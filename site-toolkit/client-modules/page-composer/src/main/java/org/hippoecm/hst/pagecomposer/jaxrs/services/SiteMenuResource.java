@@ -61,14 +61,29 @@ public class SiteMenuResource extends AbstractConfigResource {
 
     @GET
     @Path("/")
-    public Response getPageModelRepresentationV2(@Context HttpServletRequest servletRequest) {
+    public Response getMenu(@Context HttpServletRequest servletRequest) {
         try {
             final HstRequestContext requestContext = getRequestContext(servletRequest);
-
             final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
-            final SiteMenuRepresentation siteMenuRepresentation = new SiteMenuRepresentation().represent(menu);
+            final SiteMenuRepresentation representation = new SiteMenuRepresentation().represent(menu);
+            return ok("Menu item loaded successfully", representation);
+        } catch (RepositoryException e) {
+            return logAndReturnError(e.getMessage());
+        } catch (IllegalStateException e) {
+            return logAndReturnClientError(e.getMessage());
+        }
+    }
 
-            return ok("Menu loaded successfully", siteMenuRepresentation);
+    @GET
+    @Path("/{menuItemId}")
+    public Response getMenuItem(@Context HttpServletRequest servletRequest,
+                                @PathParam("menuItemId") String menuItemId) {
+        try {
+            final HstRequestContext requestContext = getRequestContext(servletRequest);
+            final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
+            final HstSiteMenuItemConfiguration menuItem = siteMenuHelper.getMenuItem(menu, menuItemId);
+            final SiteMenuItemRepresentation representation = new SiteMenuItemRepresentation().represent(menuItem);
+            return ok("Menu item loaded successfully", representation);
         } catch (RepositoryException e) {
             return logAndReturnError(e.getMessage());
         } catch (IllegalStateException e) {
@@ -86,7 +101,7 @@ public class SiteMenuResource extends AbstractConfigResource {
             final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
             final String itemId = newMenuItem.getId();
             final HstSiteMenuItemConfiguration menuItem = siteMenuHelper.getMenuItem(menu, itemId);
-            final SiteMenuItemRepresentation currentMenuItem = new SiteMenuItemRepresentation().represent(menuItem, menuItem.getParentItemConfiguration());
+            final SiteMenuItemRepresentation currentMenuItem = new SiteMenuItemRepresentation().represent(menuItem);
 
             final Node menuItemNode = session.getNodeByIdentifier(currentMenuItem.getId());
             siteMenuItemHelper.update(menuItemNode, currentMenuItem, newMenuItem);
@@ -100,12 +115,21 @@ public class SiteMenuResource extends AbstractConfigResource {
         }
     }
 
+
+    @POST
+    @Path("/move/{sourceId}/{parentTargetId}")
+    public Response move(@Context HttpServletRequest servletRequest,
+                         @PathParam("sourceId") String sourceId,
+                         @PathParam("parentTargetId") String parentTargetId) {
+        return move(servletRequest, sourceId, parentTargetId, null);
+    }
+
     @POST
     @Path("/move/{sourceId}/{parentTargetId}/{childTargetId}")
     public Response move(@Context HttpServletRequest servletRequest,
                          @PathParam("sourceId") String sourceId,
                          @PathParam("parentTargetId") String parentTargetId,
-                         @PathParam("childTargetId") final String childTargetId) {
+                         @PathParam("childTargetId") String childTargetId) {
         try {
             final HstRequestContext requestContext = getRequestContext(servletRequest);
             final Session session = requestContext.getSession();
@@ -115,17 +139,18 @@ public class SiteMenuResource extends AbstractConfigResource {
 
             final HstSiteMenuItemConfiguration sourceItem = siteMenuHelper.getMenuItem(menu, sourceId);
             assertCanonicalInfoInstance(sourceItem);
-            final Node source = session.getNodeByIdentifier(((CanonicalInfo)sourceItem).getCanonicalIdentifier());
+            final Node source = session.getNodeByIdentifier(((CanonicalInfo) sourceItem).getCanonicalIdentifier());
 
             if (!parentTargetId.equals(source.getParent().getIdentifier())) {
                 siteMenuItemHelper.move(source, parent);
             }
-
             if (StringUtils.isNotBlank(childTargetId)) {
                 final HstSiteMenuItemConfiguration targetChildItem = siteMenuHelper.getMenuItem(menu, childTargetId);
                 assertCanonicalInfoInstance(targetChildItem);
-                final Node child = session.getNodeByIdentifier(((CanonicalInfo)targetChildItem).getCanonicalIdentifier());
+                final Node child = session.getNodeByIdentifier(((CanonicalInfo) targetChildItem).getCanonicalIdentifier());
                 parent.orderBefore(source.getName(), child.getName());
+            } else {
+                parent.orderBefore(source.getName(), null);
             }
             HstConfigurationUtils.persistChanges(session);
             return ok("Item moved successfully", sourceId);
@@ -138,22 +163,22 @@ public class SiteMenuResource extends AbstractConfigResource {
     }
 
     @POST
-    @Path("/delete/{sourceId}")
+    @Path("/delete/{menuItemId}")
     public Response delete(@Context HttpServletRequest servletRequest,
-                           @PathParam("sourceId") String sourceId) {
+                           @PathParam("menuItemId") String menuItemId) {
         try {
             final HstRequestContext requestContext = getRequestContext(servletRequest);
             final Session session = requestContext.getSession();
 
             final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
 
-            final HstSiteMenuItemConfiguration sourceItem = siteMenuHelper.getMenuItem(menu, sourceId);
+            final HstSiteMenuItemConfiguration sourceItem = siteMenuHelper.getMenuItem(menu, menuItemId);
 
             assertCanonicalInfoInstance(sourceItem);
-            final Node source = session.getNodeByIdentifier(((CanonicalInfo)sourceItem).getCanonicalIdentifier());
+            final Node source = session.getNodeByIdentifier(((CanonicalInfo) sourceItem).getCanonicalIdentifier());
             source.getSession().removeItem(source.getPath());
             HstConfigurationUtils.persistChanges(session);
-            return ok("Item deleted successfully", sourceId);
+            return ok("Item deleted successfully", menuItemId);
 
         } catch (RepositoryException e) {
             return logAndReturnError(e.getMessage());
@@ -164,12 +189,12 @@ public class SiteMenuResource extends AbstractConfigResource {
 
     private Node getParentNode(String parentTargetId, Session session, HstSiteMenuConfiguration menu) throws RepositoryException {
         assertCanonicalInfoInstance(menu);
-        if (((CanonicalInfo)menu).getCanonicalIdentifier().equals(parentTargetId)) {
+        if (((CanonicalInfo) menu).getCanonicalIdentifier().equals(parentTargetId)) {
             return session.getNodeByIdentifier(parentTargetId);
         } else {
             final HstSiteMenuItemConfiguration targetParentItem = siteMenuHelper.getMenuItem(menu, parentTargetId);
             assertCanonicalInfoInstance(targetParentItem);
-            return session.getNodeByIdentifier(((CanonicalInfo)targetParentItem).getCanonicalIdentifier());
+            return session.getNodeByIdentifier(((CanonicalInfo) targetParentItem).getCanonicalIdentifier());
         }
     }
 
@@ -192,7 +217,7 @@ public class SiteMenuResource extends AbstractConfigResource {
         return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
     }
 
-    private void assertCanonicalInfoInstance(final Object o) throws IllegalStateException{
+    private void assertCanonicalInfoInstance(final Object o) throws IllegalStateException {
         if (!(o instanceof CanonicalInfo)) {
             throw new IllegalStateException("HstSiteMenuItemConfiguration not instanceof CanonicalInfo");
         }

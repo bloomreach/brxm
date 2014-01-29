@@ -36,18 +36,14 @@ public class SiteMenuItemRepresentation {
 
     private List<SiteMenuItemRepresentation> children = new ArrayList<>();
 
-    public SiteMenuItemRepresentation represent(HstSiteMenuItemConfiguration rootItem) {
-        return represent(rootItem, null);
-    }
-
-    public SiteMenuItemRepresentation represent(HstSiteMenuItemConfiguration item, HstSiteMenuItemConfiguration parent)
+    public SiteMenuItemRepresentation represent(HstSiteMenuItemConfiguration item)
             throws IllegalArgumentException {
         if (!(item instanceof CanonicalInfo)) {
             throw new IllegalArgumentException("Expected object of type CanonicalInfo");
         }
 
         name = item.getName();
-        id = ((CanonicalInfo)item).getCanonicalIdentifier();
+        id = ((CanonicalInfo) item).getCanonicalIdentifier();
         externalLink = item.getExternalLink();
         siteMapItemPath = item.getSiteMapItemPath();
         repositoryBased = item.isRepositoryBased();
@@ -56,7 +52,7 @@ public class SiteMenuItemRepresentation {
         roles = item.getRoles();
         for (HstSiteMenuItemConfiguration childItem : item.getChildItemConfigurations()) {
             SiteMenuItemRepresentation child = new SiteMenuItemRepresentation();
-            child.represent(childItem, item);
+            child.represent(childItem);
             children.add(child);
         }
         return this;

@@ -17,6 +17,7 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.Collections;
+import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -36,6 +37,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuRepresentation;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -51,6 +53,9 @@ import static org.junit.Assert.assertThat;
 
 public class SiteMenuResourceTest {
 
+    public static final int OK = Response.Status.OK.getStatusCode();
+    public static final int SERVER_ERROR = Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
+    public static final int BAD_REQUEST = Response.Status.BAD_REQUEST.getStatusCode();
     // class under test
     private SiteMenuResource siteMenuResource;
 
@@ -92,6 +97,38 @@ public class SiteMenuResourceTest {
     }
 
     @Test
+    public void testGetMenu() throws RepositoryException {
+        mockGetPreviewSite();
+        mockGetSiteMenu();
+        expect(menuConfig.getCanonicalIdentifier()).andReturn("uuid-of-menu");
+        expect(menuConfig.getName()).andReturn("menuMane");
+        final List<HstSiteMenuItemConfiguration> children = Collections.emptyList();
+        expect(menuConfig.getSiteMenuConfigurationItems()).andReturn(children);
+        replay(mocks);
+
+        final Response response = siteMenuResource.getMenu(request);
+        assertThat(response.getStatus(), is(OK));
+        final ExtResponseRepresentation entity = ExtResponseRepresentation.class.cast(response.getEntity());
+        assertThat(entity.getData(), is(SiteMenuRepresentation.class));
+        assertThat(entity.isSuccess(), is(true));
+    }
+
+    @Test
+    public void testGetMenuItem() throws RepositoryException {
+        mockGetPreviewSite();
+        mockGetSiteMenu();
+        final String id = "uuid-of-menu-item";
+        mockGetMenuItem(node, id);
+        replay(mocks);
+
+        final Response response = siteMenuResource.getMenuItem(request, id);
+        assertThat(response.getStatus(), is(OK));
+        final ExtResponseRepresentation entity = ExtResponseRepresentation.class.cast(response.getEntity());
+        assertThat(entity.getData(), is(SiteMenuItemRepresentation.class));
+        assertThat(entity.isSuccess(), is(true));
+    }
+
+    @Test
     public void testUpdate() throws RepositoryException {
 
         mockGetPreviewSite();
@@ -116,7 +153,7 @@ public class SiteMenuResourceTest {
         final Response response = siteMenuResource.update(request, newMenuItem);
         assertThat(currentItem.getValue().getId(), is(id));
 
-        assertThat(response.getStatus(), is(200));
+        assertThat(response.getStatus(), is(OK));
         assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
 
         final ExtResponseRepresentation extResponse = ExtResponseRepresentation.class.cast(response.getEntity());
@@ -125,13 +162,29 @@ public class SiteMenuResourceTest {
     }
 
     @Test
-    public void testUpdateReturnsErrorOnRepositoryException() throws RepositoryException {
+    public void testUpdateReturnsServerErrorOnRepositoryException() throws RepositoryException {
         expect(request.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT)).andReturn(context);
         expect(context.getSession()).andThrow(new RepositoryException("failed"));
         replay(mocks);
 
         final Response response = siteMenuResource.update(request, null);
-        assertThat(response.getStatus(), is(500));
+        assertThat(response.getStatus(), is(SERVER_ERROR));
+        assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
+
+        final ExtResponseRepresentation extResponse = ExtResponseRepresentation.class.cast(response.getEntity());
+        assertThat(extResponse.isSuccess(), is(false));
+        assertThat(extResponse.getData(), is(String[].class));
+
+    }
+
+    @Test
+    public void testUpdateReturnsClientErrorOnIllegalStateException() throws RepositoryException {
+        expect(request.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT)).andReturn(context);
+        expect(context.getSession()).andThrow(new IllegalStateException("failed"));
+        replay(mocks);
+
+        final Response response = siteMenuResource.update(request, null);
+        assertThat(response.getStatus(), is(BAD_REQUEST));
         assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
 
         final ExtResponseRepresentation extResponse = ExtResponseRepresentation.class.cast(response.getEntity());
@@ -168,7 +221,35 @@ public class SiteMenuResourceTest {
         replay(mocks);
 
         final Response response = siteMenuResource.move(request, sourceId, parentTargetId, childTargetId);
-        assertThat(response.getStatus(), is(200));
+        assertThat(response.getStatus(), is(OK));
+        assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
+
+        final ExtResponseRepresentation extResponse = ExtResponseRepresentation.class.cast(response.getEntity());
+        assertThat(extResponse.isSuccess(), is(true));
+        assertThat(extResponse.getData().toString(), is(sourceId));
+    }
+
+    @Test
+    public void testDelete() throws RepositoryException {
+
+        mockGetPreviewSite();
+        mockGetSiteMenu();
+        final String sourceId = "sourceId";
+        mockGetMenuItem(node, sourceId);
+
+        expect(node.getSession()).andReturn(session);
+        expect(node.getPath()).andReturn("some-path");
+        session.removeItem("some-path");
+        expectLastCall().once();
+
+        // Return false, so that we don't have to mock all method calls in
+        // HstConfigurationUtils.persistChanges()
+        expect(session.hasPendingChanges()).andReturn(false);
+
+        replay(mocks);
+
+        final Response response = siteMenuResource.delete(request, sourceId);
+        assertThat(response.getStatus(), is(OK));
         assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
 
         final ExtResponseRepresentation extResponse = ExtResponseRepresentation.class.cast(response.getEntity());
