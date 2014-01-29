@@ -24,14 +24,14 @@
     def getDraft() { dm.getDocumentVariantByState('draft') }
     def getUnpublished() { dm.getDocumentVariantByState('unpublished') }
     def getPublished() { dm.getDocumentVariantByState('published') }
+    def getUser() { dm.user }
     def getCopySource() { published ?: unpublished ?: null }
     def getDeleteSource() { unpublished ?: published ?: draft }
     def getHolder() { draft?.holder }
-    def getUser() { dm.user }
-    def boolean isEditable() { !draft?.holder or draft?.holder==dm.user }
+    def boolean isEditable() { !draft?.holder or draft?.holder == user }
     def boolean isEditing() { !!draft?.holder }
-    def boolean isEditor() { draft?.holder==dm.user }
-    def boolean isUserRequest() { dm.request?.owner==dm.user }
+    def boolean isEditor() { draft?.holder == user }
+    def boolean isUserRequest() { dm.request?.owner == user }
     def boolean isLive() { published?.isAvailable('live') }
     def boolean isPreview() { unpublished?.isAvailable('preview') }
     def boolean isModified() { unpublished and (!live or unpublished.lastModified!=published.lastModified) }
@@ -295,7 +295,7 @@
 
       <state id="depublishable">
         <onentry>
-          <if cond="(!dm.request or user=='system') and dm.states in (String[])['p','dp']">
+          <if cond="!dm.request or user=='system'">
             <hippo:action action="depublish" value="true"/>
             <hippo:action action="requestDepublish" value="true"/>
           </if>
@@ -329,19 +329,19 @@
         </onentry>
 
         <transition event="version" target="reset">
-          <hippo:version variant="dm.unpublished"  />
+          <hippo:version variant="unpublished"  />
         </transition>
 
         <transition event="listVersions">
-          <hippo:listVersions variant="dm.unpublished"  />
+          <hippo:listVersions variant="unpublished"  />
         </transition>
 
         <transition event="retrieveVersion">
-          <hippo:retrieveVersion historic="_eventdata" variant="dm.unpublished" />
+          <hippo:retrieveVersion historic="_eventdata" variant="unpublished" />
         </transition>
 
         <transition event="restoreVersion" target="reset">
-          <hippo:retrieveVersion historic="_eventdata" variant="dm.unpublished" />
+          <hippo:retrieveVersion historic="_eventdata" variant="unpublished" />
           <hippo:restoreVersion version="dm.result" />
         </transition>
 

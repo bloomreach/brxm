@@ -20,6 +20,7 @@ import java.rmi.RemoteException;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
@@ -54,22 +55,14 @@ public class RenameDocumentTask extends AbstractDocumentTask {
 
         DocumentHandle dm = getDocumentHandle();
 
-        DocumentVariant document = null;
+        DocumentVariant document = dm.getDocumentVariantByState(HippoStdNodeType.UNPUBLISHED);
 
-        if (dm.getUnpublished() != null) {
-            document = dm.getUnpublished();
+        if (document == null) {
+            document = dm.getDocumentVariantByState(HippoStdNodeType.PUBLISHED);
         }
 
         if (document == null) {
-            if (dm.getPublished() != null) {
-                document = dm.getPublished();
-            }
-        }
-
-        if (document == null) {
-            if (dm.getDraft() != null) {
-                document = dm.getDraft();
-            }
+            document = dm.getDocumentVariantByState(HippoStdNodeType.DRAFT);
         }
 
         if (document == null) {

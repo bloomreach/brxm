@@ -20,6 +20,7 @@ import java.rmi.RemoteException;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.Workflow;
@@ -28,6 +29,7 @@ import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.hippoecm.repository.standardworkflow.EmbedWorkflow;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
+import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,23 +80,26 @@ public class CopyDocumentTask extends AbstractDocumentTask {
             folderWorkflowCategory = (String) config.get("folder-workflow-category");
         }
 
-        if (dm.getUnpublished() == null) {
-            Document folder = WorkflowUtils.getContainingFolder(dm.getPublished());
+        DocumentVariant unpublished = dm.getDocumentVariantByState(HippoStdNodeType.UNPUBLISHED);
+
+        if (unpublished == null) {
+            DocumentVariant published = dm.getDocumentVariantByState(HippoStdNodeType.PUBLISHED);
+            Document folder = WorkflowUtils.getContainingFolder(published);
             Workflow workflow = dm.getWorkflowContext().getWorkflow(folderWorkflowCategory, destination);
 
             if (workflow instanceof EmbedWorkflow) {
-                Document copy = ((EmbedWorkflow) workflow).copyTo(folder, dm.getPublished(), newName, null);
+                Document copy = ((EmbedWorkflow) workflow).copyTo(folder, published, newName, null);
                 FullReviewedActionsWorkflow copiedDocumentWorkflow = (FullReviewedActionsWorkflow) dm.getWorkflowContext().getWorkflow("default", copy);
                 copiedDocumentWorkflow.depublish();
             } else {
                 throw new WorkflowException("cannot copy document which is not contained in a folder");
             }
         } else {
-            Document folder = WorkflowUtils.getContainingFolder(dm.getUnpublished());
+            Document folder = WorkflowUtils.getContainingFolder(unpublished);
             Workflow workflow = dm.getWorkflowContext().getWorkflow(folderWorkflowCategory, destination);
 
             if (workflow instanceof EmbedWorkflow) {
-                ((EmbedWorkflow) workflow).copyTo(folder, dm.getUnpublished(), newName, null);
+                ((EmbedWorkflow) workflow).copyTo(folder, unpublished, newName, null);
             } else {
                 throw new WorkflowException("cannot copy document which is not contained in a folder");
             }

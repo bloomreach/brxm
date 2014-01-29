@@ -26,9 +26,11 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
+import org.onehippo.repository.documentworkflow.DocumentVariant;
 
 /**
  * Custom workflow task for determining if current draft is modified compared to the unpublished variant
@@ -42,14 +44,16 @@ public class IsModifiedTask extends AbstractDocumentTask {
     public Object doExecute() throws RepositoryException {
 
         DocumentHandle dm = getDocumentHandle();
+        DocumentVariant draft = dm.getDocumentVariantByState(HippoStdNodeType.DRAFT);
+        DocumentVariant unpublished = dm.getDocumentVariantByState(HippoStdNodeType.UNPUBLISHED);
 
-        if (dm.getDraft() != null && dm.getUnpublished() != null) {
-            Node draftNode = dm.getDraft().getNode();
-            if (dm.getUser().equals(dm.getDraft().getHolder())) {
+        if (draft != null && draft != null) {
+            Node draftNode = draft.getNode();
+            if (dm.getUser().equals(draft.getHolder())) {
                 // use user session bound draftNode which might contain outstanding changes
                 draftNode = dm.getWorkflowContext().getUserSession().getNodeByIdentifier(draftNode.getIdentifier());
             }
-            dm.getInfo().put("modified", !equals(draftNode, dm.getUnpublished().getNode()));
+            dm.getInfo().put("modified", !equals(draftNode, unpublished.getNode()));
         }
         return null;
     }

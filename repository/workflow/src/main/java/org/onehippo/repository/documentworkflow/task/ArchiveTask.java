@@ -19,12 +19,14 @@ import java.rmi.RemoteException;
 
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
+import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,21 +43,24 @@ public class ArchiveTask extends AbstractDocumentTask {
     public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
 
         DocumentHandle dm = getDocumentHandle();
-
+        DocumentVariant variant;
         try {
-            if (dm.getDraft() != null) {
-                deleteDocument(dm.getDraft());
+            variant = dm.getDocumentVariantByState(HippoStdNodeType.DRAFT);
+            if (variant != null) {
+                deleteDocument(variant);
             }
 
-            if (dm.getPublished() != null) {
-                deleteDocument(dm.getPublished());
+            variant = dm.getDocumentVariantByState(HippoStdNodeType.PUBLISHED);
+            if (variant != null) {
+                deleteDocument(variant);
             }
         } catch (RepositoryException e) {
             throw new WorkflowException(e.getMessage(), e);
         }
 
         try {
-            DefaultWorkflow defaultWorkflow = (DefaultWorkflow) dm.getWorkflowContext().getWorkflow("core", dm.getUnpublished());
+            variant = dm.getDocumentVariantByState(HippoStdNodeType.UNPUBLISHED);
+            DefaultWorkflow defaultWorkflow = (DefaultWorkflow) dm.getWorkflowContext().getWorkflow("core", variant);
             defaultWorkflow.archive();
         } catch (MappingException ex) {
             log.warn("invalid default workflow, falling back in behaviour", ex);

@@ -18,8 +18,10 @@ package org.onehippo.repository.documentworkflow.task;
 
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
+import org.onehippo.repository.documentworkflow.DocumentVariant;
 
 /**
  * Custom workflow task which sets the draft variant holder to the current user
@@ -42,8 +44,9 @@ public class SetHolderTask extends AbstractDocumentTask {
 
         DocumentHandle dm = getDocumentHandle();
 
-        if (dm.getDraft() != null) {
-            dm.getDraft().setHolder(holder);
+        DocumentVariant draft = dm.getDocumentVariantByState(HippoStdNodeType.DRAFT);
+        if (draft != null) {
+            draft.setHolder(holder);
         }
         else {
             throw new WorkflowException("Draft document not available");

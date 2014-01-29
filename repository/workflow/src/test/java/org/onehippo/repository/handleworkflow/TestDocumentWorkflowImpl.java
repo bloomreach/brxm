@@ -51,11 +51,15 @@ import org.onehippo.repository.documentworkflow.action.DeleteRequestAction;
 import org.onehippo.repository.documentworkflow.action.InfoAction;
 import org.onehippo.repository.documentworkflow.action.InvokeDocumentWorkflowAction;
 import org.onehippo.repository.documentworkflow.action.IsModifiedAction;
+import org.onehippo.repository.documentworkflow.action.ListVersionsVariantAction;
 import org.onehippo.repository.documentworkflow.action.MoveDocumentAction;
 import org.onehippo.repository.documentworkflow.action.RenameDocumentAction;
 import org.onehippo.repository.documentworkflow.action.RequestAction;
+import org.onehippo.repository.documentworkflow.action.RestoreVersionAction;
+import org.onehippo.repository.documentworkflow.action.RetrieveVersionAction;
 import org.onehippo.repository.documentworkflow.action.ScheduleRequestAction;
 import org.onehippo.repository.documentworkflow.action.SetHolderAction;
+import org.onehippo.repository.documentworkflow.action.VersionVariantAction;
 import org.onehippo.repository.documentworkflow.action.WorkflowExceptionAction;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.mock.MockValue;
@@ -77,7 +81,7 @@ public class TestDocumentWorkflowImpl {
     public static void beforeClass() throws Exception {
         MockRepositorySCXMLRegistry registry = new MockRepositorySCXMLRegistry();
         MockNode scxmlConfigNode = registry.createConfigNode();
-        MockNode scxmlNode = registry.addScxmlNode(scxmlConfigNode, "document-workflow", loadTestSCXML());
+        MockNode scxmlNode = registry.addScxmlNode(scxmlConfigNode, "document-workflow", loadSCXML());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "action", ActionAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "result", ResultAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "info", InfoAction.class.getName());
@@ -94,6 +98,10 @@ public class TestDocumentWorkflowImpl {
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "deleteRequest", DeleteRequestAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "invokeDocumentWorkflow", InvokeDocumentWorkflowAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "workflowException", WorkflowExceptionAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "version", VersionVariantAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "listVersions", ListVersionsVariantAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "retrieveVersion", RetrieveVersionAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "restoreVersion", RestoreVersionAction.class.getName());
         registry.setUp(scxmlConfigNode);
 
         HippoServiceRegistry.registerService(registry, SCXMLRegistry.class);
@@ -106,7 +114,7 @@ public class TestDocumentWorkflowImpl {
         HippoServiceRegistry.unregisterService(HippoServiceRegistry.getService(SCXMLRegistry.class), SCXMLRegistry.class);
     }
 
-    protected static String loadTestSCXML() throws Exception {
+    protected static String loadSCXML() throws Exception {
         return IOUtils.toString(TestDocumentWorkflowImpl.class.getResourceAsStream("/reviewed-actions-workflow.scxml"));
     }
 
@@ -262,6 +270,22 @@ public class TestDocumentWorkflowImpl {
         wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "status", true);
+    }
+
+    @Test
+    public void testInitializeSCXML() throws Exception {
+
+        MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
+        MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
+        RepositoryMap workflowConfig = workflowContext.getWorkflowConfiguration();
+        HandleDocumentWorkflowImpl wf = new HandleDocumentWorkflowImpl();
+        wf.setWorkflowContext(workflowContext);
+
+        Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+
+        addVariant(handleNode, HippoStdNodeType.DRAFT);
+        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", HandleDocumentWorkflow.SupportedFeatures.request.name());
+        wf.setNode(handleNode);
     }
 
     @Test

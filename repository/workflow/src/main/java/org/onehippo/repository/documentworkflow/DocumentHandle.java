@@ -56,8 +56,6 @@ public class DocumentHandle implements SCXMLDataModel {
     private Map<String, WorkflowRequest> requests = null;
     private WorkflowRequest request = null;
 
-    private String states;
-
     private Map<String, Map<String, Boolean>> pathPrivilegesMap;
 
     private Map<String, Serializable> info = new HashMap<>();
@@ -211,34 +209,11 @@ public class DocumentHandle implements SCXMLDataModel {
         return context;
     }
 
-    /**
-     * Get short notation representing the states of all existing Variants
-     *
-     * @return concatenation of: "d" if Draft variant exists, "u" if Unpublished variant exists, "p" if Published
-     * variant exists. Never returns null
-     */
-    public String getStates() {
-        if (states == null) {
-            states = "";
-            if (getDraft() != null) {
-                states += "d";
-            }
-            if (getUnpublished() != null) {
-                states += "u";
-            }
-            if (getPublished() != null) {
-                states += "p";
-            }
-        }
-        return states;
-    }
-
     public String getUser() {
         return user;
     }
 
     public void putDocumentVariant(DocumentVariant variant) throws RepositoryException {
-        states = null;
         getDocuments(true).put(variant.getState(), variant);
     }
 
@@ -246,25 +221,8 @@ public class DocumentHandle implements SCXMLDataModel {
         return getDocuments(false).get(state);
     }
 
-    /**
-     * @return Draft variant if it exists or null otherwise
-     */
-    public DocumentVariant getDraft() {
-        return getDocuments(false).get(DocumentVariant.DRAFT);
-    }
-
-    /**
-     * @return Unpublished variant if it exists or null otherwise
-     */
-    public DocumentVariant getUnpublished() {
-        return getDocuments(false).get(DocumentVariant.UNPUBLISHED);
-    }
-
-    /**
-     * @return Published variant if it exists or null otherwise
-     */
-    public DocumentVariant getPublished() {
-        return getDocuments(false).get(DocumentVariant.PUBLISHED);
+    public Map<String, DocumentVariant> getDocuments() {
+        return getDocuments(false);
     }
 
     public Map<String, Serializable> getInfo() {
