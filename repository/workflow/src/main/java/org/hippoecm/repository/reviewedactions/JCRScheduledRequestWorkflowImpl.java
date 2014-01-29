@@ -25,10 +25,14 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.util.JcrUtils;
 
-public class ScheduledRequestWorkflowImpl extends WorkflowImpl implements BasicRequestWorkflow {
+/**
+ * Deprecated JCR-based implementation.  Kept for reference for new SCXML based implementation.
+ */
+@Deprecated
+public class JCRScheduledRequestWorkflowImpl extends WorkflowImpl implements BasicRequestWorkflow {
     protected Document request;
 
-    public ScheduledRequestWorkflowImpl() throws RemoteException {
+    public JCRScheduledRequestWorkflowImpl() throws RemoteException {
     }
 
     public void setNode(Node node) throws RepositoryException {

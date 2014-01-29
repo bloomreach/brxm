@@ -21,6 +21,10 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.WorkflowException;
 
+/**
+ * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.handleworkflow.HandleDocumentWorkflowImpl} instead.
+ */
+@Deprecated
 public class UnlockWorkflowImpl extends AbstractReviewedActionsWorkflow implements UnlockWorkflow {
     /**
      * All implementations of a work-flow must provide a single, no-argument constructor.

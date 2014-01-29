@@ -31,6 +31,10 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.reviewedactions.AbstractReviewedActionsWorkflow;
 import org.onehippo.repository.util.JcrConstants;
 
+/**
+ * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.handleworkflow.HandleDocumentWorkflowImpl} instead.
+ */
+@Deprecated
 public class VersionWorkflowImpl extends AbstractReviewedActionsWorkflow implements VersionWorkflow {
 
     public VersionWorkflowImpl() throws RemoteException {

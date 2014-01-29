@@ -42,13 +42,13 @@ import static org.hippoecm.repository.util.WorkflowUtils.getContainingFolder;
  * Deprecated JCR-based implementation.  Kept for reference for new SCXML based implementation.
  */
 @Deprecated
-public class JCRFullReviewedActionsWorkflowImplJCR extends JCRBasicReviewedActionsWorkflowImpl implements FullReviewedActionsWorkflow {
+public class JCRFullReviewedActionsWorkflowImpl extends JCRBasicReviewedActionsWorkflowImpl implements FullReviewedActionsWorkflow {
 
-    private static final Logger log = LoggerFactory.getLogger(JCRFullReviewedActionsWorkflowImplJCR.class);
+    private static final Logger log = LoggerFactory.getLogger(JCRFullReviewedActionsWorkflowImpl.class);
 
     private static final long serialVersionUID = 1L;
 
-    public JCRFullReviewedActionsWorkflowImplJCR() throws RemoteException {
+    public JCRFullReviewedActionsWorkflowImpl() throws RemoteException {
     }
 
     @Override

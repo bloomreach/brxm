@@ -29,6 +29,10 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
 import org.onehippo.repository.documentworkflow.HandleDocumentWorkflow;
 
+/**
+ * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.handleworkflow.HandleDocumentWorkflowImpl} instead.
+ */
+@Deprecated
 public class AbstractReviewedActionsWorkflow extends WorkflowImpl {
 
     protected HandleDocumentWorkflow handleDocumentWorkflow;

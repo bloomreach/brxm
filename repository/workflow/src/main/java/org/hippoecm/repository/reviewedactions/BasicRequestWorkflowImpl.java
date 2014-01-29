@@ -21,6 +21,10 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.WorkflowException;
 
+/**
+ * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.handleworkflow.HandleDocumentWorkflowImpl} instead.
+ */
+@Deprecated
 public class BasicRequestWorkflowImpl extends AbstractReviewedActionsWorkflow implements BasicRequestWorkflow {
 
     public BasicRequestWorkflowImpl() throws RemoteException {
