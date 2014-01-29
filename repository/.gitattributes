@@ -89,8 +89,6 @@ config/src/main/resources/role-jcrread.xml -text svneol=unset#text/plain
 config/src/main/resources/scheduler-module.xml -text
 config/src/main/resources/updater-configuration.xml -text
 config/src/main/resources/updater-execution-module.xml -text
-config/src/test/resources/hippoecm-extension.xml svneol=native#text/plain
-config/src/test/resources/repository-test.cnd -text
 connector/pom.xml -text
 connector/src/main/java/org/apache/NOTICE.txt -text
 connector/src/main/java/org/hippoecm/repository/ParameterCallback.java -text

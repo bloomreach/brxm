@@ -91,3 +91,7 @@
 - hippo:d2 (date)
 + hippo:d1fields (hippostd:datefields) = hippostd:datefields mandatory autocreated
 + hippo:d2fields (hippostd:datefields) = hippostd:datefields
+
+[hippo:coredocument] > hippo:document
++ * = nt:unstructured multiple
+- *
