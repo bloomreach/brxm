@@ -177,10 +177,6 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
         this.statusCode = node.getValueProvider().getLong(HstNodeTypes.SITEMAPITEM_PROPERTY_STATUSCODE).intValue();
         this.errorCode = node.getValueProvider().getLong(HstNodeTypes.SITEMAPITEM_PROPERTY_ERRORCODE).intValue();
 
-        if(this.value == null){
-            log.error("The 'value' of a SiteMapItem is not allowed to be null: '{}'", nodePath);
-            throw new ModelLoadingException("The 'value' of a SiteMapItem is not allowed to be null. It is so for '"+nodePath+"'");
-        }
         if(parentItem != null) {
             this.parameterizedPath = this.parentItem.getParameterizedPath()+"/";
             this.occurences = this.parentItem.getWildCardAnyOccurences();
