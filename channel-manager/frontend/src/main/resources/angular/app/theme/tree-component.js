@@ -19,6 +19,31 @@
     angular.module('hippo.theme')
 
         /*
+        * jstree directive
+        * via http://plnkr.co/edit/xHIc4J?p=preview
+        */
+        .directive('jstree', [function() {
+            return {
+                restrict: 'A',
+                scope: {
+                    data: "="
+                },
+                template: '<div id="filter">Filter did not load.</div>',
+                link: function (scope, element, attrs) {
+                    scope.$watch('data', function() {
+                        element.jstree('destroy');
+                        element.jstree({ 'core' : {
+                            data: scope.data
+                        }}).bind('select_node.jstree', function() {
+                            console.log('Node selected');
+                        });
+
+                    }, true);
+                }
+            }
+        }])
+
+        /*
          * This directive is a modification of
          * https://github.com/nickperkinslondon/angular-bootstrap-nav-tree
          */

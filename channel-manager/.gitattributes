@@ -933,6 +933,7 @@ frontend/src/main/resources/angular/vendors/jstree/dist/themes/default/40px.png 
 frontend/src/main/resources/angular/vendors/jstree/dist/themes/default/style.css -text
 frontend/src/main/resources/angular/vendors/jstree/dist/themes/default/style.min.css -text
 frontend/src/main/resources/angular/vendors/jstree/dist/themes/default/throbber.gif -text
+frontend/src/main/resources/angular/vendors/underscore.js -text
 frontend/src/test/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanelTest.java -text
 frontend/src/test/java/org/onehippo/cms7/channelmanager/channels/ReflectionUtilTest.java -text
 frontend/src/test/java/org/onehippo/cms7/channelmanager/widgets/JsonUtilTest.java -text

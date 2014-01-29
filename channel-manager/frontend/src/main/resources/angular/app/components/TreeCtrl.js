@@ -27,8 +27,14 @@
             // fetch initial data
             $scope.menuTree = [{}];
             MenuService.getMenu(ConfigService.menuId).then(function (response) {
-                $scope.menuTree = response.children;
+                $scope.menuTree = reformatData(response.children);
             });
+
+            $scope.addItem = function() {
+                 $scope.menuTree.push({
+                    name: 'hooi'
+                 });
+            };
 
             // methods
             $scope.setSelectedItem = function (branch) {
@@ -42,5 +48,23 @@
                     }
                 }
             };
+
+            function reformatData(src) {
+                var result = [];
+                _.each(src, function (item) {
+                    var newItem = {
+                        id: item.id,
+                        text: item.name
+                    };
+
+                    if (item.children && item.children.length > 0) {
+                        newItem.children = reformatData(item.children);
+                    }
+
+                    result.push(newItem);
+                });
+
+                return result;
+            }
         }]);
 })();
