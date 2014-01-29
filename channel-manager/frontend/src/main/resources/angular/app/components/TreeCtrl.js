@@ -30,12 +30,6 @@
                 $scope.menuTree = reformatData(response.children);
             });
 
-            $scope.addItem = function() {
-                 $scope.menuTree.push({
-                    text: 'Random dummy item ' +  + Math.ceil((Math.random() * 100))
-                 });
-            };
-
             // methods
             $scope.setSelectedItemId = function (itemId) {
 

@@ -89,3 +89,9 @@ html, body {
     height: 100%;
     background: url(../images/loader.gif) no-repeat center center;
 }
+
+/* --- jsTree component --- */
+.jstree {
+    height: 433px;
+    overflow-y: auto;
+}
