@@ -21,7 +21,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
-import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.request.ResolvedMount;
@@ -41,7 +40,6 @@ import static org.junit.Assert.assertTrue;
 public class TestSiteMapModels extends AbstractTestConfigurations {
 
     private HstManager hstManager;
-    private EventPathsInvalidator invalidator;
     private HippoSession session;
 
     @Override
@@ -51,7 +49,6 @@ public class TestSiteMapModels extends AbstractTestConfigurations {
         session = createSession();
         createHstConfigBackup(session);
         hstManager = getComponent(HstManager.class.getName());
-        invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
     }
 
     @Override
@@ -69,7 +66,7 @@ public class TestSiteMapModels extends AbstractTestConfigurations {
     }
 
     @Test
-    public void test_sitemap_inheritance_without_workspace_sitemap() throws Exception {
+    public void test_plain_sitemap_without_workspace_sitemap() throws Exception {
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         final HstSiteMap siteMap = hstSite.getSiteMap();

@@ -43,23 +43,15 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
      * canonicalComponentConfigurations are component configurations that are retrievable through getComponentConfiguration(String id),
      * They are the HstComponentConfiguration items that are not the result of enhancing but present without enhancing
      */
-    private Map<String, HstComponentConfiguration> canonicalComponentConfigurations = new LinkedHashMap<String, HstComponentConfiguration>();
+    private final Map<String, HstComponentConfiguration> canonicalComponentConfigurations;
 
-    /*
-     * Components that artoStringe direct childs of the hst:components node. A child component only is a root component when it has a non null
-     * id.
-     */
-    private List<HstComponentConfiguration> childComponents  = new ArrayList<HstComponentConfiguration>();
-    
     /*
      * The Map of all containter items. These are the hst:containeritemcomponent's that are configured as child of hst:containeritemcomponent's
      */
-    private List<HstComponentConfiguration> availableContainerItems  = new ArrayList<HstComponentConfiguration>();
+    private final List<HstComponentConfiguration> availableContainerItems;
 
-    private Set<String> usedReferenceNames = new HashSet<String>();
-    private int autocreatedCounter = 0;
-
-
+    private final Set<String> usedReferenceNames = new HashSet<>();
+    private int autoCreatedCounter = 0;
 
     public HstComponentsConfigurationService(final CompositeConfigurationNodes ccn,
                                              final List<HstComponentConfiguration> commonCatalogItem) throws ModelLoadingException {
@@ -76,24 +68,21 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
             containers = Collections.emptyMap();
         }
 
-//        final CompositeConfigurationNodes.CompositeConfigurationNode workspace = ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_WORKSPACE);
-//        if (workspace != null) {
-//            modifiableContainers = workspace.getCompositeChildren().get(HstNodeTypes.NODENAME_HST_CONTAINERS);
-//        }
-
         final CompositeConfigurationNodes.CompositeConfigurationNode components = ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_COMPONENTS);
 
         final String rootConfigurationPathPrefix = ccn.getConfigurationRootNode().getValueProvider().getPath() + "/";
+
+        List<HstComponentConfiguration> childComponents  = new ArrayList<>();
         if (components != null) {
             log.debug("Initializing the components");
-            init(components, HstNodeTypes.NODENAME_HST_COMPONENTS, rootConfigurationPathPrefix, containers);
+            init(components, HstNodeTypes.NODENAME_HST_COMPONENTS, rootConfigurationPathPrefix, containers, childComponents);
         }
 
         final CompositeConfigurationNodes.CompositeConfigurationNode pages = ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_PAGES);
 
         if (pages != null) {
             log.debug("Initializing the pages");
-            init(pages, HstNodeTypes.NODENAME_HST_PAGES, rootConfigurationPathPrefix, containers);
+            init(pages, HstNodeTypes.NODENAME_HST_PAGES, rootConfigurationPathPrefix, containers, childComponents);
         }
 
         // populate all the available containeritems that are part of hst:catalog. These container items do *not* need to be enhanced as they
@@ -106,11 +95,20 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         }
 
         if (commonCatalogItem != null) {
+            availableContainerItems = new ArrayList<>();
             availableContainerItems.addAll(commonCatalogItem);
+        } else {
+            availableContainerItems = Collections.emptyList();
         }
 
-        for (HstComponentConfiguration child : childComponents) {
-            populateCanonicalComponentConfigurations(child);
+        if (childComponents.isEmpty()) {
+            canonicalComponentConfigurations = Collections.emptyMap();
+        } else {
+            Map<String, HstComponentConfiguration> toPopulate = new LinkedHashMap<>();
+            for (HstComponentConfiguration child : childComponents) {
+                populateCanonicalComponentConfigurations(child, toPopulate);
+            }
+            canonicalComponentConfigurations = Collections.unmodifiableMap(toPopulate);
         }
 
         /*
@@ -122,11 +120,11 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
          */
         
         Map<String, HstNode> templateResourceMap = getTemplateResourceMap(ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_TEMPLATES));
-        enhanceComponentTree(templateResourceMap);
+        enhanceComponentTree(templateResourceMap, childComponents);
 
     }
 
-    private void enhanceComponentTree(Map<String, HstNode> templateResourceMap) {
+    private void enhanceComponentTree(Map<String, HstNode> templateResourceMap, final List<HstComponentConfiguration> childComponents) {
         // merging referenced components:  to avoid circular population, hold a list of already populated configs
         List<HstComponentConfiguration> populated = new ArrayList<HstComponentConfiguration>();
         for (HstComponentConfiguration child : canonicalComponentConfigurations.values()) {
@@ -182,7 +180,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     }
 
     public Map<String, HstComponentConfiguration> getComponentConfigurations() {
-        return Collections.unmodifiableMap(this.canonicalComponentConfigurations);
+        return canonicalComponentConfigurations;
     }
 
 
@@ -192,21 +190,22 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     
     private void autocreateReferenceNames(HstComponentConfiguration componentConfiguration) {
         if (componentConfiguration.getReferenceName() == null || "".equals(componentConfiguration.getReferenceName())) {
-            String autoRefName = "r" + (++autocreatedCounter);
+            String autoRefName = "r" + (++autoCreatedCounter);
             while (usedReferenceNames.contains(autoRefName)) {
-                autoRefName = "r" + (++autocreatedCounter);
+                autoRefName = "r" + (++autoCreatedCounter);
             }
             ((HstComponentConfigurationService) componentConfiguration).setReferenceName(StringPool.get(autoRefName));
         }
         ((HstComponentConfigurationService) componentConfiguration).autocreateReferenceNames();
     }
 
-    private void populateCanonicalComponentConfigurations(HstComponentConfiguration componentConfiguration) {
+    private void populateCanonicalComponentConfigurations(final HstComponentConfiguration componentConfiguration,
+                                                          final Map<String, HstComponentConfiguration> toPopulate) {
         if (componentConfiguration.getId() != null) {
-            canonicalComponentConfigurations.put(componentConfiguration.getId(), componentConfiguration);
+            toPopulate.put(componentConfiguration.getId(), componentConfiguration);
         }
         for (HstComponentConfiguration child : componentConfiguration.getChildren().values()) {
-            populateCanonicalComponentConfigurations(child);
+            populateCanonicalComponentConfigurations(child, toPopulate);
         }
     }
     
@@ -216,7 +215,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     private void init(final CompositeConfigurationNodes.CompositeConfigurationNode node,
                       final String rootNodeName,
                       final String rootConfigurationPathPrefix,
-                      final Map<String, HstNode> modifiableContainers) {
+                      final Map<String, HstNode> modifiableContainers, final List<HstComponentConfiguration> childComponents) {
 
         for (HstNode child : node.getCompositeChildren().values()) {
             if (isHstComponentType(child)) {
