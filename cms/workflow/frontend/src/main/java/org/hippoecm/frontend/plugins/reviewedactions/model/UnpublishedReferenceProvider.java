@@ -101,7 +101,7 @@ public class UnpublishedReferenceProvider implements ISortableDataProvider<Strin
                 while (upstream.hasNext()) {
                     String uuid = upstream.next();
                     try {
-                        Node node = session.getNodeByUUID(uuid);
+                        Node node = session.getNodeByIdentifier(uuid);
                         boolean valid = true;
                         if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                             valid = false;
@@ -115,9 +115,6 @@ public class UnpublishedReferenceProvider implements ISortableDataProvider<Strin
                                         valid = true;
                                         break;
                                     }
-                                } else {
-                                    valid = true;
-                                    break;
                                 }
                             }
                         }
