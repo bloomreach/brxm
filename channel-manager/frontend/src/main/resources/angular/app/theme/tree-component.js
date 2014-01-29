@@ -47,15 +47,16 @@
 
                         element.jstree('destroy');
                         element.jstree({
+                            plugins : [ "themes" ],
                             core: {
                                 data: scope.data
                             },
                             themes: {
-                                theme: 'proton'
+                                theme: 'hippo'
                             }
                         }).bind('select_node.jstree', function(event, item) {
                             treeCtrl.setSelectedItem(item.node.id);
-                        });
+                        }).jstree('set_theme', 'hippo');
                     }, true);
                 }
             }
