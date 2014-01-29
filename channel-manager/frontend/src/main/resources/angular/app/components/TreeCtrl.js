@@ -32,7 +32,6 @@
 
             // methods
             $scope.setSelectedItemId = function (itemId) {
-
                 // TODO: fetch the details for this menu item and set them as the selectedMenuItem
                 MenuService.getMenu(ConfigService.menuId).then(function (response) {
                     $scope.$parent.selectedMenuItem = {

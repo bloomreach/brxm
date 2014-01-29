@@ -41,7 +41,7 @@
                             data: scope.data
                         }}).bind('select_node.jstree', function(event, item) {
                             treeCtrl.setSelectedItem(item.node.id);
-                        });
+                        }).jstree('select_node', scope.data[0].id)
                     }, true);
                 }
             }
