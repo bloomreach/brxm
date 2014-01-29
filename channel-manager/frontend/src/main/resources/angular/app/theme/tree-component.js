@@ -29,15 +29,19 @@
                     data: "="
                 },
                 template: '<div id="filter">Filter did not load.</div>',
-                link: function (scope, element, attrs) {
+                controller: function($scope) {
+                    this.setSelectedItem = function(itemId) {
+                        $scope.$parent.setSelectedItemId(itemId);
+                    }
+                },
+                link: function (scope, element, attrs, treeCtrl) {
                     scope.$watch('data', function() {
                         element.jstree('destroy');
                         element.jstree({ 'core' : {
                             data: scope.data
-                        }}).bind('select_node.jstree', function() {
-                            console.log('Node selected');
+                        }}).bind('select_node.jstree', function(event, item) {
+                            treeCtrl.setSelectedItem(item.node.id);
                         });
-
                     }, true);
                 }
             }

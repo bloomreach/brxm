@@ -32,30 +32,42 @@
 
             $scope.addItem = function() {
                  $scope.menuTree.push({
-                    name: 'hooi'
+                    text: 'Random dummy item ' +  + Math.ceil((Math.random() * 100))
                  });
             };
 
             // methods
-            $scope.setSelectedItem = function (branch) {
-                // set selected menu item so child-controllers can access it
-                $scope.$parent.selectedMenuItem = branch;
+            $scope.setSelectedItemId = function (itemId) {
 
-                if (branch && branch.id) {
-                    // redirect if the selected item is different from the current
-                    if ($scope.$parent.selectedMenuItemId !== branch.id) {
-                        $location.path('/' + branch.id + '/edit');
-                    }
+                // TODO: fetch the details for this menu item and set them as the selectedMenuItem
+                MenuService.getMenu(ConfigService.menuId).then(function (response) {
+                    $scope.$parent.selectedMenuItem = {
+                        id: 'abc-123',
+                        name: 'Placeholder text - ' + Math.ceil((Math.random() * 10))
+                    };
+                });
+
+                // set selected menu item so child-controllers can access it
+                /*
+                 MenuService.getMenu(itemId).then(function (response) {
+                 console.log(response);
+                 $scope.$parent.selectedMenuItem = response;
+                 });
+                 */
+
+                /*
+                // redirect if the selected item is different from the current
+                if ($scope.$parent.selectedMenuItemId !== itemId) {
+                    $location.path('/' + itemId + '/edit');
                 }
+                */
             };
 
             function reformatData(src) {
                 var result = [];
                 _.each(src, function (item) {
-                    var newItem = {
-                        id: item.id,
-                        text: item.name
-                    };
+                    var newItem = item;
+                    newItem.text = item.name;
 
                     if (item.children && item.children.length > 0) {
                         newItem.children = reformatData(item.children);
