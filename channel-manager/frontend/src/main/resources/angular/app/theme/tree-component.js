@@ -35,13 +35,27 @@
                     }
                 },
                 link: function (scope, element, attrs, treeCtrl) {
+                    function selectFirstElement(list) {
+                        var item = list[0] || {};
+                        item.state = item.state || {};
+                        item.state.selected = item.state.selected || true;
+                    }
+
                     scope.$watch('data', function() {
+                        // select first item by default
+                        selectFirstElement(scope.data);
+
                         element.jstree('destroy');
-                        element.jstree({ 'core' : {
-                            data: scope.data
-                        }}).bind('select_node.jstree', function(event, item) {
+                        element.jstree({
+                            core: {
+                                data: scope.data
+                            },
+                            themes: {
+                                theme: 'proton'
+                            }
+                        }).bind('select_node.jstree', function(event, item) {
                             treeCtrl.setSelectedItem(item.node.id);
-                        }).jstree('select_node', scope.data[0].id)
+                        });
                     }, true);
                 }
             }
