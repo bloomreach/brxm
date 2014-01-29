@@ -61,6 +61,13 @@
                 _.each(src, function (item) {
                     var newItem = item;
                     newItem.text = item.name;
+                    newItem.attr = { "class": "some-class1", "id": "node_1" };
+
+                    if (newItem.children && newItem.children.length > 0) {
+                        newItem.icon = "fa  fa-folder";
+                    } else {
+                        newItem.icon = "fa  fa-file-text";
+                    }
 
                     if (item.children && item.children.length > 0) {
                         newItem.children = reformatData(item.children);
