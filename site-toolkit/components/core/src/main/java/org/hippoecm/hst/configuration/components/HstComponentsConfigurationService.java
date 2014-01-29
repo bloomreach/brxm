@@ -48,7 +48,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     /*
      * The Map of all containter items. These are the hst:containeritemcomponent's that are configured as child of hst:containeritemcomponent's
      */
-    private final List<HstComponentConfiguration> availableContainerItems;
+    private List<HstComponentConfiguration> availableContainerItems = new ArrayList<>();
 
     private final Set<String> usedReferenceNames = new HashSet<>();
     private int autoCreatedCounter = 0;
@@ -95,8 +95,8 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         }
 
         if (commonCatalogItem != null) {
-            availableContainerItems = new ArrayList<>();
             availableContainerItems.addAll(commonCatalogItem);
+            availableContainerItems = Collections.unmodifiableList(availableContainerItems);
         } else {
             availableContainerItems = Collections.emptyList();
         }
