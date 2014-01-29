@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.repository.documentworkflow.reviewedactions;
+package org.hippoecm.repository.standardworkflow;
 
 import java.rmi.RemoteException;
 import java.util.Calendar;
@@ -28,7 +28,7 @@ import javax.jcr.version.Version;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.standardworkflow.VersionWorkflow;
+import org.hippoecm.repository.reviewedactions.AbstractReviewedActionsWorkflow;
 import org.onehippo.repository.util.JcrConstants;
 
 public class VersionWorkflowImpl extends AbstractReviewedActionsWorkflow implements VersionWorkflow {

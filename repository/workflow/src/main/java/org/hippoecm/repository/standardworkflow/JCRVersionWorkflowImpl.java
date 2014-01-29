@@ -25,17 +25,13 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
-import javax.jcr.Value;
-import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
@@ -55,42 +51,11 @@ import org.hippoecm.repository.util.PropInfo;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.repository.util.JcrConstants;
 
-public class VersionWorkflowImpl extends Document implements VersionWorkflow, InternalWorkflow {
-
-    private static Map<String, String> getCriteria(Node subject, Node handle) throws RepositoryException {
-        Map<String, String> criteria = new TreeMap<String, String>();
-        try {
-            if (handle != null && handle.isNodeType(HippoNodeType.NT_HANDLE)
-                    && handle.hasProperty(HippoNodeType.HIPPO_DISCRIMINATOR)) {
-                Value[] discriminators = handle.getProperty(HippoNodeType.HIPPO_DISCRIMINATOR).getValues();
-                for (Value discriminator : discriminators) {
-                    String key = discriminator.getString();
-                    if (subject.hasProperty(key)) {
-                        criteria.put(key, subject.getProperty(key).getString());
-                    }
-                }
-            } else if (subject.isNodeType("hippostd:publishable")) {
-                String key = "hippostd:state";
-                if (subject.hasProperty(key)) {
-                    criteria.put(key, subject.getProperty(key).getString());
-                }
-            }
-        } catch (ItemNotFoundException ex) {
-            // ignore, handle does not exist; empty map is fine
-        }
-        return criteria;
-    }
-
-    private static boolean matches(Node node, Map<String, String> criteria) throws ValueFormatException,
-            PathNotFoundException, RepositoryException {
-        for (Map.Entry<String, String> entry : criteria.entrySet()) {
-            if (!node.hasProperty(entry.getKey())
-                    || !node.getProperty(entry.getKey()).getString().equals(entry.getValue())) {
-                return false;
-            }
-        }
-        return true;
-    }
+/**
+ * Deprecated JCR-based implementation.  Kept for reference for new SCXML based implementation.
+ */
+@Deprecated
+public class JCRVersionWorkflowImpl extends Document implements VersionWorkflow, InternalWorkflow {
 
     private static void restore(Node target, Node source) throws RepositoryException {
         JcrUtils.copyToChain(source, new DefaultCopyHandler(target) {
@@ -145,7 +110,7 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
     private Node subject;
     private Version version;
 
-    public VersionWorkflowImpl(Session userSession, Session rootSession, Node subject) throws RemoteException,
+    public JCRVersionWorkflowImpl(Session userSession, Session rootSession, Node subject) throws RemoteException,
             RepositoryException {
         if (subject.isNodeType("nt:frozenNode")) {
             this.subject = rootSession.getNodeByIdentifier(subject.getProperty("jcr:frozenUuid").getString());
@@ -161,10 +126,9 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
 
     private Version lookup(Calendar historic) throws WorkflowException, RepositoryException {
         VersionHistory versionHistory = subject.getVersionHistory();
-        Map<String, String> criteria = getCriteria(subject, null);
         for (VersionIterator iter = versionHistory.getAllVersions(); iter.hasNext(); ) {
             Version version = iter.nextVersion();
-            if (version.getCreated().equals(historic) && matches(version.getNode("jcr:frozenNode"), criteria)) {
+            if (version.getCreated().equals(historic)) {
                 return version;
             }
         }

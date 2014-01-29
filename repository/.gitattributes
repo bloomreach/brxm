@@ -73,7 +73,6 @@ config/src/main/resources/domain-hippofolders.xml -text svneol=unset#text/plain
 config/src/main/resources/domain-hippomodules.xml -text
 config/src/main/resources/domain-hipporequests.xml svneol=native#text/plain
 config/src/main/resources/domain-workflow.xml -text svneol=unset#text/plain
-config/src/main/resources/embedded-workflows.xml -text
 config/src/main/resources/group-author.xml -text svneol=unset#text/plain
 config/src/main/resources/group-editor.xml -text svneol=unset#text/plain
 config/src/main/resources/group-everybody.xml -text svneol=unset#text/plain
@@ -81,8 +80,6 @@ config/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 config/src/main/resources/hippolog.cnd -text
 config/src/main/resources/hippostd-logging.xml svneol=native#text/plain
 config/src/main/resources/hippostd-queries.xml -text
-config/src/main/resources/hippostd-workflows-threepane.xml -text svneol=unset#text/plain
-config/src/main/resources/hippostd-workflows.xml svneol=native#text/plain
 config/src/main/resources/hippostd.cnd -text
 config/src/main/resources/hippotranslation.cnd -text
 config/src/main/resources/namespace-folder.xml -text svneol=unset#text/plain
@@ -90,10 +87,8 @@ config/src/main/resources/role-author.xml -text svneol=unset#text/plain
 config/src/main/resources/role-editor.xml -text svneol=unset#text/plain
 config/src/main/resources/role-jcrread.xml -text svneol=unset#text/plain
 config/src/main/resources/scheduler-module.xml -text
-config/src/main/resources/shortcuts-workflows.xml svneol=native#text/plain
 config/src/main/resources/updater-configuration.xml -text
 config/src/main/resources/updater-execution-module.xml -text
-config/src/main/resources/versioning-workflows.xml -text
 config/src/test/resources/hippoecm-extension.xml svneol=native#text/plain
 config/src/test/resources/repository-test.cnd -text
 connector/pom.xml -text
@@ -213,9 +208,6 @@ engine/src/main/java/org/hippoecm/repository/security/service/SecurityServiceImp
 engine/src/main/java/org/hippoecm/repository/security/service/UserImpl.java -text
 engine/src/main/java/org/hippoecm/repository/security/user/HippoUserManager.java -text
 engine/src/main/java/org/hippoecm/repository/security/user/RepositoryUserManager.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/repository/standardworkflow/DefaultWorkflowImpl.java -text
-engine/src/main/java/org/hippoecm/repository/standardworkflow/FolderWorkflowImpl.java -text
-engine/src/main/java/org/hippoecm/repository/standardworkflow/NullWorkflowImpl.java -text
 engine/src/main/java/org/hippoecm/repository/standardworkflow/WorkflowEventLoggerWorkflowImpl.java -text
 engine/src/main/java/org/onehippo/repository/modules/ModuleManager.java -text
 engine/src/main/java/org/onehippo/repository/modules/ModuleRegistration.java -text
@@ -471,16 +463,19 @@ utilities/src/main/java/org/hippoecm/repository/util/RepoUtils.java -text
 utilities/src/main/java/org/hippoecm/repository/util/Utilities.java -text
 utilities/src/test/java/org/hippoecm/repository/util/RepoUtilsTest.java -text
 workflow/src/main/java/org/hippoecm/faceteddate/DerivedDataFunction.java -text
-workflow/src/main/java/org/hippoecm/repository/reviewedactions/BasicRequestWorkflowImpl.java -text
-workflow/src/main/java/org/hippoecm/repository/reviewedactions/BasicReviewedActionsWorkflowImpl.java -text
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/DerivedDataFunction.java -text
-workflow/src/main/java/org/hippoecm/repository/reviewedactions/FullRequestWorkflowImpl.java -text
-workflow/src/main/java/org/hippoecm/repository/reviewedactions/FullReviewedActionsWorkflowImpl.java -text
+workflow/src/main/java/org/hippoecm/repository/reviewedactions/JCRBasicRequestWorkflowImpl.java -text
+workflow/src/main/java/org/hippoecm/repository/reviewedactions/JCRBasicReviewedActionsWorkflowImpl.java -text
+workflow/src/main/java/org/hippoecm/repository/reviewedactions/JCRFullRequestWorkflowImpl.java -text
+workflow/src/main/java/org/hippoecm/repository/reviewedactions/JCRFullReviewedActionsWorkflowImplJCR.java -text
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/PublicationRequest.java -text
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/PublicationState.java -text
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/PublishableDocument.java -text
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/ScheduledRequest.java -text
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/ScheduledRequestWorkflowImpl.java -text
+workflow/src/main/java/org/hippoecm/repository/standardworkflow/DefaultWorkflowImpl.java -text
+workflow/src/main/java/org/hippoecm/repository/standardworkflow/FolderWorkflowImpl.java -text
+workflow/src/main/java/org/hippoecm/repository/standardworkflow/NullWorkflowImpl.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/DocumentVariant.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/WorkflowRequest.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/action/ArchiveAction.java -text
@@ -515,6 +510,7 @@ workflow/src/main/java/org/onehippo/repository/scxml/SCXMLStrictErrorReporter.ja
 workflow/src/main/java/org/onehippo/repository/scxml/SCXMLWorkflowExecutor.java -text
 workflow/src/main/resources/date-derivatives.xml -text
 workflow/src/main/resources/editing-workflows.xml svneol=native#text/plain
+workflow/src/main/resources/embedded-workflows.xml -text
 workflow/src/main/resources/gallery-namespace.xml -text
 workflow/src/main/resources/gallery-workflows.xml svneol=native#text/plain
 workflow/src/main/resources/gallerytemplate-files.xml -text svneol=unset#text/plain
@@ -522,12 +518,16 @@ workflow/src/main/resources/gallerytemplate-image.xml svneol=native#text/plain
 workflow/src/main/resources/gallerytemplate-images.xml -text svneol=unset#text/plain
 workflow/src/main/resources/hippogallery.cnd svneol=native#text/plain
 workflow/src/main/resources/hipposcxml.cnd -text
+workflow/src/main/resources/hippostd-workflows-threepane.xml -text svneol=unset#text/plain
+workflow/src/main/resources/hippostd-workflows.xml svneol=native#text/plain
 workflow/src/main/resources/hippostdpubwf.cnd -text
 workflow/src/main/resources/reviewed-actions-workflow.scxml -text
 workflow/src/main/resources/reviewedactions-derivatives.xml -text
 workflow/src/main/resources/reviewedactions-workflows.xml svneol=native#text/plain
 workflow/src/main/resources/scxml-definitions.xml svneol=native#text/plain
 workflow/src/main/resources/scxml-registry-module.xml svneol=native#text/plain
+workflow/src/main/resources/shortcuts-workflows.xml svneol=native#text/plain
+workflow/src/main/resources/versioning-workflows.xml -text
 workflow/src/test/java/org/hippoecm/faceteddate/DerivedDateTest.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/AbstractActionTest.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/AbstractWorkflowTaskActionTest.java -text

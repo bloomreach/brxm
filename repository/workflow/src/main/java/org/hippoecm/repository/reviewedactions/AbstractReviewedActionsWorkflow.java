@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.repository.documentworkflow.reviewedactions;
+package org.hippoecm.repository.reviewedactions;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
