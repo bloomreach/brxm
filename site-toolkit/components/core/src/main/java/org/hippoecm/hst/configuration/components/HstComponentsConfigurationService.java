@@ -96,9 +96,12 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
 
         if (commonCatalogItem != null) {
             availableContainerItems.addAll(commonCatalogItem);
-            availableContainerItems = Collections.unmodifiableList(availableContainerItems);
-        } else {
+        }
+
+        if (availableContainerItems.isEmpty()) {
             availableContainerItems = Collections.emptyList();
+        } else {
+            availableContainerItems = Collections.unmodifiableList(availableContainerItems);
         }
 
         if (childComponents.isEmpty()) {
