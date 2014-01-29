@@ -18,6 +18,7 @@ package org.onehippo.repository.documentworkflow.task;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -27,6 +28,9 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
+import javax.jcr.version.Version;
+import javax.jcr.version.VersionHistory;
+import javax.jcr.version.VersionIterator;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -195,5 +199,16 @@ public abstract class AbstractDocumentTask implements WorkflowTask, Serializable
         JcrUtils.copyTo(srcNode, chain);
 
         return destNode;
+    }
+
+    protected Version lookupVersion(Node variant, Calendar historic) throws RepositoryException {
+        VersionHistory versionHistory = variant.getVersionHistory();
+        for (VersionIterator iter = versionHistory.getAllVersions(); iter.hasNext(); ) {
+            Version version = iter.nextVersion();
+            if (version.getCreated().equals(historic)) {
+                return version;
+            }
+        }
+        return null;
     }
 }

@@ -61,7 +61,7 @@ public class VersionWorkflowImpl extends AbstractReviewedActionsWorkflow impleme
 
     @Override
     public Document revert(final Calendar historic) throws WorkflowException, RepositoryException, RemoteException {
-        return handleDocumentWorkflow.revertFromVersion(historic);
+        return handleDocumentWorkflow.restoreFromVersion(historic);
     }
 
     @Override

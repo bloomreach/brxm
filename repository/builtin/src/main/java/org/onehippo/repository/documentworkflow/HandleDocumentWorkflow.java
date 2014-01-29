@@ -88,19 +88,6 @@ public interface HandleDocumentWorkflow extends Workflow, FullReviewedActionsWor
             throws WorkflowException, RepositoryException, RemoteException;
 
     /**
-     * Restores a document to one of its previous states, at which point the #version() call was made.
-     * @param historic the exact date on which the version was created using the #version() call.  The actual dates available can
-     * be retrieved using the {@link #listVersions()} method.
-     * @return the restored document variant
-     * @throws WorkflowException  indicates that the work-flow call failed due work-flow specific conditions
-     * @throws MappingException indicates that the work-flow call failed because of configuration problems
-     * @throws RepositoryException  indicates that the work-flow call failed because of storage problems internal to the repository
-     * @throws RemoteException indicates that the work-flow call failed because of a connection problem with the repository
-     */
-    public Document revertFromVersion(Calendar historic)
-            throws WorkflowException, RepositoryException, RemoteException;
-
-    /**
      * Restore a specific version
      * @param version the version to restore
      * @return the updated target node
@@ -127,7 +114,7 @@ public interface HandleDocumentWorkflow extends Workflow, FullReviewedActionsWor
     /**
      * Lists the historic versions of a documents that are available.  A historic version is created using the {@link #version()}
      * call.  The time at which such a call is made is listed at key item in the returned map.  This time may be used in a call
-     * to {@link #revertFromVersion} or {@link #restoreFromVersion}
+     * to {@link #restoreFromVersion}
      * @return A time-ordered map from earliest to latest of historic version (the timestamps at which {@link #version} was called)
      * mapped to a list of symbolic names that were given to the versions.  The symbolic names currently cannot be set using
      * this work-flow interface, but can be set using the regular JCR API.

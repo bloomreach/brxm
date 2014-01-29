@@ -180,6 +180,50 @@
         <sv:value>org.onehippo.repository.documentworkflow.action.DeleteRequestAction</sv:value>
       </sv:property>
     </sv:node>
+    <sv:node sv:name="version">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposcxml:action</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+        <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposcxml:classname" sv:type="String">
+        <sv:value>org.onehippo.repository.documentworkflow.action.RetrieveVersionAction</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="listVersions">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposcxml:action</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+        <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposcxml:classname" sv:type="String">
+        <sv:value>org.onehippo.repository.documentworkflow.action.ListVersionsVariantAction</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="retrieveVersion">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposcxml:action</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+        <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposcxml:classname" sv:type="String">
+        <sv:value>org.onehippo.repository.documentworkflow.action.RetrieveVersionAction</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="restoreVersion">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposcxml:action</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+        <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposcxml:classname" sv:type="String">
+        <sv:value>org.onehippo.repository.documentworkflow.action.RestoreVersionAction</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="invokeDocumentWorkflow">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hipposcxml:action</sv:value>

@@ -271,13 +271,8 @@ public class HandleDocumentWorkflowImpl extends WorkflowImpl implements HandleDo
     }
 
     @Override
-    public Document revertFromVersion(final Calendar historic) throws WorkflowException, RepositoryException {
-        return workflowResultToUserDocument(workflowExecutor.triggerAction("revert", historic));
-    }
-
-    @Override
     public Document restoreFromVersion(final Version version) throws WorkflowException, RepositoryException {
-        return workflowResultToUserDocument(workflowExecutor.triggerAction("restoreFrom", version));
+        return workflowResultToUserDocument(workflowExecutor.triggerAction("restoreFrom", new Document(version)));
     }
 
     @Override
