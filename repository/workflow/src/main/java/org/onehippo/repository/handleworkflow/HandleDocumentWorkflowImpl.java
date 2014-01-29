@@ -277,7 +277,7 @@ public class HandleDocumentWorkflowImpl extends WorkflowImpl implements HandleDo
 
     @Override
     public Document restoreFromVersion(final Calendar historic) throws WorkflowException, RepositoryException {
-        return workflowResultToUserDocument(workflowExecutor.triggerAction("restore", historic));
+        return workflowResultToUserDocument(workflowExecutor.triggerAction("restoreVersion", historic));
     }
 
     @Override
@@ -288,6 +288,6 @@ public class HandleDocumentWorkflowImpl extends WorkflowImpl implements HandleDo
 
     @Override
     public Document retrieveVersion(final Calendar historic) throws WorkflowException, RepositoryException {
-        return workflowResultToUserDocument(workflowExecutor.triggerAction("retrieve", historic));
+        return workflowResultToUserDocument(workflowExecutor.triggerAction("retrieveVersion", historic));
     }
 }

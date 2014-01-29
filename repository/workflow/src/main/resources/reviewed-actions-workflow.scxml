@@ -318,7 +318,9 @@
 -->
           <hippo:action action="version" value="true"/>
           <hippo:action action="listVersions" value="true"/>
+          <hippo:action action="retrieveVersion" value="true"/>
           <hippo:action action="restoreVersion" value="true"/>
+
 <!--
           <else/>
             <hippo:action action="restoreVersionTo" value="true"/>
@@ -334,7 +336,11 @@
           <hippo:listVersions variant="dm.unpublished"  />
         </transition>
 
-        <transition event="restore" target="reset">
+        <transition event="retrieveVersion">
+          <hippo:retrieveVersion historic="_eventdata" variant="dm.unpublished" />
+        </transition>
+
+        <transition event="restoreVersion" target="reset">
           <hippo:retrieveVersion historic="_eventdata" variant="dm.unpublished" />
           <hippo:restoreVersion version="dm.result" />
         </transition>
