@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.hippoecm.hst.pagecomposer.jaxrs.services;
+package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
-import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
+import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 
-interface MockSiteMenuItemConfiguration extends HstSiteMenuItemConfiguration, CanonicalInfo {
+public interface MockSiteMenuConfiguration extends HstSiteMenuConfiguration, CanonicalInfo {
 }

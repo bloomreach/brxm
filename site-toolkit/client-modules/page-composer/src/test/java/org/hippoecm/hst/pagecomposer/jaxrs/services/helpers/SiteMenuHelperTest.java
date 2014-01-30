@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.hippoecm.hst.pagecomposer.jaxrs.services;
+package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
 import java.util.Arrays;
 import java.util.HashMap;

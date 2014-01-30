@@ -38,6 +38,10 @@ import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.MockSiteMenuConfiguration;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.MockSiteMenuItemConfiguration;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper;
 import org.junit.Before;
 import org.junit.Test;
 

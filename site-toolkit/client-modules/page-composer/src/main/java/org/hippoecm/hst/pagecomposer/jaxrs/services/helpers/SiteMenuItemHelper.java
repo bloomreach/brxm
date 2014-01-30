@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.hippoecm.hst.pagecomposer.jaxrs.services;
+package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
 import java.util.Iterator;
 
@@ -23,7 +23,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 
-class SiteMenuItemHelper {
+public class SiteMenuItemHelper {
 
     public static final String HST_EXTERNALLINK = "hst:externallink";
     public static final String HST_REFERENCESITEMAPITEM = "hst:referencesitemapitem";

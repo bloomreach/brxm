@@ -40,6 +40,8 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -217,7 +219,7 @@ public class SiteMenuResource extends AbstractConfigResource {
     }
 
     private HstSiteMenuConfiguration getHstSiteMenuConfiguration(final HstRequestContext requestContext) throws RepositoryException {
-        final HstSite editingPreviewHstSite = siteMenuHelper.getEditingPreviewHstSite(getEditingPreviewSite(requestContext));
+        final HstSite editingPreviewHstSite = getEditingPreviewSite(requestContext);
         final String menuId = getRequestConfigIdentifier(requestContext);
         return siteMenuHelper.getMenu(editingPreviewHstSite, menuId);
     }

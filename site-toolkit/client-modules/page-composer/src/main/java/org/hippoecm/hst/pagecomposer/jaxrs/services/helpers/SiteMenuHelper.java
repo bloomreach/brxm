@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.hst.pagecomposer.jaxrs.services;
+package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
 import java.util.Map;
 
@@ -22,14 +22,7 @@ import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 
-class SiteMenuHelper {
-
-    public HstSite getEditingPreviewHstSite(HstSite editingPreviewHstSite) throws IllegalStateException {
-        if (editingPreviewHstSite == null) {
-            throw new IllegalStateException("Could not get the editing site to create the page model representation.");
-        }
-        return editingPreviewHstSite;
-    }
+public class SiteMenuHelper {
 
     public HstSiteMenuConfiguration getMenu(HstSite site, String menuId) {
         final Map<String,HstSiteMenuConfiguration> siteMenuConfigurations = site.getSiteMenusConfiguration().getSiteMenuConfigurations();
