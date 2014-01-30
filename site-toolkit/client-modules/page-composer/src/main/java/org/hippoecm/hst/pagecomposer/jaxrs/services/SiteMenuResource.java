@@ -15,6 +15,9 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.util.concurrent.Callable;
+
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -61,55 +64,52 @@ public class SiteMenuResource extends AbstractConfigResource {
 
     @GET
     @Path("/")
-    public Response getMenu(@Context HstRequestContext requestContext ) {
-        try {
-            final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
-            final SiteMenuRepresentation representation = new SiteMenuRepresentation().represent(menu);
-            return ok("Menu item loaded successfully", representation);
-        } catch (RepositoryException e) {
-            return logAndReturnError(e.getMessage());
-        } catch (IllegalStateException e) {
-            return logAndReturnClientError(e.getMessage());
-        }
+    public Response getMenu(final @Context HstRequestContext requestContext) {
+        return tryExecute(new Callable<Response>() {
+            @Override
+            public Response call() throws Exception {
+                final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
+                final SiteMenuRepresentation representation = new SiteMenuRepresentation().represent(menu);
+                return ok("Menu item loaded successfully", representation);
+            }
+        });
     }
 
     @GET
     @Path("/{menuItemId}")
-    public Response getMenuItem(@Context HstRequestContext requestContext,
-                                @PathParam("menuItemId") String menuItemId) {
-        try {
-            final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
-            final HstSiteMenuItemConfiguration menuItem = siteMenuHelper.getMenuItem(menu, menuItemId);
-            final SiteMenuItemRepresentation representation = new SiteMenuItemRepresentation().represent(menuItem);
-            return ok("Menu item loaded successfully", representation);
-        } catch (RepositoryException e) {
-            return logAndReturnError(e.getMessage());
-        } catch (IllegalStateException e) {
-            return logAndReturnClientError(e.getMessage());
-        }
+    public Response getMenuItem(final @Context HstRequestContext requestContext,
+                                final @PathParam("menuItemId") String menuItemId) {
+        return tryExecute(new Callable<Response>() {
+            @Override
+            public Response call() throws Exception {
+                final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
+                final HstSiteMenuItemConfiguration menuItem = siteMenuHelper.getMenuItem(menu, menuItemId);
+                final SiteMenuItemRepresentation representation = new SiteMenuItemRepresentation().represent(menuItem);
+                return ok("Menu item loaded successfully", representation);
+            }
+        });
     }
 
     @POST
     @Path("/update")
-    public Response update(@Context HstRequestContext requestContext, SiteMenuItemRepresentation newMenuItem) {
-        try {
-            final Session session = requestContext.getSession();
+    public Response update(final @Context HstRequestContext requestContext, final SiteMenuItemRepresentation newMenuItem) {
+        return tryExecute(new Callable<Response>() {
+            @Override
+            public Response call() throws Exception {
+                final Session session = requestContext.getSession();
 
-            final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
-            final String itemId = newMenuItem.getId();
-            final HstSiteMenuItemConfiguration menuItem = siteMenuHelper.getMenuItem(menu, itemId);
-            final SiteMenuItemRepresentation currentMenuItem = new SiteMenuItemRepresentation().represent(menuItem);
+                final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
+                final String itemId = newMenuItem.getId();
+                final HstSiteMenuItemConfiguration menuItem = siteMenuHelper.getMenuItem(menu, itemId);
+                final SiteMenuItemRepresentation currentMenuItem = new SiteMenuItemRepresentation().represent(menuItem);
 
-            final Node menuItemNode = session.getNodeByIdentifier(currentMenuItem.getId());
-            siteMenuItemHelper.update(menuItemNode, currentMenuItem, newMenuItem);
-            HstConfigurationUtils.persistChanges(session);
+                final Node menuItemNode = session.getNodeByIdentifier(currentMenuItem.getId());
+                siteMenuItemHelper.update(menuItemNode, currentMenuItem, newMenuItem);
+                HstConfigurationUtils.persistChanges(session);
 
-            return ok("Item updated successfully", itemId);
-        } catch (RepositoryException e) {
-            return logAndReturnError(e.getMessage());
-        } catch (IllegalStateException e) {
-            return logAndReturnClientError(e.getMessage());
-        }
+                return ok("Item updated successfully", itemId);
+            }
+        });
     }
 
 
@@ -123,63 +123,86 @@ public class SiteMenuResource extends AbstractConfigResource {
 
     @POST
     @Path("/move/{sourceId}/{parentTargetId}/{childTargetId}")
-    public Response move(@Context HstRequestContext requestContext,
-                         @PathParam("sourceId") String sourceId,
-                         @PathParam("parentTargetId") String parentTargetId,
-                         @PathParam("childTargetId") String childTargetId) {
-        try {
-            final Session session = requestContext.getSession();
+    public Response move(final @Context HstRequestContext requestContext,
+                         final @PathParam("sourceId") String sourceId,
+                         final @PathParam("parentTargetId") String parentTargetId,
+                         final @PathParam("childTargetId") String childTargetId) {
+        return tryExecute(new Callable<Response>() {
+            @Override
+            public Response call() throws Exception {
+                final Session session = requestContext.getSession();
 
-            final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
-            final Node parent = getParentNode(parentTargetId, session, menu);
+                final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
+                final Node parent = getParentNode(parentTargetId, session, menu);
 
-            final HstSiteMenuItemConfiguration sourceItem = siteMenuHelper.getMenuItem(menu, sourceId);
-            assertCanonicalInfoInstance(sourceItem);
-            final Node source = session.getNodeByIdentifier(((CanonicalInfo) sourceItem).getCanonicalIdentifier());
+                final HstSiteMenuItemConfiguration sourceItem = siteMenuHelper.getMenuItem(menu, sourceId);
+                assertCanonicalInfoInstance(sourceItem);
+                final Node source = session.getNodeByIdentifier(((CanonicalInfo) sourceItem).getCanonicalIdentifier());
 
-            if (!parentTargetId.equals(source.getParent().getIdentifier())) {
-                siteMenuItemHelper.move(source, parent);
+                if (!parentTargetId.equals(source.getParent().getIdentifier())) {
+                    siteMenuItemHelper.move(source, parent);
+                }
+                if (StringUtils.isNotBlank(childTargetId)) {
+                    final HstSiteMenuItemConfiguration targetChildItem = siteMenuHelper.getMenuItem(menu, childTargetId);
+                    assertCanonicalInfoInstance(targetChildItem);
+                    final Node child = session.getNodeByIdentifier(((CanonicalInfo) targetChildItem).getCanonicalIdentifier());
+                    parent.orderBefore(source.getName(), child.getName());
+                } else {
+                    parent.orderBefore(source.getName(), null);
+                }
+                HstConfigurationUtils.persistChanges(session);
+                return ok("Item moved successfully", sourceId);
             }
-            if (StringUtils.isNotBlank(childTargetId)) {
-                final HstSiteMenuItemConfiguration targetChildItem = siteMenuHelper.getMenuItem(menu, childTargetId);
-                assertCanonicalInfoInstance(targetChildItem);
-                final Node child = session.getNodeByIdentifier(((CanonicalInfo) targetChildItem).getCanonicalIdentifier());
-                parent.orderBefore(source.getName(), child.getName());
-            } else {
-                parent.orderBefore(source.getName(), null);
-            }
-            HstConfigurationUtils.persistChanges(session);
-            return ok("Item moved successfully", sourceId);
-
-        } catch (RepositoryException e) {
-            return logAndReturnError(e.getMessage());
-        } catch (IllegalStateException e) {
-            return logAndReturnClientError(e.getMessage());
-        }
+        });
     }
 
     @POST
     @Path("/delete/{menuItemId}")
-    public Response delete(@Context HstRequestContext requestContext,
-                           @PathParam("menuItemId") String menuItemId) {
+    public Response delete(final @Context HstRequestContext requestContext,
+                           final @PathParam("menuItemId") String menuItemId) {
+        return tryExecute(new Callable<Response>() {
+            @Override
+            public Response call() throws Exception {
+                final Session session = requestContext.getSession();
+
+                final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
+
+                final HstSiteMenuItemConfiguration sourceItem = siteMenuHelper.getMenuItem(menu, menuItemId);
+
+                assertCanonicalInfoInstance(sourceItem);
+                final Node source = session.getNodeByIdentifier(((CanonicalInfo) sourceItem).getCanonicalIdentifier());
+                source.getSession().removeItem(source.getPath());
+                HstConfigurationUtils.persistChanges(session);
+                return ok("Item deleted successfully", menuItemId);
+            }
+        });
+    }
+
+    private Response tryExecute(Callable<Response> callable) {
         try {
-            final Session session = requestContext.getSession();
-
-            final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
-
-            final HstSiteMenuItemConfiguration sourceItem = siteMenuHelper.getMenuItem(menu, menuItemId);
-
-            assertCanonicalInfoInstance(sourceItem);
-            final Node source = session.getNodeByIdentifier(((CanonicalInfo) sourceItem).getCanonicalIdentifier());
-            source.getSession().removeItem(source.getPath());
-            HstConfigurationUtils.persistChanges(session);
-            return ok("Item deleted successfully", menuItemId);
-
-        } catch (RepositoryException e) {
-            return logAndReturnError(e.getMessage());
-        } catch (IllegalStateException e) {
-            return logAndReturnClientError(e.getMessage());
+            return callable.call();
+        } catch (IllegalStateException | IllegalArgumentException | ItemNotFoundException e) {
+            return logAndReturnClientError(e);
+        } catch (Exception e) {
+            return logAndReturnServerError(e);
         }
+    }
+
+    private Response logAndReturnServerError(Exception e) {
+        if (log.isDebugEnabled()) {
+            log.warn(e.toString(), e);
+        } else {
+            log.warn(e.toString());
+        }
+        return error(e.getMessage());
+    }
+
+    private Response logAndReturnClientError(Exception e) {
+        log.info(e.toString());
+        final ExtResponseRepresentation entity = new ExtResponseRepresentation();
+        entity.setSuccess(false);
+        entity.setMessage(e.getMessage());
+        return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
     }
 
     private Node getParentNode(String parentTargetId, Session session, HstSiteMenuConfiguration menu) throws RepositoryException {
@@ -197,19 +220,6 @@ public class SiteMenuResource extends AbstractConfigResource {
         final HstSite editingPreviewHstSite = siteMenuHelper.getEditingPreviewHstSite(getEditingPreviewSite(requestContext));
         final String menuId = getRequestConfigIdentifier(requestContext);
         return siteMenuHelper.getMenu(editingPreviewHstSite, menuId);
-    }
-
-    private Response logAndReturnError(String errorMessage) {
-        log.error(errorMessage);
-        return error(errorMessage);
-    }
-
-    private Response logAndReturnClientError(String errorMessage) {
-        log.warn(errorMessage);
-        final ExtResponseRepresentation entity = new ExtResponseRepresentation();
-        entity.setSuccess(false);
-        entity.setMessage(errorMessage);
-        return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
     }
 
     private void assertCanonicalInfoInstance(final Object o) throws IllegalStateException {
