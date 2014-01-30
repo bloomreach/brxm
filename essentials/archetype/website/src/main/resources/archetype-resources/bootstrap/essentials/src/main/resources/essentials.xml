@@ -19,7 +19,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-  <?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="essentials">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>essentials:folder</sv:value>
