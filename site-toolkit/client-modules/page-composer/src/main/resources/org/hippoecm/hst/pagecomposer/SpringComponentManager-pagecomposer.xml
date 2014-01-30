@@ -39,6 +39,7 @@
     <property name="providers">
       <list>
         <ref bean="jaxrsRestJsonProvider"/>
+        <bean class="org.hippoecm.hst.pagecomposer.jaxrs.cxf.provider.CXFRequestContextProvider"/>
       </list>
     </property>
     <property name="resourceProviders">

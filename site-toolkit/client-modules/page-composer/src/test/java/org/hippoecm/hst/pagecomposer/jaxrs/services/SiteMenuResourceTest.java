@@ -106,7 +106,7 @@ public class SiteMenuResourceTest {
         expect(menuConfig.getSiteMenuConfigurationItems()).andReturn(children);
         replay(mocks);
 
-        final Response response = siteMenuResource.getMenu(request);
+        final Response response = siteMenuResource.getMenu(context);
         assertThat(response.getStatus(), is(OK));
         final ExtResponseRepresentation entity = ExtResponseRepresentation.class.cast(response.getEntity());
         assertThat(entity.getData(), is(SiteMenuRepresentation.class));
@@ -121,7 +121,7 @@ public class SiteMenuResourceTest {
         mockGetMenuItem(node, id);
         replay(mocks);
 
-        final Response response = siteMenuResource.getMenuItem(request, id);
+        final Response response = siteMenuResource.getMenuItem(context, id);
         assertThat(response.getStatus(), is(OK));
         final ExtResponseRepresentation entity = ExtResponseRepresentation.class.cast(response.getEntity());
         assertThat(entity.getData(), is(SiteMenuItemRepresentation.class));
@@ -150,7 +150,7 @@ public class SiteMenuResourceTest {
 
         replay(mocks);
 
-        final Response response = siteMenuResource.update(request, newMenuItem);
+        final Response response = siteMenuResource.update(context, newMenuItem);
         assertThat(currentItem.getValue().getId(), is(id));
 
         assertThat(response.getStatus(), is(OK));
@@ -163,11 +163,10 @@ public class SiteMenuResourceTest {
 
     @Test
     public void testUpdateReturnsServerErrorOnRepositoryException() throws RepositoryException {
-        expect(request.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT)).andReturn(context);
         expect(context.getSession()).andThrow(new RepositoryException("failed"));
         replay(mocks);
 
-        final Response response = siteMenuResource.update(request, null);
+        final Response response = siteMenuResource.update(context, null);
         assertThat(response.getStatus(), is(SERVER_ERROR));
         assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
 
@@ -179,11 +178,10 @@ public class SiteMenuResourceTest {
 
     @Test
     public void testUpdateReturnsClientErrorOnIllegalStateException() throws RepositoryException {
-        expect(request.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT)).andReturn(context);
         expect(context.getSession()).andThrow(new IllegalStateException("failed"));
         replay(mocks);
 
-        final Response response = siteMenuResource.update(request, null);
+        final Response response = siteMenuResource.update(context, null);
         assertThat(response.getStatus(), is(BAD_REQUEST));
         assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
 
@@ -220,7 +218,7 @@ public class SiteMenuResourceTest {
 
         replay(mocks);
 
-        final Response response = siteMenuResource.move(request, sourceId, parentTargetId, childTargetId);
+        final Response response = siteMenuResource.move(context, sourceId, parentTargetId, childTargetId);
         assertThat(response.getStatus(), is(OK));
         assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
 
@@ -248,7 +246,7 @@ public class SiteMenuResourceTest {
 
         replay(mocks);
 
-        final Response response = siteMenuResource.delete(request, sourceId);
+        final Response response = siteMenuResource.delete(context, sourceId);
         assertThat(response.getStatus(), is(OK));
         assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
 
@@ -276,7 +274,6 @@ public class SiteMenuResourceTest {
 
     private void mockGetPreviewSite() throws RepositoryException {
         // Due to the inheritance the following mock calls are required to get the preview site
-        expect(request.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT)).andReturn(context);
         expect(context.getSession()).andReturn(session);
         expect(context.getServletRequest()).andReturn(request);
         expect(request.getSession(true)).andReturn(httpSession);

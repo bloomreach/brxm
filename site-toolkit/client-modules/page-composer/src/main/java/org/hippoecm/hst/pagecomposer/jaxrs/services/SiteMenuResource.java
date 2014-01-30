@@ -18,7 +18,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -29,6 +28,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
@@ -41,7 +41,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Path("/hst:sitemenu/")
+@Path("/" + HstNodeTypes.NODETYPE_HST_SITEMENU + "/")
 @Produces(MediaType.APPLICATION_JSON)
 public class SiteMenuResource extends AbstractConfigResource {
 
@@ -61,9 +61,8 @@ public class SiteMenuResource extends AbstractConfigResource {
 
     @GET
     @Path("/")
-    public Response getMenu(@Context HttpServletRequest servletRequest) {
+    public Response getMenu(@Context HstRequestContext requestContext ) {
         try {
-            final HstRequestContext requestContext = getRequestContext(servletRequest);
             final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
             final SiteMenuRepresentation representation = new SiteMenuRepresentation().represent(menu);
             return ok("Menu item loaded successfully", representation);
@@ -76,10 +75,9 @@ public class SiteMenuResource extends AbstractConfigResource {
 
     @GET
     @Path("/{menuItemId}")
-    public Response getMenuItem(@Context HttpServletRequest servletRequest,
+    public Response getMenuItem(@Context HstRequestContext requestContext,
                                 @PathParam("menuItemId") String menuItemId) {
         try {
-            final HstRequestContext requestContext = getRequestContext(servletRequest);
             final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
             final HstSiteMenuItemConfiguration menuItem = siteMenuHelper.getMenuItem(menu, menuItemId);
             final SiteMenuItemRepresentation representation = new SiteMenuItemRepresentation().represent(menuItem);
@@ -93,9 +91,8 @@ public class SiteMenuResource extends AbstractConfigResource {
 
     @POST
     @Path("/update")
-    public Response update(@Context HttpServletRequest servletRequest, SiteMenuItemRepresentation newMenuItem) {
+    public Response update(@Context HstRequestContext requestContext, SiteMenuItemRepresentation newMenuItem) {
         try {
-            final HstRequestContext requestContext = getRequestContext(servletRequest);
             final Session session = requestContext.getSession();
 
             final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
@@ -118,20 +115,19 @@ public class SiteMenuResource extends AbstractConfigResource {
 
     @POST
     @Path("/move/{sourceId}/{parentTargetId}")
-    public Response move(@Context HttpServletRequest servletRequest,
+    public Response move(@Context HstRequestContext requestContext,
                          @PathParam("sourceId") String sourceId,
                          @PathParam("parentTargetId") String parentTargetId) {
-        return move(servletRequest, sourceId, parentTargetId, null);
+        return move(requestContext, sourceId, parentTargetId, null);
     }
 
     @POST
     @Path("/move/{sourceId}/{parentTargetId}/{childTargetId}")
-    public Response move(@Context HttpServletRequest servletRequest,
+    public Response move(@Context HstRequestContext requestContext,
                          @PathParam("sourceId") String sourceId,
                          @PathParam("parentTargetId") String parentTargetId,
                          @PathParam("childTargetId") String childTargetId) {
         try {
-            final HstRequestContext requestContext = getRequestContext(servletRequest);
             final Session session = requestContext.getSession();
 
             final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
@@ -164,10 +160,9 @@ public class SiteMenuResource extends AbstractConfigResource {
 
     @POST
     @Path("/delete/{menuItemId}")
-    public Response delete(@Context HttpServletRequest servletRequest,
+    public Response delete(@Context HstRequestContext requestContext,
                            @PathParam("menuItemId") String menuItemId) {
         try {
-            final HstRequestContext requestContext = getRequestContext(servletRequest);
             final Session session = requestContext.getSession();
 
             final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
