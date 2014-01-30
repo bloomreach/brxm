@@ -221,6 +221,7 @@ public class ResourceServlet extends HttpServlet {
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.ico"));
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.jpg"));
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.jpeg"));
+        DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.json"));
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.eot"));
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.otf"));
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.svg"));
@@ -238,6 +239,7 @@ public class ResourceServlet extends HttpServlet {
         DEFAULT_MIME_TYPES.put(".ico", "image/vnd.microsoft.icon");
         DEFAULT_MIME_TYPES.put(".jpg", "image/jpeg");
         DEFAULT_MIME_TYPES.put(".jpeg", "image/jpeg");
+        DEFAULT_MIME_TYPES.put(".json", "application/json");
         DEFAULT_MIME_TYPES.put(".eot", "application/vnd.ms-fontobject");
         DEFAULT_MIME_TYPES.put(".otf", "application/vnd.ms-opentype");
         DEFAULT_MIME_TYPES.put(".svg", "image/svg+xml");
