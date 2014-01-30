@@ -165,8 +165,6 @@ public class PluginResource extends BaseResource {
     @Path("/configure/add")
     public RestfulList<PluginRestful> addToRecentlyInstalled(@Context ServletContext servletContext, final PostPayloadRestful payload) {
 
-        log.info("servletContext {}");
-
         final RestfulList<PluginRestful> plugins = new RestfulList<>();
         final List<Plugin> pluginList = getPlugins(servletContext);
         for (Plugin p : pluginList) {
