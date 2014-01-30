@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/hippo-essentials.css"/>
   <%--<script src="${pageContext.request.contextPath}/js/jquery.js"></script>--%>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="${pageContext.request.contextPath}/js/lib/jquery.ui.min.js"></script>
 
   <script src="${pageContext.request.contextPath}/js/lib/angular.js"></script>
   <script src="${pageContext.request.contextPath}/js/lib/angular-route.min.js"></script>
@@ -32,7 +33,7 @@
   <script src="${pageContext.request.contextPath}/plugins/contentBlocks/controller.js"></script>
   <script src="${pageContext.request.contextPath}/plugins/galleryPlugin/controller.js"></script>
   <script src="${pageContext.request.contextPath}/plugins/newsEventsPowerpack/controller.js"></script>
-  <script src="${pageContext.request.contextPath}/plugins/xinhaPlugin/controller.js"></script>
+  <script src="${pageContext.request.contextPath}/plugins/xinhaPlugin/xinhaPlugin.js"></script>
   <script src="${pageContext.request.contextPath}/tools/beanwriter/controller.js"></script>
 
 

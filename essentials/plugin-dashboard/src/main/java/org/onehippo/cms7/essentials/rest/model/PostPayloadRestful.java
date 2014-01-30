@@ -16,7 +16,7 @@
 
 package org.onehippo.cms7.essentials.rest.model;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -30,17 +30,17 @@ public class PostPayloadRestful implements Restful {
     private static final long serialVersionUID = 1L;
 
 
-    private Map<String, String> values = new HashMap<>();
+    private LinkedHashMap<String, String> values = new LinkedHashMap<>();
 
     public void add(final String key, final String value) {
         values.put(key, value);
     }
 
-    public Map<String, String> getValues() {
+    public LinkedHashMap<String, String> getValues() {
         return values;
     }
 
-    public void setValues(final Map<String, String> values) {
+    public void setValues(final LinkedHashMap<String, String> values) {
         this.values = values;
     }
 }

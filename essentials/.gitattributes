@@ -1964,6 +1964,7 @@ plugin-dashboard/src/main/webapp/js/lib/chosen.jquery.js -text
 plugin-dashboard/src/main/webapp/js/lib/chosen.js -text
 plugin-dashboard/src/main/webapp/js/lib/domReady.js -text
 plugin-dashboard/src/main/webapp/js/lib/jquery.js -text
+plugin-dashboard/src/main/webapp/js/lib/jquery.ui.min.js -text
 plugin-dashboard/src/main/webapp/js/lib/jquery.validate.min.js -text
 plugin-dashboard/src/main/webapp/js/lib/main.js -text
 plugin-dashboard/src/main/webapp/js/lib/require.js -text
@@ -1985,8 +1986,8 @@ plugin-dashboard/src/main/webapp/plugins/galleryPlugin/testimageprocessor.json -
 plugin-dashboard/src/main/webapp/plugins/galleryPlugin/testimagesets.json -text
 plugin-dashboard/src/main/webapp/plugins/newsEventsPowerpack/controller.js -text
 plugin-dashboard/src/main/webapp/plugins/newsEventsPowerpack/index.html -text
-plugin-dashboard/src/main/webapp/plugins/xinhaPlugin/controller.js -text
 plugin-dashboard/src/main/webapp/plugins/xinhaPlugin/index.html -text
+plugin-dashboard/src/main/webapp/plugins/xinhaPlugin/xinhaPlugin.js -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/_font-awesome.css -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/main.css -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/theme.html -text

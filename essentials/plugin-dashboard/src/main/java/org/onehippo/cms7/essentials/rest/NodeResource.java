@@ -41,6 +41,8 @@ import org.onehippo.cms7.essentials.rest.model.RestfulList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
+
 /**
  * @version "$Id$"
  */
@@ -56,16 +58,21 @@ public class NodeResource extends BaseResource {
     public RestfulList<KeyValueRestful> getProperty(@Context ServletContext servletContext, final PostPayloadRestful payload) {
 
         final RestfulList<KeyValueRestful> list = new RestfulList<>();
-        final Map<String,String> values = payload.getValues();
-        final String path = values.get("path");
+        final Map<String, String> values = payload.getValues();
         final String name = values.get("property");
-         Session session = null;
+        final String path = values.get("path");
+        if (Strings.isNullOrEmpty(path) || Strings.isNullOrEmpty(name)) {
+            throw new RestException("Path or property name were empty", Response.Status.NOT_FOUND);
+        }
+
+
+        Session session = null;
         try {
 
             session = GlobalUtils.createSession();
             final Node node = session.getNode(path);
             final Property property = node.getProperty(name);
-            if(property.isMultiple()){
+            if (property.isMultiple()) {
                 final Value[] v = property.getValues();
                 for (Value value : v) {
                     final String val = value.getString();
@@ -90,16 +97,20 @@ public class NodeResource extends BaseResource {
         final Map<String, String> values = payload.getValues();
         final String path = values.remove("path");
         final String name = values.remove("property");
+        final String multiple = values.remove("multiple");
+        boolean multiValue = Boolean.parseBoolean(multiple);
+
         Session session = null;
         try {
-
-            session = GlobalUtils.createSession();
-            final Node node = session.getNode(path);
-            final Property property = node.getProperty(name);
-            final Collection<String> vals = values.values();
-            final String[] newValue = vals.toArray(new String[vals.size()]);
-            property.setValue(newValue);
-            session.save();
+            if (multiValue) {
+                session = GlobalUtils.createSession();
+                final Node node = session.getNode(path);
+                final Property property = node.getProperty(name);
+                final Collection<String> vals = values.values();
+                final String[] newValue = vals.toArray(new String[vals.size()]);
+                property.setValue(newValue);
+                session.save();
+            }
         } catch (RepositoryException e) {
             log.error("Error saving property", e);
             throw new RestException(e, Response.Status.NOT_FOUND);
