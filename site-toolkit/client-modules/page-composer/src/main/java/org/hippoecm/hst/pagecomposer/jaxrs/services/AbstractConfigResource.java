@@ -15,6 +15,9 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.util.concurrent.Callable;
+
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +27,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
@@ -150,10 +154,44 @@ public class AbstractConfigResource {
         return requestContext.getContentBeansTool().getObjectConverter();
     }
 
-    private void assertIsContextualizableMount(final Mount liveMount) throws IllegalStateException{
+    protected void assertIsContextualizableMount(final Mount liveMount) throws IllegalStateException{
         if (!(liveMount instanceof  ContextualizableMount)) {
             throw new IllegalStateException("Expected a mount of type "+ContextualizableMount.class.getName()+"" +
                     " but found '"+liveMount.toString()+"' which is of type " + liveMount.getClass().getName());
+        }
+    }
+
+    protected Response tryExecute(Callable<Response> callable) {
+        try {
+            return callable.call();
+        } catch (IllegalStateException | IllegalArgumentException | ItemNotFoundException e) {
+            return logAndReturnClientError(e);
+        } catch (Exception e) {
+            return logAndReturnServerError(e);
+        }
+    }
+
+    protected Response logAndReturnServerError(Exception e) {
+        if (log.isDebugEnabled()) {
+            log.warn(e.toString(), e);
+        } else {
+            log.warn(e.toString());
+        }
+        return error(e.getMessage());
+    }
+
+    protected Response logAndReturnClientError(Exception e) {
+        log.info(e.toString());
+        final ExtResponseRepresentation entity = new ExtResponseRepresentation();
+        entity.setSuccess(false);
+        entity.setMessage(e.getMessage());
+        return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
+    }
+
+
+    protected void assertCanonicalInfoInstance(final Object o) throws IllegalStateException {
+        if (!(o instanceof CanonicalInfo)) {
+            throw new IllegalStateException("HstSiteMenuItemConfiguration not instanceof CanonicalInfo");
         }
     }
 }

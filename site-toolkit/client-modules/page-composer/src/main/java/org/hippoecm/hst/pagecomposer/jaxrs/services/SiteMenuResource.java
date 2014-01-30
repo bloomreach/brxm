@@ -17,7 +17,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.concurrent.Callable;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -37,7 +36,6 @@ import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
@@ -180,32 +178,6 @@ public class SiteMenuResource extends AbstractConfigResource {
         });
     }
 
-    private Response tryExecute(Callable<Response> callable) {
-        try {
-            return callable.call();
-        } catch (IllegalStateException | IllegalArgumentException | ItemNotFoundException e) {
-            return logAndReturnClientError(e);
-        } catch (Exception e) {
-            return logAndReturnServerError(e);
-        }
-    }
-
-    private Response logAndReturnServerError(Exception e) {
-        if (log.isDebugEnabled()) {
-            log.warn(e.toString(), e);
-        } else {
-            log.warn(e.toString());
-        }
-        return error(e.getMessage());
-    }
-
-    private Response logAndReturnClientError(Exception e) {
-        log.info(e.toString());
-        final ExtResponseRepresentation entity = new ExtResponseRepresentation();
-        entity.setSuccess(false);
-        entity.setMessage(e.getMessage());
-        return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
-    }
 
     private Node getParentNode(String parentTargetId, Session session, HstSiteMenuConfiguration menu) throws RepositoryException {
         assertCanonicalInfoInstance(menu);
@@ -222,12 +194,6 @@ public class SiteMenuResource extends AbstractConfigResource {
         final HstSite editingPreviewHstSite = getEditingPreviewSite(requestContext);
         final String menuId = getRequestConfigIdentifier(requestContext);
         return siteMenuHelper.getMenu(editingPreviewHstSite, menuId);
-    }
-
-    private void assertCanonicalInfoInstance(final Object o) throws IllegalStateException {
-        if (!(o instanceof CanonicalInfo)) {
-            throw new IllegalStateException("HstSiteMenuItemConfiguration not instanceof CanonicalInfo");
-        }
     }
 
 }
