@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.SocketException;
 import java.util.Collection;
 import java.util.TreeSet;
 
@@ -71,8 +72,18 @@ public class PageInfoRenderingValve extends AbstractBaseOrderableValve {
                 // committed and we do not need to write the response then
                 writeResponse(response, pageInfo);
             }
+        } catch (SocketException e) {
+            if (log.isDebugEnabled()) {
+                log.info("Unable to write response due to SocketException", e);
+            } else {
+                log.info("Unable to write response due to SocketException : {}", e.toString());
+            }
         } catch (IOException e) {
-            throw new ContainerException(e);
+            if (log.isDebugEnabled()) {
+                log.warn("Unable to write response", e);
+            } else {
+                log.warn("Unable to write response : {}", e.toString());
+            }
         }
     }
 

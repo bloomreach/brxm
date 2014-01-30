@@ -537,11 +537,19 @@ public class HstFilter implements Filter {
             }
            sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
         } catch (ContainerException e) {
-            log.warn(e.getClass().getName() + " for '"+req.getRequestURI()+"':" , e);
+            if(log.isDebugEnabled()) {
+                log.warn("ContainerException for '{}':",req.getRequestURI(), e);
+            } else {
+                log.warn("ContainerException for '{}': {}",req.getRequestURI(),  e.toString());
+            }
             sendError(req, res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     	catch (Exception e) {
-            log.warn("Fatal error encountered while processing request '"+req.getRequestURI()+"':" , e);
+            if(log.isDebugEnabled()) {
+                log.warn("Fatal error encountered while processing request '{}':", req.getRequestURI(), e);
+            } else {
+                log.warn("Fatal error encountered while processing request '{}': {}", req.getRequestURI(), e.toString());
+            }
             sendError(req, res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     	}
     	finally {
