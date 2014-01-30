@@ -189,9 +189,10 @@ public class AbstractConfigResource {
     }
 
 
-    protected void assertCanonicalInfoInstance(final Object o) throws IllegalStateException {
-        if (!(o instanceof CanonicalInfo)) {
-            throw new IllegalStateException("HstSiteMenuItemConfiguration not instanceof CanonicalInfo");
+    protected CanonicalInfo getCanonicalInfo(final Object o) throws IllegalStateException {
+        if (o instanceof CanonicalInfo) {
+            return (CanonicalInfo)o;
         }
+        throw new IllegalStateException("HstSiteMenuItemConfiguration not instanceof CanonicalInfo");
     }
 }

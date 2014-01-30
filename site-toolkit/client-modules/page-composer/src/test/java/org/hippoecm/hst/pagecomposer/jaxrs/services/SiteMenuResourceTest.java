@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Response;
 
-import org.easymock.Capture;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
@@ -45,10 +44,8 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
@@ -179,10 +176,9 @@ public class SiteMenuResourceTest {
         mockGetMenuItem(node, id);
 
         // Mock updating the site menu item
-        final Capture<SiteMenuItemRepresentation> currentItem = new Capture<>();
-        final SiteMenuItemRepresentation newMenuItem = new SiteMenuItemRepresentation();
-        newMenuItem.setId(id);
-        siteMenuItemHelper.update(eq(node), capture(currentItem), eq(newMenuItem));
+        final SiteMenuItemRepresentation modifiedItem = new SiteMenuItemRepresentation();
+        modifiedItem.setId(id);
+        siteMenuItemHelper.update(node, modifiedItem);
         expectLastCall().once();
 
         // Return false, so that we don't have to mock all method calls in
@@ -191,8 +187,7 @@ public class SiteMenuResourceTest {
 
         replay(mocks);
 
-        final Response response = siteMenuResource.update(context, newMenuItem);
-        assertThat(currentItem.getValue().getId(), is(id));
+        final Response response = siteMenuResource.update(context, modifiedItem);
 
         assertThat(response.getStatus(), is(OK));
         assertThat(response.getEntity(), is(ExtResponseRepresentation.class));

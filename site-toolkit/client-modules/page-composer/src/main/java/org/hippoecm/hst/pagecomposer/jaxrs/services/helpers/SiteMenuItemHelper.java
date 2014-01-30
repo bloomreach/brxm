@@ -17,13 +17,15 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
 import java.util.Iterator;
-import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
+
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_REPOBASED;
 
 public class SiteMenuItemHelper {
 
@@ -35,46 +37,32 @@ public class SiteMenuItemHelper {
      * @throws RepositoryException
      */
     public void save(Node node, SiteMenuItemRepresentation newItem) throws RepositoryException {
-        assert newItem.getName().equals(node.getName()) : "Precondition violated";
-        final SiteMenuItemRepresentation placeholder = new SiteMenuItemRepresentation();
-        placeholder.setName(newItem.getName());
-        update(node, placeholder, newItem);
+        assert node.getName().equals(newItem.getName()) : "Precondition violated: node and item name must be equal";
+        update(node, newItem);
     }
 
     /**
-     * Updates the properties of the given node provided that the names of the node and the current item are equal. Only
-     * new and modified properties will be updated.
+     * Updates the properties of the given node with those of the modified item.
      *
-     * @param node        a node
-     * @param currentItem an item containing the property values of the current item
-     * @param newItem     an item containing the property values of the new item
+     * @param node         a node
+     * @param modifiedItem an item containing the property values of the new item
      * @throws RepositoryException
      */
-    public void update(Node node, SiteMenuItemRepresentation currentItem, SiteMenuItemRepresentation newItem) throws RepositoryException {
-        final String newName = newItem.getName();
-        if (newName != null && !newName.equals(currentItem.getName())) {
+    public void update(Node node, SiteMenuItemRepresentation modifiedItem) throws RepositoryException {
+        final String newName = modifiedItem.getName();
+        if (newName != null && !newName.equals(node.getName())) {
             rename(node, newName);
-            currentItem.setName(newName);
         }
-        final String newExternalLink = newItem.getExternalLink();
-        if (newExternalLink != null && !newExternalLink.equals(currentItem.getExternalLink())) {
-            node.setProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK, newExternalLink);
-            currentItem.setExternalLink(newExternalLink);
+        final String newExternalLink = modifiedItem.getExternalLink();
+        if (newExternalLink != null) {
+            node.setProperty(SITEMENUITEM_PROPERTY_EXTERNALLINK, newExternalLink);
         }
-        final String newSiteMapItemPath = newItem.getSiteMapItemPath();
-        if (newSiteMapItemPath != null && !newSiteMapItemPath.equals(currentItem.getSiteMapItemPath())) {
-            node.setProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM, newSiteMapItemPath);
-            currentItem.setSiteMapItemPath(newSiteMapItemPath);
+        final String newSiteMapItemPath = modifiedItem.getSiteMapItemPath();
+        if (newSiteMapItemPath != null) {
+            node.setProperty(SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM, newSiteMapItemPath);
         }
-        final boolean newRepositoryBased = newItem.isRepositoryBased();
-        if (newRepositoryBased != currentItem.isRepositoryBased()) {
-            node.setProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_REPOBASED, newRepositoryBased);
-            currentItem.setRepositoryBased(newRepositoryBased);
-        }
-        Map<String, String> newParameters = newItem.getParameters();
-        if (newParameters != null && newParameters != currentItem.getParameters()) {
-            currentItem.setParameters(newParameters);
-        }
+        final boolean newRepositoryBased = modifiedItem.isRepositoryBased();
+        node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, newRepositoryBased);
         // TODO (meggermont) add all other properties too.
     }
 

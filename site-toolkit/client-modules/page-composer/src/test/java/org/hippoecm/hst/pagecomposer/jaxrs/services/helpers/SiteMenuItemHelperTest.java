@@ -30,11 +30,9 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_REPOBASED;
-import static org.junit.Assert.assertThat;
 
 public class SiteMenuItemHelperTest {
 
@@ -68,26 +66,38 @@ public class SiteMenuItemHelperTest {
         newItem.setExternalLink("externalLink");
         newItem.setSiteMapItemPath("siteMapItemPath");
 
-        expect(node.getName()).andReturn("name");
+        expect(node.getName()).andReturn("name").times(2);
         expect(node.setProperty(SITEMENUITEM_PROPERTY_EXTERNALLINK, newItem.getExternalLink())).andReturn(null);
         expect(node.setProperty(SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM, newItem.getSiteMapItemPath())).andReturn(null);
+        expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
 
         replay(mocks);
         siteMenuItemHelper.save(node, newItem);
     }
+
+    @Test(expected = AssertionError.class)
+    public void testSaveFailsIfNamesAreDifferent() throws RepositoryException {
+
+        final SiteMenuItemRepresentation newItem = new SiteMenuItemRepresentation();
+        newItem.setName("a");
+
+        expect(node.getName()).andReturn("b");
+        replay(mocks);
+        siteMenuItemHelper.save(node, newItem);
+    }
+
     @Test
     public void testUpdateExternalLink() throws RepositoryException {
 
         final String newExternalLink = "link";
         expect(node.setProperty(SITEMENUITEM_PROPERTY_EXTERNALLINK, newExternalLink)).andReturn(null);
+        expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
 
-        final SiteMenuItemRepresentation currentItem = new SiteMenuItemRepresentation();
-        final SiteMenuItemRepresentation newItem = new SiteMenuItemRepresentation();
-        newItem.setExternalLink(newExternalLink);
+        final SiteMenuItemRepresentation modifiedItem = new SiteMenuItemRepresentation();
+        modifiedItem.setExternalLink(newExternalLink);
 
         replay(mocks);
-        siteMenuItemHelper.update(node, currentItem, newItem);
-        assertThat(currentItem.getExternalLink(), is(newExternalLink));
+        siteMenuItemHelper.update(node, modifiedItem);
         verify(mocks);
     }
 
@@ -96,14 +106,13 @@ public class SiteMenuItemHelperTest {
 
         final String newSiteMapItemPath = "link";
         expect(node.setProperty(SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM, newSiteMapItemPath)).andReturn(null);
+        expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
 
-        final SiteMenuItemRepresentation currentItem = new SiteMenuItemRepresentation();
         final SiteMenuItemRepresentation newItem = new SiteMenuItemRepresentation();
         newItem.setSiteMapItemPath(newSiteMapItemPath);
 
         replay(mocks);
-        siteMenuItemHelper.update(node, currentItem, newItem);
-        assertThat(currentItem.getSiteMapItemPath(), is(newSiteMapItemPath));
+        siteMenuItemHelper.update(node, newItem);
         verify(mocks);
     }
 
@@ -112,25 +121,24 @@ public class SiteMenuItemHelperTest {
 
         expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, true)).andReturn(null);
 
-        final SiteMenuItemRepresentation currentItem = new SiteMenuItemRepresentation();
-        final SiteMenuItemRepresentation newItem = new SiteMenuItemRepresentation();
-        newItem.setRepositoryBased(true);
+        final SiteMenuItemRepresentation modifiedItem = new SiteMenuItemRepresentation();
+        modifiedItem.setRepositoryBased(true);
 
         replay(mocks);
-        siteMenuItemHelper.update(node, currentItem, newItem);
-        assertThat(currentItem.isRepositoryBased(), is(true));
+        siteMenuItemHelper.update(node, modifiedItem);
         verify(mocks);
     }
 
     @Test
     public void testUpdateName() throws RepositoryException {
 
+        expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
         expect(node.getSession()).andReturn(session);
         expect(node.getParent()).andReturn(parent);
 
         final String oldName = "hst";
         final String pathPrefix = "hst:hst/hst/hst/hst";
-        expect(node.getName()).andReturn(oldName).times(2);
+        expect(node.getName()).andReturn(oldName).times(3);
         expect(node.getPath()).andReturn(pathPrefix + "/" + oldName);
 
         expect(parent.getNodes()).andReturn(childIterator);
@@ -148,11 +156,9 @@ public class SiteMenuItemHelperTest {
         expectLastCall().once();
 
         replay(mocks);
-        final SiteMenuItemRepresentation currentItem = new SiteMenuItemRepresentation();
         final SiteMenuItemRepresentation newItem = new SiteMenuItemRepresentation();
         newItem.setName(newName);
-        siteMenuItemHelper.update(node, currentItem, newItem);
-        assertThat(currentItem.getName(), is(newName));
+        siteMenuItemHelper.update(node, newItem);
         verify(mocks);
     }
 }
