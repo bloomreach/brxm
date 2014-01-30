@@ -1021,6 +1021,7 @@
             var editMenuWindow = new Hippo.ChannelManager.TemplateComposer.EditMenuWindow({
                 resources: this.resources,
                 composerRestMountUrl: this.composerRestMountUrl,
+                debug: this.debug,
                 locale: this.locale,
                 menuId: uuid
             });

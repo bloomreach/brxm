@@ -1,0 +1,16 @@
+{
+    "private": true,
+    "dependencies": {},
+    "devDependencies": {
+        "grunt-contrib-clean": "~0.5.0",
+        "grunt-contrib-copy": "~0.4.1",
+        "grunt-contrib-watch": "~0.5.3",
+        "grunt-declutter-task": "https://github.com/Voles/grunt-declutter-task/tarball/v0.1.0",
+        "grunt-shell": "~0.4.0",
+        "load-grunt-tasks": "~0.2.0",
+        "time-grunt": "~0.1.1"
+    },
+    "engines": {
+        "node": ">=0.10.0"
+    }
+}

@@ -43,9 +43,10 @@
                     {
                         xtype: 'Hippo.ChannelManager.TemplateComposer.IFramePanel',
                         id: this.iframePanelId,
-                        url: Ext.urlAppend('./angular/index.html', 'parentExtIFramePanelId=' + this.iframePanelId),
+                        url: Ext.urlAppend('./angular/app/index.html', 'parentExtIFramePanelId=' + this.iframePanelId),
                         pageManagementConfig: {
                             apiUrlPrefix: config.composerRestMountUrl,
+                            debug: config.debug,
                             locale: config.locale,
                             menuId: config.menuId
                         }
@@ -62,10 +63,6 @@
             });
 
             Hippo.ChannelManager.TemplateComposer.EditMenuWindow.superclass.constructor.call(this, config);
-        },
-
-        initComponent: function() {
-            Hippo.ChannelManager.TemplateComposer.EditMenuWindow.superclass.initComponent.apply(this, arguments);
         }
 
     });

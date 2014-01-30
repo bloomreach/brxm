@@ -12,6 +12,8 @@ frontend/.classpath
 frontend/.idea
 frontend/.project
 frontend/.settings
+frontend/node_modules
+frontend/src/js/components
 frontend/target
 repository/*.iml
 repository/.classpath
