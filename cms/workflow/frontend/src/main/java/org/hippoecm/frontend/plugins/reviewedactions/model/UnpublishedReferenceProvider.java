@@ -22,8 +22,10 @@ import java.util.List;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
@@ -31,8 +33,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugins.standards.list.datatable.SortState;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,14 +107,10 @@ public class UnpublishedReferenceProvider implements ISortableDataProvider<Strin
                         boolean valid = true;
                         if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                             valid = false;
-
                             for (Node document : new NodeIterable(node.getNodes(node.getName()))) {
-                                if (document.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)) {
-                                    String state = document.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
-                                    if (HippoStdNodeType.PUBLISHED.equals(state)) {
-                                        valid = true;
-                                        break;
-                                    }
+                                if (isLive(document)) {
+                                    valid = true;
+                                    break;
                                 }
                             }
                         }
@@ -127,6 +125,18 @@ public class UnpublishedReferenceProvider implements ISortableDataProvider<Strin
                 log.error(ex.getMessage(), ex);
             }
         }
+    }
+
+    private boolean isLive(Node document) throws RepositoryException {
+        final Property property = JcrUtils.getPropertyIfExists(document, HippoNodeType.HIPPO_AVAILABILITY);
+        if (property != null) {
+            for (Value value : property.getValues()) {
+                if ("live".equals(value.getString())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }
