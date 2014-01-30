@@ -206,7 +206,6 @@ public class PluginResource extends BaseResource {
         for (Plugin plugin : pluginList) {
             if (plugin.getPluginClass().equals(className)) {
                 if (Strings.isNullOrEmpty(plugin.getPluginLink())) {
-                    log.error("Plugin has no pluginLink defined, please check plugin.xml file: {}", plugin);
                     continue;
                 }
                 resource.setTitle(plugin.getName());
