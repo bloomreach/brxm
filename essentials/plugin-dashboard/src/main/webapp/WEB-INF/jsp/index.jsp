@@ -30,7 +30,7 @@
   <script src="${pageContext.request.contextPath}/js/routes.js"></script>
   <script src="${pageContext.request.contextPath}/js/controllers.js"></script>
   <%--  TODO make dynamic--%>
-  <script src="${pageContext.request.contextPath}/plugins/contentBlocks/controller.js"></script>
+  <script src="${pageContext.request.contextPath}/plugins/contentBlocks/contentBlocks.js"></script>
   <script src="${pageContext.request.contextPath}/plugins/galleryPlugin/controller.js"></script>
   <script src="${pageContext.request.contextPath}/plugins/newsEventsPowerpack/controller.js"></script>
   <script src="${pageContext.request.contextPath}/plugins/xinhaPlugin/xinhaPlugin.js"></script>

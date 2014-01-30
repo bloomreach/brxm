@@ -699,7 +699,7 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentbl
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/CBPayload.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/Compounds.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/ContentBlockModel.java -text
-plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/DocumentTypes.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/DocumentType.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/HasProviderMatcher.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/jaxb.properties -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/gallery/ImageProcessorRestful.java -text
@@ -1977,7 +1977,7 @@ plugin-dashboard/src/main/webapp/pages/find-plugins.html -text
 plugin-dashboard/src/main/webapp/pages/home.html -text
 plugin-dashboard/src/main/webapp/pages/plugins.html -text
 plugin-dashboard/src/main/webapp/pages/tools.html -text
-plugin-dashboard/src/main/webapp/plugins/contentBlocks/controller.js -text
+plugin-dashboard/src/main/webapp/plugins/contentBlocks/contentBlocks.js -text
 plugin-dashboard/src/main/webapp/plugins/contentBlocks/index.html -text
 plugin-dashboard/src/main/webapp/plugins/galleryPlugin/cmslanguages.json -text
 plugin-dashboard/src/main/webapp/plugins/galleryPlugin/controller.js -text
