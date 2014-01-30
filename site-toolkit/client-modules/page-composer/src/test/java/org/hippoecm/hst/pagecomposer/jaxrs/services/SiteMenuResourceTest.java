@@ -270,7 +270,6 @@ public class SiteMenuResourceTest {
 
     private void mockGetSiteMenu() {
         // Mock getting the site menu
-        expect(siteMenuHelper.getEditingPreviewHstSite(site)).andReturn(site);
         final String menuId = "uuid-of-menu";
         expect(context.getAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER)).andReturn(menuId);
         expect(siteMenuHelper.getMenu(site, menuId)).andReturn(menuConfig);
