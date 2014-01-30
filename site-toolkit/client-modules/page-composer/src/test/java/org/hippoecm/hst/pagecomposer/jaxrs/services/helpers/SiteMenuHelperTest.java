@@ -43,11 +43,6 @@ public class SiteMenuHelperTest {
         this.siteMenuHelper = new SiteMenuHelper();
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void testGetEditingPreviewHstSiteThrowsWhenSiteIsNull() {
-        siteMenuHelper.getEditingPreviewHstSite(null);
-    }
-
     @Test
     public void testGetMenuConfig() {
         final HstSite site = createMock(HstSite.class);
