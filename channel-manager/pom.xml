@@ -191,6 +191,9 @@
                 <exclude>frontend/src/main/resources/angular/vendors/**/*</exclude>
                 <exclude>frontend/src/main/resources/angular/components/**/*</exclude>
 
+                <!-- files without license header -->
+                <exclude>frontend/.bowerrc</exclude>
+
                 <!-- repository content XML -->
                 <exclude>repository/src/main/resources/**/*.xml</exclude>
               </excludes>
