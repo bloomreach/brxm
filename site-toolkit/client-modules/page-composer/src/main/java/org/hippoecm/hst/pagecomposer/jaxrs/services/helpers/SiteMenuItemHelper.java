@@ -17,17 +17,39 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 
 public class SiteMenuItemHelper {
 
-    public static final String HST_EXTERNALLINK = "hst:externallink";
-    public static final String HST_REFERENCESITEMAPITEM = "hst:referencesitemapitem";
+    /**
+     * Saves the properties of the new item into the node, provided that the names of the node and the item are equal.
+     *
+     * @param node    a newly created node
+     * @param newItem an item containing the property values for the node
+     * @throws RepositoryException
+     */
+    public void save(Node node, SiteMenuItemRepresentation newItem) throws RepositoryException {
+        assert newItem.getName().equals(node.getName()) : "Precondition violated";
+        final SiteMenuItemRepresentation placeholder = new SiteMenuItemRepresentation();
+        placeholder.setName(newItem.getName());
+        update(node, placeholder, newItem);
+    }
 
+    /**
+     * Updates the properties of the given node provided that the names of the node and the current item are equal. Only
+     * new and modified properties will be updated.
+     *
+     * @param node        a node
+     * @param currentItem an item containing the property values of the current item
+     * @param newItem     an item containing the property values of the new item
+     * @throws RepositoryException
+     */
     public void update(Node node, SiteMenuItemRepresentation currentItem, SiteMenuItemRepresentation newItem) throws RepositoryException {
         final String newName = newItem.getName();
         if (newName != null && !newName.equals(currentItem.getName())) {
@@ -36,24 +58,32 @@ public class SiteMenuItemHelper {
         }
         final String newExternalLink = newItem.getExternalLink();
         if (newExternalLink != null && !newExternalLink.equals(currentItem.getExternalLink())) {
-            node.setProperty(HST_EXTERNALLINK, newExternalLink);
+            node.setProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK, newExternalLink);
             currentItem.setExternalLink(newExternalLink);
         }
         final String newSiteMapItemPath = newItem.getSiteMapItemPath();
         if (newSiteMapItemPath != null && !newSiteMapItemPath.equals(currentItem.getSiteMapItemPath())) {
-            node.setProperty(HST_REFERENCESITEMAPITEM, newSiteMapItemPath);
+            node.setProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM, newSiteMapItemPath);
             currentItem.setSiteMapItemPath(newSiteMapItemPath);
+        }
+        final boolean newRepositoryBased = newItem.isRepositoryBased();
+        if (newRepositoryBased != currentItem.isRepositoryBased()) {
+            node.setProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_REPOBASED, newRepositoryBased);
+            currentItem.setRepositoryBased(newRepositoryBased);
+        }
+        Map<String, String> newParameters = newItem.getParameters();
+        if (newParameters != null && newParameters != currentItem.getParameters()) {
+            currentItem.setParameters(newParameters);
         }
         // TODO (meggermont) add all other properties too.
     }
 
     /**
-     * Move the given node by appending it as the last child of the new parent and assigning it the give
-     * new node name.
+     * Move the given node by appending it as the last child of the new parent and assigning it the give new node name.
      *
-     * @param node the node to move
+     * @param node        the node to move
      * @param newNodeName the new name of the node
-     * @param newParent the new parent of the node
+     * @param newParent   the new parent of the node
      * @throws RepositoryException
      */
     public void move(Node node, String newNodeName, Node newParent) throws RepositoryException {
@@ -63,7 +93,7 @@ public class SiteMenuItemHelper {
     /**
      * Move the given node by appending it as the last child of the new parent.
      *
-     * @param node the node to move
+     * @param node      the node to move
      * @param newParent the new parent of the node
      * @throws RepositoryException
      */

@@ -53,6 +53,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMENUITEM;
 import static org.junit.Assert.assertThat;
 
 public class SiteMenuResourceTest {
@@ -103,7 +104,7 @@ public class SiteMenuResourceTest {
     @Test
     public void testGetMenu() throws RepositoryException {
         mockGetPreviewSite();
-        mockGetSiteMenu();
+        mockGetSiteMenu("menuId");
         expect(menuConfig.getCanonicalIdentifier()).andReturn("uuid-of-menu");
         expect(menuConfig.getName()).andReturn("menuMane");
         final List<HstSiteMenuItemConfiguration> children = Collections.emptyList();
@@ -120,7 +121,7 @@ public class SiteMenuResourceTest {
     @Test
     public void testGetMenuItem() throws RepositoryException {
         mockGetPreviewSite();
-        mockGetSiteMenu();
+        mockGetSiteMenu("menuId");
         final String id = "uuid-of-menu-item";
         mockGetMenuItem(node, id);
         replay(mocks);
@@ -133,10 +134,46 @@ public class SiteMenuResourceTest {
     }
 
     @Test
+    public void testCreate() throws RepositoryException {
+
+        mockGetPreviewSite();
+        final String menuId = "uuid-of-menu";
+        mockGetSiteMenu(menuId);
+
+        expect(menuConfig.getCanonicalIdentifier()).andReturn(menuId);
+        expect(session.getNodeByIdentifier(menuId)).andReturn(parentNode);
+
+        final String name = "menuItemName";
+        expect(parentNode.addNode(name, NODETYPE_HST_SITEMENUITEM)).andReturn(node);
+
+        // Mock creating the site menu item
+        final SiteMenuItemRepresentation newMenuItem = new SiteMenuItemRepresentation();
+        newMenuItem.setName(name);
+        siteMenuItemHelper.save(node, newMenuItem);
+        expectLastCall().once();
+
+        // Return false, so that we don't have to mock all method calls in
+        // HstConfigurationUtils.persistChanges()
+        expect(session.hasPendingChanges()).andReturn(false);
+        final String menuItemId = "menuItemId";
+        expect(node.getIdentifier()).andReturn(menuItemId);
+        replay(mocks);
+
+        final Response response = siteMenuResource.create(context, newMenuItem);
+
+        assertThat(response.getStatus(), is(OK));
+        assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
+
+        final ExtResponseRepresentation extResponse = ExtResponseRepresentation.class.cast(response.getEntity());
+        assertThat(extResponse.isSuccess(), is(true));
+        assertThat(extResponse.getData().toString(), is(menuItemId));
+    }
+
+    @Test
     public void testUpdate() throws RepositoryException {
 
         mockGetPreviewSite();
-        mockGetSiteMenu();
+        mockGetSiteMenu("menuId");
 
         final String id = "uuid-of-menu-item";
         mockGetMenuItem(node, id);
@@ -199,7 +236,7 @@ public class SiteMenuResourceTest {
     public void testMove() throws RepositoryException {
 
         mockGetPreviewSite();
-        mockGetSiteMenu();
+        mockGetSiteMenu("menuId");
         final String sourceId = "sourceId";
         mockGetMenuItem(node, sourceId);
         final String childTargetId = "child";
@@ -235,7 +272,7 @@ public class SiteMenuResourceTest {
     public void testDelete() throws RepositoryException {
 
         mockGetPreviewSite();
-        mockGetSiteMenu();
+        mockGetSiteMenu("menuId");
         final String sourceId = "sourceId";
         mockGetMenuItem(node, sourceId);
 
@@ -268,9 +305,8 @@ public class SiteMenuResourceTest {
         return id;
     }
 
-    private void mockGetSiteMenu() {
+    private void mockGetSiteMenu(String menuId) {
         // Mock getting the site menu
-        final String menuId = "uuid-of-menu";
         expect(context.getAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER)).andReturn(menuId);
         expect(siteMenuHelper.getMenu(site, menuId)).andReturn(menuConfig);
     }

@@ -41,14 +41,10 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Path("/" + HstNodeTypes.NODETYPE_HST_SITEMENU + "/")
 @Produces(MediaType.APPLICATION_JSON)
 public class SiteMenuResource extends AbstractConfigResource {
-
-    private static Logger log = LoggerFactory.getLogger(SiteMenuResource.class);
 
     private final SiteMenuHelper siteMenuHelper;
     private final SiteMenuItemHelper siteMenuItemHelper;
@@ -91,27 +87,46 @@ public class SiteMenuResource extends AbstractConfigResource {
     }
 
     @POST
-    @Path("/update")
-    public Response update(final @Context HstRequestContext requestContext, final SiteMenuItemRepresentation newMenuItem) {
+    @Path("/create")
+    public Response create(final @Context HstRequestContext requestContext, final SiteMenuItemRepresentation newMenuItem) {
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
                 final Session session = requestContext.getSession();
 
                 final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
-                final String itemId = newMenuItem.getId();
+                final CanonicalInfo menuInfo = (CanonicalInfo)menu;
+                final Node menuNode = session.getNodeByIdentifier(menuInfo.getCanonicalIdentifier());
+                final Node menuItemNode = menuNode.addNode(newMenuItem.getName(), HstNodeTypes.NODETYPE_HST_SITEMENUITEM);
+                siteMenuItemHelper.save(menuItemNode, newMenuItem);
+                HstConfigurationUtils.persistChanges(session);
+
+                return ok("Item created successfully", menuItemNode.getIdentifier());
+            }
+        });
+    }
+
+    @POST
+    @Path("/update")
+    public Response update(final @Context HstRequestContext requestContext, final SiteMenuItemRepresentation modifiedItem) {
+        return tryExecute(new Callable<Response>() {
+            @Override
+            public Response call() throws Exception {
+                final Session session = requestContext.getSession();
+
+                final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
+                final String itemId = modifiedItem.getId();
                 final HstSiteMenuItemConfiguration menuItem = siteMenuHelper.getMenuItem(menu, itemId);
                 final SiteMenuItemRepresentation currentMenuItem = new SiteMenuItemRepresentation().represent(menuItem);
 
                 final Node menuItemNode = session.getNodeByIdentifier(currentMenuItem.getId());
-                siteMenuItemHelper.update(menuItemNode, currentMenuItem, newMenuItem);
+                siteMenuItemHelper.update(menuItemNode, currentMenuItem, modifiedItem);
                 HstConfigurationUtils.persistChanges(session);
 
                 return ok("Item updated successfully", itemId);
             }
         });
     }
-
 
     @POST
     @Path("/move/{sourceId}/{parentTargetId}")
