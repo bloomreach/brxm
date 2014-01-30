@@ -37,6 +37,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.ext.Provider;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -66,6 +67,8 @@ import org.slf4j.LoggerFactory;
 /**
  * @version "$Id$"
  */
+
+
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/imagegallery/")
@@ -110,8 +113,6 @@ public class ImageGalleryResource extends BaseResource {
 
     @PUT
     @Path("/save")
-    @Consumes("application/json")
-    @Produces("application/json")
     public ImageProcessorRestful saveImageProcessor(@Context HttpServletRequest request) {
         try {
             final JAXBContext context = JAXBContext.newInstance(ImageProcessorRestful.class);
@@ -132,9 +133,7 @@ public class ImageGalleryResource extends BaseResource {
                 }
                 return imageProcessor;
             }
-        } catch (JAXBException e) {
-            log.error("Error parsing JSON", e);
-        } catch (IOException e) {
+        } catch (JAXBException | IOException e) {
             log.error("Error parsing JSON", e);
         }
         return null;

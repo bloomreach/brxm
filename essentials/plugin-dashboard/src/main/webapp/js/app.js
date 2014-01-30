@@ -14,7 +14,7 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.essentials', ['ngRoute', 'localytics.directives'])
+    angular.module('hippo.essentials', ['ngRoute', 'localytics.directives','ui.bootstrap'])
 
 //############################################
 // GLOBAL LOADING
@@ -152,7 +152,11 @@
                     //############################################
                     node: root + '/node/',
                     getProperty: root + '/node/property',
-                    setProperty: root + '/node/property/save'
+                    setProperty: root + '/node/property/save',
+                    galleryProcessor: root + '/imagegallery/',
+                    imageSets: root + '/imagegallery/imagesets/',
+                    galleryProcessorSave: root + '/imagegallery/save',
+                    imageSetsSave: root + '/imagegallery/imagesets/save'
 
 
                 };

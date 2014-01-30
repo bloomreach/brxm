@@ -1,17 +1,15 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.essentials').controller('galleryPluginCtrl',function ($scope, $sce, $log, $rootScope, $http) {
+    angular.module('hippo.essentials').controller('galleryPluginCtrl', function ($scope, $sce, $log, $rootScope, $http, $modal) {
 
         $scope.message = "Gallery plugin";
         $scope.selectedTab = 1;
 
         $scope.invalidated = false;
 
-        $http.get($rootScope.REST.galleryProcessor).success(function (data) {
-            $scope.imageProcessorData = data;
-            $scope.imageProcessor = data.imageProcessors[0];
-        });
+
+
 
 
         $http({
@@ -65,6 +63,12 @@
 
         $scope.init = function () {
             $log.info(" **** gallery plugin called ***");
+            $http.get($rootScope.REST.galleryProcessor).success(function (data) {
+                $scope.imageProcessorData = data;
+                $scope.imageProcessor = data.imageProcessors[0];
+            });
+
+
         };
 
         /*
@@ -369,9 +373,9 @@
             return true;
         };
 
-        $scope.openDeleteImageSetConfirmation = function () {
+        $scope.openDeleteImageSetConfirmation = function ($scope, $modal, currentImageSet) {
 
-           /* var modalInstance = $modal.open({
+            var modalInstance = $modal.open({
                 templateUrl: 'deleteImageSetConfirmation.html',
                 controller: ModalConfirmationCtrl,
                 resolve: {
@@ -386,7 +390,7 @@
 
             }, function () {
                 $log.info('Modal dismissed at: ' + new Date());
-            });*/
+            });
         };
 
 
@@ -492,9 +496,9 @@
 
         $scope.init();
 
-    }).controller('ModalConfirmationCtrl', function ($scope, currentImageSet) {
+    }).controller('ModalConfirmationCtrl', function ($scope, $modalInstance, currentImageSet) {
 
-        /*$scope.currentImageSet = currentImageSet;
+        $scope.currentImageSet = currentImageSet;
 
         $scope.ok = function () {
             $modalInstance.close($scope.currentImageSet);
@@ -502,7 +506,7 @@
 
         $scope.cancel = function () {
             $modalInstance.dismiss('cancel');
-        };*/
+        };
     })
             .filter('hideHippoGalleryVariantsFilter', function () {
                 return function (variants) {
