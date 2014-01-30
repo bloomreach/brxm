@@ -42,6 +42,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 
@@ -150,7 +151,7 @@ public class ImageGalleryResource extends BaseResource {
             if (variant == null) {
                 // TODO or add to list of nodes to delete
                 //variantNode.remove();
-                System.out.println("Remove " + variantNode.getPath());
+                log.info("Remove " + variantNode.getPath());
             }
         }
         // save all variants
@@ -232,14 +233,14 @@ public class ImageGalleryResource extends BaseResource {
                 variantRestful.addProperty(property);
             }
             if (variantTranslationsMap.get(variantName) != null) {
-                System.out.println("Translations for " + variantName + ": " + variantTranslationsMap.get(variantName).size());
+                log.info("Translations for " + variantName + ": " + variantTranslationsMap.get(variantName).size());
             } else {
-                System.out.println("No translations for " + variantName);
+                log.info("No translations for " + variantName);
             }
             variantRestful.addTranslations(variantTranslationsMap.get(variantName).values());
 
             for (String t : variantTranslationsMap.keySet()) {
-                System.out.println("Map entry " + t);
+                log.info("Map entry " + t);
             }
 
             variants.put(variantRestful.getNodeType(), variantRestful);
@@ -259,11 +260,8 @@ public class ImageGalleryResource extends BaseResource {
             translation.setMessage(TranslationUtils.getHippoMessage(node));
 
             final String propertyName = TranslationUtils.getHippoProperty(node);
-            if (StringUtils.isBlank(propertyName)) {
-                System.out.println("Skipping translation: " + node.getPath());
+            if (Strings.isNullOrEmpty(propertyName)) {
                 continue;
-            } else {
-                System.out.println("Adding translation: " + node.getPath());
             }
             if (!map.containsKey(propertyName)) {
                 map.put(propertyName, new HashMap<String, TranslationRestful>());
@@ -318,12 +316,12 @@ public class ImageGalleryResource extends BaseResource {
             if (variant == null) {
                 // TODO or add to list of nodes to delete
                 //variantFieldNode.remove();
-                System.out.println("Remove " + variantFieldNode.getPath());
+                log.info("Remove " + variantFieldNode.getPath());
             }
             if (imageSetNode.hasNode("editor:templates/_default_/" + variant.getName())) {
                 final Node templateNode = imageSetNode.getNode("editor:templates/_default_/" + variantFieldNode.getName());
                 //templateNode.remove();
-                System.out.println("Remove " + templateNode.getPath());
+                log.info("Remove " + templateNode.getPath());
             }
         }
 
@@ -424,10 +422,10 @@ public class ImageGalleryResource extends BaseResource {
 
             final String propertyName = TranslationUtils.getHippoProperty(node);
             if (!StringUtils.isBlank(propertyName)) {
-                System.out.println("Skipping translation: " + node.getPath());
+                log.info("Skipping translation: " + node.getPath());
                 continue;
             } else {
-                System.out.println("Adding translation: " + node.getPath());
+                log.info("Adding translation: " + node.getPath());
             }
             translations.add(translation);
         }
@@ -476,9 +474,9 @@ public class ImageGalleryResource extends BaseResource {
         final List<Node> variantTranslations = new ArrayList<>();
         final PluginContext pluginContext = getPluginContext();
         final List<Node> nodes = fetchImageSetNamespaceNodes(session, listImageSetTypes(pluginContext));
-        System.out.println("Image set nodes: " + nodes.size());
+        log.info("Image set nodes: " + nodes.size());
         for (final Node imageSetNSNode : nodes) {
-            System.out.println("Image set node: " + imageSetNSNode.getPath());
+            log.info("Image set node: " + imageSetNSNode.getPath());
             variantTranslations.addAll(TranslationUtils.getTranslationsFromNode(imageSetNSNode));
         }
         return variantTranslations;
@@ -487,7 +485,7 @@ public class ImageGalleryResource extends BaseResource {
     private List<Node> fetchImageSetNamespaceNodes(final Session session, final List<String> imageSets) throws RepositoryException {
         final List<Node> nodes = new ArrayList<>();
         for (final String imageSet : imageSets) {
-            System.out.println("Fetch Image set NS node for: " + imageSet);
+            log.info("Fetch Image set NS node for: " + imageSet);
             nodes.add(fetchImageSetNamespaceNode(session, imageSet));
         }
         return nodes;
