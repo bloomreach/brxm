@@ -50,6 +50,8 @@
                         // reload providers, we added new one:
                         $scope.loadProviders();
                     });
+
+
                 };
 
 
@@ -129,6 +131,7 @@
                             });
                         });
                     });
+
                 };
                 $scope.init();
             })
