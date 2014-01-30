@@ -49,6 +49,7 @@ archetype/website/src/main/resources/archetype-resources/bootstrap/content/src/m
 archetype/website/src/main/resources/archetype-resources/bootstrap/content/src/main/resources/hippoecm-extension.xml -text
 archetype/website/src/main/resources/archetype-resources/bootstrap/essentials/pom.xml -text
 archetype/website/src/main/resources/archetype-resources/bootstrap/essentials/src/main/resources/essentials.xml -text
+archetype/website/src/main/resources/archetype-resources/bootstrap/essentials/src/main/resources/essentials/plugins/org.xml -text
 archetype/website/src/main/resources/archetype-resources/bootstrap/essentials/src/main/resources/hippoecm-extension.xml -text
 archetype/website/src/main/resources/archetype-resources/bootstrap/pom.xml -text
 archetype/website/src/main/resources/archetype-resources/cms/pom.xml -text
