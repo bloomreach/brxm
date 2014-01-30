@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.observation.Event;
-import javax.jcr.observation.EventListener;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -43,6 +42,7 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -56,7 +56,10 @@ public class AbstractPageComposerTest {
     protected HstURLFactory hstURLFactory;
     protected HstSiteMapMatcher siteMapMatcher;
     protected HstEventsCollector hstEventsCollector;
+    protected HippoSession session;
     protected Object hstModelMutex;
+    private HstConfigurationEventListener listener;
+
 
     @Before
     public void setUp() throws Exception {
@@ -71,14 +74,34 @@ public class AbstractPageComposerTest {
         this.hstURLFactory = HstServices.getComponentManager().getComponent(HstURLFactory.class.getName());
         this.hstEventsCollector = HstServices.getComponentManager().getComponent("hstEventsCollector");
         this.hstModelMutex = HstServices.getComponentManager().getComponent("hstModelMutex");
+
+        session = (HippoSession)createSession();
+
+        createHstConfigBackup(session);
+        listener = new HstConfigurationEventListener();
+        listener.setHstEventsCollector(hstEventsCollector);
+        listener.setHstManager(hstManager);
+        listener.setHstModelMutex(hstModelMutex);
+        session.getWorkspace().getObservationManager().addEventListener(listener,
+                Event.NODE_ADDED | Event.NODE_MOVED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED,
+                "/hst:hst",
+                true,
+                null,
+                null,
+                false);
+
     }
 
     @After
     public void tearDown() throws Exception {
+        session.getWorkspace().getObservationManager().removeEventListener(listener);
+        restoreHstConfigBackup(session);
+        session.logout();
         this.componentManager.stop();
         this.componentManager.close();
         HstServices.setComponentManager(null);
         ModifiableRequestContextProvider.clear();
+
     }
 
     protected String[] getConfigurations() {
@@ -90,7 +113,6 @@ public class AbstractPageComposerTest {
     protected ComponentManager getComponentManager() {
         return this.componentManager;
     }
-
 
     protected Session createSession() throws RepositoryException {
         Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
@@ -159,56 +181,24 @@ public class AbstractPageComposerTest {
         return vhosts.matchSiteMapItem(url);
     }
 
-    public class CommonHstConfigSetup implements AutoCloseable {
-        public Session session;
-        public EventListener listener;
-
-        public CommonHstConfigSetup() throws RepositoryException {
-            session = createSession();
-            listener = registerConfigListener();
-            createHstConfigBackup();
-        }
-
-        @Override
-        public void close() throws Exception {
-            removeListener();
-            restoreHstConfigBackup();
-            session.logout();
-        }
-
-        protected void createHstConfigBackup() throws RepositoryException {
-            if (!session.nodeExists("/hst-backup")) {
-                JcrUtils.copy(session, "/hst:hst", "/hst-backup");
-                session.save();
-            }
-        }
-
-        protected void restoreHstConfigBackup() throws RepositoryException {
-            if (session.nodeExists("/hst-backup")) {
-                session.removeItem("/hst:hst");
-                JcrUtils.copy(session, "/hst-backup", "/hst:hst");
-                session.removeItem("/hst-backup");
-                session.save();
-            }
-        }
-
-        private void removeListener() throws RepositoryException {
-            session.getWorkspace().getObservationManager().removeEventListener(listener);
-        }
-
-        private EventListener registerConfigListener() throws RepositoryException {
-            HstConfigurationEventListener configurationEventListener = new HstConfigurationEventListener();
-            configurationEventListener.setHstEventsCollector(hstEventsCollector);
-            configurationEventListener.setHstManager(hstManager);
-            configurationEventListener.setHstModelMutex(hstModelMutex);
-            session.getWorkspace().getObservationManager().addEventListener(configurationEventListener,
-                    Event.NODE_ADDED | Event.NODE_MOVED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED,
-                    "/hst:hst",
-                    true,
-                    null,
-                    null,
-                    false);
-            return configurationEventListener;
+    protected void createHstConfigBackup(Session session) throws RepositoryException {
+        if (!session.nodeExists("/hst-backup")) {
+            JcrUtils.copy(session, "/hst:hst", "/hst-backup");
+            session.save();
         }
     }
+
+    protected void restoreHstConfigBackup(Session session) throws RepositoryException {
+        if (session.nodeExists("/hst-backup")) {
+            if (session.nodeExists("/hst:hst")) {
+                session.removeItem("/hst:hst");
+            }
+            JcrUtils.copy(session, "/hst-backup", "/hst:hst");
+            session.removeItem("/hst-backup");
+            session.save();
+        }
+    }
+
+
+
 }

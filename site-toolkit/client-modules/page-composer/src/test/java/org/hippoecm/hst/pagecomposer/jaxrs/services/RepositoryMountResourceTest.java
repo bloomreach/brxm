@@ -43,8 +43,6 @@ public class RepositoryMountResourceTest extends AbstractPageComposerTest {
     @Test
     public void testEditAndPublishMount() throws Exception {
 
-        try (CommonHstConfigSetup setup = new CommonHstConfigSetup()) {
-            Session session = setup.session;
             final Node unitTestConfigNode = session.getNode("/hst:hst/hst:configurations/unittestproject");
             final Node workspace = unitTestConfigNode.addNode("hst:workspace", "hst:workspace");
             final Node containers = workspace.addNode("hst:containers", "hst:containercomponentfolder");
@@ -74,7 +72,7 @@ public class RepositoryMountResourceTest extends AbstractPageComposerTest {
             assertFalse("Preview config node should not exist yet.",
                     session.nodeExists(previewConfigurationPath));
 
-            ((HstMutableRequestContext) ctx).setSession(setup.session);
+            ((HstMutableRequestContext) ctx).setSession(session);
 
             MountResource mountResource = new MountResource();
             mountResource.startEdit(request);
@@ -90,7 +88,7 @@ public class RepositoryMountResourceTest extends AbstractPageComposerTest {
             assertTrue("Preview channel path node should exist",
                     session.nodeExists(ctx.getResolvedMount().getMount().getChannelPath()+ "-preview"));
 
-            Set<String> usersWithLockedContainers = mountResource.findUsersWithLockedContainers((HippoSession) setup.session, previewConfigurationPath);
+            Set<String> usersWithLockedContainers = mountResource.findUsersWithLockedContainers(session, previewConfigurationPath);
             assertTrue(usersWithLockedContainers.isEmpty());
 
             // reload model through new request, and then modify a container
@@ -135,7 +133,7 @@ public class RepositoryMountResourceTest extends AbstractPageComposerTest {
 
             usersWithLockedContainers = mountResource.findUsersWithLockedContainers((HippoSession) session, previewConfigurationPath);
             assertTrue(usersWithLockedContainers.isEmpty());
-        }
+
     }
 
     private void setMountIdOnHttpSession(final MockHttpServletRequest request, final String mountId) {
@@ -172,9 +170,6 @@ public class RepositoryMountResourceTest extends AbstractPageComposerTest {
     @Test
     public void testEditAndPublishProjectThatStartsWithNumber() throws Exception {
 
-        try (CommonHstConfigSetup setup = new CommonHstConfigSetup()) {
-            Session session = setup.session;
-
             session.move("/hst:hst/hst:configurations/unittestproject", "/hst:hst/hst:configurations/7_8");
             final Node unitTestConfigNode = session.getNode("/hst:hst/hst:configurations/7_8");
 
@@ -195,7 +190,7 @@ public class RepositoryMountResourceTest extends AbstractPageComposerTest {
             Node testSideNode = session.getNode("/hst:hst/hst:sites/unittestproject");
             testSideNode.setProperty("hst:configurationpath", "/hst:hst/hst:configurations/7_8");
 
-            setup.session.save();
+            session.save();
             // give time for jcr events to evict model
             Thread.sleep(200);
 
@@ -210,19 +205,19 @@ public class RepositoryMountResourceTest extends AbstractPageComposerTest {
 
             final String previewConfigurationPath = ctx.getResolvedMount().getMount().getHstSite().getConfigurationPath() + "-preview";
             assertFalse("Preview config node should not exist yet.",
-                    setup.session.nodeExists(previewConfigurationPath));
+                    session.nodeExists(previewConfigurationPath));
 
-            ((HstMutableRequestContext) ctx).setSession(setup.session);
+            ((HstMutableRequestContext) ctx).setSession(session);
 
             MountResource mountResource = new MountResource();
             mountResource.startEdit(request);
 
             assertTrue("Live config node should exist",
-                    setup.session.nodeExists(ctx.getResolvedMount().getMount().getHstSite().getConfigurationPath()));
+                    session.nodeExists(ctx.getResolvedMount().getMount().getHstSite().getConfigurationPath()));
             assertTrue("Preview config node should exist",
-                    setup.session.nodeExists(previewConfigurationPath));
+                    session.nodeExists(previewConfigurationPath));
 
-            Set<String> usersWithLockedContainers = mountResource.findUsersWithLockedContainers((HippoSession) setup.session, previewConfigurationPath);
+            Set<String> usersWithLockedContainers = mountResource.findUsersWithLockedContainers((HippoSession) session, previewConfigurationPath);
             assertTrue(usersWithLockedContainers.isEmpty());
 
             // reload model through new request, and then modify a container
@@ -230,14 +225,14 @@ public class RepositoryMountResourceTest extends AbstractPageComposerTest {
             Thread.sleep(200);
             final MockHttpServletRequest secondRequest = new MockHttpServletRequest();
             final  HstRequestContext secondCtx = getRequestContextWithResolvedSiteMapItemAndContainerURL(secondRequest, "localhost", "/home");
-            ((HstMutableRequestContext) secondCtx).setSession(setup.session);
+            ((HstMutableRequestContext) secondCtx).setSession(session);
 
             final String secondMountId = secondCtx.getResolvedMount().getMount().getIdentifier();
             ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, secondMountId);
             setMountIdOnHttpSession(secondRequest, secondMountId);
 
 
-            final String previewContainerNodeUUID = setup.session.getNode(previewConfigurationPath)
+            final String previewContainerNodeUUID = session.getNode(previewConfigurationPath)
                     .getNode("hst:workspace/hst:containers/testcontainer").getIdentifier();
 
             secondCtx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, previewContainerNodeUUID);
@@ -245,7 +240,7 @@ public class RepositoryMountResourceTest extends AbstractPageComposerTest {
             final ContainerComponentResource containerComponentResource = new ContainerComponentResource();
             containerComponentResource.createContainerItem(secondRequest, catalogItemUUID, System.currentTimeMillis());
 
-            usersWithLockedContainers = mountResource.findUsersWithLockedContainers((HippoSession) setup.session, previewConfigurationPath);
+            usersWithLockedContainers = mountResource.findUsersWithLockedContainers((HippoSession) session, previewConfigurationPath);
             assertTrue(usersWithLockedContainers.contains("admin"));
 
 
@@ -254,7 +249,7 @@ public class RepositoryMountResourceTest extends AbstractPageComposerTest {
             Thread.sleep(200);
             final MockHttpServletRequest thirdRequest = new MockHttpServletRequest();
             final  HstRequestContext thirdCtx = getRequestContextWithResolvedSiteMapItemAndContainerURL(thirdRequest, "localhost", "/home");
-            ((HstMutableRequestContext) thirdCtx).setSession(setup.session);
+            ((HstMutableRequestContext) thirdCtx).setSession(session);
 
             final String thirdMountId = thirdCtx.getResolvedMount().getMount().getIdentifier();
             ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, thirdMountId);
@@ -264,10 +259,9 @@ public class RepositoryMountResourceTest extends AbstractPageComposerTest {
 
             mountResource.publish(thirdRequest);
 
-            usersWithLockedContainers = mountResource.findUsersWithLockedContainers((HippoSession) setup.session, previewConfigurationPath);
+            usersWithLockedContainers = mountResource.findUsersWithLockedContainers((HippoSession) session, previewConfigurationPath);
             assertTrue(usersWithLockedContainers.isEmpty());
 
-        }
 
     }
 
