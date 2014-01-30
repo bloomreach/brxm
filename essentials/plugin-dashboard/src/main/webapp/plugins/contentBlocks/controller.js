@@ -49,6 +49,7 @@
                     $http.put($rootScope.REST.compoundsCreate + docName, docName).success(function (data) {
                         // reload providers, we added new one:
                         $scope.loadProviders();
+                        $scope.loadDocumentTypes();
                     });
 
 
@@ -113,15 +114,7 @@
                     });
 
                 };
-                $scope.init = function () {
-                    // check if plugin is installed
-                    $http.get($rootScope.REST.pluginInstallState + $scope.pluginClass).success(function (data) {
-                        //{"installed":false,"pluginLink":"contentBlocks","title":"Content Blocks Plugin"}
-                        // TODO enable check:
-                        $scope.pluginInstalled = true;
-                        //$scope.pluginInstalled = data.installed;
-                    });
-                    $scope.loadProviders();
+                $scope.loadDocumentTypes = function () {
                     $http.get($rootScope.REST.documentTypes).success(function (data) {
                         $scope.documentTypes = data.items;
                         angular.forEach($scope.documentTypes, function (docType, key) {
@@ -131,6 +124,18 @@
                             });
                         });
                     });
+
+                };
+                $scope.init = function () {
+                    // check if plugin is installed
+                    $http.get($rootScope.REST.pluginInstallState + $scope.pluginClass).success(function (data) {
+                        //{"installed":false,"pluginLink":"contentBlocks","title":"Content Blocks Plugin"}
+                        // TODO enable check:
+                        $scope.pluginInstalled = true;
+                        //$scope.pluginInstalled = data.installed;
+                    });
+                    $scope.loadProviders();
+                    $scope.loadDocumentTypes();
 
                 };
                 $scope.init();

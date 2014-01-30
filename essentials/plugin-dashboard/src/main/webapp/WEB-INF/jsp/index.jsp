@@ -21,6 +21,8 @@
   <!--<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.3/angular.min.js"></script>-->
 <%--  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.3/angular-route.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>--%>
+  <script src="${pageContext.request.contextPath}/js/lib/ui-bootstrap-0.10.js"></script>
+
   <script src="${pageContext.request.contextPath}/js/Essentials.js"></script>
   <script src="${pageContext.request.contextPath}/js/app.js"></script>
   <script src="${pageContext.request.contextPath}/js/routes.js"></script>

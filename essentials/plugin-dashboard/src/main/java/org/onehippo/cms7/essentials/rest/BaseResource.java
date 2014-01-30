@@ -125,7 +125,6 @@ public class BaseResource {
 
     protected List<Plugin> getPlugins(final ServletContext context) {
         final String libPath = context.getRealPath("/WEB-INF/lib");
-        log.debug("Scanning path for essentials: {}", libPath);
         final PluginScanner scanner = new PluginScanner();
         return scanner.scan(libPath);
     }

@@ -4,7 +4,7 @@
         "needsInstallation": true,
         "artifacts": [],
         "assets": [],
-        "introduction": "Content blocks configuration plugin",
+        "introduction": "Content Blocks plugin provides the content/document editors an ability to add multiple pre-configured compound type blocks to a document. The CMS administrator can configure the available content blocks on per document type basis.",
         "name": "Content Blocks",
         "pluginClass": "org.onehippo.cms7.essentials.dashboard.contentblocks.ContentBlocksPlugin",
         "pluginLink": "contentBlocks",

@@ -6329,3 +6329,24 @@ button {
 .panel {
   box-shadow: none;
 }
+
+/*Override for Bootstrap 3*/
+
+.modal {
+  display: block;
+}
+
+.modal-body:before,
+.modal-body:after {
+  display: table;
+  content: " ";
+}
+
+.modal-header:before,
+.modal-header:after {
+  display: table;
+  content: " ";
+}
+
+/*End override for Bootstrap 3*/
+
