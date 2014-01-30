@@ -113,7 +113,7 @@ public class RepositoryMountResourceTest extends AbstractPageComposerTest {
             final ContainerComponentResource containerComponentResource = new ContainerComponentResource();
             containerComponentResource.createContainerItem(secondRequest, catalogItemUUID, System.currentTimeMillis());
 
-            usersWithLockedContainers = mountResource.findUsersWithLockedContainers((HippoSession) session, previewConfigurationPath);
+            usersWithLockedContainers = mountResource.findUsersWithLockedContainers(session, previewConfigurationPath);
             assertTrue(usersWithLockedContainers.contains("admin"));
 
 
@@ -131,7 +131,7 @@ public class RepositoryMountResourceTest extends AbstractPageComposerTest {
 
             mountResource.publish(thirdRequest);
 
-            usersWithLockedContainers = mountResource.findUsersWithLockedContainers((HippoSession) session, previewConfigurationPath);
+            usersWithLockedContainers = mountResource.findUsersWithLockedContainers(session, previewConfigurationPath);
             assertTrue(usersWithLockedContainers.isEmpty());
 
     }
@@ -217,7 +217,7 @@ public class RepositoryMountResourceTest extends AbstractPageComposerTest {
             assertTrue("Preview config node should exist",
                     session.nodeExists(previewConfigurationPath));
 
-            Set<String> usersWithLockedContainers = mountResource.findUsersWithLockedContainers((HippoSession) session, previewConfigurationPath);
+            Set<String> usersWithLockedContainers = mountResource.findUsersWithLockedContainers(session, previewConfigurationPath);
             assertTrue(usersWithLockedContainers.isEmpty());
 
             // reload model through new request, and then modify a container
@@ -240,7 +240,7 @@ public class RepositoryMountResourceTest extends AbstractPageComposerTest {
             final ContainerComponentResource containerComponentResource = new ContainerComponentResource();
             containerComponentResource.createContainerItem(secondRequest, catalogItemUUID, System.currentTimeMillis());
 
-            usersWithLockedContainers = mountResource.findUsersWithLockedContainers((HippoSession) session, previewConfigurationPath);
+            usersWithLockedContainers = mountResource.findUsersWithLockedContainers(session, previewConfigurationPath);
             assertTrue(usersWithLockedContainers.contains("admin"));
 
 
@@ -259,7 +259,7 @@ public class RepositoryMountResourceTest extends AbstractPageComposerTest {
 
             mountResource.publish(thirdRequest);
 
-            usersWithLockedContainers = mountResource.findUsersWithLockedContainers((HippoSession) session, previewConfigurationPath);
+            usersWithLockedContainers = mountResource.findUsersWithLockedContainers(session, previewConfigurationPath);
             assertTrue(usersWithLockedContainers.isEmpty());
 
 
