@@ -19,6 +19,7 @@ package org.onehippo.cms7.essentials.rest;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,9 @@ import javax.ws.rs.core.MediaType;
 
 import org.onehippo.cms7.essentials.dashboard.EssentialsPlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
+import org.onehippo.cms7.essentials.dashboard.config.DefaultDocumentManager;
+import org.onehippo.cms7.essentials.dashboard.config.DocumentManager;
+import org.onehippo.cms7.essentials.dashboard.config.InstallerDocument;
 import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.installer.InstallState;
@@ -52,7 +56,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 import com.google.gson.Gson;
-import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
 
@@ -66,6 +69,7 @@ import com.google.inject.Inject;
 @Path("/plugins/")
 public class PluginResource extends BaseResource {
 
+    public static final int WEEK_OLD = -7;
     @Inject
     private EventBus eventBus;
     private static Logger log = LoggerFactory.getLogger(PluginResource.class);
@@ -81,10 +85,8 @@ public class PluginResource extends BaseResource {
     public RestfulList<PluginRestful> getPluginList(@Context ServletContext servletContext) {
         final RestfulList<PluginRestful> plugins = new RestfulList<>();
 
-        final RestClient client = new RestClient("https://api.github.com/gists/8453217");
 
-        final String pluginList = client.getPluginList();
-        List<PluginRestful> items = parseGist(pluginList);
+        List<PluginRestful> items = parseGist();
         // GIST may not be available (too many requests)
         if (items == null || items.size() == 0) {
             final InputStream stream = getClass().getResourceAsStream("/plugin_descriptor.json");
@@ -97,32 +99,50 @@ public class PluginResource extends BaseResource {
 
         }
 
+        final DocumentManager manager = new DefaultDocumentManager(getContext(servletContext));
         for (PluginRestful item : items) {
             plugins.add(item);
+            final String pluginClass = item.getPluginClass();
+            final boolean hasClass = !Strings.isNullOrEmpty(pluginClass);
+            if (!hasClass) {
+                continue;
+            }
             if (item.isNeedsInstallation()) {
-                final String pluginClass = item.getPluginClass();
-                if (pluginClass != null) {
-                    try {
-                        @SuppressWarnings("unchecked")
-                        final Class<EssentialsPlugin> clazz = (Class<EssentialsPlugin>) Class.forName(pluginClass);
-                        final Constructor<EssentialsPlugin> constructor = clazz.getConstructor(Plugin.class, PluginContext.class);
-                        final org.onehippo.cms7.essentials.dashboard.model.EssentialsPlugin dummy = new org.onehippo.cms7.essentials.dashboard.model.EssentialsPlugin();
-                        final EssentialsPlugin instance = constructor.newInstance(dummy, new DashboardPluginContext(GlobalUtils.createSession(), dummy));
-                        final InstallState installState = instance.getInstallState();
-                        if (installState == InstallState.INSTALLED_AND_RESTARTED) {
-                            item.setNeedsInstallation(false);
-                        }
-                    } catch (Exception e) {
-                        log.error("Error checking install state", e);
+                try {
+                    @SuppressWarnings("unchecked")
+                    final Class<EssentialsPlugin> clazz = (Class<EssentialsPlugin>) Class.forName(pluginClass);
+                    final Constructor<EssentialsPlugin> constructor = clazz.getConstructor(Plugin.class, PluginContext.class);
+                    final org.onehippo.cms7.essentials.dashboard.model.EssentialsPlugin dummy = new org.onehippo.cms7.essentials.dashboard.model.EssentialsPlugin();
+                    final EssentialsPlugin instance = constructor.newInstance(dummy, new DashboardPluginContext(GlobalUtils.createSession(), dummy));
+                    final InstallState installState = instance.getInstallState();
+                    if (installState == InstallState.INSTALLED_AND_RESTARTED) {
+                        item.setNeedsInstallation(false);
                     }
+                } catch (Exception e) {
+                    log.error("Error checking install state", e);
+                }
+
+            }
+            // check if recently installed:
+            // TODO: move to client?
+            final InstallerDocument document = manager.fetchDocument(GlobalUtils.getFullConfigPath(pluginClass), InstallerDocument.class);
+            if (document != null && document.getDateInstalled() != null) {
+                final Calendar dateInstalled = document.getDateInstalled();
+                final Calendar lastWeek = Calendar.getInstance();
+                lastWeek.add(Calendar.DAY_OF_MONTH, WEEK_OLD);
+                if (dateInstalled.after(lastWeek)) {
+                    item.setDateInstalled(dateInstalled);
                 }
             }
+
         }
         return plugins;
     }
 
-    public static List<PluginRestful> parseGist(final String pluginList) {
+    public static List<PluginRestful> parseGist() {
         try {
+            final RestClient client = new RestClient("https://api.github.com/gists/8453217");
+            final String pluginList = client.getPluginList();
             final Gson gson = new Gson();
             final Gist gist = gson.fromJson(pluginList, Gist.class);
             final Map<String, GistFile> files = gist.getFiles();
@@ -133,7 +153,7 @@ public class PluginResource extends BaseResource {
             }.getType();
             final RestfulList<PluginRestful> restfulList = gson.fromJson(json, listType);
             return restfulList.getItems();
-        } catch (JsonParseException e) {
+        } catch (Exception e) {
             log.error("Error parsing gist", e);
         }
         return Collections.emptyList();
@@ -202,7 +222,7 @@ public class PluginResource extends BaseResource {
         return resource;
     }
 
-    @GET
+    @POST
     @Path("/install/{className}")
     public MessageRestful installPlugin(@Context ServletContext servletContext, @PathParam("className") String className) {
 
@@ -210,21 +230,36 @@ public class PluginResource extends BaseResource {
         final RestfulList<PluginRestful> pluginList = getPluginList(servletContext);
         for (PluginRestful plugin : pluginList.getItems()) {
             final String pluginClass = plugin.getPluginClass();
-            if(Strings.isNullOrEmpty(pluginClass)){
+            if (Strings.isNullOrEmpty(pluginClass)) {
                 continue;
             }
             if (pluginClass.equals(className)) {
-                Plugin p = new org.onehippo.cms7.essentials.dashboard.model.EssentialsPlugin();
+                final Plugin p = new org.onehippo.cms7.essentials.dashboard.model.EssentialsPlugin();
                 p.setDescription(plugin.getIntroduction());
                 p.setPluginClass(pluginClass);
+                if (checkInstalled(p)) {
+                    message.setValue("Plugin was already installed. Please rebuild and restart your application");
+                    return message;
+                }
+
+
                 final boolean installed = installPlugin(p);
                 if (installed) {
-                    message.setValue("Plugin successfully installed");
+                    final DocumentManager manager = new DefaultDocumentManager(getContext(servletContext));
+                    final InstallerDocument document = new InstallerDocument();
+                    document.setParentPath(GlobalUtils.getParentConfigPath(pluginClass));
+                    document.setName(GlobalUtils.getClassName(pluginClass));
+                    document.setDateInstalled(Calendar.getInstance());
+                    document.setPluginClass(pluginClass);
+                    manager.saveDocument(document);
+                    message.setValue("Plugin successfully installed. Please rebuild and restart your application");
                     return message;
                 }
             }
         }
-        message.setValue("Plugin could not be installed");
+
+        message.setSuccessMessage(false);
+        message.setValue("Plugin was not found and could not be installed");
         return message;
     }
 }

@@ -1,6 +1,28 @@
 <div class="row">
-    <p>Welcome to the Hippo Essentials CMS setup.</p>
-    Using this tool you can easily <a href="#/find-plugins">add additional</a> or
-    <a href="#/plugins">configure existing</a> plugins for your project or perform common
-    <a href="#/tools">developer tasks</a>.
+    <div class="col-lg-10">
+        <p>Welcome to the Hippo Essentials CMS setup.</p>
+        Using this tool you can easily <a href="#/find-plugins">add additional</a> or
+        <a href="#/plugins">configure existing</a> plugins for your project or perform common
+        <a href="#/tools">developer tasks</a>.
+
+    </div>
+    <!-- DISPLAY RECENTLY INSTALLED -->
+    <div class="col-lg-10" style="margin-top: 40px;" ng-hide="!plugins.length">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th class="nav nav-justified" colspan="2">There are recently installed plugins that can be configured:</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="plugin in plugins">
+                <td>{{plugin.name}}</td>
+                <td>{{plugin.introduction}}</td>
+                <td class="pull-right">
+                    <a class="btn btn-primary" href="#/plugins/{{plugin.pluginLink}}">Configure</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>

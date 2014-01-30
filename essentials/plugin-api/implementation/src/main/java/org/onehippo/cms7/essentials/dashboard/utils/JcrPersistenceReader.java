@@ -90,6 +90,8 @@ public class JcrPersistenceReader {
                     field.set(document, myProperty.getBoolean());
                 } else if (type == Long.class || type == long.class) {
                     field.set(document, myProperty.getLong());
+                } else if (type == Calendar.class) {
+                    field.set(document, myProperty.getDate());
                 } else {
                     log.error("@@@ PROPERTY READING NOT IMPLEMENTED FOR TYPE: {}", type);
                 }

@@ -1,6 +1,7 @@
 package org.onehippo.cms7.essentials.rest.model;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -20,6 +21,26 @@ public class PluginRestful implements Restful {
     private String introduction;
     private String pluginLink;
     private String pluginClass;
+    private String type;
+    private boolean installed;
+    private boolean needsInstallation;
+    private Calendar dateInstalled;
+
+    public Calendar getDateInstalled() {
+        return dateInstalled;
+    }
+
+    public void setDateInstalled(final Calendar dateInstalled) {
+        this.dateInstalled = dateInstalled;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(final String type) {
+        this.type = type;
+    }
 
     public String getName() {
         return name;
@@ -29,8 +50,7 @@ public class PluginRestful implements Restful {
         this.name = name;
     }
 
-    private boolean installed;
-    private boolean needsInstallation;
+
 
     public boolean isNeedsInstallation() {
         return needsInstallation;

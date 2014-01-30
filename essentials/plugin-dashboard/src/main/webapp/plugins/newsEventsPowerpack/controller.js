@@ -6,7 +6,7 @@
             .controller('newsEventsCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
 
                 $scope.hideAll = false;
-                $scope.installSampleData = false;
+                $scope.installSampleData = true;
                 $scope.stepVisible = [true, false];
                 $scope.resultMessages = null;
                 $scope.selectedDescription = "Please make a selection";
@@ -40,13 +40,10 @@
                     for (var i = 0; i < $scope.packs.items.length; i++) {
                         var powerpack = $scope.packs.items[i];
                         if (powerpack.value === $scope.selectedItem) {
-
-                            console.log(powerpack.name);
                             $scope.selectedDescription = $scope.getDescription(powerpack.name);
                         }
                     }
                 };
-
 
                 $scope.onWizardButton = function (idx) {
                     if (idx == 0) {

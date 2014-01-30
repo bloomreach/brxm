@@ -23,9 +23,12 @@
             }).controller('toolCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
                 // does nothing for time being
             })
-        // loads plugin list
             .controller('pluginCtrl', function ($scope, $location, $sce, $log, $rootScope, $http) {
 
+                $scope.allPluginsInstalled = "No additional plugins could be found";
+                $scope.plugins = [];
+                $scope.pluginNeedsInstall = [];
+                $scope.selectedPlugin = null;
                 $scope.tabs = [
                     {name: "Installed Plugins", link: "/plugins"},
                     {name: "Find additional", link: "/find-plugins"}
@@ -33,20 +36,49 @@
                 $scope.isPageSelected = function (path) {
                     return $location.path() == path;
                 };
-                //plugin list
+
+
+                $scope.showPluginDetail = function (pluginClass) {
+                    $scope.selectedPlugin  = extracted(pluginClass);
+                };
+                $scope.installPlugin = function (pluginClass) {
+                    $scope.selectedPlugin  = extracted(pluginClass);
+                    if($scope.selectedPlugin){
+                        $http.post($rootScope.REST.pluginInstall+pluginClass).success(function (data) {
+                            // we'll get error message or
+                            $scope.init();
+                        });
+                    }
+                };
+
+
+                //fetch plugin list
                 $scope.init = function () {
-                    $http({
-                        method: 'GET',
-                        url: $rootScope.REST.plugins
-                    }).success(function (data) {
-                        console.log("===================");
-                        console.log(data);
-                        console.log("===================");
+                    $http.get($rootScope.REST.plugins).success(function (data) {
                         $scope.plugins = data.items;
+                        $scope.pluginNeedsInstall = [];
+                        for (var i = 0; i < data.items.length; i++) {
+                            var obj = data.items[i];
+                            if(obj.needsInstallation){
+                                $scope.pluginNeedsInstall.push(obj);
+                            }
+                        }
                     });
 
                 };
                 $scope.init();
+                function extracted(pluginClass) {
+                    for (var i = 0; i < $scope.plugins.length; i++) {
+                        var selected = $scope.plugins[i];
+                        if (selected.pluginClass == pluginClass) {
+                            return selected;
+                        }
+
+                    }
+                    return null;
+                }
+
+
 
             })
 
@@ -55,9 +87,22 @@
          // ON LOAD CONTROLLER
          //############################################
          */
-            .controller('homeCtrl', function ($scope, $sce, $log) {
+            .controller('homeCtrl', function ($scope, $http, $rootScope) {
+                $scope.plugins = [];
                 $scope.init = function () {
-                    $log.info("...Essentials loaded...");
+                    $http.get($rootScope.REST.plugins).success(function (data) {
+                        $scope.plugins =  [];
+                        var items = data.items;
+                        for (var i = 0; i < items.length; i++) {
+                            var plugin = items[i];
+
+                            if(plugin.dateInstalled){
+                                $scope.plugins.push(plugin);
+                            }
+
+                        }
+                    });
+
                 };
                 $scope.init();
 

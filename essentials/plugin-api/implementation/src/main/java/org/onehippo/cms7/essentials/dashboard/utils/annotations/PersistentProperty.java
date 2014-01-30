@@ -21,6 +21,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Calendar;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -92,6 +93,8 @@ public @interface PersistentProperty {
                         node.setProperty(name, (String) value);
                     } else if (value instanceof Boolean) {
                         node.setProperty(name, (Boolean) value);
+                    } else if (value instanceof Calendar) {
+                        node.setProperty(name, (Calendar) value);
                     } else {
                         throw new NotImplementedException("Property writer not implemented for: " + value.getClass());
                     }
