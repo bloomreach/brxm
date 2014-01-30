@@ -138,7 +138,7 @@ public class PowerpackResource extends BaseResource {
 
         // add documentation messages:
         eventBus.post(new DisplayEvent(
-                "\nmvn clean package\n" +
+                "mvn clean package\n" +
                         "mvn -P cargo.run\n", DisplayEvent.DisplayType.PRE, true));
         //eventBus.post(new DisplayEvent("Please rebuild and restart your application:", DisplayEvent.DisplayType.STRONG, true));
 
