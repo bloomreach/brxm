@@ -17,15 +17,24 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Node;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
+import com.google.common.collect.Iterables;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_REPOBASED;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_ROLES;
 
 public class SiteMenuItemHelper {
 
@@ -49,21 +58,32 @@ public class SiteMenuItemHelper {
      * @throws RepositoryException
      */
     public void update(Node node, SiteMenuItemRepresentation modifiedItem) throws RepositoryException {
-        final String newName = modifiedItem.getName();
-        if (newName != null && !newName.equals(node.getName())) {
-            rename(node, newName);
+        final String modifiedName = modifiedItem.getName();
+        if (modifiedName != null && !modifiedName.equals(node.getName())) {
+            rename(node, modifiedName);
         }
-        final String newExternalLink = modifiedItem.getExternalLink();
-        if (newExternalLink != null) {
-            node.setProperty(SITEMENUITEM_PROPERTY_EXTERNALLINK, newExternalLink);
+        final String modifiedExternalLink = modifiedItem.getExternalLink();
+        if (modifiedExternalLink != null) {
+            node.setProperty(SITEMENUITEM_PROPERTY_EXTERNALLINK, modifiedExternalLink);
         }
-        final String newSiteMapItemPath = modifiedItem.getSiteMapItemPath();
-        if (newSiteMapItemPath != null) {
-            node.setProperty(SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM, newSiteMapItemPath);
+        final String modifiedSiteMapItemPath = modifiedItem.getSiteMapItemPath();
+        if (modifiedSiteMapItemPath != null) {
+            node.setProperty(SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM, modifiedSiteMapItemPath);
         }
-        final boolean newRepositoryBased = modifiedItem.isRepositoryBased();
-        node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, newRepositoryBased);
-        // TODO (meggermont) add all other properties too.
+        final boolean modifiedRepositoryBased = modifiedItem.isRepositoryBased();
+        node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, modifiedRepositoryBased);
+
+        final Map<String, String> modifiedLocalParameters = modifiedItem.getLocalParameters();
+        if (modifiedLocalParameters != null) {
+            final String[][] namesAndValues = mapToNameValueArrays(modifiedLocalParameters);
+            node.setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, namesAndValues[0], PropertyType.STRING);
+            node.setProperty(GENERAL_PROPERTY_PARAMETER_VALUES, namesAndValues[1], PropertyType.STRING);
+        }
+        final Set<String> modifiedRoles = modifiedItem.getRoles();
+        if (CollectionUtils.isNotEmpty(modifiedRoles)) {
+            final String[] roles = Iterables.toArray(modifiedRoles, String.class);
+            node.setProperty(SITEMENUITEM_PROPERTY_ROLES, roles, PropertyType.STRING);
+        }
     }
 
     /**
@@ -109,6 +129,18 @@ public class SiteMenuItemHelper {
         } else {
             return null;
         }
+    }
+
+    private String[][] mapToNameValueArrays(final Map<String, String> map) {
+        final int size = map.size();
+        final String[][] namesAndValues = {
+                map.keySet().toArray(new String[size]),
+                new String[size]
+        };
+        for (int i = 0; i < size; i++) {
+            namesAndValues[1][i] = map.get(namesAndValues[0][i]);
+        }
+        return namesAndValues;
     }
 
 }

@@ -16,23 +16,35 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
+import java.util.HashMap;
+import java.util.HashSet;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.easymock.Capture;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_REPOBASED;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_ROLES;
+import static org.junit.Assert.assertThat;
 
 public class SiteMenuItemHelperTest {
 
@@ -126,6 +138,43 @@ public class SiteMenuItemHelperTest {
 
         replay(mocks);
         siteMenuItemHelper.update(node, modifiedItem);
+        verify(mocks);
+    }
+
+    @Test
+    public void testUpdateRoles() throws RepositoryException {
+
+        final SiteMenuItemRepresentation modifiedItem = new SiteMenuItemRepresentation();
+        modifiedItem.setRoles(new HashSet<String>());
+        modifiedItem.getRoles().add("role");
+
+        final Capture<String[]> roles = new Capture<>();
+        expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
+        expect(node.setProperty(eq(SITEMENUITEM_PROPERTY_ROLES), capture(roles), eq(PropertyType.STRING))).andReturn(null);
+
+        replay(mocks);
+        siteMenuItemHelper.update(node, modifiedItem);
+        assertThat(roles.getValue()[0], is("role"));
+        verify(mocks);
+    }
+
+    @Test
+    public void testUpdateLocalParameters() throws RepositoryException {
+
+        final SiteMenuItemRepresentation modifiedItem = new SiteMenuItemRepresentation();
+        modifiedItem.setLocalParameters(new HashMap<String, String>());
+        modifiedItem.getLocalParameters().put("name", "value");
+
+        expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
+        final Capture<String[]> names = new Capture<>();
+        expect(node.setProperty(eq(GENERAL_PROPERTY_PARAMETER_NAMES), capture(names), eq(PropertyType.STRING))).andReturn(null);
+        final Capture<String[]> values = new Capture<>();
+        expect(node.setProperty(eq(GENERAL_PROPERTY_PARAMETER_VALUES), capture(values), eq(PropertyType.STRING))).andReturn(null);
+
+        replay(mocks);
+        siteMenuItemHelper.update(node, modifiedItem);
+        assertThat(names.getValue()[0], is("name"));
+        assertThat(values.getValue()[0], is("value"));
         verify(mocks);
     }
 

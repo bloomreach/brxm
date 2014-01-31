@@ -30,7 +30,6 @@ public class SiteMenuItemRepresentation {
     String externalLink;
     String siteMapItemPath;
     boolean repositoryBased;
-    Map<String, String> parameters;
     Map<String, String> localParameters;
     Set<String> roles;
 
@@ -47,7 +46,6 @@ public class SiteMenuItemRepresentation {
         externalLink = item.getExternalLink();
         siteMapItemPath = item.getSiteMapItemPath();
         repositoryBased = item.isRepositoryBased();
-        parameters = item.getParameters();
         localParameters = item.getLocalParameters();
         roles = item.getRoles();
         for (HstSiteMenuItemConfiguration childItem : item.getChildItemConfigurations()) {
@@ -96,14 +94,6 @@ public class SiteMenuItemRepresentation {
 
     public void setRepositoryBased(final boolean repositoryBased) {
         this.repositoryBased = repositoryBased;
-    }
-
-    public Map<String, String> getParameters() {
-        return parameters;
-    }
-
-    public void setParameters(final Map<String, String> parameters) {
-        this.parameters = parameters;
     }
 
     public Map<String, String> getLocalParameters() {
