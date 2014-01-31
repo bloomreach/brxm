@@ -23,13 +23,13 @@
   <parent>
     <groupId>org.onehippo.cms7.essentials</groupId>
     <artifactId>hippo-dashboard-powerpacks</artifactId>
-    <version>1.01.00</version>
+    <version>1.01.01-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Essentials basic powerpack</name>
   <description>Hippo Essentials basic powerpack</description>
   <artifactId>hippo-essentials-basic-powerpack</artifactId>
-  <version>1.01.00</version>
+  <version>1.01.01-SNAPSHOT</version>
   <packaging>jar</packaging>
 
 
