@@ -28,7 +28,7 @@ module.exports = function(config) {
 
         // list of files / patterns to load in the browser
         files: [
-            // app dependencies
+            // dependencies
             'components/jquery/jquery.js',
             'components/angular/angular.js',
             'components/angular-route/angular-route.js',
@@ -41,8 +41,8 @@ module.exports = function(config) {
             'components/jasmine-jquery/lib/jasmine-jquery.js',
             'components/angular-mocks/angular-mocks.js',
 
-            // app sources
-           'app/**/*.js',
+            // sources
+            'menu-manager/**/*.js',
 
             // tests
             {

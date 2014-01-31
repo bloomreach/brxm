@@ -69,13 +69,13 @@ module.exports = function (grunt) {
 
         // copy files
         copy: {
-            app: {
+            menuManager: {
                 files: [
                     {
                         expand: true,
                         dot: true,
-                        cwd: '<%= build.source %>/app',
-                        dest: '<%= build.target %>/app',
+                        cwd: '<%= build.source %>/menu-manager',
+                        dest: '<%= build.target %>/menu-manager',
                         src: [
                             '**/*.html',
                             '**/*.js',
@@ -102,11 +102,11 @@ module.exports = function (grunt) {
 
         // watch
         watch: {
-            app: {
+            menuManager: {
                 files: [
-                    '<%= build.source %>/app/**/*'
+                    '<%= build.source %>/menu-manager/**/*'
                 ],
-                tasks: ['copy:app']
+                tasks: ['copy:menuManager']
             },
 
             components: {
@@ -121,7 +121,7 @@ module.exports = function (grunt) {
                     livereload: true
                 },
                 files: [
-                    '<%= build.source %>/app/**/*'
+                    '<%= build.source %>/menu-manager/**/*'
                 ]
             }
         },
@@ -138,12 +138,12 @@ module.exports = function (grunt) {
 
         // validate source code with jslint
         jslint: {
-            app: {
+            menuManager: {
                 src: [
-                    '<%= build.source %>/app/**/*.js'
+                    '<%= build.source %>/menu-manager/**/*.js'
                 ],
                 exclude: [
-                    '<%= build.source %>/app/**/*.spec.js'
+                    '<%= build.source %>/menu-manager/**/*.spec.js'
                 ],
                 directives: {
                     predef: [
@@ -158,7 +158,7 @@ module.exports = function (grunt) {
             },
             tests: {
                 src: [
-                    '<%= build.source %>/app/**/*.spec.js'
+                    '<%= build.source %>/menu-manager/**/*.spec.js'
                 ],
                 directives: {
                     predef: [
@@ -204,7 +204,7 @@ module.exports = function (grunt) {
             'test:unit',
             'declutter',
             'clean:target',
-            'copy:app',
+            'copy:menuManager',
             'copy:components'
         ]);
     });

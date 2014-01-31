@@ -21,7 +21,7 @@
 
         .service('hippo.channelManager.menuManagement.Container', [
             '$log',
-            'hippo.channelManager.menuManagement.IFrameService',
+            '_hippo.channelManager.menuManagement.IFrameService',
             function($log, IFrameService) {
                 function closeIFrame() {
                     var iframePanel;

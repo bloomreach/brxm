@@ -19,7 +19,7 @@
     angular.module('hippo.channelManager.menuManagement')
 
         .service('hippo.channelManager.menuManagement.ConfigService', [
-            'hippo.channelManager.menuManagement.IFrameService',
+            '_hippo.channelManager.menuManagement.IFrameService',
             function(IFrame) {
                 var config = {
                     apiUrlPrefix: 'http://localhost:8080/site/_rp',

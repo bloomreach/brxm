@@ -52,9 +52,9 @@ describe('IFrame Service', function () {
         });
     });
 
-    beforeEach(inject(['$log', 'hippo.channelManager.menuManagement.IFrameService', function (_$log_, $IFrameService) {
-        $log = _$log_;
-        iframeService = $IFrameService;
+    beforeEach(inject(['$log', '_hippo.channelManager.menuManagement.IFrameService', function (log, IFrameService) {
+        $log = log;
+        iframeService = IFrameService;
     }]));
 
     it('should exist', function() {

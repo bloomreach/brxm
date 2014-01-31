@@ -15,6 +15,6 @@
  */
 
 module.exports = {
-    source: 'src/js',
+    source: 'js',
     target: 'target/classes/angular'
 };

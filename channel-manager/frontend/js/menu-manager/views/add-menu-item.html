@@ -1,0 +1,85 @@
+<!--
+  ~ Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~  http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<div class="container" id="container">
+    <div class="row">
+
+        <!-- START Tree Component -->
+        <div class="col-sm-4" id="menu-tree" data-ng-controller="hippo.channelManager.menuManagement.TreeCtrl">
+            <div file-tree tree-data="menuTree" on-select="setSelectedItem(branch)"></div>
+        </div>
+        <!-- END Tree Component -->
+
+        <div class="col-sm-8" id="form-panel" data-ng-controller="hippo.channelManager.menuManagement.AddMenuItemFormCtrl">
+            <form role="form">
+                <legend>{{ 'ADD_NEW_MENU_ITEM' | translate }}</legend>
+                <div class="form-group">
+                    <label for="label">{{ 'LABEL' | translate }}</label>
+                    <input type="text" class="form-control" id="label" placeholder="{{ 'LABEL' | translate }}" ng-model="selectedMenuItem.name">
+                </div>
+                <label for="url">{{ 'DESTINATION' | translate }}</label>
+                <div class="form-group">
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="destination"  ng-model="selectedMenuItem.destination" value="1" checked="checked">
+                            {{ 'SITEMAP_ITEM' | translate }}
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="destination" ng-model="selectedMenuItem.destination" value="2">
+                            {{ 'EXTERNAL_LINK' | translate }}
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="destination" ng-model="selectedMenuItem.destination" value="3">
+                            {{ 'NONE' | translate }}
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group" ng-show="selectedMenuItem.destination == 1">
+                    <label for="url">{{ 'INTERNAL_LINK' | translate }}</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="url" data-ng-model="selectedMenuItem.siteMapItemPath">
+                          <span class="input-group-btn">
+                            <button class="btn btn-default" type="button"><i class="fa fa-external-link"></i></button>
+                          </span>
+                    </div>
+                </div>
+                <div class="form-group" ng-show="selectedMenuItem.destination == 1">
+                    <button type="button" class="btn btn-default btn-sm">
+                        <i class="fa fa-crosshairs"></i> {{ 'SELECT_DOCUMENT' | translate }}
+                    </button>
+                    <button type="button" class="btn btn-default btn-sm">
+                        <i class="fa fa-crosshairs"></i> {{ 'SELECT_LANDING_PAGE' | translate }}
+                    </button>
+                    <button type="button" class="btn btn-default btn-sm" ng-click="createNewPage()">
+                        <i class="fa fa-plus"></i> {{ 'CREATE_NEW_PAGE' | translate }}
+                    </button>
+                </div>
+                <div class="form-group" ng-show="selectedMenuItem.destination == 2">
+                    <label for="link">{{ 'EXTERNAL_LINK' | translate }}</label>
+                    <input type="text" class="form-control" id="link" placeholder="{{ 'EXAMPLE_DOMAIN' | translate }}" ng-model="selectedMenuItem.externalLink">
+                </div>
+
+                <button type="submit" class="btn btn-default" ng-click="submit(newitem)">{{ 'CREATE_MENU_ITEM' | translate }}</button>
+                <button type="submit" class="btn btn-link" ng-click="cancel()">{{ 'CANCEL' | translate }}</button>
+            </form>
+
+        </div>
+    </div>
+</div>

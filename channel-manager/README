@@ -42,7 +42,7 @@ Develop AngularJS UI with live reload
 
 Some UI parts in the 'frontend' module are build with AngularJS. The client-side
 dependencies are fetched with Bower. Grunt takes care of building the AnguluarJS
-app, and copies files from frontend/src/js into the Maven target folder.
+sources, and copies files from frontend/js into the Maven target folder.
 
 Grunt can also watch the AngularJS sources for changes, and reload the AngularJS
 application automatically while the CMS is running. To make this happen:
