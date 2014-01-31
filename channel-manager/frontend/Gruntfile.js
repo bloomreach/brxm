@@ -209,6 +209,10 @@ module.exports = function (grunt) {
         ]);
     });
 
+    grunt.registerTask('test', [
+        'test:unit'
+    ]);
+
     grunt.registerTask('test:unit', [
         'karma:single'
     ]);
