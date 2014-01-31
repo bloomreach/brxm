@@ -88,6 +88,7 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
+import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,7 +99,7 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(FullReviewedActionsWorkflowPlugin.class);
 
-    private String stateSummary = StringUtils.EMPTY;
+    @SuppressWarnings("unused") // used by a PropertyModel
     private String inUseBy = StringUtils.EMPTY;
 
     private StdWorkflow infoAction;
@@ -599,42 +600,45 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
         return stringCodecFactory.getStringCodec("encoding.node");
     }
 
+    @SuppressWarnings("unused")  // used by a PropertyModel
+    public String getStateSummary() {
+        try {
+            WorkflowDescriptorModel wdm = getModel();
+            Node handleNode = wdm.getNode();
+            for (Node child : new NodeIterable(handleNode.getNodes())) {
+                if (child.hasProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY)) {
+                    return child.getProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY).getString();
+                }
+            }
+        } catch (RepositoryException ex) {
+            log.warn("Unable to ascertain state summary", ex);
+        }
+        return "";
+    }
+
     private void hideInvalidActions() {
         try {
             WorkflowManager manager = UserSession.get().getWorkflowManager();
             WorkflowDescriptorModel wdm = getModel();
             WorkflowDescriptor workflowDescriptor = wdm.getObject();
             if (workflowDescriptor != null) {
-                Node documentNode = wdm.getNode();
-                if (documentNode != null && documentNode.hasProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY)) {
-                    stateSummary = documentNode.getProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY).getString();
-                }
                 Workflow workflow = manager.getWorkflow(workflowDescriptor);
                 Map<String, Serializable> info = workflow.hints();
-                if ((documentNode != null && !documentNode.hasProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY))
-                        || (info.containsKey("obtainEditableInstance") && info.get("obtainEditableInstance") instanceof Boolean
-                        && !(Boolean) info.get("obtainEditableInstance"))) {
-                    editAction.setVisible(false);
-                }
-                if (info.containsKey("publish") && info.get("publish") instanceof Boolean && !(Boolean) info.get("publish")) {
-                    publishAction.setVisible(false);
-                    schedulePublishAction.setVisible(false);
-                }
-                if (info.containsKey("depublish") && info.get("depublish") instanceof Boolean && !(Boolean) info.get("depublish")) {
-                    depublishAction.setVisible(false);
-                    scheduleDepublishAction.setVisible(false);
-                }
+
+                hideIfNecessary(info, "obtainEditableInstance", editAction);
+                hideIfNecessary(info, "publish", publishAction);
+                hideIfNecessary(info, "schedpublish", schedulePublishAction);
+
+                hideIfNecessary(info, "depublish", depublishAction);
+                hideIfNecessary(info, "scheddepublish", scheduleDepublishAction);
+
                 hideOrDisable(deleteAction, info, "delete");
                 hideOrDisable(renameAction, info, "rename");
                 hideOrDisable(moveAction, info, "move");
-                if (info.containsKey("copy") && info.get("copy") instanceof Boolean && !(Boolean) info.get("copy")) {
-                    copyAction.setVisible(false);
-                }
-                if (info.containsKey("status") && info.get("status") instanceof Boolean && !(Boolean) info.get("status")) {
-                    infoAction.setVisible(false);
-                    whereUsedAction.setVisible(false);
-                    historyAction.setVisible(false);
-                }
+
+                hideIfNecessary(info, "copy", copyAction);
+                hideIfNecessary(info, "status", infoAction, whereUsedAction, historyAction);
+
                 if (info.containsKey("inUseBy") && info.get("inUseBy") instanceof String) {
                     inUseBy = (String) info.get("inUseBy");
                     infoEditAction.setVisible(true);
@@ -642,12 +646,16 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
                     infoEditAction.setVisible(false);
                 }
             }
-        } catch (RepositoryException ex) {
+        } catch (RepositoryException | WorkflowException | RemoteException ex) {
             log.error(ex.getMessage(), ex);
-        } catch (WorkflowException ex) {
-            log.error(ex.getMessage(), ex);
-        } catch (RemoteException ex) {
-            log.error(ex.getMessage(), ex);
+        }
+    }
+
+    void hideIfNecessary(Map<String, Serializable> info, String key, StdWorkflow... actions) {
+        if (info.containsKey(key) && info.get(key) instanceof Boolean && !(Boolean) info.get(key)) {
+            for (StdWorkflow action : actions) {
+                action.setVisible(false);
+            }
         }
     }
 

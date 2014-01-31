@@ -16,7 +16,7 @@
 -->
 <sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="combine"
          sv:name="default">
-  <sv:node sv:name="reviewedactions" h:merge="overlay">
+  <sv:node sv:name="handle" h:merge="overlay">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:workflow</sv:value>
     </sv:property>
@@ -32,74 +32,6 @@
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.reviewedactions.FullReviewedActionsWorkflowPlugin</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="scheduledrequests" h:merge="overlay">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:workflow</sv:value>
-    </sv:property>
-    <sv:node sv:name="frontend:renderer">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.reviewedactions.CancelWorkflowPlugin</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="basicscheduledrequests" h:merge="overlay">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:workflow</sv:value>
-    </sv:property>
-    <sv:node sv:name="frontend:renderer">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.standardworkflow.NullWorkflowPlugin</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="authorreviewedactions" h:merge="overlay">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:workflow</sv:value>
-    </sv:property>
-    <sv:node sv:name="frontend:renderer">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="editor.id" sv:type="String">
-        <sv:value>${editor.id}</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.reviewedactions.BasicReviewedActionsWorkflowPlugin</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="reviewedrequests" h:merge="overlay">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:workflow</sv:value>
-    </sv:property>
-    <sv:node sv:name="frontend:renderer">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.reviewedactions.FullRequestWorkflowPlugin</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="authorreviewedrequests" h:merge="overlay">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:workflow</sv:value>
-    </sv:property>
-    <sv:node sv:name="frontend:renderer">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.reviewedactions.BasicRequestWorkflowPlugin</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

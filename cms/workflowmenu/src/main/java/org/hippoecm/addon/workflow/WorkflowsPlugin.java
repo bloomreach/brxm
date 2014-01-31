@@ -20,7 +20,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -28,6 +27,7 @@ import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.model.event.Observer;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderService;
@@ -94,19 +94,12 @@ public class WorkflowsPlugin extends AbstractWorkflowPlugin {
                         if (node.isNodeType(HippoNodeType.NT_DOCUMENT)
                                 && node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
                             Node handle = node.getParent();
-                            for (NodeIterator iter = handle.getNodes(); iter.hasNext();) {
-                                node = iter.nextNode();
-                                if (node != null) {
-                                    nodeSet.add(node);
-                                }
-                            }
+                            nodeSet.add(handle);
                             handleModel = new JcrNodeModel(handle);
-                            getPluginContext().registerService(handleObserver = new IObserver<JcrNodeModel>() {
-                                public JcrNodeModel getObservable() {
-                                    return handleModel;
-                                }
 
-                                public void onEvent(Iterator<? extends IEvent<JcrNodeModel>> event) {
+                            getPluginContext().registerService(handleObserver = new Observer<JcrNodeModel>(handleModel) {
+                                @Override
+                                public void onEvent(final Iterator<? extends IEvent<JcrNodeModel>> events) {
                                     onModelChanged();
                                 }
                             }, IObserver.class.getName());

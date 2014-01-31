@@ -94,7 +94,7 @@
     <hippo.commons.version>1.03.01-SNAPSHOT</hippo.commons.version>
     <hippo.utilities.version>1.02.01-SNAPSHOT</hippo.utilities.version>
     <hippo.services.version>1.03.04-SNAPSHOT</hippo.services.version>
-    <hippo.repository.version>2.25.05-SNAPSHOT</hippo.repository.version>
+    <hippo.repository.version>2.25.05-scxml-SNAPSHOT</hippo.repository.version>
 
     <!-- Test dependencies  -->
     <easymock.version>2.4</easymock.version>
