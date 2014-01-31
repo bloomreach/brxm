@@ -12,7 +12,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.onehippo.cms7.essentials.rest.model.KeyValueRestful;
 import org.onehippo.cms7.essentials.rest.model.RestfulList;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.CBPayload;
-import org.onehippo.cms7.essentials.rest.model.contentblocks.DocumentTypes;
+import org.onehippo.cms7.essentials.rest.model.contentblocks.DocumentType;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -36,18 +36,18 @@ public class ContentBlocksTest {
         String myString = IOUtils.toString(resourceAsStream, "UTF-8");
 
         final CBPayload o = new Gson().fromJson(myString, type);
-        final int size = o.getItems().getItems().size();
+        final int size = o.getDocumentTypes().getItems().size();
         assertTrue(size==2);
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         CBPayload cbPayload = new CBPayload();
-        final RestfulList<DocumentTypes> types = new RestfulList<>();
+        final RestfulList<DocumentType> types = new RestfulList<>();
         final RestfulList<KeyValueRestful> keyValueRestfulRestfulList = new RestfulList<>();
         keyValueRestfulRestfulList.add(new KeyValueRestful("Provider 1", "Provider 1"));
         keyValueRestfulRestfulList.add(new KeyValueRestful("Provider 2", "Provider 2"));
-        types.add(new DocumentTypes("News document", "namespace:news", keyValueRestfulRestfulList));
-        types.add(new DocumentTypes("News documen2", "namespace:news", keyValueRestfulRestfulList));
-        cbPayload.setItems(types);
+        types.add(new DocumentType("News document", "namespace:news", keyValueRestfulRestfulList));
+        types.add(new DocumentType("News documen2", "namespace:news", keyValueRestfulRestfulList));
+        cbPayload.setDocumentTypes(types);
         String jsonOutput = gson.toJson(cbPayload);
         assertTrue(StringUtils.isNotEmpty(jsonOutput));
 

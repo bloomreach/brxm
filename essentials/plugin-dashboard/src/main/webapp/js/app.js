@@ -14,7 +14,7 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.essentials', ['ngRoute', 'localytics.directives','ui.bootstrap', 'ui.sortable'])
+    angular.module('hippo.essentials', ['ngRoute', 'localytics.directives','ui.bootstrap', 'ui.sortable', 'ui.router'])
 
 //############################################
 // GLOBAL LOADING
@@ -90,15 +90,14 @@
 //############################################
 
 
-            .run(function ($rootScope, $location, $log, $http, $templateCache, MyHttpInterceptor) {
+            .run(function ($rootScope, $location, $log, $http, $state) {
                 $rootScope.headerMessage = "Welcome on the Hippo Trail";
                 // routing listener
-                $rootScope.$on('$routeChangeStart', function (event, next, current) {
+                $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+
                     // check if we need powerpacks install check
-                    /*if(!$rootScope.checkDone && ($location.url() != "/" || $location.url() != "")){
-                     var url = $location.url();
-                     $log.info("Redirecting to [/]: needs powerpack install check:");
-                     $location.path('/');
+                  /*  if(!$rootScope.checkDone && (toState != "powerpacks" && $location.url() != "/" || $location.url() != "")){
+                        $state.transitionTo('powerpacks');
                      }*/
 
                 });
@@ -182,6 +181,11 @@
 
                 $rootScope.initData();
             })
+
+        //############################################
+        // DIRECTIVES
+        //############################################
+
 
 //############################################
 // FILTERS

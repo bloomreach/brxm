@@ -1,0 +1,6 @@
+<div class="col-lg-2" style="padding-left: 0;">
+
+    <div class="list-group">
+        <a href="#/plugins/{{plugin.pluginLink}}" class="list-group-item" ng-repeat="plugin in plugins | filter:{needsInstallation:false}">{{plugin.name}}</a>
+    </div>
+</div>

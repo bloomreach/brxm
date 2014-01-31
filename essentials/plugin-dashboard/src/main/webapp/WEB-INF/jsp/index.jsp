@@ -10,6 +10,7 @@
 
   <script src="${pageContext.request.contextPath}/js/lib/angular.js"></script>
   <script src="${pageContext.request.contextPath}/js/lib/angular-route.min.js"></script>
+  <script src="${pageContext.request.contextPath}/js/lib/angular-ui-router.js"></script>
 
   <script src="${pageContext.request.contextPath}/js/lib/chosen.jquery.js"></script>
   <script src="${pageContext.request.contextPath}/js/lib/chosen.js"></script>
@@ -21,8 +22,8 @@
   <%--<script src="${pageContext.request.contextPath}/js/require.js"></script>--%>
 
   <!--<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.3/angular.min.js"></script>-->
-<%--  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.3/angular-route.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>--%>
+  <%--  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.3/angular-route.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>--%>
   <script src="${pageContext.request.contextPath}/js/lib/ui-bootstrap-0.10.js"></script>
 
   <script src="${pageContext.request.contextPath}/js/Essentials.js"></script>
@@ -30,12 +31,11 @@
   <script src="${pageContext.request.contextPath}/js/routes.js"></script>
   <script src="${pageContext.request.contextPath}/js/controllers.js"></script>
   <%--  TODO make dynamic--%>
-  <script src="${pageContext.request.contextPath}/plugins/contentBlocks/controller.js"></script>
+  <script src="${pageContext.request.contextPath}/plugins/contentBlocks/contentBlocks.js"></script>
   <script src="${pageContext.request.contextPath}/plugins/galleryPlugin/controller.js"></script>
   <script src="${pageContext.request.contextPath}/plugins/newsEventsPowerpack/controller.js"></script>
   <script src="${pageContext.request.contextPath}/plugins/xinhaPlugin/xinhaPlugin.js"></script>
   <script src="${pageContext.request.contextPath}/tools/beanwriter/controller.js"></script>
-
 
 
 </head>
@@ -66,26 +66,28 @@
       <a href="${pageContext.request.contextPath}"><img src="${pageContext.request.contextPath}/images/hippo-logo.png"></a>
     </div>
     <div class="hippo-header-text">
-           {{headerMessage}}
+      {{headerMessage}}
     </div>
 
   </div>
   <div class="col-sm-2" style="margin-right: 20px;" ng-controller="mainMenuCtrl">
     <ul class="nav nav-stacked nav-pills" ng-show="packsInstalled">
       <li ng-repeat="item in menu" ng-class="{true:'active', false:''}[isPageSelected('{{item.link}}')]">
-        <a  href="{{item.link}}" ng-click="onMenuClick(item)">{{item.name}}</a>
+        <a href="{{item.link}}" ng-click="onMenuClick(item)">{{item.name}}</a>
       </li>
     </ul>
 
   </div>
   <div class="col-sm-9" ng-controller="homeCtrl">
-    <div ng-view></div>
+    <div ui-view="submenu" autoscroll="false"></div>
+    <div ui-view="plugintabs" autoscroll="false"></div>
+    <div style="margin-left: 220px;" ui-view="plugininstance" autoscroll="false"></div>
+    <div ui-view autoscroll="false"></div>
+    <%--<div ng-view></div>--%>
   </div>
   <div class="clearfix"></div>
   <div class="col-sm-12 footer">&copy; Hippo B.V., All Rights Reserved</div>
 </div>
-
-
 
 
 </body>

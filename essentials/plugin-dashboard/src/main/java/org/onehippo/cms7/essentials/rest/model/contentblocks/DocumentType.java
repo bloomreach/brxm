@@ -10,17 +10,17 @@ import org.onehippo.cms7.essentials.rest.model.RestfulList;
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "items")
-public class DocumentTypes extends KeyValueRestful implements Restful {
+@XmlRootElement(name = "documentType")
+public class DocumentType extends KeyValueRestful implements Restful {
 
     private static final long serialVersionUID = 1L;
 
     private RestfulList<KeyValueRestful> providers;
 
-    public DocumentTypes() {
+    public DocumentType() {
     }
 
-    public DocumentTypes(final String key, final String value, final RestfulList<KeyValueRestful> providers) {
+    public DocumentType(final String key, final String value, final RestfulList<KeyValueRestful> providers) {
         super(key, value);
         this.providers = providers;
     }

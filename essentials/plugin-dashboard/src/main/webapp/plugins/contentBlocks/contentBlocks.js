@@ -81,8 +81,8 @@
                  * called on document save
                  */
                 $scope.saveBlocksConfiguration = function () {
-                    $scope.payload = {"cbpayload": {"items": {"items": []}}};
-                    $scope.payload.cbpayload.items.items = $scope.documentTypes;
+                    $scope.payload = {"cbpayload": {"documentTypes": {"documentType": []}}};
+                    $scope.payload.cbpayload.documentTypes.documentType = $scope.documentTypes;
                     $http.post($rootScope.REST.contentblocksCreate, $scope.payload
                             ).success(function (data) {
                                 // ignore
@@ -116,7 +116,7 @@
                 };
                 $scope.loadDocumentTypes = function () {
                     $http.get($rootScope.REST.documentTypes).success(function (data) {
-                        $scope.documentTypes = data.items;
+                        $scope.documentTypes = data.documentType;
                         angular.forEach($scope.documentTypes, function (docType, key) {
                             docType.providers.ritems = [];
                             angular.forEach(docType.providers.items, function (providerItem, key) {

@@ -6,52 +6,91 @@
     "use strict";
 
     angular.module('hippo.essentials')
-            .config(function ($routeProvider) {
-                $routeProvider
-                        .when('/', {
-                            templateUrl: 'pages/home.html',
+            .config(function ($stateProvider, $routeProvider) {
+                $stateProvider
+                        .state('index', {
                             controller: 'homeCtrl',
-                            resolve: {
-                                factory: checkPackInstalled
-                            }
+                            url: '',
+                            templateUrl: 'pages/home.html',
+                            resolve: { factory: checkPackInstalled}
                         })
-                        .when('/powerpacks', {
-                            templateUrl: 'plugins/newsEventsPowerpack/index.html',
-                            controller: 'newsEventsCtrl'
-                        }).when('/plugins', {
-                            templateUrl: 'pages/plugins.html',
-                            controller: 'pluginCtrl'
-                        }).when('/find-plugins', {
-                            templateUrl: 'pages/find-plugins.html',
-                            controller: 'pluginCtrl'
-                        }).when('/tools', {
+                        .state('tools', {
+                            url: '/tools',
                             templateUrl: 'pages/tools.html',
                             controller: 'toolCtrl'
                         })
-                    //############################################
-                    // PLUGINS: TODO make dynamic
-                    //############################################
-                        .when('/plugins/:pluginId',
-                        {
-                            templateUrl: function (params) {
-                                return 'plugins/' + params.pluginId + '/index.html';
-                            },
-                            controller: 'pluginLoaderCtrl'
-
+                        .state('powerpacks', {
+                            url: '/powerpacks',
+                            templateUrl: 'plugins/newsEventsPowerpack/index.html',
+                            controller: 'newsEventsCtrl'
                         })
-                        .when('/tools/:toolId',
-                        {
-                            templateUrl: function (params) {
-                                return 'tools/' + params.toolId + '/index.html';
+                        .state('tools-id', {
+                            url: '/tools/:id',
+                            templateUrl: function ($stateParams) {
+                                return 'tools/' + $stateParams.id + '/index.html';
                             },
                             controller: 'toolCtrl'
+                        })
+                        .state('home', {
+                            controller: 'homeCtrl',
+                            url: '/home',
+                            templateUrl: 'pages/home.html'
 
                         })
-                        .otherwise({redirectTo: '/'})
+                        .state('plugins', {
+                            url: '/plugins',
+                            templateUrl: 'pages/plugins.html',
+                            controller: 'pluginCtrl',
+                            views: {
+                                "submenu": {
+                                    templateUrl: 'pages/plugins-menu.html',
+                                    controller: 'pluginCtrl'
+                                }, "plugintabs": {
+                                    templateUrl: 'pages/plugins-installed-tabs.html',
+                                    controller: 'pluginCtrl'
+                                }
 
+                            }
+
+                        })
+                        .state('find-plugins', {
+                            url: '/find-plugins',
+                            templateUrl: 'pages/find-plugins.html',
+                            controller: 'pluginCtrl',
+                            views: {
+                                "submenu": {
+                                    templateUrl: 'pages/plugins-menu-find.html',
+                                    controller: 'pluginCtrl'
+                                }, "plugintabs": {
+                                    templateUrl: 'pages/plugins-new-tabs.html',
+                                    controller: 'pluginCtrl'
+                                }, "plugininstance": {
+                                    controller: 'pluginCtrl',
+                                    templateUrl: 'pages/find-plugins.html'
+                                }
+                            }
+                        }
+                )
+                        .state('plugin', {
+                            url: '/plugins/:id',
+                            views: {
+                                "submenu": {
+                                    templateUrl: 'pages/plugins-menu-find.html',
+                                    controller: 'pluginCtrl'
+                                }, "plugintabs": {
+                                    templateUrl: 'pages/plugins-installed-tabs.html',
+                                    controller: 'pluginCtrl'
+                                },"plugininstance":{
+                                    url: '/plugins/:id',
+                                    templateUrl: function ($stateParams) {
+                                        return 'plugins/' + $stateParams.id + '/index.html';
+                                    }
+                                }
+                            }
+                        }
+                );
             });
-
-    var checkPackInstalled = function ($q, $rootScope, $location, $http, $log, MyHttpInterceptor) {
+    var checkPackInstalled = function ($q, $rootScope, $location, $http, $log) {
         $rootScope.checkDone = true;
         if ($rootScope.packsInstalled) {
             $log.info("powerpack is installed");
@@ -75,5 +114,6 @@
             return deferred.promise;
         }
     }
+
 })();
 
