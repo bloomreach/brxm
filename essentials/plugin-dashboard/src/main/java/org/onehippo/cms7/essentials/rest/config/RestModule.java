@@ -19,6 +19,7 @@ package org.onehippo.cms7.essentials.rest.config;
 import org.onehippo.cms7.essentials.rest.BeanWriterResource;
 import org.onehippo.cms7.essentials.rest.ContentBlocksResource;
 import org.onehippo.cms7.essentials.rest.ControllersResource;
+import org.onehippo.cms7.essentials.rest.ImageGalleryResource;
 import org.onehippo.cms7.essentials.rest.KeyValueResource;
 import org.onehippo.cms7.essentials.rest.MenuResource;
 import org.onehippo.cms7.essentials.rest.NodeResource;
@@ -36,8 +37,6 @@ import com.google.code.inject.jaxrs.CXFServerModule;
 public class RestModule extends CXFServerModule {
 
 
-
-
     @Override
     protected void configure() {
         publish(BeanWriterResource.class);
@@ -50,7 +49,10 @@ public class RestModule extends CXFServerModule {
         publish(PropertiesResource.class);
         publish(StatusResource.class);
         publish(NodeResource.class);
+        publish(ImageGalleryResource.class);
+        // providers
         provide(EssentialsExceptionMapper.class);
+
 
     }
 

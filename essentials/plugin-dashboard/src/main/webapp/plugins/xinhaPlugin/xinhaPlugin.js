@@ -19,6 +19,16 @@
 
     angular.module('hippo.essentials')
             .controller('xinhaPluginCtrl', function ($scope, $sce, $log, $rootScope, $http) {
+                $scope.options = [];
+                $scope.sortableOptions = {
+                    update: function (e, ui) {
+                        // check items that are dragged automaticaly
+                        var option = ui.item.scope().option;
+                        if (option && !option.checked) {
+                            option.checked = true;
+                        }
+                    }
+                };
 
                 $scope.save = function () {
                     // fetch existing settings:
@@ -31,6 +41,7 @@
                             Essentials.addPayloadData(option.name, option.name, payload);
                         }
                     }
+
                     $http.post($rootScope.REST.setProperty, payload).success(function (data) {
                         $scope.init();
                     });
@@ -38,18 +49,15 @@
 
                 };
 
-                $scope.unselect = function () {
+                $scope.deselect = function () {
                     for (var i = 0; i < $scope.options.length; i++) {
-                        var option = $scope.options[i];
-                        option.checked = false;
-
+                        $scope.options[i].checked = false;
                     }
                 };
 
                 $scope.select = function () {
                     for (var i = 0; i < $scope.options.length; i++) {
-                        var option = $scope.options[i];
-                        option.checked = true;
+                        $scope.options[i].checked = true;
                     }
                 };
                 $scope.init = function () {
@@ -60,16 +68,21 @@
                     $http.post($rootScope.REST.getProperty, payload).success(function (data) {
                         var items = data.items;
                         if (items) {
-                            for (var i = 0; i < items.length; i++) {
-                                var item = items[i].key;
-                                for (var k = 0; k < $scope.options.length; k++) {
-                                    var option = $scope.options[k];
-                                    var name = option.name;
-                                    if (name == item) {
-                                        option.checked = true;
+                            var copy = items.slice(0);
+                            // filter unselected options and add those
+                            var other = $scope.allOptions.filter(function (option) {
+                                for (var i = 0; i < copy.length; i++) {
+                                    var item = copy[i];
+                                    item.checked = true;
+                                    item.name = item.key;
+                                    item.value = item.key;
+                                    if (option.name == item.key) {
+                                        return false;
                                     }
                                 }
-                            }
+                                return true;
+                            });
+                            $scope.options = copy.concat(other);
                         }
                     });
 
@@ -77,7 +90,7 @@
                 };
 
 
-                $scope.options = [
+                $scope.allOptions = [
                     {name: 'fullscreen', checked: false, title: 'fullscreen'},
                     {name: 'createlink', checked: false, title: 'createlink'},
                     {name: 'createexternallink', checked: false, title: 'createexternallink'},

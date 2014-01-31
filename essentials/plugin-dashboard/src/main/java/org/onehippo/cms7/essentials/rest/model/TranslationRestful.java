@@ -16,31 +16,41 @@
 
 package org.onehippo.cms7.essentials.rest.model;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "payload")
-public class PostPayloadRestful implements Restful {
+@XmlRootElement(name = "translation")
+public class TranslationRestful implements Restful {
 
     private static final long serialVersionUID = 1L;
 
+    private String locale;
+    private String message;
 
-    private LinkedHashMap<String, String> values = new LinkedHashMap<>();
-
-    public void add(final String key, final String value) {
-        values.put(key, value);
+    public TranslationRestful() {
     }
 
-    public LinkedHashMap<String, String> getValues() {
-        return values;
+    public TranslationRestful(final String locale, final String message) {
+
+        this.locale = locale;
+        this.message = message;
     }
 
-    public void setValues(final LinkedHashMap<String, String> values) {
-        this.values = values;
+    public String getLocale() {
+        return locale;
+    }
+
+    public void setLocale(final String locale) {
+        this.locale = locale;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(final String message) {
+        this.message = message;
     }
 }

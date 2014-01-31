@@ -64,19 +64,20 @@ public @interface PersistentNode {
                 }
                 final Session session = context.getSession();
                 try {
-                    if(parent !=null && !parent.hasNode(path)){
-                        log.warn("Item: {} does not exists for parent {}", path, parent.getPath());
+                    if (parent != null && !parent.hasNode(path)) {
+                        if (log.isDebugEnabled()) {
+                            log.warn("Item: {} does not exists for parent {}", path, parent.getPath());
+                        }
+                        return null;
+                    } else if (!session.itemExists(path)) {
+                        if (log.isDebugEnabled()) {
+                            log.warn("Item does not exists {}", path);
+                        }
                         return null;
                     }
-
-                    else if (!session.itemExists(path)) {
-                        log.warn("Item does not exists {}", path);
-                        return null;
-                    }
-
                     return session.getNode(path);
 
-                }catch (RepositoryException e){
+                } catch (RepositoryException e) {
                     log.error("Error fetching node {}", e);
                 }
                 return null;
@@ -86,7 +87,6 @@ public @interface PersistentNode {
 
         @Override
         public Node execute(final PluginContext context, final Document model, final PersistentNode annotation) {
-            log.info("Executing node persisting {}", model);
             final String parentPath = model.getParentPath();
             if (Strings.isNullOrEmpty(parentPath)) {
                 log.error("Parent path was null for model: {}", model);
@@ -97,7 +97,7 @@ public @interface PersistentNode {
                 if (session.itemExists(parentPath)) {
                     final Node parent = session.getNode(parentPath);
                     final String name = model.getName();
-                    if(parent.hasNode(name)){
+                    if (parent.hasNode(name)) {
                         parent.getNode(name).remove();
                     }
 

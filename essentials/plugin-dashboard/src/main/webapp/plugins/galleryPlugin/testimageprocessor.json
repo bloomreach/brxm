@@ -1,0 +1,277 @@
+  {
+    "name": "galleryProcessorService",
+    "path": "/hippo:configuration/hippo:frontend/cms/cms-services/galleryProcessorService",
+    "id": "service.gallery.processor",
+    "class": "org.hippoecm.frontend.plugins.gallery.processor.ScalingGalleryProcessorPlugin",
+    "properties": [],
+    "variants": [
+      {
+        "id": "82759c6b-54a1-4842-8e75-772dfa4d72ec",
+        "namespace": "hippogallery",
+        "name": "thumbnail",
+        "translations": [
+          {
+            "locale": "",
+            "message": "Thumbnail"
+          },
+          {
+            "locale": "en",
+            "message": "Thumbnail"
+          },
+          {
+            "locale": "nl",
+            "message": "Thumbnail"
+          }
+        ],
+        "width": 60,
+        "height": 60,
+        "properties": [
+          {
+            "name": "upscaling",
+            "value": "false"
+          }
+        ],
+        "imageSets": [
+          {
+            "id": "594877a6-1235-4a4c-94b5-c3000606d770",
+            "namespace": "hippogallery",
+            "name": "exampleImageSet",
+            "translations": [
+              {
+                "locale": "",
+                "message": "Example image set"
+              },
+              {
+                "locale": "en",
+                "message": "Example image set"
+              },
+              {
+                "locale": "nl",
+                "message": "Voorbeeld afbeeldingset"
+              }
+            ]
+          },
+          {
+            "id": "dummybannerid",
+            "namespace": "projectgallery",
+            "name": "bannerimageset",
+            "translations": [
+              {
+                "locale": "",
+                "message": "Banner image set"
+              },
+              {
+                "locale": "en",
+                "message": "Banner image set"
+              },
+              {
+                "locale": "nl",
+                "message": "Voorbeeld afbeeldingset"
+              }
+            ]
+          },
+          {
+            "id": "dummydefaultid",
+            "namespace": "projectgallery",
+            "name": "defaultimageset",
+            "translations": [
+              {
+                "locale": "",
+                "message": "Default image set"
+              },
+              {
+                "locale": "en",
+                "message": "Default image set"
+              },
+              {
+                "locale": "nl",
+                "message": "Standaard afbeeldingset"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "aeed4080-c60f-4a3c-ab0a-ad871004cbc3",
+        "namespace": "hippogallery",
+        "name": "original",
+        "translations": [
+          {
+            "locale": "",
+            "message": "Original"
+          },
+          {
+            "locale": "en",
+            "message": "Original"
+          },
+          {
+            "locale": "nl",
+            "message": "Origineel"
+          }
+        ],
+        "width": 0,
+        "height": 0,
+        "properties": [
+          {
+            "name": "upscaling",
+            "value": "false"
+          }
+        ],
+        "imageSets": [
+          {
+            "id": "594877a6-1235-4a4c-94b5-c3000606d770",
+            "namespace": "hippogallery",
+            "name": "exampleImageSet",
+            "translations": [
+              {
+                "locale": "",
+                "message": "Example image set"
+              },
+              {
+                "locale": "en",
+                "message": "Example image set"
+              },
+              {
+                "locale": "nl",
+                "message": "Voorbeeld afbeeldingset"
+              }
+            ]
+          },
+          {
+            "id": "dummybannerid",
+            "namespace": "projectgallery",
+            "name": "bannerimageset",
+            "translations": [
+              {
+                "locale": "",
+                "message": "Banner image set"
+              },
+              {
+                "locale": "en",
+                "message": "Banner image set"
+              },
+              {
+                "locale": "nl",
+                "message": "Voorbeeld afbeeldingset"
+              }
+            ]
+          },
+          {
+            "id": "dummydefaultid",
+            "namespace": "projectgallery",
+            "name": "defaultimageset",
+            "translations": [
+              {
+                "locale": "",
+                "message": "Default image set"
+              },
+              {
+                "locale": "en",
+                "message": "Default image set"
+              },
+              {
+                "locale": "nl",
+                "message": "Standaard afbeeldingset"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "dummylargeid",
+        "namespace": "projectgallery",
+        "name": "large",
+        "translations": [
+          {
+            "locale": "",
+            "message": "Large"
+          },
+          {
+            "locale": "en",
+            "message": "Large"
+          },
+          {
+            "locale": "nl",
+            "message": "Groot"
+          }
+        ],
+        "width": 400,
+        "height": 400,
+        "properties": [
+          {
+            "name": "upscaling",
+            "value": "false"
+          }
+        ],
+        "imageSets": [
+          {
+            "id": "dummybannerid",
+            "namespace": "projectgallery",
+            "name": "bannerimageset",
+            "translations": [
+              {
+                "locale": "",
+                "message": "Banner image set"
+              },
+              {
+                "locale": "en",
+                "message": "Banner image set"
+              },
+              {
+                "locale": "nl",
+                "message": "Voorbeeld afbeeldingset"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "dummysmallid",
+        "namespace": "projectgallery",
+        "name": "small",
+        "translations": [
+          {
+            "locale": "",
+            "message": "Small"
+          },
+          {
+            "locale": "en",
+            "message": "Small"
+          },
+          {
+            "locale": "nl",
+            "message": "Klein"
+          }
+        ],
+        "width": 100,
+        "height": 100,
+        "properties": [
+          {
+            "name": "upscaling",
+            "value": "false"
+          }
+        ],
+        "imageSets": [
+          {
+            "id": "dummydefaultid",
+            "namespace": "projectgallery",
+            "name": "defaultimageset",
+            "translations": [
+              {
+                "locale": "",
+                "message": "Default image set"
+              },
+              {
+                "locale": "en",
+                "message": "Default image set"
+              },
+              {
+                "locale": "nl",
+                "message": "Standaard afbeeldingset"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }

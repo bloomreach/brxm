@@ -19,59 +19,23 @@
     <div class="row">
         <div class="panel panel-primary">
             <div class="panel-heading">Xinha configuration</div>
-            <div class="list-group">
+            <div class="panel-body">
                 <form name="xinhaForm">
-
-                    <div class="col-sm-6">
-                        <table class="table table-striped">
-                            <tbody>
-                            <tr>
-                                <td colspan="2" class="pull-right">
-                                    <button class="btn btn-primary" ng-click="unselect()">Unselect all</button>
-                                </td>
-                            </tr>
-                            <!--  -->
-                            <tr ng-repeat="option in options" ng-switch="$even">
-                                <!-- EVEN-->
-                                <td ng-switch-when="true">
-                                    <input type="checkbox" checked="{{options.checked}}" ng-model="option.checked"/>
-                                </td>
-                                <td ng-switch-when="true">
-                                    {{option.title}}
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
+                    <div class="navbar">
+                        <a class="btn btn-success navbar-btn" ng-click="select()">Select all</a>
+                        <a class="btn btn-warning navbar-btn" ng-click="deselect()">Deselect all</a>
+                        <a class="btn btn-primary navbar-btn pull-right" ng-click="save()">Save</a>
                     </div>
-                    <div class="col-sm-6">
-                        <table class="table table-striped">
-                            <tbody>
-                            <tr>
-                                <td colspan="2" class="pull-right">
-                                    <button class="btn btn-primary" ng-click="select()">Select all</button>
-                                </td>
-                            </tr>
-                            <tr ng-repeat="option in options" ng-switch="$odd">
-                                <!-- EVEN-->
-                                <td ng-switch-when="true">
-                                    <input type="checkbox" checked="{{options.checked}}" ng-model="option.checked"/>
-                                </td>
-                                <td ng-switch-when="true">
-                                    {{option.title}}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="3">
-                                </td>
-                                <td>
-                                    <button class="btn btn-primary" ng-click="save()">Save</button>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <ul ui-sortable="sortableOptions" ng-model="options" class="list-group">
+                        <li ng-repeat="option in options" style="cursor: move; height: 28px; padding-top: 2px" class="list-group-item">
+                            <span style="padding-right: 20px; cursor: default"><input type="checkbox" checked="{{options.checked}}" ng-model="option.checked"/></span>
+                            {{option.name}}
+                        </li>
+
+                    </ul>
 
 
+                    <a class="btn btn-primary navbar-btn pull-right" ng-click="save()">Save</a>
                 </form>
             </div>
         </div>

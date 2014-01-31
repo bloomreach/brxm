@@ -2402,6 +2402,12 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentbl
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/atlassian-ide-plugin.xml
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/hippo-plugins.iws
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/target
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/gallery/*.iml
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/gallery/.DS_Store
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/gallery/.idea
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/gallery/atlassian-ide-plugin.xml
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/gallery/hippo-plugins.iws
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/gallery/target
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/hippo-plugins.iws
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/target
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/tmp/*.iml
