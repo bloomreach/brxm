@@ -60,9 +60,9 @@ public class RetrieveVersionTask extends AbstractDocumentTask {
         }
         Node variant = getVariant().getNode();
 
-        final Version node = lookupVersion(variant, getHistoric());
-        if (node != null) {
-            return new Document(node);
+        final Version version = lookupVersion(variant, getHistoric());
+        if (version != null) {
+            return new Document(version.getFrozenNode());
         }
         return null;
     }

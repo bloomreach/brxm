@@ -24,6 +24,7 @@ import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -90,6 +91,7 @@ public class MockNode extends MockItem implements HippoNode {
     private String identifier;
     private final Map<String, MockProperty> properties;
     private final Map<String, List<MockNode>> children;
+    private Set<String> mixins;
     private String primaryItemName;
 
     public MockNode(String name) {
@@ -401,7 +403,7 @@ public class MockNode extends MockItem implements HippoNode {
 
     @Override
     public boolean isNodeType(final String nodeTypeName) {
-        return primaryType != null && primaryType.isNodeType(nodeTypeName);
+        return primaryType != null && primaryType.isNodeType(nodeTypeName) || (mixins != null && mixins.contains(nodeTypeName));
     }
 
     @Override
@@ -657,17 +659,24 @@ public class MockNode extends MockItem implements HippoNode {
 
     @Override
     public void addMixin(final String mixinName) {
-        throw new UnsupportedOperationException();
+        if (mixinName != null) {
+            if (mixins == null) {
+                mixins = new HashSet<>();
+            }
+            mixins.add(mixinName);
+        }
     }
 
     @Override
     public void removeMixin(final String mixinName) {
-        throw new UnsupportedOperationException();
+        if (mixinName != null && mixins != null) {
+            mixins.remove(mixinName);
+        }
     }
 
     @Override
     public boolean canAddMixin(final String mixinName) {
-        throw new UnsupportedOperationException();
+        return true;
     }
 
     @Override

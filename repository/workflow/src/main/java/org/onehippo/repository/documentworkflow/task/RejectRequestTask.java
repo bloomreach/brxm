@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,35 +17,40 @@ package org.onehippo.repository.documentworkflow.task;
 
 import java.rmi.RemoteException;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.repository.documentworkflow.Request;
+import org.onehippo.repository.documentworkflow.WorkflowRequest;
 
 /**
- * Custom workflow task for deleting a request
+ * Custom workflow task for rejecting a request
  */
-public class DeleteRequestTask extends AbstractDocumentTask {
+public class RejectRequestTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
 
-    private Request request;
+    private WorkflowRequest request;
+    private String reason;
 
-    public Request getRequest() {
+    public WorkflowRequest getRequest() {
         return request;
     }
 
-    public void setRequest(final Request request) {
+    public void setRequest(final WorkflowRequest request) {
         this.request = request;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(final String reason) {
+        this.reason = reason;
     }
 
     @Override
     public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
-        Node requestNode = request.getCheckedOutNode();
-        JcrUtils.ensureIsCheckedOut(requestNode.getParent());
-        requestNode.remove();
+        getRequest().setRejected(getReason());
         return null;
     }
 }

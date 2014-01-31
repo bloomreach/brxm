@@ -15,6 +15,7 @@
  */
 package org.onehippo.repository.documentworkflow;
 
+import java.rmi.RemoteException;
 import java.util.Date;
 
 import javax.jcr.Node;

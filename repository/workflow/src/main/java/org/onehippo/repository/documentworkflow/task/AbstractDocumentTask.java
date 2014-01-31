@@ -34,7 +34,6 @@ import javax.jcr.version.VersionIterator;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType;
 import org.hippoecm.repository.util.CopyHandler;
@@ -73,7 +72,8 @@ public abstract class AbstractDocumentTask implements WorkflowTask, Serializable
             HippoNodeType.HIPPO_PATHS,
             HippoStdNodeType.HIPPOSTD_STATE,
             HippoStdNodeType.HIPPOSTD_HOLDER,
-            HippoStdNodeType.HIPPOSTD_STATESUMMARY
+            HippoStdNodeType.HIPPOSTD_STATESUMMARY,
+            HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE
     };
 
     static {

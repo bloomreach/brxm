@@ -15,21 +15,25 @@
  */
 package org.onehippo.repository.documentworkflow;
 
-public class RequestPayload {
+import java.util.Calendar;
 
-    private final WorkflowRequest subject;
-    private final String reason;
+import org.hippoecm.repository.api.Document;
 
-    public RequestPayload(final WorkflowRequest subject, final String reason) {
-        this.subject = subject;
-        this.reason = reason;
+public class VersionRestoreToPayload {
+
+    private final Calendar historic;
+    private final Document target;
+
+    public VersionRestoreToPayload(final Calendar historic, final Document target) {
+        this.historic = historic;
+        this.target = target;
     }
 
-    public WorkflowRequest getSubject() {
-        return subject;
+    public Calendar getHistoric() {
+        return historic;
     }
 
-    public String getReason() {
-        return reason;
+    public Document getTarget() {
+        return target;
     }
 }

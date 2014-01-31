@@ -20,14 +20,17 @@ import java.util.Date;
 
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
+import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
+import org.onehippo.repository.documentworkflow.HandleDocumentWorkflow;
 
 /**
- * Custom workflow task for deleting a variant through a chained workflow call
+ * Custom workflow task for invoking a HandleDocumentWorkflow action
  */
-public class InvokeDocumentWorkflowTask extends AbstractDocumentTask {
+public class InvokeHandleDocumentWorkflowTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
 
@@ -51,30 +54,30 @@ public class InvokeDocumentWorkflowTask extends AbstractDocumentTask {
         this.action = action;
     }
 
-    public DocumentVariant getSubject() {
-        return subject;
-    }
-
-    public void setSubject(final DocumentVariant subject) {
-        this.subject = subject;
-    }
-
     @Override
     public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
+        DocumentHandle dh = getDocumentHandle();
+        WorkflowContext wfc = dh.getWorkflowContext();
+        Document handle = new Document(dh.getHandle());
         if ("delete".equals(action)) {
-            ((FullReviewedActionsWorkflow)getDocumentHandle().getWorkflowContext().getWorkflow("default", subject)).delete();
+            wfc.getInternalWorkflowSession().save();
+            ((HandleDocumentWorkflow)wfc.getWorkflow("default", handle)).delete();
         }
         else if ("publish".equals(action)) {
-            ((FullReviewedActionsWorkflow)getDocumentHandle().getWorkflowContext().getWorkflow("default", subject)).publish();
+            wfc.getInternalWorkflowSession().save();
+            ((HandleDocumentWorkflow)wfc.getWorkflow("default", handle)).publish();
         }
         else if ("depublish".equals(action)) {
-            ((FullReviewedActionsWorkflow)getDocumentHandle().getWorkflowContext().getWorkflow("default", subject)).depublish();
+            wfc.getInternalWorkflowSession().save();
+            ((HandleDocumentWorkflow)wfc.getWorkflow("default", handle)).depublish();
         }
         else if ("scheduledpublish".equals(action)) {
-            ((FullReviewedActionsWorkflow)getDocumentHandle().getWorkflowContext().getWorkflow("default", subject)).publish(when);
+            wfc.getInternalWorkflowSession().save();
+            ((HandleDocumentWorkflow)wfc.getWorkflow("default", handle)).publish(when);
         }
         else if ("scheduleddepublish".equals(action)) {
-            ((FullReviewedActionsWorkflow)getDocumentHandle().getWorkflowContext().getWorkflow("default", subject)).depublish(when);
+            wfc.getInternalWorkflowSession().save();
+            ((HandleDocumentWorkflow)wfc.getWorkflow("default", handle)).depublish(when);
         }
         else {
             throw new WorkflowException("Unsupported workflow action: "+(action));

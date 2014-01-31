@@ -28,13 +28,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Custom workflow task for publication request, depublication request, scheduled publication, scheduled depublication and deletion request.
+ * Custom workflow task for requestting publication, depublication, scheduled publication, scheduled depublication and deletion.
  */
-public class RequestTask extends AbstractDocumentTask {
+public class WorkflowRequestTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(RequestTask.class);
+    private static Logger log = LoggerFactory.getLogger(WorkflowRequestTask.class);
 
     private String type;
     private DocumentVariant contextVariant;
@@ -69,7 +69,7 @@ public class RequestTask extends AbstractDocumentTask {
 
         DocumentHandle dm = getDocumentHandle();
 
-        if (dm.getRequest() == null) {
+        if (!dm.isRequestPending()) {
             WorkflowRequest req;
 
             if (targetDate == null) {

@@ -21,6 +21,19 @@ import java.util.HashMap;
 class MockSCXMLDataModel implements SCXMLDataModel {
     private HashMap<String, Boolean> actions = new HashMap<>();
     private Object result;
+    private final String scxmlId;
+
+    public MockSCXMLDataModel(String scxmlId) {
+        this.scxmlId = scxmlId;
+    }
+
+    public final String getScxmlId() {
+        return scxmlId;
+    }
+
+    public void initialize() {
+        result = null;
+    }
 
     public HashMap<String, Boolean> getActions() {
         return actions;

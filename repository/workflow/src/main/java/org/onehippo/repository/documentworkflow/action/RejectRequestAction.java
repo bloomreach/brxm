@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,13 @@ package org.onehippo.repository.documentworkflow.action;
 
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
-import org.onehippo.repository.documentworkflow.Request;
-import org.onehippo.repository.documentworkflow.task.DeleteRequestTask;
+import org.onehippo.repository.documentworkflow.WorkflowRequest;
+import org.onehippo.repository.documentworkflow.task.RejectRequestTask;
 
 /**
- * DeleteRequestAction delegating the execution to DeleteRequestTask.
+ * RejectRequestAction delegating the execution to RejectRequestTask.
  */
-public class DeleteRequestAction extends AbstractDocumentTaskAction<DeleteRequestTask> {
+public class RejectRequestAction extends AbstractDocumentTaskAction<RejectRequestTask> {
 
     private static final long serialVersionUID = 1L;
 
@@ -36,14 +36,22 @@ public class DeleteRequestAction extends AbstractDocumentTaskAction<DeleteReques
         return getParameter("requestExpr");
     }
 
+    public void setReasonExpr(String reasonExpr) {
+        setParameter("reasonExpr", reasonExpr);
+    }
+
+    public String getReasonExpr() {
+        return getParameter("reasonExpr");
+    }
     @Override
-    protected DeleteRequestTask createWorkflowTask() {
-        return new DeleteRequestTask();
+    protected RejectRequestTask createWorkflowTask() {
+        return new RejectRequestTask();
     }
 
     @Override
-    protected void initTask(DeleteRequestTask task) throws ModelException, SCXMLExpressionException {
+    protected void initTask(RejectRequestTask task) throws ModelException, SCXMLExpressionException {
         super.initTask(task);
-        task.setRequest((Request) eval(getRequestExpr()));
+        task.setRequest((WorkflowRequest) eval(getRequestExpr()));
+        task.setReason((String)eval(getReasonExpr()));
     }
 }

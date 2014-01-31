@@ -40,9 +40,11 @@ public class DocumentHandleTest {
         return variant;
     }
 
-    protected Node addRequest(Node handle, String type) throws RepositoryException {
-        Node variant = handle.addNode(WorkflowRequest.HIPPO_REQUEST, HippoNodeType.NT_REQUEST);
+    protected Node addRequest(Node handle, String type, boolean workflowRequest) throws RepositoryException {
+        Node variant = handle.addNode(WorkflowRequest.HIPPO_REQUEST,
+                workflowRequest ? WorkflowRequest.NT_HIPPOSTDPUBWF_REQUEST : ScheduledRequest.NT_HIPPOSCHED_WORKFLOW_JOB);
         variant.setProperty(WorkflowRequest.HIPPOSTDPUBWF_TYPE, type);
+        variant.addMixin(HippoNodeType.NT_REQUEST);
         return variant;
     }
 
@@ -68,34 +70,34 @@ public class DocumentHandleTest {
 
         // create handle with publication request
         MockNode handle = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
-        Node publishRequest = addRequest(handle, WorkflowRequest.PUBLISH);
-        DocumentHandle dm = new DocumentHandle(new MockWorkflowContext("testuser"), handle);
+        Node publishRequest = addRequest(handle, WorkflowRequest.PUBLISH, true);
+        DocumentHandle dm = new DocumentHandle("test", new MockWorkflowContext("testuser"), handle);
 
         assertTrue(dm.getDocuments().isEmpty());
         assertEquals("testuser", dm.getUser());
-        assertEquals(publishRequest, dm.getRequest().getNode());
+        assertEquals(1, dm.getRequests().size());
+        assertTrue(dm.isRequestPending());
 
 
         // add published, unpublished variants & rejected request
         Node publishedVariant = addVariant(handle, HippoStdNodeType.PUBLISHED);
         Node unpublishedVariant = addVariant(handle, HippoStdNodeType.UNPUBLISHED);
-        addRequest(handle, WorkflowRequest.REJECTED);
-        Node rejectedRequest = addRequest(handle, WorkflowRequest.REJECTED);
+        addRequest(handle, WorkflowRequest.REJECTED, true);
+        Node rejectedRequest = addRequest(handle, WorkflowRequest.REJECTED, true);
         rejectedRequest.setProperty(WorkflowRequest.HIPPOSTDPUBWF_USERNAME, "testuser");
-        dm = new DocumentHandle(new MockWorkflowContext("testuser"), handle);
+        dm = new DocumentHandle("test", new MockWorkflowContext("testuser"), handle);
 
         assertNull(getDraft(dm));
         assertNotNull(getUnpublished(dm));
         assertNotNull(getPublished(dm));
         assertEquals(publishedVariant, getPublished(dm).getNode());
         assertEquals(unpublishedVariant, getUnpublished(dm).getNode());
-        assertEquals(publishRequest, dm.getRequest().getNode());
-        assertEquals(2, dm.getRequests().size());
-
+        assertEquals(3, dm.getRequests().size());
+        assertTrue(dm.isRequestPending());
 
         // add draft
         Node draftVariant = addVariant(handle, HippoStdNodeType.DRAFT);
-        dm = new DocumentHandle(new MockWorkflowContext("testuser"), handle);
+        dm = new DocumentHandle("test", new MockWorkflowContext("testuser"), handle);
 
         assertNotNull(getDraft(dm));
         assertNotNull(getUnpublished(dm));
@@ -110,19 +112,19 @@ public class DocumentHandleTest {
         addVariant(handleNode, HippoStdNodeType.DRAFT);
         RepositoryMap workflowConfig = context.getWorkflowConfiguration();
 
-        DocumentHandle dm = new DocumentHandle(context, handleNode);
+        DocumentHandle dm = new DocumentHandle("test", context, handleNode);
         assertEquals(HandleDocumentWorkflow.SupportedFeatures.all, dm.getSupportedFeatures());
         assertTrue(dm.getSupportedFeatures().isDocument());
         assertTrue(dm.getSupportedFeatures().isRequest());
 
         putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", HandleDocumentWorkflow.SupportedFeatures.document.name());
-        dm = new DocumentHandle(context, handleNode);
+        dm = new DocumentHandle("test", context, handleNode);
         assertEquals(HandleDocumentWorkflow.SupportedFeatures.document, dm.getSupportedFeatures());
         assertTrue(dm.getSupportedFeatures().isDocument());
         assertFalse(dm.getSupportedFeatures().isRequest());
 
         putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", "undefined");
-        dm = new DocumentHandle(context, handleNode);
+        dm = new DocumentHandle("test", context, handleNode);
         assertEquals(HandleDocumentWorkflow.SupportedFeatures.all, dm.getSupportedFeatures());
     }
 
@@ -133,7 +135,7 @@ public class DocumentHandleTest {
         MockWorkflowContext context = new MockWorkflowContext("testuser", session);
         Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
         Node draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
-        DocumentHandle dm = new DocumentHandle(context, handleNode);
+        DocumentHandle dm = new DocumentHandle("test", context, handleNode);
 
         // testing with only hippo:admin being denied
         assertTrue(dm.isGranted(getDraft(dm), "foo"));
@@ -142,7 +144,7 @@ public class DocumentHandleTest {
         assertFalse(dm.isGranted(getDraft(dm), "hippo:admin"));
 
         session.setPermissions("/test/test", "hippo:author,hippo:editor", true);
-        dm = new DocumentHandle(context, handleNode);
+        dm = new DocumentHandle("test", context, handleNode);
 
         // testing with only hippo:author,hippo:editor being allowed
         assertFalse(dm.isGranted(getDraft(dm), "foo"));

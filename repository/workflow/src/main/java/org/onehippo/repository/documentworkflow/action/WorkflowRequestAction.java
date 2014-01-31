@@ -21,12 +21,12 @@ import java.util.Date;
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
-import org.onehippo.repository.documentworkflow.task.RequestTask;
+import org.onehippo.repository.documentworkflow.task.WorkflowRequestTask;
 
 /**
- * RequestAction delegating the execution to RequestTask.
+ * RequestAction delegating the execution to WorkflowRequestTask.
  */
-public class RequestAction extends AbstractDocumentTaskAction<RequestTask> {
+public class WorkflowRequestAction extends AbstractDocumentTaskAction<WorkflowRequestTask> {
 
     private static final long serialVersionUID = 1L;
 
@@ -55,12 +55,12 @@ public class RequestAction extends AbstractDocumentTaskAction<RequestTask> {
     }
 
     @Override
-    protected RequestTask createWorkflowTask() {
-        return new RequestTask();
+    protected WorkflowRequestTask createWorkflowTask() {
+        return new WorkflowRequestTask();
     }
 
     @Override
-    protected void initTask(RequestTask task) throws ModelException, SCXMLExpressionException {
+    protected void initTask(WorkflowRequestTask task) throws ModelException, SCXMLExpressionException {
         super.initTask(task);
         task.setType(getType());
         task.setContextVariant((DocumentVariant) eval(getContextVariantExpr()));

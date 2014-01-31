@@ -17,24 +17,28 @@
 <scxml version="1.0"
        xmlns="http://www.w3.org/2005/07/scxml"
        xmlns:hippo="http://www.onehippo.org/cms7/repository/scxml"
+       xmlns:cs="http://commons.apache.org/scxml"
        initial="handle">
 
   <script>
+    def getScxmlId() { dm.scxmlId }
     def getSupports() { dm.supportedFeatures }
     def getDraft() { dm.getDocumentVariantByState('draft') }
     def getUnpublished() { dm.getDocumentVariantByState('unpublished') }
     def getPublished() { dm.getDocumentVariantByState('published') }
     def getUser() { dm.user }
+    def getRequests() { dm.requests }
     def getCopySource() { published ?: unpublished ?: null }
     def getDeleteSource() { unpublished ?: published ?: draft }
     def getHolder() { draft?.holder }
     def boolean isEditable() { !draft?.holder or draft?.holder == user }
     def boolean isEditing() { !!draft?.holder }
     def boolean isEditor() { draft?.holder == user }
-    def boolean isUserRequest() { dm.request?.owner == user }
     def boolean isLive() { published?.isAvailable('live') }
     def boolean isPreview() { unpublished?.isAvailable('preview') }
     def boolean isModified() { unpublished and (!live or unpublished.lastModified!=published.lastModified) }
+    def boolean isRequestPending() { dm.requestPending }
+    def boolean isRequestActionAllowed(request, action) { !!dm.info['requests']?."$request?.identity"?."$action" }
   </script>
 
   <parallel id="handle">
@@ -56,8 +60,7 @@
     <state id="edit" initial="no-edit">
 
       <state id="no-edit">
-        <transition target="init-edit"
-                    cond="(supports.document or supports.unlock)"/>
+        <transition target="init-edit" cond="(supports.document or supports.unlock)"/>
       </state>
 
       <state id="init-edit">
@@ -71,10 +74,8 @@
             <hippo:action action="unlock" value="false"/>
           </if>
         </onentry>
-        <transition target="not-editable"
-                    cond="!!dm.request"/>
-        <transition target="editing"
-                    cond="editing"/>
+        <transition target="not-editable" cond="requestPending"/>
+        <transition target="editing"      cond="editing"/>
         <transition target="editable"/>
       </state>
 
@@ -150,156 +151,199 @@
     <state id="request" initial="no-request">
 
       <state id="no-request">
-        <transition target="init-request"
-                    cond="supports.request"/>
+        <transition target="init-request" cond="supports.request"/>
       </state>
 
       <state id="init-request">
-        <!-- Note: transition for request-rejected MUST be evaluated before transition for requested
-                   because if the subject is a rejected request only its state is to be considered
-        -->
-        <!-- TODO: fixup request handling
-        <transition target="request-rejected"
-                    cond="!empty(dm.rr)"/>
-        <transition target="requested"
-                    cond="!empty(dm.r)"/>
-        -->
-        <transition target="not-requested"/>
-      </state>
+        <transition target="requested" cond="!empty(requests)"/>
 
-      <state id="request-rejected">
-        <onentry>
-          <hippo:action action="acceptRequest" value="false"/>
-          <hippo:action action="rejectRequest" value="false"/>
-          <hippo:action action="cancelRequest" value="true"/>
-        </onentry>
+        <transition target="not-requested"/>
       </state>
 
       <state id="requested">
         <onentry>
-          <if cond="userRequest">
-            <hippo:action action="cancelRequest" value="true"/>
-          <else/>
-            <hippo:action action="cancelRequest" value="false"/>
-          </if>
-          <if cond="dm.isGranted(dm.request,'hippo:editor')">
-            <hippo:action action="acceptRequest" value="true"/>
-            <if cond="userRequest">
-              <hippo:action action="rejectRequest" value="false"/>
-            <else/>
-              <hippo:action action="rejectRequest" value="true"/>
-            </if>
-          </if>
+          <hippo:requestsActionsInfo/>
         </onentry>
+
+        <transition event="acceptRequest" target="reset">
+
+          <cs:var name="request" expr="requests[_eventdata]"/>
+
+          <hippo:workflowException cond="isRequestActionAllowed(request,'acceptRequest')"
+            errorExpr="'Cannot invoke workflow '+scxmlId+' action acceptRequest: action not allowed or request not found'"/>
+
+          <cs:var name="requestType" expr="request.type"/>
+
+          <if cond="requestType=='delete'">
+            <hippo:workflowException cond="live"
+              errorExpr="'Cannot delete document when still published'"/>
+
+            <hippo:workflowException cond="editing"
+              errorExpr="'Cannot delete document which is being edited'"/>
+
+            <hippo:deleteRequest requestExpr="request"/>
+            <hippo:invokeHandleDocumentWorkflow action="delete"/>
+
+          <elseif cond="requestType ==~ '(publish|scheduledpublish)'"/>
+
+            <hippo:workflowException cond="editing"
+              errorExpr="'Cannot publish document which is being edited'"/>
+
+            <hippo:workflowException cond="!modified"
+              errorExpr="'Cannot publish document when no changes present'"/>
+
+            <if cond="requestType=='publish'">
+              <hippo:deleteRequest requestExpr="request"/>
+              <hippo:invokeHandleDocumentWorkflow action="publish"/>
+            <else/>
+              <cs:var name="requestDate" expr="request.scheduledDate"/>
+              <hippo:deleteRequest requestExpr="request"/>
+              <hippo:invokeHandleDocumentWorkflow action="scheduledpublish" whenExpr="requestDate"/>
+            </if>
+
+          <elseif cond="request.type ==~ '(depublish|scheduleddepublish)'"/>
+
+            <hippo:workflowException cond="editing"
+              errorExpr="'Cannot depublish document which is being edited'"/>
+
+            <hippo:workflowException cond="!live"
+              errorExpr="'Cannot depublish document when not published'"/>
+
+            <if cond="requestType=='depublish'">
+              <hippo:invokeHandleDocumentWorkflow action="publish"/>
+            <else/>
+              <cs:var name="requestDate" expr="request.scheduledDate"/>
+              <hippo:deleteRequest requestExpr="request"/>
+              <hippo:invokeHandleDocumentWorkflow action="scheduleddepublish" whenExpr="requestDate"/>
+            </if>
+
+          <else/>
+
+            <hippo:workflowException
+              errorExpr="'Unsupported request type '+(request.type)+' for workflow action acceptRequest"/>
+
+          </if>
+        </transition>
+
+        <transition event="rejectRequest" target="reset">
+
+          <cs:var name="request" expr="requests[(_eventdata?.requestIdentifier)]"/>
+          <cs:var name="reason" expr="requests[(_eventdata?.reason)]"/>
+
+          <hippo:workflowException cond="isRequestActionAllowed(request,'rejectRequest')"
+            errorExpr="'Cannot invoke workflow '+scxmlId+' action rejectRequest: action not allowed or request not found'"/>
+
+          <hippo:rejectRequest requestExpr="request" reasonExpr="reason"/>
+        </transition>
+
+        <transition event="cancelRequest" target="reset">
+          <cs:var name="request" expr="requests[_eventdata]"/>
+
+          <hippo:workflowException cond="isRequestActionAllowed(request,'cancelRequest')"
+            errorExpr="'Cannot invoke workflow '+scxmlId+' action cancelRequest: action not allowed or request not found'"/>
+
+          <hippo:deleteRequest requestExpr="request"/>
+        </transition>
       </state>
 
       <state id="not-requested"/>
-
-      <transition event="acceptRequest" target="reset">
-        <if cond="dm.request?.type=='delete'">
-          <hippo:workflowException errorExpr="'Cannot delete document when still published'"
-                                   cond="live"/>
-          <hippo:workflowException errorExpr="'Cannot delete document which is being edited'"
-                                   cond="editing"/>
-
-          <hippo:deleteRequest/>
-          <hippo:invokeDocumentWorkflow action="delete"
-                                        subjectExpr="deleteSource"/>
-
-        <elseif cond="dm.request?.type in (String[])['publish','schedpublish]"/>
-          <hippo:workflowException errorExpr="'Cannot publish document which is being edited'"
-                                   cond="editing"/>
-          <hippo:workflowException errorExpr="'Cannot publish document when no changes present'"
-                                   cond="!modified" />
-
-          <hippo:deleteRequest/>
-          <if cond="dm.request?.type=='publish'">
-            <hippo:invokeDocumentWorkflow action="publish" subjectExpr="unpublished"/>
-          <else/>
-            <hippo:invokeDocumentWorkflow action="schedpublish" whenExpr="dm.request.scheduledDate" subjectExpr="dm.request.reference"/>
-          </if>
-
-        <elseif cond="dm.request?.type in (String[])['depublish','schedpublish]"/>
-          <hippo:workflowException errorExpr="'Cannot depublish document which is being edited'"
-                                   cond="editing"/>
-          <hippo:workflowException errorExpr="'Cannot depublish document when not published'"
-                                   cond="!live" />
-
-          <hippo:deleteRequest/>
-          <if cond="dm.request?.type=='depublish'">
-            <hippo:invokeDocumentWorkflow action="publish" subjectExpr="published"/>
-          <else/>
-            <hippo:invokeDocumentWorkflow action="scheddepublish" whenExpr="dm.request.scheduledDate" subjectExpr="dm.request.reference"/>
-          </if>
-
-        <elseif cond="dm.request?.type=='rejected"/>
-          <hippo:workflowException errorExpr="'Request has already been rejected'"/>
-        <else/>
-          <hippo:workflowException errorExpr="'Unknown request type '+dm.request?.type"/>
-        </if>
-      </transition>
 
     </state>
 
     <state id="publish" initial="no-publish">
 
       <state id="no-publish">
-        <transition target="init-publish"
-                    cond="supports.document"/>
+        <transition target="init-publish" cond="supports.document"/>
       </state>
 
       <state id="init-publish">
+
         <onentry>
           <hippo:action action="publish" value="false"/>
         </onentry>
-        <transition target="publishable"
-                    cond="!editing and modified"/>
+
+        <transition target="publishable" cond="!editing and modified"/>
         <transition target="not-publishable"/>
+
       </state>
 
       <state id="not-publishable"/>
 
       <state id="publishable">
         <onentry>
-          <if cond="!dm.request or user=='system'">
+          <if cond="!requestPending or user=='system'">
             <hippo:action action="publish" value="true"/>
             <hippo:action action="requestPublish" value="true"/>
+            <if cond="dm.isGranted(unpublished, 'hippo:editor')">
+              <hippo:action action="schedulePublish" value="true"/>
+            </if>
           </if>
         </onentry>
-      </state>
 
-      <transition event="publish" target="reset">
-        <hippo:copyVariant sourceState="unpublished" targetState="published"/>
-        <hippo:configVariant variant="published" versionable="false" availabilities="live"/>
-      </transition>
+        <transition event="publish" target="reset">
+          <hippo:copyVariant sourceState="unpublished" targetState="published"/>
+          <hippo:configVariant variant="published" applyPublished="true" availabilities="live"/>
+          <hippo:version variant="unpublished"/>
+        </transition>
+
+        <transition event="requestPublish" value="reset">
+          <hippo:workflowRequest type="publish" contextVariantExpr="unpublished" targetDateExpr="_eventdata"/>
+        </transition>
+
+        <transition event="schedulePublish" value="reset">
+          <hippo:invokeHandleDocumentWorkflow action="scheduledpublish" whenExpr="_eventDate"/>
+        </transition>
+
+      </state>
 
     </state>
 
     <state id="depublish" initial="no-depublish">
 
       <state id="no-depublish">
-        <transition target="init-depublish"
-                    cond="supports.document"/>
+        <transition target="init-depublish" cond="supports.document"/>
       </state>
 
       <state id="init-depublish">
         <onentry>
           <hippo:action action="depublish" value="false"/>
         </onentry>
-        <transition target="depublishable"
-                    cond="!editing and live"/>
+
+        <transition target="depublishable" cond="!editing and live"/>
         <transition target="not-depublishable"/>
+
       </state>
 
       <state id="not-depublishable"/>
 
       <state id="depublishable">
         <onentry>
-          <if cond="!dm.request or user=='system'">
+          <if cond="!requestPending or user=='system'">
             <hippo:action action="depublish" value="true"/>
             <hippo:action action="requestDepublish" value="true"/>
+            <if cond="dm.isGranted(published, 'hippo:editor')">
+              <hippo:action action="scheduleDepublish" value="true"/>
+            </if>
           </if>
         </onentry>
+
+        <transition event="depublish" target="reset">
+          <if cond="!unpublished">
+            <hippo:copyVariant sourceState="published" targetState="unpublished"/>
+          </if>
+          <hippo:configVariant variant="unpublished" versionable="true" availabilities="preview"/>
+          <hippo:configVariant variant="published" availabilities="null"/>
+          <hippo:version variant="unpublished"/>
+        </transition>
+
+        <transition event="requestDepublish" value="reset">
+          <hippo:workflowRequest type="depublish" contextVariantExpr="published" targetDateExpr="_eventdata"/>
+        </transition>
+
+        <transition event="scheduleDepublish" value="reset">
+          <hippo:invokeHandleDocumentWorkflow action="scheduleddepublish" whenExpr="_eventDate"/>
+        </transition>
+
       </state>
 
     </state>
@@ -307,25 +351,16 @@
     <state id="versioning" initial="no-versioning">
 
       <state id="no-versioning">
-        <transition target="version"
-                    cond="supports.version"/>
+        <transition target="version" cond="supports.version and unpublished"/>
       </state>
 
       <state id="version">
         <onentry>
-<!--
-          <if cond="empty(dm.v)">
--->
           <hippo:action action="version" value="true"/>
           <hippo:action action="listVersions" value="true"/>
           <hippo:action action="retrieveVersion" value="true"/>
           <hippo:action action="restoreVersion" value="true"/>
-
-<!--
-          <else/>
-            <hippo:action action="restoreVersionTo" value="true"/>
-          </if>
--->
+          <hippo:action action="versionRestoreTo" value="true"/>
         </onentry>
 
         <transition event="version" target="reset">
@@ -340,13 +375,12 @@
           <hippo:retrieveVersion historic="_eventdata" variant="unpublished" />
         </transition>
 
-        <transition event="restoreVersion" target="reset">
-          <hippo:retrieveVersion historic="_eventdata" variant="unpublished" />
-          <hippo:restoreVersion version="dm.result" />
+        <transition event="versionRestoreTo" target="reset">
+          <hippo:versionRestoreTo historic="_eventdata?.historic" variant="unpublished" target="_eventdata?.target"/>
         </transition>
 
-        <transition event="restoreFrom" target="reset">
-          <hippo:restoreVersion version="_eventdata"  />
+        <transition event="restoreVersion" target="reset">
+          <hippo:restoreVersion historic="_eventdata"  variant="unpublished" />
         </transition>
 
       </state>
@@ -356,8 +390,7 @@
     <state id="terminate" initial="no-terminate">
 
       <state id="no-terminate">
-        <transition target="terminateable"
-                    cond="supports.document and !live and !editing and !dm.request"/>
+        <transition target="terminateable" cond="supports.document and !live and !editing and !requestPending"/>
       </state>
 
       <state id="terminateable">
@@ -369,6 +402,23 @@
             <hippo:action action="rename" value="true"/>
           </if>
         </onentry>
+
+        <transition event="requestDelete" value="reset">
+          <hippo:workflowRequest type="delete" contextVariantExpr="deleteSource"/>
+        </transition>
+
+        <transition event="delete" value="reset">
+          <hippo:invokeHandleDocumentWorkflow action="delete"/>
+        </transition>
+
+        <transition event="move" value="reset">
+          <hippo:moveDocument destinationExpr="_eventdata?.destination" newNameExpr="_eventdata?.newName"/>
+        </transition>
+
+        <transition event="rename" value="reset">
+          <hippo:renameDocument newNameExpr="_eventdata"/>
+        </transition>
+
       </state>
 
     </state>
@@ -376,14 +426,18 @@
     <state id="copy" initial="no-copy">
 
       <state id="no-copy">
-        <transition target="copyable"
-                    cond="supports.document and dm.isGranted(copySource,'hippo:editor')"/>
+        <transition target="copyable" cond="supports.document and dm.isGranted(copySource,'hippo:editor')"/>
       </state>
 
       <state id="copyable">
         <onentry>
           <hippo:action action="copy" value="true"/>
         </onentry>
+
+        <transition event="copy" value="reset">
+          <hippo:copyDocument destinationExpr="_eventdata?.destination" newNameExpr="_eventdata?.newName"/>
+        </transition>
+
       </state>
 
     </state>
@@ -392,6 +446,5 @@
 
   <final id="reset"/>
   <final id="terminated" />
-  <final id="invalid-context" />
 
 </scxml>

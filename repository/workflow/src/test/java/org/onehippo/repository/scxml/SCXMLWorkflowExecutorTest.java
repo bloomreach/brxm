@@ -99,7 +99,7 @@ public class SCXMLWorkflowExecutorTest {
         registry.addCustomAction(scxmlDefNode, "http://www.onehippo.org/cms7/repository/scxml", "result", ResultAction.class.getName());
         registry.setUp(scxmlConfigNode);
 
-        SCXMLWorkflowExecutor workflowExecutor = new SCXMLWorkflowExecutor("scxml", new MockSCXMLDataModel());
+        SCXMLWorkflowExecutor workflowExecutor = new SCXMLWorkflowExecutor(new MockSCXMLDataModel("scxml"));
         workflowExecutor.getSCXMLExecutor().getRootContext().set("message", "Hello world!");
         Object message = workflowExecutor.start();
 
@@ -119,7 +119,7 @@ public class SCXMLWorkflowExecutorTest {
         assertNull(workflowExecutor.triggerAction("hello"));
         assertTrue(workflowExecutor.isStarted());
 
-        workflowExecutor.setDataModel(new MockSCXMLDataModel());
+        workflowExecutor.setDataModel(new MockSCXMLDataModel("scxml"));
         assertFalse(workflowExecutor.isStarted());
         assertFalse(workflowExecutor.isTerminated());
     }
@@ -131,7 +131,7 @@ public class SCXMLWorkflowExecutorTest {
         registry.addCustomAction(scxmlDefNode, "http://www.onehippo.org/cms7/repository/scxml", "action", ActionAction.class.getName());
         registry.setUp(scxmlConfigNode);
 
-        SCXMLWorkflowExecutor workflowExecutor = new SCXMLWorkflowExecutor("scxml", new MockSCXMLDataModel());
+        SCXMLWorkflowExecutor workflowExecutor = new SCXMLWorkflowExecutor(new MockSCXMLDataModel("scxml"));
         try {
             workflowExecutor.start();
             fail("Workflow should have failed starting");
@@ -158,7 +158,7 @@ public class SCXMLWorkflowExecutorTest {
         registry.addCustomAction(scxmlDefNode, "http://www.onehippo.org/cms7/repository/scxml", "result", ResultAction.class.getName());
         registry.setUp(scxmlConfigNode);
 
-        SCXMLWorkflowExecutor workflowExecutor = new SCXMLWorkflowExecutor("scxml", new MockSCXMLDataModel());
+        SCXMLWorkflowExecutor workflowExecutor = new SCXMLWorkflowExecutor(new MockSCXMLDataModel("scxml"));
         workflowExecutor.start();
 
         assertTrue(workflowExecutor.isStarted());
@@ -190,7 +190,7 @@ public class SCXMLWorkflowExecutorTest {
         workflowExecutor.triggerAction("terminate");
         assertTrue(workflowExecutor.isTerminated());
         // force reset
-        workflowExecutor.setDataModel(new MockSCXMLDataModel());
+        workflowExecutor.setDataModel(new MockSCXMLDataModel("scxml"));
         message = workflowExecutor.triggerAction("hello", "Hello world!");
         assertEquals("Hello world!", message);
     }
@@ -201,7 +201,7 @@ public class SCXMLWorkflowExecutorTest {
         registry.addScxmlNode(scxmlConfigNode, "scxml", SCXML_RESETTING_TEST);
         registry.setUp(scxmlConfigNode);
 
-        SCXMLWorkflowExecutor workflowExecutor = new SCXMLWorkflowExecutor("scxml", new MockSCXMLDataModel());
+        SCXMLWorkflowExecutor workflowExecutor = new SCXMLWorkflowExecutor(new MockSCXMLDataModel("scxml"));
         workflowExecutor.start();
 
         assertFalse(workflowExecutor.isStarted());

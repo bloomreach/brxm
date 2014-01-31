@@ -61,7 +61,7 @@ public class ActionAndResultActionTest {
 
         SCXMLExecutor helloExec = execFactory.createSCXMLExecutor(helloScxml);
 
-        SCXMLDataModel dm = new MockSCXMLDataModel();
+        SCXMLDataModel dm = new MockSCXMLDataModel(helloScxml.getId());
         helloExec.getRootContext().set(SCXMLDataModel.CONTEXT_KEY, dm);
         helloExec.getRootContext().set("world", Boolean.TRUE);
         helloExec.go();

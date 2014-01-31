@@ -38,12 +38,12 @@ public class SCXMLWorkflowExecutor {
     private final String scxmlId;
     private final SCXMLExecutor executor;
     private SCXMLDataModel dm;
-    private boolean resetRequired = true;
+    private boolean resetRequired;
     private boolean terminated;
 
-    public SCXMLWorkflowExecutor(final String scxmlId, SCXMLDataModel dm) throws WorkflowException {
+    public SCXMLWorkflowExecutor(SCXMLDataModel dm) throws WorkflowException {
 
-        this.scxmlId = scxmlId;
+        this.scxmlId = dm.getScxmlId();
 
         SCXMLRegistry scxmlRegistry = HippoServiceRegistry.getService(SCXMLRegistry.class);
         SCXMLDefinition scxmlDef = scxmlRegistry.getSCXMLDefinition(scxmlId);
@@ -59,7 +59,8 @@ public class SCXMLWorkflowExecutor {
             throw new WorkflowException("SCXML workflow executor creation failed", e);
         }
 
-        setDataModel(dm);
+        this.dm = dm;
+        prepare();
     }
 
     public SCXMLExecutor getSCXMLExecutor() {
@@ -70,9 +71,16 @@ public class SCXMLWorkflowExecutor {
         return dm;
     }
 
-    public void setDataModel(SCXMLDataModel dm) {
+    public void setDataModel(SCXMLDataModel dm) throws WorkflowException {
         this.dm = dm;
         reset();
+    }
+
+    public boolean ensureStarted() throws WorkflowException {
+        if (!isStarted() && !isTerminated()) {
+            start();
+        }
+        return isStarted();
     }
 
     public boolean isStarted() {
@@ -86,18 +94,18 @@ public class SCXMLWorkflowExecutor {
     public void reset() {
         terminated = false;
         resetRequired = true;
-        prepare();
+        getDataModel().reset();
     }
 
-    protected void prepare() {
-        getSCXMLExecutor().getRootContext().set(SCXMLDataModel.CONTEXT_KEY, getDataModel());
+    protected void prepare() throws WorkflowException {
         if (resetRequired) {
             getDataModel().reset();
         }
-        getDataModel().setResult(null);
+        getDataModel().initialize();
+        getSCXMLExecutor().getRootContext().set(SCXMLDataModel.CONTEXT_KEY, getDataModel());
     }
 
-    protected void checkFinalState() {
+    protected void checkFinalState() throws WorkflowException {
         resetRequired = false;
         if (executor.getCurrentStatus().isFinal()) {
             Set<TransitionTarget> targets = executor.getCurrentStatus().getStates();

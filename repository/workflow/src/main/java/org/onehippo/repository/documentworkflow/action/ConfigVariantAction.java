@@ -68,6 +68,14 @@ public class ConfigVariantAction extends AbstractDocumentTaskAction<ConfigVarian
         setParameter("setHolder", setHolder);
     }
 
+    public void setApplyPublished(String applyPublished) {
+        setParameter("applyPublished", applyPublished);
+    }
+
+    public boolean isApplyPublished() {
+        return Boolean.parseBoolean(getParameter("applyPublished"));
+    }
+
     @Override
     protected ConfigVariantTask createWorkflowTask() {
         return new ConfigVariantTask();
@@ -81,5 +89,6 @@ public class ConfigVariantAction extends AbstractDocumentTaskAction<ConfigVarian
         task.setApplyModified(isApplyModified());
         task.setVersionable(isVersionable());
         task.setSetHolder(isSetHolder());
+        task.setApplyPublished(isApplyPublished());
     }
 }

@@ -16,6 +16,7 @@
 package org.onehippo.repository.documentworkflow.task;
 
 import java.rmi.RemoteException;
+import java.util.Date;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -40,6 +41,7 @@ public class ConfigVariantTask extends AbstractDocumentTask {
     private boolean applyModified;
     private boolean versionable;
     private boolean setHolder;
+    private boolean applyPublished;
 
     public DocumentVariant getVariant() {
         return variant;
@@ -81,6 +83,14 @@ public class ConfigVariantTask extends AbstractDocumentTask {
         this.setHolder = setHolder;
     }
 
+    public boolean isApplyPublished() {
+        return applyPublished;
+    }
+
+    public void setApplyPublished(final boolean applyPublished) {
+        this.applyPublished = applyPublished;
+    }
+
     @Override
     public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
 
@@ -109,6 +119,10 @@ public class ConfigVariantTask extends AbstractDocumentTask {
 
         if (isSetHolder()) {
             variant.setHolder(dm.getUser());
+        }
+
+        if (isApplyPublished()) {
+            getVariant().setPublicationDate(new Date());
         }
 
         variant.setAvailability(getAvailabilities() != null ? StringUtils.split(getAvailabilities(), "\t\r\n, ") : null);

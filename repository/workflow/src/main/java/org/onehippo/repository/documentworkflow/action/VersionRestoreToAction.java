@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.repository.documentworkflow.action;
 
 import java.util.Calendar;
 
-import javax.jcr.version.Version;
-
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
+import org.hippoecm.repository.api.Document;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
-import org.onehippo.repository.documentworkflow.task.RestoreVersionTask;
+import org.onehippo.repository.documentworkflow.task.VersionRestoreToTask;
 
 /**
- * RestoreVersionAction delegating the execution to RestoreVersionTask.
+ * VersionRestoreToAction delegating the execution to VersionRestoreToTask.
  */
-public class RestoreVersionAction extends AbstractDocumentTaskAction<RestoreVersionTask> {
+public class VersionRestoreToAction extends AbstractDocumentTaskAction<VersionRestoreToTask> {
 
     private static final long serialVersionUID = 1L;
 
@@ -40,6 +38,14 @@ public class RestoreVersionAction extends AbstractDocumentTaskAction<RestoreVers
         setParameter("variantExpr", variant);
     }
 
+    public String getTarget() {
+        return getParameter("targetExpr");
+    }
+
+    public void setTarget(String targetExpr) {
+        setParameter("targetExpr", targetExpr);
+    }
+
     public String getHistoric() {
         return getParameter("historicExpr");
     }
@@ -49,15 +55,15 @@ public class RestoreVersionAction extends AbstractDocumentTaskAction<RestoreVers
     }
 
     @Override
-    protected RestoreVersionTask createWorkflowTask() {
-        return new RestoreVersionTask();
+    protected VersionRestoreToTask createWorkflowTask() {
+        return new VersionRestoreToTask();
     }
 
     @Override
-    protected void initTask(RestoreVersionTask task) throws ModelException, SCXMLExpressionException {
+    protected void initTask(VersionRestoreToTask task) throws ModelException, SCXMLExpressionException {
         super.initTask(task);
+        task.setTarget((Document) eval(getTarget()));
         task.setVariant((DocumentVariant) eval(getVariant()));
         task.setHistoric((Calendar) eval(getHistoric()));
     }
-
 }

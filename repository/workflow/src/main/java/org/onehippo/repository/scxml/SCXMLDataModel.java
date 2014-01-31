@@ -18,6 +18,8 @@ package org.onehippo.repository.scxml;
 
 import java.util.Map;
 
+import org.hippoecm.repository.api.WorkflowException;
+
 /**
  * SCXMLDataModel to be provided in a SCXML root Context under the predefined and reserved {@link #CONTEXT_KEY} ("dm") key.
  * <p>
@@ -40,6 +42,8 @@ public interface SCXMLDataModel {
 
     String FINAL_RESET_STATE_ID = "reset";
 
+    String getScxmlId();
+    void initialize() throws WorkflowException;
     Map<String,Boolean> getActions();
     Object getResult();
     void setResult(Object result);

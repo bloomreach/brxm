@@ -25,7 +25,7 @@ import org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.util.JcrConstants;
 
-public class WorkflowRequest extends Document {
+public class WorkflowRequest extends Request {
 
     public static final String HIPPO_REQUEST = "hippo:request";
     public static final String NT_HIPPOSTDPUBWF_REQUEST = "hippostdpubwf:request";

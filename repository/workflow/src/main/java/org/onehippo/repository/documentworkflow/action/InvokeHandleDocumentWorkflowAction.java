@@ -20,13 +20,12 @@ import java.util.Date;
 
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
-import org.onehippo.repository.documentworkflow.DocumentVariant;
-import org.onehippo.repository.documentworkflow.task.InvokeDocumentWorkflowTask;
+import org.onehippo.repository.documentworkflow.task.InvokeHandleDocumentWorkflowTask;
 
 /**
- * InvokeDocumentWorkflowAction delegating the execution to InvokeDocumentWorkflowTask.
+ * InvokeHandleDocumentWorkflowAction delegating the execution to InvokeHandleDocumentWorkflowTask.
  */
-public class InvokeDocumentWorkflowAction extends AbstractDocumentTaskAction<InvokeDocumentWorkflowTask> {
+public class InvokeHandleDocumentWorkflowAction extends AbstractDocumentTaskAction<InvokeHandleDocumentWorkflowTask> {
 
     private static final long serialVersionUID = 1L;
 
@@ -46,27 +45,18 @@ public class InvokeDocumentWorkflowAction extends AbstractDocumentTaskAction<Inv
         setParameter("whenExpr", whenExpr);
     }
 
-    public String getSubjectExpr() {
-        return getParameter("subjectExpr");
-    }
-
-    public void setSubjectExpr(String subject) {
-        setParameter("subjectExpr", subject);
+    @Override
+    protected InvokeHandleDocumentWorkflowTask createWorkflowTask() {
+        return new InvokeHandleDocumentWorkflowTask();
     }
 
     @Override
-    protected InvokeDocumentWorkflowTask createWorkflowTask() {
-        return new InvokeDocumentWorkflowTask();
-    }
-
-    @Override
-    protected void initTask(InvokeDocumentWorkflowTask task) throws ModelException, SCXMLExpressionException {
+    protected void initTask(InvokeHandleDocumentWorkflowTask task) throws ModelException, SCXMLExpressionException {
         super.initTask(task);
 
         task.setAction(getAction());
         if (getWhenExpr() != null) {
             task.setWhen((Date)eval(getWhenExpr()));
         }
-        task.setSubject((DocumentVariant) eval(getSubjectExpr()));
     }
 }

@@ -1,12 +1,12 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
- *
+ *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,23 +15,17 @@
  */
 package org.onehippo.repository.documentworkflow;
 
-import java.util.Calendar;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
-public class VersionPayload {
+public class ScheduledRequest extends Request {
 
-    private final Calendar version;
-    private final DocumentVariant target;
+    public static final String NT_HIPPOSCHED_WORKFLOW_JOB = "hipposched:workflowjob";
 
-    public VersionPayload(final Calendar version, final DocumentVariant target) {
-        this.version = version;
-        this.target = target;
+    public ScheduledRequest() {
     }
 
-    public Calendar getVersion() {
-        return version;
-    }
-
-    public DocumentVariant getTarget() {
-        return target;
+    public ScheduledRequest(Node node) throws RepositoryException {
+        super(node);
     }
 }

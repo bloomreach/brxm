@@ -33,7 +33,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.WorkflowContext;
-import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.repository.scxml.SCXMLDataModel;
 import org.slf4j.Logger;
@@ -42,6 +42,10 @@ import org.slf4j.LoggerFactory;
 public class DocumentHandle implements SCXMLDataModel {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentHandle.class);
+
+    private final String scxmlId;
+
+    private boolean initialized;
 
     private Map<String, Boolean> actions = new HashMap<>();
     private Object result;
@@ -52,61 +56,72 @@ public class DocumentHandle implements SCXMLDataModel {
 
     private HandleDocumentWorkflow.SupportedFeatures supportedFeatures = HandleDocumentWorkflow.SupportedFeatures.all;
 
-    private Map<String, DocumentVariant> documents = null;
-    private Map<String, WorkflowRequest> requests = null;
-    private WorkflowRequest request = null;
+    private Map<String, DocumentVariant> documents;
+    private Map<String, Request> requests;
+    private boolean requestPending;
 
     private Map<String, Map<String, Boolean>> pathPrivilegesMap;
 
     private Map<String, Serializable> info = new HashMap<>();
 
-    public DocumentHandle(WorkflowContext context, Node handle) throws RepositoryException {
+    public DocumentHandle(String scxmlId, WorkflowContext context, Node handle) throws WorkflowException {
+        this.scxmlId = scxmlId;
         this.context = context;
         this.handle = handle;
         this.user = context.getUserIdentity();
+        initialize();
+    }
 
-        RepositoryMap workflowConfiguration = context.getWorkflowConfiguration();
-        if (workflowConfiguration.exists()) {
-            String supportedFeaturesConfiguration = (String) workflowConfiguration.get("workflow.supportedFeatures");
-            if (supportedFeaturesConfiguration != null) {
-                try {
-                    supportedFeatures = HandleDocumentWorkflow.SupportedFeatures.valueOf(supportedFeaturesConfiguration);
-                } catch (IllegalArgumentException e) {
-                    String configurationPath = (String) workflowConfiguration.get("_path");
-                    if (configurationPath == null) {
-                        configurationPath = "<unknown>";
+    public void initialize() throws WorkflowException {
+        result = null;
+        if (!initialized) {
+            try {
+                RepositoryMap workflowConfiguration = context.getWorkflowConfiguration();
+                if (workflowConfiguration.exists()) {
+                    String supportedFeaturesConfiguration = (String) workflowConfiguration.get("workflow.supportedFeatures");
+                    if (supportedFeaturesConfiguration != null) {
+                        try {
+                            supportedFeatures = HandleDocumentWorkflow.SupportedFeatures.valueOf(supportedFeaturesConfiguration);
+                        } catch (IllegalArgumentException e) {
+                            String configurationPath = (String) workflowConfiguration.get("_path");
+                            if (configurationPath == null) {
+                                configurationPath = "<unknown>";
+                            }
+                            log.warn("Unknown DocumentWorkflow.SupportedFeatures [{}] configured for property workflow.supportedFeatures at: {}",
+                                    supportedFeaturesConfiguration, configurationPath);
+                        }
                     }
-                    log.warn("Unknown DocumentWorkflow.SupportedFeatures [{}] configured for property workflow.supportedFeatures at: {}",
-                            supportedFeaturesConfiguration, configurationPath);
                 }
-            }
-        }
 
-        for (Node variant : new NodeIterable(handle.getNodes(handle.getName()))) {
-            DocumentVariant doc = new DocumentVariant(variant);
-            if (documents != null && documents.containsKey(doc.getState())) {
-                log.warn("Document at path {} has multiple variants with state {}. Variant with identifier {} ignored.",
-                        new String[]{handle.getPath(), doc.getState(), variant.getIdentifier()});
-            }
-            getDocuments(true).put(doc.getState(), doc);
-        }
+                for (Node variant : new NodeIterable(handle.getNodes(handle.getName()))) {
+                    DocumentVariant doc = new DocumentVariant(variant);
+                    if (documents != null && documents.containsKey(doc.getState())) {
+                        log.warn("Document at path {} has multiple variants with state {}. Variant with identifier {} ignored.",
+                                new String[]{handle.getPath(), doc.getState(), variant.getIdentifier()});
+                    }
+                    getDocuments(true).put(doc.getState(), doc);
+                }
 
-        for (Node requestNode : new NodeIterable(handle.getNodes(WorkflowRequest.HIPPO_REQUEST))) {
-            WorkflowRequest req = new WorkflowRequest(requestNode);
-            String requestType = JcrUtils.getStringProperty(requestNode, WorkflowRequest.HIPPOSTDPUBWF_TYPE, "");
-            if ("rejected".equals(requestType)) {
-                if (req.getOwner() == null || !req.getOwner().equals(user)) {
-                    continue;
+                for (Node requestNode : new NodeIterable(handle.getNodes(WorkflowRequest.HIPPO_REQUEST))) {
+                    Request request = Request.createRequest(requestNode);
+                    if (request != null) {
+                        if (request.isWorkflowRequest()) {
+                            getRequests(true).put(request.getIdentity(), request);
+                            if (!WorkflowRequest.REJECTED.equals(((WorkflowRequest)request).getType())) {
+                                requestPending = true;
+                            }
+                        }
+                        else if (request.isScheduledRequest()) {
+                            getRequests(true).put(request.getIdentity(), request);
+                            requestPending = true;
+                        }
+                    }
                 }
-            } else {
-                if (request != null) {
-                    log.warn("Document at path {} has multiple outstanding requests. Request with identifier {} ignored.",
-                            new String[]{handle.getPath(), requestNode.getIdentifier()});
-                    continue;
-                }
-                request = req;
             }
-            getRequests(true).put(req.getIdentity(), req);
+            catch (RepositoryException e) {
+                throw new WorkflowException("DocumentHandle initialization failed", e);
+            }
+            initialized = true;
         }
     }
 
@@ -120,7 +135,7 @@ public class DocumentHandle implements SCXMLDataModel {
         return Collections.emptyMap();
     }
 
-    protected Map<String, WorkflowRequest> getRequests(boolean create) {
+    protected Map<String, Request> getRequests(boolean create) {
         if (create && requests == null) {
             requests = new HashMap<>();
         }
@@ -130,15 +145,20 @@ public class DocumentHandle implements SCXMLDataModel {
         return Collections.emptyMap();
     }
 
-    public Map<String, WorkflowRequest> getRequests() {
+    public String getScxmlId() {
+        return scxmlId;
+    }
+
+    public Node getHandle() {
+        return handle;
+    }
+
+    public Map<String, Request> getRequests() {
         return getRequests(false);
     }
 
-    /**
-     * @return the active Request or null if none
-     */
-    public WorkflowRequest getRequest() {
-        return request;
+    public boolean isRequestPending() {
+        return requestPending;
     }
 
     /**
@@ -246,8 +266,19 @@ public class DocumentHandle implements SCXMLDataModel {
 
     @Override
     public void reset() {
+        initialized = false;
         actions.clear();
         info.clear();
+        if (documents != null) {
+            documents.clear();
+        }
+        if (requests != null) {
+            requests.clear();
+        }
+        requestPending = false;
+        if (pathPrivilegesMap != null) {
+            pathPrivilegesMap.clear();
+        }
     }
 
     @Override

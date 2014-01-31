@@ -16,12 +16,12 @@
 package org.onehippo.repository.documentworkflow.task;
 
 import java.rmi.RemoteException;
+import java.util.Calendar;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
 
-import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
 
@@ -32,28 +32,38 @@ public class RestoreVersionTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
 
-    private Document version;
+    private DocumentVariant variant;
+    private Calendar historic;
 
-    public Document getVersion() {
-        return version;
+    public DocumentVariant getVariant() {
+        return variant;
     }
 
-    public void setVersion(Document version) {
-        this.version = version;
+    public void setVariant(DocumentVariant variant) {
+        this.variant = variant;
+    }
+
+    public Calendar getHistoric() {
+        return historic;
+    }
+
+    public void setHistoric(final Calendar historic) {
+        this.historic = historic;
     }
 
     @Override
     public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
-        Node versionNode = getVersion().getNode();
-        if (versionNode == null || !(versionNode instanceof Version)) {
-            throw new WorkflowException("No version provided");
+        if (getVariant() == null || getVariant().getNode() == null || getHistoric() == null) {
+            throw new WorkflowException("No variant or date provided");
         }
+        Node variant = getVariant().getNode();
 
-        Version version = (Version) versionNode;
-        String id = version.getContainingHistory().getVersionableIdentifier();
-        Node variant = version.getSession().getNodeByIdentifier(id);
-        variant.restore(version, true);
-        return new DocumentVariant(variant);
+        final Version version = lookupVersion(variant, getHistoric());
+        if (version != null) {
+            variant.restore(version, true);
+            return new DocumentVariant(variant);
+        }
+        return null;
     }
 
 }
