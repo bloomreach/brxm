@@ -5,13 +5,6 @@ frontend-api/src/main/appended-resources/META-INF/LICENSE -text
 frontend/.bowerrc -text
 frontend/bower.json -text
 frontend/declutter.config.json -text
-frontend/js/app/assets/css/main.css -text
-frontend/js/app/assets/css/tree.css -text
-frontend/js/app/assets/images/loader.gif -text
-frontend/js/app/i18n/en.json -text
-frontend/js/app/i18n/nl.json -text
-frontend/js/app/views/add-page.html -text
-frontend/js/app/views/loader.html -text
 frontend/js/menu-manager/assets/css/main.css -text
 frontend/js/menu-manager/assets/css/tree.css -text
 frontend/js/menu-manager/assets/images/loader.gif -text
