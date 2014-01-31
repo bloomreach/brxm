@@ -51,6 +51,8 @@
                         $scope.loadProviders();
                         $scope.loadDocumentTypes();
                     });
+
+
                 };
 
 
@@ -122,6 +124,7 @@
                             });
                         });
                     });
+
                 };
                 $scope.init = function () {
                     // check if plugin is installed
