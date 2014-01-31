@@ -4,7 +4,7 @@
   Copyright 2013 Hippo B.V. (http://www.onehippo.com)
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -17,7 +17,7 @@
   <description>Hippo Essentials plugins sdk</description>
   <artifactId>hippo-essentials-plugin-sdk</artifactId>
   <groupId>org.onehippo.cms7.essentials</groupId>
-  <version>1.01.01-SNAPSHOT</version>
+  <version>1.01.00-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
@@ -168,4 +168,6 @@
       <url>http://maven.onehippo.com/maven2/</url>
     </repository>
   </repositories>
+
+
 </project>
