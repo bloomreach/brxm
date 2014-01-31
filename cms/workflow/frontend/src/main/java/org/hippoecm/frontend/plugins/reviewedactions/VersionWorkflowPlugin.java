@@ -63,6 +63,12 @@ public class VersionWorkflowPlugin extends RenderPlugin {
         super(context, config);
 
         add(new StdWorkflow("info", "info") {
+
+            @Override
+            public String getSubMenu() {
+                return "info";
+            }
+
             @Override
             protected IModel getTitle() {
                 return new StringResourceModel("created", this, null, new LoadableDetachableModel<Date>() {
@@ -92,6 +98,12 @@ public class VersionWorkflowPlugin extends RenderPlugin {
         });
 
         add(new StdWorkflow("restore", new StringResourceModel("restore", this, null).getString(), null, context, this) {
+
+            @Override
+            public String getSubMenu() {
+                return "top";
+            }
+
             @Override
             protected ResourceReference getIcon() {
                 return new PackageResourceReference(getClass(), "restore-16.png");
@@ -173,6 +185,12 @@ public class VersionWorkflowPlugin extends RenderPlugin {
         });
 
         add(new StdWorkflow("select", new StringResourceModel("select", this, null).getString(), null, context, this) {
+
+            @Override
+            public String getSubMenu() {
+                return "top";
+            }
+
             @Override
             protected ResourceReference getIcon() {
                 return new PackageResourceReference(getClass(), "select-16.png");

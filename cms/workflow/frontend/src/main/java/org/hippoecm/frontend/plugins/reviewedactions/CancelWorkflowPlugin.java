@@ -43,7 +43,7 @@ public class CancelWorkflowPlugin extends RenderPlugin {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(BasicReviewedActionsWorkflowPlugin.class);
+    private static Logger log = LoggerFactory.getLogger(CancelWorkflowPlugin.class);
 
     private final DateFormat dateFormatFull = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL, getSession().getLocale());
 

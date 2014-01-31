@@ -30,8 +30,8 @@ class MenuHierarchy implements Serializable {
 
     private final List<String> categories;
     private Map<String, List<MenuDescription>> menus = new LinkedHashMap<>();
-    private Map<String, MenuHierarchy> submenus = new LinkedHashMap<String, MenuHierarchy>();
-    private List<ActionDescription> items = new LinkedList<ActionDescription>();
+    private Map<String, MenuHierarchy> submenus = new LinkedHashMap<>();
+    private List<ActionDescription> items = new LinkedList<>();
 
     private final Form form;
 
@@ -64,78 +64,10 @@ class MenuHierarchy implements Serializable {
 
     public void restructure() {
         Map<String, MenuHierarchy> submenus = this.submenus;
-        this.submenus = new LinkedHashMap<String, MenuHierarchy>();
-        this.items = new LinkedList<ActionDescription>();
-        if (submenus.containsKey("default")) {
-            MenuHierarchy submenu = submenus.get("default");
-            for (ActionDescription action : submenu.items) {
-                if (!action.isVisible()) {
-                    continue;
-                }
-                if (action.getId().startsWith("info")) {
-                    // processed in second round
-                } else if (action.getId().equals("edit")) {
-                    put(action);
-                } else if (action.getId().equals("delete")) {
-                    put("document", action);
-                } else if (action.getId().equals("copy")) {
-                    put("document", action);
-                } else if (action.getId().equals("move")) {
-                    put("document", action);
-                } else if (action.getId().equals("rename")) {
-                    put("document", action);
-                } else if (action.getId().equals("where-used")) {
-                    put("document", action);
-                } else if (action.getId().equals("history")) {
-                    put("document", action);
-                } else if (action.getId().toLowerCase().contains("publi")) {
-                    put("publication", action);
-                } else if (action.getId().equals("cancel") || action.getId().equals("accept")
-                        || action.getId().equals("reject")) {
-                    put("request", action);
-                } else {
-                    put("miscellaneous", action);
-                }
-            }
-        }
-        if (submenus.containsKey("editing")) {
-            MenuHierarchy submenu = submenus.remove("editing");
-            for (ActionDescription action : submenu.items) {
-                put(action);
-            }
-        }
-        if (submenus.containsKey("threepane")) {
-            MenuHierarchy submenu = submenus.remove("editing");
-            for (ActionDescription action : submenu.items) {
-                put(action);
-            }
-        }
-        if (submenus.containsKey("versioning")) {
-            MenuHierarchy submenu = submenus.remove("versioning");
-            for (ActionDescription action : submenu.items) {
-                put(action);
-            }
-        }
-        if (submenus.containsKey("default")) {
-            MenuHierarchy submenu = submenus.remove("default");
-            /* [AC] skipping spacer - not used anywhere yet and it causes aesthetics problems with the workflow toolbar
-            put(new ActionDescription("spacer") {
-                @Override
-                public void invoke() {
-                }
-            });
-            */
-            for (ActionDescription action : submenu.items) {
-                if (!action.isVisible()) {
-                    continue;
-                }
-                if (action.getId().startsWith("info")) {
-                    put(action);
-                }
-            }
-        }
-        if (submenus.containsKey("custom")) {
-            MenuHierarchy submenu = submenus.remove("custom");
+        this.submenus = new LinkedHashMap<>();
+        this.items = new LinkedList<>();
+        if (submenus.containsKey("top")) {
+            MenuHierarchy submenu = submenus.remove("top");
             for (ActionDescription action : submenu.items) {
                 put(action);
             }
@@ -155,8 +87,8 @@ class MenuHierarchy implements Serializable {
 
     public void flatten() {
         Map<String, MenuHierarchy> submenus = this.submenus;
-        this.submenus = new LinkedHashMap<String, MenuHierarchy>();
-        this.items = new LinkedList<ActionDescription>();
+        this.submenus = new LinkedHashMap<>();
+        this.items = new LinkedList<>();
         for (MenuHierarchy submenu : submenus.values()) {
             for (ActionDescription action : submenu.items) {
                 if (action.isVisible()) {
@@ -167,10 +99,10 @@ class MenuHierarchy implements Serializable {
     }
 
     List<Component> list(MenuComponent context) {
-        List<Component> list = new LinkedList<Component>();
+        List<Component> list = new LinkedList<>();
         if (context instanceof MenuBar) {
             for (ActionDescription item : items) {
-                if (!(item.getId().startsWith("info") || item.getId().equals("spacer"))) {
+                if (!(item.getId().startsWith("info"))) {
                     MenuAction menuAction = new MenuAction("item", item, form);
                     if (menuAction.isVisible()) {
                         list.add(menuAction);
@@ -178,7 +110,7 @@ class MenuHierarchy implements Serializable {
                 }
             }
 
-            List<String> categories = new ArrayList<String>(this.categories);
+            List<String> categories = new ArrayList<>(this.categories);
             if (categories.contains("default")) {
                 categories.remove("default");
                 categories.add(0, "publication");
@@ -187,6 +119,9 @@ class MenuHierarchy implements Serializable {
                 categories.add(3, "miscellaneous");
             }
             for (String subMenuKey : submenus.keySet()) {
+                if ("info".equals(subMenuKey)) {
+                    continue;
+                }
                 if (!categories.contains(subMenuKey)) {
                     categories.add(subMenuKey);
                 }
@@ -207,11 +142,12 @@ class MenuHierarchy implements Serializable {
                 }
             }
 
-            for (ActionDescription item : items) {
-                if (item.getId().startsWith("info")) {
-                    list.add(new MenuLabel("item", item));
-                } else if (item.getId().equals("spacer")) {
-                    list.add(new MenuSpacer("item"));
+            if (submenus.containsKey("info")) {
+                MenuHierarchy info = submenus.get("info");
+                for (ActionDescription item : info.items) {
+                    if (item.getId().startsWith("info")) {
+                        list.add(new MenuLabel("item", item));
+                    }
                 }
             }
         } else {

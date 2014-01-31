@@ -71,6 +71,11 @@ public class EditingReviewedActionsWorkflowPlugin extends RenderPlugin {
                 new PackageResourceReference(EditingReviewedActionsWorkflowPlugin.class, "document-save-16.png"), context, getModel()) {
 
             @Override
+            public String getSubMenu() {
+                return "top";
+            }
+
+            @Override
             public boolean isFormSubmitted() {
                 return true;
             }
@@ -91,6 +96,11 @@ public class EditingReviewedActionsWorkflowPlugin extends RenderPlugin {
 
         add(new StdWorkflow("done", new StringResourceModel("done", this, null, "Done"),
                 new PackageResourceReference(EditingReviewedActionsWorkflowPlugin.class, "document-saveclose-16.png"), context, getModel()) {
+
+            @Override
+            public String getSubMenu() {
+                return "top";
+            }
 
             @Override
             public boolean isFormSubmitted() {
@@ -152,6 +162,11 @@ public class EditingReviewedActionsWorkflowPlugin extends RenderPlugin {
                 }
             }));
             add(feedbackFragment);
+        }
+
+        @Override
+        public String getSubMenu() {
+            return "info";
         }
 
         @Override

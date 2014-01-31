@@ -16,7 +16,7 @@
 -->
 <sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
          sv:name="editing" xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="combine">
-  <sv:node sv:name="reviewedactions" h:merge="overlay">
+  <sv:node sv:name="handle" h:merge="overlay">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:workflow</sv:value>
     </sv:property>

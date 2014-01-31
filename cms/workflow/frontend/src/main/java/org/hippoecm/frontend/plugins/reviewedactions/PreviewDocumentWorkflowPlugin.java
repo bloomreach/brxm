@@ -86,18 +86,20 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
+import org.hippoecm.repository.reviewedactions.UnlockWorkflow;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
+public class PreviewDocumentWorkflowPlugin extends RenderPlugin {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(FullReviewedActionsWorkflowPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(PreviewDocumentWorkflowPlugin.class);
 
     @SuppressWarnings("unused") // used by a PropertyModel
     private String inUseBy = StringUtils.EMPTY;
@@ -105,9 +107,13 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
     private StdWorkflow infoAction;
     private StdWorkflow infoEditAction;
     private StdWorkflow editAction;
+    private StdWorkflow unlockAction;
     private StdWorkflow publishAction;
     private StdWorkflow depublishAction;
+    private StdWorkflow requestPublishAction;
+    private StdWorkflow requestDepublishAction;
     private StdWorkflow deleteAction;
+    private StdWorkflow requestDeleteAction;
     private StdWorkflow renameAction;
     private StdWorkflow copyAction;
     private StdWorkflow moveAction;
@@ -116,15 +122,21 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
     private StdWorkflow whereUsedAction;
     private StdWorkflow historyAction;
 
-    public FullReviewedActionsWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
+    public PreviewDocumentWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         final TypeTranslator translator = new TypeTranslator(new JcrNodeTypeModel(HippoStdNodeType.NT_PUBLISHABLESUMMARY));
         add(infoAction = new StdWorkflow("info", "info") {
+
+            @Override
+            public String getSubMenu() {
+                return "info";
+            }
+
             @Override
             protected IModel getTitle() {
                 return translator.getValueName(HippoStdNodeType.HIPPOSTD_STATESUMMARY,
-                        new PropertyModel<String>(FullReviewedActionsWorkflowPlugin.this, "stateSummary"));
+                        new PropertyModel<String>(PreviewDocumentWorkflowPlugin.this, "stateSummary"));
             }
 
             @Override
@@ -133,10 +145,16 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
         });
 
         add(infoEditAction = new StdWorkflow("infoEdit", "infoEdit") {
+
+            @Override
+            public String getSubMenu() {
+                return "info";
+            }
+
             @Override
             protected IModel getTitle() {
                 return new StringResourceModel("in-use-by", this, null,
-                        new PropertyModel(FullReviewedActionsWorkflowPlugin.this, "inUseBy"));
+                        new PropertyModel(PreviewDocumentWorkflowPlugin.this, "inUseBy"));
             }
 
             @Override
@@ -145,6 +163,12 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
         });
 
         add(editAction = new StdWorkflow("edit", new StringResourceModel("edit-label", this, null), getModel()) {
+
+            @Override
+            public String getSubMenu() {
+                return "top";
+            }
+
             @Override
             protected ResourceReference getIcon() {
                 return new PackageResourceReference(getClass(), "edit-16.png");
@@ -172,7 +196,32 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
             }
         });
 
+        add(unlockAction = new StdWorkflow<UnlockWorkflow>("unlock", new StringResourceModel("unlock", this, null),
+                null, context, getModel()) {
+
+            @Override
+            public String getSubMenu() {
+                return "admin";
+            }
+
+            @Override
+            protected ResourceReference getIcon() {
+                return new PackageResourceReference(getClass(), "unlock-16.png");
+            }
+
+            @Override
+            protected String execute(UnlockWorkflow workflow) throws Exception {
+                workflow.unlock();
+                return null;
+            }
+        });
+
         add(publishAction = new StdWorkflow("publish", new StringResourceModel("publish-label", this, null), context, getModel()) {
+
+            @Override
+            public String getSubMenu() {
+                return "publication";
+            }
 
             @Override
             protected ResourceReference getIcon() {
@@ -204,13 +253,112 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
             }
         });
 
+        add(depublishAction = new StdWorkflow("depublish", new StringResourceModel("depublish-label", this, null), context, getModel()) {
+
+            @Override
+            public String getSubMenu() {
+                return "publication";
+            }
+
+            @Override
+            protected ResourceReference getIcon() {
+                return new PackageResourceReference(getClass(), "unpublish-16.png");
+            }
+
+            @Override
+            protected Dialog createRequestDialog() {
+                final IModel docName = getDocumentName();
+                IModel title = new StringResourceModel("depublish-title", PreviewDocumentWorkflowPlugin.this, null, docName);
+                IModel message = new StringResourceModel("depublish-message", PreviewDocumentWorkflowPlugin.this, null, docName);
+                return new DepublishDialog(title, message, getModel(), this, getEditorManager());
+            }
+
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
+                workflow.depublish();
+                return null;
+            }
+        });
+
+        add(requestPublishAction = new StdWorkflow("requestPublication", new StringResourceModel("request-publication", this, null), context, getModel()) {
+
+            @Override
+            public String getSubMenu() {
+                return "publication";
+            }
+
+            @Override
+            protected ResourceReference getIcon() {
+                return new PackageResourceReference(getClass(), "workflow-requestpublish-16.png");
+            }
+
+            @Override
+            protected Dialog createRequestDialog() {
+                HippoNode node;
+                try {
+                    node = (HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode();
+                    final UnpublishedReferenceProvider referenced = new UnpublishedReferenceProvider(new ReferenceProvider(
+                            new JcrNodeModel(node)));
+                    if (referenced.size() > 0) {
+                        return new UnpublishedReferencesDialog(publishAction, new UnpublishedReferenceNodeProvider(referenced), getEditorManager());
+                    }
+                } catch (RepositoryException e) {
+                    log.error(e.getMessage());
+                }
+                return null;
+            }
+
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
+                workflow.requestPublication();
+                return null;
+            }
+        });
+
+        add(requestDepublishAction = new StdWorkflow("requestDepublication", new StringResourceModel("request-depublication", this, null), context, getModel()) {
+
+            @Override
+            public String getSubMenu() {
+                return "publication";
+            }
+
+            @Override
+            protected ResourceReference getIcon() {
+                return new PackageResourceReference(getClass(), "workflow-requestunpublish-16.png");
+            }
+
+            @Override
+            protected Dialog createRequestDialog() {
+                final IModel docName = getDocumentName();
+                IModel<String> title = new StringResourceModel("depublish-title", PreviewDocumentWorkflowPlugin.this, null, docName);
+                IModel<String> message = new StringResourceModel("depublish-message", PreviewDocumentWorkflowPlugin.this, null, docName);
+                return new DepublishDialog(title, message, getModel(), this, getEditorManager());
+            }
+
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
+                workflow.requestDepublication();
+                return null;
+            }
+        });
+
         add(schedulePublishAction = new StdWorkflow("schedulePublish", new StringResourceModel(
                 "schedule-publish-label", this, null), context, getModel()) {
             public Date date = new Date();
+
+            @Override
+            public String getSubMenu() {
+                return "publication";
+            }
+
             @Override
             protected ResourceReference getIcon() {
                 return new PackageResourceReference(getClass(), "publish-schedule-16.png");
             }
+
             @Override
             protected Dialog createRequestDialog() {
                 WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
@@ -234,32 +382,15 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
             }
         });
 
-        add(depublishAction = new StdWorkflow("depublish", new StringResourceModel("depublish-label", this, null), context, getModel()) {
-
-            @Override
-            protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "unpublish-16.png");
-            }
-
-            @Override
-            protected Dialog createRequestDialog() {
-                final IModel docName = getDocumentName();
-                IModel title = new StringResourceModel("depublish-title", FullReviewedActionsWorkflowPlugin.this, null, docName);
-                IModel message = new StringResourceModel("depublish-message", FullReviewedActionsWorkflowPlugin.this, null, docName);
-                return new DepublishDialog(title, message, getModel(), this, getEditorManager());
-            }
-
-            @Override
-            protected String execute(Workflow wf) throws Exception {
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
-                workflow.depublish();
-                return null;
-            }
-        });
-
         add(scheduleDepublishAction = new StdWorkflow("scheduleDepublish", new StringResourceModel(
                 "schedule-depublish-label", this, null), context, getModel()) {
             public Date date = new Date();
+
+            @Override
+            public String getSubMenu() {
+                return "publication";
+            }
+
             @Override
             protected ResourceReference getIcon() {
                 return new PackageResourceReference(getClass(), "unpublish-scheduled-16.png");
@@ -294,6 +425,11 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
             public Map<Localized, String> localizedNames;
 
             @Override
+            public String getSubMenu() {
+                return "document";
+            }
+
+            @Override
             protected ResourceReference getIcon() {
                 if (isEnabled()) {
                     return new PackageResourceReference(getClass(), "rename-16.png");
@@ -323,7 +459,7 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
                     localizedNames = Collections.emptyMap();
                 }
                 return new RenameDocumentDialog(this, new StringResourceModel("rename-title",
-                        FullReviewedActionsWorkflowPlugin.this, null));
+                        PreviewDocumentWorkflowPlugin.this, null));
             }
 
             private HippoNode getModelNode() throws RepositoryException {
@@ -365,6 +501,11 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
             String name = null;
 
             @Override
+            public String getSubMenu() {
+                return "document";
+            }
+
+            @Override
             protected ResourceReference getIcon() {
                 return new PackageResourceReference(getClass(), "copy-16.png");
             }
@@ -373,7 +514,7 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
             protected Dialog createRequestDialog() {
                 destination = new NodeModelWrapper(getFolder()) {};
                 CopyNameHelper copyNameHelper = new CopyNameHelper(getNodeNameCodec(), new StringResourceModel(
-                        "copyof", FullReviewedActionsWorkflowPlugin.this, null).getString());
+                        "copyof", PreviewDocumentWorkflowPlugin.this, null).getString());
                 try {
                     name = copyNameHelper.getCopyName(((HippoNode) ((WorkflowDescriptorModel) getDefaultModel())
                             .getNode()).getLocalizedName(), destination.getNodeModel().getNode());
@@ -381,8 +522,8 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
                     return new ExceptionDialog(ex);
                 }
                 return new DestinationDialog(
-                        new StringResourceModel("copy-title", FullReviewedActionsWorkflowPlugin.this, null),
-                        new StringResourceModel("copy-name", FullReviewedActionsWorkflowPlugin.this, null),
+                        new StringResourceModel("copy-title", PreviewDocumentWorkflowPlugin.this, null),
+                        new StringResourceModel("copy-name", PreviewDocumentWorkflowPlugin.this, null),
                         new PropertyModel<String>(this, "name"),
                         destination, getPluginContext(), getPluginConfig()) {
                     {
@@ -425,6 +566,11 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
             NodeModelWrapper destination;
 
             @Override
+            public String getSubMenu() {
+                return "document";
+            }
+
+            @Override
             protected ResourceReference getIcon() {
                 if (isEnabled()) {
                     return new PackageResourceReference(getClass(), "move-16.png");
@@ -447,7 +593,7 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
                 destination = new NodeModelWrapper(getFolder()) {
                 };
                 return new DestinationDialog(new StringResourceModel("move-title",
-                        FullReviewedActionsWorkflowPlugin.this, null), null, null, destination,
+                        PreviewDocumentWorkflowPlugin.this, null), null, null, destination,
                                              getPluginContext(), getPluginConfig()) {
                     @Override
                     public void invokeWorkflow() throws Exception {
@@ -474,6 +620,11 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
                 new StringResourceModel("delete-label", this, null), context, getModel()) {
 
             @Override
+            public String getSubMenu() {
+                return "document";
+            }
+
+            @Override
             protected ResourceReference getIcon() {
                 if (isEnabled()) {
                     return new PackageResourceReference(getClass(), "delete-16.png");
@@ -494,8 +645,8 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
             @Override
             protected Dialog createRequestDialog() {
                 IModel<String> message = new StringResourceModel("delete-message",
-                        FullReviewedActionsWorkflowPlugin.this, null, getDocumentName());
-                IModel<String> title = new StringResourceModel("delete-title", FullReviewedActionsWorkflowPlugin.this,
+                        PreviewDocumentWorkflowPlugin.this, null, getDocumentName());
+                IModel<String> title = new StringResourceModel("delete-title", PreviewDocumentWorkflowPlugin.this,
                         null, getDocumentName());
                 return new DeleteDialog(title, getModel(), message, this, getEditorManager());
             }
@@ -508,7 +659,42 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
             }
         });
 
+        add(requestDeleteAction = new StdWorkflow("requestDelete", new StringResourceModel("request-delete", this, null), context, getModel()) {
+
+            @Override
+            public String getSubMenu() {
+                return "document";
+            }
+
+            @Override
+            protected ResourceReference getIcon() {
+                return new PackageResourceReference(getClass(), "workflow-requestdelete-16.png");
+            }
+
+            @Override
+            protected Dialog createRequestDialog() {
+                IModel<String> message = new StringResourceModel("delete-message",
+                        PreviewDocumentWorkflowPlugin.this, null, getDocumentName());
+                IModel<String> title = new StringResourceModel("delete-title", PreviewDocumentWorkflowPlugin.this,
+                        null, getDocumentName());
+                return new DeleteDialog(title, getModel(), message, this, getEditorManager());
+            }
+
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
+                workflow.requestDeletion();
+                return null;
+            }
+        });
+
         add(whereUsedAction = new StdWorkflow("where-used", new StringResourceModel("where-used-label", this, null), context, getModel()) {
+
+            @Override
+            public String getSubMenu() {
+                return "document";
+            }
+
             @Override
             protected ResourceReference getIcon() {
                 return new PackageResourceReference(getClass(), "where-used-16.png");
@@ -527,6 +713,11 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
         });
 
         add(historyAction = new StdWorkflow("history", new StringResourceModel("history-label", this, null), context, getModel()) {
+
+            @Override
+            public String getSubMenu() {
+                return "document";
+            }
 
             @Override
             public boolean isEnabled() {
@@ -626,11 +817,16 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
                 Map<String, Serializable> info = workflow.hints();
 
                 hideIfNecessary(info, "obtainEditableInstance", editAction);
-                hideIfNecessary(info, "publish", publishAction);
-                hideIfNecessary(info, "schedpublish", schedulePublishAction);
+                hideIfNecessary(info, "unlock", unlockAction);
 
+                hideIfNecessary(info, "publish", publishAction);
+                hideIfNecessary(info, "schedulePublish", schedulePublishAction);
                 hideIfNecessary(info, "depublish", depublishAction);
-                hideIfNecessary(info, "scheddepublish", scheduleDepublishAction);
+                hideIfNecessary(info, "scheduleDepublish", scheduleDepublishAction);
+
+                hideIfNecessary(info, "requestDelete", requestDeleteAction);
+                hideIfNecessary(info, "requestPublish", requestPublishAction);
+                hideIfNecessary(info, "requestDepublish", requestDepublishAction);
 
                 hideOrDisable(deleteAction, info, "delete");
                 hideOrDisable(renameAction, info, "rename");

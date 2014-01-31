@@ -36,7 +36,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.reviewedactions.BasicRequestWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +44,7 @@ public class BasicRequestWorkflowPlugin extends RenderPlugin {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(BasicReviewedActionsWorkflowPlugin.class);
+    private static Logger log = LoggerFactory.getLogger(BasicRequestWorkflowPlugin.class);
 
     private final DateFormat dateFormatFull = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL,
                                                                              getSession().getLocale());

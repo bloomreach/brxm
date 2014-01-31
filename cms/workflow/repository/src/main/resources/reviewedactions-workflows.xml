@@ -31,7 +31,7 @@
         <sv:value>${editor.id}</sv:value>
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.reviewedactions.FullReviewedActionsWorkflowPlugin</sv:value>
+        <sv:value>org.hippoecm.frontend.plugins.reviewedactions.PreviewDocumentWorkflowPlugin</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

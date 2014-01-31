@@ -75,6 +75,11 @@ public class FullRequestWorkflowPlugin extends RenderPlugin {
         add(acceptAction = new StdWorkflow("accept", new StringResourceModel("accept-request", this, null), getModel()) {
 
             @Override
+            public String getSubMenu() {
+                return "request";
+            }
+
+            @Override
             protected ResourceReference getIcon() {
                 return new PackageResourceReference(getClass(), "workflow-accept-16.png");
             }
@@ -91,9 +96,15 @@ public class FullRequestWorkflowPlugin extends RenderPlugin {
             public String reason;
 
             @Override
+            public String getSubMenu() {
+                return "request";
+            }
+
+            @Override
             protected ResourceReference getIcon() {
                 return new PackageResourceReference(getClass(), "workflow-requestunpublish-16.png");
             }
+
             @Override
             protected Dialog createRequestDialog() {
                 return new TextDialog(
@@ -115,6 +126,11 @@ public class FullRequestWorkflowPlugin extends RenderPlugin {
         });
 
         add(cancelAction = new StdWorkflow("cancel", new StringResourceModel("cancel-request", this, null), getModel()) {
+
+            @Override
+            public String getSubMenu() {
+                return "request";
+            }
 
             @Override
             protected ResourceReference getIcon() {

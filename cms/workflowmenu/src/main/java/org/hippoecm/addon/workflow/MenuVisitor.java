@@ -31,7 +31,13 @@ class MenuVisitor implements IVisitor<Panel, Void> {
 
     public void component(Panel component, IVisit<Void> visit) {
         if (component instanceof ActionDescription) {
-            menu.put(category, (ActionDescription) component);
+            ActionDescription action = (ActionDescription) component;
+            String subMenu = action.getSubMenu();
+            if (subMenu == null) {
+                menu.put(category, action);
+            } else {
+                menu.put(subMenu, action);
+            }
         } else if (component instanceof MenuDescription) {
             menu.put(category, (MenuDescription) component);
         }
