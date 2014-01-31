@@ -69,7 +69,7 @@ public class JCRFullRequestWorkflowImpl extends JCRBasicRequestWorkflowImpl impl
     }
 
     @Override
-    public Map<String,Serializable> hints()  {
+    public Map<String,Serializable> hints() throws WorkflowException {
         Map<String,Serializable> info = super.hints();
         try {
             if (PublicationRequest.REJECTED.equals(request.getType())) {

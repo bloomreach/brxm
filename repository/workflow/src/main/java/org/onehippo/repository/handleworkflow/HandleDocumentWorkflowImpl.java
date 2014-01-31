@@ -26,7 +26,6 @@ import java.util.SortedMap;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.version.Version;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.RepositoryMap;
@@ -36,8 +35,8 @@ import org.onehippo.repository.documentworkflow.DocumentCopyMovePayload;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.documentworkflow.HandleDocumentWorkflow;
-import org.onehippo.repository.documentworkflow.RequestPayload;
-import org.onehippo.repository.documentworkflow.WorkflowRequest;
+import org.onehippo.repository.documentworkflow.RejectRequestPayload;
+import org.onehippo.repository.documentworkflow.VersionRestoreToPayload;
 import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
 
 public class HandleDocumentWorkflowImpl extends WorkflowImpl implements HandleDocumentWorkflow {
@@ -79,17 +78,17 @@ public class HandleDocumentWorkflowImpl extends WorkflowImpl implements HandleDo
     public void setNode(final Node node) throws RepositoryException {
         super.setNode(node);
 
+        String scxmlId = "document-workflow";
         // Critical: MUST use getNonChainingWorkflowContext() or getWorkflowContext(null), NOT getWorkflowContext()!
-        dm = new DocumentHandle(getNonChainingWorkflowContext(), node);
 
         try {
-            String definition = "document-workflow";
             final RepositoryMap workflowConfiguration = getWorkflowContext().getWorkflowConfiguration();
             if (workflowConfiguration != null && workflowConfiguration.exists() && workflowConfiguration.get(SCXML_DEFINITION_KEY) instanceof String) {
-                definition = (String) workflowConfiguration.get(SCXML_DEFINITION_KEY);
+                scxmlId = (String) workflowConfiguration.get(SCXML_DEFINITION_KEY);
             }
 
-            workflowExecutor = new SCXMLWorkflowExecutor(definition, dm);
+            dm = new DocumentHandle(scxmlId, getNonChainingWorkflowContext(), node);
+            workflowExecutor = new SCXMLWorkflowExecutor(dm);
             workflowExecutor.start();
         }
         catch (WorkflowException wfe) {
@@ -101,28 +100,29 @@ public class HandleDocumentWorkflowImpl extends WorkflowImpl implements HandleDo
     }
 
     @Override
-    public Map<String, Serializable> hints() {
-        Map<String, Serializable> hints = super.hints();
-        if (workflowExecutor.isStarted()) {
+    public Map<String, Serializable> hints() throws WorkflowException {
+        if (workflowExecutor.ensureStarted()) {
+            Map<String, Serializable> hints = super.hints();
             hints.putAll(dm.getInfo());
             hints.putAll(dm.getActions());
+            return Collections.unmodifiableMap(hints);
         }
-        return hints;
+        return Collections.emptyMap();
     }
 
     @Override
-    public Map<String, Serializable> getInfo() {
-        if (workflowExecutor.isStarted()) {
-            return dm.getInfo();
+    public Map<String, Serializable> getInfo() throws WorkflowException {
+        if (workflowExecutor.ensureStarted()) {
+            return Collections.unmodifiableMap(dm.getInfo());
         } else {
             return Collections.emptyMap();
         }
     }
 
     @Override
-    public Map<String, Boolean> getActions() {
-        if (workflowExecutor.isStarted()) {
-            return dm.getActions();
+    public Map<String, Boolean> getActions() throws WorkflowException {
+        if (workflowExecutor.ensureStarted()) {
+            return Collections.unmodifiableMap(dm.getActions());
         } else {
             return Collections.emptyMap();
         }
@@ -159,7 +159,7 @@ public class HandleDocumentWorkflowImpl extends WorkflowImpl implements HandleDo
 
     @Override
     public void requestDepublication() throws WorkflowException {
-        workflowExecutor.triggerAction("requestDepublish");
+        workflowExecutor.triggerAction("requestDepublish", null);
     }
 
     @Override
@@ -169,7 +169,7 @@ public class HandleDocumentWorkflowImpl extends WorkflowImpl implements HandleDo
 
     @Override
     public void requestPublication() throws WorkflowException {
-        workflowExecutor.triggerAction("publish");
+        workflowExecutor.triggerAction("requestPublish", null);
     }
 
     @Override
@@ -211,7 +211,7 @@ public class HandleDocumentWorkflowImpl extends WorkflowImpl implements HandleDo
 
     @Override
     public void depublish(final Date depublicationDate) throws WorkflowException {
-        workflowExecutor.triggerAction("depublish", depublicationDate);
+        workflowExecutor.triggerAction("scheduleDepublish", depublicationDate);
     }
 
     @Override
@@ -221,7 +221,7 @@ public class HandleDocumentWorkflowImpl extends WorkflowImpl implements HandleDo
 
     @Override
     public void publish(final Date publicationDate) throws WorkflowException {
-        workflowExecutor.triggerAction("publish", publicationDate);
+        workflowExecutor.triggerAction("schedulePublish", publicationDate);
     }
 
     @Override
@@ -232,18 +232,18 @@ public class HandleDocumentWorkflowImpl extends WorkflowImpl implements HandleDo
     // Request Workflow on Document handle level
 
     @Override
-    public void cancelRequest(Node request) throws WorkflowException, RepositoryException {
-        workflowExecutor.triggerAction("cancelRequest", new WorkflowRequest(request));
+    public void cancelRequest(String requestIdentifier) throws WorkflowException {
+        workflowExecutor.triggerAction("cancelRequest", requestIdentifier);
     }
 
     @Override
-    public void acceptRequest(Node request) throws WorkflowException, RepositoryException {
-        workflowExecutor.triggerAction("acceptRequest", new WorkflowRequest(request));
+    public void acceptRequest(String requestIdentifier) throws WorkflowException {
+        workflowExecutor.triggerAction("acceptRequest", requestIdentifier);
     }
 
     @Override
-    public void rejectRequest(Node request, final String reason) throws WorkflowException, RepositoryException {
-        workflowExecutor.triggerAction("rejectRequest", new RequestPayload(new WorkflowRequest(request), reason));
+    public void rejectRequest(String requestIdentifier, final String reason) throws WorkflowException {
+        workflowExecutor.triggerAction("rejectRequest", new RejectRequestPayload(requestIdentifier, reason));
     }
 
     // UnlockWorkflow implementation
@@ -261,12 +261,12 @@ public class HandleDocumentWorkflowImpl extends WorkflowImpl implements HandleDo
     }
 
     @Override
-    public Document restoreFromVersion(final Version version) throws WorkflowException, RepositoryException {
-        return workflowResultToUserDocument(workflowExecutor.triggerAction("restoreFrom", new Document(version)));
+    public Document versionRestoreTo(final Calendar historic, Document target) throws WorkflowException, RepositoryException {
+        return workflowResultToUserDocument(workflowExecutor.triggerAction("versionRestoreTo", new VersionRestoreToPayload(historic, target)));
     }
 
     @Override
-    public Document restoreFromVersion(final Calendar historic) throws WorkflowException, RepositoryException {
+    public Document restoreVersion(final Calendar historic) throws WorkflowException, RepositoryException {
         return workflowResultToUserDocument(workflowExecutor.triggerAction("restoreVersion", historic));
     }
 

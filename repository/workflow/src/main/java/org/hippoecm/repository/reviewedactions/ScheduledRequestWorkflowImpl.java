@@ -34,6 +34,6 @@ public class ScheduledRequestWorkflowImpl extends AbstractReviewedActionsWorkflo
 
     @Override
     public void cancelRequest() throws WorkflowException, RemoteException, RepositoryException {
-        handleDocumentWorkflow.cancelRequest(getNode());
+        handleDocumentWorkflow.cancelRequest(getNode().getIdentifier());
     }
 }

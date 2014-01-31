@@ -42,7 +42,7 @@ public class JCRUnlockWorkflowImpl extends WorkflowImpl implements UnlockWorkflo
     }
 
     @Override
-    public Map<String, Serializable> hints() {
+    public Map<String, Serializable> hints() throws WorkflowException {
         Map<String, Serializable> info = super.hints();
         try {
             if (document == null || !"draft".equals(document.getState()) || document.getOwner() == null) {

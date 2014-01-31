@@ -52,7 +52,7 @@ public class JCRFullReviewedActionsWorkflowImpl extends JCRBasicReviewedActionsW
     }
 
     @Override
-    public Map<String, Serializable> hints() {
+    public Map<String, Serializable> hints() throws WorkflowException {
         Map<String, Serializable> info = super.hints();
         if (info.containsKey("delete")) {
             info.put("rename", info.get("delete"));

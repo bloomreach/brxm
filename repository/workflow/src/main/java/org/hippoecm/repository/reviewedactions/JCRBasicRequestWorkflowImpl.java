@@ -44,7 +44,7 @@ public class JCRBasicRequestWorkflowImpl extends WorkflowImpl implements BasicRe
     }
 
     @Override
-    public Map<String,Serializable> hints()  {
+    public Map<String,Serializable> hints() throws WorkflowException {
         Map<String,Serializable> info = super.hints();
         try {
             if(request.getOwner() != null) {

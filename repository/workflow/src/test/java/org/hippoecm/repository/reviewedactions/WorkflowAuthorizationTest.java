@@ -283,7 +283,10 @@ public class WorkflowAuthorizationTest extends RepositoryTestCase {
                     if (preview != null) {
                         log.debug(iter + ": publishing " + name);
                         FullReviewedActionsWorkflow publishWorkflow = (FullReviewedActionsWorkflow) getWorkflow(preview, "default");
-                        publishWorkflow.publish();
+                        Boolean canPublish = (Boolean)publishWorkflow.hints().get("publish");
+                        if (canPublish != null && canPublish.booleanValue()) {
+                            publishWorkflow.publish();
+                        }
                         continue;
                     }
 

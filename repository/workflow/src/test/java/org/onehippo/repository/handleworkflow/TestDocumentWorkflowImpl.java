@@ -42,6 +42,7 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.documentworkflow.HandleDocumentWorkflow;
 import org.onehippo.repository.documentworkflow.MockAccessManagedSession;
 import org.onehippo.repository.documentworkflow.MockWorkflowContext;
+import org.onehippo.repository.documentworkflow.ScheduledRequest;
 import org.onehippo.repository.documentworkflow.WorkflowRequest;
 import org.onehippo.repository.documentworkflow.action.ArchiveAction;
 import org.onehippo.repository.documentworkflow.action.ConfigVariantAction;
@@ -49,12 +50,15 @@ import org.onehippo.repository.documentworkflow.action.CopyDocumentAction;
 import org.onehippo.repository.documentworkflow.action.CopyVariantAction;
 import org.onehippo.repository.documentworkflow.action.DeleteRequestAction;
 import org.onehippo.repository.documentworkflow.action.InfoAction;
-import org.onehippo.repository.documentworkflow.action.InvokeDocumentWorkflowAction;
+import org.onehippo.repository.documentworkflow.action.InvokeHandleDocumentWorkflowAction;
 import org.onehippo.repository.documentworkflow.action.IsModifiedAction;
 import org.onehippo.repository.documentworkflow.action.ListVersionsVariantAction;
 import org.onehippo.repository.documentworkflow.action.MoveDocumentAction;
+import org.onehippo.repository.documentworkflow.action.RejectRequestAction;
 import org.onehippo.repository.documentworkflow.action.RenameDocumentAction;
-import org.onehippo.repository.documentworkflow.action.RequestAction;
+import org.onehippo.repository.documentworkflow.action.VersionRestoreToAction;
+import org.onehippo.repository.documentworkflow.action.WorkflowRequestAction;
+import org.onehippo.repository.documentworkflow.action.RequestsActionsInfoAction;
 import org.onehippo.repository.documentworkflow.action.RestoreVersionAction;
 import org.onehippo.repository.documentworkflow.action.RetrieveVersionAction;
 import org.onehippo.repository.documentworkflow.action.ScheduleRequestAction;
@@ -87,7 +91,7 @@ public class TestDocumentWorkflowImpl {
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "info", InfoAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "copyVariant", CopyVariantAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "configVariant", ConfigVariantAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "request", RequestAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "workflowRequest", WorkflowRequestAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "archive", ArchiveAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "isModified", IsModifiedAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "scheduleRequest", ScheduleRequestAction.class.getName());
@@ -96,12 +100,15 @@ public class TestDocumentWorkflowImpl {
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "renameDocument", RenameDocumentAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "setHolder", SetHolderAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "deleteRequest", DeleteRequestAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "invokeDocumentWorkflow", InvokeDocumentWorkflowAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "invokeHandleDocumentWorkflow", InvokeHandleDocumentWorkflowAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "workflowException", WorkflowExceptionAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "version", VersionVariantAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "listVersions", ListVersionsVariantAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "retrieveVersion", RetrieveVersionAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "restoreVersion", RestoreVersionAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "versionRestoreTo", VersionRestoreToAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "requestsActionsInfo", RequestsActionsInfoAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "rejectRequest", RejectRequestAction.class.getName());
         registry.setUp(scxmlConfigNode);
 
         HippoServiceRegistry.registerService(registry, SCXMLRegistry.class);
@@ -140,9 +147,11 @@ public class TestDocumentWorkflowImpl {
         return variant;
     }
 
-    protected Node addRequest(Node handle, String type) throws RepositoryException {
-        Node variant = handle.addNode(WorkflowRequest.HIPPO_REQUEST, HippoNodeType.NT_REQUEST);
+    protected Node addRequest(Node handle, String type, boolean workflowRequest) throws RepositoryException {
+        Node variant = handle.addNode(WorkflowRequest.HIPPO_REQUEST,
+                workflowRequest ? WorkflowRequest.NT_HIPPOSTDPUBWF_REQUEST : ScheduledRequest.NT_HIPPOSCHED_WORKFLOW_JOB);
         variant.setProperty(WorkflowRequest.HIPPOSTDPUBWF_TYPE, type);
+        variant.addMixin(HippoNodeType.NT_REQUEST);
         return variant;
     }
 
@@ -212,6 +221,22 @@ public class TestDocumentWorkflowImpl {
     }
 
     @Test
+    public void testInitializeSCXML() throws Exception {
+
+        MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
+        MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
+        RepositoryMap workflowConfig = workflowContext.getWorkflowConfiguration();
+        HandleDocumentWorkflowImpl wf = new HandleDocumentWorkflowImpl();
+        wf.setWorkflowContext(workflowContext);
+
+        Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+
+        addVariant(handleNode, HippoStdNodeType.DRAFT);
+        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", HandleDocumentWorkflow.SupportedFeatures.request.name());
+        wf.setNode(handleNode);
+    }
+
+    @Test
     public void testStatusState() throws Exception {
 
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
@@ -273,22 +298,6 @@ public class TestDocumentWorkflowImpl {
     }
 
     @Test
-    public void testInitializeSCXML() throws Exception {
-
-        MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
-        MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
-        RepositoryMap workflowConfig = workflowContext.getWorkflowConfiguration();
-        HandleDocumentWorkflowImpl wf = new HandleDocumentWorkflowImpl();
-        wf.setWorkflowContext(workflowContext);
-
-        Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
-
-        addVariant(handleNode, HippoStdNodeType.DRAFT);
-        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", HandleDocumentWorkflow.SupportedFeatures.request.name());
-        wf.setNode(handleNode);
-    }
-
-    @Test
     public void testEditState() throws Exception {
 
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
@@ -316,7 +325,7 @@ public class TestDocumentWorkflowImpl {
         // test state not-editable
         assertContainsStateIds(wf.getWorkflowExecutor(), "editable");
 
-        rejectedRequest = addRequest(handleNode, WorkflowRequest.REJECTED);
+        rejectedRequest = addRequest(handleNode, WorkflowRequest.REJECTED, true);
         wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "no-edit");
@@ -326,7 +335,7 @@ public class TestDocumentWorkflowImpl {
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "editable");
 
-        publishRequest = addRequest(handleNode, WorkflowRequest.PUBLISH);
+        publishRequest = addRequest(handleNode, WorkflowRequest.PUBLISH, true);
         wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "not-editable");
@@ -366,7 +375,7 @@ public class TestDocumentWorkflowImpl {
 
         assertContainsHint(wf.hints(), "obtainEditableInstance", true);
 
-        rejectedRequest = addRequest(handleNode, WorkflowRequest.REJECTED);
+        rejectedRequest = addRequest(handleNode, WorkflowRequest.REJECTED, true);
         wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "no-edit");
@@ -445,12 +454,12 @@ public class TestDocumentWorkflowImpl {
         assertContainsStateIds(wf.getWorkflowExecutor(), "not-requested");
 
         // test state requested
-        publishRequest = addRequest(handleNode, WorkflowRequest.PUBLISH);
+        publishRequest = addRequest(handleNode, WorkflowRequest.PUBLISH, true);
         wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "requested");
 
-        rejectedRequest = addRequest(handleNode, WorkflowRequest.REJECTED);
+        rejectedRequest = addRequest(handleNode, WorkflowRequest.REJECTED, true);
         wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "request-rejected");
@@ -584,7 +593,7 @@ public class TestDocumentWorkflowImpl {
         assertContainsHint(wf.hints(), "publish", true);
 
         unpublishedVariant.remove();
-        publishRequest = addRequest(handleNode, WorkflowRequest.PUBLISH);
+        publishRequest = addRequest(handleNode, WorkflowRequest.PUBLISH, true);
         wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "not-publishable");
@@ -707,7 +716,7 @@ public class TestDocumentWorkflowImpl {
         assertContainsStateIds(wf.getWorkflowExecutor(), "not-depublishable");
 
         draftVariant.getProperty(HippoStdNodeType.HIPPOSTD_HOLDER).remove();
-        publishRequest = addRequest(handleNode, WorkflowRequest.PUBLISH);
+        publishRequest = addRequest(handleNode, WorkflowRequest.PUBLISH, true);
         wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "no-depublish");
@@ -874,7 +883,7 @@ public class TestDocumentWorkflowImpl {
         assertContainsStateIds(wf.getWorkflowExecutor(), "no-terminate");
 
         draftVariant.getProperty(HippoStdNodeType.HIPPOSTD_HOLDER).remove();
-        publishRequest = addRequest(handleNode, WorkflowRequest.PUBLISH);
+        publishRequest = addRequest(handleNode, WorkflowRequest.PUBLISH, true);
         wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "no-terminate");
@@ -914,7 +923,7 @@ public class TestDocumentWorkflowImpl {
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "otheruser");
         unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
         publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
-        publishRequest = addRequest(handleNode, WorkflowRequest.PUBLISH);
+        publishRequest = addRequest(handleNode, WorkflowRequest.PUBLISH, true);
 
         wf.setNode(handleNode);
 

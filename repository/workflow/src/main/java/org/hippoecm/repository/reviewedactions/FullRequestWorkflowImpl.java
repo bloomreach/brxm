@@ -39,12 +39,12 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
 
     @Override
     public void acceptRequest() throws WorkflowException, RemoteException, RepositoryException {
-        handleDocumentWorkflow.acceptRequest(getNode());
+        handleDocumentWorkflow.acceptRequest(getNode().getIdentifier());
     }
 
     @Override
     public void rejectRequest(final String reason) throws WorkflowException, RemoteException, RepositoryException {
-        handleDocumentWorkflow.rejectRequest(getNode(), reason);
+        handleDocumentWorkflow.rejectRequest(getNode().getIdentifier(), reason);
     }
 
 }

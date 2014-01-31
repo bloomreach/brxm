@@ -34,7 +34,7 @@ public class BasicRequestWorkflowImpl extends AbstractReviewedActionsWorkflow im
 
     @Override
     public void cancelRequest() throws WorkflowException, RemoteException, RepositoryException {
-        handleDocumentWorkflow.cancelRequest(getNode());
+        handleDocumentWorkflow.cancelRequest(getNode().getIdentifier());
     }
 
 }

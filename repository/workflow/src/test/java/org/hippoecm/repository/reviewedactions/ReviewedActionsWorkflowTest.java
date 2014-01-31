@@ -191,6 +191,7 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
         FullReviewedActionsWorkflow reviewedWorkflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
         assertNotNull("No applicable workflow where there should be one", reviewedWorkflow);
         reviewedWorkflow.publish(); // make sure 'published' variant exists
+        reviewedWorkflow.depublish();
         reviewedWorkflow.requestPublication();
 
         for (Node docNode : new NodeIterable(getNode("test/myarticle").getNodes("myarticle"))) {

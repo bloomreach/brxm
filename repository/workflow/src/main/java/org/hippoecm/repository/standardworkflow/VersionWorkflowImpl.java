@@ -43,7 +43,7 @@ public class VersionWorkflowImpl extends AbstractReviewedActionsWorkflow impleme
     protected Node getSubjectHandleNode() throws RepositoryException {
         Node node = getNode();
         // override needed to handle dereferencing document handle for a jcr:frozenNode subject
-        if (node.isNodeType(JcrConstants.JCR_FROZEN_NODE)) {
+        if (node.isNodeType(JcrConstants.NT_FROZEN_NODE)) {
             Node subject = node.getSession().getNodeByIdentifier(node.getProperty(JcrConstants.JCR_FROZEN_UUID).getString());
             Node handleNode = subject.getParent();
             if (!handleNode.isNodeType(HippoNodeType.NT_HANDLE)) {
@@ -65,17 +65,18 @@ public class VersionWorkflowImpl extends AbstractReviewedActionsWorkflow impleme
 
     @Override
     public Document revert(final Calendar historic) throws WorkflowException, RepositoryException, RemoteException {
-        return handleDocumentWorkflow.restoreFromVersion(historic);
+        return handleDocumentWorkflow.restoreVersion(historic);
     }
 
     @Override
     public Document restoreTo(final Document target) throws WorkflowException, RepositoryException, RemoteException {
-        return handleDocumentWorkflow.restoreFromVersion((Version)getNode().getParent());
+        // only can/may work when this workflow is instantiated for a frozen node
+        return handleDocumentWorkflow.versionRestoreTo(((Version) getNode().getParent()).getCreated(), target);
     }
 
     @Override
     public Document restore(final Calendar historic) throws WorkflowException, RepositoryException, RemoteException {
-        return handleDocumentWorkflow.restoreFromVersion(historic);
+        return handleDocumentWorkflow.restoreVersion(historic);
     }
 
     @Override

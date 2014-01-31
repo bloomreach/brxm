@@ -120,7 +120,7 @@ public class JCRBasicReviewedActionsWorkflowImpl extends WorkflowImpl implements
     }
 
     @Override
-    public Map<String, Serializable> hints() {
+    public Map<String, Serializable> hints() throws WorkflowException {
         Map<String, Serializable> info = super.hints();
         try {
             final String userIdentity = super.getWorkflowContext().getUserIdentity();
