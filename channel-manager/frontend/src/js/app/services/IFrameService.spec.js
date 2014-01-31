@@ -17,7 +17,7 @@
 describe('IFrame Service', function () {
     'use strict';
 
-    var iframeConfig, parentIFramePanel, $window, iframeService;
+    var iframeConfig, parentIFramePanel, $log, $window, iframeService;
 
     beforeEach(module('hippo.channelManager.menuManagement'));
 
@@ -52,7 +52,8 @@ describe('IFrame Service', function () {
         });
     });
 
-    beforeEach(inject(['hippo.channelManager.menuManagement.IFrameService', function ($IFrameService) {
+    beforeEach(inject(['$log', 'hippo.channelManager.menuManagement.IFrameService', function (_$log_, $IFrameService) {
+        $log = _$log_;
         iframeService = $IFrameService;
     }]));
 
@@ -78,9 +79,12 @@ describe('IFrame Service', function () {
         var head = jasmine.createSpyObj('head', ['appendChild']);
         $window.document.getElementsByTagName.andReturn([head]);
 
+        spyOn($log, 'info');
+
         iframeService.enableLiveReload();
 
         expect(head.appendChild).toHaveBeenCalled();
+        expect($log.info).toHaveBeenCalledWith('iframe #ext-42 has live reload enabled via //localhost:35729/livereload.js');
     });
 
     it('should not enable live reload in non-debug mode', function() {
