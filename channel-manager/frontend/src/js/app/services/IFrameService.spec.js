@@ -15,6 +15,7 @@
  */
 
 describe('IFrame Service', function () {
+    'use strict';
 
     var iframeConfig, parentIFramePanel, $window, iframeService;
 

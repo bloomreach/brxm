@@ -18,11 +18,14 @@
 
     angular.module('hippo.channelManager.menuManagement')
 
-        .controller('hippo.channelManager.menuManagement.MenuItemActionsCtrl', ['$scope', function ($scope) {
+        .controller('hippo.channelManager.menuManagement.MenuItemActionsCtrl', [
+            '$scope',
+            '$log',
+            function ($scope, $log) {
             $scope.removeMenuItem = function () {
-                console.log('Remove menu item');
+                $log.info('Remove menu item');
             };
         }
     ]);
 
-})();
+}());

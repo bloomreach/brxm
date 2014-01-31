@@ -21,11 +21,6 @@
 
         .controller('hippo.channelManager.menuManagement.EditMenuItemFormCtrl', ['$scope', '$location', function ($scope, $location) {
 
-            // make sure there is a destination property
-            $scope.$parent.$watch('selectedMenuItem', function (item) {
-                setDestinationProperty(item);
-            });
-
             function setDestinationProperty(item) {
                 if (item && !item.destination) {
                     if (item.externalLink) {
@@ -38,9 +33,14 @@
                 }
             }
 
+            // make sure there is a destination property
+            $scope.$parent.$watch('selectedMenuItem', function (item) {
+                setDestinationProperty(item);
+            });
+
             $scope.createNewPage = function () {
                 $location.path('/' + $scope.selectedMenuItemId + '/add-page');
             };
 
         }]);
-})();
+}());

@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 (function () {
+    "use strict";
 
     angular.module('hippo.channelManager.menuManagement')
 
         .controller('hippo.channelManager.menuManagement.AddPageCtrl', [
             '$scope',
             '$routeParams',
-            '$location',
-            'hippo.channelManager.menuManagement.MenuService',
-            'hippo.channelManager.menuManagement.ConfigService',
-            function ($scope, $routeParams, $location, MenuService, ConfigService) {
+            function ($scope, $routeParams) {
                 // scope values
                 $scope.selectedMenuItemId = $routeParams.menuItemId;
                 $scope.selectedMenuItem = {};
             }
         ]);
 
-})();
+}());

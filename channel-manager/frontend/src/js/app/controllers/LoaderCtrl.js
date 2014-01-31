@@ -19,18 +19,18 @@
     angular.module('hippo.channelManager.menuManagement')
 
         .controller('hippo.channelManager.menuManagement.LoaderCtrl', [
-            '$scope',
             '$location',
+            '$log',
             'hippo.channelManager.menuManagement.ConfigService',
             'hippo.channelManager.menuManagement.MenuService',
-            function ($scope, $location, ConfigService, MenuService) {
+            function ($location, $log, ConfigService, MenuService) {
 
                 MenuService.getMenu(ConfigService.menuId).then(function (data) {
                     // redirect to edit menu item for first item
                     $location.path('/' + data.children[0].id + '/edit');
                 }, function (error) {
-                    console.error(error);
+                    $log.error(error);
                 });
 
         }]);
-})();
+}());

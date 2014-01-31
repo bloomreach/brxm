@@ -21,13 +21,10 @@
 
         .controller('hippo.channelManager.menuManagement.AddMenuItemCtrl', [
             '$scope',
-            '$routeParams',
-            '$location',
-            'hippo.channelManager.menuManagement.MenuService',
-            'hippo.channelManager.menuManagement.ConfigService',
-            function ($scope, $routeParams) {
+            function ($scope) {
                 // scope values
-                $scope.selectedMenuItemId;
+                $scope.selectedMenuItemId = undefined;
                 $scope.selectedMenuItem = {};
-        }]);
-})();
+            }
+        ]);
+}());

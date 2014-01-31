@@ -79,4 +79,4 @@
                 enableLiveReload: enableLiveReload
             };
         }]);
-})();
+}());

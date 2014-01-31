@@ -15,61 +15,63 @@
  */
 
 (function () {
+    "use strict";
+
+    function reformatData(src) {
+        var result = [];
+        _.each(src, function (item) {
+            var newItem = item;
+            newItem.text = item.name;
+
+            if (item.children && item.children.length > 0) {
+                newItem.children = reformatData(item.children);
+            }
+
+            result.push(newItem);
+        });
+
+        return result;
+    }
 
     angular.module('hippo.channelManager.menuManagement')
 
-        .controller('hippo.channelManager.menuManagement.TreeCtrl', ['$scope',
-        '$location',
-        '$routeParams',
-        'hippo.channelManager.menuManagement.ConfigService',
-        'hippo.channelManager.menuManagement.MenuService',
-        function ($scope, $location, $routeParams, ConfigService, MenuService) {
-            // fetch initial data
-            $scope.menuTree = [{}];
-            MenuService.getMenu(ConfigService.menuId).then(function (response) {
-                $scope.menuTree = reformatData(response.children);
-            });
+        .controller('hippo.channelManager.menuManagement.TreeCtrl', [
+            '$scope',
+            'hippo.channelManager.menuManagement.ConfigService',
+            'hippo.channelManager.menuManagement.MenuService',
+            function ($scope, ConfigService, MenuService) {
 
-            // methods
-            $scope.setSelectedItemId = function (itemId) {
-                // TODO: fetch the details for this menu item and set them as the selectedMenuItem
+                // fetch initial data
+                $scope.menuTree = [{}];
                 MenuService.getMenu(ConfigService.menuId).then(function (response) {
-                    $scope.$parent.selectedMenuItem = {
-                        id: 'abc-123',
-                        name: 'Placeholder text - ' + Math.ceil((Math.random() * 10))
-                    };
+                    $scope.menuTree = reformatData(response.children);
                 });
 
-                // set selected menu item so child-controllers can access it
-                /*
-                 MenuService.getMenu(itemId).then(function (response) {
-                 console.log(response);
-                 $scope.$parent.selectedMenuItem = response;
-                 });
-                 */
+                // methods
+                $scope.setSelectedItemId = function (/*itemId*/) {
+                    // TODO: fetch the details for this menu item and set them as the selectedMenuItem
+                    MenuService.getMenu(ConfigService.menuId).then(function () {
+                        $scope.$parent.selectedMenuItem = {
+                            id: 'abc-123',
+                            name: 'Placeholder text - ' + Math.ceil((Math.random() * 10))
+                        };
+                    });
 
-                /*
-                // redirect if the selected item is different from the current
-                if ($scope.$parent.selectedMenuItemId !== itemId) {
-                    $location.path('/' + itemId + '/edit');
-                }
-                */
-            };
+                    // set selected menu item so child-controllers can access it
+                    /*
+                     MenuService.getMenu(itemId).then(function (response) {
+                     console.log(response);
+                     $scope.$parent.selectedMenuItem = response;
+                     });
+                     */
 
-            function reformatData(src) {
-                var result = [];
-                _.each(src, function (item) {
-                    var newItem = item;
-                    newItem.text = item.name;
-
-                    if (item.children && item.children.length > 0) {
-                        newItem.children = reformatData(item.children);
+                    /*
+                    // redirect if the selected item is different from the current
+                    if ($scope.$parent.selectedMenuItemId !== itemId) {
+                        $location.path('/' + itemId + '/edit');
                     }
+                    */
+                };
 
-                    result.push(newItem);
-                });
-
-                return result;
-            }
-        }]);
-})();
+            }]);
+}());

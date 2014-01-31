@@ -23,4 +23,4 @@
                 $location.path('/add-menu-item');
             };
         }]);
-})();
+}());

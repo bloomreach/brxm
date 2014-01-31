@@ -20,9 +20,9 @@
     angular.module('hippo.channelManager.menuManagement')
 
         .service('hippo.channelManager.menuManagement.Container', [
-            '$window',
+            '$log',
             'hippo.channelManager.menuManagement.IFrameService',
-            function($window, IFrameService) {
+            function($log, IFrameService) {
                 function closeIFrame() {
                     var iframePanel;
 
@@ -32,7 +32,7 @@
                         if (iframePanel) {
                             iframePanel.iframeToHost.publish('close');
                         } else {
-                            console.info("Ignoring close, there is no parent iframe");
+                            $log.info("Ignoring close, there is no parent iframe");
                         }
                     }
                 }
@@ -41,5 +41,5 @@
                     close: closeIFrame
                 };
             }
-        ])
-})();
+        ]);
+}());

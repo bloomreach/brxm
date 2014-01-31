@@ -19,10 +19,11 @@
     angular.module('hippo.theme')
 
         /*
-        * jstree directive
-        * via http://plnkr.co/edit/xHIc4J?p=preview
-        */
+         * jstree directive
+         * via http://plnkr.co/edit/xHIc4J?p=preview
+         */
         .directive('jstree', [function() {
+            /*jslint unparam: true*/
             return {
                 restrict: 'A',
                 scope: {
@@ -32,7 +33,7 @@
                 controller: function($scope) {
                     this.setSelectedItem = function(itemId) {
                         $scope.$parent.setSelectedItemId(itemId);
-                    }
+                    };
                 },
                 link: function (scope, element, attrs, treeCtrl) {
                     scope.$watch('data', function() {
@@ -41,9 +42,9 @@
                             data: scope.data
                         }}).bind('select_node.jstree', function(event, item) {
                             treeCtrl.setSelectedItem(item.node.id);
-                        }).jstree('select_node', scope.data[0].id)
+                        }).jstree('select_node', scope.data[0].id);
                     }, true);
                 }
-            }
+            };
         }]);
-})();
+}());

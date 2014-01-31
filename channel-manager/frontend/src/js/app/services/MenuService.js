@@ -42,7 +42,7 @@
 
                 $http.post(ConfigService.apiUrlPrefix + '/' + parentId, menuItem).success(function (response) {
                     deferred.resolve(response.data);
-                }).error(function (error) {
+                }).error(function() {
                     deferred.reject('An error occured while fetching all personas');
                 });
 
@@ -51,4 +51,4 @@
 
             return menuService;
         }]);
-})();
+}());

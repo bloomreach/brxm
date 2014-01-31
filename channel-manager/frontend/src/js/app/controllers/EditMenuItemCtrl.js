@@ -22,12 +22,9 @@
         .controller('hippo.channelManager.menuManagement.EditMenuItemCtrl', [
             '$scope',
             '$routeParams',
-            '$location',
-            'hippo.channelManager.menuManagement.MenuService',
-            'hippo.channelManager.menuManagement.ConfigService',
-            function ($scope, $routeParams, $location, MenuService, ConfigService) {
+            function ($scope, $routeParams) {
                 // scope values
                 $scope.selectedMenuItemId = $routeParams.menuItemId;
                 $scope.selectedMenuItem = {};
         }]);
-})();
+}());

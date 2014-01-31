@@ -22,7 +22,8 @@
             '$scope',
             '$routeParams',
             '$location',
-            function ($scope, $routeParams, $location) {
+            '$log',
+            function ($scope, $routeParams, $location, $log) {
                 $scope.templates = [{name: 'Template 1'}, {name: 'TODO: fetch templates via HTTP-call'}];
 
                 $scope.cancel = function () {
@@ -31,11 +32,11 @@
 
                 $scope.submit = function (page) {
                     // TODO: save page implementation
-                    console.log('Submit add page form');
-                    console.log(page);
+                    $log.info('Submit add page form');
+                    $log.info(page);
 
                     // redirect to the active menu item with the new page data as destination
                 };
             }
         ]);
-})();
+}());

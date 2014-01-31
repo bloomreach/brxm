@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-'use strict';
-
 module.exports = function (grunt) {
+    'use strict';
 
     function readDeclutterConfig() {
         return grunt.file.readJSON('declutter.config.json');
@@ -137,6 +136,49 @@ module.exports = function (grunt) {
             ]
         },
 
+        // validate source code with jslint
+        jslint: {
+            app: {
+                src: [
+                    '<%= build.source %>/app/**/*.js'
+                ],
+                exclude: [
+                    '<%= build.source %>/app/**/*.spec.js'
+                ],
+                directives: {
+                    predef: [
+                        '_',
+                        'angular'
+                    ],
+                    browser: true,
+                    nomen: true,
+                    todo: true,
+                    white: true
+                }
+            },
+            tests: {
+                src: [
+                    '<%= build.source %>/app/**/*.spec.js'
+                ],
+                directives: {
+                    predef: [
+                        'after',
+                        'afterEach',
+                        'before',
+                        'beforeEach',
+                        'describe',
+                        'expect',
+                        'inject',
+                        'jasmine',
+                        'module',
+                        'it',
+                        'spyOn'
+                    ],
+                    white: true
+                }
+            }
+        },
+
         // testing with karma
         karma: {
             options: {
@@ -158,6 +200,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build', function (target) {
         grunt.task.run([
+            'jslint',
             'declutter',
             'clean:target',
             'copy:app',

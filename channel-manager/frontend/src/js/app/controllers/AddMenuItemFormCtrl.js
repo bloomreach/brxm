@@ -38,11 +38,11 @@
                     }
                 }
             }
+            */
 
             $scope.createNewPage = function () {
                 $location.path('/' + $scope.selectedMenuItemId + '/add-page');
             };
-            */
 
         }]);
-})();
+}());
