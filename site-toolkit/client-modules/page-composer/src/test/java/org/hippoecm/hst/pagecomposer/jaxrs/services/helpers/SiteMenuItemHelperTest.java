@@ -21,11 +21,13 @@ import java.util.HashSet;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.easymock.Capture;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,6 +60,7 @@ public class SiteMenuItemHelperTest {
     private Node sibling;
     private Session session;
     private Object[] mocks;
+    private Property property;
 
     @Before
     public void setUp() {
@@ -67,7 +70,8 @@ public class SiteMenuItemHelperTest {
         this.childIterator = createMock(NodeIterator.class);
         this.sibling = createMock(Node.class);
         this.session = createMock(Session.class);
-        this.mocks = new Object[]{node, parent, childIterator, sibling, session};
+        this.property = createMock(Property.class);
+        this.mocks = new Object[]{node, parent, childIterator, sibling, session, property};
     }
 
     @Test
@@ -75,12 +79,8 @@ public class SiteMenuItemHelperTest {
 
         final SiteMenuItemRepresentation newItem = new SiteMenuItemRepresentation();
         newItem.setName("name");
-        newItem.setExternalLink("externalLink");
-        newItem.setSiteMapItemPath("siteMapItemPath");
 
         expect(node.getName()).andReturn("name").times(2);
-        expect(node.setProperty(SITEMENUITEM_PROPERTY_EXTERNALLINK, newItem.getExternalLink())).andReturn(null);
-        expect(node.setProperty(SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM, newItem.getSiteMapItemPath())).andReturn(null);
         expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
 
         replay(mocks);
@@ -96,36 +96,6 @@ public class SiteMenuItemHelperTest {
         expect(node.getName()).andReturn("b");
         replay(mocks);
         siteMenuItemHelper.save(node, newItem);
-    }
-
-    @Test
-    public void testUpdateExternalLink() throws RepositoryException {
-
-        final String newExternalLink = "link";
-        expect(node.setProperty(SITEMENUITEM_PROPERTY_EXTERNALLINK, newExternalLink)).andReturn(null);
-        expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
-
-        final SiteMenuItemRepresentation modifiedItem = new SiteMenuItemRepresentation();
-        modifiedItem.setExternalLink(newExternalLink);
-
-        replay(mocks);
-        siteMenuItemHelper.update(node, modifiedItem);
-        verify(mocks);
-    }
-
-    @Test
-    public void testUpdateSiteMapItemPath() throws RepositoryException {
-
-        final String newSiteMapItemPath = "link";
-        expect(node.setProperty(SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM, newSiteMapItemPath)).andReturn(null);
-        expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
-
-        final SiteMenuItemRepresentation newItem = new SiteMenuItemRepresentation();
-        newItem.setSiteMapItemPath(newSiteMapItemPath);
-
-        replay(mocks);
-        siteMenuItemHelper.update(node, newItem);
-        verify(mocks);
     }
 
     @Test
@@ -208,6 +178,88 @@ public class SiteMenuItemHelperTest {
         final SiteMenuItemRepresentation newItem = new SiteMenuItemRepresentation();
         newItem.setName(newName);
         siteMenuItemHelper.update(node, newItem);
+        verify(mocks);
+    }
+
+    @Test
+    public void testUpdateLinkToExternal() throws RepositoryException {
+
+        expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
+
+        final Capture<String> linkCapture = new Capture<>();
+        expect(node.setProperty(eq(SITEMENUITEM_PROPERTY_EXTERNALLINK), capture(linkCapture))).andReturn(null);
+
+        expect(node.hasProperty(SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM)).andReturn(true);
+        expect(node.getProperty(SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM)).andReturn(property);
+        expect(property.getPath()).andReturn("path");
+
+        expect(node.getSession()).andReturn(session);
+        session.removeItem("path");
+        expectLastCall().once();
+
+        replay(mocks);
+
+        final SiteMenuItemRepresentation modifiedItem = new SiteMenuItemRepresentation();
+        modifiedItem.setLinkType(LinkType.EXTERNAL);
+        final String link = "external";
+        modifiedItem.setLink(link);
+        siteMenuItemHelper.update(node, modifiedItem);
+        assertThat(linkCapture.getValue(), is(link));
+
+        verify(mocks);
+    }
+
+
+    @Test
+    public void testUpdateLinkToInternal() throws RepositoryException {
+
+        expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
+
+
+        final Capture<String> linkCapture = new Capture<>();
+        expect(node.setProperty(eq(SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM), capture(linkCapture))).andReturn(null);
+
+        expect(node.hasProperty(SITEMENUITEM_PROPERTY_EXTERNALLINK)).andReturn(true);
+        expect(node.getProperty(SITEMENUITEM_PROPERTY_EXTERNALLINK)).andReturn(property);
+        expect(property.getPath()).andReturn("path");
+
+        expect(node.getSession()).andReturn(session);
+        session.removeItem("path");
+        expectLastCall().once();
+
+        replay(mocks);
+
+        final SiteMenuItemRepresentation modifiedItem = new SiteMenuItemRepresentation();
+        modifiedItem.setLinkType(LinkType.SITEMAPITEM);
+        final String link = "internal";
+        modifiedItem.setLink(link);
+        siteMenuItemHelper.update(node, modifiedItem);
+        assertThat(linkCapture.getValue(), is(link));
+
+        verify(mocks);
+    }
+
+    @Test
+    public void testUpdateLinkToNone() throws RepositoryException {
+
+        expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
+
+
+        expect(node.hasProperty(SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM)).andReturn(false);
+        expect(node.hasProperty(SITEMENUITEM_PROPERTY_EXTERNALLINK)).andReturn(true);
+        expect(node.getProperty(SITEMENUITEM_PROPERTY_EXTERNALLINK)).andReturn(property);
+        expect(property.getPath()).andReturn("path");
+
+        expect(node.getSession()).andReturn(session);
+        session.removeItem("path");
+        expectLastCall().once();
+
+        replay(mocks);
+
+        final SiteMenuItemRepresentation modifiedItem = new SiteMenuItemRepresentation();
+        modifiedItem.setLinkType(LinkType.NONE);
+        siteMenuItemHelper.update(node, modifiedItem);
+
         verify(mocks);
     }
 }

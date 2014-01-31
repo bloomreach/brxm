@@ -25,17 +25,20 @@ import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 
 public class SiteMenuItemRepresentation {
 
-    String id;
-    String name;
-    String externalLink;
-    String siteMapItemPath;
-    boolean repositoryBased;
-    Map<String, String> localParameters;
-    Set<String> roles;
+    private String id;
+    private String name;
+    private boolean repositoryBased;
+    private Map<String, String> localParameters;
+    private Set<String> roles;
+    private SiteMenuItemLink siteMenuItemLink = new SiteMenuItemLink(null, null);
 
     private List<SiteMenuItemRepresentation> children = new ArrayList<>();
 
-    public SiteMenuItemRepresentation represent(HstSiteMenuItemConfiguration item)
+    public SiteMenuItemRepresentation() {
+        super();
+    }
+
+    public SiteMenuItemRepresentation(HstSiteMenuItemConfiguration item)
             throws IllegalArgumentException {
         if (!(item instanceof CanonicalInfo)) {
             throw new IllegalArgumentException("Expected object of type CanonicalInfo");
@@ -43,17 +46,13 @@ public class SiteMenuItemRepresentation {
 
         name = item.getName();
         id = ((CanonicalInfo) item).getCanonicalIdentifier();
-        externalLink = item.getExternalLink();
-        siteMapItemPath = item.getSiteMapItemPath();
         repositoryBased = item.isRepositoryBased();
         localParameters = item.getLocalParameters();
         roles = item.getRoles();
         for (HstSiteMenuItemConfiguration childItem : item.getChildItemConfigurations()) {
-            SiteMenuItemRepresentation child = new SiteMenuItemRepresentation();
-            child.represent(childItem);
-            children.add(child);
+            children.add(new SiteMenuItemRepresentation(childItem));
         }
-        return this;
+        this.siteMenuItemLink = new SiteMenuItemLink(item);
     }
 
     public String getId() {
@@ -70,22 +69,6 @@ public class SiteMenuItemRepresentation {
 
     public void setName(final String name) {
         this.name = name;
-    }
-
-    public String getExternalLink() {
-        return externalLink;
-    }
-
-    public void setExternalLink(final String externalLink) {
-        this.externalLink = externalLink;
-    }
-
-    public String getSiteMapItemPath() {
-        return siteMapItemPath;
-    }
-
-    public void setSiteMapItemPath(final String siteMapItemPath) {
-        this.siteMapItemPath = siteMapItemPath;
     }
 
     public boolean isRepositoryBased() {
@@ -119,4 +102,21 @@ public class SiteMenuItemRepresentation {
     public void setChildren(final List<SiteMenuItemRepresentation> children) {
         this.children = children;
     }
+
+    public LinkType getLinkType() {
+        return siteMenuItemLink.getLinkType();
+    }
+
+    public void setLinkType(LinkType linkType) {
+        this.siteMenuItemLink = new SiteMenuItemLink(linkType, siteMenuItemLink.getLink());
+    }
+
+    public String getLink() {
+        return siteMenuItemLink.getLink();
+    }
+
+    public void setLink(String link) {
+        this.siteMenuItemLink = new SiteMenuItemLink(siteMenuItemLink.getLinkType(), link);
+    }
+
 }

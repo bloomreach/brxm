@@ -19,16 +19,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
-import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
-import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class SiteMenuRepresentation {
 
@@ -37,22 +30,23 @@ public class SiteMenuRepresentation {
     private long lastModifiedTimestamp;
     private List<SiteMenuItemRepresentation> children = new ArrayList<>();
 
-    public SiteMenuRepresentation represent(HstSiteMenuConfiguration siteMenuConfiguration) throws IllegalArgumentException {
+    public SiteMenuRepresentation() {
+        super();
+    }
+
+    public SiteMenuRepresentation(HstSiteMenuConfiguration siteMenuConfiguration) throws IllegalArgumentException {
         if (!(siteMenuConfiguration instanceof CanonicalInfo)) {
             throw new IllegalArgumentException("Expected object of type CanonicalInfo");
         }
-        id = ((CanonicalInfo)siteMenuConfiguration).getCanonicalIdentifier();
+        id = ((CanonicalInfo) siteMenuConfiguration).getCanonicalIdentifier();
         name = siteMenuConfiguration.getName();
 
         // TODO last modified timestamp / etc etc
         lastModifiedTimestamp = Calendar.getInstance().getTimeInMillis();
 
         for (HstSiteMenuItemConfiguration item : siteMenuConfiguration.getSiteMenuConfigurationItems()) {
-            final SiteMenuItemRepresentation itemRepresentation = new SiteMenuItemRepresentation();
-            itemRepresentation.represent(item);
-            children.add(itemRepresentation);
+            children.add(new SiteMenuItemRepresentation(item));
         }
-        return this;
     }
 
     public String getId() {

@@ -65,7 +65,7 @@ public class SiteMenuResource extends AbstractConfigResource {
             @Override
             public Response call() throws Exception {
                 final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
-                final SiteMenuRepresentation representation = new SiteMenuRepresentation().represent(menu);
+                final SiteMenuRepresentation representation = new SiteMenuRepresentation(menu);
                 return ok("Menu item loaded successfully", representation);
             }
         });
@@ -80,7 +80,7 @@ public class SiteMenuResource extends AbstractConfigResource {
             public Response call() throws Exception {
                 final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
                 final HstSiteMenuItemConfiguration menuItem = siteMenuHelper.getMenuItem(menu, menuItemId);
-                final SiteMenuItemRepresentation representation = new SiteMenuItemRepresentation().represent(menuItem);
+                final SiteMenuItemRepresentation representation = new SiteMenuItemRepresentation(menuItem);
                 return ok("Menu item loaded successfully", representation);
             }
         });

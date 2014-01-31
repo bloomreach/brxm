@@ -26,7 +26,7 @@ import javax.jcr.RepositoryException;
 
 import com.google.common.collect.Iterables;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES;
@@ -54,35 +54,53 @@ public class SiteMenuItemHelper {
      * Updates the properties of the given node with those of the modified item.
      *
      * @param node         a node
-     * @param modifiedItem an item containing the property values of the new item
+     * @param modifiedItem an item containing the property values of the modified item
      * @throws RepositoryException
      */
     public void update(Node node, SiteMenuItemRepresentation modifiedItem) throws RepositoryException {
+
         final String modifiedName = modifiedItem.getName();
         if (modifiedName != null && !modifiedName.equals(node.getName())) {
             rename(node, modifiedName);
         }
-        final String modifiedExternalLink = modifiedItem.getExternalLink();
-        if (modifiedExternalLink != null) {
-            node.setProperty(SITEMENUITEM_PROPERTY_EXTERNALLINK, modifiedExternalLink);
+
+        final String modifiedLink = modifiedItem.getLink();
+        if (modifiedItem.getLinkType() == LinkType.NONE) {
+            removeProperty(node, SITEMENUITEM_PROPERTY_EXTERNALLINK);
+            removeProperty(node, SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM);
+        } else if (modifiedItem.getLinkType() == LinkType.SITEMAPITEM) {
+            node.setProperty(SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM, modifiedLink);
+            removeProperty(node, SITEMENUITEM_PROPERTY_EXTERNALLINK);
+        } else if (modifiedItem.getLinkType() == LinkType.EXTERNAL) {
+            node.setProperty(SITEMENUITEM_PROPERTY_EXTERNALLINK, modifiedLink);
+            removeProperty(node, SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM);
         }
-        final String modifiedSiteMapItemPath = modifiedItem.getSiteMapItemPath();
-        if (modifiedSiteMapItemPath != null) {
-            node.setProperty(SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM, modifiedSiteMapItemPath);
-        }
+
         final boolean modifiedRepositoryBased = modifiedItem.isRepositoryBased();
         node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, modifiedRepositoryBased);
 
         final Map<String, String> modifiedLocalParameters = modifiedItem.getLocalParameters();
-        if (modifiedLocalParameters != null) {
+        if (modifiedLocalParameters != null && !modifiedLocalParameters.isEmpty()) {
             final String[][] namesAndValues = mapToNameValueArrays(modifiedLocalParameters);
             node.setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, namesAndValues[0], PropertyType.STRING);
             node.setProperty(GENERAL_PROPERTY_PARAMETER_VALUES, namesAndValues[1], PropertyType.STRING);
+        } else if (modifiedLocalParameters != null && modifiedLocalParameters.isEmpty()) {
+            removeProperty(node, GENERAL_PROPERTY_PARAMETER_NAMES);
+            removeProperty(node, GENERAL_PROPERTY_PARAMETER_VALUES);
         }
+
         final Set<String> modifiedRoles = modifiedItem.getRoles();
-        if (CollectionUtils.isNotEmpty(modifiedRoles)) {
+        if (modifiedRoles != null && !modifiedRoles.isEmpty()) {
             final String[] roles = Iterables.toArray(modifiedRoles, String.class);
             node.setProperty(SITEMENUITEM_PROPERTY_ROLES, roles, PropertyType.STRING);
+        } else if (modifiedRoles != null && modifiedRoles.isEmpty()) {
+            removeProperty(node, SITEMENUITEM_PROPERTY_ROLES);
+        }
+    }
+
+    private void removeProperty(Node node, String property) throws RepositoryException {
+        if (node.hasProperty(property)) {
+            node.getSession().removeItem(node.getProperty(property).getPath());
         }
     }
 
