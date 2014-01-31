@@ -35,6 +35,7 @@
     <notice.project.name>Hippo CMS7 Essentials Maven Archetypes</notice.project.name>
   </properties>
 
+
   <repositories>
     <repository>
       <id>hippo</id>
