@@ -6,6 +6,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.cxf.transport.http.HTTPConduit;
 import org.onehippo.cms7.essentials.rest.model.PluginRestful;
 import org.onehippo.cms7.essentials.rest.model.RestfulList;
 import org.slf4j.Logger;
@@ -23,20 +24,38 @@ public class RestClient {
      * e.g. http://localhost:8080/site/restapi
      */
     private final String baseResourceUri;
+    private long receiveTimeout = 2000;
+    private long connectionTimeout = 2500;
 
     public RestClient(String baseResourceUri) {
         this.baseResourceUri = baseResourceUri;
     }
 
-    public String getPluginList(){
+    public RestClient(String baseResourceUri, long receiveTimeout, long connectionTimeout) {
+        this.baseResourceUri = baseResourceUri;
+        this.connectionTimeout = connectionTimeout;
+        this.receiveTimeout = receiveTimeout;
+    }
+
+    public String getPluginList() {
         final WebClient client = WebClient.create(baseResourceUri);
+        setTimeouts(client, connectionTimeout, receiveTimeout);
         return client.accept(MediaType.WILDCARD).get(String.class);
+    }
+
+    private void setTimeouts(final WebClient client, final long connectionTimeout, final long receiveTimeout) {
+        HTTPConduit conduit = WebClient.getConfig(client).getHttpConduit();
+        if (receiveTimeout != 0) {
+            conduit.getClient().setReceiveTimeout(receiveTimeout);
+        }
+        if (connectionTimeout != 0) {
+            conduit.getClient().setConnectionTimeout(connectionTimeout);
+        }
     }
 
 
     @SuppressWarnings("unchecked")
     public RestfulList<PluginRestful> getPlugins() {
-
         // TODO use rest client
         if (isEnabled()) {
             try {
@@ -48,7 +67,9 @@ public class RestClient {
             }
 
         } else {
+
             final WebClient client = WebClient.create(baseResourceUri);
+            setTimeouts(client, connectionTimeout, receiveTimeout);
             return client.path("plugins").accept(MediaType.APPLICATION_XML).get(RestfulList.class);
         }
         return null;
