@@ -90,8 +90,8 @@ public class BeanWriterResource extends BaseResource {
             messages.add(new MessageRestful("Please rebuild and restart your application:", DisplayEvent.DisplayType.STRONG));
 
             messages.add(new MessageRestful(
-                    "\nmvn clean package\n" +
-                            "mvn -P cargo.run\n", DisplayEvent.DisplayType.PRE));
+                    "mvn clean package\n" +
+                            "mvn -P cargo.run", DisplayEvent.DisplayType.PRE));
         }
 
         return messages;

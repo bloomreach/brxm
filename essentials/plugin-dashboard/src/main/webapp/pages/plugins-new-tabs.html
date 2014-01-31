@@ -1,0 +1,21 @@
+<div class="col-lg-2" style="padding-left: 0;">
+    <div class="list-group">
+        <a href="javascript:void(0)" ng-click="showPluginDetail(plugin.pluginClass)" class="list-group-item" ng-repeat="plugin in plugins | filter:{needsInstallation:true}">{{plugin.name}}</a>
+    </div>
+</div>
+<div class="col-lg-10" ng-show="selectedPlugin && pluginNeedsInstall.length">
+    <div class="panel">
+        <div class="panel-heading">{{selectedPlugin.name}}</div>
+        <div class="list-group">
+            <p class="list-group-item">
+                {{selectedPlugin.introduction}}
+            </p>
+            <p class="list-group-item">
+                <a href="{{selectedPlugin.vendor.url}}" target="_blank">{{selectedPlugin.vendor.name}}</a>
+            </p>
+            <p class="list-group-item pull-right">
+                <button class="btn btn-primary" ng-click="installPlugin(selectedPlugin.pluginClass)">Install plugin</button>
+            </p>
+        </div>
+    </div>
+</div>

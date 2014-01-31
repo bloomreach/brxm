@@ -53,7 +53,7 @@ import org.onehippo.cms7.essentials.rest.model.contentblocks.AllDocumentMatcher;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.CBPayload;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.Compounds;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.ContentBlockModel;
-import org.onehippo.cms7.essentials.rest.model.contentblocks.DocumentTypes;
+import org.onehippo.cms7.essentials.rest.model.contentblocks.DocumentType;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.HasProviderMatcher;
 import org.onehippo.cms7.essentials.rest.utils.RestWorkflow;
 import org.slf4j.Logger;
@@ -75,8 +75,8 @@ public class ContentBlocksResource extends BaseResource {
 
     @GET
     @Path("/")
-    public RestfulList<DocumentTypes> getControllers(@Context ServletContext servletContext) {
-        final RestfulList<DocumentTypes> types = new RestfulList<>();
+    public RestfulList<DocumentType> getControllers(@Context ServletContext servletContext) {
+        final RestfulList<DocumentType> types = new RestfulList<>();
 
         final Session session = GlobalUtils.createSession();
         final PluginContext context = getContext(servletContext);
@@ -99,7 +99,7 @@ public class ContentBlocksResource extends BaseResource {
                     }
                 }
 
-                types.add(new DocumentTypes(HippoNodeUtils.getDisplayValue(session, primaryType), primaryType, keyValueRestfulRestfulList));
+                types.add(new DocumentType(HippoNodeUtils.getDisplayValue(session, primaryType), primaryType, keyValueRestfulRestfulList));
             }
         } catch (RepositoryException e) {
             log.error("Exception while trying to retrieve document types from repository {}", e);
@@ -172,9 +172,9 @@ public class ContentBlocksResource extends BaseResource {
     @Path("/compounds/contentblocks/create")
 
     public MessageRestful createContentBlocks(CBPayload body, @Context ServletContext servletContext) {
-        final List<DocumentTypes> docTypes = body.getItems().getItems();
+        final List<DocumentType> docTypes = body.getDocumentTypes().getItems();
         final RestWorkflow workflow = new RestWorkflow(GlobalUtils.createSession(), getContext(servletContext));
-        for (DocumentTypes documentType : docTypes) {
+        for (DocumentType documentType : docTypes) {
             final List<KeyValueRestful> providers = documentType.getProviders().getItems();
             if (providers.isEmpty()) {
                 log.debug("DocumentType {} had no providers", documentType.getKey());
