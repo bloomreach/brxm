@@ -40,6 +40,12 @@
                     var myPath = $location.path();
                     return  myPath.indexOf(path) != -1;
                 };
+                $scope.isMenuSelected = function (path) {
+                    var myPath = $location.path();
+                    return  myPath.indexOf(path) != -1;
+                };
+
+
 
                 $scope.showPluginDetail = function (pluginClass) {
                     $scope.selectedPlugin  = extracted(pluginClass);

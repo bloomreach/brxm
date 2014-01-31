@@ -20,6 +20,7 @@
     angular.module('hippo.essentials')
             .controller('xinhaPluginCtrl', function ($scope, $sce, $log, $rootScope, $http) {
                 $scope.options = [];
+                $scope.introMessage = "Xinha plugin allows you to configure Xinha toolbar. Ordering of the items can be done by using drag & drop functionality.";
                 $scope.sortableOptions = {
                     update: function (e, ui) {
                         // check items that are dragged automaticaly

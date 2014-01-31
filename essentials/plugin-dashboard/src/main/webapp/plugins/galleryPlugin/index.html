@@ -15,244 +15,246 @@
   -->
 
 <div ng-controller="galleryPluginCtrl">
-  <h1>{{message}}</h1>
+<div class="col-md-12">
+<h2>{{message}}</h2>
 
-  <div ng-show="invalidated" class="alert alert-danger">
+<div ng-show="invalidated" class="alert alert-danger">
     <button data-dismiss="alert" class="close" type="button">×</button>
     <strong>Unable to save image sets!</strong>
     Make sure that the required fields are filled in.
-  </div>
+</div>
 
-  <!-- Variants -->
-  <div id="imageVariants" class="panel panel-default">
+<!-- Variants -->
+<div id="imageVariants" class="panel panel-default">
     <div class="panel-heading">Image variants
-      <a href="" ng-click="imageVariantsInfo = !imageVariantsInfo"><i class="icon-fixed-width"></i></a>
+        <a href="" ng-click="imageVariantsInfo = !imageVariantsInfo"><i class="icon-fixed-width"></i></a>
     </div>
     <div id="imageVariantsInfo" ng-show="imageVariantsInfo" class="alert alert-info">
-      <button data-dismiss="alert" class="close" type="button">×</button>
-      Some help text for image variants.
-      <a class="alert-link" href="http://www.onehippo.org/">Link to documentation</a>
+        <button data-dismiss="alert" class="close" type="button">×</button>
+        Some help text for image variants.
+        <a class="alert-link" href="http://www.onehippo.org/">Link to documentation</a>
     </div>
 
     <div class="panel-body">
-      <form ng-repeat-start="variant in imageProcessor.variants | hideHippoGalleryVariantsFilter">
-        <fieldset>
-          <!-- Variant name -->
-          <div class="form-group" ng-class="{true: 'has-error form-group',false: 'form-group'}[variant.name=='']">
-            <label for="variant{{$index}}Name">Image variant node name
-              <a href="" ng-click="showVariantNameInfo = !showVariantNameInfo"><i class="icon-fixed-width"></i></a></label>
-            <div ng-show="showVariantNameInfo" class="alert alert-info">
-              <button data-dismiss="alert" class="close" type="button">×</button>
-              The image variant node name is used as the node name of variants. The node name is
-              used the reference to the variants as well.
-            </div>
-            <div class="input-group" style="width: 200px;">
-              <span class="input-group-addon" style="width: 100px;">{{variant.namespace}}:</span>
-              <input type="text" placeholder="variantname" id="variant{{$index}}Name" class="form-control" ng-model="variant.name" style="width: 200px;">
-            </div>
-          </div>
+        <form ng-repeat-start="variant in imageProcessor.variants | hideHippoGalleryVariantsFilter">
+            <fieldset>
+                <!-- Variant name -->
+                <div class="form-group" ng-class="{true: 'has-error form-group',false: 'form-group'}[variant.name=='']">
+                    <label for="variant{{$index}}Name">Image variant node name
+                        <a href="" ng-click="showVariantNameInfo = !showVariantNameInfo"><i class="icon-fixed-width"></i></a></label>
+                    <div ng-show="showVariantNameInfo" class="alert alert-info">
+                        <button data-dismiss="alert" class="close" type="button">×</button>
+                        The image variant node name is used as the node name of variants. The node name is
+                        used the reference to the variants as well.
+                    </div>
+                    <div class="input-group" style="width: 200px;">
+                        <span class="input-group-addon" style="width: 100px;">{{variant.namespace}}:</span>
+                        <input type="text" placeholder="variantname" id="variant{{$index}}Name" class="form-control" ng-model="variant.name" style="width: 200px;">
+                    </div>
+                </div>
 
-          <button data-dismiss="alert" class="close" type="button" ng-click="removeVariant(variant)">×</button>
+                <button data-dismiss="alert" class="close" type="button" ng-click="removeVariant(variant)">×</button>
 
 
-          <!-- Variant translations -->
-          <div class="form-group">
-            <label>Image variant description
-              <a href="" ng-click="showVariantDescriptionInfo = !showVariantDescriptionInfo"><i class="icon-fixed-width"></i></a></label>
-            <div ng-show="showVariantDescriptionInfo" class="alert alert-info">
-              <button data-dismiss="alert" class="close" type="button">×</button>
-              The image variant node name is used as the node name of variants. The node name is
-              used the reference to the variants as well.
-            </div>
-            <div>
-              <!-- Variant translation -->
-              <div class="input-group" ng-repeat="variantTranslation in variant.translations" style="width: 400px;">
-                <span class="input-group-addon" ng-if="!variantTranslation.locale" style="width: 100px;">default</span>
-                <span class="input-group-addon" ng-if="variantTranslation.locale" style="width: 100px;">{{variantTranslation.locale}}</span>
-                <input type="text" class="form-control" ng-model="variantTranslation.message" style="width: 280px;"/>
-                <span class="input-group-btn" ng-if="variantTranslation.locale"><button data-dismiss="alert" class="close" type="button" ng-click="removeVariantTranslation(variant,variantTranslation)">×</button></span>
-              </div>
-            </div>
-            <!-- Add translation -->
-            <button class="btn btn-link" type="button" ng-click="showAddTranslation = !showAddTranslation">Add language</button>
-            <div ng-show="showAddTranslation" style="width: 600px;">
-              <div class="input-group">
+                <!-- Variant translations -->
+                <div class="form-group">
+                    <label>Image variant description
+                        <a href="" ng-click="showVariantDescriptionInfo = !showVariantDescriptionInfo"><i class="icon-fixed-width"></i></a></label>
+                    <div ng-show="showVariantDescriptionInfo" class="alert alert-info">
+                        <button data-dismiss="alert" class="close" type="button">×</button>
+                        The image variant node name is used as the node name of variants. The node name is
+                        used the reference to the variants as well.
+                    </div>
+                    <div>
+                        <!-- Variant translation -->
+                        <div class="input-group" ng-repeat="variantTranslation in variant.translations" style="width: 400px;">
+                            <span class="input-group-addon" ng-if="!variantTranslation.locale" style="width: 100px;">default</span>
+                            <span class="input-group-addon" ng-if="variantTranslation.locale" style="width: 100px;">{{variantTranslation.locale}}</span>
+                            <input type="text" class="form-control" ng-model="variantTranslation.message" style="width: 280px;"/>
+                            <span class="input-group-btn" ng-if="variantTranslation.locale"><button data-dismiss="alert" class="close" type="button" ng-click="removeVariantTranslation(variant,variantTranslation)">×</button></span>
+                        </div>
+                    </div>
+                    <!-- Add translation -->
+                    <button class="btn btn-link" type="button" ng-click="showAddTranslation = !showAddTranslation">Add language</button>
+                    <div ng-show="showAddTranslation" style="width: 600px;">
+                        <div class="input-group">
               <span class="input-group-btn"><select id="variantTranslationLocale{{$index}}" class="form-control"
                                                     ng-model="newTranslationLocale"
                                                     ng-options="language.description for language in cmsLanguages"
                                                     ng-required="true"
-                  >
+                      >
               </select></span>
-                <input type="text" class="form-control" ng-model="newTranslationMessage" placeholder="Variant description">
-                <span class="input-group-btn"><button class="btn btn-default" type="button" ng-disabled="!newTranslationLocale" ng-click="addVariantTranslation(variant, newTranslationLocale, newTranslationMessage)">Add translation</button></span>
-              </div>
-            </div>
-          </div>
+                            <input type="text" class="form-control" ng-model="newTranslationMessage" placeholder="Variant description">
+                            <span class="input-group-btn"><button class="btn btn-default" type="button" ng-disabled="!newTranslationLocale" ng-click="addVariantTranslation(variant, newTranslationLocale, newTranslationMessage)">Add translation</button></span>
+                        </div>
+                    </div>
+                </div>
 
-          <!-- Variant height -->
-          <div class="form-group">
-            <label for="variant{{$index}}Height">Height</label>
-            <input type="text" placeholder="0" id="variant{{$index}}Height" class="form-control" style="width: 60px;">
-          </div>
+                <!-- Variant height -->
+                <div class="form-group">
+                    <label for="variant{{$index}}Height">Height</label>
+                    <input type="text" placeholder="0" id="variant{{$index}}Height" class="form-control" style="width: 60px;">
+                </div>
 
-          <!-- Variant width -->
-          <div class="form-group">
-            <label for="variant{{$index}}Width">Width</label>
-            <input type="text" placeholder="0" id="variant{{$index}}Width" class="form-control" style="width: 60px;">
-          </div>
+                <!-- Variant width -->
+                <div class="form-group">
+                    <label for="variant{{$index}}Width">Width</label>
+                    <input type="text" placeholder="0" id="variant{{$index}}Width" class="form-control" style="width: 60px;">
+                </div>
 
-          <!-- Attached image sets -->
-          <div class="form-group">
-            <label for="variant{{$index}}ImageSets">Attached to image sets</label>
-            <select id="variant{{$index}}ImageSets"
-                    style="width:100%"
-                    ng-model="variant.imageSets"
-                    ng-multiple="true"
-                    ng-options="imageSet.namespace + ':' + imageSet.name for imageSet in imageSets track by calculateIdForImageSet(imageSet)"
-                    data-placeholder="Select image sets"
-                    chosen
-                    multiple
-                    ng-change="updateImageSetsForVariant(variant)"
-                >
-            </select>
-          </div>
+                <!-- Attached image sets -->
+                <div class="form-group">
+                    <label for="variant{{$index}}ImageSets">Attached to image sets</label>
+                    <select id="variant{{$index}}ImageSets"
+                            style="width:100%"
+                            ng-model="variant.imageSets"
+                            ng-multiple="true"
+                            ng-options="imageSet.namespace + ':' + imageSet.name for imageSet in imageSets track by calculateIdForImageSet(imageSet)"
+                            data-placeholder="Select image sets"
+                            chosen
+                            multiple
+                            ng-change="updateImageSetsForVariant(variant)"
+                            >
+                    </select>
+                </div>
 
-          <!-- Advanced variant settings -->
-          <a href="" ng-click="showVariantAdvanced = !showVariantAdvanced">Advanced settings</a>
-          <div class="form-group" ng-show="showVariantAdvanced">
-            <!-- Upscaling -->
-            <div class="input-group">
-              <span class="input-group-addon" style="width: 140px;">Upscale</span>
-              <select id="variant{{$index}}Upscale" class="form-control"
-                      ng-model="upscalingValue"
-                      ng-options="v.description for v in upscalingValues"
-                      style="width: 240px;"
-                  >
-              </select>
-            </div>
-            <!-- Optimization -->
-            <div class="input-group">
-              <span class="input-group-addon" style="width: 140px;">Speed vs Quality</span>
-              <select id="variant{{$index}}Optimize" class="form-control"
-                      ng-model="optimizeValue"
-                      ng-options="o.description for o in optimizeValues"
-                      style="width: 240px;"
-                  >
-              </select>
-            </div>
-            <!-- Compression -->
-            <div class="input-group">
-              <span class="input-group-addon" style="width: 140px;">JPEG Quality</span>
-              <select id="variant{{$index}}Compression" class="form-control"
-                      ng-model="compressionValue"
-                      ng-options="c.description for c in compressionValues"
-                      style="width: 240px;"
-                  >
-              </select>
-            </div>
-          </div>
+                <!-- Advanced variant settings -->
+                <a href="" ng-click="showVariantAdvanced = !showVariantAdvanced">Advanced settings</a>
+                <div class="form-group" ng-show="showVariantAdvanced">
+                    <!-- Upscaling -->
+                    <div class="input-group">
+                        <span class="input-group-addon" style="width: 140px;">Upscale</span>
+                        <select id="variant{{$index}}Upscale" class="form-control"
+                                ng-model="upscalingValue"
+                                ng-options="v.description for v in upscalingValues"
+                                style="width: 240px;"
+                                >
+                        </select>
+                    </div>
+                    <!-- Optimization -->
+                    <div class="input-group">
+                        <span class="input-group-addon" style="width: 140px;">Speed vs Quality</span>
+                        <select id="variant{{$index}}Optimize" class="form-control"
+                                ng-model="optimizeValue"
+                                ng-options="o.description for o in optimizeValues"
+                                style="width: 240px;"
+                                >
+                        </select>
+                    </div>
+                    <!-- Compression -->
+                    <div class="input-group">
+                        <span class="input-group-addon" style="width: 140px;">JPEG Quality</span>
+                        <select id="variant{{$index}}Compression" class="form-control"
+                                ng-model="compressionValue"
+                                ng-options="c.description for c in compressionValues"
+                                style="width: 240px;"
+                                >
+                        </select>
+                    </div>
+                </div>
 
 
-        </fieldset>
-      </form>
-      <hr ng-repeat-end/>
+            </fieldset>
+        </form>
+        <hr ng-repeat-end/>
 
-      <button class="btn btn-default" type="button" ng-click="addVariant()">Add variant</button>
+        <button class="btn btn-default" type="button" ng-click="addVariant()">Add variant</button>
     </div>
-  </div>
+</div>
 
 
-  <!-- Image sets -->
-  <div id="imageSets" class="panel panel-default">
+<!-- Image sets -->
+<div id="imageSets" class="panel panel-default">
     <div class="panel-heading">Image Sets
-      <a href="" ng-click="imageSetsInfo = !imageSetsInfo"><i class="icon-fixed-width"></i></a>
+        <a href="" ng-click="imageSetsInfo = !imageSetsInfo"><i class="icon-fixed-width"></i></a>
     </div>
     <div ng-show="imageSetsInfo" class="alert alert-info">
-      <button data-dismiss="alert" class="close" type="button">×</button>
-      Some help text for image sets.
-      <a class="alert-link" href="http://www.onehippo.org/">Link to documentation</a>
+        <button data-dismiss="alert" class="close" type="button">×</button>
+        Some help text for image sets.
+        <a class="alert-link" href="http://www.onehippo.org/">Link to documentation</a>
     </div>
 
     <div class="panel-body">
-      <form ng-repeat-start="imageSet in imageSets">
-        <fieldset>
-          <!-- Image set name -->
-          <div class="form-group" ng-class="{true: 'has-error form-group',false: 'form-group'}[imageSet.name=='']">
-            <label for="imageSet{{$index}}Name">Image set node name
-              <a href="" ng-click="showImageSetNameInfo = !showImageSetNameInfo"><i class="icon-fixed-width"></i></a></label>
-            <div ng-show="showImageSetNameInfo" class="alert alert-info">
-              <button data-dismiss="alert" class="close" type="button">×</button>
-              The image variant node name is used as the node name of variants. The node name is
-              used the reference to the variants as well.
-            </div>
-            <div class="input-group" style="width: 200px;">
-              <span class="input-group-addon" style="width: 100px;">{{imageSet.namespace}}:</span>
-              <input type="text" placeholder="variantname" id="imageSet{{$index}}Name" class="form-control" ng-model="imageSet.name" style="width: 200px;">
-            </div>
-          </div>
+        <form ng-repeat-start="imageSet in imageSets">
+            <fieldset>
+                <!-- Image set name -->
+                <div class="form-group" ng-class="{true: 'has-error form-group',false: 'form-group'}[imageSet.name=='']">
+                    <label for="imageSet{{$index}}Name">Image set node name
+                        <a href="" ng-click="showImageSetNameInfo = !showImageSetNameInfo"><i class="icon-fixed-width"></i></a></label>
+                    <div ng-show="showImageSetNameInfo" class="alert alert-info">
+                        <button data-dismiss="alert" class="close" type="button">×</button>
+                        The image variant node name is used as the node name of variants. The node name is
+                        used the reference to the variants as well.
+                    </div>
+                    <div class="input-group" style="width: 200px;">
+                        <span class="input-group-addon" style="width: 100px;">{{imageSet.namespace}}:</span>
+                        <input type="text" placeholder="variantname" id="imageSet{{$index}}Name" class="form-control" ng-model="imageSet.name" style="width: 200px;">
+                    </div>
+                </div>
 
-          <button data-dismiss="alert" class="close" type="button" ng-click="removeImageSet(imageSet)">×</button>
+                <button data-dismiss="alert" class="close" type="button" ng-click="removeImageSet(imageSet)">×</button>
 
 
-          <!-- Image set translations -->
-          <div class="form-group">
-            <label>Image set description
-              <a href="" ng-click="showImageSetDescriptionInfo = !showImageSetDescriptionInfo"><i class="icon-fixed-width"></i></a></label>
-            <div ng-show="showImageSetDescriptionInfo" class="alert alert-info">
-              <button data-dismiss="alert" class="close" type="button">×</button>
-              The image set node name is used as the node name of image sets. The node name is
-              used the reference to the variants as well.
-            </div>
-            <div>
-              <!-- Image set translation -->
-              <div class="input-group" ng-repeat="imageSetTranslation in imageSet.translations" style="width: 400px;">
-                <span class="input-group-addon" ng-if="!imageSetTranslation.locale" style="width: 100px;">default</span>
-                <span class="input-group-addon" ng-if="imageSetTranslation.locale" style="width: 100px;">{{imageSetTranslation.locale}}</span>
-                <input type="text" class="form-control" ng-model="imageSetTranslation.message" style="width: 280px;"/>
-                <span class="input-group-btn" ng-if="imageSetTranslation.locale"><button data-dismiss="alert" class="close" type="button" ng-click="removeImageSetTranslation(imageSet,imageSetTranslation)">×</button></span>
-              </div>
-            </div>
-            <!-- Add translation -->
-            <button class="btn btn-link" type="button" ng-click="showAddTranslation = !showAddTranslation">Add language</button>
-            <div ng-show="showAddTranslation" style="width: 600px;">
-              <div class="input-group">
+                <!-- Image set translations -->
+                <div class="form-group">
+                    <label>Image set description
+                        <a href="" ng-click="showImageSetDescriptionInfo = !showImageSetDescriptionInfo"><i class="icon-fixed-width"></i></a></label>
+                    <div ng-show="showImageSetDescriptionInfo" class="alert alert-info">
+                        <button data-dismiss="alert" class="close" type="button">×</button>
+                        The image set node name is used as the node name of image sets. The node name is
+                        used the reference to the variants as well.
+                    </div>
+                    <div>
+                        <!-- Image set translation -->
+                        <div class="input-group" ng-repeat="imageSetTranslation in imageSet.translations" style="width: 400px;">
+                            <span class="input-group-addon" ng-if="!imageSetTranslation.locale" style="width: 100px;">default</span>
+                            <span class="input-group-addon" ng-if="imageSetTranslation.locale" style="width: 100px;">{{imageSetTranslation.locale}}</span>
+                            <input type="text" class="form-control" ng-model="imageSetTranslation.message" style="width: 280px;"/>
+                            <span class="input-group-btn" ng-if="imageSetTranslation.locale"><button data-dismiss="alert" class="close" type="button" ng-click="removeImageSetTranslation(imageSet,imageSetTranslation)">×</button></span>
+                        </div>
+                    </div>
+                    <!-- Add translation -->
+                    <button class="btn btn-link" type="button" ng-click="showAddTranslation = !showAddTranslation">Add language</button>
+                    <div ng-show="showAddTranslation" style="width: 600px;">
+                        <div class="input-group">
               <span class="input-group-btn"><select class="form-control"
                                                     ng-model="newTranslationLocale"
                                                     ng-options="language.description for language in cmsLanguages"
                                                     ng-required="true"
-                  >
+                      >
               </select></span>
-                <input type="text" class="form-control" ng-model="newTranslationMessage" placeholder="Variant description">
-                <span class="input-group-btn"><button class="btn btn-default" type="button" ng-disabled="!newTranslationLocale" ng-click="addImageSetTranslation(imageSet, newTranslationLocale, newTranslationMessage)">Add translation</button></span>
-              </div>
-            </div>
-          </div>
+                            <input type="text" class="form-control" ng-model="newTranslationMessage" placeholder="Variant description">
+                            <span class="input-group-btn"><button class="btn btn-default" type="button" ng-disabled="!newTranslationLocale" ng-click="addImageSetTranslation(imageSet, newTranslationLocale, newTranslationMessage)">Add translation</button></span>
+                        </div>
+                    </div>
+                </div>
 
-          <!-- Attached variants -->
-          <div class="form-group">
-            <label for="imageSet{{$index}}Variants">Attached image variants</label>
-            <select id="imageSet{{$index}}Variants"
-                    style="width:100%"
-                    ng-model="imageSet.variants"
-                    ng-multiple="true"
-                    ng-options="variant.namespace + ':' + variant.name for variant in imageProcessor.variants  | hideHippoGalleryVariantsFilter track by calculateIdForVariant(variant)"
-                    data-placeholder="Select image variants"
-                    chosen
-                    multiple
-                    ng-change="updateVariantsForImageSet(imageSet)"
-                >
-            </select>
-          </div>
+                <!-- Attached variants -->
+                <div class="form-group">
+                    <label for="imageSet{{$index}}Variants">Attached image variants</label>
+                    <select id="imageSet{{$index}}Variants"
+                            style="width:100%"
+                            ng-model="imageSet.variants"
+                            ng-multiple="true"
+                            ng-options="variant.namespace + ':' + variant.name for variant in imageProcessor.variants  | hideHippoGalleryVariantsFilter track by calculateIdForVariant(variant)"
+                            data-placeholder="Select image variants"
+                            chosen
+                            multiple
+                            ng-change="updateVariantsForImageSet(imageSet)"
+                            >
+                    </select>
+                </div>
 
-        </fieldset>
-      </form>
-      <hr ng-repeat-end/>
+            </fieldset>
+        </form>
+        <hr ng-repeat-end/>
 
-      <button class="btn btn-default" type="button" ng-click="addImageSet()">Add image set</button>
+        <button class="btn btn-default" type="button" ng-click="addImageSet()">Add image set</button>
     </div>
-  </div>
+</div>
 
-  <!-- Save button -->
-  <button class="btn btn-default" type="button" ng-click="saveVariantsAndImageSets()">Save</button>
+<!-- Save button -->
+<button class="btn btn-default" type="button" ng-click="saveVariantsAndImageSets()">Save</button>
 
+</div>
 </div>
