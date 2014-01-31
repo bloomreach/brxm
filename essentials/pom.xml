@@ -54,13 +54,13 @@
     <repository>
       <id>hippo-maven2-private</id>
       <name>Hippo Private Maven 2</name>
-      <url>https://maven.onehippo.com/maven2-private</url>
+      <url>https://maven.onehippo.com/content/repositories/private-releases/</url>
       <uniqueVersion>false</uniqueVersion>
     </repository>
     <snapshotRepository>
       <id>hippo-maven2-private-snapshots</id>
       <name>Hippo Private Maven 2 Snapshots</name>
-      <url>http://maven.onehippo.com/maven2-private-snapshots</url>
+      <url>https://maven.onehippo.com/content/repositories/private-snapshots/</url>
       <uniqueVersion>false</uniqueVersion>
     </snapshotRepository>
   </distributionManagement>
@@ -84,11 +84,11 @@
       <name>Hippo maven 2 private repository snapshots</name>
       <url>http://maven.onehippo.com/maven2-private-snapshots</url>
     </repository>
-    <repository>
+    <!--<repository>
       <id>hippo</id>
       <name>Hippo maven 2 repository.</name>
       <url>http://maven.onehippo.com/maven2/</url>
-    </repository>
+    </repository>-->
     <repository>
       <id>hippo-forge</id>
       <name>Hippo Forge maven 2 repository.</name>
