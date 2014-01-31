@@ -93,7 +93,7 @@ The following URLs are available from this project:
 
  * CMS at http://localhost:8080/cms
  * Website at http://localhost:8080/site 
- * Essentials dashboard at http://localhost:8080/dashboard
+ * Essentials dashboard at http://localhost:8080/essentials
 
 Logs are located in `target/tomcat6x/logs`
 
