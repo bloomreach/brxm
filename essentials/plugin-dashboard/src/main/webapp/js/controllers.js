@@ -51,6 +51,7 @@
                     $scope.selectedPlugin  = extracted(pluginClass);
                 };
                 $scope.installPlugin = function (pluginClass) {
+                    $rootScope.pluginsCache = null;
                     $scope.selectedPlugin  = extracted(pluginClass);
                     if($scope.selectedPlugin){
                         $http.post($rootScope.REST.pluginInstall+pluginClass).success(function (data) {
@@ -63,16 +64,26 @@
 
                 //fetch plugin list
                 $scope.init = function () {
-                    $http.get($rootScope.REST.plugins).success(function (data) {
-                        $scope.plugins = data.items;
+
+                    if ($rootScope.pluginsCache) {
+                        processItems($rootScope.pluginsCache);
+                    } else {
+                        $http.get($rootScope.REST.plugins).success(function (data) {
+                            $rootScope.pluginsCache = data.items;
+                            processItems(data.items);
+                        });
+                    }
+
+                    function processItems(items) {
+                        $scope.plugins = items;
                         $scope.pluginNeedsInstall = [];
-                        for (var i = 0; i < data.items.length; i++) {
-                            var obj = data.items[i];
-                            if(obj.needsInstallation){
+                        for (var i = 0; i < items.length; i++) {
+                            var obj = items[i];
+                            if (obj.needsInstallation) {
                                 $scope.pluginNeedsInstall.push(obj);
                             }
                         }
-                    });
+                    }
 
                 };
                 $scope.init();
