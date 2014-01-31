@@ -38,8 +38,6 @@
                 };
                 $scope.isTabSelected = function (path) {
                     var myPath = $location.path();
-                    console.log("mypath:"+ myPath);
-                    console.log("path:"+ path);
                     return  myPath.indexOf(path) != -1;
                 };
 
