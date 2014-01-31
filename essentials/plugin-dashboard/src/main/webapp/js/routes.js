@@ -64,6 +64,9 @@
                                 }, "plugintabs": {
                                     templateUrl: 'pages/plugins-new-tabs.html',
                                     controller: 'pluginCtrl'
+                                }, "plugininstance": {
+                                    controller: 'pluginCtrl',
+                                    templateUrl: 'pages/find-plugins.html'
                                 }
                             }
                         }
