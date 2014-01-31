@@ -16,9 +16,9 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.channelManager.menuManagement')
+    angular.module('hippo.channelManager.menuManager')
 
-        .service('hippo.channelManager.menuManagement.ConfigService', [
+        .service('hippo.channelManager.menuManager.ConfigService', [
             '_hippo.channelManager.menuManagement.IFrameService',
             function(IFrame) {
                 var config = {

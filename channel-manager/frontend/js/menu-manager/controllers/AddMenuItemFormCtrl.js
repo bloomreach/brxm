@@ -17,9 +17,9 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.channelManager.menuManagement')
+    angular.module('hippo.channelManager.menuManager')
 
-        .controller('hippo.channelManager.menuManagement.AddMenuItemFormCtrl', ['$scope', '$location', function ($scope, $location) {
+        .controller('hippo.channelManager.menuManager.AddMenuItemFormCtrl', ['$scope', '$location', function ($scope, $location) {
 
             /*
             // make sure there is a destination property

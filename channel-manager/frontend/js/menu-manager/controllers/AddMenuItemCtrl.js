@@ -17,9 +17,9 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.channelManager.menuManagement')
+    angular.module('hippo.channelManager.menuManager')
 
-        .controller('hippo.channelManager.menuManagement.AddMenuItemCtrl', [
+        .controller('hippo.channelManager.menuManager.AddMenuItemCtrl', [
             '$scope',
             function ($scope) {
                 // scope values

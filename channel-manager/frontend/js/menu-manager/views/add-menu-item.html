@@ -18,12 +18,12 @@
     <div class="row">
 
         <!-- START Tree Component -->
-        <div class="col-sm-4" id="menu-tree" data-ng-controller="hippo.channelManager.menuManagement.TreeCtrl">
+        <div class="col-sm-4" id="menu-tree" data-ng-controller="hippo.channelManager.menuManager.TreeCtrl">
             <div file-tree tree-data="menuTree" on-select="setSelectedItem(branch)"></div>
         </div>
         <!-- END Tree Component -->
 
-        <div class="col-sm-8" id="form-panel" data-ng-controller="hippo.channelManager.menuManagement.AddMenuItemFormCtrl">
+        <div class="col-sm-8" id="form-panel" data-ng-controller="hippo.channelManager.menuManager.AddMenuItemFormCtrl">
             <form role="form">
                 <legend>{{ 'ADD_NEW_MENU_ITEM' | translate }}</legend>
                 <div class="form-group">

@@ -17,9 +17,9 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.channelManager.menuManagement')
+    angular.module('hippo.channelManager.menuManager')
 
-        .service('hippo.channelManager.menuManagement.Container', [
+        .service('hippo.channelManager.menuManager.Container', [
             '$log',
             '_hippo.channelManager.menuManagement.IFrameService',
             function($log, IFrameService) {

@@ -19,7 +19,7 @@
 
     var LIVE_RELOAD_URL = '//localhost:35729/livereload.js';
 
-    angular.module('hippo.channelManager.menuManagement')
+    angular.module('hippo.channelManager.menuManager')
 
         .service('_hippo.channelManager.menuManagement.IFrameService', ['$window', '$log', function ($window, $log) {
 

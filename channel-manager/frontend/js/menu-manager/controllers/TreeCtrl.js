@@ -33,12 +33,12 @@
         return result;
     }
 
-    angular.module('hippo.channelManager.menuManagement')
+    angular.module('hippo.channelManager.menuManager')
 
-        .controller('hippo.channelManager.menuManagement.TreeCtrl', [
+        .controller('hippo.channelManager.menuManager.TreeCtrl', [
             '$scope',
-            'hippo.channelManager.menuManagement.ConfigService',
-            'hippo.channelManager.menuManagement.MenuService',
+            'hippo.channelManager.menuManager.ConfigService',
+            'hippo.channelManager.menuManager.MenuService',
             function ($scope, ConfigService, MenuService) {
 
                 // fetch initial data

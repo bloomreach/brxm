@@ -16,13 +16,13 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.channelManager.menuManagement')
+    angular.module('hippo.channelManager.menuManager')
 
-        .controller('hippo.channelManager.menuManagement.LoaderCtrl', [
+        .controller('hippo.channelManager.menuManager.LoaderCtrl', [
             '$location',
             '$log',
-            'hippo.channelManager.menuManagement.ConfigService',
-            'hippo.channelManager.menuManagement.MenuService',
+            'hippo.channelManager.menuManager.ConfigService',
+            'hippo.channelManager.menuManager.MenuService',
             function ($location, $log, ConfigService, MenuService) {
 
                 MenuService.getMenu(ConfigService.menuId).then(function (data) {

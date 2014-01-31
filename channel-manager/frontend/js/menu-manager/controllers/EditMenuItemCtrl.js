@@ -17,9 +17,9 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.channelManager.menuManagement')
+    angular.module('hippo.channelManager.menuManager')
 
-        .controller('hippo.channelManager.menuManagement.EditMenuItemCtrl', [
+        .controller('hippo.channelManager.menuManager.EditMenuItemCtrl', [
             '$scope',
             '$routeParams',
             function ($scope, $routeParams) {

@@ -17,9 +17,9 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.channelManager.menuManagement')
+    angular.module('hippo.channelManager.menuManager')
 
-        .service('hippo.channelManager.menuManagement.MenuService', ['hippo.channelManager.menuManagement.ConfigService', '$q', '$http', function (ConfigService, $q, $http) {
+        .service('hippo.channelManager.menuManager.MenuService', ['hippo.channelManager.menuManager.ConfigService', '$q', '$http', function (ConfigService, $q, $http) {
             var menuService = {};
 
             // fetch menu tree

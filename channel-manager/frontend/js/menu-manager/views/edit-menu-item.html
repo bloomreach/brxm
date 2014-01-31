@@ -18,12 +18,12 @@
     <div class="row">
 
         <!-- START Tree Component -->
-        <div class="col-sm-4" id="menu-tree" data-ng-controller="hippo.channelManager.menuManagement.TreeCtrl">
+        <div class="col-sm-4" id="menu-tree" data-ng-controller="hippo.channelManager.menuManager.TreeCtrl">
             <div jstree data="menuTree" class="jstree"></div>
         </div>
         <!-- END Tree Component -->
 
-        <div class="col-sm-8" id="form-panel" data-ng-controller="hippo.channelManager.menuManagement.EditMenuItemFormCtrl">
+        <div class="col-sm-8" id="form-panel" data-ng-controller="hippo.channelManager.menuManager.EditMenuItemFormCtrl">
             <form role="form">
                 <legend>Edit menu item</legend>
                 <div class="form-group">
@@ -80,10 +80,10 @@
         </div>
     </div>
     <div class="row">
-        <div id="add" class="col-sm-4" data-ng-controller="hippo.channelManager.menuManagement.TreeActionsCtrl">
+        <div id="add" class="col-sm-4" data-ng-controller="hippo.channelManager.menuManager.TreeActionsCtrl">
             <button type="button" class="btn btn-default btn-block" ng-click="addMenuItem()"><i class="fa fa-plus"></i> {{ 'ADD_MENU_ITEM' | translate }}</button>
         </div>
-        <div id="remove" class="col-md-8" data-ng-controller="hippo.channelManager.menuManagement.MenuItemActionsCtrl">
+        <div id="remove" class="col-md-8" data-ng-controller="hippo.channelManager.menuManager.MenuItemActionsCtrl">
             <button type="button" class="btn btn-default" ng-click="removeMenuItem(selectedMenuItem)"><i class="fa fa-trash-o"></i> {{ 'DELETE_MENU_ITEM' | translate }}</button>
         </div>
     </div>

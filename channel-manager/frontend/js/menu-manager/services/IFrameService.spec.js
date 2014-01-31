@@ -19,7 +19,7 @@ describe('IFrame Service', function () {
 
     var iframeConfig, parentIFramePanel, $log, $window, iframeService;
 
-    beforeEach(module('hippo.channelManager.menuManagement'));
+    beforeEach(module('hippo.channelManager.menuManager'));
 
     beforeEach(function() {
         iframeConfig = {
