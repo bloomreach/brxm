@@ -30,7 +30,7 @@ public class CBPayload implements Restful {
 
     private static final long serialVersionUID = 1L;
 
-    private RestfulList<DocumentType> documentTypes;
+    private RestfulList<DocumentType> documentTypes = new RestfulList<>();
 
     @XmlElement(name = "documentTypes")
     public RestfulList<DocumentType> getDocumentTypes() {
