@@ -36,7 +36,8 @@
   <script src="${pageContext.request.contextPath}/plugins/newsEventsPowerpack/controller.js"></script>
   <script src="${pageContext.request.contextPath}/plugins/xinhaPlugin/xinhaPlugin.js"></script>
   <script src="${pageContext.request.contextPath}/tools/beanwriter/controller.js"></script>
-
+  <link rel="icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
+  <link rel="shortcut icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
 
 </head>
 <body>
