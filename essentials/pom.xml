@@ -12,7 +12,7 @@
   <description>Hippo Essentials</description>
   <groupId>org.onehippo.cms7.essentials</groupId>
   <artifactId>hippo-essentials</artifactId>
-  <version>1.01.01-SNAPSHOT</version>
+  <version>1.01.00-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
