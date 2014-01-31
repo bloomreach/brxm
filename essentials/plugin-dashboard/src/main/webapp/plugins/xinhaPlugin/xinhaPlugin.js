@@ -84,7 +84,10 @@
                                 return true;
                             });
                             $scope.options = copy.concat(other);
+                        }else{
+                            $scope.options = [].concat($scope.allOptions);
                         }
+
                     });
 
 
