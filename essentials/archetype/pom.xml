@@ -28,7 +28,7 @@
   </description>
 
   <artifactId>essentials-archetype</artifactId>
-  <version>1.01.00-SNAPSHOT</version>
+  <version>1.01.00</version>
   <packaging>pom</packaging>
 
   <properties>
@@ -75,4 +75,8 @@
     </plugins>
   </reporting>
 
+
+  <scm>
+    <tag>hippo-essentials-1.01.00</tag>
+  </scm>
 </project>

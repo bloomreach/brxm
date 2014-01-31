@@ -22,13 +22,13 @@
   <parent>
     <groupId>org.onehippo.cms7.essentials</groupId>
     <artifactId>hippo-dashboard-plugins</artifactId>
-    <version>1.01.00-SNAPSHOT</version>
+    <version>1.01.00</version>
   </parent>
 
   <name>Hippo Essentials dashboard gallery plugin</name>
   <description>Hippo Essentials dashboard gallery plugin</description>
   <artifactId>hippo-dashboard-gallery-plugin</artifactId>
-  <version>1.01.00-SNAPSHOT</version>
+  <version>1.01.00</version>
   <packaging>jar</packaging>
 
   <dependencies>
