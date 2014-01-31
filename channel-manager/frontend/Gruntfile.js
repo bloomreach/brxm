@@ -45,10 +45,7 @@ module.exports = function (grunt) {
 
     // project configuration
     grunt.initConfig({
-        build: {
-            source: 'src/js',
-            target: 'target/classes/angular'
-        },
+        build: require('./build.config.js'),
 
         // clean target (distribution) folder
         clean: {
@@ -138,6 +135,22 @@ module.exports = function (grunt) {
             files: [
                 '<%= build.source %>/components/*'
             ]
+        },
+
+        // testing with karma
+        karma: {
+            options: {
+                configFile: 'karma.config.js',
+                autoWatch: true
+            },
+
+            single: {
+                singleRun: true
+            },
+
+            continuous: {
+                singleRun: false
+            }
         }
     });
 
@@ -151,5 +164,13 @@ module.exports = function (grunt) {
             'copy:components'
         ]);
     });
+
+    grunt.registerTask('test:unit', [
+        'karma:single'
+    ]);
+
+    grunt.registerTask('test:unit:loop', [
+        'karma:continuous'
+    ]);
 
 };

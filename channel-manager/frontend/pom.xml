@@ -302,6 +302,16 @@
               <commandlineArgs>build</commandlineArgs>
             </configuration>
           </execution>
+          <execution>
+            <id>grunt-test</id>
+            <phase>test</phase>
+            <goals><goal>exec</goal></goals>
+            <configuration>
+              <executable>grunt</executable>
+              <commandlineArgs>test:unit</commandlineArgs>
+              <skip>${skipTests}</skip>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
     </plugins>

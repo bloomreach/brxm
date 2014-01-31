@@ -44,7 +44,7 @@
                         xtype: 'Hippo.ChannelManager.TemplateComposer.IFramePanel',
                         id: this.iframePanelId,
                         url: Ext.urlAppend('./angular/app/index.html', 'parentExtIFramePanelId=' + this.iframePanelId),
-                        pageManagementConfig: {
+                        iframeConfig: {
                             apiUrlPrefix: config.composerRestMountUrl,
                             debug: config.debug,
                             locale: config.locale,
