@@ -11,13 +11,13 @@
   <parent>
     <groupId>org.onehippo.cms7.essentials</groupId>
     <artifactId>hippo-dashboard-plugins</artifactId>
-    <version>1.01.00-SNAPSHOT</version>
+    <version>1.01.00</version>
   </parent>
 
   <name>Hippo Essentials beanwriter plugin</name>
   <description>Hippo Essentials beanwriter plugin</description>
   <artifactId>hippo-beanwriter-plugin</artifactId>
-  <version>1.01.00-SNAPSHOT</version>
+  <version>1.01.00</version>
   <packaging>jar</packaging>
 
 
