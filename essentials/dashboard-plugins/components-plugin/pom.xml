@@ -6,13 +6,13 @@
   <parent>
     <groupId>org.onehippo.cms7.essentials</groupId>
     <artifactId>hippo-dashboard-plugins</artifactId>
-    <version>1.01.00-SNAPSHOT</version>
+    <version>1.01.01-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Essentials components plugin</name>
   <description>Hippo Essentials components plugin</description>
   <artifactId>hippo-components-plugin</artifactId>
-  <version>1.01.00-SNAPSHOT</version>
+  <version>1.01.01-SNAPSHOT</version>
   <packaging>pom</packaging>
   <properties>
     <junit.version>4.11</junit.version>

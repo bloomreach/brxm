@@ -28,12 +28,13 @@
   </description>
 
   <artifactId>essentials-archetype</artifactId>
-  <version>1.01.00-SNAPSHOT</version>
+  <version>1.01.01-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
     <notice.project.name>Hippo CMS7 Essentials Maven Archetypes</notice.project.name>
   </properties>
+
 
   <repositories>
     <repository>
@@ -73,5 +74,4 @@
       </plugin>
     </plugins>
   </reporting>
-
 </project>

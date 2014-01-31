@@ -16,7 +16,12 @@
 
 <div ng-controller="galleryPluginCtrl">
 <div class="col-md-12">
-<h2>{{message}}</h2>
+<div class="panel">
+<div class="panel-heading">
+    <h2><h2>{{message}}</h2></h2>
+</div>
+<div class="panel-body">
+
 
 <div ng-show="invalidated" class="alert alert-danger">
     <button data-dismiss="alert" class="close" type="button">×</button>
@@ -249,12 +254,14 @@
         </form>
         <hr ng-repeat-end/>
 
-        <button class="btn btn-default" type="button" ng-click="addImageSet()">Add image set</button>
+        <button class="btn btn-primary" type="button" ng-click="addImageSet()">Add image set</button>
     </div>
 </div>
 
 <!-- Save button -->
-<button class="btn btn-default" type="button" ng-click="saveVariantsAndImageSets()">Save</button>
+<button class="btn btn-primary pull-right" type="button" ng-click="saveVariantsAndImageSets()">Save</button>
 
+</div>
+</div>
 </div>
 </div>

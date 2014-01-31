@@ -715,7 +715,6 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/tmp/User.
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/tmp/UserPlan.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/utils/RestWorkflow.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/JarResourceServlet.java -text
-plugin-dashboard/src/main/resources/log4j.xml -text
 plugin-dashboard/src/main/resources/nodetype.xml -text
 plugin-dashboard/src/main/resources/plugin_descriptor.json -text
 plugin-dashboard/src/main/resources/rest.xml -text
@@ -1939,6 +1938,7 @@ plugin-dashboard/src/main/webapp/images/back_enabled.png -text
 plugin-dashboard/src/main/webapp/images/back_enabled_hover.png -text
 plugin-dashboard/src/main/webapp/images/ecommerce1.png -text
 plugin-dashboard/src/main/webapp/images/ecommerce2.png -text
+plugin-dashboard/src/main/webapp/images/favicon.ico -text
 plugin-dashboard/src/main/webapp/images/forward_disabled.png -text
 plugin-dashboard/src/main/webapp/images/forward_enabled.png -text
 plugin-dashboard/src/main/webapp/images/forward_enabled_hover.png -text
