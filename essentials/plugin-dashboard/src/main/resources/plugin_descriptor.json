@@ -9,10 +9,10 @@
         "pluginClass": "org.onehippo.cms7.essentials.dashboard.contentblocks.ContentBlocksPlugin",
         "pluginLink": "contentBlocks",
         "screenshots": [],
-        "type": "Hippo Certified",
+        "type": null,
         "vendor": {
-            "name": "Hippo",
-            "url": "http://www.onehippo.com"
+            "name": "Detailed Content Blocks documentation",
+            "url": "http://content-blocks.forge.onehippo.org"
         },
         "dependencies": [
             {
@@ -33,7 +33,7 @@
         "pluginClass": "org.onehippo.cms7.essentials.xinha.gui.XinhaPlugin",
         "pluginLink": "xinhaPlugin",
         "screenshots": [],
-        "type": "Community",
+        "type": null,
         "vendor": {
             "name": "Hippo",
             "url": "http://www.onehippo.com"
@@ -48,7 +48,7 @@
         "pluginClass": "org.onehippo.cms7.essentials.dashboard.gallery.GalleryPlugin",
         "pluginLink": "galleryPlugin",
         "screenshots": [],
-        "type": "Hippo Certified",
+        "type": null,
         "vendor": {
             "name": "Hippo",
             "url": "http://www.onehippo.com"
