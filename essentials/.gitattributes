@@ -1957,6 +1957,7 @@ plugin-dashboard/src/main/webapp/js/app.js -text
 plugin-dashboard/src/main/webapp/js/controllers.js -text
 plugin-dashboard/src/main/webapp/js/lib/angular-route.min.js -text
 plugin-dashboard/src/main/webapp/js/lib/angular-route.min.js.map -text
+plugin-dashboard/src/main/webapp/js/lib/angular-ui-router.js -text
 plugin-dashboard/src/main/webapp/js/lib/angular.js -text
 plugin-dashboard/src/main/webapp/js/lib/angular.min.js.map -text
 plugin-dashboard/src/main/webapp/js/lib/bootstrap.js -text
@@ -1975,6 +1976,10 @@ plugin-dashboard/src/main/webapp/js/routes.js -text
 plugin-dashboard/src/main/webapp/js/services/dependencyService.js -text
 plugin-dashboard/src/main/webapp/pages/find-plugins.html -text
 plugin-dashboard/src/main/webapp/pages/home.html -text
+plugin-dashboard/src/main/webapp/pages/plugins-installed-tabs.html -text
+plugin-dashboard/src/main/webapp/pages/plugins-menu-find.html -text
+plugin-dashboard/src/main/webapp/pages/plugins-menu.html -text
+plugin-dashboard/src/main/webapp/pages/plugins-new-tabs.html -text
 plugin-dashboard/src/main/webapp/pages/plugins.html -text
 plugin-dashboard/src/main/webapp/pages/tools.html -text
 plugin-dashboard/src/main/webapp/plugins/contentBlocks/contentBlocks.js -text

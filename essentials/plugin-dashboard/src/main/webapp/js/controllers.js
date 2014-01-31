@@ -36,7 +36,10 @@
                 $scope.isPageSelected = function (path) {
                     return $location.path() == path;
                 };
-
+                $scope.isTabSelected = function (path) {
+                    var myPath = $location.path();
+                    return  myPath.indexOf(path) != -1;
+                };
 
                 $scope.showPluginDetail = function (pluginClass) {
                     $scope.selectedPlugin  = extracted(pluginClass);
@@ -132,6 +135,7 @@
                     }
                     return  '#' + myPath == path;
                 };
+
                 $scope.onMenuClick = function (menuItem) {
                    //
                 };
