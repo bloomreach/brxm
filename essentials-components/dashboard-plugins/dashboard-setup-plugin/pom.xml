@@ -29,7 +29,6 @@
   <name>Hippo Essentials project settings plugin</name>
   <description>Hippo Essentials project settings plugin</description>
   <artifactId>hippo-essentials-project-settings-plugin</artifactId>
-  <version>1.01.01-SNAPSHOT</version>
   <packaging>jar</packaging>
 
 
