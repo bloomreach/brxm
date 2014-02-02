@@ -16,7 +16,6 @@
   <name>Hippo Essentials plugins api</name>
   <description>Hippo Essentials plugins api</description>
   <artifactId>hippo-essentials-plugin-api</artifactId>
-  <version>1.01.01-SNAPSHOT</version>
   <packaging>jar</packaging>
   <!--
    NOTE: *all* dependencies in the API should be provided

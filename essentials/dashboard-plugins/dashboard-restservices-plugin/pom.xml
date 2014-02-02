@@ -12,7 +12,6 @@
   <name>Hippo Essentials REST services plugin</name>
   <description>Hippo Essentials REST services plugin</description>
   <artifactId>hippo-dashboard-restservices-plugin</artifactId>
-  <version>1.01.01-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <dependencies>

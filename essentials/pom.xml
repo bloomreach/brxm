@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>7.8.5</version>
+    <version>7.8.7</version>
   </parent>
 
   <name>Hippo Essentials</name>
@@ -18,10 +18,7 @@
   <properties>
 
     <!--***START temporary override of versions*** -->
-    <hippo.cms.version>2.24.07</hippo.cms.version>
-    <hippo.hst.version>2.26.08</hippo.hst.version>
-    <hippo.repository.version>2.24.11</hippo.repository.version>
-    <hippo.addon-channel-manager.version>2.24.08</hippo.addon-channel-manager.version>
+
     <!-- ***END temporary override of versions*** -->
 
     <jstl.version>1.1.2</jstl.version>
@@ -84,11 +81,11 @@
       <name>Hippo maven 2 private repository snapshots</name>
       <url>http://maven.onehippo.com/maven2-private-snapshots</url>
     </repository>
-    <!--<repository>
+    <repository>
       <id>hippo</id>
       <name>Hippo maven 2 repository.</name>
       <url>http://maven.onehippo.com/maven2/</url>
-    </repository>-->
+    </repository>
     <repository>
       <id>hippo-forge</id>
       <name>Hippo Forge maven 2 repository.</name>

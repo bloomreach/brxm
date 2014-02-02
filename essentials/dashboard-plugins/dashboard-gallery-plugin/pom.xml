@@ -28,7 +28,6 @@
   <name>Hippo Essentials dashboard gallery plugin</name>
   <description>Hippo Essentials dashboard gallery plugin</description>
   <artifactId>hippo-dashboard-gallery-plugin</artifactId>
-  <version>1.01.01-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <dependencies>

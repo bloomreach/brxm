@@ -5,13 +5,10 @@
     <groupId>org.onehippo.cms7.essentials</groupId>
     <artifactId>hippo-essentials</artifactId>
     <version>1.01.01-SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.onehippo.cms7.essentials.installer</groupId>
   <artifactId>plugin-dashboard</artifactId>
   <packaging>war</packaging>
-  <version>1.01.01-SNAPSHOT</version>
   <name>Hippo Essentials plugins dashboard</name>
   <description>Hippo Essentials plugins dashboard</description>
 

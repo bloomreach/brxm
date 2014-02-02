@@ -29,7 +29,6 @@
   <name>Hippo Essentials powerpacks</name>
   <description>Hippo Essentials powerpacks</description>
   <artifactId>hippo-dashboard-powerpacks</artifactId>
-  <version>1.01.01-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>

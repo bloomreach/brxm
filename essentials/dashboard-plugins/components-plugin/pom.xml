@@ -12,7 +12,6 @@
   <name>Hippo Essentials components plugin</name>
   <description>Hippo Essentials components plugin</description>
   <artifactId>hippo-components-plugin</artifactId>
-  <version>1.01.01-SNAPSHOT</version>
   <packaging>pom</packaging>
   <properties>
     <junit.version>4.11</junit.version>

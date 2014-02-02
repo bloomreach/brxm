@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>20</version>
+    <version>22.2</version>
   </parent>
 
   <name>Hippo CMS7 Site Toolkit Maven Archetypes</name>

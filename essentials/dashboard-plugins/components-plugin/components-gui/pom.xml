@@ -16,7 +16,6 @@
   <name>Hippo Essentials components plugin GUI</name>
   <description>Hippo Essentials components plugin GUI</description>
   <artifactId>hippo-components-plugin-gui</artifactId>
-  <version>1.01.01-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <dependencies>
@@ -39,7 +38,7 @@
       <artifactId>hippo-essentials-plugin-sdk</artifactId>
       <type>pom</type>
       <scope>test</scope>
-      <version>${hippo-essentials-plugin-api.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
