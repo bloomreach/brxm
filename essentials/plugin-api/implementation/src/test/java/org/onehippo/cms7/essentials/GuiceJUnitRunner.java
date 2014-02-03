@@ -24,46 +24,22 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.EventBusModule;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Module;
 
 
 public class GuiceJUnitRunner extends BlockJUnit4ClassRunner {
-    private Injector injector;
 
     public GuiceJUnitRunner(Class<?> clazz) throws InitializationError {
         super(clazz);
         Class<?>[] classes = getModulesFor(clazz);
-        injector = parseModules(classes);
+
     }
 
     @Override
     public Object createTest() throws Exception {
         Object obj = super.createTest();
-        injector.injectMembers(obj);
         return obj;
     }
 
-    private Injector parseModules(Class<?>[] classes) throws InitializationError {
-        Module[] modules = new Module[classes.length];
-        for (int i = 0; i < classes.length; i++) {
-            try {
-
-                final Class<?> myClass = classes[i];
-                if (myClass.equals(EventBusModule.class)) {
-                    modules[i] = EventBusModule.getInstance();
-                    continue;
-                }
-
-
-                modules[i] = (Module) myClass.newInstance();
-            } catch (InstantiationException | IllegalAccessException e) {
-                throw new InitializationError(e);
-            }
-        }
-        return Guice.createInjector(modules);
-    }
 
     private Class<?>[] getModulesFor(Class<?> clazz) throws InitializationError {
         GuiceJUnitModules annotation = clazz.getAnnotation(GuiceJUnitModules.class);

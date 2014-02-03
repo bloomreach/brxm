@@ -18,6 +18,8 @@ package org.onehippo.cms7.essentials.dashboard.instruction;
 
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeTypeExistsException;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -38,8 +40,7 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+
 
 /**
  * @version "$Id$"
@@ -55,10 +56,10 @@ public class CndInstruction extends PluginInstruction {
     private String namespace;
     private String superType;
     private String documentType;
-    @Inject(optional = true)
+    @Inject
     @Named("instruction.message.cnd.register.failed")
     private String messageRegisterError;
-    @Inject(optional = true)
+    @Inject
     @Named("instruction.message.cnd.register")
     private String message;
     private String action;

@@ -18,6 +18,7 @@ package org.onehippo.cms7.essentials.dashboard.instruction;
 
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
@@ -27,9 +28,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.EventBusModule;
 
 import com.google.common.eventbus.EventBus;
-import com.google.inject.Guice;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
+
 
 /**
  * @version "$Id$"
@@ -43,8 +42,8 @@ public abstract class PluginInstruction implements Instruction {
     @Inject
     private EventBus eventBus;
     protected PluginInstruction() {
-        final Injector injector = Guice.createInjector(EventBusModule.getInstance());
-        injector.injectMembers(this);
+     /*   final Injector injector = Guice.createInjector(EventBusModule.getInstance());
+        injector.injectMembers(this);*/
     }
 
     @Override

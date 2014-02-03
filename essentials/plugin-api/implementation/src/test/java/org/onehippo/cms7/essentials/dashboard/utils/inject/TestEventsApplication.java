@@ -16,8 +16,9 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils.inject;
 
+import javax.inject.Inject;
+
 import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
 
 /**
  * @version "$Id$"

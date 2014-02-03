@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.essentials.rest;
 
+import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -35,7 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
+
 
 /**
  * @version "$Id$"

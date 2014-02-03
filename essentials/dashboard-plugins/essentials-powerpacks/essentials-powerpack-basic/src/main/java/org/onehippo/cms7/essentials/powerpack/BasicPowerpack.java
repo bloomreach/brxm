@@ -19,6 +19,8 @@ package org.onehippo.cms7.essentials.powerpack;
 import java.io.InputStream;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
@@ -33,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
+
 
 /**
  * @version "$Id$"

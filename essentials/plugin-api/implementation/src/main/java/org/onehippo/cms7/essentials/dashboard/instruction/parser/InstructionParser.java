@@ -32,8 +32,6 @@ import org.onehippo.cms7.essentials.dashboard.utils.inject.PropertiesModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 
 /**
  * @version "$Id$"
@@ -48,7 +46,7 @@ public final class InstructionParser {
             final JAXBContext context = JAXBContext.newInstance(PluginInstructions.class);
             final Unmarshaller unmarshaller = context.createUnmarshaller();
             final Instructions instructions = (Instructions) unmarshaller.unmarshal(new StringReader(content));
-            final Injector injector = Guice.createInjector(new PropertiesModule(), EventBusModule.getInstance());
+            /*final Injector injector = Guice.createInjector(new PropertiesModule(), EventBusModule.getInstance());
             final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
             for (InstructionSet instructionSet : instructionSets) {
                 final Set<Instruction> myInstr = instructionSet.getInstructions();
@@ -57,7 +55,7 @@ public final class InstructionParser {
                 }
             }
 
-            injector.injectMembers(instructions);
+            injector.injectMembers(instructions);*/
             return instructions;
 
         } catch (JAXBException e) {

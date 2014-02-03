@@ -22,21 +22,19 @@ import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventL
 import org.onehippo.cms7.essentials.dashboard.event.listeners.ValidationEventListener;
 import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
+import org.springframework.context.annotation.Configuration;
 
 import com.google.common.eventbus.EventBus;
-import com.google.inject.AbstractModule;
-import com.google.inject.TypeLiteral;
-import com.google.inject.matcher.Matchers;
-import com.google.inject.spi.InjectionListener;
-import com.google.inject.spi.TypeEncounter;
-import com.google.inject.spi.TypeListener;
+
 
 /**
  * Guice module for injecting event bus instance
  *
  * @version "$Id$"
  */
-public final class EventBusModule extends AbstractModule {
+
+@Configuration
+public final class EventBusModule  {
 
     @SuppressWarnings("StaticVariableOfConcreteClass")
     private static final EventBusModule instance = new EventBusModule();
@@ -55,9 +53,9 @@ public final class EventBusModule extends AbstractModule {
         eventBus.unregister(instructionsEventListener);
     }
 
-    @Override
-    protected void configure() {
-        bind(EventBus.class).toInstance(eventBus);
+
+    public void configure() {
+        /*bind(EventBus.class).toInstance(eventBus);
 
         bindListener(Matchers.any(), new TypeListener() {
             public <I> void hear(TypeLiteral<I> typeLiteral, TypeEncounter<I> typeEncounter) {
@@ -74,7 +72,7 @@ public final class EventBusModule extends AbstractModule {
         bind(ValidationEventListener.class).toInstance(validationEventListener);
         bind(InstructionsEventListener.class).toInstance(instructionsEventListener);
         bind(InstructionExecutor.class).toInstance(instructionExecutor);
-
+*/
     }
 
     public static EventBusModule getInstance() {

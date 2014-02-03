@@ -26,6 +26,8 @@ import java.util.Deque;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -43,9 +45,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-
 
 /**
  * @version "$Id$"
@@ -62,16 +61,16 @@ public class FileInstruction extends PluginInstruction {
     private String message;
     @Inject
     private EventBus eventBus;
-    @Inject(optional = true)
+    @Inject
     @Named("instruction.message.file.delete")
     private String messageDelete;
-    @Inject(optional = true)
+    @Inject
     @Named("instruction.message.file.copy")
     private String messageCopy;
-    @Inject(optional = true)
+    @Inject
     @Named("instruction.message.file.copy.error")
     private String messageCopyError;
-    @Inject(optional = true)
+    @Inject
     @Named("instruction.message.folder.create")
     private String messageFolderCreate;
     private boolean overwrite;

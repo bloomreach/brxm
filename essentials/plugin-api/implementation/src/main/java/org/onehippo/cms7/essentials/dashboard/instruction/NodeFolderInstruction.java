@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -39,8 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+
 
 /**
  * @version "$Id$"
@@ -53,7 +54,7 @@ public class NodeFolderInstruction extends PluginInstruction {
     private String template;
     private String path;
     private PluginContext context;
-    @Inject(optional = true)
+    @Inject
     @Named("instruction.message.folder.create")
     private String messageSuccess;
 

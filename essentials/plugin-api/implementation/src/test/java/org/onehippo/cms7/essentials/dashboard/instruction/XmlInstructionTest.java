@@ -16,6 +16,8 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
@@ -27,7 +29,7 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.EventBusModule;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.PropertiesModule;
 
-import com.google.inject.Inject;
+
 
 import static org.junit.Assert.assertTrue;
 

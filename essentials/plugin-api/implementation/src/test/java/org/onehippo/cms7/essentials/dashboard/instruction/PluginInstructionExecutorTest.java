@@ -19,6 +19,8 @@ package org.onehippo.cms7.essentials.dashboard.instruction;
 import java.io.InputStream;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.InstructionsEventListener;
@@ -30,7 +32,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Inject;
+
 
 import static org.junit.Assert.assertEquals;
 

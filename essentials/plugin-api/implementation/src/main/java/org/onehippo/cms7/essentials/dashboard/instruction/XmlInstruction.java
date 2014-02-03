@@ -21,6 +21,8 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -42,8 +44,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+
 
 /**
  * @version "$Id$"
@@ -63,13 +64,13 @@ public class XmlInstruction extends PluginInstruction {
     private String action;
     @Inject
     private EventBus eventBus;
-    @Inject(optional = true)
+    @Inject
     @Named("instruction.message.xml.delete")
     private String messageDelete;
-    @Inject(optional = true)
+    @Inject
     @Named("instruction.message.xml.copy")
     private String messageCopy;
-    @Inject(optional = true)
+    @Inject
     @Named("instruction.message.xml.copy.error")
     private String messageCopyError;
     private PluginContext context;

@@ -17,14 +17,15 @@
 package org.onehippo.cms7.essentials.dashboard.utils.inject;
 
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 import static org.junit.Assert.assertTrue;
 

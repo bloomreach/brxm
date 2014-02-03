@@ -19,13 +19,9 @@ package org.onehippo.cms7.essentials.rest.config;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.onehippo.cms7.essentials.dashboard.utils.inject.EventBusModule;
-import org.onehippo.cms7.essentials.dashboard.utils.inject.PropertiesModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 
 /**
  * @version "$Id$"
@@ -37,9 +33,8 @@ public class RestServletListener implements ServletContextListener {
     @Override
     public void contextInitialized(final ServletContextEvent servletContextEvent) {
 
-        log.info("##### CREATING INJECTOR #############");
-        final Injector injector = Guice.createInjector(EventBusModule.getInstance(), new PropertiesModule(), new RestModule());
-        servletContextEvent.getServletContext().setAttribute(RestServlet.ATTRIBUTE_INJECTOR,injector);
+        log.info("#####  ESSENTIALS LISTENER #############");
+
     }
 
     @Override
