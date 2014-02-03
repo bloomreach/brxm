@@ -64,7 +64,6 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
@@ -77,7 +76,6 @@ import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.hippoecm.repository.reviewedactions.UnlockWorkflow;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.util.NodeIterable;
-import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -707,20 +705,6 @@ public class PreviewDocumentWorkflowPlugin extends RenderPlugin {
             }
 
             @Override
-            public boolean isEnabled() {
-                try {
-                    final Node node = getModel().getNode();
-                    final Node parent = node.getParent();
-                    if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
-                        return !parent.isNodeType(JcrConstants.MIX_VERSIONABLE);
-                    }
-                } catch (RepositoryException e) {
-                    log.warn("Unable to determine whether version history is available", e);
-                }
-                return false;
-            }
-
-            @Override
             protected ResourceReference getIcon() {
                 return new PackageResourceReference(getClass(), "revision-16.png");
             }
@@ -817,12 +801,13 @@ public class PreviewDocumentWorkflowPlugin extends RenderPlugin {
                 hideIfNecessary(info, "requestPublish", requestPublishAction);
                 hideIfNecessary(info, "requestDepublish", requestDepublishAction);
 
-                hideOrDisable(deleteAction, info, "delete");
-                hideOrDisable(renameAction, info, "rename");
-                hideOrDisable(moveAction, info, "move");
+                hideOrDisable(info, "delete", deleteAction);
+                hideOrDisable(info, "rename", renameAction);
+                hideOrDisable(info, "move", moveAction);
 
                 hideIfNecessary(info, "copy", copyAction);
-                hideIfNecessary(info, "status", infoAction, whereUsedAction, historyAction);
+                hideIfNecessary(info, "status", infoAction, whereUsedAction);
+                hideOrDisable(info, "listVersions", historyAction);
 
                 if (info.containsKey("inUseBy") && info.get("inUseBy") instanceof String) {
                     inUseBy = (String) info.get("inUseBy");
@@ -844,7 +829,7 @@ public class PreviewDocumentWorkflowPlugin extends RenderPlugin {
         }
     }
 
-    void hideOrDisable(StdWorkflow action, Map<String, Serializable> info, String key) {
+    void hideOrDisable(Map<String, Serializable> info, String key, StdWorkflow action) {
         if (info.containsKey(key)) {
             if (info.get(key) instanceof Boolean && !(Boolean) info.get(key)) {
                 action.setEnabled(false);
