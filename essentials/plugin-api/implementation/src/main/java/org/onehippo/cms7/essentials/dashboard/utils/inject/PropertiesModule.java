@@ -16,30 +16,23 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils.inject;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 
 /**
  * @version "$Id$"
  */
 @Configuration
-public class PropertiesModule  {
+@PropertySource(value = {"classpath:essentials_messages.properties"}, name = "essentialsProperties")
+public class PropertiesModule {
 
-    private static final Logger log = LoggerFactory.getLogger(PropertiesModule.class);
-
-    protected void configure() {
-        final Properties properties = new Properties();
-        try (final InputStream stream = getClass().getResourceAsStream("/essentials_messages.properties")) {
-            properties.load(stream);
-            //Names.bindProperties(binder(), properties);
-        } catch (IOException e) {
-            log.error("Error injecting properties [essentials_messages.properties]", e);
-        }
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
     }
+
+
 }

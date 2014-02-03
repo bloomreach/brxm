@@ -23,10 +23,12 @@ import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.springframework.stereotype.Component;
 
 /**
  * @version "$Id$"
  */
+@Component
 public class PluginInstructionExecutor implements InstructionExecutor {
 
 

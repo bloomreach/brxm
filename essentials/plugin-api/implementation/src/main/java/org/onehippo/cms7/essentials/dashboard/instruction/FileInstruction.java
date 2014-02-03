@@ -41,6 +41,8 @@ import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
@@ -49,6 +51,7 @@ import com.google.common.eventbus.EventBus;
 /**
  * @version "$Id$"
  */
+//@Component
 @XmlRootElement(name = "file", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class FileInstruction extends PluginInstruction {
 
@@ -61,17 +64,17 @@ public class FileInstruction extends PluginInstruction {
     private String message;
     @Inject
     private EventBus eventBus;
-    @Inject
-    @Named("instruction.message.file.delete")
+
+    @Value("${instruction.message.file.delete}")
     private String messageDelete;
-    @Inject
-    @Named("instruction.message.file.copy")
+
+    @Value("${instruction.message.file.copy}")
     private String messageCopy;
-    @Inject
-    @Named("instruction.message.file.copy.error")
+
+    @Value("${instruction.message.file.copy.error}")
     private String messageCopyError;
-    @Inject
-    @Named("instruction.message.folder.create")
+
+    @Value("#{instruction.message.folder.create}")
     private String messageFolderCreate;
     private boolean overwrite;
     private String source;
