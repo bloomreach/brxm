@@ -129,15 +129,15 @@
           <hippo:isModified/>
         </if>
         <if cond="!unpublished or dm.info['modified']">
-          <hippo:copyVariant sourceState="draft" targetState="unpublished"/>
-          <hippo:configVariant variant="unpublished" versionable="true" applyModified="true" availabilities="preview"/>
-          <if cond="!!published">
+          <if cond="!unpublished and !!published">
             <if cond="live">
               <hippo:configVariant variant="published" availabilities="live"/>
             <else/>
               <hippo:configVariant variant="published" availabilities="null"/>
             </if>
           </if>
+          <hippo:copyVariant sourceState="draft" targetState="unpublished"/>
+          <hippo:configVariant variant="unpublished" versionable="true" applyModified="true" availabilities="preview"/>
         </if>
         <hippo:result value="unpublished"/>
       </transition>
@@ -291,7 +291,7 @@
         </transition>
 
         <transition event="schedulePublish" value="reset">
-          <hippo:invokeHandleDocumentWorkflow action="scheduledpublish" whenExpr="_eventDate"/>
+          <hippo:invokeHandleDocumentWorkflow action="scheduledpublish" whenExpr="_eventdata"/>
         </transition>
 
       </state>
@@ -341,7 +341,7 @@
         </transition>
 
         <transition event="scheduleDepublish" value="reset">
-          <hippo:invokeHandleDocumentWorkflow action="scheduleddepublish" whenExpr="_eventDate"/>
+          <hippo:invokeHandleDocumentWorkflow action="scheduleddepublish" whenExpr="_eventdata"/>
         </transition>
 
       </state>
