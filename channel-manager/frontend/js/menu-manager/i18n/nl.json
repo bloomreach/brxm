@@ -1,1 +1,21 @@
-{}
+{
+    "ADD_NEW_MENU_ITEM": "Voeg menu onderdeel toe",
+    "LABEL": "Label",
+    "DESTINATION": "Doel",
+    "SITEMAP_ITEM": "Sitemap onderdeel",
+    "EXTERNAL_LINK": "Externe link",
+    "NONE": "Geen",
+    "INTERNAL_LINK": "Interne link",
+    "SELECT_DOCUMENT": "Selecteer document",
+    "SELECT_LANDING_PAGE": "Selecteer landingspagina",
+    "CREATE_NEW_PAGE": "Maak nieuwe pagina",
+    "EXAMPLE_DOMAIN": "http://www.voorbeeld.nl",
+    "CREATE_MENU_ITEM": "Maak menu onderdeel",
+    "CANCEL": "Annuleer",
+    "PAGE_TITLE": "Pagina titel",
+    "PAGE_URL": "Pagina URL",
+    "SEARCH_FOR_TEMPLATE": "Zoek naar template",
+    "CREATE_PAGE": "Maak pagina",
+    "ADD_MENU_ITEM": "Voeg menu onderdeel toe",
+    "DELETE_MENU_ITEM": "Verwijder menu item"
+}
