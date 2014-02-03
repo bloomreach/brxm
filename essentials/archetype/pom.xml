@@ -28,7 +28,7 @@
   </description>
 
   <artifactId>essentials-archetype</artifactId>
-  <version>1.01.00</version>
+  <version>1.01.01</version>
   <packaging>pom</packaging>
 
   <properties>
@@ -41,13 +41,13 @@
     <repository>
       <id>hippo-maven2-private</id>
       <name>Hippo Private Maven 2</name>
-      <url>https://maven.onehippo.com/content/repositories/private-releases/</url>
+      <url>https://maven.onehippo.com/content/repositories/private-releases</url>
       <uniqueVersion>false</uniqueVersion>
     </repository>
     <snapshotRepository>
       <id>hippo-maven2-private-snapshots</id>
       <name>Hippo Private Maven 2 Snapshots</name>
-      <url>https://maven.onehippo.com/content/repositories/private-snapshots/</url>
+      <url>https://maven.onehippo.com/content/repositories/private-snapshots</url>
       <uniqueVersion>false</uniqueVersion>
     </snapshotRepository>
   </distributionManagement>
