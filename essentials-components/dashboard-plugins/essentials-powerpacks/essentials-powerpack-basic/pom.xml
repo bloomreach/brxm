@@ -30,9 +30,7 @@
   <description>Hippo Essentials basic powerpack</description>
   <artifactId>hippo-essentials-basic-powerpack</artifactId>
   <packaging>jar</packaging>
-  <properties>
-    <spring-test.version>3.2.6.RELEASE</spring-test.version>
-  </properties>
+
 
   <dependencies>
     <dependency>
@@ -64,7 +62,6 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
-      <version>${spring-test.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
