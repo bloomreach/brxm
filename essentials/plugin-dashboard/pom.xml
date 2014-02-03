@@ -20,6 +20,7 @@
     <eclipselink.version>2.5.1</eclipselink.version>
     <jackrabbit.version>2.6.2-h1</jackrabbit.version>
     <spring.version>3.2.6.RELEASE</spring.version>
+    <spring-test.version>3.2.6.RELEASE</spring-test.version>
   </properties>
   <dependencies>
     <dependency>
@@ -44,6 +45,13 @@
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>${spring-test.version}</version>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
       <artifactId>hippo-essentials-project-settings-plugin</artifactId>
