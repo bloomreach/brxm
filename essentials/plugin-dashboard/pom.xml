@@ -86,7 +86,7 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>dashboard-easyforms-plugin</artifactId>
+      <artifactId>hippo-easyforms-plugin</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
