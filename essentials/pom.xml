@@ -79,7 +79,7 @@
     <repository>
       <id>hippo-maven2-private-snapshots</id>
       <name>Hippo maven 2 private repository snapshots</name>
-      <url>http://maven.onehippo.com/maven2-private-snapshots</url>
+      <url>https://maven.onehippo.com/maven2-private-snapshots</url>
     </repository>
     <repository>
       <id>hippo</id>
