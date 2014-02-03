@@ -50,7 +50,7 @@ public class VersionVariantTask extends AbstractDocumentTask {
         Node targetNode = getVariant().getNode();
 
         // ensure no pending changes which would fail the checkin
-        getDocumentHandle().getWorkflowContext().getInternalWorkflowSession().save();
+        targetNode.getSession().save();
         return new Document(targetNode.checkin());
     }
 }
