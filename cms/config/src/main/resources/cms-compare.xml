@@ -98,6 +98,12 @@
       <sv:value>admin</sv:value>
       <sv:value>translation</sv:value>
     </sv:property>
+    <sv:property sv:name="workflow.menuorder" sv:type="String">
+      <sv:value>publication</sv:value>
+      <sv:value>request</sv:value>
+      <sv:value>document</sv:value>
+      <sv:value>miscellaneous</sv:value>
+    </sv:property>
   </sv:node>
 </sv:node>
 

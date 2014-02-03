@@ -29,6 +29,7 @@ import org.apache.wicket.markup.html.form.Form;
 class MenuHierarchy implements Serializable {
 
     private final List<String> categories;
+    private final List<String> submenuOrder;
     private Map<String, List<MenuDescription>> menus = new LinkedHashMap<>();
     private Map<String, MenuHierarchy> submenus = new LinkedHashMap<>();
     private List<ActionDescription> items = new LinkedList<>();
@@ -40,7 +41,12 @@ class MenuHierarchy implements Serializable {
     }
 
     MenuHierarchy(final List<String> categories, Form form) {
+        this(categories, categories, form);
+    }
+
+    MenuHierarchy(final List<String> categories, final List<String> submenuOrder, Form form) {
         this.categories = categories;
+        this.submenuOrder = submenuOrder;
         this.form = form;
     }
 
@@ -110,13 +116,9 @@ class MenuHierarchy implements Serializable {
                 }
             }
 
-            List<String> categories = new ArrayList<>(this.categories);
+            List<String> categories = new ArrayList<>(this.submenuOrder);
             if (categories.contains("default")) {
                 categories.remove("default");
-                categories.add(0, "publication");
-                categories.add(1, "request");
-                categories.add(2, "document");
-                categories.add(3, "miscellaneous");
             }
             for (String subMenuKey : submenus.keySet()) {
                 if ("info".equals(subMenuKey)) {

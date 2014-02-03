@@ -60,10 +60,12 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
     static final Logger log = LoggerFactory.getLogger(AbstractWorkflowPlugin.class);
 
     public static final String CATEGORIES = "workflow.categories";
+    public static final String MENU_ORDER = "workflow.menuorder";
 
     private List<IObserver<JcrNodeModel>> observers;
     private PluginController plugins;
     private String[] categories;
+    private String[] menuOrder;
     protected AbstractView view;
 
     protected AbstractWorkflowPlugin(IPluginContext context, IPluginConfig config) {
@@ -82,9 +84,14 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
             categories = new String[]{};
             log.warn("No categories ({}) defined", CATEGORIES);
         }
+        if (config.get(MENU_ORDER) != null) {
+            menuOrder = config.getStringArray(MENU_ORDER);
+        } else {
+            menuOrder = categories;
+        }
         IServiceReference serviceReference = context.getReference(this);
         plugins = new PluginController(context, config, serviceReference.getServiceId());
-        observers = new LinkedList<IObserver<JcrNodeModel>>();
+        observers = new LinkedList<>();
     }
 
     @Override
@@ -129,14 +136,14 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
     MenuHierarchy buildMenu(Set<Node> nodeSet) {
         Form form = getForm();
 
-        final MenuHierarchy menu = new MenuHierarchy(Arrays.asList(categories), form);
+        final MenuHierarchy menu = new MenuHierarchy(Arrays.asList(categories), Arrays.asList(menuOrder), form);
         plugins.stopRenderers();
         IPluginContext context = getPluginContext();
-        for (IObserver<JcrNodeModel> observer : new ArrayList<IObserver<JcrNodeModel>>(observers)) {
+        for (IObserver<JcrNodeModel> observer : new ArrayList<>(observers)) {
             context.unregisterService(observer, IObserver.class.getName());
         }
         observers.clear();
-        List<Panel> list = new LinkedList<Panel>();
+        List<Panel> list = new LinkedList<>();
         for (Node node : nodeSet) {
             for (final String category : categories) {
                 List<Panel> panels = buildCategory(context, node, category);
@@ -266,7 +273,7 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
         private static final long serialVersionUID = 1L;
 
         public PanelView(final List<Panel> list) {
-            super("view", new ListDataProvider<Panel>(list));
+            super("view", new ListDataProvider<>(list));
         }
 
         @Override
