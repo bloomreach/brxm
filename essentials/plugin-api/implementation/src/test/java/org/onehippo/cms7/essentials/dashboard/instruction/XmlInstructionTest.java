@@ -21,8 +21,6 @@ import javax.inject.Inject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.onehippo.cms7.essentials.GuiceJUnitModules;
-import org.onehippo.cms7.essentials.GuiceJUnitRunner;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
@@ -36,8 +34,6 @@ import static org.junit.Assert.assertTrue;
 /**
  * @version "$Id$"
  */
-@RunWith(GuiceJUnitRunner.class)
-@GuiceJUnitModules({EventBusModule.class, PropertiesModule.class})
 public class XmlInstructionTest extends BaseRepositoryTest {
 
     /**

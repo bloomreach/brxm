@@ -34,7 +34,7 @@ import com.google.common.eventbus.EventBus;
  */
 
 @Configuration
-public final class EventBusModule  {
+public  class EventBusModule  {
 
     @SuppressWarnings("StaticVariableOfConcreteClass")
     private static final EventBusModule instance = new EventBusModule();
@@ -79,6 +79,5 @@ public final class EventBusModule  {
         return instance;
     }
 
-    private EventBusModule() {
-    }
+
 }
