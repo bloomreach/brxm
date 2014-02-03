@@ -87,6 +87,13 @@
     </dependency>
 
     <dependency>
+      <groupId>org.wicketstuff</groupId>
+      <artifactId>wicket-extjs</artifactId>
+      <version>0.23</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
       <version>1.7.1</version>

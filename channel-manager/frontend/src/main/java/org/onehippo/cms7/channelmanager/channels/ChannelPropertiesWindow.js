@@ -37,6 +37,7 @@
             }
 
             this.saveButton = new Ext.Button({
+                id: 'channel-properties-save-button',
                 text: self.resources['channel-properties-save'],
                 listeners: {
                     click: {
