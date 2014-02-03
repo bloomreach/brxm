@@ -35,6 +35,7 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,26 +43,26 @@ public class AbstractConfigResource {
     
     private static Logger log = LoggerFactory.getLogger(AbstractConfigResource.class);
 
-    protected HstRequestContext getRequestContext(HttpServletRequest servletRequest) {
+    public static HstRequestContext getRequestContext(HttpServletRequest servletRequest) {
         return (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
     }
- 
-    protected String getRequestConfigIdentifier(HstRequestContext requestContext) {
+
+    public static String getRequestConfigIdentifier(HstRequestContext requestContext) {
         return (String) requestContext.getAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER);
     }
 
-    protected HstSite getEditingLiveSite(final HstRequestContext requestContext) {
+    public static HstSite getEditingLiveSite(final HstRequestContext requestContext) {
         final Mount mount = getEditingMount(requestContext);
         return mount.getHstSite();
     }
 
-    protected HstSite getEditingPreviewSite(final HstRequestContext requestContext) {
+    public static HstSite getEditingPreviewSite(final HstRequestContext requestContext) {
         final Mount liveMount = getEditingMount(requestContext);
         assertIsContextualizableMount(liveMount);
         return ((ContextualizableMount)liveMount).getPreviewHstSite();
     }
 
-    protected String getEditingPreviewChannelPath(final HstRequestContext requestContext) {
+    public static String getEditingPreviewChannelPath(final HstRequestContext requestContext) {
         final Mount liveMount = getEditingMount(requestContext);
         assertIsContextualizableMount(liveMount);
         final String previewChannelPath =  liveMount.getChannelPath()+ "-preview";
@@ -70,17 +71,17 @@ public class AbstractConfigResource {
     /**
      * @return the preview {@link Channel} and <code>null</code> if there is no preview channel available
      */
-    protected Channel getEditingPreviewChannel(final HstRequestContext requestContext) {
+    public static Channel getEditingPreviewChannel(final HstRequestContext requestContext) {
         final String previewChannelPath =  getEditingPreviewChannelPath(requestContext);
         return requestContext.getVirtualHost().getVirtualHosts().getChannelByJcrPath(previewChannelPath);
     }
 
-    protected boolean hasPreviewConfiguration(final Mount mount) {
+    public static boolean hasPreviewConfiguration(final Mount mount) {
         assertIsContextualizableMount(mount);
         return  ((ContextualizableMount)mount).getPreviewHstSite().hasPreviewConfiguration();
     }
 
-    protected Mount getEditingMount(final HstRequestContext requestContext) {
+    public static Mount getEditingMount(final HstRequestContext requestContext) {
         HttpSession session = requestContext.getServletRequest().getSession(true);
         final String renderingMountId = (String)session.getAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID);
         if (renderingMountId == null) {
@@ -154,18 +155,33 @@ public class AbstractConfigResource {
         return requestContext.getContentBeansTool().getObjectConverter();
     }
 
-    protected void assertIsContextualizableMount(final Mount liveMount) throws IllegalStateException{
+    public static void assertIsContextualizableMount(final Mount liveMount) throws IllegalStateException{
         if (!(liveMount instanceof  ContextualizableMount)) {
             throw new IllegalStateException("Expected a mount of type "+ContextualizableMount.class.getName()+"" +
                     " but found '"+liveMount.toString()+"' which is of type " + liveMount.getClass().getName());
         }
     }
 
-    protected Response tryExecute(Callable<Response> callable) {
+    protected Response tryExecute(Callable<Response> callable, Validator... validators) {
         try {
-            return callable.call();
+            if (validators != null) {
+                for (Validator validator : validators) {
+                    validator.preValidate();
+                }
+            }
+
+            final Response response = callable.call();
+
+            if (validators != null) {
+                for (Validator validator : validators) {
+                    validator.postValidate();
+                }
+            }
+            return response;
         } catch (IllegalStateException | IllegalArgumentException | ItemNotFoundException e) {
             return logAndReturnClientError(e);
+        } catch (AssertionError e) {
+            return logAndReturnClientError(new Exception(e.getCause()));
         } catch (Exception e) {
             return logAndReturnServerError(e);
         }
@@ -195,4 +211,5 @@ public class AbstractConfigResource {
         }
         throw new IllegalStateException("HstSiteMenuItemConfiguration not instanceof CanonicalInfo");
     }
+
 }

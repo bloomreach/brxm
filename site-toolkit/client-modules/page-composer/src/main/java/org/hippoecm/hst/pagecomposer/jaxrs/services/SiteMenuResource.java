@@ -116,6 +116,7 @@ public class SiteMenuResource extends AbstractConfigResource {
 
                 final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
                 final String itemId = modifiedItem.getId();
+                // call below is needed to assure item exists : replace with a validator
                 final HstSiteMenuItemConfiguration menuItem = siteMenuHelper.getMenuItem(menu, itemId);
                 final CanonicalInfo menuItemInfo = getCanonicalInfo(menuItem);
                 final Node menuItemNode = session.getNodeByIdentifier(menuItemInfo.getCanonicalIdentifier());

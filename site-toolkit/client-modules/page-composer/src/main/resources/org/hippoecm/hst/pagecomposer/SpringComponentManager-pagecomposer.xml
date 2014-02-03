@@ -61,6 +61,11 @@
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource"/>
+          </constructor-arg>
+        </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource"/>
           </constructor-arg>
         </bean>

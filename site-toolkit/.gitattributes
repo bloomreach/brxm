@@ -303,6 +303,8 @@ client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/m
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ExtResponseRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/PageModelRepresentation.java -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/PostRepresentation.java -text
+client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/SiteMapItemRepresentation.java -text
+client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/SiteMapRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/SiteMenuItemRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/SiteMenuRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ToolkitRepresentation.java -text
@@ -312,7 +314,13 @@ client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/s
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/ExceptionResource.java -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/MountResource.java -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/RootResource.java -text
+client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/SiteMapResource.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/SiteMenuResource.java -text
+client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/helpers/AbstractHelper.java -text
+client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/helpers/SiteMapHelper.java -text
+client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validaters/CurrentPreviewSiteItemValidator.java -text
+client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validaters/LockValidator.java -text
+client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/validaters/Validator.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/util/HstConfigurationUtils.java -text
 client-modules/page-composer/src/main/resources/org/hippoecm/hst/pagecomposer/SpringComponentManager-pagecomposer.xml -text svneol=unset#text/plain
 client-modules/page-composer/src/main/resources/org/hippoecm/hst/pagecomposer/builtin/components/ol.ftl -text
