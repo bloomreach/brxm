@@ -40,7 +40,7 @@ import com.google.common.eventbus.EventBus;
 @Configuration
 @ComponentScan("org.onehippo.cms7.essentials")
 public class ApplicationModule {
-    //implements } BeanPostProcessor {
+
 
     @SuppressWarnings("StaticVariableOfConcreteClass")
 

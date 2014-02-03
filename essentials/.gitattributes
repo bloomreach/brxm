@@ -534,6 +534,7 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/w
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wiki/WikiNodeType.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wiki/WikiPediaToJCRHandler.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wiki/WikiStrategy.java -text
+plugin-api/implementation/src/main/resources/META-INF/essentialsSpringSdk.xml -text
 plugin-api/implementation/src/main/resources/enwiki-20081008-pages-articles.xml.100.top.xml -text
 plugin-api/implementation/src/main/resources/essentials_messages.properties -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/BaseRepositoryTest.java -text
@@ -702,8 +703,8 @@ plugin-dashboard/src/main/resources/rest.xml -text
 plugin-dashboard/src/main/resources/rest_workflow_content_block_template.xml -text
 plugin-dashboard/src/main/resources/template.xml -text
 plugin-dashboard/src/main/webapp/META-INF/context.xml -text
+plugin-dashboard/src/main/webapp/WEB-INF/applicationContext.xml -text
 plugin-dashboard/src/main/webapp/WEB-INF/jsp/index.jsp -text
-plugin-dashboard/src/main/webapp/WEB-INF/rest.xml -text
 plugin-dashboard/src/main/webapp/WEB-INF/web.xml -text
 plugin-dashboard/src/main/webapp/assets/css/bootstrap.css -text
 plugin-dashboard/src/main/webapp/assets/fonts/Roboto-Black-webfont.eot -text

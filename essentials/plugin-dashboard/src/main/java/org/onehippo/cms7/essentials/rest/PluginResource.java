@@ -73,6 +73,7 @@ public class PluginResource extends BaseResource {
     public static final int WEEK_OLD = -7;
     @Inject
     private EventBus eventBus;
+
     private static Logger log = LoggerFactory.getLogger(PluginResource.class);
 
     /**

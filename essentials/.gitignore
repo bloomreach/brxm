@@ -1940,6 +1940,12 @@ plugin-api/implementation/src/main/java/target
 plugin-api/implementation/src/main/resources/*.iml
 plugin-api/implementation/src/main/resources/.DS_Store
 plugin-api/implementation/src/main/resources/.idea
+plugin-api/implementation/src/main/resources/META-INF/*.iml
+plugin-api/implementation/src/main/resources/META-INF/.DS_Store
+plugin-api/implementation/src/main/resources/META-INF/.idea
+plugin-api/implementation/src/main/resources/META-INF/atlassian-ide-plugin.xml
+plugin-api/implementation/src/main/resources/META-INF/hippo-plugins.iws
+plugin-api/implementation/src/main/resources/META-INF/target
 plugin-api/implementation/src/main/resources/atlassian-ide-plugin.xml
 plugin-api/implementation/src/main/resources/hippo-plugins.iws
 plugin-api/implementation/src/main/resources/target

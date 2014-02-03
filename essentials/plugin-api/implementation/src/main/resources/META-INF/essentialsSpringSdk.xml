@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2014 Hippo B.V. (http://www.onehippo.com)
 
@@ -16,19 +17,10 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:jaxrs="http://cxf.apache.org/jaxrs"
-       xsi:schemaLocation="
-         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-         http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-  <import resource="classpath:META-INF/cxf/cxf.xml"/>
-  <import resource="classpath:META-INF/cxf/osgi/cxf-extension-osgi.xml"/>
+  <!-- APPLICATION CONFIG -->
+  <bean id="applicationModule" class="org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule"/>
+  <bean id="propertiesModule" class="org.onehippo.cms7.essentials.dashboard.utils.inject.PropertiesModule"/>
 
-  <jaxrs:server id="customerService" address="/customers">
-    <jaxrs:serviceBeans>
-      <ref bean="serviceBean"/>
-    </jaxrs:serviceBeans>
-  </jaxrs:server>
-
-  <bean id="serviceBean" class="service.CustomerService"/>
 </beans>
