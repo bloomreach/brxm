@@ -19,7 +19,7 @@
   <properties>
 
     <!--***START temporary override of versions*** -->
-    <essentials.version>1.01.00</essentials.version>
+    <essentials.version>1.01.01</essentials.version>
     <!-- ***END temporary override of versions*** -->
 
     <!--Solving duplicate CMS dependencies-->
@@ -46,7 +46,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.onehippo.cms7.essentials.installer</groupId>
+      <groupId>org.onehippo.cms7.essentials</groupId>
       <artifactId>plugin-dashboard</artifactId>
       <version>${essentials.version}</version>
       <type>war</type>
@@ -202,7 +202,7 @@
                     </properties>
                   </deployable>
                   <deployable>
-                    <groupId>org.onehippo.cms7.essentials.installer</groupId>
+                    <groupId>org.onehippo.cms7.essentials</groupId>
                     <artifactId>plugin-dashboard</artifactId>
                     <type>war</type>
                   </deployable>
