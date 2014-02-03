@@ -655,8 +655,6 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/PowerpackResour
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/PropertiesResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/StatusResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/client/RestClient.java -text
-plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/config/JsonProvider.java -text
-plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/config/RestApplication.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/config/RestServletListener.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/exc/EssentialsExceptionMapper.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/exc/ExceptionInterceptor.java -text

@@ -31,8 +31,11 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
+import org.onehippo.cms7.essentials.dashboard.utils.inject.PropertiesModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import com.google.common.eventbus.EventBus;
 
@@ -40,6 +43,7 @@ import com.google.common.eventbus.EventBus;
 /**
  * @version "$Id$"
  */
+@Component
 public class BasicPowerpack implements PowerpackPackage {
 
     private static Logger log = LoggerFactory.getLogger(BasicPowerpack.class);
@@ -48,6 +52,7 @@ public class BasicPowerpack implements PowerpackPackage {
     private InstructionParser instructionParser;
 
     private Instructions instructions;
+
     @Inject
     private EventBus eventBus;
 

@@ -18,6 +18,8 @@ package org.onehippo.cms7.essentials.powerpack;
 
 import java.io.File;
 
+import javax.inject.Inject;
+
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -27,6 +29,7 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 import static org.junit.Assert.assertEquals;
 
@@ -35,6 +38,9 @@ import static org.junit.Assert.assertEquals;
  */
 public class BasicPowerpackTest extends BaseRepositoryTest {
 
+
+    @Inject
+    private AutowireCapableBeanFactory injector;
 
     private File jspDirectory;
 
@@ -50,6 +56,7 @@ public class BasicPowerpackTest extends BaseRepositoryTest {
     @Test
     public void testParseInstructions() throws Exception {
         final PowerpackPackage powerpackPackage = new BasicPowerpack();
+        injector.autowireBean(powerpackPackage);
         final Instructions instructions = powerpackPackage.getInstructions();
         assertEquals(10, instructions.getInstructionSets().size());
     }
@@ -57,6 +64,7 @@ public class BasicPowerpackTest extends BaseRepositoryTest {
     @Test
     public void testExecute() throws Exception {
         final PowerpackPackage powerpackPackage = new BasicPowerpack();
+        injector.autowireBean(powerpackPackage);
         final InstructionStatus status = powerpackPackage.execute(getContext());
         // create target node:
         assertEquals(InstructionStatus.SUCCESS, status);

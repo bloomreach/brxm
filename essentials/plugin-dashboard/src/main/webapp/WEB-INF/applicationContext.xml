@@ -1,7 +1,7 @@
 <!--
   Copyright 2014 Hippo B.V. (http://www.onehippo.com)
 
-  Licensed under the Apache License, Version 2.0 (the "License");
+  Licensed under the Apache License, Version 2.0 (the "License</value>;
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
 
@@ -16,11 +16,14 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:jaxrs="http://cxf.apache.org/jaxrs"
-       xsi:schemaLocation="
-         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-         http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
+       xmlns:jaxrs="http://cxf.apache.org/jaxrs" xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans.xsd
+   http://cxf.apache.org/jaxrs
+   http://cxf.apache.org/schemas/jaxrs.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
+
+  <context:component-scan base-package="org.onehippo.cms7.essentials"/>
 
   <import resource="classpath:META-INF/essentialsSpringSdk.xml"/>
   <import resource="classpath:META-INF/cxf/cxf.xml"/>
@@ -52,6 +55,38 @@
       <ref bean="statusResource"/>
 
     </jaxrs:serviceBeans>
+
+
+    <jaxrs:providers>
+      <ref bean="jsonProvider"/>
+    </jaxrs:providers>
+
   </jaxrs:server>
+
+  <!--
+   //############################################
+   //   JSON FORMATTING
+   //############################################
+ -->
+  <bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.json.JSONProvider">
+    <property name="ignoreNamespaces" value="true"/>
+    <property name="dropRootElement" value="true"/>
+    <property name="serializeAsArray" value="true"/>
+    <!--<property name="dropCollectionWrapperElement" value="true"/>-->
+    <!--<property name="supportUnwrapped" value="true"/>-->
+    <property name="arrayKeys">
+      <list>
+        <value>items</value>
+        <value>item</value>
+        <value>properties</value>
+        <value>plugins</value>
+        <value>variants</value>
+        <value>imageSets</value>
+        <value>translations</value>
+      </list>
+    </property>
+
+  </bean>
+
 
 </beans>
