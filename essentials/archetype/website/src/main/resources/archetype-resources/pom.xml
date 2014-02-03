@@ -19,7 +19,7 @@
   <properties>
 
     <!--***START temporary override of versions*** -->
-    <essentials.version>1.01.01</essentials.version>
+    <essentials.version>1.01.02-SNAPSHOT</essentials.version>
     <!-- ***END temporary override of versions*** -->
 
     <!--Solving duplicate CMS dependencies-->
