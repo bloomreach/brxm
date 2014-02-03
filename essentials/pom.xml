@@ -71,6 +71,7 @@
 
 
   <repositories>
+<!--
     <repository>
       <id>hippo-maven2-private</id>
       <name>Hippo maven 2 private repository.</name>
@@ -81,6 +82,7 @@
       <name>Hippo maven 2 private repository snapshots</name>
       <url>https://maven.onehippo.com/maven2-private-snapshots</url>
     </repository>
+-->
     <repository>
       <id>hippo</id>
       <name>Hippo maven 2 repository.</name>

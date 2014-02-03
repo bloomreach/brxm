@@ -19,6 +19,8 @@ package org.onehippo.cms7.essentials.powerpack;
 import java.io.InputStream;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
@@ -29,20 +31,28 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
+import org.onehippo.cms7.essentials.dashboard.utils.inject.PropertiesModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
+
 
 /**
  * @version "$Id$"
  */
+@Component
 public class BasicPowerpack implements PowerpackPackage {
 
     private static Logger log = LoggerFactory.getLogger(BasicPowerpack.class);
 
+    @Inject
+    private InstructionParser instructionParser;
+
     private Instructions instructions;
+
     @Inject
     private EventBus eventBus;
 
@@ -51,7 +61,7 @@ public class BasicPowerpack implements PowerpackPackage {
         if (instructions == null) {
             final InputStream resourceAsStream = getClass().getResourceAsStream("/META-INF/instructions.xml");
             final String content = GlobalUtils.readStreamAsText(resourceAsStream);
-            instructions = InstructionParser.parseInstructions(content);
+            instructions = instructionParser.parseInstructions(content);
         }
         return instructions;
 

@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -53,14 +54,18 @@ import org.onehippo.cms7.essentials.rest.model.RestfulList;
 import org.onehippo.cms7.essentials.rest.model.StepRestful;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
+
 
 /**
  * @version "$Id$"
  */
+@Component
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/powerpacks/")
@@ -70,6 +75,10 @@ public class PowerpackResource extends BaseResource {
     @Inject
     private EventBus eventBus;
     private static Logger log = LoggerFactory.getLogger(PowerpackResource.class);
+
+
+    @Inject
+    private AutowireCapableBeanFactory injector;
 
     @Inject
     private MemoryPluginEventListener listener;
@@ -94,6 +103,7 @@ public class PowerpackResource extends BaseResource {
                 powerpackPackage = new EmptyPowerPack();
                 break;
         }
+        injector.autowireBean(powerpackPackage);
         final String className = ProjectSetupPlugin.class.getName();
         final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), getPluginByClassName(className, servletContext));
         // inject project settings:

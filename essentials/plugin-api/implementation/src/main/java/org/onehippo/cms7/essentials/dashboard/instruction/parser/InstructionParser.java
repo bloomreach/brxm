@@ -19,6 +19,8 @@ package org.onehippo.cms7.essentials.dashboard.instruction.parser;
 import java.io.StringReader;
 import java.util.Set;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -27,37 +29,38 @@ import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructions;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
-import org.onehippo.cms7.essentials.dashboard.utils.inject.EventBusModule;
-import org.onehippo.cms7.essentials.dashboard.utils.inject.PropertiesModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.stereotype.Component;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 
 /**
  * @version "$Id$"
  */
-public final class InstructionParser {
+@Component
+public class InstructionParser {
 
     private static Logger log = LoggerFactory.getLogger(InstructionParser.class);
 
+    @Inject
+    private AutowireCapableBeanFactory injector;
 
-    public static Instructions parseInstructions(final String content) {
+    public Instructions parseInstructions(final String content) {
         try {
             final JAXBContext context = JAXBContext.newInstance(PluginInstructions.class);
             final Unmarshaller unmarshaller = context.createUnmarshaller();
             final Instructions instructions = (Instructions) unmarshaller.unmarshal(new StringReader(content));
-            final Injector injector = Guice.createInjector(new PropertiesModule(), EventBusModule.getInstance());
+
             final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
             for (InstructionSet instructionSet : instructionSets) {
                 final Set<Instruction> myInstr = instructionSet.getInstructions();
                 for (Instruction instruction : myInstr) {
-                    injector.injectMembers(instruction);
+                    injector.autowireBean(instruction);
                 }
             }
 
-            injector.injectMembers(instructions);
+            injector.autowireBean(instructions);
             return instructions;
 
         } catch (JAXBException e) {
@@ -67,6 +70,6 @@ public final class InstructionParser {
         return null;
     }
 
-    private  InstructionParser() {
-    }
+
+
 }

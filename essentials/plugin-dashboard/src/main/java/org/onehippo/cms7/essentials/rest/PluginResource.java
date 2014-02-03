@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -57,7 +58,7 @@ import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.google.inject.Inject;
+
 
 /**
  * Rest resource which provides information about plugins: e.g. installed or available plugins
@@ -72,6 +73,7 @@ public class PluginResource extends BaseResource {
     public static final int WEEK_OLD = -7;
     @Inject
     private EventBus eventBus;
+
     private static Logger log = LoggerFactory.getLogger(PluginResource.class);
 
     /**

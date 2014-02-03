@@ -21,6 +21,8 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -38,16 +40,18 @@ import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+
 
 /**
  * @version "$Id$"
  */
+@Component
 @XmlRootElement(name = "xml", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class XmlInstruction extends PluginInstruction {
 
@@ -63,14 +67,14 @@ public class XmlInstruction extends PluginInstruction {
     private String action;
     @Inject
     private EventBus eventBus;
-    @Inject(optional = true)
-    @Named("instruction.message.xml.delete")
+
+    @Value("${instruction.message.xml.delete}")
     private String messageDelete;
-    @Inject(optional = true)
-    @Named("instruction.message.xml.copy")
+
+    @Value("${instruction.message.xml.copy}")
     private String messageCopy;
-    @Inject(optional = true)
-    @Named("instruction.message.xml.copy.error")
+
+    @Value("${instruction.message.xml.copy.error}")
     private String messageCopyError;
     private PluginContext context;
 

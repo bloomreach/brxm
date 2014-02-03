@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import javax.inject.Inject;
 import javax.jcr.Session;
 
 import org.apache.commons.io.FileUtils;
@@ -29,8 +30,6 @@ import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Inject;
-
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -41,6 +40,8 @@ import static org.junit.Assert.assertEquals;
 public class InstallationTest extends BaseRepositoryTest {
 
     private static Logger log = LoggerFactory.getLogger(InstallationTest.class);
+    @Inject
+    private InstructionParser instructionParser;
     @Inject
     private InstructionsEventListener listener;
     @Inject
@@ -118,7 +119,7 @@ public class InstallationTest extends BaseRepositoryTest {
         final String content = GlobalUtils.readStreamAsText(resourceAsStream);
         log.info("content {}", content);
         listener.reset();
-        final Instructions instructions = InstructionParser.parseInstructions(content);
+        final Instructions instructions = instructionParser.parseInstructions(content);
         final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
         for (InstructionSet instructionSet : instructionSets) {
             pluginInstructionExecutor.execute(instructionSet, getContext());

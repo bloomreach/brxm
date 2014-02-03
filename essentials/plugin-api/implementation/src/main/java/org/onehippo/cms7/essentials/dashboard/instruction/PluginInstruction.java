@@ -18,34 +18,32 @@ package org.onehippo.cms7.essentials.dashboard.instruction;
 
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.event.InstructionEvent;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.inject.EventBusModule;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.stereotype.Component;
 
 import com.google.common.eventbus.EventBus;
-import com.google.inject.Guice;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
+
 
 /**
  * @version "$Id$"
  */
 @XmlTransient
+@Component
 public abstract class PluginInstruction implements Instruction {
 
     public static final String COPY = "copy";
     public static final String DELETE = "delete";
 
+
     @Inject
     private EventBus eventBus;
-    protected PluginInstruction() {
-        final Injector injector = Guice.createInjector(EventBusModule.getInstance());
-        injector.injectMembers(this);
-    }
 
     @Override
     public void processPlaceholders(final Map<String, Object> data) {

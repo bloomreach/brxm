@@ -26,6 +26,8 @@ import java.util.Deque;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -39,17 +41,17 @@ import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-
 
 /**
  * @version "$Id$"
  */
+@Component
 @XmlRootElement(name = "file", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class FileInstruction extends PluginInstruction {
 
@@ -60,19 +62,20 @@ public class FileInstruction extends PluginInstruction {
             .build();
     private static final Logger log = LoggerFactory.getLogger(FileInstruction.class);
     private String message;
+
     @Inject
     private EventBus eventBus;
-    @Inject(optional = true)
-    @Named("instruction.message.file.delete")
+
+    @Value("${instruction.message.file.delete}")
     private String messageDelete;
-    @Inject(optional = true)
-    @Named("instruction.message.file.copy")
+
+    @Value("${instruction.message.file.copy}")
     private String messageCopy;
-    @Inject(optional = true)
-    @Named("instruction.message.file.copy.error")
+
+    @Value("${instruction.message.file.copy.error}")
     private String messageCopyError;
-    @Inject(optional = true)
-    @Named("instruction.message.folder.create")
+
+    @Value("${instruction.message.folder.create}")
     private String messageFolderCreate;
     private boolean overwrite;
     private String source;

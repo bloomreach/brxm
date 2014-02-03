@@ -16,7 +16,6 @@
   <name>Hippo Essentials plugins sdk</name>
   <description>Hippo Essentials plugins sdk</description>
   <artifactId>hippo-essentials-plugin-sdk</artifactId>
-  <groupId>org.onehippo.cms7.essentials</groupId>
   <packaging>pom</packaging>
 
   <properties>
@@ -26,7 +25,8 @@
     <hippo.repository.version>2.24.11</hippo.repository.version>
     <hippo.addon-channel-manager.version>2.24.08</hippo.addon-channel-manager.version>
     <!-- ***END temporary override of versions*** -->
-    <guice.version>3.0</guice.version>
+    <javax.inject.version>1</javax.inject.version>
+    <spring.version>3.2.6.RELEASE</spring.version>
     <junit.version>4.11</junit.version>
     <maven-model.version>3.0.5</maven-model.version>
     <commons-io.version>2.3</commons-io.version>
@@ -38,6 +38,7 @@
     <maven-compiler-plugin.version>2.5.1</maven-compiler-plugin.version>
     <geronimo-jta_1.1_spec.version>1.1.1</geronimo-jta_1.1_spec.version>
     <mustache.version>0.8.13</mustache.version>
+    <spring-test.version>3.2.6.RELEASE</spring-test.version>
   </properties>
 
   <modules>
@@ -54,14 +55,24 @@
       </dependency>
 
       <dependency>
-        <groupId>com.google.inject</groupId>
-        <artifactId>guice</artifactId>
-        <version>${guice.version}</version>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-core</artifactId>
+        <version>${spring.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.google.inject.extensions</groupId>
-        <artifactId>guice-multibindings</artifactId>
-        <version>${guice.version}</version>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-expression</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-beans</artifactId>
+        <version>${spring.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
@@ -73,6 +84,11 @@
             <groupId>org.apache.tika</groupId>
           </exclusion>
         </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>javax.inject</groupId>
+        <artifactId>javax.inject</artifactId>
+        <version>${javax.inject.version}</version>
       </dependency>
       <dependency>
         <groupId>com.github.spullara.mustache.java</groupId>
@@ -128,6 +144,12 @@
         <artifactId>junit</artifactId>
         <scope>test</scope>
         <version>${junit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-test</artifactId>
+        <version>${spring-test.version}</version>
+        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7.hst</groupId>

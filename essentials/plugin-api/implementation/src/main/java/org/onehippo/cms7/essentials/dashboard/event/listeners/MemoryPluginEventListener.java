@@ -21,14 +21,19 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import javax.inject.Singleton;
+
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.event.PluginEventListener;
+import org.springframework.stereotype.Component;
 
 import com.google.common.eventbus.Subscribe;
 
 /**
  * @version "$Id$"
  */
+@Component
+@Singleton
 public class MemoryPluginEventListener implements PluginEventListener<DisplayEvent> {
 
     public static final int MAX_ITEMS = 1000;

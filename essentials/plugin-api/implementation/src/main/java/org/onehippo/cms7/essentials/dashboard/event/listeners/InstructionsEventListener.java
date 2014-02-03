@@ -17,16 +17,21 @@
 package org.onehippo.cms7.essentials.dashboard.event.listeners;
 
 
+import javax.inject.Singleton;
+
 import org.onehippo.cms7.essentials.dashboard.event.InstructionEvent;
 import org.onehippo.cms7.essentials.dashboard.event.PluginEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import com.google.common.eventbus.Subscribe;
 
 /**
  * @version "$Id$"
  */
+@Component
+@Singleton
 public class InstructionsEventListener implements PluginEventListener<InstructionEvent> {
 
     private static final Logger log = LoggerFactory.getLogger(InstructionsEventListener.class);

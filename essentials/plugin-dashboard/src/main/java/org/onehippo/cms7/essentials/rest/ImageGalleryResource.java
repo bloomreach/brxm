@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
@@ -44,7 +45,7 @@ import javax.xml.bind.Unmarshaller;
 
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
+
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.persistence.jaxb.UnmarshallerProperties;

@@ -16,18 +16,17 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils.inject;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
-
-import com.google.inject.Inject;
 
 import static org.junit.Assert.assertEquals;
 
 /**
  * @version "$Id$"
  */
-public class EventBusModuleTest extends BaseTest{
-
+public class EventBusModuleTest extends BaseTest {
 
 
     @Inject

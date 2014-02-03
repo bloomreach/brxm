@@ -6,22 +6,17 @@
   <listener>
     <listener-class>org.onehippo.cms7.essentials.rest.config.RestServletListener</listener-class>
   </listener>
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>WEB-INF/applicationContext.xml</param-value>
+  </context-param>
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
   <servlet>
+    <display-name>REST</display-name>
     <servlet-name>REST</servlet-name>
-    <servlet-class>org.onehippo.cms7.essentials.rest.config.RestServlet</servlet-class>
-<!--    <init-param>
-      <param-name>jaxrs.providers</param-name>
-      <param-value>
-        org.apache.cxf.jaxrs.provider.JSONProvider(unwrapped=true dropRootElement=true)
-      </param-value>
-    </init-param>
--->
-    <init-param>
-      <param-name>javax.ws.rs.Application</param-name>
-      <param-value>
-        org.onehippo.cms7.essentials.rest.config.RestApplication
-      </param-value>
-    </init-param>
+    <servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
@@ -33,17 +28,17 @@
     // PLUGIN RESOURCES LOADER
     //############################################
   -->
-<!--
-<servlet>
-    <servlet-name>PLUGINS</servlet-name>
-    <servlet-class>org.onehippo.cms7.essentials.servlet.JarResourceServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>PLUGINS</servlet-name>
-    <url-pattern>/plugins/*</url-pattern>
-  </servlet-mapping>
-  -->
+  <!--
+  <servlet>
+      <servlet-name>PLUGINS</servlet-name>
+      <servlet-class>org.onehippo.cms7.essentials.servlet.JarResourceServlet</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+      <servlet-name>PLUGINS</servlet-name>
+      <url-pattern>/plugins/*</url-pattern>
+    </servlet-mapping>
+    -->
 
 
   <welcome-file-list>

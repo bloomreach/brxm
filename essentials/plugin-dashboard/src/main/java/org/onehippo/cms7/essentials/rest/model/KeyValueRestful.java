@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "items")
+@XmlRootElement(name = "keyvalue")
 public class KeyValueRestful implements Restful {
 
     private static final long serialVersionUID = 1L;

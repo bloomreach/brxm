@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -36,15 +38,17 @@ import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+
 
 /**
  * @version "$Id$"
  */
+@Component
 @XmlRootElement(name = "folder", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class NodeFolderInstruction extends PluginInstruction {
 
@@ -53,8 +57,8 @@ public class NodeFolderInstruction extends PluginInstruction {
     private String template;
     private String path;
     private PluginContext context;
-    @Inject(optional = true)
-    @Named("instruction.message.folder.create")
+
+    @Value("${instruction.message.folder.create}")
     private String messageSuccess;
 
     // path="/foo/bar/foobar" template="/my_folder_template.xml"

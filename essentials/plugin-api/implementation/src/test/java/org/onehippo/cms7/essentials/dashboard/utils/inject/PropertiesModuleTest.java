@@ -17,15 +17,19 @@
 package org.onehippo.cms7.essentials.dashboard.utils.inject;
 
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -43,22 +47,26 @@ public class PropertiesModuleTest extends BaseTest{
         assertTrue(!Strings.isNullOrEmpty(instance.getValue()));
         assertTrue(!Strings.isNullOrEmpty(instance.getName()));
         log.info("instance {}", instance);
+        assertEquals("Copied file from: {{source}} to: {{target}}",instance.getName());
+        assertEquals("Deleted file: {{target}}",instance.getValue());
+
 
     }
 
     /**
      * @version "$Id$"
      */
+    @Component
     public static class PropertyTestObj {
 
 
 
-        @Inject
-        @Named("instruction.message.file.delete")
+
+        @Value("${instruction.message.file.delete}")
         private String value;
 
-        @Inject
-        @Named("instruction.message.file.copy")
+
+        @Value("${instruction.message.file.copy}")
         private String name;
 
         @Override

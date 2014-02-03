@@ -106,9 +106,10 @@
                 $scope.loadProviders = function () {
 
                     $http.get($rootScope.REST.compounds).success(function (data) {
+                        console.log("=================================================>>");
+                        console.log(JSON.stringify(data));
                         $scope.providers = data.items;
                         angular.forEach($scope.providers, function (provider, key) {
-
                             $scope.map[provider.key] = provider;
                         });
                     });

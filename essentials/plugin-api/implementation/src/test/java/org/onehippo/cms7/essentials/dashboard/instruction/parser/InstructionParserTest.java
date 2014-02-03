@@ -22,10 +22,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
 import org.junit.Test;
+import org.onehippo.cms7.essentials.BaseTest;
 import org.onehippo.cms7.essentials.dashboard.instruction.FileInstruction;
 import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructions;
@@ -43,9 +45,15 @@ import static org.junit.Assert.assertTrue;
 /**
  * @version "$Id$"
  */
-public class InstructionParserTest {
+
+public class InstructionParserTest extends BaseTest{
 
     private static Logger log = LoggerFactory.getLogger(InstructionParserTest.class);
+
+
+    @Inject
+    private InstructionParser instructionParser;
+
 
     @Test
     public void testParseInstructions() throws Exception {
@@ -56,15 +64,13 @@ public class InstructionParserTest {
         //############################################
         final InputStream resourceAsStream = getClass().getResourceAsStream("/instructions.xml");
         final String content = GlobalUtils.readStreamAsText(resourceAsStream);
-        final Instructions myInstructions = InstructionParser.parseInstructions(content);
+        final Instructions myInstructions = instructionParser.parseInstructions(content);
         final Set<InstructionSet> iset = myInstructions.getInstructionSets();
         assertEquals(1, iset.size());
         final InstructionSet inSet = iset.iterator().next();
         assertEquals(5, inSet.getInstructions().size());
         assertEquals(5, myInstructions.totalInstructions());
         assertEquals(1, myInstructions.totalInstructionSets());
-
-
 
 
         //############################################
@@ -85,7 +91,7 @@ public class InstructionParserTest {
         m.marshal(value, writer);
         final String s = writer.toString();
         log.info("s {}", s);
-        final Instructions instructions = InstructionParser.parseInstructions(s);
+        final Instructions instructions = instructionParser.parseInstructions(s);
         assertTrue(instructions != null);
         final InstructionSet set = instructions.getInstructionSets().iterator().next();
         final Set<Instruction> mySet = set.getInstructions();

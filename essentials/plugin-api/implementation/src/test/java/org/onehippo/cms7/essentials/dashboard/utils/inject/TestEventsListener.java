@@ -16,12 +16,17 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils.inject;
 
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Component;
+
 import com.google.common.eventbus.Subscribe;
-import com.google.inject.Inject;
+
 
 /**
  * @version "$Id$"
  */
+@Component
 public class TestEventsListener {
 
 
