@@ -1,44 +1,34 @@
 package org.onehippo.cms7.essentials.dashboard.relateddocs.query;
 
-import javax.jcr.Session;
+import javax.jcr.Node;
 
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.utils.update.UpdateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
 
 /**
  * @version "$Id$"
  */
-public class RelatedDocQueryBuilderTest {
+public class RelatedDocQueryBuilderTest extends BaseRepositoryTest {
 
     private static Logger log = LoggerFactory.getLogger(RelatedDocQueryBuilderTest.class);
 
-    private Session session;
-
+    @Override
     @Before
     public void setUp() throws Exception {
-        try {
-            final HippoRepository repository = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
-            session = repository.login("admin", "admin".toCharArray());
-        } catch (Exception e) {
-            log.error("Error creating repository connection");
-            assumeTrue(false);
+        super.setUp();
+        final Node updaterNode = session.getNode(UpdateUtils.UPDATE_UTIL_PATH);
+        if (!updaterNode.hasNode(UpdateUtils.UpdateType.REGISTRY.getPath())) {
+            updaterNode.addNode(UpdateUtils.UpdateType.REGISTRY.getPath(), "hipposys:updaterfolder");
         }
-        if (session.itemExists("/hippo:configuration/hippo:update/hippo:registry/related-doc-updater")) {
-            session.getNode("/hippo:configuration/hippo:update/hippo:registry/related-doc-updater").remove();
-            session.save();
-        }
-
     }
 
     @Test
@@ -51,10 +41,4 @@ public class RelatedDocQueryBuilderTest {
 
     }
 
-    @After
-    public void tearDown() throws Exception {
-        if(session!=null) {
-            session.logout();
-        }
-    }
 }

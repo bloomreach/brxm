@@ -13,6 +13,7 @@ import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.onehippo.cms7.essentials.BaseRepositoryTest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -20,21 +21,15 @@ import static org.junit.Assert.assertFalse;
 /**
  * @version "$Id: HippoNodeUtilsTest.java 167907 2013-06-17 08:34:55Z mmilicevic $"
  */
-public class HippoNodeUtilsTest {
+public class HippoNodeUtilsTest extends BaseRepositoryTest {
 
-    @Ignore
     @Test
     public void testGetProjectNamespaces() throws Exception {
-        final HippoRepository repository = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
-        final Session session = repository.login("admin", "admin".toCharArray());
         final List<String> projectNamespaces = HippoNodeUtils.getProjectNamespaces(session);
         final Set<String> reserved = EssentialConst.HIPPO_BUILT_IN_NAMESPACES;
         for (String r : reserved) {
             assertFalse(projectNamespaces.contains(r));
         }
-
-        session.logout();
-
     }
 
     @Test

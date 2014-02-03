@@ -78,11 +78,11 @@
   </category>
 
   <category name="org.onehippo.cms7.essentials">
-    <level value="debug"/>
+    <level value="info"/>
   </category>
 
   <root>
-    <level value="debug"/>
+    <level value="info"/>
     <appender-ref ref="console"/>
   </root>
 

@@ -12,12 +12,12 @@
 
   <dependencies>
     <dependency>
-    <groupId>org.onehippo.cms7.essentials</groupId>
+      <groupId>org.onehippo.cms7.essentials</groupId>
       <artifactId>hippo-essentials-plugin-api</artifactId>
     </dependency>
     <dependency>
-        <groupId>org.onehippo.cms7.essentials</groupId>
-        <artifactId>hippo-essentials-plugin-api-implementation</artifactId>
+      <groupId>org.onehippo.cms7.essentials</groupId>
+      <artifactId>hippo-essentials-plugin-api-implementation</artifactId>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
@@ -46,6 +46,13 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-modules</artifactId>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
