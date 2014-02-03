@@ -20,8 +20,8 @@ public abstract class AbstractCndInstaller extends AbstractDependencyInstaller {
     /**
      * The constructor needs the namespace URI to check if the appropriate CND has been installed with de dependencies.
      *
-     * @param context
-     * @param uri
+     * @param context the provided {@link org.onehippo.cms7.essentials.dashboard.ctx.PluginContext}
+     * @param uri the uri of the namespace
      */
     public AbstractCndInstaller(PluginContext context, String uri) {
         this.context = context;
@@ -44,10 +44,18 @@ public abstract class AbstractCndInstaller extends AbstractDependencyInstaller {
         return installed;
     }
 
+    /**
+     * Gets the provided PluginContext
+     * @return the corresponding {@link org.onehippo.cms7.essentials.dashboard.ctx.PluginContext}
+     */
     public PluginContext getContext() {
         return context;
     }
 
+    /**
+     * Get the URI of the to installed namespace
+     * @return the uri
+     */
     public String getUri() {
         return uri;
     }
