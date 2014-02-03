@@ -51,7 +51,7 @@ import com.google.common.eventbus.EventBus;
 /**
  * @version "$Id$"
  */
-//@Component
+@Component
 @XmlRootElement(name = "file", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class FileInstruction extends PluginInstruction {
 
@@ -74,7 +74,7 @@ public class FileInstruction extends PluginInstruction {
     @Value("${instruction.message.file.copy.error}")
     private String messageCopyError;
 
-    @Value("#{instruction.message.folder.create}")
+    @Value("${instruction.message.folder.create}")
     private String messageFolderCreate;
     private boolean overwrite;
     private String source;
