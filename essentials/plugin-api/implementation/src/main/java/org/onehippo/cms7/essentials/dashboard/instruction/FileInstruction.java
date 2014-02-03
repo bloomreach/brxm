@@ -62,6 +62,7 @@ public class FileInstruction extends PluginInstruction {
             .build();
     private static final Logger log = LoggerFactory.getLogger(FileInstruction.class);
     private String message;
+
     @Inject
     private EventBus eventBus;
 

@@ -40,6 +40,8 @@ import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
@@ -49,6 +51,7 @@ import com.google.common.eventbus.EventBus;
 /**
  * @version "$Id$"
  */
+@Component
 @XmlRootElement(name = "xml", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class XmlInstruction extends PluginInstruction {
 
@@ -64,14 +67,14 @@ public class XmlInstruction extends PluginInstruction {
     private String action;
     @Inject
     private EventBus eventBus;
-    @Inject
-    @Named("instruction.message.xml.delete")
+
+    @Value("${instruction.message.xml.delete}")
     private String messageDelete;
-    @Inject
-    @Named("instruction.message.xml.copy")
+
+    @Value("${instruction.message.xml.copy}")
     private String messageCopy;
-    @Inject
-    @Named("instruction.message.xml.copy.error")
+
+    @Value("${instruction.message.xml.copy.error}")
     private String messageCopyError;
     private PluginContext context;
 

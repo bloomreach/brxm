@@ -29,7 +29,6 @@ import static org.junit.Assert.assertEquals;
 public class EventBusModuleTest extends BaseTest{
 
 
-
     @Inject
     private TestEventsListener testEventListener;
 

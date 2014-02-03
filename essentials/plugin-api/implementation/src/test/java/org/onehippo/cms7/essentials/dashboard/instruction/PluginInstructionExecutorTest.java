@@ -31,7 +31,7 @@ import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.springframework.stereotype.Component;
 
 
 import static org.junit.Assert.assertEquals;
@@ -39,6 +39,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * @version "$Id$"
  */
+
 public class PluginInstructionExecutorTest extends BaseRepositoryTest {
 
     private static Logger log = LoggerFactory.getLogger(PluginInstructionExecutorTest.class);
@@ -46,6 +47,8 @@ public class PluginInstructionExecutorTest extends BaseRepositoryTest {
     private InstructionsEventListener listener;
     @Inject
     private PluginInstructionExecutor pluginInstructionExecutor;
+    @Inject
+    private  InstructionParser instructionParser;
 
     @Test
     public void testExecute() throws Exception {
@@ -54,7 +57,8 @@ public class PluginInstructionExecutorTest extends BaseRepositoryTest {
         final String content = GlobalUtils.readStreamAsText(resourceAsStream);
         log.info("content {}", content);
         listener.reset();
-        final Instructions instructions = InstructionParser.parseInstructions(content);
+
+        final Instructions instructions = instructionParser.parseInstructions(content);
         final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
         for (InstructionSet instructionSet : instructionSets) {
             pluginInstructionExecutor.execute(instructionSet, getContext());

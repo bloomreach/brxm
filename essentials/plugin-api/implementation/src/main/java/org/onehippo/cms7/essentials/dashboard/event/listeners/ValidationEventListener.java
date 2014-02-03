@@ -21,14 +21,19 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import javax.inject.Singleton;
+
 import org.onehippo.cms7.essentials.dashboard.event.PluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.ValidationEvent;
+import org.springframework.stereotype.Component;
 
 import com.google.common.eventbus.Subscribe;
 
 /**
  * @version "$Id$"
  */
+@Component
+@Singleton
 public class ValidationEventListener implements PluginEventListener<ValidationEvent> {
 
     public static final int MAX_ITEMS = 100;

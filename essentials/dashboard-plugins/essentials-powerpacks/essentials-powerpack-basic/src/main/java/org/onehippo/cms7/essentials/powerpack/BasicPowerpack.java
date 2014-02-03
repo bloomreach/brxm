@@ -44,6 +44,9 @@ public class BasicPowerpack implements PowerpackPackage {
 
     private static Logger log = LoggerFactory.getLogger(BasicPowerpack.class);
 
+    @Inject
+    private InstructionParser instructionParser;
+
     private Instructions instructions;
     @Inject
     private EventBus eventBus;
@@ -53,7 +56,7 @@ public class BasicPowerpack implements PowerpackPackage {
         if (instructions == null) {
             final InputStream resourceAsStream = getClass().getResourceAsStream("/META-INF/instructions.xml");
             final String content = GlobalUtils.readStreamAsText(resourceAsStream);
-            instructions = InstructionParser.parseInstructions(content);
+            instructions = instructionParser.parseInstructions(content);
         }
         return instructions;
 

@@ -18,6 +18,8 @@ package org.onehippo.cms7.essentials.dashboard.instruction.executors;
 
 import java.util.Set;
 
+import javax.inject.Singleton;
+
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
@@ -29,12 +31,12 @@ import org.springframework.stereotype.Component;
  * @version "$Id$"
  */
 @Component
+@Singleton
 public class PluginInstructionExecutor implements InstructionExecutor {
 
 
     @Override
     public InstructionStatus execute(final InstructionSet set, PluginContext context) {
-
         InstructionStatus status = InstructionStatus.SUCCESS;
         final Set<Instruction> instructions = set.getInstructions();
         for (Instruction instruction : instructions) {

@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
@@ -36,6 +37,7 @@ import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -43,9 +45,13 @@ import static org.junit.Assert.assertTrue;
 /**
  * @version "$Id$"
  */
+
 public class InstructionParserTest {
 
     private static Logger log = LoggerFactory.getLogger(InstructionParserTest.class);
+
+    @Inject
+    private InstructionParser instructionParser;
 
     @Test
     public void testParseInstructions() throws Exception {
@@ -56,7 +62,7 @@ public class InstructionParserTest {
         //############################################
         final InputStream resourceAsStream = getClass().getResourceAsStream("/instructions.xml");
         final String content = GlobalUtils.readStreamAsText(resourceAsStream);
-        final Instructions myInstructions = InstructionParser.parseInstructions(content);
+        final Instructions myInstructions = instructionParser.parseInstructions(content);
         final Set<InstructionSet> iset = myInstructions.getInstructionSets();
         assertEquals(1, iset.size());
         final InstructionSet inSet = iset.iterator().next();
@@ -85,7 +91,7 @@ public class InstructionParserTest {
         m.marshal(value, writer);
         final String s = writer.toString();
         log.info("s {}", s);
-        final Instructions instructions = InstructionParser.parseInstructions(s);
+        final Instructions instructions = instructionParser.parseInstructions(s);
         assertTrue(instructions != null);
         final InstructionSet set = instructions.getInstructionSets().iterator().next();
         final Set<Instruction> mySet = set.getInstructions();

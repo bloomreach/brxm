@@ -41,6 +41,8 @@ public class InstallationTest extends BaseRepositoryTest {
 
     private static Logger log = LoggerFactory.getLogger(InstallationTest.class);
     @Inject
+    private InstructionParser instructionParser;
+    @Inject
     private InstructionsEventListener listener;
     @Inject
     private PluginInstructionExecutor pluginInstructionExecutor;
@@ -117,7 +119,7 @@ public class InstallationTest extends BaseRepositoryTest {
         final String content = GlobalUtils.readStreamAsText(resourceAsStream);
         log.info("content {}", content);
         listener.reset();
-        final Instructions instructions = InstructionParser.parseInstructions(content);
+        final Instructions instructions = instructionParser.parseInstructions(content);
         final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
         for (InstructionSet instructionSet : instructionSets) {
             pluginInstructionExecutor.execute(instructionSet, getContext());

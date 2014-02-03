@@ -16,12 +16,12 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils.inject;
 
-import org.onehippo.cms7.essentials.dashboard.event.listeners.InstructionsEventListener;
-import org.onehippo.cms7.essentials.dashboard.event.listeners.LoggingPluginEventListener;
-import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
-import org.onehippo.cms7.essentials.dashboard.event.listeners.ValidationEventListener;
-import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
+import javax.inject.Singleton;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -37,29 +37,27 @@ import com.google.common.eventbus.EventBus;
 
 @Configuration
 @ComponentScan("org.onehippo.cms7.essentials")
-public  class EventBusModule  {
+public class ApplicationModule {
+    //implements } BeanPostProcessor {
 
+    private static final Logger log = LoggerFactory.getLogger(ApplicationModule.class);
     @SuppressWarnings("StaticVariableOfConcreteClass")
 
-    private static final EventBusModule instance = new EventBusModule();
+    private static final ApplicationModule instance = new ApplicationModule();
 
     private final transient EventBus eventBus = new EventBus("Essentials Event Bus");
-    private final transient LoggingPluginEventListener loggingPluginEventListener = new LoggingPluginEventListener();
-    private final transient MemoryPluginEventListener memoryPluginEventListener = new MemoryPluginEventListener();
-    private final transient ValidationEventListener validationEventListener = new ValidationEventListener();
-    private final transient InstructionsEventListener instructionsEventListener = new InstructionsEventListener();
-    private final transient InstructionExecutor instructionExecutor = new PluginInstructionExecutor();
 
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Bean(name = "eventBus")
-    public EventBus getEventBus(){
-
+    @Singleton
+    public EventBus getEventBus() {
         return eventBus;
     }
 
 
-
-    public static EventBusModule getInstance() {
+    public static ApplicationModule getInstance() {
         return instance;
     }
 

@@ -38,6 +38,8 @@ import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -46,6 +48,7 @@ import com.google.common.base.Strings;
 /**
  * @version "$Id$"
  */
+@Component
 @XmlRootElement(name = "folder", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class NodeFolderInstruction extends PluginInstruction {
 
@@ -54,8 +57,8 @@ public class NodeFolderInstruction extends PluginInstruction {
     private String template;
     private String path;
     private PluginContext context;
-    @Inject
-    @Named("instruction.message.folder.create")
+
+    @Value("${instruction.message.folder.create}")
     private String messageSuccess;
 
     // path="/foo/bar/foobar" template="/my_folder_template.xml"

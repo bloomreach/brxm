@@ -14,7 +14,7 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
-import org.onehippo.cms7.essentials.dashboard.utils.inject.EventBusModule;
+import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.PropertiesModule;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -26,7 +26,7 @@ import com.google.common.collect.ImmutableSet;
  * @version "$Id$"
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {EventBusModule.class, PropertiesModule.class})
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {ApplicationModule.class, PropertiesModule.class})
 public abstract class BaseTest {
 
     public static final String HIPPOPLUGINS_NAMESPACE = "hippoplugins";
