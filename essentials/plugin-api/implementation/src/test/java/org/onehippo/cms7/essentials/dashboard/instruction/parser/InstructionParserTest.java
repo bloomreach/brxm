@@ -27,6 +27,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
 import org.junit.Test;
+import org.onehippo.cms7.essentials.BaseTest;
 import org.onehippo.cms7.essentials.dashboard.instruction.FileInstruction;
 import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructions;
@@ -37,7 +38,6 @@ import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -46,12 +46,14 @@ import static org.junit.Assert.assertTrue;
  * @version "$Id$"
  */
 
-public class InstructionParserTest {
+public class InstructionParserTest extends BaseTest{
 
     private static Logger log = LoggerFactory.getLogger(InstructionParserTest.class);
 
+
     @Inject
     private InstructionParser instructionParser;
+
 
     @Test
     public void testParseInstructions() throws Exception {
@@ -69,8 +71,6 @@ public class InstructionParserTest {
         assertEquals(5, inSet.getInstructions().size());
         assertEquals(5, myInstructions.totalInstructions());
         assertEquals(1, myInstructions.totalInstructionSets());
-
-
 
 
         //############################################

@@ -18,9 +18,12 @@ package org.onehippo.cms7.essentials.dashboard.event.listeners;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.essentials.BaseTest;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 
 import com.google.common.eventbus.EventBus;
@@ -30,24 +33,22 @@ import static org.junit.Assert.assertEquals;
 /**
  * @version "$Id$"
  */
-public class MemoryPluginEventListenerTest {
+public class MemoryPluginEventListenerTest extends BaseTest{
 
 
-    private final EventBus bus  = new EventBus();
-    private final MemoryPluginEventListener listener  = new MemoryPluginEventListener();
+    @Inject
+    private  EventBus eventBus;
 
-    @Before
-    public void setUp() throws Exception {
-        bus.register(listener);
+    @Inject
+    private  MemoryPluginEventListener listener;
 
-    }
 
     @Test
     public void testOnPluginEvent() throws Exception {
 
         final int maxItems = MemoryPluginEventListener.MAX_ITEMS + 10;
         for (int i = 0; i < maxItems; i++) {
-             bus.post(new DisplayEvent(String.valueOf(i)));
+             eventBus.post(new DisplayEvent(String.valueOf(i)));
         }
         List<DisplayEvent> pluginEvents = listener.consumeEvents();
         assertEquals(MemoryPluginEventListener.MAX_ITEMS, pluginEvents.size());
@@ -55,13 +56,13 @@ public class MemoryPluginEventListenerTest {
         pluginEvents = listener.consumeEvents();
         assertEquals(0, pluginEvents.size());
         // add
-        bus.post(new DisplayEvent("test"));
+        eventBus.post(new DisplayEvent("test"));
         pluginEvents = listener.consumeEvents();
         assertEquals(1, pluginEvents.size());
         // test first
-        bus.post(new DisplayEvent("test", true));
-        bus.post(new DisplayEvent("test", true));
-        bus.post(new DisplayEvent("first", true));
+        eventBus.post(new DisplayEvent("test", true));
+        eventBus.post(new DisplayEvent("test", true));
+        eventBus.post(new DisplayEvent("first", true));
         pluginEvents = listener.consumeEvents();
         assertEquals(3, pluginEvents.size());
         assertEquals(pluginEvents.get(0).getMessage(), "first");
@@ -71,8 +72,5 @@ public class MemoryPluginEventListenerTest {
 
     }
 
-    @After
-    public void tearDown() throws Exception {
-        bus.unregister(listener);
-    }
+
 }

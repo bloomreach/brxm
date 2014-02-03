@@ -39,11 +39,9 @@ import org.springframework.stereotype.Component;
  * @version "$Id$"
  */
 @Component
-@Singleton
 public class InstructionParser {
 
     private static Logger log = LoggerFactory.getLogger(InstructionParser.class);
-
 
     @Inject
     private AutowireCapableBeanFactory injector;
@@ -72,6 +70,6 @@ public class InstructionParser {
         return null;
     }
 
-    private InstructionParser() {
-    }
+
+
 }

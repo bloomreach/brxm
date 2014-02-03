@@ -16,11 +16,13 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils.inject;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.onehippo.cms7.essentials.dashboard.event.listeners.InstructionsEventListener;
+import org.onehippo.cms7.essentials.dashboard.event.listeners.LoggingPluginEventListener;
+import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
+import org.onehippo.cms7.essentials.dashboard.event.listeners.ValidationEventListener;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -40,25 +42,38 @@ import com.google.common.eventbus.EventBus;
 public class ApplicationModule {
     //implements } BeanPostProcessor {
 
-    private static final Logger log = LoggerFactory.getLogger(ApplicationModule.class);
     @SuppressWarnings("StaticVariableOfConcreteClass")
 
-    private static final ApplicationModule instance = new ApplicationModule();
 
     private final transient EventBus eventBus = new EventBus("Essentials Event Bus");
 
-    @Autowired
+
+    @Inject
+    private LoggingPluginEventListener loggingPluginEventListener;
+    @Inject
+    private MemoryPluginEventListener memoryPluginEventListener;
+    @Inject
+    private ValidationEventListener validationEventListener;
+    @Inject
+    private InstructionsEventListener instructionsEventListener;
+
+    private volatile boolean initialized = false;
+
+    @Inject
     private ApplicationContext applicationContext;
 
     @Bean(name = "eventBus")
     @Singleton
     public EventBus getEventBus() {
+        if (!initialized) {
+            eventBus.register(loggingPluginEventListener);
+            eventBus.register(memoryPluginEventListener);
+            eventBus.register(validationEventListener);
+            eventBus.register(instructionsEventListener);
+            eventBus.register(instructionsEventListener);
+            initialized = true;
+        }
         return eventBus;
-    }
-
-
-    public static ApplicationModule getInstance() {
-        return instance;
     }
 
 

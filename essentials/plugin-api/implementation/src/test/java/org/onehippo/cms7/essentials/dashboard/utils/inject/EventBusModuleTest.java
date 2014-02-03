@@ -26,7 +26,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * @version "$Id$"
  */
-public class EventBusModuleTest extends BaseTest{
+public class EventBusModuleTest extends BaseTest {
 
 
     @Inject
