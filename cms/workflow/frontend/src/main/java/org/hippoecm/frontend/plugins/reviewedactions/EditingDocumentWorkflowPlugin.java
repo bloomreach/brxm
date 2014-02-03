@@ -44,7 +44,7 @@ import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.repository.api.Workflow;
 
-public class EditingReviewedActionsWorkflowPlugin extends RenderPlugin {
+public class EditingDocumentWorkflowPlugin extends RenderPlugin {
 
     private static final long serialVersionUID = 1L;
 
@@ -64,11 +64,11 @@ public class EditingReviewedActionsWorkflowPlugin extends RenderPlugin {
     private transient boolean closing = false;
     private boolean isValid = true;
 
-    public EditingReviewedActionsWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
+    public EditingDocumentWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         add(new StdWorkflow("save", new StringResourceModel("save", this, null, "Save"),
-                new PackageResourceReference(EditingReviewedActionsWorkflowPlugin.class, "document-save-16.png"), context, getModel()) {
+                new PackageResourceReference(EditingDocumentWorkflowPlugin.class, "document-save-16.png"), context, getModel()) {
 
             @Override
             public String getSubMenu() {
@@ -87,7 +87,7 @@ public class EditingReviewedActionsWorkflowPlugin extends RenderPlugin {
                 editor.save();
 
                 DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-                new FeedbackLogger().info(new StringResourceModel("saved", EditingReviewedActionsWorkflowPlugin.this,
+                new FeedbackLogger().info(new StringResourceModel("saved", EditingDocumentWorkflowPlugin.this,
                         null, null, df.format(new Date())).getString());
                 showFeedback();
                 return null;
@@ -95,7 +95,7 @@ public class EditingReviewedActionsWorkflowPlugin extends RenderPlugin {
         });
 
         add(new StdWorkflow("done", new StringResourceModel("done", this, null, "Done"),
-                new PackageResourceReference(EditingReviewedActionsWorkflowPlugin.class, "document-saveclose-16.png"), context, getModel()) {
+                new PackageResourceReference(EditingDocumentWorkflowPlugin.class, "document-saveclose-16.png"), context, getModel()) {
 
             @Override
             public String getSubMenu() {
@@ -153,7 +153,7 @@ public class EditingReviewedActionsWorkflowPlugin extends RenderPlugin {
         public Feedback() {
             super("info");
 
-            Fragment feedbackFragment = new Fragment("text", "feedback", EditingReviewedActionsWorkflowPlugin.this);
+            Fragment feedbackFragment = new Fragment("text", "feedback", EditingDocumentWorkflowPlugin.this);
             feedbackFragment.add(new YuiFeedbackPanel("feedback", new IFeedbackMessageFilter() {
                 private static final long serialVersionUID = 1L;
 

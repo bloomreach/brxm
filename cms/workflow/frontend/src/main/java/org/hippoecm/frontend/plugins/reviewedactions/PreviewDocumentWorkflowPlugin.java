@@ -27,24 +27,12 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
-import org.apache.wicket.ajax.attributes.ThrottlingSettings;
-import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
-import org.apache.wicket.util.string.Strings;
-import org.apache.wicket.util.time.Duration;
-import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
 import org.hippoecm.addon.workflow.DestinationDialog;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
@@ -67,8 +55,6 @@ import org.hippoecm.frontend.plugins.reviewedactions.dialogs.SchedulePublishDial
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.UnpublishedReferencesDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.model.ReferenceProvider;
 import org.hippoecm.frontend.plugins.reviewedactions.model.UnpublishedReferenceProvider;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
-import org.hippoecm.frontend.plugins.standardworkflow.RenameMessage;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
@@ -180,7 +166,7 @@ public class PreviewDocumentWorkflowPlugin extends RenderPlugin {
                 Document docRef = workflow.obtainEditableInstance();
                 Session session = UserSession.get().getJcrSession();
                 session.refresh(true);
-                Node docNode = session.getNodeByUUID(docRef.getIdentity());
+                Node docNode = session.getNodeByIdentifier(docRef.getIdentity());
                 IEditorManager editorMgr = getPluginContext().getService(
                         getPluginConfig().getString(IEditorManager.EDITOR_ID), IEditorManager.class);
                 if (editorMgr != null) {
@@ -458,8 +444,9 @@ public class PreviewDocumentWorkflowPlugin extends RenderPlugin {
                     uriName = targetName = "";
                     localizedNames = Collections.emptyMap();
                 }
-                return new RenameDocumentDialog(this, new StringResourceModel("rename-title",
-                        PreviewDocumentWorkflowPlugin.this, null));
+                return new RenameDocumentDialog(this,
+                        new StringResourceModel("rename-title", PreviewDocumentWorkflowPlugin.this, null),
+                        context);
             }
 
             private HippoNode getModelNode() throws RepositoryException {
@@ -750,6 +737,8 @@ public class PreviewDocumentWorkflowPlugin extends RenderPlugin {
             }
         });
 
+        add(new RequestsView("requests", getModel(), context));
+
         hideInvalidActions();
     }
 
@@ -907,99 +896,4 @@ public class PreviewDocumentWorkflowPlugin extends RenderPlugin {
         }
     }
 
-    public class RenameDocumentDialog extends AbstractWorkflowDialog {
-        private IModel title;
-        private TextField nameComponent;
-        private TextField uriComponent;
-        private boolean uriModified;
-
-        public RenameDocumentDialog(StdWorkflow action, IModel title) {
-            super(null, action);
-
-            this.title = title;
-
-            final PropertyModel<String> nameModel = new PropertyModel<String>(action, "targetName");
-            final PropertyModel<String> uriModel = new PropertyModel<String>(action, "uriName");
-            final PropertyModel<Map<Localized, String>> localizedNamesModel = new PropertyModel<Map<Localized, String>>(action, "localizedNames");
-
-            String s1 = nameModel.getObject();
-            String s2 = uriModel.getObject();
-            uriModified = !s1.equals(s2);
-
-            nameComponent = new TextField<String>("name", nameModel);
-            nameComponent.setRequired(true);
-            nameComponent.setLabel(new StringResourceModel("name-label", this, null));
-            nameComponent.add(new OnChangeAjaxBehavior() {
-
-                @Override
-                protected void onUpdate(AjaxRequestTarget target) {
-                    if (!uriModified) {
-                        uriModel.setObject(getNodeNameCodec().encode(nameModel.getObject()));
-                        target.add(uriComponent);
-                    }
-                }
-
-                @Override
-                protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
-                    super.updateAjaxAttributes(attributes);
-                    attributes.setThrottlingSettings(new ThrottlingSettings(nameComponent.getPath(), Duration.milliseconds(500)));
-                }
-            });
-            nameComponent.setOutputMarkupId(true);
-            setFocus(nameComponent);
-            add(nameComponent);
-
-            add(uriComponent = new TextField<String>("uriinput", uriModel) {
-                @Override
-                public boolean isEnabled() {
-                    return uriModified;
-                }
-            });
-
-            uriComponent.add(new CssClassAppender(new AbstractReadOnlyModel<String>() {
-                @Override
-                public String getObject() {
-                    return uriModified ? "grayedin" : "grayedout";
-                }
-            }));
-            uriComponent.setOutputMarkupId(true);
-
-            AjaxLink<Boolean> uriAction = new AjaxLink<Boolean>("uriAction") {
-                @Override
-                public void onClick(AjaxRequestTarget target) {
-                    uriModified = !uriModified;
-                    if (!uriModified) {
-                        uriModel.setObject(Strings.isEmpty(nameModel.getObject()) ? "" : getNodeNameCodec().encode(
-                                nameModel.getObject()));
-                    } else {
-                        target.focusComponent(uriComponent);
-                    }
-                    target.add(RenameDocumentDialog.this);
-                }
-            };
-            uriAction.add(new Label("uriActionLabel", new AbstractReadOnlyModel<String>() {
-                @Override
-                public String getObject() {
-                    return uriModified ? getString("url-reset") : getString("url-edit");
-                }
-            }));
-            add(uriAction);
-
-            final Locale cmsLocale = UserSession.get().getLocale();
-            final RenameMessage message = new RenameMessage(cmsLocale, localizedNamesModel.getObject());
-            if (message.shouldShow()) {
-                warn(message.forDocument());
-            };
-        }
-
-        @Override
-        public IModel getTitle() {
-            return title;
-        }
-
-        @Override
-        public IValueMap getProperties() {
-            return MEDIUM;
-        }
-    }
 }
