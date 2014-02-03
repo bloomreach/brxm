@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.onehippo.cms7.essentials</groupId>
     <artifactId>hippo-dashboard-plugins</artifactId>
-    <version>1.01.01-SNAPSHOT</version>
+    <version>1.01.01</version>
   </parent>
 
   <name>Hippo Essentials REST services plugin</name>
