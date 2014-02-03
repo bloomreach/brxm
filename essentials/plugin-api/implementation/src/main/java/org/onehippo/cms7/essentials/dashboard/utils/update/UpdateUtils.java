@@ -186,6 +186,9 @@ public final class UpdateUtils {
         }
 
         public UpdateConfig(final String name, final String script, final String query, final long batchSize, final long throttle, final boolean dryRun) {
+            if (StringUtils.isEmpty(name)) {
+                throw new IllegalArgumentException("Name is mandatory");
+            }
             this.name = name;
             this.script = script;
             this.query = query;
@@ -240,9 +243,6 @@ public final class UpdateUtils {
         }
 
         public String getName() {
-            if (StringUtils.isEmpty(name)) {
-                throw new IllegalArgumentException("Name is mandatory");
-            }
             return name;
         }
 

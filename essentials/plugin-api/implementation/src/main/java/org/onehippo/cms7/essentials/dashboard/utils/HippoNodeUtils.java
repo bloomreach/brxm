@@ -390,7 +390,7 @@ public final class HippoNodeUtils {
      *
      * @param session
      * @param matcher
-     * @return
+     * @return a Set of compound names
      * @throws RepositoryException
      */
     public static Set<String> getCompounds(final Session session, final JcrMatcher matcher) throws RepositoryException {

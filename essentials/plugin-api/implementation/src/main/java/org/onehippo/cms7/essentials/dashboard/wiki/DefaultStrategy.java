@@ -20,6 +20,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,11 +108,11 @@ public abstract class DefaultStrategy implements WikiStrategy {
             Node wikiImages;
             if (!images.hasNode(containerName)) {
                 wikiImages = images.addNode(containerName, "hippogallery:stdImageGallery");
-                wikiImages.addMixin("hippo:harddocument");
-                wikiImages.setProperty("hippo:paths", ArrayUtils.EMPTY_STRING_ARRAY);
+                wikiImages.addMixin(HippoNodeType.NT_HARDDOCUMENT);
+                wikiImages.setProperty(HippoNodeType.HIPPO_PATHS, ArrayUtils.EMPTY_STRING_ARRAY);
                 String[] foldertype = {"new-image-folder"};
                 wikiImages.setProperty("hippostd:foldertype", foldertype);
-                String[] gallerytype = {"hippogallery:imageset"};
+                String[] gallerytype = {HippoGalleryNodeType.IMAGE_SET};
                 wikiImages.setProperty("hippostd:gallerytype", gallerytype);
             } else {
                 wikiImages = images.getNode(containerName);
@@ -120,11 +122,11 @@ public abstract class DefaultStrategy implements WikiStrategy {
             Node imgSubFolder;
             if (!wikiImages.hasNode(currentSubFolder.getName())) {
                 imgSubFolder = wikiImages.addNode(currentSubFolder.getName(), "hippogallery:stdImageGallery");
-                imgSubFolder.addMixin("hippo:harddocument");
-                imgSubFolder.setProperty("hippo:paths", ArrayUtils.EMPTY_STRING_ARRAY);
+                imgSubFolder.addMixin(HippoNodeType.NT_HARDDOCUMENT);
+                imgSubFolder.setProperty(HippoNodeType.HIPPO_PATHS, ArrayUtils.EMPTY_STRING_ARRAY);
                 String[] foldertype = {"new-image-folder"};
                 imgSubFolder.setProperty("hippostd:foldertype", foldertype);
-                String[] gallerytype = {"hippogallery:imageset"};
+                String[] gallerytype = {HippoGalleryNodeType.IMAGE_SET};
                 imgSubFolder.setProperty("hippostd:gallerytype", gallerytype);
             } else {
                 imgSubFolder = wikiImages.getNode(currentSubFolder.getName());
@@ -134,11 +136,11 @@ public abstract class DefaultStrategy implements WikiStrategy {
             Node imgFolder;
             if (!imgSubFolder.hasNode(doc.getName())) {
                 imgFolder = imgSubFolder.addNode(doc.getName(), "hippogallery:stdImageGallery");
-                imgFolder.addMixin("hippo:harddocument");
-                imgFolder.setProperty("hippo:paths", ArrayUtils.EMPTY_STRING_ARRAY);
+                imgFolder.addMixin(HippoNodeType.NT_HARDDOCUMENT);
+                imgFolder.setProperty(HippoNodeType.HIPPO_PATHS, ArrayUtils.EMPTY_STRING_ARRAY);
                 String[] foldertype = {"new-image-folder"};
                 imgFolder.setProperty("hippostd:foldertype", foldertype);
-                String[] gallerytype = {"hippogallery:imageset"};
+                String[] gallerytype = {HippoGalleryNodeType.IMAGE_SET};
                 imgFolder.setProperty("hippostd:gallerytype", gallerytype);
             } else {
                 imgFolder = imgSubFolder.getNode(doc.getName());
@@ -155,19 +157,19 @@ public abstract class DefaultStrategy implements WikiStrategy {
 
             // Create image set (if it doesn't exist)
             if (!imgHandle.hasNode(name)) {
-                Node imgDoc = imgHandle.addNode(name, "hippogallery:imageset");
-                imgDoc.addMixin("hippo:harddocument");
-                imgDoc.setProperty("hippo:paths", ArrayUtils.EMPTY_STRING_ARRAY);
+                Node imgDoc = imgHandle.addNode(name, HippoGalleryNodeType.IMAGE_SET);
+                imgDoc.addMixin(HippoNodeType.NT_HARDDOCUMENT);
+                imgDoc.setProperty(HippoNodeType.HIPPO_PATHS, ArrayUtils.EMPTY_STRING_ARRAY);
                 String[] availability = {"live", "preview"};
                 imgDoc.setProperty("hippo:availability", availability);
                 imgDoc.setProperty("hippogallery:filename", name);
 
                 //Thumbnail node might already exist
                 Node imgThumb;
-                if (imgDoc.hasNode("hippogallery:thumbnail")) {
-                    imgThumb = imgDoc.getNode("hippogallery:thumbnail");
+                if (imgDoc.hasNode(HippoGalleryNodeType.IMAGE_SET_THUMBNAIL)) {
+                    imgThumb = imgDoc.getNode(HippoGalleryNodeType.IMAGE_SET_THUMBNAIL);
                 } else {
-                    imgThumb = imgDoc.addNode("hippogallery:thumbnail", "hippogallery:image");
+                    imgThumb = imgDoc.addNode(HippoGalleryNodeType.IMAGE_SET_THUMBNAIL, "hippogallery:image");
                 }
 
 
@@ -176,16 +178,16 @@ public abstract class DefaultStrategy implements WikiStrategy {
                     imgThumb.setProperty("jcr:mimeType", "image/" + imgExt);
                 }
 
-                imgThumb.setProperty("hippogallery:height", 50L);
-                imgThumb.setProperty("hippogallery:width", 300L);
+                imgThumb.setProperty(HippoGalleryNodeType.IMAGE_HEIGHT, 50L);
+                imgThumb.setProperty(HippoGalleryNodeType.IMAGE_WIDTH, 300L);
 
                 Node imgOrig = imgDoc.addNode("hippogallery:original", "hippogallery:image");
                 if (isNotSimulation()) {
                     imgOrig.setProperty("jcr:lastModified", Calendar.getInstance());
                     imgOrig.setProperty("jcr:mimeType", "image/" + imgExt);
                 }
-                imgOrig.setProperty("hippogallery:height", 50L);
-                imgOrig.setProperty("hippogallery:width", 300L);
+                imgOrig.setProperty(HippoGalleryNodeType.IMAGE_HEIGHT, 50L);
+                imgOrig.setProperty(HippoGalleryNodeType.IMAGE_WIDTH, 300L);
 
                 BufferedImage image = new BufferedImage(300, 50, BufferedImage.TYPE_INT_RGB);
                 Graphics2D g2d = image.createGraphics();
