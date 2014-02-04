@@ -15,8 +15,10 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
-import java.util.Calendar;
+import java.util.Map;
+import java.util.Set;
 
+import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -30,7 +32,6 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.AbstractConfigResource;
-import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,21 +51,59 @@ public class SiteMapHelper extends AbstractHelper {
         final Session session = requestContext.getSession();
         final String itemId = siteMapItem.getId();
         Node jcrNode = session.getNodeByIdentifier(itemId);
-        acquireLock(jcrNode);
 
+        acquireLock(jcrNode, HstNodeTypes.NODETYPE_HST_SITEMAP);
+
+        final String modifiedName = siteMapItem.getName();
+        if (modifiedName != null && !modifiedName.equals(jcrNode.getName())) {
+            String oldLocation = jcrNode.getPath();
+            session.move(jcrNode.getPath(), jcrNode.getParent() + "/" + modifiedName);
+            createDeletedNode(session, oldLocation);
+        }
+
+        setSitemapItemProperties(siteMapItem, jcrNode);
+
+        final Map<String, String> modifiedLocalParameters = siteMapItem.getLocalParameters();
+        setLocalParameters(jcrNode, modifiedLocalParameters);
+
+        final Set<String> modifiedRoles = siteMapItem.getRoles();
+        setRoles(jcrNode, modifiedRoles);
+    }
+
+    public void create(final SiteMapItemRepresentation siteMapItem, final String parentId) throws RepositoryException {
+
+        HstRequestContext requestContext = RequestContextProvider.get();
+        final Session session = requestContext.getSession();
+        Node parent = session.getNodeByIdentifier(parentId);
+
+        final Node newChild = parent.addNode(siteMapItem.getName(), HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
+
+        setSitemapItemProperties(siteMapItem, newChild);
+
+        final Map<String, String> modifiedLocalParameters = siteMapItem.getLocalParameters();
+        setLocalParameters(newChild, modifiedLocalParameters);
+
+        final Set<String> modifiedRoles = siteMapItem.getRoles();
+        setRoles(newChild,modifiedRoles);
 
     }
 
-    public void create(final SiteMapItemRepresentation siteMapItem, final String parentId) {
-
+    public void move(final String id, final String parentId) throws RepositoryException {
+        HstRequestContext requestContext = RequestContextProvider.get();
+        final Session session = requestContext.getSession();
+        Node toMove = session.getNode(id);
+        Node newParent = session.getNode(parentId);
+        String oldLocation = toMove.getPath();
+        session.move(oldLocation, newParent.getPath() + "/" + toMove.getName());
+        acquireLock(toMove, HstNodeTypes.NODETYPE_HST_SITEMAP);
+        createDeletedNode(session, oldLocation);
     }
 
-    public void move(final String sourceId, final String parentId) {
-
-    }
-
-    public void delete(final String id) {
-
+    public void delete(final String id) throws RepositoryException {
+        HstRequestContext requestContext = RequestContextProvider.get();
+        final Session session = requestContext.getSession();
+        Node deleted = session.getNode(id);
+        markDeleted(deleted);
     }
 
     public static HstSiteMapItem getSiteMapItem(HstSiteMap siteMap, String siteMapItemId) {
@@ -95,6 +134,18 @@ public class SiteMapHelper extends AbstractHelper {
         return null;
     }
 
+
+    private void setSitemapItemProperties(final SiteMapItemRepresentation siteMapItem, final Node jcrNode) throws RepositoryException {
+        setProperty(jcrNode, HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID, siteMapItem.getComponentConfigurationId());
+        setProperty(jcrNode, HstNodeTypes.SITEMAPITEM_PROPERTY_SCHEME, siteMapItem.getScheme());
+        setProperty(jcrNode, HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, siteMapItem.getRelativeContentPath());
+    }
+
+
+    private void createDeletedNode(final Session session, final String oldLocation) throws RepositoryException {
+        Node deleted = session.getRootNode().addNode(oldLocation.substring(1), HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
+        markDeleted(deleted);
+    }
 
 
 

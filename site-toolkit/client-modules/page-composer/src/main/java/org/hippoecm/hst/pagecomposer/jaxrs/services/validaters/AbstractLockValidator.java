@@ -44,27 +44,6 @@ public abstract class AbstractLockValidator implements Validator {
         return getLockedDeepBy(node.getParent(), rootNodeType);
     }
 
-    protected boolean isLockedDeep(final Node node, String rootNodeType) throws RepositoryException {
-        String lockedBy = getLockedDeepBy(node, rootNodeType);
-        if (lockedBy == null) {
-             return false;
-        }
-        return lockedBy.equals(node.getSession().getUserID());
-    }
-
-
-
-    /**
-     * @return whether there is a partial lock for <code>node</code> : A node is partial locked if it contains
-     * descendants with deep locks. In this case, only {@link Operation#CREATE} is allowed
-     */
-    protected boolean isLockedOperation(final Node node, final String rootNodeType, final Operation operation) throws RepositoryException {
-        if (operation == Operation.CREATE) {
-            return false;
-        }
-        return hasDescendantLock(node);
-    }
-
     protected boolean hasDescendantLock(final Node node) throws RepositoryException {
         if (node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
             String lockedBy = node.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString();

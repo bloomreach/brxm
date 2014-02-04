@@ -52,29 +52,13 @@ public class PostLockValidator extends AbstractLockValidator {
             HstRequestContext requestContext = RequestContextProvider.get();
             final Session session = requestContext.getSession();
             session.refresh(true);
-            final Node node = session.getNodeByIdentifier(id);
+            final Node node = checkNodeForLock(session, id);
             if (!node.isNodeType(itemNodeType)) {
                 throw new IllegalArgumentException("Expected node of type '"+itemNodeType+
                         "' but was '"+node.getPrimaryNodeType().getName()+"'");
             }
 
-            // assert not self or ancestor locked
-            if(isLockedDeep(node, rootNodeType)) {
-                if(node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
-                    // only remove if owned by you : an ancestor has been locked while you acquired the lock
-                    String lockedBy = node.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString();
-                    if (node.getSession().getUserID().equals(lockedBy)) {
-                        node.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).remove();
-
-                        // TODO remove other lock props
-                        HstConfigurationUtils.persistChanges(session);
-                    }
-                }
-                throw new IllegalStateException("Node at '"+node.getPath()+"' is part of a deep lock. Performed '"+operation+"' " +
-                        "should had failed. Lock for '"+session.getUserID()+"' on '"+node.getPath()+"' is removed.");
-            }
-
-            // assert current user has locked the node (or ancestor)
+            // assert current user has locked the node (or an ancestor)
             String lockedBy = getLockedDeepBy(node, rootNodeType);
             if (!node.getSession().getUserID().equals(lockedBy)) {
                 throw new IllegalStateException("Node for '"+node.getPath()+"' should be locked by '"+node.getSession().getUserID()+"' but found to be locked" +
@@ -86,6 +70,10 @@ public class PostLockValidator extends AbstractLockValidator {
         } catch (RepositoryException e) {
             throw new RuntimeRepositoryException("RepositoryException during pre-validate", e);
         }
+    }
+
+    protected Node checkNodeForLock(final Session session, final String id) throws RepositoryException {
+        return session.getNodeByIdentifier(id);
     }
 
 

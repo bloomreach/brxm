@@ -58,13 +58,14 @@ public class PreLockValidator extends AbstractLockValidator {
                         "' but was '"+node.getPrimaryNodeType().getName()+"'");
             }
 
-            // assert not self or ancestor locked
-            if (isLockedDeep(node, rootNodeType)) {
+            // assert not self or ancestor locked by someone else
+            String lockedByUser = getLockedDeepBy(node, rootNodeType);
+            if (lockedByUser != null && !node.getSession().getUserID().equals(lockedByUser)) {
                 throw new IllegalStateException("'"+node.getPath()+"' is part of a deep lock. Cannot perform '"+operation+"'");
             }
 
-            // id an descendant is locked, only Operation.ADD is allowed
-            if (isLockedOperation(node, rootNodeType, operation)) {
+            // if an descendant is locked, Operation.UPDATE is not allowed
+            if (hasDescendantLock(node) && operation == Operation.UPDATE) {
                 throw new IllegalStateException("'"+operation+"' is not allowed for '"+node.getPath()+"' due to locked descendant");
             }
 

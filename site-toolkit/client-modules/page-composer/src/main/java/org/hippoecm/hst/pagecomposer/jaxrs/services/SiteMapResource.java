@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import javax.jcr.RepositoryException;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -30,6 +31,7 @@ import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapRepresentation;
@@ -37,6 +39,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.Operation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.AbstractLockValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.CurrentPreviewValidator;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.NewChildPostLockValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.PostLockValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.PreLockValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.Validator;
@@ -110,7 +113,9 @@ public class SiteMapResource extends AbstractConfigResource {
         }
 
         final List<Validator> postValidators = new ArrayList<>();
-        postValidators.add(new PostLockValidator(parentId, Operation.UPDATE,
+        postValidators.add(new NewChildPostLockValidator(parentId, siteMapItem.getName(), Operation.CREATE,
+                HstNodeTypes.NODETYPE_HST_SITEMAPITEM, HstNodeTypes.NODETYPE_HST_SITEMAP));
+        postValidators.add(new PostLockValidator(parentId , Operation.CREATE,
                 HstNodeTypes.NODETYPE_HST_SITEMAPITEM, HstNodeTypes.NODETYPE_HST_SITEMAP));
 
         return tryExecute(new Callable<Response>() {
@@ -128,6 +133,12 @@ public class SiteMapResource extends AbstractConfigResource {
     public Response move(final @PathParam("id") String id,
                          final @PathParam("parentId") String parentId) {
 
+        String oldPath;
+        try {
+            oldPath = RequestContextProvider.get().getSession().getNode(id).getPath();
+        } catch (RepositoryException e) {
+            return logAndReturnClientError(e);
+        }
         final List<Validator> preValidators = new ArrayList<>();
         preValidators.add(new CurrentPreviewValidator(id, siteMapHelper));
         preValidators.add(new CurrentPreviewValidator(parentId, siteMapHelper));
@@ -142,8 +153,9 @@ public class SiteMapResource extends AbstractConfigResource {
         final List<Validator> postValidators = new ArrayList<>();
         postValidators.add(new PostLockValidator(id, Operation.MOVE,
                 HstNodeTypes.NODETYPE_HST_SITEMAPITEM, HstNodeTypes.NODETYPE_HST_SITEMAP));
-        postValidators.add(new PostLockValidator(parentId, Operation.MOVE,
-                HstNodeTypes.NODETYPE_HST_SITEMAPITEM, HstNodeTypes.NODETYPE_HST_SITEMAP));
+// TODO
+//        postValidators.add(new DeletedValidator(oldPath, Operation.MOVE,
+//                HstNodeTypes.NODETYPE_HST_SITEMAPITEM, HstNodeTypes.NODETYPE_HST_SITEMAP));
 
         return tryExecute(new Callable<Response>() {
             @Override

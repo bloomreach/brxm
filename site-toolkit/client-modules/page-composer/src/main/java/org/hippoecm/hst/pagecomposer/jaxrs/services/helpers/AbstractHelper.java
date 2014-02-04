@@ -26,6 +26,7 @@ import javax.jcr.Session;
 
 import com.google.common.collect.Iterables;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
@@ -56,11 +57,13 @@ public abstract class AbstractHelper {
      * userID gets set on the node except another user already has a lock, explicit or implicit
      */
     // TODO check lastModifiedTimestamp
-    protected void acquireLock(final Node node) throws RepositoryException {
-        if (isLockPresent(node)) {
+    protected void acquireLock(final Node node, final String checkUntilType) throws RepositoryException {
+        if (isLockPresent(node, checkUntilType)) {
             return;
         }
-        node.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
+        if (!node.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)) {
+            node.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
+        }
         final Session session = node.getSession();
         log.info("Node '{}' gets a lock for user '{}'.", node.getPath(), session.getUserID());
         node.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, session.getUserID());
@@ -73,6 +76,17 @@ public abstract class AbstractHelper {
         removeDescendantLocks(new NodeIterable(node.getNodes()));
     }
 
+    protected void markDeleted(final Node deleted) throws RepositoryException {
+        if (!deleted.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)) {
+            deleted.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
+        }
+        Calendar now = Calendar.getInstance();
+        if (!deleted.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
+            deleted.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON, now);
+        }
+        deleted.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, deleted.getSession().getUserID());
+    }
+
     private void removeDescendantLocks(final NodeIterable nodes) throws RepositoryException {
         for (Node node : nodes) {
             removeProperty(node, HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY);
@@ -80,19 +94,31 @@ public abstract class AbstractHelper {
         }
     }
 
-    private boolean isLockPresent(final Node node) throws RepositoryException {
+    /**
+     * returns <code>true</code> when <code>node</code> or one of its ancestors is locked
+     */
+    private boolean isLockPresent(final Node node, final String checkUntilType) throws RepositoryException {
         if(node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
             String lockedBy = node.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON).getString();
             if (!node.getSession().getUserID().equals(lockedBy)) {
-                throw new IllegalStateException("Locked by someone else");
+                throw new IllegalStateException("Node '"+node.getPath()+"' is locked by '"+lockedBy+"'");
             }
             return true;
         }
 
-        if (node.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMAP)) {
+        if (node.isNodeType(checkUntilType)) {
             return false;
         }
-        return isLockPresent(node.getParent());
+        return isLockPresent(node.getParent(), checkUntilType);
+    }
+
+
+    protected void setProperty(final Node jcrNode, final String propName, final String propValue) throws RepositoryException {
+        if (StringUtils.isEmpty(propValue)) {
+            removeProperty(jcrNode, propName);
+        } else {
+            jcrNode.setProperty(propName, propValue);
+        }
     }
 
     protected void setLocalParameters(final Node node, final Map<String, String> modifiedLocalParameters) throws RepositoryException {
