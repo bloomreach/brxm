@@ -27,6 +27,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.easymock.Capture;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 import org.junit.Before;
@@ -80,20 +81,10 @@ public class SiteMenuItemHelperTest {
         final SiteMenuItemRepresentation newItem = new SiteMenuItemRepresentation();
         newItem.setName("name");
 
-        expect(node.getName()).andReturn("name").times(2);
+        expect(node.addNode(newItem.getName(), HstNodeTypes.NODETYPE_HST_SITEMENUITEM)).andReturn(node);
+        expect(node.getName()).andReturn(newItem.getName());
         expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
 
-        replay(mocks);
-        siteMenuItemHelper.create(node, newItem);
-    }
-
-    @Test(expected = AssertionError.class)
-    public void testSaveFailsIfNamesAreDifferent() throws RepositoryException {
-
-        final SiteMenuItemRepresentation newItem = new SiteMenuItemRepresentation();
-        newItem.setName("a");
-
-        expect(node.getName()).andReturn("b");
         replay(mocks);
         siteMenuItemHelper.create(node, newItem);
     }
