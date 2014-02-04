@@ -19,7 +19,10 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.io.IClusterable;
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -114,7 +117,11 @@ class PluginController implements IClusterable {
 
         clusters.add(new Cluster(control, modelRef));
 
-        return context.getService(wicketRenderId, IRenderService.class);
+        IRenderService renderService = context.getService(wicketRenderId, IRenderService.class);
+        if (renderService != null) {
+            renderService.render((PluginRequestTarget) RequestCycle.get().find(AjaxRequestTarget.class));
+        }
+        return renderService;
     }
 
 }

@@ -28,13 +28,13 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.ServiceContext;
 
-public final class ContextWorkflowPlugin extends AbstractWorkflowPlugin {
+public final class ContextWorkflowManagerPlugin extends AbstractWorkflowManagerPlugin {
 
     private static final long serialVersionUID = 1L;
 
     private final IPluginContext pluginContext;
 
-    public ContextWorkflowPlugin(IPluginContext context, IPluginConfig config) {
+    public ContextWorkflowManagerPlugin(IPluginContext context, IPluginConfig config) {
         super(new ServiceContext(context), config);
         this.pluginContext = context;
 

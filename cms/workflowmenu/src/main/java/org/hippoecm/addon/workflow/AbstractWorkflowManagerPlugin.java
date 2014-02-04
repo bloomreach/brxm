@@ -55,11 +55,11 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
+abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(AbstractWorkflowPlugin.class);
+    static final Logger log = LoggerFactory.getLogger(AbstractWorkflowManagerPlugin.class);
 
     public static final String CATEGORIES = "workflow.categories";
     public static final String MENU_ORDER = "workflow.menuorder";
@@ -70,7 +70,7 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
     private String[] menuOrder;
     protected AbstractView view;
 
-    protected AbstractWorkflowPlugin(IPluginContext context, IPluginConfig config) {
+    protected AbstractWorkflowManagerPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
         if (config.get(CATEGORIES) != null) {
             categories = config.getStringArray(CATEGORIES);

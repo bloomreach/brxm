@@ -33,7 +33,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.repository.api.HippoNodeType;
 
-public class WorkflowsPlugin extends AbstractWorkflowPlugin {
+public class DocumentWorkflowManagerPlugin extends AbstractWorkflowManagerPlugin {
 
     private static final long serialVersionUID = 1L;
 
@@ -43,7 +43,7 @@ public class WorkflowsPlugin extends AbstractWorkflowPlugin {
     private IObserver handleObserver = null;
     private boolean updateMenu = false;
 
-    public WorkflowsPlugin(IPluginContext context, IPluginConfig config) {
+    public DocumentWorkflowManagerPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         if (config.getString(RenderService.MODEL_ID) != null) {

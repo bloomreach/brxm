@@ -37,7 +37,7 @@
         <sv:value>${validator.id}</sv:value>
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.reviewedactions.EditingDocumentWorkflowPlugin</sv:value>
+        <sv:value>org.hippoecm.frontend.plugins.reviewedactions.EditingWorkflowPlugin</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

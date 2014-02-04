@@ -489,7 +489,6 @@ workflow/frontend/repository
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/.BasicReviewedActionsWorkflowPlugin.html.swp
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/.FullRequestWorkflowPlugin.java.swp
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/.FullReviewedActionsWorkflowPlugin.html.swp
-workflow/frontend/src/main/java/org/hippoecm/repository/frontend/plugins/versioning/.VersionPane.java.swp
 workflow/frontend/target
 workflow/frontend/tm.epoch
 workflow/frontend/tm.out

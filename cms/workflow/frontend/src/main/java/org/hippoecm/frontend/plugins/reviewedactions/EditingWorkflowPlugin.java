@@ -17,7 +17,6 @@ package org.hippoecm.frontend.plugins.reviewedactions;
 
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.List;
 
 import javax.jcr.Node;
 
@@ -38,13 +37,9 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.feedback.YuiFeedbackPanel;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
-import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.validation.IValidationResult;
-import org.hippoecm.frontend.validation.IValidationService;
-import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.repository.api.Workflow;
 
-public class EditingDocumentWorkflowPlugin extends RenderPlugin {
+public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
     private static final long serialVersionUID = 1L;
 
@@ -61,14 +56,12 @@ public class EditingDocumentWorkflowPlugin extends RenderPlugin {
     }
 
     private Fragment feedbackContainer;
-    private transient boolean closing = false;
-    private boolean isValid = true;
 
-    public EditingDocumentWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
+    public EditingWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         add(new StdWorkflow("save", new StringResourceModel("save", this, null, "Save"),
-                new PackageResourceReference(EditingDocumentWorkflowPlugin.class, "img/document-save-16.png"), context, getModel()) {
+                new PackageResourceReference(EditingWorkflowPlugin.class, "img/document-save-16.png"), context, getModel()) {
 
             @Override
             public String getSubMenu() {
@@ -87,7 +80,7 @@ public class EditingDocumentWorkflowPlugin extends RenderPlugin {
                 editor.save();
 
                 DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-                new FeedbackLogger().info(new StringResourceModel("saved", EditingDocumentWorkflowPlugin.this,
+                new FeedbackLogger().info(new StringResourceModel("saved", EditingWorkflowPlugin.this,
                         null, null, df.format(new Date())).getString());
                 showFeedback();
                 return null;
@@ -95,7 +88,7 @@ public class EditingDocumentWorkflowPlugin extends RenderPlugin {
         });
 
         add(new StdWorkflow("done", new StringResourceModel("done", this, null, "Done"),
-                new PackageResourceReference(EditingDocumentWorkflowPlugin.class, "img/document-saveclose-16.png"), context, getModel()) {
+                new PackageResourceReference(EditingWorkflowPlugin.class, "img/document-saveclose-16.png"), context, getModel()) {
 
             @Override
             public String getSubMenu() {
@@ -130,30 +123,13 @@ public class EditingDocumentWorkflowPlugin extends RenderPlugin {
         yfp.render(RequestCycle.get().find(AjaxRequestTarget.class));
     }
 
-    void validate() throws ValidationException {
-        isValid = true;
-        List<IValidationService> validators = getPluginContext().getServices(
-                getPluginConfig().getString(IValidationService.VALIDATE_ID), IValidationService.class);
-        if (validators != null) {
-            for (IValidationService validator : validators) {
-                validator.validate();
-                IValidationResult result = validator.getValidationResult();
-                isValid = isValid && result.isValid();
-            }
-        }
-    }
-
-    boolean isValid() {
-        return isValid;
-    }
-
     class Feedback extends ActionDescription {
         private static final long serialVersionUID = 1L;
 
         public Feedback() {
             super("info");
 
-            Fragment feedbackFragment = new Fragment("text", "feedback", EditingDocumentWorkflowPlugin.this);
+            Fragment feedbackFragment = new Fragment("text", "feedback", EditingWorkflowPlugin.this);
             feedbackFragment.add(new YuiFeedbackPanel("feedback", new IFeedbackMessageFilter() {
                 private static final long serialVersionUID = 1L;
 
