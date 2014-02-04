@@ -22,9 +22,34 @@
         .controller('hippo.channelManager.menuManager.EditMenuItemCtrl', [
             '$scope',
             '$routeParams',
-            function ($scope, $routeParams) {
-                // scope values
-                $scope.selectedMenuItemId = $routeParams.menuItemId;
-                $scope.selectedMenuItem = {};
-        }]);
+            '$stateParams',
+            '$state',
+            'hippo.channelManager.menuManager.MenuService',
+            'hippo.channelManager.menuManager.ConfigService',
+            function ($scope, $routeParams, $stateParams, $state, MenuService, ConfigService) {
+                console.log('edit menu item ctrl init');
+
+                // fetch menu item
+                MenuService.getMenuItem(ConfigService.menuId, $stateParams.menuItemId).then(function (response) {
+                    setDestinationProperty(response);
+                    $scope.selectedMenuItem = response;
+                });
+
+                function setDestinationProperty(item) {
+                    if (item && !item.destination) {
+                        if (item.externalLink) {
+                            item.destination = 2;
+                        } else if (item.siteMapItemPath) {
+                            item.destination = 1;
+                        } else {
+                            item.destination = 3;
+                        }
+                    }
+                }
+
+                $scope.createNewPage = function () {
+                    $state.go('menu-item.add-page', {menuItemId: $stateParams.menuItemId });
+                };
+            }
+        ]);
 }());

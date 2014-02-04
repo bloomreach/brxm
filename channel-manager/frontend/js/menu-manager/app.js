@@ -16,30 +16,40 @@
 (function() {
     "use strict";
 
-    angular.module('hippo.channelManager.menuManager', ['ngRoute', 'hippo.theme', 'pascalprecht.translate'])
+    angular.module('hippo.channelManager.menuManager', ['ngRoute', 'hippo.theme', 'pascalprecht.translate', 'ui.router'])
 
-        .config(['$routeProvider', '$translateProvider', function($routeProvider, $translateProvider) {
+        .config(['$stateProvider', '$translateProvider', function($stateProvider, $translateProvider) {
 
             // routing
-            $routeProvider
-                .when('/loader', {
+            $stateProvider
+                .state('loader', {
+                    url: '/loader',
                     controller: 'hippo.channelManager.menuManager.LoaderCtrl',
                     templateUrl: 'views/loader.html'
                 })
-                .when('/add-menu-item', {
+
+                .state('menu-item.add', {
+                    url: '/:menuItemId/add',
                     controller: 'hippo.channelManager.menuManager.AddMenuItemCtrl',
                     templateUrl: 'views/add-menu-item.html'
                 })
-                .when('/:menuItemId/edit', {
+
+                .state('menu-item', {
+                    abstract: true,
+                    controller: 'hippo.channelManager.menuManager.MenuItemCtrl',
+                    templateUrl: 'views/menu-item.html'
+                })
+
+                .state('menu-item.edit', {
+                    url: '/:menuItemId/edit',
                     controller: 'hippo.channelManager.menuManager.EditMenuItemCtrl',
                     templateUrl: 'views/edit-menu-item.html'
                 })
-                .when('/:menuItemId/add-page', {
+
+                .state('menu-item.add-page', {
+                    url: '/:menuItemId/add',
                     controller: 'hippo.channelManager.menuManager.AddPageCtrl',
-                    templateUrl: 'views/add-page.html'
-                })
-                .otherwise({
-                    redirectTo: '/loader'
+                    templateUrl: 'views/add-menu-item.html'
                 });
 
             // translations
@@ -54,17 +64,22 @@
         .run([
             '$rootScope',
             '$translate',
+            '$state',
             'hippo.channelManager.menuManager.Container',
             'hippo.channelManager.menuManager.ConfigService',
             '_hippo.channelManager.menuManagement.IFrameService',
-            function ($rootScope, $translate, Container, Config, IFrame) {
+            function ($rootScope, $translate, $state, Container, Config, IFrame) {
                 $rootScope.close = function() {
                     Container.close();
                 };
 
+                // go to default state
+                $state.go('loader');
+
                 // set language
                 $translate.uses(Config.locale);
 
+                // enable live reload
                 IFrame.enableLiveReload();
             }
         ]);

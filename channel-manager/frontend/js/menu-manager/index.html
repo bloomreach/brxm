@@ -26,18 +26,21 @@
 </head>
 
 <body>
-    <div data-ng-app="hippo.channelManager.menuManager" data-ng-view id="application"></div>
+    <div data-ng-app="hippo.channelManager.menuManager" id="application">
+        <div ui-view></div>
+    </div>
 
     <script src="../components/jquery/jquery.min.js"></script>
     <script src="../components/angular/angular.js"></script>
     <script src="../components/angular-route/angular-route.min.js"></script>
     <script src="../components/chosen/dist/chosen.jquery.min.js"></script>
     <script src="../components/hippo-plugins/dist/js/main.min.js"></script>
-    <script src="../components/hippo-theme/dist/js/main.js"></script>
+    <script src="../components/hippo-theme/dist/js/main.min.js"></script>
     <script src="../components/angular-translate/angular-translate.min.js"></script>
     <script src="../components/angular-translate-loader-static-files/angular-translate-loader-static-files.min.js"></script>
     <script src="../components/jstree/dist/jstree.min.js"></script>
     <script src="../components/underscore/underscore-min.js"></script>
+    <script src="../components/angular-ui-router/release/angular-ui-router.min.js"></script>
 
     <!-- Tree component -->
     <script src="theme/tree-component.js"></script>
@@ -45,10 +48,8 @@
     <!-- App -->
     <script src="app.js"></script>
 
-    <script src="controllers/AddPageFormCtrl.js"></script>
-    <script src="controllers/EditMenuItemFormCtrl.js"></script>
-    <script src="controllers/AddMenuItemFormCtrl.js"></script>
     <script src="controllers/MenuItemActionsCtrl.js"></script>
+    <script src="controllers/MenuItemCtrl.js"></script>
     <script src="controllers/TreeActionsCtrl.js"></script>
     <script src="controllers/TreeCtrl.js"></script>
 

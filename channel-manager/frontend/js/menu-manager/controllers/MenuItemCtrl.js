@@ -19,7 +19,14 @@
 
     angular.module('hippo.channelManager.menuManager')
 
-        .controller('hippo.channelManager.menuManager.AddMenuItemCtrl', [function () {
-            console.log('Add menu item ctrl init');
-        }]);
+        .controller('hippo.channelManager.menuManager.MenuItemCtrl', [
+            '$scope',
+            '$stateParams',
+            function ($scope, $stateParams) {
+                console.log('Menu item controller init');
+
+                $scope.selectedMenuItemId = $stateParams.menuItemId;
+                $scope.selectedMenuItem = {};
+            }
+        ]);
 }());

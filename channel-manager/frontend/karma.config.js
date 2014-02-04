@@ -36,6 +36,7 @@ module.exports = function(config) {
             'components/hippo-theme/dist/js/main.js',
             'components/angular-translate/angular-translate.js',
             'components/angular-translate-loader-static-files/angular-translate-loader-static-files.js',
+            'components/angular-ui-router/release/angular-ui-router.min.js',
 
             // testing dependencies
             'components/jasmine-jquery/lib/jasmine-jquery.js',

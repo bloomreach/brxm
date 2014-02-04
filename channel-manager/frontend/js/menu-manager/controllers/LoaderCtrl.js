@@ -21,16 +21,24 @@
         .controller('hippo.channelManager.menuManager.LoaderCtrl', [
             '$location',
             '$log',
+            '$state',
             'hippo.channelManager.menuManager.ConfigService',
             'hippo.channelManager.menuManager.MenuService',
-            function ($location, $log, ConfigService, MenuService) {
+            function ($location, $log, $state, ConfigService, MenuService) {
+
+                console.log('loader ctrl init');
 
                 MenuService.getMenu(ConfigService.menuId).then(function (data) {
                     // redirect to edit menu item for first item
-                    $location.path('/' + data.children[0].id + '/edit');
+                    //$location.path('/' + data.children[0].id + '/edit');
+
+                    // go to default state
+                    $state.go('menu-item.edit', {
+                        menuItemId: data.children[0].id
+                    });
                 }, function (error) {
                     $log.error(error);
                 });
-
-        }]);
+            }
+        ]);
 }());

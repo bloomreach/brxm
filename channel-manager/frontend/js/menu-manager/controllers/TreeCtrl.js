@@ -37,9 +37,12 @@
 
         .controller('hippo.channelManager.menuManager.TreeCtrl', [
             '$scope',
+            '$state',
             'hippo.channelManager.menuManager.ConfigService',
             'hippo.channelManager.menuManager.MenuService',
-            function ($scope, ConfigService, MenuService) {
+            function ($scope, $state, ConfigService, MenuService) {
+
+                console.log('tree ctrl init');
 
                 // fetch initial data
                 $scope.menuTree = [{}];
@@ -47,31 +50,10 @@
                     $scope.menuTree = reformatData(response.children);
                 });
 
-                // methods
-                $scope.setSelectedItemId = function (/*itemId*/) {
-                    // TODO: fetch the details for this menu item and set them as the selectedMenuItem
-                    MenuService.getMenu(ConfigService.menuId).then(function () {
-                        $scope.$parent.selectedMenuItem = {
-                            id: 'abc-123',
-                            name: 'Placeholder text - ' + Math.ceil((Math.random() * 10))
-                        };
-                    });
-
-                    // set selected menu item so child-controllers can access it
-                    /*
-                     MenuService.getMenu(itemId).then(function (response) {
-                     console.log(response);
-                     $scope.$parent.selectedMenuItem = response;
-                     });
-                     */
-
-                    /*
-                    // redirect if the selected item is different from the current
-                    if ($scope.$parent.selectedMenuItemId !== itemId) {
-                        $location.path('/' + itemId + '/edit');
-                    }
-                    */
+                $scope.setSelected = function (itemId) {
+                    $state.go('menu-item.edit', {menuItemId: itemId});
                 };
 
-            }]);
+            }
+        ]);
 }());

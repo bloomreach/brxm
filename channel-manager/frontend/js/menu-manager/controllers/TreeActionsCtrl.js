@@ -18,9 +18,13 @@
 
     angular.module('hippo.channelManager.menuManager')
 
-        .controller('hippo.channelManager.menuManager.TreeActionsCtrl', ['$scope', '$location', function ($scope, $location) {
-            $scope.addMenuItem = function () {
-                $location.path('/add-menu-item');
-            };
-        }]);
+        .controller('hippo.channelManager.menuManager.TreeActionsCtrl', [
+            '$scope',
+            '$state',
+            function ($scope, $state) {
+                $scope.addMenuItem = function () {
+                    $state.go('menu-item.add', {});
+                };
+            }
+        ]);
 }());

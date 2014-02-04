@@ -20,11 +20,25 @@
 
         .controller('hippo.channelManager.menuManager.AddPageCtrl', [
             '$scope',
-            '$routeParams',
-            function ($scope, $routeParams) {
-                // scope values
-                $scope.selectedMenuItemId = $routeParams.menuItemId;
-                $scope.selectedMenuItem = {};
+            '$stateParams',
+            '$log',
+            '$state',
+            function ($scope, $stateParams, $log, $state) {
+                console.log('add page ctrl init');
+
+                $scope.templates = [{name: 'Template 1'}, {name: 'TODO: fetch templates via HTTP-call'}];
+
+                $scope.cancel = function () {
+                    $state.go('menu-item.edit', {menuItemId: $stateParams.menuItemId});
+                };
+
+                $scope.submit = function (page) {
+                    // TODO: save page implementation
+                    $log.info('Submit add page form');
+                    $log.info(page);
+
+                    // redirect to the active menu item with the new page data as destination
+                };
             }
         ]);
 

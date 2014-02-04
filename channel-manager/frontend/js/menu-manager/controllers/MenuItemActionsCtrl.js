@@ -22,10 +22,11 @@
             '$scope',
             '$log',
             function ($scope, $log) {
-            $scope.removeMenuItem = function () {
-                $log.info('Remove menu item');
-            };
-        }
-    ]);
+                console.log('menu item actions ctrl init');
+                $scope.removeMenuItem = function () {
+                    $log.info('Remove menu item');
+                };
+            }
+        ]);
 
 }());
