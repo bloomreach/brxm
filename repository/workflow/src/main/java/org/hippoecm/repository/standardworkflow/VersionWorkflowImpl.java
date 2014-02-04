@@ -32,7 +32,7 @@ import org.hippoecm.repository.reviewedactions.AbstractReviewedActionsWorkflow;
 import org.onehippo.repository.util.JcrConstants;
 
 /**
- * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.handleworkflow.HandleDocumentWorkflowImpl} instead.
+ * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.documentworkflow.DocumentWorkflowImpl} instead.
  */
 @Deprecated
 public class VersionWorkflowImpl extends AbstractReviewedActionsWorkflow implements VersionWorkflow {
@@ -60,23 +60,23 @@ public class VersionWorkflowImpl extends AbstractReviewedActionsWorkflow impleme
 
     @Override
     public Document version() throws WorkflowException, RepositoryException, RemoteException {
-        return handleDocumentWorkflow.version();
+        return documentWorkflow.version();
     }
 
     @Override
     public Document revert(final Calendar historic) throws WorkflowException, RepositoryException, RemoteException {
-        return handleDocumentWorkflow.restoreVersion(historic);
+        return documentWorkflow.restoreVersion(historic);
     }
 
     @Override
     public Document restoreTo(final Document target) throws WorkflowException, RepositoryException, RemoteException {
         // only can/may work when this workflow is instantiated for a frozen node
-        return handleDocumentWorkflow.versionRestoreTo(((Version) getNode().getParent()).getCreated(), target);
+        return documentWorkflow.versionRestoreTo(((Version) getNode().getParent()).getCreated(), target);
     }
 
     @Override
     public Document restore(final Calendar historic) throws WorkflowException, RepositoryException, RemoteException {
-        return handleDocumentWorkflow.restoreVersion(historic);
+        return documentWorkflow.restoreVersion(historic);
     }
 
     @Override
@@ -86,12 +86,12 @@ public class VersionWorkflowImpl extends AbstractReviewedActionsWorkflow impleme
 
     @Override
     public SortedMap<Calendar, Set<String>> list() throws WorkflowException, RemoteException, RepositoryException {
-        return handleDocumentWorkflow.listVersions();
+        return documentWorkflow.listVersions();
     }
 
     @Override
     public Document retrieve(final Calendar historic) throws WorkflowException, RepositoryException, RemoteException {
-        return handleDocumentWorkflow.retrieveVersion(historic);
+        return documentWorkflow.retrieveVersion(historic);
     }
 
 }

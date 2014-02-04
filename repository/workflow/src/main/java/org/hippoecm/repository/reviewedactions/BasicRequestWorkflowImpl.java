@@ -22,7 +22,7 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.api.WorkflowException;
 
 /**
- * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.handleworkflow.HandleDocumentWorkflowImpl} instead.
+ * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.documentworkflow.DocumentWorkflowImpl} instead.
  */
 @Deprecated
 public class BasicRequestWorkflowImpl extends AbstractReviewedActionsWorkflow implements BasicRequestWorkflow {
@@ -34,7 +34,7 @@ public class BasicRequestWorkflowImpl extends AbstractReviewedActionsWorkflow im
 
     @Override
     public void cancelRequest() throws WorkflowException, RemoteException, RepositoryException {
-        handleDocumentWorkflow.cancelRequest(getNode().getIdentifier());
+        documentWorkflow.cancelRequest(getNode().getIdentifier());
     }
 
 }

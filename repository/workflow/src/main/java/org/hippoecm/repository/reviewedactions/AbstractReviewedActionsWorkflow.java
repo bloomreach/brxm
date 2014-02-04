@@ -27,15 +27,15 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
-import org.onehippo.repository.documentworkflow.HandleDocumentWorkflow;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 /**
- * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.handleworkflow.HandleDocumentWorkflowImpl} instead.
+ * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.documentworkflow.DocumentWorkflowImpl} instead.
  */
 @Deprecated
 public class AbstractReviewedActionsWorkflow extends WorkflowImpl {
 
-    protected HandleDocumentWorkflow handleDocumentWorkflow;
+    protected DocumentWorkflow documentWorkflow;
 
     /**
      * All implementations of a work-flow must provide a single, no-argument constructor.
@@ -55,11 +55,11 @@ public class AbstractReviewedActionsWorkflow extends WorkflowImpl {
 
         try {
             final Workflow handleWorkflow = getNonChainingWorkflowContext().getWorkflow("default", new Document(handleNode));
-            if (!(handleWorkflow instanceof HandleDocumentWorkflow)) {
-                throw new RepositoryException("Workflow on handle, in category 'document', is not a HandleDocumentWorkflow");
+            if (!(handleWorkflow instanceof DocumentWorkflow)) {
+                throw new RepositoryException("Workflow on handle, in category 'document', is not a DocumentWorkflow");
             }
 
-            handleDocumentWorkflow = (HandleDocumentWorkflow) handleWorkflow;
+            documentWorkflow = (DocumentWorkflow) handleWorkflow;
         }
         catch (WorkflowException wfe) {
             if (wfe.getCause() != null && wfe.getCause() instanceof RepositoryException) {
@@ -80,8 +80,8 @@ public class AbstractReviewedActionsWorkflow extends WorkflowImpl {
     @Override
     public Map<String, Serializable> hints() throws WorkflowException {
         Map<String, Serializable> hints = super.hints();
-        hints.putAll(handleDocumentWorkflow.getInfo());
-        hints.putAll(handleDocumentWorkflow.getActions());
+        hints.putAll(documentWorkflow.getInfo());
+        hints.putAll(documentWorkflow.getActions());
         return hints;
     }
 

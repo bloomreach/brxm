@@ -23,7 +23,7 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 
 /**
- * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.documentworkflow.HandleDocumentWorkflow} instead.
+ * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.documentworkflow.DocumentWorkflow} instead.
  */
 @Deprecated
 public interface BasicRequestWorkflow extends Workflow {

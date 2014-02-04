@@ -33,11 +33,11 @@ import org.hippoecm.repository.reviewedactions.UnlockWorkflow;
 import org.onehippo.repository.api.annotation.WorkflowAction;
 
 /**
- * Aggregate HandleDocumentWorkflow, combining all Document handle based workflow operations into one generic interface.
+ * Aggregate DocumentWorkflow, combining all Document handle based workflow operations into one generic interface.
  * <p> The -Request- and VersionWorkflows operations have been re-defined inline to be able to use different parameters
  * (and methodNames) as needed to be functional on Document handle level </p>
  */
-public interface HandleDocumentWorkflow extends Workflow, FullReviewedActionsWorkflow, UnlockWorkflow {
+public interface DocumentWorkflow extends Workflow, FullReviewedActionsWorkflow, UnlockWorkflow {
 
     /**
      * The SupportedFeatures enumeration can be used to 'filter' which subset of the DocumentWorkflow functionality

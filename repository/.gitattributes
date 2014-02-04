@@ -482,7 +482,7 @@ workflow/src/main/java/org/onehippo/repository/documentworkflow/action/ConfigVar
 workflow/src/main/java/org/onehippo/repository/documentworkflow/action/CopyDocumentAction.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/action/CopyVariantAction.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/action/DeleteRequestAction.java -text
-workflow/src/main/java/org/onehippo/repository/documentworkflow/action/InvokeHandleDocumentWorkflowAction.java -text
+workflow/src/main/java/org/onehippo/repository/documentworkflow/action/InvokeDocumentWorkflowAction.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/action/IsModifiedAction.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/action/MoveDocumentAction.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/action/RenameDocumentAction.java -text
@@ -495,7 +495,7 @@ workflow/src/main/java/org/onehippo/repository/documentworkflow/task/ArchiveTask
 workflow/src/main/java/org/onehippo/repository/documentworkflow/task/ConfigVariantTask.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/task/CopyDocumentTask.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/task/CopyVariantTask.java -text
-workflow/src/main/java/org/onehippo/repository/documentworkflow/task/InvokeHandleDocumentWorkflowTask.java -text
+workflow/src/main/java/org/onehippo/repository/documentworkflow/task/InvokeDocumentWorkflowTask.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/task/IsModifiedTask.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/task/MoveDocumentTask.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/task/RenameDocumentTask.java -text
@@ -510,6 +510,7 @@ workflow/src/main/java/org/onehippo/repository/scxml/SCXMLExecutionError.java -t
 workflow/src/main/java/org/onehippo/repository/scxml/SCXMLStrictErrorReporter.java -text
 workflow/src/main/java/org/onehippo/repository/scxml/SCXMLWorkflowExecutor.java -text
 workflow/src/main/resources/date-derivatives.xml -text
+workflow/src/main/resources/document-workflow.scxml -text
 workflow/src/main/resources/editing-workflows.xml svneol=native#text/plain
 workflow/src/main/resources/embedded-workflows.xml -text
 workflow/src/main/resources/gallery-namespace.xml -text
@@ -522,7 +523,6 @@ workflow/src/main/resources/hipposcxml.cnd -text
 workflow/src/main/resources/hippostd-workflows-threepane.xml -text svneol=unset#text/plain
 workflow/src/main/resources/hippostd-workflows.xml svneol=native#text/plain
 workflow/src/main/resources/hippostdpubwf.cnd -text
-workflow/src/main/resources/reviewed-actions-workflow.scxml -text
 workflow/src/main/resources/reviewedactions-derivatives.xml -text
 workflow/src/main/resources/reviewedactions-workflows.xml svneol=native#text/plain
 workflow/src/main/resources/scxml-definitions.xml svneol=native#text/plain

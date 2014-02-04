@@ -36,7 +36,7 @@ import org.onehippo.repository.api.annotation.WorkflowAction;
  * to determine when to version documents.  The default publication work-flow versions documents whenever a document is published,
  * for instance.  So it invokes the VersionWorkflow.version() whenever its publish action is invoked.
  *
- * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.documentworkflow.HandleDocumentWorkflow} instead.
+ * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.documentworkflow.DocumentWorkflow} instead.
  */
 @Deprecated
 public interface VersionWorkflow extends Workflow {

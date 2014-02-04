@@ -19,12 +19,12 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposcxml:definitions</sv:value>
   </sv:property>
-  <sv:node sv:name="reviewed-actions-workflow">
+  <sv:node sv:name="document-workflow">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposcxml:scxml</sv:value>
     </sv:property>
     <sv:property sv:name="hipposcxml:source" sv:type="String">
-      <sv:value h:file="reviewed-actions-workflow.scxml"/>
+      <sv:value h:file="document-workflow.scxml"/>
     </sv:property>
     <sv:node sv:name="action">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -235,7 +235,7 @@
         <sv:value>org.onehippo.repository.documentworkflow.action.VersionRestoreToAction</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="invokeHandleDocumentWorkflow">
+    <sv:node sv:name="invokeDocumentWorkflow">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hipposcxml:action</sv:value>
       </sv:property>
@@ -243,7 +243,7 @@
         <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
       </sv:property>
       <sv:property sv:name="hipposcxml:classname" sv:type="String">
-        <sv:value>org.onehippo.repository.documentworkflow.action.InvokeHandleDocumentWorkflowAction</sv:value>
+        <sv:value>org.onehippo.repository.documentworkflow.action.InvokeDocumentWorkflowAction</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="workflowException">

@@ -22,7 +22,7 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.api.WorkflowException;
 
 /**
- * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.handleworkflow.HandleDocumentWorkflowImpl} instead.
+ * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.documentworkflow.DocumentWorkflowImpl} instead.
  */
 @Deprecated
 public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements FullRequestWorkflow {
@@ -39,12 +39,12 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
 
     @Override
     public void acceptRequest() throws WorkflowException, RemoteException, RepositoryException {
-        handleDocumentWorkflow.acceptRequest(getNode().getIdentifier());
+        documentWorkflow.acceptRequest(getNode().getIdentifier());
     }
 
     @Override
     public void rejectRequest(final String reason) throws WorkflowException, RemoteException, RepositoryException {
-        handleDocumentWorkflow.rejectRequest(getNode().getIdentifier(), reason);
+        documentWorkflow.rejectRequest(getNode().getIdentifier(), reason);
     }
 
 }

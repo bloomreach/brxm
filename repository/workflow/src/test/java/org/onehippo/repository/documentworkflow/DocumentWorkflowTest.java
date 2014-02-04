@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.repository.handleworkflow;
+package org.onehippo.repository.documentworkflow;
 
 import java.io.Serializable;
 import java.util.Calendar;
@@ -39,18 +39,13 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.repository.documentworkflow.HandleDocumentWorkflow;
-import org.onehippo.repository.documentworkflow.MockAccessManagedSession;
-import org.onehippo.repository.documentworkflow.MockWorkflowContext;
-import org.onehippo.repository.documentworkflow.ScheduledRequest;
-import org.onehippo.repository.documentworkflow.WorkflowRequest;
 import org.onehippo.repository.documentworkflow.action.ArchiveAction;
 import org.onehippo.repository.documentworkflow.action.ConfigVariantAction;
 import org.onehippo.repository.documentworkflow.action.CopyDocumentAction;
 import org.onehippo.repository.documentworkflow.action.CopyVariantAction;
 import org.onehippo.repository.documentworkflow.action.DeleteRequestAction;
 import org.onehippo.repository.documentworkflow.action.InfoAction;
-import org.onehippo.repository.documentworkflow.action.InvokeHandleDocumentWorkflowAction;
+import org.onehippo.repository.documentworkflow.action.InvokeDocumentWorkflowAction;
 import org.onehippo.repository.documentworkflow.action.IsModifiedAction;
 import org.onehippo.repository.documentworkflow.action.ListVersionsVariantAction;
 import org.onehippo.repository.documentworkflow.action.MoveDocumentAction;
@@ -79,7 +74,7 @@ import org.onehippo.repository.util.JcrConstants;
 
 import static org.junit.Assert.assertEquals;
 
-public class TestDocumentWorkflowImpl {
+public class DocumentWorkflowTest {
 
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -100,7 +95,7 @@ public class TestDocumentWorkflowImpl {
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "renameDocument", RenameDocumentAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "setHolder", SetHolderAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "deleteRequest", DeleteRequestAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "invokeHandleDocumentWorkflow", InvokeHandleDocumentWorkflowAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "invokeDocumentWorkflow", InvokeDocumentWorkflowAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "workflowException", WorkflowExceptionAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "version", VersionVariantAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "listVersions", ListVersionsVariantAction.class.getName());
@@ -122,24 +117,8 @@ public class TestDocumentWorkflowImpl {
     }
 
     protected static String loadSCXML() throws Exception {
-        return IOUtils.toString(TestDocumentWorkflowImpl.class.getResourceAsStream("/reviewed-actions-workflow.scxml"));
+        return IOUtils.toString(DocumentWorkflowTest.class.getResourceAsStream("/document-workflow.scxml"));
     }
-
-/*
-    protected static String loadSCXML() throws Exception {
-        InputStream is = null;
-
-        try {
-            is = TestDocumentWorkflowImpl.class.getResourceAsStream("/scxml-definitions.xml");
-            Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
-            XPathExpression xpathExpr = XPathFactory.newInstance().newXPath()
-                    .compile("//node[@name='reviewed-actions-workflow']/property[@name='hipposcxml:source']/value/text()");
-            return StringUtils.trim((String) xpathExpr.evaluate(doc.getDocumentElement(), XPathConstants.STRING));
-        } finally {
-            IOUtils.closeQuietly(is);
-        }
-    }
-*/
 
     protected Node addVariant(Node handle, String state) throws RepositoryException {
         Node variant = handle.addNode(handle.getName(), HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT);
@@ -226,13 +205,13 @@ public class TestDocumentWorkflowImpl {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         RepositoryMap workflowConfig = workflowContext.getWorkflowConfiguration();
-        HandleDocumentWorkflowImpl wf = new HandleDocumentWorkflowImpl();
+        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
         Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
 
         addVariant(handleNode, HippoStdNodeType.DRAFT);
-        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", HandleDocumentWorkflow.SupportedFeatures.request.name());
+        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.request.name());
         wf.setNode(handleNode);
     }
 
@@ -242,7 +221,7 @@ public class TestDocumentWorkflowImpl {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         RepositoryMap workflowConfig = workflowContext.getWorkflowConfiguration();
-        HandleDocumentWorkflowImpl wf = new HandleDocumentWorkflowImpl();
+        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
         Node handleNode = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
@@ -252,14 +231,14 @@ public class TestDocumentWorkflowImpl {
         unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
         publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
 
-        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", HandleDocumentWorkflow.SupportedFeatures.request.name());
+        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.request.name());
         wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "status");
         assertNotContainsHint(wf.hints(), "status");
         assertNotContainsHint(wf.hints(), "checkModified");
 
-        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", HandleDocumentWorkflow.SupportedFeatures.document.name());
+        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
         wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "status", true);
@@ -303,14 +282,14 @@ public class TestDocumentWorkflowImpl {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         RepositoryMap workflowConfig = workflowContext.getWorkflowConfiguration();
-        HandleDocumentWorkflowImpl wf = new HandleDocumentWorkflowImpl();
+        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
         Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
         Node draftVariant, unpublishedVariant, publishedVariant, rejectedRequest, publishRequest;
 
         draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
-        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", HandleDocumentWorkflow.SupportedFeatures.request.name());
+        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.request.name());
         wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "no-edit");
@@ -349,13 +328,13 @@ public class TestDocumentWorkflowImpl {
         assertContainsHint(wf.hints(), "obtainEditableInstance", true);
         assertContainsHint(wf.hints(), "unlock", false);
 
-        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", HandleDocumentWorkflow.SupportedFeatures.document.name());
+        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
         wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "obtainEditableInstance", true);
         assertNotContainsHint(wf.hints(), "unlock");
 
-        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", HandleDocumentWorkflow.SupportedFeatures.unlock.name());
+        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.unlock.name());
         wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "unlock", false);
@@ -385,7 +364,7 @@ public class TestDocumentWorkflowImpl {
         publishedVariant.remove();
         rejectedRequest.remove();
 
-        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", HandleDocumentWorkflow.SupportedFeatures.document.name());
+        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
         draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "testuser");
         wf.setNode(handleNode);
@@ -396,7 +375,7 @@ public class TestDocumentWorkflowImpl {
         assertContainsHint(wf.hints(), "disposeEditableInstance", true);
         assertNotContainsHint(wf.hints(), "unlock");
 
-        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", HandleDocumentWorkflow.SupportedFeatures.unlock.name());
+        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.unlock.name());
         wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "editing");
@@ -441,7 +420,7 @@ public class TestDocumentWorkflowImpl {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         RepositoryMap workflowConfig = workflowContext.getWorkflowConfiguration();
-        HandleDocumentWorkflowImpl wf = new HandleDocumentWorkflowImpl();
+        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
         Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
@@ -472,7 +451,7 @@ public class TestDocumentWorkflowImpl {
         assertNotContainsHint(wf.hints(), "acceptRequest");
         assertNotContainsHint(wf.hints(), "rejectRequest");
 
-        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", HandleDocumentWorkflow.SupportedFeatures.document.name());
+        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
         wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "requested");
@@ -480,7 +459,7 @@ public class TestDocumentWorkflowImpl {
         assertNotContainsHint(wf.hints(), "acceptRequest");
         assertNotContainsHint(wf.hints(), "rejectRequest");
 
-        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", HandleDocumentWorkflow.SupportedFeatures.request.name());
+        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.request.name());
         session.setPermissions(publishRequest.getPath(), "hippo:editor", true);
 
         wf.setNode(handleNode);
@@ -526,7 +505,7 @@ public class TestDocumentWorkflowImpl {
         assertContainsHint(wf.hints(), "acceptRequest", false);
         assertContainsHint(wf.hints(), "rejectRequest", false);
 
-        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", HandleDocumentWorkflow.SupportedFeatures.document.name());
+        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
         wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "request-rejected");
@@ -573,14 +552,14 @@ public class TestDocumentWorkflowImpl {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         RepositoryMap workflowConfig = workflowContext.getWorkflowConfiguration();
-        HandleDocumentWorkflowImpl wf = new HandleDocumentWorkflowImpl();
+        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
         Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
         Node draftVariant, unpublishedVariant, publishedVariant, publishRequest;
 
         unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
-        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", HandleDocumentWorkflow.SupportedFeatures.request.name());
+        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.request.name());
         wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "no-publish");
@@ -670,14 +649,14 @@ public class TestDocumentWorkflowImpl {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         RepositoryMap workflowConfig = workflowContext.getWorkflowConfiguration();
-        HandleDocumentWorkflowImpl wf = new HandleDocumentWorkflowImpl();
+        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
         Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
         Node draftVariant, unpublishedVariant, publishedVariant, publishRequest;
 
         publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
-        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", HandleDocumentWorkflow.SupportedFeatures.request.name());
+        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.request.name());
         wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "no-depublish");
@@ -776,7 +755,7 @@ public class TestDocumentWorkflowImpl {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         RepositoryMap workflowConfig = workflowContext.getWorkflowConfiguration();
-        HandleDocumentWorkflowImpl wf = new HandleDocumentWorkflowImpl();
+        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
         Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
@@ -798,7 +777,7 @@ public class TestDocumentWorkflowImpl {
         assertContainsHint(wf.hints(), "revertVersion", true);
         assertNotContainsHint(wf.hints(), "restoreVersionTo");
 
-        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", HandleDocumentWorkflow.SupportedFeatures.document.name());
+        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
         wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "no-versioning");
@@ -816,7 +795,7 @@ public class TestDocumentWorkflowImpl {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         RepositoryMap workflowConfig = workflowContext.getWorkflowConfiguration();
-        HandleDocumentWorkflowImpl wf = new HandleDocumentWorkflowImpl();
+        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
         Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
@@ -865,7 +844,7 @@ public class TestDocumentWorkflowImpl {
         assertNotContainsHint(wf.hints(), "move");
         assertNotContainsHint(wf.hints(), "rename");
 
-        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", HandleDocumentWorkflow.SupportedFeatures.request.name());
+        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.request.name());
         wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "no-terminate");
@@ -913,7 +892,7 @@ public class TestDocumentWorkflowImpl {
     public void testCopyState() throws Exception {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
-        HandleDocumentWorkflowImpl wf = new HandleDocumentWorkflowImpl();
+        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
         Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
@@ -960,7 +939,7 @@ public class TestDocumentWorkflowImpl {
     public void testNoState() throws Exception {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
-        HandleDocumentWorkflowImpl wf = new HandleDocumentWorkflowImpl();
+        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
         Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);

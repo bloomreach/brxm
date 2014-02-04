@@ -183,7 +183,7 @@
               errorExpr="'Cannot delete document which is being edited'"/>
 
             <hippo:deleteRequest requestExpr="request"/>
-            <hippo:invokeHandleDocumentWorkflow action="delete"/>
+            <hippo:invokeDocumentWorkflow action="delete"/>
 
           <elseif cond="requestType ==~ '(publish|scheduledpublish)'"/>
 
@@ -195,11 +195,11 @@
 
             <if cond="requestType=='publish'">
               <hippo:deleteRequest requestExpr="request"/>
-              <hippo:invokeHandleDocumentWorkflow action="publish"/>
+              <hippo:invokeDocumentWorkflow action="publish"/>
             <else/>
               <cs:var name="requestDate" expr="request.scheduledDate"/>
               <hippo:deleteRequest requestExpr="request"/>
-              <hippo:invokeHandleDocumentWorkflow action="scheduledpublish" whenExpr="requestDate"/>
+              <hippo:invokeDocumentWorkflow action="scheduledpublish" whenExpr="requestDate"/>
             </if>
 
           <elseif cond="request.type ==~ '(depublish|scheduleddepublish)'"/>
@@ -211,11 +211,11 @@
               errorExpr="'Cannot depublish document when not published'"/>
 
             <if cond="requestType=='depublish'">
-              <hippo:invokeHandleDocumentWorkflow action="publish"/>
+              <hippo:invokeDocumentWorkflow action="publish"/>
             <else/>
               <cs:var name="requestDate" expr="request.scheduledDate"/>
               <hippo:deleteRequest requestExpr="request"/>
-              <hippo:invokeHandleDocumentWorkflow action="scheduleddepublish" whenExpr="requestDate"/>
+              <hippo:invokeDocumentWorkflow action="scheduleddepublish" whenExpr="requestDate"/>
             </if>
 
           <else/>
@@ -292,7 +292,7 @@
         </transition>
 
         <transition event="schedulePublish" value="reset">
-          <hippo:invokeHandleDocumentWorkflow action="scheduledpublish" whenExpr="_eventdata"/>
+          <hippo:invokeDocumentWorkflow action="scheduledpublish" whenExpr="_eventdata"/>
         </transition>
 
       </state>
@@ -342,7 +342,7 @@
         </transition>
 
         <transition event="scheduleDepublish" value="reset">
-          <hippo:invokeHandleDocumentWorkflow action="scheduleddepublish" whenExpr="_eventdata"/>
+          <hippo:invokeDocumentWorkflow action="scheduleddepublish" whenExpr="_eventdata"/>
         </transition>
 
       </state>
@@ -409,7 +409,7 @@
         </transition>
 
         <transition event="delete" value="reset">
-          <hippo:invokeHandleDocumentWorkflow action="delete"/>
+          <hippo:invokeDocumentWorkflow action="delete"/>
         </transition>
 
         <transition event="move" value="reset">

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.repository.handleworkflow;
+package org.onehippo.repository.documentworkflow;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -31,15 +31,9 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
-import org.onehippo.repository.documentworkflow.DocumentCopyMovePayload;
-import org.onehippo.repository.documentworkflow.DocumentHandle;
-import org.onehippo.repository.documentworkflow.DocumentVariant;
-import org.onehippo.repository.documentworkflow.HandleDocumentWorkflow;
-import org.onehippo.repository.documentworkflow.RejectRequestPayload;
-import org.onehippo.repository.documentworkflow.VersionRestoreToPayload;
 import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
 
-public class HandleDocumentWorkflowImpl extends WorkflowImpl implements HandleDocumentWorkflow {
+public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkflow {
 
     private static final long serialVersionUID = 1L;
 
@@ -48,7 +42,7 @@ public class HandleDocumentWorkflowImpl extends WorkflowImpl implements HandleDo
     private SCXMLWorkflowExecutor workflowExecutor;
     private DocumentHandle dm;
 
-    public HandleDocumentWorkflowImpl() throws RemoteException {
+    public DocumentWorkflowImpl() throws RemoteException {
     }
 
     SCXMLWorkflowExecutor getWorkflowExecutor() {

@@ -113,19 +113,19 @@ public class DocumentHandleTest {
         RepositoryMap workflowConfig = context.getWorkflowConfiguration();
 
         DocumentHandle dm = new DocumentHandle("test", context, handleNode);
-        assertEquals(HandleDocumentWorkflow.SupportedFeatures.all, dm.getSupportedFeatures());
+        assertEquals(DocumentWorkflow.SupportedFeatures.all, dm.getSupportedFeatures());
         assertTrue(dm.getSupportedFeatures().isDocument());
         assertTrue(dm.getSupportedFeatures().isRequest());
 
-        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", HandleDocumentWorkflow.SupportedFeatures.document.name());
+        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
         dm = new DocumentHandle("test", context, handleNode);
-        assertEquals(HandleDocumentWorkflow.SupportedFeatures.document, dm.getSupportedFeatures());
+        assertEquals(DocumentWorkflow.SupportedFeatures.document, dm.getSupportedFeatures());
         assertTrue(dm.getSupportedFeatures().isDocument());
         assertFalse(dm.getSupportedFeatures().isRequest());
 
         putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", "undefined");
         dm = new DocumentHandle("test", context, handleNode);
-        assertEquals(HandleDocumentWorkflow.SupportedFeatures.all, dm.getSupportedFeatures());
+        assertEquals(DocumentWorkflow.SupportedFeatures.all, dm.getSupportedFeatures());
     }
 
     @Test

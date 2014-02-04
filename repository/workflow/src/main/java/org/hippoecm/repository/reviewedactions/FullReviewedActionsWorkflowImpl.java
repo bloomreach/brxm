@@ -24,7 +24,7 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
 
 /**
- * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.handleworkflow.HandleDocumentWorkflowImpl} instead.
+ * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.documentworkflow.DocumentWorkflowImpl} instead.
  */
 @Deprecated
 public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflowImpl implements FullReviewedActionsWorkflow {
@@ -34,47 +34,47 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
 
     @Override
     public void delete() throws WorkflowException, RepositoryException, RemoteException {
-        handleDocumentWorkflow.delete();
+        documentWorkflow.delete();
     }
 
     @Override
     public void rename(final String newName) throws WorkflowException, RepositoryException, RemoteException {
-        handleDocumentWorkflow.rename(newName);
+        documentWorkflow.rename(newName);
     }
 
     @Override
     public void copy(final Document destination, final String newName) throws WorkflowException, RepositoryException, RemoteException {
-        handleDocumentWorkflow.copy(destination, newName);
+        documentWorkflow.copy(destination, newName);
     }
 
     @Override
     public void move(final Document destination, final String newName) throws WorkflowException, RepositoryException, RemoteException {
-        handleDocumentWorkflow.move(destination, newName);
+        documentWorkflow.move(destination, newName);
     }
 
     @Override
     public void depublish() throws WorkflowException, RepositoryException, RemoteException {
-        handleDocumentWorkflow.depublish();
+        documentWorkflow.depublish();
     }
 
     @Override
     public void depublish(final Date depublicationDate) throws WorkflowException, RepositoryException, RemoteException {
-        handleDocumentWorkflow.depublish(depublicationDate);
+        documentWorkflow.depublish(depublicationDate);
     }
 
     @Override
     public void publish() throws WorkflowException, RepositoryException, RemoteException {
-        handleDocumentWorkflow.publish();
+        documentWorkflow.publish();
     }
 
     @Override
     public void publish(final Date publicationDate) throws WorkflowException, RepositoryException, RemoteException {
-        handleDocumentWorkflow.publish(publicationDate);
+        documentWorkflow.publish(publicationDate);
     }
 
     @Override
     public void publish(final Date publicationDate, final Date unpublicationDate) throws WorkflowException, RepositoryException, RemoteException {
-        handleDocumentWorkflow.publish(publicationDate, unpublicationDate);
+        documentWorkflow.publish(publicationDate, unpublicationDate);
     }
 
 }

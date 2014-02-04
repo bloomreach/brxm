@@ -54,7 +54,7 @@ public class DocumentHandle implements SCXMLDataModel {
     private final Node handle;
     private final String user;
 
-    private HandleDocumentWorkflow.SupportedFeatures supportedFeatures = HandleDocumentWorkflow.SupportedFeatures.all;
+    private DocumentWorkflow.SupportedFeatures supportedFeatures = DocumentWorkflow.SupportedFeatures.all;
 
     private Map<String, DocumentVariant> documents;
     private Map<String, Request> requests;
@@ -81,7 +81,7 @@ public class DocumentHandle implements SCXMLDataModel {
                     String supportedFeaturesConfiguration = (String) workflowConfiguration.get("workflow.supportedFeatures");
                     if (supportedFeaturesConfiguration != null) {
                         try {
-                            supportedFeatures = HandleDocumentWorkflow.SupportedFeatures.valueOf(supportedFeaturesConfiguration);
+                            supportedFeatures = DocumentWorkflow.SupportedFeatures.valueOf(supportedFeaturesConfiguration);
                         } catch (IllegalArgumentException e) {
                             String configurationPath = (String) workflowConfiguration.get("_path");
                             if (configurationPath == null) {
@@ -218,10 +218,10 @@ public class DocumentHandle implements SCXMLDataModel {
     }
 
     /**
-     * @return configured Features or {@link org.onehippo.repository.documentworkflow.HandleDocumentWorkflow.SupportedFeatures#all}
+     * @return configured Features or {@link DocumentWorkflow.SupportedFeatures#all}
      * by default
      */
-    public HandleDocumentWorkflow.SupportedFeatures getSupportedFeatures() {
+    public DocumentWorkflow.SupportedFeatures getSupportedFeatures() {
         return supportedFeatures;
     }
 

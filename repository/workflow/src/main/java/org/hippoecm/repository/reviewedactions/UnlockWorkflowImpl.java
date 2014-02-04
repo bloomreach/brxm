@@ -22,7 +22,7 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.api.WorkflowException;
 
 /**
- * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.handleworkflow.HandleDocumentWorkflowImpl} instead.
+ * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.documentworkflow.DocumentWorkflowImpl} instead.
  */
 @Deprecated
 public class UnlockWorkflowImpl extends AbstractReviewedActionsWorkflow implements UnlockWorkflow {
@@ -38,7 +38,7 @@ public class UnlockWorkflowImpl extends AbstractReviewedActionsWorkflow implemen
 
     @Override
     public void unlock() throws WorkflowException, RepositoryException, RemoteException {
-        handleDocumentWorkflow.unlock();
+        documentWorkflow.unlock();
     }
 
 }

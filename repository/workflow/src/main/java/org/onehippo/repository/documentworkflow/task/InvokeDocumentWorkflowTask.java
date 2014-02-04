@@ -25,12 +25,12 @@ import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
-import org.onehippo.repository.documentworkflow.HandleDocumentWorkflow;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 /**
- * Custom workflow task for invoking a HandleDocumentWorkflow action
+ * Custom workflow task for invoking a DocumentWorkflow action
  */
-public class InvokeHandleDocumentWorkflowTask extends AbstractDocumentTask {
+public class InvokeDocumentWorkflowTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
 
@@ -61,23 +61,23 @@ public class InvokeHandleDocumentWorkflowTask extends AbstractDocumentTask {
         Document handle = new Document(dh.getHandle());
         if ("delete".equals(action)) {
             wfc.getInternalWorkflowSession().save();
-            ((HandleDocumentWorkflow)wfc.getWorkflow("default", handle)).delete();
+            ((DocumentWorkflow)wfc.getWorkflow("default", handle)).delete();
         }
         else if ("publish".equals(action)) {
             wfc.getInternalWorkflowSession().save();
-            ((HandleDocumentWorkflow)wfc.getWorkflow("default", handle)).publish();
+            ((DocumentWorkflow)wfc.getWorkflow("default", handle)).publish();
         }
         else if ("depublish".equals(action)) {
             wfc.getInternalWorkflowSession().save();
-            ((HandleDocumentWorkflow)wfc.getWorkflow("default", handle)).depublish();
+            ((DocumentWorkflow)wfc.getWorkflow("default", handle)).depublish();
         }
         else if ("scheduledpublish".equals(action)) {
             wfc.getInternalWorkflowSession().save();
-            ((HandleDocumentWorkflow)wfc.getWorkflow("default", handle)).publish(when);
+            ((DocumentWorkflow)wfc.getWorkflow("default", handle)).publish(when);
         }
         else if ("scheduleddepublish".equals(action)) {
             wfc.getInternalWorkflowSession().save();
-            ((HandleDocumentWorkflow)wfc.getWorkflow("default", handle)).depublish(when);
+            ((DocumentWorkflow)wfc.getWorkflow("default", handle)).depublish(when);
         }
         else {
             throw new WorkflowException("Unsupported workflow action: "+(action));

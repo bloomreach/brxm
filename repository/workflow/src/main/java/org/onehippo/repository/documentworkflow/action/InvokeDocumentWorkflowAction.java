@@ -20,12 +20,12 @@ import java.util.Date;
 
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
-import org.onehippo.repository.documentworkflow.task.InvokeHandleDocumentWorkflowTask;
+import org.onehippo.repository.documentworkflow.task.InvokeDocumentWorkflowTask;
 
 /**
- * InvokeHandleDocumentWorkflowAction delegating the execution to InvokeHandleDocumentWorkflowTask.
+ * InvokeDocumentWorkflowAction delegating the execution to InvokeDocumentWorkflowTask.
  */
-public class InvokeHandleDocumentWorkflowAction extends AbstractDocumentTaskAction<InvokeHandleDocumentWorkflowTask> {
+public class InvokeDocumentWorkflowAction extends AbstractDocumentTaskAction<InvokeDocumentWorkflowTask> {
 
     private static final long serialVersionUID = 1L;
 
@@ -46,12 +46,12 @@ public class InvokeHandleDocumentWorkflowAction extends AbstractDocumentTaskActi
     }
 
     @Override
-    protected InvokeHandleDocumentWorkflowTask createWorkflowTask() {
-        return new InvokeHandleDocumentWorkflowTask();
+    protected InvokeDocumentWorkflowTask createWorkflowTask() {
+        return new InvokeDocumentWorkflowTask();
     }
 
     @Override
-    protected void initTask(InvokeHandleDocumentWorkflowTask task) throws ModelException, SCXMLExpressionException {
+    protected void initTask(InvokeDocumentWorkflowTask task) throws ModelException, SCXMLExpressionException {
         super.initTask(task);
 
         task.setAction(getAction());
