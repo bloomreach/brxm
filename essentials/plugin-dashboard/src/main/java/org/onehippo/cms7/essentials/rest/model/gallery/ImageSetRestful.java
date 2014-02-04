@@ -48,7 +48,7 @@ public class ImageSetRestful implements Restful {
     public ImageSetRestful(final String name, final String path) {
 
         this.name = name;
-        this.name = path;
+        this.path = path;
     }
 
     public String getNamespace() {

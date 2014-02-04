@@ -48,7 +48,7 @@ public class ImageProcessorRestful implements Restful {
     public ImageProcessorRestful(final String name, final String path) {
 
         this.name = name;
-        this.name = path;
+        this.path = path;
     }
 
     public String getName() {

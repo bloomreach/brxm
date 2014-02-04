@@ -14,8 +14,6 @@ import static org.junit.Assert.assertTrue;
  */
 public class NonWorkflowWikiImporterTest extends BaseRepositoryTest {
 
-
-
     @Test
     public void testNonWorkflowJCRImportAction() throws Exception {
 
