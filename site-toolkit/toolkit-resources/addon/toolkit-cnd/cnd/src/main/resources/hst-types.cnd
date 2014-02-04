@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,14 @@
 [hst:descriptive] mixin
 - hst:description (string)
 + hst:icon (hippo:resource) = hippo:resource
+
+[hst:editable] mixin
+- hst:lockedby (string)
+- hst:lockedon (date)
+- hst:lastmodified (date)
+- hst:lastmodifiedby (string)
+- hst:origin (string)
+- hst:state (string)
 
 [hst:template] > nt:base, mix:referenceable, hst:descriptive
 - hst:renderpath (string)

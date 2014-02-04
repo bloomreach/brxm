@@ -23,11 +23,19 @@ import java.util.Set;
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import javax.jcr.ValueFormatException;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.version.VersionException;
 
 import com.google.common.collect.Iterables;
 
+import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.AbstractConfigResource;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES;
@@ -36,7 +44,14 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_REPOBASED;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_ROLES;
 
-public class SiteMenuItemHelper {
+public class SiteMenuItemHelper extends AbstractHelper {
+
+    private final SiteMenuHelper menuHelper = new SiteMenuHelper();
+
+    @Override
+    public <T> T getConfigObject(final String itemId) {
+        throw new UnsupportedOperationException("Cannot fetch site menu item without menu id");
+    }
 
     /**
      * Saves the properties of the new item into the node, provided that the names of the node and the item are equal.
@@ -80,29 +95,13 @@ public class SiteMenuItemHelper {
         node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, modifiedRepositoryBased);
 
         final Map<String, String> modifiedLocalParameters = modifiedItem.getLocalParameters();
-        if (modifiedLocalParameters != null && !modifiedLocalParameters.isEmpty()) {
-            final String[][] namesAndValues = mapToNameValueArrays(modifiedLocalParameters);
-            node.setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, namesAndValues[0], PropertyType.STRING);
-            node.setProperty(GENERAL_PROPERTY_PARAMETER_VALUES, namesAndValues[1], PropertyType.STRING);
-        } else if (modifiedLocalParameters != null && modifiedLocalParameters.isEmpty()) {
-            removeProperty(node, GENERAL_PROPERTY_PARAMETER_NAMES);
-            removeProperty(node, GENERAL_PROPERTY_PARAMETER_VALUES);
-        }
+        setLocalParameters(node, modifiedLocalParameters);
 
         final Set<String> modifiedRoles = modifiedItem.getRoles();
-        if (modifiedRoles != null && !modifiedRoles.isEmpty()) {
-            final String[] roles = Iterables.toArray(modifiedRoles, String.class);
-            node.setProperty(SITEMENUITEM_PROPERTY_ROLES, roles, PropertyType.STRING);
-        } else if (modifiedRoles != null && modifiedRoles.isEmpty()) {
-            removeProperty(node, SITEMENUITEM_PROPERTY_ROLES);
-        }
+        setRoles(node,modifiedRoles);
+
     }
 
-    private void removeProperty(Node node, String property) throws RepositoryException {
-        if (node.hasProperty(property)) {
-            node.getSession().removeItem(node.getProperty(property).getPath());
-        }
-    }
 
     /**
      * Move the given node by appending it as the last child of the new parent and assigning it the give new node name.
@@ -149,16 +148,5 @@ public class SiteMenuItemHelper {
         }
     }
 
-    private String[][] mapToNameValueArrays(final Map<String, String> map) {
-        final int size = map.size();
-        final String[][] namesAndValues = {
-                map.keySet().toArray(new String[size]),
-                new String[size]
-        };
-        for (int i = 0; i < size; i++) {
-            namesAndValues[1][i] = map.get(namesAndValues[0][i]);
-        }
-        return namesAndValues;
-    }
 
 }

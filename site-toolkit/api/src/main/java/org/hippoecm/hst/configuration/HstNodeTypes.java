@@ -52,6 +52,8 @@ public interface HstNodeTypes {
     static final String NODETYPE_HST_BLUEPRINTS = "hst:blueprints";
     static final String NODETYPE_HST_CONTAINERCOMPONENTSFOLDER = "hst:containercomponentfolder";
 
+    static final String MIXINTYPE_HST_EDITABLE = "hst:editable";
+
     static final String GENERAL_PROPERTY_INHERITS_FROM = "hst:inheritsfrom";
     static final String GENERAL_PROPERTY_LOCKED_BY = "hst:lockedby";
     static final String GENERAL_PROPERTY_LOCKED_ON = "hst:lockedon";

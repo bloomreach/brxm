@@ -22,6 +22,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
@@ -29,23 +30,20 @@ import org.hippoecm.repository.util.NodeIterable;
 
 public class LockValidator implements Validator {
 
+
     public enum Operation {
-        ADD, DELETE, MOVE, UPDATE
+        CREATE, DELETE, MOVE, UPDATE
     }
 
-    private final HstRequestContext requestContext;
     private final String id;
     private final Operation operation;
     private String itemNodeType;
     private String rootNodeType;
 
-
-    public LockValidator(final HstRequestContext requestContext,
-                         final String id,
+    public LockValidator(final String id,
                          final Operation operation,
                          final String itemNodeType,
                          final String rootNodeType){
-        this.requestContext = requestContext;
         this.id = id;
         this.operation = operation;
         this.itemNodeType = itemNodeType;
@@ -56,6 +54,7 @@ public class LockValidator implements Validator {
     @Override
     public void preValidate() throws RuntimeException {
         try {
+            HstRequestContext requestContext = RequestContextProvider.get();
             final Session session = requestContext.getSession();
             final Node node = session.getNodeByIdentifier(id);
             if (!node.isNodeType(itemNodeType)) {
@@ -68,6 +67,7 @@ public class LockValidator implements Validator {
                 throw new IllegalStateException("'"+node.getPath()+"' is part of a deep lock. Cannot perform '"+operation+"'");
             }
 
+            // id an descendant is locked, only Operation.ADD is allowed
             if (isLockedOperation(node, rootNodeType, operation)) {
                 throw new IllegalStateException("'"+operation+"' is not allowed for '"+node.getPath()+"' due to locked descendant");
             }
@@ -83,6 +83,7 @@ public class LockValidator implements Validator {
     @Override
     public void postValidate() throws RuntimeException {
         try {
+            HstRequestContext requestContext = RequestContextProvider.get();
             final Session session = requestContext.getSession();
             session.refresh(false);
             final Node node = session.getNodeByIdentifier(id);
@@ -103,14 +104,14 @@ public class LockValidator implements Validator {
                         HstConfigurationUtils.persistChanges(session);
                     }
                 }
-                throw new IllegalStateException("Node for '"+id+"' is part of a deep lock. Performed '"+operation+"' " +
-                        "should had failed. Lock for '"+session.getUserID()+"' on '"+id+"' is removed.");
+                throw new IllegalStateException("Node at '"+node.getPath()+"' is part of a deep lock. Performed '"+operation+"' " +
+                        "should had failed. Lock for '"+session.getUserID()+"' on '"+node.getPath()+"' is removed.");
             }
 
             // assert current user has locked the node (or ancestor)
             String lockedBy = getLockedDeepBy(node, rootNodeType);
             if (!node.getSession().getUserID().equals(lockedBy)) {
-                throw new IllegalStateException("Node for '"+id+"' should be locked by '"+node.getSession().getUserID()+"' but found to be locked" +
+                throw new IllegalStateException("Node for '"+node.getPath()+"' should be locked by '"+node.getSession().getUserID()+"' but found to be locked" +
                         " by '"+lockedBy+"'.");
             }
 
@@ -152,10 +153,10 @@ public class LockValidator implements Validator {
 
     /**
      * @return whether there is a partial lock for <code>node</code> : A node is partial locked if it contains
-     * descendants with deep locks. In this case, only {@link Operation#ADD} is allowed
+     * descendants with deep locks. In this case, only {@link Operation#CREATE} is allowed
      */
     protected boolean isLockedOperation(final Node node, final String rootNodeType, final Operation operation) throws RepositoryException {
-        if (operation == Operation.ADD) {
+        if (operation == Operation.CREATE) {
             return false;
         }
         return hasDescendantLock(node);

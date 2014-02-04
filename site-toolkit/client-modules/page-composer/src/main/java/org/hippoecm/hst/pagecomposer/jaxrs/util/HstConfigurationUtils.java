@@ -214,9 +214,7 @@ public class HstConfigurationUtils {
         }
     }
 
-
-
-    public static  boolean isLockedBySomeoneElse(Node configurationNode) throws RepositoryException {
+    public static boolean isLockedBySomeoneElse(Node configurationNode) throws RepositoryException {
         final String holder = getLockedBy(configurationNode);
         if (StringUtils.isEmpty(holder)) {
             return false;

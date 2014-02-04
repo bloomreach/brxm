@@ -18,12 +18,12 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.validaters;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.AbstractHelper;
 
-public class CurrentPreviewSiteItemValidator implements Validator {
+public class CurrentPreviewValidator implements Validator {
 
     private final String id;
     private final AbstractHelper helper;
 
-    public CurrentPreviewSiteItemValidator(final String id, final AbstractHelper helper){
+    public CurrentPreviewValidator(final String id, final AbstractHelper helper){
         this.id = id;
         this.helper = helper;
 
