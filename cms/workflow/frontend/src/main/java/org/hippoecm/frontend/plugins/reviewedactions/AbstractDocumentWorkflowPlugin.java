@@ -42,7 +42,7 @@ import org.hippoecm.repository.api.StringCodecFactory;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.onehippo.repository.documentworkflow.HandleDocumentWorkflow;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -135,13 +135,13 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
         }
     }
 
-    protected HandleDocumentWorkflow getWorkflow() {
+    protected DocumentWorkflow getWorkflow() {
         WorkflowManager manager = UserSession.get().getWorkflowManager();
         WorkflowDescriptorModel wdm = getModel();
         WorkflowDescriptor workflowDescriptor = wdm.getObject();
         try {
             if (workflowDescriptor != null) {
-                return (HandleDocumentWorkflow) manager.getWorkflow(workflowDescriptor);
+                return (DocumentWorkflow) manager.getWorkflow(workflowDescriptor);
             }
         } catch (RepositoryException e) {
             log.error("Unable to retrieve workflow", e);
@@ -150,7 +150,7 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
     }
 
     protected Map<String, Serializable> getHints() {
-        HandleDocumentWorkflow workflow = getWorkflow();
+        DocumentWorkflow workflow = getWorkflow();
         if (workflow != null) {
             try {
                 return workflow.hints();

@@ -47,7 +47,7 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.onehippo.repository.documentworkflow.HandleDocumentWorkflow;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -143,7 +143,7 @@ public class RequestsView extends RepeatingView {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                HandleDocumentWorkflow workflow = (HandleDocumentWorkflow) wf;
+                DocumentWorkflow workflow = (DocumentWorkflow) wf;
                 workflow.acceptRequest(item.getModelObject().getId());
                 return null;
             }
@@ -184,7 +184,7 @@ public class RequestsView extends RepeatingView {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                HandleDocumentWorkflow workflow = (HandleDocumentWorkflow) wf;
+                DocumentWorkflow workflow = (DocumentWorkflow) wf;
                 workflow.rejectRequest(item.getModelObject().getId(), reason);
                 return null;
             }
@@ -259,7 +259,7 @@ public class RequestsView extends RepeatingView {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                HandleDocumentWorkflow workflow = (HandleDocumentWorkflow) wf;
+                DocumentWorkflow workflow = (DocumentWorkflow) wf;
                 workflow.cancelRequest(item.getModelObject().getId());
                 return null;
             }

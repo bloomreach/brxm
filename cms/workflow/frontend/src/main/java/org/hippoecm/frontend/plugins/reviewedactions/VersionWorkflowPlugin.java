@@ -45,7 +45,7 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.onehippo.repository.documentworkflow.HandleDocumentWorkflow;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,15 +129,15 @@ public class VersionWorkflowPlugin extends RenderPlugin {
 
                 WorkflowDescriptorModel handleWorkflowModel = getHandleWorkflowModel();
                 final WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-                HandleDocumentWorkflow handleDocumentWorkflow = (HandleDocumentWorkflow) workflowManager.getWorkflow(handleWorkflowModel.getObject());
+                DocumentWorkflow documentWorkflow = (DocumentWorkflow) workflowManager.getWorkflow(handleWorkflowModel.getObject());
 
                 Version versionNode = (Version) frozenNode.getParent();
                 Calendar calendar = versionNode.getCreated();
-                Document doc = handleDocumentWorkflow.obtainEditableInstance();
+                Document doc = documentWorkflow.obtainEditableInstance();
                 try {
-                    handleDocumentWorkflow.versionRestoreTo(calendar, doc);
+                    documentWorkflow.versionRestoreTo(calendar, doc);
                 } finally {
-                    doc = handleDocumentWorkflow.commitEditableInstance();
+                    doc = documentWorkflow.commitEditableInstance();
                 }
 
                 JcrNodeModel previewModel = new JcrNodeModel(session.getNodeByIdentifier(doc.getIdentity()));

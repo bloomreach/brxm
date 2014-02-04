@@ -33,7 +33,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.onehippo.repository.documentworkflow.HandleDocumentWorkflow;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +81,7 @@ public class RevisionHistory implements IDetachable {
         if (list == null) {
             list = new LinkedList<>();
             try {
-                HandleDocumentWorkflow workflow = getWorkflow();
+                DocumentWorkflow workflow = getWorkflow();
                 if (workflow != null) {
                     final SortedMap<Calendar, Set<String>> versions = workflow.listVersions();
                     int index = 0;
@@ -96,10 +96,10 @@ public class RevisionHistory implements IDetachable {
         }
     }
 
-    public HandleDocumentWorkflow getWorkflow() throws RepositoryException {
+    public DocumentWorkflow getWorkflow() throws RepositoryException {
         final WorkflowDescriptor workflowDescriptor = wdm.getObject();
         WorkflowManager manager = UserSession.get().getWorkflowManager();
-        return (HandleDocumentWorkflow) manager.getWorkflow(workflowDescriptor);
+        return (DocumentWorkflow) manager.getWorkflow(workflowDescriptor);
     }
 
 }

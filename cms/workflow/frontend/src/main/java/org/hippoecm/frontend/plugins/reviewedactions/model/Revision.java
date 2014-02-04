@@ -30,7 +30,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
-import org.onehippo.repository.documentworkflow.HandleDocumentWorkflow;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +72,7 @@ public class Revision implements IDetachable {
         if (versionModel == null) {
             versionModel = new JcrNodeModel((Node) null);
             try {
-                HandleDocumentWorkflow workflow = history.getWorkflow();
+                DocumentWorkflow workflow = history.getWorkflow();
                 if (workflow != null) {
                     Document doc = workflow.retrieveVersion(date);
                     if (doc != null) {
