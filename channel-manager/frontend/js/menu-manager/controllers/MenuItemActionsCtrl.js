@@ -22,7 +22,6 @@
             '$scope',
             '$log',
             function ($scope, $log) {
-                console.log('menu item actions ctrl init');
                 $scope.removeMenuItem = function () {
                     $log.info('Remove menu item');
                 };

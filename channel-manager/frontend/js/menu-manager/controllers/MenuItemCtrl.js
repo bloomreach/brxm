@@ -23,10 +23,7 @@
             '$scope',
             '$stateParams',
             function ($scope, $stateParams) {
-                console.log('Menu item controller init');
 
-                $scope.selectedMenuItemId = $stateParams.menuItemId;
-                $scope.selectedMenuItem = {};
             }
         ]);
 }());

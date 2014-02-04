@@ -29,9 +29,6 @@
                 console.log('loader ctrl init');
 
                 MenuService.getMenu(ConfigService.menuId).then(function (data) {
-                    // redirect to edit menu item for first item
-                    //$location.path('/' + data.children[0].id + '/edit');
-
                     // go to default state
                     $state.go('menu-item.edit', {
                         menuItemId: data.children[0].id

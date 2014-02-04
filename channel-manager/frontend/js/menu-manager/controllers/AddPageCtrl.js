@@ -26,6 +26,7 @@
             function ($scope, $stateParams, $log, $state) {
                 console.log('add page ctrl init');
 
+                // TODO: fetch templates via HTTP-call
                 $scope.templates = [{name: 'Template 1'}, {name: 'TODO: fetch templates via HTTP-call'}];
 
                 $scope.cancel = function () {
