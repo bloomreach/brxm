@@ -100,6 +100,7 @@
     <json-lib.version>2.2.2</json-lib.version>
     <easymock.version>3.1</easymock.version>
     <decentxml.version>1.4</decentxml.version>
+    <commons-scxml2.version>2.0-SNAPSHOT</commons-scxml2.version>
   </properties>
 
   <scm>
@@ -257,6 +258,18 @@
         <groupId>de.pdark</groupId>
         <artifactId>decentxml</artifactId>
         <version>${decentxml.version}</version>
+      </dependency>
+      <!-- SCXML -->
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-scxml2</artifactId>
+        <version>${commons-scxml2.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
 
