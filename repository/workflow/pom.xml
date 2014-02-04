@@ -26,11 +26,6 @@
   <artifactId>hippo-repository-workflow</artifactId>
   <packaging>jar</packaging>
 
-  <properties>
-    <commons-scxml2.version>2.0-SNAPSHOT</commons-scxml2.version>
-    <commons-jexl.version>2.1.2-m-r1550527</commons-jexl.version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
@@ -72,24 +67,6 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-scxml2</artifactId>
-      <version>${commons-scxml2.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-jexl</artifactId>
-      <version>${commons-jexl.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
