@@ -103,7 +103,7 @@ public class VersionWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "restore-16.png");
+                return new PackageResourceReference(getClass(), "img/restore-16.png");
             }
 
             @Override
@@ -166,7 +166,7 @@ public class VersionWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "select-16.png");
+                return new PackageResourceReference(getClass(), "img/select-16.png");
             }
 
             @Override

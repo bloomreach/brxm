@@ -155,7 +155,7 @@ public class PreviewDocumentWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "edit-16.png");
+                return new PackageResourceReference(getClass(), "img/edit-16.png");
             }
 
             @Override
@@ -190,7 +190,7 @@ public class PreviewDocumentWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "unlock-16.png");
+                return new PackageResourceReference(getClass(), "img/unlock-16.png");
             }
 
             @Override
@@ -209,7 +209,7 @@ public class PreviewDocumentWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "publish-16.png");
+                return new PackageResourceReference(getClass(), "img/publish-16.png");
             }
 
             @Override
@@ -246,7 +246,7 @@ public class PreviewDocumentWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "unpublish-16.png");
+                return new PackageResourceReference(getClass(), "img/unpublish-16.png");
             }
 
             @Override
@@ -274,7 +274,7 @@ public class PreviewDocumentWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "workflow-requestpublish-16.png");
+                return new PackageResourceReference(getClass(), "img/workflow-requestpublish-16.png");
             }
 
             @Override
@@ -310,7 +310,7 @@ public class PreviewDocumentWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "workflow-requestunpublish-16.png");
+                return new PackageResourceReference(getClass(), "img/workflow-requestunpublish-16.png");
             }
 
             @Override
@@ -340,7 +340,7 @@ public class PreviewDocumentWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "publish-schedule-16.png");
+                return new PackageResourceReference(getClass(), "img/publish-schedule-16.png");
             }
 
             @Override
@@ -377,7 +377,7 @@ public class PreviewDocumentWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "unpublish-scheduled-16.png");
+                return new PackageResourceReference(getClass(), "img/unpublish-scheduled-16.png");
             }
 
             @Override
@@ -416,9 +416,9 @@ public class PreviewDocumentWorkflowPlugin extends RenderPlugin {
             @Override
             protected ResourceReference getIcon() {
                 if (isEnabled()) {
-                    return new PackageResourceReference(getClass(), "rename-16.png");
+                    return new PackageResourceReference(getClass(), "img/rename-16.png");
                 } else {
-                    return new PackageResourceReference(getClass(), "rename-disabled-16.png");
+                    return new PackageResourceReference(getClass(), "img/rename-disabled-16.png");
                 }
             }
 
@@ -492,7 +492,7 @@ public class PreviewDocumentWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "copy-16.png");
+                return new PackageResourceReference(getClass(), "img/copy-16.png");
             }
 
             @Override
@@ -558,9 +558,9 @@ public class PreviewDocumentWorkflowPlugin extends RenderPlugin {
             @Override
             protected ResourceReference getIcon() {
                 if (isEnabled()) {
-                    return new PackageResourceReference(getClass(), "move-16.png");
+                    return new PackageResourceReference(getClass(), "img/move-16.png");
                 } else {
-                    return new PackageResourceReference(getClass(), "move-disabled-16.png");
+                    return new PackageResourceReference(getClass(), "img/move-disabled-16.png");
                 }
             }
 
@@ -612,9 +612,9 @@ public class PreviewDocumentWorkflowPlugin extends RenderPlugin {
             @Override
             protected ResourceReference getIcon() {
                 if (isEnabled()) {
-                    return new PackageResourceReference(getClass(), "delete-16.png");
+                    return new PackageResourceReference(getClass(), "img/delete-16.png");
                 } else {
-                    return new PackageResourceReference(getClass(), "delete-disabled-16.png");
+                    return new PackageResourceReference(getClass(), "img/delete-disabled-16.png");
                 }
             }
 
@@ -653,7 +653,7 @@ public class PreviewDocumentWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "workflow-requestdelete-16.png");
+                return new PackageResourceReference(getClass(), "img/workflow-requestdelete-16.png");
             }
 
             @Override
@@ -682,7 +682,7 @@ public class PreviewDocumentWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "where-used-16.png");
+                return new PackageResourceReference(getClass(), "img/where-used-16.png");
             }
 
             @Override
@@ -706,7 +706,7 @@ public class PreviewDocumentWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "revision-16.png");
+                return new PackageResourceReference(getClass(), "img/revision-16.png");
             }
 
             @Override

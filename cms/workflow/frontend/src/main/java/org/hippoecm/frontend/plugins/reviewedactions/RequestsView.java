@@ -138,7 +138,7 @@ public class RequestsView extends RepeatingView {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "workflow-accept-16.png");
+                return new PackageResourceReference(getClass(), "img/workflow-accept-16.png");
             }
 
             @Override
@@ -165,7 +165,7 @@ public class RequestsView extends RepeatingView {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "workflow-requestunpublish-16.png");
+                return new PackageResourceReference(getClass(), "img/workflow-requestunpublish-16.png");
             }
 
             @Override
@@ -205,7 +205,7 @@ public class RequestsView extends RepeatingView {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "delete-16.png");
+                return new PackageResourceReference(getClass(), "img/delete-16.png");
             }
 
             @Override

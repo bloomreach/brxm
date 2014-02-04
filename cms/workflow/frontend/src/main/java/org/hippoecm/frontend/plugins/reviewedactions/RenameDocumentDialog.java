@@ -44,27 +44,27 @@ import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
 
 public  class RenameDocumentDialog extends AbstractWorkflowDialog<Void> {
-        private IModel title;
+        private IModel<String> title;
         private TextField nameComponent;
         private TextField uriComponent;
         private boolean uriModified;
         private IPluginContext context;
 
-        public RenameDocumentDialog(StdWorkflow action, IModel title, IPluginContext context) {
+        public RenameDocumentDialog(StdWorkflow action, IModel<String> title, IPluginContext context) {
             super(null, action);
 
             this.title = title;
             this.context = context;
 
-            final PropertyModel<String> nameModel = new PropertyModel<String>(action, "targetName");
-            final PropertyModel<String> uriModel = new PropertyModel<String>(action, "uriName");
-            final PropertyModel<Map<Localized, String>> localizedNamesModel = new PropertyModel<Map<Localized, String>>(action, "localizedNames");
+            final PropertyModel<String> nameModel = new PropertyModel<>(action, "targetName");
+            final PropertyModel<String> uriModel = new PropertyModel<>(action, "uriName");
+            final PropertyModel<Map<Localized, String>> localizedNamesModel = new PropertyModel<>(action, "localizedNames");
 
             String s1 = nameModel.getObject();
             String s2 = uriModel.getObject();
             uriModified = !s1.equals(s2);
 
-            nameComponent = new TextField<String>("name", nameModel);
+            nameComponent = new TextField<>("name", nameModel);
             nameComponent.setRequired(true);
             nameComponent.setLabel(new StringResourceModel("name-label", this, null));
             nameComponent.add(new OnChangeAjaxBehavior() {

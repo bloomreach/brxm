@@ -68,7 +68,7 @@ public class EditingDocumentWorkflowPlugin extends RenderPlugin {
         super(context, config);
 
         add(new StdWorkflow("save", new StringResourceModel("save", this, null, "Save"),
-                new PackageResourceReference(EditingDocumentWorkflowPlugin.class, "document-save-16.png"), context, getModel()) {
+                new PackageResourceReference(EditingDocumentWorkflowPlugin.class, "img/document-save-16.png"), context, getModel()) {
 
             @Override
             public String getSubMenu() {
@@ -95,7 +95,7 @@ public class EditingDocumentWorkflowPlugin extends RenderPlugin {
         });
 
         add(new StdWorkflow("done", new StringResourceModel("done", this, null, "Done"),
-                new PackageResourceReference(EditingDocumentWorkflowPlugin.class, "document-saveclose-16.png"), context, getModel()) {
+                new PackageResourceReference(EditingDocumentWorkflowPlugin.class, "img/document-saveclose-16.png"), context, getModel()) {
 
             @Override
             public String getSubMenu() {
