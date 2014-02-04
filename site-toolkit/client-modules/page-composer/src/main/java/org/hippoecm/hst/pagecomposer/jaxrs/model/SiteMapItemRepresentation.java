@@ -29,7 +29,6 @@ public class SiteMapItemRepresentation {
 
     String id;
     String name;
-    Map<String, String> parameters;
     Map<String, String> localParameters;
     Set<String> roles;
     String componentConfigurationId;
@@ -63,7 +62,6 @@ public class SiteMapItemRepresentation {
         containsWildCard = item.containsWildCard();
         containsAny = item.containsAny();
         isExplicitPath = !(wildCard || any || containsAny || containsAny);
-        parameters = item.getParameters();
         localParameters = item.getLocalParameters();
         roles = item.getRoles();
         Map<String, SiteMapItemRepresentation> orderedChildren = new TreeMap<>();
@@ -170,14 +168,6 @@ public class SiteMapItemRepresentation {
 
     public void setExplicitPath(final boolean explicitPath) {
         isExplicitPath = explicitPath;
-    }
-
-    public Map<String, String> getParameters() {
-        return parameters;
-    }
-
-    public void setParameters(final Map<String, String> parameters) {
-        this.parameters = parameters;
     }
 
     public Map<String, String> getLocalParameters() {
