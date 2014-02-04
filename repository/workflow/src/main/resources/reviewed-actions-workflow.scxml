@@ -120,7 +120,7 @@
         <elseif cond="!!published"/>
           <hippo:copyVariant sourceState="published" targetState="draft"/>
         </if>
-        <hippo:configVariant variant="draft" applyModified="true" setHolder="true"/>
+        <hippo:configVariant variant="draft" applyModified="true" setHolder="true" availabilities=""/>
         <hippo:result value="draft"/>
       </transition>
 
@@ -134,7 +134,7 @@
             <if cond="live">
               <hippo:configVariant variant="published" availabilities="live"/>
             <else/>
-              <hippo:configVariant variant="published" availabilities="null"/>
+              <hippo:configVariant variant="published" availabilities=""/>
             </if>
           </if>
           <hippo:copyVariant sourceState="draft" targetState="unpublished"/>
@@ -333,7 +333,7 @@
             <hippo:copyVariant sourceState="published" targetState="unpublished"/>
           </if>
           <hippo:configVariant variant="unpublished" versionable="true" availabilities="preview"/>
-          <hippo:configVariant variant="published" availabilities="null"/>
+          <hippo:configVariant variant="published" availabilities=""/>
           <hippo:version variant="unpublished"/>
         </transition>
 
