@@ -87,6 +87,12 @@ html, body {
 }
 
 /* --- Panel component --- */
+.jstree-hippo li.jstree-node {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+}
+
 .l-sidebar {
     height: 433px;
     overflow-y: auto;
