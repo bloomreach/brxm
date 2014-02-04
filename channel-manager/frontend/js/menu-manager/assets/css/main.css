@@ -38,10 +38,6 @@ html, body {
     display: table-row;
 }
 
-#container .row:first-child {
-    height: 433px;
-}
-
 /* --- Tree --- */
 #menu-tree {
     padding: 0;
@@ -90,8 +86,8 @@ html, body {
     background: url(../images/loader.gif) no-repeat center center;
 }
 
-/* --- jsTree component --- */
-.jstree {
+/* --- Panel component --- */
+.l-sidebar {
     height: 433px;
     overflow-y: auto;
 }

@@ -7,7 +7,6 @@ frontend/.jshintrc -text
 frontend/bower.json -text
 frontend/declutter.config.json -text
 frontend/js/menu-manager/assets/css/main.css -text
-frontend/js/menu-manager/assets/css/tree.css -text
 frontend/js/menu-manager/assets/images/loader.gif -text
 frontend/js/menu-manager/controllers/AddMenuItemCtrl.js -text
 frontend/js/menu-manager/controllers/AddPageCtrl.js -text
