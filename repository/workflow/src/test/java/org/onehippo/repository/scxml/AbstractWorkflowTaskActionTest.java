@@ -36,8 +36,8 @@ import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.TriggerEvent;
 import org.apache.commons.scxml2.env.SimpleDispatcher;
 import org.apache.commons.scxml2.env.SimpleErrorReporter;
-import org.apache.commons.scxml2.env.jexl.JexlContext;
-import org.apache.commons.scxml2.env.jexl.JexlEvaluator;
+import org.apache.commons.scxml2.env.groovy.GroovyContext;
+import org.apache.commons.scxml2.env.groovy.GroovyEvaluator;
 import org.apache.commons.scxml2.model.ModelException;
 import org.apache.commons.scxml2.model.OnEntry;
 import org.apache.commons.scxml2.model.State;
@@ -73,8 +73,8 @@ public class AbstractWorkflowTaskActionTest {
         onEntry = new OnEntry();
         state.setOnEntry(onEntry);
 
-        context = new JexlContext();
-        final Evaluator evaluator = new JexlEvaluator();
+        context = new GroovyContext();
+        final Evaluator evaluator = new GroovyEvaluator();
         scInstance = EasyMock.createNiceMock(SCInstance.class);
         EasyMock.expect(scInstance.getContext(state)).andReturn(context).anyTimes();
         EasyMock.expect(scInstance.getEvaluator()).andReturn(evaluator).anyTimes();
