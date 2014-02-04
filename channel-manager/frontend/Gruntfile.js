@@ -137,15 +137,17 @@ module.exports = function (grunt) {
         },
 
         // validate source code with jslint
-
         jshint: {
             options: {
                 reporter: require('jshint-stylish'),
                 jshintrc: true
             },
-            all: [
+            app: [
                 '<%= build.source %>/menu-manager/**/*.js',
                 '!<%= build.source %>/menu-manager/**/*.spec.js'
+            ],
+            tests: [
+                '<%= build.source %>/menu-manager/**/*.spec.js'
             ]
         },
 
@@ -170,7 +172,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build', function (target) {
         grunt.task.run([
-            'jshint:all',
+            'jshint:app',
             'test:unit',
             'declutter',
             'clean:target',
@@ -180,10 +182,12 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('test', [
+        'jshint:tests',
         'test:unit'
     ]);
 
     grunt.registerTask('test:unit', [
+        'jshint:tests',
         'karma:single'
     ]);
 

@@ -26,6 +26,14 @@
         "module": true,
         "require": true,
         "IE": true,
-        "console": true
+        "console": true,
+
+        "describe": true,
+        "beforeEach": true,
+        "jasmine": true,
+        "inject": true,
+        "it": true,
+        "expect": true,
+        "spyOn": true
     }
 }
