@@ -37,7 +37,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.Operation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.AbstractLockValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.CurrentPreviewValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.NewChildPostLockValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.PostLockValidator;

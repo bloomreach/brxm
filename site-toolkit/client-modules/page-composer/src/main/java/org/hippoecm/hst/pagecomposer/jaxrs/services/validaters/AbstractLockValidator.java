@@ -20,7 +20,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.Operation;
 import org.hippoecm.repository.util.NodeIterable;
 
 public abstract class AbstractLockValidator implements Validator {

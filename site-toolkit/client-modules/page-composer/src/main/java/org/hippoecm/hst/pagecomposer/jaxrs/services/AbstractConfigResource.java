@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 

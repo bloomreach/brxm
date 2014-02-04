@@ -45,7 +45,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.ChildExistsValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.Validator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.WorkspaceNodeValidator;
-import org.hippoecm.repository.util.JcrUtils;
 
 @Path("/" + HstNodeTypes.NODETYPE_HST_SITEMENU + "/")
 @Produces(MediaType.APPLICATION_JSON)
