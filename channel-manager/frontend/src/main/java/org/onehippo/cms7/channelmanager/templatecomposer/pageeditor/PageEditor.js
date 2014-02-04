@@ -1025,6 +1025,7 @@
                 locale: this.locale,
                 menuId: uuid
             });
+            editMenuWindow.on('close', this.refreshIframe, this);
             editMenuWindow.show();
         },
 
