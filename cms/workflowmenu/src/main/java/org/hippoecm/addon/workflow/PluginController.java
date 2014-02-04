@@ -23,6 +23,7 @@ import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.InheritingPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
@@ -86,6 +87,29 @@ class PluginController implements IClusterable {
         childClusterConfig.addPlugin(childPluginConfig);
 
         IClusterControl control = context.newCluster(childClusterConfig, null);
+        control.start();
+
+        clusters.add(new Cluster(control, modelRef));
+
+        return context.getService(wicketRenderId, IRenderService.class);
+    }
+
+    public IRenderService startRenderer(IClusterConfig config, WorkflowDescriptorModel wdm) {
+        if (config == null) {
+            return null;
+        }
+
+        String wicketModelId = baseServiceName + "." + "model" + clusters.size();
+        ModelReference modelRef = new ModelReference(wicketModelId, wdm);
+        modelRef.init(context);
+
+        JavaPluginConfig parameters = new JavaPluginConfig(new InheritingPluginConfig(config, this.config));
+
+        String wicketRenderId = baseServiceName + "." + "id" + clusters.size();
+        parameters.put(RenderService.WICKET_ID, wicketRenderId);
+        parameters.put(RenderService.MODEL_ID, wicketModelId);
+
+        IClusterControl control = context.newCluster(config, parameters);
         control.start();
 
         clusters.add(new Cluster(control, modelRef));
