@@ -36,7 +36,7 @@ public class ChildExistsValidator implements Validator {
     }
 
     @Override
-    public void preValidate() throws RuntimeException {
+    public void validate() throws RuntimeException {
         try {
             HstRequestContext requestContext = RequestContextProvider.get();
             final Session session = requestContext.getSession();
@@ -57,7 +57,4 @@ public class ChildExistsValidator implements Validator {
 
     }
 
-    @Override
-    public void postValidate() throws RuntimeException {
-    }
 }

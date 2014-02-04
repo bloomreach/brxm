@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import javax.jcr.ItemNotFoundException;
@@ -30,12 +32,14 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.Validator;
+import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -162,20 +166,40 @@ public class AbstractConfigResource {
         }
     }
 
-    protected Response tryExecute(Callable<Response> callable, Validator... validators) {
+    protected Response tryExecute(final Callable<Response> callable) {
+        return tryExecute(callable, null);
+    }
+
+    protected Response tryExecute(final Callable<Response> callable,
+                                  final List<Validator> preValidators) {
+        return tryExecute(callable, preValidators, null);
+    }
+
+
+    protected Response tryExecute(final Callable<Response> callable,
+                                  final List<Validator> preValidators,
+                                  final List<Validator> postValidators) {
         try {
-            if (validators != null) {
-                for (Validator validator : validators) {
-                    validator.preValidate();
+            if (RequestContextProvider.get() == null) {
+                // unit test use case. Skip all the jcr based validators and persisting of changes
+                return callable.call();
+            }
+
+            if (preValidators != null) {
+                for (Validator validator : preValidators) {
+                    validator.validate();
                 }
             }
 
             final Response response = callable.call();
 
-            if (validators != null) {
-                for (Validator validator : validators) {
-                    validator.postValidate();
+            if (postValidators != null) {
+                for (Validator validator : postValidators) {
+                    validator.validate();
                 }
+            }
+            if (RequestContextProvider.get().getSession().hasPendingChanges()) {
+                HstConfigurationUtils.persistChanges(RequestContextProvider.get().getSession());
             }
             return response;
         } catch (IllegalStateException | IllegalArgumentException | ItemNotFoundException e) {

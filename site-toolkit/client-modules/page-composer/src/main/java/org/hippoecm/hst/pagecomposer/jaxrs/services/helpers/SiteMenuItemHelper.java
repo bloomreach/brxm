@@ -21,48 +21,27 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.Node;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
-import javax.jcr.ValueFormatException;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.version.VersionException;
 
-import com.google.common.collect.Iterables;
-
-import org.hippoecm.hst.configuration.site.HstSite;
-import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.AbstractConfigResource;
 
-import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES;
-import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_REPOBASED;
-import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_ROLES;
 
 public class SiteMenuItemHelper extends AbstractHelper {
-
-    private final SiteMenuHelper menuHelper = new SiteMenuHelper();
 
     @Override
     public <T> T getConfigObject(final String itemId) {
         throw new UnsupportedOperationException("Cannot fetch site menu item without menu id");
     }
 
-    /**
-     * Saves the properties of the new item into the node, provided that the names of the node and the item are equal.
-     *
-     * @param node    a newly created node
-     * @param newItem an item containing the property values for the node
-     * @throws RepositoryException
-     */
-    public void save(Node node, SiteMenuItemRepresentation newItem) throws RepositoryException {
-        assert node.getName().equals(newItem.getName()) : "Precondition violated: node and item name must be equal";
-        update(node, newItem);
+    public Node create(Node parent, SiteMenuItemRepresentation newItem) throws RepositoryException {
+        final Node newChild = parent.addNode(newItem.getName(), HstNodeTypes.NODETYPE_HST_SITEMENUITEM);
+        update(newChild, newItem);
+        return newChild;
     }
 
     /**

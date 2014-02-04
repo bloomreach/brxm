@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-package org.hippoecm.hst.pagecomposer.jaxrs.services.validaters;
+package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
-public interface Validator {
-
-    /**
-     * if not valid, throws a RuntimeException
-     */
-    void validate() throws RuntimeException;
-
+public enum Operation {
+    CREATE, DELETE, MOVE, UPDATE
 }

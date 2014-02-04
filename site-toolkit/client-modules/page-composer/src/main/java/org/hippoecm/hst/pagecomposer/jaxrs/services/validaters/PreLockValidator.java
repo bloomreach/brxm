@@ -25,19 +25,26 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.Operation;
+import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
+import org.hippoecm.repository.util.NodeIterable;
 
-public class WorkspaceNodeValidator implements Validator {
+public class PreLockValidator extends AbstractLockValidator {
 
-    final String id;
-    final String requiredNodeType;
+    private final String id;
+    private final Operation operation;
+    private String itemNodeType;
+    private String rootNodeType;
 
-    public WorkspaceNodeValidator(final String id){
-        this(id, null);
-    }
-
-    public WorkspaceNodeValidator(final String id, final String requiredNodeType){
+    public PreLockValidator(final String id,
+                            final Operation operation,
+                            final String itemNodeType,
+                            final String rootNodeType){
         this.id = id;
-        this.requiredNodeType = requiredNodeType;
+        this.operation = operation;
+        this.itemNodeType = itemNodeType;
+        this.rootNodeType = rootNodeType;
+
     }
 
     @Override
@@ -46,13 +53,19 @@ public class WorkspaceNodeValidator implements Validator {
             HstRequestContext requestContext = RequestContextProvider.get();
             final Session session = requestContext.getSession();
             final Node node = session.getNodeByIdentifier(id);
-            if (requiredNodeType != null && !node.isNodeType(requiredNodeType)) {
-                throw new IllegalArgumentException("Required node of type '"+requiredNodeType+"' but node '"+node.getPath()+"' of " +
-                        "type '"+node.getPrimaryNodeType().getName()+"' found." );
+            if (!node.isNodeType(itemNodeType)) {
+                throw new IllegalArgumentException("Expected node of type '"+itemNodeType+
+                        "' but was '"+node.getPrimaryNodeType().getName()+"'");
             }
 
-            if (!isWorkspaceNode(node)) {
-                throw new IllegalArgumentException("Required workspace node but '"+node.getPath()+"' is not part of hst:workspace");
+            // assert not self or ancestor locked
+            if (isLockedDeep(node, rootNodeType)) {
+                throw new IllegalStateException("'"+node.getPath()+"' is part of a deep lock. Cannot perform '"+operation+"'");
+            }
+
+            // id an descendant is locked, only Operation.ADD is allowed
+            if (isLockedOperation(node, rootNodeType, operation)) {
+                throw new IllegalStateException("'"+operation+"' is not allowed for '"+node.getPath()+"' due to locked descendant");
             }
 
         } catch (ItemNotFoundException e) {
@@ -63,16 +76,5 @@ public class WorkspaceNodeValidator implements Validator {
 
     }
 
-    private boolean isWorkspaceNode(final Node node) throws RepositoryException {
-        Node cr = node;
-        Node root = cr.getSession().getRootNode();
-        while (!cr.isSame(root)) {
-            if (node.isNodeType(HstNodeTypes.NODETYPE_HST_WORKSPACE)) {
-                return true;
-            }
-            cr = cr.getParent();
-        }
-        return false;
-    }
 
 }

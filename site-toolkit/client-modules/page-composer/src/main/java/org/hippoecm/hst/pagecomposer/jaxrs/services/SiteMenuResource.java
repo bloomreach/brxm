@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import javax.jcr.Node;
@@ -40,7 +42,10 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper;
-import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.ChildExistsValidator;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.Validator;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.WorkspaceNodeValidator;
+import org.hippoecm.repository.util.JcrUtils;
 
 @Path("/" + HstNodeTypes.NODETYPE_HST_SITEMENU + "/")
 @Produces(MediaType.APPLICATION_JSON)
@@ -87,120 +92,106 @@ public class SiteMenuResource extends AbstractConfigResource {
     }
 
     @POST
-    @Path("/create/{parentTargetId}")
+    @Path("/create/{parentId}")
     public Response create(final @Context HstRequestContext requestContext,
-                           final @PathParam("parentTargetId") String parentTargetId,
+                           final @PathParam("parentId") String parentId,
                            final SiteMenuItemRepresentation newMenuItem) {
+        List<Validator> preValidators = getDefaultMenuModificationValidators(requestContext);
+        preValidators.add(new WorkspaceNodeValidator(parentId));
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
                 final Session session = requestContext.getSession();
-
                 final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
-                final Node parentNode = getParentNode(parentTargetId, session, menu);
-                final Node menuItemNode = parentNode.addNode(newMenuItem.getName(), HstNodeTypes.NODETYPE_HST_SITEMENUITEM);
-                siteMenuItemHelper.save(menuItemNode, newMenuItem);
-                HstConfigurationUtils.persistChanges(session);
-
+                final Node parentNode = getParentNode(parentId, session, menu);
+                Node menuItemNode = siteMenuItemHelper.create(parentNode, newMenuItem);
                 return ok("Item created successfully", menuItemNode.getIdentifier());
             }
-        });
+        }, preValidators);
     }
+
 
     @POST
     @Path("/update")
     public Response update(final @Context HstRequestContext requestContext, final SiteMenuItemRepresentation modifiedItem) {
+        
+        List<Validator> preValidators = getDefaultMenuModificationValidators(requestContext);
+        preValidators.add(new WorkspaceNodeValidator(modifiedItem.getId()));
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
                 final Session session = requestContext.getSession();
-
-                final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
-                final String itemId = modifiedItem.getId();
-                // call below is needed to assure item exists : replace with a validator
-                final HstSiteMenuItemConfiguration menuItem = siteMenuHelper.getMenuItem(menu, itemId);
-                final CanonicalInfo menuItemInfo = getCanonicalInfo(menuItem);
-                final Node menuItemNode = session.getNodeByIdentifier(menuItemInfo.getCanonicalIdentifier());
+                final Node menuItemNode = session.getNodeByIdentifier(modifiedItem.getId());
                 siteMenuItemHelper.update(menuItemNode, modifiedItem);
-                HstConfigurationUtils.persistChanges(session);
-
-                return ok("Item updated successfully", itemId);
+                return ok("Item updated successfully", modifiedItem.getId());
             }
-        });
+        }, preValidators);
     }
 
     @POST
-    @Path("/move/{sourceId}/{parentTargetId}")
+    @Path("/move/{sourceId}/{parentId}")
     public Response move(@Context HstRequestContext requestContext,
                          @PathParam("sourceId") String sourceId,
-                         @PathParam("parentTargetId") String parentTargetId) {
-        return move(requestContext, sourceId, parentTargetId, null);
+                         @PathParam("parentId") String parentId) {
+        return move(requestContext, sourceId, parentId, null);
     }
 
     @POST
-    @Path("/move/{sourceId}/{parentTargetId}/{childTargetId}")
+    @Path("/move/{sourceId}/{parentId}/{beforeChildId}")
     public Response move(final @Context HstRequestContext requestContext,
                          final @PathParam("sourceId") String sourceId,
-                         final @PathParam("parentTargetId") String parentTargetId,
-                         final @PathParam("childTargetId") String childTargetId) {
+                         final @PathParam("parentId") String parentId,
+                         final @PathParam("beforeChildId") String beforeChildId) {
+        List<Validator> preValidators = getDefaultMenuModificationValidators(requestContext);
+        preValidators.add(new WorkspaceNodeValidator(sourceId));
+        preValidators.add(new WorkspaceNodeValidator(parentId));
+        if (StringUtils.isNotBlank(beforeChildId)) {
+            preValidators.add(new ChildExistsValidator(parentId, beforeChildId));
+        }
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
                 final Session session = requestContext.getSession();
+                final Node parent = session.getNodeByIdentifier(parentId);
+                final Node source = session.getNodeByIdentifier(sourceId);
 
-                final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
-                final Node parent = getParentNode(parentTargetId, session, menu);
-
-                final HstSiteMenuItemConfiguration sourceItem = siteMenuHelper.getMenuItem(menu, sourceId);
-                final CanonicalInfo sourceItemInfo = getCanonicalInfo(sourceItem);
-                final Node source = session.getNodeByIdentifier(sourceItemInfo.getCanonicalIdentifier());
-
-                if (!parentTargetId.equals(source.getParent().getIdentifier())) {
+                if (!source.getParent().isSame(parent)) {
                     siteMenuItemHelper.move(source, parent);
                 }
-                if (StringUtils.isNotBlank(childTargetId)) {
-                    final HstSiteMenuItemConfiguration targetChildItem = siteMenuHelper.getMenuItem(menu, childTargetId);
-                    final CanonicalInfo targetChildItemInfo = getCanonicalInfo(targetChildItem);
-                    final Node child = session.getNodeByIdentifier(targetChildItemInfo.getCanonicalIdentifier());
+                if (StringUtils.isNotBlank(beforeChildId)) {
+                    final Node child = session.getNodeByIdentifier(beforeChildId);
                     parent.orderBefore(source.getName(), child.getName());
                 } else {
                     parent.orderBefore(source.getName(), null);
                 }
-                HstConfigurationUtils.persistChanges(session);
                 return ok("Item moved successfully", sourceId);
             }
-        });
+        }, preValidators);
     }
 
     @POST
     @Path("/delete/{menuItemId}")
     public Response delete(final @Context HstRequestContext requestContext,
                            final @PathParam("menuItemId") String menuItemId) {
+        List<Validator> preValidators = getDefaultMenuModificationValidators(requestContext);
+        preValidators.add(new WorkspaceNodeValidator(menuItemId));
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
                 final Session session = requestContext.getSession();
-
-                final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
-
-                final HstSiteMenuItemConfiguration sourceItem = siteMenuHelper.getMenuItem(menu, menuItemId);
-
-                final CanonicalInfo sourceItemInfo = getCanonicalInfo(sourceItem);
-                final Node source = session.getNodeByIdentifier(sourceItemInfo.getCanonicalIdentifier());
-                source.getSession().removeItem(source.getPath());
-                HstConfigurationUtils.persistChanges(session);
+                session.getNodeByIdentifier(menuItemId).remove();
                 return ok("Item deleted successfully", menuItemId);
             }
-        });
+        }, preValidators);
     }
 
 
-    private Node getParentNode(String parentTargetId, Session session, HstSiteMenuConfiguration menu) throws RepositoryException {
+    private Node getParentNode(String parentId, Session session, HstSiteMenuConfiguration menu) throws RepositoryException {
         final CanonicalInfo menuInfo = getCanonicalInfo(menu);
-        if (menuInfo.getCanonicalIdentifier().equals(parentTargetId)) {
-            return session.getNodeByIdentifier(parentTargetId);
+        if (menuInfo.getCanonicalIdentifier().equals(parentId)) {
+            return session.getNodeByIdentifier(parentId);
         } else {
-            final HstSiteMenuItemConfiguration targetParentItem = siteMenuHelper.getMenuItem(menu, parentTargetId);
+            final HstSiteMenuItemConfiguration targetParentItem = siteMenuHelper.getMenuItem(menu, parentId);
             final CanonicalInfo targetParentItemInfo = getCanonicalInfo(targetParentItem);
             return session.getNodeByIdentifier(targetParentItemInfo.getCanonicalIdentifier());
         }
@@ -210,6 +201,13 @@ public class SiteMenuResource extends AbstractConfigResource {
         final HstSite editingPreviewHstSite = getEditingPreviewSite(requestContext);
         final String menuId = getRequestConfigIdentifier(requestContext);
         return siteMenuHelper.getMenu(editingPreviewHstSite, menuId);
+    }
+
+
+    private List<Validator> getDefaultMenuModificationValidators(final HstRequestContext requestContext) {
+        List<Validator> preValidators = new ArrayList<>();
+        preValidators.add(new WorkspaceNodeValidator(getRequestConfigIdentifier(requestContext), HstNodeTypes.NODETYPE_HST_SITEMENU));
+        return preValidators;
     }
 
 }

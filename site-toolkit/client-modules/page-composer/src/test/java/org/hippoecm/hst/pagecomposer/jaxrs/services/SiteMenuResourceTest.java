@@ -146,14 +146,11 @@ public class SiteMenuResourceTest {
         // Mock creating the site menu item
         final SiteMenuItemRepresentation newMenuItem = new SiteMenuItemRepresentation();
         newMenuItem.setName(name);
-        siteMenuItemHelper.save(node, newMenuItem);
-        expectLastCall().once();
+        expect(siteMenuItemHelper.create(parentNode, newMenuItem)).andReturn(node);
 
-        // Return false, so that we don't have to mock all method calls in
-        // HstConfigurationUtils.persistChanges()
-        expect(session.hasPendingChanges()).andReturn(false);
         final String menuItemId = "menuItemId";
         expect(node.getIdentifier()).andReturn(menuItemId);
+
         replay(mocks);
 
         final Response response = siteMenuResource.create(context, menuId, newMenuItem);
@@ -180,11 +177,6 @@ public class SiteMenuResourceTest {
         modifiedItem.setId(id);
         siteMenuItemHelper.update(node, modifiedItem);
         expectLastCall().once();
-
-        // Return false, so that we don't have to mock all method calls in
-        // HstConfigurationUtils.persistChanges()
-        expect(session.hasPendingChanges()).andReturn(false);
-
         replay(mocks);
 
         final Response response = siteMenuResource.update(context, modifiedItem);
@@ -199,10 +191,15 @@ public class SiteMenuResourceTest {
 
     @Test
     public void testUpdateReturnsServerErrorOnRepositoryException() throws RepositoryException {
+        expect(context.getAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER)).andReturn(null).anyTimes();
         expect(context.getSession()).andThrow(new RepositoryException("failed"));
+
+        final String id = "uuid-of-menu-item";
+        final SiteMenuItemRepresentation modifiedItem = new SiteMenuItemRepresentation();
+        modifiedItem.setId(id);
         replay(mocks);
 
-        final Response response = siteMenuResource.update(context, null);
+        final Response response = siteMenuResource.update(context, modifiedItem);
         assertThat(response.getStatus(), is(SERVER_ERROR));
         assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
 
@@ -214,10 +211,16 @@ public class SiteMenuResourceTest {
 
     @Test
     public void testUpdateReturnsClientErrorOnIllegalStateException() throws RepositoryException {
+        expect(context.getAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER)).andReturn(null).anyTimes();
         expect(context.getSession()).andThrow(new IllegalStateException("failed"));
+
+
+        final String id = "uuid-of-menu-item";
+        final SiteMenuItemRepresentation modifiedItem = new SiteMenuItemRepresentation();
+        modifiedItem.setId(id);
         replay(mocks);
 
-        final Response response = siteMenuResource.update(context, null);
+        final Response response = siteMenuResource.update(context, modifiedItem);
         assertThat(response.getStatus(), is(BAD_REQUEST));
         assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
 
@@ -232,6 +235,7 @@ public class SiteMenuResourceTest {
 
         mockGetPreviewSite();
         mockGetSiteMenu("menuId");
+
         final String sourceId = "sourceId";
         mockGetMenuItem(node, sourceId);
         final String childTargetId = "child";
@@ -241,17 +245,13 @@ public class SiteMenuResourceTest {
         expect(menuConfig.getCanonicalIdentifier()).andReturn("parentId");
         expect(session.getNodeByIdentifier(parentTargetId)).andReturn(parentNode);
         expect(node.getParent()).andReturn(parentNode);
+        expect(parentNode.isSame(parentNode)).andReturn(true);
         expect(parentNode.getIdentifier()).andReturn(parentTargetId);
 
         expect(node.getName()).andReturn("src");
         expect(childNode.getName()).andReturn("dest");
         parentNode.orderBefore("src", "dest");
         expectLastCall().once();
-
-        // Return false, so that we don't have to mock all method calls in
-        // HstConfigurationUtils.persistChanges()
-        expect(session.hasPendingChanges()).andReturn(false);
-
         replay(mocks);
 
         final Response response = siteMenuResource.move(context, sourceId, parentTargetId, childTargetId);
@@ -270,16 +270,9 @@ public class SiteMenuResourceTest {
         mockGetSiteMenu("menuId");
         final String sourceId = "sourceId";
         mockGetMenuItem(node, sourceId);
-
         expect(node.getSession()).andReturn(session);
-        expect(node.getPath()).andReturn("some-path");
-        session.removeItem("some-path");
+        node.remove();
         expectLastCall().once();
-
-        // Return false, so that we don't have to mock all method calls in
-        // HstConfigurationUtils.persistChanges()
-        expect(session.hasPendingChanges()).andReturn(false);
-
         replay(mocks);
 
         final Response response = siteMenuResource.delete(context, sourceId);
@@ -302,7 +295,7 @@ public class SiteMenuResourceTest {
 
     private void mockGetSiteMenu(String menuId) {
         // Mock getting the site menu
-        expect(context.getAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER)).andReturn(menuId);
+        expect(context.getAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER)).andReturn(menuId).anyTimes();
         expect(siteMenuHelper.getMenu(site, menuId)).andReturn(menuConfig);
     }
 

@@ -30,12 +30,8 @@ public class CurrentPreviewValidator implements Validator {
     }
 
     @Override
-    public void preValidate() throws RuntimeException {
+    public void validate() throws RuntimeException {
         helper.getConfigObject(id);
     }
 
-    @Override
-    public void postValidate() throws RuntimeException {
-        return;
-    }
 }

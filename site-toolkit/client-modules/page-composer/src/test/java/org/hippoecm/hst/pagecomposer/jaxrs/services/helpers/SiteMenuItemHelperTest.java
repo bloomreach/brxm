@@ -84,7 +84,7 @@ public class SiteMenuItemHelperTest {
         expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
 
         replay(mocks);
-        siteMenuItemHelper.save(node, newItem);
+        siteMenuItemHelper.create(node, newItem);
     }
 
     @Test(expected = AssertionError.class)
@@ -95,7 +95,7 @@ public class SiteMenuItemHelperTest {
 
         expect(node.getName()).andReturn("b");
         replay(mocks);
-        siteMenuItemHelper.save(node, newItem);
+        siteMenuItemHelper.create(node, newItem);
     }
 
     @Test
@@ -191,10 +191,8 @@ public class SiteMenuItemHelperTest {
 
         expect(node.hasProperty(SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM)).andReturn(true);
         expect(node.getProperty(SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM)).andReturn(property);
-        expect(property.getPath()).andReturn("path");
 
-        expect(node.getSession()).andReturn(session);
-        session.removeItem("path");
+        property.remove();
         expectLastCall().once();
 
         replay(mocks);
@@ -221,10 +219,7 @@ public class SiteMenuItemHelperTest {
 
         expect(node.hasProperty(SITEMENUITEM_PROPERTY_EXTERNALLINK)).andReturn(true);
         expect(node.getProperty(SITEMENUITEM_PROPERTY_EXTERNALLINK)).andReturn(property);
-        expect(property.getPath()).andReturn("path");
-
-        expect(node.getSession()).andReturn(session);
-        session.removeItem("path");
+        property.remove();
         expectLastCall().once();
 
         replay(mocks);
@@ -243,15 +238,10 @@ public class SiteMenuItemHelperTest {
     public void testUpdateLinkToNone() throws RepositoryException {
 
         expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
-
-
         expect(node.hasProperty(SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM)).andReturn(false);
         expect(node.hasProperty(SITEMENUITEM_PROPERTY_EXTERNALLINK)).andReturn(true);
         expect(node.getProperty(SITEMENUITEM_PROPERTY_EXTERNALLINK)).andReturn(property);
-        expect(property.getPath()).andReturn("path");
-
-        expect(node.getSession()).andReturn(session);
-        session.removeItem("path");
+        property.remove();
         expectLastCall().once();
 
         replay(mocks);
