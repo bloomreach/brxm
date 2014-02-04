@@ -41,16 +41,13 @@
             'hippo.channelManager.menuManager.ConfigService',
             'hippo.channelManager.menuManager.MenuService',
             function ($scope, $state, ConfigService, MenuService) {
-
-                console.log('tree ctrl init');
-
                 // fetch initial data
                 $scope.menuTree = [{}];
                 MenuService.getMenu(ConfigService.menuId).then(function (response) {
                     $scope.menuTree = reformatData(response.children);
                 });
 
-                $scope.setSelected = function (itemId) {
+                $scope.navigateTo = function (itemId) {
                     $state.go('menu-item.edit', {menuItemId: itemId});
                 };
 
