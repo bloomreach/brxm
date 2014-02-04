@@ -47,6 +47,7 @@
       <onentry>
         <if cond="supports.document">
           <hippo:info info="status" value="editable"/>
+          <hippo:info info="isLive" value="live"/>
           <hippo:action action="checkModified" value="draft and unpublished"/>
         </if>
       </onentry>
