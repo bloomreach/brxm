@@ -32,7 +32,8 @@
                 var destinationLookupTable = {
                     'SITEMAPITEM': 1,
                     'EXTERNAL': 2,
-                    'NONE': 3};
+                    'NONE': 3
+                };
 
                 // fetch menu item
                 MenuService.getMenuItem(ConfigService.menuId, $stateParams.menuItemId).then(function (response) {
