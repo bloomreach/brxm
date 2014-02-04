@@ -3,6 +3,7 @@
 /NOTICE -text
 frontend-api/src/main/appended-resources/META-INF/LICENSE -text
 frontend/.bowerrc -text
+frontend/.jshintrc -text
 frontend/bower.json -text
 frontend/declutter.config.json -text
 frontend/js/menu-manager/assets/css/main.css -text

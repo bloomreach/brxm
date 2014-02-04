@@ -106,7 +106,7 @@ module.exports = function (grunt) {
                 files: [
                     '<%= build.source %>/menu-manager/**/*'
                 ],
-                tasks: ['copy:menuManager']
+                tasks: ['jshint', 'copy:menuManager']
             },
 
             components: {
@@ -137,46 +137,16 @@ module.exports = function (grunt) {
         },
 
         // validate source code with jslint
-        jslint: {
-            menuManager: {
-                src: [
-                    '<%= build.source %>/menu-manager/**/*.js'
-                ],
-                exclude: [
-                    '<%= build.source %>/menu-manager/**/*.spec.js'
-                ],
-                directives: {
-                    predef: [
-                        '_',
-                        'angular'
-                    ],
-                    browser: true,
-                    nomen: true,
-                    todo: true,
-                    white: true
-                }
+
+        jshint: {
+            options: {
+                reporter: require('jshint-stylish'),
+                jshintrc: true
             },
-            tests: {
-                src: [
-                    '<%= build.source %>/menu-manager/**/*.spec.js'
-                ],
-                directives: {
-                    predef: [
-                        'after',
-                        'afterEach',
-                        'before',
-                        'beforeEach',
-                        'describe',
-                        'expect',
-                        'inject',
-                        'jasmine',
-                        'module',
-                        'it',
-                        'spyOn'
-                    ],
-                    white: true
-                }
-            }
+            all: [
+                '<%= build.source %>/menu-manager/**/*.js',
+                '!<%= build.source %>/menu-manager/**/*.spec.js'
+            ]
         },
 
         // testing with karma
@@ -200,7 +170,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build', function (target) {
         grunt.task.run([
-            'jslint',
+            'jshint:all',
             'test:unit',
             'declutter',
             'clean:target',
