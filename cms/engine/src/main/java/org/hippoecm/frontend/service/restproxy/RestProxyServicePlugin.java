@@ -32,14 +32,18 @@ import javax.ws.rs.core.MediaType;
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.params.ClientPNames;
+import org.apache.http.impl.client.ClientParamsStack;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.CoreConnectionPNames;
+import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.codehaus.jackson.Version;
@@ -79,6 +83,7 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
     private static final long serialVersionUID = 1L;
     private static final JacksonJaxbJsonProvider defaultJJJProvider;
 
+    private final static int FIRST_TIME_PING_SERVLET_TIMEOUT = 20000;
     private final static int PING_SERVLET_TIMEOUT = 1000;
     private final static int MAX_CONNECTIONS = 50;
     private final String pingServiceUri;
@@ -103,7 +108,24 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         PoolingClientConnectionManager mgr = new PoolingClientConnectionManager();
         mgr.setDefaultMaxPerRoute(MAX_CONNECTIONS);
         mgr.setMaxTotal(MAX_CONNECTIONS);
-        httpClient = new DefaultHttpClient(mgr);
+        final BasicHttpParams overrideParams = new BasicHttpParams();
+        overrideParams.setIntParameter(CoreConnectionPNames.SO_TIMEOUT, FIRST_TIME_PING_SERVLET_TIMEOUT);
+        overrideParams.setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, FIRST_TIME_PING_SERVLET_TIMEOUT);
+        httpClient = new DefaultHttpClient(mgr) {
+            private volatile long start = -1;
+            @Override
+            protected HttpParams determineParams(final HttpRequest req) {
+                // At first we wait a little longer for the response, in order to give the application time to start up
+                if (start == -1) {
+                    start = System.currentTimeMillis();
+                }
+                if (System.currentTimeMillis() - start < FIRST_TIME_PING_SERVLET_TIMEOUT) {
+                    return new ClientParamsStack(null, getParams(), req.getParams(), overrideParams);
+                } else {
+                    return super.determineParams(req);
+                }
+            }
+        };
         // @see http://hc.apache.org/httpcomponents-client-ga/tutorial/html/connmgmt.html#d5e399
         httpClient.getParams().setIntParameter(CoreConnectionPNames.SO_TIMEOUT, PING_SERVLET_TIMEOUT);
         httpClient.getParams().setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, PING_SERVLET_TIMEOUT);
@@ -251,17 +273,14 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
             normalizedPingServiceUri = URLEncoder.encode(pingServiceUri, Charset.defaultCharset().name())
                     .replaceAll("%2F", "/").replaceAll("%3A", ":");
 
-            // Set the timeout for the HTTP connection in milliseconds, if the configuration parameter is missing or not set
-            // use default value of 1 second
             httpGet = new HttpGet(normalizedPingServiceUri);
-            // @see http://hc.apache.org/httpcomponents-client-ga/tutorial/html/connmgmt.html#d5e639
             final HttpContext httpContext = new BasicHttpContext();
             final HttpResponse httpResponse = httpClient.execute(httpGet, httpContext);
             boolean ok = (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK);
             if (!ok) {
                 log.warn("The response status ('{}') is not okay from the pinging site service URI, '{}'.", httpResponse.getStatusLine(), normalizedPingServiceUri);
             }
-            siteIsAlive = new Boolean(ok);
+            siteIsAlive = ok;
         } catch (IOException e) {
             if (log.isDebugEnabled()) {
                 log.warn("Error while pinging site using URI " + normalizedPingServiceUri, e);
