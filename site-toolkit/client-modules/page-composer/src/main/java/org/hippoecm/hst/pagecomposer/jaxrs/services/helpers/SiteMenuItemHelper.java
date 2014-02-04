@@ -26,6 +26,7 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
+import org.hippoecm.repository.util.NodeIterable;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM;
@@ -107,15 +108,15 @@ public class SiteMenuItemHelper extends AbstractHelper {
 
     private void rename(Node node, String newName) throws RepositoryException {
         final Node parent = node.getParent();
-        // remember the successor name, to be able to restore the node's position
-        final String successorName = getSuccessorName(node, parent);
+        // remember the next sibling name, to be able to restore the node's position
+        final String nextSiblingName = getNextSiblingName(node, parent);
         // rename the node by moving it within the same parent
         move(node, newName, parent);
         // restore the position
-        parent.orderBefore(newName, successorName);
+        parent.orderBefore(newName, nextSiblingName);
     }
 
-    private String getSuccessorName(final Node node, final Node parent) throws RepositoryException {
+    private String getNextSiblingName(final Node node, final Node parent) throws RepositoryException {
         final String currentName = node.getName();
         final Iterator<Node> children = parent.getNodes();
         while (children.hasNext() && !children.next().getName().equals(currentName)) {
