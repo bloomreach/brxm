@@ -351,15 +351,17 @@ public class WorkflowManagerImpl implements WorkflowManager {
             } else if (WorkflowImpl.class.isAssignableFrom(clazz)) {
                 try {
                     workflow = clazz.newInstance();
-                    Node rootSessionNode = rootSession.getNodeByIdentifier(uuid);
-                    ((WorkflowImpl) workflow).setWorkflowContext(new WorkflowContextNodeImpl(workflowDefinition, item.getSession(), item));
-                    ((WorkflowImpl) workflow).setNode(rootSessionNode);
                 } catch (Exception ex) {
                     // TODO DEJDO?
                     throw new RepositoryException("Workflow class [" + clazz.getName() + "] instantiation exception", ex);
                 }
             } else {
                 throw new RepositoryException("Unsupported type of workflow class [" + clazz.getName() + "]");
+            }
+            if (WorkflowImpl.class.isAssignableFrom(clazz)) {
+                Node rootSessionNode = rootSession.getNodeByIdentifier(uuid);
+                ((WorkflowImpl) workflow).setWorkflowContext(new WorkflowContextNodeImpl(workflowDefinition, item.getSession(), item));
+                ((WorkflowImpl) workflow).setNode(rootSessionNode);
             }
             return workflow;
         }
