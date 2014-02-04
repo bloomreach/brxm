@@ -41,8 +41,8 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.CurrentPreviewVal
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.NewChildPostLockValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.PostLockValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.PreLockValidator;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.PreviewWorkspaceNodeValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.Validator;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.WorkspaceNodeValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +75,7 @@ public class SiteMapResource extends AbstractConfigResource {
         preValidators.add(new CurrentPreviewValidator(siteMapItem.getId(), siteMapHelper));
         preValidators.add(new PreLockValidator(siteMapItem.getId(), Operation.UPDATE,
                 HstNodeTypes.NODETYPE_HST_SITEMAPITEM, HstNodeTypes.NODETYPE_HST_SITEMAP));
-        preValidators.add(new WorkspaceNodeValidator(siteMapItem.getId(), HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
+        preValidators.add(new PreviewWorkspaceNodeValidator(siteMapItem.getId(), HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
 
         final List<Validator> postValidators = new ArrayList<>();
         postValidators.add(new PostLockValidator(siteMapItem.getId(), Operation.UPDATE,
@@ -108,7 +108,7 @@ public class SiteMapResource extends AbstractConfigResource {
         if (parentId != null) {
             preValidators.add(new PreLockValidator(parentId, Operation.CREATE,
                     HstNodeTypes.NODETYPE_HST_SITEMAPITEM, HstNodeTypes.NODETYPE_HST_SITEMAP));
-            preValidators.add(new WorkspaceNodeValidator(parentId, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
+            preValidators.add(new PreviewWorkspaceNodeValidator(parentId, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
         }
 
         final List<Validator> postValidators = new ArrayList<>();
@@ -141,8 +141,8 @@ public class SiteMapResource extends AbstractConfigResource {
         final List<Validator> preValidators = new ArrayList<>();
         preValidators.add(new CurrentPreviewValidator(id, siteMapHelper));
         preValidators.add(new CurrentPreviewValidator(parentId, siteMapHelper));
-        preValidators.add(new WorkspaceNodeValidator(id, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
-        preValidators.add(new WorkspaceNodeValidator(parentId, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
+        preValidators.add(new PreviewWorkspaceNodeValidator(id, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
+        preValidators.add(new PreviewWorkspaceNodeValidator(parentId, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
 
         preValidators.add(new PreLockValidator(id, Operation.MOVE,
                 HstNodeTypes.NODETYPE_HST_SITEMAPITEM, HstNodeTypes.NODETYPE_HST_SITEMAP));

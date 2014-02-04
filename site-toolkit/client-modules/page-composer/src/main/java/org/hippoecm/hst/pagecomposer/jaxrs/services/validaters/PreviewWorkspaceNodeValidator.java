@@ -26,16 +26,16 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
-public class WorkspaceNodeValidator implements Validator {
+public class PreviewWorkspaceNodeValidator implements Validator {
 
     final String id;
     final String requiredNodeType;
 
-    public WorkspaceNodeValidator(final String id){
+    public PreviewWorkspaceNodeValidator(final String id){
         this(id, null);
     }
 
-    public WorkspaceNodeValidator(final String id, final String requiredNodeType){
+    public PreviewWorkspaceNodeValidator(final String id, final String requiredNodeType){
         this.id = id;
         this.requiredNodeType = requiredNodeType;
     }
@@ -51,7 +51,7 @@ public class WorkspaceNodeValidator implements Validator {
                         "type '"+node.getPrimaryNodeType().getName()+"' found." );
             }
 
-            if (!isWorkspaceNode(node)) {
+            if (!isPreviewWorkspaceNode(node)) {
                 throw new IllegalArgumentException("Required workspace node but '"+node.getPath()+"' is not part of hst:workspace");
             }
 
@@ -63,11 +63,11 @@ public class WorkspaceNodeValidator implements Validator {
 
     }
 
-    private boolean isWorkspaceNode(final Node node) throws RepositoryException {
+    private boolean isPreviewWorkspaceNode(final Node node) throws RepositoryException {
         Node cr = node;
         Node root = cr.getSession().getRootNode();
         while (!cr.isSame(root)) {
-            if (node.isNodeType(HstNodeTypes.NODETYPE_HST_WORKSPACE)) {
+            if (cr.isNodeType(HstNodeTypes.NODETYPE_HST_WORKSPACE) && cr.getParent().getName().endsWith("-preview")) {
                 return true;
             }
             cr = cr.getParent();
