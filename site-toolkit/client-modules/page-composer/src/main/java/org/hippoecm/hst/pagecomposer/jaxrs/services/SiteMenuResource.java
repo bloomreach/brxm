@@ -87,17 +87,18 @@ public class SiteMenuResource extends AbstractConfigResource {
     }
 
     @POST
-    @Path("/create")
-    public Response create(final @Context HstRequestContext requestContext, final SiteMenuItemRepresentation newMenuItem) {
+    @Path("/create/{parentTargetId}")
+    public Response create(final @Context HstRequestContext requestContext,
+                           final @PathParam("parentTargetId") String parentTargetId,
+                           final SiteMenuItemRepresentation newMenuItem) {
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
                 final Session session = requestContext.getSession();
 
                 final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
-                final CanonicalInfo menuInfo = (CanonicalInfo) menu;
-                final Node menuNode = session.getNodeByIdentifier(menuInfo.getCanonicalIdentifier());
-                final Node menuItemNode = menuNode.addNode(newMenuItem.getName(), HstNodeTypes.NODETYPE_HST_SITEMENUITEM);
+                final Node parentNode = getParentNode(parentTargetId, session, menu);
+                final Node menuItemNode = parentNode.addNode(newMenuItem.getName(), HstNodeTypes.NODETYPE_HST_SITEMENUITEM);
                 siteMenuItemHelper.save(menuItemNode, newMenuItem);
                 HstConfigurationUtils.persistChanges(session);
 

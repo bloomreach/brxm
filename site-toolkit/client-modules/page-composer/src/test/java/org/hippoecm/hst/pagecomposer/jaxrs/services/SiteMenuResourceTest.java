@@ -131,7 +131,7 @@ public class SiteMenuResourceTest {
     }
 
     @Test
-    public void testCreate() throws RepositoryException {
+    public void testCreateAsChildOfMenu() throws RepositoryException {
 
         mockGetPreviewSite();
         final String menuId = "uuid-of-menu";
@@ -156,7 +156,7 @@ public class SiteMenuResourceTest {
         expect(node.getIdentifier()).andReturn(menuItemId);
         replay(mocks);
 
-        final Response response = siteMenuResource.create(context, newMenuItem);
+        final Response response = siteMenuResource.create(context, menuId, newMenuItem);
 
         assertThat(response.getStatus(), is(OK));
         assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
