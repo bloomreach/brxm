@@ -28,11 +28,31 @@
   <artifactId>hippo-cms-richtext-ckeditor-resources</artifactId>
   <packaging>jar</packaging>
 
+  <properties>
+    <hippo.ckeditor.version>4.3.0-h5-SNAPSHOT</hippo.ckeditor.version>
+  </properties>
+
   <dependencies>
 
     <dependency>
       <groupId>org.apache.wicket</groupId>
       <artifactId>wicket-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-ckeditor</artifactId>
+      <classifier>optimized</classifier>
+      <version>${hippo.ckeditor.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-ckeditor</artifactId>
+      <classifier>sources</classifier>
+      <version>${hippo.ckeditor.version}</version>
+      <scope>runtime</scope>
     </dependency>
 
     <dependency>
