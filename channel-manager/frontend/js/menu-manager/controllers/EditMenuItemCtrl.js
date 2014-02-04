@@ -29,6 +29,11 @@
             function ($scope, $routeParams, $stateParams, $state, MenuService, ConfigService) {
                 console.log('edit menu item ctrl init');
 
+                var destinationLookupTable = {
+                    'SITEMAPITEM': 1,
+                    'EXTERNAL': 2,
+                    'NONE': 3};
+
                 // fetch menu item
                 MenuService.getMenuItem(ConfigService.menuId, $stateParams.menuItemId).then(function (response) {
                     setDestinationProperty(response);
@@ -37,13 +42,7 @@
 
                 function setDestinationProperty(item) {
                     if (item && !item.destination) {
-                        if (item.linkType === 'EXTERNAL') {
-                            item.destination = 2;
-                        } else if (item.linkType = 'SITEMAPITEM') {
-                            item.destination = 1;
-                        } else {
-                            item.destination = 3;
-                        }
+                        item.destination = destinationLookupTable[item.linkType];
                     }
                 }
 
