@@ -37,9 +37,9 @@
 
                 function setDestinationProperty(item) {
                     if (item && !item.destination) {
-                        if (item.externalLink) {
+                        if (item.linkType === 'EXTERNAL') {
                             item.destination = 2;
-                        } else if (item.siteMapItemPath) {
+                        } else if (item.linkType = 'SITEMAPITEM') {
                             item.destination = 1;
                         } else {
                             item.destination = 3;

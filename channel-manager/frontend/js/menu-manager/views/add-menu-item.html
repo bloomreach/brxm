@@ -46,7 +46,7 @@
         <div class="form-group" ng-show="selectedMenuItem.destination == 1">
             <label for="url">{{ 'INTERNAL_LINK' | translate }}</label>
             <div class="input-group">
-                <input type="text" class="form-control" id="url" data-ng-model="selectedMenuItem.siteMapItemPath">
+                <input type="text" class="form-control" id="url" data-ng-model="selectedMenuItem.link">
                   <span class="input-group-btn">
                     <button class="btn btn-default" type="button"><i class="fa fa-external-link"></i></button>
                   </span>
@@ -65,7 +65,7 @@
         </div>
         <div class="form-group" ng-show="selectedMenuItem.destination == 2">
             <label for="link">{{ 'EXTERNAL_LINK' | translate }}</label>
-            <input type="text" class="form-control" id="link" placeholder="{{ 'EXAMPLE_DOMAIN' | translate }}" ng-model="selectedMenuItem.externalLink">
+            <input type="text" class="form-control" id="link" placeholder="{{ 'EXAMPLE_DOMAIN' | translate }}" ng-model="selectedMenuItem.link">
         </div>
 
         <button type="submit" class="btn btn-default" ng-click="submit(newitem)">{{ 'CREATE_MENU_ITEM' | translate }}</button>
