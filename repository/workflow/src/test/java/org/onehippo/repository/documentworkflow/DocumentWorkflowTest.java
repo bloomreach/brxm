@@ -32,7 +32,7 @@ import org.apache.jackrabbit.util.ISO8601;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.RepositoryMap;
-import org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType;
+import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;

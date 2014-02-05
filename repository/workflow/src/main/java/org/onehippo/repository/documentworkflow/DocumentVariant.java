@@ -24,7 +24,7 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType;
+import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 
 public class DocumentVariant extends Document {

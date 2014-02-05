@@ -22,7 +22,7 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.RepositoryMap;
-import org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType;
+import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
 

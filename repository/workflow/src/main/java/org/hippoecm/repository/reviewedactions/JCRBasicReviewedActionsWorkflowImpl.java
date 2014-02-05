@@ -39,6 +39,7 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.util.CopyHandler;
 import org.hippoecm.repository.util.JcrUtils;

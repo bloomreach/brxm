@@ -35,7 +35,7 @@ import javax.jcr.version.VersionIterator;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType;
+import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.util.CopyHandler;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeInfo;
