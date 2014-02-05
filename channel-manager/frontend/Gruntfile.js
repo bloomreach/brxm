@@ -111,7 +111,7 @@ module.exports = function (grunt) {
 
             components: {
                 files: [
-                    '<%= build.source %>/components'
+                    '<%= build.source %>/components/**/*'
                 ],
                 tasks: ['copy:components']
             },
