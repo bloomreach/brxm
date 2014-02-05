@@ -139,17 +139,17 @@ public class MountResource extends AbstractConfigResource {
         }
     }
 
-    Set<String> findUsersWithLockedMainConfigNodes(final HippoSession session, String previewConfigurationPath) throws RepositoryException {
+    static Set<String> findUsersWithLockedMainConfigNodes(final HippoSession session, String previewConfigurationPath) throws RepositoryException {
         final String xpath = buildXPathQueryToFindLockedMainConfigNodesForUsers(previewConfigurationPath);
         return collectFromQueryUsersForLockedBy(session, xpath);
     }
 
-    Set<String> findUsersWithLockedContainers(final HippoSession session, String previewConfigurationPath) throws RepositoryException {
+    static Set<String> findUsersWithLockedContainers(final HippoSession session, String previewConfigurationPath) throws RepositoryException {
         final String xpath = buildXPathQueryToFindLockedContainersForUsers(previewConfigurationPath);
         return collectFromQueryUsersForLockedBy(session, xpath);
     }
 
-    private Set<String> collectFromQueryUsersForLockedBy(final HippoSession session, final String xpath) throws RepositoryException {
+    private static Set<String> collectFromQueryUsersForLockedBy(final HippoSession session, final String xpath) throws RepositoryException {
         final QueryResult result = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH).execute();
         final NodeIterable lockedContainers = new NodeIterable(result.getNodes());
         Set<String> userIds = new HashSet<String>();

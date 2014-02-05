@@ -35,12 +35,8 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.Operation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.CurrentPreviewValidator;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.NewChildPostLockValidator;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.PostLockValidator;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.PreLockValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.PreviewWorkspaceNodeValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.Validator;
 import org.slf4j.Logger;
@@ -73,13 +69,7 @@ public class SiteMapResource extends AbstractConfigResource {
     public Response update(final SiteMapItemRepresentation siteMapItem) {
         final List<Validator> preValidators = new ArrayList<>();
         preValidators.add(new CurrentPreviewValidator(siteMapItem.getId(), siteMapHelper));
-        preValidators.add(new PreLockValidator(siteMapItem.getId(), Operation.UPDATE,
-                HstNodeTypes.NODETYPE_HST_SITEMAPITEM, HstNodeTypes.NODETYPE_HST_SITEMAP));
         preValidators.add(new PreviewWorkspaceNodeValidator(siteMapItem.getId(), HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
-
-        final List<Validator> postValidators = new ArrayList<>();
-        postValidators.add(new PostLockValidator(siteMapItem.getId(), Operation.UPDATE,
-                HstNodeTypes.NODETYPE_HST_SITEMAPITEM, HstNodeTypes.NODETYPE_HST_SITEMAP));
 
         return tryExecute(new Callable<Response>() {
             @Override
@@ -87,7 +77,7 @@ public class SiteMapResource extends AbstractConfigResource {
                 siteMapHelper.update(siteMapItem);
                 return ok("Item updated successfully", siteMapItem.getId());
             }
-        }, preValidators, postValidators);
+        }, preValidators);
     }
 
 
@@ -106,16 +96,8 @@ public class SiteMapResource extends AbstractConfigResource {
         preValidators.add(new CurrentPreviewValidator(siteMapItem.getId(), siteMapHelper));
 
         if (parentId != null) {
-            preValidators.add(new PreLockValidator(parentId, Operation.CREATE,
-                    HstNodeTypes.NODETYPE_HST_SITEMAPITEM, HstNodeTypes.NODETYPE_HST_SITEMAP));
             preValidators.add(new PreviewWorkspaceNodeValidator(parentId, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
         }
-
-        final List<Validator> postValidators = new ArrayList<>();
-        postValidators.add(new NewChildPostLockValidator(parentId, siteMapItem.getName(), Operation.CREATE,
-                HstNodeTypes.NODETYPE_HST_SITEMAPITEM, HstNodeTypes.NODETYPE_HST_SITEMAP));
-        postValidators.add(new PostLockValidator(parentId , Operation.CREATE,
-                HstNodeTypes.NODETYPE_HST_SITEMAPITEM, HstNodeTypes.NODETYPE_HST_SITEMAP));
 
         return tryExecute(new Callable<Response>() {
             @Override
@@ -123,7 +105,7 @@ public class SiteMapResource extends AbstractConfigResource {
                 siteMapHelper.create(siteMapItem, parentId);
                 return ok("Item updated successfully", siteMapItem.getId());
             }
-        }, preValidators, postValidators);
+        }, preValidators);
     }
 
 
@@ -144,25 +126,13 @@ public class SiteMapResource extends AbstractConfigResource {
         preValidators.add(new PreviewWorkspaceNodeValidator(id, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
         preValidators.add(new PreviewWorkspaceNodeValidator(parentId, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
 
-        preValidators.add(new PreLockValidator(id, Operation.MOVE,
-                HstNodeTypes.NODETYPE_HST_SITEMAPITEM, HstNodeTypes.NODETYPE_HST_SITEMAP));
-        preValidators.add(new PreLockValidator(parentId, Operation.MOVE,
-                HstNodeTypes.NODETYPE_HST_SITEMAPITEM, HstNodeTypes.NODETYPE_HST_SITEMAP));
-
-        final List<Validator> postValidators = new ArrayList<>();
-        postValidators.add(new PostLockValidator(id, Operation.MOVE,
-                HstNodeTypes.NODETYPE_HST_SITEMAPITEM, HstNodeTypes.NODETYPE_HST_SITEMAP));
-// TODO
-//        postValidators.add(new DeletedValidator(oldPath, Operation.MOVE,
-//                HstNodeTypes.NODETYPE_HST_SITEMAPITEM, HstNodeTypes.NODETYPE_HST_SITEMAP));
-
-        return tryExecute(new Callable<Response>() {
+       return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
                 siteMapHelper.move(id, parentId);
                 return ok("Item updated successfully", id);
             }
-        }, preValidators, postValidators);
+        }, preValidators);
     }
 
     @POST

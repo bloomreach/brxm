@@ -39,6 +39,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.hippoecm.hst.util.HstRequestUtils;
@@ -48,6 +49,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockHttpSession;
 
 public class AbstractPageComposerTest {
 
@@ -124,6 +126,11 @@ public class AbstractPageComposerTest {
         return propConf;
     }
 
+    protected void setMountIdOnHttpSession(final MockHttpServletRequest request, final String mountId) {
+        final MockHttpSession httpSession = new MockHttpSession();
+        httpSession.setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
+        request.setSession(httpSession);
+    }
 
 
     protected HstRequestContext getRequestContextWithResolvedSiteMapItemAndContainerURL(final MockHttpServletRequest request, String hostAndPort, String requestURI) throws Exception {
@@ -144,6 +151,10 @@ public class AbstractPageComposerTest {
 
         request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
         ModifiableRequestContextProvider.set(requestContext);
+        final String mountId = requestContext.getResolvedMount().getMount().getIdentifier();
+        requestContext.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, mountId);
+        setMountIdOnHttpSession(request, mountId);
+
         return requestContext;
     }
 

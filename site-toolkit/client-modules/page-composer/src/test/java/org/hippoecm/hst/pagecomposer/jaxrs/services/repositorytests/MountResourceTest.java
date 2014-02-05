@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.hst.pagecomposer.jaxrs.services;
+package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -29,6 +29,9 @@ import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResourceAccessor;
 import org.hippoecm.repository.api.HippoSession;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -38,7 +41,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class RepositoryMountResourceTest extends AbstractPageComposerTest {
+public class MountResourceTest extends AbstractPageComposerTest {
 
     @Test
     public void testEditAndPublishMount() throws Exception {
@@ -88,7 +91,7 @@ public class RepositoryMountResourceTest extends AbstractPageComposerTest {
             assertTrue("Preview channel path node should exist",
                     session.nodeExists(ctx.getResolvedMount().getMount().getChannelPath()+ "-preview"));
 
-            Set<String> usersWithLockedContainers = mountResource.findUsersWithLockedContainers(session, previewConfigurationPath);
+            Set<String> usersWithLockedContainers = MountResourceAccessor.findUsersWithLockedContainers(session, previewConfigurationPath);
             assertTrue(usersWithLockedContainers.isEmpty());
 
             // reload model through new request, and then modify a container
@@ -113,7 +116,7 @@ public class RepositoryMountResourceTest extends AbstractPageComposerTest {
             final ContainerComponentResource containerComponentResource = new ContainerComponentResource();
             containerComponentResource.createContainerItem(secondRequest, catalogItemUUID, System.currentTimeMillis());
 
-            usersWithLockedContainers = mountResource.findUsersWithLockedContainers(session, previewConfigurationPath);
+            usersWithLockedContainers = MountResourceAccessor.findUsersWithLockedContainers(session, previewConfigurationPath);
             assertTrue(usersWithLockedContainers.contains("admin"));
 
 
@@ -131,39 +134,32 @@ public class RepositoryMountResourceTest extends AbstractPageComposerTest {
 
             mountResource.publish(thirdRequest);
 
-            usersWithLockedContainers = mountResource.findUsersWithLockedContainers(session, previewConfigurationPath);
+            usersWithLockedContainers = MountResourceAccessor.findUsersWithLockedContainers(session, previewConfigurationPath);
             assertTrue(usersWithLockedContainers.isEmpty());
 
     }
 
-    private void setMountIdOnHttpSession(final MockHttpServletRequest request, final String mountId) {
-        final MockHttpSession httpSession = new MockHttpSession();
-        httpSession.setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
-        request.setSession(httpSession);
-    }
-
-
     @Test
     public void testXpathQueries(){
         assertEquals("/jcr:root/hst:hst/hst:configurations/myproject-preview//element(*,hst:containercomponent)[@hst:lockedby != '']",
-                MountResource.buildXPathQueryToFindLockedContainersForUsers("/hst:hst/hst:configurations/myproject-preview"));
+                MountResourceAccessor.buildXPathQueryToFindLockedContainersForUsers("/hst:hst/hst:configurations/myproject-preview"));
         assertEquals("/jcr:root/hst:hst/hst:configurations/_x0037__8-preview//element(*,hst:containercomponent)[@hst:lockedby != '']",
-                MountResource.buildXPathQueryToFindLockedContainersForUsers("/hst:hst/hst:configurations/7_8-preview"));
+                MountResourceAccessor.buildXPathQueryToFindLockedContainersForUsers("/hst:hst/hst:configurations/7_8-preview"));
 
         assertEquals("/jcr:root/hst:hst/hst:configurations/myproject-preview/*[@hst:lockedby != '']",
-                MountResource.buildXPathQueryToFindLockedMainConfigNodesForUsers("/hst:hst/hst:configurations/myproject-preview"));
+                MountResourceAccessor.buildXPathQueryToFindLockedMainConfigNodesForUsers("/hst:hst/hst:configurations/myproject-preview"));
         assertEquals("/jcr:root/hst:hst/hst:configurations/_x0037__8-preview/*[@hst:lockedby != '']",
-                MountResource.buildXPathQueryToFindLockedMainConfigNodesForUsers("/hst:hst/hst:configurations/7_8-preview"));
+                MountResourceAccessor.buildXPathQueryToFindLockedMainConfigNodesForUsers("/hst:hst/hst:configurations/7_8-preview"));
 
         assertEquals("/jcr:root/hst:hst/hst:configurations/myproject-preview//element(*,hst:containercomponent)[@hst:lockedby = 'admin' or @hst:lockedby = 'editor']",
-                MountResource.buildXPathQueryToFindContainersForUsers("/hst:hst/hst:configurations/myproject-preview", Arrays.asList(new String[]{"admin","editor"})));
+                MountResourceAccessor.buildXPathQueryToFindContainersForUsers("/hst:hst/hst:configurations/myproject-preview", Arrays.asList(new String[]{"admin","editor"})));
         assertEquals("/jcr:root/hst:hst/hst:configurations/_x0037__8-preview//element(*,hst:containercomponent)[@hst:lockedby = 'admin' or @hst:lockedby = 'editor']",
-                MountResource.buildXPathQueryToFindContainersForUsers("/hst:hst/hst:configurations/7_8-preview", Arrays.asList(new String[]{"admin","editor"})));
+                MountResourceAccessor.buildXPathQueryToFindContainersForUsers("/hst:hst/hst:configurations/7_8-preview", Arrays.asList(new String[]{"admin","editor"})));
 
         assertEquals("/jcr:root/hst:hst/hst:configurations/myproject-preview/*[@hst:lockedby = 'admin' or @hst:lockedby = 'editor']",
-                MountResource.buildXPathQueryToFindMainfConfigNodesForUsers("/hst:hst/hst:configurations/myproject-preview", Arrays.asList(new String[]{"admin","editor"})));
+                MountResourceAccessor.buildXPathQueryToFindMainfConfigNodesForUsers("/hst:hst/hst:configurations/myproject-preview", Arrays.asList(new String[]{"admin","editor"})));
         assertEquals("/jcr:root/hst:hst/hst:configurations/_x0037__8-preview/*[@hst:lockedby = 'admin' or @hst:lockedby = 'editor']",
-                MountResource.buildXPathQueryToFindMainfConfigNodesForUsers("/hst:hst/hst:configurations/7_8-preview", Arrays.asList(new String[]{"admin","editor"})));
+                MountResourceAccessor.buildXPathQueryToFindMainfConfigNodesForUsers("/hst:hst/hst:configurations/7_8-preview", Arrays.asList(new String[]{"admin","editor"})));
     }
 
 
@@ -217,7 +213,7 @@ public class RepositoryMountResourceTest extends AbstractPageComposerTest {
             assertTrue("Preview config node should exist",
                     session.nodeExists(previewConfigurationPath));
 
-            Set<String> usersWithLockedContainers = mountResource.findUsersWithLockedContainers(session, previewConfigurationPath);
+            Set<String> usersWithLockedContainers = MountResourceAccessor.findUsersWithLockedContainers(session, previewConfigurationPath);
             assertTrue(usersWithLockedContainers.isEmpty());
 
             // reload model through new request, and then modify a container
@@ -240,7 +236,7 @@ public class RepositoryMountResourceTest extends AbstractPageComposerTest {
             final ContainerComponentResource containerComponentResource = new ContainerComponentResource();
             containerComponentResource.createContainerItem(secondRequest, catalogItemUUID, System.currentTimeMillis());
 
-            usersWithLockedContainers = mountResource.findUsersWithLockedContainers(session, previewConfigurationPath);
+            usersWithLockedContainers = MountResourceAccessor.findUsersWithLockedContainers(session, previewConfigurationPath);
             assertTrue(usersWithLockedContainers.contains("admin"));
 
 
@@ -259,7 +255,7 @@ public class RepositoryMountResourceTest extends AbstractPageComposerTest {
 
             mountResource.publish(thirdRequest);
 
-            usersWithLockedContainers = mountResource.findUsersWithLockedContainers(session, previewConfigurationPath);
+            usersWithLockedContainers = MountResourceAccessor.findUsersWithLockedContainers(session, previewConfigurationPath);
             assertTrue(usersWithLockedContainers.isEmpty());
 
 

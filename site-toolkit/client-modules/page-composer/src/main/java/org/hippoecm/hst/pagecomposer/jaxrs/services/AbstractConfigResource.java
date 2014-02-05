@@ -18,9 +18,11 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Response;
@@ -39,6 +41,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.Validator;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
+import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -201,12 +204,30 @@ public class AbstractConfigResource {
                 HstConfigurationUtils.persistChanges(RequestContextProvider.get().getSession());
             }
             return response;
-        } catch (IllegalStateException | IllegalArgumentException | ItemNotFoundException e) {
+        } catch (IllegalStateException | IllegalArgumentException | ItemNotFoundException | ItemExistsException e) {
+            resetSession();
             return logAndReturnClientError(e);
-        } catch (AssertionError e) {
-            return logAndReturnClientError(new Exception(e.getCause()));
         } catch (Exception e) {
+            resetSession();
             return logAndReturnServerError(e);
+        }
+    }
+
+    private void resetSession() {
+        final HstRequestContext requestContext = RequestContextProvider.get();
+        if (requestContext != null) {
+            try {
+                final Session session = requestContext.getSession();
+                if (session.hasPendingChanges()) {
+                    if (session instanceof HippoSession) {
+                        ((HippoSession) session).localRefresh();
+                    } else {
+                        session.refresh(false);
+                    }
+                }
+            } catch (RepositoryException e) {
+                log.error("RepositoryException while resetting session", e);
+            }
         }
     }
 

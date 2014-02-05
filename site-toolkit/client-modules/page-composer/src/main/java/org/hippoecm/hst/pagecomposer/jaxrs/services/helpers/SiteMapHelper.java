@@ -31,6 +31,7 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.AbstractConfigResource;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,13 +52,17 @@ public class SiteMapHelper extends AbstractHelper {
         final String itemId = siteMapItem.getId();
         Node jcrNode = session.getNodeByIdentifier(itemId);
 
-        acquireLock(jcrNode, HstNodeTypes.NODETYPE_HST_SITEMAP);
+        acquireLock(jcrNode);
 
         final String modifiedName = siteMapItem.getName();
         if (modifiedName != null && !modifiedName.equals(jcrNode.getName())) {
+            // we do not need to check lock for parent as this is a rename within same parent
             String oldLocation = jcrNode.getPath();
-            session.move(jcrNode.getPath(), jcrNode.getParent() + "/" + modifiedName);
-            createDeletedNode(session, oldLocation);
+            String target = jcrNode.getParent().getPath() + "/" + modifiedName;
+            validateTarget(session, target);
+            session.move(jcrNode.getPath(), jcrNode.getParent().getPath() + "/" + modifiedName);
+
+            createMarkedDeletedIfLiveExists(session, oldLocation);
         }
 
         setSitemapItemProperties(siteMapItem, jcrNode);
@@ -69,11 +74,15 @@ public class SiteMapHelper extends AbstractHelper {
         setRoles(jcrNode, modifiedRoles);
     }
 
+
+
     public void create(final SiteMapItemRepresentation siteMapItem, final String parentId) throws RepositoryException {
 
         HstRequestContext requestContext = RequestContextProvider.get();
         final Session session = requestContext.getSession();
         Node parent = session.getNodeByIdentifier(parentId);
+
+        validateTarget(session, parent.getPath() + "/" + siteMapItem.getName());
 
         final Node newChild = parent.addNode(siteMapItem.getName(), HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
 
@@ -88,22 +97,36 @@ public class SiteMapHelper extends AbstractHelper {
     }
 
     public void move(final String id, final String parentId) throws RepositoryException {
+        if (id.equals(parentId)) {
+            return;
+        }
         HstRequestContext requestContext = RequestContextProvider.get();
         final Session session = requestContext.getSession();
-        Node toMove = session.getNode(id);
+        Node nodeToMove = session.getNode(id);
         Node newParent = session.getNode(parentId);
-        String oldLocation = toMove.getPath();
-        session.move(oldLocation, newParent.getPath() + "/" + toMove.getName());
-        acquireLock(toMove, HstNodeTypes.NODETYPE_HST_SITEMAP);
-        createDeletedNode(session, oldLocation);
+        Node oldParent = nodeToMove.getParent();
+        if (hasSelfOrAncestorLockBySomeOneElse(newParent)) {
+            throw new IllegalStateException("Cannot move node to '"+newParent.getPath()+"' because that node is locked " +
+                    "by '"+getSelfOrAncestorLockedBy(newParent)+"'");
+        }
+        acquireLock(nodeToMove);
+        String nodeName = nodeToMove.getName();
+        validateTarget(session, newParent.getPath() + "/" + nodeName);
+        String oldLocation = nodeToMove.getPath();
+        session.move(oldParent.getPath() + "/" + nodeName, newParent.getPath() + "/" + nodeName);
+        acquireLock(nodeToMove);
+
+        createMarkedDeletedIfLiveExists(session, oldLocation);
     }
 
     public void delete(final String id) throws RepositoryException {
         HstRequestContext requestContext = RequestContextProvider.get();
         final Session session = requestContext.getSession();
-        Node deleted = session.getNode(id);
-        markDeleted(deleted);
+        Node toDelete = session.getNode(id);
+        acquireLock(toDelete);
+        deleteOrMarkDeletedIfLiveExists(toDelete);
     }
+
 
     public static HstSiteMapItem getSiteMapItem(HstSiteMap siteMap, String siteMapItemId) {
 
@@ -141,11 +164,53 @@ public class SiteMapHelper extends AbstractHelper {
     }
 
 
-    private void createDeletedNode(final Session session, final String oldLocation) throws RepositoryException {
-        Node deleted = session.getRootNode().addNode(oldLocation.substring(1), HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
-        markDeleted(deleted);
+
+    private void createMarkedDeletedIfLiveExists(final Session session, final String oldLocation) throws RepositoryException {
+        boolean liveExists =  liveExists(session, oldLocation);
+        if (liveExists) {
+            Node deleted = session.getRootNode().addNode(oldLocation.substring(1), HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
+            markDeleted(deleted);
+        }
     }
 
+    private void deleteOrMarkDeletedIfLiveExists(final Node toDelete) throws RepositoryException {
+        boolean liveExists =  liveExists(toDelete.getSession(), toDelete.getPath());
+        if (liveExists) {
+            markDeleted(toDelete);
+        } else {
+            toDelete.remove();
+        }
+    }
+
+    private boolean liveExists(final Session session, final String oldLocation) throws RepositoryException {
+        if (!oldLocation.contains("-preview/hst:workspace")) {
+            throw new IllegalStateException("Unexpected location '"+oldLocation+"'");
+        }
+        oldLocation.replace("-preview/hst:workspace", "/hst:workspace");
+        return session.nodeExists(oldLocation);
+    }
+
+    private void markDeleted(final Node deleted) throws RepositoryException {
+        acquireLock(deleted);
+        deleted.setProperty("hst:state", "deleted");
+    }
+
+    private boolean isMarkedDeleted(final Node node) throws RepositoryException {
+       return "deleted".equals(JcrUtils.getStringProperty(node, "hst:state", null));
+    }
+
+    private void validateTarget(final Session session, final String target) throws RepositoryException {
+        if (session.nodeExists(target)) {
+            Node targetNode = session.getNode(target);
+            if (isMarkedDeleted(targetNode)) {
+                // see if we own the lock
+                acquireLock(targetNode);
+                targetNode.remove();
+            } else {
+                throw new IllegalStateException("Target node '"+targetNode.getPath()+"' already exists");
+            }
+        }
+    }
 
 
 }

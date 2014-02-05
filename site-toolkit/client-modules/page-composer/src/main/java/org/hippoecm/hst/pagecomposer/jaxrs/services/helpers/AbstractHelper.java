@@ -52,18 +52,29 @@ public abstract class AbstractHelper {
     }
 
     /**
-     * if the <code>node</code> is already locked for the user <code>node.getSession()</code>, either explicitly or implicitly
-     * through an ancestor, this method does not do anything. If there is no lock yet, a lock for the current session
-     * userID gets set on the node except another user already has a lock, explicit or implicit
+     * if the <code>node</code> is already locked for the user <code>node.getSession()</code> this method does not do anything.
+     * If there is no lock yet, a lock for the current session userID gets set on the node. If there is already a lock by another
+     * user a IllegalStateException is thrown,
      */
-    // TODO check lastModifiedTimestamp
-    protected void acquireLock(final Node node, final String checkUntilType) throws RepositoryException {
-        if (isLockPresent(node, checkUntilType)) {
-            return;
+    public void acquireLock(final Node node) throws RepositoryException {
+        if (hasSelfOrDescendantLockBySomeOneElse(node)) {
+            throw new IllegalStateException("Node '"+node.getPath()+"' cannot be locked due to a descendant locked node by " +
+                    "someone else.");
         }
+        String selfOrAncestorLockedBy = getSelfOrAncestorLockedBy(node);
+        if (selfOrAncestorLockedBy != null) {
+            if (selfOrAncestorLockedBy.equals(node.getSession().getUserID())) {
+                log.debug("Node '{}' already locked", node.getSession().getUserID());
+                return;
+            }
+            throw new IllegalStateException("Node '"+node.getPath()+"' cannot be locked due to an ancestor locked node by " +
+                    "someone else.");
+        }
+
         if (!node.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)) {
             node.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
         }
+
         final Session session = node.getSession();
         log.info("Node '{}' gets a lock for user '{}'.", node.getPath(), session.getUserID());
         node.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, session.getUserID());
@@ -72,44 +83,6 @@ public abstract class AbstractHelper {
             node.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON, now);
         }
         node.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
-        // remove all present descendant locks for current user.
-        removeDescendantLocks(new NodeIterable(node.getNodes()));
-    }
-
-    protected void markDeleted(final Node deleted) throws RepositoryException {
-        if (!deleted.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)) {
-            deleted.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
-        }
-        Calendar now = Calendar.getInstance();
-        if (!deleted.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
-            deleted.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON, now);
-        }
-        deleted.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, deleted.getSession().getUserID());
-    }
-
-    private void removeDescendantLocks(final NodeIterable nodes) throws RepositoryException {
-        for (Node node : nodes) {
-            removeProperty(node, HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY);
-            removeProperty(node, HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON);
-        }
-    }
-
-    /**
-     * returns <code>true</code> when <code>node</code> or one of its ancestors is locked
-     */
-    private boolean isLockPresent(final Node node, final String checkUntilType) throws RepositoryException {
-        if(node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
-            String lockedBy = node.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON).getString();
-            if (!node.getSession().getUserID().equals(lockedBy)) {
-                throw new IllegalStateException("Node '"+node.getPath()+"' is locked by '"+lockedBy+"'");
-            }
-            return true;
-        }
-
-        if (node.isNodeType(checkUntilType)) {
-            return false;
-        }
-        return isLockPresent(node.getParent(), checkUntilType);
     }
 
 
@@ -152,6 +125,49 @@ public abstract class AbstractHelper {
             namesAndValues[1][i] = map.get(namesAndValues[0][i]);
         }
         return namesAndValues;
+    }
+
+    /**
+     * returns the userID that contains the deep lock or <code>null</code> when no deep lock present
+     */
+    protected String getSelfOrAncestorLockedBy(final Node node) throws RepositoryException {
+        if (node == null || node.isSame(node.getSession().getRootNode())) {
+            return null;
+        }
+
+        if (node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
+            String lockedBy = node.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString();
+            return lockedBy;
+        }
+
+        if (node.isNodeType(HstNodeTypes.NODETYPE_HST_WORKSPACE)) {
+            return null;
+        }
+        return getSelfOrAncestorLockedBy(node.getParent());
+    }
+
+    protected boolean hasSelfOrAncestorLockBySomeOneElse(final Node node) throws RepositoryException {
+        String selfOrAncestorLockedBy = getSelfOrAncestorLockedBy(node);
+        if (selfOrAncestorLockedBy == null) {
+            return false;
+        }
+        return node.getSession().getUserID().equals(selfOrAncestorLockedBy);
+    }
+
+    protected boolean hasSelfOrDescendantLockBySomeOneElse(final Node node) throws RepositoryException {
+        if (node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
+            String lockedBy = node.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString();
+            if (!lockedBy.equals(node.getSession().getUserID())) {
+                return true;
+            }
+        }
+        for (Node child : new NodeIterable(node.getNodes())) {
+            boolean hasDescendantLock = hasSelfOrDescendantLockBySomeOneElse(child);
+            if (hasDescendantLock) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
