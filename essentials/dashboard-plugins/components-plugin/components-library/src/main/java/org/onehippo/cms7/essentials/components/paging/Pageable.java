@@ -45,8 +45,6 @@ public abstract class Pageable<T extends HippoBean> {
 
     private long total;
 
-    private int defaultPageRange = DEFAULT_PAGE_RANGE;
-
     private boolean showPagination = true;
 
     /**
@@ -306,7 +304,7 @@ public abstract class Pageable<T extends HippoBean> {
     }
 
     protected int getDefaultPageRange() {
-        return defaultPageRange;
+        return DEFAULT_PAGE_RANGE;
     }
 
     /**
