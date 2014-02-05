@@ -275,23 +275,22 @@
           <if cond="!requestPending or user=='system'">
             <hippo:action action="requestPublication" enabledExpr="true"/>
             <if cond="dm.isGranted(unpublished, 'hippo:editor')">
-              <hippo:action action="schedulePublication" enabledExpr="true"/>
               <hippo:action action="publish" enabledExpr="true"/>
             </if>
           </if>
         </onentry>
 
-        <transition event="publish" target="reset">
+        <transition event="requestPublication" target="reset">
+          <hippo:workflowRequest type="publish" contextVariantExpr="unpublished" targetDateExpr="_eventdata"/>
+        </transition>
+
+        <transition event="publish" cond="!_eventdata" target="reset">
           <hippo:copyVariant sourceState="unpublished" targetState="published"/>
           <hippo:configVariant variant="published" applyPublished="true" availabilities="live"/>
           <hippo:version variant="unpublished"/>
         </transition>
 
-        <transition event="requestPublication" target="reset">
-          <hippo:workflowRequest type="publish" contextVariantExpr="unpublished" targetDateExpr="_eventdata"/>
-        </transition>
-
-        <transition event="schedulePublication" target="reset">
+        <transition event="publish" cond="!!_eventdata" target="reset">
           <hippo:invokeDocumentWorkflow action="scheduledpublish" whenExpr="_eventdata"/>
         </transition>
 
@@ -323,12 +322,15 @@
             <hippo:action action="requestDepublication" enabledExpr="true"/>
             <if cond="dm.isGranted(published, 'hippo:editor')">
               <hippo:action action="depublish" enabledExpr="true"/>
-              <hippo:action action="scheduledDepublication" enabledExpr="true"/>
             </if>
           </if>
         </onentry>
 
-        <transition event="depublish" target="reset">
+        <transition event="requestDepublication" target="reset">
+          <hippo:workflowRequest type="depublish" contextVariantExpr="published" targetDateExpr="_eventdata"/>
+        </transition>
+
+        <transition event="depublish" cond="!_eventdata" target="reset">
           <if cond="!unpublished">
             <hippo:copyVariant sourceState="published" targetState="unpublished"/>
           </if>
@@ -337,11 +339,7 @@
           <hippo:version variant="unpublished"/>
         </transition>
 
-        <transition event="requestDepublication" target="reset">
-          <hippo:workflowRequest type="depublish" contextVariantExpr="published" targetDateExpr="_eventdata"/>
-        </transition>
-
-        <transition event="scheduleDepublication" target="reset">
+        <transition event="depublish" cond="!!_eventdata" target="reset">
           <hippo:invokeDocumentWorkflow action="scheduleddepublish" whenExpr="_eventdata"/>
         </transition>
 
