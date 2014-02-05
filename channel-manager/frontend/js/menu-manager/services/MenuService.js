@@ -56,11 +56,24 @@
                 $http.post(ConfigService.apiUrlPrefix + '/' + parentId, menuItem).success(function (response) {
                     deferred.resolve(response.data);
                 }).error(function() {
-                    deferred.reject('An error occured while fetching all personas');
+                    deferred.reject('An error occured while creating a menu item');
                 });
 
                 return deferred.promise;
             };
+
+            menuService.deleteMenuItem = function (menuItemId) {
+                var deferred = $q.defer();
+
+                $http.post(ConfigService.apiUrlPrefix + '/' + ConfigService.menuId +'./delete/' + menuItemId).success(function (response) {
+                    deferred.resolve(response.data);
+                }).error(function() {
+                    deferred.reject('An error occured while deleting menu item with id ' + menuItemId);
+                });
+
+                return deferred.promise;
+            };
+
 
             return menuService;
         }]);

@@ -21,9 +21,21 @@
         .controller('hippo.channelManager.menuManager.MenuItemActionsCtrl', [
             '$scope',
             '$log',
-            function ($scope, $log) {
-                $scope.removeMenuItem = function () {
-                    $log.info('Remove menu item');
+            '$state',
+            '$stateParams',
+            'hippo.channelManager.menuManager.MenuService',
+            function ($scope, $log, $state, $stateParams, MenuService) {
+                $log.info('menu item actions ctrl init');
+
+                $scope.deleteMenuItem = function () {
+                    var menuItemId = $stateParams.menuItemId;
+                    $log.info('Delete menu item ' + menuItemId);
+                    MenuService.deleteMenuItem(menuItemId).then(
+                            function(response) {
+                                $log.info('response: ' + response);
+                            }
+                    );
+                    $state.go('loader');
                 };
             }
         ]);
