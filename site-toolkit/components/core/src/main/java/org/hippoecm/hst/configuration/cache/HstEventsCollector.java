@@ -105,6 +105,10 @@ public class HstEventsCollector {
     }
 
     private void addEvent(final String nodePath) {
+        if (ignore(nodePath)) {
+            log.debug("Ignore event '{}' because not an event below /hst:hst.", nodePath);
+            return;
+        }
         hstEvents.add(new HstEvent(nodePath, false));
     }
 
