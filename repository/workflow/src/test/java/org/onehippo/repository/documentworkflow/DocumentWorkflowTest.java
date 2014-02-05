@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.jcr.Node;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
@@ -120,14 +119,14 @@ public class DocumentWorkflowTest {
         return IOUtils.toString(DocumentWorkflowTest.class.getResourceAsStream("/documentworkflow.scxml"));
     }
 
-    protected Node addVariant(Node handle, String state) throws RepositoryException {
-        Node variant = handle.addNode(handle.getName(), HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT);
+    protected MockNode addVariant(MockNode handle, String state) throws RepositoryException {
+        MockNode variant = (MockNode)handle.addNode(handle.getName(), HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT);
         variant.setProperty(HippoStdNodeType.HIPPOSTD_STATE, state);
         return variant;
     }
 
-    protected Node addRequest(Node handle, String type, boolean workflowRequest) throws RepositoryException {
-        Node variant = handle.addNode(WorkflowRequest.HIPPO_REQUEST,
+    protected MockNode addRequest(MockNode handle, String type, boolean workflowRequest) throws RepositoryException {
+        MockNode variant = (MockNode)handle.addNode(WorkflowRequest.HIPPO_REQUEST,
                 workflowRequest ? WorkflowRequest.NT_HIPPOSTDPUBWF_REQUEST : ScheduledRequest.NT_HIPPOSCHED_WORKFLOW_JOB);
         variant.setProperty(WorkflowRequest.HIPPOSTDPUBWF_TYPE, type);
         variant.addMixin(HippoNodeType.NT_REQUEST);
@@ -208,7 +207,7 @@ public class DocumentWorkflowTest {
         DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
-        Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
 
         addVariant(handleNode, HippoStdNodeType.DRAFT);
         putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.request.name());
@@ -224,12 +223,11 @@ public class DocumentWorkflowTest {
         DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
-        Node handleNode = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
-        Node draftVariant, unpublishedVariant, publishedVariant;
+        MockNode handleNode = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
 
-        draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
-        unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
-        publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
+        MockNode draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
+        MockNode unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
+        MockNode publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
 
         putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.request.name());
         wf.setNode(handleNode);
@@ -285,8 +283,8 @@ public class DocumentWorkflowTest {
         DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
-        Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
-        Node draftVariant, unpublishedVariant, publishedVariant, rejectedRequest, publishRequest;
+        MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        MockNode draftVariant, unpublishedVariant, publishedVariant, rejectedRequest, publishRequest;
 
         draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
         putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.request.name());
@@ -423,8 +421,8 @@ public class DocumentWorkflowTest {
         DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
-        Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
-        Node unpublishedVariant, rejectedRequest, publishRequest;
+        MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        MockNode unpublishedVariant, rejectedRequest, publishRequest;
 
         // test state not-requested
         unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
@@ -555,8 +553,8 @@ public class DocumentWorkflowTest {
         DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
-        Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
-        Node draftVariant, unpublishedVariant, publishedVariant, publishRequest;
+        MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        MockNode draftVariant, unpublishedVariant, publishedVariant, publishRequest;
 
         unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
         putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.request.name());
@@ -652,8 +650,8 @@ public class DocumentWorkflowTest {
         DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
-        Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
-        Node draftVariant, unpublishedVariant, publishedVariant, publishRequest;
+        MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        MockNode draftVariant, unpublishedVariant, publishedVariant, publishRequest;
 
         publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
         putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.request.name());
@@ -758,8 +756,8 @@ public class DocumentWorkflowTest {
         DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
-        Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
-        Node unpublishedVariant, frozenNode;
+        MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        MockNode unpublishedVariant, frozenNode;
 
         unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
 
@@ -798,8 +796,8 @@ public class DocumentWorkflowTest {
         DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
-        Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
-        Node draftVariant, unpublishedVariant, publishedVariant, publishRequest;
+        MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        MockNode draftVariant, unpublishedVariant, publishedVariant, publishRequest;
 
         unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
 
@@ -895,8 +893,8 @@ public class DocumentWorkflowTest {
         DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
-        Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
-        Node draftVariant, unpublishedVariant, publishedVariant, publishRequest;
+        MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        MockNode draftVariant, unpublishedVariant, publishedVariant, publishRequest;
 
         draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "otheruser");
@@ -942,8 +940,8 @@ public class DocumentWorkflowTest {
         DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
-        Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
-        Node unpublishedVariant, frozenNode;
+        MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        MockNode unpublishedVariant, frozenNode;
 
         unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
 
