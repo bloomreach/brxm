@@ -18,6 +18,10 @@ package org.hippoecm.repository.reviewedactions;
 
 import javax.jcr.RepositoryException;
 
+/**
+ * @deprecated since CMS 7.9, no longer used by {@link org.onehippo.repository.documentworkflow.DocumentWorkflowImpl} replacing the reviewedactions workflow
+ */
+@Deprecated
 public class PublicationState {
 
     private final PublishableDocument published;

@@ -25,6 +25,10 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.CopyWorkflow;
 
+/**
+ * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.documentworkflow.DocumentWorkflow} instead.
+ */
+@Deprecated
 public interface FullReviewedActionsWorkflow extends BasicReviewedActionsWorkflow, CopyWorkflow {
 
     /**

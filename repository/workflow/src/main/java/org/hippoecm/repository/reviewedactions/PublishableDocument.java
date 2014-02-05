@@ -22,6 +22,10 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
 
+/**
+ * @deprecated since CMS 7.9, no longer used by {@link org.onehippo.repository.documentworkflow.DocumentWorkflowImpl} replacing the reviewedactions workflow
+ */
+@Deprecated
 public class PublishableDocument extends Document {
 
     final public static String PUBLISHED = "published";

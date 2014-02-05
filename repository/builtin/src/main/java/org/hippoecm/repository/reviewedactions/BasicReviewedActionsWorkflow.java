@@ -25,6 +25,10 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 
+/**
+ * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.documentworkflow.DocumentWorkflow} instead.
+ */
+@Deprecated
 public interface BasicReviewedActionsWorkflow extends Workflow, EditableWorkflow {
 
     /**

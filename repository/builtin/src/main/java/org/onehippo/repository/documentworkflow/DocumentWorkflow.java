@@ -28,8 +28,11 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.hippoecm.repository.reviewedactions.UnlockWorkflow;
+import org.hippoecm.repository.standardworkflow.CopyWorkflow;
+import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.onehippo.repository.api.annotation.WorkflowAction;
 
 /**
@@ -37,7 +40,7 @@ import org.onehippo.repository.api.annotation.WorkflowAction;
  * <p> The -Request- and VersionWorkflows operations have been re-defined inline to be able to use different parameters
  * (and methodNames) as needed to be functional on Document handle level </p>
  */
-public interface DocumentWorkflow extends Workflow, FullReviewedActionsWorkflow, UnlockWorkflow {
+public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkflow, BasicReviewedActionsWorkflow, FullReviewedActionsWorkflow, UnlockWorkflow {
 
     /**
      * The SupportedFeatures enumeration can be used to 'filter' which subset of the DocumentWorkflow functionality
