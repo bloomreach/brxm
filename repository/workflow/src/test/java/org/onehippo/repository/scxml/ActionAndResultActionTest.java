@@ -36,7 +36,7 @@ public class ActionAndResultActionTest {
                     "    </initial>\n" +
                     "    <state id=\"world\">\n" +
                     "      <onentry>\n" +
-                    "        <hippo:action action=\"hello\" value=\"world\"/>\n" +
+                    "        <hippo:action action=\"hello\" enabledExpr=\"world\"/>\n" +
                     "        <hippo:result value=\"dm\"/>\n" +
                     "      </onentry>\n" +
                     "    </state>\n" +

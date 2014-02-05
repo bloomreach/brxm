@@ -38,7 +38,7 @@ public class SCXMLWorkflowExecutorTest {
             "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" xmlns:hippo=\"http://www.onehippo.org/cms7/repository/scxml\" version=\"1.0\" initial=\"hello\">\n" +
                     "  <state id=\"hello\">\n" +
                     "    <onentry>\n" +
-                    "      <hippo:action action=\"hello\" value=\"true\"/>\n" +
+                    "      <hippo:action action=\"hello\" enabledExpr=\"true\"/>\n" +
                     "      <hippo:result value=\"message\"/>\n" +
                     "    </onentry>\n" +
                     "  </state>\n" +
@@ -48,7 +48,7 @@ public class SCXMLWorkflowExecutorTest {
             "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" xmlns:hippo=\"http://www.onehippo.org/cms7/repository/scxml\" version=\"1.0\" initial=\"hello\">\n" +
                     "  <state id=\"hello\">\n" +
                     "    <onentry>\n" +
-                    "      <hippo:action action=\"hello\" value=\"unknown\"/>\n" +
+                    "      <hippo:action action=\"hello\" enabledExpr=\"unknown\"/>\n" +
                     "    </onentry>\n" +
                     "  </state>\n" +
                     "</scxml>";
@@ -57,8 +57,8 @@ public class SCXMLWorkflowExecutorTest {
             "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" xmlns:hippo=\"http://www.onehippo.org/cms7/repository/scxml\" version=\"1.0\" initial=\"hello\">\n" +
                     "  <state id=\"hello\">\n" +
                     "    <onentry>\n" +
-                    "      <hippo:action action=\"hello\" value=\"true\"/>\n" +
-                    "      <hippo:action action=\"terminate\" value=\"true\"/>\n" +
+                    "      <hippo:action action=\"hello\" enabledExpr=\"true\"/>\n" +
+                    "      <hippo:action action=\"terminate\" enabledExpr=\"true\"/>\n" +
                     "    </onentry>\n" +
                     "    <transition event=\"hello\" target=\"reset\">\n" +
                     "      <hippo:result value=\"_eventdata\"/>\n" +
