@@ -279,7 +279,7 @@ public final class HippoNodeUtils {
             for (Node queryTemplate : foldertypes) {
                 try {
                     Set<String> prototypes = new TreeSet<>();
-                    if (queryTemplate.isNodeType("nt:query")) {
+                    if (queryTemplate.isNodeOfSuperType("nt:query")) {
                         Query query = qmgr.getQuery(queryTemplate);
                         query = qmgr.createQuery(queryTemplate.getProperty("jcr:statement").getString(), query.getLanguage()); // HREPTWO-1266
                         QueryResult rs = query.execute();

@@ -3,12 +3,12 @@ package org.onehippo.cms7.essentials;
 import javax.jcr.Session;
 
 import org.onehippo.cms7.essentials.dashboard.Plugin;
-import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
+import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 
 /**
  * @version "$Id: TestPluginContext.java 174579 2013-08-21 16:43:11Z mmilicevic $"
  */
-public class TestPluginContext extends DashboardPluginContext {
+public class TestPluginContext extends DefaultPluginContext {
 
 
 

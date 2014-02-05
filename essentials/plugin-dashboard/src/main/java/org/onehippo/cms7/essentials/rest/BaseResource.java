@@ -26,7 +26,7 @@ import org.onehippo.cms7.essentials.dashboard.EssentialsPlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
-import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
+import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.installer.InstallState;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
@@ -49,7 +49,7 @@ public class BaseResource {
     protected boolean installPlugin(final Plugin plugin) {
 
         final String pluginClass = plugin.getPluginClass();
-        final EssentialsPlugin essentialsPlugin = instantiatePlugin(plugin, new DashboardPluginContext(GlobalUtils.createSession(), plugin), pluginClass);
+        final EssentialsPlugin essentialsPlugin = instantiatePlugin(plugin, new DefaultPluginContext(GlobalUtils.createSession(), plugin), pluginClass);
         if (essentialsPlugin != null) {
             essentialsPlugin.install();
             return true;
@@ -61,7 +61,7 @@ public class BaseResource {
     protected boolean checkInstalled(final Plugin plugin) {
 
         final String pluginClass = plugin.getPluginClass();
-        final EssentialsPlugin essentialsPlugin = instantiatePlugin(plugin, new DashboardPluginContext(GlobalUtils.createSession(), plugin), pluginClass);
+        final EssentialsPlugin essentialsPlugin = instantiatePlugin(plugin, new DefaultPluginContext(GlobalUtils.createSession(), plugin), pluginClass);
         if (essentialsPlugin != null) {
 
             final InstallState installState = essentialsPlugin.getInstallState();
@@ -93,7 +93,7 @@ public class BaseResource {
     }
 
     protected ProjectRestful getProjectRestful() {
-        final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), null);
+        final PluginContext context = new DefaultPluginContext(GlobalUtils.createSession(), null);
         // inject project settings:
         final ProjectSettingsBean document = context.getConfigService().read(ProjectSetupPlugin.class.getName(), ProjectSettingsBean.class);
         final ProjectRestful projectRestful = new ProjectRestful();
@@ -108,7 +108,7 @@ public class BaseResource {
 
     public PluginContext getContext(ServletContext servletContext) {
         final String className = ProjectSetupPlugin.class.getName();
-        final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), getPluginByClassName(className, servletContext));
+        final PluginContext context = new DefaultPluginContext(GlobalUtils.createSession(), getPluginByClassName(className, servletContext));
         final PluginConfigService service = context.getConfigService();
 
         final ProjectSettingsBean document = service.read(className, ProjectSettingsBean.class);

@@ -55,7 +55,7 @@ public final class CndUtils {
      * @param uri     the URI of the namespace
      * @return true when namespace with given URI exists, false otherwise
      */
-    public static boolean existsNamespaceUri(final PluginContext context, final String uri) {
+    public static boolean namespaceUriExists(final PluginContext context, final String uri) {
         try {
             final Session session = context.getSession();
             final NamespaceRegistry namespaceRegistry = session.getWorkspace().getNamespaceRegistry();
@@ -78,7 +78,7 @@ public final class CndUtils {
      * @param prefix  the prefix of the namespace
      * @return true when namespace with given prefix exists, false otherwise
      */
-    public static boolean existsNamespacePrefix(final PluginContext context, final String prefix) {
+    public static boolean namespacePrefixExists(final PluginContext context, final String prefix) {
         try {
             final Session session = context.getSession();
             final NamespaceRegistry namespaceRegistry = session.getWorkspace().getNamespaceRegistry();
@@ -173,7 +173,7 @@ public final class CndUtils {
      * @return true when the node type exists, false otherwise
      * @throws RepositoryException
      */
-    public static boolean existsNodeType(final PluginContext context, final String nodeType) throws RepositoryException {
+    public static boolean nodeTypeExists(final PluginContext context, final String nodeType) throws RepositoryException {
         if (StringUtils.isEmpty(nodeType)) {
             log.debug("Empty node type does not exist");
             return false;
@@ -193,7 +193,7 @@ public final class CndUtils {
      * @return true when nodeType is of superType
      * @throws RepositoryException
      */
-    public static boolean isNodeType(final PluginContext context, final String nodeType, final String superType) throws RepositoryException {
+    public static boolean isNodeOfSuperType(final PluginContext context, final String nodeType, final String superType) throws RepositoryException {
         if (StringUtils.isEmpty(nodeType)) {
             log.debug("Empty node type does not exist");
             return false;

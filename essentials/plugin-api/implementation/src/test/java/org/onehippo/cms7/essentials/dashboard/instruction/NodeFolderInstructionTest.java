@@ -24,7 +24,6 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 
-
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -44,8 +43,25 @@ public class NodeFolderInstructionTest extends BaseRepositoryTest {
         instruction.setTemplate("my_folder_template.xml");
         final InstructionSet instructionSet = new PluginInstructionSet();
         instructionSet.addInstruction(instruction);
-        final InstructionStatus execute = executor.execute(instructionSet, getContext());
-        assertEquals(execute, InstructionStatus.SUCCESS);
+        InstructionStatus execute = executor.execute(instructionSet, getContext());
+        assertEquals(InstructionStatus.SUCCESS, execute);
+        // should skip second time
+        execute = executor.execute(instructionSet, getContext());
+        assertEquals(InstructionStatus.SKIPPED, execute);
+        // should fail,  wrong path
+        instruction.setPath("foo/bar/foobar");
+        execute = executor.execute(instructionSet, getContext());
+        assertEquals(InstructionStatus.FAILED, execute);
+        // should skip,  folder exists
+        instruction.setTemplate("no_template_my_folder_template.xml");
+        instruction.setPath("/foo/bar/foobar");
+        execute = executor.execute(instructionSet, getContext());
+        assertEquals(InstructionStatus.SKIPPED, execute);
+        // should fail, no  folder exists , wrong path
+        instruction.setTemplate("no_template_my_folder_template.xml");
+        instruction.setPath("/foo/bar/foobar/somepath");
+        execute = executor.execute(instructionSet, getContext());
+        assertEquals(InstructionStatus.FAILED, execute);
 
 
     }

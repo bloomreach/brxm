@@ -21,6 +21,9 @@ public final class TranslationUtils {
 
     private static Logger log = LoggerFactory.getLogger(TranslationUtils.class);
 
+    private TranslationUtils() {
+    }
+
     /**
      * @param node
      * @param property

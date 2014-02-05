@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.eventbus.EventBus;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 /**
  * @version "$Id$"
@@ -56,13 +57,17 @@ public class ValidationEventListenerTest {
         // above consume should remove all events:
         pluginEvents = listener.consumeEvents();
         assertEquals(0, pluginEvents.size());
+        assertFalse(listener.hasEvents());
+        assertEquals(0, listener.size());
         // add
         bus.post(new ValidationEvent("test"));
         pluginEvents = listener.consumeEvents();
         assertEquals(1, pluginEvents.size());
+        assertEquals(0, listener.size());
         // consume again:
         pluginEvents = listener.consumeEvents();
         assertEquals(0, pluginEvents.size());
+        assertEquals(0, listener.size());
 
     }
 

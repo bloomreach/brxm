@@ -33,7 +33,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
-import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
+import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
@@ -56,7 +56,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
@@ -105,7 +104,7 @@ public class PowerpackResource extends BaseResource {
         }
         injector.autowireBean(powerpackPackage);
         final String className = ProjectSetupPlugin.class.getName();
-        final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), getPluginByClassName(className, servletContext));
+        final PluginContext context = new DefaultPluginContext(GlobalUtils.createSession(), getPluginByClassName(className, servletContext));
         // inject project settings:
         final PluginConfigService service = context.getConfigService();
 
@@ -167,7 +166,7 @@ public class PowerpackResource extends BaseResource {
         final ProjectRestful projectRestful = getProjectRestful();
 
         final String className = ProjectSetupPlugin.class.getName();
-        final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), getPluginByClassName(className, servletContext));
+        final PluginContext context = new DefaultPluginContext(GlobalUtils.createSession(), getPluginByClassName(className, servletContext));
         // inject project settings:
         final PluginConfigService service = context.getConfigService();
 

@@ -31,11 +31,11 @@ import com.google.common.collect.Multimap;
 /**
  * @version "$Id$"
  */
-public class DashboardPluginContext implements PluginContext {
+public class DefaultPluginContext implements PluginContext {
 
     public static final String MAIN_JAVA_PART = File.separator + "src" + File.separator + "main" + File.separator + "java"
             + File.separator;
-    private static final Logger log = LoggerFactory.getLogger(DashboardPluginContext.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultPluginContext.class);
     private static final long serialVersionUID = 1L;
     private final transient Session session;
     private final Plugin plugin;
@@ -46,7 +46,7 @@ public class DashboardPluginContext implements PluginContext {
     private String restPackage;
     private String projectNamespace;
 
-    public DashboardPluginContext(final Session session, final Plugin plugin) {
+    public DefaultPluginContext(final Session session, final Plugin plugin) {
         this.session = session;
         this.plugin = plugin;
     }

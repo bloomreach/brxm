@@ -26,6 +26,7 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -48,12 +49,17 @@ public class FileInstructionTest extends BaseTest {
 
     @Test
     public void testProcess() throws Exception {
-        copyInstruction.setAction(PluginInstruction.COPY);
-        copyInstruction.setSource(SOURCE);
-        copyInstruction.setTarget(TARGET);
+
         final InstructionSet set = new PluginInstructionSet();
         set.addInstruction(copyInstruction);
         InstructionStatus status = executor.execute(set, getContext());
+        // invalid instruction:
+        assertTrue(status == InstructionStatus.FAILED); 
+        copyInstruction.setAction(PluginInstruction.COPY);
+        copyInstruction.setSource(SOURCE);
+        copyInstruction.setTarget(TARGET);
+
+        status = executor.execute(set, getContext());
         assertTrue(status == InstructionStatus.SUCCESS || status == InstructionStatus.SKIPPED);
         assertTrue(!copyInstruction.getMessage().contains("{{"));
         //############################################

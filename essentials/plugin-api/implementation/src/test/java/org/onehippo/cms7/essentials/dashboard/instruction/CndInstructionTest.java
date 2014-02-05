@@ -52,14 +52,17 @@ public class CndInstructionTest extends BaseRepositoryTest {
         assertTrue("CndUtils.registerNamespaceUri", true);
         CndUtils.createHippoNamespace(getContext(), TEST_PREFIX);
         assertTrue("CndUtils.createHippoNamespace", true);
-        boolean exists = CndUtils.existsNamespaceUri(getContext(), TEST_URI);
+        boolean exists = CndUtils.namespaceUriExists(getContext(), TEST_URI);
         assertTrue(exists);
 
         cndInstruction.setDocumentType("newsdocument");
         getContext().setProjectNamespacePrefix(TEST_PREFIX);
         final InstructionSet instructionSet = new PluginInstructionSet();
         instructionSet.addInstruction(cndInstruction);
-        final InstructionStatus status = executor.execute(instructionSet, getContext());
+        InstructionStatus status = executor.execute(instructionSet, getContext());
         assertTrue("Expected success but got: " + status, status == InstructionStatus.SUCCESS);
+        // this should node throw exists exception
+        status = executor.execute(instructionSet, getContext());
+        assertTrue("Expected success but got: " + status, status == InstructionStatus.FAILED);
     }
 }

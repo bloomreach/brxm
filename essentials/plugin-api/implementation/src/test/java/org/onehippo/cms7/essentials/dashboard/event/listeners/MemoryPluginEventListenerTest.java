@@ -69,6 +69,7 @@ public class MemoryPluginEventListenerTest extends BaseTest{
         // consume again:
         pluginEvents = listener.consumeEvents();
         assertEquals(0, pluginEvents.size());
+        assertEquals(0, listener.pollEvents().size());
 
     }
 

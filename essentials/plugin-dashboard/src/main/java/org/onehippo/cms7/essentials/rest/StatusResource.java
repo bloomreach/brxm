@@ -27,7 +27,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
-import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
+import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
@@ -57,7 +57,7 @@ public class StatusResource extends BaseResource {
         final StatusRestful status = new StatusRestful();
         try {
             final Plugin plugin = getPluginByClassName(ProjectSetupPlugin.class.getName(), servletContext);
-            final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), plugin);
+            final PluginContext context = new DefaultPluginContext(GlobalUtils.createSession(), plugin);
             final ProjectSettingsBean document = context.getConfigService().read(ProjectSetupPlugin.class.getName(), ProjectSettingsBean.class);
 
             if (document != null && document.getSetupDone()) {

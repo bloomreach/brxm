@@ -217,7 +217,7 @@ public class FileInstruction extends PluginInstruction {
         data.put("createdFoldersTarget", createdFoldersTarget);
         // setup messages:
 
-        if (Strings.isNullOrEmpty(message)) {
+        if (Strings.isNullOrEmpty(message) && !Strings.isNullOrEmpty(action)) {
             // check message based on action:
             if (action.equals(COPY)) {
                 message = messageCopy;

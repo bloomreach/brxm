@@ -22,27 +22,6 @@ import static org.junit.Assert.assertTrue;
 public class ProjectUtilsTest extends BaseTest {
 
 
-    private String oldSystemDir;
-
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        // reset system property
-        if (oldSystemDir != null) {
-            System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, oldSystemDir);
-        }
-
-    }
-
-
-   /* @Test
-    public void testGetSiteJars() throws Exception {
-        final String[] siteJars = ProjectUtils.getSiteJars(getContext());
-        assertTrue(siteJars != null);
-
-    }*/
-
     @Test
     public void testSitePackages() throws Exception {
         final List<String> sitePackages = ProjectUtils.getSitePackages(getContext());

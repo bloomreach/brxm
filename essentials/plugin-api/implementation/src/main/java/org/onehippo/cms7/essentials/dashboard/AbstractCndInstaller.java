@@ -33,7 +33,7 @@ public abstract class AbstractCndInstaller extends AbstractDependencyInstaller {
         InstallState installed = super.getInstallState();
         switch (installed) {
             case INSTALLED:
-                if (CndUtils.existsNamespaceUri(context, uri)) {
+                if (CndUtils.namespaceUriExists(context, uri)) {
                     installed = InstallState.INSTALLED_AND_RESTARTED;
                 }
                 break;

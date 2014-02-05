@@ -5,7 +5,7 @@ import javax.jcr.Node;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
+import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.update.UpdateUtils;
 import org.slf4j.Logger;
@@ -34,7 +34,7 @@ public class RelatedDocQueryBuilderTest extends BaseRepositoryTest {
     @Test
     public void testRelatedDocQueryBuilderTest() throws Exception {
         assertFalse(session.itemExists("/hippo:configuration/hippo:update/hippo:registry/related-doc-updater"));
-        PluginContext context = new DashboardPluginContext(session, null);
+        PluginContext context = new DefaultPluginContext(session, null);
         RelatedDocQueryBuilder builder = new RelatedDocQueryBuilder.Builder().addDocumentType("test:test").build();
         builder.addToRegistry(context);
         assertTrue(session.itemExists("/hippo:configuration/hippo:update/hippo:registry/related-doc-updater"));
