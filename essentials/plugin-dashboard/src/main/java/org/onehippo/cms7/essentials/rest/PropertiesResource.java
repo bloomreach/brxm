@@ -23,7 +23,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.onehippo.cms7.essentials.rest.model.MessageRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
+import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 
 /**
  * @version "$Id$"

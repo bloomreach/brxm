@@ -21,10 +21,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.commons.lang.StringUtils;
-import org.onehippo.cms7.essentials.rest.model.PropertyRestful;
-import org.onehippo.cms7.essentials.rest.model.Restful;
-import org.onehippo.cms7.essentials.rest.model.TranslationRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.Restful;
 
 /**
  * @version "$Id$"

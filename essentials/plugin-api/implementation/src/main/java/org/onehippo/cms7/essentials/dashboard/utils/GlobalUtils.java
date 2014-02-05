@@ -16,7 +16,6 @@ import javax.jcr.Session;
 import org.apache.commons.io.IOUtils;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
-import org.onehippo.cms7.essentials.dashboard.config.Document;
 import org.onehippo.cms7.essentials.dashboard.config.JcrPluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.slf4j.Logger;
@@ -196,7 +195,7 @@ public final class GlobalUtils {
         return null;
     }
 
-    public static <T extends Document> void cleanupSession(final Session session) {
+    public static void cleanupSession(final Session session) {
         if (session != null) {
             session.logout();
         }
@@ -210,6 +209,25 @@ public final class GlobalUtils {
             log.error("Error instantiating", e);
         } catch (IllegalAccessException e) {
             log.error("Access exception", e);
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T newInstance(final String className) {
+        Class<?> aClass = loadCLass(className);
+        if (aClass != null) {
+            return (T) newInstance(aClass);
+        }
+        return null;
+    }
+
+
+    public static Class<?> loadCLass(final String clazz) {
+        try {
+            return Class.forName(clazz);
+        } catch (ClassNotFoundException e) {
+            log.error("Error loading class: [" + clazz + ']', e);
         }
         return null;
     }
@@ -228,4 +246,6 @@ public final class GlobalUtils {
     public static String getClassName(final String fullPluginClassName) {
         return fullPluginClassName.substring(fullPluginClassName.lastIndexOf('.') + 1, fullPluginClassName.length());
     }
+
+
 }

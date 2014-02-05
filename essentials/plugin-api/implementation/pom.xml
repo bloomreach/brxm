@@ -97,6 +97,11 @@
     </dependency>
 
     <dependency>
+      <groupId>javax.ws.rs</groupId>
+      <artifactId>jsr311-api</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.eclipse.jdt</groupId>
       <artifactId>core</artifactId>
       <exclusions>

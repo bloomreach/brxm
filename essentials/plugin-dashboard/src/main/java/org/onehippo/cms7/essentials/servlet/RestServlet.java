@@ -20,6 +20,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.ws.rs.ext.RuntimeDelegate;
 
+import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.transport.servlet.CXFServlet;
@@ -27,6 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Bootstrapping servlet for dynamic rest end points.
+ *
  * @version "$Id$"
  */
 public class RestServlet extends CXFServlet {
@@ -37,14 +40,14 @@ public class RestServlet extends CXFServlet {
     @Override
     public void init(final ServletConfig sc) throws ServletException {
         super.init(sc);
-        RuntimeDelegate delegate = RuntimeDelegate.getInstance();
-        JAXRSServerFactoryBean bean = delegate.createEndpoint(new DynamicRestApplication(), JAXRSServerFactoryBean.class);
-
-        bean.setAddress("http://localhost:8080/services" + bean.getAddress());
-
-        Server server = bean.create();
+        //############################################
+        // SCAN PLUGIN CLASSES AND REGISTER END POINTS
+        //############################################
+        final RuntimeDelegate delegate = RuntimeDelegate.getInstance();
+        final JAXRSServerFactoryBean bean = delegate.createEndpoint(new EndpointsRestApplication(), JAXRSServerFactoryBean.class);
+        final Bus bus = getBus();
+        bean.setBus(bus);
+        final Server server = bean.create();
         server.start();
-        server.stop();
-
     }
 }

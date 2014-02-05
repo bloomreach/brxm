@@ -21,8 +21,19 @@ public class GlobalUtilsTest extends BaseTest {
 
     @Test
     public void testNewInstance() throws Exception {
-        final String myString = GlobalUtils.newInstance(String.class);
+         String myString = GlobalUtils.newInstance(String.class);
         assertTrue(myString != null);
+        // test new instance from string:
+        myString = GlobalUtils.newInstance(String.class.getName());
+        assertTrue(myString != null);
+        // not found exception
+        myString = GlobalUtils.newInstance("com.foo.Bar.Baz");
+        assertTrue(myString == null);
+        // cast exception
+        myString = GlobalUtils.newInstance(Integer.class.getName());
+        assertTrue(myString == null);
+
+
     }
 
     @Test

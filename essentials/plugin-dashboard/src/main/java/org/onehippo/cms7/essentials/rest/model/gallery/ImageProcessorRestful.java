@@ -19,13 +19,12 @@ package org.onehippo.cms7.essentials.rest.model.gallery;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms7.essentials.rest.model.PropertyRestful;
-import org.onehippo.cms7.essentials.rest.model.Restful;
+import org.onehippo.cms7.essentials.dashboard.rest.Restful;
 
 /**
  * @version "$Id$"

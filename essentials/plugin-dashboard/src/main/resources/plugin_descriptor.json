@@ -53,5 +53,21 @@
             "name": "Hippo",
             "url": "http://www.onehippo.com"
         }
+    },
+    {
+        "needsInstallation": false,
+        "artifacts": [],
+        "assets": [],
+        "introduction": "Configuration of Hippo image sets",
+        "name": "Gallery plugin",
+        "pluginClass": "org.onehippo.cms7.essentials.beanwriter.gui.BeanwriterPlugin",
+        "pluginLink": "beanwriter",
+        "screenshots": [],
+        "restClasses": ["org.onehippo.cms7.essentials.beanwriter.rest.BeanWriterResource"],
+        "type": "tool",
+        "vendor": {
+            "name": "Hippo",
+            "url": "http://www.onehippo.com"
+        }
     }
 ]}

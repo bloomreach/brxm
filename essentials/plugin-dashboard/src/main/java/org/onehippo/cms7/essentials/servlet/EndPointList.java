@@ -16,24 +16,31 @@
 
 package org.onehippo.cms7.essentials.servlet;
 
+import java.util.List;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
+
 /**
  * @version "$Id$"
  */
-@Path("/echo")
-public class RestEcho {
+@Path("/list")
+public class EndPointList {
 
-    private static Logger log = LoggerFactory.getLogger(RestEcho.class);
+    private static Logger log = LoggerFactory.getLogger(EndPointList.class);
 
     @GET
-    public String echo() {
-        log.info("@@@@ REST ECHO @@@@");
-        return "echo";
+    public List<String> list() {
+        log.info("@@@@ LISTING REST ENDPOINTS @@@@");
+        // TODO return list of dynamic endpoints
+        final List<String> endpoints = Lists.newArrayList();
+        endpoints.add("/dynamic");
+        return endpoints;
     }
 
 }

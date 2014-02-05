@@ -41,15 +41,16 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
+import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
+import org.onehippo.cms7.essentials.dashboard.rest.ProjectRestful;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.onehippo.cms7.essentials.powerpack.BasicPowerpack;
 import org.onehippo.cms7.essentials.powerpack.BasicPowerpackWithSamples;
-import org.onehippo.cms7.essentials.rest.model.MessageRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.rest.model.PowerpackListRestful;
 import org.onehippo.cms7.essentials.rest.model.PowerpackRestful;
-import org.onehippo.cms7.essentials.rest.model.ProjectRestful;
 import org.onehippo.cms7.essentials.rest.model.RestfulList;
 import org.onehippo.cms7.essentials.rest.model.StepRestful;
 import org.slf4j.Logger;
@@ -143,8 +144,6 @@ public class PowerpackResource extends BaseResource {
         eventBus.post(new DisplayEvent(DisplayEvent.DisplayType.BR.name(), DisplayEvent.DisplayType.BR, true));
 
 
-
-
         // add documentation messages:
         eventBus.post(new DisplayEvent(
                 "mvn clean package\n" +
@@ -203,7 +202,6 @@ public class PowerpackResource extends BaseResource {
         dummy1.setName("Headless REST based content repository.");
         dummy1.setValue("empty-rest");
         dummy1.setEnabled(false);
-
 
 
         // add packs

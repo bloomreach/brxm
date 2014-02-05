@@ -79,5 +79,17 @@
         return typeof str === "undefined" || str == null || str.trim().length == 0;
     };
 
+    Essentials.asArray = function (obj) {
+        var array = [];
+        if (typeof obj === "undefined" || obj == null) {
+            return array;
+        }
+        if (typeof obj === "object") {
+            array.push(obj);
+            return array;
+        }
+        return array;
+    };
+
 
 })(window.Essentials = window.Essentials || {}, undefined);

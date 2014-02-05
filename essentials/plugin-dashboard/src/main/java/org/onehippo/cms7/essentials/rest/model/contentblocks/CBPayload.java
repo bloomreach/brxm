@@ -19,7 +19,7 @@ package org.onehippo.cms7.essentials.rest.model.contentblocks;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.onehippo.cms7.essentials.rest.model.Restful;
+import org.onehippo.cms7.essentials.dashboard.rest.Restful;
 import org.onehippo.cms7.essentials.rest.model.RestfulList;
 
 /**

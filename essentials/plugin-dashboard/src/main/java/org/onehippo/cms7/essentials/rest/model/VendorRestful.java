@@ -2,10 +2,12 @@ package org.onehippo.cms7.essentials.rest.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.onehippo.cms7.essentials.dashboard.rest.Restful;
+
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "items")
+@XmlRootElement(name = "vendor")
 public class VendorRestful implements Restful {
 
     private static final long serialVersionUID = 1L;

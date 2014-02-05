@@ -19,10 +19,10 @@ package org.onehippo.cms7.essentials.rest;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
@@ -34,7 +34,12 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.ext.RuntimeDelegate;
 
+import org.apache.cxf.Bus;
+import org.apache.cxf.BusFactory;
+import org.apache.cxf.endpoint.Server;
+import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.onehippo.cms7.essentials.dashboard.EssentialsPlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.config.DefaultDocumentManager;
@@ -43,14 +48,13 @@ import org.onehippo.cms7.essentials.dashboard.config.InstallerDocument;
 import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.installer.InstallState;
+import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
-import org.onehippo.cms7.essentials.rest.client.RestClient;
-import org.onehippo.cms7.essentials.rest.model.MessageRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.rest.model.PluginRestful;
 import org.onehippo.cms7.essentials.rest.model.PostPayloadRestful;
 import org.onehippo.cms7.essentials.rest.model.RestfulList;
-import org.onehippo.cms7.essentials.rest.model.tmp.Gist;
-import org.onehippo.cms7.essentials.rest.model.tmp.GistFile;
+import org.onehippo.cms7.essentials.servlet.DynamicRestPointsApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,19 +92,15 @@ public class PluginResource extends BaseResource {
         final RestfulList<PluginRestful> plugins = new RestfulList<>();
 
 
-        List<PluginRestful> items = parseGist();
-        // GIST may not be available (too many requests)
-        if (items == null || items.size() == 0) {
-            final InputStream stream = getClass().getResourceAsStream("/plugin_descriptor.json");
-            final String json = GlobalUtils.readStreamAsText(stream);
-            final Gson gson = new Gson();
-            final Type listType = new TypeToken<RestfulList<PluginRestful>>() {
-            }.getType();
-            final RestfulList<PluginRestful> restfulList = gson.fromJson(json, listType);
-            items = restfulList.getItems();
+        final InputStream stream = getClass().getResourceAsStream("/plugin_descriptor.json");
+        final String json = GlobalUtils.readStreamAsText(stream);
+        final Gson gson = new Gson();
+        final Type listType = new TypeToken<RestfulList<PluginRestful>>() {
+        }.getType();
+        final RestfulList<PluginRestful> restfulList = gson.fromJson(json, listType);
+        final List<PluginRestful> items = restfulList.getItems();
 
-        }
-
+        final Collection<String> restClasses = new ArrayList<>();
         final DocumentManager manager = new DefaultDocumentManager(getContext(servletContext));
         for (PluginRestful item : items) {
             plugins.add(item);
@@ -125,6 +125,17 @@ public class PluginResource extends BaseResource {
                 }
 
             }
+            //############################################
+            // collect endpoints
+            //############################################
+            final List<String> pluginRestClasses = item.getRestClasses();
+            if (pluginRestClasses != null) {
+                for (String clazz : pluginRestClasses) {
+                    restClasses.add(clazz);
+                }
+            }
+
+
             // check if recently installed:
             // TODO: move to client?
             final InstallerDocument document = manager.fetchDocument(GlobalUtils.getFullConfigPath(pluginClass), InstallerDocument.class);
@@ -138,11 +149,42 @@ public class PluginResource extends BaseResource {
             }
 
         }
+        //############################################
+        // Register endpoints:
+        //############################################
+        if (!restClasses.isEmpty()) {
+            final RuntimeDelegate delegate = RuntimeDelegate.getInstance();
+            final Bus bus = BusFactory.getDefaultBus();
+            final DynamicRestPointsApplication application = new DynamicRestPointsApplication();
+            for (String restClass : restClasses) {
+                final Class<?> endpointClass = GlobalUtils.loadCLass(restClass);
+                if (endpointClass == null) {
+                    log.error("Invalid application class: {}", restClass);
+                    continue;
+                }
+                application.addClass(endpointClass);
+
+            }
+            // register:
+
+            final JAXRSServerFactoryBean factoryBean = delegate.createEndpoint(application, JAXRSServerFactoryBean.class);
+            factoryBean.setBus(bus);
+            final Server server = factoryBean.create();
+            server.start();
+        }
+
+
         return plugins;
     }
 
-    public static List<PluginRestful> parseGist() {
+    // TODO mm: enable this after we figure out new endpoint
+/*
+public static List<PluginRestful> parseGist() {
         try {
+
+
+
+
             final RestClient client = new RestClient("https://api.github.com/gists/8453217");
             final String pluginList = client.getPluginList();
             final Gson gson = new Gson();
@@ -161,7 +203,7 @@ public class PluginResource extends BaseResource {
         return Collections.emptyList();
 
     }
-
+*/
 
     @POST
     @Path("/configure/add")

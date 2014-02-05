@@ -17,9 +17,10 @@
 package org.onehippo.cms7.essentials.rest.model;
 
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.onehippo.cms7.essentials.dashboard.rest.Restful;
 
 /**
  * @version "$Id$"

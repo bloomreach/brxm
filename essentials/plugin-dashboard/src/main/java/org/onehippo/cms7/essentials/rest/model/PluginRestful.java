@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.onehippo.cms7.essentials.dashboard.rest.Restful;
+
 /**
  * @version "$Id$"
  */
@@ -14,6 +16,7 @@ public class PluginRestful implements Restful {
 
     private static final long serialVersionUID = 1L;
 
+    private List<String> restClasses;
     private VendorRestful vendor;
     private List<DependencyRestful> dependencies;
     private String title;
@@ -51,7 +54,6 @@ public class PluginRestful implements Restful {
     }
 
 
-
     public boolean isNeedsInstallation() {
         return needsInstallation;
     }
@@ -86,7 +88,7 @@ public class PluginRestful implements Restful {
 
 
     public List<DependencyRestful> getDependencies() {
-        if(dependencies ==null){
+        if (dependencies == null) {
             return new ArrayList<>();
         }
         return dependencies;
@@ -96,8 +98,8 @@ public class PluginRestful implements Restful {
         this.dependencies = dependencies;
     }
 
-    public void addDependency(final DependencyRestful dependency){
-        if(dependencies ==null){
+    public void addDependency(final DependencyRestful dependency) {
+        if (dependencies == null) {
             dependencies = new ArrayList<>();
         }
         dependencies.add(dependency);
@@ -129,17 +131,42 @@ public class PluginRestful implements Restful {
         this.pluginClass = pluginClass;
     }
 
+
+    public void addRestCLass(final String restClass) {
+
+        if (restClasses == null) {
+            restClasses = new ArrayList<>();
+        }
+        restClasses.add(restClass);
+    }
+
+
+    public List<String> getRestClasses() {
+        return restClasses;
+    }
+
+    public void setRestClasses(final List<String> restClasses) {
+        this.restClasses = restClasses;
+    }
+
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("PluginRestful{");
-        sb.append("vendor=").append(vendor);
+        sb.append("restClasses=").append(restClasses);
+        sb.append(", vendor=").append(vendor);
         sb.append(", dependencies=").append(dependencies);
         sb.append(", title='").append(title).append('\'');
+        sb.append(", name='").append(name).append('\'');
         sb.append(", introduction='").append(introduction).append('\'');
         sb.append(", pluginLink='").append(pluginLink).append('\'');
         sb.append(", pluginClass='").append(pluginClass).append('\'');
+        sb.append(", type='").append(type).append('\'');
         sb.append(", installed=").append(installed);
+        sb.append(", needsInstallation=").append(needsInstallation);
+        sb.append(", dateInstalled=").append(dateInstalled);
         sb.append('}');
         return sb.toString();
     }
+
 }

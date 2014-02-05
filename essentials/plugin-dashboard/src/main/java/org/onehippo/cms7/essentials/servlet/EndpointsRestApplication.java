@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,23 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.rest.model;
+package org.onehippo.cms7.essentials.servlet;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.ws.rs.ApplicationPath;
 
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "items")
-public class ProjectRestful implements Restful {
 
-    private static final long serialVersionUID = 1L;
+@ApplicationPath("/endponts")
+public class EndpointsRestApplication extends javax.ws.rs.core.Application {
 
-    // TODO add more data
-    private String namespace;
-
-    public String getNamespace() {
-        return namespace;
-    }
-
-    public void setNamespace(final String namespace) {
-        this.namespace = namespace;
+    @Override
+    public Set<Class<?>> getClasses() {
+         return new HashSet<Class<?>>(Arrays.asList(EndPointList.class));
     }
 }

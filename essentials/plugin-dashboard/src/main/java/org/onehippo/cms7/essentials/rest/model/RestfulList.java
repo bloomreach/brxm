@@ -9,6 +9,8 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.Restful;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.Compounds;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.DocumentType;
 import org.onehippo.cms7.essentials.rest.model.gallery.ImageProcessorRestful;

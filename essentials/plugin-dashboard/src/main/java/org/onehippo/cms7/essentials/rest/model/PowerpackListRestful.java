@@ -22,6 +22,9 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.onehippo.cms7.essentials.dashboard.rest.ProjectRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.Restful;
+
 /**
  * @version "$Id$"
  */
@@ -51,6 +54,7 @@ public class PowerpackListRestful implements Restful {
     public void addStep(final StepRestful step) {
         steps.add(step);
     }
+
     public void addPowerpack(final PowerpackRestful powerpack) {
         powerpacks.add(powerpack);
     }

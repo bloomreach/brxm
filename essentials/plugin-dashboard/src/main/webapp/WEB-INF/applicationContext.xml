@@ -83,6 +83,7 @@
         <value>variants</value>
         <value>imageSets</value>
         <value>translations</value>
+        <value>restClasses</value>
       </list>
     </property>
 
