@@ -48,7 +48,7 @@
         <if cond="supports.document">
           <hippo:info info="status" value="editable"/>
           <hippo:info info="isLive" value="live"/>
-          <hippo:action action="checkModified" value="draft and unpublished"/>
+          <hippo:action action="checkModified" enabledExpr="draft and unpublished"/>
         </if>
       </onentry>
 
@@ -67,12 +67,12 @@
       <state id="init-edit">
         <onentry>
           <if cond="supports.document">
-            <hippo:action action="disposeEditableInstance" value="false"/>
-            <hippo:action action="obtainEditableInstance" value="false"/>
-            <hippo:action action="commitEditableInstance" value="false"/>
+            <hippo:action action="disposeEditableInstance" enabledExpr="false"/>
+            <hippo:action action="obtainEditableInstance" enabledExpr="false"/>
+            <hippo:action action="commitEditableInstance" enabledExpr="false"/>
           </if>
           <if cond="supports.unlock">
-            <hippo:action action="unlock" value="false"/>
+            <hippo:action action="unlock" enabledExpr="false"/>
           </if>
         </onentry>
         <transition target="not-editable" cond="requestPending"/>
@@ -86,16 +86,16 @@
         <onentry>
           <if cond="supports.document">
             <if cond="editor">
-              <hippo:action action="disposeEditableInstance" value="true"/>
-              <hippo:action action="obtainEditableInstance" value="true"/>
-              <hippo:action action="commitEditableInstance" value="true"/>
+              <hippo:action action="disposeEditableInstance" enabledExpr="true"/>
+              <hippo:action action="obtainEditableInstance" enabledExpr="true"/>
+              <hippo:action action="commitEditableInstance" enabledExpr="true"/>
             <else/>
               <hippo:info info="inUseBy" value="holder"/>
             </if>
           </if>
           <if cond="supports.unlock">
             <if cond="editor or dm.isGranted(draft,'hippo:admin')">
-              <hippo:action action="unlock" value="true"/>
+              <hippo:action action="unlock" enabledExpr="true"/>
             </if>
           </if>
         </onentry>
@@ -104,7 +104,7 @@
       <state id="editable">
         <onentry>
           <if cond="supports.document">
-            <hippo:action action="obtainEditableInstance" value="true"/>
+            <hippo:action action="obtainEditableInstance" enabledExpr="true"/>
           </if>
         </onentry>
       </state>
@@ -260,7 +260,7 @@
       <state id="init-publish">
 
         <onentry>
-          <hippo:action action="publish" value="false"/>
+          <hippo:action action="publish" enabledExpr="false"/>
         </onentry>
 
         <transition target="publishable" cond="!editing and modified"/>
@@ -273,10 +273,10 @@
       <state id="publishable">
         <onentry>
           <if cond="!requestPending or user=='system'">
-            <hippo:action action="publish" value="true"/>
-            <hippo:action action="requestPublish" value="true"/>
+            <hippo:action action="publish" enabledExpr="true"/>
+            <hippo:action action="requestPublish" enabledExpr="true"/>
             <if cond="dm.isGranted(unpublished, 'hippo:editor')">
-              <hippo:action action="schedulePublish" value="true"/>
+              <hippo:action action="schedulePublish" enabledExpr="true"/>
             </if>
           </if>
         </onentry>
@@ -287,11 +287,11 @@
           <hippo:version variant="unpublished"/>
         </transition>
 
-        <transition event="requestPublish" value="reset">
+        <transition event="requestPublish" target="reset">
           <hippo:workflowRequest type="publish" contextVariantExpr="unpublished" targetDateExpr="_eventdata"/>
         </transition>
 
-        <transition event="schedulePublish" value="reset">
+        <transition event="schedulePublish" target="reset">
           <hippo:invokeDocumentWorkflow action="scheduledpublish" whenExpr="_eventdata"/>
         </transition>
 
@@ -307,7 +307,7 @@
 
       <state id="init-depublish">
         <onentry>
-          <hippo:action action="depublish" value="false"/>
+          <hippo:action action="depublish" enabledExpr="false"/>
         </onentry>
 
         <transition target="depublishable" cond="!editing and live"/>
@@ -320,10 +320,10 @@
       <state id="depublishable">
         <onentry>
           <if cond="!requestPending or user=='system'">
-            <hippo:action action="depublish" value="true"/>
-            <hippo:action action="requestDepublish" value="true"/>
+            <hippo:action action="depublish" enabledExpr="true"/>
+            <hippo:action action="requestDepublish" enabledExpr="true"/>
             <if cond="dm.isGranted(published, 'hippo:editor')">
-              <hippo:action action="scheduleDepublish" value="true"/>
+              <hippo:action action="scheduleDepublish" enabledExpr="true"/>
             </if>
           </if>
         </onentry>
@@ -337,11 +337,11 @@
           <hippo:version variant="unpublished"/>
         </transition>
 
-        <transition event="requestDepublish" value="reset">
+        <transition event="requestDepublish" target="reset">
           <hippo:workflowRequest type="depublish" contextVariantExpr="published" targetDateExpr="_eventdata"/>
         </transition>
 
-        <transition event="scheduleDepublish" value="reset">
+        <transition event="scheduleDepublish" target="reset">
           <hippo:invokeDocumentWorkflow action="scheduleddepublish" whenExpr="_eventdata"/>
         </transition>
 
@@ -357,11 +357,11 @@
 
       <state id="version">
         <onentry>
-          <hippo:action action="version" value="true"/>
-          <hippo:action action="listVersions" value="true"/>
-          <hippo:action action="retrieveVersion" value="true"/>
-          <hippo:action action="restoreVersion" value="true"/>
-          <hippo:action action="versionRestoreTo" value="true"/>
+          <hippo:action action="version" enabledExpr="true"/>
+          <hippo:action action="listVersions" enabledExpr="true"/>
+          <hippo:action action="retrieveVersion" enabledExpr="true"/>
+          <hippo:action action="restoreVersion" enabledExpr="true"/>
+          <hippo:action action="versionRestoreTo" enabledExpr="true"/>
         </onentry>
 
         <transition event="version" target="reset">
@@ -396,27 +396,27 @@
 
       <state id="terminateable">
         <onentry>
-          <hippo:action action="delete" value="true"/>
-          <hippo:action action="requestDelete" value="true"/>
+          <hippo:action action="delete" enabledExpr="true"/>
+          <hippo:action action="requestDelete" enabledExpr="true"/>
           <if cond="dm.isGranted(deleteSource, 'hippo:editor')">
-            <hippo:action action="move" value="true"/>
-            <hippo:action action="rename" value="true"/>
+            <hippo:action action="move" enabledExpr="true"/>
+            <hippo:action action="rename" enabledExpr="true"/>
           </if>
         </onentry>
 
-        <transition event="requestDelete" value="reset">
+        <transition event="requestDelete" target="reset">
           <hippo:workflowRequest type="delete" contextVariantExpr="deleteSource"/>
         </transition>
 
-        <transition event="delete" value="reset">
+        <transition event="delete" target="reset">
           <hippo:invokeDocumentWorkflow action="delete"/>
         </transition>
 
-        <transition event="move" value="reset">
+        <transition event="move" target="reset">
           <hippo:moveDocument destinationExpr="_eventdata?.destination" newNameExpr="_eventdata?.newName"/>
         </transition>
 
-        <transition event="rename" value="reset">
+        <transition event="rename" target="reset">
           <hippo:renameDocument newNameExpr="_eventdata"/>
         </transition>
 
@@ -432,10 +432,10 @@
 
       <state id="copyable">
         <onentry>
-          <hippo:action action="copy" value="true"/>
+          <hippo:action action="copy" enabledExpr="true"/>
         </onentry>
 
-        <transition event="copy" value="reset">
+        <transition event="copy" target="reset">
           <hippo:copyDocument destinationExpr="_eventdata?.destination" newNameExpr="_eventdata?.newName"/>
         </transition>
 

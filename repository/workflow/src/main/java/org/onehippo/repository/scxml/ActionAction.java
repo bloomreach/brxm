@@ -27,7 +27,7 @@ import org.apache.commons.scxml2.TriggerEvent;
 import org.apache.commons.scxml2.model.ModelException;
 
 /**
- * ActionAction sets a provided action value in the {@link SCXMLDataModel}, or removes it if empty/null
+ * ActionAction sets a provided action enabled setting in the {@link SCXMLDataModel}, or removes it if empty/null
  */
 public class ActionAction extends AbstractAction {
 
@@ -41,12 +41,12 @@ public class ActionAction extends AbstractAction {
         setParameter("action", action);
     }
 
-    public String getValue() {
-        return getParameter("valueExpr");
+    public String getEnabledExpr() {
+        return getParameter("enabledExpr");
     }
 
-    public void setValue(final String value) {
-        setParameter("valueExpr", value);
+    public void setEnabledExpr(final String enabled) {
+        setParameter("enabledExpr", enabled);
     }
 
     @Override
@@ -58,17 +58,17 @@ public class ActionAction extends AbstractAction {
             throw new ModelException("No action specified");
         }
 
-        String valueExpr = getValue();
-        Object value = (StringUtils.isBlank(valueExpr) ? null : eval(valueExpr));
-        if (value != null && ! (value instanceof Boolean)) {
-            throw new ModelException("Action "+action+" value must be of type boolean. Value: "+value.toString());
+        String enabledExpr = getEnabledExpr();
+        Object enabled = (StringUtils.isBlank(enabledExpr) ? null : eval(enabledExpr));
+        if (enabled != null && ! (enabled instanceof Boolean)) {
+            throw new ModelException("Action "+action+" enabled attribute must be of type boolean. Value: "+enabled.toString());
         }
 
         SCXMLDataModel dm = getDataModel();
-        if (value == null) {
+        if (enabled == null) {
             dm.getActions().remove(action);
         } else {
-            dm.getActions().put(action, (Boolean)value);
+            dm.getActions().put(action, (Boolean)enabled);
         }
     }
 }
