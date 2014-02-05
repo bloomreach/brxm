@@ -43,8 +43,8 @@
             function ($scope, $state, ConfigService, MenuService) {
                 // fetch initial data
                 $scope.menuTree = [{}];
-                MenuService.getMenu(ConfigService.menuId).then(function (response) {
-                    $scope.menuTree = reformatData(response.children);
+                MenuService.getMenu(ConfigService.menuId).then(function (menuData) {
+                    $scope.menuTree = reformatData(menuData.children);
                 });
 
                 $scope.navigateTo = function (itemId) {

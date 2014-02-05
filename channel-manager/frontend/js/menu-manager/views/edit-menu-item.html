@@ -19,30 +19,30 @@
     <legend>{{ 'EDIT_MENU_ITEM' | translate }}</legend>
     <div class="form-group">
         <label for="label">{{ 'LABEL' | translate }}</label>
-        <input type="text" class="form-control" id="label" placeholder="{{ 'LABEL' | translate }}" ng-model="selectedMenuItem.name">
+        <input type="text" class="form-control" id="label" placeholder="{{ 'LABEL' | translate }}" ng-model="selectedMenuItem.name" ng-blur="saveMenuItem()">
     </div>
     <label for="url">{{ 'DESTINATION' | translate }}</label>
     <div class="form-group">
         <div class="radio">
             <label>
-                <input type="radio" name="destination"  ng-model="selectedMenuItem.destination" value="1" checked="checked">
+                <input type="radio" name="destination" ng-model="selectedMenuItem.linkType" value="SITEMAPITEM" checked="checked" ng-click="saveMenuItem()">
                 {{ 'SITEMAP_ITEM' | translate }}
             </label>
         </div>
         <div class="radio">
             <label>
-                <input type="radio" name="destination" ng-model="selectedMenuItem.destination" value="2">
+                <input type="radio" name="destination" ng-model="selectedMenuItem.linkType" value="EXTERNAL" ng-click="saveMenuItem()">
                 {{ 'EXTERNAL_LINK' | translate }}
             </label>
         </div>
         <div class="radio">
             <label>
-                <input type="radio" name="destination" ng-model="selectedMenuItem.destination" value="3">
+                <input type="radio" name="destination" ng-model="selectedMenuItem.linkType" value="NONE" ng-click="saveMenuItem()">
                 {{ 'NONE' | translate }}
             </label>
         </div>
     </div>
-    <div class="form-group" ng-show="selectedMenuItem.destination == 1">
+    <div class="form-group" ng-show="selectedMenuItem.linkType === 'SITEMAPITEM'">
         <label for="url">{{ 'INTERNAL_LINK' | translate }}</label>
         <div class="input-group">
             <input type="text" class="form-control" id="url" data-ng-model="selectedMenuItem.link">
@@ -51,7 +51,7 @@
             </span>
         </div>
     </div>
-    <div class="form-group" ng-show="selectedMenuItem.destination == 1">
+    <div class="form-group" ng-show="selectedMenuItem.linkType === 'SITEMAPITEM'">
         <button type="button" class="btn btn-default btn-sm">
             <i class="fa fa-crosshairs"></i> {{ 'SELECT_DOCUMENT' | translate }}
         </button>
@@ -62,7 +62,7 @@
             <i class="fa fa-plus"></i> {{ 'CREATE_NEW_PAGE' | translate }}
         </button>
     </div>
-    <div class="form-group" ng-show="selectedMenuItem.destination == 2">
+    <div class="form-group" ng-show="selectedMenuItem.linkType === 'EXTERNAL'">
         <label for="link">{{ 'EXTERNAL_LINK' | translate }}</label>
         <input type="text" class="form-control" id="link" placeholder="{{ 'EXAMPLE_DOMAIN' | translate }}" ng-model="selectedMenuItem.link">
     </div>

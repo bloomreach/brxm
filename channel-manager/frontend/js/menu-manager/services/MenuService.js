@@ -29,26 +29,36 @@
                 $http.get(ConfigService.apiUrlPrefix + '/' + menuId).success(function (response) {
                     deferred.resolve(response.data);
                 }).error(function (error) {
-                    deferred.reject('An error occured while fetching the menu tree with id `' + menuId + '`: ' + error);
+                    deferred.reject("An error occured while fetching the menu tree with id '" + menuId + "': " + error);
                 });
 
                 return deferred.promise;
             };
 
-            // fetch menu item
             menuService.getMenuItem = function(menuId, itemId) {
                 var deferred = $q.defer();
 
                 $http.get(ConfigService.apiUrlPrefix + '/' + menuId + './' + itemId).success(function (response) {
                     deferred.resolve(response.data);
                 }).error(function (error) {
-                    deferred.reject('An error occured while fetching the menu item with id `' + menuId + '`: ' + error);
+                    deferred.reject("An error occured while fetching the menu item with id '" + menuId + "': " + error);
                 });
 
                 return deferred.promise;
             };
 
-            // create new menu item
+            menuService.saveMenuItem = function(menuId, menuItem) {
+                var deferred = $q.defer();
+
+                $http.post(ConfigService.apiUrlPrefix + '/' + menuId + './update', menuItem).success(function (response) {
+                    deferred.resolve(response.data);
+                }).error(function(error) {
+                    deferred.reject("An error occured while the menu item with id '" + menuId + "': " + error);
+                });
+
+                return deferred.promise;
+            };
+
             // TODO: finish this implementation
             menuService.createItem = function (parentId, menuItem) {
                 var deferred = $q.defer();

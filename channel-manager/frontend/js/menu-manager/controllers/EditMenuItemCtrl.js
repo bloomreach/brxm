@@ -27,28 +27,18 @@
             'hippo.channelManager.menuManager.MenuService',
             'hippo.channelManager.menuManager.ConfigService',
             function ($scope, $routeParams, $stateParams, $state, MenuService, ConfigService) {
-                console.log('edit menu item ctrl init');
-
-                var destinationLookupTable = {
-                    'SITEMAPITEM': 1,
-                    'EXTERNAL': 2,
-                    'NONE': 3
-                };
-
-                // fetch menu item
-                MenuService.getMenuItem(ConfigService.menuId, $stateParams.menuItemId).then(function (response) {
-                    setDestinationProperty(response);
-                    $scope.selectedMenuItem = response;
+                MenuService.getMenuItem(ConfigService.menuId, $stateParams.menuItemId).then(function (menuItem) {
+                    $scope.selectedMenuItem = menuItem;
                 });
 
-                function setDestinationProperty(item) {
-                    if (item && !item.destination) {
-                        item.destination = destinationLookupTable[item.linkType];
-                    }
-                }
+                $scope.saveMenuItem = function () {
+                    MenuService.saveMenuItem(ConfigService.menuId, $scope.selectedMenuItem).then(function () {
+                        $state.go('loader');
+                    });
+                };
 
                 $scope.createNewPage = function () {
-                    $state.go('menu-item.add-page', {menuItemId: $stateParams.menuItemId });
+                    $state.go('menu-item.add-page', { menuItemId: $stateParams.menuItemId });
                 };
             }
         ]);
