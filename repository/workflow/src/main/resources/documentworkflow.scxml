@@ -273,10 +273,10 @@
       <state id="publishable">
         <onentry>
           <if cond="!requestPending or user=='system'">
-            <hippo:action action="publish" enabledExpr="true"/>
-            <hippo:action action="requestPublish" enabledExpr="true"/>
+            <hippo:action action="requestPublication" enabledExpr="true"/>
             <if cond="dm.isGranted(unpublished, 'hippo:editor')">
-              <hippo:action action="schedulePublish" enabledExpr="true"/>
+              <hippo:action action="schedulePublication" enabledExpr="true"/>
+              <hippo:action action="publish" enabledExpr="true"/>
             </if>
           </if>
         </onentry>
@@ -287,11 +287,11 @@
           <hippo:version variant="unpublished"/>
         </transition>
 
-        <transition event="requestPublish" target="reset">
+        <transition event="requestPublication" target="reset">
           <hippo:workflowRequest type="publish" contextVariantExpr="unpublished" targetDateExpr="_eventdata"/>
         </transition>
 
-        <transition event="schedulePublish" target="reset">
+        <transition event="schedulePublication" target="reset">
           <hippo:invokeDocumentWorkflow action="scheduledpublish" whenExpr="_eventdata"/>
         </transition>
 
@@ -320,10 +320,10 @@
       <state id="depublishable">
         <onentry>
           <if cond="!requestPending or user=='system'">
-            <hippo:action action="depublish" enabledExpr="true"/>
-            <hippo:action action="requestDepublish" enabledExpr="true"/>
+            <hippo:action action="requestDepublication" enabledExpr="true"/>
             <if cond="dm.isGranted(published, 'hippo:editor')">
-              <hippo:action action="scheduleDepublish" enabledExpr="true"/>
+              <hippo:action action="depublish" enabledExpr="true"/>
+              <hippo:action action="scheduledDepublication" enabledExpr="true"/>
             </if>
           </if>
         </onentry>
@@ -337,11 +337,11 @@
           <hippo:version variant="unpublished"/>
         </transition>
 
-        <transition event="requestDepublish" target="reset">
+        <transition event="requestDepublication" target="reset">
           <hippo:workflowRequest type="depublish" contextVariantExpr="published" targetDateExpr="_eventdata"/>
         </transition>
 
-        <transition event="scheduleDepublish" target="reset">
+        <transition event="scheduleDepublication" target="reset">
           <hippo:invokeDocumentWorkflow action="scheduleddepublish" whenExpr="_eventdata"/>
         </transition>
 
@@ -396,9 +396,9 @@
 
       <state id="terminateable">
         <onentry>
-          <hippo:action action="delete" enabledExpr="true"/>
           <hippo:action action="requestDelete" enabledExpr="true"/>
           <if cond="dm.isGranted(deleteSource, 'hippo:editor')">
+            <hippo:action action="delete" enabledExpr="true"/>
             <hippo:action action="move" enabledExpr="true"/>
             <hippo:action action="rename" enabledExpr="true"/>
           </if>

@@ -155,22 +155,22 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     @Override
     public void requestDepublication() throws WorkflowException {
-        workflowExecutor.triggerAction("requestDepublish", null);
+        workflowExecutor.triggerAction("requestDepublication", null);
     }
 
     @Override
     public void requestDepublication(final Date publicationDate) throws WorkflowException {
-        workflowExecutor.triggerAction("requestDepublish", publicationDate);
+        workflowExecutor.triggerAction("requestDepublication", publicationDate);
     }
 
     @Override
     public void requestPublication() throws WorkflowException {
-        workflowExecutor.triggerAction("requestPublish", null);
+        workflowExecutor.triggerAction("requestPublication", null);
     }
 
     @Override
     public void requestPublication(final Date publicationDate) throws WorkflowException {
-        workflowExecutor.triggerAction("requestPublish", publicationDate);
+        workflowExecutor.triggerAction("requestPublication", publicationDate);
     }
 
     @Override
