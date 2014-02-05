@@ -21,14 +21,21 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
 import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.jackrabbit.value.DateValue;
+import org.apache.jackrabbit.value.DoubleValue;
+import org.apache.jackrabbit.value.LongValue;
 import org.onehippo.cms7.essentials.dashboard.config.Document;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.PersistentHandler;
@@ -50,7 +57,7 @@ public @interface PersistentMultiProperty {
 
     String name();
 
-    Class<?> type() default String[].class;
+    Class<?> type() default String.class;
 
     enum ProcessAnnotation implements PersistentHandler<PersistentMultiProperty, Property> {
         MULTI_PROPERTY {
@@ -93,11 +100,53 @@ public @interface PersistentMultiProperty {
                         node.setProperty(name, (String[]) value);
                     } else if (value instanceof List) {
                         final Class<?> type = annotation.type();
-                        if (type.equals(String[].class)) {
+                        if (type.equals(String.class)) {
                             @SuppressWarnings("unchecked")
                             final List<String> values = (List<String>) value;
                             final String[] stringValues = values.toArray(new String[values.size()]);
                             node.setProperty(name, stringValues);
+                        } else if (type.equals(int.class) || type.equals(Integer.class)) {
+                            @SuppressWarnings("unchecked")
+                            final Collection<Integer> values = (Collection<Integer>) value;
+                            final List<Value> jcrValues = new ArrayList<>();
+                            for (Integer integer : values) {
+                                final Value val = new LongValue(integer);
+                                jcrValues.add(val);
+                            }
+                            final Value[] valArray = jcrValues.toArray(new Value[values.size()]);
+                            node.setProperty(name, valArray);
+                        } else if (type.equals(long.class) || type.equals(Long.class)) {
+                            @SuppressWarnings("unchecked")
+                            final Collection<Long> values = (Collection<Long>) value;
+                            final List<Value> jcrValues = new ArrayList<>();
+                            for (Long l : values) {
+                                final Value val = new LongValue(l);
+                                jcrValues.add(val);
+                            }
+                            final Value[] valArray = jcrValues.toArray(new Value[values.size()]);
+                            node.setProperty(name, valArray);
+                        } else if (type.equals(double.class) || type.equals(Double.class)) {
+                            @SuppressWarnings("unchecked")
+                            final Collection<Double> values = (Collection<Double>) value;
+                            final List<Value> jcrValues = new ArrayList<>();
+                            for (Double d : values) {
+                                final Value val = new DoubleValue(d);
+                                jcrValues.add(val);
+                            }
+                            final Value[] valArray = jcrValues.toArray(new Value[values.size()]);
+                            node.setProperty(name, valArray);
+                        } else if (type.equals(Calendar.class)) {
+                            @SuppressWarnings("unchecked")
+                            final Collection<Calendar> values = (Collection<Calendar>) value;
+                            final List<Value> jcrValues = new ArrayList<>();
+                            for (Calendar c : values) {
+                                final Value val = new DateValue(c);
+                                jcrValues.add(val);
+                            }
+                            final Value[] valArray = jcrValues.toArray(new Value[values.size()]);
+                            node.setProperty(name, valArray);
+                        } else {
+                            log.error("type {}", type);
                         }
                     } else {
                         throw new NotImplementedException("Property writer not implemented for: " + value.getClass());

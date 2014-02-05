@@ -93,6 +93,12 @@ public @interface PersistentProperty {
                         node.setProperty(name, (String) value);
                     } else if (value instanceof Boolean) {
                         node.setProperty(name, (Boolean) value);
+                    } else if (value instanceof Integer) {
+                        node.setProperty(name, (Integer) value);
+                    } else if (value instanceof Long) {
+                        node.setProperty(name, (Long) value);
+                    } else if (value instanceof Double) {
+                        node.setProperty(name, (Double) value);
                     } else if (value instanceof Calendar) {
                         node.setProperty(name, (Calendar) value);
                     } else {

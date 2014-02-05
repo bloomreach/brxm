@@ -89,7 +89,13 @@ public class JcrPersistenceReader {
                 } else if (type == Boolean.class || type == boolean.class) {
                     field.set(document, myProperty.getBoolean());
                 } else if (type == Long.class || type == long.class) {
-                    field.set(document, myProperty.getLong());
+                    final long myLong = myProperty.getLong();
+                    field.set(document, myLong);
+                } else if (type == Integer.class || type == int.class) {
+                    final Long myLong = myProperty.getLong();
+                    field.set(document, myLong.intValue());
+                } else if (type == Double.class || type == double.class) {
+                    field.set(document, myProperty.getDouble());
                 } else if (type == Calendar.class) {
                     field.set(document, myProperty.getDate());
                 } else {
@@ -122,9 +128,11 @@ public class JcrPersistenceReader {
                 } else if (type == Date.class || type == Calendar.class) {
                     field.set(document, covertValues(values, Calendar.class));
                 } else if (type == boolean.class || type == Boolean.class) {
-                    field.set(document, myProperty.getBoolean());
+                    field.set(document, covertValues(values, Boolean.class));
+                } else if (type == double.class || type == Double.class) {
+                    field.set(document, covertValues(values, Double.class));
                 } else if (type == int.class || type == long.class || type == Long.class || type == Integer.class) {
-                    field.set(document, myProperty.getLong());
+                    field.set(document, covertValues(values, Long.class));
                 } else {
                     log.error("@@@ PROPERTY READING NOT IMPLEMENTED FOR TYPE: {}", type);
                 }
@@ -152,6 +160,12 @@ public class JcrPersistenceReader {
                 } else if (clazz == boolean.class || clazz == Boolean.class) {
                     final Boolean aBoolean = value.getBoolean();
                     list.add((T) aBoolean);
+                } else if (clazz == Calendar.class) {
+                    final Calendar cal = value.getDate();
+                    list.add((T) cal);
+                } else if (clazz == double.class || clazz == Double.class) {
+                    final Double aDouble = value.getDouble();
+                    list.add((T) aDouble);
                 } else if (clazz == long.class || clazz == Long.class) {
                     final Long aLong = value.getLong();
                     list.add((T) aLong);

@@ -541,6 +541,7 @@ plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/c
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/DummyTestPlugin.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/InstallerDocumentTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/JcrPluginConfigServiceTest.java -text
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/TestBeanDocument.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/event/listeners/MemoryPluginEventListenerTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/event/listeners/ValidationEventListenerTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/CndInstructionTest.java -text
