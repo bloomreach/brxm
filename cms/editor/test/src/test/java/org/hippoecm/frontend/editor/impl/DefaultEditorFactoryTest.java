@@ -24,10 +24,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
 
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.util.collections.MiniMap;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.editor.IEditorContext;
@@ -44,8 +42,6 @@ import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IRenderService;
-import org.hippoecm.frontend.service.ITitleDecorator;
-import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Test;
@@ -57,7 +53,6 @@ public class DefaultEditorFactoryTest extends PluginTest {
 
     static final String EDITORS = "editors";
     static final String PREVIEWS = "previews";
-    static final String COMPARERS = "compares";
     static final String FILTERS = "filters";
     static final String RENDERERS = "service.renderer";
     
@@ -71,36 +66,13 @@ public class DefaultEditorFactoryTest extends PluginTest {
         }
     }
 
-    public static class Preview extends RenderPlugin implements ITitleDecorator {
+    public static class Preview extends RenderPlugin {
         private static final long serialVersionUID = 1L;
 
         public Preview(IPluginContext context, IPluginConfig config) {
             super(context, config);
 
             context.registerService(this, PREVIEWS);
-        }
-
-        public IModel getTitle() {
-            try {
-                return new Model(((JcrNodeModel) getModel()).getNode().getName());
-            } catch (RepositoryException ex) {
-                throw new RuntimeException("failed to determine node name", ex);
-            }
-        }
-
-        public ResourceReference getIcon(IconSize type) {
-            return null;
-        }
-
-    }
-
-    public static class Comparer extends RenderPlugin {
-        private static final long serialVersionUID = 1L;
-
-        public Comparer(IPluginContext context, IPluginConfig config) {
-            super(context, config);
-
-            context.registerService(this, COMPARERS);
         }
 
         public IModel getCompareToModel() {
@@ -140,10 +112,6 @@ public class DefaultEditorFactoryTest extends PluginTest {
         return context.getServices(EDITORS, IRenderService.class);
     }
 
-    private List<IRenderService> getComparers() {
-        return context.getServices(COMPARERS, IRenderService.class);
-    }
-
     private List<CloseFilter> getCloseFilters() {
         return context.getServices(FILTERS, CloseFilter.class);
     }
@@ -181,17 +149,12 @@ public class DefaultEditorFactoryTest extends PluginTest {
             "/config/test-app/cms-preview", "frontend:plugincluster",
                 "frontend:references", "wicket.model",
                 "frontend:references", "editor.id",
+                "frontend:references", "model.compareTo",
                 "frontend:services", "wicket.id",
                 "/config/test-app/cms-preview/plugin", "frontend:plugin",
                     "plugin.class", Preview.class.getName(),
                 "/config/test-app/cms-preview/filter", "frontend:plugin",
                     "plugin.class", CloseFilter.class.getName(),
-            "/config/test-app/cms-compare", "frontend:plugincluster",
-                "frontend:references", "wicket.model",
-                "frontend:references", "model.compareTo",
-                "frontend:services", "wicket.id",
-                "/config/test-app/cms-compare/plugin", "frontend:plugin",
-                    "plugin.class", Comparer.class.getName(),
     };
 
     final static String[] cmstestdocument = new String[] {
@@ -306,11 +269,11 @@ public class DefaultEditorFactoryTest extends PluginTest {
 
         DefaultEditorFactoryPlugin factory = new DefaultEditorFactoryPlugin(context, config);
         IEditor editor = factory.newEditor(new TestEditorContext(), new JcrNodeModel(version), Mode.COMPARE, parameters);
-        List<IRenderService> comparers = getComparers();
+        List<IRenderService> comparers = getPreviews();
         assertEquals(1, comparers.size());
-        Comparer comparer = (Comparer) comparers.get(0);
-        JcrNodeModel current = (JcrNodeModel) comparer.getModel();
-        JcrNodeModel base = (JcrNodeModel) comparer.getCompareToModel();
+        Preview preview = (Preview) comparers.get(0);
+        JcrNodeModel current = (JcrNodeModel) preview.getModel();
+        JcrNodeModel base = (JcrNodeModel) preview.getCompareToModel();
         assertEquals(new JcrNodeModel("/test/content/document/document"), current);
         assertEquals(new JcrNodeModel(version.getNode("jcr:frozenNode")), base);
     }

@@ -312,21 +312,6 @@
       <sv:value>900.7</sv:value>
     </sv:property>
   </sv:node>
-  <!-- CMS compare perspective -->
-  <sv:node sv:name="cms-compare">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>cms-compare.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>900.8</sv:value>
-    </sv:property>
-  </sv:node>
   <!-- CMS shortcuts perspective -->
   <sv:node sv:name="cms-dashshortcuts">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">

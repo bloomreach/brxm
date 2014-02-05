@@ -1295,7 +1295,6 @@ builtin/src/main/java/org/hippoecm/repository/standardworkflow/VersionWorkflowIm
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/VersionWorkflowImpl_nl.properties svneol=native#text/plain
 config/pom.xml svneol=native#text/plain
 config/src/main/resources/cms-browser.xml svneol=native#text/plain
-config/src/main/resources/cms-compare.xml svneol=native#text/plain
 config/src/main/resources/cms-dashboard.xml -text svneol=unset#text/plain
 config/src/main/resources/cms-dashshortcuts-changepassword.xml -text svneol=unset#text/plain
 config/src/main/resources/cms-dashshortcuts-gotolink.xml -text svneol=unset#text/plain
@@ -1686,8 +1685,6 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/validator/IFeedbackLo
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/validator/plugins/ResourceRequiredValidator.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/viewer/ComparePlugin.html svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/viewer/ComparePlugin.java svneol=native#text/plain
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/viewer/ViewerPlugin.html -text svneol=unset#text/plain
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/viewer/ViewerPlugin.java -text svneol=unset#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/CommitTypeWorkflowPlugin.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/CommitTypeWorkflowPlugin.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/CommitTypeWorkflowPlugin_de.properties -text

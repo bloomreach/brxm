@@ -274,8 +274,6 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
             clusterName = "cms-editor";
             break;
         case COMPARE:
-            clusterName = "cms-compare";
-            break;
         case VIEW:
         default:
             clusterName = "cms-preview";
