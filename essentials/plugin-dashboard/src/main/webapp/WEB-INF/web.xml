@@ -16,7 +16,7 @@
   <servlet>
     <display-name>REST</display-name>
     <servlet-name>REST</servlet-name>
-    <servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
+    <servlet-class>org.onehippo.cms7.essentials.servlet.RestServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>

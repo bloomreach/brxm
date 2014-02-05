@@ -20,10 +20,6 @@
 
   <properties>
     <!--***START temporary override of versions*** -->
-    <hippo.cms.version>2.24.07</hippo.cms.version>
-    <hippo.hst.version>2.26.08</hippo.hst.version>
-    <hippo.repository.version>2.24.11</hippo.repository.version>
-    <hippo.addon-channel-manager.version>2.24.08</hippo.addon-channel-manager.version>
     <!-- ***END temporary override of versions*** -->
     <javax.inject.version>1</javax.inject.version>
     <spring.version>3.2.6.RELEASE</spring.version>
