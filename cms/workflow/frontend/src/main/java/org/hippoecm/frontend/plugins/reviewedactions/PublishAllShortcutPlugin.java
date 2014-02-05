@@ -47,8 +47,7 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.reviewedactions.BasicRequestWorkflow;
-import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -157,19 +156,19 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
                                     Node request = requestIter.nextNode();
                                     if (request != null) {
                                         Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, request);
-                                        if (workflow instanceof BasicRequestWorkflow) {
-                                            ((BasicRequestWorkflow) workflow).cancelRequest();
+                                        if (workflow instanceof DocumentWorkflow) {
+                                            ((DocumentWorkflow) workflow).cancelRequest(request.getIdentifier());
                                         }
                                     }
                                 }
                             }
                         }
                         Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, document);
-                        if (workflow instanceof FullReviewedActionsWorkflow) {
+                        if (workflow instanceof DocumentWorkflow) {
                             if (mode.equals(MODE_PUBLISH)) {
-                                ((FullReviewedActionsWorkflow) workflow).publish();
+                                ((DocumentWorkflow) workflow).publish();
                             } else if (mode.equals(MODE_DEPUBLISH)) {
-                                ((FullReviewedActionsWorkflow) workflow).depublish();
+                                ((DocumentWorkflow) workflow).depublish();
                             }
                         }
                     } catch (MappingException ex) {

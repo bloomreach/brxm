@@ -40,8 +40,7 @@ import org.hippoecm.frontend.plugins.reviewedactions.model.ReferenceProvider;
 import org.hippoecm.frontend.plugins.reviewedactions.model.UnpublishedReferenceProvider;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
-import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
@@ -81,7 +80,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
+                DocumentWorkflow workflow = (DocumentWorkflow) wf;
                 workflow.publish();
                 return null;
             }
@@ -110,7 +109,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
+                DocumentWorkflow workflow = (DocumentWorkflow) wf;
                 workflow.depublish();
                 return null;
             }
@@ -147,7 +146,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
+                DocumentWorkflow workflow = (DocumentWorkflow) wf;
                 workflow.requestPublication();
                 return null;
             }
@@ -176,7 +175,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
+                DocumentWorkflow workflow = (DocumentWorkflow) wf;
                 workflow.requestDepublication();
                 return null;
             }
@@ -210,7 +209,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
+                DocumentWorkflow workflow = (DocumentWorkflow) wf;
                 if (date != null) {
                     workflow.publish(date);
                 } else {
@@ -248,7 +247,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
+                DocumentWorkflow workflow = (DocumentWorkflow) wf;
                 if (date != null) {
                     workflow.depublish(date);
                 } else {

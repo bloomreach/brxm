@@ -15,12 +15,16 @@
  */
 package org.hippoecm.frontend.plugins.social;
 
+import java.io.Serializable;
+import java.rmi.RemoteException;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
@@ -29,8 +33,12 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.documenturl.IDocumentUrlService;
 import org.hippoecm.frontend.service.social.ISocialMediaService;
 import org.hippoecm.frontend.service.social.ISocialMedium;
-import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.api.WorkflowManager;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,8 +87,24 @@ public class SocialSharingPlugin extends CompatibilityWorkflowPlugin<Workflow> {
         if (model != null) {
             try {
                 Node node = model.getNode();
-                isPublished = isPublished(node);
-            } catch (RepositoryException e) {
+                if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    WorkflowManager workflowManager = UserSession.get().getWorkflowManager();
+                    DocumentWorkflow workflow = (DocumentWorkflow) workflowManager.getWorkflow(model.getObject());
+                    Serializable isLive = workflow.hints().get("isLive");
+                    isPublished = (isLive instanceof Boolean) && ((Boolean) isLive);
+                } else {
+                    log.warn("Using deprecated variant-based availability");
+                    if (node.hasProperty(HippoNodeType.HIPPO_AVAILABILITY)) {
+                        Value[] availability = node.getProperty(HippoNodeType.HIPPO_AVAILABILITY).getValues();
+                        for (Value value : availability) {
+                            if ("live".equals(value.getString())) {
+                                isPublished = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            } catch (RepositoryException | RemoteException | WorkflowException e) {
                 log.error("Error getting document node from WorkflowDescriptorModel", e);
             }
         }
@@ -111,18 +135,6 @@ public class SocialSharingPlugin extends CompatibilityWorkflowPlugin<Workflow> {
         super.onDetach();
     }
 
-    private static boolean isPublished(Node documentNode) {
-        try {
-            if (documentNode.hasProperty(HippoStdNodeType.HIPPOSTD_STATE)) {
-                final String state = documentNode.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
-                return HippoStdNodeType.PUBLISHED.equals(state);
-            }
-        } catch (RepositoryException e) {
-            log.error("Error getting " + HippoStdNodeType.HIPPOSTD_STATE + " property from document", e);
-        }
-        return false;
-    }
-
     private class ShareWorkflow extends StdWorkflow {
         private static final long serialVersionUID = 1L;
 
@@ -131,6 +143,11 @@ public class SocialSharingPlugin extends CompatibilityWorkflowPlugin<Workflow> {
         public ShareWorkflow(ISocialMedium medium) {
             super("share-on-" + medium.getDisplayName(), "share-on-" + medium.getDisplayName());
             this.medium = medium;
+        }
+
+        @Override
+        public String getSubMenu() {
+            return "socialsharing";
         }
 
         @Override

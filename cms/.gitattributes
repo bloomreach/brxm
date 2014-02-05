@@ -1316,7 +1316,6 @@ config/src/main/resources/cms-static_it.xml -text
 config/src/main/resources/cms.xml -text svneol=unset#text/plain
 config/src/main/resources/domain-defaultread-reporting.xml svneol=native#text/plain
 config/src/main/resources/domain-workflow-frontend.xml svneol=native#text/plain
-config/src/main/resources/embedded-workflows-frontend.xml svneol=native#text/plain
 config/src/main/resources/folder-frontend-workflows-filters.xml svneol=native#text/plain
 config/src/main/resources/hippoecm-extension.xml -text svneol=unset#text/plain
 config/src/main/resources/hippostd-workflows-frontend.xml svneol=native#text/plain
@@ -7265,6 +7264,12 @@ workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/Ed
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/EditingWorkflowPlugin_fr.properties -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/EditingWorkflowPlugin_it.properties -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/EditingWorkflowPlugin_nl.properties -text
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/ExtendedFolderWorkflowPlugin$ConfirmBulkWorkflowDialog_de.properties -text
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/ExtendedFolderWorkflowPlugin$ConfirmBulkWorkflowDialog_fr.properties -text
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/ExtendedFolderWorkflowPlugin$ConfirmBulkWorkflowDialog_it.properties -text
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/ExtendedFolderWorkflowPlugin_de.properties -text
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/ExtendedFolderWorkflowPlugin_fr.properties -text
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/ExtendedFolderWorkflowPlugin_it.properties -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/PreviewWorkflowPlugin.java svneol=native#text/plain
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/PublishAllShortcutPlugin$Dialog_de.properties -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/PublishAllShortcutPlugin$Dialog_it.properties -text
@@ -7330,6 +7335,7 @@ workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/im
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/delete-16.png -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/delete-disabled-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/depublish-16.png -text
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/depublish-all-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/document-done-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/document-save-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/document-saveclose-16.png -text svneol=unset#image/png
@@ -7337,6 +7343,7 @@ workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/im
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/move-16.png -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/move-disabled-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/publish-16.png -text
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/publish-all-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/publish-schedule-16.png -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/rename-16.png -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/rename-disabled-16.png -text svneol=unset#image/png
@@ -7369,16 +7376,8 @@ workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/li
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/list/style.css -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/model/Revision.java svneol=native#text/plain
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/model/RevisionHistory.java svneol=native#text/plain
-workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/ExtendedFolderWorkflowPlugin$ConfirmBulkWorkflowDialog_de.properties -text
-workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/ExtendedFolderWorkflowPlugin$ConfirmBulkWorkflowDialog_fr.properties -text
-workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/ExtendedFolderWorkflowPlugin$ConfirmBulkWorkflowDialog_it.properties -text
-workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/ExtendedFolderWorkflowPlugin_de.properties -text
-workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/ExtendedFolderWorkflowPlugin_fr.properties -text
-workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/ExtendedFolderWorkflowPlugin_it.properties -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/PermissionsFolderWorkflowPlugin$PermissionsConfirmDialog_de.properties -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/PermissionsFolderWorkflowPlugin_de.properties -text
-workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/depublish-all-16.png -text svneol=unset#image/png
-workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/publish-all-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/queries-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/repository/reviewedactions/ScheduledRequestWorkflowImpl.properties -text
 workflow/frontend/src/main/java/org/hippoecm/repository/reviewedactions/ScheduledRequestWorkflowImpl_de.properties -text
@@ -7389,9 +7388,7 @@ workflow/frontend/src/test/resources/cmstest.cnd -text
 workflow/frontend/src/test/resources/hippoecm-extension.xml svneol=native#text/plain
 workflow/frontend/src/test/resources/log4j-filters.txt -text
 workflow/frontend/src/test/resources/log4j.xml svneol=native#text/plain
-workflow/repository/src/main/resources/admin-workflows.xml -text
-workflow/repository/src/main/resources/admin-workflows_de.xml -text
-workflow/repository/src/main/resources/admin-workflows_it.xml -text
+workflow/repository/src/main/resources/admin-workflowmenu.xml -text
 workflow/repository/src/main/resources/editing-reviewedactions-workflows.xml svneol=native#text/plain
 workflow/repository/src/main/resources/hippoecm-extension.xml -text
 workflow/repository/src/main/resources/hippostd-queries-translation.xml svneol=native#text/plain

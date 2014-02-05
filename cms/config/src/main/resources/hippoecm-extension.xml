@@ -111,20 +111,6 @@
       <sv:value>15.1</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="embedded-workflows-frontend">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>embedded-workflows-frontend.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:workflows</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>17.1</sv:value>
-    </sv:property>
-  </sv:node>
   <sv:node sv:name="threepane-workflows-frontend">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
@@ -147,7 +133,7 @@
       <sv:value>folder-frontend-workflows-filters.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:workflows/threepane/folder/frontend:renderer</sv:value>
+      <sv:value>/hippo:configuration/hippo:workflows/threepane/folder/frontend:renderer/standard</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>18.2</sv:value>
@@ -161,7 +147,7 @@
       <sv:value>folder-frontend-workflows-filters.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:workflows/threepane/folder-extended/frontend:renderer</sv:value>
+      <sv:value>/hippo:configuration/hippo:workflows/threepane/folder-extended/frontend:renderer/standard</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>18.3</sv:value>

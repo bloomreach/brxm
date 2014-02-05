@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standardworkflow;
+package org.hippoecm.frontend.plugins.reviewedactions;
 
 import java.rmi.RemoteException;
 import java.util.HashSet;
@@ -44,6 +44,7 @@ import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -53,7 +54,7 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
-import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +73,7 @@ import org.slf4j.LoggerFactory;
  * (un)published are logged as warnings.  This even though they are not really
  * serious, but you do want to keep track of them.
  */
-public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
+public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
 
     private static final long serialVersionUID = 1L;
 
@@ -95,7 +96,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "publish-all-16.png");
+                return new PackageResourceReference(getClass(), "img/publish-all-16.png");
             }
 
             @Override
@@ -105,7 +106,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
                 } catch(RepositoryException ex) {
                     name = "";
                 }
-                documents = new HashSet<String>();
+                documents = new HashSet<>();
                 Session session = UserSession.get().getJcrSession();
                 Query query = null;
                 try {
@@ -146,8 +147,8 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
                             }
                         }
                         Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, document);
-                        if (workflow instanceof FullReviewedActionsWorkflow) {
-                            ((FullReviewedActionsWorkflow) workflow).publish();
+                        if (workflow instanceof DocumentWorkflow) {
+                            ((DocumentWorkflow) workflow).publish();
                             ++processed;
                             log.info("published document "+path+" ("+uuid+")");
                         }
@@ -169,7 +170,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "depublish-all-16.png");
+                return new PackageResourceReference(getClass(), "img/depublish-all-16.png");
             }
 
             @Override
@@ -179,7 +180,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
                 } catch(RepositoryException ex) {
                     name = "";
                 }
-                documents = new HashSet<String>();
+                documents = new HashSet<>();
                 Session session = UserSession.get().getJcrSession();
                 Query query = null;
                 try {
@@ -220,8 +221,8 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
                             }
                         }
                         Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, document);
-                        if (workflow instanceof FullReviewedActionsWorkflow) {
-                            ((FullReviewedActionsWorkflow) workflow).depublish();
+                        if (workflow instanceof DocumentWorkflow) {
+                            ((DocumentWorkflow) workflow).depublish();
                             ++processed;
                             log.info("depublished document "+path+" ("+uuid+")");
                         }
@@ -238,6 +239,11 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
                 }
             }
         });
+    }
+
+    @Override
+    public WorkflowDescriptorModel getModel() {
+        return (WorkflowDescriptorModel) super.getModel();
     }
 
     public class ConfirmBulkWorkflowDialog extends AbstractWorkflowDialog {
@@ -277,11 +283,11 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
             add(new Label("counttext", dialogSubText));
             
             Label countComponent = new Label("count");
-            countComponent.setDefaultModel(new Model<String>(Integer.toString(documents.size())));
+            countComponent.setDefaultModel(new Model<>(Integer.toString(documents.size())));
             add(countComponent);
             
             Label locationComponent = new Label("location");
-            locationComponent.setDefaultModel(new Model<String>((String) folderName.getObject()));
+            locationComponent.setDefaultModel(new Model<>((String) folderName.getObject()));
             add(locationComponent);
 
             affectedComponent = new Label("affected");
@@ -308,7 +314,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
             setOkVisible(false);
             setCancelLabel(new StringResourceModel("done-label", ConfirmBulkWorkflowDialog.this, null));
             onOk();
-            affectedComponent.setDefaultModel(new Model<String>(Integer.toString(processed)));
+            affectedComponent.setDefaultModel(new Model<>(Integer.toString(processed)));
             affectedComponent.setVisible(true);
             RequestCycle.get().find(AjaxRequestTarget.class).add(this);
        }

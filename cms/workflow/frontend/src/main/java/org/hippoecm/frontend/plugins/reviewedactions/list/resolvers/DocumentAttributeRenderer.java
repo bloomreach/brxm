@@ -16,14 +16,14 @@
 
 package org.hippoecm.frontend.plugins.reviewedactions.list.resolvers;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeRenderer;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
 public abstract class DocumentAttributeRenderer extends AbstractNodeRenderer {
 

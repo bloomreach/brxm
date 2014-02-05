@@ -47,9 +47,9 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -236,7 +236,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                 return session.pendingChanges(node, JcrConstants.NT_BASE, true).hasNext();
             } else {
                 WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-                EditableWorkflow workflow = (BasicReviewedActionsWorkflow) manager.getWorkflow("editing", node);
+                EditableWorkflow workflow = (DocumentWorkflow) manager.getWorkflow("editing", node);
                 Map<String,Serializable> hints = workflow.hints();
                 if (hints.containsKey("checkModified")) {
                     modified = workflow.isModified();
@@ -278,10 +278,10 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             }
             if (isValid) {
                 WorkflowManager manager = session.getWorkflowManager();
-                EditableWorkflow workflow = (BasicReviewedActionsWorkflow) manager.getWorkflow("editing", documentNode);
+                EditableWorkflow workflow = (DocumentWorkflow) manager.getWorkflow("editing", documentNode);
                 workflow.commitEditableInstance();
                 session.getJcrSession().refresh(true);
-                workflow = (BasicReviewedActionsWorkflow) manager.getWorkflow("editing", documentNode);
+                workflow = (DocumentWorkflow) manager.getWorkflow("editing", documentNode);
                 workflow.obtainEditableInstance();
                 modified = false;
             } else {
@@ -364,7 +364,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                 jcrSession.refresh(true);
                 jcrSession.save();
                 WorkflowManager manager = session.getWorkflowManager();
-                EditableWorkflow workflow = (BasicReviewedActionsWorkflow) manager.getWorkflow("editing", documentNode);
+                EditableWorkflow workflow = (DocumentWorkflow) manager.getWorkflow("editing", documentNode);
                 workflow.commitEditableInstance();
                 jcrSession.refresh(false);
                 this.modified = false;

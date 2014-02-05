@@ -49,9 +49,8 @@ import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
-import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
@@ -135,7 +134,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 WorkflowManager manager = UserSession.get().getWorkflowManager();
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
                 if (!((WorkflowDescriptorModel) getDefaultModel()).getNode().getName().equals(nodeName)) {
-                    ((FullReviewedActionsWorkflow) wf).rename(nodeName);
+                    ((DocumentWorkflow) wf).rename(nodeName);
                 }
                 if (!getLocalizedNameForSession(node).equals(localName)) {
                     defaultWorkflow.replaceAllLocalizedNames(localName);
@@ -195,7 +194,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 }
                 StringCodec codec = getNodeNameCodec();
                 String nodeName = codec.encode(name);
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
+                DocumentWorkflow workflow = (DocumentWorkflow) wf;
 
                 workflow.copy(new Document(folderModel.getNode()), nodeName);
                 JcrNodeModel resultModel = new JcrNodeModel(folderModel.getItemModel().getPath() + "/" + nodeName);
@@ -257,7 +256,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                     folderModel = destination.getNodeModel();
                 }
                 String nodeName = getModel().getNode().getName();
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
+                DocumentWorkflow workflow = (DocumentWorkflow) wf;
                 workflow.move(new Document(folderModel.getNode()), nodeName);
                 browseTo(new JcrNodeModel(folderModel.getItemModel().getPath() + "/" + nodeName));
                 return null;
@@ -301,7 +300,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
+                DocumentWorkflow workflow = (DocumentWorkflow) wf;
                 workflow.delete();
                 return null;
             }
@@ -330,7 +329,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
+                DocumentWorkflow workflow = (DocumentWorkflow) wf;
                 workflow.requestDeletion();
                 return null;
             }
@@ -391,7 +390,6 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
         hideOrDisable(info, "move", moveAction);
 
         hideIfNecessary(info, "copy", copyAction);
-        hideIfNecessary(info, "status", whereUsedAction);
         hideOrDisable(info, "listVersions", historyAction);
     }
 }

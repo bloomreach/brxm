@@ -64,19 +64,20 @@ import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PermissionsFolderWorkflowPlugin extends ExtendedFolderWorkflowPlugin {
+public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
 
 
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(PermissionsFolderWorkflowPlugin.class);
 
-    private static final ResourceReference CSS = new CssResourceReference(ConfirmBulkWorkflowDialog.class, "PermissionsFolderWorkflowPlugin.css");
+    private static final ResourceReference CSS = new CssResourceReference(PermissionsFolderWorkflowPlugin.class, "PermissionsFolderWorkflowPlugin.css");
     private static final String QUERY_LANGUAGE_QUERIES = Query.XPATH;
     private static final String QUERY_STATEMENT_QUERIES = "hippo:configuration/hippo:queries/hippo:templates//element(*, hippostd:templatequery)";
 
@@ -142,6 +143,11 @@ public class PermissionsFolderWorkflowPlugin extends ExtendedFolderWorkflowPlugi
         });
 
 
+    }
+
+    @Override
+    public WorkflowDescriptorModel getModel() {
+        return (WorkflowDescriptorModel) super.getModel();
     }
 
     public String getName() {
