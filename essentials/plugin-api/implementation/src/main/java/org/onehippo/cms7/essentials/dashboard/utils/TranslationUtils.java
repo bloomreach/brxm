@@ -187,10 +187,14 @@ public final class TranslationUtils {
                 if (!property.equals(childProperty)) {
                     continue;
                 }
-            } else if (StringUtils.isNotBlank(childProperty)) {
-                //TODO check
+            }
+
+            //TODO check htis
+            /*
+            else if (StringUtils.isNotBlank(childProperty)) {
                 //continue;
             }
+            */
 
             // A match: add child to list
             translations.add(child);
