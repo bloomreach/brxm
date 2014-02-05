@@ -33,7 +33,7 @@ import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.NodeNameCodec;
-import org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType;
+import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
