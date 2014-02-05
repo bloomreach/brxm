@@ -159,7 +159,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
 
     @Override
     protected IModel<Node> getBaseModel() throws EditorException {
-        if (getMode() != Mode.COMPARE) {
+        if (getMode() != Mode.COMPARE && getMode() != Mode.VIEW) {
             return super.getBaseModel();
         }
         Node node = super.getEditorModel().getObject();

@@ -234,7 +234,7 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
     protected Map<IEditorFilter, Object> preClose() throws EditorException {
         List<IEditorFilter> filters = context.getServices(context.getReference(this).getServiceId(),
                 IEditorFilter.class);
-        IdentityHashMap<IEditorFilter, Object> filterContexts = new IdentityHashMap<IEditorFilter, Object>();
+        IdentityHashMap<IEditorFilter, Object> filterContexts = new IdentityHashMap<>();
         //        for (IEditorFilter filter : filters) {
         //            Object filterContext = filter.preClose();
         //            if (filterContext == null) {
@@ -293,12 +293,12 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
         IClusterConfig decorated = cluster.getClusterConfig();
 
         String modelId = decorated.getString(RenderService.MODEL_ID);
-        modelService = new ModelReference<T>(modelId, getEditorModel());
+        modelService = new ModelReference<>(modelId, getEditorModel());
         modelService.init(context);
 
-        if (mode == Mode.COMPARE) {
+        if (mode == Mode.COMPARE || mode == Mode.VIEW) {
             String baseId = decorated.getString("model.compareTo");
-            baseService = new ModelReference<T>(baseId, getBaseModel());
+            baseService = new ModelReference<>(baseId, getBaseModel());
             baseService.init(context);
         }
 
