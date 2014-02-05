@@ -14,7 +14,8 @@
     "karma-phantomjs-launcher": "~0.1.0",
     "load-grunt-tasks": "~0.2.0",
     "time-grunt": "~0.1.1",
-    "jshint-stylish": "~0.1.5"
+    "jshint-stylish": "~0.1.5",
+    "console-browserify": "~1.0.3"
   },
   "engines": {
     "node": ">=0.10.0"
