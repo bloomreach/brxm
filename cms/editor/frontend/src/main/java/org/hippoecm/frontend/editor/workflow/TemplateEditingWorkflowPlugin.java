@@ -104,6 +104,11 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
         add(new WorkflowAction("save", new StringResourceModel("save", this, null)) {
 
             @Override
+            public String getSubMenu() {
+                return "top";
+            }
+
+            @Override
             public boolean isFormSubmitted() {
                 return true;
             }
@@ -114,6 +119,11 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
         });
         add(new WorkflowAction("done", new StringResourceModel("done", this, null)) {
+
+            @Override
+            public String getSubMenu() {
+                return "top";
+            }
 
             @Override
             public boolean isFormSubmitted() {

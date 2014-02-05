@@ -336,11 +336,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                 }
             });
             add.populate();
-        } catch (RepositoryException ex) {
-            log.error(ex.getClass().getName() + ": " + ex.getMessage());
-        } catch (WorkflowException ex) {
-            log.error(ex.getClass().getName() + ": " + ex.getMessage());
-        } catch (RemoteException ex) {
+        } catch (RepositoryException | RemoteException | WorkflowException ex) {
             log.error(ex.getClass().getName() + ": " + ex.getMessage());
         }
     }
@@ -410,51 +406,42 @@ public class FolderWorkflowPlugin extends RenderPlugin {
         IEditorManager editorMgr = getPluginContext().getService(getPluginConfig().getString(IEditorManager.EDITOR_ID),
                 IEditorManager.class);
         try {
-            if (nodeModel.getNode() != null
-                    && (nodeModel.getNode().isNodeType(HippoNodeType.NT_DOCUMENT) || nodeModel.getNode().isNodeType(
-                    HippoNodeType.NT_HANDLE))) {
+            final Node node = nodeModel.getNode();
+            if (node != null
+                    && (node.isNodeType(HippoNodeType.NT_DOCUMENT) || node.isNodeType(HippoNodeType.NT_HANDLE))) {
                 if (browser != null) {
                     browser.browse(nodeModel);
                 }
-                if (!nodeModel.getNode().isNodeType("hippostd:folder")
-                        && !nodeModel.getNode().isNodeType("hippostd:directory")) {
-                    if (editorMgr != null) {
-                        JcrNodeModel editNodeModel = nodeModel;
-                        Node editNodeModelNode = nodeModel.getNode();
-                        if (editNodeModelNode.isNodeType(HippoNodeType.NT_HANDLE)) {
-                            editNodeModelNode = editNodeModelNode.getNode(editNodeModelNode.getName());
-                        }
-                        javax.jcr.Session session = UserSession.get().getJcrSession();
-                        WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace())
-                                .getWorkflowManager();
-                        Workflow workflow = workflowManager.getWorkflow("editing", editNodeModelNode);
-                        try {
-                            if (workflow instanceof EditableWorkflow) {
-                                EditableWorkflow editableWorkflow = (EditableWorkflow) workflow;
-                                Document editableDocument = editableWorkflow.obtainEditableInstance();
-                                if (editableDocument != null) {
-                                    session.refresh(true);
-                                    editNodeModel = new JcrNodeModel(session.getNodeByUUID(editableDocument
-                                            .getIdentity()));
-                                } else {
-                                    editNodeModel = null;
-                                }
+                if (editorMgr == null) {
+                    return;
+                }
+                if (node.isNodeType(HippoNodeType.NT_HANDLE) || node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                    Node editNode = node;
+                    if (node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                        editNode = node.getParent();
+                    }
+
+                    javax.jcr.Session session = UserSession.get().getJcrSession();
+                    WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace())
+                            .getWorkflowManager();
+                    Workflow workflow = workflowManager.getWorkflow("editing", editNode);
+                    if (!(workflow instanceof EditableWorkflow)) {
+                        log.warn("Invalid workflow configured for node of type {} in category 'editing'; expected an EditableWorkflow implementation", editNode.getPrimaryNodeType().getName());
+                    }
+                    try {
+                        EditableWorkflow editableWorkflow = (EditableWorkflow) workflow;
+                        Document editableDocument = editableWorkflow.obtainEditableInstance();
+                        if (editableDocument != null) {
+                            session.refresh(true);
+                            final Node docNode = session.getNodeByIdentifier(editableDocument.getIdentity());
+                            JcrNodeModel editNodeModel = new JcrNodeModel(docNode);
+                            IEditor editor = editorMgr.getEditor(editNodeModel);
+                            if (editor == null) {
+                                editorMgr.openEditor(editNodeModel);
                             }
-                            if (editNodeModel != null) {
-                                IEditor editor = editorMgr.getEditor(editNodeModel);
-                                if (editor == null) {
-                                    editorMgr.openEditor(editNodeModel);
-                                }
-                            }
-                        } catch (WorkflowException ex) {
-                            log.error("Cannot auto-edit document", ex);
-                        } catch (RemoteException ex) {
-                            log.error("Cannot auto-edit document", ex);
-                        } catch (RepositoryException ex) {
-                            log.error("Cannot auto-edit document", ex);
-                        } catch (ServiceException ex) {
-                            log.error("Cannot auto-edit document", ex);
                         }
+                    } catch (WorkflowException | RemoteException | ServiceException | RepositoryException ex) {
+                        log.error("Cannot auto-edit document", ex);
                     }
                 }
             }

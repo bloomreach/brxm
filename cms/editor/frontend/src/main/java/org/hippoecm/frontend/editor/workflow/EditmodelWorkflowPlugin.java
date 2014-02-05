@@ -68,6 +68,11 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
             private static final long serialVersionUID = 1L;
 
             @Override
+            public String getSubMenu() {
+                return "top";
+            }
+
+            @Override
             public String execute(Workflow workflow) throws Exception {
                 EditmodelWorkflow emWorkflow = (EditmodelWorkflow) workflow;
                 if (emWorkflow != null) {
@@ -105,6 +110,11 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
             private static final long serialVersionUID = 1L;
 
             String name;
+
+            @Override
+            public String getSubMenu() {
+                return "top";
+            }
 
             @Override
             protected Dialog createRequestDialog() {

@@ -22,7 +22,6 @@ import java.util.Map;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.Session;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.editor.repository.EditmodelWorkflow;
@@ -41,13 +40,17 @@ public class CommitTypeWorkflowPlugin extends CompatibilityWorkflowPlugin {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(CommitTypeWorkflowPlugin.class);
     private MarkupContainer commitAction;
-    private MarkupContainer revertAction;
 
     public CommitTypeWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         add(commitAction = new WorkflowAction("commit", new StringResourceModel("commit", this, null)) {
             private static final long serialVersionUID = 1L;
+
+            @Override
+            public String getSubMenu() {
+                return "top";
+            }
 
             @Override
             protected String execute(Workflow wf) {
