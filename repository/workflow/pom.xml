@@ -149,7 +149,7 @@
           <excludes>
             <exclude>**/AcceptRequestTest.java</exclude>
             <exclude>**/TranslationWorkflowTest.java</exclude>
-            <exclude>**/TestDocumentWorkflowImpl.java</exclude>
+            <exclude>**/DocumentWorkflowTest.java</exclude>
           </excludes>
         </configuration>
       </plugin>
