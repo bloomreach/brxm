@@ -159,7 +159,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                             if (checkWorkflowPermission(variant, workflowNode)) {
                                 return new WorkflowDefinition(workflowNode);
                             } else {
-                                return null;
+                                continue;
                             }
                         }
                     }
@@ -167,8 +167,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     log.debug("Found workflow in category {} for node {}", category, item.getPath());
                     if (checkWorkflowPermission(item, workflowNode)) {
                         return new WorkflowDefinition(workflowNode);
-                    } else {
-                        return null;
                     }
                 }
             } else {
