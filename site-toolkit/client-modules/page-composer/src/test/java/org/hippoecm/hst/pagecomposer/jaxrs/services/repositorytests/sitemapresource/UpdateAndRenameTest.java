@@ -289,7 +289,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
 
 
     @Test
-    public void test_update_rename() throws Exception {
+    public void test_rename() throws Exception {
         final SiteMapItemRepresentation home = getSiteMapItemRepresentation("home");
         Node homeNode = session.getNodeByIdentifier(home.getId());
         String parentPath = homeNode.getParent().getPath();
@@ -307,8 +307,21 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
 
     }
 
+
     @Test
-    public void test_update_rename_and_back_again() throws Exception {
+    public void test_rename_to_same_name() throws Exception {
+        final SiteMapItemRepresentation home = getSiteMapItemRepresentation("home");
+        Node homeNode = session.getNodeByIdentifier(home.getId());
+        home.setName("home");
+        SiteMapResource siteMapResource = new SiteMapResource();
+        Response response = siteMapResource.update(home);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+        assertTrue(homeNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
+    }
+
+    @Test
+    public void test_rename_and_back_again() throws Exception {
         final SiteMapItemRepresentation home = getSiteMapItemRepresentation("home");
         Node homeNode = session.getNodeByIdentifier(home.getId());
         String parentPath = homeNode.getParent().getPath();
@@ -326,23 +339,53 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
     }
 
     @Test
-    public void test_update_rename_and_rename_back_again() throws Exception {
+    public void test_rename_and_rename_and_back_again() throws Exception {
+
+        SiteMapResource siteMapResource = new SiteMapResource();
+        final SiteMapItemRepresentation home = getSiteMapItemRepresentation("home");
+        Node homeNode = session.getNodeByIdentifier(home.getId());
+        String parentPath = homeNode.getParent().getPath();
+
+        home.setName("rename1");
+        siteMapResource.update(home);
+        home.setName("rename2");
+        siteMapResource.update(home);
+
+        home.setName("home");
+
+        Response response = siteMapResource.update(home);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals("home", homeNode.getName());
+        assertEquals("admin", homeNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
+        assertFalse(session.nodeExists(parentPath + "/rename1"));
+        assertFalse(session.nodeExists(parentPath + "/rename2"));
+
+    }
+
+    @Test
+    public void test_rename_home_and_rename_news_to_home() throws Exception {
+        // also with bob
 
     }
 
 
     @Test
-    public void test_update_rename_fails_target_existing_sibling() throws Exception {
+    public void test_rename_home_and_add_home() throws Exception {
+        // also with bob
+    }
+
+    @Test
+    public void test_rename_fails_target_existing_sibling() throws Exception {
 
     }
 
     @Test
-    public void test_update_rename_succeeds_with_sibling_locks() throws Exception {
+    public void test_rename_succeeds_with_sibling_locks() throws Exception {
 
     }
 
     @Test
-    public void test_update_rename_fails_cause_target_existing_in_non_workspace() throws Exception {
+    public void test_rename_fails_cause_target_existing_in_non_workspace() throws Exception {
 
     }
 

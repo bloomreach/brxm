@@ -182,12 +182,12 @@ public class SiteMapHelper extends AbstractHelper {
         }
     }
 
-    private boolean liveExists(final Session session, final String oldLocation) throws RepositoryException {
-        if (!oldLocation.contains("-preview/hst:workspace")) {
-            throw new IllegalStateException("Unexpected location '"+oldLocation+"'");
+    private boolean liveExists(final Session session, final String previewLocation) throws RepositoryException {
+        if (!previewLocation.contains("-preview/hst:workspace")) {
+            throw new IllegalStateException("Unexpected location '"+previewLocation+"'");
         }
-        oldLocation.replace("-preview/hst:workspace", "/hst:workspace");
-        return session.nodeExists(oldLocation);
+        String liveLocation = previewLocation.replace("-preview/hst:workspace", "/hst:workspace");
+        return session.nodeExists(liveLocation);
     }
 
     private void markDeleted(final Node deleted) throws RepositoryException {
