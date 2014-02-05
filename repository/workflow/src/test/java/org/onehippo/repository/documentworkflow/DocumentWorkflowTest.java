@@ -80,7 +80,7 @@ public class DocumentWorkflowTest {
     public static void beforeClass() throws Exception {
         MockRepositorySCXMLRegistry registry = new MockRepositorySCXMLRegistry();
         MockNode scxmlConfigNode = registry.createConfigNode();
-        MockNode scxmlNode = registry.addScxmlNode(scxmlConfigNode, "document-workflow", loadSCXML());
+        MockNode scxmlNode = registry.addScxmlNode(scxmlConfigNode, "documentworkflow", loadSCXML());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "action", ActionAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "result", ResultAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "info", InfoAction.class.getName());
@@ -117,7 +117,7 @@ public class DocumentWorkflowTest {
     }
 
     protected static String loadSCXML() throws Exception {
-        return IOUtils.toString(DocumentWorkflowTest.class.getResourceAsStream("/document-workflow.scxml"));
+        return IOUtils.toString(DocumentWorkflowTest.class.getResourceAsStream("/documentworkflow.scxml"));
     }
 
     protected Node addVariant(Node handle, String state) throws RepositoryException {

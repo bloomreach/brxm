@@ -120,12 +120,12 @@
   </sv:node>
 
   <!--Derived summary configuration-->
-  <sv:node sv:name="reviewedactions-derivatives">
+  <sv:node sv:name="documentworkflow-derivatives">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>reviewedactions-derivatives.xml</sv:value>
+      <sv:value>documentworkflow-derivatives.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:configuration/hippo:derivatives</sv:value>

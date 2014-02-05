@@ -40,7 +40,7 @@
         <sv:value>nt:unstructured</sv:value>
       </sv:property>
       <sv:property sv:name="scxml-definition" sv:type="String">
-        <sv:value>document-workflow</sv:value>
+        <sv:value>documentworkflow</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

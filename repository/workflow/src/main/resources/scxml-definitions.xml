@@ -19,12 +19,12 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposcxml:definitions</sv:value>
   </sv:property>
-  <sv:node sv:name="document-workflow">
+  <sv:node sv:name="documentworkflow">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposcxml:scxml</sv:value>
     </sv:property>
     <sv:property sv:name="hipposcxml:source" sv:type="String">
-      <sv:value h:file="document-workflow.scxml"/>
+      <sv:value h:file="documentworkflow.scxml"/>
     </sv:property>
     <sv:node sv:name="action">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">

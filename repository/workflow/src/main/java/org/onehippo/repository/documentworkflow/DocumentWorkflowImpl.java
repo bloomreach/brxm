@@ -72,7 +72,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     public void setNode(final Node node) throws RepositoryException {
         super.setNode(node);
 
-        String scxmlId = "document-workflow";
+        String scxmlId = "documentworkflow";
         // Critical: MUST use getNonChainingWorkflowContext() or getWorkflowContext(null), NOT getWorkflowContext()!
 
         try {

@@ -462,7 +462,6 @@ utilities/src/main/java/org/hippoecm/repository/util/RepoUtils.java -text
 utilities/src/main/java/org/hippoecm/repository/util/Utilities.java -text
 utilities/src/test/java/org/hippoecm/repository/util/RepoUtilsTest.java -text
 workflow/src/main/java/org/hippoecm/faceteddate/DerivedDataFunction.java -text
-workflow/src/main/java/org/hippoecm/repository/reviewedactions/DerivedDataFunction.java -text
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/JCRBasicRequestWorkflowImpl.java -text
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/JCRBasicReviewedActionsWorkflowImpl.java -text
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/JCRFullRequestWorkflowImpl.java -text
@@ -474,6 +473,7 @@ workflow/src/main/java/org/hippoecm/repository/reviewedactions/PublishableDocume
 workflow/src/main/java/org/hippoecm/repository/standardworkflow/DefaultWorkflowImpl.java -text
 workflow/src/main/java/org/hippoecm/repository/standardworkflow/FolderWorkflowImpl.java -text
 workflow/src/main/java/org/hippoecm/repository/standardworkflow/NullWorkflowImpl.java -text
+workflow/src/main/java/org/onehippo/repository/documentworkflow/DerivedDataFunction.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/DocumentVariant.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/ScheduledRequest.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/WorkflowRequest.java -text
@@ -510,7 +510,8 @@ workflow/src/main/java/org/onehippo/repository/scxml/SCXMLExecutionError.java -t
 workflow/src/main/java/org/onehippo/repository/scxml/SCXMLStrictErrorReporter.java -text
 workflow/src/main/java/org/onehippo/repository/scxml/SCXMLWorkflowExecutor.java -text
 workflow/src/main/resources/date-derivatives.xml -text
-workflow/src/main/resources/document-workflow.scxml -text
+workflow/src/main/resources/documentworkflow-derivatives.xml -text
+workflow/src/main/resources/documentworkflow.scxml -text
 workflow/src/main/resources/editing-workflows.xml svneol=native#text/plain
 workflow/src/main/resources/embedded-workflows.xml -text
 workflow/src/main/resources/gallery-namespace.xml -text
@@ -523,7 +524,6 @@ workflow/src/main/resources/hipposcxml.cnd -text
 workflow/src/main/resources/hippostd-workflows-threepane.xml -text svneol=unset#text/plain
 workflow/src/main/resources/hippostd-workflows.xml svneol=native#text/plain
 workflow/src/main/resources/hippostdpubwf.cnd -text
-workflow/src/main/resources/reviewedactions-derivatives.xml -text
 workflow/src/main/resources/reviewedactions-workflows.xml svneol=native#text/plain
 workflow/src/main/resources/scxml-definitions.xml svneol=native#text/plain
 workflow/src/main/resources/scxml-registry-module.xml svneol=native#text/plain
