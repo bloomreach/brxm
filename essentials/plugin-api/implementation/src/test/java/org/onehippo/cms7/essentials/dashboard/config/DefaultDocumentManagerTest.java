@@ -39,6 +39,10 @@ public class DefaultDocumentManagerTest extends BaseRepositoryTest {
         final DocumentManager manager = new DefaultDocumentManager(getContext());
         final String parentPath = "/foo/bar";
         TestBeanDocument document = new TestBeanDocument("testDoc", parentPath);
+        document.setBooleanVal(true);
+        final List<Boolean> booleanValArray = new ArrayList<>();
+        booleanValArray.add(true);
+        document.setBooleanValArray(booleanValArray);
         document.setDoubleCounter(1D);
         final List<Double> doubleCounterArray = new ArrayList<>();
         doubleCounterArray.add(1D);
@@ -64,6 +68,8 @@ public class DefaultDocumentManagerTest extends BaseRepositoryTest {
         assertTrue("Expected document to be saved", saved);
         TestBeanDocument fetched = manager.fetchDocument(document.getPath(), TestBeanDocument.class);
         assertEquals("testDoc", fetched.getName());
+        assertTrue(fetched.isBooleanVal());
+        assertTrue(fetched.getBooleanValArray().size() == 1);
         assertTrue(1D == fetched.getDoubleCounter());
         assertTrue(fetched.getDoubleCounterArray().size() == 1);
         assertTrue(1 == fetched.getIntCounter());

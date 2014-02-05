@@ -40,6 +40,14 @@ public class TestBeanDocument extends BaseDocument {
 
     @PersistentProperty(name = "intCounter")
     private int intCounter;
+
+    @PersistentProperty(name = "booleanVal")
+    private boolean booleanVal;
+
+
+    @PersistentMultiProperty(name = "booleanValArray", type = boolean.class)
+    private List<Boolean> booleanValArray;
+
     @PersistentMultiProperty(name = "intCounterArray", type = int.class)
     private List<Integer> intCounterArray;
     @PersistentProperty(name = "longCounter")
@@ -58,6 +66,23 @@ public class TestBeanDocument extends BaseDocument {
     private Calendar dateType;
     @PersistentMultiProperty(name = "dateTypeArray", type = Calendar.class)
     private List<Calendar> dateTypeArray;
+
+    public boolean isBooleanVal() {
+        return booleanVal;
+    }
+
+    public void setBooleanVal(final boolean booleanVal) {
+        this.booleanVal = booleanVal;
+    }
+
+    public List<Boolean> getBooleanValArray() {
+        return booleanValArray;
+    }
+
+    public void setBooleanValArray(final List<Boolean> booleanValArray) {
+        this.booleanValArray = booleanValArray;
+    }
+
 
     public List<Integer> getIntCounterArray() {
         return intCounterArray;

@@ -33,6 +33,7 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.jackrabbit.value.BooleanValue;
 import org.apache.jackrabbit.value.DateValue;
 import org.apache.jackrabbit.value.DoubleValue;
 import org.apache.jackrabbit.value.LongValue;
@@ -125,6 +126,16 @@ public @interface PersistentMultiProperty {
                             }
                             final Value[] valArray = jcrValues.toArray(new Value[values.size()]);
                             node.setProperty(name, valArray);
+                        } else if (type.equals(boolean.class) || type.equals(Boolean.class)) {
+                            @SuppressWarnings("unchecked")
+                            final Collection<Boolean> values = (Collection<Boolean>) value;
+                            final List<Value> jcrValues = new ArrayList<>();
+                            for (Boolean b : values) {
+                                final Value val = new BooleanValue(b);
+                                jcrValues.add(val);
+                            }
+                            final Value[] valArray = jcrValues.toArray(new Value[values.size()]);
+                            node.setProperty(name, valArray);
                         } else if (type.equals(double.class) || type.equals(Double.class)) {
                             @SuppressWarnings("unchecked")
                             final Collection<Double> values = (Collection<Double>) value;
@@ -146,7 +157,7 @@ public @interface PersistentMultiProperty {
                             final Value[] valArray = jcrValues.toArray(new Value[values.size()]);
                             node.setProperty(name, valArray);
                         } else {
-                            log.error("type {}", type);
+                            throw new NotImplementedException("Property writer not implemented for: " + type);
                         }
                     } else {
                         throw new NotImplementedException("Property writer not implemented for: " + value.getClass());
