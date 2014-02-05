@@ -437,7 +437,6 @@ plugin-api/implementation/pom.xml -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/AbstractCndInstaller.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/AbstractDependencyInstaller.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/BaseDocument.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/BaseFolder.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/DefaultDocumentManager.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/InstallerDocument.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/JcrPluginConfigService.java -text
@@ -465,7 +464,6 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/i
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/parser/InstructionParser.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/ActionType.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/BeanWriterLogEntry.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/CatalogObject.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/EssentialsPlugin.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/PluginAsset.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/PluginNamespaceMapper.java -text

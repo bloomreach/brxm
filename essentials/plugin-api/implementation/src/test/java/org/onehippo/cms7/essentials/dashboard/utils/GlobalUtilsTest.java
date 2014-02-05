@@ -3,6 +3,7 @@ package org.onehippo.cms7.essentials.dashboard.utils;
 import java.io.InputStream;
 
 import org.junit.Test;
+import org.onehippo.cms7.essentials.BaseTest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -12,11 +13,17 @@ import static org.junit.Assert.assertTrue;
 /**
  * @version "$Id: GlobalUtilsTest.java 174806 2013-08-23 09:22:46Z mmilicevic $"
  */
-public class GlobalUtilsTest {
+public class GlobalUtilsTest extends BaseTest {
 
     public static final String REPLACE_NAMESPACE = "testnamespace";
     public static final String REPLACE_DOC_NAME = "mytestname";
 
+
+    @Test
+    public void testNewInstance() throws Exception {
+        final String myString = GlobalUtils.newInstance(String.class);
+        assertTrue(myString != null);
+    }
 
     @Test
     public void testReplacePlaceholders() throws Exception {
