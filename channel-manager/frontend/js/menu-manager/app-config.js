@@ -16,7 +16,7 @@
 (function() {
     "use strict";
 
-    angular.module('hippo.channelManager.menuManager', ['ngRoute', 'hippo.theme', 'pascalprecht.translate', 'ui.router'])
+    angular.module('hippo.channelManager.menuManager')
 
         .config(['$stateProvider', '$translateProvider', function($stateProvider, $translateProvider) {
 
