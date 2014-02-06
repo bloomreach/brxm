@@ -16,6 +16,7 @@
 package org.hippoecm.frontend;
 
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.request.resource.ResourceReference;
 
 public abstract class PluginApplication extends WebApplication {
 
@@ -26,5 +27,7 @@ public abstract class PluginApplication extends WebApplication {
     public abstract String getPluginApplicationName();
 
     public abstract String getConfigurationParameter(String parameterName, String defaultValue);
+
+    public abstract ResourceReference getPluginApplicationFavIconReference();
 
 }

@@ -27,6 +27,8 @@ import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.value.ValueMap;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
@@ -61,6 +63,11 @@ public abstract class PluginTest extends RepositoryTestCase {
         @Override
         public String getPluginApplicationName() {
             return "test-app";
+        }
+
+        @Override
+        public ResourceReference getPluginApplicationFavIconReference() {
+            return new PackageResourceReference(PluginTestApplication.class, "test.ico");
         }
 
         @Override

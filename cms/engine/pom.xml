@@ -147,6 +147,7 @@
           <include>**/*.gif</include>
           <include>**/*.js</include>
           <include>**/*.properties</include>
+          <include>**/*.ico</include>
         </includes>
       </resource>
       <resource>

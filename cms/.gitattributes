@@ -1887,6 +1887,8 @@ engine/src/main/java/org/hippoecm/frontend/StagedLocalizer.java -text
 engine/src/main/java/org/hippoecm/frontend/StringResourceProviderConsumer.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/behaviors/ContextMenuBehavior.java -text
 engine/src/main/java/org/hippoecm/frontend/behaviors/contextmenu.js -text
+engine/src/main/java/org/hippoecm/frontend/hippo-cms.ico -text
+engine/src/main/java/org/hippoecm/frontend/hippo-console.ico -text
 engine/src/main/java/org/hippoecm/frontend/i18n/AbstractTranslateService.java -text
 engine/src/main/java/org/hippoecm/frontend/i18n/ConfigTraversingPlugin.java -text
 engine/src/main/java/org/hippoecm/frontend/i18n/ConfigWrapper.java -text
@@ -2396,6 +2398,7 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/LogoutLink.jav
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/RootPlugin.html -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/RootPlugin_de.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/RootPlugin_it.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/hippo-cms.ico -text
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/TestSuite.java -text
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/admin/SearchableDataProviderTest.java -text
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/admin/domains/DomainDataProviderTest.java -text

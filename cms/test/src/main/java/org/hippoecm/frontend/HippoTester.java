@@ -28,6 +28,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.page.IPageManagerContext;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.tester.WicketTester;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
@@ -146,6 +147,11 @@ public class HippoTester extends WicketTester {
                 }
 
             });
+        }
+
+        @Override
+        public ResourceReference getPluginApplicationFavIconReference() {
+            return null;
         }
     }
 }

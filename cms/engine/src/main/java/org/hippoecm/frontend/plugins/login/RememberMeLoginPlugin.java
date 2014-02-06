@@ -48,6 +48,7 @@ import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
@@ -111,13 +112,12 @@ public class RememberMeLoginPlugin extends LoginPlugin {
         if (supported != null) {
             add(new BrowserCheckBehavior(supported));
         }
-
+        add(new ResourceLink("faviconLink", ((PluginApplication) getApplication()).getPluginApplicationFavIconReference()));
     }
 
     @Override
     public void renderHead(final IHeaderResponse response) {
         super.renderHead(response);
-
         response.render(CssHeaderItem.forReference(new CssResourceReference(RememberMeLoginPlugin.class, "login.css")));
 
         IPluginConfig config = getPluginConfig();
