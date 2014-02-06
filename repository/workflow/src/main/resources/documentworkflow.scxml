@@ -174,6 +174,7 @@
             errorExpr="'Cannot invoke workflow '+scxmlId+' action acceptRequest: action not allowed or request not found'"/>
 
           <cs:var name="requestType" expr="request.type"/>
+          <cs:var name="requestDate" expr="request.scheduledDate"/>
 
           <if cond="requestType=='delete'">
             <hippo:workflowException cond="live"
@@ -183,7 +184,7 @@
               errorExpr="'Cannot delete document which is being edited'"/>
 
             <hippo:deleteRequest requestExpr="request"/>
-            <hippo:invokeDocumentWorkflow action="delete"/>
+            <hippo:archiveDocument/>
 
           <elseif cond="requestType ==~ '(publish|scheduledpublish)'"/>
 
@@ -193,13 +194,15 @@
             <hippo:workflowException cond="!modified"
               errorExpr="'Cannot publish document when no changes present'"/>
 
+            <hippo:deleteRequest requestExpr="request"/>
+
             <if cond="requestType=='publish'">
-              <hippo:deleteRequest requestExpr="request"/>
-              <hippo:invokeDocumentWorkflow action="publish"/>
+              <!-- copy of handling in transition "publish", should consider raising an internal event instead -->
+              <hippo:copyVariant sourceState="unpublished" targetState="published"/>
+              <hippo:configVariant variant="published" applyPublished="true" availabilities="live"/>
+              <hippo:version variant="unpublished"/>
             <else/>
-              <cs:var name="requestDate" expr="request.scheduledDate"/>
-              <hippo:deleteRequest requestExpr="request"/>
-              <hippo:invokeDocumentWorkflow action="scheduledpublish" whenExpr="requestDate"/>
+              <hippo:scheduleWorkflow type="publish" targetDateExpr="requestDate"/>
             </if>
 
           <elseif cond="request.type ==~ '(depublish|scheduleddepublish)'"/>
@@ -210,12 +213,18 @@
             <hippo:workflowException cond="!live"
               errorExpr="'Cannot depublish document when not published'"/>
 
+            <hippo:deleteRequest requestExpr="request"/>
+
             <if cond="requestType=='depublish'">
-              <hippo:invokeDocumentWorkflow action="publish"/>
+              <!-- copy of handling in transition "depublish", should consider raising an internal event instead -->
+              <if cond="!unpublished">
+                <hippo:copyVariant sourceState="published" targetState="unpublished"/>
+              </if>
+              <hippo:configVariant variant="unpublished" versionable="true" availabilities="preview"/>
+              <hippo:configVariant variant="published" availabilities=""/>
+              <hippo:version variant="unpublished"/>
             <else/>
-              <cs:var name="requestDate" expr="request.scheduledDate"/>
-              <hippo:deleteRequest requestExpr="request"/>
-              <hippo:invokeDocumentWorkflow action="scheduleddepublish" whenExpr="requestDate"/>
+              <hippo:scheduleWorkflow type="depublish" targetDateExpr="requestDate"/>
             </if>
 
           <else/>
@@ -291,7 +300,7 @@
         </transition>
 
         <transition event="publish" cond="!!_eventdata" target="reset">
-          <hippo:invokeDocumentWorkflow action="scheduledpublish" whenExpr="_eventdata"/>
+          <hippo:scheduleWorkflow type="publish" targetDateExpr="_eventdata"/>
         </transition>
 
       </state>
@@ -340,7 +349,7 @@
         </transition>
 
         <transition event="depublish" cond="!!_eventdata" target="reset">
-          <hippo:invokeDocumentWorkflow action="scheduleddepublish" whenExpr="_eventdata"/>
+          <hippo:scheduleWorkflow type="depublish" targetDateExpr="_eventdata"/>
         </transition>
 
       </state>
@@ -407,7 +416,7 @@
         </transition>
 
         <transition event="delete" target="reset">
-          <hippo:invokeDocumentWorkflow action="delete"/>
+          <hippo:archiveDocument/>
         </transition>
 
         <transition event="move" target="reset">

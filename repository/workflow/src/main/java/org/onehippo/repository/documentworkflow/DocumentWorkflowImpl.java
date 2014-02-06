@@ -29,7 +29,6 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.RepositoryMap;
-import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
 import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
@@ -206,10 +205,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     @Override
     public void depublish(final Date depublicationDate) throws WorkflowException, RepositoryException, RemoteException {
-        // create 'future' documentworkflow proxy
-        WorkflowContext ctx = getWorkflowContext().getWorkflowContext(depublicationDate);
-        DocumentWorkflow workflow = (DocumentWorkflow)ctx.getWorkflow("default");
-        workflow.depublish();
+        workflowExecutor.triggerAction("depublish", depublicationDate);
     }
 
     @Override
@@ -219,10 +215,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     @Override
     public void publish(final Date publicationDate) throws WorkflowException, RepositoryException, RemoteException {
-        // create 'future' documentworkflow proxy
-        WorkflowContext ctx = getWorkflowContext().getWorkflowContext(publicationDate);
-        DocumentWorkflow workflow = (DocumentWorkflow)ctx.getWorkflow("default");
-        workflow.publish();
+        workflowExecutor.triggerAction("publish", publicationDate);
     }
 
     @Override

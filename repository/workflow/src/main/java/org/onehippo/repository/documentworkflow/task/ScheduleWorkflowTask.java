@@ -22,19 +22,19 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Custom workflow task for scheduling a publication or depublication of a document.
  */
-public class ScheduleRequestTask extends AbstractDocumentTask {
+public class ScheduleWorkflowTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(ScheduleRequestTask.class);
+    private static Logger log = LoggerFactory.getLogger(ScheduleWorkflowTask.class);
 
     private String type;
     private Date targetDate;
@@ -58,33 +58,26 @@ public class ScheduleRequestTask extends AbstractDocumentTask {
     @Override
     public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
 
-        DocumentHandle dm = getDocumentHandle();
+        DocumentHandle dh = getDocumentHandle();
 
         if (getType() == null || !("publish".equals(getType()) || "depublish".equals(getType()))) {
-            throw new WorkflowException("Unknown or undefined ScheduledRequestAction: "+getType());
-        }
-        Boolean allowed = null;
-        try {
-            allowed = (Boolean)dm.getActions().get(getType());
-        }
-        catch (Exception e) {
-            //
-        }
-        if (allowed == null || !allowed.booleanValue()) {
-            throw new WorkflowException("ScheduledRequestAction: "+getType()+" not allowed");
+            throw new WorkflowException("Unknown or undefined ScheduledWorkflowAction: "+getType());
         }
         if (targetDate == null) {
-            throw new WorkflowException("ScheduledRequestAction: no target date specified");
+            throw new WorkflowException("ScheduledWorkflowAction: no target date specified");
         }
-        WorkflowContext wfCtx = dm.getWorkflowContext();
-        wfCtx = wfCtx.getWorkflowContext(targetDate);
-        FullReviewedActionsWorkflow wf = (FullReviewedActionsWorkflow) wfCtx.getWorkflow("default");
+        WorkflowContext wfc = dh.getWorkflowContext();
+        // ensure no outstanding changes
+        wfc.getInternalWorkflowSession().save();
+        // create 'future' documentworkflow proxy
+        WorkflowContext futureContext = wfc.getWorkflowContext(targetDate);
+        DocumentWorkflow workflow = (DocumentWorkflow)futureContext.getWorkflow("default");
 
         if ("publish".equals(getType())) {
-            wf.publish();
+            workflow.publish();
         }
         else {
-            wf.depublish();
+            workflow.depublish();
         }
 
         return null;

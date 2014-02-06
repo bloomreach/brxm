@@ -33,24 +33,24 @@ import org.slf4j.LoggerFactory;
 /**
  * Custom workflow task for archiving document.
  */
-public class ArchiveTask extends AbstractDocumentTask {
+public class ArchiveDocumentTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(ArchiveTask.class);
+    private static Logger log = LoggerFactory.getLogger(ArchiveDocumentTask.class);
 
     @Override
     public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
 
-        DocumentHandle dm = getDocumentHandle();
+        DocumentHandle dh = getDocumentHandle();
         DocumentVariant variant;
         try {
-            variant = dm.getDocumentVariantByState(HippoStdNodeType.DRAFT);
+            variant = dh.getDocumentVariantByState(HippoStdNodeType.DRAFT);
             if (variant != null) {
                 deleteDocument(variant);
             }
 
-            variant = dm.getDocumentVariantByState(HippoStdNodeType.PUBLISHED);
+            variant = dh.getDocumentVariantByState(HippoStdNodeType.PUBLISHED);
             if (variant != null) {
                 deleteDocument(variant);
             }
@@ -59,8 +59,9 @@ public class ArchiveTask extends AbstractDocumentTask {
         }
 
         try {
-            variant = dm.getDocumentVariantByState(HippoStdNodeType.UNPUBLISHED);
-            DefaultWorkflow defaultWorkflow = (DefaultWorkflow) dm.getWorkflowContext().getWorkflow("core", variant);
+            variant = dh.getDocumentVariantByState(HippoStdNodeType.UNPUBLISHED);
+            dh.getWorkflowContext().getInternalWorkflowSession().save();
+            DefaultWorkflow defaultWorkflow = (DefaultWorkflow) dh.getWorkflowContext().getWorkflow("core", variant);
             defaultWorkflow.archive();
         } catch (MappingException ex) {
             log.warn("invalid default workflow, falling back in behaviour", ex);

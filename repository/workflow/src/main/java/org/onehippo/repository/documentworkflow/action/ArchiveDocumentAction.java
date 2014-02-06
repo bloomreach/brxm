@@ -16,17 +16,17 @@
 
 package org.onehippo.repository.documentworkflow.action;
 
-import org.onehippo.repository.documentworkflow.task.ArchiveTask;
+import org.onehippo.repository.documentworkflow.task.ArchiveDocumentTask;
 
 /**
  * ArchiveAction delegating the execution to ArchiveTask.
  */
-public class ArchiveAction extends AbstractDocumentTaskAction<ArchiveTask> {
+public class ArchiveDocumentAction extends AbstractDocumentTaskAction<ArchiveDocumentTask> {
 
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected ArchiveTask createWorkflowTask() {
-        return new ArchiveTask();
+    protected ArchiveDocumentTask createWorkflowTask() {
+        return new ArchiveDocumentTask();
     }
 }

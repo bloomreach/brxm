@@ -20,12 +20,12 @@ import java.util.Date;
 
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
-import org.onehippo.repository.documentworkflow.task.ScheduleRequestTask;
+import org.onehippo.repository.documentworkflow.task.ScheduleWorkflowTask;
 
 /**
- * ScheduleRequestAction delegating the execution to ScheduleRequestTask.
+ * ScheduleRequestAction delegating the execution to ScheduleWorkflowTask.
  */
-public class ScheduleRequestAction extends AbstractDocumentTaskAction<ScheduleRequestTask> {
+public class ScheduleWorkflowAction extends AbstractDocumentTaskAction<ScheduleWorkflowTask> {
 
     private static final long serialVersionUID = 1L;
 
@@ -46,12 +46,12 @@ public class ScheduleRequestAction extends AbstractDocumentTaskAction<ScheduleRe
     }
 
     @Override
-    protected ScheduleRequestTask createWorkflowTask() {
-        return new ScheduleRequestTask();
+    protected ScheduleWorkflowTask createWorkflowTask() {
+        return new ScheduleWorkflowTask();
     }
 
     @Override
-    protected void initTask(ScheduleRequestTask task) throws ModelException, SCXMLExpressionException {
+    protected void initTask(ScheduleWorkflowTask task) throws ModelException, SCXMLExpressionException {
         super.initTask(task);
         task.setType(getType());
         task.setTargetDate((Date) eval(getTargetDateExpr()));

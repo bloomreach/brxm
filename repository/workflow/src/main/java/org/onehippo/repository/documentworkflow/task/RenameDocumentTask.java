@@ -69,7 +69,6 @@ public class RenameDocumentTask extends AbstractDocumentTask {
             throw new WorkflowException("No source document found.");
         }
 
-        // doDepublish();
         DefaultWorkflow defaultWorkflow = (DefaultWorkflow) dm.getWorkflowContext().getWorkflow("core", document);
         defaultWorkflow.rename(newName);
 
