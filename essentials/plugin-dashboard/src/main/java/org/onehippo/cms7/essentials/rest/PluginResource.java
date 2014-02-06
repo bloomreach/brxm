@@ -22,7 +22,9 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
@@ -32,6 +34,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.RuntimeDelegate;
@@ -40,6 +43,8 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
+import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
+import org.apache.cxf.jaxrs.provider.json.JSONProvider;
 import org.onehippo.cms7.essentials.dashboard.EssentialsPlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.config.DefaultDocumentManager;
@@ -57,6 +62,8 @@ import org.onehippo.cms7.essentials.rest.model.RestfulList;
 import org.onehippo.cms7.essentials.servlet.DynamicRestPointsApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.ContextLoader;
 
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
@@ -166,8 +173,10 @@ public class PluginResource extends BaseResource {
 
             }
             // register:
-
+            final ApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
+            final Object jsonProvider =  applicationContext.getBean("jsonProvider");
             final JAXRSServerFactoryBean factoryBean = delegate.createEndpoint(application, JAXRSServerFactoryBean.class);
+            factoryBean.setProvider(jsonProvider);
             factoryBean.setBus(bus);
             final Server server = factoryBean.create();
             server.start();

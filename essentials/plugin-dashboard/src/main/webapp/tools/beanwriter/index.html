@@ -12,9 +12,9 @@
                     <button class="btn btn-primary" ng-click="runBeanWriter()">Run HST bean re-generation</button>
                 </p>
             </div>
-            <div class="list-group-item" ng-show="resultMessages.length > 0">
+            <div class="list-group-item" ng-show="resultMessages.items.length > 0">
                 <div class="alert alert-info">
-                    <div ng-repeat="message in resultMessages" ng-switch="message.displayType">
+                    <div ng-repeat="message in resultMessages.items" ng-switch="message.displayType">
                         <div ng-switch-when="PRE">
                             <pre>{{message.value}}</pre>
                         </div>

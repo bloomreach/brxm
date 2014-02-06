@@ -6,7 +6,7 @@
                 $scope.resultMessages = [];
                 $scope.runBeanWriter = function () {
                     $http.post($scope.endpoint).success(function (data) {
-                        $scope.resultMessages = Essentials.asArray(data.collection.items);
+                        $scope.resultMessages = data;
                     });
                 };
             })
