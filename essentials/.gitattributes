@@ -704,6 +704,8 @@ plugin-dashboard/src/main/resources/rest_workflow_content_block_template.xml -te
 plugin-dashboard/src/main/resources/template.xml -text
 plugin-dashboard/src/main/webapp/META-INF/context.xml -text
 plugin-dashboard/src/main/webapp/WEB-INF/applicationContext.xml -text
+plugin-dashboard/src/main/webapp/WEB-INF/jsp/errors/404.jsp -text
+plugin-dashboard/src/main/webapp/WEB-INF/jsp/errors/500.jsp -text
 plugin-dashboard/src/main/webapp/WEB-INF/jsp/index.jsp -text
 plugin-dashboard/src/main/webapp/WEB-INF/web.xml -text
 plugin-dashboard/src/main/webapp/assets/css/bootstrap.css -text
