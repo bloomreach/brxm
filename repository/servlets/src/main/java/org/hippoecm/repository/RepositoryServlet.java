@@ -95,6 +95,10 @@ public class RepositoryServlet extends HttpServlet {
     /** Default repository storage directory */
     public static final String DEFAULT_REPOSITORY_DIRECTORY = "WEB-INF/storage";
 
+    /** Default repository storage directory under the current working directory in case war is running while not
+ * unpacked. */
+    public static final String DEFAULT_REPOSITORY_DIRECTORY_UNDER_CURRENT_WORKING_DIR = "repository_storage";
+
     /** Default binding address for server */
     public static final String DEFAULT_REPOSITORY_BINDING = "rmi://localhost:1099/hipporepository";
 
@@ -135,10 +139,15 @@ public class RepositoryServlet extends HttpServlet {
         // check for absolute path
         if (!storageLocation.startsWith("/") && !storageLocation.startsWith("file:")) {
             // try to parse the relative path
-            storageLocation = config.getServletContext().getRealPath(storageLocation);
-            if (storageLocation == null) {
-                throw new ServletException("Cannot determine repository location "
-                        + config.getInitParameter(REPOSITORY_DIRECTORY_PARAM));
+            final String storagePath = config.getServletContext().getRealPath(storageLocation);
+
+            // ServletContext#getRealPath() may return null especially when unpackWARs="false".
+            if (storagePath == null) {
+                log.warn("Cannot determine the real path of the repository storage location, '{}'. Defaults to './{}'",
+                        storageLocation, DEFAULT_REPOSITORY_DIRECTORY_UNDER_CURRENT_WORKING_DIR);
+                storageLocation = DEFAULT_REPOSITORY_DIRECTORY_UNDER_CURRENT_WORKING_DIR;
+            } else {
+                storageLocation = storagePath;
             }
         }
     }
