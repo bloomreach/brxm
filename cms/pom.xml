@@ -139,6 +139,8 @@
     <sonar.l10n.locales>nl,fr,it,de</sonar.l10n.locales>
 
     <jslint.plugin.version>1.0.1</jslint.plugin.version>
+    <sf.htmlcleaner.version>2.7</sf.htmlcleaner.version>
+
   </properties>
 
   <!--
