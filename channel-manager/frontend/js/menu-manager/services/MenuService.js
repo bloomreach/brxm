@@ -29,7 +29,7 @@
                         children: null
                     },
                     menuDataLoading = false,
-                    menuLoaded = $q.defer();
+                    menuLoaded = null;
 
                 function menuServiceUrl(suffix) {
                     var url = ConfigService.apiUrlPrefix + '/' + ConfigService.menuId;
@@ -42,6 +42,7 @@
                 function loadMenu() {
                     if (!menuDataLoading) {
                         menuDataLoading = true;
+                        menuLoaded = $q.defer();
                         $http.get(menuServiceUrl())
                             .success(function (response) {
                                 menuData.children = response.data.children;
@@ -80,7 +81,8 @@
                     var deferred = $q.defer();
                     menuService.getMenu().then(
                         function() {
-                            deferred.resolve(getResolved());
+                            var resolved = angular.isFunction(getResolved) ? getResolved() : undefined;
+                            deferred.resolve(resolved);
                         },
                         function(error) {
                             deferred.reject(error);
@@ -120,12 +122,18 @@
                 };
 
                 menuService.deleteMenuItem = function (menuItemId) {
+                    var deferred = $q.defer();
+
                     $http.post(menuServiceUrl('delete/' + menuItemId))
-                        .success(loadMenu)
+                        .success(function() {
+                            loadMenu();
+                            deferred.resolve();
+                        })
                         .error(function () {
-                            // TODO show error in UI
-                            console.error('An error occured while deleting menu item with id ' + menuItemId);
+                            deferred.reject();
                         });
+
+                    return deferred.promise;
                 };
 
                 return menuService;
