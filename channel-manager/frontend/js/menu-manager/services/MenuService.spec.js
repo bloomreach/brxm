@@ -17,38 +17,60 @@
 describe('Menu Service', function () {
     'use strict';
 
-    var menuService;
+    var menuService, $httpBackend;
 
     beforeEach(module('hippo.channelManager.menuManager'));
 
     beforeEach(function() {
-        var configService = function () {
-            return {
-                menuId: 'menuId',
-                apiUrlPrefix: 'url'
-            };
-        };
         module(function($provide) {
-            $provide.value('hippo.channelManager.menuManager.ConfigService', configService);
+            $provide.value('hippo.channelManager.menuManager.ConfigService', {
+                apiUrlPrefix: 'api',
+                menuId: 'menuId'
+            });
         });
     });
+
+    beforeEach(inject(function($injector) {
+        $httpBackend = $injector.get('$httpBackend');
+        $httpBackend.when('GET', 'api/menuId').respond({
+            data: {
+                children: [
+                    {
+                        id: '1',
+                        name: 'One'
+                    },
+                    {
+                        id: '2',
+                        name: 'Two',
+                    }
+                ]
+            }
+        });
+    }));
 
     beforeEach(inject(['hippo.channelManager.menuManager.MenuService', function (MenuService) {
         menuService = MenuService;
     }]));
 
+    afterEach(function() {
+        $httpBackend.verifyNoOutstandingExpectation();
+        $httpBackend.verifyNoOutstandingRequest();
+    });
 
     it('should exist', function () {
         expect(menuService).toBeDefined();
     });
 
     it('should get menu by id', function () {
-        // TODO: add assertions
-        var menu = menuService.getMenu('menuId');
+        var promise = menuService.getMenu('menuId');
+
+        $httpBackend.expectGET('api/menuId');
+        $httpBackend.flush();
+
+        promise.then(function (menuData) {
+            expect(menuData).toBeDefined();
+            expect(menuData.children.length).toEqual(2);
+        });
     });
 
-    it('should delete menu by id', function () {
-        // TODO: add assertions
-        var menuId = menuService.deleteMenuItem('menuId');
-    });
 });
