@@ -25,31 +25,31 @@
                 .state('loader', {
                     url: '/loader',
                     controller: 'hippo.channelManager.menuManager.LoaderCtrl',
-                    templateUrl: 'views/loader.html'
-                })
-
-                .state('menu-item.add', {
-                    url: '/:menuItemId/add',
-                    controller: 'hippo.channelManager.menuManager.AddMenuItemCtrl',
-                    templateUrl: 'views/add-menu-item.html'
+                    templateUrl: 'states/loader/loader.html'
                 })
 
                 .state('menu-item', {
                     abstract: true,
                     controller: 'hippo.channelManager.menuManager.MenuItemCtrl',
-                    templateUrl: 'views/menu-item.html'
+                    templateUrl: 'states/menu-item/menu-item.html'
                 })
 
-                .state('menu-item.edit', {
-                    url: '/:menuItemId/edit',
-                    controller: 'hippo.channelManager.menuManager.EditMenuItemCtrl',
-                    templateUrl: 'views/edit-menu-item.html'
+                .state('menu-item.add', {
+                    url: '/:menuItemId/add',
+                    controller: 'hippo.channelManager.menuManager.AddMenuItemCtrl',
+                    templateUrl: 'states/menu-item/add/add-menu-item.html'
                 })
 
                 .state('menu-item.add-page', {
                     url: '/:menuItemId/add',
                     controller: 'hippo.channelManager.menuManager.AddPageCtrl',
-                    templateUrl: 'views/add-menu-item.html'
+                    templateUrl: 'states/menu-item/add-page/add-page.html'
+                })
+
+                .state('menu-item.edit', {
+                    url: '/:menuItemId/edit',
+                    controller: 'hippo.channelManager.menuManager.EditMenuItemCtrl',
+                    templateUrl: 'states/menu-item/edit/edit-menu-item.html'
                 });
 
             // translations
