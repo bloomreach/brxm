@@ -59,28 +59,6 @@
             });
 
             $translateProvider.preferredLanguage('en');
-        }])
+        }]);
 
-        .run([
-            '$rootScope',
-            '$translate',
-            '$state',
-            'hippo.channelManager.menuManager.Container',
-            'hippo.channelManager.menuManager.ConfigService',
-            '_hippo.channelManager.menuManagement.IFrameService',
-            function ($rootScope, $translate, $state, Container, Config, IFrame) {
-                $rootScope.close = function() {
-                    Container.close();
-                };
-
-                // go to default state
-                $state.go('loader');
-
-                // set language
-                $translate.uses(Config.locale);
-
-                // enable live reload
-                IFrame.enableLiveReload();
-            }
-        ]);
 }());

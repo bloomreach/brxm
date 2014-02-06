@@ -43,7 +43,9 @@ module.exports = function(config) {
             'components/angular-mocks/angular-mocks.js',
 
             // sources
-            'menu-manager/**/*.js',
+            'menu-manager/app-config.js',
+            'menu-manager/services/*.js',
+            'menu-manager/states/**/*.js',
 
             // tests
             {

@@ -22,17 +22,13 @@ describe('Menu Service', function () {
     beforeEach(module('hippo.channelManager.menuManager'));
 
     beforeEach(function() {
-        var iFrameService = {
-            enableLiveReload: function (){}
-        };
-        var configService = function (_) {
+        var configService = function () {
             return {
                 menuId: 'menuId',
                 apiUrlPrefix: 'url'
             };
         };
         module(function($provide) {
-            $provide.value('_hippo.channelManager.menuManagement.IFrameService', iFrameService);
             $provide.value('hippo.channelManager.menuManager.ConfigService', configService);
         });
     });
@@ -42,16 +38,16 @@ describe('Menu Service', function () {
     }]));
 
 
-    it('should exist', function() {
+    it('should exist', function () {
         expect(menuService).toBeDefined();
     });
 
-    it('should get menu by id', function() {
+    it('should get menu by id', function () {
         // TODO: add assertions
         var menu = menuService.getMenu('menuId');
     });
 
-    it('should delete menu by id', function() {
+    it('should delete menu by id', function () {
         // TODO: add assertions
         var menuId = menuService.deleteMenuItem('menuId');
     });
