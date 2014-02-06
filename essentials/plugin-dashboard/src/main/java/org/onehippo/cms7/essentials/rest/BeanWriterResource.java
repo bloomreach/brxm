@@ -72,9 +72,6 @@ public class BeanWriterResource extends BaseResource {
             context.setRestPackageName(document.getSelectedRestPackage());
             context.setProjectNamespacePrefix(document.getProjectNamespace());
         }
-
-        /*messages.add(new MessageRestful("Not Enabled @see org.onehippo.cms7.essentials.rest.BeanWriterResource"));
-        messages.add(new MessageRestful("Not implemented yet"));*/
         final java.nio.file.Path namespacePath = new File(basePath + File.separator + "bootstrap").toPath();
 
         final List<MemoryBean> memoryBeans = BeanWriterUtils.buildBeansGraph(namespacePath, context, EssentialConst.SOURCE_PATTERN_JAVA);
