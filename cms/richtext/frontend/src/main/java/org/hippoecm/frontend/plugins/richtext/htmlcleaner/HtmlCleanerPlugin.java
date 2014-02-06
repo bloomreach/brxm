@@ -72,7 +72,9 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
             final Element element = new Element(elementName, attributes);
             whitelist.put(element.name, element);
         }
-        context.registerService(this, IHtmlCleanerService.class.getName());
+        if (context != null) {
+            context.registerService(this, IHtmlCleanerService.class.getName());
+        }
     }
 
     @Override
