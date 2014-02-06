@@ -2485,6 +2485,7 @@ richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/li
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/links/DocumentBrowserDialog_nl.properties -text svneol=unset#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/links/LinkPickerBehavior.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/links/RichTextEditorLinkService.java svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/htmlcleaner/DeprecatedHtmlCleanerPlugin.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/htmlcleaner/HtmlCleanerPlugin.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/jcr/ChildFacetUuidsModel.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/jcr/ImgAddUuidDecorator.java -text
@@ -2514,6 +2515,7 @@ richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/richtext/model/Bro
 richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/richtext/model/ChildFacetUuidsModelTest.java -text
 richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/richtext/model/RichTextImageMetaDataModelTest.java -text
 richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/richtext/view/RichTextDiffWithLinksAndImagesPanelTest.java -text
+richtext/frontend/src/test/resources/htmlcleaner-testconfig.xml -text
 richtext/frontend/src/test/resources/log4j-filters.txt -text
 richtext/frontend/src/test/resources/log4j.dtd svneol=native#text/plain
 richtext/frontend/src/test/resources/log4j.xml svneol=native#text/plain

@@ -29,3 +29,6 @@ configuration as specified by /hippo:configuration/hippo:initialize/hippostd-htm
 Error initializing content for system-html-template_de.xml
 configuration as specified by /hippo:configuration/hippo:initialize/system-html-template-de
 Error initializing content for html-cleaner-service.xml
+illegal mixin type name: editor:editable
+No child node definition for hippo:translation found
+javax.jcr.PathNotFoundException: /hippo:configuration/hippo:frontend/cms

@@ -51,6 +51,10 @@
     <level value="error"/>
   </category>
 
+  <logger name="org.hippoecm.frontend.plugins.richtext.htmlcleaner.HtmlCleanerPluginTest">
+    <level value="info"/>
+  </logger>
+
   <root>
     <level value="warn"/>
     <appender-ref ref="console"/>

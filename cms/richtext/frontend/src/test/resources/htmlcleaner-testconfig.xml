@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="cleaner.config">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>frontend:pluginconfig</sv:value>
+  </sv:property>
+  <sv:property sv:name="charset" sv:type="String">
+    <sv:value>UTF-8</sv:value>
+  </sv:property>
+  <sv:property sv:name="serializer" sv:type="String">
+    <sv:value>compact</sv:value>
+  </sv:property>
+  <sv:node sv:name="whitelist">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:pluginconfig</sv:value>
+    </sv:property>
+    <sv:node sv:name="html">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="body">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="div">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+        <sv:value>id</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="span">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+        <sv:value>id</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="p">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>align</sv:value>
+        <sv:value>class</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="br">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="pre">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="blockquote">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+        <sv:value>id</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="h1">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="h2">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="h3">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="h4">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="h5">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="a">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>href</sv:value>
+        <sv:value>target</sv:value>
+        <sv:value>title</sv:value>
+        <sv:value>name</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="strong">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="em">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="b">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="sub">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="sup">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="u">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="i">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="ul">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="ol">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="li">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="img">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>src</sv:value>
+        <sv:value>alt</sv:value>
+        <sv:value>border</sv:value>
+        <sv:value>align</sv:value>
+        <sv:value>hspace</sv:value>
+        <sv:value>vspace</sv:value>
+        <sv:value>width</sv:value>
+        <sv:value>height</sv:value>
+        <sv:value>title</sv:value>
+        <sv:value>style</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="table">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+        <sv:value>border</sv:value>
+        <sv:value>cellspacing</sv:value>
+        <sv:value>cellpadding</sv:value>
+        <sv:value>width</sv:value>
+        <sv:value>align</sv:value>
+        <sv:value>style</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="tbody">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="tr">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="td">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>width</sv:value>
+        <sv:value>colspan</sv:value>
+        <sv:value>rowspan</sv:value>
+        <sv:value>valign</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="th">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>width</sv:value>
+        <sv:value>colspan</sv:value>
+        <sv:value>rowspan</sv:value>
+        <sv:value>valign</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hr">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="object">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>align</sv:value>
+        <sv:value>class</sv:value>
+        <sv:value>data</sv:value>
+        <sv:value>height</sv:value>
+        <sv:value>id</sv:value>
+        <sv:value>width</sv:value>
+        <sv:value>title</sv:value>
+        <sv:value>type</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="param">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>id</sv:value>
+        <sv:value>name</sv:value>
+        <sv:value>value</sv:value>
+      </sv:property>
+    </sv:node>
+    <!-- iframe is not safe?
+    <sv:node sv:name="iframe">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>src</sv:value>
+        <sv:value>align</sv:value>
+        <sv:value>allowfullscreen</sv:value>
+        <sv:value>class</sv:value>
+        <sv:value>frameborder</sv:value>
+        <sv:value>height</sv:value>
+        <sv:value>name</sv:value>
+        <sv:value>scrolling</sv:value>
+        <sv:value>width</sv:value>
+      </sv:property>
+    </sv:node>
+    -->
+  </sv:node>
+</sv:node>

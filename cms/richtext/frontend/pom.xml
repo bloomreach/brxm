@@ -67,6 +67,12 @@
       </exclusions>
     </dependency>
 
+    <dependency>
+      <groupId>net.sourceforge.htmlcleaner</groupId>
+      <artifactId>htmlcleaner</artifactId>
+      <version>${sf.htmlcleaner.version}</version>
+    </dependency>
+
     <!-- test -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
