@@ -26,7 +26,7 @@ import javax.ws.rs.ApplicationPath;
  * @version "$Id$"
  */
 
-@ApplicationPath("/endponts")
+@ApplicationPath("/system")
 public class EndpointsRestApplication extends javax.ws.rs.core.Application {
 
     @Override

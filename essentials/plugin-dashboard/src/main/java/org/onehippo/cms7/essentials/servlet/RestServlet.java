@@ -21,8 +21,13 @@ import javax.servlet.ServletException;
 import javax.ws.rs.ext.RuntimeDelegate;
 
 import org.apache.cxf.Bus;
+import org.apache.cxf.BusException;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
+import org.apache.cxf.transport.DestinationFactory;
+import org.apache.cxf.transport.DestinationFactoryManager;
+import org.apache.cxf.transport.http.DestinationRegistry;
+import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.cxf.transport.servlet.CXFServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,5 +54,8 @@ public class RestServlet extends CXFServlet {
         bean.setBus(bus);
         final Server server = bean.create();
         server.start();
+
+
+
     }
 }
