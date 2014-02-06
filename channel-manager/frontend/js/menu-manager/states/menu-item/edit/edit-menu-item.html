@@ -18,34 +18,49 @@
 <form role="form">
     <legend>{{ 'EDIT_MENU_ITEM' | translate }}</legend>
     <div class="form-group">
-        <label for="label">{{ 'LABEL' | translate }}</label>
-        <input type="text" class="form-control" id="label" placeholder="{{ 'LABEL' | translate }}" ng-model="selectedMenuItem.name" ng-blur="saveMenuItem()">
+        <label for="hippo.channelManager.menuManager.menuItem.edit.label">{{ 'LABEL' | translate }}</label>
+        <input type="text" class="form-control" id="hippo.channelManager.menuManager.menuItem.edit.label"
+               placeholder="{{ 'LABEL' | translate }}"
+               ng-model="selectedMenuItem.name"
+               ng-blur="saveMenuItem()"
+               hippo.channel-manager.menu-manager.auto-focus>
     </div>
-    <label for="url">{{ 'DESTINATION' | translate }}</label>
-    <div class="form-group">
+    <label for="hippo.channelManager.menuManager.menuItem.edit.linkType">{{ 'DESTINATION' | translate }}</label>
+    <div class="form-group" id="hippo.channelManager.menuManager.menuItem.edit.linkType">
         <div class="radio">
             <label>
-                <input type="radio" name="destination" ng-model="selectedMenuItem.linkType" value="SITEMAPITEM" checked="checked" ng-click="saveMenuItem()">
+                <input type="radio" name="destination"
+                       ng-model="selectedMenuItem.linkType"
+                       value="SITEMAPITEM"
+                       ng-click="selectedMenuItem.link = ''; focus('hippo.channelManager.menuManager.menuItem.edit.url')">
                 {{ 'SITEMAP_ITEM' | translate }}
             </label>
         </div>
         <div class="radio">
             <label>
-                <input type="radio" name="destination" ng-model="selectedMenuItem.linkType" value="EXTERNAL" ng-click="saveMenuItem()">
+                <input type="radio" name="destination"
+                       ng-model="selectedMenuItem.linkType"
+                       value="EXTERNAL"
+                       ng-click="selectedMenuItem.link = ''; focus('hippo.channelManager.menuManager.menuItem.edit.link')">
                 {{ 'EXTERNAL_LINK' | translate }}
             </label>
         </div>
         <div class="radio">
             <label>
-                <input type="radio" name="destination" ng-model="selectedMenuItem.linkType" value="NONE" ng-click="saveMenuItem()">
+                <input type="radio" name="destination"
+                       ng-model="selectedMenuItem.linkType"
+                       value="NONE"
+                       ng-click="selectedMenuItem.link = ''">
                 {{ 'NONE' | translate }}
             </label>
         </div>
     </div>
     <div class="form-group" ng-show="selectedMenuItem.linkType === 'SITEMAPITEM'">
-        <label for="url">{{ 'INTERNAL_LINK' | translate }}</label>
+        <label for="hippo.channelManager.menuManager.menuItem.edit.url">{{ 'INTERNAL_LINK' | translate }}</label>
         <div class="input-group">
-            <input type="text" class="form-control" id="url" data-ng-model="selectedMenuItem.link" ng-blur="saveMenuItem()">
+            <input type="text" class="form-control" id="hippo.channelManager.menuManager.menuItem.edit.url"
+                   data-ng-model="selectedMenuItem.link"
+                   ng-blur="saveMenuItem()">
             <span class="input-group-btn">
                 <button class="btn btn-default" type="button"><i class="fa fa-external-link"></i></button>
             </span>
@@ -63,7 +78,10 @@
         </button>
     </div>
     <div class="form-group" ng-show="selectedMenuItem.linkType === 'EXTERNAL'">
-        <label for="link">{{ 'EXTERNAL_LINK' | translate }}</label>
-        <input type="text" class="form-control" id="link" placeholder="{{ 'EXAMPLE_DOMAIN' | translate }}" ng-model="selectedMenuItem.link" ng-blur="saveMenuItem()">
+        <label for="hippo.channelManager.menuManager.menuItem.edit.link">{{ 'EXTERNAL_LINK' | translate }}</label>
+        <input type="text" class="form-control" id="hippo.channelManager.menuManager.menuItem.edit.link"
+               placeholder="{{ 'EXAMPLE_DOMAIN' | translate }}"
+               ng-model="selectedMenuItem.link"
+               ng-blur="saveMenuItem()">
     </div>
 </form>

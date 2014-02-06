@@ -24,14 +24,32 @@
             '$stateParams',
             '$state',
             'hippo.channelManager.menuManager.MenuService',
-            function ($scope, $stateParams, $state, MenuService) {
+            'hippo.channelManager.menuManager.FocusService',
+            function ($scope, $stateParams, $state, MenuService, FocusService) {
+                var savedMenuItem;
+
+                function shouldSaveMenuItem(menuItem) {
+                    if (!angular.isDefined(menuItem)) {
+                        return false;
+                    }
+                    return menuItem.name !== savedMenuItem.name
+                        || menuItem.link !== savedMenuItem.link
+                        || menuItem.linkType !== savedMenuItem.linkType;
+                }
+
                 MenuService.getMenuItem($stateParams.menuItemId).then(function (menuItem) {
                     $scope.selectedMenuItem = menuItem;
+                    savedMenuItem = angular.copy($scope.selectedMenuItem);
                 });
 
                 $scope.saveMenuItem = function () {
-                    MenuService.saveMenuItem($scope.selectedMenuItem);
+                    if (shouldSaveMenuItem($scope.selectedMenuItem)) {
+                        savedMenuItem = angular.copy($scope.selectedMenuItem);
+                        MenuService.saveMenuItem($scope.selectedMenuItem);
+                    }
                 };
+
+                $scope.focus = FocusService.focusElementWithId;
 
                 $scope.createNewPage = function () {
                     $state.go('menu-item.add-page', { menuItemId: $stateParams.menuItemId });
