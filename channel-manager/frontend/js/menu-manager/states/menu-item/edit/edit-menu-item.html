@@ -45,7 +45,7 @@
     <div class="form-group" ng-show="selectedMenuItem.linkType === 'SITEMAPITEM'">
         <label for="url">{{ 'INTERNAL_LINK' | translate }}</label>
         <div class="input-group">
-            <input type="text" class="form-control" id="url" data-ng-model="selectedMenuItem.link">
+            <input type="text" class="form-control" id="url" data-ng-model="selectedMenuItem.link" ng-blur="saveMenuItem()">
             <span class="input-group-btn">
                 <button class="btn btn-default" type="button"><i class="fa fa-external-link"></i></button>
             </span>
@@ -64,6 +64,6 @@
     </div>
     <div class="form-group" ng-show="selectedMenuItem.linkType === 'EXTERNAL'">
         <label for="link">{{ 'EXTERNAL_LINK' | translate }}</label>
-        <input type="text" class="form-control" id="link" placeholder="{{ 'EXAMPLE_DOMAIN' | translate }}" ng-model="selectedMenuItem.link">
+        <input type="text" class="form-control" id="link" placeholder="{{ 'EXAMPLE_DOMAIN' | translate }}" ng-model="selectedMenuItem.link" ng-blur="saveMenuItem()">
     </div>
 </form>

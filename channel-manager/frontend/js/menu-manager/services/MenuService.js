@@ -19,72 +19,116 @@
 
     angular.module('hippo.channelManager.menuManager')
 
-        .service('hippo.channelManager.menuManager.MenuService', ['hippo.channelManager.menuManager.ConfigService', '$q', '$http', function (ConfigService, $q, $http) {
-            var menuService = {};
+        .service('hippo.channelManager.menuManager.MenuService', [
+            'hippo.channelManager.menuManager.ConfigService',
+            '$http',
+            '$q',
+            function (ConfigService, $http, $q) {
+                var menuService = {},
+                    menuData = {
+                        children: null
+                    },
+                    menuDataLoading = false,
+                    menuLoaded = $q.defer();
 
-            // fetch menu tree
-            menuService.getMenu = function(menuId) {
-                var deferred = $q.defer();
+                function menuServiceUrl(suffix) {
+                    var url = ConfigService.apiUrlPrefix + '/' + ConfigService.menuId;
+                    if (angular.isString(suffix)) {
+                        url += './' + suffix;
+                    }
+                    return url;
+                }
 
-                $http.get(ConfigService.apiUrlPrefix + '/' + menuId).success(function (response) {
-                    deferred.resolve(response.data);
-                }).error(function (error) {
-                    deferred.reject("An error occured while fetching the menu tree with id '" + menuId + "': " + error);
-                });
+                function loadMenu() {
+                    if (!menuDataLoading) {
+                        menuDataLoading = true;
+                        $http.get(menuServiceUrl())
+                            .success(function (response) {
+                                menuData.children = response.data.children;
+                                menuLoaded.resolve(menuData);
+                            })
+                            .error(function (error) {
+                                menuLoaded.reject(error);
+                            })
+                            .then(function () {
+                                menuDataLoading = false;
+                            });
+                    }
+                }
 
-                return deferred.promise;
-            };
+                function loadMenuOnce() {
+                    if (menuData.children === null) {
+                        loadMenu();
+                    }
+                }
 
-            menuService.getMenuItem = function(menuId, itemId) {
-                var deferred = $q.defer();
+                function findMenuItem(items, id) {
+                    var found = _.findWhere(items, { id: id });
+                    if (!found) {
+                        for (var i = 0, length = items.length; i < length && !found; i++) {
+                            found = findMenuItem(items[i].children, id);
+                        }
+                    }
+                    return found;
+                }
 
-                $http.get(ConfigService.apiUrlPrefix + '/' + menuId + './' + itemId).success(function (response) {
-                    deferred.resolve(response.data);
-                }).error(function (error) {
-                    deferred.reject("An error occured while fetching the menu item with id '" + menuId + "': " + error);
-                });
+                function getMenuItem(id) {
+                    return findMenuItem(menuData.children, id);
+                }
 
-                return deferred.promise;
-            };
+                function whenMenuLoaded(getResolved) {
+                    var deferred = $q.defer();
+                    menuService.getMenu().then(
+                        function() {
+                            deferred.resolve(getResolved());
+                        },
+                        function(error) {
+                            deferred.reject(error);
+                        }
+                    );
+                    return deferred.promise;
+                }
 
-            menuService.saveMenuItem = function(menuId, menuItem) {
-                var deferred = $q.defer();
+                menuService.getMenu = function () {
+                    loadMenuOnce();
+                    return menuLoaded.promise;
+                };
 
-                $http.post(ConfigService.apiUrlPrefix + '/' + menuId + './update', menuItem).success(function (response) {
-                    deferred.resolve(response.data);
-                }).error(function(error) {
-                    deferred.reject("An error occured while the menu item with id '" + menuId + "': " + error);
-                });
+                menuService.getFirstMenuItemId = function () {
+                    return whenMenuLoaded(function () {
+                        return menuData.children[0].id;
+                    });
+                };
 
-                return deferred.promise;
-            };
+                menuService.getMenuItem = function (menuItemId) {
+                    return whenMenuLoaded(function () {
+                        return getMenuItem(menuItemId);
+                    });
+                };
 
-            // TODO: finish this implementation
-            menuService.createItem = function (parentId, menuItem) {
-                var deferred = $q.defer();
+                menuService.saveMenuItem = function (menuItem) {
+                    $http.post(menuServiceUrl('update'), menuItem)
+                        .error(function (error) {
+                            // TODO show error in UI
+                            console.error("An error occured while saving the menu item with id '" + menuItem.id + "': " + error);
+                        });
+                };
 
-                $http.post(ConfigService.apiUrlPrefix + '/' + parentId, menuItem).success(function (response) {
-                    deferred.resolve(response.data);
-                }).error(function() {
-                    deferred.reject('An error occured while creating a menu item');
-                });
+                menuService.createItem = function (parentId, menuItem) {
+                    // TODO: implement
+                    console.error("Create item is not implemented");
+                };
 
-                return deferred.promise;
-            };
+                menuService.deleteMenuItem = function (menuItemId) {
+                    $http.post(menuServiceUrl('delete/' + menuItemId))
+                        .success(loadMenu)
+                        .error(function () {
+                            // TODO show error in UI
+                            console.error('An error occured while deleting menu item with id ' + menuItemId);
+                        });
+                };
 
-            menuService.deleteMenuItem = function (menuItemId) {
-                var deferred = $q.defer();
-
-                $http.post(ConfigService.apiUrlPrefix + '/' + ConfigService.menuId +'./delete/' + menuItemId).success(function (response) {
-                    deferred.resolve(response.data);
-                }).error(function() {
-                    deferred.reject('An error occured while deleting menu item with id ' + menuItemId);
-                });
-
-                return deferred.promise;
-            };
-
-
-            return menuService;
-        }]);
+                return menuService;
+            }
+        ]);
 }());

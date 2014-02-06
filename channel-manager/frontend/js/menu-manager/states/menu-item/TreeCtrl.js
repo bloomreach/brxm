@@ -17,20 +17,23 @@
 (function () {
     "use strict";
 
-    function reformatData(src) {
-        var result = [];
-        _.each(src, function (item) {
-            var newItem = item;
-            newItem.text = item.name;
+    function createTree(menuItems) {
+        var nodes = [];
 
-            if (item.children && item.children.length > 0) {
-                newItem.children = reformatData(item.children);
+        _.each(menuItems, function (menuItem) {
+            var node = {
+                id: menuItem.id,
+                text: menuItem.name
+            };
+
+            if (menuItem.children && menuItem.children.length > 0) {
+                node.children = createTree(menuItem.children);
             }
 
-            result.push(newItem);
+            nodes.push(node);
         });
 
-        return result;
+        return nodes;
     }
 
     angular.module('hippo.channelManager.menuManager')
@@ -41,10 +44,14 @@
             'hippo.channelManager.menuManager.ConfigService',
             'hippo.channelManager.menuManager.MenuService',
             function ($scope, $state, ConfigService, MenuService) {
-                // fetch initial data
-                $scope.menuTree = [{}];
-                MenuService.getMenu(ConfigService.menuId).then(function (menuData) {
-                    $scope.menuTree = reformatData(menuData.children);
+                $scope.menuTree = [];
+
+                MenuService.getMenu().then(function(menuData) {
+                    $scope.menuData = menuData;
+
+                    $scope.$watch('menuData', function(newMenuData, oldMenuData) {
+                        $scope.menuTree = createTree(newMenuData.children);
+                    }, true);
                 });
 
                 $scope.navigateTo = function (itemId) {

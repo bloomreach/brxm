@@ -21,20 +21,16 @@
 
         .controller('hippo.channelManager.menuManager.EditMenuItemCtrl', [
             '$scope',
-            '$routeParams',
             '$stateParams',
             '$state',
             'hippo.channelManager.menuManager.MenuService',
-            'hippo.channelManager.menuManager.ConfigService',
-            function ($scope, $routeParams, $stateParams, $state, MenuService, ConfigService) {
-                MenuService.getMenuItem(ConfigService.menuId, $stateParams.menuItemId).then(function (menuItem) {
+            function ($scope, $stateParams, $state, MenuService) {
+                MenuService.getMenuItem($stateParams.menuItemId).then(function (menuItem) {
                     $scope.selectedMenuItem = menuItem;
                 });
 
                 $scope.saveMenuItem = function () {
-                    MenuService.saveMenuItem(ConfigService.menuId, $scope.selectedMenuItem).then(function () {
-                        $state.go('loader');
-                    });
+                    MenuService.saveMenuItem($scope.selectedMenuItem);
                 };
 
                 $scope.createNewPage = function () {

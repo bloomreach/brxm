@@ -25,17 +25,18 @@
             'hippo.channelManager.menuManager.ConfigService',
             'hippo.channelManager.menuManager.MenuService',
             function ($location, $log, $state, ConfigService, MenuService) {
-
-                console.log('loader ctrl init');
-
-                MenuService.getMenu(ConfigService.menuId).then(function (data) {
-                    // go to default state
-                    $state.go('menu-item.edit', {
-                        menuItemId: data.children[0].id
-                    });
-                }, function (error) {
-                    $log.error(error);
-                });
+                MenuService.getFirstMenuItemId().then(
+                    function (firstMenuItemId) {
+                        // go to default state
+                        $state.go('menu-item.edit', {
+                            menuItemId: firstMenuItemId
+                        });
+                    },
+                    function (error) {
+                        // TODO show error in UI
+                        $log.error(error);
+                    }
+                );
             }
         ]);
 }());
