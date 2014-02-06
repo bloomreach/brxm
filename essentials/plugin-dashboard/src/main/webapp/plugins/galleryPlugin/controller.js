@@ -520,3 +520,9 @@
                 };
             })
 }());
+
+/**
+ Kenan todo:
+ - add new gallery namespace cnd with postfix of current namespace name with initialize.
+ - restservice gallery namespace retrieval
+ **/

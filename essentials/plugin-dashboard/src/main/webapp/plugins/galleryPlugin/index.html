@@ -19,6 +19,7 @@
 <div class="panel">
 <div class="panel-heading">
     <h2><h2>{{message}}</h2></h2>
+
 </div>
 <div class="panel-body">
 
@@ -37,7 +38,7 @@
     <div id="imageVariantsInfo" ng-show="imageVariantsInfo" class="alert alert-info">
         <button data-dismiss="alert" class="close" type="button">×</button>
         Some help text for image variants.
-        <a class="alert-link" href="http://www.onehippo.org/">Link to documentation</a>
+        <a class="alert-link" href="http://www.onehippo.org/" target="_blank">Link to documentation</a>
     </div>
 
     <div class="panel-body">
@@ -57,6 +58,7 @@
                         <input type="text" placeholder="variantname" id="variant{{$index}}Name" class="form-control" ng-model="variant.name" style="width: 200px;">
                     </div>
                 </div>
+
 
                 <button data-dismiss="alert" class="close" type="button" ng-click="removeVariant(variant)">×</button>
 
@@ -176,12 +178,17 @@
     <div ng-show="imageSetsInfo" class="alert alert-info">
         <button data-dismiss="alert" class="close" type="button">×</button>
         Some help text for image sets.
-        <a class="alert-link" href="http://www.onehippo.org/">Link to documentation</a>
+        <a class="alert-link" href="http://www.onehippo.org/" target="_blank">Link to documentation</a>
     </div>
 
     <div class="panel-body">
         <form ng-repeat-start="imageSet in imageSets">
             <fieldset>
+
+
+                  <span class="badge" style="float:right;">
+                    <button data-dismiss="alert" class="close" type="button" ng-click="removeImageSet(imageSet)">×</button>
+                </span>
                 <!-- Image set name -->
                 <div class="form-group" ng-class="{true: 'has-error form-group',false: 'form-group'}[imageSet.name=='']">
                     <label for="imageSet{{$index}}Name">Image set node name
@@ -195,9 +202,8 @@
                         <span class="input-group-addon" style="width: 100px;">{{imageSet.namespace}}:</span>
                         <input type="text" placeholder="variantname" id="imageSet{{$index}}Name" class="form-control" ng-model="imageSet.name" style="width: 200px;">
                     </div>
-                </div>
 
-                <button data-dismiss="alert" class="close" type="button" ng-click="removeImageSet(imageSet)">×</button>
+                </div>
 
 
                 <!-- Image set translations -->
