@@ -187,12 +187,12 @@
                 <exclude>frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/vtabs/*</exclude>
                 <exclude>frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/deviceskins/devices/device-skins.txt</exclude>
 
-                <!-- TODO: add licenses of included libraries to LICENSE file -->
-                <exclude>frontend/src/main/resources/angular/vendors/**/*</exclude>
-                <exclude>frontend/src/main/resources/angular/components/**/*</exclude>
+                <!-- ignore frontend dependencies pulled in by npm -->
+                <exclude>frontend/node_modules/**/*</exclude>
 
                 <!-- files without license header -->
                 <exclude>frontend/.bowerrc</exclude>
+                <exclude>frontend/.jshintrc</exclude>
 
                 <!-- repository content XML -->
                 <exclude>repository/src/main/resources/**/*.xml</exclude>
