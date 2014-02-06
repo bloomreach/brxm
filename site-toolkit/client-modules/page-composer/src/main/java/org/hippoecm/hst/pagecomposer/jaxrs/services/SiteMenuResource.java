@@ -111,7 +111,7 @@ public class SiteMenuResource extends AbstractConfigResource {
 
 
     @POST
-    @Path("/update")
+    @Path("/")
     public Response update(final @Context HstRequestContext requestContext, final SiteMenuItemRepresentation modifiedItem) {
         
         List<Validator> preValidators = getDefaultMenuModificationValidators(requestContext);
