@@ -13,7 +13,7 @@
       <defaultValue>myhippoproject</defaultValue>
     </requiredProperty>
     <requiredProperty key="version">
-      <defaultValue>1.01.02-SNAPSHOT</defaultValue>
+      <defaultValue>1.01.00-SNAPSHOT</defaultValue>
     </requiredProperty>
     <requiredProperty key="projectName">
       <defaultValue>My Hippo Project</defaultValue>
