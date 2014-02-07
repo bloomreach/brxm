@@ -88,6 +88,8 @@ class MenuHierarchy implements Serializable {
                     put("document", action);
                 } else if (action.getId().equals("history")) {
                     put("document", action);
+                } else if (action.getId().equals("docMetaData")) {
+                    put("document", action);
                 } else if (action.getId().toLowerCase().contains("publi")) {
                     put("publication", action);
                 } else if (action.getId().equals("cancel") || action.getId().equals("accept")

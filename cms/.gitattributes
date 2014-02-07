@@ -92,8 +92,11 @@ api/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/arrow-sort
 api/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/arrow-sort-right-16.png -text svneol=unset#image/png
 api/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/arrow-sort-up-16.png -text svneol=unset#image/png
 api/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/workflow-16.png -text svneol=unset#image/png
+api/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/DocumentMetadataDialog.properties -text
+api/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/DocumentMetadataDialog_nl.properties -text
 api/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/ReferringDocumentsView_de.properties -text
 api/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/WhereUsedDialog_de.properties -text
+api/src/main/java/org/hippoecm/frontend/editor/workflow/model/DocumentMetadataEntry.java -text
 api/src/main/java/org/hippoecm/frontend/extjs/ExtHippoThemeBehavior.java -text
 api/src/main/java/org/hippoecm/frontend/extjs/ExtWidget.java -text
 api/src/main/java/org/hippoecm/frontend/extjs/ExtWidgetRegistry.java -text
@@ -3073,6 +3076,7 @@ workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/di
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/dialogs/UnpublishedReferencesView_fr.properties svneol=native#text/plain
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/dialogs/UnpublishedReferencesView_it.properties -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/dialogs/UnpublishedReferencesView_nl.properties svneol=native#text/plain
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/docmetadata-16.png -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/document-done-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/document-save-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/document-saveclose-16.png -text svneol=unset#image/png

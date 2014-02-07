@@ -52,6 +52,7 @@ import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.editor.workflow.CopyNameHelper;
 import org.hippoecm.frontend.editor.workflow.dialog.DeleteDialog;
+import org.hippoecm.frontend.editor.workflow.dialog.DocumentMetadataDialog;
 import org.hippoecm.frontend.editor.workflow.dialog.WhereUsedDialog;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
@@ -114,6 +115,7 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
     private StdWorkflow scheduleDepublishAction;
     private StdWorkflow whereUsedAction;
     private StdWorkflow historyAction;
+    private StdWorkflow docMetaDataAction;
 
     public FullReviewedActionsWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -558,6 +560,26 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
             }
         });
 
+        add(docMetaDataAction = new StdWorkflow("docMetaData", new StringResourceModel("docmetadata-label", this, null), context, getModel()) {
+
+            @Override
+            protected ResourceReference getIcon() {
+                return new PackageResourceReference(getClass(), "docmetadata-16.png");
+            }
+
+            @Override
+            protected Dialog createRequestDialog() {
+                WorkflowDescriptorModel wdm = getModel();
+                return new DocumentMetadataDialog(wdm, getEditorManager());
+            }
+
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                return null;
+            }
+        });
+
+
         hideInvalidActions();
     }
 
@@ -634,6 +656,7 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
                     infoAction.setVisible(false);
                     whereUsedAction.setVisible(false);
                     historyAction.setVisible(false);
+                    docMetaDataAction.setVisible(false);
                 }
                 if (info.containsKey("inUseBy") && info.get("inUseBy") instanceof String) {
                     inUseBy = (String) info.get("inUseBy");
