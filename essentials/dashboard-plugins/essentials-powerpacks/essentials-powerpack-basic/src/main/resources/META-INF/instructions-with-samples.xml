@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2013-2014 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -83,6 +83,9 @@
     <xml action="copy" source="xml/hst/templates/events-main-content.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <!--todo temporary:-->
     <xml action="copy" source="xml/hst/templates/homepage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+  </instructionSet>
+  <instructionSet name="CATALOG">
+    <xml action="copy" source="xml/hst/catalog/basic-powerpack-catalog.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:catalog"/>
   </instructionSet>
   <instructionSet name="SAMPLE_DOCUMENTS">
     <xml action="copy" source="xml/samples/content/documents/events.xml" target="/content/documents/{{namespace}}"/>

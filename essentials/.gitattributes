@@ -370,6 +370,7 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/reso
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/folderoptions/new-events-folder.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/folderoptions/new-news-document.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/folderoptions/new-news-folder.xml -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/catalog/basic-powerpack-catalog.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/components/content.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/components/list.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/pages/eventsoverview.xml -text
