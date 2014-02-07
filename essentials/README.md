@@ -40,7 +40,7 @@ $ mvn clean install
 mvn archetype:generate \
 -DarchetypeGroupId=org.onehippo.cms7 \
 -DarchetypeArtifactId=essentials-archetype-website \
--DarchetypeVersion=1.01.00
+-DarchetypeVersion=1.01.02-SNAPSHOT
 
 ```
 ## Working with Git
