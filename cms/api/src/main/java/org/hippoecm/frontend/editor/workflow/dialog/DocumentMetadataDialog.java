@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.editor.workflow.dialog;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,8 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.editor.workflow.model.DocumentMetadataEntry;
 import org.hippoecm.frontend.service.IEditorManager;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +49,7 @@ import org.slf4j.LoggerFactory;
 public class DocumentMetadataDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
+    private static final String DATE_STYLE = "MS";
 
     static final Logger log = LoggerFactory.getLogger(DocumentMetadataDialog.class);
 
@@ -54,56 +58,120 @@ public class DocumentMetadataDialog extends AbstractDialog {
 
         setOkVisible(false);
         setCancelLabel(new StringResourceModel("close", this, null));
+        setFocusOnCancel();
 
-        List<DocumentMetadataEntry> metaDataList = new ArrayList<>();
         try {
             final Node node = model.getNode();
 
-            final Map<String, String> names = getNames(node);
-            String namesLabel;
-            if(names.size() > 1) {
-                namesLabel = getString("document-names");
-            } else {
-                namesLabel = getString("document-name");
-            }
-            for(Map.Entry<String, String> entry : names.entrySet()) {
-                StringBuilder name = new StringBuilder(entry.getValue());
-                if(StringUtils.isNotBlank(entry.getKey())) {
-                    name.append(" (");
-                    name.append(entry.getKey());
-                    name.append(")");
-                }
-                metaDataList.add(new DocumentMetadataEntry(namesLabel, name.toString()));
-                namesLabel = StringUtils.EMPTY;
-            }
+            ListView metaDataListView = getMetaDataListView(node);
+            add(metaDataListView);
 
-            metaDataList.add(new DocumentMetadataEntry(getString("url-name"), node.getName()));
+            // Show info of live variant if one found with hippostd:state = published and hippostd:stateSummary = live || changed
+            List<DocumentMetadataEntry> publicationMetadata = getPublicationMetaData(node);
+            ListView publicationDataList = new ListView("publicationmetadatalist", publicationMetadata) {
+                protected void populateItem(ListItem item) {
+                    final DocumentMetadataEntry entry = (DocumentMetadataEntry) item.getModelObject();
+                    item.add(new Label("key", entry.getKey()));
+                    item.add(new Label("value", entry.getValue()));
+                }
+            };
+            final Label publicationheader = new Label("publicationheader", getString("publication-header"));
+            add(publicationheader);
+            add(publicationDataList);
+
+            if(publicationMetadata.size() == 0) {
+                publicationDataList.setVisible(false);
+                publicationheader.setVisible(false);
+            }
 
         } catch (RepositoryException e) {
             throw new WicketRuntimeException("No document node present", e);
         }
 
+    }
 
-        add(new ListView("metadatalist", metaDataList) {
+    private ListView getMetaDataListView(final Node node) throws RepositoryException {
+        List<DocumentMetadataEntry> metaDataList = new ArrayList<>();
+
+        // add translation names
+        final Map<String, String> names = getNames(node);
+        String namesLabel;
+        if (names.size() > 1) {
+            namesLabel = getString("document-names");
+        } else {
+            namesLabel = getString("document-name");
+        }
+        for (Map.Entry<String, String> entry : names.entrySet()) {
+            StringBuilder name = new StringBuilder(entry.getValue());
+            if (StringUtils.isNotBlank(entry.getKey())) {
+                name.append(" (");
+                name.append(entry.getKey());
+                name.append(")");
+            }
+            metaDataList.add(new DocumentMetadataEntry(namesLabel, name.toString()));
+            namesLabel = StringUtils.EMPTY;
+        }
+
+        // add url name
+        metaDataList.add(new DocumentMetadataEntry(getString("url-name"), node.getName()));
+
+        return getListView("metadatalist", metaDataList);
+    }
+
+    private ListView getListView(final String id, final List<DocumentMetadataEntry> metaDataList) {
+        return new ListView(id, metaDataList) {
             protected void populateItem(ListItem item) {
                 final DocumentMetadataEntry entry = (DocumentMetadataEntry) item.getModelObject();
                 item.add(new Label("key", entry.getKey()));
                 item.add(new Label("value", entry.getValue()));
             }
-        });
+        };
+    }
 
+    private List<DocumentMetadataEntry> getPublicationMetaData(final Node node) throws RepositoryException {
+        List<DocumentMetadataEntry> publicationMetadata = new ArrayList<>();
+        final NodeIterator nodeIterator = node.getParent().getNodes(node.getName());
+        while (nodeIterator.hasNext()) {
+            Node variant = nodeIterator.nextNode();
+            final String state = variant.getProperty("hippostd:state").getString();
+            final String stateSummary = variant.getProperty("hippostd:stateSummary").getString();
+            if (StringUtils.equals(state, "published") &&
+                    (StringUtils.equals(stateSummary, "live") || StringUtils.equals(stateSummary, "changed"))) {
+                publicationMetadata.add(new DocumentMetadataEntry(getString("created-by"),
+                        variant.getProperty("hippostdpubwf:createdBy").getString()));
+                publicationMetadata.add(new DocumentMetadataEntry(getString("creationdate"),
+                        formattedCalendarByStyle(variant.getProperty("hippostdpubwf:creationDate").getDate(), DATE_STYLE)));
+                publicationMetadata.add(new DocumentMetadataEntry(getString("lastmodifiedby"),
+                        variant.getProperty("hippostdpubwf:lastModifiedBy").getString()));
+                publicationMetadata.add(new DocumentMetadataEntry(getString("lastmodificationdate"),
+                        formattedCalendarByStyle(variant.getProperty("hippostdpubwf:lastModificationDate").getDate(), DATE_STYLE)));
+                publicationMetadata.add(new DocumentMetadataEntry(getString("publicationdate"),
+                        formattedCalendarByStyle(variant.getProperty("hippostdpubwf:publicationDate").getDate(), DATE_STYLE)));
+            }
+        }
+
+        return publicationMetadata;
     }
 
     private Map<String, String> getNames(final Node node) throws RepositoryException {
         Map<String, String> names = new HashMap<>();
         final NodeIterator nodeIterator = node.getParent().getNodes("hippo:translation");
-        while(nodeIterator.hasNext()) {
+        while (nodeIterator.hasNext()) {
             final Node translationNode = nodeIterator.nextNode();
             names.put(translationNode.getProperty("hippo:language").getString(),
                     translationNode.getProperty("hippo:message").getString());
         }
         return names;
     }
+
+    private String formattedCalendarByStyle(Calendar calendar, String patternStyle) {
+        if (calendar != null) {
+            String pattern = DateTimeFormat.patternForStyle(patternStyle, getLocale());
+            return DateTimeFormat.forPattern(pattern).print(new DateTime(calendar));
+        }
+        return "";
+    }
+
 
     public IModel getTitle() {
         return new StringResourceModel("document-info", this, null);
