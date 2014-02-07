@@ -20,7 +20,7 @@
       <sv:value>HST.Item</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="newslist">
+  <sv:node sv:name="eventslist">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:containeritemcomponent</sv:value>
     </sv:property>
