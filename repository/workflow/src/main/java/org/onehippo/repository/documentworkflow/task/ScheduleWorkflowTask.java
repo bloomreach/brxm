@@ -67,8 +67,6 @@ public class ScheduleWorkflowTask extends AbstractDocumentTask {
             throw new WorkflowException("ScheduledWorkflowAction: no target date specified");
         }
         WorkflowContext wfc = dh.getWorkflowContext();
-        // ensure no outstanding changes
-        wfc.getInternalWorkflowSession().save();
         // create 'future' documentworkflow proxy
         WorkflowContext futureContext = wfc.getWorkflowContext(targetDate);
         DocumentWorkflow workflow = (DocumentWorkflow)futureContext.getWorkflow("default");

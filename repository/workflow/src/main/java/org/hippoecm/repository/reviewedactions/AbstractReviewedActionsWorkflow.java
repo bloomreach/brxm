@@ -22,12 +22,10 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
-import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+import org.onehippo.repository.documentworkflow.DocumentWorkflowImpl;
 
 /**
  * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.documentworkflow.DocumentWorkflowImpl} instead.
@@ -35,7 +33,7 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 @Deprecated
 public class AbstractReviewedActionsWorkflow extends WorkflowImpl {
 
-    protected DocumentWorkflow documentWorkflow;
+    protected DocumentWorkflowImpl documentWorkflow;
 
     /**
      * All implementations of a work-flow must provide a single, no-argument constructor.
@@ -54,18 +52,12 @@ public class AbstractReviewedActionsWorkflow extends WorkflowImpl {
         Node handleNode = getSubjectHandleNode();
 
         try {
-            final Workflow handleWorkflow = getNonChainingWorkflowContext().getWorkflow("default", new Document(handleNode));
-            if (!(handleWorkflow instanceof DocumentWorkflow)) {
-                throw new RepositoryException("Workflow on handle, in category 'document', is not a DocumentWorkflow");
-            }
-
-            documentWorkflow = (DocumentWorkflow) handleWorkflow;
+            documentWorkflow = new DocumentWorkflowImpl();
+            documentWorkflow.setWorkflowContext(getWorkflowContext());
+            documentWorkflow.setNode(handleNode);
         }
-        catch (WorkflowException wfe) {
-            if (wfe.getCause() != null && wfe.getCause() instanceof RepositoryException) {
-                throw (RepositoryException)wfe.getCause();
-            }
-            throw new RepositoryException(wfe);
+        catch (RemoteException rmi) {
+            throw new RepositoryException("Failed to create DocumentWorkflow delegate", rmi);
         }
     }
 

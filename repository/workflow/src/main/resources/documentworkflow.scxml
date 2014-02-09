@@ -270,6 +270,7 @@
 
         <onentry>
           <hippo:action action="publish" enabledExpr="false"/>
+          <hippo:action action="requestPublication" enabledExpr="false"/>
         </onentry>
 
         <transition target="publishable" cond="!editing and modified"/>
@@ -316,6 +317,7 @@
       <state id="init-depublish">
         <onentry>
           <hippo:action action="depublish" enabledExpr="false"/>
+          <hippo:action action="requestDepublication" enabledExpr="false"/>
         </onentry>
 
         <transition target="depublishable" cond="!editing and live"/>
@@ -364,11 +366,13 @@
 
       <state id="version">
         <onentry>
-          <hippo:action action="version" enabledExpr="true"/>
           <hippo:action action="listVersions" enabledExpr="true"/>
           <hippo:action action="retrieveVersion" enabledExpr="true"/>
-          <hippo:action action="restoreVersion" enabledExpr="true"/>
-          <hippo:action action="versionRestoreTo" enabledExpr="true"/>
+          <if cond="dm.isGranted(published, 'hippo:editor')">
+            <hippo:action action="version" enabledExpr="true"/>
+            <hippo:action action="restoreVersion" enabledExpr="true"/>
+            <hippo:action action="versionRestoreTo" enabledExpr="true"/>
+          </if>
         </onentry>
 
         <transition event="version" target="reset">
@@ -398,6 +402,14 @@
     <state id="terminate" initial="no-terminate">
 
       <state id="no-terminate">
+        <onentry>
+          <hippo:action action="requestDelete" enabledExpr="false"/>
+          <if cond="dm.isGranted(deleteSource, 'hippo:editor')">
+            <hippo:action action="delete" enabledExpr="false"/>
+            <hippo:action action="move" enabledExpr="false"/>
+            <hippo:action action="rename" enabledExpr="false"/>
+          </if>
+        </onentry>
         <transition target="terminateable" cond="supports.document and !live and !editing and !requestPending"/>
       </state>
 

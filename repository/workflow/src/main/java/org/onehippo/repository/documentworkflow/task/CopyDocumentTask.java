@@ -17,6 +17,7 @@ package org.onehippo.repository.documentworkflow.task;
 
 import java.rmi.RemoteException;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
@@ -25,11 +26,11 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.hippoecm.repository.standardworkflow.EmbedWorkflow;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,7 +90,8 @@ public class CopyDocumentTask extends AbstractDocumentTask {
 
             if (workflow instanceof EmbedWorkflow) {
                 Document copy = ((EmbedWorkflow) workflow).copyTo(folder, published, newName, null);
-                FullReviewedActionsWorkflow copiedDocumentWorkflow = (FullReviewedActionsWorkflow) dm.getWorkflowContext().getWorkflow("default", copy);
+                Node copyHandle = copy.getNode().getParent();
+                DocumentWorkflow copiedDocumentWorkflow = (DocumentWorkflow) dm.getWorkflowContext().getWorkflow("default", new Document(copyHandle));
                 copiedDocumentWorkflow.depublish();
             } else {
                 throw new WorkflowException("cannot copy document which is not contained in a folder");

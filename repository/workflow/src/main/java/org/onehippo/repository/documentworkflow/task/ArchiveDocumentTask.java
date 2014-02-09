@@ -60,7 +60,6 @@ public class ArchiveDocumentTask extends AbstractDocumentTask {
 
         try {
             variant = dh.getDocumentVariantByState(HippoStdNodeType.UNPUBLISHED);
-            dh.getWorkflowContext().getInternalWorkflowSession().save();
             DefaultWorkflow defaultWorkflow = (DefaultWorkflow) dh.getWorkflowContext().getWorkflow("core", variant);
             defaultWorkflow.archive();
         } catch (MappingException ex) {
