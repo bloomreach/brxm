@@ -42,7 +42,7 @@ public abstract class AbstractWorkflowAction extends Action {
     }
 
     protected boolean isApplicableMethod(Node node) throws Exception {
-        WorkflowDescriptor descriptor = getWorkflowManager(node.getSession()).getWorkflowDescriptor(getWorkflowCategory(), node);
+        WorkflowDescriptor descriptor = getWorkflowDescriptor(node);
         if (descriptor == null) {
             return false;
         }
@@ -63,6 +63,10 @@ public abstract class AbstractWorkflowAction extends Action {
             }
         }
         return false;
+    }
+
+    protected WorkflowDescriptor getWorkflowDescriptor(Node node) throws Exception {
+        return getWorkflowManager(node.getSession()).getWorkflowDescriptor(getWorkflowCategory(), node);
     }
 
     @Override

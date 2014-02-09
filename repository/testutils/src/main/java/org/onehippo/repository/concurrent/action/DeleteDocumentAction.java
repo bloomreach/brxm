@@ -17,7 +17,7 @@ package org.onehippo.repository.concurrent.action;
 
 import javax.jcr.Node;
 
-public class DeleteDocumentAction extends AbstractFullReviewedActionsWorkflowAction {
+public class DeleteDocumentAction extends AbstractDocumentWorkflowAction {
 
     public DeleteDocumentAction(final ActionContext context) {
         super(context);
@@ -30,7 +30,8 @@ public class DeleteDocumentAction extends AbstractFullReviewedActionsWorkflowAct
 
     @Override
     protected Node doExecute(Node node) throws Exception {
-        getFullReviewedActionsWorkflow(node).delete();
+        Node handle = node.getParent();
+        getDocumentWorkflow(handle).delete();
         node.getSession().refresh(false);
         return null;
     }

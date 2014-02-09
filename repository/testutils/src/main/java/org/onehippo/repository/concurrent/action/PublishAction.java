@@ -17,7 +17,7 @@ package org.onehippo.repository.concurrent.action;
 
 import javax.jcr.Node;
 
-public class PublishAction extends AbstractFullReviewedActionsWorkflowAction {
+public class PublishAction extends AbstractDocumentWorkflowAction {
 
     public PublishAction(final ActionContext context) {
         super(context);
@@ -30,7 +30,8 @@ public class PublishAction extends AbstractFullReviewedActionsWorkflowAction {
 
     @Override
     protected Node doExecute(Node node) throws Exception {
-        getFullReviewedActionsWorkflow(node).publish();
+        Node handle = node.getParent();
+        getDocumentWorkflow(handle).publish();
         node.getSession().refresh(false);
         return null;
     }

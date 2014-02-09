@@ -19,24 +19,31 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
+import org.hippoecm.repository.api.WorkflowDescriptor;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 /**
- * If your action executes a method on FullReviewedActionsWorkflow then extend this class
+ * If your action executes a method on DocumentWorkflow then extend this class
  */
-public abstract class AbstractFullReviewedActionsWorkflowAction extends AbstractWorkflowAction {
+public abstract class AbstractDocumentWorkflowAction extends AbstractWorkflowAction {
 
     private static final String[] REQUIRED_NODE_TYPES = new String[] {"hippostdpubwf:document"};
     private static final String WORKFLOW_CATEGORY = "default";
-    private static final Class<FullReviewedActionsWorkflow> WORKFLOW_CLASS = FullReviewedActionsWorkflow.class;
+    private static final Class<DocumentWorkflow> WORKFLOW_CLASS = DocumentWorkflow.class;
     
-    public AbstractFullReviewedActionsWorkflowAction(ActionContext context) {
+    public AbstractDocumentWorkflowAction(ActionContext context) {
         super(context);
     }
 
     @Override
     protected final String getWorkflowCategory() {
         return WORKFLOW_CATEGORY;
+    }
+
+    @Override
+    protected WorkflowDescriptor getWorkflowDescriptor(Node node) throws Exception {
+        Node handle = node.getParent();
+        return getWorkflowManager(node.getSession()).getWorkflowDescriptor(getWorkflowCategory(), handle);
     }
 
     @Override
@@ -54,10 +61,10 @@ public abstract class AbstractFullReviewedActionsWorkflowAction extends Abstract
         return WORKFLOW_CLASS;
     }
 
-    protected final FullReviewedActionsWorkflow getFullReviewedActionsWorkflow(Node node) throws RepositoryException {
-        Workflow wf = getWorkflowManager(node.getSession()).getWorkflow(getWorkflowCategory(), node);
-        assert wf instanceof FullReviewedActionsWorkflow;
-        return (FullReviewedActionsWorkflow) wf;
+    protected final DocumentWorkflow getDocumentWorkflow(Node handle) throws RepositoryException {
+        Workflow wf = getWorkflowManager(handle.getSession()).getWorkflow(getWorkflowCategory(), handle);
+        assert wf instanceof DocumentWorkflow;
+        return (DocumentWorkflow) wf;
     }
     
 }

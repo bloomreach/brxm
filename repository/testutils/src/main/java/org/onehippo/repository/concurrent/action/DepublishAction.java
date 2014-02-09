@@ -17,7 +17,7 @@ package org.onehippo.repository.concurrent.action;
 
 import javax.jcr.Node;
 
-public class DepublishAction extends AbstractFullReviewedActionsWorkflowAction {
+public class DepublishAction extends AbstractDocumentWorkflowAction {
 
     public DepublishAction(final ActionContext context) {
         super(context);
@@ -30,7 +30,8 @@ public class DepublishAction extends AbstractFullReviewedActionsWorkflowAction {
 
     @Override
     protected Node doExecute(Node node) throws Exception {
-        getFullReviewedActionsWorkflow(node).depublish();
+        Node handle = node.getParent();
+        getDocumentWorkflow(handle).depublish();
         node.getSession().refresh(false);
         return null;
     }
