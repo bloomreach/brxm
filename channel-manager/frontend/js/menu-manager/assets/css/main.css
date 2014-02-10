@@ -97,3 +97,7 @@ html, body {
     height: 433px;
     overflow-y: auto;
 }
+
+.jstree-hippo li.jstree-node .jstree-icon {
+    margin-top: 23px;
+}
