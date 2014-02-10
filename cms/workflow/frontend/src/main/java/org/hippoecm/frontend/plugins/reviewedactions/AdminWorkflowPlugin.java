@@ -24,7 +24,7 @@ import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.repository.reviewedactions.UnlockWorkflow;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 public class AdminWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
@@ -32,7 +32,7 @@ public class AdminWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
         super(context, config);
 
         final StdWorkflow unlockAction;
-        add(unlockAction = new StdWorkflow<UnlockWorkflow>("unlock", new StringResourceModel("unlock", this, null),
+        add(unlockAction = new StdWorkflow<DocumentWorkflow>("unlock", new StringResourceModel("unlock", this, null),
                 null, context, getModel()) {
 
             @Override
@@ -46,7 +46,7 @@ public class AdminWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected String execute(UnlockWorkflow workflow) throws Exception {
+            protected String execute(DocumentWorkflow workflow) throws Exception {
                 workflow.unlock();
                 return null;
             }

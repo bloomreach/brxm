@@ -49,11 +49,9 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,30 +132,17 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
                         if (document.getDepth() > 0) {
                             Node handle = document.getParent();
                             if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
-                                for (NodeIterator requestIter = handle.getNodes(HippoNodeType.NT_REQUEST); requestIter.hasNext(); ) {
-                                    Node request = requestIter.nextNode();
-                                    if (request != null) {
-                                        Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, request);
-                                        if (workflow instanceof FullRequestWorkflow) {
-                                            ((FullRequestWorkflow) workflow).cancelRequest();
-                                            log.info("removed request(s) from document "+document.getPath()+" ("+uuid+")");
-                                        }
-                                    }
+                                Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, handle);
+                                if (workflow instanceof DocumentWorkflow) {
+                                    DocumentWorkflow docWorkflow = (DocumentWorkflow) workflow;
+                                    cancelRequests(handle, docWorkflow);
+
+                                    ((DocumentWorkflow) workflow).publish();
+                                    ++processed;
+                                    log.info("published document "+path+" ("+uuid+")");
                                 }
                             }
                         }
-                        Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, document);
-                        if (workflow instanceof DocumentWorkflow) {
-                            ((DocumentWorkflow) workflow).publish();
-                            ++processed;
-                            log.info("published document "+path+" ("+uuid+")");
-                        }
-                    } catch (MappingException ex) {
-                        log.warn("Publication of {} failed: {}", uuid, ex);
-                    } catch (WorkflowException ex) {
-                        log.warn("Publication of {} failed: {}", uuid, ex);
-                    } catch (RemoteException ex) {
-                        log.warn("Publication of {} failed: {}", uuid, ex);
                     } catch (RepositoryException ex) {
                         log.warn("Publication of {} failed: {}", uuid, ex);
                     }
@@ -208,30 +193,17 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
                         if (document.getDepth() > 0) {
                             Node handle = document.getParent();
                             if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
-                                for (NodeIterator requestIter = handle.getNodes(HippoNodeType.NT_REQUEST); requestIter.hasNext(); ) {
-                                    Node request = requestIter.nextNode();
-                                    if (request != null) {
-                                        Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, request);
-                                        if (workflow instanceof FullRequestWorkflow) {
-                                            ((FullRequestWorkflow) workflow).cancelRequest();
-                                            log.info("removed request(s) from document "+document.getPath()+" ("+uuid+")");
-                                        }
-                                    }
+                                Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, handle);
+                                if (workflow instanceof DocumentWorkflow) {
+                                    DocumentWorkflow docWorkflow = (DocumentWorkflow) workflow;
+                                    cancelRequests(handle, docWorkflow);
+
+                                    ((DocumentWorkflow) workflow).depublish();
+                                    ++processed;
+                                    log.info("depublished document "+path+" ("+uuid+")");
                                 }
                             }
                         }
-                        Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, document);
-                        if (workflow instanceof DocumentWorkflow) {
-                            ((DocumentWorkflow) workflow).depublish();
-                            ++processed;
-                            log.info("depublished document "+path+" ("+uuid+")");
-                        }
-                    } catch (MappingException ex) {
-                        log.warn("Depublication of {} failed: {}", uuid, ex);
-                    } catch (WorkflowException ex) {
-                        log.warn("Depublication of {} failed: {}", uuid, ex);
-                    } catch (RemoteException ex) {
-                        log.warn("Depublication of {} failed: {}", uuid, ex);
                     } catch (RepositoryException ex) {
                         log.warn("Depublication of {} failed: {}", uuid, ex);
                     }
@@ -239,6 +211,13 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
                 }
             }
         });
+    }
+
+    private void cancelRequests(final Node handle, final DocumentWorkflow docWorkflow) throws RepositoryException, WorkflowException, RemoteException {
+        for (NodeIterator requestIter = handle.getNodes(HippoNodeType.NT_REQUEST); requestIter.hasNext(); ) {
+            Node request = requestIter.nextNode();
+            docWorkflow.cancelRequest(request.getIdentifier());
+        }
     }
 
     @Override

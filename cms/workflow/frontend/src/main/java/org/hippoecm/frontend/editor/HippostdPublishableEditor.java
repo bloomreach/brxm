@@ -159,9 +159,6 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
 
     @Override
     protected IModel<Node> getBaseModel() throws EditorException {
-        if (getMode() != Mode.COMPARE && getMode() != Mode.VIEW) {
-            return super.getBaseModel();
-        }
         Node node = super.getEditorModel().getObject();
         try {
             if (node.isNodeType(JcrConstants.NT_VERSION)) {
@@ -170,7 +167,20 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         } catch (RepositoryException ex) {
             throw new EditorException("Error locating base revision", ex);
         }
-        return getWorkflowState(node).published;
+
+        final WorkflowState state = getWorkflowState(node);
+        switch (getMode()) {
+            case EDIT:
+                throw new EditorException("Base model is not supported in edit mode");
+            default:
+                if (state.published != null) {
+                    return state.published;
+                }
+                if (state.unpublished != null) {
+                    return state.unpublished;
+                }
+                return super.getBaseModel();
+        }
     }
 
     @Override
@@ -230,9 +240,12 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             } else {
                 EditableWorkflow workflow = getEditableWorkflow();
                 Map<String,Serializable> hints = workflow.hints();
-                if (hints.containsKey("checkModified")) {
+                if (hints.containsKey("checkModified") && Boolean.TRUE.equals(hints.get("checkModifled"))) {
                     modified = workflow.isModified();
                     return modified;
+                } else {
+                    modified = true;
+                    return true;
                 }
             }
         } catch (EditorException | RepositoryException |RemoteException | WorkflowException e) {
@@ -499,6 +512,15 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         }
     }
 
+    @Override
+    public void detach() {
+        isValid = null;
+        if (editorModel != null) {
+            editorModel.detach();
+        }
+        super.detach();
+    }
+
     static Mode getMode(IModel<Node> nodeModel) throws EditorException {
         Node node = nodeModel.getObject();
         try {
@@ -571,12 +593,4 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         }
     }
 
-    @Override
-    public void detach() {
-        isValid = null;
-        if (editorModel != null) {
-            editorModel.detach();
-        }
-        super.detach();
-    }
 }

@@ -43,6 +43,7 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.junit.Test;
+import org.onehippo.repository.documentworkflow.DocumentWorkflowImpl;
 
 import static org.junit.Assert.assertEquals;
 
@@ -262,8 +263,9 @@ public class EditorFactoryTest extends PluginTest {
     public void testSetMode() throws Exception {
         String[] workflowConfig = {
             "/publishable", "hipposys:workflow",
-                "hipposys:nodetype", "hippostd:publishable",
-                "hipposys:classname", org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflowImpl.class.getName(),
+                "hipposys:nodetype", "hippo:handle",
+                "hipposys:subtype", "hippostd:publishable",
+                "hipposys:classname", DocumentWorkflowImpl.class.getName(),
                 "hipposys:display", "publishable workflow",
         };
         build(session, mount("/hippo:configuration/hippo:workflows/default", workflowConfig));
