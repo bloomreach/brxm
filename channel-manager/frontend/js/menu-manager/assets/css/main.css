@@ -60,7 +60,7 @@ html, body {
     float: none;
 }
 
-#add, #remove {
+#add, #actions {
     display: table-cell;
     float: none;
     vertical-align: top;
@@ -71,11 +71,8 @@ html, body {
     border-right: 1px solid #dddddd;
 }
 
-#add button {
-    margin: 10px 0;
-}
-
-#remove button {
+#add button,
+#actions button {
     margin: 10px 0;
 }
 

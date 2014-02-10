@@ -24,7 +24,8 @@
             '$state',
             '$stateParams',
             'hippo.channelManager.menuManager.MenuService',
-            function ($scope, $log, $state, $stateParams, MenuService) {
+            'hippo.channelManager.menuManager.Container',
+            function ($scope, $log, $state, $stateParams, MenuService, Container) {
                 $scope.deleteMenuItem = function () {
                     var menuItemId = $stateParams.menuItemId;
 
@@ -42,6 +43,10 @@
                             }
                         );
                     });
+                };
+
+                $scope.close = function () {
+                    Container.close();
                 };
             }
         ]);

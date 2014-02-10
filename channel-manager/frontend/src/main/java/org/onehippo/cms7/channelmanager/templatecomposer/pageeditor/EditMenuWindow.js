@@ -23,21 +23,14 @@
         constructor: function(config) {
             this.iframePanelId = Ext.id();
 
-            var closeButton = new Ext.Toolbar.Button({
-                text: 'Close',
-                listeners: {
-                    click: {
-                        fn: this.close,
-                        scope: this
-                    }
-                }
-            });
-
             Ext.apply(config, {
                 title: config.resources['edit-menu'],
                 width: 860,
-                height: 555,
+                minWidth: 790,
+                height: 517,
+                closable: false,
                 modal: true,
+                resizeHandles: 'e w',
                 layout: 'fit',
                 items: [
                     {
@@ -52,8 +45,6 @@
                         }
                     }
                 ],
-                buttons: [ closeButton ],
-                buttonAlign: 'right',
                 listeners: {
                     'afterrender': function(self) {
                         var iframePanel = Ext.getCmp(self.iframePanelId);
