@@ -124,16 +124,22 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         String[] segments = relPath.split("/");
 
         SiteMapItemRepresentation itemPresentation = null;
+        boolean match = false;
         while (segmentPos < segments.length) {
             if (segmentPos == 0) {
                 for (SiteMapItemRepresentation siteMapItemRepresentation : representation.getChildren()) {
                     if (siteMapItemRepresentation.getName().equals(segments[segmentPos])) {
                         itemPresentation = siteMapItemRepresentation;
                         segmentPos++;
+                        match = true;
                         break;
                     }
                 }
+                if (!match) {
+                    return null;
+                }
             } else {
+                match = false;
                 if (itemPresentation == null) {
                     return null;
                 }
@@ -142,8 +148,12 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
                 for (SiteMapItemRepresentation childItemRepresentation : current.getChildren()) {
                     if (childItemRepresentation.getName().equals(segments[segmentPos])) {
                         itemPresentation = childItemRepresentation;
+                        match = true;
                         break;
                     }
+                }
+                if (!match) {
+                    return null;
                 }
                 segmentPos++;
             }

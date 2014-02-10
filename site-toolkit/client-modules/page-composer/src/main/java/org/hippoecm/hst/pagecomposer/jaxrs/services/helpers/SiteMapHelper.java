@@ -193,11 +193,11 @@ public class SiteMapHelper extends AbstractHelper {
 
     private void markDeleted(final Node deleted) throws RepositoryException {
         acquireLock(deleted);
-        deleted.setProperty("hst:state", "deleted");
+        deleted.setProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE, "deleted");
     }
 
     private boolean isMarkedDeleted(final Node node) throws RepositoryException {
-       return "deleted".equals(JcrUtils.getStringProperty(node, "hst:state", null));
+       return "deleted".equals(JcrUtils.getStringProperty(node, HstNodeTypes.EDITABLE_PROPERTY_STATE, null));
     }
 
     private void validateTarget(final Session session, final String target) throws RepositoryException {

@@ -427,6 +427,10 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
         }
 
         for(HstNode child : node.getNodes()) {
+            if ("deleted".equals(child.getValueProvider().getString(HstNodeTypes.EDITABLE_PROPERTY_STATE))) {
+                log.debug("SKipping marked deleted node {}", child.getValueProvider().getPath());
+                continue;
+            }
             if(HstNodeTypes.NODETYPE_HST_SITEMAPITEM.equals(child.getNodeTypeName())) {
                 try {
                     HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, mountSiteMapConfiguration,  siteMapItemHandlersConfiguration , this, this.hstSiteMap, depth + 1);

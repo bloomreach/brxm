@@ -310,7 +310,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
             assertTrue(session.nodeExists(parentPath + "/home"));
             Node deletedMarkerNode = session.getNode(parentPath + "/home");
             assertEquals("admin", deletedMarkerNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
-            assertEquals("deleted", deletedMarkerNode.getProperty("hst:state").getString());
+            assertEquals("deleted", deletedMarkerNode.getProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE).getString());
         }
         // assert bob cannot rename 'news' to 'home' now as it is locked.
         // also bob cannot rename 'renamedHome' as is locked
@@ -451,7 +451,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
             assertTrue(admin.nodeExists(oldHomeParentPath + "/home"));
             Node renamedNewsNode = admin.getNode(oldHomeParentPath + "/home");
             assertEquals("admin", renamedNewsNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
-            assertFalse(renamedNewsNode.hasProperty("hst:state"));
+            assertFalse(renamedNewsNode.hasProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE));
             admin.logout();
         }
 

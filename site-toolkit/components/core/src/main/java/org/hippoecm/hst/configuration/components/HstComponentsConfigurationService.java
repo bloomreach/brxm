@@ -221,6 +221,10 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
                       final Map<String, HstNode> modifiableContainers, final List<HstComponentConfiguration> childComponents) {
 
         for (HstNode child : node.getCompositeChildren().values()) {
+            if ("deleted".equals(child.getValueProvider().getString(HstNodeTypes.EDITABLE_PROPERTY_STATE))) {
+                log.debug("SKipping marked deleted node {}", child.getValueProvider().getPath());
+                continue;
+            }
             if (isHstComponentType(child)) {
                 if (child.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)) {
                     // add to the used referencenames set

@@ -334,6 +334,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             return;
         }
         for (HstNode child : node.getNodes()) {
+            if ("deleted".equals(child.getValueProvider().getString(HstNodeTypes.EDITABLE_PROPERTY_STATE))) {
+                log.debug("SKipping marked deleted node {}", child.getValueProvider().getPath());
+                continue;
+            }
             HstComponentConfigurationService childComponent = loadChildComponent(child, rootNodeName, referenceableContainers);
             if (childComponent == null) {
                 continue;

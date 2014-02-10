@@ -24,6 +24,7 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.ws.rs.core.Response;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
@@ -173,7 +174,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         assertEquals(Response.Status.OK.getStatusCode(), delete.getStatus());
         try {
             final Node fooToHomeNode = admin.getNodeByIdentifier(foo.getId());
-            assertEquals("deleted",fooToHomeNode.getProperty("hst:state").getString());
+            assertEquals("deleted",fooToHomeNode.getProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE).getString());
 
             final Session bob = createSession("bob", "bob");
             final SiteMapItemRepresentation deletedHome = getSiteMapItemRepresentation(bob, "home");

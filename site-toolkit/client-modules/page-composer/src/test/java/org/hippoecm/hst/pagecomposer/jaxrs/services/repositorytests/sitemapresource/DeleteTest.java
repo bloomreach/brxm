@@ -17,17 +17,22 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.sitemapreso
 
 import java.util.UUID;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.ws.rs.core.Response;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class DeleteTest extends AbstractSiteMapResourceTest {
 
@@ -73,12 +78,45 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
         assertTrue((((ExtResponseRepresentation) delete.getEntity()).getMessage().contains("not part of hst:workspace")));
     }
 
+    @Test
+    public void test_deleted_item_not_part_of_model() throws Exception {
+        final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
+        final SiteMapResource siteMapResource = new SiteMapResource();
+        final Response delete = siteMapResource.delete(home.getId());
+        assertEquals(Response.Status.OK.getStatusCode(), delete.getStatus());
+        assertTrue(((ExtResponseRepresentation) delete.getEntity()).getMessage().contains("deleted"));
 
+        // a refetch for deleted item should return null as not present in hst model any more
+        assertNull(getSiteMapItemRepresentation(session, "home"));
 
-//    final Session bob = createSession("bob", "bob");
-//    Node homeNodeByBob = bob.getNodeByIdentifier(home.getId());
+    }
 
+    @Test
+    public void test_deleted_item_jcr_node_still_present_and_locked() throws Exception {
+        final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
+        final SiteMapResource siteMapResource = new SiteMapResource();
+        final Response delete = siteMapResource.delete(home.getId());
+        assertEquals(Response.Status.OK.getStatusCode(), delete.getStatus());
+        assertTrue(((ExtResponseRepresentation) delete.getEntity()).getMessage().contains("deleted"));
 
+        try {
+            final Node deletedNode = session.getNodeByIdentifier(home.getId());
+            assertEquals("deleted",deletedNode.getProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE).getString());
 
+            final Session bob = createSession("bob", "bob");
+            Node deleteHomeNodeByBob = bob.getNodeByIdentifier(home.getId());
+            SiteMapHelper helper = new SiteMapHelper();
+            try {
+                helper.acquireLock(deleteHomeNodeByBob);
+                fail("Bob should 'see' locked deleted home node");
+            } catch (IllegalStateException e) {
+
+            }
+            bob.logout();
+
+        } catch (ItemNotFoundException e) {
+            fail("Node should still exist but marked as deleted");
+        }
+    }
 
 }
