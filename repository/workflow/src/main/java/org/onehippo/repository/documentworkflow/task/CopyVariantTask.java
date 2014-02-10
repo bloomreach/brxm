@@ -20,6 +20,7 @@ import java.rmi.RemoteException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
@@ -72,7 +73,7 @@ public class CopyVariantTask extends AbstractDocumentTask {
             saveNeeded = true;
             targetNode = cloneDocumentNode(sourceNode);
 
-            if (DocumentVariant.DRAFT.equals(getTargetState())) {
+            if (HippoStdNodeType.DRAFT.equals(getTargetState())) {
                 if (targetNode.isNodeType(HippoNodeType.NT_HARDDOCUMENT)) {
                     targetNode.removeMixin(HippoNodeType.NT_HARDDOCUMENT);
                 }

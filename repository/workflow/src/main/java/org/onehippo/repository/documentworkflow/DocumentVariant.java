@@ -15,7 +15,6 @@
  */
 package org.onehippo.repository.documentworkflow;
 
-import java.rmi.RemoteException;
 import java.util.Date;
 
 import javax.jcr.Node;
@@ -28,10 +27,6 @@ import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 
 public class DocumentVariant extends Document {
-
-    final public static String PUBLISHED = HippoStdNodeType.PUBLISHED;
-    final public static String UNPUBLISHED = HippoStdNodeType.UNPUBLISHED;
-    final public static String DRAFT = HippoStdNodeType.DRAFT;
 
     public DocumentVariant() {
     }
