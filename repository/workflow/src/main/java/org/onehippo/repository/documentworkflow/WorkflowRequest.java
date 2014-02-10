@@ -27,36 +27,21 @@ import org.onehippo.repository.util.JcrConstants;
 
 public class WorkflowRequest extends Request {
 
-    public static final String HIPPO_REQUEST = "hippo:request";
-    public static final String NT_HIPPOSTDPUBWF_REQUEST = "hippostdpubwf:request";
-    public static final String HIPPOSTDPUBWF_TYPE = "hippostdpubwf:type";
-    public static final String HIPPOSTDPUBWF_USERNAME = "hippostdpubwf:username";
-    public static final String HIPPOSTDPUBWF_REQDATE = "hippostdpubwf:reqdate";
-    public static final String HIPPOSTDPUBWF_REASON = "hippostdpubwf:reason";
-    public static final String REJECTED = "rejected"; // zombie
-    public static final String PUBLISH = "publish";
-    public static final String DEPUBLISH = "depublish";
-    public static final String SCHEDPUBLISH = "scheduledpublish";
-    public static final String SCHEDDEPUBLISH = "scheduleddepublish";
-    public static final String DELETE = "delete";
-
-    public WorkflowRequest() {}
-
     public WorkflowRequest(Node node) throws RepositoryException {
         super(node);
     }
 
     private static Node newRequestNode(Node parent) throws RepositoryException {
         JcrUtils.ensureIsCheckedOut(parent);
-        Node requestNode = parent.addNode(HIPPO_REQUEST, NT_HIPPOSTDPUBWF_REQUEST);
+        Node requestNode = parent.addNode(HippoStdPubWfNodeType.HIPPO_REQUEST, HippoStdPubWfNodeType.NT_HIPPOSTDPUBWF_REQUEST);
         requestNode.addMixin(JcrConstants.MIX_REFERENCEABLE);
         return requestNode;
     }
 
     public WorkflowRequest(String type, Node sibling, DocumentVariant document, String username) throws RepositoryException {
         super(newRequestNode(sibling.getParent()));
-        setStringProperty(HIPPOSTDPUBWF_TYPE, type);
-        setStringProperty(HIPPOSTDPUBWF_USERNAME, username);
+        setStringProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_TYPE, type);
+        setStringProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_USERNAME, username);
         if (document != null) {
             getCheckedOutNode().setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT, document.getNode());
         }
@@ -64,45 +49,45 @@ public class WorkflowRequest extends Request {
 
     public WorkflowRequest(String type, Node sibling, DocumentVariant document, String username, Date scheduledDate) throws RepositoryException {
         this(type, sibling, document, username);
-        setDateProperty(HIPPOSTDPUBWF_REQDATE, scheduledDate);
+        setDateProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_REQDATE, scheduledDate);
     }
 
     public String getType() throws RepositoryException {
-        return getStringProperty(HIPPOSTDPUBWF_TYPE);
+        return getStringProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_TYPE);
     }
 
     public String getWorkflowType() throws RepositoryException {
         String type = getType();
-        if (SCHEDPUBLISH.equals(type)) {
-            return PUBLISH;
+        if (HippoStdPubWfNodeType.SCHEDPUBLISH.equals(type)) {
+            return HippoStdPubWfNodeType.PUBLISH;
         }
-        else if (SCHEDDEPUBLISH.equals(type)) {
-            return DEPUBLISH;
+        else if (HippoStdPubWfNodeType.SCHEDDEPUBLISH.equals(type)) {
+            return HippoStdPubWfNodeType.DEPUBLISH;
         }
         return type;
     }
 
     public String getOwner() throws RepositoryException {
-        return getStringProperty(HIPPOSTDPUBWF_USERNAME);
+        return getStringProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_USERNAME);
     }
 
     public Date getScheduledDate() throws RepositoryException  {
         String type = getType();
-        if (SCHEDPUBLISH.equals(type) || SCHEDDEPUBLISH.equals(type)) {
-            return getDateProperty(HIPPOSTDPUBWF_REQDATE);
+        if (HippoStdPubWfNodeType.SCHEDPUBLISH.equals(type) || HippoStdPubWfNodeType.SCHEDDEPUBLISH.equals(type)) {
+            return getDateProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_REQDATE);
         }
         return null;
     }
 
     public void setRejected(DocumentVariant stale, String reason) throws RepositoryException  {
-        setStringProperty(HIPPOSTDPUBWF_TYPE, REJECTED);
+        setStringProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_TYPE, HippoStdPubWfNodeType.REJECTED);
         if (stale != null) {
             setNodeProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT, stale.getNode());
         }
         else {
             setNodeProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT, null);
         }
-        setStringProperty(HIPPOSTDPUBWF_REASON, reason);
+        setStringProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_REASON, reason);
     }
 
     public void setRejected(String reason) throws RepositoryException  {

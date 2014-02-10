@@ -29,6 +29,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
@@ -85,12 +86,12 @@ public class DocumentHandle implements SCXMLDataModel {
                     documents.put(doc.getState(), doc);
                 }
 
-                for (Node requestNode : new NodeIterable(handle.getNodes(WorkflowRequest.HIPPO_REQUEST))) {
+                for (Node requestNode : new NodeIterable(handle.getNodes(HippoStdPubWfNodeType.HIPPO_REQUEST))) {
                     Request request = Request.createRequest(requestNode);
                     if (request != null) {
                         if (request.isWorkflowRequest()) {
                             requests.put(request.getIdentity(), request);
-                            if (!WorkflowRequest.REJECTED.equals(((WorkflowRequest)request).getType())) {
+                            if (!HippoStdPubWfNodeType.REJECTED.equals(((WorkflowRequest)request).getType())) {
                                 requestPending = true;
                             }
                         }

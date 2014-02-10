@@ -22,6 +22,7 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
+import org.hippoecm.repository.quartz.HippoSchedJcrConstants;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
 
@@ -40,9 +41,9 @@ public class DocumentHandleTest {
     }
 
     protected Node addRequest(Node handle, String type, boolean workflowRequest) throws RepositoryException {
-        Node variant = handle.addNode(WorkflowRequest.HIPPO_REQUEST,
-                workflowRequest ? WorkflowRequest.NT_HIPPOSTDPUBWF_REQUEST : ScheduledRequest.NT_HIPPOSCHED_WORKFLOW_JOB);
-        variant.setProperty(WorkflowRequest.HIPPOSTDPUBWF_TYPE, type);
+        Node variant = handle.addNode(HippoStdPubWfNodeType.HIPPO_REQUEST,
+                workflowRequest ? HippoStdPubWfNodeType.NT_HIPPOSTDPUBWF_REQUEST : HippoSchedJcrConstants.HIPPOSCHED_WORKFLOW_JOB);
+        variant.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_TYPE, type);
         variant.addMixin(HippoNodeType.NT_REQUEST);
         return variant;
     }
@@ -64,7 +65,7 @@ public class DocumentHandleTest {
 
         // create handle with publication request
         MockNode handle = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
-        Node publishRequest = addRequest(handle, WorkflowRequest.PUBLISH, true);
+        Node publishRequest = addRequest(handle, HippoStdPubWfNodeType.PUBLISH, true);
         DocumentHandle dm = new DocumentHandle("test", new MockWorkflowContext("testuser"), handle);
         dm.initialize();
         assertTrue(dm.getDocuments().isEmpty());
@@ -76,9 +77,9 @@ public class DocumentHandleTest {
         // add published, unpublished variants & rejected request
         Node publishedVariant = addVariant(handle, HippoStdNodeType.PUBLISHED);
         Node unpublishedVariant = addVariant(handle, HippoStdNodeType.UNPUBLISHED);
-        addRequest(handle, WorkflowRequest.REJECTED, true);
-        Node rejectedRequest = addRequest(handle, WorkflowRequest.REJECTED, true);
-        rejectedRequest.setProperty(WorkflowRequest.HIPPOSTDPUBWF_USERNAME, "testuser");
+        addRequest(handle, HippoStdPubWfNodeType.REJECTED, true);
+        Node rejectedRequest = addRequest(handle, HippoStdPubWfNodeType.REJECTED, true);
+        rejectedRequest.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_USERNAME, "testuser");
         dm = new DocumentHandle("test", new MockWorkflowContext("testuser"), handle);
         dm.initialize();
         assertNull(getDraft(dm));

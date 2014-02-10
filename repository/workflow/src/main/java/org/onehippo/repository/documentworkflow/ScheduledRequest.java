@@ -20,11 +20,6 @@ import javax.jcr.RepositoryException;
 
 public class ScheduledRequest extends Request {
 
-    public static final String NT_HIPPOSCHED_WORKFLOW_JOB = "hipposched:workflowjob";
-
-    public ScheduledRequest() {
-    }
-
     public ScheduledRequest(Node node) throws RepositoryException {
         super(node);
     }

@@ -17,12 +17,23 @@ package org.hippoecm.repository;
 
 public interface HippoStdPubWfNodeType {
 
-
+    String HIPPO_REQUEST = "hippo:request";
+    String NT_HIPPOSTDPUBWF_REQUEST = "hippostdpubwf:request";
+    String HIPPOSTDPUBWF_TYPE = "hippostdpubwf:type";
     String HIPPOSTDPUBWF_DOCUMENT = "hippostdpubwf:document";
     String HIPPOSTDPUBWF_PUBLICATION_DATE = "hippostdpubwf:publicationDate";
     String HIPPOSTDPUBWF_LAST_MODIFIED_DATE = "hippostdpubwf:lastModificationDate";
     String HIPPOSTDPUBWF_LAST_MODIFIED_BY = "hippostdpubwf:lastModifiedBy";
     String HIPPOSTDPUBWF_CREATION_DATE = "hippostdpubwf:creationDate";
     String HIPPOSTDPUBWF_CREATED_BY = "hippostdpubwf:createdBy";
+    String HIPPOSTDPUBWF_USERNAME = "hippostdpubwf:username";
+    String HIPPOSTDPUBWF_REQDATE = "hippostdpubwf:reqdate";
+    String HIPPOSTDPUBWF_REASON = "hippostdpubwf:reason";
 
+    String REJECTED = "rejected";
+    String PUBLISH = "publish";
+    String DEPUBLISH = "depublish";
+    String SCHEDPUBLISH = "scheduledpublish";
+    String SCHEDDEPUBLISH = "scheduleddepublish";
+    String DELETE = "delete";
 }

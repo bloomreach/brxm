@@ -19,7 +19,9 @@ package org.onehippo.repository.documentworkflow;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.quartz.HippoSchedJcrConstants;
 
 public abstract class Request extends Document {
 
@@ -39,14 +41,14 @@ public abstract class Request extends Document {
     }
 
     public static WorkflowRequest createWorkflowRequest(Node requestNode) throws RepositoryException {
-        if (requestNode.isNodeType(WorkflowRequest.NT_HIPPOSTDPUBWF_REQUEST)) {
+        if (requestNode.isNodeType(HippoStdPubWfNodeType.NT_HIPPOSTDPUBWF_REQUEST)) {
             return new WorkflowRequest(requestNode);
         }
         return null;
     }
 
     public static ScheduledRequest createScheduledRequest(Node requestNode) throws RepositoryException {
-        if (requestNode.isNodeType(ScheduledRequest.NT_HIPPOSCHED_WORKFLOW_JOB)) {
+        if (requestNode.isNodeType(HippoSchedJcrConstants.HIPPOSCHED_WORKFLOW_JOB)) {
             return new ScheduledRequest(requestNode);
         }
         return null;
