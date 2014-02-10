@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.richtext.htmlcleaner;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collection;
@@ -49,17 +50,12 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
     private static final String PRETTY = "pretty";
     private static final String JAVASCRIPT_PROTOCOL = "javascript:";
 
-    private final HtmlCleaner cleaner = new HtmlCleaner();
     private final Map<String, Element> whitelist = new HashMap<>();
     private final String charset;
     private final String serializer;
 
     public HtmlCleanerPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
-        final CleanerProperties properties = cleaner.getProperties();
-        properties.setOmitHtmlEnvelope(true);
-        properties.setTranslateSpecialEntities(false);
-        properties.setOmitXmlDeclaration(true);
         charset = config.getString(CHARSET, DEFAULT_CHARSET);
         serializer = config.getString(SERIALIZER, COMPACT);
         final IPluginConfig whitelistConfig = config.getPluginConfig(WHITELIST);
@@ -79,11 +75,12 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
 
     @Override
     public String clean(final String value) throws Exception {
+        HtmlCleaner cleaner = createCleaner();
         final TagNode node = cleaner.clean(value);
         if (filter(node) == null) {
             return "";
         }
-        return serialize(node);
+        return serialize(node, cleaner.getProperties());
     }
 
     private TagNode filter(final TagNode node) {
@@ -112,22 +109,32 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
         return node;
     }
 
-    private String serialize(final TagNode html) throws IOException {
-        final Serializer serializer = createSerializer();
+    private String serialize(final TagNode html, final CleanerProperties properties) throws IOException {
+        final Serializer serializer = createSerializer(properties);
         final StringWriter writer = new StringWriter();
         serializer.write(html, writer, charset);
         return writer.getBuffer().toString().trim();
     }
 
-    private Serializer createSerializer() {
+    private HtmlCleaner createCleaner() {
+        final HtmlCleaner cleaner = new HtmlCleaner();
+        final CleanerProperties properties = cleaner.getProperties();
+        properties.setOmitHtmlEnvelope(true);
+        properties.setTranslateSpecialEntities(false);
+        properties.setOmitXmlDeclaration(true);
+        return cleaner;
+    }
+
+    private Serializer createSerializer(final CleanerProperties properties) {
         switch (serializer) {
-            case PRETTY : return new PrettyHtmlSerializer(cleaner.getProperties());
-            case COMPACT : return new CompactHtmlSerializer(cleaner.getProperties());
-            default : return new SimpleHtmlSerializer(cleaner.getProperties());
+            case PRETTY : return new PrettyHtmlSerializer(properties);
+            case COMPACT : return new CompactHtmlSerializer(properties);
+            default : return new SimpleHtmlSerializer(properties);
         }
     }
 
-    private static final class Element {
+    private static final class Element implements Serializable {
+        private static final long serialVersionUID = 1L;
         private final String name;
         private final Collection<String> attributes;
         private Element(final String name, final Collection<String> attributes) {
