@@ -57,7 +57,7 @@ public class DocumentHandle implements SCXMLDataModel {
     private Map<String, Request> requests = new HashMap<>();
     private boolean requestPending;
 
-    private Map<String, Map<String, Boolean>> pathPrivilegesMap;
+    private Map<String, Map<String, Boolean>> pathPrivilegesMap = new HashMap<>();
 
     private Map<String, Serializable> info = new HashMap<>();
     private Map<String, Map<String, Boolean>> requestActionsInfo = null;
@@ -158,9 +158,6 @@ public class DocumentHandle implements SCXMLDataModel {
             return false;
         }
 
-        if (pathPrivilegesMap == null) {
-            pathPrivilegesMap = new HashMap<>();
-        }
         final Session userSession = context.getUserSession();
         try {
             Node userDocumentNode = userSession.getNodeByIdentifier(document.getIdentity());
@@ -238,15 +235,10 @@ public class DocumentHandle implements SCXMLDataModel {
         initialized = false;
         actions.clear();
         info.clear();
-        if (documents != null) {
-            documents.clear();
-        }
-        if (requests != null) {
-            requests.clear();
-        }
+        documents.clear();
+        requests.clear();
+        requestActionsInfo = null;
         requestPending = false;
-        if (pathPrivilegesMap != null) {
-            pathPrivilegesMap.clear();
-        }
+        pathPrivilegesMap.clear();
     }
 }
