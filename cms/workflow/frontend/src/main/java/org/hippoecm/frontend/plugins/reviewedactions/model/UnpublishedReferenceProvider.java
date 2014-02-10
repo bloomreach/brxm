@@ -22,9 +22,10 @@ import java.util.List;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
@@ -32,8 +33,9 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugins.standards.list.datatable.SortState;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,28 +96,19 @@ public class UnpublishedReferenceProvider implements ISortableDataProvider<Strin
 
     protected void load() {
         if (entries == null) {
-            entries = new ArrayList<String>();
+            entries = new ArrayList<>();
             Session session = UserSession.get().getJcrSession();
             Iterator<String> upstream = wrapped.iterator(0, wrapped.size());
             try {
                 while (upstream.hasNext()) {
                     String uuid = upstream.next();
                     try {
-                        Node node = session.getNodeByUUID(uuid);
+                        Node node = session.getNodeByIdentifier(uuid);
                         boolean valid = true;
                         if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                             valid = false;
-
-                            NodeIterator docs = node.getNodes(node.getName());
-                            while (docs.hasNext()) {
-                                Node document = docs.nextNode();
-                                if (document.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)) {
-                                    String state = document.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
-                                    if ("published".equals(state)) {
-                                        valid = true;
-                                        break;
-                                    }
-                                } else {
+                            for (Node document : new NodeIterable(node.getNodes(node.getName()))) {
+                                if (isLive(document)) {
                                     valid = true;
                                     break;
                                 }
@@ -132,6 +125,18 @@ public class UnpublishedReferenceProvider implements ISortableDataProvider<Strin
                 log.error(ex.getMessage(), ex);
             }
         }
+    }
+
+    private boolean isLive(Node document) throws RepositoryException {
+        final Property property = JcrUtils.getPropertyIfExists(document, HippoNodeType.HIPPO_AVAILABILITY);
+        if (property != null) {
+            for (Value value : property.getValues()) {
+                if ("live".equals(value.getString())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }

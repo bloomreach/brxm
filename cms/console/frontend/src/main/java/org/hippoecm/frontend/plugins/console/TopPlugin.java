@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 public class TopPlugin extends RenderPlugin {
 
-    static final Logger log = LoggerFactory.getLogger(RootPlugin.class);
+    static final Logger log = LoggerFactory.getLogger(TopPlugin.class);
 
     public TopPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);

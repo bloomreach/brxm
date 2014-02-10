@@ -14,21 +14,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="htmlCleanerService">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="cleaner.config">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>frontend:plugin</sv:value>
-  </sv:property>
-  <sv:property sv:name="plugin.class" sv:type="String">
-    <sv:value>org.hippoecm.frontend.plugins.richtext.htmlcleaner.HtmlCleanerPlugin</sv:value>
+    <sv:value>frontend:pluginconfig</sv:value>
   </sv:property>
   <sv:property sv:name="charset" sv:type="String">
     <sv:value>UTF-8</sv:value>
   </sv:property>
   <sv:property sv:name="serializer" sv:type="String">
     <sv:value>compact</sv:value>
-  </sv:property>
-  <sv:property sv:name="omitComments" sv:type="String">
-    <sv:value>false</sv:value>
   </sv:property>
   <sv:node sv:name="whitelist">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">

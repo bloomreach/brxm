@@ -66,6 +66,8 @@ import org.apache.wicket.request.mapper.mount.IMountedRequestMapper;
 import org.apache.wicket.request.mapper.mount.Mount;
 import org.apache.wicket.request.mapper.mount.MountMapper;
 import org.apache.wicket.request.mapper.mount.MountParameters;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.request.resource.caching.FilenameWithVersionResourceCachingStrategy;
 import org.apache.wicket.request.resource.caching.version.LastModifiedResourceVersion;
 import org.apache.wicket.resource.loader.IStringResourceLoader;
@@ -462,6 +464,11 @@ public class Main extends PluginApplication {
         }
 
         return result;
+    }
+
+    @Override
+    public ResourceReference getPluginApplicationFavIconReference() {
+        return new PackageResourceReference(Main.class, "hippo-" + getPluginApplicationName() + ".ico");
     }
 
     @Override

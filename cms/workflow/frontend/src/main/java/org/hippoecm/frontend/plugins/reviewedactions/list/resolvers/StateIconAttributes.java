@@ -195,26 +195,24 @@ public class StateIconAttributes implements IObservable, IDetachable {
     }
 
     private void retrieveProperties(Node document, NodeType primaryType) throws RepositoryException {
-        if(document == null || primaryType == null) {
+        if (document == null || primaryType == null) {
             return;
         }
-        
-        if (primaryType.isNodeType(HIPPOSTDPUBWF_DOCUMENT) || document.isNodeType(HIPPOSTDPUBWF_DOCUMENT)) {
-            if (document.hasProperty(HIPPOSTDPUBWF_PUBLICATION_DATE)) {
-                publicationDate = document.getProperty(HIPPOSTDPUBWF_PUBLICATION_DATE).getDate();
-            }
-            if(document.hasProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE)) {
-                lastModifiedDate = document.getProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE).getDate();
-            }
-            if(document.hasProperty(HIPPOSTDPUBWF_LAST_MODIFIED_BY)) {
-                lastModifiedBy = document.getProperty(HIPPOSTDPUBWF_LAST_MODIFIED_BY).getString();
-            }
-            if(document.hasProperty(HIPPOSTDPUBWF_CREATION_DATE)) {
-                creationDate = document.getProperty(HIPPOSTDPUBWF_CREATION_DATE).getDate();
-            }
-            if(document.hasProperty(HIPPOSTDPUBWF_CREATED_BY)) {
-                createdBy = document.getProperty(HIPPOSTDPUBWF_CREATED_BY).getString();
-            }
+
+        if (document.hasProperty(HIPPOSTDPUBWF_PUBLICATION_DATE)) {
+            publicationDate = document.getProperty(HIPPOSTDPUBWF_PUBLICATION_DATE).getDate();
+        }
+        if (document.hasProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE)) {
+            lastModifiedDate = document.getProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE).getDate();
+        }
+        if (document.hasProperty(HIPPOSTDPUBWF_LAST_MODIFIED_BY)) {
+            lastModifiedBy = document.getProperty(HIPPOSTDPUBWF_LAST_MODIFIED_BY).getString();
+        }
+        if (document.hasProperty(HIPPOSTDPUBWF_CREATION_DATE)) {
+            creationDate = document.getProperty(HIPPOSTDPUBWF_CREATION_DATE).getDate();
+        }
+        if (document.hasProperty(HIPPOSTDPUBWF_CREATED_BY)) {
+            createdBy = document.getProperty(HIPPOSTDPUBWF_CREATED_BY).getString();
         }
 
     }

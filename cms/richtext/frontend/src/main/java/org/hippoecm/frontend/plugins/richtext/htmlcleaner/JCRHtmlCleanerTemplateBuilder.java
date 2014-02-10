@@ -23,6 +23,11 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 import nl.hippo.htmlcleaner.HtmlCleanerTemplate;
 
+/**
+ * @deprecated
+ * @see DeprecatedHtmlCleanerPlugin
+ */
+@Deprecated
 public class JCRHtmlCleanerTemplateBuilder {
 
     public static final String HTMLCLEANER_PREFIX = "hippohtmlcleaner:";

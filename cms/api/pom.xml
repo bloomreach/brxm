@@ -198,6 +198,7 @@
           <include>**/*.css</include>
           <include>**/*.png</include>
           <include>**/*.gif</include>
+          <include>**/*.ico</include>
         </includes>
       </resource>
     </resources>
