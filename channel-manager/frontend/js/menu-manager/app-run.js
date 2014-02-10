@@ -19,17 +19,11 @@
     angular.module('hippo.channelManager.menuManager')
 
         .run([
-            '$rootScope',
             '$translate',
             '$state',
-            'hippo.channelManager.menuManager.Container',
             'hippo.channelManager.menuManager.ConfigService',
             '_hippo.channelManager.menuManagement.IFrameService',
-            function ($rootScope, $translate, $state, Container, Config, IFrame) {
-                $rootScope.close = function() {
-                    Container.close();
-                };
-
+            function ($translate, $state, Config, IFrame) {
                 // go to default state
                 $state.go('loader');
 
