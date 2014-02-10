@@ -14,6 +14,10 @@ Grunt and Bower can be installed with Node Package Manager:
 
  $ sudo npm install -g grunt-cli bower
 
+If Bower fails to download zipped dependencies, make sure it uses decompress-zip >= 0.0.4.
+(e.g. check the file /usr/lib/node_modules/bower/node_modules/decompress-zip/package.json,
+and reinstall Bower if decompress-zip is too old).
+
 -----
 Build
 -----
