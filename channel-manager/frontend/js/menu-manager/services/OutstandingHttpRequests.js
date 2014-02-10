@@ -18,7 +18,7 @@
 
     angular.module('hippo.channelManager.menuManager')
 
-        .factory('_hippo.channelManager.menuManager.OutstandingHttpRequests', function() {
+        .factory('_hippo.channelManager.menuManager.OutstandingHttpRequests', ['$q', function($q) {
             var outstandingRequests = 0;
 
             return {
@@ -34,14 +34,14 @@
 
                 responseError: function (rejection) {
                     outstandingRequests -= 1;
-                    return rejection;
+                    return $q.reject(rejection);
                 },
 
                 isEmpty: function () {
                     return outstandingRequests === 0;
                 }
             };
-        })
+        }])
 
         .config(['$httpProvider', function($httpProvider) {
             $httpProvider.interceptors.push('_hippo.channelManager.menuManager.OutstandingHttpRequests');
