@@ -15,13 +15,22 @@
  */
 package org.hippoecm.repository.reviewedactions;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.documentworkflow.DocumentWorkflowImpl} instead.
@@ -29,7 +38,88 @@ import org.hippoecm.repository.api.WorkflowException;
 @Deprecated
 public class BasicReviewedActionsWorkflowImpl extends AbstractReviewedActionsWorkflow implements BasicReviewedActionsWorkflow {
 
+    static final Logger log = LoggerFactory.getLogger(BasicReviewedActionsWorkflowImpl.class);
+
+    protected PublishableDocument draftDocument;
+    protected PublishableDocument unpublishedDocument;
+    protected PublishableDocument publishedDocument;
+
     public BasicReviewedActionsWorkflowImpl() throws RemoteException {
+    }
+
+    @Override
+    public void setNode(final Node node) throws RepositoryException {
+        super.setNode(node);
+
+        Node parent = node.getParent();
+
+        draftDocument = unpublishedDocument = publishedDocument = null;
+        for (Node sibling : new NodeIterable(parent.getNodes(node.getName()))) {
+            String state = JcrUtils.getStringProperty(sibling, HippoStdNodeType.HIPPOSTD_STATE, "");
+            switch (state) {
+                case "draft":
+                    draftDocument = new PublishableDocument(sibling);
+                    break;
+                case "unpublished":
+                    unpublishedDocument = new PublishableDocument(sibling);
+                    break;
+                case "published":
+                    publishedDocument = new PublishableDocument(sibling);
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public Map<String, Serializable> hints() throws WorkflowException {
+        Map<String, Serializable> info = new HashMap<>(super.hints());
+        try {
+            final String state = JcrUtils.getStringProperty(getNode(), HippoStdNodeType.HIPPOSTD_STATE, "");
+
+            boolean status = Boolean.TRUE.equals(info.get("status"));
+            boolean editable = Boolean.TRUE.equals(info.get("obtainEditableInstance"));
+            boolean publishable = Boolean.TRUE.equals(info.get("publish"));
+            boolean depublishable = Boolean.TRUE.equals(info.get("depublish"));
+            Boolean deleteable = (Boolean) info.get("delete");
+
+            // put everything on the unpublished; unless it doesn't exist
+            if (unpublishedDocument != null && !PublishableDocument.UNPUBLISHED.equals(state)) {
+                status = editable = publishable = depublishable = false;
+                deleteable = null;
+            } else if (unpublishedDocument == null) {
+                if (PublishableDocument.DRAFT.equals(state)) {
+                    if (publishedDocument != null) {
+                        depublishable = status = false;
+                        deleteable = null;
+                    }
+                } else if (PublishableDocument.PUBLISHED.equals(state)) {
+                    if (draftDocument != null) {
+                        editable = false;
+                    }
+                }
+            }
+
+            if (PublishableDocument.DRAFT.equals(state) && unpublishedDocument != null) {
+                info.put("checkModified", true);
+            }
+
+            if (PublishableDocument.DRAFT.equals(state)) {
+                info.put("inUseBy", draftDocument.getOwner());
+            }
+            info.put("obtainEditableInstance", editable);
+            info.put("publish", publishable);
+            info.put("depublish", depublishable);
+            if (deleteable != null) {
+                info.put("delete", deleteable);
+            } else {
+                info.remove("delete");
+            }
+            info.put("status", status);
+        } catch (RepositoryException ex) {
+            log.error("Failed to calculate hints", ex);
+        }
+
+        return info;
     }
 
     // EditableWorkflow implementation

@@ -15,13 +15,16 @@
  */
 package org.hippoecm.repository.reviewedactions;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Date;
+import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.util.JcrUtils;
 
 /**
  * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.documentworkflow.DocumentWorkflowImpl} instead.
@@ -30,6 +33,23 @@ import org.hippoecm.repository.api.WorkflowException;
 public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflowImpl implements FullReviewedActionsWorkflow {
 
     public FullReviewedActionsWorkflowImpl() throws RemoteException {
+    }
+
+    @Override
+    public Map<String, Serializable> hints() throws WorkflowException {
+        Map<String, Serializable> info = super.hints();
+        if (info.containsKey("delete")) {
+            info.put("rename", info.get("delete"));
+            info.put("move", info.get("delete"));
+        }
+        try {
+            String state = JcrUtils.getStringProperty(getNode(), "hippostd:state", "");
+            info.put("copy", (unpublishedDocument != null && PublishableDocument.UNPUBLISHED.equals(state))
+                    || (unpublishedDocument == null && publishedDocument != null && PublishableDocument.PUBLISHED.equals(state)));
+        } catch (RepositoryException ex) {
+            // TODO DEDJO: ignore?
+        }
+        return info;
     }
 
     @Override

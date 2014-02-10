@@ -15,8 +15,12 @@
  */
 package org.hippoecm.repository.reviewedactions;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Collections;
+import java.util.Map;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.WorkflowException;
@@ -33,6 +37,23 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
      * @throws java.rmi.RemoteException mandatory exception that must be thrown by all Remote objects
      */
     public FullRequestWorkflowImpl() throws RemoteException {
+    }
+
+    @Override
+    public Map<String, Serializable> hints() throws WorkflowException {
+        final Map<String, Serializable> hints = super.hints();
+        try {
+            Node node = getNode();
+            String id = node.getIdentifier();
+            Map<String, Map<String, Serializable>> requests = (Map<String, Map<String, Serializable>>) hints.get("requests");
+            if (requests != null) {
+                return requests.get(id);
+            } else {
+                return Collections.emptyMap();
+            }
+        } catch (RepositoryException e) {
+            throw new WorkflowException("Unable to build request hints", e);
+        }
     }
 
     // FullRequestWorkflow implementation
