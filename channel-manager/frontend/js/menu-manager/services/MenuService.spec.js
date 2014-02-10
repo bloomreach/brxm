@@ -105,7 +105,7 @@ describe('Menu Service', function () {
 
     it('should return undefined when getting an unknown menu item', function () {
         menuService.getMenuItem('nosuchitem').then(function(menuItem) {
-            expect(menuItem).not.toBeDefined();
+            expect(menuItem).toBeUndefined();
         });
         expectGetMenu();
     });
