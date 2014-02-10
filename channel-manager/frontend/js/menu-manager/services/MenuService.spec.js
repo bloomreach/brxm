@@ -41,7 +41,7 @@ describe('Menu Service', function () {
                     },
                     {
                         id: '2',
-                        name: 'Two',
+                        name: 'Two'
                     }
                 ]
             }
@@ -61,7 +61,7 @@ describe('Menu Service', function () {
         expect(menuService).toBeDefined();
     });
 
-    it('should get menu by id', function () {
+    it('should get menu by id ', function () {
         var promise = menuService.getMenu('menuId');
 
         $httpBackend.expectGET('api/menuId');
@@ -73,4 +73,35 @@ describe('Menu Service', function () {
         });
     });
 
+
+    it('should delete a menu item by id', function () {
+
+        var response = {data: {children: [{id: 1, name: 'One'}]}};
+        $httpBackend.expectPOST('api/menuId./delete/menuItemId').respond('OK');
+        $httpBackend.expectGET('api/menuId').respond(response);
+
+        menuService.deleteMenuItem('menuItemId');
+        var promise = menuService.getMenu('menuId');
+        promise.then(function (menuData) {
+            expect(menuData).toBeDefined();
+            expect(menuData.children.length).toEqual(1);
+        });
+        $httpBackend.flush();
+    });
+
+    it('should not delete a menu item by id on server error', function () {
+
+        $httpBackend.expectPOST('api/menuId./delete/menuItemId').respond(500, 'NOT OK');
+
+        var spy = {errorFn: function (reason) {}};
+        spyOn(spy, 'errorFn');
+
+        var promise = menuService.deleteMenuItem('menuItemId');
+        promise.then(undefined, function(reason) {
+            spy.errorFn();
+        });
+        $httpBackend.flush();
+
+        expect(spy.errorFn).toHaveBeenCalled();
+    });
 });
