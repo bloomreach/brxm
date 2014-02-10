@@ -16,6 +16,8 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.validaters;
 
+import java.util.UUID;
+
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -45,6 +47,11 @@ public class PreviewWorkspaceNodeValidator implements Validator {
         try {
             HstRequestContext requestContext = RequestContextProvider.get();
             final Session session = requestContext.getSession();
+            try {
+                UUID.fromString(id);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Not a valid uuid '"+id+"'");
+            }
             final Node node = session.getNodeByIdentifier(id);
             if (requiredNodeType != null && !node.isNodeType(requiredNodeType)) {
                 throw new IllegalArgumentException("Required node of type '"+requiredNodeType+"' but node '"+node.getPath()+"' of " +

@@ -52,44 +52,22 @@ public class MoveTest extends AbstractSiteMapResourceTest {
 
 
     @Test
-    public void test_update_move() throws Exception {
-        final SiteMapItemRepresentation home = getSiteMapItemRepresentation("home");
-        Node homeNode = session.getNodeByIdentifier(home.getId());
-        String parentPath = homeNode.getParent().getPath();
-        home.setName("renamedHome");
-
-        SiteMapResource siteMapResource = new SiteMapResource();
-        Response response = siteMapResource.update(home);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals("renamedHome", homeNode.getName());
-        assertEquals(parentPath + "/renamedHome", homeNode.getPath());
-
-        assertTrue(session.nodeExists(parentPath + "/home"));
-        Node deletedMarkerNode = session.getNode(parentPath + "/home");
-        assertEquals("admin", deletedMarkerNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
+    public void test_move() throws Exception {
 
     }
 
     @Test
-    public void test_update_move_and_back_again() throws Exception {
-        final SiteMapItemRepresentation home = getSiteMapItemRepresentation("home");
-        Node homeNode = session.getNodeByIdentifier(home.getId());
-        String parentPath = homeNode.getParent().getPath();
-        home.setName("renamedHome");
+    public void test_move_and_back_again() throws Exception {
 
-        SiteMapResource siteMapResource = new SiteMapResource();
-        siteMapResource.update(home);
-
-        home.setName("home");
-        Response response = siteMapResource.update(home);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals("home", homeNode.getName());
-        assertEquals("admin", homeNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
-        assertFalse(session.nodeExists(parentPath + "/renamedHome"));
     }
 
     @Test
-    public void test_update_move_and_move_back_again() throws Exception {
+    public void test_move_and_move_back_again() throws Exception {
+
+    }
+
+    @Test
+    public void test_node_to_descendant_fails() throws Exception {
 
     }
 

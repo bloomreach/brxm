@@ -164,13 +164,17 @@ public class SiteMapResource extends AbstractConfigResource {
     @POST
     @Path("/delete/{id}")
     public Response delete(final @PathParam("id") String id) {
+        final  List<Validator> preValidators = new ArrayList<>();
+
+        preValidators.add(new PreviewWorkspaceNodeValidator(id, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
+
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
                 siteMapHelper.delete(id);
                 return ok("Item deleted successfully", id);
             }
-        });
+        }, preValidators);
     }
 
 }

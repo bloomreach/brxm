@@ -17,6 +17,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.sitemapreso
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -280,6 +281,44 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         }
     }
 
+    @Test
+    public void test_create_below_non_existing_parent() throws Exception {
+        initContext();
+        final SiteMapItemRepresentation homeChild = new SiteMapItemRepresentation();
+        homeChild.setName("homeChild");
+        SiteMapResource siteMapResource = new SiteMapResource();
+        {
+            final Response response = siteMapResource.create(homeChild, UUID.randomUUID().toString());
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        }
+    }
+
+
+    @Test
+    public void test_create_below_invalid_uuid_parent() throws Exception {
+        initContext();
+        final SiteMapItemRepresentation homeChild = new SiteMapItemRepresentation();
+        homeChild.setName("homeChild");
+        SiteMapResource siteMapResource = new SiteMapResource();
+        {
+            final Response response = siteMapResource.create(homeChild, "non-uuid");
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        }
+    }
+
+    @Test
+    public void test_create_below_invalid_parent() throws Exception {
+        initContext();
+        final Node menuNode = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:sitemenus/main");
+        String uuidInvalidLocation = menuNode.getIdentifier();
+        final SiteMapItemRepresentation homeChild = new SiteMapItemRepresentation();
+        homeChild.setName("homeChild");
+        SiteMapResource siteMapResource = new SiteMapResource();
+        {
+            final Response response = siteMapResource.create(homeChild, uuidInvalidLocation);
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        }
+    }
 
     @Test
     public void test_create_fails_when_parent_locked() throws Exception {
