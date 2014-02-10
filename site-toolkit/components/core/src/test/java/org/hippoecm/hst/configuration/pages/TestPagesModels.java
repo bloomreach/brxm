@@ -22,6 +22,7 @@ import javax.jcr.SimpleCredentials;
 
 import junit.framework.Assert;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
@@ -205,5 +206,22 @@ public class TestPagesModels extends AbstractTestConfigurations {
             assertTrue(hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestcommon/hst:components"));
         }
         assertNull(hstSite.getComponentsConfiguration().getComponentConfigurations().get("basepage"));
+    }
+
+    @Test
+    public void test_marked_deleted_nodes_are_ignored()  throws Exception {
+        Node homePage = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:pages/homepage");
+        homePage.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
+        homePage.setProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE, "deleted");
+        final Node standardBody = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:pages/standardoverview/body");
+        standardBody.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
+        standardBody.setProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE, "deleted");
+        session.save();
+
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "", "/");
+        final HstSite hstSite = mount.getMount().getHstSite();
+        assertNull(hstSite.getComponentsConfiguration().getComponentConfiguration("hst:pages/homepage"));
+        assertNull(hstSite.getComponentsConfiguration().getComponentConfiguration("hst:pages/standardoverview/body"));
+        assertNull(hstSite.getComponentsConfiguration().getComponentConfiguration("hst:pages/standardoverview").getChildByName("body"));
     }
 }

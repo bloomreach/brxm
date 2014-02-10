@@ -20,6 +20,7 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
@@ -239,5 +240,23 @@ public class TestSiteMapModels extends AbstractTestConfigurations {
         final HstSite hstSite = mount.getMount().getHstSite();
         final HstSiteMap siteMap = hstSite.getSiteMap();
         assertNull(siteMap.getSiteMapItem("home"));
+    }
+
+    @Test
+    public void test_marked_deleted_nodes_are_ignored()  throws Exception {
+        final Node home = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/home");
+        home.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
+        home.setProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE, "deleted");
+        final Node newsDefault = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/news/_default_");
+        newsDefault.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
+        newsDefault.setProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE, "deleted");
+        session.save();
+
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "", "/");
+        final HstSite hstSite = mount.getMount().getHstSite();
+        final HstSiteMap siteMap = hstSite.getSiteMap();
+        assertNull(siteMap.getSiteMapItem("home"));
+        assertNull(siteMap.getSiteMapItem("news").getChild("_default_"));
+
     }
 }
