@@ -34,7 +34,7 @@ public class HtmlCleanerPluginTest extends PluginTest {
     }
 
     @Test
-    public void testHtmlCleaner() throws Exception {
+    public void testCleanNonWhiteListedTag() throws Exception {
         final HtmlCleanerPlugin htmlCleanerPlugin = new HtmlCleanerPlugin(null, getPluginConfig());
 
         String html = htmlCleanerPlugin.clean("<script>alert(\"xss\")</script>");
@@ -45,22 +45,42 @@ public class HtmlCleanerPluginTest extends PluginTest {
         html = htmlCleanerPlugin.clean("<ScRiPT>alert(\"xss\")</sCrIpT>");
         log.debug(html);
         assertEquals("", html);
+    }
 
-        html = htmlCleanerPlugin.clean("<p foo=\"bar\">&nbsp;</p>");
+    @Test
+    public void testCleanNonWhiteListedAttribute() throws Exception {
+        final HtmlCleanerPlugin htmlCleanerPlugin = new HtmlCleanerPlugin(null, getPluginConfig());
+
+        String html = htmlCleanerPlugin.clean("<p foo=\"bar\">&nbsp;</p>");
         log.debug(html);
         // attribute foo of p is not on whitelist
         assertEquals("<p>&nbsp;</p>", html);
+    }
 
-        html = htmlCleanerPlugin.clean("simple text");
+    @Test
+    public void testCleanPlainText() throws Exception {
+        final HtmlCleanerPlugin htmlCleanerPlugin = new HtmlCleanerPlugin(null, getPluginConfig());
+
+        String html = htmlCleanerPlugin.clean("simple text");
         log.debug(html);
         assertEquals("simple text", html);
+    }
 
-        html = htmlCleanerPlugin.clean("simple text <p>&nbsp;</p>");
+    @Test
+    public void testCleanMultipleRootElements() throws Exception {
+        final HtmlCleanerPlugin htmlCleanerPlugin = new HtmlCleanerPlugin(null, getPluginConfig());
+
+        String html = htmlCleanerPlugin.clean("simple text <p>&nbsp;</p>");
         log.debug(html);
         assertEquals("simple text \n<p>&nbsp;</p>", html);
+    }
+
+    @Test
+    public void testClean() throws Exception {
+        final HtmlCleanerPlugin htmlCleanerPlugin = new HtmlCleanerPlugin(null, getPluginConfig());
 
         // src attribute contains javascript
-        html = htmlCleanerPlugin.clean("<img src=\"jAvAsCrIpT:alert()\"");
+        String html = htmlCleanerPlugin.clean("<img src=\"jAvAsCrIpT:alert()\"");
         log.debug(html);
         assertEquals("<img src=\"\" />", html);
     }

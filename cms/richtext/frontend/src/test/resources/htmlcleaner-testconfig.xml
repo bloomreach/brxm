@@ -28,12 +28,37 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:pluginconfig</sv:value>
     </sv:property>
-    <sv:node sv:name="html">
+    <sv:node sv:name="blockquote">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+        <sv:value>id</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="a">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>href</sv:value>
+        <sv:value>target</sv:value>
+        <sv:value>title</sv:value>
+        <sv:value>name</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="b">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="body">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="br">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
@@ -47,44 +72,9 @@
         <sv:value>id</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="span">
+    <sv:node sv:name="em">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
-        <sv:value>class</sv:value>
-        <sv:value>id</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="p">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
-        <sv:value>align</sv:value>
-        <sv:value>class</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="br">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="pre">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
-        <sv:value>class</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="blockquote">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
-        <sv:value>class</sv:value>
-        <sv:value>id</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="h1">
@@ -112,43 +102,12 @@
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="a">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
-        <sv:value>href</sv:value>
-        <sv:value>target</sv:value>
-        <sv:value>title</sv:value>
-        <sv:value>name</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="strong">
+    <sv:node sv:name="hr">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="em">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="b">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="sub">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="sup">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="u">
+    <sv:node sv:name="html">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
@@ -158,19 +117,20 @@
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="ul">
+    <sv:node sv:name="iframe">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
-    </sv:node>
-    <sv:node sv:name="ol">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="li">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>src</sv:value>
+        <sv:value>align</sv:value>
+        <sv:value>allowfullscreen</sv:value>
+        <sv:value>class</sv:value>
+        <sv:value>frameborder</sv:value>
+        <sv:value>height</sv:value>
+        <sv:value>name</sv:value>
+        <sv:value>scrolling</sv:value>
+        <sv:value>width</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="img">
@@ -190,6 +150,82 @@
         <sv:value>style</sv:value>
       </sv:property>
     </sv:node>
+    <sv:node sv:name="li">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="object">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>align</sv:value>
+        <sv:value>class</sv:value>
+        <sv:value>data</sv:value>
+        <sv:value>height</sv:value>
+        <sv:value>id</sv:value>
+        <sv:value>width</sv:value>
+        <sv:value>title</sv:value>
+        <sv:value>type</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="ol">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="p">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>align</sv:value>
+        <sv:value>class</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="param">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>id</sv:value>
+        <sv:value>name</sv:value>
+        <sv:value>value</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="pre">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="span">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+        <sv:value>id</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="strong">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="sub">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="sup">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="table">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
@@ -205,11 +241,6 @@
       </sv:property>
     </sv:node>
     <sv:node sv:name="tbody">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="tr">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
@@ -236,53 +267,20 @@
         <sv:value>valign</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="hr">
+    <sv:node sv:name="tr">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="object">
+    <sv:node sv:name="u">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
-      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
-        <sv:value>align</sv:value>
-        <sv:value>class</sv:value>
-        <sv:value>data</sv:value>
-        <sv:value>height</sv:value>
-        <sv:value>id</sv:value>
-        <sv:value>width</sv:value>
-        <sv:value>title</sv:value>
-        <sv:value>type</sv:value>
-      </sv:property>
     </sv:node>
-    <sv:node sv:name="param">
+    <sv:node sv:name="ul">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
-      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
-        <sv:value>id</sv:value>
-        <sv:value>name</sv:value>
-        <sv:value>value</sv:value>
-      </sv:property>
     </sv:node>
-    <!-- iframe is not safe?
-    <sv:node sv:name="iframe">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
-        <sv:value>src</sv:value>
-        <sv:value>align</sv:value>
-        <sv:value>allowfullscreen</sv:value>
-        <sv:value>class</sv:value>
-        <sv:value>frameborder</sv:value>
-        <sv:value>height</sv:value>
-        <sv:value>name</sv:value>
-        <sv:value>scrolling</sv:value>
-        <sv:value>width</sv:value>
-      </sv:property>
-    </sv:node>
-    -->
   </sv:node>
 </sv:node>

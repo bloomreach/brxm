@@ -48,16 +48,20 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
     private static final String SERIALIZER = "serializer";
     private static final String COMPACT = "compact";
     private static final String PRETTY = "pretty";
+    private static final String OMIT_COMMENTS = "omitComments";
     private static final String JAVASCRIPT_PROTOCOL = "javascript:";
 
     private final Map<String, Element> whitelist = new HashMap<>();
     private final String charset;
     private final String serializer;
+    private final boolean omitComments;
+
 
     public HtmlCleanerPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
         charset = config.getString(CHARSET, DEFAULT_CHARSET);
         serializer = config.getString(SERIALIZER, COMPACT);
+        omitComments = config.getBoolean(OMIT_COMMENTS);
         final IPluginConfig whitelistConfig = config.getPluginConfig(WHITELIST);
         for (IPluginConfig elementConfig : whitelistConfig.getPluginConfigSet()) {
             final Collection<String> attributes = elementConfig.containsKey(ATTRIBUTES) ?
@@ -122,6 +126,7 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
         properties.setOmitHtmlEnvelope(true);
         properties.setTranslateSpecialEntities(false);
         properties.setOmitXmlDeclaration(true);
+        properties.setOmitComments(omitComments);
         return cleaner;
     }
 
