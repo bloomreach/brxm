@@ -122,7 +122,7 @@ describe('Menu Service', function () {
 
     it('should save a menu item', function () {
         var savedMenuItem = { id: 'child1', name: 'New Name' };
-        $httpBackend.expectPOST('api/menuId./update', savedMenuItem).respond('OK');
+        $httpBackend.expectPOST('api/menuId', savedMenuItem).respond('OK');
         menuService.saveMenuItem(savedMenuItem);
         $httpBackend.flush();
     });
