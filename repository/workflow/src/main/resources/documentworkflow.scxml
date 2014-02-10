@@ -22,7 +22,6 @@
 
   <script>
     def getScxmlId() { dm.scxmlId }
-    def getSupports() { dm.supportedFeatures }
     def getDraft() { dm.getDocumentVariantByState('draft') }
     def getUnpublished() { dm.getDocumentVariantByState('unpublished') }
     def getPublished() { dm.getDocumentVariantByState('published') }
@@ -45,11 +44,9 @@
 
     <state id="status">
       <onentry>
-        <if cond="supports.document">
-          <hippo:info info="status" value="editable"/>
-          <hippo:info info="isLive" value="live"/>
-          <hippo:action action="checkModified" enabledExpr="draft and unpublished"/>
-        </if>
+        <hippo:info info="status" value="editable"/>
+        <hippo:info info="isLive" value="live"/>
+        <hippo:action action="checkModified" enabledExpr="draft and unpublished"/>
       </onentry>
 
       <transition event="checkModified">
@@ -61,51 +58,34 @@
     <state id="edit" initial="no-edit">
 
       <state id="no-edit">
-        <transition target="init-edit" cond="(supports.document or supports.unlock)"/>
-      </state>
-
-      <state id="init-edit">
         <onentry>
-          <if cond="supports.document">
-            <hippo:action action="disposeEditableInstance" enabledExpr="false"/>
-            <hippo:action action="obtainEditableInstance" enabledExpr="false"/>
-            <hippo:action action="commitEditableInstance" enabledExpr="false"/>
-          </if>
-          <if cond="supports.unlock">
-            <hippo:action action="unlock" enabledExpr="false"/>
-          </if>
+          <hippo:action action="disposeEditableInstance" enabledExpr="false"/>
+          <hippo:action action="obtainEditableInstance" enabledExpr="false"/>
+          <hippo:action action="commitEditableInstance" enabledExpr="false"/>
+          <hippo:action action="unlock" enabledExpr="false"/>
         </onentry>
-        <transition target="not-editable" cond="requestPending"/>
-        <transition target="editing"      cond="editing"/>
-        <transition target="editable"/>
+        <transition target="editing"  cond="!requestPending and editing"/>
+        <transition target="editable" cond="!requestPending"/>
       </state>
-
-      <state id="not-editable"/>
 
       <state id="editing">
         <onentry>
-          <if cond="supports.document">
-            <if cond="editor">
-              <hippo:action action="disposeEditableInstance" enabledExpr="true"/>
-              <hippo:action action="obtainEditableInstance" enabledExpr="true"/>
-              <hippo:action action="commitEditableInstance" enabledExpr="true"/>
-            <else/>
-              <hippo:info info="inUseBy" value="holder"/>
-            </if>
+          <if cond="editor">
+            <hippo:action action="disposeEditableInstance" enabledExpr="true"/>
+            <hippo:action action="obtainEditableInstance" enabledExpr="true"/>
+            <hippo:action action="commitEditableInstance" enabledExpr="true"/>
+          <else/>
+            <hippo:info info="inUseBy" value="holder"/>
           </if>
-          <if cond="supports.unlock">
-            <if cond="editor or dm.isGranted(draft,'hippo:admin')">
-              <hippo:action action="unlock" enabledExpr="true"/>
-            </if>
+          <if cond="editor or dm.isGranted(draft,'hippo:admin')">
+            <hippo:action action="unlock" enabledExpr="true"/>
           </if>
         </onentry>
       </state>
 
       <state id="editable">
         <onentry>
-          <if cond="supports.document">
-            <hippo:action action="obtainEditableInstance" enabledExpr="true"/>
-          </if>
+          <hippo:action action="obtainEditableInstance" enabledExpr="true"/>
         </onentry>
       </state>
 
@@ -152,13 +132,7 @@
     <state id="request" initial="no-request">
 
       <state id="no-request">
-        <transition target="init-request" cond="supports.request"/>
-      </state>
-
-      <state id="init-request">
         <transition target="requested" cond="!empty(requests)"/>
-
-        <transition target="not-requested"/>
       </state>
 
       <state id="requested">
@@ -256,29 +230,17 @@
         </transition>
       </state>
 
-      <state id="not-requested"/>
-
     </state>
 
     <state id="publish" initial="no-publish">
 
       <state id="no-publish">
-        <transition target="init-publish" cond="supports.document"/>
-      </state>
-
-      <state id="init-publish">
-
         <onentry>
           <hippo:action action="publish" enabledExpr="false"/>
           <hippo:action action="requestPublication" enabledExpr="false"/>
         </onentry>
-
         <transition target="publishable" cond="!editing and modified"/>
-        <transition target="not-publishable"/>
-
       </state>
-
-      <state id="not-publishable"/>
 
       <state id="publishable">
         <onentry>
@@ -311,21 +273,12 @@
     <state id="depublish" initial="no-depublish">
 
       <state id="no-depublish">
-        <transition target="init-depublish" cond="supports.document"/>
-      </state>
-
-      <state id="init-depublish">
         <onentry>
           <hippo:action action="depublish" enabledExpr="false"/>
           <hippo:action action="requestDepublication" enabledExpr="false"/>
         </onentry>
-
         <transition target="depublishable" cond="!editing and live"/>
-        <transition target="not-depublishable"/>
-
       </state>
-
-      <state id="not-depublishable"/>
 
       <state id="depublishable">
         <onentry>
@@ -361,10 +314,10 @@
     <state id="versioning" initial="no-versioning">
 
       <state id="no-versioning">
-        <transition target="version" cond="supports.version and unpublished"/>
+        <transition target="versionable" cond="!!unpublished"/>
       </state>
 
-      <state id="version">
+      <state id="versionable">
         <onentry>
           <hippo:action action="listVersions" enabledExpr="true"/>
           <hippo:action action="retrieveVersion" enabledExpr="true"/>
@@ -410,7 +363,7 @@
             <hippo:action action="rename" enabledExpr="false"/>
           </if>
         </onentry>
-        <transition target="terminateable" cond="supports.document and !live and !editing and !requestPending"/>
+        <transition target="terminateable" cond="!live and !editing and !requestPending"/>
       </state>
 
       <state id="terminateable">
@@ -446,7 +399,7 @@
     <state id="copy" initial="no-copy">
 
       <state id="no-copy">
-        <transition target="copyable" cond="supports.document and dm.isGranted(copySource,'hippo:editor')"/>
+        <transition target="copyable" cond="dm.isGranted(copySource,'hippo:editor')"/>
       </state>
 
       <state id="copyable">

@@ -29,9 +29,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.NodeIterable;
@@ -54,8 +52,6 @@ public class DocumentHandle implements SCXMLDataModel {
     private final Node handle;
     private final String user;
 
-    private DocumentWorkflow.SupportedFeatures supportedFeatures = DocumentWorkflow.SupportedFeatures.all;
-
     private Map<String, DocumentVariant> documents;
     private Map<String, Request> requests;
     private boolean requestPending;
@@ -76,23 +72,6 @@ public class DocumentHandle implements SCXMLDataModel {
         result = null;
         if (!initialized) {
             try {
-                RepositoryMap workflowConfiguration = context.getWorkflowConfiguration();
-                if (workflowConfiguration.exists()) {
-                    String supportedFeaturesConfiguration = (String) workflowConfiguration.get("workflow.supportedFeatures");
-                    if (supportedFeaturesConfiguration != null) {
-                        try {
-                            supportedFeatures = DocumentWorkflow.SupportedFeatures.valueOf(supportedFeaturesConfiguration);
-                        } catch (IllegalArgumentException e) {
-                            String configurationPath = (String) workflowConfiguration.get("_path");
-                            if (configurationPath == null) {
-                                configurationPath = "<unknown>";
-                            }
-                            log.warn("Unknown DocumentWorkflow.SupportedFeatures [{}] configured for property workflow.supportedFeatures at: {}",
-                                    supportedFeaturesConfiguration, configurationPath);
-                        }
-                    }
-                }
-
                 for (Node variant : new NodeIterable(handle.getNodes(handle.getName()))) {
                     DocumentVariant doc = new DocumentVariant(variant);
                     if (documents != null && documents.containsKey(doc.getState())) {
@@ -198,11 +177,11 @@ public class DocumentHandle implements SCXMLDataModel {
                 if (hasPrivilege == null) {
                     hasPrivilege = Boolean.FALSE;
                     try {
-                        hasPrivilege = Boolean.valueOf(userSession.hasPermission(userDocumentPath, priv));
-                    } catch (AccessControlException e) {
-                    } catch (AccessDeniedException e) {
+                        hasPrivilege = userSession.hasPermission(userDocumentPath, priv);
+                    } catch (AccessControlException e) { // ignore
+                    } catch (AccessDeniedException e) { // ignore
                     } catch (IllegalArgumentException e) { // the underlying repository does not recognized the privileges requested.
-                    } catch (RepositoryException e) {
+                    } catch (RepositoryException e) { // ignore
                     }
                     privilegesMap.put(priv, hasPrivilege);
                 }
@@ -215,14 +194,6 @@ public class DocumentHandle implements SCXMLDataModel {
         catch (RepositoryException e) {
             return false;
         }
-    }
-
-    /**
-     * @return configured Features or {@link DocumentWorkflow.SupportedFeatures#all}
-     * by default
-     */
-    public DocumentWorkflow.SupportedFeatures getSupportedFeatures() {
-        return supportedFeatures;
     }
 
     public WorkflowContext getWorkflowContext() {
@@ -279,10 +250,5 @@ public class DocumentHandle implements SCXMLDataModel {
         if (pathPrivilegesMap != null) {
             pathPrivilegesMap.clear();
         }
-    }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
     }
 }

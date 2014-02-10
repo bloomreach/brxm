@@ -42,31 +42,6 @@ import org.onehippo.repository.api.annotation.WorkflowAction;
  */
 public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkflow, BasicReviewedActionsWorkflow, FullReviewedActionsWorkflow, UnlockWorkflow {
 
-    /**
-     * The SupportedFeatures enumeration can be used to 'filter' which subset of the DocumentWorkflow functionality
-     * should be used and exposed
-     */
-    enum SupportedFeatures {
-
-        all, request, document, unlock, version;
-
-        public boolean isRequest() {
-            return this == all || this == request;
-        }
-
-        public boolean isDocument() {
-            return this == all || this == document;
-        }
-
-        public boolean isUnlock() {
-            return this == all || this == unlock;
-        }
-
-        public boolean isVersion() {
-            return this == all || this == version;
-        }
-    }
-
     Map<String, Serializable> getInfo() throws WorkflowException;
 
     Map<String, Boolean> getActions() throws WorkflowException;

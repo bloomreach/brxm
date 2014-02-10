@@ -21,7 +21,6 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
@@ -48,11 +47,6 @@ public class DocumentHandleTest {
         return variant;
     }
 
-    @SuppressWarnings("unchecked")
-    protected void putWorkflowConfig(RepositoryMap workflowConfig, String key, String value) {
-        workflowConfig.put(key, value);
-    }
-    
     protected static DocumentVariant getDraft(DocumentHandle dm) {
         return dm.getDocumentVariantByState(HippoStdNodeType.DRAFT);
     }
@@ -103,29 +97,6 @@ public class DocumentHandleTest {
         assertNotNull(getUnpublished(dm));
         assertNotNull(getPublished(dm));
         assertEquals(draftVariant, getDraft(dm).getNode());
-    }
-
-    @Test
-    public void testWorkflowSupportedFeatures() throws Exception {
-        MockWorkflowContext context = new MockWorkflowContext("testuser");
-        MockNode handleNode = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
-        addVariant(handleNode, HippoStdNodeType.DRAFT);
-        RepositoryMap workflowConfig = context.getWorkflowConfiguration();
-
-        DocumentHandle dm = new DocumentHandle("test", context, handleNode);
-        assertEquals(DocumentWorkflow.SupportedFeatures.all, dm.getSupportedFeatures());
-        assertTrue(dm.getSupportedFeatures().isDocument());
-        assertTrue(dm.getSupportedFeatures().isRequest());
-
-        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
-        dm = new DocumentHandle("test", context, handleNode);
-        assertEquals(DocumentWorkflow.SupportedFeatures.document, dm.getSupportedFeatures());
-        assertTrue(dm.getSupportedFeatures().isDocument());
-        assertFalse(dm.getSupportedFeatures().isRequest());
-
-        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", "undefined");
-        dm = new DocumentHandle("test", context, handleNode);
-        assertEquals(DocumentWorkflow.SupportedFeatures.all, dm.getSupportedFeatures());
     }
 
     @Test
