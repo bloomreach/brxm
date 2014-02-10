@@ -70,7 +70,7 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = new SiteMapResource();
         final Response delete = siteMapResource.delete(nonWorkspaceItem.getId());
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), delete.getStatus());
-        System.out.println(((ExtResponseRepresentation) delete.getEntity()).getMessage());
+        assertTrue((((ExtResponseRepresentation) delete.getEntity()).getMessage().contains("not part of hst:workspace")));
     }
 
 
