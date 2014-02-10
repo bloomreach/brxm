@@ -43,6 +43,7 @@ public interface SCXMLDataModel {
     String FINAL_RESET_STATE_ID = "reset";
 
     String getScxmlId();
+    boolean isInitialized();
     void initialize() throws WorkflowException;
     Map<String,Boolean> getActions();
     Object getResult();

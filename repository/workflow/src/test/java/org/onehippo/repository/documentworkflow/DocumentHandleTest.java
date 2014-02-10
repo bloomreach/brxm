@@ -66,7 +66,7 @@ public class DocumentHandleTest {
         MockNode handle = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
         Node publishRequest = addRequest(handle, WorkflowRequest.PUBLISH, true);
         DocumentHandle dm = new DocumentHandle("test", new MockWorkflowContext("testuser"), handle);
-
+        dm.initialize();
         assertTrue(dm.getDocuments().isEmpty());
         assertEquals("testuser", dm.getUser());
         assertEquals(1, dm.getRequests().size());
@@ -80,7 +80,7 @@ public class DocumentHandleTest {
         Node rejectedRequest = addRequest(handle, WorkflowRequest.REJECTED, true);
         rejectedRequest.setProperty(WorkflowRequest.HIPPOSTDPUBWF_USERNAME, "testuser");
         dm = new DocumentHandle("test", new MockWorkflowContext("testuser"), handle);
-
+        dm.initialize();
         assertNull(getDraft(dm));
         assertNotNull(getUnpublished(dm));
         assertNotNull(getPublished(dm));
@@ -92,7 +92,7 @@ public class DocumentHandleTest {
         // add draft
         Node draftVariant = addVariant(handle, HippoStdNodeType.DRAFT);
         dm = new DocumentHandle("test", new MockWorkflowContext("testuser"), handle);
-
+        dm.initialize();
         assertNotNull(getDraft(dm));
         assertNotNull(getUnpublished(dm));
         assertNotNull(getPublished(dm));
@@ -107,7 +107,7 @@ public class DocumentHandleTest {
         Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
         Node draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
         DocumentHandle dm = new DocumentHandle("test", context, handleNode);
-
+        dm.initialize();
         // testing with only hippo:admin being denied
         assertTrue(dm.isGranted(getDraft(dm), "foo"));
         assertTrue(dm.isGranted(getDraft(dm), "foo,bar"));
@@ -116,7 +116,7 @@ public class DocumentHandleTest {
 
         session.setPermissions("/test/test", "hippo:author,hippo:editor", true);
         dm = new DocumentHandle("test", context, handleNode);
-
+        dm.initialize();
         // testing with only hippo:author,hippo:editor being allowed
         assertFalse(dm.isGranted(getDraft(dm), "foo"));
         assertFalse(dm.isGranted(getDraft(dm), "foo,bar"));

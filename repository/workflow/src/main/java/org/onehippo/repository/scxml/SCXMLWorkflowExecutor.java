@@ -15,14 +15,13 @@
  */
 package org.onehippo.repository.scxml;
 
-import java.util.Set;
+import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.scxml2.SCXMLExecutor;
 import org.apache.commons.scxml2.TriggerEvent;
 import org.apache.commons.scxml2.model.ModelException;
-import org.apache.commons.scxml2.model.TransitionTarget;
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
@@ -38,11 +37,12 @@ public class SCXMLWorkflowExecutor {
     private final String scxmlId;
     private final SCXMLExecutor executor;
     private SCXMLDataModel dm;
-    private boolean resetRequired;
+    private boolean started;
     private boolean terminated;
 
     public SCXMLWorkflowExecutor(SCXMLDataModel dm) throws WorkflowException {
 
+        this.dm = dm;
         this.scxmlId = dm.getScxmlId();
 
         SCXMLRegistry scxmlRegistry = HippoServiceRegistry.getService(SCXMLRegistry.class);
@@ -58,9 +58,6 @@ public class SCXMLWorkflowExecutor {
         } catch (SCXMLException e) {
             throw new WorkflowException("SCXML workflow executor creation failed", e);
         }
-
-        this.dm = dm;
-        prepare();
     }
 
     public SCXMLExecutor getSCXMLExecutor() {
@@ -76,15 +73,8 @@ public class SCXMLWorkflowExecutor {
         reset();
     }
 
-    public boolean ensureStarted() throws WorkflowException {
-        if (!isStarted() && !isTerminated()) {
-            start();
-        }
-        return isStarted();
-    }
-
     public boolean isStarted() {
-        return !resetRequired && !terminated;
+        return started;
     }
 
     public boolean isTerminated() {
@@ -93,41 +83,13 @@ public class SCXMLWorkflowExecutor {
 
     public void reset() {
         terminated = false;
-        resetRequired = true;
-        getDataModel().reset();
-    }
-
-    protected void prepare() throws WorkflowException {
-        if (resetRequired) {
+        started = false;
+        if (getDataModel().isInitialized()) {
             getDataModel().reset();
         }
-        getDataModel().initialize();
-        getSCXMLExecutor().getRootContext().set(SCXMLDataModel.CONTEXT_KEY, getDataModel());
     }
 
-    protected void checkFinalState() throws WorkflowException {
-        resetRequired = false;
-        if (executor.getCurrentStatus().isFinal()) {
-            Set<TransitionTarget> targets = executor.getCurrentStatus().getStates();
-            for (TransitionTarget target : targets) {
-                if (SCXMLDataModel.FINAL_RESET_STATE_ID.equals(target.getId())) {
-                    resetRequired = true;
-                }
-            }
-            if (resetRequired) {
-                getDataModel().reset();
-            }
-            else {
-                terminated = true;
-            }
-        }
-    }
-
-    protected void handleException(Exception e, boolean noResetRequired) throws WorkflowException {
-        if (!noResetRequired) {
-            resetRequired = true;
-            getDataModel().reset();
-        }
+    protected void handleException(Exception e) throws WorkflowException {
         if (e instanceof WorkflowException) {
             log.error(e.getMessage(), e);
             throw (WorkflowException)e;
@@ -179,14 +141,20 @@ public class SCXMLWorkflowExecutor {
         if (terminated) {
             throw new WorkflowException("Workflow "+scxmlId+" already terminated");
         }
-        prepare();
-        resetRequired = false;
+        if (getDataModel().isInitialized()) {
+            getDataModel().reset();
+        }
+        getDataModel().initialize();
+        getSCXMLExecutor().getRootContext().set(SCXMLDataModel.CONTEXT_KEY, getDataModel());
         log.info("Starting workflow {}", scxmlId);
         try {
             executor.go();
-            checkFinalState();
+            started = true;
+            if (executor.getCurrentStatus().isFinal()) {
+                terminated = true;
+            }
         } catch (Exception e) {
-            handleException(e, false);
+            handleException(e);
         }
         // only reached when no exception
         return getDataModel().getResult();
@@ -194,34 +162,46 @@ public class SCXMLWorkflowExecutor {
 
     /**
      * Invokes {@link SCXMLExecutor#triggerEvent(TriggerEvent)} with a {@link TriggerEvent#SIGNAL_EVENT} and the provided action as event name
+     * <p>If the triggering of the action is allowed will first be validated against the {@link SCXMLDataModel#getActions()}</p>
      * @return {@link SCXMLDataModel#getResult()} if there's no exception.
      */
     public Object triggerAction(String action) throws WorkflowException {
-        return triggerAction(action, null);
+        return triggerAction(action, getDataModel().getActions(), null);
+    }
+
+    /**
+     * Invokes {@link SCXMLExecutor#triggerEvent(TriggerEvent)} with a {@link TriggerEvent#SIGNAL_EVENT} and the provided action as event name
+     * <p>If the triggering of the action is allowed will first be validated against the provided actionsMap}</p>
+     * @return {@link SCXMLDataModel#getResult()} if there's no exception.
+     */
+    public Object triggerAction(String action, Map<String, Boolean> actionsMap) throws WorkflowException {
+        return triggerAction(action, actionsMap, null);
     }
 
     /**
      * Invokes {@link SCXMLExecutor#triggerEvent(TriggerEvent)} with a {@link TriggerEvent#SIGNAL_EVENT}, the provided action as event name and payload as event payload
+     * <p>If the triggering of the action is allowed will first be validated against the {@link SCXMLDataModel#getActions()}</p>
      * @return {@link SCXMLDataModel#getResult()} if there's no exception.
      */
     public Object triggerAction(String action, Object payload) throws WorkflowException {
-        boolean noResetRequired = false;
+        return triggerAction(action, getDataModel().getActions(), payload);
+    }
+
+    /**
+     * Invokes {@link SCXMLExecutor#triggerEvent(TriggerEvent)} with a {@link TriggerEvent#SIGNAL_EVENT}, the provided action as event name and payload as event payload
+     * <p>If the triggering of the action is allowed will first be validated against the provided actionsMap}</p>
+     * @return {@link SCXMLDataModel#getResult()} if there's no exception.
+     */
+    public Object triggerAction(String action, Map<String, Boolean> actionsMap, Object payload) throws WorkflowException {
+        if (!started) {
+            throw new WorkflowException("Workflow "+scxmlId+" not started");
+        }
         if (terminated) {
             throw new WorkflowException("Workflow "+scxmlId+" already terminated");
         }
         try {
-            if (resetRequired) {
-                log.info("Resetting workflow {}", scxmlId);
-                prepare();
-                executor.go();
-                checkFinalState();
-                if (terminated || resetRequired) {
-                    throw new WorkflowException("Cannot invoke workflow "+scxmlId+" action "+action+": workflow already terminated or reset");
-                }
-            }
-            Boolean allowed = getDataModel().getActions().get(action);
+            Boolean allowed = actionsMap.get(action);
             if (allowed == null || !allowed) {
-                noResetRequired = true;
                 throw new WorkflowException("Cannot invoke workflow "+scxmlId+" action "+action+": action not allowed or undefined");
             }
             TriggerEvent event = new TriggerEvent(action, TriggerEvent.SIGNAL_EVENT, payload);
@@ -231,11 +211,14 @@ public class SCXMLWorkflowExecutor {
             else {
                 log.info("Invoking workflow {} action {} with payload {}", new Object[]{scxmlId, action, payload.toString()});
             }
-            prepare();
+            // reset result
+            getDataModel().setResult(null);
             executor.triggerEvent(event);
-            checkFinalState();
+            if (executor.getCurrentStatus().isFinal()) {
+                terminated = true;
+            }
         } catch (Exception e) {
-            handleException(e, noResetRequired);
+            handleException(e);
         }
         // only reached when no exception
         return getDataModel().getResult();

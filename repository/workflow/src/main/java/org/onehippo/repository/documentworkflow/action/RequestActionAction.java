@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package org.onehippo.repository.scxml;
+package org.onehippo.repository.documentworkflow.action;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -25,13 +26,20 @@ import org.apache.commons.scxml2.EventDispatcher;
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.TriggerEvent;
 import org.apache.commons.scxml2.model.ModelException;
+import org.onehippo.repository.documentworkflow.DocumentHandle;
+import org.onehippo.repository.scxml.AbstractAction;
 
-/**
- * ActionAction sets a provided action enabled setting in the {@link SCXMLDataModel}, or removes it if empty/null
- */
-public class ActionAction extends AbstractAction {
+public class RequestActionAction extends AbstractAction {
 
     private static final long serialVersionUID = 1L;
+
+    public String getIdentifierExpr() {
+        return getParameter("identifierExpr");
+    }
+
+    public void setIdentifierExpr(String identifierExpr) {
+        setParameter("identifierExpr", identifierExpr);
+    }
 
     public String getAction() {
         return getParameter("action");
@@ -53,6 +61,11 @@ public class ActionAction extends AbstractAction {
     protected void doExecute(EventDispatcher evtDispatcher, ErrorReporter errRep, Log appLog,
                              Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException {
 
+        String identifier = (StringUtils.isBlank(getIdentifierExpr()) ? null : (String)eval(getIdentifierExpr()));
+        if (StringUtils.isBlank(identifier)) {
+            throw new ModelException("No identifier specified");
+        }
+
         String action = getAction();
         if (StringUtils.isBlank(action)) {
             throw new ModelException("No action specified");
@@ -61,11 +74,12 @@ public class ActionAction extends AbstractAction {
         String enabledExpr = getEnabledExpr();
         Boolean enabled = (StringUtils.isBlank(enabledExpr) ? null : (Boolean)eval(enabledExpr));
 
-        SCXMLDataModel dm = getDataModel();
+        DocumentHandle dh = (DocumentHandle)getDataModel();
+        Map<String, Boolean> requestActions = dh.getRequestActions(identifier);
         if (enabled == null) {
-            dm.getActions().remove(action);
+            requestActions.remove(action);
         } else {
-            dm.getActions().put(action, enabled);
+            requestActions.put(action, enabled);
         }
     }
 }

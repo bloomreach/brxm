@@ -246,7 +246,7 @@
         <sv:value>org.onehippo.repository.documentworkflow.action.WorkflowExceptionAction</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="requestsActionsInfo">
+    <sv:node sv:name="requestAction">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hipposcxml:action</sv:value>
       </sv:property>
@@ -254,7 +254,7 @@
         <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
       </sv:property>
       <sv:property sv:name="hipposcxml:classname" sv:type="String">
-        <sv:value>org.onehippo.repository.documentworkflow.action.RequestsActionsInfoAction</sv:value>
+        <sv:value>org.onehippo.repository.documentworkflow.action.RequestActionAction</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="rejectRequest">

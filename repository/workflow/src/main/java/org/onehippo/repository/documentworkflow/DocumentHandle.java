@@ -52,20 +52,24 @@ public class DocumentHandle implements SCXMLDataModel {
     private final Node handle;
     private final String user;
 
-    private Map<String, DocumentVariant> documents;
-    private Map<String, Request> requests;
+    private Map<String, DocumentVariant> documents = new HashMap<>();
+    private Map<String, Request> requests = new HashMap<>();
     private boolean requestPending;
 
     private Map<String, Map<String, Boolean>> pathPrivilegesMap;
 
     private Map<String, Serializable> info = new HashMap<>();
+    private Map<String, Map<String, Boolean>> requestActionsInfo = null;
 
     public DocumentHandle(String scxmlId, WorkflowContext context, Node handle) throws WorkflowException {
         this.scxmlId = scxmlId;
         this.context = context;
         this.handle = handle;
         this.user = context.getUserIdentity();
-        initialize();
+    }
+
+    public boolean isInitialized() {
+        return initialized;
     }
 
     public void initialize() throws WorkflowException {
@@ -74,24 +78,24 @@ public class DocumentHandle implements SCXMLDataModel {
             try {
                 for (Node variant : new NodeIterable(handle.getNodes(handle.getName()))) {
                     DocumentVariant doc = new DocumentVariant(variant);
-                    if (documents != null && documents.containsKey(doc.getState())) {
+                    if (documents.containsKey(doc.getState())) {
                         log.warn("Document at path {} has multiple variants with state {}. Variant with identifier {} ignored.",
                                 new String[]{handle.getPath(), doc.getState(), variant.getIdentifier()});
                     }
-                    getDocuments(true).put(doc.getState(), doc);
+                    documents.put(doc.getState(), doc);
                 }
 
                 for (Node requestNode : new NodeIterable(handle.getNodes(WorkflowRequest.HIPPO_REQUEST))) {
                     Request request = Request.createRequest(requestNode);
                     if (request != null) {
                         if (request.isWorkflowRequest()) {
-                            getRequests(true).put(request.getIdentity(), request);
+                            requests.put(request.getIdentity(), request);
                             if (!WorkflowRequest.REJECTED.equals(((WorkflowRequest)request).getType())) {
                                 requestPending = true;
                             }
                         }
                         else if (request.isScheduledRequest()) {
-                            getRequests(true).put(request.getIdentity(), request);
+                            requests.put(request.getIdentity(), request);
                             requestPending = true;
                         }
                     }
@@ -104,26 +108,6 @@ public class DocumentHandle implements SCXMLDataModel {
         }
     }
 
-    protected Map<String, DocumentVariant> getDocuments(boolean create) {
-        if (create && documents == null) {
-            documents = new HashMap<>();
-        }
-        if (documents != null) {
-            return documents;
-        }
-        return Collections.emptyMap();
-    }
-
-    protected Map<String, Request> getRequests(boolean create) {
-        if (create && requests == null) {
-            requests = new HashMap<>();
-        }
-        if (requests != null) {
-            return requests;
-        }
-        return Collections.emptyMap();
-    }
-
     public String getScxmlId() {
         return scxmlId;
     }
@@ -133,7 +117,20 @@ public class DocumentHandle implements SCXMLDataModel {
     }
 
     public Map<String, Request> getRequests() {
-        return getRequests(false);
+        return requests;
+    }
+
+    public Map<String, Boolean> getRequestActions(String requestIdentifier) {
+        if (requestActionsInfo == null) {
+            requestActionsInfo = new HashMap<>();
+            info.put("requests", (Serializable)Collections.unmodifiableMap(requestActionsInfo));
+        }
+        Map<String,Boolean> requestActions = requestActionsInfo.get(requestIdentifier);
+        if (requestActions == null) {
+            requestActions = new HashMap<>();
+            requestActionsInfo.put(requestIdentifier, requestActions);
+        }
+        return requestActions;
     }
 
     public boolean isRequestPending() {
@@ -205,15 +202,15 @@ public class DocumentHandle implements SCXMLDataModel {
     }
 
     public void putDocumentVariant(DocumentVariant variant) throws RepositoryException {
-        getDocuments(true).put(variant.getState(), variant);
+        documents.put(variant.getState(), variant);
     }
 
     public DocumentVariant getDocumentVariantByState(String state) {
-        return getDocuments(false).get(state);
+        return documents.get(state);
     }
 
     public Map<String, DocumentVariant> getDocuments() {
-        return getDocuments(false);
+        return documents;
     }
 
     public Map<String, Serializable> getInfo() {

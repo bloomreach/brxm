@@ -39,7 +39,6 @@ public class WorkflowRequest extends Request {
     public static final String SCHEDPUBLISH = "scheduledpublish";
     public static final String SCHEDDEPUBLISH = "scheduleddepublish";
     public static final String DELETE = "delete";
-    public static final String COLLECTION = "collection";
 
     public WorkflowRequest() {}
 
@@ -72,12 +71,27 @@ public class WorkflowRequest extends Request {
         return getStringProperty(HIPPOSTDPUBWF_TYPE);
     }
 
+    public String getWorkflowType() throws RepositoryException {
+        String type = getType();
+        if (SCHEDPUBLISH.equals(type)) {
+            return PUBLISH;
+        }
+        else if (SCHEDDEPUBLISH.equals(type)) {
+            return DEPUBLISH;
+        }
+        return type;
+    }
+
     public String getOwner() throws RepositoryException {
         return getStringProperty(HIPPOSTDPUBWF_USERNAME);
     }
 
     public Date getScheduledDate() throws RepositoryException  {
-        return getDateProperty(HIPPOSTDPUBWF_REQDATE);
+        String type = getType();
+        if (SCHEDPUBLISH.equals(type) || SCHEDDEPUBLISH.equals(type)) {
+            return getDateProperty(HIPPOSTDPUBWF_REQDATE);
+        }
+        return null;
     }
 
     public void setRejected(DocumentVariant stale, String reason) throws RepositoryException  {

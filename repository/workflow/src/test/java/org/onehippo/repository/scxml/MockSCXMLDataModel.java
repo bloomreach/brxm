@@ -22,6 +22,7 @@ class MockSCXMLDataModel implements SCXMLDataModel {
     private HashMap<String, Boolean> actions = new HashMap<>();
     private Object result;
     private final String scxmlId;
+    private boolean initialized;
 
     public MockSCXMLDataModel(String scxmlId) {
         this.scxmlId = scxmlId;
@@ -31,7 +32,12 @@ class MockSCXMLDataModel implements SCXMLDataModel {
         return scxmlId;
     }
 
+    public boolean isInitialized() {
+        return initialized;
+    }
+
     public void initialize() {
+        initialized = true;
         result = null;
     }
 
@@ -48,6 +54,7 @@ class MockSCXMLDataModel implements SCXMLDataModel {
     }
 
     public void reset() {
+        initialized = false;
         actions.clear();
     }
 }

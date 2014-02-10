@@ -48,10 +48,10 @@ import org.onehippo.repository.documentworkflow.action.ListVersionsVariantAction
 import org.onehippo.repository.documentworkflow.action.MoveDocumentAction;
 import org.onehippo.repository.documentworkflow.action.RejectRequestAction;
 import org.onehippo.repository.documentworkflow.action.RenameDocumentAction;
+import org.onehippo.repository.documentworkflow.action.RequestActionAction;
 import org.onehippo.repository.documentworkflow.action.ScheduleWorkflowAction;
 import org.onehippo.repository.documentworkflow.action.VersionRestoreToAction;
 import org.onehippo.repository.documentworkflow.action.WorkflowRequestAction;
-import org.onehippo.repository.documentworkflow.action.RequestsActionsInfoAction;
 import org.onehippo.repository.documentworkflow.action.RestoreVersionAction;
 import org.onehippo.repository.documentworkflow.action.RetrieveVersionAction;
 import org.onehippo.repository.documentworkflow.action.SetHolderAction;
@@ -98,7 +98,7 @@ public class DocumentWorkflowTest {
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "retrieveVersion", RetrieveVersionAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "restoreVersion", RestoreVersionAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "versionRestoreTo", VersionRestoreToAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "requestsActionsInfo", RequestsActionsInfoAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "requestAction", RequestActionAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "rejectRequest", RejectRequestAction.class.getName());
         registry.setUp(scxmlConfigNode);
 
@@ -202,6 +202,7 @@ public class DocumentWorkflowTest {
 
         addVariant(handleNode, HippoStdNodeType.DRAFT);
         wf.setNode(handleNode);
+        wf.getWorkflowExecutor().start();
     }
 
     @Test
@@ -219,6 +220,7 @@ public class DocumentWorkflowTest {
         MockNode publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
 
         wf.setNode(handleNode);
+        wf.getWorkflowExecutor().start();
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "status");
         assertContainsHint(wf.hints(), "status", true);
@@ -226,32 +228,38 @@ public class DocumentWorkflowTest {
 
         unpublishedVariant.remove();
         wf.setNode(handleNode);
+        wf.getWorkflowExecutor().start();
 
         assertContainsHint(wf.hints(), "status", true);
         assertContainsHint(wf.hints(), "checkModified", false);
 
         publishedVariant.remove();
         wf.setNode(handleNode);
+        wf.getWorkflowExecutor().start();
 
         assertContainsHint(wf.hints(), "status", true);
 
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "testuser");
         wf.setNode(handleNode);
+        wf.getWorkflowExecutor().start();
 
         assertContainsHint(wf.hints(), "status", true);
 
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "otheruser");
         wf.setNode(handleNode);
+        wf.getWorkflowExecutor().start();
 
         assertContainsHint(wf.hints(), "status", false);
 
         unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
         wf.setNode(handleNode);
+        wf.getWorkflowExecutor().start();
 
         assertContainsHint(wf.hints(), "status", false);
 
         draftVariant.remove();
         wf.setNode(handleNode);
+        wf.getWorkflowExecutor().start();
 
         assertContainsHint(wf.hints(), "status", true);
     }
