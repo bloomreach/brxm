@@ -76,7 +76,7 @@ public class HtmlCleanerPluginTest extends PluginTest {
     }
 
     @Test
-    public void testClean() throws Exception {
+    public void testCleanJavascriptInAttributes() throws Exception {
         final HtmlCleanerPlugin htmlCleanerPlugin = new HtmlCleanerPlugin(null, getPluginConfig());
 
         // src attribute contains javascript

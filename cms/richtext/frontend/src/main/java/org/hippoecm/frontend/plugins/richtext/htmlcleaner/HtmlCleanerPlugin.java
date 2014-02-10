@@ -100,7 +100,7 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
                 attributes.remove(attribute.getKey());
                 continue;
             }
-            if (attributeValue.toLowerCase().startsWith(JAVASCRIPT_PROTOCOL)) {
+            if (attributeValue.toLowerCase().trim().startsWith(JAVASCRIPT_PROTOCOL)) {
                 attributes.put(attributeName, "");
             }
         }
