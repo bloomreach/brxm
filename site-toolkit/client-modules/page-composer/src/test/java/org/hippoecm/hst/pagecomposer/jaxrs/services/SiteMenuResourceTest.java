@@ -75,13 +75,13 @@ public class SiteMenuResourceTest {
     private HstSite site;
     private MockSiteMenuConfiguration menuConfig;
     private MockSiteMenuItemConfiguration itemConfig;
+    private HstRequestContextService hstRequestContextService;
     private Node node, parentNode, childNode;
 
     @Before
     public void setUp() {
         this.siteMenuHelper = createMock(SiteMenuHelper.class);
         this.siteMenuItemHelper = createMock(SiteMenuItemHelper.class);
-        this.siteMenuResource = new SiteMenuResource(siteMenuHelper, siteMenuItemHelper);
         this.request = createMock(HttpServletRequest.class);
         this.context = createMock(HstRequestContext.class);
         this.session = createMock(Session.class);
@@ -95,7 +95,13 @@ public class SiteMenuResourceTest {
         this.node = createMock(Node.class);
         this.parentNode = createMock(Node.class);
         this.childNode = createMock(Node.class);
-        this.mocks = new Object[]{siteMenuHelper, siteMenuItemHelper, request, context, session, httpSession, virtualHost, virtualHosts, mount, site, menuConfig, itemConfig, node, parentNode, childNode};
+        this.hstRequestContextService = createMock(HstRequestContextService.class);
+        this.mocks = new Object[]{siteMenuHelper, siteMenuItemHelper, request, context, session, httpSession, virtualHost, virtualHosts, mount, site, menuConfig, itemConfig, node, parentNode, childNode, hstRequestContextService};
+
+        this.siteMenuResource = new SiteMenuResource();
+        this.siteMenuResource.setSiteMenuHelper(siteMenuHelper);
+        this.siteMenuResource.setSiteMenuItemHelper(siteMenuItemHelper);
+        this.siteMenuResource.setHstRequestContextService(hstRequestContextService);
     }
 
     @Test
@@ -108,7 +114,7 @@ public class SiteMenuResourceTest {
         expect(menuConfig.getSiteMenuConfigurationItems()).andReturn(children);
         replay(mocks);
 
-        final Response response = siteMenuResource.getMenu(context);
+        final Response response = siteMenuResource.getMenu();
         assertThat(response.getStatus(), is(OK));
         final ExtResponseRepresentation entity = ExtResponseRepresentation.class.cast(response.getEntity());
         assertThat(entity.getData(), is(SiteMenuRepresentation.class));
@@ -123,7 +129,7 @@ public class SiteMenuResourceTest {
         mockGetMenuItem(node, id);
         replay(mocks);
 
-        final Response response = siteMenuResource.getMenuItem(context, id);
+        final Response response = siteMenuResource.getMenuItem(id);
         assertThat(response.getStatus(), is(OK));
         final ExtResponseRepresentation entity = ExtResponseRepresentation.class.cast(response.getEntity());
         assertThat(entity.getData(), is(SiteMenuItemRepresentation.class));
@@ -153,7 +159,7 @@ public class SiteMenuResourceTest {
 
         replay(mocks);
 
-        final Response response = siteMenuResource.create(context, menuId, newMenuItem);
+        final Response response = siteMenuResource.create(menuId, newMenuItem);
 
         assertThat(response.getStatus(), is(OK));
         assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
@@ -179,7 +185,7 @@ public class SiteMenuResourceTest {
         expectLastCall().once();
         replay(mocks);
 
-        final Response response = siteMenuResource.update(context, modifiedItem);
+        final Response response = siteMenuResource.update(modifiedItem);
 
         assertThat(response.getStatus(), is(OK));
         assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
@@ -191,7 +197,8 @@ public class SiteMenuResourceTest {
 
     @Test
     public void testUpdateReturnsServerErrorOnRepositoryException() throws RepositoryException {
-        expect(context.getAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER)).andReturn(null).anyTimes();
+        expect(hstRequestContextService.getRequestConfigIdentifier()).andReturn(null).anyTimes();
+        expect(hstRequestContextService.getRequestContext()).andReturn(context).times(2);
         expect(context.getSession()).andThrow(new RepositoryException("failed"));
 
         final String id = "uuid-of-menu-item";
@@ -199,7 +206,7 @@ public class SiteMenuResourceTest {
         modifiedItem.setId(id);
         replay(mocks);
 
-        final Response response = siteMenuResource.update(context, modifiedItem);
+        final Response response = siteMenuResource.update(modifiedItem);
         assertThat(response.getStatus(), is(SERVER_ERROR));
         assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
 
@@ -211,7 +218,8 @@ public class SiteMenuResourceTest {
 
     @Test
     public void testUpdateReturnsClientErrorOnIllegalStateException() throws RepositoryException {
-        expect(context.getAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER)).andReturn(null).anyTimes();
+        expect(hstRequestContextService.getRequestConfigIdentifier()).andReturn(null).anyTimes();
+        expect(hstRequestContextService.getRequestContext()).andReturn(context).times(2);
         expect(context.getSession()).andThrow(new IllegalStateException("failed"));
 
 
@@ -220,7 +228,7 @@ public class SiteMenuResourceTest {
         modifiedItem.setId(id);
         replay(mocks);
 
-        final Response response = siteMenuResource.update(context, modifiedItem);
+        final Response response = siteMenuResource.update(modifiedItem);
         assertThat(response.getStatus(), is(BAD_REQUEST));
         assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
 
@@ -254,7 +262,7 @@ public class SiteMenuResourceTest {
         expectLastCall().once();
         replay(mocks);
 
-        final Response response = siteMenuResource.move(context, sourceId, parentTargetId, childTargetId);
+        final Response response = siteMenuResource.move(sourceId, parentTargetId, childTargetId);
         assertThat(response.getStatus(), is(OK));
         assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
 
@@ -275,7 +283,7 @@ public class SiteMenuResourceTest {
         expectLastCall().once();
         replay(mocks);
 
-        final Response response = siteMenuResource.delete(context, sourceId);
+        final Response response = siteMenuResource.delete(sourceId);
         assertThat(response.getStatus(), is(OK));
         assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
 
@@ -295,6 +303,8 @@ public class SiteMenuResourceTest {
 
     private void mockGetSiteMenu(String menuId) {
         // Mock getting the site menu
+        expect(hstRequestContextService.getRequestConfigIdentifier()).andReturn(menuId).anyTimes();
+        expect(hstRequestContextService.getRequestContext()).andReturn(context);
         expect(context.getAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER)).andReturn(menuId).anyTimes();
         expect(siteMenuHelper.getMenu(site, menuId)).andReturn(menuConfig);
     }
@@ -309,6 +319,7 @@ public class SiteMenuResourceTest {
         expect(virtualHost.getVirtualHosts()).andReturn(virtualHosts);
         expect(virtualHosts.getMountByIdentifier("mount")).andReturn(mount);
         expect(mount.getPreviewHstSite()).andReturn(site);
+        expect(hstRequestContextService.getEditingPreviewSite()).andReturn(site).anyTimes();
     }
 
 }

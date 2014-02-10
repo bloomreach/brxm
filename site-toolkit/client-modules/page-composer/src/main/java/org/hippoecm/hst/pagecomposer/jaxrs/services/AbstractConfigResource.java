@@ -49,6 +49,16 @@ public class AbstractConfigResource {
     
     private static Logger log = LoggerFactory.getLogger(AbstractConfigResource.class);
 
+    private HstRequestContextService hstRequestContextService;
+
+    public void setHstRequestContextService(HstRequestContextService hstRequestContextService) {
+        this.hstRequestContextService = hstRequestContextService;
+    }
+
+    protected final HstRequestContextService getHstRequestContextService() {
+        return hstRequestContextService;
+    }
+
     public static HstRequestContext getRequestContext(HttpServletRequest servletRequest) {
         return (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
     }
@@ -71,8 +81,7 @@ public class AbstractConfigResource {
     public static String getEditingPreviewChannelPath(final HstRequestContext requestContext) {
         final Mount liveMount = getEditingMount(requestContext);
         assertIsContextualizableMount(liveMount);
-        final String previewChannelPath =  liveMount.getChannelPath()+ "-preview";
-        return previewChannelPath;
+        return  liveMount.getChannelPath()+ "-preview";
     }
     /**
      * @return the preview {@link Channel} and <code>null</code> if there is no preview channel available
@@ -91,7 +100,7 @@ public class AbstractConfigResource {
         HttpSession session = requestContext.getServletRequest().getSession(true);
         final String renderingMountId = (String)session.getAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID);
         if (renderingMountId == null) {
-            throw new IllegalStateException("Cound not find rendering mount id '"+renderingMountId+"' on request session.");
+            throw new IllegalStateException("Cound not find rendering mount id on request session.");
         }
         Mount mount = requestContext.getVirtualHost().getVirtualHosts().getMountByIdentifier(renderingMountId);
         if (mount == null) {

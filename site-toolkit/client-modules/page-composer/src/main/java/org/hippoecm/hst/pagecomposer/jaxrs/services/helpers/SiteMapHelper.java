@@ -27,10 +27,9 @@ import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.AbstractConfigResource;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.HstRequestContextService;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,15 +39,20 @@ public class SiteMapHelper extends AbstractHelper {
     private static final Logger log = LoggerFactory.getLogger(SiteMapHelper.class);
     private static final String WORKSPACE_PATH_ELEMENT = "/" + HstNodeTypes.NODENAME_HST_WORKSPACE + "/";
 
+    private HstRequestContextService hstRequestContextService;
+
+    public void setHstRequestContextService(final HstRequestContextService hstRequestContextService) {
+        this.hstRequestContextService = hstRequestContextService;
+    }
+
     @Override
     public <T> T getConfigObject(final String itemId) {
-        final HstRequestContext requestContext = RequestContextProvider.get();
-        final HstSite editingPreviewSite = AbstractConfigResource.getEditingPreviewSite(requestContext);
+        final HstSite editingPreviewSite = hstRequestContextService.getEditingPreviewSite();
         return (T) getSiteMapItem(editingPreviewSite.getSiteMap(), itemId);
     }
 
     public void update(final SiteMapItemRepresentation siteMapItem) throws RepositoryException {
-        HstRequestContext requestContext = RequestContextProvider.get();
+        HstRequestContext requestContext = hstRequestContextService.getRequestContext();
         final Session session = requestContext.getSession();
         final String itemId = siteMapItem.getId();
         Node jcrNode = session.getNodeByIdentifier(itemId);
@@ -78,7 +82,7 @@ public class SiteMapHelper extends AbstractHelper {
 
     public Node create(final SiteMapItemRepresentation siteMapItem, final String parentId) throws RepositoryException {
 
-        HstRequestContext requestContext = RequestContextProvider.get();
+        HstRequestContext requestContext = hstRequestContextService.getRequestContext();
         final Session session = requestContext.getSession();
         Node parent = session.getNodeByIdentifier(parentId);
 
@@ -101,7 +105,7 @@ public class SiteMapHelper extends AbstractHelper {
         if (id.equals(parentId)) {
             return;
         }
-        HstRequestContext requestContext = RequestContextProvider.get();
+        HstRequestContext requestContext = hstRequestContextService.getRequestContext();
         final Session session = requestContext.getSession();
         Node nodeToMove = session.getNode(id);
         Node newParent = session.getNode(parentId);
@@ -121,7 +125,7 @@ public class SiteMapHelper extends AbstractHelper {
     }
 
     public void delete(final String id) throws RepositoryException {
-        HstRequestContext requestContext = RequestContextProvider.get();
+        HstRequestContext requestContext = hstRequestContextService.getRequestContext();
         final Session session = requestContext.getSession();
         Node toDelete = session.getNodeByIdentifier(id);
         acquireLock(toDelete);
@@ -202,7 +206,7 @@ public class SiteMapHelper extends AbstractHelper {
 
     private void validateTarget(final Session session, final String target) throws RepositoryException {
         // check non workspace sitemap for collisions
-        final HstSiteMap siteMap = AbstractConfigResource.getEditingPreviewSite(RequestContextProvider.get()).getSiteMap();
+        final HstSiteMap siteMap = hstRequestContextService.getEditingPreviewSite().getSiteMap();
         if (!(siteMap instanceof CanonicalInfo)) {
             throw new IllegalStateException("Unexpected sitemap for site '" + siteMap.getSite().getName() + "' because not an instanceof CanonicalInfo");
         }

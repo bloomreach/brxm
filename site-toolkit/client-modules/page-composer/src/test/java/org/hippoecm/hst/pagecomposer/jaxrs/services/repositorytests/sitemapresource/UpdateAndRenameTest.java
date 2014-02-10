@@ -40,6 +40,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.PreviewWorkspaceNodeValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.Validator;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -56,26 +57,26 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL(request, "localhost", "/home");
         ((HstMutableRequestContext) ctx).setSession(session);
-        final ContextualizableMount mount =  (ContextualizableMount)ctx.getResolvedMount().getMount();
+        final ContextualizableMount mount = (ContextualizableMount) ctx.getResolvedMount().getMount();
 
         {
             final HstSiteMapItem home = mount.getPreviewHstSite().getSiteMap().getSiteMapItem("home");
             assertTrue(home instanceof CanonicalInfo);
-            assertTrue( ((CanonicalInfo)home).isWorkspaceConfiguration() );
-            final String homeUuid = ((CanonicalInfo)home).getCanonicalIdentifier();
+            assertTrue(((CanonicalInfo) home).isWorkspaceConfiguration());
+            final String homeUuid = ((CanonicalInfo) home).getCanonicalIdentifier();
             Validator validator = new PreviewWorkspaceNodeValidator(homeUuid, HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
             validator.validate();
         }
 
         {
             final HstSiteMapItem news = mount.getPreviewHstSite().getSiteMap().getSiteMapItem("news");
-            assertTrue( ((CanonicalInfo)news).isWorkspaceConfiguration() );
-            final String newsUuid = ((CanonicalInfo)news).getCanonicalIdentifier();
+            assertTrue(((CanonicalInfo) news).isWorkspaceConfiguration());
+            final String newsUuid = ((CanonicalInfo) news).getCanonicalIdentifier();
             new PreviewWorkspaceNodeValidator(newsUuid, HstNodeTypes.NODETYPE_HST_SITEMAPITEM).validate();
 
             final HstSiteMapItem newsWildcardChild = news.getChild("_default_");
-            assertTrue( ((CanonicalInfo)newsWildcardChild).isWorkspaceConfiguration() );
-            final String newsWildcardChildUuid = ((CanonicalInfo)newsWildcardChild).getCanonicalIdentifier();
+            assertTrue(((CanonicalInfo) newsWildcardChild).isWorkspaceConfiguration());
+            final String newsWildcardChildUuid = ((CanonicalInfo) newsWildcardChild).getCanonicalIdentifier();
             new PreviewWorkspaceNodeValidator(newsWildcardChildUuid, HstNodeTypes.NODETYPE_HST_SITEMAPITEM).validate();
         }
 
@@ -83,11 +84,11 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         {
             final HstSiteMapItem aboutUs = mount.getPreviewHstSite().getSiteMap().getSiteMapItem("about-us");
             assertFalse(((CanonicalInfo) aboutUs).isWorkspaceConfiguration());
-            final String aboutUsUuid = ((CanonicalInfo)aboutUs).getCanonicalIdentifier();
+            final String aboutUsUuid = ((CanonicalInfo) aboutUs).getCanonicalIdentifier();
             try {
                 new PreviewWorkspaceNodeValidator(aboutUsUuid, HstNodeTypes.NODETYPE_HST_SITEMAPITEM).validate();
                 fail("Expected PreviewWorkspaceNodeValidator to fail on non workspace sitemap item");
-            } catch (IllegalArgumentException e){
+            } catch (IllegalArgumentException e) {
 
             }
         }
@@ -114,7 +115,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         home.setLocalParameters(localParams);
 
 
-        SiteMapResource siteMapResource = new SiteMapResource();
+        final SiteMapResource siteMapResource = createResource();
         Response response = siteMapResource.update(home);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
@@ -171,7 +172,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
 
         // attempt now to update home with admin session
         home.setComponentConfigurationId("foo");
-        SiteMapResource siteMapResource = new SiteMapResource();
+        final SiteMapResource siteMapResource = createResource();
 
         Response response = siteMapResource.update(home);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
@@ -187,7 +188,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         try {
             helper.acquireLock(homeNodeByBob);
         } catch (IllegalStateException e) {
-           fail("Bob should still have the lock");
+            fail("Bob should still have the lock");
         }
 
         bob.logout();
@@ -210,12 +211,12 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         // now news/_any_ has explicit lock: as a result, 'news' is partially locked
 
         news.setComponentConfigurationId("foo");
-        SiteMapResource siteMapResource = new SiteMapResource();
+        final SiteMapResource siteMapResource = createResource();
 
         session.getRootNode().addNode("dummy-to-show-changes-are-discarded-when-update-fails");
         {
             Response response = siteMapResource.update(news);
-            assertEquals("update should fail because of partial lock.",Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+            assertEquals("update should fail because of partial lock.", Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
         }
         assertFalse("After failing update, session should had its changes discarded", session.hasPendingChanges());
 
@@ -261,7 +262,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         bob.save();
 
 
-        SiteMapResource siteMapResource = new SiteMapResource();
+        final SiteMapResource siteMapResource = createResource();
         // now news/_any_ has implicit lock due to ancestor lock
 
         final SiteMapItemRepresentation newsAny = getSiteMapItemRepresentation(session, "news/_any_");
@@ -294,7 +295,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
     @Test
     public void test_rename() throws Exception {
 
-        SiteMapResource siteMapResource = new SiteMapResource();
+        final SiteMapResource siteMapResource = createResource();
 
         {
             final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
@@ -322,7 +323,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
             news.setName("home");
             Response bobResponse = siteMapResource.update(news);
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), bobResponse.getStatus());
-            assertTrue(((ExtResponseRepresentation)bobResponse.getEntity()).getMessage().contains("lock"));
+            assertTrue(((ExtResponseRepresentation) bobResponse.getEntity()).getMessage().contains("lock"));
 
             // bob also sees the 'renamedHome' locked
             news.setName("renamedHome");
@@ -338,7 +339,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
         Node homeNode = session.getNodeByIdentifier(home.getId());
         home.setName("home");
-        SiteMapResource siteMapResource = new SiteMapResource();
+        final SiteMapResource siteMapResource = createResource();
         Response response = siteMapResource.update(home);
         assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
                 Response.Status.OK.getStatusCode(), response.getStatus());
@@ -347,7 +348,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
 
     @Test
     public void test_rename_and_back_again() throws Exception {
-        SiteMapResource siteMapResource = new SiteMapResource();
+        final SiteMapResource siteMapResource = createResource();
         String parentPath;
         {
             final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
@@ -378,7 +379,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
 
     @Test
     public void test_rename_and_rename_and_back_again() throws Exception {
-        SiteMapResource siteMapResource = new SiteMapResource();
+        final SiteMapResource siteMapResource = createResource();
         String parentPath;
         {
             final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
@@ -418,7 +419,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         String oldHomeParentPath = session.getNodeByIdentifier(home.getId()).getParent().getPath();
         home.setName("renamedHome");
 
-        SiteMapResource siteMapResource = new SiteMapResource();
+        final SiteMapResource siteMapResource = createResource();
         siteMapResource.update(home);
 
         // bob sees the old home item locked
@@ -471,7 +472,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
         // news already exists
         home.setName("news");
-        SiteMapResource siteMapResource = new SiteMapResource();
+        final SiteMapResource siteMapResource = createResource();
         Response response = siteMapResource.update(home);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
         assertTrue(((ExtResponseRepresentation) response.getEntity()).getMessage().contains("already exists"));
@@ -479,7 +480,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
 
     @Test
     public void test_rename_succeeds_with_sibling_locks() throws Exception {
-        SiteMapResource siteMapResource = new SiteMapResource();
+        final SiteMapResource siteMapResource = createResource();
         final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
 
         SiteMapHelper helper = new SiteMapHelper();
@@ -505,7 +506,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
 
     @Test
     public void test_rename_fails_cause_target_existing_in_non_workspace() throws Exception {
-        SiteMapResource siteMapResource = new SiteMapResource();
+        final SiteMapResource siteMapResource = createResource();
         final SiteMapItemRepresentation aboutUs = getSiteMapItemRepresentation(session, "about-us");
         assertNotNull(aboutUs);
         // about-us is part of non-workspace
@@ -519,12 +520,13 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         assertTrue(((ExtResponseRepresentation) failResponse.getEntity()).getMessage().contains("*non-workspace* sitemap already contains"));
     }
 
+    @Ignore("takes forever")
     @Test
     public void test_rename_succeeds_when_no_non_workspace_sitemap() throws Exception {
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap").remove();
         session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:sitemap").remove();
         session.save();
-        SiteMapResource siteMapResource = new SiteMapResource();
+        final SiteMapResource siteMapResource = createResource();
         final SiteMapItemRepresentation aboutUs = getSiteMapItemRepresentation(session, "about-us");
         assertNotNull(aboutUs);
         // about-us is part of non-workspace

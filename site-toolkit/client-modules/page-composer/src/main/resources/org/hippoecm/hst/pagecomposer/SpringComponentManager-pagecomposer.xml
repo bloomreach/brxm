@@ -30,6 +30,8 @@
     </property>
   </bean>
 
+  <bean id="hstRequestContextService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.HstRequestContextService"/>
+
   <!--
     The internal server factory. 
     Each JAX-RS service component is registered by "resourceProvider" property. 
@@ -39,7 +41,6 @@
     <property name="providers">
       <list>
         <ref bean="jaxrsRestJsonProvider"/>
-        <bean class="org.hippoecm.hst.pagecomposer.jaxrs.cxf.provider.CXFRequestContextProvider"/>
       </list>
     </property>
     <property name="resourceProviders">
@@ -56,12 +57,29 @@
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMenuResource"/>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMenuResource">
+              <property name="hstRequestContextService" ref="hstRequestContextService"/>
+              <property name="siteMenuHelper">
+                <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper">
+                  <property name="hstRequestContextService" ref="hstRequestContextService"/>
+                </bean>
+              </property>
+              <property name="siteMenuItemHelper">
+                <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper"/>
+              </property>
+            </bean>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource"/>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource">
+              <property name="hstRequestContextService" ref="hstRequestContextService"/>
+              <property name="siteMapHelper">
+                <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper">
+                  <property name="hstRequestContextService" ref="hstRequestContextService"/>
+                </bean>
+              </property>
+            </bean>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">

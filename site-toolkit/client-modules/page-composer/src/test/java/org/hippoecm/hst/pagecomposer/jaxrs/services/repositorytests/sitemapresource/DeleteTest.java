@@ -36,8 +36,6 @@ import static org.junit.Assert.fail;
 
 public class DeleteTest extends AbstractSiteMapResourceTest {
 
-
-
     private void initContext() throws Exception {
         // call below will init request context
         final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
@@ -45,9 +43,9 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
 
     @Test
     public void test_delete() throws Exception {
-        final SiteMapResource siteMapResource = new SiteMapResource();
         final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
 
+        final SiteMapResource siteMapResource = createResource();
         final Response delete = siteMapResource.delete(home.getId());
         assertEquals(Response.Status.OK.getStatusCode(), delete.getStatus());
         assertTrue(((ExtResponseRepresentation) delete.getEntity()).getMessage().contains("deleted"));
@@ -56,7 +54,7 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
     @Test
     public void test_delete_non_existing() throws Exception {
         initContext();
-        final SiteMapResource siteMapResource = new SiteMapResource();
+        final SiteMapResource siteMapResource = createResource();
         final Response delete = siteMapResource.delete(UUID.randomUUID().toString());
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), delete.getStatus());
     }
@@ -64,7 +62,7 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
     @Test
     public void test_delete_invalid_uuid() throws Exception {
         initContext();
-        final SiteMapResource siteMapResource = new SiteMapResource();
+        final SiteMapResource siteMapResource = createResource();
         final Response delete = siteMapResource.delete("invalid-uuid");
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), delete.getStatus());
     }
@@ -72,7 +70,7 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
     @Test
     public void test_delete_non_workspace_item_fails() throws Exception {
         final SiteMapItemRepresentation nonWorkspaceItem = getSiteMapItemRepresentation(session, "about-us");
-        final SiteMapResource siteMapResource = new SiteMapResource();
+        final SiteMapResource siteMapResource = createResource();
         final Response delete = siteMapResource.delete(nonWorkspaceItem.getId());
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), delete.getStatus());
         assertTrue((((ExtResponseRepresentation) delete.getEntity()).getMessage().contains("not part of hst:workspace")));
@@ -81,7 +79,7 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
     @Test
     public void test_deleted_item_not_part_of_model() throws Exception {
         final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
-        final SiteMapResource siteMapResource = new SiteMapResource();
+        final SiteMapResource siteMapResource = createResource();
         final Response delete = siteMapResource.delete(home.getId());
         assertEquals(Response.Status.OK.getStatusCode(), delete.getStatus());
         assertTrue(((ExtResponseRepresentation) delete.getEntity()).getMessage().contains("deleted"));
@@ -94,7 +92,7 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
     @Test
     public void test_deleted_item_jcr_node_still_present_and_locked() throws Exception {
         final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
-        final SiteMapResource siteMapResource = new SiteMapResource();
+        final SiteMapResource siteMapResource = createResource();
         final Response delete = siteMapResource.delete(home.getId());
         assertEquals(Response.Status.OK.getStatusCode(), delete.getStatus());
         assertTrue(((ExtResponseRepresentation) delete.getEntity()).getMessage().contains("deleted"));

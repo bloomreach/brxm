@@ -27,7 +27,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -37,7 +36,6 @@ import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
@@ -50,25 +48,24 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.Validator;
 @Produces(MediaType.APPLICATION_JSON)
 public class SiteMenuResource extends AbstractConfigResource {
 
-    private final SiteMenuHelper siteMenuHelper;
-    private final SiteMenuItemHelper siteMenuItemHelper;
+    private SiteMenuHelper siteMenuHelper;
+    private SiteMenuItemHelper siteMenuItemHelper;
 
-    public SiteMenuResource(final SiteMenuHelper siteMenuHelper, final SiteMenuItemHelper siteMenuItemHelper) {
+    public void setSiteMenuHelper(final SiteMenuHelper siteMenuHelper) {
         this.siteMenuHelper = siteMenuHelper;
-        this.siteMenuItemHelper = siteMenuItemHelper;
     }
 
-    public SiteMenuResource() {
-        this(new SiteMenuHelper(), new SiteMenuItemHelper());
+    public void setSiteMenuItemHelper(final SiteMenuItemHelper siteMenuItemHelper) {
+        this.siteMenuItemHelper = siteMenuItemHelper;
     }
 
     @GET
     @Path("/")
-    public Response getMenu(final @Context HstRequestContext requestContext) {
+    public Response getMenu() {
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
+                final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration();
                 final SiteMenuRepresentation representation = new SiteMenuRepresentation(menu);
                 return ok("Menu item loaded successfully", representation);
             }
@@ -77,12 +74,11 @@ public class SiteMenuResource extends AbstractConfigResource {
 
     @GET
     @Path("/{menuItemId}")
-    public Response getMenuItem(final @Context HstRequestContext requestContext,
-                                final @PathParam("menuItemId") String menuItemId) {
+    public Response getMenuItem(final @PathParam("menuItemId") String menuItemId) {
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
+                final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration();
                 final HstSiteMenuItemConfiguration menuItem = siteMenuHelper.getMenuItem(menu, menuItemId);
                 final SiteMenuItemRepresentation representation = new SiteMenuItemRepresentation(menuItem);
                 return ok("Menu item loaded successfully", representation);
@@ -92,16 +88,15 @@ public class SiteMenuResource extends AbstractConfigResource {
 
     @POST
     @Path("/create/{parentId}")
-    public Response create(final @Context HstRequestContext requestContext,
-                           final @PathParam("parentId") String parentId,
+    public Response create(final @PathParam("parentId") String parentId,
                            final SiteMenuItemRepresentation newMenuItem) {
-        List<Validator> preValidators = getDefaultMenuModificationValidators(requestContext);
+        List<Validator> preValidators = getDefaultMenuModificationValidators();
         preValidators.add(new PreviewWorkspaceNodeValidator(parentId));
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                final Session session = requestContext.getSession();
-                final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
+                final Session session = getHstRequestContextService().getRequestContext().getSession();
+                final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration();
                 final Node parentNode = getParentNode(parentId, session, menu);
                 Node menuItemNode = siteMenuItemHelper.create(parentNode, newMenuItem);
                 return ok("Item created successfully", menuItemNode.getIdentifier());
@@ -112,14 +107,14 @@ public class SiteMenuResource extends AbstractConfigResource {
 
     @POST
     @Path("/")
-    public Response update(final @Context HstRequestContext requestContext, final SiteMenuItemRepresentation modifiedItem) {
-        
-        List<Validator> preValidators = getDefaultMenuModificationValidators(requestContext);
+    public Response update(final SiteMenuItemRepresentation modifiedItem) {
+
+        List<Validator> preValidators = getDefaultMenuModificationValidators();
         preValidators.add(new PreviewWorkspaceNodeValidator(modifiedItem.getId()));
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                final Session session = requestContext.getSession();
+                final Session session = getHstRequestContextService().getRequestContext().getSession();
                 final Node menuItemNode = session.getNodeByIdentifier(modifiedItem.getId());
                 siteMenuItemHelper.update(menuItemNode, modifiedItem);
                 return ok("Item updated successfully", modifiedItem.getId());
@@ -129,19 +124,17 @@ public class SiteMenuResource extends AbstractConfigResource {
 
     @POST
     @Path("/move/{sourceId}/{parentId}")
-    public Response move(@Context HstRequestContext requestContext,
-                         @PathParam("sourceId") String sourceId,
+    public Response move(@PathParam("sourceId") String sourceId,
                          @PathParam("parentId") String parentId) {
-        return move(requestContext, sourceId, parentId, null);
+        return move(sourceId, parentId, null);
     }
 
     @POST
     @Path("/move/{sourceId}/{parentId}/{beforeChildId}")
-    public Response move(final @Context HstRequestContext requestContext,
-                         final @PathParam("sourceId") String sourceId,
+    public Response move(final @PathParam("sourceId") String sourceId,
                          final @PathParam("parentId") String parentId,
                          final @PathParam("beforeChildId") String beforeChildId) {
-        List<Validator> preValidators = getDefaultMenuModificationValidators(requestContext);
+        List<Validator> preValidators = getDefaultMenuModificationValidators();
         preValidators.add(new PreviewWorkspaceNodeValidator(sourceId));
         preValidators.add(new PreviewWorkspaceNodeValidator(parentId));
         if (StringUtils.isNotBlank(beforeChildId)) {
@@ -150,7 +143,7 @@ public class SiteMenuResource extends AbstractConfigResource {
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                final Session session = requestContext.getSession();
+                final Session session = getHstRequestContextService().getRequestContext().getSession();
                 final Node parent = session.getNodeByIdentifier(parentId);
                 final Node source = session.getNodeByIdentifier(sourceId);
 
@@ -170,14 +163,13 @@ public class SiteMenuResource extends AbstractConfigResource {
 
     @POST
     @Path("/delete/{menuItemId}")
-    public Response delete(final @Context HstRequestContext requestContext,
-                           final @PathParam("menuItemId") String menuItemId) {
-        List<Validator> preValidators = getDefaultMenuModificationValidators(requestContext);
+    public Response delete(final @PathParam("menuItemId") String menuItemId) {
+        List<Validator> preValidators = getDefaultMenuModificationValidators();
         preValidators.add(new PreviewWorkspaceNodeValidator(menuItemId));
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                final Session session = requestContext.getSession();
+                final Session session = getHstRequestContextService().getRequestContext().getSession();
                 session.getNodeByIdentifier(menuItemId).remove();
                 return ok("Item deleted successfully", menuItemId);
             }
@@ -196,16 +188,17 @@ public class SiteMenuResource extends AbstractConfigResource {
         }
     }
 
-    private HstSiteMenuConfiguration getHstSiteMenuConfiguration(final HstRequestContext requestContext) throws RepositoryException {
-        final HstSite editingPreviewHstSite = getEditingPreviewSite(requestContext);
-        final String menuId = getRequestConfigIdentifier(requestContext);
+    private HstSiteMenuConfiguration getHstSiteMenuConfiguration() throws RepositoryException {
+        final HstSite editingPreviewHstSite = getHstRequestContextService().getEditingPreviewSite();
+        final String menuId = getHstRequestContextService().getRequestConfigIdentifier();
         return siteMenuHelper.getMenu(editingPreviewHstSite, menuId);
     }
 
 
-    private List<Validator> getDefaultMenuModificationValidators(final HstRequestContext requestContext) {
+    private List<Validator> getDefaultMenuModificationValidators() {
         List<Validator> preValidators = new ArrayList<>();
-        preValidators.add(new PreviewWorkspaceNodeValidator(getRequestConfigIdentifier(requestContext), HstNodeTypes.NODETYPE_HST_SITEMENU));
+        final String requestConfigIdentifier = getHstRequestContextService().getRequestConfigIdentifier();
+        preValidators.add(new PreviewWorkspaceNodeValidator(requestConfigIdentifier, HstNodeTypes.NODETYPE_HST_SITEMENU));
         return preValidators;
     }
 
