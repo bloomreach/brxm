@@ -72,8 +72,7 @@ public class AbstractReviewedActionsWorkflow extends WorkflowImpl {
     @Override
     public Map<String, Serializable> hints() throws WorkflowException {
         Map<String, Serializable> hints = super.hints();
-        hints.putAll(documentWorkflow.getInfo());
-        hints.putAll(documentWorkflow.getActions());
+        hints.putAll(documentWorkflow.hints());
         return hints;
     }
 

@@ -17,6 +17,7 @@ package org.hippoecm.repository.reviewedactions;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Collections;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -35,13 +36,18 @@ public class BasicRequestWorkflowImpl extends AbstractReviewedActionsWorkflow im
 
     @Override
     public Map<String, Serializable> hints() throws WorkflowException {
-        final Map<String, Serializable> hints = super.hints();
+        Map<String, Serializable> hints = super.hints();
         try {
             Node node = getNode();
             String id = node.getIdentifier();
-            Map<String, Map<String, Serializable>> requests;
-            requests = (Map<String, Map<String, Serializable>>) hints.get("requests");
-            return requests.get(id);
+            Map<String, Map<String, Serializable>> requests = (Map<String, Map<String, Serializable>>) hints.get("requests");
+            if (requests != null) {
+                hints = requests.get(id);
+            }
+            else {
+                hints = Collections.EMPTY_MAP;
+            }
+            return hints;
         } catch (RepositoryException e) {
             throw new WorkflowException("Unable to build request hints", e);
         }

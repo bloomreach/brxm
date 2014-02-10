@@ -20,8 +20,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Date;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -174,7 +176,8 @@ public class AcceptRequestTest extends RepositoryTestCase {
                 node = getNode("test/myarticle/hippo:request");
                 if (node != null) {
                     FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow(node, "default");
-                    if (workflow.hints().containsKey("acceptRequest") && ((Boolean)workflow.hints().get("acceptRequest")).booleanValue()) {
+                    Map<String, Serializable> hints = workflow.hints();
+                    if (hints.containsKey("acceptRequest") && ((Boolean)hints.get("acceptRequest")).booleanValue()) {
                         workflow.acceptRequest();
                         session.save();
                         found = true;
