@@ -44,6 +44,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -520,7 +521,6 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         assertTrue(((ExtResponseRepresentation) failResponse.getEntity()).getMessage().contains("*non-workspace* sitemap already contains"));
     }
 
-    @Ignore("takes forever")
     @Test
     public void test_rename_succeeds_when_no_non_workspace_sitemap() throws Exception {
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap").remove();
@@ -528,9 +528,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         session.save();
         final SiteMapResource siteMapResource = createResource();
         final SiteMapItemRepresentation aboutUs = getSiteMapItemRepresentation(session, "about-us");
-        assertNotNull(aboutUs);
-        // about-us is part of non-workspace
-        assertFalse(aboutUs.isWorkspaceConfiguration());
+        assertNull(aboutUs);
         final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
 
         // 'about-us' is part of the non-workspace sitemap and should thus fail!
