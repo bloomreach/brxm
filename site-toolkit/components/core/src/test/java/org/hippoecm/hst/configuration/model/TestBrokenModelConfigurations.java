@@ -18,6 +18,7 @@ package org.hippoecm.hst.configuration.model;
 
 import java.util.Map;
 
+import javax.jcr.NodeIterator;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -41,6 +42,7 @@ import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.request.ResolvedSiteMapItemImpl;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.JcrSessionUtils;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -100,7 +102,9 @@ public class TestBrokenModelConfigurations extends AbstractTestConfigurations {
 
         session.getNode("/hst:hst").remove();
         session.save();
-        invalidator.eventPaths("/hst:hst");
+        // trigger a reload below a /hst:hst node since /hst:hst or / is ignored in
+        // HstEventsCollector
+        invalidator.eventPaths("/hst:hst/hst:hosts");
         assertTrue(((HstManagerImpl) hstManager).state == HstManagerImpl.BuilderState.STALE);
 
         ExecuteOnLogLevel.fatal(new Runnable() {
@@ -124,7 +128,10 @@ public class TestBrokenModelConfigurations extends AbstractTestConfigurations {
         }, HstManagerImpl.class.getName());
 
         restoreHstConfigBackup(session);
-        invalidator.eventPaths("/hst:hst");
+
+        // trigger a reload below a /hst:hst node since /hst:hst or / is ignored in
+        // HstEventsCollector
+        invalidator.eventPaths("/hst:hst/hst:hosts");
 
         final VirtualHosts finalModel = hstManager.getVirtualHosts();
         assertNotSame(finalModel, firstModel);
@@ -156,7 +163,7 @@ public class TestBrokenModelConfigurations extends AbstractTestConfigurations {
         assertTrue(resolvedMount.getMount().getChannel() == channels.values().iterator().next());
         // now remove sites node
         session.getNode("/hst:hst/hst:sites").remove();
-        invalidator.eventPaths("/hst:hst");
+        invalidator.eventPaths("/hst:hst/hst:sites");
         assertTrue( ((HstManagerImpl)hstManager).state == HstManagerImpl.BuilderState.STALE);
         session.save();
 
@@ -181,7 +188,7 @@ public class TestBrokenModelConfigurations extends AbstractTestConfigurations {
         }, HstManagerImpl.class.getName());
 
         restoreHstConfigBackup(session);
-        invalidator.eventPaths("/hst:hst");
+        invalidator.eventPaths("/hst:hst/hst:sites");
 
         final VirtualHosts finalModel = hstManager.getVirtualHosts();
         assertNotSame(finalModel, firstModel);
