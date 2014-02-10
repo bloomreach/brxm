@@ -65,7 +65,7 @@
 
                 function findMenuItem(items, id) {
                     var found = _.findWhere(items, { id: id });
-                    if (!found) {
+                    if (found === undefined && angular.isArray(items)) {
                         for (var i = 0, length = items.length; i < length && !found; i++) {
                             found = findMenuItem(items[i].children, id);
                         }

@@ -41,7 +41,13 @@ describe('Menu Service', function () {
                     },
                     {
                         id: '2',
-                        name: 'Two'
+                        name: 'Two',
+                        children: [
+                            {
+                                id: 'child1',
+                                name: 'Child 1'
+                            }
+                        ]
                     }
                 ]
             }
@@ -61,27 +67,73 @@ describe('Menu Service', function () {
         expect(menuService).toBeDefined();
     });
 
-    it('should get menu by id ', function () {
-        var promise = menuService.getMenu('menuId');
-
+    function expectGetMenu() {
         $httpBackend.expectGET('api/menuId');
         $httpBackend.flush();
+    }
 
-        promise.then(function (menuData) {
-            expect(menuData).toBeDefined();
-            expect(menuData.children.length).toEqual(2);
+    it('should get menu by id ', function () {
+        menuService.getMenu().then(function (menu) {
+            expect(menu).toBeDefined();
+            expect(menu.children.length).toEqual(2);
         });
+        expectGetMenu();
     });
 
+    it('should return the id of the first menu item', function () {
+        menuService.getFirstMenuItemId().then(function (firstMenuItemId) {
+            expect(firstMenuItemId).toEqual('1');
+        });
+        expectGetMenu();
+    });
+
+    function testGetMenuItem(id) {
+        menuService.getMenuItem(id).then(function(menuItem) {
+            expect(menuItem).toBeDefined();
+            expect(menuItem.id).toEqual(id);
+        });
+        expectGetMenu();
+    }
+
+    it('should return a main menu item by id', function () {
+        testGetMenuItem('2');
+    });
+
+    it('should return a child menu item by id', function () {
+        testGetMenuItem('child1');
+    });
+
+    it('should return undefined when getting an unknown menu item', function () {
+        menuService.getMenuItem('nosuchitem').then(function(menuItem) {
+            expect(menuItem).not.toBeDefined();
+        });
+        expectGetMenu();
+    });
+
+    it('should update the returned menu data when the name of a menu item changes', function () {
+        menuService.getMenu().then(function(menu) {
+            menuService.getMenuItem('child1').then(function(child1) {
+                child1.name = 'New Name';
+                expect(menu.children[1].children[0].name).toEqual('New Name');
+            });
+        });
+        expectGetMenu();
+    });
+
+    it('should save a menu item', function () {
+        var savedMenuItem = { id: 'child1', name: 'New Name' };
+        $httpBackend.expectPOST('api/menuId./update', savedMenuItem).respond('OK');
+        menuService.saveMenuItem(savedMenuItem);
+        $httpBackend.flush();
+    });
 
     it('should delete a menu item by id', function () {
-
         var response = {data: {children: [{id: 1, name: 'One'}]}};
         $httpBackend.expectPOST('api/menuId./delete/menuItemId').respond('OK');
         $httpBackend.expectGET('api/menuId').respond(response);
 
         menuService.deleteMenuItem('menuItemId');
-        var promise = menuService.getMenu('menuId');
+        var promise = menuService.getMenu();
         promise.then(function (menuData) {
             expect(menuData).toBeDefined();
             expect(menuData.children.length).toEqual(1);

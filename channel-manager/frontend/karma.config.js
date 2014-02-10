@@ -30,6 +30,7 @@ module.exports = function(config) {
         files: [
             // dependencies
             'components/jquery/jquery.js',
+            'components/underscore/underscore.js',
             'components/angular/angular.js',
             'components/angular-route/angular-route.js',
             'components/hippo-plugins/dist/js/main.js',
