@@ -103,13 +103,17 @@ public class SiteMapHelper extends AbstractHelper {
 
     public void move(final String id, final String parentId) throws RepositoryException {
         if (id.equals(parentId)) {
-            return;
+            throw new IllegalStateException("Cannot move node to become child of itself");
         }
         HstRequestContext requestContext = hstRequestContextService.getRequestContext();
         final Session session = requestContext.getSession();
-        Node nodeToMove = session.getNode(id);
-        Node newParent = session.getNode(parentId);
+        Node nodeToMove = session.getNodeByIdentifier(id);
+        Node newParent = session.getNodeByIdentifier(parentId);
         Node oldParent = nodeToMove.getParent();
+        if (oldParent.isSame(newParent)) {
+            log.info("Move to same parent for '"+nodeToMove.getPath()+"' does not result in a real move");
+            return;
+        }
         if (hasSelfOrAncestorLockBySomeOneElse(newParent)) {
             throw new IllegalStateException("Cannot move node to '"+newParent.getPath()+"' because that node is locked " +
                     "by '"+getSelfOrAncestorLockedBy(newParent)+"'");

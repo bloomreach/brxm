@@ -334,7 +334,6 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         }
     }
 
-
     @Test
     public void test_rename_to_same_name() throws Exception {
         final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");

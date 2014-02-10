@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -98,6 +99,7 @@ public class SiteMapResource extends AbstractConfigResource {
         final List<Validator> preValidators = new ArrayList<>();
 
         if (parentId != null) {
+            preValidators.add(new CurrentPreviewValidator(parentId, siteMapHelper));
             preValidators.add(new PreviewWorkspaceNodeValidator(parentId, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
         }
 
@@ -106,26 +108,7 @@ public class SiteMapResource extends AbstractConfigResource {
             public Response call() throws Exception {
                 final String finalParentId;
                 if (parentId == null) {
-                    final HstRequestContext requestContext = getHstRequestContextService().getRequestContext();
-                    final HstSite editingPreviewSite = getEditingPreviewSite(requestContext);
-                    final HstSiteMap siteMap = editingPreviewSite.getSiteMap();
-                    if (!(siteMap instanceof CanonicalInfo)) {
-                        throw new IllegalStateException("Only sitemap that is instance of CanonicalInfo can be edited");
-                    }
-                    String siteMapId = ((CanonicalInfo) siteMap).getCanonicalIdentifier();
-                    Node siteMapNode = requestContext.getSession().getNodeByIdentifier(siteMapId);
-                    if (siteMapNode.getParent().isNodeType(HstNodeTypes.NODETYPE_HST_WORKSPACE)) {
-                        finalParentId = siteMapId;
-                    } else {
-                        // not the workspace sitemap node. Take the workspace sitemap. If not existing, an exception is thrown
-                        final String relSiteMapPath = HstNodeTypes.NODENAME_HST_WORKSPACE + "/" + HstNodeTypes.NODENAME_HST_SITEMAP;
-                        final Node configNode = siteMapNode.getParent();
-                        if (!configNode.hasNode(relSiteMapPath)) {
-                            throw new IllegalStateException("Cannot add new sitemap items because there is no workspace sitemap at " +
-                                    "'" + configNode.getPath() + "/" + relSiteMapPath + "'.");
-                        }
-                        finalParentId = configNode.getNode(relSiteMapPath).getIdentifier();
-                    }
+                    finalParentId = getWorkspaceSiteMapId();
                 } else {
                     finalParentId = parentId;
                 }
@@ -135,28 +118,31 @@ public class SiteMapResource extends AbstractConfigResource {
         }, preValidators);
     }
 
-
+    /**
+     * if <code>parentId</code> is <code>null</code> the move will be done to the root sitemap
+     */
     @POST
     @Path("/move/{id}/{parentId}")
     public Response move(final @PathParam("id") String id,
                          final @PathParam("parentId") String parentId) {
 
-//        String oldPath;
-//        try {
-//            oldPath = RequestContextProvider.get().getSession().getNode(id).getPath();
-//        } catch (RepositoryException e) {
-//            return logAndReturnClientError(e);
-//        }
         final List<Validator> preValidators = new ArrayList<>();
         preValidators.add(new CurrentPreviewValidator(id, siteMapHelper));
-        preValidators.add(new CurrentPreviewValidator(parentId, siteMapHelper));
         preValidators.add(new PreviewWorkspaceNodeValidator(id, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
-        preValidators.add(new PreviewWorkspaceNodeValidator(parentId, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
-
+        if (parentId != null) {
+            preValidators.add(new CurrentPreviewValidator(parentId, siteMapHelper));
+            preValidators.add(new PreviewWorkspaceNodeValidator(parentId, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
+        }
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                siteMapHelper.move(id, parentId);
+                final String finalParentId;
+                if (parentId == null) {
+                    finalParentId = getWorkspaceSiteMapId();
+                } else {
+                    finalParentId = parentId;
+                }
+                siteMapHelper.move(id, finalParentId);
                 return ok("Item moved successfully", id);
             }
         }, preValidators);
@@ -167,6 +153,7 @@ public class SiteMapResource extends AbstractConfigResource {
     public Response delete(final @PathParam("id") String id) {
         final List<Validator> preValidators = new ArrayList<>();
 
+        preValidators.add(new CurrentPreviewValidator(id, siteMapHelper));
         preValidators.add(new PreviewWorkspaceNodeValidator(id, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
 
         return tryExecute(new Callable<Response>() {
@@ -177,5 +164,31 @@ public class SiteMapResource extends AbstractConfigResource {
             }
         }, preValidators);
     }
+
+    private String getWorkspaceSiteMapId() throws RepositoryException {
+        final String workspaceSiteMapId;
+        final HstRequestContext requestContext = getHstRequestContextService().getRequestContext();
+        final HstSite editingPreviewSite = getEditingPreviewSite(requestContext);
+        final HstSiteMap siteMap = editingPreviewSite.getSiteMap();
+        if (!(siteMap instanceof CanonicalInfo)) {
+            throw new IllegalStateException("Only sitemap that is instance of CanonicalInfo can be edited");
+        }
+        String siteMapId = ((CanonicalInfo) siteMap).getCanonicalIdentifier();
+        Node siteMapNode = requestContext.getSession().getNodeByIdentifier(siteMapId);
+        if (siteMapNode.getParent().isNodeType(HstNodeTypes.NODETYPE_HST_WORKSPACE)) {
+            workspaceSiteMapId = siteMapId;
+        } else {
+            // not the workspace sitemap node. Take the workspace sitemap. If not existing, an exception is thrown
+            final String relSiteMapPath = HstNodeTypes.NODENAME_HST_WORKSPACE + "/" + HstNodeTypes.NODENAME_HST_SITEMAP;
+            final Node configNode = siteMapNode.getParent();
+            if (!configNode.hasNode(relSiteMapPath)) {
+                throw new IllegalStateException("Cannot add new sitemap items because there is no workspace sitemap at " +
+                        "'" + configNode.getPath() + "/" + relSiteMapPath + "'.");
+            }
+            workspaceSiteMapId = configNode.getNode(relSiteMapPath).getIdentifier();
+        }
+        return workspaceSiteMapId;
+    }
+
 
 }

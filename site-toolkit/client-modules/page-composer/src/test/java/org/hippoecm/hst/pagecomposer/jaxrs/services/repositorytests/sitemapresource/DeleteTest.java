@@ -117,4 +117,23 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
         }
     }
 
+    @Test
+    public void test_fail_to_delete_deleted_item() throws Exception {
+
+        final SiteMapResource siteMapResource = createResource();
+        String homeId;
+        {
+            final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
+            homeId = home.getId();
+            final Response delete = siteMapResource.delete(homeId);
+            assertEquals(Response.Status.OK.getStatusCode(), delete.getStatus());
+        }
+        {
+            // force reload of hst model
+            getSiteMapItemRepresentation(session, "home");
+            final Response deleteAgain = siteMapResource.delete(homeId);
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), deleteAgain.getStatus());
+            assertTrue(((ExtResponseRepresentation) deleteAgain.getEntity()).getMessage().contains("not part of currently edited preview site"));
+        }
+    }
 }
