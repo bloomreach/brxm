@@ -147,7 +147,6 @@
           <forkMode>always</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
           <excludes>
-            <exclude>**/AcceptRequestTest.java</exclude>
             <exclude>**/TranslationWorkflowTest.java</exclude>
             <exclude>**/DocumentWorkflowTest.java</exclude>
           </excludes>
@@ -179,7 +178,6 @@
                 </goals>
                 <configuration>
                   <includes>
-                    <include>**/AcceptRequestTest.java</include>
                     <include>**/TranslationWorkflowTest.java</include>
                   </includes>
                 </configuration>
