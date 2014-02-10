@@ -469,7 +469,6 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
     @Test
     public void test_rename_fails_target_existing_sibling() throws Exception {
         final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
-
         // news already exists
         home.setName("news");
         SiteMapResource siteMapResource = new SiteMapResource();

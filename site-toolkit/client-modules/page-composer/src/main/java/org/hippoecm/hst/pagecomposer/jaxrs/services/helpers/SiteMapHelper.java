@@ -76,7 +76,7 @@ public class SiteMapHelper extends AbstractHelper {
 
 
 
-    public void create(final SiteMapItemRepresentation siteMapItem, final String parentId) throws RepositoryException {
+    public Node create(final SiteMapItemRepresentation siteMapItem, final String parentId) throws RepositoryException {
 
         HstRequestContext requestContext = RequestContextProvider.get();
         final Session session = requestContext.getSession();
@@ -85,7 +85,7 @@ public class SiteMapHelper extends AbstractHelper {
         validateTarget(session, parent.getPath() + "/" + siteMapItem.getName());
 
         final Node newChild = parent.addNode(siteMapItem.getName(), HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
-
+        acquireLock(newChild);
         // TODO clone page definition
         setSitemapItemProperties(siteMapItem, newChild);
 
@@ -94,7 +94,7 @@ public class SiteMapHelper extends AbstractHelper {
 
         final Set<String> modifiedRoles = siteMapItem.getRoles();
         setRoles(newChild,modifiedRoles);
-
+        return newChild;
     }
 
     public void move(final String id, final String parentId) throws RepositoryException {
@@ -123,7 +123,7 @@ public class SiteMapHelper extends AbstractHelper {
     public void delete(final String id) throws RepositoryException {
         HstRequestContext requestContext = RequestContextProvider.get();
         final Session session = requestContext.getSession();
-        Node toDelete = session.getNode(id);
+        Node toDelete = session.getNodeByIdentifier(id);
         acquireLock(toDelete);
         deleteOrMarkDeletedIfLiveExists(toDelete);
     }

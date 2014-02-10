@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import javax.jcr.RepositoryException;
+import javax.jcr.Node;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -30,6 +30,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.internal.CanonicalInfo;
+import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -93,7 +95,6 @@ public class SiteMapResource extends AbstractConfigResource {
                            final @PathParam("parentId") String parentId) {
 
         final  List<Validator> preValidators = new ArrayList<>();
-        preValidators.add(new CurrentPreviewValidator(siteMapItem.getId(), siteMapHelper));
 
         if (parentId != null) {
             preValidators.add(new PreviewWorkspaceNodeValidator(parentId, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
@@ -102,8 +103,33 @@ public class SiteMapResource extends AbstractConfigResource {
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                siteMapHelper.create(siteMapItem, parentId);
-                return ok("Item updated successfully", siteMapItem.getId());
+                final String finalParentId;
+                if (parentId == null) {
+                    final HstRequestContext requestContext = RequestContextProvider.get();
+                    final HstSite editingPreviewSite = AbstractConfigResource.getEditingPreviewSite(requestContext);
+                    final HstSiteMap siteMap = editingPreviewSite.getSiteMap();
+                    if (!(siteMap instanceof CanonicalInfo)) {
+                        throw new IllegalStateException("Only sitemap that is instance of CanonicalInfo can be edited");
+                    }
+                    String siteMapId = ((CanonicalInfo)siteMap).getCanonicalIdentifier();
+                    Node siteMapNode = requestContext.getSession().getNodeByIdentifier(siteMapId);
+                    if (siteMapNode.getParent().isNodeType(HstNodeTypes.NODETYPE_HST_WORKSPACE)) {
+                        finalParentId = siteMapId;
+                    } else {
+                    // not the workspace sitemap node. Take the workspace sitemap. If not existing, an exception is thrown
+                        final String relSiteMapPath = HstNodeTypes.NODENAME_HST_WORKSPACE + "/" + HstNodeTypes.NODENAME_HST_SITEMAP;
+                        final Node configNode = siteMapNode.getParent();
+                        if (!configNode.hasNode(relSiteMapPath)) {
+                            throw new IllegalStateException("Cannot add new sitemap items because there is no workspace sitemap at " +
+                                    "'"+configNode.getPath() + "/" + relSiteMapPath +"'.");
+                        }
+                        finalParentId = configNode.getNode(relSiteMapPath).getIdentifier();
+                    }
+                } else {
+                    finalParentId = parentId;
+                }
+                Node newSiteMapItem = siteMapHelper.create(siteMapItem, finalParentId);
+                return ok("Item created successfully", newSiteMapItem.getIdentifier());
             }
         }, preValidators);
     }
@@ -114,12 +140,12 @@ public class SiteMapResource extends AbstractConfigResource {
     public Response move(final @PathParam("id") String id,
                          final @PathParam("parentId") String parentId) {
 
-        String oldPath;
-        try {
-            oldPath = RequestContextProvider.get().getSession().getNode(id).getPath();
-        } catch (RepositoryException e) {
-            return logAndReturnClientError(e);
-        }
+//        String oldPath;
+//        try {
+//            oldPath = RequestContextProvider.get().getSession().getNode(id).getPath();
+//        } catch (RepositoryException e) {
+//            return logAndReturnClientError(e);
+//        }
         final List<Validator> preValidators = new ArrayList<>();
         preValidators.add(new CurrentPreviewValidator(id, siteMapHelper));
         preValidators.add(new CurrentPreviewValidator(parentId, siteMapHelper));
@@ -130,15 +156,14 @@ public class SiteMapResource extends AbstractConfigResource {
             @Override
             public Response call() throws Exception {
                 siteMapHelper.move(id, parentId);
-                return ok("Item updated successfully", id);
+                return ok("Item moved successfully", id);
             }
         }, preValidators);
     }
 
     @POST
     @Path("/delete/{id}")
-    public Response delete(final @Context HstRequestContext requestContext,
-                           final @PathParam("id") String id) {
+    public Response delete(final @PathParam("id") String id) {
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
