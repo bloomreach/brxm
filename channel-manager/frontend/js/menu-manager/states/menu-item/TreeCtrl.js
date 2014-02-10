@@ -58,6 +58,10 @@
                     $state.go('menu-item.edit', {menuItemId: itemId});
                 };
 
+                $scope.moveNode = function (node) {
+                    MenuService.moveMenuItem(node.id, node.newParent.id, node.position);
+                };
+
             }
         ]);
 }());

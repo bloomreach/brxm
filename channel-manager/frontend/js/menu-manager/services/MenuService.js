@@ -136,6 +136,14 @@
                     return deferred.promise;
                 };
 
+                menuService.moveMenuItem = function (menuItemId, newParentId, newPosition) {
+                    $http.post(menuServiceUrl('move/' + menuItemId + '/' + newParent + '/' + newPosition ))
+                        .error(function (error) {
+                            // TODO show error in UI
+                            console.error("An error occured while moving the menu item with id '" + menuItemId + "': ", error);
+                        });
+                };
+
                 return menuService;
             }
         ]);

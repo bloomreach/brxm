@@ -20,7 +20,7 @@
         <!-- START Tree Component -->
         <div class="col-sm-4" id="menu-tree" data-ng-controller="hippo.channelManager.menuManager.TreeCtrl">
             <div class="l-sidebar">
-                <div hippo.theme.tree data="menuTree" on-select="navigateTo(itemId)" class="jstree"></div>
+                <div hippo.theme.tree data="menuTree" on-select="navigateTo(itemId)" on-move="moveNode(node)" class="jstree"></div>
             </div>
         </div>
         <!-- END Tree Component -->
