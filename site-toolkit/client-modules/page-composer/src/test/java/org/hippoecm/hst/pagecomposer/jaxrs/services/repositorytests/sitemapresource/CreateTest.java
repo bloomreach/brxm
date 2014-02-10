@@ -34,6 +34,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -178,12 +179,15 @@ public class CreateTest extends AbstractSiteMapResourceTest {
             assertEquals("deleted",fooToHomeNode.getProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE).getString());
 
             final Session bob = createSession("bob", "bob");
-            final SiteMapItemRepresentation deletedHome = getSiteMapItemRepresentation(bob, "home");
-            deletedHome.setName("foo");
-            Response bobResponse = siteMapResource.update(deletedHome);
-            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), bobResponse.getStatus());
-            assertTrue(((ExtResponseRepresentation)bobResponse.getEntity()).getMessage().contains("lock"));
-
+            assertNull(getSiteMapItemRepresentation(bob, "home"));
+            Node homeNodeByBob = bob.getNodeByIdentifier(foo.getId());
+            SiteMapHelper helper = new SiteMapHelper();
+            try {
+                helper.acquireLock(homeNodeByBob);
+                fail("Expected an IllegalStateException when trying to acquire lock");
+            } catch (IllegalStateException e) {
+                assertTrue(e.getMessage().contains("cannot be locked"));
+            }
         } catch (ItemNotFoundException e) {
             fail("Node should be marked as deleted as exists in live!");
         }
@@ -191,7 +195,6 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         admin.logout();
     }
 
-    @Ignore("only passes when run individually")
     @Test
     public void test_rename_created_and_then_back_again() throws Exception {
         initContext();
@@ -209,12 +212,18 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         assertEquals("bar", fooBar.getName());
 
 
-        final SiteMapItemRepresentation bar = getSiteMapItemRepresentation(session, "bar");
-        bar.setName("foo");
-        final Response renamedAgain = siteMapResource.update(bar);
-        assertEquals(Response.Status.OK.getStatusCode(), renamedAgain.getStatus());
-        final Node barFoo = session.getNodeByIdentifier(foo.getId());
-        assertEquals("foo", barFoo.getName());
+        // because of Jackrabbit issue we need a fresh session for tests with this move because
+        // JR sometimes throws a incorrect repository exception during SessionMoveOperation
+        {
+            final Session admin = createSession("admin", "admin");
+            final SiteMapItemRepresentation bar = getSiteMapItemRepresentation(admin, "bar");
+            bar.setName("foo");
+            final Response renamedAgain = siteMapResource.update(bar);
+            assertEquals(Response.Status.OK.getStatusCode(), renamedAgain.getStatus());
+            final Node barFoo = admin.getNodeByIdentifier(foo.getId());
+            assertEquals("foo", barFoo.getName());
+            admin.logout();
+        }
     }
 
 
