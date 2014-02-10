@@ -287,7 +287,7 @@
         <onentry>
           <hippo:action action="listVersions" enabledExpr="true"/>
           <hippo:action action="retrieveVersion" enabledExpr="true"/>
-          <if cond="dm.isGranted(published, 'hippo:editor')">
+          <if cond="dm.isGranted(unpublished, 'hippo:editor')">
             <hippo:action action="version" enabledExpr="true"/>
             <hippo:action action="restoreVersion" enabledExpr="true"/>
             <hippo:action action="versionRestoreTo" enabledExpr="true"/>
