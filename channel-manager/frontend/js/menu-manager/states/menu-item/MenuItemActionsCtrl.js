@@ -25,7 +25,8 @@
             '$stateParams',
             'hippo.channelManager.menuManager.MenuService',
             'hippo.channelManager.menuManager.Container',
-            function ($scope, $log, $state, $stateParams, MenuService, Container) {
+            '_hippo.channelManager.menuManager.OutstandingHttpRequests',
+            function ($scope, $log, $state, $stateParams, MenuService, Container, OutstandingHttpRequests) {
                 $scope.deleteMenuItem = function () {
                     var menuItemId = $stateParams.menuItemId;
 
@@ -45,7 +46,11 @@
                     });
                 };
 
-                $scope.close = function () {
+                $scope.hasOutstandingChanges = function () {
+                    return !OutstandingHttpRequests.isEmpty();
+                };
+
+                $scope.closeContainer = function () {
                     Container.close();
                 };
             }

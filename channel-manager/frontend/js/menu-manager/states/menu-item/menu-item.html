@@ -34,7 +34,11 @@
         </div>
         <div id="actions" class="col-sm-8" data-ng-controller="hippo.channelManager.menuManager.MenuItemActionsCtrl">
             <button type="button" class="btn btn-default" ng-click="deleteMenuItem()"><i class="fa fa-trash-o"></i> {{ 'DELETE_MENU_ITEM' | translate }}</button>
-            <button type="button" class="btn btn-default pull-right" ng-click="close()"><i class="fa fa-check"></i> {{ 'CLOSE_WINDOW' | translate }}</button>
+            <button type="button" class="btn btn-default pull-right"
+                    ng-disabled="hasOutstandingChanges()"
+                    ng-click="closeContainer()">
+                <i class="fa fa-check"></i> {{ 'CLOSE_WINDOW' | translate }}
+            </button>
         </div>
     </div>
 </div>
