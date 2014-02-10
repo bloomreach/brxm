@@ -86,10 +86,10 @@ class DefaultCmsEditor extends AbstractCmsEditor<Node> {
             if (node.isNodeType(JcrConstants.NT_VERSION)) {
                 return new JcrNodeModel(node.getNode(JcrConstants.JCR_FROZEN_NODE));
             }
+            return model;
         } catch (RepositoryException ex) {
             throw new EditorException("cannot obtain proper editable document from handle", ex);
         }
-        throw new EditorException("Compare not supported");
     }
 
     @Override

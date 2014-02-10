@@ -260,7 +260,7 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
     }
 
     protected IModel<T> getBaseModel() throws EditorException {
-        throw new EditorException("Compare not supported");
+        return model;
     }
 
     protected IClusterConfig getClusterConfig() {
