@@ -58,8 +58,8 @@ public abstract class AbstractHelper {
      */
     public void acquireLock(final Node node) throws RepositoryException {
         if (hasSelfOrDescendantLockBySomeOneElse(node)) {
-            throw new IllegalStateException("Node '"+node.getPath()+"' cannot be locked due to a descendant locked node by " +
-                    "someone else.");
+            throw new IllegalStateException("Node '"+node.getPath()+"' cannot be locked due to someone else who " +
+                    "has the lock (possibly a descendant that is locked).");
         }
         String selfOrAncestorLockedBy = getSelfOrAncestorLockedBy(node);
         if (selfOrAncestorLockedBy != null) {
@@ -67,8 +67,8 @@ public abstract class AbstractHelper {
                 log.debug("Node '{}' already locked", node.getSession().getUserID());
                 return;
             }
-            throw new IllegalStateException("Node '"+node.getPath()+"' cannot be locked due to an ancestor locked node by " +
-                    "someone else.");
+            throw new IllegalStateException("Node '"+node.getPath()+"' cannot be locked due to someone else who " +
+                    "has the lock (possibly an ancestor that is locked).");
         }
 
         if (!node.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)) {
@@ -151,7 +151,7 @@ public abstract class AbstractHelper {
         if (selfOrAncestorLockedBy == null) {
             return false;
         }
-        return node.getSession().getUserID().equals(selfOrAncestorLockedBy);
+        return !node.getSession().getUserID().equals(selfOrAncestorLockedBy);
     }
 
     protected boolean hasSelfOrDescendantLockBySomeOneElse(final Node node) throws RepositoryException {

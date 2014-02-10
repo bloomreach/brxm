@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 public class SiteMapHelper extends AbstractHelper {
 
     private static final Logger log = LoggerFactory.getLogger(SiteMapHelper.class);
+    private static final String WORKSPACE_PATH_ELEMENT = "/" + HstNodeTypes.NODENAME_HST_WORKSPACE + "/";
 
     @Override
     public <T> T getConfigObject(final String itemId) {
@@ -61,7 +62,6 @@ public class SiteMapHelper extends AbstractHelper {
             String target = jcrNode.getParent().getPath() + "/" + modifiedName;
             validateTarget(session, target);
             session.move(jcrNode.getPath(), jcrNode.getParent().getPath() + "/" + modifiedName);
-
             createMarkedDeletedIfLiveExists(session, oldLocation);
         }
 
@@ -86,6 +86,7 @@ public class SiteMapHelper extends AbstractHelper {
 
         final Node newChild = parent.addNode(siteMapItem.getName(), HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
 
+        // TODO clone page definition
         setSitemapItemProperties(siteMapItem, newChild);
 
         final Map<String, String> modifiedLocalParameters = siteMapItem.getLocalParameters();
@@ -166,7 +167,7 @@ public class SiteMapHelper extends AbstractHelper {
 
 
     private void createMarkedDeletedIfLiveExists(final Session session, final String oldLocation) throws RepositoryException {
-        boolean liveExists =  liveExists(session, oldLocation);
+        boolean liveExists = liveExists(session, oldLocation);
         if (liveExists) {
             Node deleted = session.getRootNode().addNode(oldLocation.substring(1), HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
             markDeleted(deleted);
@@ -174,7 +175,7 @@ public class SiteMapHelper extends AbstractHelper {
     }
 
     private void deleteOrMarkDeletedIfLiveExists(final Node toDelete) throws RepositoryException {
-        boolean liveExists =  liveExists(toDelete.getSession(), toDelete.getPath());
+        boolean liveExists = liveExists(toDelete.getSession(), toDelete.getPath());
         if (liveExists) {
             markDeleted(toDelete);
         } else {
@@ -183,10 +184,10 @@ public class SiteMapHelper extends AbstractHelper {
     }
 
     private boolean liveExists(final Session session, final String previewLocation) throws RepositoryException {
-        if (!previewLocation.contains("-preview/hst:workspace")) {
+        if (!previewLocation.contains("-preview/hst:workspace/")) {
             throw new IllegalStateException("Unexpected location '"+previewLocation+"'");
         }
-        String liveLocation = previewLocation.replace("-preview/hst:workspace", "/hst:workspace");
+        String liveLocation = previewLocation.replace("-preview/hst:workspace/", "/hst:workspace/");
         return session.nodeExists(liveLocation);
     }
 
@@ -200,6 +201,14 @@ public class SiteMapHelper extends AbstractHelper {
     }
 
     private void validateTarget(final Session session, final String target) throws RepositoryException {
+        // check non workspace sitemap for collisions
+        final HstSiteMap siteMap = AbstractConfigResource.getEditingPreviewSite(RequestContextProvider.get()).getSiteMap();
+        if (!(siteMap instanceof CanonicalInfo)) {
+            throw new IllegalStateException("Unexpected sitemap for site '" + siteMap.getSite().getName() + "' because not an instanceof CanonicalInfo");
+        }
+        if (!target.contains(WORKSPACE_PATH_ELEMENT)) {
+            throw new IllegalArgumentException("Target '" + target + "' expected to at least contain ");
+        }
         if (session.nodeExists(target)) {
             Node targetNode = session.getNode(target);
             if (isMarkedDeleted(targetNode)) {
@@ -207,10 +216,40 @@ public class SiteMapHelper extends AbstractHelper {
                 acquireLock(targetNode);
                 targetNode.remove();
             } else {
-                throw new IllegalStateException("Target node '"+targetNode.getPath()+"' already exists");
+                throw new IllegalStateException("Target node '" + targetNode.getPath() + "' already exists");
+            }
+        } else {
+            final CanonicalInfo canonical = (CanonicalInfo) siteMap;
+            if (canonical.isWorkspaceConfiguration()) {
+                // the hst:sitemap node is from workspace so there is no non workspace sitemap for current site (inherited one
+                // does not have precendence)
+                return;
+            } else {
+                // non workspace sitemap
+                final Node siteMapNode = session.getNodeByIdentifier(canonical.getCanonicalIdentifier());
+                final Node siteNode = siteMapNode.getParent();
+                if (!siteNode.isNodeType(HstNodeTypes.NODETYPE_HST_CONFIGURATION)) {
+                    throw new IllegalStateException("Expected node type '" + HstNodeTypes.NODETYPE_HST_CONFIGURATION + "' for " +
+                            "'" + siteNode.getPath() + "' but was '" + siteNode.getPrimaryNodeType().getName() + "'.");
+                }
+                if (!target.startsWith(siteNode.getPath() + "/")) {
+                    throw new IllegalArgumentException("Target '" + target + "' does not start with the path of the " +
+                            "targeted hst site '" + siteMapNode.getPath() + "'.");
+                }
+                // check whether non workspace sitemap does not already contain the target without /hst:workspace/ part
+                String nonWorkspaceTarget = target.replace(WORKSPACE_PATH_ELEMENT, "/");
+                // now we have a path like /hst:hst/hst:configurations/myproject/hst:sitemap/foo/bar/lux
+                // we need to make sure 'foo' does not already exist
+                String siteMapRelPath = nonWorkspaceTarget.substring(siteMapNode.getPath().length() + 1);
+                String[] segments = siteMapRelPath.split("/");
+                if (siteMapNode.hasNode(segments[0])) {
+                    throw new IllegalArgumentException("Target '" + target + "' not allowed since the *non-workspace* " +
+                            "sitemap already contains '" + siteMapNode.getPath() + "/" + segments[0] + "'");
+                }
+                // valid!
+                return;
             }
         }
     }
-
 
 }

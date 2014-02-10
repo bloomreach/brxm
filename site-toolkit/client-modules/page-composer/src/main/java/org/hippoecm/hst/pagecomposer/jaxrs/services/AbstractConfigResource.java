@@ -241,7 +241,11 @@ public class AbstractConfigResource {
     }
 
     protected Response logAndReturnClientError(Exception e) {
-        log.info(e.toString());
+        if (log.isDebugEnabled()) {
+            log.info(e.toString(), e);
+        } else {
+            log.info(e.toString());
+        }
         final ExtResponseRepresentation entity = new ExtResponseRepresentation();
         entity.setSuccess(false);
         entity.setMessage(e.getMessage());

@@ -34,6 +34,7 @@ import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
@@ -96,7 +97,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
     @Test
     public void test_update_properties() throws Exception {
 
-        final SiteMapItemRepresentation home = getSiteMapItemRepresentation("home");
+        final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
         assertNotNull(home);
 
         home.setComponentConfigurationId("testCompId");
@@ -156,7 +157,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
 
     @Test
     public void test_update_properties_fails_cause_node_locked() throws Exception {
-        final SiteMapItemRepresentation home = getSiteMapItemRepresentation("home");
+        final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
 
         final Session bob = createSession("bob", "bob");
         Node homeNodeByBob = bob.getNodeByIdentifier(home.getId());
@@ -180,8 +181,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
             helper.acquireLock(homeNode);
             fail("Expected an IllegalStateException when trying to acquire lock");
         } catch (IllegalStateException e) {
-            System.out.println(e.toString());
-            assertTrue(e.getMessage().contains("descendant locked node"));
+            assertTrue(e.getMessage().contains("cannot be locked"));
         }
 
         try {
@@ -198,8 +198,8 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
     public void test_update_properties_fails_cause_descendant_locked() throws Exception {
         // with bob user we lock first the sitemap item /news/_any_ : This makes 'news' item partially locked:
         // partially locked nodes cannot be moved / renamed or updated any more.
-        final SiteMapItemRepresentation news = getSiteMapItemRepresentation("news");
-        final SiteMapItemRepresentation newsAny = getSiteMapItemRepresentation("news/_any_");
+        final SiteMapItemRepresentation news = getSiteMapItemRepresentation(session, "news");
+        final SiteMapItemRepresentation newsAny = getSiteMapItemRepresentation(session, "news/_any_");
 
         final Session bob = createSession("bob", "bob");
         Node newsAnyNodeByBob = bob.getNodeByIdentifier(newsAny.getId());
@@ -222,11 +222,12 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
 
         // assert update on /news/_default_ still works
 
-        final SiteMapItemRepresentation newsDefault = getSiteMapItemRepresentation("news/_default_");
+        final SiteMapItemRepresentation newsDefault = getSiteMapItemRepresentation(session, "news/_default_");
         {
             newsDefault.setComponentConfigurationId("foobar");
             Response response = siteMapResource.update(newsDefault);
-            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+                    Response.Status.OK.getStatusCode(), response.getStatus());
             final Node newsDefaultNode = session.getNodeByIdentifier(newsDefault.getId());
             assertEquals("foobar", newsDefaultNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
             assertEquals("admin", newsDefaultNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
@@ -240,7 +241,8 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
 
         {
             Response response = siteMapResource.update(news);
-            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+                    Response.Status.OK.getStatusCode(), response.getStatus());
             final Node newsNode = session.getNodeByIdentifier(news.getId());
             assertEquals("foo", newsNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
             assertEquals("admin", newsNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
@@ -251,7 +253,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
     @Test
     public void test_update_properties_fails_cause_ancestor_locked() throws Exception {
 
-        final SiteMapItemRepresentation news = getSiteMapItemRepresentation("news");
+        final SiteMapItemRepresentation news = getSiteMapItemRepresentation(session, "news");
         final Session bob = createSession("bob", "bob");
         Node newsNodeByBob = bob.getNodeByIdentifier(news.getId());
         SiteMapHelper helper = new SiteMapHelper();
@@ -262,7 +264,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         SiteMapResource siteMapResource = new SiteMapResource();
         // now news/_any_ has implicit lock due to ancestor lock
 
-        final SiteMapItemRepresentation newsAny = getSiteMapItemRepresentation("news/_any_");
+        final SiteMapItemRepresentation newsAny = getSiteMapItemRepresentation(session, "news/_any_");
         newsAny.setComponentConfigurationId("foo");
         {
             Response response = siteMapResource.update(newsAny);
@@ -279,7 +281,8 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
 
         {
             Response response = siteMapResource.update(newsAny);
-            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+                    Response.Status.OK.getStatusCode(), response.getStatus());
             final Node newsAnyNode = session.getNodeByIdentifier(newsAny.getId());
             assertEquals("foo", newsAnyNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
             assertEquals("admin", newsAnyNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
@@ -290,102 +293,249 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
 
     @Test
     public void test_rename() throws Exception {
-        final SiteMapItemRepresentation home = getSiteMapItemRepresentation("home");
-        Node homeNode = session.getNodeByIdentifier(home.getId());
-        String parentPath = homeNode.getParent().getPath();
-        home.setName("renamedHome");
 
         SiteMapResource siteMapResource = new SiteMapResource();
-        Response response = siteMapResource.update(home);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals("renamedHome", homeNode.getName());
-        assertEquals(parentPath + "/renamedHome", homeNode.getPath());
 
-        assertTrue(session.nodeExists(parentPath + "/home"));
-        Node deletedMarkerNode = session.getNode(parentPath + "/home");
-        assertEquals("admin", deletedMarkerNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
+        {
+            final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
+            Node homeNode = session.getNodeByIdentifier(home.getId());
+            String parentPath = homeNode.getParent().getPath();
+            home.setName("renamedHome");
+            Response response = siteMapResource.update(home);
+            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+                    Response.Status.OK.getStatusCode(), response.getStatus());
+            assertEquals("renamedHome", homeNode.getName());
+            assertEquals(parentPath + "/renamedHome", homeNode.getPath());
 
+            assertTrue(session.nodeExists(parentPath + "/home"));
+            Node deletedMarkerNode = session.getNode(parentPath + "/home");
+            assertEquals("admin", deletedMarkerNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
+            assertEquals("deleted", deletedMarkerNode.getProperty("hst:state").getString());
+        }
+        // assert bob cannot rename 'news' to 'home' now as it is locked.
+        // also bob cannot rename 'renamedHome' as is locked
+
+        {
+            // bob sees the old home item locked
+            final Session bob = createSession("bob", "bob");
+            final SiteMapItemRepresentation news = getSiteMapItemRepresentation(bob, "news");
+            news.setName("home");
+            Response bobResponse = siteMapResource.update(news);
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), bobResponse.getStatus());
+            assertTrue(((ExtResponseRepresentation)bobResponse.getEntity()).getMessage().contains("lock"));
+
+            // bob also sees the 'renamedHome' locked
+            news.setName("renamedHome");
+            Response bobResponse2 = siteMapResource.update(news);
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), bobResponse2.getStatus());
+            assertTrue(((ExtResponseRepresentation) bobResponse2.getEntity()).getMessage().contains("already exists"));
+        }
     }
 
 
     @Test
     public void test_rename_to_same_name() throws Exception {
-        final SiteMapItemRepresentation home = getSiteMapItemRepresentation("home");
+        final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
         Node homeNode = session.getNodeByIdentifier(home.getId());
         home.setName("home");
         SiteMapResource siteMapResource = new SiteMapResource();
         Response response = siteMapResource.update(home);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-
+        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+                Response.Status.OK.getStatusCode(), response.getStatus());
         assertTrue(homeNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
     }
 
     @Test
     public void test_rename_and_back_again() throws Exception {
-        final SiteMapItemRepresentation home = getSiteMapItemRepresentation("home");
-        Node homeNode = session.getNodeByIdentifier(home.getId());
-        String parentPath = homeNode.getParent().getPath();
-        home.setName("renamedHome");
-
         SiteMapResource siteMapResource = new SiteMapResource();
-        siteMapResource.update(home);
+        String parentPath;
+        {
+            final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
+            Node homeNode = session.getNodeByIdentifier(home.getId());
+            parentPath = homeNode.getParent().getPath();
+            home.setName("renamedHome");
+            siteMapResource.update(home);
+        }
 
-        home.setName("home");
-        Response response = siteMapResource.update(home);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals("home", homeNode.getName());
-        assertEquals("admin", homeNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
-        assertFalse(session.nodeExists(parentPath + "/renamedHome"));
+        {
+            // because of Jackrabbit issue we need a fresh session for tests with this move because
+            // JR sometimes throws a incorrect repository exception during SessionMoveOperation
+            final Session admin = createSession("admin", "admin");
+            final SiteMapItemRepresentation renamedHome = getSiteMapItemRepresentation(admin, "renamedHome");
+            renamedHome.setName("home");
+            Response response = siteMapResource.update(renamedHome);
+            Node homeNode = admin.getNodeByIdentifier(renamedHome.getId());
+            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+                    Response.Status.OK.getStatusCode(), response.getStatus());
+            assertEquals("home", homeNode.getName());
+            assertEquals("admin", homeNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
+            assertFalse(admin.nodeExists(parentPath + "/renamedHome"));
+            admin.logout();
+        }
+
     }
+
 
     @Test
     public void test_rename_and_rename_and_back_again() throws Exception {
-
         SiteMapResource siteMapResource = new SiteMapResource();
-        final SiteMapItemRepresentation home = getSiteMapItemRepresentation("home");
-        Node homeNode = session.getNodeByIdentifier(home.getId());
-        String parentPath = homeNode.getParent().getPath();
+        String parentPath;
+        {
+            final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
+            Node homeNode = session.getNodeByIdentifier(home.getId());
+            parentPath = homeNode.getParent().getPath();
 
-        home.setName("rename1");
-        siteMapResource.update(home);
-        home.setName("rename2");
-        siteMapResource.update(home);
+            home.setName("rename1");
+            siteMapResource.update(home);
 
-        home.setName("home");
 
-        Response response = siteMapResource.update(home);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals("home", homeNode.getName());
-        assertEquals("admin", homeNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
-        assertFalse(session.nodeExists(parentPath + "/rename1"));
-        assertFalse(session.nodeExists(parentPath + "/rename2"));
+            home.setName("rename2");
+            siteMapResource.update(home);
+        }
+        // because of Jackrabbit issue we need a fresh session for tests with this move because
+        // JR sometimes throws a incorrect repository exception during SessionMoveOperation
+        {
+            final Session admin = createSession("admin", "admin");
+            final SiteMapItemRepresentation home = getSiteMapItemRepresentation(admin, "rename2");
+            home.setName("home");
+            Response response = siteMapResource.update(home);
+            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+                    Response.Status.OK.getStatusCode(), response.getStatus());
+            assertEquals("home", home.getName());
+            Node homeNode = admin.getNodeByIdentifier(home.getId());
+            assertEquals("admin", homeNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
+            assertFalse(admin.nodeExists(parentPath + "/rename1"));
+            assertFalse(admin.nodeExists(parentPath + "/rename2"));
+            admin.logout();
+        }
 
     }
 
     @Test
     public void test_rename_home_and_rename_news_to_home() throws Exception {
-        // also with bob
 
-    }
+        final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
+        String oldHomeParentPath = session.getNodeByIdentifier(home.getId()).getParent().getPath();
+        home.setName("renamedHome");
+
+        SiteMapResource siteMapResource = new SiteMapResource();
+        siteMapResource.update(home);
+
+        // bob sees the old home item locked
+        final Session bob = createSession("bob", "bob");
+        Node deleteHomeNodeByBob = bob.getNode(oldHomeParentPath + "/home");
+        SiteMapHelper helper = new SiteMapHelper();
+        try {
+            helper.acquireLock(deleteHomeNodeByBob);
+            fail("Bob should 'see' locked deleted home node");
+        } catch (IllegalStateException e) {
+
+        }
+
+        Node deleteHomeNodeByAdmin = session.getNode(oldHomeParentPath + "/home");
+        try {
+            helper.acquireLock(deleteHomeNodeByAdmin);
+        } catch (IllegalStateException e) {
+            fail("Admin should have the locked deleted home node");
+        }
 
 
-    @Test
-    public void test_rename_home_and_add_home() throws Exception {
-        // also with bob
+        // because of Jackrabbit issue we need a fresh session for tests with this move because
+        // JR sometimes throws a incorrect repository exception during SessionMoveOperation
+        {
+            final Session admin = createSession("admin", "admin");
+            final SiteMapItemRepresentation news = getSiteMapItemRepresentation(admin, "news");
+            news.setName("home");
+            siteMapResource.update(news);
+
+            assertTrue(admin.nodeExists(oldHomeParentPath + "/home"));
+            Node renamedNewsNode = admin.getNode(oldHomeParentPath + "/home");
+            assertEquals("admin", renamedNewsNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
+            assertFalse(renamedNewsNode.hasProperty("hst:state"));
+            admin.logout();
+        }
+
+        // bob sees the new home item locked
+        Node moveNewsNodeToHome = bob.getNode(oldHomeParentPath + "/home");
+        try {
+            helper.acquireLock(moveNewsNodeToHome);
+            fail("Bob should 'see' the news move to home node as locked");
+        } catch (IllegalStateException e) {
+
+        }
+        bob.logout();
     }
 
     @Test
     public void test_rename_fails_target_existing_sibling() throws Exception {
+        final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
 
+        // news already exists
+        home.setName("news");
+        SiteMapResource siteMapResource = new SiteMapResource();
+        Response response = siteMapResource.update(home);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        assertTrue(((ExtResponseRepresentation) response.getEntity()).getMessage().contains("already exists"));
     }
 
     @Test
     public void test_rename_succeeds_with_sibling_locks() throws Exception {
+        SiteMapResource siteMapResource = new SiteMapResource();
+        final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
 
+        SiteMapHelper helper = new SiteMapHelper();
+        // lock home by 'bob'
+        final Session bob = createSession("bob", "bob");
+        helper.acquireLock(bob.getNodeByIdentifier(home.getId()));
+        bob.save();
+
+        // assert home is locked for 'admin'
+        home.setName("renamed");
+        Response failResponse = siteMapResource.update(home);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), failResponse.getStatus());
+        assertTrue(((ExtResponseRepresentation) failResponse.getEntity()).getMessage().contains("lock"));
+
+        // news should still be possible to move
+        final SiteMapItemRepresentation news = getSiteMapItemRepresentation(session, "news");
+        Response response = siteMapResource.update(news);
+        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+                Response.Status.OK.getStatusCode(), response.getStatus());
+
+        bob.logout();
     }
 
     @Test
     public void test_rename_fails_cause_target_existing_in_non_workspace() throws Exception {
+        SiteMapResource siteMapResource = new SiteMapResource();
+        final SiteMapItemRepresentation aboutUs = getSiteMapItemRepresentation(session, "about-us");
+        assertNotNull(aboutUs);
+        // about-us is part of non-workspace
+        assertFalse(aboutUs.isWorkspaceConfiguration());
+        final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
+
+        // 'about-us' is part of the non-workspace sitemap and should thus fail!
+        home.setName("about-us");
+        Response failResponse = siteMapResource.update(home);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), failResponse.getStatus());
+        assertTrue(((ExtResponseRepresentation) failResponse.getEntity()).getMessage().contains("*non-workspace* sitemap already contains"));
+    }
+
+    @Test
+    public void test_rename_succeeds_when_no_non_workspace_sitemap() throws Exception {
+        session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap").remove();
+        session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:sitemap").remove();
+        session.save();
+        SiteMapResource siteMapResource = new SiteMapResource();
+        final SiteMapItemRepresentation aboutUs = getSiteMapItemRepresentation(session, "about-us");
+        assertNotNull(aboutUs);
+        // about-us is part of non-workspace
+        assertFalse(aboutUs.isWorkspaceConfiguration());
+        final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
+
+        // 'about-us' is part of the non-workspace sitemap and should thus fail!
+        home.setName("about-us");
+        Response correctResponse = siteMapResource.update(home);
+        assertEquals(Response.Status.OK.getStatusCode(), correctResponse.getStatus());
 
     }
 

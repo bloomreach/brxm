@@ -116,8 +116,9 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         Thread.sleep(100);
     }
 
-    public SiteMapItemRepresentation getSiteMapItemRepresentation(String relPath) throws Exception {
-        final SiteMapRepresentation representation = getSiteMapRepresentation();
+    public SiteMapItemRepresentation getSiteMapItemRepresentation(final Session requestSession,
+                                                                  final String relPath) throws Exception {
+        final SiteMapRepresentation representation = getSiteMapRepresentation(requestSession);
 
         int segmentPos = 0;
         String[] segments = relPath.split("/");
@@ -151,10 +152,10 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         return itemPresentation;
     }
 
-    public SiteMapRepresentation getSiteMapRepresentation() throws Exception {
+    public SiteMapRepresentation getSiteMapRepresentation(final Session requestSession) throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL(request, "localhost", "/home");
-        ((HstMutableRequestContext) ctx).setSession(session);
+        ((HstMutableRequestContext) ctx).setSession(requestSession);
         final HstSiteMap siteMap = AbstractConfigResource.getEditingPreviewSite(ctx).getSiteMap();
         return new SiteMapRepresentation().represent(siteMap);
     }
