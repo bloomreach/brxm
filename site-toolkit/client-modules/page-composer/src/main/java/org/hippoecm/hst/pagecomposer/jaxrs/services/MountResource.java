@@ -301,8 +301,8 @@ public class MountResource extends AbstractConfigResource {
 
             HippoSession session = HstConfigurationUtils.getNonProxiedSession(getPageComposerContextService().getRequestContext().getSession(false));
             List<String> relativeContainerPathsToPublish = findChangedContainersForUsers(session, previewConfigurationPath, userIds);
-
             List<String> mainConfigNodeNamesToPublish = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds);
+
             pushContainerChildrenNodes(session, previewConfigurationPath, liveConfigurationPath, relativeContainerPathsToPublish);
             copyChangedMainConfigNodes(session, previewConfigurationPath, liveConfigurationPath, mainConfigNodeNamesToPublish);
             publishChannelChanges(session, userIds);
@@ -455,19 +455,19 @@ public class MountResource extends AbstractConfigResource {
         final String xpath = buildXPathQueryToFindContainersForUsers(previewConfigurationPath, userIds);
         final QueryResult result = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH).execute();
 
-        final NodeIterable containersToRevert = new NodeIterable(result.getNodes());
-        List<String> relativePathsToRevert = new ArrayList<String>();
-        for (Node containerToRevert : containersToRevert) {
-            String containerPath = containerToRevert.getPath();
+        final NodeIterable containersForUsers = new NodeIterable(result.getNodes());
+        List<String> relativeContainersForUsers = new ArrayList<String>();
+        for (Node containerForUsers : containersForUsers) {
+            String containerPath = containerForUsers.getPath();
             if (!containerPath.startsWith(previewConfigurationPath)) {
                 log.warn("Cannot discard container '{}' because does not start with preview config path '{}'.");
                 continue;
             }
-            relativePathsToRevert.add(containerToRevert.getPath().substring(previewConfigurationPath.length()));
+            relativeContainersForUsers.add(containerForUsers.getPath().substring(previewConfigurationPath.length()));
         }
         log.info("Changed containers for configuration '{}' for users '{}' are : {}",
-                new String[]{previewConfigurationPath, userIds.toString(), relativePathsToRevert.toString()});
-        return relativePathsToRevert;
+                new String[]{previewConfigurationPath, userIds.toString(), relativeContainersForUsers.toString()});
+        return relativeContainersForUsers;
     }
 
     private List<String> findChangedMainConfigNodeNamesForUsers(final HippoSession session, String previewConfigurationPath, List<String> userIds) throws RepositoryException {
@@ -478,19 +478,19 @@ public class MountResource extends AbstractConfigResource {
         final String xpath = buildXPathQueryToFindMainfConfigNodesForUsers(previewConfigurationPath, userIds);
         final QueryResult result = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH).execute();
 
-        final NodeIterable mainConfigNodesToRevert = new NodeIterable(result.getNodes());
-        List<String> mainConfigNodeNamesToRevert = new ArrayList<String>();
-        for (Node mainConfigNodeToRevert : mainConfigNodesToRevert) {
-            String mainConfigNodePath = mainConfigNodeToRevert.getPath();
+        final NodeIterable mainConfigNodesForUsers = new NodeIterable(result.getNodes());
+        List<String> mainConfigNodeNamesForUsers = new ArrayList<String>();
+        for (Node mainConfigNodeForUser : mainConfigNodesForUsers) {
+            String mainConfigNodePath = mainConfigNodeForUser.getPath();
             if (!mainConfigNodePath.startsWith(previewConfigurationPath)) {
                 log.warn("Cannot discard container '{}' because does not start with preview config path '{}'.");
                 continue;
             }
-            mainConfigNodeNamesToRevert.add(mainConfigNodeToRevert.getPath().substring(previewConfigurationPath.length() + 1));
+            mainConfigNodeNamesForUsers.add(mainConfigNodeForUser.getPath().substring(previewConfigurationPath.length() + 1));
         }
         log.info("Changed main config nodes for configuration '{}' for users '{}' are : {}",
-                new String[]{previewConfigurationPath, userIds.toString(), mainConfigNodeNamesToRevert.toString()});
-        return mainConfigNodeNamesToRevert;
+                new String[]{previewConfigurationPath, userIds.toString(), mainConfigNodeNamesForUsers.toString()});
+        return mainConfigNodeNamesForUsers;
     }
 
 
