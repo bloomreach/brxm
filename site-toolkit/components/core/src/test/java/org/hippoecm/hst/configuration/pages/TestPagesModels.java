@@ -84,7 +84,6 @@ public class TestPagesModels extends AbstractTestConfigurations {
 
     @Test
     public void test_unittestproject_pages_without_workspace_pages() throws Exception {
-        session.getNode("/hst:hst/hst:configurations/unittestproject").addNode("hst:pages");
         session.move("/hst:hst/hst:configurations/unittestcommon/hst:pages",
                 "/hst:hst/hst:configurations/unittestproject/hst:pages");
         session.save();
