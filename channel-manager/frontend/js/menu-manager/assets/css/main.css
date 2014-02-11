@@ -32,13 +32,15 @@ html, body {
     padding: 0;
     margin-left: 0;
     margin-right: 0;
-    width: auto;
+    width: 100%;
+    display: table;
 }
 
 #container > .row {
     margin-left: 0;
     margin-right: 0;
     display: table-row;
+    width: 100%;
 }
 
 /* --- Tree --- */
@@ -100,4 +102,8 @@ html, body {
 
 .jstree-hippo li.jstree-node .jstree-icon {
     margin-top: 23px;
+}
+
+form h4.page-header {
+    margin-top: 12px;
 }
