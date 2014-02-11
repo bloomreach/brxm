@@ -23,6 +23,7 @@ html, body {
 #application {
     width: 100%;
     height: 100%;
+    overflow: hidden;
 }
 
 
@@ -50,7 +51,7 @@ html, body {
     float: none;
     vertical-align: top;
     background: white;
-    border-right: 1px solid #dddddd;
+    border-right: none;
 }
 
 #menu-tree button {
@@ -98,6 +99,7 @@ html, body {
 .l-sidebar {
     height: 433px;
     overflow-y: auto;
+    border-right: 1px solid #dddddd;
 }
 
 .jstree-hippo li.jstree-node .jstree-icon {
