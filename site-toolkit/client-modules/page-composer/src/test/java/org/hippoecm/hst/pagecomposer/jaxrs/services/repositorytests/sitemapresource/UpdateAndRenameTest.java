@@ -81,7 +81,6 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
             new PreviewWorkspaceNodeValidator(newsWildcardChildUuid, HstNodeTypes.NODETYPE_HST_SITEMAPITEM).validate();
         }
 
-
         {
             final HstSiteMapItem aboutUs = mount.getPreviewHstSite().getSiteMap().getSiteMapItem("about-us");
             assertFalse(((CanonicalInfo) aboutUs).isWorkspaceConfiguration());
@@ -130,7 +129,6 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         for (Value value : homeNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_ROLES).getValues()) {
             storedRoles.add(value.getString());
         }
-
         assertEquals(storedRoles, roles);
 
         Map<String, String> storedLocalParams = new HashMap<>();
@@ -138,12 +136,10 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         for (Value value : homeNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES).getValues()) {
             keys.add(value.getString());
         }
-
         List<String> values = new ArrayList<>();
         for (Value value : homeNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES).getValues()) {
             values.add(value.getString());
         }
-
 
         final Iterator<String> keyIt = keys.iterator();
         final Iterator<String> valueIt = values.iterator();
@@ -151,9 +147,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         while (keyIt.hasNext()) {
             storedLocalParams.put(keyIt.next(), valueIt.next());
         }
-
         assertEquals(storedLocalParams, localParams);
-
     }
 
 
@@ -262,7 +256,6 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         helper.acquireLock(newsNodeByBob);
         bob.save();
 
-
         final SiteMapResource siteMapResource = createResource();
         // now news/_any_ has implicit lock due to ancestor lock
 
@@ -272,7 +265,6 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
             Response response = siteMapResource.update(newsAny);
             assertEquals("update should fail because of partial lock.", Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
         }
-
 
         // assert after removing lock from _any_ we can call siteMapResource.update(news);
         assertTrue(newsNodeByBob.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
@@ -291,7 +283,6 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         }
 
     }
-
 
     @Test
     public void test_rename() throws Exception {
