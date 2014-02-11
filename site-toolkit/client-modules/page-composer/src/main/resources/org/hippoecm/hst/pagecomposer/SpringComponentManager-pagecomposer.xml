@@ -24,7 +24,8 @@
     <property name="jaxrsServerFactoryBean" ref="jaxrsHstConfigCxfServerFactoryBean"/>
   </bean>
 
-  <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerItemComponentResource" id="containerItemComponentResource">
+  <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerItemComponentResource" id="containerItemComponentResource"
+        parent="abstractConfigResource">
     <property name="processor">
       <bean class="org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor" />
     </property>
@@ -40,7 +41,7 @@
     <property name="pageComposerContextService" ref="pageComposerContextService"/>
   </bean>
 
-  <bean id="pageHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper">
+  <bean id="pagesHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper">
     <property name="pageComposerContextService" ref="pageComposerContextService"/>
   </bean>
 
@@ -67,7 +68,7 @@
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <ref bean="containerItemComponentResource"  parent="abstractConfigResource"/>
+            <ref bean="containerItemComponentResource"/>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
