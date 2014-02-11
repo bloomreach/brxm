@@ -72,8 +72,9 @@ public class BasicReviewedActionsWorkflowImpl extends AbstractReviewedActionsWor
 
     @Override
     public Map<String, Serializable> hints() throws WorkflowException {
-        Map<String, Serializable> info = new HashMap<>(super.hints());
+        Map<String, Serializable> hints = new HashMap<>();
         try {
+            Map<String, Serializable> info = new HashMap<>(super.hints());
             final String state = JcrUtils.getStringProperty(getNode(), HippoStdNodeType.HIPPOSTD_STATE, "");
 
             boolean status = Boolean.TRUE.equals(info.get("status"));
@@ -99,27 +100,25 @@ public class BasicReviewedActionsWorkflowImpl extends AbstractReviewedActionsWor
                 }
             }
 
-            if (PublishableDocument.DRAFT.equals(state) && unpublishedDocument != null) {
-                info.put("checkModified", true);
+            if (PublishableDocument.DRAFT.equals(state) && unpublishedDocument != null && info.containsKey("checkModified")) {
+                hints.put("checkModified", info.get("checkModified"));
             }
 
-            if (PublishableDocument.DRAFT.equals(state)) {
-                info.put("inUseBy", draftDocument.getOwner());
+            if (PublishableDocument.DRAFT.equals(state) && info.containsKey("inUseBy")) {
+                hints.put("inUseBy", info.get("inUseBy"));
             }
-            info.put("obtainEditableInstance", editable);
-            info.put("publish", publishable);
-            info.put("depublish", depublishable);
+            hints.put("obtainEditableInstance", editable);
+            hints.put("publish", publishable);
+            hints.put("depublish", depublishable);
             if (deleteable != null) {
-                info.put("delete", deleteable);
-            } else {
-                info.remove("delete");
+                hints.put("delete", deleteable);
             }
-            info.put("status", status);
+            hints.put("status", status);
         } catch (RepositoryException ex) {
             log.error("Failed to calculate hints", ex);
         }
 
-        return info;
+        return hints;
     }
 
     // EditableWorkflow implementation

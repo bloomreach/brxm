@@ -47,7 +47,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             info.put("copy", (unpublishedDocument != null && PublishableDocument.UNPUBLISHED.equals(state))
                     || (unpublishedDocument == null && publishedDocument != null && PublishableDocument.PUBLISHED.equals(state)));
         } catch (RepositoryException ex) {
-            // TODO DEDJO: ignore?
+            log.error("Failed to calculate hints", ex);
         }
         return info;
     }
