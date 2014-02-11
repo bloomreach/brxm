@@ -137,6 +137,7 @@
                 };
 
                 menuService.moveMenuItem = function (menuItemId, newParentId, newPosition) {
+                    newParentId = (menuItemId == newParentId) ? ConfigService.menuId : newParentId;
                     $http.post(menuServiceUrl('move/' + menuItemId + '/' + newParentId + '/' + newPosition ))
                         .error(function (error) {
                             // TODO show error in UI
