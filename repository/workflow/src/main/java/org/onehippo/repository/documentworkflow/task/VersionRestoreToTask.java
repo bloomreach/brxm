@@ -57,7 +57,8 @@ public class VersionRestoreToTask extends AbstractDocumentTask {
                         name.equals(HippoNodeType.HIPPO_RELATED) ||
                         name.equals(HippoNodeType.HIPPO_COMPUTE) ||
                         name.equals(HippoNodeType.HIPPO_PATHS) ||
-                        name.equals(HippoStdNodeType.HIPPOSTD_STATE)) {
+                        name.equals(HippoStdNodeType.HIPPOSTD_STATE) ||
+                        name.equals(HippoStdNodeType.HIPPOSTD_HOLDER)) {
                     return;
                 }
                 super.setProperty(prop);
@@ -66,12 +67,13 @@ public class VersionRestoreToTask extends AbstractDocumentTask {
     }
 
     private static void clear(Node node) throws RepositoryException {
-        Set<String> immune = new TreeSet();
+        Set<String> immune = new TreeSet<>();
 
-        if (node.hasProperty("hippostd:state")) {
+        if (node.hasProperty(HippoStdNodeType.HIPPOSTD_STATE)) {
             // backwards compatibility
-            immune.add("hippostd:state");
+            immune.add(HippoStdNodeType.HIPPOSTD_STATE);
         }
+        immune.add(HippoStdNodeType.HIPPOSTD_HOLDER);
         immune.add(HippoNodeType.HIPPO_RELATED);
         immune.add(HippoNodeType.HIPPO_COMPUTE);
         immune.add(HippoNodeType.HIPPO_PATHS);
