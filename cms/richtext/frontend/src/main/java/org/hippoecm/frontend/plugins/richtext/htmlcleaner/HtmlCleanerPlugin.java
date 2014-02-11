@@ -50,6 +50,7 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
     private static final String PRETTY = "pretty";
     private static final String OMIT_COMMENTS = "omitComments";
     private static final String JAVASCRIPT_PROTOCOL = "javascript:";
+    private static final TextEscaper escaper = new TextEscaper();
 
     private final Map<String, Element> whitelist = new HashMap<>();
     private final String charset;
@@ -100,7 +101,8 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
                 attributes.remove(attribute.getKey());
                 continue;
             }
-            if (attributeValue.toLowerCase().trim().startsWith(JAVASCRIPT_PROTOCOL)) {
+            final String value = escaper.escapeText(attributeValue.toLowerCase().trim());
+            if (value.startsWith(JAVASCRIPT_PROTOCOL)) {
                 attributes.put(attributeName, "");
             }
         }
@@ -148,4 +150,17 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
         }
     }
 
+    private static class TextEscaper extends CompactHtmlSerializer {
+        private TextEscaper() {
+            super(new CleanerProperties() {{
+                setRecognizeUnicodeChars(true);
+                setTranslateSpecialEntities(true);
+            }});
+        }
+
+        @Override
+        protected String escapeText(final String s) {
+            return super.escapeText(s);
+        }
+    }
 }

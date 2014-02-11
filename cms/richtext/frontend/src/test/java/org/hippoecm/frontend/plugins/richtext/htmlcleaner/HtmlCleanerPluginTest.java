@@ -85,4 +85,14 @@ public class HtmlCleanerPluginTest extends PluginTest {
         assertEquals("<img src=\"\" />", html);
     }
 
+    @Test
+    public void testCleanEncodedJavascriptInAttributes() throws Exception {
+        final HtmlCleanerPlugin htmlCleanerPlugin = new HtmlCleanerPlugin(null, getPluginConfig());
+
+        // src attribute contains encoded javascript
+        String html = htmlCleanerPlugin.clean("<a href=\"&#106;&#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;" +
+                "&#58;&#97;&#108;&#101;&#114;&#116;&#40;&#39;&#88;&#83;&#83;&#39;&#41;\">link</a>");
+        log.debug(html);
+        assertEquals("<a href=\"\">link</a>", html);
+    }
 }
