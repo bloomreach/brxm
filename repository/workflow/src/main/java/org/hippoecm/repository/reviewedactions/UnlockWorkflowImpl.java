@@ -15,23 +15,43 @@
  */
 package org.hippoecm.repository.reviewedactions;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.WorkflowException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.documentworkflow.DocumentWorkflowImpl} instead.
  */
 @Deprecated
 public class UnlockWorkflowImpl extends AbstractReviewedActionsWorkflow implements UnlockWorkflow {
+
+    static final Logger log = LoggerFactory.getLogger(UnlockWorkflowImpl.class);
+
     /**
      * All implementations of a work-flow must provide a single, no-argument constructor.
      *
      * @throws java.rmi.RemoteException mandatory exception that must be thrown by all Remote objects
      */
     public UnlockWorkflowImpl() throws RemoteException {
+    }
+
+    @Override
+    public Map<String, Serializable> hints() throws WorkflowException {
+        Map<String, Serializable> info = new HashMap<>(super.hints());
+        if (info.containsKey("unlock")) {
+            Map<String, Serializable> hints = new HashMap<>();
+            hints.put("unlock", info.get("unlock"));
+            return hints;
+        }
+        return Collections.emptyMap();
     }
 
     // UnlockWorkflow implementation
