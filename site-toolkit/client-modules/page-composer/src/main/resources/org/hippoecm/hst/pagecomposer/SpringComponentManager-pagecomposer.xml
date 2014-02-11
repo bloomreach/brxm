@@ -24,6 +24,11 @@
     <property name="jaxrsServerFactoryBean" ref="jaxrsHstConfigCxfServerFactoryBean"/>
   </bean>
 
+
+  <bean id="abstractConfigResource" abstract="true">
+    <property name="pageComposerContextService" ref="pageComposerContextService"/>
+  </bean>
+
   <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerItemComponentResource" id="containerItemComponentResource"
         parent="abstractConfigResource">
     <property name="processor">
@@ -45,9 +50,6 @@
     <property name="pageComposerContextService" ref="pageComposerContextService"/>
   </bean>
 
-  <bean id="abstractConfigResource" abstract="true">
-    <property name="pageComposerContextService" ref="pageComposerContextService"/>
-  </bean>
   <!--
     The internal server factory. 
     Each JAX-RS service component is registered by "resourceProvider" property. 
@@ -90,7 +92,7 @@
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource"  parent="abstractConfigResource">
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource" parent="abstractConfigResource">
               <property name="siteMapHelper" ref="siteMapHelper"/>
               <property name="siteMenuHelper" ref="siteMenuHelper"/>
               <property name="pagesHelper" ref="pagesHelper"/>

@@ -29,6 +29,10 @@ import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResourceAccessor;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -72,7 +76,7 @@ public class MountResourceTest extends AbstractPageComposerTest {
 
             ((HstMutableRequestContext) ctx).setSession(session);
 
-            MountResource mountResource = new MountResource();
+            MountResource mountResource = createResource();
             mountResource.startEdit();
 
             assertTrue("Live config node should exist",
@@ -108,7 +112,7 @@ public class MountResourceTest extends AbstractPageComposerTest {
                     .getNode("hst:workspace/hst:containers/testcontainer").getIdentifier();
             secondCtx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, previewContainerNodeUUID);
 
-            final ContainerComponentResource containerComponentResource = new ContainerComponentResource();
+            final ContainerComponentResource containerComponentResource = createContainerComponentResource(mountResource);
             containerComponentResource.createContainerItem(secondRequest, catalogItemUUID, System.currentTimeMillis());
 
             usersWithLockedContainers = MountResourceAccessor.findUsersWithLockedContainers(session, previewConfigurationPath);
@@ -132,6 +136,12 @@ public class MountResourceTest extends AbstractPageComposerTest {
             usersWithLockedContainers = MountResourceAccessor.findUsersWithLockedContainers(session, previewConfigurationPath);
             assertTrue(usersWithLockedContainers.isEmpty());
 
+    }
+
+    private ContainerComponentResource createContainerComponentResource(MountResource mountResource) {
+        ContainerComponentResource ccr = new ContainerComponentResource();
+        ccr.setPageComposerContextService(mountResource.getPageComposerContextService());
+        return ccr;
     }
 
     @Test
@@ -200,7 +210,7 @@ public class MountResourceTest extends AbstractPageComposerTest {
 
             ((HstMutableRequestContext) ctx).setSession(session);
 
-            MountResource mountResource = new MountResource();
+            MountResource mountResource = createResource();
             mountResource.startEdit();
 
             assertTrue("Live config node should exist",
@@ -228,7 +238,7 @@ public class MountResourceTest extends AbstractPageComposerTest {
 
             secondCtx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, previewContainerNodeUUID);
 
-            final ContainerComponentResource containerComponentResource = new ContainerComponentResource();
+            final ContainerComponentResource containerComponentResource = createContainerComponentResource(mountResource);
             containerComponentResource.createContainerItem(secondRequest, catalogItemUUID, System.currentTimeMillis());
 
             usersWithLockedContainers = MountResourceAccessor.findUsersWithLockedContainers(session, previewConfigurationPath);
@@ -253,8 +263,24 @@ public class MountResourceTest extends AbstractPageComposerTest {
             usersWithLockedContainers = MountResourceAccessor.findUsersWithLockedContainers(session, previewConfigurationPath);
             assertTrue(usersWithLockedContainers.isEmpty());
 
-
     }
+
+    private MountResource createResource() {
+        MountResource resource = new MountResource();
+        final PageComposerContextService pageComposerContextService = new PageComposerContextService();
+        resource.setPageComposerContextService(pageComposerContextService);
+        final SiteMapHelper siteMapHelper = new SiteMapHelper();
+        siteMapHelper.setPageComposerContextService(pageComposerContextService);
+        resource.setSiteMapHelper(siteMapHelper);
+        final PagesHelper pagesHelper = new PagesHelper();
+        pagesHelper.setPageComposerContextService(pageComposerContextService);
+        resource.setPagesHelper(pagesHelper);
+        final SiteMenuHelper siteMenuHelper = new SiteMenuHelper();
+        siteMenuHelper.setPageComposerContextService(pageComposerContextService);
+        resource.setSiteMenuHelper(siteMenuHelper);
+        return resource;
+    }
+
 
 
 }

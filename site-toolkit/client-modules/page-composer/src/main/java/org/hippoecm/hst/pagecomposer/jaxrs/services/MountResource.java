@@ -307,7 +307,7 @@ public class MountResource extends AbstractConfigResource {
             copyChangedMainConfigNodes(session, previewConfigurationPath, liveConfigurationPath, mainConfigNodeNamesToPublish);
             publishChannelChanges(session, userIds);
 
-            siteMapHelper.publishChanges(userIds);
+            siteMapHelper.publishWorkspaceChanges(userIds);
             HstConfigurationUtils.persistChanges(session);
             log.info("Site is published");
             return ok("Site is published");

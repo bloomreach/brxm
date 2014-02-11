@@ -49,7 +49,7 @@ public class AbstractConfigResource {
         this.pageComposerContextService = pageComposerContextService;
     }
 
-    protected final PageComposerContextService getPageComposerContextService() {
+    public final PageComposerContextService getPageComposerContextService() {
         return pageComposerContextService;
     }
 

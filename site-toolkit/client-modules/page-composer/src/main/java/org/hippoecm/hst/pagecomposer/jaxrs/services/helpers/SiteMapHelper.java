@@ -261,7 +261,7 @@ public class SiteMapHelper extends AbstractHelper {
         }
     }
 
-    public void publishChanges(final List<String> userIds) {
+    public void publishWorkspaceChanges(final List<String> userIds) {
 
         String liveConfigurationPath = pageComposerContextService.getEditingLiveSite().getConfigurationPath();
         String previewConfigurationPath = pageComposerContextService.getEditingPreviewSite().getConfigurationPath();

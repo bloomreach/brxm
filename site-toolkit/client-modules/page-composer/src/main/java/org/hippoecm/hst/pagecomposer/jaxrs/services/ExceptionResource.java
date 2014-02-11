@@ -40,8 +40,7 @@ public class ExceptionResource extends AbstractConfigResource {
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPageModelRepresentation(@Context HttpServletRequest servletRequest,
-                                               @Context HttpServletResponse servletResponse) {
+    public Response getPageModelRepresentation(@Context HttpServletRequest servletRequest) {
         
         return error(servletRequest.getAttribute(CXFJaxrsHstConfigService.REQUEST_ERROR_MESSAGE_ATTRIBUTE).toString());
      

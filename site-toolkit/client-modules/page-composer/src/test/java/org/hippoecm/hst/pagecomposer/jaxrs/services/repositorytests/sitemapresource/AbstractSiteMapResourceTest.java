@@ -44,7 +44,7 @@ import static org.junit.Assert.assertFalse;
 
 public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTest {
 
-    private PageComposerContextService pageComposerContextService;
+    protected PageComposerContextService pageComposerContextService;
 
     @Before
     @Override
@@ -114,6 +114,7 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
 
         ((HstMutableRequestContext) ctx).setSession(session);
         MountResource mountResource = new MountResource();
+        mountResource.setPageComposerContextService(pageComposerContextService);
         mountResource.startEdit();
         ModifiableRequestContextProvider.clear();
         // time for jcr events to arrive
