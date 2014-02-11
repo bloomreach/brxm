@@ -29,6 +29,9 @@
   <sv:property sv:name="frontend:services" sv:type="String">
     <sv:value>wicket.id</sv:value>
   </sv:property>
+  <sv:property sv:multiple="true" sv:name="frontend:properties" sv:type="String">
+    <sv:value>mode</sv:value>
+  </sv:property>
   <sv:node sv:name="previewPerspective">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>

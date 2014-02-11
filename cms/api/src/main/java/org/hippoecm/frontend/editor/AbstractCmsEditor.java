@@ -281,6 +281,7 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
         }
         JavaPluginConfig editorConfig = new JavaPluginConfig(parameters);
         editorConfig.put("wicket.id", editorId);
+        editorConfig.put("mode", mode.toString());
 
         IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
                 IPluginConfigService.class);
