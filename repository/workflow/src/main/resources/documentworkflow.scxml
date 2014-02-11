@@ -61,7 +61,6 @@
           <hippo:action action="disposeEditableInstance" enabledExpr="false"/>
           <hippo:action action="obtainEditableInstance" enabledExpr="false"/>
           <hippo:action action="commitEditableInstance" enabledExpr="false"/>
-          <hippo:action action="unlock" enabledExpr="false"/>
         </onentry>
         <transition target="editing"  cond="!requestPending and editing"/>
         <transition target="editable" cond="!requestPending"/>
@@ -76,7 +75,7 @@
           <else/>
             <hippo:info info="inUseBy" value="holder"/>
           </if>
-          <if cond="editor or dm.isGranted(draft,'hippo:admin')">
+          <if cond="!editor and dm.isGranted(draft,'hippo:admin')">
             <hippo:action action="unlock" enabledExpr="true"/>
           </if>
         </onentry>
@@ -84,6 +83,9 @@
 
       <state id="editable">
         <onentry>
+          <if cond="dm.isGranted(draft,'hippo:admin')">
+            <hippo:action action="unlock" enabledExpr="false"/>
+          </if>
           <hippo:action action="obtainEditableInstance" enabledExpr="true"/>
         </onentry>
       </state>
@@ -139,13 +141,15 @@
           <foreach item="request" array="requests.values()">
             <if cond="request.workflowRequest">
               <if cond="dm.isGranted(request, 'hippo:editor')">
-                <hippo:requestAction identifierExpr="request.identity" action="rejectRequest" enabledExpr="true"/>
+                <if cond="request.workflowType!='rejected'">
+                  <hippo:requestAction identifierExpr="request.identity" action="rejectRequest" enabledExpr="true"/>
+                </if>
                 <if cond="request.workflowType=='delete'">
                   <hippo:requestAction identifierExpr="request.identity" action="acceptRequest" enabledExpr="!live and !editing"/>
                 <elseif cond="request.workflowType=='publish'">
                   <hippo:requestAction identifierExpr="request.identity" action="acceptRequest" enabledExpr="modified and !editing"/>
                 </elseif>
-                <else/> <!-- depublish -->
+                <elseif cond="request.workflowType=='depublish'"/>
                   <hippo:requestAction identifierExpr="request.identity" action="acceptRequest" enabledExpr="live and !editing"/>
                 </if>
                 <if cond="!request.owner or request.owner==user">
@@ -194,8 +198,10 @@
 
       <state id="no-publish">
         <onentry>
-          <hippo:action action="publish" enabledExpr="false"/>
           <hippo:action action="requestPublication" enabledExpr="false"/>
+          <if cond="dm.isGranted(unpublished, 'hippo:editor')">
+              <hippo:action action="publish" enabledExpr="false"/>
+          </if>
         </onentry>
         <transition target="publishable" cond="!editing and modified"/>
       </state>
@@ -236,8 +242,10 @@
 
       <state id="no-depublish">
         <onentry>
-          <hippo:action action="depublish" enabledExpr="false"/>
           <hippo:action action="requestDepublication" enabledExpr="false"/>
+          <if cond="dm.isGranted(published, 'hippo:editor')"> 
+            <hippo:action action="depublish" enabledExpr="false"/>
+          </if>
         </onentry>
         <transition target="depublishable" cond="!editing and live"/>
       </state>
