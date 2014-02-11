@@ -230,7 +230,8 @@ public class RequestsView extends RepeatingView {
                     IModel<String> reason = null;
                     try {
                         WorkflowDescriptorModel model = getModel();
-                        Node node = (model != null ? model.getNode() : null);
+                        String id = item.getModelObject().getId();
+                        Node node = UserSession.get().getJcrSession().getNodeByIdentifier(id);
                         if (node != null && node.hasProperty("hippostdpubwf:reason")) {
                             reason = Model.of(node.getProperty("hippostdpubwf:reason").getString());
                         }
