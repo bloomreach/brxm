@@ -346,15 +346,15 @@
           <hippo:workflowRequest type="delete" contextVariantExpr="deleteSource"/>
         </transition>
 
-        <transition event="delete">
+        <transition event="delete" target="terminated">
           <hippo:archiveDocument/>
         </transition>
 
-        <transition event="move">
+        <transition event="move" target="terminated">
           <hippo:moveDocument destinationExpr="_eventdata?.destination" newNameExpr="_eventdata?.name"/>
         </transition>
 
-        <transition event="rename">
+        <transition event="rename" target="terminated">
           <hippo:renameDocument newNameExpr="_eventdata?.name"/>
         </transition>
 
