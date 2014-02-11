@@ -30,7 +30,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
+import com.google.common.collect.Lists;
+
+import org.apache.jackrabbit.commons.JcrUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
@@ -40,7 +42,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.ChildExistsValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.PreviewWorkspaceNodeValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.Validator;
 
@@ -123,42 +124,49 @@ public class SiteMenuResource extends AbstractConfigResource {
     }
 
     @POST
-    @Path("/move/{sourceId}/{parentId}")
-    public Response move(@PathParam("sourceId") String sourceId,
-                         @PathParam("parentId") String parentId) {
-        return move(sourceId, parentId, null);
-    }
-
-    @POST
-    @Path("/move/{sourceId}/{parentId}/{beforeChildId}")
+    @Path("/move/{sourceId}/{parentId}/{childIndex}")
     public Response move(final @PathParam("sourceId") String sourceId,
                          final @PathParam("parentId") String parentId,
-                         final @PathParam("beforeChildId") String beforeChildId) {
+                         final @PathParam("childIndex") Integer childIndex) {
+
         List<Validator> preValidators = getDefaultMenuModificationValidators();
         preValidators.add(new PreviewWorkspaceNodeValidator(sourceId));
         preValidators.add(new PreviewWorkspaceNodeValidator(parentId));
-        if (StringUtils.isNotBlank(beforeChildId)) {
-            preValidators.add(new ChildExistsValidator(parentId, beforeChildId));
-        }
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
                 final Session session = getPageComposerContextService().getRequestContext().getSession();
                 final Node parent = session.getNodeByIdentifier(parentId);
                 final Node source = session.getNodeByIdentifier(sourceId);
+                final String sourceName = source.getName();
+                final String successorNodeName = getSuccessorOfSourceNodeName(parent, sourceName, childIndex);
 
                 if (!source.getParent().isSame(parent)) {
                     siteMenuItemHelper.move(source, parent);
                 }
-                if (StringUtils.isNotBlank(beforeChildId)) {
-                    final Node child = session.getNodeByIdentifier(beforeChildId);
-                    parent.orderBefore(source.getName(), child.getName());
-                } else {
-                    parent.orderBefore(source.getName(), null);
-                }
+                parent.orderBefore(sourceName, successorNodeName);
                 return ok("Item moved successfully", sourceId);
             }
         }, preValidators);
+    }
+
+    private String getSuccessorOfSourceNodeName(Node parent, String sourceName, Integer newIndex) throws RepositoryException {
+        final List<Node> childNodes = Lists.newArrayList(JcrUtils.getChildNodes(parent));
+        if (newIndex >= childNodes.size() - 1) {
+            // move to end
+            return null;
+        }
+        int currentIndex = 0;
+        while (currentIndex < childNodes.size() && !sourceName.equals(childNodes.get(currentIndex).getName())) {
+            currentIndex++;
+        }
+        if (currentIndex < newIndex) {
+            // current index is before new index, so successor node is at position newIndex + 1
+            return childNodes.get(newIndex + 1).getName();
+        } else {
+            // current index is at or after new index, so successor node is at position newIndex
+            return childNodes.get(newIndex).getName();
+        }
     }
 
     @POST

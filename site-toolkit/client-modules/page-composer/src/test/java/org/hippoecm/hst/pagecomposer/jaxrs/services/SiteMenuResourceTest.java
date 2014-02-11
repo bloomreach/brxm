@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
@@ -77,6 +78,7 @@ public class SiteMenuResourceTest {
     private MockSiteMenuItemConfiguration itemConfig;
     private PageComposerContextService pageComposerContextService;
     private Node node, parentNode, childNode;
+    private NodeIterator nodeIterator;
 
     @Before
     public void setUp() {
@@ -96,7 +98,8 @@ public class SiteMenuResourceTest {
         this.parentNode = createMock(Node.class);
         this.childNode = createMock(Node.class);
         this.pageComposerContextService = createMock(PageComposerContextService.class);
-        this.mocks = new Object[]{siteMenuHelper, siteMenuItemHelper, request, context, session, httpSession, virtualHost, virtualHosts, mount, site, menuConfig, itemConfig, node, parentNode, childNode, pageComposerContextService};
+        this.nodeIterator = createMock(NodeIterator.class);
+        this.mocks = new Object[]{siteMenuHelper, siteMenuItemHelper, request, context, session, httpSession, virtualHost, virtualHosts, mount, site, menuConfig, itemConfig, node, parentNode, childNode, pageComposerContextService, nodeIterator};
 
         this.siteMenuResource = new SiteMenuResource();
         this.siteMenuResource.setSiteMenuHelper(siteMenuHelper);
@@ -246,23 +249,27 @@ public class SiteMenuResourceTest {
 
         final String sourceId = "sourceId";
         mockGetMenuItem(node, sourceId);
-        final String childTargetId = "child";
-        mockGetMenuItem(childNode, childTargetId);
+
+        final Integer childTargetIndex = 0;
 
         final String parentTargetId = "parentId";
         expect(menuConfig.getCanonicalIdentifier()).andReturn("parentId");
         expect(session.getNodeByIdentifier(parentTargetId)).andReturn(parentNode);
-        expect(node.getParent()).andReturn(parentNode);
         expect(parentNode.isSame(parentNode)).andReturn(true);
         expect(parentNode.getIdentifier()).andReturn(parentTargetId);
 
-        expect(node.getName()).andReturn("src");
-        expect(childNode.getName()).andReturn("dest");
+        expect(nodeIterator.hasNext()).andReturn(true).times(2).andReturn(false);
+        expect(nodeIterator.next()).andReturn(childNode).andReturn(node);
+        expect(parentNode.getNodes()).andReturn(nodeIterator);
+
+        expect(node.getParent()).andReturn(parentNode);
+        expect(node.getName()).andReturn("src").anyTimes();
+        expect(childNode.getName()).andReturn("dest").anyTimes();
         parentNode.orderBefore("src", "dest");
         expectLastCall().once();
         replay(mocks);
 
-        final Response response = siteMenuResource.move(sourceId, parentTargetId, childTargetId);
+        final Response response = siteMenuResource.move(sourceId, parentTargetId, childTargetIndex);
         assertThat(response.getStatus(), is(OK));
         assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
 
