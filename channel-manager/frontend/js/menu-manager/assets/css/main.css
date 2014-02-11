@@ -66,6 +66,11 @@ html, body {
     float: none;
 }
 
+.form-group .input-group .form-control-feedback {
+    top: 0;
+    right: 40px;
+}
+
 #add, #actions {
     display: table-cell;
     float: none;

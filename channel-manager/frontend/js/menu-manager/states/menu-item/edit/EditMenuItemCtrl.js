@@ -28,13 +28,38 @@
             function ($scope, $stateParams, $state, MenuService, FocusService) {
                 var savedMenuItem;
 
-                function shouldSaveMenuItem(menuItem) {
-                    if (!angular.isDefined(menuItem)) {
+                $scope.isSaving = {
+                    name: false,
+                    linkType: false,
+                    link: false
+                };
+
+                $scope.isSaved = {
+                    name: true,
+                    linkType: true,
+                    link: true
+                };
+
+                function shouldSaveSelectedMenuItemProperty(propertyName) {
+                    if (!angular.isDefined($scope.selectedMenuItem)) {
                         return false;
                     }
-                    return menuItem.name !== savedMenuItem.name
-                        || menuItem.link !== savedMenuItem.link
-                        || menuItem.linkType !== savedMenuItem.linkType;
+                    return $scope.selectedMenuItem[propertyName] !== savedMenuItem[propertyName];
+                }
+
+                function saveSelectedMenuItemProperty(propertyName) {
+                    savedMenuItem = angular.copy($scope.selectedMenuItem);
+
+                    $scope.isSaving[propertyName] = true;
+
+                    MenuService.saveMenuItem($scope.selectedMenuItem).then(function () {
+                        $scope.isSaving[propertyName] = false;
+                        $scope.isSaved[propertyName] = true;
+                    },
+                    function () {
+                        $scope.isSaving[propertyName] = false;
+                        $scope.isSaved[propertyName] = false;
+                    });
                 }
 
                 MenuService.getMenuItem($stateParams.menuItemId).then(function (menuItem) {
@@ -42,10 +67,9 @@
                     savedMenuItem = angular.copy($scope.selectedMenuItem);
                 });
 
-                $scope.saveMenuItem = function () {
-                    if (shouldSaveMenuItem($scope.selectedMenuItem)) {
-                        savedMenuItem = angular.copy($scope.selectedMenuItem);
-                        MenuService.saveMenuItem($scope.selectedMenuItem);
+                $scope.saveSelectedMenuItem = function(propertyName) {
+                    if (shouldSaveSelectedMenuItemProperty(propertyName)) {
+                        saveSelectedMenuItemProperty(propertyName);
                     }
                 };
 

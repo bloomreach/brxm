@@ -109,7 +109,7 @@
                 };
 
                 menuService.saveMenuItem = function (menuItem) {
-                    $http.post(menuServiceUrl(), menuItem)
+                    return $http.post(menuServiceUrl(), menuItem)
                         .error(function (error) {
                             // TODO show error in UI
                             console.error("An error occured while saving the menu item with id '" + menuItem.id + "': " + error);
