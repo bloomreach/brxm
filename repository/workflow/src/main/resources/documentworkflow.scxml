@@ -260,11 +260,11 @@
           </if>
         </onentry>
 
-        <transition event="requestDepublication" cond="!_eventdata">
+        <transition event="requestDepublication" cond="!_eventdata?.targetDate">
           <hippo:workflowRequest type="depublish" contextVariantExpr="published"/>
         </transition>
 
-        <transition event="requestDepublication" cond="!!_eventdata">
+        <transition event="requestDepublication" cond="!!_eventdata?.targetDate">
           <hippo:workflowRequest type="scheduleddepublish" contextVariantExpr="published" targetDateExpr="_eventdata.targetDate"/>
         </transition>
 
