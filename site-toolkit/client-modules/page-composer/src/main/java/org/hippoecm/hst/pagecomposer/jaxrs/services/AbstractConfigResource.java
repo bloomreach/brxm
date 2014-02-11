@@ -49,14 +49,14 @@ public class AbstractConfigResource {
     
     private static Logger log = LoggerFactory.getLogger(AbstractConfigResource.class);
 
-    private HstRequestContextService hstRequestContextService;
+    private PageComposerContextService pageComposerContextService;
 
-    public void setHstRequestContextService(HstRequestContextService hstRequestContextService) {
-        this.hstRequestContextService = hstRequestContextService;
+    public void setPageComposerContextService(PageComposerContextService pageComposerContextService) {
+        this.pageComposerContextService = pageComposerContextService;
     }
 
-    protected final HstRequestContextService getHstRequestContextService() {
-        return hstRequestContextService;
+    protected final PageComposerContextService getPageComposerContextService() {
+        return pageComposerContextService;
     }
 
     public static HstRequestContext getRequestContext(HttpServletRequest servletRequest) {

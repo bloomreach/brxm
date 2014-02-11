@@ -21,19 +21,19 @@ import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.HstRequestContextService;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 
 public class SiteMenuHelper extends AbstractHelper {
 
-    private HstRequestContextService hstRequestContextService;
+    private PageComposerContextService pageComposerContextService;
 
-    public void setHstRequestContextService(final HstRequestContextService hstRequestContextService) {
-        this.hstRequestContextService = hstRequestContextService;
+    public void setPageComposerContextService(final PageComposerContextService pageComposerContextService) {
+        this.pageComposerContextService = pageComposerContextService;
     }
 
     @Override
     public <T> T getConfigObject(final String itemId) {
-        final HstSite editingPreviewSite = hstRequestContextService.getEditingPreviewSite();
+        final HstSite editingPreviewSite = pageComposerContextService.getEditingPreviewSite();
         return (T) getMenu(editingPreviewSite, itemId);
     }
 

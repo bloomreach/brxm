@@ -30,7 +30,17 @@
     </property>
   </bean>
 
-  <bean id="hstRequestContextService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.HstRequestContextService"/>
+  <bean id="pageComposerContextService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService"/>
+
+  <bean id="siteMenuHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper">
+    <property name="pageComposerContextService" ref="pageComposerContextService"/>
+  </bean>
+
+  <bean id="siteMenuItemHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper"/>
+
+  <bean id="siteMapHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper">
+    <property name="pageComposerContextService" ref="pageComposerContextService"/>
+  </bean>
 
   <!--
     The internal server factory. 
@@ -58,27 +68,17 @@
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMenuResource">
-              <property name="hstRequestContextService" ref="hstRequestContextService"/>
-              <property name="siteMenuHelper">
-                <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper">
-                  <property name="hstRequestContextService" ref="hstRequestContextService"/>
-                </bean>
-              </property>
-              <property name="siteMenuItemHelper">
-                <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper"/>
-              </property>
+              <property name="pageComposerContextService" ref="pageComposerContextService"/>
+              <property name="siteMenuHelper" ref="siteMenuHelper"/>
+              <property name="siteMenuHelper" ref="siteMenuItemHelper"/>
             </bean>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource">
-              <property name="hstRequestContextService" ref="hstRequestContextService"/>
-              <property name="siteMapHelper">
-                <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper">
-                  <property name="hstRequestContextService" ref="hstRequestContextService"/>
-                </bean>
-              </property>
+              <property name="pageComposerContextService" ref="pageComposerContextService"/>
+              <property name="siteMapHelper" ref="siteMapHelper"/>
             </bean>
           </constructor-arg>
         </bean>

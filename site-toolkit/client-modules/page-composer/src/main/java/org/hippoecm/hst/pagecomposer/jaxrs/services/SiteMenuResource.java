@@ -95,7 +95,7 @@ public class SiteMenuResource extends AbstractConfigResource {
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                final Session session = getHstRequestContextService().getRequestContext().getSession();
+                final Session session = getPageComposerContextService().getRequestContext().getSession();
                 final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration();
                 final Node parentNode = getParentNode(parentId, session, menu);
                 Node menuItemNode = siteMenuItemHelper.create(parentNode, newMenuItem);
@@ -114,7 +114,7 @@ public class SiteMenuResource extends AbstractConfigResource {
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                final Session session = getHstRequestContextService().getRequestContext().getSession();
+                final Session session = getPageComposerContextService().getRequestContext().getSession();
                 final Node menuItemNode = session.getNodeByIdentifier(modifiedItem.getId());
                 siteMenuItemHelper.update(menuItemNode, modifiedItem);
                 return ok("Item updated successfully", modifiedItem.getId());
@@ -143,7 +143,7 @@ public class SiteMenuResource extends AbstractConfigResource {
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                final Session session = getHstRequestContextService().getRequestContext().getSession();
+                final Session session = getPageComposerContextService().getRequestContext().getSession();
                 final Node parent = session.getNodeByIdentifier(parentId);
                 final Node source = session.getNodeByIdentifier(sourceId);
 
@@ -169,7 +169,7 @@ public class SiteMenuResource extends AbstractConfigResource {
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                final Session session = getHstRequestContextService().getRequestContext().getSession();
+                final Session session = getPageComposerContextService().getRequestContext().getSession();
                 session.getNodeByIdentifier(menuItemId).remove();
                 return ok("Item deleted successfully", menuItemId);
             }
@@ -189,15 +189,15 @@ public class SiteMenuResource extends AbstractConfigResource {
     }
 
     private HstSiteMenuConfiguration getHstSiteMenuConfiguration() throws RepositoryException {
-        final HstSite editingPreviewHstSite = getHstRequestContextService().getEditingPreviewSite();
-        final String menuId = getHstRequestContextService().getRequestConfigIdentifier();
+        final HstSite editingPreviewHstSite = getPageComposerContextService().getEditingPreviewSite();
+        final String menuId = getPageComposerContextService().getRequestConfigIdentifier();
         return siteMenuHelper.getMenu(editingPreviewHstSite, menuId);
     }
 
 
     private List<Validator> getDefaultMenuModificationValidators() {
         List<Validator> preValidators = new ArrayList<>();
-        final String requestConfigIdentifier = getHstRequestContextService().getRequestConfigIdentifier();
+        final String requestConfigIdentifier = getPageComposerContextService().getRequestConfigIdentifier();
         preValidators.add(new PreviewWorkspaceNodeValidator(requestConfigIdentifier, HstNodeTypes.NODETYPE_HST_SITEMENU));
         return preValidators;
     }

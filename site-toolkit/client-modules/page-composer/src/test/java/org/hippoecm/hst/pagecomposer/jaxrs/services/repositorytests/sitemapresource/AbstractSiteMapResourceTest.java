@@ -32,7 +32,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.AbstractConfigResource;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.HstRequestContextService;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
@@ -175,13 +175,13 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
 
     protected SiteMapResource createResource() {
 
-        final HstRequestContextService hstRequestContextService = new HstRequestContextService();
+        final PageComposerContextService pageComposerContextService = new PageComposerContextService();
 
         final SiteMapHelper siteMapHelper = new SiteMapHelper();
-        siteMapHelper.setHstRequestContextService(hstRequestContextService);
+        siteMapHelper.setPageComposerContextService(pageComposerContextService);
 
         final SiteMapResource siteMapResource = new SiteMapResource();
-        siteMapResource.setHstRequestContextService(hstRequestContextService);
+        siteMapResource.setPageComposerContextService(pageComposerContextService);
         siteMapResource.setSiteMapHelper(siteMapHelper);
         return siteMapResource;
     }

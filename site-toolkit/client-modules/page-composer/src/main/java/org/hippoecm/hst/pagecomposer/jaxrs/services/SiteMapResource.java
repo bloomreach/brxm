@@ -61,7 +61,7 @@ public class SiteMapResource extends AbstractConfigResource {
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                final HstSiteMap siteMap = getHstRequestContextService().getEditingPreviewSite().getSiteMap();
+                final HstSiteMap siteMap = getPageComposerContextService().getEditingPreviewSite().getSiteMap();
                 final SiteMapRepresentation representation = new SiteMapRepresentation().represent(siteMap);
                 return ok("Sitemap loaded successfully", representation);
             }
@@ -167,7 +167,7 @@ public class SiteMapResource extends AbstractConfigResource {
 
     private String getWorkspaceSiteMapId() throws RepositoryException {
         final String workspaceSiteMapId;
-        final HstRequestContext requestContext = getHstRequestContextService().getRequestContext();
+        final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
         final HstSite editingPreviewSite = getEditingPreviewSite(requestContext);
         final HstSiteMap siteMap = editingPreviewSite.getSiteMap();
         if (!(siteMap instanceof CanonicalInfo)) {

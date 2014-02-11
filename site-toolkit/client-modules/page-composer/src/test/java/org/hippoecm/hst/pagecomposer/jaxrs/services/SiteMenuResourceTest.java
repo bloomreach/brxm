@@ -75,7 +75,7 @@ public class SiteMenuResourceTest {
     private HstSite site;
     private MockSiteMenuConfiguration menuConfig;
     private MockSiteMenuItemConfiguration itemConfig;
-    private HstRequestContextService hstRequestContextService;
+    private PageComposerContextService pageComposerContextService;
     private Node node, parentNode, childNode;
 
     @Before
@@ -95,13 +95,13 @@ public class SiteMenuResourceTest {
         this.node = createMock(Node.class);
         this.parentNode = createMock(Node.class);
         this.childNode = createMock(Node.class);
-        this.hstRequestContextService = createMock(HstRequestContextService.class);
-        this.mocks = new Object[]{siteMenuHelper, siteMenuItemHelper, request, context, session, httpSession, virtualHost, virtualHosts, mount, site, menuConfig, itemConfig, node, parentNode, childNode, hstRequestContextService};
+        this.pageComposerContextService = createMock(PageComposerContextService.class);
+        this.mocks = new Object[]{siteMenuHelper, siteMenuItemHelper, request, context, session, httpSession, virtualHost, virtualHosts, mount, site, menuConfig, itemConfig, node, parentNode, childNode, pageComposerContextService};
 
         this.siteMenuResource = new SiteMenuResource();
         this.siteMenuResource.setSiteMenuHelper(siteMenuHelper);
         this.siteMenuResource.setSiteMenuItemHelper(siteMenuItemHelper);
-        this.siteMenuResource.setHstRequestContextService(hstRequestContextService);
+        this.siteMenuResource.setPageComposerContextService(pageComposerContextService);
     }
 
     @Test
@@ -197,8 +197,8 @@ public class SiteMenuResourceTest {
 
     @Test
     public void testUpdateReturnsServerErrorOnRepositoryException() throws RepositoryException {
-        expect(hstRequestContextService.getRequestConfigIdentifier()).andReturn(null).anyTimes();
-        expect(hstRequestContextService.getRequestContext()).andReturn(context).times(2);
+        expect(pageComposerContextService.getRequestConfigIdentifier()).andReturn(null).anyTimes();
+        expect(pageComposerContextService.getRequestContext()).andReturn(context).times(2);
         expect(context.getSession()).andThrow(new RepositoryException("failed"));
 
         final String id = "uuid-of-menu-item";
@@ -218,8 +218,8 @@ public class SiteMenuResourceTest {
 
     @Test
     public void testUpdateReturnsClientErrorOnIllegalStateException() throws RepositoryException {
-        expect(hstRequestContextService.getRequestConfigIdentifier()).andReturn(null).anyTimes();
-        expect(hstRequestContextService.getRequestContext()).andReturn(context).times(2);
+        expect(pageComposerContextService.getRequestConfigIdentifier()).andReturn(null).anyTimes();
+        expect(pageComposerContextService.getRequestContext()).andReturn(context).times(2);
         expect(context.getSession()).andThrow(new IllegalStateException("failed"));
 
 
@@ -303,8 +303,8 @@ public class SiteMenuResourceTest {
 
     private void mockGetSiteMenu(String menuId) {
         // Mock getting the site menu
-        expect(hstRequestContextService.getRequestConfigIdentifier()).andReturn(menuId).anyTimes();
-        expect(hstRequestContextService.getRequestContext()).andReturn(context);
+        expect(pageComposerContextService.getRequestConfigIdentifier()).andReturn(menuId).anyTimes();
+        expect(pageComposerContextService.getRequestContext()).andReturn(context);
         expect(context.getAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER)).andReturn(menuId).anyTimes();
         expect(siteMenuHelper.getMenu(site, menuId)).andReturn(menuConfig);
     }
@@ -319,7 +319,7 @@ public class SiteMenuResourceTest {
         expect(virtualHost.getVirtualHosts()).andReturn(virtualHosts);
         expect(virtualHosts.getMountByIdentifier("mount")).andReturn(mount);
         expect(mount.getPreviewHstSite()).andReturn(site);
-        expect(hstRequestContextService.getEditingPreviewSite()).andReturn(site).anyTimes();
+        expect(pageComposerContextService.getEditingPreviewSite()).andReturn(site).anyTimes();
     }
 
 }
