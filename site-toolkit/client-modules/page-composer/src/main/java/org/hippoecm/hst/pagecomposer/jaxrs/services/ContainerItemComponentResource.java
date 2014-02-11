@@ -85,7 +85,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getVariants(@Context HttpServletRequest servletRequest) {
-        final Node containerItem = getRequestConfigNode(getRequestContext(servletRequest), HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
+        final Node containerItem = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
         try {
             Set<String> variants = doGetVariants(containerItem);
             log.info("Available variants: {}", variants);
@@ -114,7 +114,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response retainVariants(@Context HttpServletRequest servletRequest, String[] variants,
                                    @HeaderParam("lastModifiedTimestamp") long lastModifiedTimestamp) {
-        Node containerItem = getRequestConfigNode(getRequestContext(servletRequest), HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
+        Node containerItem = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
         try {
             Set<String> removedVariants = doRetainVariants(containerItem, variants, lastModifiedTimestamp);
             log.info("Removed variants: {}", removedVariants.toString());
@@ -173,15 +173,14 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                                                               @PathParam("variant") String variant,
                                                               @PathParam("locale") String localeString) {
         try {
-            HstRequestContext requestContext = getRequestContext(servletRequest);
-            Locale locale = null;
+            Locale locale;
             try {
                 locale = LocaleUtils.toLocale(localeString);
             } catch (IllegalArgumentException e) {
                 log.warn("Failed to create Locale from string '{}'. Using default locale", localeString);
                 locale = Locale.getDefault();
             }
-            return doGetParameters(getRequestConfigNode(requestContext, HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT), locale, variant);
+            return doGetParameters(getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT), locale, variant);
         } catch (Exception e) {
             log.warn("Failed to retrieve parameters.", e);
         }
@@ -219,7 +218,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                 String contentPath = "";
                 final HstRequestContext requestContext = RequestContextProvider.get();
                 if (requestContext != null) {
-                    contentPath = getEditingMount(requestContext).getContentPath();
+                    contentPath = getPageComposerContextService().getEditingMount().getContentPath();
                 }
                 properties = processor.getProperties(parametersInfo, locale, contentPath);
             }
@@ -255,7 +254,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                             @HeaderParam("lastModifiedTimestamp") long lastModifiedTimestamp,
                             MultivaluedMap<String, String> params) {
         try {
-            final Node containerItem = getRequestConfigNode(getRequestContext(servletRequest), HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
+            final Node containerItem = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
             HstComponentParameters componentParameters = new HstComponentParameters(containerItem);
             doSetParameters(componentParameters, variant, params, lastModifiedTimestamp);
             log.info("Parameters for '{}' saved successfully.", variant);
@@ -291,7 +290,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                                   @HeaderParam("lastModifiedTimestamp") long lastModifiedTimestamp,
                                   MultivaluedMap<String, String> params) {
         try {
-            final Node containerItem = getRequestConfigNode(getRequestContext(servletRequest), HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
+            final Node containerItem = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
             HstComponentParameters componentParameters = new HstComponentParameters(containerItem);
             componentParameters.removePrefix(oldVariant);
             doSetParameters(componentParameters, newVariant, params, lastModifiedTimestamp);
@@ -351,7 +350,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createVariant(@Context HttpServletRequest servletRequest, @PathParam("variant") String variant,
                                   @HeaderParam("lastModifiedTimestamp") long lastModifiedTimestamp) {
-        Node containerItem = getRequestConfigNode(getRequestContext(servletRequest), HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
+        Node containerItem = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
         try {
             HstComponentParameters componentParameters = new HstComponentParameters(containerItem);
             if (componentParameters.hasPrefix(variant)) {
@@ -399,7 +398,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteVariant(@Context HttpServletRequest servletRequest, @PathParam("variant") String variant,
                                   @HeaderParam("lastModifiedTimestamp") long lastModifiedTimestamp) {
-        Node containerItem = getRequestConfigNode(getRequestContext(servletRequest), HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
+        Node containerItem = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
         try {
             HstComponentParameters componentParameters = new HstComponentParameters(containerItem);
             if (!componentParameters.hasPrefix(variant)) {

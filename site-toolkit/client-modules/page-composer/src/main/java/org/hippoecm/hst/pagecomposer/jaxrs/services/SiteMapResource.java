@@ -168,7 +168,7 @@ public class SiteMapResource extends AbstractConfigResource {
     private String getWorkspaceSiteMapId() throws RepositoryException {
         final String workspaceSiteMapId;
         final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
-        final HstSite editingPreviewSite = getEditingPreviewSite(requestContext);
+        final HstSite editingPreviewSite =  getPageComposerContextService().getEditingPreviewSite();
         final HstSiteMap siteMap = editingPreviewSite.getSiteMap();
         if (!(siteMap instanceof CanonicalInfo)) {
             throw new IllegalStateException("Only sitemap that is instance of CanonicalInfo can be edited");

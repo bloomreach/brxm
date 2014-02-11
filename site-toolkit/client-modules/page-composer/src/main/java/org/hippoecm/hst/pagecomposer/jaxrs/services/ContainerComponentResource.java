@@ -72,7 +72,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
             throw new ContainerException("There must be a valid uuid of the containeritem to copy from");
         }
 
-        HstRequestContext requestContext = getRequestContext(servletRequest);
+        HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
         try {
             HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
             Node containerItem;
@@ -87,7 +87,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
                 return error("The container component where the item should be created in is not of the correct type. Cannot create item '"+itemUUID+"'");
             }
 
-            Node containerNode = getRequestConfigNode(requestContext, HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
+            Node containerNode = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
             if (containerNode == null) {
                 log.warn("Exception during creating new container item : Could not find container node to add item to.");
                 return error("Exception during creating new container item : Could not find container node to add item to.");
@@ -137,10 +137,10 @@ public class ContainerComponentResource extends AbstractConfigResource {
         PostRepresentation<ContainerRepresentation> pr = new Gson().fromJson(json, type);
         ContainerRepresentation container = pr.getData();
 
-        HstRequestContext requestContext = getRequestContext(servletRequest);
+        HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
         try {
             HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
-            Node containerNode = getRequestConfigNode(requestContext, HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
+            Node containerNode = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
             try {
                 HstConfigurationUtils.tryLockIfNeeded(containerNode, lastModifiedTimestamp);
             } catch (IllegalStateException e) {
@@ -193,7 +193,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
                                         @Context HttpServletResponse servletResponse,
                                         @PathParam("itemUUID") String itemUUID,
                                         @QueryParam("lastModifiedTimestamp") long lastModifiedTimestamp) {
-        HstRequestContext requestContext = getRequestContext(servletRequest);
+        HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
         try {
             Session session = requestContext.getSession();
             Node containerItem;

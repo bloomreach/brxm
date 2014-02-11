@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -260,4 +261,10 @@ public class SiteMapHelper extends AbstractHelper {
         }
     }
 
+    public void publishChanges(final List<String> userIds) {
+
+        String liveConfigurationPath = pageComposerContextService.getEditingLiveSite().getConfigurationPath();
+        String previewConfigurationPath = pageComposerContextService.getEditingPreviewSite().getConfigurationPath();
+
+    }
 }

@@ -20,11 +20,8 @@ import java.util.concurrent.Callable;
 
 import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -32,12 +29,9 @@ import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
-import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.Validator;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
@@ -57,76 +51,6 @@ public class AbstractConfigResource {
 
     protected final PageComposerContextService getPageComposerContextService() {
         return pageComposerContextService;
-    }
-
-    public static HstRequestContext getRequestContext(HttpServletRequest servletRequest) {
-        return (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
-    }
-
-    public static String getRequestConfigIdentifier(HstRequestContext requestContext) {
-        return (String) requestContext.getAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER);
-    }
-
-    public static HstSite getEditingLiveSite(final HstRequestContext requestContext) {
-        final Mount mount = getEditingMount(requestContext);
-        return mount.getHstSite();
-    }
-
-    public static HstSite getEditingPreviewSite(final HstRequestContext requestContext) {
-        final Mount liveMount = getEditingMount(requestContext);
-        assertIsContextualizableMount(liveMount);
-        return ((ContextualizableMount)liveMount).getPreviewHstSite();
-    }
-
-    public static String getEditingPreviewChannelPath(final HstRequestContext requestContext) {
-        final Mount liveMount = getEditingMount(requestContext);
-        assertIsContextualizableMount(liveMount);
-        return  liveMount.getChannelPath()+ "-preview";
-    }
-    /**
-     * @return the preview {@link Channel} and <code>null</code> if there is no preview channel available
-     */
-    public static Channel getEditingPreviewChannel(final HstRequestContext requestContext) {
-        final String previewChannelPath =  getEditingPreviewChannelPath(requestContext);
-        return requestContext.getVirtualHost().getVirtualHosts().getChannelByJcrPath(previewChannelPath);
-    }
-
-    public static boolean hasPreviewConfiguration(final Mount mount) {
-        assertIsContextualizableMount(mount);
-        return  ((ContextualizableMount)mount).getPreviewHstSite().hasPreviewConfiguration();
-    }
-
-    public static Mount getEditingMount(final HstRequestContext requestContext) {
-        HttpSession session = requestContext.getServletRequest().getSession(true);
-        final String renderingMountId = (String)session.getAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID);
-        if (renderingMountId == null) {
-            throw new IllegalStateException("Cound not find rendering mount id on request session.");
-        }
-        Mount mount = requestContext.getVirtualHost().getVirtualHosts().getMountByIdentifier(renderingMountId);
-        if (mount == null) {
-            throw new IllegalStateException("Cound not find a Mount for identifier + '"+renderingMountId+"'");
-        }
-        return mount;
-    }
-
-    protected Node getRequestConfigNode(final HstRequestContext requestContext, final String expectedNodeType) {
-        String id = getRequestConfigIdentifier(requestContext);
-        if(id == null) {
-            log.warn("Cannot get requestConfigNode because no attr '{}' on request. Return null", CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER);
-        }
-        try {
-            Node configNode = requestContext.getSession().getNodeByIdentifier(id);
-            if (configNode.isNodeType(expectedNodeType)) {
-                return configNode;
-            } else {
-                log.warn("Expected node was of type '' but actual node is of type '{}'. Return null.", expectedNodeType, configNode.getPrimaryNodeType().getName());
-                return null;
-            }
-        } catch (RepositoryException e) {
-            log.warn("Cannot find requestConfigNode because could not get node with id '{}' : {}", id, e.toString());
-            return null;
-        }
-
     }
 
     protected Response ok(String msg) {

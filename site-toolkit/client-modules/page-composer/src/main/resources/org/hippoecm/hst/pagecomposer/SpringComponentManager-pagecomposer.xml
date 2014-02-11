@@ -36,12 +36,17 @@
     <property name="pageComposerContextService" ref="pageComposerContextService"/>
   </bean>
 
-  <bean id="siteMenuItemHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper"/>
-
   <bean id="siteMapHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper">
     <property name="pageComposerContextService" ref="pageComposerContextService"/>
   </bean>
 
+  <bean id="pageHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper">
+    <property name="pageComposerContextService" ref="pageComposerContextService"/>
+  </bean>
+
+  <bean id="abstractConfigResource" abstract="true">
+    <property name="pageComposerContextService" ref="pageComposerContextService"/>
+  </bean>
   <!--
     The internal server factory. 
     Each JAX-RS service component is registered by "resourceProvider" property. 
@@ -57,46 +62,50 @@
       <list>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource"/>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource"  parent="abstractConfigResource"/>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <ref bean="containerItemComponentResource" />
+            <ref bean="containerItemComponentResource"  parent="abstractConfigResource"/>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMenuResource">
-              <property name="pageComposerContextService" ref="pageComposerContextService"/>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMenuResource" parent="abstractConfigResource">
               <property name="siteMenuHelper" ref="siteMenuHelper"/>
-              <property name="siteMenuHelper" ref="siteMenuItemHelper"/>
+              <property name="siteMenuItemHelper">
+                <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper"/>
+              </property>
             </bean>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource">
-              <property name="pageComposerContextService" ref="pageComposerContextService"/>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource"  parent="abstractConfigResource">
               <property name="siteMapHelper" ref="siteMapHelper"/>
             </bean>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource"/>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource"  parent="abstractConfigResource">
+              <property name="siteMapHelper" ref="siteMapHelper"/>
+              <property name="siteMenuHelper" ref="siteMenuHelper"/>
+              <property name="pagesHelper" ref="pagesHelper"/>
+            </bean>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.RootResource">
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.RootResource"  parent="abstractConfigResource">
               <property name="rootPath" value="${hst.configuration.rootPath}"/>
             </bean>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ExceptionResource"/>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ExceptionResource" parent="abstractConfigResource"/>
           </constructor-arg>
         </bean>
       </list>
