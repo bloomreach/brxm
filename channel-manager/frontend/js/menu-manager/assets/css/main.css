@@ -28,8 +28,10 @@ html, body {
 
 /* --- Application container --- */
 #container {
-    max-width: initial;
+    max-width: none;
     padding: 0;
+    margin-left: 0;
+    margin-right: 0;
 }
 
 #container > .row {
