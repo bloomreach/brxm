@@ -31,9 +31,8 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.AbstractConfigResource;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.site.HstServices;
@@ -45,12 +44,14 @@ import static org.junit.Assert.assertFalse;
 
 public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTest {
 
+    private PageComposerContextService pageComposerContextService;
 
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
 
+        pageComposerContextService = new PageComposerContextService();
         // create users
         final Node users = session.getNode("/hippo:configuration/hippo:users");
 
@@ -113,7 +114,7 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
 
         ((HstMutableRequestContext) ctx).setSession(session);
         MountResource mountResource = new MountResource();
-        mountResource.startEdit(request);
+        mountResource.startEdit();
         ModifiableRequestContextProvider.clear();
         // time for jcr events to arrive
         Thread.sleep(100);
@@ -169,13 +170,11 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL(request, "localhost", "/home");
         ((HstMutableRequestContext) ctx).setSession(requestSession);
-        final HstSiteMap siteMap = AbstractConfigResource.getEditingPreviewSite(ctx).getSiteMap();
+        final HstSiteMap siteMap = pageComposerContextService.getEditingPreviewSite().getSiteMap();
         return new SiteMapRepresentation().represent(siteMap);
     }
 
     protected SiteMapResource createResource() {
-
-        final PageComposerContextService pageComposerContextService = new PageComposerContextService();
 
         final SiteMapHelper siteMapHelper = new SiteMapHelper();
         siteMapHelper.setPageComposerContextService(pageComposerContextService);

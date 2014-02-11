@@ -73,7 +73,7 @@ public class MountResourceTest extends AbstractPageComposerTest {
             ((HstMutableRequestContext) ctx).setSession(session);
 
             MountResource mountResource = new MountResource();
-            mountResource.startEdit(request);
+            mountResource.startEdit();
 
             assertTrue("Live config node should exist",
                     session.nodeExists(ctx.getResolvedMount().getMount().getHstSite().getConfigurationPath()));
@@ -127,7 +127,7 @@ public class MountResourceTest extends AbstractPageComposerTest {
             setMountIdOnHttpSession(thirdRequest, thirdMountIdentifier);
             thirdCtx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, thirdMountIdentifier);
 
-            mountResource.publish(thirdRequest);
+            mountResource.publish();
 
             usersWithLockedContainers = MountResourceAccessor.findUsersWithLockedContainers(session, previewConfigurationPath);
             assertTrue(usersWithLockedContainers.isEmpty());
@@ -201,7 +201,7 @@ public class MountResourceTest extends AbstractPageComposerTest {
             ((HstMutableRequestContext) ctx).setSession(session);
 
             MountResource mountResource = new MountResource();
-            mountResource.startEdit(request);
+            mountResource.startEdit();
 
             assertTrue("Live config node should exist",
                     session.nodeExists(ctx.getResolvedMount().getMount().getHstSite().getConfigurationPath()));
@@ -248,7 +248,7 @@ public class MountResourceTest extends AbstractPageComposerTest {
 
             thirdCtx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, thirdCtx.getResolvedMount().getMount().getIdentifier());
 
-            mountResource.publish(thirdRequest);
+            mountResource.publish();
 
             usersWithLockedContainers = MountResourceAccessor.findUsersWithLockedContainers(session, previewConfigurationPath);
             assertTrue(usersWithLockedContainers.isEmpty());
