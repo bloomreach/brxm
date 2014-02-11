@@ -257,22 +257,96 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
         });
 
+        final StdWorkflow requestSchedulePublishAction;
+        add(requestSchedulePublishAction = new StdWorkflow("requestSchedulePublish", new StringResourceModel("schedule-request-publish", this, null), context, getModel()) {
+            public Date date = new Date();
+
+            @Override
+            public String getSubMenu() {
+                return "publication";
+            }
+
+            @Override
+            protected ResourceReference getIcon() {
+                return new PackageResourceReference(getClass(), "img/publish-schedule-16.png");
+            }
+
+            @Override
+            protected IDialogService.Dialog createRequestDialog() {
+                WorkflowDescriptorModel wdm = getModel();
+                try {
+                    return new SchedulePublishDialog(this, new JcrNodeModel(wdm.getNode()), new PropertyModel<Date>(this, "date"), getEditorManager());
+                } catch (RepositoryException ex) {
+                    log.warn("could not retrieve node for scheduling publish", ex);
+                }
+                return null;
+            }
+
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                DocumentWorkflow workflow = (DocumentWorkflow) wf;
+                if (date != null) {
+                    workflow.requestPublication(date);
+                } else {
+                    workflow.requestPublication();
+                }
+                return null;
+            }
+        });
+
+        final StdWorkflow requestScheduleDepublishAction;
+        add(requestScheduleDepublishAction = new StdWorkflow("requestScheduleDepublish", new StringResourceModel("schedule-request-depublish", this, null), context, getModel()) {
+            public Date date = new Date();
+
+            @Override
+            public String getSubMenu() {
+                return "publication";
+            }
+
+            @Override
+            protected ResourceReference getIcon() {
+                return new PackageResourceReference(getClass(), "img/unpublish-scheduled-16.png");
+            }
+
+            @Override
+            protected IDialogService.Dialog createRequestDialog() {
+                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
+                try {
+                    return new ScheduleDepublishDialog(this, new JcrNodeModel(wdm.getNode()), new PropertyModel<Date>(this, "date"), getEditorManager());
+                } catch (RepositoryException e) {
+                    log.warn("could not retrieve node for scheduling depublish", e);
+                }
+                return null;
+            }
+
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                DocumentWorkflow workflow = (DocumentWorkflow) wf;
+                if (date != null) {
+                    workflow.requestDepublication(date);
+                } else {
+                    workflow.requestDepublication();
+                }
+                return null;
+            }
+        });
+
         Map<String, Serializable> info = getHints();
-        hideOrDisable(info, "publish", publishAction);
-        hideOrDisable(info, "schedulePublication", schedulePublishAction);
-        hideOrDisable(info, "depublish", depublishAction);
-        hideOrDisable(info, "scheduleDepublication", scheduleDepublishAction);
+        hideOrDisable(info, "publish", publishAction, schedulePublishAction);
+        hideOrDisable(info, "depublish", depublishAction, scheduleDepublishAction);
 
         if (!info.containsKey("publish")) {
-            hideOrDisable(info, "requestPublication", requestPublishAction);
+            hideOrDisable(info, "requestPublication", requestPublishAction, requestSchedulePublishAction);
         } else {
             requestPublishAction.setVisible(false);
+            requestSchedulePublishAction.setVisible(false);
         }
 
         if (!info.containsKey("depublish")) {
-            hideOrDisable(info, "requestDepublication", requestDepublishAction);
+            hideOrDisable(info, "requestDepublication", requestDepublishAction, requestScheduleDepublishAction);
         } else {
             requestDepublishAction.setVisible(false);
+            requestScheduleDepublishAction.setVisible(false);
         }
 
     }
