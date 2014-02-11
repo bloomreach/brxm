@@ -100,7 +100,6 @@
       <sv:value>translation</sv:value>
       <sv:value>committype</sv:value>
       <sv:value>custom</sv:value>
-      <sv:value>admin</sv:value>
     </sv:property>
     <sv:property sv:name="workflow.menuorder" sv:type="String">
       <sv:value>publication</sv:value>
