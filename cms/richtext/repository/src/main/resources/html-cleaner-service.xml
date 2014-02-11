@@ -34,15 +34,6 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:pluginconfig</sv:value>
     </sv:property>
-    <sv:node sv:name="blockquote">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
-        <sv:value>class</sv:value>
-        <sv:value>id</sv:value>
-      </sv:property>
-    </sv:node>
     <sv:node sv:name="a">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
@@ -57,6 +48,15 @@
     <sv:node sv:name="b">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="blockquote">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="attributes" sv:type="String" sv:multiple="true">
+        <sv:value>class</sv:value>
+        <sv:value>id</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="body">
