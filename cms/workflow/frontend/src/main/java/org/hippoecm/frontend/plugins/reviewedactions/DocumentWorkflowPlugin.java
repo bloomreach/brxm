@@ -384,12 +384,16 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
         });
 
         Map<String, Serializable> info = getHints();
-        hideIfNecessary(info, "requestDelete", requestDeleteAction);
+        if (!info.containsKey("delete")) {
+            hideOrDisable(info, "requestDelete", requestDeleteAction);
+        } else {
+            requestDeleteAction.setVisible(false);
+        }
         hideOrDisable(info, "delete", deleteAction);
         hideOrDisable(info, "rename", renameAction);
         hideOrDisable(info, "move", moveAction);
 
-        hideIfNecessary(info, "copy", copyAction);
+        hideOrDisable(info, "copy", copyAction);
         hideOrDisable(info, "listVersions", historyAction);
     }
 }

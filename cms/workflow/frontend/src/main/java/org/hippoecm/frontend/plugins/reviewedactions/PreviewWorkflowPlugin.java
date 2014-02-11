@@ -155,9 +155,9 @@ public class PreviewWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
     private void hideInvalidActions() {
         Map<String, Serializable> info = getHints();
 
-        hideIfNecessary(info, "obtainEditableInstance", editAction);
+        hideOrDisable(info, "obtainEditableInstance", editAction);
 
-        hideIfNecessary(info, "status", infoAction);
+        hideOrDisable(info, "status", infoAction);
 
         if (info.containsKey("inUseBy") && info.get("inUseBy") instanceof String) {
             inUseBy = (String) info.get("inUseBy");

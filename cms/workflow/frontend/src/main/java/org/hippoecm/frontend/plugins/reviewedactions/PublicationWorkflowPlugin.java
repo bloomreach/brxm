@@ -258,13 +258,22 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
         });
 
         Map<String, Serializable> info = getHints();
-        hideIfNecessary(info, "publish", publishAction);
-        hideIfNecessary(info, "schedulePublish", schedulePublishAction);
-        hideIfNecessary(info, "depublish", depublishAction);
-        hideIfNecessary(info, "scheduleDepublish", scheduleDepublishAction);
+        hideOrDisable(info, "publish", publishAction);
+        hideOrDisable(info, "schedulePublish", schedulePublishAction);
+        hideOrDisable(info, "depublish", depublishAction);
+        hideOrDisable(info, "scheduleDepublish", scheduleDepublishAction);
 
-        hideIfNecessary(info, "requestPublish", requestPublishAction);
-        hideIfNecessary(info, "requestDepublish", requestDepublishAction);
+        if (!info.containsKey("publish")) {
+            hideOrDisable(info, "requestPublish", requestPublishAction);
+        } else {
+            requestPublishAction.setVisible(false);
+        }
+
+        if (!info.containsKey("depublish")) {
+            hideOrDisable(info, "requestDepublish", requestDepublishAction);
+        } else {
+            requestDepublishAction.setVisible(false);
+        }
 
     }
 }

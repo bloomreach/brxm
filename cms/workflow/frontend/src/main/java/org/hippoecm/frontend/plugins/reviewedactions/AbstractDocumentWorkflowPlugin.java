@@ -92,14 +92,6 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
         return stringCodecFactory.getStringCodec("encoding.node");
     }
 
-    protected void hideIfNecessary(Map<String, Serializable> info, String key, StdWorkflow... actions) {
-        if (info.containsKey(key) && info.get(key) instanceof Boolean && !(Boolean) info.get(key)) {
-            for (StdWorkflow action : actions) {
-                action.setVisible(false);
-            }
-        }
-    }
-
     protected void hideOrDisable(Map<String, Serializable> info, String key, StdWorkflow action) {
         if (info.containsKey(key)) {
             if (info.get(key) instanceof Boolean && !(Boolean) info.get(key)) {
