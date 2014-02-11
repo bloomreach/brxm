@@ -24,16 +24,12 @@ import java.util.Map;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.WorkflowException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.documentworkflow.DocumentWorkflowImpl} instead.
  */
 @Deprecated
 public class UnlockWorkflowImpl extends AbstractReviewedActionsWorkflow implements UnlockWorkflow {
-
-    static final Logger log = LoggerFactory.getLogger(UnlockWorkflowImpl.class);
 
     /**
      * All implementations of a work-flow must provide a single, no-argument constructor.
