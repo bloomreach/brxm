@@ -28,10 +28,6 @@
   <artifactId>hippo-cms-richtext-ckeditor-resources</artifactId>
   <packaging>jar</packaging>
 
-  <properties>
-    <hippo.ckeditor.version>4.3.0-h5-SNAPSHOT</hippo.ckeditor.version>
-  </properties>
-
   <dependencies>
 
     <dependency>

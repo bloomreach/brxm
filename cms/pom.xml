@@ -135,6 +135,7 @@
     <hippo.htmlcleaner.version>1.02.09</hippo.htmlcleaner.version>
     <hippo.htmldiff.version>1.01.03</hippo.htmldiff.version>
     <hippo.jcrdiff.version>1.01.03</hippo.jcrdiff.version>
+    <hippo.ckeditor.version>4.3.0-h5</hippo.ckeditor.version>
 
     <sonar.l10n.locales>nl,fr,it,de</sonar.l10n.locales>
 
