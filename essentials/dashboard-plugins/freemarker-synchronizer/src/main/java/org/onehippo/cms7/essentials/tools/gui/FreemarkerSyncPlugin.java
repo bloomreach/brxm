@@ -16,14 +16,16 @@
 
 package org.onehippo.cms7.essentials.tools.gui;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.onehippo.cms7.essentials.dashboard.EssentialsPlugin;
+import org.onehippo.cms7.essentials.dashboard.Plugin;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 
 /**
  * @version "$Id$"
  */
-public class FreemarkerSyncPlugin {
+public class FreemarkerSyncPlugin extends EssentialsPlugin {
 
-    private static Logger log = LoggerFactory.getLogger(FreemarkerSyncPlugin.class);
-
+    public FreemarkerSyncPlugin(final Plugin descriptor, final PluginContext context) {
+        super(descriptor, context);
+    }
 }

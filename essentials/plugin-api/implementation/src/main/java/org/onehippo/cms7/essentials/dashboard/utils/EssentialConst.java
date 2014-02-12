@@ -4,6 +4,7 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils;
 
+import java.io.File;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
@@ -103,6 +104,11 @@ public final class EssentialConst {
     public static final String HIPPO_COMPOUND_BASE_CLASS = "HippoDocument";
     public static final String HIPPO_DOCUMENT_IMPORT = "org.hippoecm.hst.content.beans.standard.HippoDocument";
     public static final String CONTENT_BLOCKS_TEMPLATE_XML = "content_blocks_template.xml";
+
+    /**
+     * SCRIPTING
+     */
+    public static final String FREEMARKER_RELATIVE_FOLDER = "src" + File.separator + "main" + File.separator + "webapp" + File.separator + "WEB-INF" + File.separator + "ftl";
 
 
     private EssentialConst() {

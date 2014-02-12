@@ -16,14 +16,15 @@
 
 package org.onehippo.cms7.essentials.tools.rest;
 
+import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
@@ -34,5 +35,11 @@ import org.slf4j.LoggerFactory;
 public class FreemarkerSyncPlugin extends BaseResource {
 
 
+    @GET
+    @Path("/")
+    public String getTemplateList(@Context ServletContext servletContext) {
+
+        return null;
+    }
 
 }
