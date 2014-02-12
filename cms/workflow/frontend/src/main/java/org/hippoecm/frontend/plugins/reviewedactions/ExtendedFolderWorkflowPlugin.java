@@ -15,8 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.Node;
@@ -135,7 +137,7 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
                                 Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, handle);
                                 if (workflow instanceof DocumentWorkflow) {
                                     DocumentWorkflow docWorkflow = (DocumentWorkflow) workflow;
-                                    cancelRequests(handle, docWorkflow);
+                                    cancelRequests(docWorkflow);
 
                                     ((DocumentWorkflow) workflow).publish();
                                     ++processed;
@@ -196,7 +198,7 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
                                 Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, handle);
                                 if (workflow instanceof DocumentWorkflow) {
                                     DocumentWorkflow docWorkflow = (DocumentWorkflow) workflow;
-                                    cancelRequests(handle, docWorkflow);
+                                    cancelRequests(docWorkflow);
 
                                     ((DocumentWorkflow) workflow).depublish();
                                     ++processed;
@@ -213,10 +215,18 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
         });
     }
 
-    private void cancelRequests(final Node handle, final DocumentWorkflow docWorkflow) throws RepositoryException, WorkflowException, RemoteException {
-        for (NodeIterator requestIter = handle.getNodes(HippoNodeType.NT_REQUEST); requestIter.hasNext(); ) {
-            Node request = requestIter.nextNode();
-            docWorkflow.cancelRequest(request.getIdentifier());
+    private void cancelRequests(final DocumentWorkflow docWorkflow) throws RepositoryException, WorkflowException, RemoteException {
+        Map<String, Map<String, Serializable>> requests = (Map<String, Map<String, Serializable>>) docWorkflow.hints().get("requests");
+        if (requests != null) {
+            for (Map.Entry<String, Map<String, Serializable>> entry : requests.entrySet()) {
+                String id = entry.getKey();
+                final Map<String, Serializable> actions = entry.getValue();
+                if (Boolean.TRUE.equals(actions.get("cancelRequest"))) {
+                    docWorkflow.cancelRequest(id);
+                } else if (Boolean.TRUE.equals(actions.get("rejectRequest"))) {
+                    docWorkflow.rejectRequest(id, "bulk workflow");
+                }
+            }
         }
     }
 

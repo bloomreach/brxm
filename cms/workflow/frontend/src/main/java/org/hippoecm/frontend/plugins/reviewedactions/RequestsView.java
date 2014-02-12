@@ -229,7 +229,6 @@ public class RequestsView extends RepeatingView {
                 if (state.equals("rejected")) {
                     IModel<String> reason = null;
                     try {
-                        WorkflowDescriptorModel model = getModel();
                         String id = item.getModelObject().getId();
                         Node node = UserSession.get().getJcrSession().getNodeByIdentifier(id);
                         if (node != null && node.hasProperty("hippostdpubwf:reason")) {

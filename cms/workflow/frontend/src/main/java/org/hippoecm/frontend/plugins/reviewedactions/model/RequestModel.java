@@ -24,6 +24,7 @@ import javax.jcr.Session;
 
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,13 +46,18 @@ public class RequestModel extends LoadableDetachableModel<Request> {
             Session session = UserSession.get().getJcrSession();
             Node node = session.getNodeByIdentifier(id);
 
+            String state = "unknown";
+            if (node.isNodeType(HippoStdPubWfNodeType.NT_HIPPOSTDPUBWF_REQUEST)) {
+                state = node.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_TYPE).getString();
+            }
+
             Date schedule = null;
-            String state = node.getProperty("hippostdpubwf:type").getString();
             if (node.hasProperty("hipposched:triggers/default/hipposched:nextFireTime")) {
                 schedule = node.getProperty("hipposched:triggers/default/hipposched:nextFireTime").getDate().getTime();
-            } else if (node.hasProperty("hippostdpubwf:reqdate")) {
-                schedule = new Date(node.getProperty("hippostdpubwf:reqdate").getLong());
+            } else if (node.hasProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_REQDATE)) {
+                schedule = new Date(node.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_REQDATE).getLong());
             }
+
             return new Request(id, schedule, state, info);
         } catch (RepositoryException ex) {
             // status unknown, maybe there are legit reasons for this, so don't emit a warning

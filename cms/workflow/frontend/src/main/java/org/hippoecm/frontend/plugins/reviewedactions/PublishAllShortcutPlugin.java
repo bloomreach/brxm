@@ -15,8 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.Node;
@@ -43,7 +45,6 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
@@ -89,7 +90,7 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
 
         private static final long serialVersionUID = 1L;
 
-        private Set<String> documents = new HashSet<String>();
+        private Set<String> handles = new HashSet<String>();
         private String mode = MODE_PUBLISH;
         private IPluginConfig config;
 
@@ -123,7 +124,7 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
                         Node document = documentIter.nextNode();
                         if (document != null) {
                             if (document.isNodeType("mix:referenceable") && document.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-                                documents.add(document.getIdentifier());
+                                handles.add(document.getParent().getIdentifier());
                             }
                         }
                     }
@@ -133,11 +134,11 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
             }
 
             Label countLabel = new Label("count");
-            countLabel.setDefaultModel(new Model<String>(Integer.toString(documents.size())));
+            countLabel.setDefaultModel(new Model<String>(Integer.toString(handles.size())));
             add(countLabel);
         }
 
-        public IModel getTitle() {
+        public IModel<String> getTitle() {
             return new StringResourceModel(config.getString("label.title"), this, null);
         }
 
@@ -146,38 +147,35 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
             try {
                 Session session = UserSession.get().getJcrSession();
                 WorkflowManager wfMgr = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-                for (String uuid : documents) {
+                for (String uuid : handles) {
                     try {
-                        Node document = session.getNodeByIdentifier(uuid);
-                        if (document.getDepth() > 0) {
-                            Node handle = document.getParent();
-                            if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
-                                for (NodeIterator requestIter = handle.getNodes(HippoNodeType.NT_REQUEST); requestIter.hasNext();) {
-                                    Node request = requestIter.nextNode();
-                                    if (request != null) {
-                                        Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, request);
-                                        if (workflow instanceof DocumentWorkflow) {
-                                            ((DocumentWorkflow) workflow).cancelRequest(request.getIdentifier());
-                                        }
-                                    }
-                                }
+                        Node handle = session.getNodeByIdentifier(uuid);
+                        Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, handle);
+                        if (!(workflow instanceof DocumentWorkflow)) {
+                            continue;
+                        }
+
+                        DocumentWorkflow documentWorkflow = (DocumentWorkflow) workflow;
+                        Map<String, Map<String, Serializable>> requests = (Map<String, Map<String, Serializable>>)
+                                documentWorkflow.hints().get("requests");
+                        for (Map.Entry<String, Map<String, Serializable>> entry : requests.entrySet()) {
+                            Map<String, Serializable> actions = entry.getValue();
+                            if (Boolean.TRUE.equals(actions.get("cancelRequest"))) {
+                                documentWorkflow.cancelRequest(entry.getKey());
+                            } else if (Boolean.TRUE.equals(actions.get("rejectRequest"))) {
+                                documentWorkflow.rejectRequest(entry.getKey(), "bulk (de)publish");
                             }
                         }
-                        Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, document);
-                        if (workflow instanceof DocumentWorkflow) {
-                            if (mode.equals(MODE_PUBLISH)) {
-                                ((DocumentWorkflow) workflow).publish();
-                            } else if (mode.equals(MODE_DEPUBLISH)) {
-                                ((DocumentWorkflow) workflow).depublish();
-                            }
+
+                        Map<String, Serializable> hints = documentWorkflow.hints();
+                        if (mode.equals(MODE_PUBLISH) && Boolean.TRUE.equals(hints.get("publish"))) {
+                            ((DocumentWorkflow) workflow).publish();
+                        } else if (mode.equals(MODE_DEPUBLISH) && Boolean.TRUE.equals(hints.get("depublish"))) {
+                            ((DocumentWorkflow) workflow).depublish();
+                        } else {
+                            log.info("Unable to (de)publish {}", uuid);
                         }
-                    } catch (MappingException ex) {
-                        log.warn("Publication of {} failed: {}", uuid, ex);
-                    } catch (WorkflowException ex) {
-                        log.warn("Publication of {} failed: {}", uuid, ex);
-                    } catch (RemoteException ex) {
-                        log.warn("Publication of {} failed: {}", uuid, ex);
-                    } catch (RepositoryException ex) {
+                    } catch (WorkflowException | RemoteException | RepositoryException ex) {
                         log.warn("Publication of {} failed: {}", uuid, ex);
                     }
                     session.refresh(true);
