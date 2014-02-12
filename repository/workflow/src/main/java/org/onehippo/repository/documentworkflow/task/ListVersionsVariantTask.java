@@ -62,7 +62,7 @@ public class ListVersionsVariantTask extends AbstractDocumentTask {
 
             for (VersionIterator iter = versionHistory.getAllVersions(); iter.hasNext(); ) {
                 Version version = iter.nextVersion();
-                if (version.getName().equals("jcr:rootVersion")) {
+                if (version.getName().equals(JcrConstants.JCR_ROOT_VERSION)) {
                     continue;
                 }
                 Set<String> labelsSet = new TreeSet<String>();

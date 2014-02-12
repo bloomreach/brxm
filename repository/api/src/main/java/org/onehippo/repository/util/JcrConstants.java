@@ -45,6 +45,7 @@ public final class JcrConstants {
 
     public static final String JCR_UUID = "jcr:uuid";
 
+    public static final String JCR_ROOT_VERSION = "jcr:rootVersion";
     public static final String JCR_BASE_VERSION = "jcr:baseVersion";
     public static final String JCR_IS_CHECKED_OUT = "jcr:isCheckedOut";
     public static final String JCR_PREDECESSORS = "jcr:predecessors";

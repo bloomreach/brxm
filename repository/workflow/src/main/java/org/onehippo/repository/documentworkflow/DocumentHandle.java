@@ -19,12 +19,11 @@ package org.onehippo.repository.documentworkflow;
 import java.io.Serializable;
 import java.security.AccessControlException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
-import javax.jcr.AccessDeniedException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -153,7 +152,7 @@ public class DocumentHandle implements SCXMLDataModel {
             return false;
         }
 
-        HashSet<String> privs = new HashSet<>(Arrays.asList(privileges.split(",")));
+        Collection<String> privs = Arrays.asList(privileges.split(","));
         if (privs.isEmpty()) {
             return false;
         }
@@ -173,10 +172,7 @@ public class DocumentHandle implements SCXMLDataModel {
                     hasPrivilege = Boolean.FALSE;
                     try {
                         hasPrivilege = userSession.hasPermission(userDocumentPath, priv);
-                    } catch (AccessControlException e) { // ignore
-                    } catch (AccessDeniedException e) { // ignore
-                    } catch (IllegalArgumentException e) { // the underlying repository does not recognized the privileges requested.
-                    } catch (RepositoryException e) { // ignore
+                    } catch (AccessControlException | IllegalArgumentException | RepositoryException ignore) {
                     }
                     privilegesMap.put(priv, hasPrivilege);
                 }

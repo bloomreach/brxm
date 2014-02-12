@@ -44,12 +44,7 @@ public class DocumentVariant extends Document {
     }
 
     public String getStateSummary() throws RepositoryException {
-        Node node = getNode();
-        if (node != null) {
-            return JcrUtils.getStringProperty(node, HippoStdNodeType.HIPPOSTD_STATESUMMARY, null);
-        }
-
-        return null;
+        return getStringProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY);
     }
 
     public void setPublicationDate(Date date) throws RepositoryException {

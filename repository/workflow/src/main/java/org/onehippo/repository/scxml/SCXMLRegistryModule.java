@@ -21,10 +21,12 @@ import javax.jcr.Session;
 
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
+import org.onehippo.repository.modules.ProvidesService;
 
 /**
  * SCXMLRegistryModule
  */
+@ProvidesService( types = { SCXMLRegistry.class, SCXMLExecutorFactory.class } )
 public class SCXMLRegistryModule extends AbstractReconfigurableDaemonModule {
 
     private RepositorySCXMLRegistry scxmlRegistry = new RepositorySCXMLRegistry();

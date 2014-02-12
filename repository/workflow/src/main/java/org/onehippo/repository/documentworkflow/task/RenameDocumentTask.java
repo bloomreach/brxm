@@ -25,8 +25,6 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Custom workflow task for renaming document.
@@ -34,8 +32,6 @@ import org.slf4j.LoggerFactory;
 public class RenameDocumentTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
-
-    private static Logger log = LoggerFactory.getLogger(RenameDocumentTask.class);
 
     private String newName;
 

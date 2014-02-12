@@ -62,8 +62,8 @@ public class ArchiveDocumentTask extends AbstractDocumentTask {
             variant = dh.getDocumentVariantByState(HippoStdNodeType.UNPUBLISHED);
             DefaultWorkflow defaultWorkflow = (DefaultWorkflow) dh.getWorkflowContext().getWorkflow("core", variant);
             defaultWorkflow.archive();
-        } catch (MappingException ex) {
-            log.warn("invalid default workflow, falling back in behaviour", ex);
+        } catch (MappingException e) {
+            log.warn("Cannot archive document: no default workflow", e);
         }
 
         return null;

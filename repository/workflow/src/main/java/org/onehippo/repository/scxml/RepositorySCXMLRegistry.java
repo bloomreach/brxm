@@ -106,10 +106,8 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
         Node scxmlDefsNode = null;
 
         try {
-            String relScxmlDefsNodePath = StringUtils.removeStart(scxmlDefinitionsNodePath, "/");
-
-            if (session.getRootNode().hasNode(relScxmlDefsNodePath)) {
-                scxmlDefsNode = session.getRootNode().getNode(relScxmlDefsNodePath);
+            if (session.nodeExists(scxmlDefinitionsNodePath)) {
+                scxmlDefsNode = session.getNode(scxmlDefinitionsNodePath);
             }
         } catch (RepositoryException e) {
             log.error("Failed to read SCXML definitions node.", e);
@@ -142,7 +140,7 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
                         log.error("Invalid SCXML at " + scxmlDefNode.getPath(), e);
                     }
 
-                    if (newScxmlDef == null) {
+                    if (newScxmlDef == null && oldScxmlDef != null) {
                         // NOTE: The new SCXML instance has error(s) so it's null here.
                         //       Now, let put the old existing SCXML instance back into the map if there's any.
                         newScxmlDef = oldScxmlDef;

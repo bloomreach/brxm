@@ -17,24 +17,24 @@ package org.onehippo.repository.documentworkflow.task;
 
 import java.rmi.RemoteException;
 import java.util.Calendar;
-import java.util.Set;
+import java.util.Collection;
 import java.util.TreeSet;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
 
 import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.util.DefaultCopyHandler;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropInfo;
+import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
 
 /**
@@ -43,6 +43,14 @@ import org.onehippo.repository.documentworkflow.DocumentVariant;
 public class VersionRestoreToTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
+
+    private static final Collection<String> immune = new TreeSet<String>(){{
+        add(HippoNodeType.HIPPO_RELATED);
+        add(HippoNodeType.HIPPO_COMPUTE);
+        add(HippoNodeType.HIPPO_PATHS);
+        add(HippoStdNodeType.HIPPOSTD_HOLDER);
+        add(HippoStdNodeType.HIPPOSTD_STATE); // backwards compatibility
+    }};
 
     private Document target;
     private DocumentVariant variant;
@@ -67,30 +75,17 @@ public class VersionRestoreToTask extends AbstractDocumentTask {
     }
 
     private static void clear(Node node) throws RepositoryException {
-        Set<String> immune = new TreeSet<>();
-
-        if (node.hasProperty(HippoStdNodeType.HIPPOSTD_STATE)) {
-            // backwards compatibility
-            immune.add(HippoStdNodeType.HIPPOSTD_STATE);
-        }
-        immune.add(HippoStdNodeType.HIPPOSTD_HOLDER);
-        immune.add(HippoNodeType.HIPPO_RELATED);
-        immune.add(HippoNodeType.HIPPO_COMPUTE);
-        immune.add(HippoNodeType.HIPPO_PATHS);
-        for (NodeIterator childIter = node.getNodes(); childIter.hasNext(); ) {
-            Node child = childIter.nextNode();
-            if (child != null) {
-                if (child.getDefinition().isAutoCreated()) {
-                    clear(child);
-                } else {
-                    child.remove();
-                }
+        for (Node child : new NodeIterable(node.getNodes())) {
+            if (child.getDefinition().isAutoCreated()) {
+                clear(child);
+            } else {
+                child.remove();
             }
         }
 
-        for (PropertyIterator propIter = node.getProperties(); propIter.hasNext(); ) {
-            Property property = propIter.nextProperty();
-            if (property.getName().startsWith("jcr:") || property.getDefinition().isProtected()
+        for (Property property : new PropertyIterable(node.getProperties())) {
+            if (property.getName().startsWith("jcr:")
+                    || property.getDefinition().isProtected()
                     || immune.contains(property.getName())) {
                 continue;
             }

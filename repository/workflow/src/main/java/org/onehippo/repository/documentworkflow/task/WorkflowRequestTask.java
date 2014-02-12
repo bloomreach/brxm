@@ -34,8 +34,6 @@ public class WorkflowRequestTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(WorkflowRequestTask.class);
-
     private String type;
     private DocumentVariant contextVariant;
     private Date targetDate;

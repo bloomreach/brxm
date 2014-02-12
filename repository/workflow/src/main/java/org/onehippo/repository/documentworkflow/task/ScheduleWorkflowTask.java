@@ -24,8 +24,6 @@ import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Custom workflow task for scheduling a publication or depublication of a document.
@@ -33,8 +31,6 @@ import org.slf4j.LoggerFactory;
 public class ScheduleWorkflowTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
-
-    private static Logger log = LoggerFactory.getLogger(ScheduleWorkflowTask.class);
 
     private String type;
     private Date targetDate;

@@ -42,7 +42,7 @@ public abstract class AbstractWorkflowTaskAction<T extends WorkflowTask> extends
     }
 
     /**
-     * Can be overriden to initialize the workflow task
+     * Can be overridden to initialize the workflow task
      */
     protected void initTask(T task) throws ModelException, SCXMLExpressionException {
     }
@@ -65,7 +65,7 @@ public abstract class AbstractWorkflowTaskAction<T extends WorkflowTask> extends
     /**
      * Process the task execution result. By default, it stores the result through {@link SCXMLDataModel#setResult(Object)}
      * if it's a non-null value.
-     * This method can be overriden to do something else or more.
+     * This method can be overridden to do something else or more.
      */
     protected void processTaskResult(Object taskResult) {
         if (taskResult != null) {

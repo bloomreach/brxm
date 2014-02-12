@@ -47,7 +47,7 @@ public class IsModifiedTask extends AbstractDocumentTask {
         DocumentVariant draft = dm.getDocumentVariantByState(HippoStdNodeType.DRAFT);
         DocumentVariant unpublished = dm.getDocumentVariantByState(HippoStdNodeType.UNPUBLISHED);
 
-        if (draft != null && draft != null) {
+        if (draft != null && unpublished != null) {
             Node draftNode = draft.getNode();
             if (dm.getUser().equals(draft.getHolder())) {
                 // use user session bound draftNode which might contain outstanding changes

@@ -30,7 +30,6 @@ public class SetHolderTask extends AbstractDocumentTask {
 
     private String holder;
 
-
     public String getHolder() {
         return holder;
     }
