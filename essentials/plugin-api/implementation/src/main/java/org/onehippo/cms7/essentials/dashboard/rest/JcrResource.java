@@ -43,7 +43,7 @@ import com.google.common.base.Strings;
  */
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
-@Path("/jcrresource/")
+@Path("/jcr/")
 public class JcrResource extends BaseResource {
 
     private static final Logger log = LoggerFactory.getLogger(JcrResource.class);

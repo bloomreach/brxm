@@ -29,6 +29,7 @@
   <import resource="classpath:META-INF/cxf/cxf.xml"/>
   <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
   <!-- REST RESOURCES-->
+  <bean id="jcrResource" class="org.onehippo.cms7.essentials.dashboard.rest.JcrResource"/>
   <bean id="contentBlocksResource" class="org.onehippo.cms7.essentials.rest.ContentBlocksResource"/>
   <bean id="controllersResource" class="org.onehippo.cms7.essentials.rest.ControllersResource"/>
   <bean id="imageGalleryResource" class="org.onehippo.cms7.essentials.rest.ImageGalleryResource"/>
@@ -42,6 +43,7 @@
 
   <jaxrs:server id="restServer" address="/">
     <jaxrs:serviceBeans>
+      <ref bean="jcr"/>
       <ref bean="contentBlocksResource"/>
       <ref bean="controllersResource"/>
       <ref bean="imageGalleryResource"/>
