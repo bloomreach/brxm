@@ -93,6 +93,7 @@
     <commons-io.version>1.4</commons-io.version>
     <lucene.version>2.2.0</lucene.version>
     <tika.version>0.9</tika.version>
+    <xmlbeans-java6.version>2.3.0</xmlbeans-java6.version>
     <pdfbox.version>1.7.1</pdfbox.version>
     <quartz.version>1.8.5</quartz.version>
     <jackrabbit.patched.version>2.6.5-h1</jackrabbit.patched.version>
@@ -227,6 +228,11 @@
         <groupId>org.apache.pdfbox</groupId>
         <artifactId>pdfbox</artifactId>
         <version>${pdfbox.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.xmlbeans</groupId>
+        <artifactId>xmlbeans-java6</artifactId>
+        <version>${xmlbeans-java6.version}</version>
       </dependency>
       <dependency>
         <groupId>org.quartz-scheduler</groupId>
