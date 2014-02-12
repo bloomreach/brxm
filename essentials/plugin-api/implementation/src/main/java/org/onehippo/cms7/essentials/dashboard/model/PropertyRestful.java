@@ -27,7 +27,7 @@ import org.onehippo.cms7.essentials.dashboard.rest.Restful;
  * @version "$Id$"
  */
 @XmlRootElement(name = "property")
-public class RestfulProperty<T> implements Restful {
+public class PropertyRestful<T> implements Restful {
 
     private static final long serialVersionUID = 1L;
     private String name;
@@ -35,12 +35,12 @@ public class RestfulProperty<T> implements Restful {
     private boolean multivalue;
     private List<T> values;
 
-    public RestfulProperty(final String name, final T value) {
+    public PropertyRestful(final String name, final T value) {
         this.name = name;
         this.value = value;
     }
 
-    public RestfulProperty() {
+    public PropertyRestful() {
     }
 
     public void addValue(final T value) {

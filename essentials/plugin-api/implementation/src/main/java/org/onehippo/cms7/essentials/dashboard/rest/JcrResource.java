@@ -22,6 +22,9 @@ import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -30,8 +33,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.onehippo.cms7.essentials.dashboard.model.RestfulNode;
-import org.onehippo.cms7.essentials.dashboard.model.RestfulProperty;
+import org.onehippo.cms7.essentials.dashboard.model.NodeRestful;
+import org.onehippo.cms7.essentials.dashboard.model.PropertyRestful;
+import org.onehippo.cms7.essentials.dashboard.model.QueryRestful;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,11 +52,13 @@ public class JcrResource extends BaseResource {
 
     private static final Logger log = LoggerFactory.getLogger(JcrResource.class);
 
+
     @POST
     @Path("/")
-    public RestfulNode getNode(final RestfulNode payload, @Context ServletContext servletContext) throws RepositoryException {
+    public NodeRestful getNode(final NodeRestful payload, @Context ServletContext servletContext) throws RepositoryException {
         final Session session = GlobalUtils.createSession();
         try {
+
             String path = payload.getPath();
             if (Strings.isNullOrEmpty(path)) {
                 log.error("Path was null or empty, using root path [/]");
@@ -60,17 +66,17 @@ public class JcrResource extends BaseResource {
             }
             // TODO abs path
             final Node n = session.getNode(path);
-            final RestfulNode restfulNode = new RestfulNode(n.getName(), n.getPath());
-            populateProperties(n, restfulNode);
+            final NodeRestful nodeRestful = new NodeRestful(n.getName(), n.getPath());
+            populateProperties(n, nodeRestful);
             //############################################
             // LOAD KIDS (lazy)
             //############################################
-            populateNodes(n, restfulNode, true);
+            populateNodes(n, nodeRestful, true);
 
             //############################################
             //
             //############################################
-            return restfulNode;
+            return nodeRestful;
 
         } finally {
 
@@ -79,12 +85,12 @@ public class JcrResource extends BaseResource {
 
     }
 
-    private void populateNodes(final Node node, final RestfulNode restfulNode, boolean anotherLevel) throws RepositoryException {
+    private void populateNodes(final Node node, final NodeRestful nodeRestful, boolean anotherLevel) throws RepositoryException {
         final NodeIterator nodes = node.getNodes();
         while (nodes.hasNext()) {
             final Node kid = nodes.nextNode();
-            final RestfulNode jcrKid = new RestfulNode(kid.getName(), kid.getPath());
-            restfulNode.addNode(jcrKid);
+            final NodeRestful jcrKid = new NodeRestful(kid.getName(), kid.getPath());
+            nodeRestful.addNode(jcrKid);
             populateProperties(kid, jcrKid);
             if (anotherLevel) {
                 populateNodes(kid, jcrKid, false);
@@ -95,21 +101,65 @@ public class JcrResource extends BaseResource {
     }
 
 
-    private void populateProperties(final Node node, final RestfulNode restfulNode) throws RepositoryException {
+    private void populateProperties(final Node node, final NodeRestful nodeRestful) throws RepositoryException {
         final PropertyIterator properties = node.getProperties();
         while (properties.hasNext()) {
             final Property p = properties.nextProperty();
-            final RestfulProperty<String> restfulProperty = new RestfulProperty<>();
-            restfulProperty.setName(p.getName());
-            restfulProperty.setValue(p.getPath());
-            restfulNode.addProperty(restfulProperty);
+            final PropertyRestful<String> propertyRestful = new PropertyRestful<>();
+            propertyRestful.setName(p.getName());
+            propertyRestful.setValue(p.getPath());
+            nodeRestful.addProperty(propertyRestful);
         }
     }
 
+
     @POST
     @Path("/property/")
-    public RestfulProperty<?> getProperty(final RestfulProperty<?> payload, @Context ServletContext servletContext) {
+    public PropertyRestful<?> getProperty(final PropertyRestful<?> payload, @Context ServletContext servletContext) {
 
-        return new RestfulProperty<>();
+        return new PropertyRestful<>();
     }
+
+
+    @POST
+    @Path("/query/")
+    public NodeRestful executeQuery(final QueryRestful payload, @Context ServletContext servletContext) {
+
+        final NodeRestful restful = new NodeRestful(true);
+
+        Session session = null;
+        try {
+
+            session = GlobalUtils.createSession();
+            final QueryManager queryManager = session.getWorkspace().getQueryManager();
+            final String s = "//element(*, hst:template)[@hst:script]";
+            final Query query = queryManager.createQuery(payload.getQuery(), payload.getType());
+            // TODO add paging
+            final QueryResult result = query.execute();
+            final NodeIterator nodes = result.getNodes();
+
+            while (nodes.hasNext()) {
+                final Node node = nodes.nextNode();
+                final NodeRestful nodeRestful = new NodeRestful(node.getName(), node.getPath());
+                populateProperties(node, nodeRestful);
+                //############################################
+                // LOAD KIDS (lazy)
+                //############################################
+                populateNodes(node, nodeRestful, true);
+                restful.addNode(nodeRestful);
+            }
+        } catch (RepositoryException e) {
+            log.error("Error executing query", e);
+
+
+        } finally {
+            GlobalUtils.cleanupSession(session);
+        }
+
+
+        return restful;
+    }
+
+
+
 }

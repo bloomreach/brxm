@@ -85,6 +85,7 @@ public class PluginResource extends BaseResource {
     @Inject
     private EventBus eventBus;
 
+    private boolean initialized;
     private static Logger log = LoggerFactory.getLogger(PluginResource.class);
 
     /**
@@ -159,7 +160,8 @@ public class PluginResource extends BaseResource {
         //############################################
         // Register endpoints:
         //############################################
-        if (!restClasses.isEmpty()) {
+        if (!initialized && !restClasses.isEmpty()) {
+            initialized = true;
             final RuntimeDelegate delegate = RuntimeDelegate.getInstance();
             final Bus bus = BusFactory.getDefaultBus();
             final DynamicRestPointsApplication application = new DynamicRestPointsApplication();

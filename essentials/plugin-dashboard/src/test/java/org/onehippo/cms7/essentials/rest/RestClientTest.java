@@ -1,6 +1,5 @@
 package org.onehippo.cms7.essentials.rest;
 
-import org.apache.cxf.jaxrs.client.ClientWebApplicationException;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.rest.client.RestClient;
@@ -32,7 +31,7 @@ public class RestClientTest {
             final RestClient client = new RestClient("https://api.github.com/gists/8453217", 1, 1);
             final String pluginList = client.getPluginList();
             assertTrue(false);
-        } catch (ClientWebApplicationException e) {
+        } catch (Exception e) {
             log.info("This should indeed happen! Timeouts set on 1 ms", e);
             assertTrue(true);
         }

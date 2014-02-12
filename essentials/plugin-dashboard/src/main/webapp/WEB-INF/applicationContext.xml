@@ -43,7 +43,7 @@
 
   <jaxrs:server id="restServer" address="/">
     <jaxrs:serviceBeans>
-      <ref bean="jcr"/>
+      <ref bean="jcrResource"/>
       <ref bean="contentBlocksResource"/>
       <ref bean="controllersResource"/>
       <ref bean="imageGalleryResource"/>

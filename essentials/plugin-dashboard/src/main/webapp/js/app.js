@@ -109,6 +109,8 @@
                 $rootScope.REST = {
                     root: root,
                     menus: root + '/menus/',
+                    jcr: root + '/jcr/',
+                    jcrQuery: root + '/jcr/query/',
                     dynamic: root + '/dynamic/',
 
                     /**

@@ -23,20 +23,27 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.onehippo.cms7.essentials.dashboard.rest.Restful;
 
+import com.sun.corba.se.impl.orbutil.ObjectWriter;
+
 /**
  * @version "$Id$"
  */
 @XmlRootElement(name = "node")
-public class RestfulNode implements Restful {
+public class NodeRestful implements Restful {
 
     private static final long serialVersionUID = 1L;
-    private List<RestfulProperty<?>> properties;
-    private List<RestfulNode> nodes;
+    private List<PropertyRestful<?>> properties;
+    private List<NodeRestful> nodes;
     /**
      * flag which indicates node is in "loaded" state (e.g. all data is retrieved)
      * so no additional requests needs to be done, unless explicitly requested
      */
     private boolean loaded;
+    /**
+     * Indicates node is wrapper node, which means node does
+     * not exists but wraps a result (or list of results.)
+     */
+    private boolean wrapper;
 
     /**
      * indicates if we should load more than one node level
@@ -45,15 +52,19 @@ public class RestfulNode implements Restful {
     private String name;
     private String path;
 
-    public RestfulNode(final String name, final String path) {
+    public NodeRestful(final String name, final String path) {
         this.name = name;
         this.path = path;
     }
 
-    public RestfulNode() {
+    public NodeRestful(final boolean wrapper) {
+        this.wrapper = wrapper;
     }
 
-    public void addProperty(final RestfulProperty<?> property) {
+    public NodeRestful() {
+    }
+
+    public void addProperty(final PropertyRestful<?> property) {
         if (properties == null) {
             properties = new ArrayList<>();
         }
@@ -61,18 +72,18 @@ public class RestfulNode implements Restful {
     }
 
 
-    public void addNode(final RestfulNode node) {
+    public void addNode(final NodeRestful node) {
         if (nodes == null) {
             nodes = new ArrayList<>();
         }
         nodes.add(node);
     }
 
-    public List<RestfulProperty<?>> getProperties() {
+    public List<PropertyRestful<?>> getProperties() {
         return properties;
     }
 
-    public void setProperties(final List<RestfulProperty<?>> properties) {
+    public void setProperties(final List<PropertyRestful<?>> properties) {
         this.properties = properties;
     }
 
@@ -96,11 +107,11 @@ public class RestfulNode implements Restful {
         return serialVersionUID;
     }
 
-    public List<RestfulNode> getNodes() {
+    public List<NodeRestful> getNodes() {
         return nodes;
     }
 
-    public void setNodes(final List<RestfulNode> nodes) {
+    public void setNodes(final List<NodeRestful> nodes) {
         this.nodes = nodes;
     }
 
@@ -122,11 +133,25 @@ public class RestfulNode implements Restful {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("RestfulNode{");
+        final StringBuilder sb = new StringBuilder("NodeRestful{");
+        sb.append("properties=").append(properties);
+        sb.append(", nodes=").append(nodes);
+        sb.append(", loaded=").append(loaded);
+        sb.append(", wrapper=").append(wrapper);
+        sb.append(", depth=").append(depth);
         sb.append(", name='").append(name).append('\'');
         sb.append(", path='").append(path).append('\'');
         sb.append('}');
         return sb.toString();
     }
+
+    public boolean isWrapper() {
+        return wrapper;
+    }
+
+    public void setWrapper(final boolean wrapper) {
+        this.wrapper = wrapper;
+    }
+
 
 }
