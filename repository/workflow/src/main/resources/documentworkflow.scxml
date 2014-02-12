@@ -168,7 +168,7 @@
 
         <transition event="acceptRequest">
 
-          <cs:var name="request" expr="_eventdata.request"/>
+          <cs:var name="request" expr="_eventdatamap.acceptRequest?.request"/>
           <cs:var name="workflowType" expr="request.workflowType"/>
           <cs:var name="targetDate" expr="request.scheduledDate"/>
 
@@ -183,11 +183,11 @@
         </transition>
 
         <transition event="rejectRequest">
-          <hippo:rejectRequest requestExpr="_eventdata.request" reasonExpr="_eventdata.reason"/>
+          <hippo:rejectRequest requestExpr="_eventdatamap.rejectRequest?.request" reasonExpr="_eventdatamap.rejectRequest?.reason"/>
         </transition>
 
         <transition event="cancelRequest">
-          <hippo:deleteRequest requestExpr="_eventdata.request"/>
+          <hippo:deleteRequest requestExpr="_eventdatamap.cancelRequest?.request"/>
         </transition>
 
       </state>
@@ -216,22 +216,22 @@
           </if>
         </onentry>
 
-        <transition event="requestPublication" cond="!_eventdata?.targetDate">
+        <transition event="requestPublication" cond="!_eventdatamap.requestPublication?.targetDate">
           <hippo:workflowRequest type="publish" contextVariantExpr="unpublished"/>
         </transition>
 
-        <transition event="requestPublication" cond="!!_eventdata?.targetDate">
-          <hippo:workflowRequest type="scheduledpublish" contextVariantExpr="unpublished" targetDateExpr="_eventdata.targetDate"/>
+        <transition event="requestPublication" cond="!!_eventdatamap.requestPublication?.targetDate">
+          <hippo:workflowRequest type="scheduledpublish" contextVariantExpr="unpublished" targetDateExpr="_eventdatamap.requestPublication.targetDate"/>
         </transition>
 
-        <transition event="publish" cond="!_eventdata?.targetDate">
+        <transition event="publish" cond="!_eventdatamap.publish?.targetDate">
           <hippo:copyVariant sourceState="unpublished" targetState="published"/>
           <hippo:configVariant variant="published" applyPublished="true" availabilities="live"/>
           <hippo:version variant="unpublished"/>
         </transition>
 
-        <transition event="publish" cond="!!_eventdata?.targetDate">
-          <hippo:scheduleWorkflow type="publish" targetDateExpr="_eventdata.targetDate"/>
+        <transition event="publish" cond="!!_eventdatamap.publish?.targetDate">
+          <hippo:scheduleWorkflow type="publish" targetDateExpr="_eventdatamap.publish.targetDate"/>
         </transition>
 
       </state>
@@ -260,15 +260,15 @@
           </if>
         </onentry>
 
-        <transition event="requestDepublication" cond="!_eventdata?.targetDate">
+        <transition event="requestDepublication" cond="!_eventdatamap.requestDepublication?.targetDate">
           <hippo:workflowRequest type="depublish" contextVariantExpr="published"/>
         </transition>
 
-        <transition event="requestDepublication" cond="!!_eventdata?.targetDate">
-          <hippo:workflowRequest type="scheduleddepublish" contextVariantExpr="published" targetDateExpr="_eventdata.targetDate"/>
+        <transition event="requestDepublication" cond="!!_eventdatamap.requestDepublication?.targetDate">
+          <hippo:workflowRequest type="scheduleddepublish" contextVariantExpr="published" targetDateExpr="_eventdatamap.requestDepublication.targetDate"/>
         </transition>
 
-        <transition event="depublish" cond="!_eventdata?.targetDate">
+        <transition event="depublish" cond="!_eventdatamap.depublish?.targetDate">
           <if cond="!unpublished">
             <hippo:copyVariant sourceState="published" targetState="unpublished"/>
           </if>
@@ -277,8 +277,8 @@
           <hippo:version variant="unpublished"/>
         </transition>
 
-        <transition event="depublish" cond="!!_eventdata?.targetDate">
-          <hippo:scheduleWorkflow type="depublish" targetDateExpr="_eventdata.targetDate"/>
+        <transition event="depublish" cond="!!_eventdatamap.depublish?.targetDate">
+          <hippo:scheduleWorkflow type="depublish" targetDateExpr="_eventdatamap.depublish.targetDate"/>
         </transition>
 
       </state>
@@ -311,15 +311,15 @@
         </transition>
 
         <transition event="retrieveVersion">
-          <hippo:retrieveVersion historic="_eventdata?.date" variant="unpublished" />
+          <hippo:retrieveVersion historic="_eventdatamap.retrieveVersion?.date" variant="unpublished" />
         </transition>
 
         <transition event="versionRestoreTo">
-          <hippo:versionRestoreTo historic="_eventdata?.date" variant="unpublished" target="_eventdata?.target"/>
+          <hippo:versionRestoreTo historic="_eventdatamap.versionRestoreTo?.date" variant="unpublished" target="_eventdatamap.versionRestoreTo?.target"/>
         </transition>
 
         <transition event="restoreVersion">
-          <hippo:restoreVersion historic="_eventdata?.date"  variant="unpublished" />
+          <hippo:restoreVersion historic="_eventdatamap.restoreVersion?.date"  variant="unpublished" />
         </transition>
 
       </state>
@@ -359,11 +359,11 @@
         </transition>
 
         <transition event="move" target="terminated">
-          <hippo:moveDocument destinationExpr="_eventdata?.destination" newNameExpr="_eventdata?.name"/>
+          <hippo:moveDocument destinationExpr="_eventdatamap.move?.destination" newNameExpr="_eventdatamap.move?.name"/>
         </transition>
 
         <transition event="rename" target="terminated">
-          <hippo:renameDocument newNameExpr="_eventdata?.name"/>
+          <hippo:renameDocument newNameExpr="_eventdatamap.rename?.name"/>
         </transition>
 
       </state>
@@ -382,7 +382,7 @@
         </onentry>
 
         <transition event="copy">
-          <hippo:copyDocument destinationExpr="_eventdata?.destination" newNameExpr="_eventdata?.name"/>
+          <hippo:copyDocument destinationExpr="_eventdatamap.copy?.destination" newNameExpr="_eventdatamap.copy?.name"/>
         </transition>
 
       </state>
