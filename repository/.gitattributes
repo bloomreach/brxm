@@ -522,7 +522,6 @@ workflow/src/main/resources/hipposcxml.cnd -text
 workflow/src/main/resources/hippostd-workflows-threepane.xml -text svneol=unset#text/plain
 workflow/src/main/resources/hippostd-workflows.xml svneol=native#text/plain
 workflow/src/main/resources/hippostdpubwf.cnd -text
-workflow/src/main/resources/reviewedactions-workflows.xml svneol=native#text/plain
 workflow/src/main/resources/scxml-definitions.xml svneol=native#text/plain
 workflow/src/main/resources/scxml-registry-module.xml svneol=native#text/plain
 workflow/src/main/resources/shortcuts-workflows.xml svneol=native#text/plain
