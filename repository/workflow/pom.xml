@@ -35,6 +35,12 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-services</artifactId>
+      <version>${hippo.services.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-builtin</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
@@ -56,11 +62,21 @@
       <version>${hippo.commons.version}</version>
       <scope>test</scope>
     </dependency>
+
+    <!-- SCXML -->
     <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-services</artifactId>
-      <version>${hippo.services.version}</version>
-      <scope>test</scope>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-scxml2</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>${commons-io.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <!-- test -->
@@ -85,7 +101,11 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymock</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -127,8 +147,8 @@
           <forkMode>always</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
           <excludes>
-            <exclude>**/AcceptRequestTest.java</exclude>
             <exclude>**/TranslationWorkflowTest.java</exclude>
+            <exclude>**/DocumentWorkflowTest.java</exclude>
           </excludes>
         </configuration>
       </plugin>
@@ -158,7 +178,6 @@
                 </goals>
                 <configuration>
                   <includes>
-                    <include>**/AcceptRequestTest.java</include>
                     <include>**/TranslationWorkflowTest.java</include>
                   </includes>
                 </configuration>

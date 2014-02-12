@@ -43,6 +43,15 @@
         <updatePolicy>never</updatePolicy>
       </releases>
     </repository>
+    <!-- TODO: temporary adding Apache snapshots repository for commons-scxml2 -->
+    <repository>
+      <id>apache.snapshots</id>
+      <name>Apache Snapshot Repository</name>
+      <url>http://repository.apache.org/snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
   </repositories>
 
   <modules>
@@ -91,12 +100,13 @@
     <json-lib.version>2.2.2</json-lib.version>
     <easymock.version>3.1</easymock.version>
     <decentxml.version>1.4</decentxml.version>
+    <commons-scxml2.version>2.0-SNAPSHOT</commons-scxml2.version>
   </properties>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/repository/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/branches/scxml-workflow</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/repository/branches/scxml-workflow</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/branches/scxml-workflow</url>
   </scm>
 
   <build>
@@ -248,6 +258,18 @@
         <groupId>de.pdark</groupId>
         <artifactId>decentxml</artifactId>
         <version>${decentxml.version}</version>
+      </dependency>
+      <!-- SCXML -->
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-scxml2</artifactId>
+        <version>${commons-scxml2.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
 

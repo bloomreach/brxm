@@ -38,4 +38,9 @@ public @interface WorkflowAction {
      */
     public boolean loggable() default true;
 
+    /**
+     * Returns true if the workflow action can potentially make changes to the session.
+     * @return
+     */
+    public boolean mutates() default true;
 }

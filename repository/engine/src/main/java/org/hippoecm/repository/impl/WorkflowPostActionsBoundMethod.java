@@ -40,12 +40,12 @@ class WorkflowPostActionsBoundMethod implements WorkflowPostActions {
     String sourceIdentity;
     boolean isDocumentResult;
     Node wfSubject;
-    Node wfNode;
+    WorkflowDefinition wfNode;
     Set<String> preconditionSet;
     String workflowCategory;
     String workflowMethod;
 
-    WorkflowPostActionsBoundMethod(WorkflowManagerImpl workflowManager, Node wfSubject, boolean isDocumentResult, Node wfNode, String workflowCategory, String workflowMethod) throws RepositoryException {
+    WorkflowPostActionsBoundMethod(WorkflowManagerImpl workflowManager, Node wfSubject, boolean isDocumentResult, WorkflowDefinition wfNode, String workflowCategory, String workflowMethod) throws RepositoryException {
         this.workflowManager = workflowManager;
         this.sourceIdentity = wfSubject.getIdentifier();
         this.wfSubject = wfSubject;
@@ -53,10 +53,9 @@ class WorkflowPostActionsBoundMethod implements WorkflowPostActions {
         this.wfNode = wfNode;
         this.workflowCategory = workflowCategory;
         this.workflowMethod = workflowMethod;
-        if (wfNode.hasNode("hipposys:eventdocument")) {
-            // TODO
-        } else if (wfNode.hasProperty("hipposys:eventdocument")) {
-            this.wfSubject = wfNode.getProperty("hipposys:eventdocument").getNode();
+        Node eventDocument = wfNode.getEventDocument();
+        if (eventDocument != null) {
+            this.wfSubject = eventDocument;
         }
     }
 
@@ -72,17 +71,11 @@ class WorkflowPostActionsBoundMethod implements WorkflowPostActions {
                 log.debug("silently ignoring the workflow event on deleted item");
                 return;
             }
-            if (wfNode.hasProperty("hipposys:eventconditioncategory")) {
-                if (!wfNode.getProperty("hipposys:eventconditioncategory").getString().equals(workflowCategory)) {
-                    return;
-                }
+            if (!wfNode.matchesEventCondition(workflowCategory, workflowMethod)) {
+                return;
             }
-            if (wfNode.hasProperty("hipposys:eventconditionmethod")) {
-                if (!wfNode.getProperty("hipposys:eventconditionmethod").getString().equals(workflowMethod)) {
-                    return;
-                }
-            }
-            Workflow workflow = workflowManager.getWorkflowInternal(wfNode, wfSubject);
+
+            Workflow workflow = workflowManager.createProxiedWorkflow(wfNode, wfSubject);
             if (workflow instanceof WorkflowEventWorkflow) {
                 WorkflowEventWorkflow event = (WorkflowEventWorkflow)workflow;
                 if (event instanceof WorkflowEventsWorkflow) {

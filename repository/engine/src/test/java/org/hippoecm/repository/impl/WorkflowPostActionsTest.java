@@ -34,18 +34,18 @@ import org.junit.Test;
 public class WorkflowPostActionsTest {
 
     private Node wfSubject;
-    private Node wfNode;
     private Document document;
     private String workflowCategory = "default";
     private String workflowMethod = "publish";
     private WorkflowEventsWorkflow eventsWorkflow;
     private WorkflowManagerImpl workflowManager;
+    private WorkflowDefinition workflowDefinition;
 
     @Before
     public void setUp() throws Exception {
         // preparing mocks for wfSubject, wfNode and document
         wfSubject = EasyMock.createNiceMock(Node.class);
-        wfNode = EasyMock.createNiceMock(Node.class);
+        final Node wfNode = EasyMock.createNiceMock(Node.class);
         document = EasyMock.createNiceMock(Document.class);
         EasyMock.replay(wfSubject);
         EasyMock.replay(wfNode);
@@ -54,7 +54,8 @@ public class WorkflowPostActionsTest {
         eventsWorkflow = EasyMock.createMock(WorkflowEventsWorkflow.class);
         // preparing the mock for workflowManager which just returns the eventsWorkflow
         workflowManager = EasyMock.createNiceMock(WorkflowManagerImpl.class);
-        EasyMock.expect(workflowManager.getWorkflowInternal(wfNode, wfSubject)).andReturn(eventsWorkflow).anyTimes();
+        workflowDefinition = new WorkflowDefinition(wfNode);
+        EasyMock.expect(workflowManager.createProxiedWorkflow(workflowDefinition, wfSubject)).andReturn(eventsWorkflow).anyTimes();
         EasyMock.replay(workflowManager);
 
         // expecting method calls: #setWorkflowCategory(String), #setWorkflowMethod(String) and finally #fire(Document) method.
@@ -72,7 +73,7 @@ public class WorkflowPostActionsTest {
     public void testWorkflowEventsWorkflowWithWorkflowPostActionsBoundMethod() throws Exception {
         // Now, create a postActionBoundMethod and execute it with the mock document.
         WorkflowPostActionsBoundMethod postAction = new WorkflowPostActionsBoundMethod(workflowManager, wfSubject,
-                true, wfNode, workflowCategory, workflowMethod);
+                true, workflowDefinition, workflowCategory, workflowMethod);
         postAction.execute(document);
     }
     @Test
@@ -80,7 +81,7 @@ public class WorkflowPostActionsTest {
     public void testWorkflowEventsWorkflowWithWorkflowPostActionSimpleQuery() throws Exception {
         // Now, create a postActionBoundMethod and execute it with the mock document.
         WorkflowPostActionSimpleQuery postAction = new WorkflowPostActionSimpleQuery(workflowManager, wfSubject,
-                true, wfNode, workflowCategory, workflowMethod);
+                true, workflowDefinition, workflowCategory, workflowMethod);
         postAction.execute(document);
     }
 }

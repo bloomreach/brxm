@@ -20,7 +20,7 @@
     <sv:value>hipposys:deriveddefinition</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:classname" sv:type="String">
-    <sv:value>org.hippoecm.repository.reviewedactions.DerivedDataFunction</sv:value>
+    <sv:value>org.onehippo.repository.documentworkflow.DerivedDataFunction</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:nodetype" sv:type="String">
     <sv:value>hippostd:publishableSummary</sv:value>

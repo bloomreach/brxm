@@ -18,6 +18,15 @@ package org.hippoecm.repository.reviewedactions;
 import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.repository.events.HippoWorkflowEvent;
 
+/**
+ * The ReviewedActionsWorkflowEvent is an <em>example</em> of defining your own HippoEvent wrapper.
+ * More detailed documentation about its usage can be found online
+ * <a href="https://cms.onehippo.org/?path=/content/documents/7_8/library/concepts/hippo-services/event-bus">here</a>
+ *
+ * @deprecated since CMS 7.9, The reviewedactions workflow has been deprecated and replaced by
+ * {@link org.onehippo.repository.documentworkflow.DocumentWorkflow}, so this example no longer should be used 'as is'
+ */
+@Deprecated
 public final class ReviewedActionsWorkflowEvent extends HippoWorkflowEvent<ReviewedActionsWorkflowEvent> {
 
     private static final String WORKFLOW_EVENT_TYPE = "event-type";

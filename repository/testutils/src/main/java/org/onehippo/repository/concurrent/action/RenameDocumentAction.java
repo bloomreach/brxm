@@ -19,7 +19,7 @@ import java.util.Random;
 
 import javax.jcr.Node;
 
-public class RenameDocumentAction extends AbstractFullReviewedActionsWorkflowAction {
+public class RenameDocumentAction extends AbstractDocumentWorkflowAction {
 
     private final Random random = new Random(System.currentTimeMillis());
 
@@ -29,17 +29,18 @@ public class RenameDocumentAction extends AbstractFullReviewedActionsWorkflowAct
 
     @Override
     protected String getWorkflowMethodName() {
-        return "move";
+        return "rename";
     }
 
     @Override
     protected Node doExecute(Node node) throws Exception {
-        Node parent = node.getParent().getParent();
+        Node handle = node.getParent();
+        Node folder = handle.getParent();
         String newName = node.getName();
         do {
             newName += "." + random.nextInt(10);
-        } while (parent.hasNode(newName));
-        getFullReviewedActionsWorkflow(node).rename(newName);
-        return parent.getNode(newName).getNode(newName);
+        } while (folder.hasNode(newName));
+        getDocumentWorkflow(handle).rename(newName);
+        return folder.getNode(newName).getNode(newName);
     }
 }

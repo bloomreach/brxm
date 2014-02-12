@@ -15,6 +15,13 @@
  */
 package org.hippoecm.repository.reviewedactions;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Map;
@@ -38,13 +45,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
 
@@ -191,6 +191,7 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
         FullReviewedActionsWorkflow reviewedWorkflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
         assertNotNull("No applicable workflow where there should be one", reviewedWorkflow);
         reviewedWorkflow.publish(); // make sure 'published' variant exists
+        reviewedWorkflow.depublish();
         reviewedWorkflow.requestPublication();
 
         for (Node docNode : new NodeIterable(getNode("test/myarticle").getNodes("myarticle"))) {

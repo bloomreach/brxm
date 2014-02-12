@@ -91,7 +91,7 @@ public class DeprecatedBasicReviewedActionsWorkflowImpl extends WorkflowImpl imp
     }
 
     @Override
-    public Map<String, Serializable> hints() {
+    public Map<String, Serializable> hints() throws WorkflowException {
         Map<String, Serializable> info = super.hints();
         boolean editable = false;
         boolean publishable = false;

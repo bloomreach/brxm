@@ -15,8 +15,15 @@
  */
 package org.hippoecm.repository.reviewedactions;
 
-import java.util.Date;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Date;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -30,17 +37,11 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 public class AcceptRequestTest extends RepositoryTestCase {
 
@@ -175,7 +176,8 @@ public class AcceptRequestTest extends RepositoryTestCase {
                 node = getNode("test/myarticle/hippo:request");
                 if (node != null) {
                     FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow(node, "default");
-                    if (workflow.hints().containsKey("acceptRequest") && ((Boolean)workflow.hints().get("acceptRequest")).booleanValue()) {
+                    Map<String, Serializable> hints = workflow.hints();
+                    if (hints.containsKey("acceptRequest") && ((Boolean)hints.get("acceptRequest")).booleanValue()) {
                         workflow.acceptRequest();
                         session.save();
                         found = true;

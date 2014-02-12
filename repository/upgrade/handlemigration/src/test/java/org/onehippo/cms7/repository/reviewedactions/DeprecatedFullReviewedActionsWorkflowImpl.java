@@ -55,7 +55,7 @@ public class DeprecatedFullReviewedActionsWorkflowImpl extends DeprecatedBasicRe
     }
 
     @Override
-    public Map<String,Serializable> hints()  {
+    public Map<String,Serializable> hints() throws WorkflowException {
         Map<String,Serializable> info = super.hints();
         if (info.containsKey("delete")) {
             info.put("rename", info.get("delete"));
@@ -243,7 +243,7 @@ public class DeprecatedFullReviewedActionsWorkflowImpl extends DeprecatedBasicRe
             publishedDocument.setState(PublishableDocument.PUBLISHED);
             publishedDocument.setPublicationDate(new Date());
             publishedDocument.setAvailability(new String[] { "live", "preview" });
-            VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", publishedDocument);
+            VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("deprecated-versioning", publishedDocument);
             versionWorkflow.version();
         } catch(MappingException ex) {
             log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
@@ -275,7 +275,7 @@ public class DeprecatedFullReviewedActionsWorkflowImpl extends DeprecatedBasicRe
                 deleteDocument(publishedDocument);
             }
             publishedDocument = null;
-            versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", unpublishedDocument);
+            versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("deprecated-versioning", unpublishedDocument);
             try {
                 versionWorkflow.version();
             } catch(MappingException ex) {

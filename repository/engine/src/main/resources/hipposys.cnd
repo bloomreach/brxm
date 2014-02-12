@@ -52,10 +52,11 @@
 
 // REPOSITORY WORKFLOW, OCM AND QUERY
 
-[hipposys:type] > nt:base // deprecated
+[hipposys:type] > nt:base
 - hipposys:nodetype (string) mandatory
-- hipposys:display (string) mandatory
-- hipposys:classname (string) mandatory //FIXME
+- hipposys:subtype (string)
+- hipposys:classname (string) mandatory
+- hipposys:display (string)
 
 [hipposys:types] > nt:base // deprecated
 + * (hipposys:type) = hipposys:type

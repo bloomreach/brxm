@@ -13,17 +13,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.reviewedactions;
+package org.onehippo.repository.documentworkflow;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.api.Document;
-
-public class ScheduledRequest extends Document {
-
-    public ScheduledRequest() {
-    }
+public class ScheduledRequest extends Request {
 
     public ScheduledRequest(Node node) throws RepositoryException {
         super(node);

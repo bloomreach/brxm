@@ -60,6 +60,20 @@
     <appender-ref ref="root"/>
   </category>
 
+  <!-- SCXML workflow -->
+  <category additivity="false" name="org.apache.commons.scxml2">
+    <level value="warn"/>
+    <appender-ref ref="console"/>
+  </category>
+  <category additivity="false" name="org.onehippo.repository.scxml">
+    <level value="warn"/>
+    <appender-ref ref="console"/>
+  </category>
+  <category additivity="false" name="org.onehippo.repository.documentworkflow">
+    <level value="warn"/>
+    <appender-ref ref="console"/>
+  </category>
+
   <root>
     <level value="warn"/>
     <appender-ref ref="console"/>

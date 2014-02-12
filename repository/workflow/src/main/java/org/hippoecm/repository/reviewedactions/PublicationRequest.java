@@ -23,6 +23,10 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.util.JcrUtils;
 
+/**
+ * @deprecated since CMS 7.9, no longer used by {@link org.onehippo.repository.documentworkflow.DocumentWorkflowImpl} replacing the reviewedactions workflow
+ */
+@Deprecated
 public class PublicationRequest extends Document {
 
     public static final String REJECTED = "rejected"; // zombie

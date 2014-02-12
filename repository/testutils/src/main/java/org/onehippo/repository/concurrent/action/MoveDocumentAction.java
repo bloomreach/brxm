@@ -25,7 +25,7 @@ import javax.jcr.query.Query;
 
 import org.hippoecm.repository.api.Document;
 
-public class MoveDocumentAction extends AbstractFullReviewedActionsWorkflowAction {
+public class MoveDocumentAction extends AbstractDocumentWorkflowAction {
 
     private final Random random = new Random(System.currentTimeMillis());
     
@@ -54,7 +54,8 @@ public class MoveDocumentAction extends AbstractFullReviewedActionsWorkflowActio
             do {
                 newName += random.nextInt(10);
             } while (targetFolder.hasNode(newName));
-            getFullReviewedActionsWorkflow(node).move(new Document(targetFolder), newName);
+            Node handle = node.getParent();
+            getDocumentWorkflow(handle).move(new Document(targetFolder), newName);
             node.getSession().refresh(false);
         }
         return targetFolder;

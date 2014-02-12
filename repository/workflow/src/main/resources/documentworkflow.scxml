@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Copyright 2013-2014 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<scxml version="1.0"
+       xmlns="http://www.w3.org/2005/07/scxml"
+       xmlns:hippo="http://www.onehippo.org/cms7/repository/scxml"
+       xmlns:cs="http://commons.apache.org/scxml"
+       initial="handle">
+
+  <script>
+    def getScxmlId() { dm.scxmlId }
+    def getDraft() { dm.getDocumentVariantByState('draft') }
+    def getUnpublished() { dm.getDocumentVariantByState('unpublished') }
+    def getPublished() { dm.getDocumentVariantByState('published') }
+    def getUser() { dm.user }
+    def getRequests() { dm.requests }
+    def getCopySource() { published ?: unpublished ?: null }
+    def getDeleteSource() { unpublished ?: published ?: draft }
+    def getHolder() { draft?.holder }
+    def boolean isEditable() { !draft?.holder or draft?.holder == user }
+    def boolean isEditing() { !!draft?.holder }
+    def boolean isEditor() { draft?.holder == user }
+    def boolean isLive() { published?.isAvailable('live') }
+    def boolean isPreview() { unpublished?.isAvailable('preview') }
+    def boolean isModified() { unpublished and (!live or unpublished.lastModified!=published.lastModified) }
+    def boolean isRequestPending() { dm.requestPending }
+  </script>
+
+  <parallel id="handle">
+
+    <state id="status">
+      <onentry>
+        <hippo:info info="status" value="editable"/>
+        <hippo:info info="isLive" value="live"/>
+        <hippo:action action="checkModified" enabledExpr="draft and unpublished"/>
+      </onentry>
+
+      <transition event="checkModified">
+        <hippo:isModified/>
+        <hippo:result value="dm.info['modified']"/>
+      </transition>
+    </state>
+
+    <state id="edit" initial="no-edit">
+
+      <state id="no-edit">
+        <onentry>
+          <hippo:action action="disposeEditableInstance" enabledExpr="false"/>
+          <hippo:action action="obtainEditableInstance" enabledExpr="false"/>
+          <hippo:action action="commitEditableInstance" enabledExpr="false"/>
+        </onentry>
+        <transition target="editing"  cond="!requestPending and editing"/>
+        <transition target="editable" cond="!requestPending"/>
+      </state>
+
+      <state id="editing">
+        <onentry>
+          <if cond="editor">
+            <hippo:action action="disposeEditableInstance" enabledExpr="true"/>
+            <hippo:action action="obtainEditableInstance" enabledExpr="true"/>
+            <hippo:action action="commitEditableInstance" enabledExpr="true"/>
+          <else/>
+            <hippo:info info="inUseBy" value="holder"/>
+          </if>
+          <if cond="!editor and dm.isGranted(draft,'hippo:admin')">
+            <hippo:action action="unlock" enabledExpr="true"/>
+          </if>
+        </onentry>
+      </state>
+
+      <state id="editable">
+        <onentry>
+          <if cond="dm.isGranted(draft,'hippo:admin')">
+            <hippo:action action="unlock" enabledExpr="false"/>
+          </if>
+          <hippo:action action="obtainEditableInstance" enabledExpr="true"/>
+        </onentry>
+      </state>
+
+      <transition event="disposeEditableInstance">
+        <hippo:setHolder holder="null"/>
+        <hippo:result value="preview ? unpublished : published"/>
+      </transition>
+
+      <transition event="obtainEditableInstance">
+        <if cond="!!unpublished">
+          <hippo:copyVariant sourceState="unpublished" targetState="draft"/>
+        <elseif cond="!!published"/>
+          <hippo:copyVariant sourceState="published" targetState="draft"/>
+        </if>
+        <hippo:configVariant variant="draft" applyModified="true" setHolder="true" availabilities=""/>
+        <hippo:result value="draft"/>
+      </transition>
+
+      <transition event="commitEditableInstance">
+        <hippo:setHolder holder="null"/>
+        <if cond="!!unpublished">
+          <hippo:isModified/>
+        </if>
+        <if cond="!unpublished or dm.info['modified']">
+          <if cond="!unpublished and !!published">
+            <if cond="live">
+              <hippo:configVariant variant="published" availabilities="live"/>
+            <else/>
+              <hippo:configVariant variant="published" availabilities=""/>
+            </if>
+          </if>
+          <hippo:copyVariant sourceState="draft" targetState="unpublished"/>
+          <hippo:configVariant variant="unpublished" versionable="true" applyModified="true" availabilities="preview"/>
+        </if>
+        <hippo:result value="unpublished"/>
+      </transition>
+
+      <transition event="unlock">
+        <hippo:setHolder holder="user"/>
+      </transition>
+
+    </state>
+
+    <state id="request" initial="no-request">
+
+      <state id="no-request">
+        <transition target="requested" cond="!empty(requests)"/>
+      </state>
+
+      <state id="requested">
+        <onentry>
+          <foreach item="request" array="requests.values()">
+            <if cond="request.workflowRequest">
+              <if cond="dm.isGranted(request, 'hippo:editor')">
+                <if cond="request.workflowType!='rejected'">
+                  <hippo:requestAction identifierExpr="request.identity" action="rejectRequest" enabledExpr="true"/>
+                </if>
+                <if cond="request.workflowType=='delete'">
+                  <hippo:requestAction identifierExpr="request.identity" action="acceptRequest" enabledExpr="!live and !editing"/>
+                <elseif cond="request.workflowType=='publish'">
+                  <hippo:requestAction identifierExpr="request.identity" action="acceptRequest" enabledExpr="modified and !editing"/>
+                </elseif>
+                <elseif cond="request.workflowType=='depublish'"/>
+                  <hippo:requestAction identifierExpr="request.identity" action="acceptRequest" enabledExpr="live and !editing"/>
+                </if>
+                <if cond="!request.owner or request.owner==user">
+                  <hippo:requestAction identifierExpr="request.identity" action="cancelRequest" enabledExpr="true"/>
+                </if>
+              <elseif cond="request?.owner==user"/>
+                <hippo:requestAction identifierExpr="request.identity" action="cancelRequest" enabledExpr="true"/>
+              </if>
+            <else/>
+              <if cond="dm.isGranted(request, 'hippo:editor')">
+                <hippo:requestAction identifierExpr="request.identity" action="cancelRequest" enabledExpr="true"/>
+              </if>
+            </if>
+          </foreach>
+        </onentry>
+
+        <transition event="acceptRequest">
+
+          <cs:var name="request" expr="_eventdata.request"/>
+          <cs:var name="workflowType" expr="request.workflowType"/>
+          <cs:var name="targetDate" expr="request.scheduledDate"/>
+
+          <hippo:deleteRequest requestExpr="request"/>
+
+          <if cond="!targetDate">
+            <send event="workflowType"/>
+          <else/>
+            <send event="workflowType" namelist="targetDate"/>
+          </if>
+
+        </transition>
+
+        <transition event="rejectRequest">
+          <hippo:rejectRequest requestExpr="_eventdata.request" reasonExpr="_eventdata.reason"/>
+        </transition>
+
+        <transition event="cancelRequest">
+          <hippo:deleteRequest requestExpr="_eventdata.request"/>
+        </transition>
+
+      </state>
+
+    </state>
+
+    <state id="publish" initial="no-publish">
+
+      <state id="no-publish">
+        <onentry>
+          <hippo:action action="requestPublication" enabledExpr="false"/>
+          <if cond="dm.isGranted(unpublished, 'hippo:editor')">
+              <hippo:action action="publish" enabledExpr="false"/>
+          </if>
+        </onentry>
+        <transition target="publishable" cond="!editing and modified"/>
+      </state>
+
+      <state id="publishable">
+        <onentry>
+          <if cond="!requestPending or user=='system'">
+            <hippo:action action="requestPublication" enabledExpr="true"/>
+            <if cond="dm.isGranted(unpublished, 'hippo:editor')">
+              <hippo:action action="publish" enabledExpr="true"/>
+            </if>
+          </if>
+        </onentry>
+
+        <transition event="requestPublication" cond="!_eventdata?.targetDate">
+          <hippo:workflowRequest type="publish" contextVariantExpr="unpublished"/>
+        </transition>
+
+        <transition event="requestPublication" cond="!!_eventdata?.targetDate">
+          <hippo:workflowRequest type="scheduledpublish" contextVariantExpr="unpublished" targetDateExpr="_eventdata.targetDate"/>
+        </transition>
+
+        <transition event="publish" cond="!_eventdata?.targetDate">
+          <hippo:copyVariant sourceState="unpublished" targetState="published"/>
+          <hippo:configVariant variant="published" applyPublished="true" availabilities="live"/>
+          <hippo:version variant="unpublished"/>
+        </transition>
+
+        <transition event="publish" cond="!!_eventdata?.targetDate">
+          <hippo:scheduleWorkflow type="publish" targetDateExpr="_eventdata.targetDate"/>
+        </transition>
+
+      </state>
+
+    </state>
+
+    <state id="depublish" initial="no-depublish">
+
+      <state id="no-depublish">
+        <onentry>
+          <hippo:action action="requestDepublication" enabledExpr="false"/>
+          <if cond="dm.isGranted(published, 'hippo:editor')"> 
+            <hippo:action action="depublish" enabledExpr="false"/>
+          </if>
+        </onentry>
+        <transition target="depublishable" cond="!editing and live"/>
+      </state>
+
+      <state id="depublishable">
+        <onentry>
+          <if cond="!requestPending or user=='system'">
+            <hippo:action action="requestDepublication" enabledExpr="true"/>
+            <if cond="dm.isGranted(published, 'hippo:editor')">
+              <hippo:action action="depublish" enabledExpr="true"/>
+            </if>
+          </if>
+        </onentry>
+
+        <transition event="requestDepublication" cond="!_eventdata?.targetDate">
+          <hippo:workflowRequest type="depublish" contextVariantExpr="published"/>
+        </transition>
+
+        <transition event="requestDepublication" cond="!!_eventdata?.targetDate">
+          <hippo:workflowRequest type="scheduleddepublish" contextVariantExpr="published" targetDateExpr="_eventdata.targetDate"/>
+        </transition>
+
+        <transition event="depublish" cond="!_eventdata?.targetDate">
+          <if cond="!unpublished">
+            <hippo:copyVariant sourceState="published" targetState="unpublished"/>
+          </if>
+          <hippo:configVariant variant="unpublished" versionable="true" availabilities="preview"/>
+          <hippo:configVariant variant="published" availabilities=""/>
+          <hippo:version variant="unpublished"/>
+        </transition>
+
+        <transition event="depublish" cond="!!_eventdata?.targetDate">
+          <hippo:scheduleWorkflow type="depublish" targetDateExpr="_eventdata.targetDate"/>
+        </transition>
+
+      </state>
+
+    </state>
+
+    <state id="versioning" initial="no-versioning">
+
+      <state id="no-versioning">
+        <transition target="versionable" cond="!!unpublished"/>
+      </state>
+
+      <state id="versionable">
+        <onentry>
+          <hippo:action action="listVersions" enabledExpr="true"/>
+          <hippo:action action="retrieveVersion" enabledExpr="true"/>
+          <if cond="dm.isGranted(unpublished, 'hippo:editor')">
+            <hippo:action action="version" enabledExpr="true"/>
+            <hippo:action action="restoreVersion" enabledExpr="true"/>
+            <hippo:action action="versionRestoreTo" enabledExpr="true"/>
+          </if>
+        </onentry>
+
+        <transition event="version">
+          <hippo:version variant="unpublished"  />
+        </transition>
+
+        <transition event="listVersions">
+          <hippo:listVersions variant="unpublished"  />
+        </transition>
+
+        <transition event="retrieveVersion">
+          <hippo:retrieveVersion historic="_eventdata?.date" variant="unpublished" />
+        </transition>
+
+        <transition event="versionRestoreTo">
+          <hippo:versionRestoreTo historic="_eventdata?.date" variant="unpublished" target="_eventdata?.target"/>
+        </transition>
+
+        <transition event="restoreVersion">
+          <hippo:restoreVersion historic="_eventdata?.date"  variant="unpublished" />
+        </transition>
+
+      </state>
+
+    </state>
+
+    <state id="terminate" initial="no-terminate">
+
+      <state id="no-terminate">
+        <onentry>
+          <hippo:action action="requestDelete" enabledExpr="false"/>
+          <if cond="dm.isGranted(deleteSource, 'hippo:editor')">
+            <hippo:action action="delete" enabledExpr="false"/>
+            <hippo:action action="move" enabledExpr="false"/>
+            <hippo:action action="rename" enabledExpr="false"/>
+          </if>
+        </onentry>
+        <transition target="terminateable" cond="!live and !editing and !requestPending"/>
+      </state>
+
+      <state id="terminateable">
+        <onentry>
+          <hippo:action action="requestDelete" enabledExpr="true"/>
+          <if cond="dm.isGranted(deleteSource, 'hippo:editor')">
+            <hippo:action action="delete" enabledExpr="true"/>
+            <hippo:action action="move" enabledExpr="true"/>
+            <hippo:action action="rename" enabledExpr="true"/>
+          </if>
+        </onentry>
+
+        <transition event="requestDelete">
+          <hippo:workflowRequest type="delete" contextVariantExpr="deleteSource"/>
+        </transition>
+
+        <transition event="delete" target="terminated">
+          <hippo:archiveDocument/>
+        </transition>
+
+        <transition event="move" target="terminated">
+          <hippo:moveDocument destinationExpr="_eventdata?.destination" newNameExpr="_eventdata?.name"/>
+        </transition>
+
+        <transition event="rename" target="terminated">
+          <hippo:renameDocument newNameExpr="_eventdata?.name"/>
+        </transition>
+
+      </state>
+
+    </state>
+
+    <state id="copy" initial="no-copy">
+
+      <state id="no-copy">
+        <transition target="copyable" cond="dm.isGranted(copySource,'hippo:editor')"/>
+      </state>
+
+      <state id="copyable">
+        <onentry>
+          <hippo:action action="copy" enabledExpr="true"/>
+        </onentry>
+
+        <transition event="copy">
+          <hippo:copyDocument destinationExpr="_eventdata?.destination" newNameExpr="_eventdata?.name"/>
+        </transition>
+
+      </state>
+
+    </state>
+
+  </parallel>
+
+  <final id="terminated" />
+
+</scxml>

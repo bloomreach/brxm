@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,44 +17,44 @@ package org.hippoecm.repository.reviewedactions;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.ext.WorkflowImpl;
 
-public class UnlockWorkflowImpl extends WorkflowImpl implements UnlockWorkflow {
+/**
+ * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.documentworkflow.DocumentWorkflowImpl} instead.
+ */
+@Deprecated
+public class UnlockWorkflowImpl extends AbstractReviewedActionsWorkflow implements UnlockWorkflow {
 
-    protected PublishableDocument document;
-
+    /**
+     * All implementations of a work-flow must provide a single, no-argument constructor.
+     *
+     * @throws java.rmi.RemoteException mandatory exception that must be thrown by all Remote objects
+     */
     public UnlockWorkflowImpl() throws RemoteException {
     }
 
-    public void setNode(Node node) throws RepositoryException {
-        super.setNode(node);
-        document = new PublishableDocument(node);
+    @Override
+    public Map<String, Serializable> hints() throws WorkflowException {
+        Map<String, Serializable> info = new HashMap<>(super.hints());
+        if (info.containsKey("unlock")) {
+            Map<String, Serializable> hints = new HashMap<>();
+            hints.put("unlock", info.get("unlock"));
+            return hints;
+        }
+        return Collections.emptyMap();
     }
+
+    // UnlockWorkflow implementation
 
     @Override
-    public Map<String, Serializable> hints() {
-        Map<String, Serializable> info = super.hints();
-        try {
-            if (document == null || !"draft".equals(document.getState()) || document.getOwner() == null) {
-                info.put("unlock", false);
-            }
-        }
-        catch (RepositoryException ex) {
-            // TODO DEJDO: ignore ?
-        }
-        return info;
+    public void unlock() throws WorkflowException, RepositoryException, RemoteException {
+        documentWorkflow.unlock();
     }
 
-    public void unlock() throws WorkflowException, RepositoryException, RemoteException {
-        if (document == null) {
-            throw new WorkflowException("No document to unlock");
-        }
-        document.setOwner(getWorkflowContext().getUserIdentity());
-    }
 }

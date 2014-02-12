@@ -21,7 +21,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
 
-public class EditDocumentAction extends AbstractFullReviewedActionsWorkflowAction {
+public class EditDocumentAction extends AbstractDocumentWorkflowAction {
 
     public EditDocumentAction(final ActionContext context) {
         super(context);
@@ -34,15 +34,15 @@ public class EditDocumentAction extends AbstractFullReviewedActionsWorkflowActio
 
     @Override
     protected Node doExecute(Node node) throws Exception {
-        Document document = getFullReviewedActionsWorkflow(node).obtainEditableInstance();
+        Node handle = node.getParent();
+        Document document = getDocumentWorkflow(handle).obtainEditableInstance();
         node.getSession().refresh(false);
         Node draft = node.getSession().getNodeByIdentifier(document.getIdentity());
         String value = draft.getProperty("testcontent:introduction").getString();
         value += "x";
         draft.setProperty("testcontent:introduction", value);
         draft.getSession().save();
-        Node handle = draft.getParent();
-        document = getFullReviewedActionsWorkflow(draft).commitEditableInstance();
+        document = getDocumentWorkflow(handle).commitEditableInstance();
         node.getSession().refresh(false);
         String variantValue = null;
         String variantUUID = "null";
@@ -51,9 +51,10 @@ public class EditDocumentAction extends AbstractFullReviewedActionsWorkflowActio
             if(variant.getProperty("hippostd:state").getString().equals("unpublished")) {
                 variantValue = variant.getProperty("testcontent:introduction").getString();
                 variantUUID = variant.getIdentifier();
+                break;
             }
         }
-        if(variantValue != null && variantValue.length() < value.length()) {
+        if(variantValue == null || variantValue.length() < value.length()) {
             throw new RepositoryException("edit action failed "+Thread.currentThread().getName()+" document "+handle.getPath()+" "+variantUUID+" is "+(variantValue!=null?variantValue.length():-1)+" expected "+value.length());
         }
 

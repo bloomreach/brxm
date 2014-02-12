@@ -16,12 +16,14 @@
 package org.hippoecm.repository;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 
 import javax.jcr.Node;
+import javax.jcr.version.Version;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -36,6 +38,12 @@ import static org.junit.Assert.assertNotNull;
 
 public class VersioningWorkflowTest extends RepositoryTestCase {
 
+    private Calendar getCurrentDate() {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        return cal;
+    }
+
     @Test
     public void testSimpleVersioning() throws Exception {
         Node node, root = session.getRootNode();
@@ -44,8 +52,12 @@ public class VersioningWorkflowTest extends RepositoryTestCase {
         node.addMixin("hippo:hardhandle");
         node = node.addNode("testdocument", "hippo:testdocument");
         node.addMixin("mix:versionable");
-        node.addMixin("hippostd:publishable");
-        node.setProperty("hippostd:state", "published");
+        node.addMixin("hippostdpubwf:document");
+        node.setProperty("hippostdpubwf:createdBy", "tester");
+        node.setProperty("hippostdpubwf:creationDate", getCurrentDate());
+        node.setProperty("hippostdpubwf:lastModifiedBy", "tester");
+        node.setProperty("hippostdpubwf:lastModificationDate", getCurrentDate());
+        node.setProperty("hippostd:state", "unpublished");
         session.save();
 
         WorkflowManager wflMgr = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
@@ -80,8 +92,12 @@ public class VersioningWorkflowTest extends RepositoryTestCase {
         node.addMixin("hippo:hardhandle");
         node = node.addNode("testdocument", "hippo:autocreatedchild");
         node.addMixin("mix:versionable");
-        node.addMixin("hippostd:publishable");
-        node.setProperty("hippostd:state", "published");
+        node.addMixin("hippostdpubwf:document");
+        node.setProperty("hippostdpubwf:createdBy", "tester");
+        node.setProperty("hippostdpubwf:creationDate", getCurrentDate());
+        node.setProperty("hippostdpubwf:lastModifiedBy", "tester");
+        node.setProperty("hippostdpubwf:lastModificationDate", getCurrentDate());
+        node.setProperty("hippostd:state", "unpublished");
         session.save();
 
 
@@ -90,7 +106,7 @@ public class VersioningWorkflowTest extends RepositoryTestCase {
         assertNotNull(versionwf);
 
         Document initial = versionwf.version();
-        Node initialVersion = session.getNodeByIdentifier(initial.getIdentity());
+        Version initialVersion = (Version)session.getNodeByIdentifier(initial.getIdentity());
 
         SortedMap<Calendar,Set<String>> list = versionwf.list();
         assertEquals(1, list.size());
@@ -99,7 +115,7 @@ public class VersioningWorkflowTest extends RepositoryTestCase {
         node.setProperty("aap", "noot");
         session.save();
 
-        versionwf = (VersionWorkflow) wflMgr.getWorkflow("versioning", initialVersion.getNode("jcr:frozenNode"));
+        versionwf = (VersionWorkflow) wflMgr.getWorkflow("versioning", initialVersion.getFrozenNode());
         versionwf.restoreTo(new Document(node));
         session.refresh(false);
 
