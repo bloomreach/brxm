@@ -21,12 +21,12 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>24.1-SNAPSHOT</version>
+    <version>24.1-iteration-10</version>
   </parent>
 
   <name>Hippo CMS7 Services - eventbus</name>
   <artifactId>hippo-services-eventbus</artifactId>
-  <version>1.03.04-SNAPSHOT</version>
+  <version>1.03.04-iteration-10</version>
 
   <inceptionYear>2012</inceptionYear>
 
@@ -34,14 +34,14 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS7 Services - eventbus</notice.project.name>
     
-    <hippo.services.version>1.03.04-SNAPSHOT</hippo.services.version>
-    <hippo.commons.version>1.03.01-SNAPSHOT</hippo.commons.version>
+    <hippo.services.version>1.03.04-iteration-10</hippo.services.version>
+    <hippo.commons.version>1.03.01-iteration-10</hippo.commons.version>
   </properties>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-eventbus/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-eventbus/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-eventbus/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-eventbus/tags/hippo-services-eventbus-1.03.04-iteration-10</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-eventbus/tags/hippo-services-eventbus-1.03.04-iteration-10</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-eventbus/tags/hippo-services-eventbus-1.03.04-iteration-10</url>
   </scm>
 
   <repositories>
