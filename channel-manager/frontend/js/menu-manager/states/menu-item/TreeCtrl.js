@@ -59,7 +59,7 @@
                 };
 
                 $scope.moveNode = function (node) {
-                    MenuService.moveMenuItem(node.id, node.newParent.id, node.position);
+                    MenuService.moveMenuItem(node.id, node.newParentId, node.position);
                 };
 
             }

@@ -137,11 +137,13 @@
                 };
 
                 menuService.moveMenuItem = function (menuItemId, newParentId, newPosition) {
-                    newParentId = (menuItemId == newParentId) ? ConfigService.menuId : newParentId;
-                    $http.post(menuServiceUrl('move/' + menuItemId + '/' + newParentId + '/' + newPosition ))
+                    newParentId = (newParentId === '#') ? ConfigService.menuId : newParentId;
+                    var url = menuServiceUrl('move/' + menuItemId + '/' + newParentId + '/' + newPosition );
+
+                    $http.post(url)
                         .error(function (error) {
                             // TODO show error in UI
-                            console.error("An error occured while moving the menu item with id '" + menuItemId + "': ", error);
+                            console.error("An error occurred while moving the menu item with id '" + menuItemId + "': ", error);
                         });
                 };
 
