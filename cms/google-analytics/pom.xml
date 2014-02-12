@@ -20,12 +20,12 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms</artifactId>
-    <version>2.25.04-iteration-10</version>
+    <version>2.25.04-SNAPSHOT</version>
   </parent>
 
   <name>CMS Google Analytics</name>
   <artifactId>hippo-cms-google-analytics</artifactId>
-  <version>2.25.04-iteration-10</version>
+  <version>2.25.04-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
