@@ -27,7 +27,7 @@
                         .state('tools-id', {
                             url: '/tools/:id',
                             templateUrl: function ($stateParams) {
-                                return 'tools/' + $stateParams.id + '/index.html';
+                                return 'tools/' + $stateParams.id + '.html';
                             },
                             controller: 'toolCtrl'
                         })

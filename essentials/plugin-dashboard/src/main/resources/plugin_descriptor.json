@@ -9,7 +9,7 @@
         "pluginClass": "org.onehippo.cms7.essentials.dashboard.contentblocks.ContentBlocksPlugin",
         "pluginLink": "contentBlocks",
         "screenshots": [],
-        "type": null,
+        "type": "plugins",
         "vendor": {
             "name": "Detailed Content Blocks documentation",
             "url": "http://content-blocks.forge.onehippo.org"
@@ -33,7 +33,7 @@
         "pluginClass": "org.onehippo.cms7.essentials.xinha.gui.XinhaPlugin",
         "pluginLink": "xinhaPlugin",
         "screenshots": [],
-        "type": null,
+        "type": "plugins",
         "vendor": {
             "name": "Hippo",
             "url": "http://www.onehippo.com"
@@ -48,7 +48,7 @@
         "pluginClass": "org.onehippo.cms7.essentials.dashboard.gallery.GalleryPlugin",
         "pluginLink": "galleryPlugin",
         "screenshots": [],
-        "type": null,
+        "type": "plugins",
         "vendor": {
             "name": "Hippo",
             "url": "http://www.onehippo.com"
@@ -59,12 +59,27 @@
         "artifacts": [],
         "assets": [],
         "introduction": "Configuration of Hippo image sets",
-        "name": "Gallery plugin",
+        "name": "Beanwriter plugin",
         "pluginClass": "org.onehippo.cms7.essentials.beanwriter.gui.BeanwriterPlugin",
         "pluginLink": "beanwriter",
         "screenshots": [],
         "restClasses": ["org.onehippo.cms7.essentials.beanwriter.rest.BeanWriterResource"],
-        "type": "tool",
+        "type": "tools",
+        "vendor": {
+            "name": "Hippo",
+            "url": "http://www.onehippo.com"
+        }
+    }, {
+        "needsInstallation": false,
+        "artifacts": [],
+        "assets": [],
+        "introduction": "Freemarker synchronizing tool",
+        "name": "Freemarker synchronizing",
+        "pluginClass": "org.onehippo.cms7.essentials.tools.gui.FreemarkerSyncPlugin",
+        "pluginLink": "freemarkersync",
+        "screenshots": [],
+        "restClasses": ["org.onehippo.cms7.essentials.tools.rest.FreemarkerSyncPlugin"],
+        "type": "tools",
         "vendor": {
             "name": "Hippo",
             "url": "http://www.onehippo.com"

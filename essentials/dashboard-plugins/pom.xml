@@ -50,6 +50,7 @@
     <module>dashboard-easyforms-plugin</module>
     <module>components-plugin</module>
     <module>beanwriter-plugin</module>
+    <module>freemarker-synchronizer</module>
   </modules>
   <dependencyManagement>
 

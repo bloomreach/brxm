@@ -404,6 +404,9 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/reso
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-themes/pom.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-themes/src/test/resources/log4j.xml -text
 dashboard-plugins/essentials-powerpacks/pom.xml -text
+dashboard-plugins/freemarker-synchronizer/pom.xml -text
+dashboard-plugins/freemarker-synchronizer/src/main/java/org/onehippo/cms7/essentials/tools/gui/FreemarkerSyncPlugin.java -text
+dashboard-plugins/freemarker-synchronizer/src/main/java/org/onehippo/cms7/essentials/tools/rest/FreemarkerSyncPlugin.java -text
 dashboard-plugins/pom.xml -text
 plugin-api/api/pom.xml -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/DependencyType.java -text
@@ -1983,8 +1986,10 @@ plugin-dashboard/src/main/webapp/theme/hippo-theme/_font-awesome.css -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/main.css -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/theme.html -text
 plugin-dashboard/src/main/webapp/theme/styles.css -text
+plugin-dashboard/src/main/webapp/tools/beanwriter/beanwriter.html -text
 plugin-dashboard/src/main/webapp/tools/beanwriter/beanwriter.js -text
-plugin-dashboard/src/main/webapp/tools/beanwriter/index.html -text
+plugin-dashboard/src/main/webapp/tools/freemarkersync/freemarkersync.html -text
+plugin-dashboard/src/main/webapp/tools/freemarkersync/freemarkersync.js -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/dashboard/contentblocks/ContentBlocksPluginTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/ContentBlocksTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/RestClientTest.java -text
