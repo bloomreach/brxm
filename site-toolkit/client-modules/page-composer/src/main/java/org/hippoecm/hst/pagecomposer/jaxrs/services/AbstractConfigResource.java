@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -25,10 +26,7 @@ import javax.jcr.Session;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.hippoecm.hst.configuration.channel.Channel;
-import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
-import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -40,7 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AbstractConfigResource {
-    
+
     private static Logger log = LoggerFactory.getLogger(AbstractConfigResource.class);
 
     private PageComposerContextService pageComposerContextService;
@@ -63,7 +61,7 @@ public class AbstractConfigResource {
         entity.setSuccess(true);
         return Response.ok().entity(entity).build();
     }
-    
+
     protected Response error(String msg) {
         return error(msg, ArrayUtils.EMPTY_STRING_ARRAY);
     }
@@ -82,32 +80,25 @@ public class AbstractConfigResource {
         entity.setSuccess(true);
         return Response.status(Response.Status.CREATED).entity(entity).build();
     }
-    
-    protected  Response conflict(String msg) {
+
+    protected Response conflict(String msg) {
         ExtResponseRepresentation entity = new ExtResponseRepresentation();
         entity.setMessage(msg);
         entity.setSuccess(false);
         return Response.status(Response.Status.CONFLICT).entity(entity).build();
-    } 
+    }
 
     protected ObjectConverter getObjectConverter(HstRequestContext requestContext) {
         return requestContext.getContentBeansTool().getObjectConverter();
     }
 
-    public static void assertIsContextualizableMount(final Mount liveMount) throws IllegalStateException{
-        if (!(liveMount instanceof  ContextualizableMount)) {
-            throw new IllegalStateException("Expected a mount of type "+ContextualizableMount.class.getName()+"" +
-                    " but found '"+liveMount.toString()+"' which is of type " + liveMount.getClass().getName());
-        }
-    }
-
     protected Response tryExecute(final Callable<Response> callable) {
-        return tryExecute(callable, null);
+        return tryExecute(callable, Collections.<Validator>emptyList());
     }
 
     protected Response tryExecute(final Callable<Response> callable,
                                   final List<Validator> preValidators) {
-        return tryExecute(callable, preValidators, null);
+        return tryExecute(callable, preValidators, Collections.<Validator>emptyList());
     }
 
 
@@ -117,24 +108,24 @@ public class AbstractConfigResource {
         try {
             if (RequestContextProvider.get() == null) {
                 // unit test use case. Skip all the jcr based validators and persisting of changes
+                // TODO (meggermont): remove this utility and properly unit test
                 return callable.call();
             }
 
-            if (preValidators != null) {
-                for (Validator validator : preValidators) {
-                    validator.validate();
-                }
+            final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
+
+            for (Validator validator : preValidators) {
+                validator.validate(requestContext);
             }
 
             final Response response = callable.call();
 
-            if (postValidators != null) {
-                for (Validator validator : postValidators) {
-                    validator.validate();
-                }
+            for (Validator validator : postValidators) {
+                validator.validate(requestContext);
             }
-            if (RequestContextProvider.get().getSession().hasPendingChanges()) {
-                HstConfigurationUtils.persistChanges(RequestContextProvider.get().getSession());
+            final Session session = requestContext.getSession();
+            if (session.hasPendingChanges()) {
+                HstConfigurationUtils.persistChanges(session);
             }
             return response;
         } catch (IllegalStateException | IllegalArgumentException | ItemNotFoundException | ItemExistsException e) {
@@ -147,7 +138,7 @@ public class AbstractConfigResource {
     }
 
     private void resetSession() {
-        final HstRequestContext requestContext = RequestContextProvider.get();
+        final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
         if (requestContext != null) {
             try {
                 final Session session = requestContext.getSession();
@@ -188,7 +179,7 @@ public class AbstractConfigResource {
 
     protected CanonicalInfo getCanonicalInfo(final Object o) throws IllegalStateException {
         if (o instanceof CanonicalInfo) {
-            return (CanonicalInfo)o;
+            return (CanonicalInfo) o;
         }
         throw new IllegalStateException("HstSiteMenuItemConfiguration not instanceof CanonicalInfo");
     }

@@ -16,6 +16,7 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.validaters;
 
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.AbstractHelper;
 
 public class CurrentPreviewValidator implements Validator {
@@ -30,7 +31,7 @@ public class CurrentPreviewValidator implements Validator {
     }
 
     @Override
-    public void validate() throws RuntimeException {
+    public void validate(HstRequestContext requestContext) throws RuntimeException {
         helper.getConfigObject(id);
     }
 

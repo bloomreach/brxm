@@ -203,6 +203,8 @@ public class SiteMenuResourceTest {
         expect(pageComposerContextService.getRequestConfigIdentifier()).andReturn(null).anyTimes();
         expect(pageComposerContextService.getRequestContext()).andReturn(context).times(2);
         expect(context.getSession()).andThrow(new RepositoryException("failed"));
+        expect(context.getSession()).andReturn(session);
+        expect(session.hasPendingChanges()).andReturn(false);
 
         final String id = "uuid-of-menu-item";
         final SiteMenuItemRepresentation modifiedItem = new SiteMenuItemRepresentation();
@@ -224,7 +226,8 @@ public class SiteMenuResourceTest {
         expect(pageComposerContextService.getRequestConfigIdentifier()).andReturn(null).anyTimes();
         expect(pageComposerContextService.getRequestContext()).andReturn(context).times(2);
         expect(context.getSession()).andThrow(new IllegalStateException("failed"));
-
+        expect(context.getSession()).andReturn(session);
+        expect(session.hasPendingChanges()).andReturn(false);
 
         final String id = "uuid-of-menu-item";
         final SiteMenuItemRepresentation modifiedItem = new SiteMenuItemRepresentation();

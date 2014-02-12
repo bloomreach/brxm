@@ -24,7 +24,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
@@ -43,9 +42,8 @@ public class PreviewWorkspaceNodeValidator implements Validator {
     }
 
     @Override
-    public void validate() throws RuntimeException {
+    public void validate(HstRequestContext requestContext) throws RuntimeException {
         try {
-            HstRequestContext requestContext = RequestContextProvider.get();
             final Session session = requestContext.getSession();
             try {
                 UUID.fromString(id);

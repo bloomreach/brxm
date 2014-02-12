@@ -16,11 +16,13 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.validaters;
 
+import org.hippoecm.hst.core.request.HstRequestContext;
+
 public interface Validator {
 
     /**
      * if not valid, throws a RuntimeException
      */
-    void validate() throws RuntimeException;
+    void validate(HstRequestContext requestContext) throws RuntimeException;
 
 }

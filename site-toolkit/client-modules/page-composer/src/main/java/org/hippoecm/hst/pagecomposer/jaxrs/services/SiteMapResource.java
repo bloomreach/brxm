@@ -30,7 +30,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -170,10 +169,7 @@ public class SiteMapResource extends AbstractConfigResource {
         final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
         final HstSite editingPreviewSite =  getPageComposerContextService().getEditingPreviewSite();
         final HstSiteMap siteMap = editingPreviewSite.getSiteMap();
-        if (!(siteMap instanceof CanonicalInfo)) {
-            throw new IllegalStateException("Only sitemap that is instance of CanonicalInfo can be edited");
-        }
-        String siteMapId = ((CanonicalInfo) siteMap).getCanonicalIdentifier();
+        String siteMapId = getCanonicalInfo(siteMap).getCanonicalIdentifier();
         Node siteMapNode = requestContext.getSession().getNodeByIdentifier(siteMapId);
         if (siteMapNode.getParent().isNodeType(HstNodeTypes.NODETYPE_HST_WORKSPACE)) {
             workspaceSiteMapId = siteMapId;

@@ -21,7 +21,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
@@ -32,13 +31,13 @@ public class ChildExistsValidator implements Validator {
 
     public ChildExistsValidator(final String parentId, final String childId) {
         this.parentId = parentId;
+
         this.childId = childId;
     }
 
     @Override
-    public void validate() throws RuntimeException {
+    public void validate(HstRequestContext requestContext) throws RuntimeException {
         try {
-            HstRequestContext requestContext = RequestContextProvider.get();
             final Session session = requestContext.getSession();
             final Node parent = session.getNodeByIdentifier(parentId);
             final Node child = session.getNodeByIdentifier(childId);
