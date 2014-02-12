@@ -20,11 +20,11 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>24.1-SNAPSHOT</version>
+    <version>24.1-iteration-10</version>
   </parent>
 
   <artifactId>hippo-cms</artifactId>
-  <version>2.25.04-SNAPSHOT</version>
+  <version>2.25.04-iteration-10</version>
 
   <inceptionYear>2007</inceptionYear>
 
@@ -91,10 +91,10 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS</notice.project.name>
 
-    <hippo.commons.version>1.03.01-SNAPSHOT</hippo.commons.version>
-    <hippo.utilities.version>1.02.01-SNAPSHOT</hippo.utilities.version>
-    <hippo.services.version>1.03.04-SNAPSHOT</hippo.services.version>
-    <hippo.repository.version>2.25.05-SNAPSHOT</hippo.repository.version>
+    <hippo.commons.version>1.03.01-iteration-10</hippo.commons.version>
+    <hippo.utilities.version>1.02.01-iteration-10</hippo.utilities.version>
+    <hippo.services.version>1.03.04-iteration-10</hippo.services.version>
+    <hippo.repository.version>2.25.05-iteration-10</hippo.repository.version>
 
     <!-- Test dependencies  -->
     <easymock.version>2.4</easymock.version>
@@ -149,9 +149,9 @@
      This is used by normal plugins, but also to autogenerate documentation in .../target/site/source-repository.html
   -->
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/tags/hippo-cms-2.25.04-iteration-10</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/cms/tags/hippo-cms-2.25.04-iteration-10</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/tags/hippo-cms-2.25.04-iteration-10</url>
   </scm>
 
   <build>
