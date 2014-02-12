@@ -5,7 +5,7 @@
     "angular-route": ["angular-route.min.js", "angular-route.min.js.map"],
     "angular-translate": ["angular-translate.min.js"],
     "angular-translate-loader-static-files": ["angular-translate-loader-static-files.min.js"],
-    "bootstrap": [],
+    "bootstrap": ["dist/js/bootstrap.js"],
     "bootstrap-chosen": [],
     "chosen": ["dist/chosen.jquery.min.js"],
     "es5-shim": [],

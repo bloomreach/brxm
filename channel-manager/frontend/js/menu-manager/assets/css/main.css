@@ -114,3 +114,8 @@ html, body {
 form h4.page-header {
     margin-top: 12px;
 }
+
+.tooltip-container {
+    position: relative;
+    top: -35px;
+}

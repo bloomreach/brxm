@@ -29,6 +29,11 @@
                data-ng-focus="form.name.$setPristine();"
                data-ng-required="true"
                data-ng-blur="!form.name.$invalid ? saveSelectedMenuItem('name') : '';">
+        <div class="tooltip-container" ng-show="form.name.$invalid">
+            <div data-tooltip
+                 data-placement="top"
+                 data-title="{{ 'LABEL_REQUIRED' | translate }}"></div>
+        </div>
         <i class="fa form-control-feedback"
            data-ng-show="form.name.$dirty"
            data-ng-class="{
@@ -113,6 +118,11 @@
                data-ng-model="selectedMenuItem.link"
                data-ng-required="true"
                data-ng-blur="!form.url.$invalid ? saveSelectedMenuItem('link') : '';">
+        <div class="tooltip-container" ng-show="form.url.$invalid">
+            <div data-tooltip
+                 data-placement="top"
+                 data-title="{{ 'EXTERNAL_LINK_INVALID' | translate }}"></div>
+        </div>
         <i class="fa form-control-feedback"
            data-ng-show="form.url.$dirty"
            data-ng-class="{
