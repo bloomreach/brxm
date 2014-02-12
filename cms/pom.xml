@@ -117,7 +117,7 @@
 
     <xerces.version>2.8.1</xerces.version>
     <wicket.version>6.8.0</wicket.version>
-    <wicket-extjs.version>0.24-SNAPSHOT</wicket-extjs.version>
+    <wicket-extjs.version>0.24</wicket-extjs.version>
     <nekohtml.version>1.9.13</nekohtml.version>
     <dom4j.version>1.6.1</dom4j.version>
     <httpclient.version>4.2.2</httpclient.version>
@@ -135,6 +135,7 @@
     <hippo.htmlcleaner.version>1.02.09</hippo.htmlcleaner.version>
     <hippo.htmldiff.version>1.01.03</hippo.htmldiff.version>
     <hippo.jcrdiff.version>1.01.03</hippo.jcrdiff.version>
+    <hippo.ckeditor.version>4.3.0-h5</hippo.ckeditor.version>
 
     <sonar.l10n.locales>nl,fr,it,de</sonar.l10n.locales>
 
