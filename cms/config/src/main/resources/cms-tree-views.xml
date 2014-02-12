@@ -97,7 +97,7 @@
           <sv:value>frontend:plugin</sv:value>
         </sv:property>
         <sv:property sv:name="plugin.class" sv:type="String">
-          <sv:value>org.hippoecm.addon.workflow.ContextWorkflowPlugin</sv:value>
+          <sv:value>org.hippoecm.addon.workflow.ContextWorkflowManagerPlugin</sv:value>
         </sv:property>
         <sv:property sv:name="workflow.categories" sv:type="String">
           <sv:value>threepane</sv:value>
@@ -252,7 +252,7 @@
           <sv:value>frontend:plugin</sv:value>
         </sv:property>
         <sv:property sv:name="plugin.class" sv:type="String">
-          <sv:value>org.hippoecm.addon.workflow.ContextWorkflowPlugin</sv:value>
+          <sv:value>org.hippoecm.addon.workflow.ContextWorkflowManagerPlugin</sv:value>
         </sv:property>
         <sv:property sv:name="workflow.categories" sv:type="String">
           <sv:value>gallery</sv:value>
@@ -426,7 +426,7 @@
           <sv:value>frontend:plugin</sv:value>
         </sv:property>
         <sv:property sv:name="plugin.class" sv:type="String">
-          <sv:value>org.hippoecm.addon.workflow.ContextWorkflowPlugin</sv:value>
+          <sv:value>org.hippoecm.addon.workflow.ContextWorkflowManagerPlugin</sv:value>
         </sv:property>
         <sv:property sv:name="workflow.categories" sv:type="String">
           <sv:value>gallery</sv:value>
@@ -596,7 +596,7 @@
           <sv:value>frontend:plugin</sv:value>
         </sv:property>
         <sv:property sv:name="plugin.class" sv:type="String">
-          <sv:value>org.hippoecm.addon.workflow.ContextWorkflowPlugin</sv:value>
+          <sv:value>org.hippoecm.addon.workflow.ContextWorkflowManagerPlugin</sv:value>
         </sv:property>
         <sv:property sv:name="workflow.categories" sv:type="String">
           <sv:value>editor</sv:value>

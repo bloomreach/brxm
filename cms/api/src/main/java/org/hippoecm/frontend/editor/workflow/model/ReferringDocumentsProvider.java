@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.editor.workflow.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -32,7 +33,6 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugins.standards.list.datatable.SortState;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoQuery;
 import org.slf4j.Logger;
@@ -116,18 +116,16 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
         }
     }
 
-    protected List<Node> getReferrersSortedByName(Node document) throws RepositoryException {
+    protected List<Node> getReferrersSortedByName(Node handle) throws RepositoryException {
         List<Node> referrers = new ArrayList<>();
-        if (!document.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-            return null;
+        if (handle.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+            handle = handle.getParent();
         }
-        document = ((HippoNode) document).getCanonicalNode();
-        Node handle = document.getParent();
         if (!handle.isNodeType(HippoNodeType.NT_HANDLE)) {
-            return null;
+            return Collections.emptyList();
         }
         String uuid = handle.getIdentifier();
-        QueryManager queryManager = document.getSession().getWorkspace().getQueryManager();
+        QueryManager queryManager = handle.getSession().getWorkspace().getQueryManager();
         String statement = createReferrersStatement(retrieveUnpublished, uuid, 5);
         HippoQuery query = (HippoQuery) queryManager.createQuery(statement, Query.XPATH);
         query.setLimit(1000);

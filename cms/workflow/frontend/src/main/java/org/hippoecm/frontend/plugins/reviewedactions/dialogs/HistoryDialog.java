@@ -16,31 +16,25 @@
 package org.hippoecm.frontend.plugins.reviewedactions.dialogs;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
-import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.reviewedactions.model.Revision;
 import org.hippoecm.frontend.plugins.reviewedactions.model.RevisionHistory;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ServiceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hippoecm.repository.api.WorkflowDescriptor;
 
 /**
  * A dialog that shows the revision history of a document.
  */
-public class HistoryDialog extends AbstractDialog {
+public class HistoryDialog extends AbstractDialog<WorkflowDescriptor> {
 
     private static final long serialVersionUID = 1L;
-
-    static final Logger log = LoggerFactory.getLogger(HistoryDialog.class);
 
     public HistoryDialog(WorkflowDescriptorModel model, final IEditorManager editorMgr) {
         super(model);
@@ -48,34 +42,30 @@ public class HistoryDialog extends AbstractDialog {
         setOkVisible(false);
         setCancelLabel(new StringResourceModel("close", this, null));
 
-        try {
-            RevisionHistory history = new RevisionHistory(new JcrNodeModel(model.getNode()));
-            add(new RevisionHistoryView("links", history) {
-                private static final long serialVersionUID = 1L;
+        RevisionHistory history = new RevisionHistory(model);
+        add(new RevisionHistoryView("links", history) {
+            private static final long serialVersionUID = 1L;
 
-                @Override
-                public void onSelect(IModel model) {
-                    Revision revision = (Revision) model.getObject();
-                    IModel<Node> docModel = revision.getDocument();
-                    IEditor editor = editorMgr.getEditor(docModel);
-                    if (editor == null) {
-                        try {
-                            editorMgr.openPreview(docModel);
-                        } catch (ServiceException ex) {
-                            log.error("Could not open editor for " + docModel, ex);
-                            error("Could not open editor");
-                            return;  // don't close dialog
-                        }
+            @Override
+            public void onSelect(IModel model) {
+                Revision revision = (Revision) model.getObject();
+                IModel<Node> docModel = revision.getDocument();
+                IEditor editor = editorMgr.getEditor(docModel);
+                if (editor == null) {
+                    try {
+                        editorMgr.openPreview(docModel);
+                    } catch (ServiceException ex) {
+                        log.error("Could not open editor for " + docModel, ex);
+                        error("Could not open editor");
+                        return;  // don't close dialog
                     }
-                    closeDialog();
                 }
-            });
-        } catch (RepositoryException e) {
-            throw new WicketRuntimeException("No document node present", e);
-        }
+                closeDialog();
+            }
+        });
     }
 
-    public IModel getTitle() {
+    public IModel<String> getTitle() {
         return new StringResourceModel("history", this, null);
     }
 

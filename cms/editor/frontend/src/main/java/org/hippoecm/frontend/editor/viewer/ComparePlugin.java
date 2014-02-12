@@ -91,7 +91,8 @@ public class ComparePlugin extends RenderPlugin {
                 IPluginConfig parameters = new JavaPluginConfig();
                 parameters.put(RenderService.WICKET_ID, getPluginConfig().getString("template"));
                 parameters.put(ITemplateEngine.ENGINE, engineId);
-                if (template.getReferences().contains("model.compareTo")) {
+                if ("mode".equals(getPluginConfig().getString("mode")) &&
+                        template.getReferences().contains("model.compareTo")) {
                     parameters.put(ITemplateEngine.MODE, "compare");
                     parameters.put("model.compareTo", getPluginConfig().get("model.compareTo"));
                 } else {

@@ -107,6 +107,12 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
         super(context, config);
 
         add(new StdWorkflow("info", "info") {
+
+            @Override
+            public String getSubMenu() {
+                return "info";
+            }
+
             @Override
             protected IModel getTitle() {
                 return caption;
@@ -120,6 +126,12 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
         onModelChanged();
 
         add(editAction = new StdWorkflow("edit", new StringResourceModel("edit", this, null), getModel()) {
+
+            @Override
+            public String getSubMenu() {
+                return "top";
+            }
+
             @Override
             protected ResourceReference getIcon() {
                 return new PackageResourceReference(getClass(), "edit-16.png");
@@ -148,6 +160,11 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
         add(renameAction = new StdWorkflow("rename", new StringResourceModel("rename-label", this, null), context, getModel()) {
             public String targetName;
             public String uriName;
+
+            @Override
+            public String getSubMenu() {
+                return "document";
+            }
 
             @Override
             protected ResourceReference getIcon() {
@@ -193,6 +210,11 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
         add(copyAction = new StdWorkflow("copy", new StringResourceModel("copy-label", this, null), context, getModel()) {
             NodeModelWrapper destination = null;
             String name = null;
+
+            @Override
+            public String getSubMenu() {
+                return "document";
+            }
 
             @Override
             protected ResourceReference getIcon() {
@@ -308,6 +330,11 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
             public NodeModelWrapper destination = null;
 
             @Override
+            public String getSubMenu() {
+                return "document";
+            }
+
+            @Override
             protected ResourceReference getIcon() {
                 return new PackageResourceReference(getClass(), "move-16.png");
             }
@@ -340,6 +367,12 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
 
         add(deleteAction = new StdWorkflow("delete",
                 new StringResourceModel("delete-label", this, null), context, getModel()) {
+
+            @Override
+            public String getSubMenu() {
+                return "document";
+            }
+
             @Override
             protected ResourceReference getIcon() {
                 return new PackageResourceReference(getClass(), "delete-16.png");
@@ -363,6 +396,12 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
         });
 
         add(whereUsedAction = new StdWorkflow("where-used", new StringResourceModel("where-used-label", this, null), context, getModel()) {
+
+            @Override
+            public String getSubMenu() {
+                return "document";
+            }
+
             @Override
             protected ResourceReference getIcon() {
                 return new PackageResourceReference(getClass(), "where-used-16.png");

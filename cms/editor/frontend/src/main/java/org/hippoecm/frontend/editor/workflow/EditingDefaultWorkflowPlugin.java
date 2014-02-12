@@ -64,6 +64,11 @@ public class EditingDefaultWorkflowPlugin extends RenderPlugin {
                 new PackageResourceReference(EditingDefaultWorkflowPlugin.class, "document-save-16.png"), getModel()) {
 
             @Override
+            public String getSubMenu() {
+                return "top";
+            }
+
+            @Override
             public boolean isFormSubmitted() {
                 return true;
             }
@@ -77,6 +82,11 @@ public class EditingDefaultWorkflowPlugin extends RenderPlugin {
 
         add(new StdWorkflow("done", new StringResourceModel("done", this, null, "Done"),
                 new PackageResourceReference(getClass(), "document-saveclose-16.png"), getModel()) {
+
+            @Override
+            public String getSubMenu() {
+                return "top";
+            }
 
             @Override
             public boolean isFormSubmitted() {

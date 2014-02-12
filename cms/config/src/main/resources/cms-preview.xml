@@ -23,10 +23,14 @@
     <sv:value>editor.id</sv:value>
     <sv:value>browser.id</sv:value>
     <sv:value>wicket.model</sv:value>
+    <sv:value>model.compareTo</sv:value>
     <sv:value>wicket.behavior</sv:value>
   </sv:property>
   <sv:property sv:name="frontend:services" sv:type="String">
     <sv:value>wicket.id</sv:value>
+  </sv:property>
+  <sv:property sv:multiple="true" sv:name="frontend:properties" sv:type="String">
+    <sv:value>mode</sv:value>
   </sv:property>
   <sv:node sv:name="previewPerspective">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -68,7 +72,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.editor.viewer.ViewerPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.editor.viewer.ComparePlugin</sv:value>
     </sv:property>
     <sv:property sv:name="template" sv:type="String">
       <sv:value>${cluster.id}.template</sv:value>
@@ -82,10 +86,16 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.addon.workflow.WorkflowsPlugin</sv:value>
+      <sv:value>org.hippoecm.addon.workflow.DocumentWorkflowManagerPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>${cluster.id}.workflows</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.model" sv:type="String">
+      <sv:value>${model.compareTo}</sv:value>
+    </sv:property>
+    <sv:property sv:name="translator.id" sv:type="String">
+      <sv:value>${cluster.id}.workflow.translator</sv:value>
     </sv:property>
     <sv:property sv:name="workflow.categories" sv:type="String">
       <sv:value>default</sv:value>
@@ -93,8 +103,32 @@
       <sv:value>translation</sv:value>
       <sv:value>committype</sv:value>
       <sv:value>custom</sv:value>
-      <sv:value>admin</sv:value>
     </sv:property>
+    <sv:property sv:name="workflow.menuorder" sv:type="String">
+      <sv:value>publication</sv:value>
+      <sv:value>request</sv:value>
+      <sv:value>document</sv:value>
+      <sv:value>miscellaneous</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="workflowMenuTranslator">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>hippostd:translated</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.i18n.ConfigTraversingPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="translator.id" sv:type="String">
+      <sv:value>${cluster.id}.workflow.translator</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippostd:translations">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippostd:translations</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
 </sv:node>
 

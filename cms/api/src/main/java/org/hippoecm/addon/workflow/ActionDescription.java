@@ -58,6 +58,10 @@ public abstract class ActionDescription extends Panel implements IWorkflowInvoke
         super(id, model);
     }
 
+    public String getSubMenu() {
+        return null;
+    }
+
     public final MarkupContainer add(final Fragment component) {
         String id = component.getId();
         if (get(id) != null) {

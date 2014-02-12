@@ -17,13 +17,14 @@ package org.onehippo.cms7.brokenlinks;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Map;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
@@ -128,7 +129,7 @@ public class ReportBrokenLinksWorkflowImpl extends WorkflowImpl implements Repor
     }
 
     @Override
-    public Map<String, Serializable> hints() {
+    public Map<String, Serializable> hints() throws WorkflowException {
         Map<String, Serializable> m = super.hints();
         m.put("reportBrokenLinks", Boolean.TRUE);
         return m;

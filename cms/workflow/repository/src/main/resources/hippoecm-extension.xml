@@ -183,13 +183,16 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>admin-workflows.xml</sv:value>
+      <sv:value>admin-workflowmenu.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:workflows</sv:value>
+      <sv:value>/hippo:configuration/hippo:frontend/cms/cms-preview/workflowMenuTranslator/hippostd:translations</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>503.0</sv:value>
+      <sv:value>901.0</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>2.26.00</sv:value>
     </sv:property>
   </sv:node>
   <!--Workflows configuration-->
@@ -223,34 +226,6 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="admin-fr">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>admin-workflows_fr.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:workflows</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>504.01</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="admin-de">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>admin-workflows_de.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:workflows</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>504.02</sv:value>
-    </sv:property>
-  </sv:node>
   <sv:node sv:name="hippo-permissions-workflow">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
@@ -273,7 +248,7 @@
       <sv:value>folder-frontend-workflows-filters.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:workflows/threepane/folder-permissions/frontend:renderer</sv:value>
+      <sv:value>/hippo:configuration/hippo:workflows/threepane/folder-permissions/frontend:renderer/standard</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>3010.02</sv:value>

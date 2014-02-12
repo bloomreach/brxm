@@ -30,16 +30,17 @@ import org.hippoecm.frontend.editor.workflow.model.ReferringDocumentsProvider;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.service.IEditorManager;
+import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DeleteDialog extends AbstractWorkflowDialog {
+public class DeleteDialog extends AbstractWorkflowDialog<WorkflowDescriptor> {
 
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(DeleteDialog.class);
 
-    private IModel title;
+    private IModel<String> title;
 
     public DeleteDialog(IModel<String> title, WorkflowDescriptorModel wdm, IModel<String> message, IWorkflowInvoker action, IEditorManager editorMgr) {
         super(wdm, message, action);
@@ -48,15 +49,15 @@ public class DeleteDialog extends AbstractWorkflowDialog {
 
         try {
             ReferringDocumentsProvider provider = new ReferringDocumentsProvider(new JcrNodeModel(wdm.getNode()), true);
-            MarkupContainer rdv = new ReferringDocumentsView("links", provider, editorMgr) {
-                private static final long serialVersionUID = 1L;
+        MarkupContainer rdv = new ReferringDocumentsView("links", provider, editorMgr) {
+            private static final long serialVersionUID = 1L;
 
-                @Override
-                public int getPageSize() {
-                    return 5;
-                }
-            };
-            add(rdv);
+            @Override
+            public int getPageSize() {
+                return 5;
+            }
+        };
+        add(rdv);
         } catch (RepositoryException e) {
             throw new WicketRuntimeException("No document node present", e);
         }
@@ -71,7 +72,7 @@ public class DeleteDialog extends AbstractWorkflowDialog {
     }
 
     @Override
-    public IModel getTitle() {
+    public IModel<String> getTitle() {
         return title;
     }
 

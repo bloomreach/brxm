@@ -34,7 +34,7 @@ import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.StringValue;
-import org.hippoecm.addon.workflow.ContextWorkflowPlugin;
+import org.hippoecm.addon.workflow.ContextWorkflowManagerPlugin;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -102,7 +102,7 @@ public class FolderTreePlugin extends RenderPlugin {
             protected MarkupContainer newContextContent(MarkupContainer parent, String id, final TreeNode node) {
                 IPluginConfig workflowConfig = config.getPluginConfig("module.workflow");
                 if (workflowConfig != null && (node instanceof IJcrTreeNode)) {
-                    ContextWorkflowPlugin content = new ContextWorkflowPlugin(context, workflowConfig);
+                    ContextWorkflowManagerPlugin content = new ContextWorkflowManagerPlugin(context, workflowConfig);
                     content.bind(FolderTreePlugin.this, id);
                     IModel<Node> nodeModel = ((IJcrTreeNode) node).getNodeModel();
                     content.setModel(nodeModel);

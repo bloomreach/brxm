@@ -19,11 +19,11 @@ import java.util.Calendar;
 import java.util.Date;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.ValueFormatException;
+import javax.jcr.version.Version;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
@@ -41,14 +41,11 @@ import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
-import org.hippoecm.repository.standardworkflow.VersionWorkflow;
-import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +60,12 @@ public class VersionWorkflowPlugin extends RenderPlugin {
         super(context, config);
 
         add(new StdWorkflow("info", "info") {
+
+            @Override
+            public String getSubMenu() {
+                return "info";
+            }
+
             @Override
             protected IModel getTitle() {
                 return new StringResourceModel("created", this, null, new LoadableDetachableModel<Date>() {
@@ -91,10 +94,16 @@ public class VersionWorkflowPlugin extends RenderPlugin {
             }
         });
 
-        add(new StdWorkflow("restore", new StringResourceModel("restore", this, null).getString(), null, context, this) {
+        add(new StdWorkflow("restore", new StringResourceModel("restore", this, null), getModel()) {
+
+            @Override
+            public String getSubMenu() {
+                return "top";
+            }
+
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "restore-16.png");
+                return new PackageResourceReference(getClass(), "img/restore-16.png");
             }
 
             @Override
@@ -115,51 +124,27 @@ public class VersionWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                Node frozenNode = ((WorkflowDescriptorModel) getDefaultModel()).getNode();
+                Node frozenNode = getModel().getNode();
                 Session session = frozenNode.getSession();
 
-                Node currentNode = session.getNodeByIdentifier(frozenNode.getProperty(JcrConstants.JCR_FROZEN_UUID).getString());
-                Node handle = currentNode.getParent();
+                WorkflowDescriptorModel handleWorkflowModel = getHandleWorkflowModel();
+                final WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
+                DocumentWorkflow documentWorkflow = (DocumentWorkflow) workflowManager.getWorkflow(handleWorkflowModel.getObject());
 
-                WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace())
-                        .getWorkflowManager();
-
-                Node unpublished = null;
-                Node document = null;
-                NodeIterator docs = handle.getNodes(handle.getName());
-                while (docs.hasNext()) {
-                    document = docs.nextNode();
-                    if ("unpublished".equals(JcrUtils.getStringProperty(document, HippoStdNodeType.HIPPOSTD_STATE, null))) {
-                        unpublished = document;
-                        break;
-                    }
-                }
-
-                if (document == null) {
-                    return "document has been deleted";
-                }
-
-                if (unpublished != null) {
-                    // create a revision to prevent loss of content from unpublished.
-                    VersionWorkflow versionWorkflow = (VersionWorkflow) workflowManager.getWorkflow("versioning", unpublished);
-                    versionWorkflow.version();
-                }
-
-                BasicReviewedActionsWorkflow braw = (BasicReviewedActionsWorkflow) workflowManager.getWorkflow("default", document);
-                Document doc = braw.obtainEditableInstance();
-
+                Version versionNode = (Version) frozenNode.getParent();
+                Calendar calendar = versionNode.getCreated();
+                Document doc = documentWorkflow.obtainEditableInstance();
                 try {
-                    VersionWorkflow versionWorkflow = (VersionWorkflow) workflowManager.getWorkflow("versioning", frozenNode);
-                    versionWorkflow.restoreTo(doc);
+                    documentWorkflow.versionRestoreTo(calendar, doc);
                 } finally {
-                    doc = braw.commitEditableInstance();
+                    doc = documentWorkflow.commitEditableInstance();
                 }
 
-                JcrNodeModel unpubModel = new JcrNodeModel(session.getNodeByIdentifier(doc.getIdentity()));
+                JcrNodeModel previewModel = new JcrNodeModel(session.getNodeByIdentifier(doc.getIdentity()));
                 IEditorManager editorMgr = getEditorManager();
-                IEditor editor = editorMgr.getEditor(unpubModel);
+                IEditor editor = editorMgr.getEditor(previewModel);
                 if (editor == null) {
-                    editor = editorMgr.openPreview(unpubModel);
+                    editor = editorMgr.openPreview(previewModel);
                 }
                 IRenderService renderer = getEditorRenderer(editor);
                 if (renderer != null) {
@@ -172,16 +157,27 @@ public class VersionWorkflowPlugin extends RenderPlugin {
             }
         });
 
-        add(new StdWorkflow("select", new StringResourceModel("select", this, null).getString(), null, context, this) {
+        add(new StdWorkflow("select", new StringResourceModel("select", this, null), context, getModel()) {
+
+            @Override
+            public String getSubMenu() {
+                return "top";
+            }
+
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "select-16.png");
+                return new PackageResourceReference(getClass(), "img/select-16.png");
             }
 
             @Override
             protected Dialog createRequestDialog() {
-                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
-                return new HistoryDialog(wdm, getEditorManager());
+                try {
+                    WorkflowDescriptorModel wdm = getHandleWorkflowModel();
+                    return new HistoryDialog(wdm, getEditorManager());
+                } catch (RepositoryException e) {
+                    log.error(e.getMessage(), e);
+                    return null;
+                }
             }
 
             @Override
@@ -190,6 +186,11 @@ public class VersionWorkflowPlugin extends RenderPlugin {
                 return null;
             }
         });
+    }
+
+    @Override
+    public WorkflowDescriptorModel getModel() {
+        return (WorkflowDescriptorModel) super.getModel();
     }
 
     private IEditor getEditor() {
@@ -204,5 +205,15 @@ public class VersionWorkflowPlugin extends RenderPlugin {
         IPluginContext context = getPluginContext();
         return getPluginContext().getService(context.getReference(editor).getServiceId(), IRenderService.class);
     }
-    
+
+    private WorkflowDescriptorModel getHandleWorkflowModel() throws RepositoryException {
+        Node frozenNode = ((WorkflowDescriptorModel) getDefaultModel()).getNode();
+
+        Session session = frozenNode.getSession();
+        Node currentNode = session.getNodeByIdentifier(frozenNode.getProperty(JcrConstants.JCR_FROZEN_UUID).getString());
+        Node handle = currentNode.getParent();
+
+        WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
+        return new WorkflowDescriptorModel(workflowManager.getWorkflowDescriptor("default", handle), "default", handle);
+    }
 }

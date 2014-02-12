@@ -106,14 +106,9 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
             "/config/test-app/cms-preview", "frontend:plugincluster",
                 "frontend:references", "wicket.model",
                 "frontend:references", "editor.id",
+                "frontend:references", "model.compareTo",
                 "frontend:services", "wicket.id",
                 "/config/test-app/cms-preview/plugin", "frontend:plugin",
-                    "plugin.class", Preview.class.getName(),
-            "/config/test-app/cms-compare", "frontend:plugincluster",
-                "frontend:references", "wicket.model",
-                "frontend:references", "editor.id",
-                "frontend:services", "wicket.id",
-                "/config/test-app/cms-compare/plugin", "frontend:plugin",
                     "plugin.class", Preview.class.getName(),
     };
 

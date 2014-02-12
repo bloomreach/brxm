@@ -155,18 +155,26 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:workflow</sv:value>
     </sv:property>
+    <sv:node sv:name="hipposys:config" h:merge="combine">
+      <sv:property sv:name="modify-on-copy" sv:type="String">
+        <sv:value>./hippotranslation:id</sv:value>
+        <sv:value>$uuid</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="frontend:renderer">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
+        <sv:value>frontend:plugincluster</sv:value>
       </sv:property>
-      <sv:property sv:name="browser.id" sv:type="String">
-        <sv:value>${browser.id}</sv:value>
+      <sv:property sv:multiple="true" sv:name="frontend:references" sv:type="String">
+        <sv:value>browser.id</sv:value>
+        <sv:value>editor.id</sv:value>
+        <sv:value>wicket.model</sv:value>
       </sv:property>
-      <sv:property sv:name="editor.id" sv:type="String">
-        <sv:value>${editor.id}</sv:value>
+      <sv:property sv:multiple="true" sv:name="frontend:services" sv:type="String">
+        <sv:value>wicket.id</sv:value>
       </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.standardworkflow.ExtendedFolderWorkflowPlugin</sv:value>
+      <sv:property sv:name="item" sv:type="String">
+        <sv:value>${cluster.id}.item</sv:value>
       </sv:property>
       <sv:property sv:name="translator.id" sv:type="String">
         <sv:value>service.translator.search</sv:value>
@@ -174,30 +182,62 @@
       <sv:property sv:name="workflow.translated" sv:type="String">
         <sv:value>new-translated-folder</sv:value>
       </sv:property>
-    </sv:node>
-    <sv:node sv:name="hipposys:config" h:merge="combine">
-      <sv:property sv:name="modify-on-copy" sv:type="String">
-        <sv:value>./hippotranslation:id</sv:value>
-        <sv:value>$uuid</sv:value>
-      </sv:property>
+      <sv:node sv:name="root">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+          <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="standard">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+          <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.id" sv:type="String">
+          <sv:value>${item}</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="extended">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+          <sv:value>org.hippoecm.frontend.plugins.reviewedactions.ExtendedFolderWorkflowPlugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.id" sv:type="String">
+          <sv:value>${item}</sv:value>
+        </sv:property>
+      </sv:node>
     </sv:node>
   </sv:node>
   <sv:node sv:name="folder" h:merge="overlay">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:workflow</sv:value>
     </sv:property>
+    <sv:node sv:name="hipposys:config" h:merge="combine">
+      <sv:property sv:name="modify-on-copy" sv:type="String">
+        <sv:value>./hippotranslation:id</sv:value>
+        <sv:value>$uuid</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="frontend:renderer">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
+        <sv:value>frontend:plugincluster</sv:value>
       </sv:property>
-      <sv:property sv:name="browser.id" sv:type="String">
-        <sv:value>${browser.id}</sv:value>
+      <sv:property sv:multiple="true" sv:name="frontend:references" sv:type="String">
+        <sv:value>browser.id</sv:value>
+        <sv:value>editor.id</sv:value>
+        <sv:value>wicket.model</sv:value>
       </sv:property>
-      <sv:property sv:name="editor.id" sv:type="String">
-        <sv:value>${editor.id}</sv:value>
+      <sv:property sv:multiple="true" sv:name="frontend:services" sv:type="String">
+        <sv:value>wicket.id</sv:value>
       </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin</sv:value>
+      <sv:property sv:name="item" sv:type="String">
+        <sv:value>${cluster.id}.item</sv:value>
       </sv:property>
       <sv:property sv:name="translator.id" sv:type="String">
         <sv:value>service.translator.search</sv:value>
@@ -205,30 +245,51 @@
       <sv:property sv:name="workflow.translated" sv:type="String">
         <sv:value>new-translated-folder</sv:value>
       </sv:property>
-    </sv:node>
-    <sv:node sv:name="hipposys:config" h:merge="combine">
-      <sv:property sv:name="modify-on-copy" sv:type="String">
-        <sv:value>./hippotranslation:id</sv:value>
-        <sv:value>$uuid</sv:value>
-      </sv:property>
+      <sv:node sv:name="root">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+          <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="standard">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+          <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.id" sv:type="String">
+          <sv:value>${item}</sv:value>
+        </sv:property>
+      </sv:node>
     </sv:node>
   </sv:node>
   <sv:node sv:name="directory-extended" h:merge="overlay">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:workflow</sv:value>
     </sv:property>
+    <sv:node sv:name="hipposys:config" h:merge="combine">
+      <sv:property sv:name="modify-on-copy" sv:type="String">
+        <sv:value>./hippotranslation:id</sv:value>
+        <sv:value>$uuid</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="frontend:renderer">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
+        <sv:value>frontend:plugincluster</sv:value>
       </sv:property>
-      <sv:property sv:name="browser.id" sv:type="String">
-        <sv:value>${browser.id}</sv:value>
+      <sv:property sv:multiple="true" sv:name="frontend:references" sv:type="String">
+        <sv:value>browser.id</sv:value>
+        <sv:value>editor.id</sv:value>
+        <sv:value>wicket.model</sv:value>
       </sv:property>
-      <sv:property sv:name="editor.id" sv:type="String">
-        <sv:value>${editor.id}</sv:value>
+      <sv:property sv:multiple="true" sv:name="frontend:services" sv:type="String">
+        <sv:value>wicket.id</sv:value>
       </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.standardworkflow.ExtendedFolderWorkflowPlugin</sv:value>
+      <sv:property sv:name="item" sv:type="String">
+        <sv:value>${cluster.id}.item</sv:value>
       </sv:property>
       <sv:property sv:name="translator.id" sv:type="String">
         <sv:value>service.translator.search</sv:value>
@@ -236,30 +297,68 @@
       <sv:property sv:name="workflow.translated" sv:type="String">
         <sv:value>new-translated-folder</sv:value>
       </sv:property>
-    </sv:node>
-    <sv:node sv:name="hipposys:config" h:merge="combine">
-      <sv:property sv:name="modify-on-copy" sv:type="String">
-        <sv:value>./hippotranslation:id</sv:value>
-        <sv:value>$uuid</sv:value>
-      </sv:property>
+      <sv:node sv:name="root">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+          <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="standard">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+          <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.id" sv:type="String">
+          <sv:value>${item}</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="extended">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+          <sv:value>org.hippoecm.frontend.plugins.reviewedactions.ExtendedFolderWorkflowPlugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.id" sv:type="String">
+          <sv:value>${item}</sv:value>
+        </sv:property>
+      </sv:node>
     </sv:node>
   </sv:node>
   <sv:node sv:name="directory" h:merge="overlay">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:workflow</sv:value>
     </sv:property>
+    <sv:node sv:name="hipposys:config" h:merge="combine">
+      <sv:property sv:name="modify-on-copy" sv:type="String">
+        <sv:value>./hippotranslation:id</sv:value>
+        <sv:value>$uuid</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:property sv:name="translator.id" sv:type="String">
+      <sv:value>service.translator.search</sv:value>
+    </sv:property>
+    <sv:property sv:name="workflow.translated" sv:type="String">
+      <sv:value>new-translated-folder</sv:value>
+    </sv:property>
     <sv:node sv:name="frontend:renderer">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
+        <sv:value>frontend:plugincluster</sv:value>
       </sv:property>
-      <sv:property sv:name="browser.id" sv:type="String">
-        <sv:value>${browser.id}</sv:value>
+      <sv:property sv:multiple="true" sv:name="frontend:references" sv:type="String">
+        <sv:value>browser.id</sv:value>
+        <sv:value>editor.id</sv:value>
+        <sv:value>wicket.model</sv:value>
       </sv:property>
-      <sv:property sv:name="editor.id" sv:type="String">
-        <sv:value>${editor.id}</sv:value>
+      <sv:property sv:multiple="true" sv:name="frontend:services" sv:type="String">
+        <sv:value>wicket.id</sv:value>
       </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin</sv:value>
+      <sv:property sv:name="item" sv:type="String">
+        <sv:value>${cluster.id}.item</sv:value>
       </sv:property>
       <sv:property sv:name="translator.id" sv:type="String">
         <sv:value>service.translator.search</sv:value>
@@ -267,12 +366,25 @@
       <sv:property sv:name="workflow.translated" sv:type="String">
         <sv:value>new-translated-folder</sv:value>
       </sv:property>
-    </sv:node>
-    <sv:node sv:name="hipposys:config" h:merge="combine">
-      <sv:property sv:name="modify-on-copy" sv:type="String">
-        <sv:value>./hippotranslation:id</sv:value>
-        <sv:value>$uuid</sv:value>
-      </sv:property>
+      <sv:node sv:name="root">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+          <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="standard">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+          <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.id" sv:type="String">
+          <sv:value>${item}</sv:value>
+        </sv:property>
+      </sv:node>
     </sv:node>
   </sv:node>
 </sv:node>

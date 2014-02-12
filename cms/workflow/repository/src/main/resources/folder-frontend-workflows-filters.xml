@@ -42,7 +42,7 @@
     <sv:property sv:name="display" sv:type="Boolean">
       <sv:value>false</sv:value>
     </sv:property>
-  </sv:node>
+  </sv:node>                                                   P
   <sv:node sv:name="hideFacnavType">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:pluginconfig</sv:value>

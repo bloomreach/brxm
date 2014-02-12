@@ -38,12 +38,12 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATED_BY;
-import static org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE;
-import static org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT;
-import static org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY;
-import static org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE;
-import static org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATED_BY;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE;
 
 /**
  * Standard attributes of a hippostdpubwf:document document.  Figures out what css classes
