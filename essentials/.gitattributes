@@ -433,6 +433,7 @@ plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/Instructions.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/PersistentHandler.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/packaging/PowerpackPackage.java -text
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/rest/Restful.java -text
 plugin-api/api/src/main/resources/essentials.cnd -text
 plugin-api/api/src/main/resources/hippoecm-extension.xml -text
 plugin-api/api/src/main/resources/instructions.xsd -text
@@ -489,7 +490,6 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/m
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/rest/BaseResource.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/rest/MessageRestful.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/rest/ProjectRestful.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/rest/Restful.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/setup/ProjectSetupPlugin.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/BeanWriterUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/CndUtils.java -text

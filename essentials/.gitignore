@@ -1812,6 +1812,12 @@ plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/packaging/.i
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/packaging/atlassian-ide-plugin.xml
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/packaging/hippo-plugins.iws
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/packaging/target
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/rest/*.iml
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/rest/.DS_Store
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/rest/.idea
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/rest/atlassian-ide-plugin.xml
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/rest/hippo-plugins.iws
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/rest/target
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/target
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/hippo-plugins.iws
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/target
