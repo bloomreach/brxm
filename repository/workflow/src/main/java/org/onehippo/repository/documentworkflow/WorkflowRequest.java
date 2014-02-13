@@ -87,6 +87,10 @@ public class WorkflowRequest extends Request {
         else {
             setNodeProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT, null);
         }
+        if (reason != null && reason.length() == 0) {
+            // empty reason should not be stored.
+            reason = null;
+        }
         setStringProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_REASON, reason);
     }
 
