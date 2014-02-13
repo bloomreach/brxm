@@ -21,9 +21,12 @@
         .controller('hippo.channelManager.menuManager.TreeActionsCtrl', [
             '$scope',
             '$state',
-            function ($scope, $state) {
+            '$stateParams',
+            function ($scope, $state, $stateParams) {
+
                 $scope.addMenuItem = function () {
-                    $state.go('menu-item.add', {});
+                    var parentItemId = $stateParams.menuItemId || $stateParams.menuId;
+                    $state.go('menu-item.add', {menuItemId: parentItemId});
                 };
             }
         ]);

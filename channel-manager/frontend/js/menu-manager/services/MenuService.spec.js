@@ -156,4 +156,13 @@ describe('Menu Service', function () {
 
         expect(spy.errorFn).toHaveBeenCalled();
     });
+
+    it('should create a menu item', function () {
+        var newMenuItem = { id: 'child1', name: 'New Name' };
+        $httpBackend.expectPOST('api/menuId./create/parentId', newMenuItem).respond('OK');
+        menuService.createMenuItem('parentId', newMenuItem);
+        $httpBackend.flush();
+    });
+
+
 });

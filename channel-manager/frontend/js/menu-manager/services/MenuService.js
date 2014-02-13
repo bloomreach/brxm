@@ -43,7 +43,7 @@
                     if (!menuDataLoading) {
                         menuDataLoading = true;
                         menuLoaded = $q.defer();
-                        $http.get(menuServiceUrl())
+                        return $http.get(menuServiceUrl())
                             .success(function (response) {
                                 menuData.children = response.data.children;
                                 menuLoaded.resolve(menuData);
@@ -112,13 +112,22 @@
                     return $http.post(menuServiceUrl(), menuItem)
                         .error(function (error) {
                             // TODO show error in UI
-                            console.error("An error occured while saving the menu item with id '" + menuItem.id + "': " + error);
+                            console.error("An error occurred while saving the menu item with id '" + menuItem.id + "': " + error);
                         });
                 };
 
-                menuService.createItem = function (parentId, menuItem) {
-                    // TODO: implement
-                    console.error("Create item is not implemented");
+                menuService.createMenuItem = function (parentId, menuItem) {
+                    var deferred = $q.defer();
+                    $http.post(menuServiceUrl('create/' + parentId), menuItem)
+                        .success(function(response) {
+                            deferred.resolve(response.data);
+                        })
+                        .error(function () {
+                            // TODO show error in UI
+                            console.error("An error occured while creating a menu item");
+                            deferred.reject();
+                        });
+                    return deferred.promise;
                 };
 
                 menuService.deleteMenuItem = function (menuItemId) {
@@ -145,6 +154,10 @@
                             // TODO show error in UI
                             console.error("An error occurred while moving the menu item with id '" + menuItemId + "': ", error);
                         });
+                };
+
+                menuService.loadMenu = function () {
+                    return loadMenu();
                 };
 
                 return menuService;

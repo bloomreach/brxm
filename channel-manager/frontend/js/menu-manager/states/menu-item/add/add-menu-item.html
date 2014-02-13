@@ -14,61 +14,119 @@
   ~ limitations under the License.
   -->
 
-
 <div>
-    <form role="form">
+    <form name="form" role="form" novalidate>
         <h4 class="page-header">{{ 'ADD_NEW_MENU_ITEM' | translate }}</h4>
-        <div class="form-group">
-            <label for="label">{{ 'LABEL' | translate }}</label>
-            <input type="text" class="form-control" id="label" placeholder="{{ 'LABEL' | translate }}" ng-model="selectedMenuItem.name">
+        <div class="form-group has-feedback"
+             data-ng-class="{
+            'has-success': form.name.$dirty && form.name.$valid,
+            'has-error': form.name.$dirty && form.name.$invalid
+         }">
+            <label for="hippo.channelManager.menuManager.menuItem.add.name">{{ 'LABEL' | translate }}</label>
+            <input type="text" name="name" class="form-control" id="hippo.channelManager.menuManager.menuItem.add.name"
+                   placeholder="{{ 'LABEL' | translate }}"
+                   hippo.channel-manager.menu-manager.auto-focus
+                   data-ng-model="selectedMenuItem.name"
+                   data-ng-focus="form.name.$setPristine();"
+                   data-ng-required="true">
+            <div class="tooltip-container" data-ng-show="form.name.$dirty && form.name.$invalid">
+                <div data-tooltip
+                     data-placement="top"
+                     data-title="{{ 'LABEL_REQUIRED' | translate }}"></div>
+            </div>
+            <i class="fa form-control-feedback"
+               data-ng-class="{
+            'fa-check': form.name.$dirty && form.name.$valid,
+            'fa-times': form.name.$dirty && form.name.$invalid
+           }"></i>
         </div>
-        <label for="url">{{ 'DESTINATION' | translate }}</label>
-        <div class="form-group">
+        <label for="hippo.channelManager.menuManager.menuItem.add.linkType">{{ 'DESTINATION' | translate }}</label>
+        <div class="form-group has-feedback" id="hippo.channelManager.menuManager.menuItem.add.linkType">
             <div class="radio">
                 <label>
-                    <input type="radio" name="destination"  ng-model="selectedMenuItem.destination" value="1" checked="checked">
+                    <input type="radio" name="destination"
+                           data-ng-model="selectedMenuItem.linkType"
+                           value="SITEMAPITEM"
+                           data-ng-click="selectedMenuItem.link = ''; focus('hippo.channelManager.menuManager.menuItem.add.sitemapItem')">
                     {{ 'SITEMAP_ITEM' | translate }}
                 </label>
             </div>
             <div class="radio">
                 <label>
-                    <input type="radio" name="destination" ng-model="selectedMenuItem.destination" value="2">
+                    <input type="radio" name="destination"
+                           data-ng-model="selectedMenuItem.linkType"
+                           value="EXTERNAL"
+                           data-ng-click="selectedMenuItem.link = ''; focus('hippo.channelManager.menuManager.menuItem.add.url')">
                     {{ 'EXTERNAL_LINK' | translate }}
                 </label>
             </div>
             <div class="radio">
                 <label>
-                    <input type="radio" name="destination" ng-model="selectedMenuItem.destination" value="3">
+                    <input type="radio" name="destination"
+                           data-ng-model="selectedMenuItem.linkType"
+                           value="NONE"
+                           data-ng-click="selectedMenuItem.link = ''">
                     {{ 'NONE' | translate }}
                 </label>
             </div>
         </div>
-        <div class="form-group" ng-show="selectedMenuItem.destination == 1">
-            <label for="url">{{ 'INTERNAL_LINK' | translate }}</label>
+        <div class="form-group has-feedback"
+             data-ng-show="selectedMenuItem.linkType === 'SITEMAPITEM'"
+             data-ng-class="{
+            'has-success': form.sitemapItem.$dirty && form.siteMap.$valid,
+            'has-error': form.sitemapItem.$dirty && form.sitemapItem.$invalid
+         }">
+            <label for="hippo.channelManager.menuManager.menuItem.add.sitemapItem">{{ 'INTERNAL_LINK' | translate }}</label>
             <div class="input-group">
-                <input type="text" class="form-control" id="url" data-ng-model="selectedMenuItem.link">
-                  <span class="input-group-btn">
-                    <button class="btn btn-default" type="button"><i class="fa fa-external-link"></i></button>
-                  </span>
+                <input type="text" name="sitemapItem" class="form-control" id="hippo.channelManager.menuManager.menuItem.add.sitemapItem"
+                       data-ng-model="selectedMenuItem.link">
+                <i class="fa form-control-feedback"
+                   data-ng-show="form.sitemapItem.$dirty"
+                   data-ng-class="{
+                'fa-check': form.sitemapItem.$dirty && form.sitemapItem.$valid,
+                'fa-times': form.sitemapItem.$dirty && form.sitemapItem.$invalid
+               }"></i>
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="button"><i class="fa fa-external-link"></i></button>
+            </span>
             </div>
         </div>
-        <div class="form-group" ng-show="selectedMenuItem.destination == 1">
+        <div class="form-group" data-ng-show="selectedMenuItem.linkType === 'SITEMAPITEM'">
             <button type="button" class="btn btn-default btn-sm">
                 <i class="fa fa-crosshairs"></i> {{ 'SELECT_DOCUMENT' | translate }}
             </button>
             <button type="button" class="btn btn-default btn-sm">
                 <i class="fa fa-crosshairs"></i> {{ 'SELECT_LANDING_PAGE' | translate }}
             </button>
-            <button type="button" class="btn btn-default btn-sm" ng-click="createNewPage()">
+            <button type="button" class="btn btn-default btn-sm" data-ng-click="createNewPage()">
                 <i class="fa fa-plus"></i> {{ 'CREATE_NEW_PAGE' | translate }}
             </button>
         </div>
-        <div class="form-group" ng-show="selectedMenuItem.destination == 2">
-            <label for="link">{{ 'EXTERNAL_LINK' | translate }}</label>
-            <input type="text" class="form-control" id="link" placeholder="{{ 'EXAMPLE_DOMAIN' | translate }}" ng-model="selectedMenuItem.link">
+        <div class="form-group has-feedback"
+             data-ng-show="selectedMenuItem.linkType === 'EXTERNAL'"
+             data-ng-class="{
+            'has-success': form.url.$dirty && form.url.$valid,
+            'has-error': form.url.$dirty && form.url.$invalid
+         }">
+            <label for="hippo.channelManager.menuManager.menuItem.add.url">{{ 'EXTERNAL_LINK' | translate }}</label>
+            <input type="url" name="url" class="form-control" id="hippo.channelManager.menuManager.menuItem.add.url"
+                   placeholder="{{ 'EXAMPLE_DOMAIN' | translate }}"
+                   data-ng-model="selectedMenuItem.link"
+                   data-ng-required="true">
+            <div class="tooltip-container" ng-show="form.url.$dirty && form.url.$invalid">
+                <div data-tooltip
+                     data-placement="top"
+                     data-title="{{ 'EXTERNAL_LINK_INVALID' | translate }}"></div>
+            </div>
+            <i class="fa form-control-feedback"
+               data-ng-show="form.url.$dirty"
+               data-ng-class="{
+            'fa-check': form.url.$dirty && form.url.$valid,
+            'fa-times': form.url.$dirty && form.url.$invalid
+           }"></i>
         </div>
 
-        <button type="submit" class="btn btn-default" ng-click="submit(newitem)">{{ 'CREATE_MENU_ITEM' | translate }}</button>
+        <button type="submit" class="btn btn-default" ng-click="submit()">{{ 'CREATE_MENU_ITEM' | translate }}</button>
         <button type="submit" class="btn btn-link" ng-click="cancel()">{{ 'CANCEL' | translate }}</button>
     </form>
 

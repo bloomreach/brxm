@@ -19,7 +19,43 @@
 
     angular.module('hippo.channelManager.menuManager')
 
-        .controller('hippo.channelManager.menuManager.AddMenuItemCtrl', [function () {
-            console.log('Add menu item ctrl init');
+        .controller('hippo.channelManager.menuManager.AddMenuItemCtrl', [
+            '$scope',
+            '$state',
+            '$stateParams',
+            'hippo.channelManager.menuManager.MenuService',
+            function ($scope, $state, $stateParams, MenuService) {
+                var parentItemId = $stateParams.menuItemId;
+
+                $scope.selectedMenuItem = {linkType: 'SITEMAPITEM', name: '', link: ''};
+
+                $scope.submit = function() {
+                    MenuService.createMenuItem(parentItemId, $scope.selectedMenuItem).then(
+                            function (menuItemId) {
+                                MenuService.loadMenu().then(
+                                        function () {
+                                            $state.go('menu-item.edit', {
+                                                menuItemId: menuItemId
+                                            });
+                                        }
+                                );
+                            }
+                    );
+                };
+
+                $scope.cancel = function () {
+                    $state.go('menu-item.edit', {
+                        menuItemId: parentItemId
+                    });
+                };
+            }
+        ])
+        .directive('tooltip', [function() {
+            return {
+                restrict: 'A',
+                link: function (scope, element, attrs) {
+                        element.tooltip ({'trigger':'focus', 'title': attrs.title}).tooltip('show');
+                    }
+            };
         }]);
 }());
