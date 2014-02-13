@@ -462,11 +462,6 @@ utilities/src/main/java/org/hippoecm/repository/util/RepoUtils.java -text
 utilities/src/main/java/org/hippoecm/repository/util/Utilities.java -text
 utilities/src/test/java/org/hippoecm/repository/util/RepoUtilsTest.java -text
 workflow/src/main/java/org/hippoecm/faceteddate/DerivedDataFunction.java -text
-workflow/src/main/java/org/hippoecm/repository/reviewedactions/JCRBasicRequestWorkflowImpl.java -text
-workflow/src/main/java/org/hippoecm/repository/reviewedactions/JCRBasicReviewedActionsWorkflowImpl.java -text
-workflow/src/main/java/org/hippoecm/repository/reviewedactions/JCRFullRequestWorkflowImpl.java -text
-workflow/src/main/java/org/hippoecm/repository/reviewedactions/JCRFullReviewedActionsWorkflowImpl.java -text
-workflow/src/main/java/org/hippoecm/repository/reviewedactions/JCRScheduledRequestWorkflowImpl.java -text
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/PublicationRequest.java -text
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/PublicationState.java -text
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/PublishableDocument.java -text
