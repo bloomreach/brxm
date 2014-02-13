@@ -15,11 +15,15 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.jcr.NamespaceException;
 import javax.jcr.ReferentialIntegrityException;
@@ -67,7 +71,7 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
     private Name documentNodeName;
     private NodeTypeRegistry nodeTypeRegistry;
 
-    private Set<HandleListener> handleListeners = Collections.synchronizedSet(new HashSet<HandleListener>());
+    private Collection<WeakReference<HandleListener>> handleListeners = new CopyOnWriteArrayList<>();
 
     public HippoSharedItemStateManager(RepositoryImpl repository, PersistenceManager persistMgr, NodeId rootNodeId, NodeTypeRegistry ntReg, boolean usesReferences,
                                        ItemStateCacheFactory cacheFactory, ISMLocking locking, final NodeIdFactory nodeIdFactory) throws ItemStateException {
@@ -116,8 +120,11 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
             Set<NodeState> handles = new HashSet<NodeState>();
             addHandles(changeLog.modifiedStates(), changeLog, handles);
             for (NodeState handleState : handles) {
-                for (HandleListener listener : new ArrayList<HandleListener>(handleListeners)) {
-                    listener.handleModified(handleState);
+                for (WeakReference<HandleListener> reference : handleListeners) {
+                    final HandleListener listener = reference.get();
+                    if (listener != null) {
+                        listener.handleModified(handleState);
+                    }
                 }
             }
         } catch (ItemStateException e) {
@@ -177,14 +184,24 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
     public void addListener(final ItemStateListener listener) {
         super.addListener(listener);
         if (listener instanceof HandleListener) {
-            handleListeners.add((HandleListener) listener);
+            handleListeners.add(new WeakReference<>((HandleListener) listener));
         }
     }
 
     @Override
     public void removeListener(final ItemStateListener listener) {
         if (listener instanceof HandleListener) {
-            handleListeners.remove(listener);
+            final Iterator<WeakReference<HandleListener>> iterator = handleListeners.iterator();
+            while (iterator.hasNext()) {
+                final WeakReference<HandleListener> reference = iterator.next();
+                final HandleListener handleListener = reference.get();
+                if (handleListener == null) {
+                    iterator.remove();
+                } else if (handleListener == listener) {
+                    iterator.remove();
+                    break;
+                }
+            }
         }
         super.removeListener(listener);
     }
