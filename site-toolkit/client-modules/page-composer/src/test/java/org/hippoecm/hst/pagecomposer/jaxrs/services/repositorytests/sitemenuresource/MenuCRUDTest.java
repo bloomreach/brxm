@@ -17,8 +17,12 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.sitemenuresource;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMenuResource;
@@ -39,29 +43,38 @@ public class MenuCRUDTest extends AbstractMenuResourceTest{
         assertNotNull(newsItem);
         newsItem.setLinkType(LinkType.SITEMAPITEM);
         newsItem.setLink("test");
-        resource.update(newsItem);
+        final Response update = resource.update(newsItem);
+        assertEquals(Response.Status.OK.getStatusCode(), update.getStatus());
+
         final Node newsNode = session.getNodeByIdentifier(newsItem.getId());
         assertEquals("test", newsNode.getProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM).getString());
 
         final Node menuNode = newsNode.getParent();
         assertEquals(HstNodeTypes.NODETYPE_HST_SITEMENU, menuNode.getPrimaryNodeType().getName());
         // assert locked
+        assertTrue(menuNode.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE));
         assertEquals("admin", menuNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
+
+        assertBobCannotMakeModications(resource);
     }
+
 
     @Test
     public void test_rename() throws Exception {
         final SiteMenuResource resource = createResource();
         final SiteMenuItemRepresentation newsItem = getSiteMenuItemRepresentation(session, "main", "News");
         newsItem.setName("NewsRenamed");
-        resource.update(newsItem);
+        final Response update = resource.update(newsItem);
+        assertEquals(Response.Status.OK.getStatusCode(), update.getStatus());
         final Node newsNode = session.getNodeByIdentifier(newsItem.getId());
         assertEquals("NewsRenamed", newsNode.getName());
 
         final Node menuNode = newsNode.getParent();
         assertEquals(HstNodeTypes.NODETYPE_HST_SITEMENU, menuNode.getPrimaryNodeType().getName());
         // assert locked
+        assertTrue(menuNode.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE));
         assertEquals("admin", menuNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
+        assertBobCannotMakeModications(resource);
     }
 
     @Test
@@ -70,12 +83,16 @@ public class MenuCRUDTest extends AbstractMenuResourceTest{
         final SiteMenuItemRepresentation newsItem = getSiteMenuItemRepresentation(session, "main", "News");
         final Node menuNode = session.getNodeByIdentifier(newsItem.getId()).getParent();
         String oldPath = session.getNodeByIdentifier(newsItem.getId()).getPath();
-        resource.delete(newsItem.getId());
+
+        final Response delete = resource.delete(newsItem.getId());
+        assertEquals(Response.Status.OK.getStatusCode(), delete.getStatus());
         assertFalse(session.nodeExists(oldPath));
 
         assertEquals(HstNodeTypes.NODETYPE_HST_SITEMENU, menuNode.getPrimaryNodeType().getName());
         // assert locked
+        assertTrue(menuNode.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE));
         assertEquals("admin", menuNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
+        assertBobCannotMakeModications(resource);
     }
 
     @Test
@@ -84,7 +101,8 @@ public class MenuCRUDTest extends AbstractMenuResourceTest{
         final SiteMenuItemRepresentation newsItem = getSiteMenuItemRepresentation(session, "main", "News");
         final SiteMenuItemRepresentation contactItem = getSiteMenuItemRepresentation(session, "main", "Contact");
         String oldPath = session.getNodeByIdentifier(newsItem.getId()).getPath();
-        resource.move(newsItem.getId(), contactItem.getId(), 0);
+        final Response move = resource.move(newsItem.getId(), contactItem.getId(), 0);
+        assertEquals(Response.Status.OK.getStatusCode(), move.getStatus());
         assertFalse(session.nodeExists(oldPath));
         String newPath = session.getNodeByIdentifier(contactItem.getId()).getPath() + "/News";
         assertTrue(session.nodeExists(newPath));
@@ -92,6 +110,19 @@ public class MenuCRUDTest extends AbstractMenuResourceTest{
         final Node menuNode = session.getNodeByIdentifier(contactItem.getId()).getParent();
         assertEquals(HstNodeTypes.NODETYPE_HST_SITEMENU, menuNode.getPrimaryNodeType().getName());
         // assert locked
+        assertTrue(menuNode.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE));
         assertEquals("admin", menuNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
+        assertBobCannotMakeModications(resource);
+    }
+
+    private void assertBobCannotMakeModications(final SiteMenuResource resource) throws Exception {
+        final Session bob = createSession("bob", "bob");
+        final SiteMenuItemRepresentation contactItem = getSiteMenuItemRepresentation(bob, "main", "Contact");
+        contactItem.setName("test");
+
+        final Response fail = resource.update(contactItem);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), fail.getStatus());
+        assertTrue(((ExtResponseRepresentation) fail.getEntity()).getMessage().contains("locked"));
+        bob.logout();
     }
 }
