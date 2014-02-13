@@ -15,6 +15,9 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,7 +25,11 @@ import java.util.Set;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryResult;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
@@ -32,6 +39,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,12 +47,6 @@ public class SiteMapHelper extends AbstractHelper {
 
     private static final Logger log = LoggerFactory.getLogger(SiteMapHelper.class);
     private static final String WORKSPACE_PATH_ELEMENT = "/" + HstNodeTypes.NODENAME_HST_WORKSPACE + "/";
-
-    private PageComposerContextService pageComposerContextService;
-
-    public void setPageComposerContextService(final PageComposerContextService pageComposerContextService) {
-        this.pageComposerContextService = pageComposerContextService;
-    }
 
     @Override
     public <T> T getConfigObject(final String itemId) {
@@ -261,10 +263,33 @@ public class SiteMapHelper extends AbstractHelper {
         }
     }
 
-    public void publishWorkspaceChanges(final List<String> userIds) {
+    @Override
+    protected String buildXPathQueryLockedWorkspaceNodesForUsers(final String previewWorkspacePath,
+                                                               final List<String> userIds) {
+        if (userIds.isEmpty()) {
+            throw new IllegalArgumentException("List of user IDs cannot be empty");
+        }
 
-        String liveConfigurationPath = pageComposerContextService.getEditingLiveSite().getConfigurationPath();
-        String previewConfigurationPath = pageComposerContextService.getEditingPreviewSite().getConfigurationPath();
+        StringBuilder xpath = new StringBuilder("/jcr:root");
+        xpath.append(ISO9075.encodePath(previewWorkspacePath + "/" +HstNodeTypes.NODENAME_HST_SITEMAP));
 
+        xpath.append("//element(*,");
+        xpath.append(HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
+        xpath.append(")[");
+
+        String concat = "";
+        for (String userId : userIds) {
+            xpath.append(concat);
+            xpath.append('@');
+            xpath.append(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY);
+            xpath.append(" = '");
+            xpath.append(userId);
+            xpath.append("'");
+            concat = " or ";
+        }
+        xpath.append("]");
+
+        return xpath.toString();
     }
+
 }

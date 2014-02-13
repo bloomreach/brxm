@@ -26,9 +26,7 @@
 [hst:editable] mixin
 - hst:lockedby (string)
 - hst:lockedon (date)
-- hst:lastmodified (date)
 - hst:lastmodifiedby (string)
-- hst:origin (string)
 - hst:state (string)
 
 [hst:template] > nt:base, mix:referenceable, hst:descriptive
@@ -70,6 +68,7 @@
 
 [hst:component] > hst:abstractcomponent orderable
 - hst:referencecomponent (string)
+- hst:lastmodified (date)
 + * (hst:containercomponentreference)
 + * (hst:abstractcomponent)
 
@@ -157,6 +156,7 @@
 - hst:componentconfigurationmappingvalues (string) multiple
 - hst:cacheable (boolean)
 - hst:resourcebundleid (string)
+- hst:lastmodified (date)
 
 + * (hst:sitemapitem)
 
@@ -184,6 +184,7 @@
 + * (hst:sitemenuitem)
 
 [hst:sitemenu] > nt:base, mix:referenceable orderable
+- hst:lastmodified (date)
 + * (hst:sitemenuitem)
 
 [hst:sitemenus] > nt:base, mix:referenceable

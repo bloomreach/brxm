@@ -29,6 +29,10 @@
     <property name="pageComposerContextService" ref="pageComposerContextService"/>
   </bean>
 
+  <bean id="abstractHelper" abstract="true">
+    <property name="pageComposerContextService" ref="pageComposerContextService"/>
+  </bean>
+
   <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerItemComponentResource" id="containerItemComponentResource"
         parent="abstractConfigResource">
     <property name="processor">
@@ -38,17 +42,11 @@
 
   <bean id="pageComposerContextService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService"/>
 
-  <bean id="siteMenuHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper">
-    <property name="pageComposerContextService" ref="pageComposerContextService"/>
-  </bean>
+  <bean id="siteMenuHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper" parent="abstractHelper"/>
 
-  <bean id="siteMapHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper">
-    <property name="pageComposerContextService" ref="pageComposerContextService"/>
-  </bean>
+  <bean id="siteMapHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper" parent="abstractHelper"/>
 
-  <bean id="pagesHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper">
-    <property name="pageComposerContextService" ref="pageComposerContextService"/>
-  </bean>
+  <bean id="pagesHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper" parent="abstractHelper"/>
 
   <!--
     The internal server factory. 
@@ -78,7 +76,7 @@
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMenuResource" parent="abstractConfigResource">
               <property name="siteMenuHelper" ref="siteMenuHelper"/>
               <property name="siteMenuItemHelper">
-                <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper"/>
+                <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper" parent="abstractHelper"/>
               </property>
             </bean>
           </constructor-arg>

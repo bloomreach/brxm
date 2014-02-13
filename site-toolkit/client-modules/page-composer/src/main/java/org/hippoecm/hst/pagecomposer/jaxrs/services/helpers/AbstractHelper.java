@@ -15,7 +15,11 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,11 +27,15 @@ import javax.jcr.Node;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryResult;
 
 import com.google.common.collect.Iterables;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +47,12 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_
 public abstract class AbstractHelper {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractHelper.class);
+
+    protected PageComposerContextService pageComposerContextService;
+
+    public void setPageComposerContextService(final PageComposerContextService pageComposerContextService) {
+        this.pageComposerContextService = pageComposerContextService;
+    }
 
     /**
      * @return the configuration object for <code>id</code> and <code>null</code> if not existing
@@ -85,6 +99,16 @@ public abstract class AbstractHelper {
         node.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
     }
 
+
+    protected void unlock(final Node workspaceNode) throws RepositoryException {
+        if (workspaceNode.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)) {
+            log.warn("Removing lock for '{}' since ancestor gets published", workspaceNode.getPath());
+            workspaceNode.removeMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
+        }
+        for (Node child : new NodeIterable(workspaceNode.getNodes())) {
+            unlock(child);
+        }
+    }
 
     protected void setProperty(final Node jcrNode, final String propName, final String propValue) throws RepositoryException {
         if (StringUtils.isEmpty(propValue)) {
@@ -168,6 +192,151 @@ public abstract class AbstractHelper {
             }
         }
         return false;
+    }
+
+
+
+    public void publishWorkspaceChanges(final List<String> userIds)  throws RepositoryException {
+        List<Node> lockedNodeRoots = getLockedNodeRoots(userIds);
+        publishWorkspaceNodeList(lockedNodeRoots);
+    }
+
+    protected void publishWorkspaceNodeList(final List<Node> lockedNodeRoots) throws RepositoryException {
+        String liveConfigurationPath = pageComposerContextService.getEditingLiveSite().getConfigurationPath();
+        String previewConfigurationPath = pageComposerContextService.getEditingPreviewSite().getConfigurationPath();
+        final Session session = pageComposerContextService.getRequestContext().getSession();
+        for (Node lockedNodeRoot : lockedNodeRoots) {
+            String relPath = lockedNodeRoot.getPath().substring(previewConfigurationPath.length());
+
+            if (session.nodeExists(liveConfigurationPath + relPath)) {
+                session.removeItem(liveConfigurationPath + relPath);
+            }
+            if (lockedNodeRoot.hasProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE) &&
+                    "deleted".equals(lockedNodeRoot.getProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE).getString())) {
+                lockedNodeRoot.remove();
+            } else {
+                lockedNodeRoot.removeMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
+                // we can only publish *IF* and only *IF* the parent exists. Otherwise we log an error and continue
+                String liveParentRelPath = StringUtils.substringBeforeLast(relPath, "/");
+                if (!session.nodeExists(liveConfigurationPath + liveParentRelPath)) {
+                    log.warn("Cannot publish preview node '{}' because the live parent '{}' is missing. Skip publishing node",
+                            lockedNodeRoot.getPath(), liveConfigurationPath + liveParentRelPath);
+                } else {
+                    log.info("Publishing '{}'", lockedNodeRoot.getPath());
+                    JcrUtils.copy(session, lockedNodeRoot.getPath(), liveConfigurationPath + relPath);
+                }
+            }
+
+        }
+    }
+
+    public void discardWorkspaceChanges(final List<String> userIds)  throws RepositoryException {
+        List<Node> lockedNodeRoots = getLockedNodeRoots(userIds);
+        discardWorkspaceNodeList(lockedNodeRoots);
+    }
+
+    protected void discardWorkspaceNodeList(final List<Node> lockedNodeRoots) throws RepositoryException {
+        String liveConfigurationPath = pageComposerContextService.getEditingLiveSite().getConfigurationPath();
+        String previewConfigurationPath = pageComposerContextService.getEditingPreviewSite().getConfigurationPath();
+        final Session session = pageComposerContextService.getRequestContext().getSession();
+
+        for (Node lockedNodeRoot : lockedNodeRoots) {
+            final String lockedNodePath = lockedNodeRoot.getPath();
+            String relPath = lockedNodePath.substring(previewConfigurationPath.length());
+
+            if (!session.nodeExists(liveConfigurationPath + relPath)) {
+                // there is no live version. Discard is thus removing the node
+                lockedNodeRoot.remove();
+                continue;
+            }
+            lockedNodeRoot.remove();
+            JcrUtils.copy(session, liveConfigurationPath + relPath, lockedNodePath);
+        }
+    }
+
+    protected List<Node> getLockedNodeRoots(final List<String> userIds) throws RepositoryException {
+
+        String previewConfigurationPath = pageComposerContextService.getEditingPreviewSite().getConfigurationPath();
+        final String previewWorkspacePath = previewConfigurationPath + "/"+HstNodeTypes.NODENAME_HST_WORKSPACE;
+        final Session session = pageComposerContextService.getRequestContext().getSession();
+
+        if (!session.nodeExists(previewWorkspacePath)) {
+            // there is no preview workspace
+            return Collections.emptyList();
+        }
+
+        List<Node> lockedNodes = findChangedWorkspaceNodesForUsers(previewWorkspacePath, userIds);
+        if (lockedNodes.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        final Node previewWorkspaceNode = session.getNode(previewWorkspacePath);
+
+        // in principle, locked items should not contain descendant locked items, however, in a clustered or highly
+        // concurrent environment, this is possible. Hence extra checks here
+
+        Set<String> lockedNodePaths = new HashSet<>();
+        for (Node lockedNode : lockedNodes) {
+            if (!lockedNode.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)) {
+                throw new IllegalStateException("locked '" + lockedNode.getPath() + "' does not have mixin '" +
+                        "" + HstNodeTypes.MIXINTYPE_HST_EDITABLE + "'. Should not happen");
+
+            }
+            lockedNodePaths.add(lockedNode.getPath());
+        }
+
+        List<Node> lockedNodeRoots = new ArrayList<>();
+
+        for (Node lockedNode : lockedNodes) {
+            Node ancestor = lockedNode.getParent();
+            while (!ancestor.isSame(previewWorkspaceNode)) {
+                if (lockedNodePaths.contains(ancestor.getPath())) {
+                    // an ancestor is getting published already due to lock. Normally does not happen. Just remove lock
+                    log.info("Removing double lock of '{}' since ancestor already has lock '{}'", lockedNode.getPath(),
+                            ancestor.getPath());
+                    lockedNode.removeMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
+                    break;
+                }
+                ancestor = ancestor.getParent();
+            }
+
+            if (lockedNode.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)) {
+                // the mixin is not removed above
+                lockedNodeRoots.add(lockedNode);
+            }
+        }
+
+        // now for all lockedNodeRoots we need to check that there are no descendant locks contained by other users than
+        // for userIds. Again, normally does not happen, but because of clustered setups / concurrency this state might happen
+        for (Node lockedNodeRoot : lockedNodeRoots) {
+            for (Node child : new NodeIterable(lockedNodeRoot.getNodes())) {
+                unlock(child);
+            }
+        }
+        return lockedNodeRoots;
+    }
+
+    protected List<Node> findChangedWorkspaceNodesForUsers(final String previewWorkspacePath, final List<String> userIds)
+            throws RepositoryException {
+        if (userIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+        final Session session = pageComposerContextService.getRequestContext().getSession();
+        final String xpath = buildXPathQueryLockedWorkspaceNodesForUsers(previewWorkspacePath, userIds);
+        final QueryResult result = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH).execute();
+
+        List<Node> lockedNodesForUsers = new ArrayList<>();
+        for (Node lockedNodeForUsers : new NodeIterable(result.getNodes())){
+            lockedNodesForUsers.add(lockedNodeForUsers);
+        }
+        return lockedNodesForUsers;
+    }
+
+    // to override for helpers that need to be able to publish
+    protected String buildXPathQueryLockedWorkspaceNodesForUsers(final String previewWorkspacePath,
+                                                                 final List<String> userIds) {
+        throw new UnsupportedOperationException("buildXPathQueryLockedWorkspaceNodesForUsers not supported for: " +
+                this.getClass().getName());
     }
 
 }

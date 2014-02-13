@@ -15,19 +15,47 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
+import java.util.List;
+
+import org.apache.jackrabbit.util.ISO9075;
+import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 
 public class PagesHelper extends AbstractHelper {
 
-    private PageComposerContextService pageComposerContextService;
-
-    public void setPageComposerContextService(final PageComposerContextService pageComposerContextService) {
-        this.pageComposerContextService = pageComposerContextService;
-    }
-
     @Override
     public <T> T getConfigObject(final String itemId) {
         throw new UnsupportedOperationException("not supported");
+    }
+
+    @Override
+    protected String buildXPathQueryLockedWorkspaceNodesForUsers(final String previewWorkspacePath,
+                                                                 final List<String> userIds) {
+        if (userIds.isEmpty()) {
+            throw new IllegalArgumentException("List of user IDs cannot be empty");
+        }
+
+        StringBuilder xpath = new StringBuilder("/jcr:root");
+        xpath.append(ISO9075.encodePath(previewWorkspacePath + "/" + HstNodeTypes.NODENAME_HST_PAGES));
+        // /element to get direct children below pages and *not* //element
+        xpath.append("/element(*,");
+        xpath.append(HstNodeTypes.NODETYPE_HST_COMPONENT);
+        xpath.append(")[");
+
+        String concat = "";
+        for (String userId : userIds) {
+            xpath.append(concat);
+            xpath.append('@');
+            xpath.append(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY);
+            xpath.append(" = '");
+            xpath.append(userId);
+            xpath.append("'");
+            concat = " or ";
+        }
+        xpath.append("]");
+
+        return xpath.toString();
     }
 
 }

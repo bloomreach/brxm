@@ -15,8 +15,14 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
+import java.util.List;
 import java.util.Map;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
+import org.apache.jackrabbit.util.ISO9075;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
@@ -25,18 +31,11 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 
 public class SiteMenuHelper extends AbstractHelper {
 
-    private PageComposerContextService pageComposerContextService;
-
-    public void setPageComposerContextService(final PageComposerContextService pageComposerContextService) {
-        this.pageComposerContextService = pageComposerContextService;
-    }
-
     @Override
     public <T> T getConfigObject(final String itemId) {
         final HstSite editingPreviewSite = pageComposerContextService.getEditingPreviewSite();
         return (T) getMenu(editingPreviewSite, itemId);
     }
-
 
     public HstSiteMenuConfiguration getMenu(HstSite site, String menuId) {
         final Map<String,HstSiteMenuConfiguration> siteMenuConfigurations = site.getSiteMenusConfiguration().getSiteMenuConfigurations();
@@ -75,6 +74,42 @@ public class SiteMenuHelper extends AbstractHelper {
             }
         }
         return null;
+    }
+
+
+    @Override
+    protected void unlock(final Node node) throws RepositoryException {
+        // site menus never have descendant sitemenu items locked
+        return;
+    }
+
+    @Override
+    protected String buildXPathQueryLockedWorkspaceNodesForUsers(final String previewWorkspacePath,
+                                                                 final List<String> userIds) {
+        if (userIds.isEmpty()) {
+            throw new IllegalArgumentException("List of user IDs cannot be empty");
+        }
+
+        StringBuilder xpath = new StringBuilder("/jcr:root");
+        xpath.append(ISO9075.encodePath(previewWorkspacePath + "/" + HstNodeTypes.NODENAME_HST_SITEMENUS));
+        // /element to get direct children below pages and *not* //element
+        xpath.append("/element(*,");
+        xpath.append(HstNodeTypes.NODETYPE_HST_SITEMENU);
+        xpath.append(")[");
+
+        String concat = "";
+        for (String userId : userIds) {
+            xpath.append(concat);
+            xpath.append('@');
+            xpath.append(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY);
+            xpath.append(" = '");
+            xpath.append(userId);
+            xpath.append("'");
+            concat = " or ";
+        }
+        xpath.append("]");
+
+        return xpath.toString();
     }
 
 }

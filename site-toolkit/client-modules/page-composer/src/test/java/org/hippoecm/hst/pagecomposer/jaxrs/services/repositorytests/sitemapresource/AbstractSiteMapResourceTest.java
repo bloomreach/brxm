@@ -35,6 +35,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.MountResourceTest;
 import org.hippoecm.hst.site.HstServices;
 import org.junit.After;
 import org.junit.Before;
@@ -44,14 +45,14 @@ import static org.junit.Assert.assertFalse;
 
 public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTest {
 
-    protected PageComposerContextService pageComposerContextService;
+    protected MountResource mountResource;
 
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
 
-        pageComposerContextService = new PageComposerContextService();
+        mountResource = MountResourceTest.createResource();
         // create users
         final Node users = session.getNode("/hippo:configuration/hippo:users");
 
@@ -70,7 +71,7 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         final Value[] values = (Value[])ArrayUtils.addAll(adminMembers, extra);
         adminGroup.setProperty("hipposys:members", values);
 
-        // move 2 sitemap items to workspace, keep rest in unittestproject
+        // move 2 sitemap items to workspace, keep rest in unittestproject/hst:sitemap
         session.getNode("/hst:hst/hst:configurations/unittestproject").addNode("hst:workspace").addNode("hst:sitemap");
         session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap/home",
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/home");
@@ -113,8 +114,6 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
                 session.nodeExists(previewConfigurationPath));
 
         ((HstMutableRequestContext) ctx).setSession(session);
-        MountResource mountResource = new MountResource();
-        mountResource.setPageComposerContextService(pageComposerContextService);
         mountResource.startEdit();
         ModifiableRequestContextProvider.clear();
         // time for jcr events to arrive
@@ -171,17 +170,17 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL(request, "localhost", "/home");
         ((HstMutableRequestContext) ctx).setSession(requestSession);
-        final HstSiteMap siteMap = pageComposerContextService.getEditingPreviewSite().getSiteMap();
+        final HstSiteMap siteMap = mountResource.getPageComposerContextService().getEditingPreviewSite().getSiteMap();
         return new SiteMapRepresentation().represent(siteMap);
     }
 
     protected SiteMapResource createResource() {
 
         final SiteMapHelper siteMapHelper = new SiteMapHelper();
-        siteMapHelper.setPageComposerContextService(pageComposerContextService);
+        siteMapHelper.setPageComposerContextService(mountResource.getPageComposerContextService());
 
         final SiteMapResource siteMapResource = new SiteMapResource();
-        siteMapResource.setPageComposerContextService(pageComposerContextService);
+        siteMapResource.setPageComposerContextService(mountResource.getPageComposerContextService());
         siteMapResource.setSiteMapHelper(siteMapHelper);
         return siteMapResource;
     }

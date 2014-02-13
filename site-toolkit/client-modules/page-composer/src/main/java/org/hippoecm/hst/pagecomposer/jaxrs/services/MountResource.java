@@ -240,7 +240,6 @@ public class MountResource extends AbstractConfigResource {
     @Path("/userswithchanges/discard")
     @Produces(MediaType.APPLICATION_JSON)
     public Response discardChangesOfUsers(ExtIdsRepresentation ids) {
-        final Mount editingMount = getPageComposerContextService().getEditingMount();
         if (!getPageComposerContextService().hasPreviewConfiguration()) {
             log.warn("Cannot discard changes of users in a non-preview site");
             return error("Cannot discard changes of users in a non-preview site");
@@ -257,8 +256,6 @@ public class MountResource extends AbstractConfigResource {
     @Path("/publish/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response publish() {
-        final Mount editingMount = getPageComposerContextService().getEditingMount();
-
         if (!getPageComposerContextService().hasPreviewConfiguration()) {
             return cannotPublishNotPreviewSite();
         }
@@ -269,8 +266,6 @@ public class MountResource extends AbstractConfigResource {
     @Path("/userswithchanges/publish")
     @Produces(MediaType.APPLICATION_JSON)
     public Response publishChangesOfUsers(ExtIdsRepresentation ids) {
-        final Mount editingMount = getPageComposerContextService().getEditingMount();
-
         if (!getPageComposerContextService().hasPreviewConfiguration()) {
             return cannotPublishNotPreviewSite();
         }
@@ -308,6 +303,8 @@ public class MountResource extends AbstractConfigResource {
             publishChannelChanges(session, userIds);
 
             siteMapHelper.publishWorkspaceChanges(userIds);
+            pagesHelper.publishWorkspaceChanges(userIds);
+            siteMenuHelper.publishWorkspaceChanges(userIds);
             HstConfigurationUtils.persistChanges(session);
             log.info("Site is published");
             return ok("Site is published");
@@ -438,6 +435,11 @@ public class MountResource extends AbstractConfigResource {
             pushContainerChildrenNodes(session, liveConfigurationPath, previewConfigurationPath, relativeContainerPathsToRevert);
             copyChangedMainConfigNodes(session, liveConfigurationPath, previewConfigurationPath, mainConfigNodeNamesToRevert);
             discardChannelChanges(session, requestContext, userIds);
+
+            siteMapHelper.discardWorkspaceChanges(userIds);
+            pagesHelper.discardWorkspaceChanges(userIds);
+            siteMenuHelper.discardWorkspaceChanges(userIds);
+
             HstConfigurationUtils.persistChanges(session);
             log.info("Changes of user '{}' for site '{}' are discarded.", session.getUserID(), editingPreviewSite.getName());
             return ok("Changes of user '"+session.getUserID()+"' for site '"+editingPreviewSite.getName()+"' are discarded.");

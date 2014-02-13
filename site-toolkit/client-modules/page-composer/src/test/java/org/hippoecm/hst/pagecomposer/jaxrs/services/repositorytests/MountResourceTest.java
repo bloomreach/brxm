@@ -265,7 +265,7 @@ public class MountResourceTest extends AbstractPageComposerTest {
 
     }
 
-    private MountResource createResource() {
+    public static MountResource createResource() {
         MountResource resource = new MountResource();
         final PageComposerContextService pageComposerContextService = new PageComposerContextService();
         resource.setPageComposerContextService(pageComposerContextService);
