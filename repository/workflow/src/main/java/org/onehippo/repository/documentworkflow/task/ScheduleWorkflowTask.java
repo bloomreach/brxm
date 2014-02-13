@@ -20,7 +20,6 @@ import java.util.Date;
 
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
@@ -66,10 +65,7 @@ public class ScheduleWorkflowTask extends AbstractDocumentTask {
         WorkflowContext wfc = dh.getWorkflowContext();
         // create 'future' documentworkflow proxy
         WorkflowContext futureContext = wfc.getWorkflowContext(targetDate);
-        // Until the DocumentWorkflow still might be invoked through the deprecated *ReviewedActionsWorkflows
-        // retrieving the "default" category DocumentWorkflow needs to be done with the handle document parameter.
-        // This would not be needed if the current DocumentWorkflow was directly invoked on the handle itself...
-        DocumentWorkflow workflow = (DocumentWorkflow)futureContext.getWorkflow("default", new Document(dh.getHandle()));
+        DocumentWorkflow workflow = (DocumentWorkflow)futureContext.getWorkflow("default" );
 
         if ("publish".equals(getType())) {
             workflow.publish();

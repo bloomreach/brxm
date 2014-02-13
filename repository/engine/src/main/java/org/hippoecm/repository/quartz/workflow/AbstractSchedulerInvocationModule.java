@@ -18,6 +18,7 @@ package org.hippoecm.repository.quartz.workflow;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.ext.WorkflowInvocation;
 import org.hippoecm.repository.ext.WorkflowInvocationHandlerModule;
@@ -43,7 +44,13 @@ public abstract class AbstractSchedulerInvocationModule implements WorkflowInvoc
             }
             final Scheduler scheduler = SchedulerModule.getScheduler(invocation.getSubject().getSession());
             if (scheduler != null) {
-                final Node handle = invocation.getSubject().getParent();
+                final Node handle;
+                if (invocation.getSubject().isNodeType(HippoNodeType.NT_HANDLE)) {
+                    handle = invocation.getSubject();
+                }
+                else {
+                    handle = invocation.getSubject().getParent();
+                }
                 JcrUtils.ensureIsCheckedOut(handle);
                 final Node requestNode = handle.addNode("hippo:request", "hipposched:workflowjob");
                 scheduler.scheduleJob(new WorkflowJobDetail(requestNode, invocation), createTrigger("default"));

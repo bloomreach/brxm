@@ -22,10 +22,12 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
-import org.onehippo.repository.documentworkflow.DocumentWorkflowImpl;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 /**
  * @deprecated since CMS 7.9, use/configure {@link org.onehippo.repository.documentworkflow.DocumentWorkflowImpl} instead.
@@ -33,7 +35,7 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflowImpl;
 @Deprecated
 public class AbstractReviewedActionsWorkflow extends WorkflowImpl {
 
-    protected DocumentWorkflowImpl documentWorkflow;
+    protected DocumentWorkflow documentWorkflow;
 
     /**
      * All implementations of a work-flow must provide a single, no-argument constructor.
@@ -52,12 +54,18 @@ public class AbstractReviewedActionsWorkflow extends WorkflowImpl {
         Node handleNode = getSubjectHandleNode();
 
         try {
-            documentWorkflow = new DocumentWorkflowImpl();
-            documentWorkflow.setWorkflowContext(getWorkflowContext());
-            documentWorkflow.setNode(handleNode);
+            final Workflow handleWorkflow = getNonChainingWorkflowContext().getWorkflow("default", new Document(handleNode));
+            if (!(handleWorkflow instanceof DocumentWorkflow)) {
+                throw new RepositoryException("Workflow on handle, in category 'document', is not a DocumentWorkflow");
+            }
+
+            documentWorkflow = (DocumentWorkflow) handleWorkflow;
         }
-        catch (RemoteException rmi) {
-            throw new RepositoryException("Failed to create DocumentWorkflow delegate", rmi);
+        catch (WorkflowException wfe) {
+            if (wfe.getCause() != null && wfe.getCause() instanceof RepositoryException) {
+                throw (RepositoryException)wfe.getCause();
+            }
+            throw new RepositoryException(wfe);
         }
     }
 
@@ -72,8 +80,11 @@ public class AbstractReviewedActionsWorkflow extends WorkflowImpl {
     @Override
     public Map<String, Serializable> hints() throws WorkflowException {
         Map<String, Serializable> hints = super.hints();
-        hints.putAll(documentWorkflow.hints());
+        try {
+            hints.putAll(documentWorkflow.hints());
+        } catch (RemoteException|RepositoryException e) {
+            throw new WorkflowException("Unable to build hints", e);
+        }
         return hints;
     }
-
 }
