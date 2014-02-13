@@ -18,7 +18,7 @@
     <h4 class="page-header">{{ 'EDIT_MENU_ITEM' | translate }}</h4>
     <div class="form-group has-feedback"
          data-ng-class="{
-            'has-success': form.name.$dirty && !isSaving.name && !form.name.$invalid && isSaved.name,
+            'has-success': form.name.$dirty && !isSaving.name && form.name.$valid && isSaved.name,
             'has-error': form.name.$dirty && !isSaving.name && (form.name.$invalid || !isSaved.name)
          }">
         <label for="hippo.channelManager.menuManager.menuItem.edit.name">{{ 'LABEL' | translate }}</label>
@@ -28,7 +28,7 @@
                data-ng-model="selectedMenuItem.name"
                data-ng-focus="form.name.$setPristine();"
                data-ng-required="true"
-               data-ng-blur="!form.name.$invalid ? saveSelectedMenuItem('name') : '';">
+               data-ng-blur="form.name.$valid ? saveSelectedMenuItem('name') : '';">
         <div class="tooltip-container" ng-show="form.name.$invalid">
             <div data-tooltip
                  data-placement="top"
@@ -38,7 +38,7 @@
            data-ng-show="form.name.$dirty"
            data-ng-class="{
             'fa-spinner fa-spin': isSaving.name,
-            'fa-check': !form.name.$invalid && isSaved.name,
+            'fa-check': form.name.$valid && isSaved.name,
             'fa-times': form.name.$invalid || !isSaved.name
            }"></i>
     </div>
@@ -75,19 +75,19 @@
     <div class="form-group has-feedback"
          data-ng-show="selectedMenuItem.linkType === 'SITEMAPITEM'"
          data-ng-class="{
-            'has-success': form.sitemapItem.$dirty && !isSaving.link && !form.siteMap.$invalid && isSaved.link,
+            'has-success': form.sitemapItem.$dirty && !isSaving.link && form.siteMap.$valid && isSaved.link,
             'has-error': !isSaving.link && (form.sitemapItem.$invalid || !isSaved.link)
          }">
         <label for="hippo.channelManager.menuManager.menuItem.edit.sitemapItem">{{ 'INTERNAL_LINK' | translate }}</label>
         <div class="input-group">
             <input type="text" name="sitemapItem" class="form-control" id="hippo.channelManager.menuManager.menuItem.edit.sitemapItem"
                    data-ng-model="selectedMenuItem.link"
-                   data-ng-blur="!form.sitemapItem.$invalid ? saveSelectedMenuItem('link') : '';">
+                   data-ng-blur="form.sitemapItem.$valid ? saveSelectedMenuItem('link') : '';">
             <i class="fa form-control-feedback"
                data-ng-show="form.sitemapItem.$dirty"
                data-ng-class="{
                 'fa-spinner fa-spin': isSaving.link,
-                'fa-check': !form.sitemapItem.$invalid && isSaved.link,
+                'fa-check': form.sitemapItem.$valid && isSaved.link,
                 'fa-times': form.sitemapItem.$invalid || !isSaved.link
                }"></i>
             <span class="input-group-btn">
@@ -109,7 +109,7 @@
     <div class="form-group has-feedback"
          data-ng-show="selectedMenuItem.linkType === 'EXTERNAL'"
          data-ng-class="{
-            'has-success': form.url.$dirty && !isSaving.link && !form.url.$invalid && isSaved.link,
+            'has-success': form.url.$dirty && !isSaving.link && form.url.$valid && isSaved.link,
             'has-error': !isSaving.link && (form.url.$invalid || !isSaved.link)
          }">
         <label for="hippo.channelManager.menuManager.menuItem.edit.url">{{ 'EXTERNAL_LINK' | translate }}</label>
@@ -117,7 +117,7 @@
                placeholder="{{ 'EXAMPLE_DOMAIN' | translate }}"
                data-ng-model="selectedMenuItem.link"
                data-ng-required="true"
-               data-ng-blur="!form.url.$invalid ? saveSelectedMenuItem('link') : '';">
+               data-ng-blur="form.url.$valid ? saveSelectedMenuItem('link') : '';">
         <div class="tooltip-container" ng-show="form.url.$invalid">
             <div data-tooltip
                  data-placement="top"
@@ -127,7 +127,7 @@
            data-ng-show="form.url.$dirty"
            data-ng-class="{
             'fa-spinner fa-spin': isSaving.link,
-            'fa-check': !form.url.$invalid && isSaved.link,
+            'fa-check': form.url.$valid && isSaved.link,
             'fa-times': form.url.$invalid || !isSaved.link
            }"></i>
     </div>
