@@ -79,9 +79,12 @@ public class BasicReviewedActionsWorkflowImpl extends AbstractReviewedActionsWor
 
             boolean status = Boolean.TRUE.equals(info.get("status"));
             boolean editable = Boolean.TRUE.equals(info.get("obtainEditableInstance"));
-            boolean publishable = Boolean.TRUE.equals(info.get("publish"));
-            boolean depublishable = Boolean.TRUE.equals(info.get("depublish"));
+            boolean publishable = Boolean.TRUE.equals(info.get("publish")) || Boolean.TRUE.equals(info.get("requestPublication"));
+            boolean depublishable = Boolean.TRUE.equals(info.get("depublish")) || Boolean.TRUE.equals(info.get("requestDepublication"));
             Boolean deleteable = (Boolean) info.get("delete");
+            if (deleteable == null) {
+                deleteable = (Boolean) info.get("requestDelete");
+            }
 
             // put everything on the unpublished; unless it doesn't exist
             if (unpublishedDocument != null && !PublishableDocument.UNPUBLISHED.equals(state)) {
