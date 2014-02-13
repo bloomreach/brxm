@@ -27,6 +27,7 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -49,7 +50,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
  * @version "$Id$"
  */
 
-@Api(value = "/jcr", description = "Generic API for accessing Hippo repository")
+@Api(value = "/jcr/", description = "Generic API for accessing Hippo repository")
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/jcr/")
@@ -57,11 +58,21 @@ public class JcrResource extends BaseResource {
 
     private static final Logger log = LoggerFactory.getLogger(JcrResource.class);
 
+    @ApiOperation(
+            value = "Populated NodeRestful",
+            notes = "Retrieves and returns root node",
+            response = NodeRestful.class)
+
+    @GET
+    @Path("/")
+    public NodeRestful getRootNode(@Context ServletContext servletContext) throws RepositoryException {
+        return getNode(new NodeRestful("/", "/"), servletContext);
+    }
 
     @ApiOperation(
-            value= "Populated NodeRestful",
-            notes= "Path is taken from payload object which is also of type NodeRestful",
-            response= NodeRestful.class
+            value = "Populated NodeRestful",
+            notes = "Path is taken from payload object which is also of type NodeRestful",
+            response = NodeRestful.class
     )
     @POST
     @Path("/")
@@ -169,7 +180,6 @@ public class JcrResource extends BaseResource {
 
         return restful;
     }
-
 
 
 }
