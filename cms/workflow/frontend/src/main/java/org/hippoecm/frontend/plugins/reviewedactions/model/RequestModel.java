@@ -25,6 +25,7 @@ import javax.jcr.Session;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,15 +48,18 @@ public class RequestModel extends LoadableDetachableModel<Request> {
             Node node = session.getNodeByIdentifier(id);
 
             String state = "unknown";
+            Date schedule = null;
             if (node.isNodeType(HippoStdPubWfNodeType.NT_HIPPOSTDPUBWF_REQUEST)) {
                 state = node.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_TYPE).getString();
+                if (node.hasProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_REQDATE)) {
+                    schedule = new Date(node.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_REQDATE).getLong());
+                }
             }
-
-            Date schedule = null;
-            if (node.hasProperty("hipposched:triggers/default/hipposched:nextFireTime")) {
-                schedule = node.getProperty("hipposched:triggers/default/hipposched:nextFireTime").getDate().getTime();
-            } else if (node.hasProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_REQDATE)) {
-                schedule = new Date(node.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_REQDATE).getLong());
+            else if (node.isNodeType("hipposched:workflowjob")) {
+                state = "scheduled" + JcrUtils.getStringProperty(node, "hipposched:methodName", state);
+                if (node.hasProperty("hipposched:triggers/default/hipposched:nextFireTime")) {
+                    schedule = node.getProperty("hipposched:triggers/default/hipposched:nextFireTime").getDate().getTime();
+                }
             }
 
             return new Request(id, schedule, state, info);
