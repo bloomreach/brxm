@@ -2,14 +2,27 @@
     "use strict";
     angular.module('hippo.essentials')
             .controller('freemarkerSyncCtrl', function ($scope, $sce, $log, $rootScope, $http) {
-
+                $scope.endpoint = $rootScope.REST.dynamic + 'freemarkersync/';
+                $scope.selectAll = function () {
+                    angular.forEach($scope.scriptNodes, function (value) {
+                        value.selected = true;
+                    });
+                };
                 $scope.init = function () {
-                    //var query = {"query":{"query": "//element(*, hst:template)[@hst:script]", "type": "xpath", "page": 0, "pageSize": 0}};
-                    var query = {"query":{"query": "//element(*, hst:template)", "type": "xpath", "page": 0, "pageSize": 0}};
+                    var query = Essentials.queryBuilder("//hst:hst/hst:configurations//element(*, hst:template)");
                     $http.post($rootScope.REST.jcrQuery, query).success(function (data) {
-                        console.log("========================================");
+                        $scope.scriptNodes = [];
+                        angular.forEach(data.nodes, function (value) {
+                            var myValue = value.path;
+                            var displayValue = myValue.replace("/hst:hst/hst:configurations/","");
+                            $scope.scriptNodes.push({"value": myValue, "displayValue":displayValue,"selected":false});
+                        });
+                    });
+
+                    // get files and match with above paths:
+                    $http.get($scope.endpoint).success(function (data) {
+                        console.log("-----------------------");
                         console.log(data);
-                        $scope.scriptNodes = data.nodes;
                     });
                 };
                 $scope.init();

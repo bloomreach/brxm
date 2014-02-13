@@ -78,7 +78,7 @@
         "pluginClass": "org.onehippo.cms7.essentials.tools.gui.FreemarkerSyncPlugin",
         "pluginLink": "freemarkersync",
         "screenshots": [],
-        "restClasses": ["org.onehippo.cms7.essentials.tools.rest.FreemarkerSyncPlugin"],
+        "restClasses": ["org.onehippo.cms7.essentials.tools.rest.FreemarkerSyncResource"],
         "type": "tools",
         "vendor": {
             "name": "Hippo",

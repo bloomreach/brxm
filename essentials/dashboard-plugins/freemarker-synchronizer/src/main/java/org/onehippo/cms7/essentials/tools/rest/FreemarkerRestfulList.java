@@ -16,30 +16,28 @@
 
 package org.onehippo.cms7.essentials.tools.rest;
 
-import javax.servlet.ServletContext;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
+import java.util.List;
 
-import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementRefs;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 
 /**
  * @version "$Id$"
  */
-@Produces({MediaType.APPLICATION_JSON})
-@Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
-@Path("/freemarkersync/")
-public class FreemarkerSyncPlugin extends BaseResource {
+@XmlRootElement(name = "list")
+public class FreemarkerRestfulList extends RestfulList<MessageRestful> {
+    private static final long serialVersionUID = 1L;
 
 
-    @GET
-    @Path("/")
-    public String getTemplateList(@Context ServletContext servletContext) {
-
-        return null;
+    @XmlElementRefs({
+            @XmlElementRef(type = MessageRestful.class)
+    })
+    @Override
+    public List<MessageRestful> getItems() {
+        return items;
     }
-
 }

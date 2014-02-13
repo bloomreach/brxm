@@ -14,13 +14,19 @@ import com.google.common.collect.ImmutableSet;
  */
 public final class EssentialConst {
 
-
+    /**
+     * SCRIPTING
+     */
+    public static final String FREEMARKER_RELATIVE_FOLDER = "src" + File.separator + "main" + File.separator + "webapp" + File.separator + "WEB-INF" + File.separator + "ftl";
+    public static final String PATH_REL_WEB_ROOT = "src" + File.separator + "main" + File.separator + "webapp";
     /**
      * Namespace placeholder name
      */
     public static final String PLACEHOLDER_NAMESPACE = "namespace";
     public static final String PLACEHOLDER_PROJECT_ROOT = "projectRoot";
     public static final String PLACEHOLDER_SITE_ROOT = "siteRoot";
+    public static final String PLACEHOLDER_SITE_WEB_ROOT = "siteRoot";
+    public static final String PLACEHOLDER_SITE_FREEMARKER_ROOT = "siteRoot";
     public static final String PLACEHOLDER_JSP_ROOT = "jspRoot";
     public static final String PLACEHOLDER_CMS_ROOT = "cmsRoot";
     public static final String PLACEHOLDER_SOURCE = "source";
@@ -76,6 +82,7 @@ public final class EssentialConst {
                     "hippogallerypi cker");
     public static final String[] XML_FILTER = new String[]{"xml"};
     public static final String[] JAR_FILTER = new String[]{"jar"};
+    public static final String[] FTL_FILTER = new String[]{"ftl"};
     public static final String NS_JCR_PRIMARY_TYPE = "jcr:primaryType";
     public static final String NS_HIPPOSYSEDIT_TEMPLATETYPE = "hipposysedit:templatetype";
     public static final String URI_JCR_NAMESPACE = "http://www.jcp.org/jcr/sv/1.0";
@@ -105,10 +112,7 @@ public final class EssentialConst {
     public static final String HIPPO_DOCUMENT_IMPORT = "org.hippoecm.hst.content.beans.standard.HippoDocument";
     public static final String CONTENT_BLOCKS_TEMPLATE_XML = "content_blocks_template.xml";
 
-    /**
-     * SCRIPTING
-     */
-    public static final String FREEMARKER_RELATIVE_FOLDER = "src" + File.separator + "main" + File.separator + "webapp" + File.separator + "WEB-INF" + File.separator + "ftl";
+
 
 
     private EssentialConst() {

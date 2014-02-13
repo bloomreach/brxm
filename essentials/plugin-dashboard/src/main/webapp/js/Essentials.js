@@ -6,6 +6,27 @@
     // UTILS
     //############################################
 
+    var Query = function(){
+        this.query = {"query":{}};
+        var ref = this.query;
+        this.forQuery = function (query) {
+            ref.query = query;
+            return this;
+        };
+        this.forPageSize = function (pageSize) {
+            ref.pageSize = pageSize;
+            return this;
+        };
+        this.forPage = function (page) {
+            ref.page = page;
+            return this;
+        };
+        this.ofType = function (type) {
+            ref.type = type;
+            return this;
+        };
+
+    };
     Essentials.emptyPayload = function () {
         var payload = {};
         payload.values = {};
@@ -19,6 +40,12 @@
         }
         payload['payload'].values.entry.push({"key": key, "value": value});
         return payload;
+    };
+
+    Essentials.queryBuilder = function (q) {
+        var query = new Query();
+        query.forQuery(q);
+        return query;
     };
 
 
