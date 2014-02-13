@@ -191,19 +191,25 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
     @Override
     public void removeListener(final ItemStateListener listener) {
         if (listener instanceof HandleListener) {
-            final Iterator<WeakReference<HandleListener>> iterator = handleListeners.iterator();
-            while (iterator.hasNext()) {
-                final WeakReference<HandleListener> reference = iterator.next();
-                final HandleListener handleListener = reference.get();
-                if (handleListener == null) {
-                    iterator.remove();
-                } else if (handleListener == listener) {
-                    iterator.remove();
-                    break;
-                }
+            final WeakReference<HandleListener> reference = getHandleListenerReference(listener);
+            if (reference != null) {
+                handleListeners.remove(reference);
             }
         }
         super.removeListener(listener);
+    }
+
+    private WeakReference<HandleListener> getHandleListenerReference(final ItemStateListener listener) {
+        for (WeakReference<HandleListener> reference : handleListeners) {
+            final HandleListener handleListener = reference.get();
+            if (handleListener == listener) {
+                return reference;
+            }
+            if (handleListener == null) {
+                handleListeners.remove(reference);
+            }
+        }
+        return null;
     }
 
     private Name getHandleName(final RepositoryImpl repository) {
