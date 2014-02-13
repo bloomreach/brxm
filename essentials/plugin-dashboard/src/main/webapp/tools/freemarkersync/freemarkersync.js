@@ -10,9 +10,11 @@
                 };
                 $scope.saveToFile = function () {
                     var map = Essentials.mapBuilder();
+                    var one = false;
                     angular.forEach($scope.scriptNodes, function (value) {
                         map.put(value.displayValue, value.value);
                     });
+
                     $http.post($scope.endpoint + "file", map).success(function (data) {
                         console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
                         console.log(map);

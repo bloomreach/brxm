@@ -406,7 +406,6 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-themes/src/test/res
 dashboard-plugins/essentials-powerpacks/pom.xml -text
 dashboard-plugins/freemarker-synchronizer/pom.xml -text
 dashboard-plugins/freemarker-synchronizer/src/main/java/org/onehippo/cms7/essentials/tools/gui/FreemarkerSyncPlugin.java -text
-dashboard-plugins/freemarker-synchronizer/src/main/java/org/onehippo/cms7/essentials/tools/rest/FreemarkerRestfulList.java -text
 dashboard-plugins/freemarker-synchronizer/src/main/java/org/onehippo/cms7/essentials/tools/rest/FreemarkerSyncResource.java -text
 dashboard-plugins/pom.xml -text
 plugin-api/api/pom.xml -text
@@ -2020,6 +2019,7 @@ plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/dashboard/contentblo
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/ContentBlocksTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/RestClientTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/model/PluginRestfulTest.java -text
+plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/model/RestListTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/utils/RestWorkflowTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/servlet/JarResourceServletTest.java -text
 plugin-dashboard/src/test/resources/contentblocks-compare.json -text

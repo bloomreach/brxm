@@ -56,7 +56,7 @@ public class FreemarkerSyncResource extends BaseResource {
     public RestfulList<MessageRestful> getTemplateList(@Context ServletContext servletContext) {
 
         final PluginContext context = getContext(servletContext);
-        final RestfulList<MessageRestful> list = new FreemarkerRestfulList();
+        final RestfulList<MessageRestful> list = new RestfulList<>();
         list.add(new MessageRestful("test"));
 
         final File freemarkerDirectory = new File((String) context.getPlaceholderData().get(EssentialConst.PLACEHOLDER_SITE_FREEMARKER_ROOT));

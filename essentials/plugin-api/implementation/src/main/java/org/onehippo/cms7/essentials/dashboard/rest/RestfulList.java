@@ -17,18 +17,13 @@
 package org.onehippo.cms7.essentials.dashboard.rest;
 
 import java.io.Serializable;
-import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.ws.rs.core.GenericEntity;
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.onehippo.cms7.essentials.dashboard.utils.code.TypeRef;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -36,7 +31,7 @@ import com.google.common.collect.Lists;
  * @version "$Id$"
  */
 
-@XmlRootElement(name="collection")
+@XmlRootElement(name = "collection")
 public class RestfulList<T extends Restful> implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -54,7 +49,10 @@ public class RestfulList<T extends Restful> implements Serializable {
         return items.iterator();
     }
 
-    public List<T> getItems(){
+
+    @XmlElementRefs({
+            @XmlElementRef(type = KeyValueRestful.class)})
+    public List<T> getItems() {
         return items;
     }
 

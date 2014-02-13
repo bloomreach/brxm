@@ -8,10 +8,10 @@
 
     var Map = function () {
         this.collection = {};
-        var ref = this.collection.items = [];
+        var ref = this.collection.keyvalue = [];
         this.put = function (key, value) {
+            //ref.push({"key":key,"value":value});
             ref.push({"key":key,"value":value});
-            ref.push({"keyvalue":{"key":key,"value":value}});
             return this;
         };
 

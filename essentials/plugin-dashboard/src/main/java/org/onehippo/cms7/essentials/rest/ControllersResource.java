@@ -47,6 +47,7 @@ public class ControllersResource extends BaseResource {
     @GET
     @Path("/")
     public RestfulList<ControllerRestful> getControllers(@Context ServletContext servletContext) {
+
         final RestfulList<ControllerRestful> controllers = new RestList<>();
         final List<Plugin> plugins = getPlugins(servletContext);
         for (Plugin plugin : plugins) {
