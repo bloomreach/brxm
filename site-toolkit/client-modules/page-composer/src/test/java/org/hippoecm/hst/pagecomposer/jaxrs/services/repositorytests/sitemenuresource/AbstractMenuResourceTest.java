@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.sitemapresource;
+package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.sitemenuresource;
 
 import javax.jcr.Node;
 import javax.jcr.Repository;
@@ -24,16 +24,20 @@ import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
+import org.hippoecm.hst.configuration.internal.CanonicalInfo;
+import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
+import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMenuResource;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.MountResourceTest;
 import org.hippoecm.hst.site.HstServices;
 import org.junit.After;
@@ -42,9 +46,10 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import static org.junit.Assert.assertFalse;
 
-public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTest {
+public abstract class AbstractMenuResourceTest extends AbstractPageComposerTest {
 
     protected MountResource mountResource;
+    protected SiteMenuHelper siteMenuHelper;
 
     @Before
     @Override
@@ -70,15 +75,12 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         final Value[] values = (Value[])ArrayUtils.addAll(adminMembers, extra);
         adminGroup.setProperty("hipposys:members", values);
 
-        // move 2 sitemap items to workspace, keep rest in unittestproject/hst:sitemap
-        session.getNode("/hst:hst/hst:configurations/unittestproject").addNode("hst:workspace").addNode("hst:sitemap");
-        session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap/home",
-                "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/home");
-        session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap/news",
-                "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/news");
-
+        // move hst:sitemenus/main to workspace
+        session.getNode("/hst:hst/hst:configurations/unittestproject").addNode("hst:workspace");
+        session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemenus",
+                "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemenus");
         session.save();
-        createPreviewWithSiteMapWorkspace();
+        createPreviewWithSiteMenuWorkspace();
     }
 
     @After
@@ -104,7 +106,7 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         return repository.login(new SimpleCredentials(userName, password.toCharArray()));
     }
 
-    protected void createPreviewWithSiteMapWorkspace() throws Exception {
+    protected void createPreviewWithSiteMenuWorkspace() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL(request, "localhost", "/home");
 
@@ -119,68 +121,71 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         Thread.sleep(100);
     }
 
-    public SiteMapItemRepresentation getSiteMapItemRepresentation(final Session requestSession,
-                                                                  final String relPath) throws Exception {
-        final SiteMapRepresentation representation = getSiteMapRepresentation(requestSession);
+    public SiteMenuItemRepresentation getSiteMenuItemRepresentation(final Session requestSession,
+                                                                    final String menuName,
+                                                                    final String relPathMenuItem) throws Exception {
 
-        int segmentPos = 0;
-        String[] segments = relPath.split("/");
+        final HstSiteMenuConfiguration hstSiteMenuConfiguration = getHstSiteMenuConfiguration(requestSession, menuName);
+        mountResource.getPageComposerContextService().getRequestContext().setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER,
+                ((CanonicalInfo)hstSiteMenuConfiguration).getCanonicalIdentifier());
+        String[] segments = relPathMenuItem.split("/");
 
-        SiteMapItemRepresentation itemPresentation = null;
-        boolean match = false;
-        while (segmentPos < segments.length) {
-            if (segmentPos == 0) {
-                for (SiteMapItemRepresentation siteMapItemRepresentation : representation.getChildren()) {
-                    if (siteMapItemRepresentation.getName().equals(segments[segmentPos])) {
-                        itemPresentation = siteMapItemRepresentation;
-                        segmentPos++;
-                        match = true;
-                        break;
-                    }
+        HstSiteMenuItemConfiguration found = null;
+        for (HstSiteMenuItemConfiguration itemConfiguration : hstSiteMenuConfiguration.getSiteMenuConfigurationItems()) {
+            if (itemConfiguration.getName().equals(segments[0])) {
+                found = itemConfiguration;
+                break;
+            }
+        }
+        if (found == null) {
+            return null;
+        }
+        if (segments.length == 1) {
+
+            return new SiteMenuItemRepresentation(found);
+        }
+
+        for (int i = 1; i < segments.length; i++) {
+            boolean hit = false;
+            for (HstSiteMenuItemConfiguration child : found.getChildItemConfigurations()) {
+                if (child.getName().equals(segments[i])) {
+                    found = child;
+                    i++;
+                    hit = true;
+                    break;
                 }
-                if (!match) {
-                    return null;
-                }
-            } else {
-                match = false;
-                if (itemPresentation == null) {
-                    return null;
-                }
-                SiteMapItemRepresentation current = itemPresentation;
-                itemPresentation = null;
-                for (SiteMapItemRepresentation childItemRepresentation : current.getChildren()) {
-                    if (childItemRepresentation.getName().equals(segments[segmentPos])) {
-                        itemPresentation = childItemRepresentation;
-                        match = true;
-                        break;
-                    }
-                }
-                if (!match) {
-                    return null;
-                }
-                segmentPos++;
+            }
+            if (!hit) {
+                return null;
             }
         }
 
-        return itemPresentation;
+        if (found == null) {
+            return null;
+        }
+        return new SiteMenuItemRepresentation(found);
     }
 
-    public SiteMapRepresentation getSiteMapRepresentation(final Session requestSession) throws Exception {
+    private HstSiteMenuConfiguration getHstSiteMenuConfiguration(final Session requestSession, final String menuName) throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL(request, "localhost", "/home");
         ((HstMutableRequestContext) ctx).setSession(requestSession);
-        final HstSiteMap siteMap = mountResource.getPageComposerContextService().getEditingPreviewSite().getSiteMap();
-        return new SiteMapRepresentation().represent(siteMap);
+        final HstSite editingPreviewHstSite = mountResource.getPageComposerContextService().getEditingPreviewSite();
+        return editingPreviewHstSite.getSiteMenusConfiguration().getSiteMenuConfiguration(menuName);
     }
 
-    protected SiteMapResource createResource() {
+    protected SiteMenuResource createResource() {
 
-        final SiteMapHelper siteMapHelper = new SiteMapHelper();
-        siteMapHelper.setPageComposerContextService(mountResource.getPageComposerContextService());
+        siteMenuHelper = new SiteMenuHelper();
+        siteMenuHelper.setPageComposerContextService(mountResource.getPageComposerContextService());
 
-        final SiteMapResource siteMapResource = new SiteMapResource();
-        siteMapResource.setPageComposerContextService(mountResource.getPageComposerContextService());
-        siteMapResource.setSiteMapHelper(siteMapHelper);
-        return siteMapResource;
+        final SiteMenuResource siteMenuResource = new SiteMenuResource();
+        siteMenuResource.setPageComposerContextService(mountResource.getPageComposerContextService());
+        siteMenuResource.setSiteMenuHelper(siteMenuHelper);
+
+        final SiteMenuItemHelper siteMenuItemHelper = new SiteMenuItemHelper();
+        siteMenuItemHelper.setPageComposerContextService(mountResource.getPageComposerContextService());
+        siteMenuResource.setSiteMenuItemHelper(siteMenuItemHelper);
+        return siteMenuResource;
     }
 }
