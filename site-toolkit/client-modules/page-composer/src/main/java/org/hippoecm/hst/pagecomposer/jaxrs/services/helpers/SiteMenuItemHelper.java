@@ -20,8 +20,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jcr.AccessDeniedException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.version.VersionException;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType;
@@ -39,9 +43,16 @@ public class SiteMenuItemHelper extends AbstractHelper {
     }
 
     public Node create(Node parent, SiteMenuItemRepresentation newItem) throws RepositoryException {
+        acquireSimpleLock(getMenuAncestor(parent));
         final Node newChild = parent.addNode(newItem.getName(), HstNodeTypes.NODETYPE_HST_SITEMENUITEM);
         update(newChild, newItem);
         return newChild;
+    }
+
+
+    public void delete(final Node node) throws RepositoryException {
+        acquireSimpleLock(getMenuAncestor(node));
+        node.remove();
     }
 
     /**
@@ -52,6 +63,8 @@ public class SiteMenuItemHelper extends AbstractHelper {
      * @throws RepositoryException
      */
     public void update(Node node, SiteMenuItemRepresentation modifiedItem) throws RepositoryException {
+
+        acquireSimpleLock(getMenuAncestor(node));
 
         final String modifiedName = modifiedItem.getName();
         if (modifiedName != null && !modifiedName.equals(node.getName())) {
@@ -81,7 +94,6 @@ public class SiteMenuItemHelper extends AbstractHelper {
 
     }
 
-
     /**
      * Move the given node by appending it as the last child of the new parent and assigning it the give new node name.
      *
@@ -91,6 +103,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
      * @throws RepositoryException
      */
     public void move(Node node, String newNodeName, Node newParent) throws RepositoryException {
+        acquireSimpleLock(getMenuAncestor(node));
         node.getSession().move(node.getPath(), newParent.getPath() + "/" + newNodeName);
     }
 
@@ -106,6 +119,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
     }
 
     private void rename(Node node, String newName) throws RepositoryException {
+        acquireSimpleLock(getMenuAncestor(node));
         final Node parent = node.getParent();
         // remember the next sibling name, to be able to restore the node's position
         final String nextSiblingName = getNextSiblingName(node, parent);
@@ -127,5 +141,17 @@ public class SiteMenuItemHelper extends AbstractHelper {
         }
     }
 
+
+    private Node getMenuAncestor(final Node node) throws RepositoryException {
+        Node current = node;
+        while (current.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMENUITEM)) {
+            current = current.getParent();
+        }
+        if (current.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMENU)) {
+            return current;
+        }
+        throw new IllegalStateException("No ancestor of type '"+HstNodeTypes.NODETYPE_HST_SITEMENU+"' " +
+                "found for '"+node.getPath()+"'");
+    }
 
 }

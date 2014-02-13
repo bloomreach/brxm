@@ -16,11 +16,6 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.sitemenuresource;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import javax.jcr.Node;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
@@ -48,6 +43,10 @@ public class MenuCRUDTest extends AbstractMenuResourceTest{
         final Node newsNode = session.getNodeByIdentifier(newsItem.getId());
         assertEquals("test", newsNode.getProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM).getString());
 
+        final Node menuNode = newsNode.getParent();
+        assertEquals(HstNodeTypes.NODETYPE_HST_SITEMENU, menuNode.getPrimaryNodeType().getName());
+        // assert locked
+        assertEquals("admin", menuNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
     }
 
     @Test
@@ -58,15 +57,25 @@ public class MenuCRUDTest extends AbstractMenuResourceTest{
         resource.update(newsItem);
         final Node newsNode = session.getNodeByIdentifier(newsItem.getId());
         assertEquals("NewsRenamed", newsNode.getName());
+
+        final Node menuNode = newsNode.getParent();
+        assertEquals(HstNodeTypes.NODETYPE_HST_SITEMENU, menuNode.getPrimaryNodeType().getName());
+        // assert locked
+        assertEquals("admin", menuNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
     }
 
     @Test
     public void test_delete() throws Exception {
         final SiteMenuResource resource = createResource();
         final SiteMenuItemRepresentation newsItem = getSiteMenuItemRepresentation(session, "main", "News");
+        final Node menuNode = session.getNodeByIdentifier(newsItem.getId()).getParent();
         String oldPath = session.getNodeByIdentifier(newsItem.getId()).getPath();
         resource.delete(newsItem.getId());
         assertFalse(session.nodeExists(oldPath));
+
+        assertEquals(HstNodeTypes.NODETYPE_HST_SITEMENU, menuNode.getPrimaryNodeType().getName());
+        // assert locked
+        assertEquals("admin", menuNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
     }
 
     @Test
@@ -79,5 +88,10 @@ public class MenuCRUDTest extends AbstractMenuResourceTest{
         assertFalse(session.nodeExists(oldPath));
         String newPath = session.getNodeByIdentifier(contactItem.getId()).getPath() + "/News";
         assertTrue(session.nodeExists(newPath));
+
+        final Node menuNode = session.getNodeByIdentifier(contactItem.getId()).getParent();
+        assertEquals(HstNodeTypes.NODETYPE_HST_SITEMENU, menuNode.getPrimaryNodeType().getName());
+        // assert locked
+        assertEquals("admin", menuNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
     }
 }

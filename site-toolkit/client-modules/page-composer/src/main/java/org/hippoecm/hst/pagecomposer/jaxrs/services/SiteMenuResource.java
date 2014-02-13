@@ -178,7 +178,7 @@ public class SiteMenuResource extends AbstractConfigResource {
             @Override
             public Response call() throws Exception {
                 final Session session = getPageComposerContextService().getRequestContext().getSession();
-                session.getNodeByIdentifier(menuItemId).remove();
+                siteMenuItemHelper.delete(session.getNodeByIdentifier(menuItemId));
                 return ok("Item deleted successfully", menuItemId);
             }
         }, preValidators);

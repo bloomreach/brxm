@@ -84,7 +84,24 @@ public abstract class AbstractHelper {
             throw new IllegalStateException("Node '"+node.getPath()+"' cannot be locked due to someone else who " +
                     "has the lock (possibly an ancestor that is locked).");
         }
+        doLock(node);
+    }
 
+    /**
+     * @see {@link #acquireLock(javax.jcr.Node)} only for the acquireSimpleLock there is no need to check descendant or
+     * ancestors. It is only the node itself that needs to be checked. This is for example the case for sitemenu nodes
+     * where there is no fine-grained locking for the items below it
+     */
+    public void acquireSimpleLock(final Node node) throws RepositoryException {
+        if (hasLockBySomeOneElse(node)) {
+            throw new IllegalStateException("Node '"+node.getPath()+"' cannot be locked due to someone else who " +
+                    "has the lock.");
+        }
+        doLock(node);
+    }
+
+
+    private void doLock(final Node node) throws RepositoryException {
         if (!node.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)) {
             node.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
         }
@@ -179,15 +196,22 @@ public abstract class AbstractHelper {
     }
 
     protected boolean hasSelfOrDescendantLockBySomeOneElse(final Node node) throws RepositoryException {
-        if (node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
-            String lockedBy = node.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString();
-            if (!lockedBy.equals(node.getSession().getUserID())) {
-                return true;
-            }
+        if (hasLockBySomeOneElse(node)) {
+            return true;
         }
         for (Node child : new NodeIterable(node.getNodes())) {
             boolean hasDescendantLock = hasSelfOrDescendantLockBySomeOneElse(child);
             if (hasDescendantLock) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected boolean hasLockBySomeOneElse(final Node node) throws RepositoryException {
+        if (node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
+            String lockedBy = node.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString();
+            if (!lockedBy.equals(node.getSession().getUserID())) {
                 return true;
             }
         }
