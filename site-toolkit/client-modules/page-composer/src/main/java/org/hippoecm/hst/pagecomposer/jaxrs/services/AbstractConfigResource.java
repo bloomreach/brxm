@@ -156,7 +156,6 @@ public class AbstractConfigResource {
     }
 
     protected Response logAndReturnServerError(Exception e) {
-        log.error(e.toString(), e);
         if (log.isDebugEnabled()) {
             log.warn(e.toString(), e);
         } else {
@@ -166,7 +165,6 @@ public class AbstractConfigResource {
     }
 
     protected Response logAndReturnClientError(Exception e) {
-        log.error(e.toString(), e);
         if (log.isDebugEnabled()) {
             log.info(e.toString(), e);
         } else {
