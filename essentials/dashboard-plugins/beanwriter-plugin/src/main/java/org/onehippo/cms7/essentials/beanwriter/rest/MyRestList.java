@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,45 +14,39 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.rest.model;
+package org.onehippo.cms7.essentials.beanwriter.rest;
 
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.Restful;
+import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
+
+import com.google.common.collect.Lists;
 
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "keyvalue")
-public class KeyValueRestful implements Restful {
+@XmlRootElement(name = "collection")
+public class MyRestList extends RestfulList<MessageRestful> {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
-    private String value;
 
-    public KeyValueRestful() {
+    @XmlElementRefs({
+            @XmlElementRef(type = MessageRestful.class),
+
+    })
+    public List<MessageRestful> getItems() {
+        return items;
     }
 
-    public KeyValueRestful(final String key, final String value) {
 
-        this.key = key;
-        this.value = value;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(final String key) {
-        this.key = key;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(final String value) {
-        this.value = value;
-    }
 }

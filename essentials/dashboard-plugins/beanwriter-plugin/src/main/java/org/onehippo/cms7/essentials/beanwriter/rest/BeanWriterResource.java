@@ -36,6 +36,7 @@ import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.model.BeanWriterLogEntry;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
@@ -63,7 +64,7 @@ public class BeanWriterResource extends BaseResource {
         final PluginContext context = new DefaultPluginContext(GlobalUtils.createSession(), getPluginByClassName(className, servletContext));
         // inject project settings:
         final PluginConfigService service = context.getConfigService();
-        final RestfulList<MessageRestful> messages = new RestfulList<>();
+        final RestfulList<MessageRestful> messages = new MyRestList();
         final ProjectSettingsBean document = service.read(className, ProjectSettingsBean.class);
         if (document != null) {
             context.setBeansPackageName(document.getSelectedBeansPackage());

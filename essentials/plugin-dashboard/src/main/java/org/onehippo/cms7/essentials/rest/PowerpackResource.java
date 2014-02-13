@@ -43,6 +43,7 @@ import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.ProjectRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
@@ -51,7 +52,7 @@ import org.onehippo.cms7.essentials.powerpack.BasicPowerpackWithSamples;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.rest.model.PowerpackListRestful;
 import org.onehippo.cms7.essentials.rest.model.PowerpackRestful;
-import org.onehippo.cms7.essentials.rest.model.RestfulList;
+import org.onehippo.cms7.essentials.rest.model.RestList;
 import org.onehippo.cms7.essentials.rest.model.StepRestful;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,7 +87,7 @@ public class PowerpackResource extends BaseResource {
     @GET
     @Path("/install/{id}/{sample}")
     public RestfulList<MessageRestful> installPowerpack(@Context ServletContext servletContext, @PathParam("id") String id, @PathParam("sample") final boolean sampleContent) {
-        final RestfulList<MessageRestful> messageRestfulRestfulList = new RestfulList<>();
+        final RestfulList<MessageRestful> messageRestfulRestfulList = new RestList<>();
         if (Strings.isNullOrEmpty(id)) {
             return messageRestfulRestfulList;
         }

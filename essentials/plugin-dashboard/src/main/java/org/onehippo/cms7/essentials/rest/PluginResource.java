@@ -54,11 +54,12 @@ import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.installer.InstallState;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
+import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.rest.model.PluginRestful;
 import org.onehippo.cms7.essentials.rest.model.PostPayloadRestful;
-import org.onehippo.cms7.essentials.rest.model.RestfulList;
+import org.onehippo.cms7.essentials.rest.model.RestList;
 import org.onehippo.cms7.essentials.servlet.DynamicRestPointsApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +98,7 @@ public class PluginResource extends BaseResource {
     @GET
     @Path("/")
     public RestfulList<PluginRestful> getPluginList(@Context ServletContext servletContext) {
-        final RestfulList<PluginRestful> plugins = new RestfulList<>();
+        final RestfulList<PluginRestful> plugins = new RestList<>();
 
 
         final InputStream stream = getClass().getResourceAsStream("/plugin_descriptor.json");
@@ -220,7 +221,7 @@ public static List<PluginRestful> parseGist() {
     @Path("/configure/add")
     public RestfulList<PluginRestful> addToRecentlyInstalled(@Context ServletContext servletContext, final PostPayloadRestful payload) {
 
-        final RestfulList<PluginRestful> plugins = new RestfulList<>();
+        final RestfulList<PluginRestful> plugins = new RestList<>();
         final List<Plugin> pluginList = getPlugins(servletContext);
         for (Plugin p : pluginList) {
 
@@ -239,7 +240,7 @@ public static List<PluginRestful> parseGist() {
     @Path("/configure/list")
     public RestfulList<PluginRestful> getRecentlyInstalled(@Context ServletContext servletContext) {
 
-        final RestfulList<PluginRestful> plugins = new RestfulList<>();
+        final RestfulList<PluginRestful> plugins = new RestList<>();
         final List<Plugin> pluginList = getPlugins(servletContext);
         for (Plugin plugin : pluginList) {
             final PluginRestful resource = new PluginRestful();

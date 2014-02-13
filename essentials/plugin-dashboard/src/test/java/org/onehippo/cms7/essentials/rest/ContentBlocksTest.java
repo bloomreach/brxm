@@ -8,9 +8,10 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
+import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
-import org.onehippo.cms7.essentials.rest.model.KeyValueRestful;
-import org.onehippo.cms7.essentials.rest.model.RestfulList;
+import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
+import org.onehippo.cms7.essentials.rest.model.RestList;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.CBPayload;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.DocumentType;
 
@@ -41,8 +42,8 @@ public class ContentBlocksTest {
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         CBPayload cbPayload = new CBPayload();
-        final RestfulList<DocumentType> types = new RestfulList<>();
-        final RestfulList<KeyValueRestful> keyValueRestfulRestfulList = new RestfulList<>();
+        final RestfulList<DocumentType> types = new RestList<>();
+        final RestfulList<KeyValueRestful> keyValueRestfulRestfulList = new RestList<>();
         keyValueRestfulRestfulList.add(new KeyValueRestful("Provider 1", "Provider 1"));
         keyValueRestfulRestfulList.add(new KeyValueRestful("Provider 2", "Provider 2"));
         types.add(new DocumentType("News document", "namespace:news", keyValueRestfulRestfulList));

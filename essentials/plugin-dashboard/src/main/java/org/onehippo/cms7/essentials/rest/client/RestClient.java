@@ -7,8 +7,8 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.transport.http.HTTPConduit;
+import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.rest.model.PluginRestful;
-import org.onehippo.cms7.essentials.rest.model.RestfulList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

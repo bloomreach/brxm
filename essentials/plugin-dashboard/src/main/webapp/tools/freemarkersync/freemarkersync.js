@@ -3,9 +3,19 @@
     angular.module('hippo.essentials')
             .controller('freemarkerSyncCtrl', function ($scope, $sce, $log, $rootScope, $http) {
                 $scope.endpoint = $rootScope.REST.dynamic + 'freemarkersync/';
-                $scope.selectAll = function () {
+                $scope.saveToRepository = function () {
                     angular.forEach($scope.scriptNodes, function (value) {
-                        value.selected = true;
+                        console.log(value);
+                    });
+                };
+                $scope.saveToFile = function () {
+                    angular.forEach($scope.scriptNodes, function (value) {
+                        var files = [];
+                        files.push("xxxx");
+
+                        $http.post($rootScope.REST, files, true).success(function (data) {
+                            console.log(data);
+                        });
                     });
                 };
                 $scope.init = function () {

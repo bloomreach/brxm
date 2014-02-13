@@ -23,32 +23,34 @@
             <div class="list-group">
                 <div class="list-group-item">
                     <div ng-show="scriptNodes.length < 1" class="alert-success">
-                        <p>There is no Freemarker markup stored in the repository</p>
+                        <p>There are no Freemarker scripts stored in the repository</p>
                     </div>
                 </div>
-
-
                 <table ng-show="scriptNodes.length > 0" class="table table-striped table-bordered">
                     <thead>
                     <tr>
-                        <th class="col-sm-7">
-                            <button class="btn btn-default" ng-click="selectAll()" style="vertical-align: middle">
-                                <span class="glyphicon glyphicon-check"></span>
-                                Select all
+                        <th colspan="2">
+                            <button tooltip="Save all scripts to file system" class="btn btn-success" ng-click="saveToFile()" style="vertical-align: middle">
+                                <span class="glyphicon glyphicon-floppy-save"></span>
+                                Save/update to file system
+                            </button>
+                            <button tooltip="Write freemarker file content into repository" class="btn btn-success" ng-click="saveToRepository()" style="vertical-align: middle">
+                                <span class="glyphicon glyphicon-cloud-upload"></span>
+                                Save files to repository
                             </button>
                         </th>
+
+                    </tr>
+                    <tr>
                         <th class="col-sm-7">Freemarker markup stored in the repository:</th>
+                        <th class="col-sm-7">Freemarker markup stored on file system:</th>
                     </tr>
                     </thead>
                     <tbody>
                     </tbody>
                     <tr ng-repeat="node in scriptNodes">
-
-                        <td>
-                            <span style="padding-right: 20px; cursor: default">
-                                <input type="checkbox" checked="{{node.selected}}" ng-model="node.selected"/></span>
-                        </td>
                         <td>{{node.displayValue}}</td>
+                        <td>{{node.filePath}}</td>
                     </tr>
                 </table>
 

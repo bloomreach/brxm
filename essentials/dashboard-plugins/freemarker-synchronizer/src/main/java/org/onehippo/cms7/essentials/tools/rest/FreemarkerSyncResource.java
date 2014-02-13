@@ -82,6 +82,7 @@ public class FreemarkerSyncResource extends BaseResource {
     @Path("/file")
     public MessageRestful writeToFileSystem(final String[] paths, final boolean overwrite, @Context ServletContext servletContext) {
 
+
         return new MessageRestful("Successfully wrote");
     }
 

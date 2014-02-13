@@ -28,8 +28,10 @@ import javax.ws.rs.core.MediaType;
 
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
+import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.rest.model.ControllerRestful;
-import org.onehippo.cms7.essentials.rest.model.RestfulList;
+import org.onehippo.cms7.essentials.rest.model.RestList;
+
 
 import com.google.common.base.Strings;
 
@@ -45,7 +47,7 @@ public class ControllersResource extends BaseResource {
     @GET
     @Path("/")
     public RestfulList<ControllerRestful> getControllers(@Context ServletContext servletContext) {
-        final RestfulList<ControllerRestful> controllers = new RestfulList<>();
+        final RestfulList<ControllerRestful> controllers = new RestList<>();
         final List<Plugin> plugins = getPlugins(servletContext);
         for (Plugin plugin : plugins) {
             final String pluginLink = plugin.getPluginLink();

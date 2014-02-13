@@ -112,6 +112,7 @@
                     jcr: root + '/jcr/',
                     jcrQuery: root + '/jcr/query/',
                     dynamic: root + '/dynamic/',
+                    projectSettings: root + '/keyvalue/settings',
 
                     /**
                      * Returns list of all plugins

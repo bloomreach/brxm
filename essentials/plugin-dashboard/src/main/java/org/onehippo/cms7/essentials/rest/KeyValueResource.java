@@ -16,16 +16,22 @@
 
 package org.onehippo.cms7.essentials.rest;
 
+import java.util.Map;
+
+import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
-import org.onehippo.cms7.essentials.rest.model.KeyValueRestful;
-import org.onehippo.cms7.essentials.rest.model.RestfulList;
+import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
+import org.onehippo.cms7.essentials.rest.model.RestList;
+
 
 /**
  * @version "$Id$"
@@ -36,20 +42,27 @@ import org.onehippo.cms7.essentials.rest.model.RestfulList;
 public class KeyValueResource extends BaseResource {
 
 
+    /**
+     * Returns a list of all project settings like: site/cms root folder path, project namespace etc.
+     *
+     * @return
+     */
     @GET
-    @Path("/")
-    public RestfulList<KeyValueRestful> getKeyValue() {
-        final RestfulList<KeyValueRestful> keyValueRestfulRestfulList = new RestfulList<>();
-        keyValueRestfulRestfulList.add(new KeyValueRestful("key","value"));
-        return keyValueRestfulRestfulList;
+    @Path("/settings")
+    public RestfulList<KeyValueRestful> getKeyValue(@Context ServletContext servletContext) {
+        final PluginContext context = getContext(servletContext);
+        final Map<String, Object> placeholderData = context.getPlaceholderData();
+        final RestfulList<KeyValueRestful> list = new RestList<>();
+        for (Map.Entry<String, Object> entry : placeholderData.entrySet()) {
+            final Object value = entry.getValue();
+            if (value instanceof String) {
+                final KeyValueRestful keyValueRestful = new KeyValueRestful(entry.getKey(), (String) value);
+                list.add(keyValueRestful);
+            }
+        }
+        return list;
 
     }
 
-    @GET
-    @Path("/{serviceId}")
-    public RestfulList<KeyValueRestful> getKeyValueForService(@PathParam("serviceId") String serviceId) {
-        return new RestfulList<>();
-
-    }
 
 }

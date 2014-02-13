@@ -36,7 +36,7 @@ import com.google.common.collect.Lists;
  * @version "$Id$"
  */
 
-public abstract class RestfulList<T extends Restful> implements Serializable {
+public class RestfulList<T extends Restful> implements Serializable {
 
     private static final Logger log = LoggerFactory.getLogger(RestfulList.class);
 
@@ -55,6 +55,8 @@ public abstract class RestfulList<T extends Restful> implements Serializable {
         return items.iterator();
     }
 
-    public abstract List<T> getItems();
+    public List<T> getItems(){
+        return items;
+    }
 
 }

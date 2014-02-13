@@ -43,13 +43,15 @@ import javax.ws.rs.core.Response;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
+import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils;
 import org.onehippo.cms7.essentials.rest.exc.RestException;
-import org.onehippo.cms7.essentials.rest.model.KeyValueRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
-import org.onehippo.cms7.essentials.rest.model.RestfulList;
+
+import org.onehippo.cms7.essentials.rest.model.RestList;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.AllDocumentMatcher;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.CBPayload;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.Compounds;
@@ -77,7 +79,7 @@ public class ContentBlocksResource extends BaseResource {
     @GET
     @Path("/")
     public RestfulList<DocumentType> getControllers(@Context ServletContext servletContext) {
-        final RestfulList<DocumentType> types = new RestfulList<>();
+        final RestfulList<DocumentType> types = new RestList<>();
 
         final Session session = GlobalUtils.createSession();
         final PluginContext context = getContext(servletContext);
@@ -89,7 +91,7 @@ public class ContentBlocksResource extends BaseResource {
             final Map<String, Compounds> compoundMap = getCompoundMap(servletContext);
 
             for (String primaryType : primaryTypes) {
-                final RestfulList<KeyValueRestful> keyValueRestfulRestfulList = new RestfulList<>();
+                final RestfulList<KeyValueRestful> keyValueRestfulRestfulList = new RestList<>();
                 final NodeIterator it = executeQuery(MessageFormat.format("{0}//element(*, frontend:plugin)[@cpItemsPath]", HippoNodeUtils.resolvePath(primaryType).substring(1)));
                 while (it.hasNext()) {
                     final String name = it.nextNode().getName();
@@ -130,7 +132,7 @@ public class ContentBlocksResource extends BaseResource {
     @GET
     @Path("/compounds")
     public RestfulList<Compounds> getCompounds(@Context ServletContext servletContext) {
-        final RestfulList<Compounds> types = new RestfulList<>();
+        final RestfulList<Compounds> types = new RestList<>();
         final Session session = GlobalUtils.createSession();
         try {
             final Set<String> primaryTypes = HippoNodeUtils.getCompounds(session, new HasProviderMatcher());
