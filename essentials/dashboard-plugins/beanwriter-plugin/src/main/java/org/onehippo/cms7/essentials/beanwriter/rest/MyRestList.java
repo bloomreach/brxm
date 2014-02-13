@@ -40,6 +40,7 @@ public class MyRestList extends RestfulList<MessageRestful> {
     private static final long serialVersionUID = 1L;
 
 
+    @Override
     @XmlElementRefs({
             @XmlElementRef(type = MessageRestful.class),
 

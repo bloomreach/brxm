@@ -163,19 +163,15 @@
 
                 };
 
+                /**
+                 * Set global variables (often used stuff)
+                 */
                 $rootScope.initData = function () {
-                    $http({
-                        method: 'GET',
-                        url: $rootScope.REST.controllers
-                    }).success(function (data) {
+                    $http.get($rootScope.REST.controllers).success(function (data) {
                         $rootScope.controllers = data;
-                        // load all controller files:
-                        /*var controller = $rootScope.controllers.controller;
-                         for(var i = 0; i < controller.length; i++){
-                         $log.info(controller[i].id);
-                         require(["plugins/"+ controller[i].id+"/controller.js"]);
-                         $log.info("Loaded: " + controller[i].id);
-                         }*/
+                    });
+                    $http.get($rootScope.REST.projectSettings).success(function (data) {
+                        $rootScope.projectSettings = data.keyvalue;
 
                     });
 

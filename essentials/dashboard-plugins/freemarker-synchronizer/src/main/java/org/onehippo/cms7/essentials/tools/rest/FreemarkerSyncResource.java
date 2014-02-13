@@ -31,6 +31,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.io.FileUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
+import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
@@ -80,10 +81,12 @@ public class FreemarkerSyncResource extends BaseResource {
 
     @POST
     @Path("/file")
-    public MessageRestful writeToFileSystem(final String[] paths, final boolean overwrite, @Context ServletContext servletContext) {
+    public RestfulList<KeyValueRestful> writeToFileSystem(final RestfulList<KeyValueRestful> paths, @Context ServletContext servletContext) {
 
-
-        return new MessageRestful("Successfully wrote");
+        log.info("paths {}", paths.getItems());
+        final RestfulList<KeyValueRestful> list = new RestfulList<>();
+        list.add(new KeyValueRestful("test", "valyue"));
+        return list;
     }
 
 

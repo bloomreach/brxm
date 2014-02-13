@@ -6,6 +6,16 @@
     // UTILS
     //############################################
 
+    var Map = function () {
+        this.collection = {};
+        var ref = this.collection.items = [];
+        this.put = function (key, value) {
+            ref.push({"key":key,"value":value});
+            ref.push({"keyvalue":{"key":key,"value":value}});
+            return this;
+        };
+
+    };
     var Query = function(){
         this.query = {"query":{}};
         var ref = this.query;
@@ -46,6 +56,10 @@
         var query = new Query();
         query.forQuery(q);
         return query;
+    };
+
+    Essentials.mapBuilder = function () {
+        return new Map();
     };
 
 

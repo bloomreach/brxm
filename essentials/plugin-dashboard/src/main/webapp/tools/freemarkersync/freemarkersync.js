@@ -9,13 +9,15 @@
                     });
                 };
                 $scope.saveToFile = function () {
+                    var map = Essentials.mapBuilder();
                     angular.forEach($scope.scriptNodes, function (value) {
-                        var files = [];
-                        files.push("xxxx");
-
-                        $http.post($rootScope.REST, files, true).success(function (data) {
-                            console.log(data);
-                        });
+                        map.put(value.displayValue, value.value);
+                    });
+                    $http.post($scope.endpoint + "file", map).success(function (data) {
+                        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+                        console.log(map);
+                        console.log(data);
+                        console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
                     });
                 };
                 $scope.init = function () {
@@ -24,8 +26,8 @@
                         $scope.scriptNodes = [];
                         angular.forEach(data.nodes, function (value) {
                             var myValue = value.path;
-                            var displayValue = myValue.replace("/hst:hst/hst:configurations/","");
-                            $scope.scriptNodes.push({"value": myValue, "displayValue":displayValue,"selected":false});
+                            var displayValue = myValue.replace("/hst:hst/hst:configurations/", "");
+                            $scope.scriptNodes.push({"value": myValue, "displayValue": displayValue, "selected": false});
                         });
                     });
 
@@ -34,6 +36,7 @@
                         console.log("-----------------------");
                         console.log(data);
                     });
+
                 };
                 $scope.init();
             })

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.rest;
+package org.onehippo.cms7.essentials.rest;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -36,15 +36,20 @@ import javax.ws.rs.core.MediaType;
 import org.onehippo.cms7.essentials.dashboard.model.NodeRestful;
 import org.onehippo.cms7.essentials.dashboard.model.PropertyRestful;
 import org.onehippo.cms7.essentials.dashboard.model.QueryRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
 
 /**
  * @version "$Id$"
  */
+
+@Api(value = "/jcr", description = "Generic API for accessing Hippo repository")
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/jcr/")
@@ -53,6 +58,11 @@ public class JcrResource extends BaseResource {
     private static final Logger log = LoggerFactory.getLogger(JcrResource.class);
 
 
+    @ApiOperation(
+            value= "Populated NodeRestful",
+            notes= "Path is taken from payload object which is also of type NodeRestful",
+            response= NodeRestful.class
+    )
     @POST
     @Path("/")
     public NodeRestful getNode(final NodeRestful payload, @Context ServletContext servletContext) throws RepositoryException {

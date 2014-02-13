@@ -36,9 +36,8 @@ import com.google.common.collect.Lists;
  * @version "$Id$"
  */
 
+@XmlRootElement(name="collection")
 public class RestfulList<T extends Restful> implements Serializable {
-
-    private static final Logger log = LoggerFactory.getLogger(RestfulList.class);
 
     private static final long serialVersionUID = 1L;
     protected List<T> items = Lists.newArrayList();
