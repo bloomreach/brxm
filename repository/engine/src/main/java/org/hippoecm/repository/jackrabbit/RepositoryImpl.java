@@ -15,11 +15,8 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.NamespaceException;
@@ -28,16 +25,12 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.security.auth.Subject;
 
-import org.apache.jackrabbit.core.HierarchyManager;
-import org.apache.jackrabbit.core.HierarchyManagerImpl;
 import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.apache.jackrabbit.core.SearchManager;
-import org.apache.jackrabbit.core.config.ConfigurationException;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
 import org.apache.jackrabbit.core.fs.FileSystem;
 import org.apache.jackrabbit.core.id.NodeId;
-import org.apache.jackrabbit.core.journal.JournalException;
 import org.apache.jackrabbit.core.lock.LockManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.observation.ObservationDispatcher;
@@ -50,17 +43,9 @@ import org.apache.jackrabbit.core.security.authentication.AuthContext;
 import org.apache.jackrabbit.core.state.ISMLocking;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
-import org.apache.jackrabbit.spi.commons.conversion.DefaultNamePathResolver;
-import org.apache.jackrabbit.spi.commons.namespace.RegistryNamespaceResolver;
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.query.lucene.HippoQueryHandler;
 import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
-import org.hippoecm.repository.replication.ReplicationJournal;
-import org.hippoecm.repository.replication.ReplicationJournalProducer;
-import org.hippoecm.repository.replication.ReplicatorContext;
-import org.hippoecm.repository.replication.ReplicatorNode;
-import org.hippoecm.repository.replication.config.ReplicationConfig;
-import org.hippoecm.repository.replication.config.ReplicatorNodeConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,8 +53,6 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
 
     private static Logger log = LoggerFactory.getLogger(RepositoryImpl.class);
     
-    private Map<String, ReplicatorNode> replicatorNodes;
-    private ReplicationJournal journal;
     private FacetedNavigationEngine<FacetedNavigationEngine.Query, FacetedNavigationEngine.Context> facetedEngine;
 
     protected boolean isStarted = false;
@@ -257,71 +240,10 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
 
     protected class HippoWorkspaceInfo extends org.apache.jackrabbit.core.RepositoryImpl.WorkspaceInfo {
 
-        private ReplicationJournalProducer listener;
         private SearchManager searchMgr;
 
         protected HippoWorkspaceInfo(WorkspaceConfig config) {
             super(config);
-        }
-
-        /**
-         * Initializes the search manager of this workspace info. This method
-         * is called while still holding the write lock on this workspace
-         * info, but {@link #initialized} is already set to <code>true</code>.
-         *
-         * @throws RepositoryException if the search manager could not be created
-         */
-        @Override
-        protected void doPostInitialize() throws RepositoryException {
-            super.doPostInitialize();
-
-            ReplicationConfig rc = ReplicationConfig.create(getRepositoryConfig().getHomeDir());
-
-            if (rc == null) {
-                // This is normal. It just means that no replicators are configured.
-                log.debug("No replication config found.");
-                return;
-            }
-            if (rc.getReplicatorConfigs().size() == 0) {
-                log.warn("No replicator nodes configured in replicator config");
-                return;
-            }
-
-            if (journal == null) {
-                try {
-                    journal = rc.getJournalConfig();
-                    journal.setRepositoryHome(new File(getRepositoryConfig().getHomeDir()));
-                    journal.init("REPL-JOURNAL", new RegistryNamespaceResolver(getNamespaceRegistry()));
-                } catch (JournalException e) {
-                    log.error("Error while setting up journal for replication. Replication is disabled", e);
-                    return;
-                }
-            }
-
-            if (listener == null) {
-                listener = new ReplicationJournalProducer(getName(), journal.getProducer("REPL-PRODUCER"), journal
-                        .getLocalChangesOnly());
-            }
-            if (replicatorNodes == null) {
-                replicatorNodes = new HashMap<String, ReplicatorNode>();
-            }
-
-            for (ReplicatorNodeConfig config : rc.getReplicatorConfigs()) {
-                DefaultNamePathResolver npRes = new DefaultNamePathResolver(getNamespaceRegistry());
-                HierarchyManager hierMgr = new HierarchyManagerImpl(getRootNodeId(), getItemStateProvider());
-                ReplicatorContext context = new ReplicatorContext(journal, getItemStateProvider(), getNodeTypeRegistry(), hierMgr, npRes);
-                try {
-                    ReplicatorNode replicatorNode = new ReplicatorNode(config);
-                    replicatorNode.init(context);
-                    replicatorNode.start();
-                    registerReplicator(replicatorNode);
-                } catch (ConfigurationException e) {
-                    log.error("Failed to create replicator node", e);
-                }
-            }
-
-            // register listener
-            ((HippoSharedItemStateManager) getItemStateProvider()).registerUpdateListener(listener);
         }
 
         @Override
@@ -374,52 +296,6 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
         @Override
         protected LockManagerImpl createLockManager() throws RepositoryException {
             return new HippoLockManager(getSystemSession(), getFileSystem(), context.getExecutor());
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     * Stop replicators and close journal.
-     */
-    @Override
-    public void shutdown() {
-        stopReplicators();
-        if (journal != null) {
-            journal.close();
-        }
-        super.shutdown();
-    }
-
-    /**
-     * Register a {@link ReplicatorNode}.
-     * @param replicator
-     */
-    public void registerReplicator(ReplicatorNode replicator) {
-        synchronized (replicatorNodes) {
-            replicatorNodes.put(replicator.getId(), replicator);
-        }
-    }
-
-    /**
-     * Unregister a {@link ReplicatorNode}.
-     * @param replicator
-     */
-    public void unRegisterReplicator(ReplicatorNode replicator) {
-        synchronized (replicatorNodes) {
-            replicatorNodes.remove(replicator.getId());
-        }
-    }
-
-    /**
-     * Stop all {@link ReplicatorNode}s.
-     */
-    protected void stopReplicators() {
-        if (replicatorNodes != null) {
-            synchronized (replicatorNodes) {
-                for (ReplicatorNode replicator : replicatorNodes.values()) {
-                    replicator.stop();
-                }
-            }
         }
     }
 

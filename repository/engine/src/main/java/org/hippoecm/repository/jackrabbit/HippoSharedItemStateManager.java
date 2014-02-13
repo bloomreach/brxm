@@ -16,18 +16,13 @@
 package org.hippoecm.repository.jackrabbit;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.jcr.NamespaceException;
 import javax.jcr.ReferentialIntegrityException;
-import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 
 import org.apache.jackrabbit.core.cluster.ClusterException;
@@ -56,7 +51,6 @@ import org.apache.jackrabbit.core.state.StaleItemStateException;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.hippoecm.repository.dataprovider.HippoNodeId;
-import org.hippoecm.repository.replication.ReplicationUpdateEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,7 +60,6 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
 
     public RepositoryImpl repository;
 
-    private List<ReplicationUpdateEventListener> updateListeners = new ArrayList<ReplicationUpdateEventListener>();
     private Name handleNodeName;
     private Name documentNodeName;
     private NodeTypeRegistry nodeTypeRegistry;
@@ -92,13 +85,11 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
     @Override
     public void update(ChangeLog local, EventStateCollectionFactory factory) throws ReferentialIntegrityException, StaleItemStateException, ItemStateException {
         super.update(local, factory);
-        updateInternalListeners(local, factory);
     }
 
     @Override
     public void externalUpdate(ChangeLog external, EventStateCollection events) {
         super.externalUpdate(external, events);
-        updateExternalListeners(external, events);
         notifyDocumentListeners(external);
     }
 
@@ -234,59 +225,6 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
             }
         }
         return documentNodeName;
-    }
-
-    public void updateInternalListeners(ChangeLog changes, EventStateCollectionFactory factory) {
-        EventStateCollection events = null;
-        try {
-            events = factory.createEventStateCollection();
-        } catch (RepositoryException e) {
-            log.error("Unable to create events for for local changes", e);
-        }
-
-        synchronized (updateListeners) {
-            for (ReplicationUpdateEventListener listener : updateListeners) {
-                try {
-                    listener.internalUpdate(changes, events.getEvents());
-                } catch (RepositoryException e) {
-                    log.error("Error while updating replication update event listener.", e);
-                }
-            }
-        }
-    }
-
-    public void updateExternalListeners(ChangeLog changes, EventStateCollection events) {
-        synchronized (updateListeners) {
-            for (ReplicationUpdateEventListener listener : updateListeners) {
-                try {
-                    listener.externalUpdate(changes, events.getEvents());
-                } catch (RepositoryException e) {
-                    log.error("Error while updating replication update event listener.", e);
-                }
-            }
-        }
-    }
-
-    /**
-     * Register a {@link ReplicationUpdateEventListener}.
-     *
-     * @param listener
-     */
-    public void registerUpdateListener(ReplicationUpdateEventListener listener) {
-        synchronized (updateListeners) {
-            updateListeners.add(listener);
-        }
-    }
-
-    /**
-     * Unregister a {@link ReplicationUpdateEventListener}.
-     *
-     * @param listener
-     */
-    public void unRegisterUpdateListener(ReplicationUpdateEventListener listener) {
-        synchronized (updateListeners) {
-            updateListeners.remove(listener);
-        }
     }
 
     @Override
