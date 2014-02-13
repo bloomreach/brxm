@@ -22,6 +22,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
@@ -44,6 +45,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 public abstract class AbstractMenuResourceTest extends AbstractPageComposerTest {
@@ -104,6 +106,16 @@ public abstract class AbstractMenuResourceTest extends AbstractPageComposerTest 
     protected Session createSession(final String userName,final String password) throws RepositoryException {
         Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
         return repository.login(new SimpleCredentials(userName, password.toCharArray()));
+    }
+
+
+    protected void assertBobCanMakeModications(final SiteMenuResource resource) throws Exception {
+        final Session bob = createSession("bob", "bob");
+        final SiteMenuItemRepresentation contactItem = getSiteMenuItemRepresentation(bob, "main", "Contact");
+        contactItem.setName("test");
+        final Response fail = resource.update(contactItem);
+        assertEquals(Response.Status.OK.getStatusCode(), fail.getStatus());
+        bob.logout();
     }
 
     protected void createPreviewWithSiteMenuWorkspace() throws Exception {

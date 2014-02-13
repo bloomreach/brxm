@@ -32,6 +32,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class MenuPublicationTest extends AbstractMenuResourceTest{
+
     @Test
     public void test_update() throws Exception {
 
@@ -118,12 +119,4 @@ public class MenuPublicationTest extends AbstractMenuResourceTest{
     }
 
 
-    private void assertBobCanMakeModications(final SiteMenuResource resource) throws Exception {
-        final Session bob = createSession("bob", "bob");
-        final SiteMenuItemRepresentation contactItem = getSiteMenuItemRepresentation(bob, "main", "Contact");
-        contactItem.setName("test");
-        final Response fail = resource.update(contactItem);
-        assertEquals(Response.Status.OK.getStatusCode(), fail.getStatus());
-        bob.logout();
-    }
 }
