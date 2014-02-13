@@ -16,6 +16,114 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.sitemenuresource;
 
-public class MenuPublicationTest {
-    // TODO
+import javax.jcr.Node;
+import javax.jcr.Session;
+import javax.ws.rs.core.Response;
+
+import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMenuResource;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+public class MenuPublicationTest extends AbstractMenuResourceTest{
+    @Test
+    public void test_update() throws Exception {
+
+        final SiteMenuResource resource = createResource();
+        final SiteMenuItemRepresentation newsItem = getSiteMenuItemRepresentation(session, "main", "News");
+        assertNotNull(newsItem);
+        newsItem.setLinkType(LinkType.SITEMAPITEM);
+        newsItem.setLink("test");
+        resource.update(newsItem);
+        mountResource.publish();
+
+        final Node newsNode = session.getNodeByIdentifier(newsItem.getId());
+        assertEquals("test", newsNode.getProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM).getString());
+        final Node menuNode = newsNode.getParent();
+        assertFalse(menuNode.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE));
+
+        String liveLocation = newsNode.getPath().replace("-preview/","/");
+        assertTrue(session.nodeExists(liveLocation));
+
+        Node liveNewsNode = session.getNode(liveLocation);
+        assertEquals("test", liveNewsNode.getProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM).getString());
+
+        assertBobCanMakeModications(resource);
+    }
+
+
+    @Test
+    public void test_rename() throws Exception {
+        final SiteMenuResource resource = createResource();
+        final SiteMenuItemRepresentation newsItem = getSiteMenuItemRepresentation(session, "main", "News");
+
+        final String oldPreviewLocation = session.getNodeByIdentifier(newsItem.getId()).getPath();
+
+        newsItem.setName("NewsRenamed");
+        resource.update(newsItem);
+        mountResource.publish();
+
+        final Node newsNode = session.getNodeByIdentifier(newsItem.getId());
+        final Node menuNode = newsNode.getParent();
+        assertFalse(menuNode.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE));
+
+        assertFalse(session.nodeExists(oldPreviewLocation));
+        String oldLiveLocation = oldPreviewLocation.replace("-preview/","/");
+        assertFalse(session.nodeExists(oldLiveLocation));
+
+        assertBobCanMakeModications(resource);
+    }
+
+    @Test
+    public void test_delete() throws Exception {
+        final SiteMenuResource resource = createResource();
+        final SiteMenuItemRepresentation newsItem = getSiteMenuItemRepresentation(session, "main", "News");
+        String oldPath = session.getNodeByIdentifier(newsItem.getId()).getPath();
+        resource.delete(newsItem.getId());
+        mountResource.publish();
+
+        assertFalse(session.nodeExists(oldPath));
+        String oldLiveLocation = oldPath.replace("-preview/","/");
+        assertFalse(session.nodeExists(oldLiveLocation));
+
+        assertBobCanMakeModications(resource);
+    }
+
+    @Test
+    public void test_move() throws Exception {
+        final SiteMenuResource resource = createResource();
+        final SiteMenuItemRepresentation newsItem = getSiteMenuItemRepresentation(session, "main", "News");
+        final SiteMenuItemRepresentation contactItem = getSiteMenuItemRepresentation(session, "main", "Contact");
+        String oldPath = session.getNodeByIdentifier(newsItem.getId()).getPath();
+        resource.move(newsItem.getId(), contactItem.getId(), 0);
+        String newPath = session.getNodeByIdentifier(contactItem.getId()).getPath() + "/News";
+
+        mountResource.publish();
+
+        assertFalse(session.nodeExists(oldPath));
+        assertTrue(session.nodeExists(newPath));
+
+        String oldLiveLocation = oldPath.replace("-preview/","/");
+        String newLiveLocation = newPath.replace("-preview/", "/");
+        assertFalse(session.nodeExists(oldLiveLocation));
+        assertTrue(session.nodeExists(newLiveLocation));
+
+        assertBobCanMakeModications(resource);
+    }
+
+
+    private void assertBobCanMakeModications(final SiteMenuResource resource) throws Exception {
+        final Session bob = createSession("bob", "bob");
+        final SiteMenuItemRepresentation contactItem = getSiteMenuItemRepresentation(bob, "main", "Contact");
+        contactItem.setName("test");
+        final Response fail = resource.update(contactItem);
+        assertEquals(Response.Status.OK.getStatusCode(), fail.getStatus());
+        bob.logout();
+    }
 }
