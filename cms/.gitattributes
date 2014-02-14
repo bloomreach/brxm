@@ -2534,14 +2534,6 @@ richtext/repository/src/main/resources/hippostd-html-template_it.xml -text
 richtext/repository/src/main/resources/html-cleaner-service.xml -text
 richtext/repository/src/main/resources/system-html-template_de.xml -text
 richtext/repository/src/main/resources/system-html-template_it.xml -text
-search/src/main/java/org/hippoecm/frontend/plugins/search/SearchPlugin.html svneol=native#text/plain
-search/src/main/java/org/hippoecm/frontend/plugins/search/SearchPlugin.java svneol=native#text/plain
-search/src/main/java/org/hippoecm/frontend/plugins/search/yui/ResultItem.java svneol=native#text/plain
-search/src/main/java/org/hippoecm/frontend/plugins/search/yui/SearchBehavior.java svneol=native#text/plain
-search/src/main/java/org/hippoecm/frontend/plugins/search/yui/SearchNamespace.java svneol=native#text/plain
-search/src/main/java/org/hippoecm/frontend/plugins/search/yui/SearchResult.java svneol=native#text/plain
-search/src/main/java/org/hippoecm/frontend/plugins/search/yui/js/searchbox/searchbox-debug.js svneol=native#text/plain
-search/src/main/java/org/hippoecm/frontend/plugins/search/yui/js/searchbox/searchbox.js svneol=native#text/plain
 test/src/main/java/org/hippoecm/frontend/PluginSuite.java -text
 test/src/main/java/org/hippoecm/frontend/RepositoryTest.java -text
 test/src/main/resources/domain-defaultread.xml -text

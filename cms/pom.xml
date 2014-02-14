@@ -64,11 +64,6 @@
     <module>google-analytics</module>
     <module>automatic-export</module>
 
-    <!-- obsolete? -->
-    <!--
-      <module>search</module>
-    -->
-
     <module>upgrade</module>
     <module>tools</module>
 

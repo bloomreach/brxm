@@ -315,11 +315,6 @@ richtext/repository/.project
 richtext/repository/.settings
 richtext/repository/target
 richtext/target
-search/.classpath
-search/.project
-search/.settings
-search/hippo-cms-search.iml
-search/target
 shared-dependencies/*.iml
 shared-dependencies/.project
 shared-dependencies/.settings
