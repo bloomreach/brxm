@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row" ng-controller="pluginCtrl">
     <table class="table table-striped">
         <thead>
         <tr>
@@ -6,9 +6,9 @@
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="plugin in plugins | filter:{needsInstallation:true} | filter:{type:'plugins'}">
+        <tr ng-repeat="plugin in plugins | filter:{needsInstallation:false} | filter:{type:'tools'}">
             <td >
-                <a class="btn btn-primary" href="#/tools/{{plugin.pluginLink}}">{{selectedPlugin.name}}</a>
+                <a class="btn btn-primary" href="#/tools/{{plugin.pluginLink}}">{{plugin.name}}</a>
             </td>
             <td>{{plugin.introduction}}</td>
         </tr>

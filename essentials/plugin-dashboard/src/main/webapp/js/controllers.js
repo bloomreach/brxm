@@ -62,6 +62,8 @@
 
                 //fetch plugin list
                 $scope.init = function () {
+
+                    console.log(".......................plugins loaded....");
                     if ($rootScope.pluginsCache) {
                         processItems($rootScope.pluginsCache);
                     } else {
