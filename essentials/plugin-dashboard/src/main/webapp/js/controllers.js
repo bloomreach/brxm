@@ -64,7 +64,6 @@
 
                 //fetch plugin list
                 $scope.init = function () {
-
                     if ($rootScope.pluginsCache) {
                         processItems($rootScope.pluginsCache);
                     } else {
@@ -77,29 +76,22 @@
                     function processItems(items) {
                         $scope.plugins = items;
                         $scope.pluginNeedsInstall = [];
-                        for (var i = 0; i < items.length; i++) {
-                            var obj = items[i];
+                        angular.forEach(items, function (obj) {
                             if (obj.needsInstallation) {
                                 $scope.pluginNeedsInstall.push(obj);
                             }
-                        }
+                        });
                     }
-
                 };
                 $scope.init();
                 function extracted(pluginClass) {
-                    for (var i = 0; i < $scope.plugins.length; i++) {
-                        var selected = $scope.plugins[i];
+                    angular.forEach($scope.plugins, function (selected) {
                         if (selected.pluginClass == pluginClass) {
                             return selected;
                         }
-
-                    }
+                    });
                     return null;
                 }
-
-
-
             })
 
         /*
@@ -113,14 +105,11 @@
                     $http.get($rootScope.REST.plugins).success(function (data) {
                         $scope.plugins =  [];
                         var items = data.items;
-                        for (var i = 0; i < items.length; i++) {
-                            var plugin = items[i];
-
-                            if(plugin.dateInstalled){
+                        angular.forEach(items, function (plugin) {
+                            if (plugin.dateInstalled) {
                                 $scope.plugins.push(plugin);
                             }
-
-                        }
+                        });
                     });
 
                 };
