@@ -98,37 +98,7 @@
       <sv:value>workflow-channelactions.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:workflows</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="workflow-channelactions-cms-preview">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>21001</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/cms/cms-preview/workflowPlugin/workflow.categories</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentpropadd" sv:type="String">
-      <sv:value>channelactions</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="workflow-channelactions-cms-compare">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>21002</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/cms/cms-compare/workflowPlugin/workflow.categories</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentpropadd" sv:type="String">
-      <sv:value>channelactions</sv:value>
+      <sv:value>/hippo:configuration/hippo:workflows/default/handle/frontend:renderer</sv:value>
     </sv:property>
   </sv:node>
 
@@ -136,59 +106,44 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>workflow-socialsharing.xml</sv:value>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>21003.1</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:workflows</sv:value>
+      <sv:value>/hippo:configuration/hippo:workflows/default/handle/frontend:renderer</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>socialsharing-workflowmenu.xml</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="workflow-socialsharing-translations">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>socialsharing-translations.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend/cms/cms-preview/workflowMenuTranslator/hippostd:translations</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>21003</sv:value>
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="workflow-socialsharing-de">
+  <sv:node sv:name="cms-services-surf">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>10001.1</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>workflow-socialsharing_de.xml</sv:value>
+      <sv:value>cms-services-surf.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:workflows</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>21003.01</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="workflow-socialsharing-cms-preview">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>21003.1</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/cms/cms-preview/workflowPlugin/workflow.categories</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentpropadd" sv:type="String">
-      <sv:value>socialsharing</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="workflow-socialsharing-cms-compare">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>21003.2</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/cms/cms-compare/workflowPlugin/workflow.categories</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentpropadd" sv:type="String">
-      <sv:value>socialsharing</sv:value>
+      <sv:value>/hippo:configuration/hippo:frontend/cms/cms-services</sv:value>
     </sv:property>
   </sv:node>
 
@@ -220,7 +175,7 @@
       <sv:value>document-url-service.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
+      <sv:value>/hippo:configuration/hippo:frontend/cms/cms-services</sv:value>
     </sv:property>
   </sv:node>
 

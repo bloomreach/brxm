@@ -15,7 +15,7 @@
 -->
 <sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="socialsharing">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hipposys:workflowcategory</sv:value>
+    <sv:value>frontend:pluginconfig</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
     <sv:value>hippo:translated</sv:value>
@@ -58,43 +58,21 @@
       <sv:value>hippo:translation</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:language" sv:type="String">
+      <sv:value>de</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:message" sv:type="String">
+      <sv:value>Social Media</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="hippo:translation">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:translation</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:language" sv:type="String">
       <sv:value>it</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
       <sv:value>Condividi</sv:value>
     </sv:property>
-  </sv:node>
-  <sv:node sv:name="button">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:workflow</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:classname" sv:type="String">
-      <sv:value>org.hippoecm.repository.standardworkflow.NullWorkflowImpl</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:display" sv:type="String">
-      <sv:value>Show preview</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:nodetype" sv:type="String">
-      <sv:value>hippostdpubwf:document</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposys:types">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:types</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="frontend:renderer">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.social.SocialSharingPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="document.url.service.id" sv:type="String">
-        <sv:value>live.site.document.url.service</sv:value>
-      </sv:property>
-      <sv:property sv:name="social.media.service.id" sv:type="String">
-        <sv:value>popup.social.media.service</sv:value>
-      </sv:property>
-    </sv:node>
   </sv:node>
 </sv:node>

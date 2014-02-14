@@ -15,8 +15,6 @@
  */
 package org.onehippo.cms7.channelmanager.service;
 
-import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.CONFIG_REST_PROXY_SERVICE_ID;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -25,10 +23,11 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IRestProxyService;
-import org.hippoecm.frontend.service.documenturl.IDocumentUrlService;
 import org.hippoecm.hst.rest.DocumentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.CONFIG_REST_PROXY_SERVICE_ID;
 
 /**
  * Returns the fully qualified, canonical URL to a document in a channel of a certain type (preview, live,
