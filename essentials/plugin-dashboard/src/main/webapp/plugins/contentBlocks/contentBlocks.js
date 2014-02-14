@@ -81,10 +81,26 @@
                  * called on document save
                  */
                 $scope.saveBlocksConfiguration = function () {
-                    $scope.payload = {"cbpayload": {"documentTypes": {"documentType": []}}};
-                    $scope.payload.cbpayload.documentTypes.documentType = $scope.documentTypes;
+                    $scope.payload = {"documentTypes": {"items": []}};
+                    $scope.payload.documentTypes.items = $scope.documentTypes;
+                    // delete ritems, path properties, not mapped on the backend:
+                    angular.forEach($scope.payload.documentTypes.items, function (value) {
+                        if (value.providers && value.providers.ritems) {
+                            delete value.providers.ritems;
+                        }
+                        var items = value.providers.items;
+                        angular.forEach(items, function (v) {
+                            if (v.path) {
+                                delete v.path;
+                            }
+                        });
+
+
+                    });
+
+                    console.log($scope.payload);
                     $http.post($rootScope.REST.contentblocksCreate, $scope.payload
-                            ).success(function (data) {
+                    ).success(function (data) {
                                 // ignore
                             });
                 };
@@ -106,8 +122,6 @@
                 $scope.loadProviders = function () {
 
                     $http.get($rootScope.REST.compounds).success(function (data) {
-                        console.log("=================================================>>");
-                        console.log(JSON.stringify(data));
                         $scope.providers = data.items;
                         angular.forEach($scope.providers, function (provider, key) {
                             $scope.map[provider.key] = provider;
@@ -117,10 +131,10 @@
                 };
                 $scope.loadDocumentTypes = function () {
                     $http.get($rootScope.REST.documentTypes).success(function (data) {
-                        $scope.documentTypes = data.documentType;
-                        angular.forEach($scope.documentTypes, function (docType, key) {
+                        $scope.documentTypes = data.items;
+                        angular.forEach($scope.documentTypes, function (docType) {
                             docType.providers.ritems = [];
-                            angular.forEach(docType.providers.items, function (providerItem, key) {
+                            angular.forEach(docType.providers.items, function (providerItem) {
                                 docType.providers.ritems.push($scope.map[providerItem.key]);
                             });
                         });

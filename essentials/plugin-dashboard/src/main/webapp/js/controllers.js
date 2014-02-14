@@ -20,8 +20,6 @@
         //############################################
             .controller('pluginLoaderCtrl',function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
 
-            }).controller('toolCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
-                // does nothing for time being
             })
             .controller('pluginCtrl', function ($scope, $location, $sce, $log, $rootScope, $http) {
 

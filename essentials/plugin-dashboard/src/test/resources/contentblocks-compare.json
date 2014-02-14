@@ -1,27 +1,33 @@
 {"documentTypes": {
     "items": [
         {
-            "key": "test",
-            "value": "mydemoessentials:test",
-            "providers": {
-                "items": [
-                    {
-                        "key": "testcompound",
-                        "value": "mydemoessentials:testcompound",
-                        "path": "/hippo:namespaces/mydemoessentials/testcompound"
-                    }
-                ]
-            }
-        },
-        {
             "key": "News document",
             "value": "namespace:news",
             "providers": {
                 "items": [
                     {
-                        "key": "Events document",
-                        "value": "namespace:events",
-                        "path": "test/test/test"
+                        "key": "Provider 1",
+                        "value": "Provider 1"
+                    },
+                    {
+                        "key": "Provider 2",
+                        "value": "Provider 2"
+                    }
+                ]
+            }
+        },
+        {
+            "key": "News documen2",
+            "value": "namespace:news",
+            "providers": {
+                "items": [
+                    {
+                        "key": "Provider 1",
+                        "value": "Provider 1"
+                    },
+                    {
+                        "key": "Provider 2",
+                        "value": "Provider 2"
                     }
                 ]
             }

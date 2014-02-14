@@ -105,7 +105,12 @@
 
                 var root = 'http://localhost:8080/essentials/rest';
                 var plugins = root + "/plugins";
-                /* TODO generate this server side */
+
+                $rootScope.PLUGIN_GROUP = {
+                    plugin: "plugins",
+                    tool: "tools"
+                };
+                /* TODO generate this server side ?*/
                 $rootScope.REST = {
                     root: root,
                     menus: root + '/menus/',

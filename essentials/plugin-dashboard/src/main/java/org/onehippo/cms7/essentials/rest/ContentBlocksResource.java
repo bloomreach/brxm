@@ -90,7 +90,7 @@ public class ContentBlocksResource extends BaseResource {
             final Map<String, Compounds> compoundMap = getCompoundMap(servletContext);
 
             for (String primaryType : primaryTypes) {
-                final RestfulList<KeyValueRestful> keyValueRestfulRestfulList = new RestList<>();
+                final RestList<KeyValueRestful> keyValueRestfulRestfulList = new RestList<>();
                 final NodeIterator it = executeQuery(MessageFormat.format("{0}//element(*, frontend:plugin)[@cpItemsPath]", HippoNodeUtils.resolvePath(primaryType).substring(1)));
                 while (it.hasNext()) {
                     final String name = it.nextNode().getName();

@@ -58,7 +58,7 @@
         "needsInstallation": false,
         "artifacts": [],
         "assets": [],
-        "introduction": "Configuration of Hippo image sets",
+        "introduction": "Creates (re-generates) HST beans",
         "name": "Beanwriter plugin",
         "pluginClass": "org.onehippo.cms7.essentials.beanwriter.gui.BeanwriterPlugin",
         "pluginLink": "beanwriter",
@@ -69,7 +69,8 @@
             "name": "Hippo",
             "url": "http://www.onehippo.com"
         }
-    }, {
+    },
+    {
         "needsInstallation": false,
         "artifacts": [],
         "assets": [],

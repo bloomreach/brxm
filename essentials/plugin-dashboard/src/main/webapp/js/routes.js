@@ -17,7 +17,7 @@
                         .state('tools', {
                             url: '/tools',
                             templateUrl: 'pages/tools.html',
-                            controller: 'toolCtrl'
+                            controller: 'pluginCtrl'
                         })
                         .state('powerpacks', {
                             url: '/powerpacks',
@@ -28,8 +28,7 @@
                             url: '/tools/:id',
                             templateUrl: function ($stateParams) {
                                 return 'tools/' + $stateParams.id + '/'+ $stateParams.id+ '.html';
-                            },
-                            controller: 'toolCtrl'
+                            }
                         })
                         .state('home', {
                             controller: 'homeCtrl',

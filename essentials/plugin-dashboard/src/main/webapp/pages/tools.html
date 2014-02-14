@@ -6,11 +6,11 @@
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td>
-                <a class="btn btn-primary" href="#/tools/beanwriter">HST bean re-generation</a>
+        <tr ng-repeat="plugin in plugins | filter:{needsInstallation:true} | filter:{type:'plugins'}">
+            <td >
+                <a class="btn btn-primary" href="#/tools/{{plugin.pluginLink}}">{{selectedPlugin.name}}</a>
             </td>
-            <td>Creates (re-generates) HST beans</td>
+            <td>{{plugin.introduction}}</td>
         </tr>
         </tbody>
     </table>

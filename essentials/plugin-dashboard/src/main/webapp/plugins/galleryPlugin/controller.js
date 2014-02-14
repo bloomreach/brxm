@@ -9,9 +9,6 @@
         $scope.invalidated = false;
 
 
-
-
-
         $http({
             method: 'GET',
             url: $rootScope.REST.imageSets
@@ -65,7 +62,9 @@
             $log.info(" **** gallery plugin called ***");
             $http.get($rootScope.REST.galleryProcessor).success(function (data) {
                 $scope.imageProcessorData = data;
-                $scope.imageProcessor = data.imageProcessors[0];
+                if (data && data.imageProcessors) {
+                    $scope.imageProcessor = data.imageProcessors[0];
+                }
             });
 
 

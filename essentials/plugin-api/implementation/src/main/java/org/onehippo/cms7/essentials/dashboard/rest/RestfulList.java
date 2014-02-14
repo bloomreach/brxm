@@ -21,12 +21,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonSubTypes;
-import org.codehaus.jackson.annotate.JsonTypeInfo;
 
 import com.google.common.collect.Lists;
 
