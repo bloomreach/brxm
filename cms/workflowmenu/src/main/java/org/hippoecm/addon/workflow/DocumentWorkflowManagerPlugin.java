@@ -27,7 +27,6 @@ import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
-import org.hippoecm.frontend.model.event.Observer;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderService;
@@ -39,9 +38,7 @@ public class DocumentWorkflowManagerPlugin extends AbstractWorkflowManagerPlugin
 
     private final IModelReference modelReference;
 
-    private JcrNodeModel handleModel;
-    private IObserver handleObserver = null;
-    private boolean updateMenu = false;
+    private boolean updateMenu = true;
 
     public DocumentWorkflowManagerPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -74,7 +71,9 @@ public class DocumentWorkflowManagerPlugin extends AbstractWorkflowManagerPlugin
     @Override
     protected void onModelChanged() {
         super.onModelChanged();
-        updateMenu = true;
+        if (isObserving()) {
+            updateMenu = true;
+        }
     }
 
     @Override
@@ -82,11 +81,6 @@ public class DocumentWorkflowManagerPlugin extends AbstractWorkflowManagerPlugin
         if (updateMenu && isActive()) {
             updateMenu = false;
             Set<Node> nodeSet = new LinkedHashSet<>();
-            if (handleObserver != null) {
-                getPluginContext().unregisterService(handleObserver, IObserver.class.getName());
-                handleObserver = null;
-                handleModel = null;
-            }
             try {
                 if (getDefaultModel() instanceof JcrNodeModel) {
                     Node node = ((JcrNodeModel) getDefaultModel()).getNode();
@@ -95,14 +89,6 @@ public class DocumentWorkflowManagerPlugin extends AbstractWorkflowManagerPlugin
                                 && node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
                             Node handle = node.getParent();
                             nodeSet.add(handle);
-                            handleModel = new JcrNodeModel(handle);
-
-                            getPluginContext().registerService(handleObserver = new Observer<JcrNodeModel>(handleModel) {
-                                @Override
-                                public void onEvent(final Iterator<? extends IEvent<JcrNodeModel>> events) {
-                                    onModelChanged();
-                                }
-                            }, IObserver.class.getName());
                         } else {
                             nodeSet.add(node);
                         }
@@ -113,7 +99,7 @@ public class DocumentWorkflowManagerPlugin extends AbstractWorkflowManagerPlugin
             }
             MenuHierarchy menu = buildMenu(nodeSet);
             menu.restructure();
-            addOrReplace(new MenuBar("menu", menu));
+            replace(new MenuBar("menu", menu));
 
             if (target != null) {
                 target.add(this);
@@ -122,11 +108,4 @@ public class DocumentWorkflowManagerPlugin extends AbstractWorkflowManagerPlugin
         super.render(target);
     }
 
-    @Override
-    protected void onDetach() {
-        if (handleModel != null) {
-            handleModel.detach();
-        }
-        super.onDetach();
-    }
 }

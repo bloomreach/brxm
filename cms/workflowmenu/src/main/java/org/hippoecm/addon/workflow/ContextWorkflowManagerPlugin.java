@@ -39,9 +39,9 @@ public final class ContextWorkflowManagerPlugin extends AbstractWorkflowManagerP
         this.pluginContext = context;
 
         Component menu;
-        add(menu = new Label("menu"));
+        replace(menu = new Label("menu"));
         Component v;
-        add(v = new Label("view"));
+        replace(v = new Label("view"));
         v.setVisible(false);
         menu.setVisible(false);
         v.setOutputMarkupId(true);
@@ -90,7 +90,7 @@ public final class ContextWorkflowManagerPlugin extends AbstractWorkflowManagerP
         MenuHierarchy menu = buildMenu(nodeSet);
         menu.flatten();
         MenuDrop dropdown = new MenuDrop("menu", null, menu);
-        addOrReplace(dropdown);
+        replace(dropdown);
         dropdown.setVisible(true);
     }
 

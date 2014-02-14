@@ -32,6 +32,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
@@ -62,6 +63,7 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
 
     static final Logger log = LoggerFactory.getLogger(AbstractWorkflowManagerPlugin.class);
 
+    public static final String OBSERVATION = "workflow.observation";
     public static final String CATEGORIES = "workflow.categories";
     public static final String MENU_ORDER = "workflow.menuorder";
 
@@ -73,10 +75,11 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
 
     protected AbstractWorkflowManagerPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+
         if (config.get(CATEGORIES) != null) {
             categories = config.getStringArray(CATEGORIES);
             if (log.isDebugEnabled()) {
-                final StringBuffer sb = new StringBuffer("workflow showing categories");
+                final StringBuilder sb = new StringBuilder("workflow showing categories");
                 for (String category : categories) {
                     sb.append(" ");
                     sb.append(category);
@@ -87,14 +90,25 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
             categories = new String[]{};
             log.warn("No categories ({}) defined", CATEGORIES);
         }
+
         if (config.get(MENU_ORDER) != null) {
             menuOrder = config.getStringArray(MENU_ORDER);
         } else {
             menuOrder = categories;
         }
+
         IServiceReference serviceReference = context.getReference(this);
         plugins = new PluginController(context, config, serviceReference.getServiceId());
-        observers = new HashSet<>();
+        if (config.getAsBoolean(OBSERVATION, true)) {
+            observers = new HashSet<>();
+        }
+
+        add(new EmptyPanel("view"));
+        add(new EmptyPanel("menu"));
+    }
+
+    protected boolean isObserving() {
+        return observers != null;
     }
 
     @Override
@@ -130,8 +144,10 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
 
     @Override
     protected void onDetach() {
-        for (IObserver<JcrNodeModel> observer : observers) {
-            observer.getObservable().detach();
+        if (observers != null) {
+            for (IObserver<JcrNodeModel> observer : observers) {
+                observer.getObservable().detach();
+            }
         }
         super.onDetach();
     }
@@ -156,7 +172,7 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
             }
         }
 
-        addOrReplace(view = new PanelView(list));
+        replace(view = new PanelView(list));
         view.populate();
         view.setVisible(false);
 
@@ -166,35 +182,39 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
     }
 
     private void stopObservation() {
-        IPluginContext context = getPluginContext();
-        for (IObserver<JcrNodeModel> observer : new ArrayList<>(observers)) {
-            context.unregisterService(observer, IObserver.class.getName());
+        if (observers != null) {
+            IPluginContext context = getPluginContext();
+            for (IObserver<JcrNodeModel> observer : new ArrayList<>(observers)) {
+                context.unregisterService(observer, IObserver.class.getName());
+            }
+            observers.clear();
         }
-        observers.clear();
     }
 
     private void startObservation(final Set<Node> nodeSet) {
-        IPluginContext context = getPluginContext();
+        if (observers != null) {
+            IPluginContext context = getPluginContext();
 
-        Set<JcrNodeModel> models = new HashSet<>();
-        for (Node node : nodeSet) {
-            models.add(new JcrNodeModel(node));
-            try {
-                if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    for (Node child : new NodeIterable(node.getNodes())) {
-                        models.add(new JcrNodeModel(child));
+            Set<JcrNodeModel> models = new HashSet<>();
+            for (Node node : nodeSet) {
+                models.add(new JcrNodeModel(node));
+                try {
+                    if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        for (Node child : new NodeIterable(node.getNodes())) {
+                            models.add(new JcrNodeModel(child));
+                        }
                     }
+                } catch (RepositoryException e) {
+                    log.error("Unable to watch document for changes", e);
                 }
-            } catch (RepositoryException e) {
-                log.error("Unable to watch document for changes", e);
             }
-        }
 
-        for (JcrNodeModel nodeModel : models) {
-            NodeObserver observer = new NodeObserver(nodeModel);
-            if (!observers.contains(observer)) {
-                observers.add(observer);
-                context.registerService(observer, IObserver.class.getName());
+            for (JcrNodeModel nodeModel : models) {
+                NodeObserver observer = new NodeObserver(nodeModel);
+                if (!observers.contains(observer)) {
+                    observers.add(observer);
+                    context.registerService(observer, IObserver.class.getName());
+                }
             }
         }
     }
@@ -252,7 +272,6 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
         }
 
         return plugin;
-
     }
 
     private Panel createPlugin(final String category, final String pluginRenderer, final WorkflowDescriptorModel pluginModel) throws RepositoryException {

@@ -108,6 +108,9 @@
     <sv:property sv:name="workflow.categories" sv:type="String">
       <sv:value>editing</sv:value>
     </sv:property>
+    <sv:property sv:name="workflow.observation" sv:type="Boolean">
+      <sv:value>false</sv:value>
+    </sv:property>
   </sv:node>
 </sv:node>
 
