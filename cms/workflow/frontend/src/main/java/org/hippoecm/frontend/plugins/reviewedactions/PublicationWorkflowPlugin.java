@@ -49,43 +49,6 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
     public PublicationWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        add(publishAction = new StdWorkflow("publish", new StringResourceModel("publish-label", this, null), context, getModel()) {
-
-            @Override
-            public String getSubMenu() {
-                return "publication";
-            }
-
-            @Override
-            protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "img/publish-16.png");
-            }
-
-            @Override
-            protected IDialogService.Dialog createRequestDialog() {
-                HippoNode node;
-                try {
-                    node = (HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode();
-                    final UnpublishedReferenceProvider referenced = new UnpublishedReferenceProvider(
-                            new ReferenceProvider(new JcrNodeModel(node)));
-                    if (referenced.size() > 0) {
-                        return new UnpublishedReferencesDialog(publishAction, new UnpublishedReferenceNodeProvider(
-                                referenced), getEditorManager());
-                    }
-                } catch (RepositoryException e) {
-                    log.error(e.getMessage());
-                }
-                return null;
-            }
-
-            @Override
-            protected String execute(Workflow wf) throws Exception {
-                DocumentWorkflow workflow = (DocumentWorkflow) wf;
-                workflow.publish();
-                return null;
-            }
-        });
-
         final StdWorkflow depublishAction;
         add(depublishAction = new StdWorkflow("depublish", new StringResourceModel("depublish-label", this, null), context, getModel()) {
 
@@ -115,43 +78,6 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
         });
 
-        final StdWorkflow requestPublishAction;
-        add(requestPublishAction = new StdWorkflow("requestPublication", new StringResourceModel("request-publication", this, null), context, getModel()) {
-
-            @Override
-            public String getSubMenu() {
-                return "publication";
-            }
-
-            @Override
-            protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "img/workflow-requestpublish-16.png");
-            }
-
-            @Override
-            protected IDialogService.Dialog createRequestDialog() {
-                HippoNode node;
-                try {
-                    node = (HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode();
-                    final UnpublishedReferenceProvider referenced = new UnpublishedReferenceProvider(new ReferenceProvider(
-                            new JcrNodeModel(node)));
-                    if (referenced.size() > 0) {
-                        return new UnpublishedReferencesDialog(publishAction, new UnpublishedReferenceNodeProvider(referenced), getEditorManager());
-                    }
-                } catch (RepositoryException e) {
-                    log.error(e.getMessage());
-                }
-                return null;
-            }
-
-            @Override
-            protected String execute(Workflow wf) throws Exception {
-                DocumentWorkflow workflow = (DocumentWorkflow) wf;
-                workflow.requestPublication();
-                return null;
-            }
-        });
-
         final StdWorkflow requestDepublishAction;
         add(requestDepublishAction = new StdWorkflow("requestDepublication", new StringResourceModel("request-depublication", this, null), context, getModel()) {
 
@@ -177,44 +103,6 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             protected String execute(Workflow wf) throws Exception {
                 DocumentWorkflow workflow = (DocumentWorkflow) wf;
                 workflow.requestDepublication();
-                return null;
-            }
-        });
-
-        final StdWorkflow schedulePublishAction;
-        add(schedulePublishAction = new StdWorkflow("schedulePublish", new StringResourceModel(
-                "schedule-publish-label", this, null), context, getModel()) {
-            public Date date = new Date();
-
-            @Override
-            public String getSubMenu() {
-                return "publication";
-            }
-
-            @Override
-            protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "img/publish-schedule-16.png");
-            }
-
-            @Override
-            protected IDialogService.Dialog createRequestDialog() {
-                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
-                try {
-                    return new SchedulePublishDialog(this, new JcrNodeModel(wdm.getNode()), new PropertyModel<Date>(this, "date"), getEditorManager());
-                } catch (RepositoryException ex) {
-                    log.warn("could not retrieve node for scheduling publish", ex);
-                }
-                return null;
-            }
-
-            @Override
-            protected String execute(Workflow wf) throws Exception {
-                DocumentWorkflow workflow = (DocumentWorkflow) wf;
-                if (date != null) {
-                    workflow.publish(date);
-                } else {
-                    workflow.publish();
-                }
                 return null;
             }
         });
@@ -257,6 +145,156 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
         });
 
+        final StdWorkflow requestScheduleDepublishAction;
+        add(requestScheduleDepublishAction = new StdWorkflow("requestScheduleDepublish", new StringResourceModel("schedule-request-depublish", this, null), context, getModel()) {
+            public Date date = new Date();
+
+            @Override
+            public String getSubMenu() {
+                return "publication";
+            }
+
+            @Override
+            protected ResourceReference getIcon() {
+                return new PackageResourceReference(getClass(), "img/unpublish-scheduled-16.png");
+            }
+
+            @Override
+            protected IDialogService.Dialog createRequestDialog() {
+                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
+                try {
+                    return new ScheduleDepublishDialog(this, new JcrNodeModel(wdm.getNode()), new PropertyModel<Date>(this, "date"), getEditorManager());
+                } catch (RepositoryException e) {
+                    log.warn("could not retrieve node for scheduling depublish", e);
+                }
+                return null;
+            }
+
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                DocumentWorkflow workflow = (DocumentWorkflow) wf;
+                if (date != null) {
+                    workflow.requestDepublication(date);
+                } else {
+                    workflow.requestDepublication();
+                }
+                return null;
+            }
+        });
+
+
+        add(publishAction = new StdWorkflow("publish", new StringResourceModel("publish-label", this, null), context, getModel()) {
+
+            @Override
+            public String getSubMenu() {
+                return "publication";
+            }
+
+            @Override
+            protected ResourceReference getIcon() {
+                return new PackageResourceReference(getClass(), "img/publish-16.png");
+            }
+
+            @Override
+            protected IDialogService.Dialog createRequestDialog() {
+                HippoNode node;
+                try {
+                    node = (HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode();
+                    final UnpublishedReferenceProvider referenced = new UnpublishedReferenceProvider(
+                            new ReferenceProvider(new JcrNodeModel(node)));
+                    if (referenced.size() > 0) {
+                        return new UnpublishedReferencesDialog(publishAction, new UnpublishedReferenceNodeProvider(
+                                referenced), getEditorManager());
+                    }
+                } catch (RepositoryException e) {
+                    log.error(e.getMessage());
+                }
+                return null;
+            }
+
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                DocumentWorkflow workflow = (DocumentWorkflow) wf;
+                workflow.publish();
+                return null;
+            }
+        });
+
+        final StdWorkflow requestPublishAction;
+        add(requestPublishAction = new StdWorkflow("requestPublication", new StringResourceModel("request-publication", this, null), context, getModel()) {
+
+            @Override
+            public String getSubMenu() {
+                return "publication";
+            }
+
+            @Override
+            protected ResourceReference getIcon() {
+                return new PackageResourceReference(getClass(), "img/workflow-requestpublish-16.png");
+            }
+
+            @Override
+            protected IDialogService.Dialog createRequestDialog() {
+                HippoNode node;
+                try {
+                    node = (HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode();
+                    final UnpublishedReferenceProvider referenced = new UnpublishedReferenceProvider(new ReferenceProvider(
+                            new JcrNodeModel(node)));
+                    if (referenced.size() > 0) {
+                        return new UnpublishedReferencesDialog(publishAction, new UnpublishedReferenceNodeProvider(referenced), getEditorManager());
+                    }
+                } catch (RepositoryException e) {
+                    log.error(e.getMessage());
+                }
+                return null;
+            }
+
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                DocumentWorkflow workflow = (DocumentWorkflow) wf;
+                workflow.requestPublication();
+                return null;
+            }
+        });
+
+        final StdWorkflow schedulePublishAction;
+        add(schedulePublishAction = new StdWorkflow("schedulePublish", new StringResourceModel(
+                "schedule-publish-label", this, null), context, getModel()) {
+            public Date date = new Date();
+
+            @Override
+            public String getSubMenu() {
+                return "publication";
+            }
+
+            @Override
+            protected ResourceReference getIcon() {
+                return new PackageResourceReference(getClass(), "img/publish-schedule-16.png");
+            }
+
+            @Override
+            protected IDialogService.Dialog createRequestDialog() {
+                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
+                try {
+                    return new SchedulePublishDialog(this, new JcrNodeModel(wdm.getNode()), new PropertyModel<Date>(this, "date"), getEditorManager());
+                } catch (RepositoryException ex) {
+                    log.warn("could not retrieve node for scheduling publish", ex);
+                }
+                return null;
+            }
+
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                DocumentWorkflow workflow = (DocumentWorkflow) wf;
+                if (date != null) {
+                    workflow.publish(date);
+                } else {
+                    workflow.publish();
+                }
+                return null;
+            }
+        });
+
         final StdWorkflow requestSchedulePublishAction;
         add(requestSchedulePublishAction = new StdWorkflow("requestSchedulePublish", new StringResourceModel("schedule-request-publish", this, null), context, getModel()) {
             public Date date = new Date();
@@ -294,42 +332,6 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
         });
 
-        final StdWorkflow requestScheduleDepublishAction;
-        add(requestScheduleDepublishAction = new StdWorkflow("requestScheduleDepublish", new StringResourceModel("schedule-request-depublish", this, null), context, getModel()) {
-            public Date date = new Date();
-
-            @Override
-            public String getSubMenu() {
-                return "publication";
-            }
-
-            @Override
-            protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "img/unpublish-scheduled-16.png");
-            }
-
-            @Override
-            protected IDialogService.Dialog createRequestDialog() {
-                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
-                try {
-                    return new ScheduleDepublishDialog(this, new JcrNodeModel(wdm.getNode()), new PropertyModel<Date>(this, "date"), getEditorManager());
-                } catch (RepositoryException e) {
-                    log.warn("could not retrieve node for scheduling depublish", e);
-                }
-                return null;
-            }
-
-            @Override
-            protected String execute(Workflow wf) throws Exception {
-                DocumentWorkflow workflow = (DocumentWorkflow) wf;
-                if (date != null) {
-                    workflow.requestDepublication(date);
-                } else {
-                    workflow.requestDepublication();
-                }
-                return null;
-            }
-        });
 
         Map<String, Serializable> info = getHints();
         hideOrDisable(info, "publish", publishAction, schedulePublishAction);
