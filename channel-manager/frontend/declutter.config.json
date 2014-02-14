@@ -22,5 +22,6 @@
     "jstree": ["dist/jstree.js", "dist/themes/default/*"],
     "underscore": ["underscore-min.js", "underscore-min.map"],
     "angular-ui-router": ["release/angular-ui-router.min.js"],
-    "respond": ["dest/respond.src.js"]
+    "respond": ["dest/respond.src.js"],
+    "sizzle": []
 }
