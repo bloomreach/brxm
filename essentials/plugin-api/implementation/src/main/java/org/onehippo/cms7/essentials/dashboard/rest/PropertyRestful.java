@@ -99,7 +99,21 @@ public class PropertyRestful implements Restful {
         return value;
     }
 
+
     public void setValue(final String value) {
         this.value = value;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("PropertyRestful{");
+        sb.append("name='").append(name).append('\'');
+        sb.append(", type=").append(type);
+        sb.append(", value='").append(value).append('\'');
+        sb.append(", multivalue=").append(multivalue);
+        sb.append(", values=").append(values);
+        sb.append('}');
+        return sb.toString();
+    }
 }
+

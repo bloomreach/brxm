@@ -48,7 +48,9 @@
                     <tbody>
                     </tbody>
                     <tr ng-repeat="node in scriptNodes">
-                        <td>{{node.displayValue}}</td>
+                        <td>
+                            <a style="width:100%" href="http://localhost:8080/cms/console?path={{node.value}}" target="_blank">{{node.displayValue}}</a>
+                        </td>
                         <td>{{node.filePath}}</td>
                     </tr>
                 </table>

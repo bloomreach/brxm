@@ -166,4 +166,14 @@ public class NodeRestful implements Restful {
     }
 
 
+    public NodeRestful getNodeForPath(final String scriptPath) {
+        final List<NodeRestful> myNodes = getNodes();
+        for (NodeRestful myNode : myNodes) {
+            if(myNode.getPath().equals(scriptPath)){
+                return myNode;
+            }
+
+        }
+        return null;
+    }
 }

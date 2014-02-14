@@ -52,8 +52,9 @@ public final class FSUtils {
 
     public static NodeRestful getScriptNodes(final PluginContext context) {
         final NodeRestful restful = new NodeRestful(true);
+        Session session = null;
         try {
-            final Session session = context.getSession();
+            session = context.getSession();
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
             final String q = "//element(*, hst:template)[@hst:script]";
             final Query query = queryManager.createQuery(q, "xpath");
@@ -67,6 +68,8 @@ public final class FSUtils {
             }
         } catch (RepositoryException e) {
             log.error("Error getting script nodes", e);
+        } finally {
+            GlobalUtils.cleanupSession(session);
         }
 
 
@@ -80,39 +83,45 @@ public final class FSUtils {
         final Map<String, String> nodeFileMappings = new HashMap<>();
         final List<NodeRestful> nodes = restful.getNodes();
         for (NodeRestful node : nodes) {
-            final String path = node.getPath();
-            final String[] paths = TEMPLATE_PATTERN.split(path);
-            if (paths.length != 2) {
-                log.error("Invalid path, cannot extract Freemarker path {}", path);
-                continue;
-            }
-            final PropertyRestful property = node.getProperty("hst:script");
-            if (property == null || property.getValue()==null) {
-                log.error("Script node or it's value was null: {}", path);
-                continue;
-            }
-            final String value = property.getValue();
-            final String freemarkerPath = (String) context.getPlaceholderData().get(EssentialConst.PLACEHOLDER_SITE_FREEMARKER_ROOT);
-
-            try {
-                final File dir = ensureDirs(freemarkerPath, context);
-                final String fileName = MessageFormat.format("{0}{1}{2}{3}", dir.getAbsolutePath(), File.separator, node.getName(), ".ftl");
-                final File file = new File((fileName));
-                if(!file.exists()){
-                    log.info("Creating file: {}", file);
-                    file.createNewFile();
-                }
-                GlobalUtils.writeToFile(value, file.toPath());
-                nodeFileMappings.put(node.getPath(), file.getAbsolutePath());
-            } catch (IOException e) {
-                log.error("Error writing script content", e);
-            }
-
-
+            writeScriptNode(context, node, nodeFileMappings);
         }
 
         return nodeFileMappings;
 
+    }
+
+    public static void writeScriptNode(final PluginContext context, final NodeRestful node, final Map<String, String> nodeFileMappings) {
+        final String path = node.getPath();
+        if (path == null) {
+            log.error("Path was null for node {}", node);
+            return;
+        }
+        final String[] paths = TEMPLATE_PATTERN.split(path);
+        if (paths.length != 2) {
+            log.error("Invalid path, cannot extract Freemarker path {}", path);
+            return;
+        }
+        final PropertyRestful property = node.getProperty("hst:script");
+        if (property == null || property.getValue() == null) {
+            log.error("Script node or it's value was null: {}", path);
+            return;
+        }
+        final String value = property.getValue();
+        final String freemarkerPath = (String) context.getPlaceholderData().get(EssentialConst.PLACEHOLDER_SITE_FREEMARKER_ROOT);
+
+        try {
+            final File dir = ensureDirs(freemarkerPath, context);
+            final String fileName = MessageFormat.format("{0}{1}{2}{3}", dir.getAbsolutePath(), File.separator, node.getName(), ".ftl");
+            final File file = new File((fileName));
+            if (!file.exists()) {
+                log.info("Creating file: {}", file);
+                file.createNewFile();
+            }
+            GlobalUtils.writeToFile(value, file.toPath());
+            nodeFileMappings.put(node.getPath(), file.getAbsolutePath());
+        } catch (IOException e) {
+            log.error("Error writing script content", e);
+        }
     }
 
     private static File ensureDirs(final String freemarkerPath, final PluginContext context) throws IOException {

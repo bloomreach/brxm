@@ -18,6 +18,9 @@ package org.onehippo.cms7.essentials.tools.rest;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
@@ -33,6 +36,7 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.NodeRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.slf4j.Logger;
@@ -57,7 +61,6 @@ public class FreemarkerSyncResource extends BaseResource {
 
         final PluginContext context = getContext(servletContext);
         final RestfulList<MessageRestful> list = new RestfulList<>();
-        list.add(new MessageRestful("test"));
 
         final File freemarkerDirectory = new File((String) context.getPlaceholderData().get(EssentialConst.PLACEHOLDER_SITE_FREEMARKER_ROOT));
         if (!freemarkerDirectory.exists()) {
@@ -75,7 +78,7 @@ public class FreemarkerSyncResource extends BaseResource {
     /**
      * Writes nodes to files
      *
-     * @param paths   list of XPATH entries
+     * @param paths          list of XPATH entries
      * @param servletContext
      */
 
@@ -83,9 +86,22 @@ public class FreemarkerSyncResource extends BaseResource {
     @Path("/file")
     public RestfulList<KeyValueRestful> writeToFileSystem(final RestfulList<KeyValueRestful> paths, @Context ServletContext servletContext) {
 
+        final PluginContext context = getContext(servletContext);
+        final List<KeyValueRestful> items = paths.getItems();
+        final NodeRestful scriptNodes = FSUtils.getScriptNodes(context);
+        final Map<String, String> results = new HashMap<>();
+        for (KeyValueRestful item : items) {
+            final String scriptPath = item.getValue();
+            final NodeRestful nodeForPath = scriptNodes.getNodeForPath(scriptPath);
+            if (nodeForPath != null) {
+                FSUtils.writeScriptNode(context, nodeForPath, results);
+            }
+        }
 
         final RestfulList<KeyValueRestful> list = new RestfulList<>();
-        list.add(new KeyValueRestful("test", "valyue"));
+        for (Map.Entry<String, String> entry : results.entrySet()) {
+            list.add(new KeyValueRestful(entry.getKey(), entry.getValue()));
+        }
         return list;
     }
 
