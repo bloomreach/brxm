@@ -55,4 +55,13 @@ public class KeyValueRestful implements Restful {
     public void setValue(final String value) {
         this.value = value;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("KeyValueRestful{");
+        sb.append("key='").append(key).append('\'');
+        sb.append(", value='").append(value).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
 }

@@ -83,7 +83,7 @@ public class FreemarkerSyncResource extends BaseResource {
     @Path("/file")
     public RestfulList<KeyValueRestful> writeToFileSystem(final RestfulList<KeyValueRestful> paths, @Context ServletContext servletContext) {
 
-        log.info("paths {}", paths.getItems());
+
         final RestfulList<KeyValueRestful> list = new RestfulList<>();
         list.add(new KeyValueRestful("test", "valyue"));
         return list;

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.rest.model;
+package org.onehippo.cms7.essentials.dashboard.rest;
 
 import java.util.LinkedHashMap;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.onehippo.cms7.essentials.dashboard.rest.Restful;
-
 /**
+ * Holds ordered map of key value properties.
+ *
  * @version "$Id$"
  */
 @XmlRootElement(name = "payload")
@@ -37,11 +37,21 @@ public class PostPayloadRestful implements Restful {
         values.put(key, value);
     }
 
+    // keep concrete class:
+    @SuppressWarnings("CollectionDeclaredAsConcreteClass")
     public LinkedHashMap<String, String> getValues() {
         return values;
     }
 
     public void setValues(final LinkedHashMap<String, String> values) {
         this.values = values;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("PostPayloadRestful{");
+        sb.append("values=").append(values);
+        sb.append('}');
+        return sb.toString();
     }
 }

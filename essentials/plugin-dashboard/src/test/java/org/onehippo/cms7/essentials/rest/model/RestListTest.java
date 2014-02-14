@@ -16,24 +16,11 @@
 
 package org.onehippo.cms7.essentials.rest.model;
 
-import java.io.StringWriter;
-import java.io.Writer;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
-import org.codehaus.jettison.json.JSONObject;
-import org.codehaus.jettison.mapped.Configuration;
-import org.codehaus.jettison.mapped.MappedNamespaceConvention;
-import org.codehaus.jettison.mapped.MappedXMLStreamReader;
-import org.codehaus.jettison.mapped.MappedXMLStreamWriter;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,5 +57,31 @@ public class RestListTest {
         final RestfulList<KeyValueRestful> List = mapper.readValue(result, new TypeReference<RestfulList<KeyValueRestful>>() {
         });
         assertEquals(2, List.getItems().size());
+        // payload
+        RestfulList<PostPayloadRestful> payloadList = new RestfulList<>();
+        final PostPayloadRestful resource = new PostPayloadRestful();
+        payloadList.add(resource);
+        resource.add("test", "test");
+        resource.add("test1", "test1");
+        result = mapper.writeValueAsString(payloadList);
+        log.info("result {}", result);
+        payloadList = mapper.readValue(result, new TypeReference<RestfulList<PostPayloadRestful>>() {
+        });
+
+        assertEquals(1, payloadList.getItems().size());
+        PostPayloadRestful postPayloadRestful = payloadList.getItems().get(0);
+        assertEquals(2, postPayloadRestful.getValues().size());
+        result = "{\"items\":[{\"values\":{\"path\":\"/hippo:namespaces/hippostd/html/editor:templates/_default_/root\",\"property\":\"Xinha.config.toolbar\"}}]}";
+        payloadList = mapper.readValue(result, new TypeReference<RestfulList<PostPayloadRestful>>() {
+        });
+        assertEquals(1, payloadList.getItems().size());
+        postPayloadRestful = payloadList.getItems().get(0);
+        assertEquals(2, postPayloadRestful.getValues().size());
+        // test payload:
+        postPayloadRestful = new PostPayloadRestful();
+        postPayloadRestful.add("testKey", "testValue");
+        result = mapper.writeValueAsString(postPayloadRestful);
+        log.info("postPayloadRestful {}", result);
     }
+
 }

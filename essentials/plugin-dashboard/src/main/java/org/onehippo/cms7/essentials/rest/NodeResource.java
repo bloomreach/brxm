@@ -38,7 +38,7 @@ import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.rest.exc.RestException;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
-import org.onehippo.cms7.essentials.rest.model.PostPayloadRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.rest.model.RestList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,7 +94,7 @@ public class NodeResource extends BaseResource {
 
     @POST
     @Path("/property/save")
-    public RestfulList<KeyValueRestful> saveProperty(@Context ServletContext servletContext, final PostPayloadRestful payload) {
+    public RestfulList<KeyValueRestful> saveProperty(final PostPayloadRestful payload, @Context ServletContext servletContext) {
         final RestfulList<KeyValueRestful> list = new RestList<>();
         final Map<String, String> values = payload.getValues();
         final String path = values.remove("path");

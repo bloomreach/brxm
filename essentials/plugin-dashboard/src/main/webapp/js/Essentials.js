@@ -35,18 +35,14 @@
         };
 
     };
-    Essentials.emptyPayload = function () {
-        var payload = {};
-        payload.values = {};
-        payload.values.entry = [];
-        return {"payload": payload};
-    };
+
 
     Essentials.addPayloadData = function (key, value, payload) {
         if (payload === undefined || payload == null) {
-            payload = Essentials.emptyPayload();
+            payload = {"values":{}};
+
         }
-        payload['payload'].values.entry.push({"key": key, "value": value});
+        payload.values[key] = value;
         return payload;
     };
 

@@ -13,6 +13,7 @@ import org.codehaus.jackson.annotate.JsonSubTypes;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.Restful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.Compounds;
@@ -42,6 +43,7 @@ public class RestList<T extends Restful> extends RestfulList<T>{
             @JsonSubTypes.Type(MessageRestful.class),
             @JsonSubTypes.Type(ControllerRestful.class),
             @JsonSubTypes.Type(KeyValueRestful.class),
+            @JsonSubTypes.Type(PostPayloadRestful.class),
             @JsonSubTypes.Type(DocumentType.class),
             @JsonSubTypes.Type(ImageProcessorRestful.class),
             @JsonSubTypes.Type(ImageSetRestful.class),
