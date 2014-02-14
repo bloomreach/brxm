@@ -16,24 +16,25 @@
 
 package org.onehippo.cms7.essentials.dashboard.rest;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "project")
-public class ProjectRestful implements Restful {
+public class QueryRestfulTest {
 
-    private static final long serialVersionUID = 1L;
+    private static Logger log = LoggerFactory.getLogger(QueryRestfulTest.class);
 
-    // TODO add more data
-    private String namespace;
+    @Test
+    public void testQuery() throws Exception {
 
-    public String getNamespace() {
-        return namespace;
-    }
+        ObjectMapper mapper = new ObjectMapper();
+        final QueryRestful q = new QueryRestful();
+        final String result = mapper.writeValueAsString(q);
+        log.error("result {}", result);
 
-    public void setNamespace(final String namespace) {
-        this.namespace = namespace;
     }
 }

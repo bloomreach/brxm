@@ -9,6 +9,8 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.codehaus.jackson.annotate.JsonSubTypes;
+import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.Restful;
@@ -31,21 +33,22 @@ public class RestList<T extends Restful> extends RestfulList<T>{
 
 
 
-    @XmlElementRefs({
-            @XmlElementRef(type = PluginRestful.class),
-            @XmlElementRef(type = PowerpackRestful.class),
-            @XmlElementRef(type = VendorRestful.class),
-            @XmlElementRef(type = StatusRestful.class),
-            @XmlElementRef(type = MessageRestful.class),
-            @XmlElementRef(type = ControllerRestful.class),
-            @XmlElementRef(type = KeyValueRestful.class),
-            @XmlElementRef(type = DocumentType.class),
-            @XmlElementRef(type = ImageProcessorRestful.class),
-            @XmlElementRef(type = ImageSetRestful.class),
-            @XmlElementRef(type = ImageVariantRestful.class),
-            @XmlElementRef(type = TranslationRestful.class),
-            @XmlElementRef(type = PropertyRestful.class),
-            @XmlElementRef(type = Compounds.class)
+
+    @JsonSubTypes({
+            @JsonSubTypes.Type(PluginRestful.class),
+            @JsonSubTypes.Type(PowerpackRestful.class),
+            @JsonSubTypes.Type(VendorRestful.class),
+            @JsonSubTypes.Type(StatusRestful.class),
+            @JsonSubTypes.Type(MessageRestful.class),
+            @JsonSubTypes.Type(ControllerRestful.class),
+            @JsonSubTypes.Type(KeyValueRestful.class),
+            @JsonSubTypes.Type(DocumentType.class),
+            @JsonSubTypes.Type(ImageProcessorRestful.class),
+            @JsonSubTypes.Type(ImageSetRestful.class),
+            @JsonSubTypes.Type(ImageVariantRestful.class),
+            @JsonSubTypes.Type(TranslationRestful.class),
+            @JsonSubTypes.Type(PropertyRestful.class),
+            @JsonSubTypes.Type(Compounds.class)
     })
     @Override
     public List<T> getItems() {

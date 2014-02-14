@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.model;
+package org.onehippo.cms7.essentials.dashboard.rest;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "query", namespace = "")
+@XmlRootElement(name = "query")
 public class QueryRestful implements Restful{
     private static final long serialVersionUID = 1L;
 

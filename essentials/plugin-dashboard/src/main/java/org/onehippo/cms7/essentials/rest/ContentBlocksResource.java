@@ -80,7 +80,6 @@ public class ContentBlocksResource extends BaseResource {
     @Path("/")
     public RestfulList<DocumentType> getControllers(@Context ServletContext servletContext) {
         final RestfulList<DocumentType> types = new RestList<>();
-
         final Session session = GlobalUtils.createSession();
         final PluginContext context = getContext(servletContext);
         final String projectNamespacePrefix = context.getProjectNamespacePrefix();

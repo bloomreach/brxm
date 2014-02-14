@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.model;
+package org.onehippo.cms7.essentials.dashboard.rest;
 
 import java.util.ArrayList;
 import java.util.List;

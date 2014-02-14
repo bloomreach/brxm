@@ -25,6 +25,8 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.codehaus.jettison.json.JSONObject;
 import org.codehaus.jettison.mapped.Configuration;
 import org.codehaus.jettison.mapped.MappedNamespaceConvention;
@@ -48,44 +50,25 @@ public class RestListTest {
     @Test
     public void testList() throws Exception {
 
-        final Configuration config = new Configuration();
-        config.setIgnoreNamespaces(true);
+        final ObjectMapper mapper = new ObjectMapper();
 
-
-        /*
-          <property name="ignoreNamespaces" value="true"/>
-    <property name="dropRootElement" value="true"/>
-    <property name="serializeAsArray" value="true"/>
-    <!--<property name="dropCollectionWrapperElement" value="true"/>-->
-    <!--<property name="supportUnwrapped" value="true"/>-->
-    <property name="arrayKeys">
-      <list>
-        <value>items</value>
-        <value>item</value>
-        <value>properties</value>
-        <value>plugins</value>
-        <value>variants</value>
-        <value>imageSets</value>
-        <value>translations</value>
-        <value>restClasses</value>
-      </list>*/
-        final JAXBContext jc = JAXBContext.newInstance(RestList.class);
-        final Writer writer = new StringWriter();
-        final XMLStreamWriter xmlStreamWriter = new MappedXMLStreamWriter(new MappedNamespaceConvention(config), writer);
-
-        final Marshaller marshaller = jc.createMarshaller();
-        final RestList<KeyValueRestful> list = new RestList<>();
-        list.add(new KeyValueRestful("test", "test"));
-        list.add(new KeyValueRestful("test1", "test1"));
-        marshaller.marshal(list, xmlStreamWriter);
-        log.info("{}", writer);
-        final JSONObject obj = new JSONObject(writer.toString());
-        final XMLStreamReader xmlStreamReader = new MappedXMLStreamReader(obj);
-        final Unmarshaller unmarshaller = jc.createUnmarshaller();
+        final RestfulList<KeyValueRestful> keyValue = new RestfulList<>();
+        keyValue.add(new KeyValueRestful("test", "test"));
+        keyValue.add(new KeyValueRestful("test1", "test1"));
+        String result = mapper.writeValueAsString(keyValue);
+        log.info("{}", result);
         @SuppressWarnings("unchecked")
-        final RestfulList<KeyValueRestful> myList = (RestfulList<KeyValueRestful>) unmarshaller.unmarshal(xmlStreamReader);
+        final RestfulList<KeyValueRestful> myList = mapper.readValue(result, new TypeReference<RestfulList<KeyValueRestful>>() {
+        });
         assertEquals(2, myList.getItems().size());
-
-
+        //mix of implementations:
+        final RestList<KeyValueRestful> listKeyValue = new RestList<>();
+        listKeyValue.add(new KeyValueRestful("test", "test"));
+        listKeyValue.add(new KeyValueRestful("test2", "test2"));
+        result = mapper.writeValueAsString(keyValue);
+        log.info("{}", result);
+        final RestfulList<KeyValueRestful> List = mapper.readValue(result, new TypeReference<RestfulList<KeyValueRestful>>() {
+        });
+        assertEquals(2, List.getItems().size());
     }
 }

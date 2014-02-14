@@ -7,8 +7,7 @@
     //############################################
 
     var Map = function () {
-        this.collection = {};
-        var ref = this.collection.keyvalue = [];
+        var ref = this.items = [];
         this.put = function (key, value) {
             //ref.push({"key":key,"value":value});
             ref.push({"key":key,"value":value});
@@ -17,8 +16,7 @@
 
     };
     var Query = function(){
-        this.query = {"query":{}};
-        var ref = this.query;
+        var ref = this;
         this.forQuery = function (query) {
             ref.query = query;
             return this;

@@ -26,6 +26,7 @@
   <context:component-scan base-package="org.onehippo.cms7.essentials"/>
 
   <import resource="classpath:META-INF/essentialsSpringSdk.xml"/>
+  <import resource="classpath:jackson.xml"/>
   <import resource="classpath:META-INF/cxf/cxf.xml"/>
   <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
   <!-- REST RESOURCES-->
@@ -95,12 +96,12 @@
    //############################################
  -->
 
+<!--
   <bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.json.JSONProvider">
     <property name="ignoreNamespaces" value="true"/>
     <property name="dropRootElement" value="true"/>
     <property name="serializeAsArray" value="true"/>
-    <!--<property name="dropCollectionWrapperElement" value="true"/>-->
-    <!--<property name="supportUnwrapped" value="true"/>-->
+
     <property name="arrayKeys">
       <list>
         <value>items</value>
@@ -115,6 +116,7 @@
     </property>
 
   </bean>
+-->
 
 
 </beans>

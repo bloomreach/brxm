@@ -472,12 +472,9 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/i
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/ActionType.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/BeanWriterLogEntry.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/EssentialsPlugin.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/NodeRestful.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/PluginAsset.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/PluginNamespaceMapper.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/PluginScreenshot.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/PropertyRestful.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/QueryRestful.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/BaseJcrModel.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/HstConfiguration.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/HstConfigurationBuilder.java -text
@@ -493,7 +490,10 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/m
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/rest/BaseResource.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/rest/KeyValueRestful.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/rest/MessageRestful.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/rest/NodeRestful.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/rest/ProjectRestful.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/rest/PropertyRestful.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/rest/QueryRestful.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/rest/RestfulList.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/setup/ProjectSetupPlugin.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/BeanWriterUtils.java -text
@@ -565,6 +565,7 @@ plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/i
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/XmlInstructionTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/parser/InstructionParserTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/model/hst/HstConfigurationServiceTest.java -text
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/rest/QueryRestfulTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/BeanWriterUtilsTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/CndUtilsTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/ComponentsUtilsTest.java -text
@@ -706,6 +707,7 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/EndPointList
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/EndpointsRestApplication.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/JarResourceServlet.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/RestServlet.java -text
+plugin-dashboard/src/main/resources/jackson.xml -text
 plugin-dashboard/src/main/resources/nodetype.xml -text
 plugin-dashboard/src/main/resources/plugin_descriptor.json -text
 plugin-dashboard/src/main/resources/rest.xml -text

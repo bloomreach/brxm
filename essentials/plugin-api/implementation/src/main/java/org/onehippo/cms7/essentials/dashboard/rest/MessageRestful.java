@@ -24,7 +24,7 @@ import org.onehippo.cms7.essentials.dashboard.rest.Restful;
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "items")
+@XmlRootElement(name = "message")
 public class MessageRestful implements Restful {
 
     private boolean successMessage = true;

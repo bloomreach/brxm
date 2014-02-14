@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.model;
+package org.onehippo.cms7.essentials.dashboard.rest;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.onehippo.cms7.essentials.dashboard.rest.Restful;
-
-import com.sun.corba.se.impl.orbutil.ObjectWriter;
 
 /**
  * @version "$Id$"

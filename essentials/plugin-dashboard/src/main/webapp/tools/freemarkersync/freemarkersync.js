@@ -24,7 +24,13 @@
                 };
                 $scope.init = function () {
                     var query = Essentials.queryBuilder("//hst:hst/hst:configurations//element(*, hst:template)");
+                    console.log("========================");
+                    console.log(query);
                     $http.post($rootScope.REST.jcrQuery, query).success(function (data) {
+                        console.log("=======================================");
+                        console.log("=======================================");
+                        console.log("=======================================");
+                        console.log(data);
                         $scope.scriptNodes = [];
                         angular.forEach(data.nodes, function (value) {
                             var myValue = value.path;

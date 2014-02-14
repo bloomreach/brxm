@@ -34,9 +34,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.onehippo.cms7.essentials.dashboard.model.NodeRestful;
-import org.onehippo.cms7.essentials.dashboard.model.PropertyRestful;
-import org.onehippo.cms7.essentials.dashboard.model.QueryRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.NodeRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.PropertyRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.QueryRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
