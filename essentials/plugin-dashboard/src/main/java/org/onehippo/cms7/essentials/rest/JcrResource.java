@@ -126,7 +126,7 @@ public class JcrResource extends BaseResource {
         final PropertyIterator properties = node.getProperties();
         while (properties.hasNext()) {
             final Property p = properties.nextProperty();
-            final PropertyRestful<String> propertyRestful = new PropertyRestful<>();
+            final PropertyRestful propertyRestful = new PropertyRestful();
             propertyRestful.setName(p.getName());
             propertyRestful.setValue(p.getPath());
             nodeRestful.addProperty(propertyRestful);
@@ -136,9 +136,9 @@ public class JcrResource extends BaseResource {
 
     @POST
     @Path("/property/")
-    public PropertyRestful<?> getProperty(final PropertyRestful<?> payload, @Context ServletContext servletContext) {
+    public PropertyRestful getProperty(final PropertyRestful payload, @Context ServletContext servletContext) {
 
-        return new PropertyRestful<>();
+        return new PropertyRestful();
     }
 
 

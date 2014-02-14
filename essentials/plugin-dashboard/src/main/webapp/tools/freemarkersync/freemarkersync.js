@@ -23,7 +23,7 @@
                     });
                 };
                 $scope.init = function () {
-                    var query = Essentials.queryBuilder("//hst:hst/hst:configurations//element(*, hst:template)");
+                    var query = Essentials.queryBuilder("//hst:hst/hst:configurations//element(*, hst:template)[@hst:script]");
                     console.log("========================");
                     console.log(query);
                     $http.post($rootScope.REST.jcrQuery, query).success(function (data) {

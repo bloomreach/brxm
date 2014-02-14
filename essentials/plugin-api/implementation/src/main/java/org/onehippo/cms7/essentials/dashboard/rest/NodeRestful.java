@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class NodeRestful implements Restful {
 
     private static final long serialVersionUID = 1L;
-    private List<PropertyRestful<?>> properties;
+    private List<PropertyRestful> properties;
     private List<NodeRestful> nodes;
     /**
      * flag which indicates node is in "loaded" state (e.g. all data is retrieved)
@@ -60,7 +60,7 @@ public class NodeRestful implements Restful {
     public NodeRestful() {
     }
 
-    public void addProperty(final PropertyRestful<?> property) {
+    public void addProperty(final PropertyRestful property) {
         if (properties == null) {
             properties = new ArrayList<>();
         }
@@ -75,11 +75,24 @@ public class NodeRestful implements Restful {
         nodes.add(node);
     }
 
-    public List<PropertyRestful<?>> getProperties() {
+
+    public PropertyRestful  getProperty(final String name) {
+        if (properties == null) {
+            return null;
+        }
+        for (PropertyRestful  property : properties) {
+            if (property.getName().equals(name)) {
+                return property;
+            }
+        }
+        return null;
+    }
+
+    public List<PropertyRestful> getProperties() {
         return properties;
     }
 
-    public void setProperties(final List<PropertyRestful<?>> properties) {
+    public void setProperties(final List<PropertyRestful> properties) {
         this.properties = properties;
     }
 
@@ -104,6 +117,9 @@ public class NodeRestful implements Restful {
     }
 
     public List<NodeRestful> getNodes() {
+        if(nodes ==null){
+            return new ArrayList<>();
+        }
         return nodes;
     }
 

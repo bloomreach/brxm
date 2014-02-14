@@ -45,6 +45,7 @@ public class DefaultPluginContext implements PluginContext {
     private String beansPackage;
     private String restPackage;
     private String projectNamespace;
+    private Map<String, Object> placeholderData;
 
     public DefaultPluginContext(final Session session, final Plugin plugin) {
         this.session = session;
@@ -203,7 +204,9 @@ public class DefaultPluginContext implements PluginContext {
      */
     @Override
     public Map<String, Object> getPlaceholderData() {
-        final Map<String, Object> placeholderData = new HashMap<>();
+        if (placeholderData == null) {
+            placeholderData = new HashMap<>();
+        }
         placeholderData.put(EssentialConst.PLACEHOLDER_NAMESPACE, getProjectNamespacePrefix());
         placeholderData.put(EssentialConst.PLACEHOLDER_PROJECT_ROOT, ProjectUtils.getBaseProjectDirectory());
         placeholderData.put(EssentialConst.PLACEHOLDER_SITE_ROOT, ProjectUtils.getSite().getAbsolutePath());

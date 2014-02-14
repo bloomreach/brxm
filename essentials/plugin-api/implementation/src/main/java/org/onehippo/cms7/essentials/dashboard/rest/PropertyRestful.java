@@ -19,6 +19,7 @@ package org.onehippo.cms7.essentials.dashboard.rest;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jcr.PropertyType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.onehippo.cms7.essentials.dashboard.rest.Restful;
@@ -27,23 +28,42 @@ import org.onehippo.cms7.essentials.dashboard.rest.Restful;
  * @version "$Id$"
  */
 @XmlRootElement(name = "property")
-public class PropertyRestful<T> implements Restful {
+public class PropertyRestful implements Restful {
 
     private static final long serialVersionUID = 1L;
     private String name;
-    private T value;
+    private int type = PropertyType.STRING;
+    private String value;
     private boolean multivalue;
-    private List<T> values;
+    private List<String> values;
 
-    public PropertyRestful(final String name, final T value) {
+    public PropertyRestful(final String name) {
+        this.name = name;
+    }
+
+    public PropertyRestful(final String name, final String value) {
         this.name = name;
         this.value = value;
+    }
+
+    public PropertyRestful(final String name, final String value, final int type) {
+        this.name = name;
+        this.value = value;
+        this.type = type;
     }
 
     public PropertyRestful() {
     }
 
-    public void addValue(final T value) {
+    public int getType() {
+        return type;
+    }
+
+    public void setType(final int type) {
+        this.type = type;
+    }
+
+    public void addValue(final String value) {
         if (values == null) {
             values = new ArrayList<>();
         }
@@ -59,11 +79,11 @@ public class PropertyRestful<T> implements Restful {
         this.multivalue = multivalue;
     }
 
-    public List<T> getValues() {
+    public List<String> getValues() {
         return values;
     }
 
-    public void setValues(final List<T> values) {
+    public void setValues(final List<String> values) {
         this.values = values;
     }
 
@@ -75,11 +95,11 @@ public class PropertyRestful<T> implements Restful {
         this.name = name;
     }
 
-    public T getValue() {
+    public String getValue() {
         return value;
     }
 
-    public void setValue(final T value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 }

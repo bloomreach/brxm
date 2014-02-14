@@ -406,7 +406,10 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-themes/src/test/res
 dashboard-plugins/essentials-powerpacks/pom.xml -text
 dashboard-plugins/freemarker-synchronizer/pom.xml -text
 dashboard-plugins/freemarker-synchronizer/src/main/java/org/onehippo/cms7/essentials/tools/gui/FreemarkerSyncPlugin.java -text
+dashboard-plugins/freemarker-synchronizer/src/main/java/org/onehippo/cms7/essentials/tools/rest/FSUtils.java -text
 dashboard-plugins/freemarker-synchronizer/src/main/java/org/onehippo/cms7/essentials/tools/rest/FreemarkerSyncResource.java -text
+dashboard-plugins/freemarker-synchronizer/src/test/java/org/onehippo/cms7/essentials/tools/rest/FSUtilsTest.java -text
+dashboard-plugins/freemarker-synchronizer/src/test/resources/log4j.xml -text
 dashboard-plugins/pom.xml -text
 plugin-api/api/pom.xml -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/DependencyType.java -text

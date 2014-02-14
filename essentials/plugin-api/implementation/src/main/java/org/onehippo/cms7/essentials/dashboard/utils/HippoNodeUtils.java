@@ -2,6 +2,7 @@ package org.onehippo.cms7.essentials.dashboard.utils;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -14,10 +15,15 @@ import java.util.TreeSet;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
+import javax.jcr.Binary;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 import javax.jcr.query.InvalidQueryException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
@@ -27,6 +33,8 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.onehippo.cms7.essentials.dashboard.rest.NodeRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.PropertyRestful;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +42,9 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Multimap;
 
 /**
  * @version "$Id: HippoNodeUtils.java 169724 2013-07-05 08:32:08Z dvandiepen $"
@@ -45,6 +55,21 @@ public final class HippoNodeUtils {
     private static final Pattern NAME_PATTERN = Pattern.compile("^[A-Za-z]+$");
     private static final Pattern URL_PATTERN = Pattern.compile("^http:.*/[0-9].[0-9]$");
 
+    public static final Multimap<Integer, Class<?>> TYPE_MAPPINGS = new ImmutableMultimap.Builder<Integer, Class<?>>()
+            .put(PropertyType.LONG, Integer.class)
+            .put(PropertyType.LONG, int.class)
+            .put(PropertyType.LONG, Long.class)
+            .put(PropertyType.LONG, long.class)
+            .put(PropertyType.DOUBLE, Double.class)
+            .put(PropertyType.DOUBLE, double.class)
+            .put(PropertyType.DOUBLE, Number.class)
+            .put(PropertyType.BOOLEAN, Boolean.class)
+            .put(PropertyType.BOOLEAN, boolean.class)
+            .put(PropertyType.STRING, String.class)
+            .put(PropertyType.DATE, Calendar.class)
+            .put(PropertyType.BINARY, Binary.class)
+
+            .build();
     public static final String HIPPOSYSEDIT_PATH = HippoNodeType.HIPPO_PATH;
     public static final String HIPPO_NAMESPACE_PREFIX = "hippo:";
     public static final String HIPPOSYS_NAMESPACE_PREFIX = "hipposys:";
@@ -54,7 +79,7 @@ public final class HippoNodeUtils {
         @Override
         public boolean apply(String documentType) {
 
-            if (documentType!=null
+            if (documentType != null
                     && !documentType.startsWith(HIPPO_NAMESPACE_PREFIX)
                     && !documentType.startsWith(HIPPOSYS_NAMESPACE_PREFIX)
                     && !documentType.startsWith(HIPPOSYSEDIT_NAMESAPCE_PREFIX)
@@ -264,50 +289,6 @@ public final class HippoNodeUtils {
         return namespaceNode.getNode(EssentialConst.HIPPOSYSEDIT_NODETYPE).getNode(EssentialConst.HIPPOSYSEDIT_NODETYPE);
     }
 
-    /*
-    private static Map<String, Set<String>> prototypes(final Session session, final String... templates) throws RepositoryException {
-        Map<String, Set<String>> types = new LinkedHashMap<>();
-        try {
-            QueryManager qmgr = session.getWorkspace().getQueryManager();
-            AbstractList<Node> foldertypes = new Vector<>();
-            Node hippoTemplates = session.getRootNode().getNode("hippo:configuration/hippo:queries/hippo:templates");
-            for (String template : templates) {
-                if (hippoTemplates.hasNode(template)) {
-                    foldertypes.add(hippoTemplates.getNode(template));
-                }
-            }
-            for (Node queryTemplate : foldertypes) {
-                try {
-                    Set<String> prototypes = new TreeSet<>();
-                    if (queryTemplate.isNodeOfSuperType("nt:query")) {
-                        Query query = qmgr.getQuery(queryTemplate);
-                        query = qmgr.createQuery(queryTemplate.getProperty("jcr:statement").getString(), query.getLanguage()); // HREPTWO-1266
-                        QueryResult rs = query.execute();
-                        for (NodeIterator iter = rs.getNodes(); iter.hasNext(); ) {
-                            Node typeNode = iter.nextNode();
-                            if (typeNode.getName().equals("hipposysedit:prototype")) {
-                                String documentType = typeNode.getPrimaryNodeType().getName();
-                                final boolean isTemplate = INTERNAL_TYPES_PREDICATE.apply(documentType);
-                                if (isTemplate) {
-                                    prototypes.add(documentType);
-
-                                }
-                            } else {
-                                prototypes.add(typeNode.getName());
-                            }
-                        }
-                    }
-                    types.put(queryTemplate.getName(), prototypes);
-                } catch (InvalidQueryException ex) {
-                    log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-                }
-            }
-        } catch (RepositoryException ex) {
-            log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-        }
-        return types;
-    }
-    */
 
     /**
      * Partially ripped from org.hippoecm.repository.standardworkflow.FolderWorkflowImpl#prototypes() to retrieve a list
@@ -320,7 +301,7 @@ public final class HippoNodeUtils {
      * @return
      * @throws RepositoryException
      */
-    private static Map<String, Set<String>> prototypes(final Session session, JcrMatcher matcher, final String... templates)  {
+    private static Map<String, Set<String>> prototypes(final Session session, JcrMatcher matcher, final String... templates) {
         Map<String, Set<String>> types = new LinkedHashMap<>();
         if (session == null) {
             // WHEN RUNNING WITHOUT CMS
@@ -521,7 +502,6 @@ public final class HippoNodeUtils {
     }
 
 
-
     public static void checkName(String name) throws Exception {
         if (Strings.isNullOrEmpty(name)) {
             throw new Exception("No name specified");
@@ -538,6 +518,47 @@ public final class HippoNodeUtils {
         if (!URL_PATTERN.matcher(name).matches()) {
             throw new Exception("Invalid URL; ");
         }
+    }
+
+    /**
+     * Populates properties of given node
+     *
+     * @param node    node
+     * @param restful restful representation
+     */
+    public static void populateProperties(final Node node, final NodeRestful restful) {
+        try {
+            restful.setName(node.getName());
+            restful.setPath(node.getPath());
+            final PropertyIterator properties = node.getProperties();
+            while (properties.hasNext()) {
+                final Property property = properties.nextProperty();
+                restful.addProperty(extractProperty(property));
+            }
+
+
+        } catch (RepositoryException e) {
+            log.error("Error populating node", e);
+        }
+    }
+
+    private static PropertyRestful extractProperty(final Property property) throws RepositoryException {
+        final PropertyRestful restful = new PropertyRestful(property.getName());
+        restful.setName(property.getName());
+        if (property.isMultiple()) {
+            restful.setMultivalue(true);
+            final Value[] values = property.getValues();
+            for (Value value : values) {
+                restful.addValue(value.getString());
+                restful.setType(value.getType());
+            }
+
+        } else {
+            restful.setValue(property.getValue().getString());
+            restful.setType(property.getType());
+        }
+
+        return restful;
     }
 
 

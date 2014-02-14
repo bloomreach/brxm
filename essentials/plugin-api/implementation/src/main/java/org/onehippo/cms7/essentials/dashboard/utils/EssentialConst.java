@@ -25,8 +25,8 @@ public final class EssentialConst {
     public static final String PLACEHOLDER_NAMESPACE = "namespace";
     public static final String PLACEHOLDER_PROJECT_ROOT = "projectRoot";
     public static final String PLACEHOLDER_SITE_ROOT = "siteRoot";
-    public static final String PLACEHOLDER_SITE_WEB_ROOT = "siteRoot";
-    public static final String PLACEHOLDER_SITE_FREEMARKER_ROOT = "siteRoot";
+    public static final String PLACEHOLDER_SITE_WEB_ROOT = "siteWebRoot";
+    public static final String PLACEHOLDER_SITE_FREEMARKER_ROOT = "freemarkerRoot";
     public static final String PLACEHOLDER_JSP_ROOT = "jspRoot";
     public static final String PLACEHOLDER_CMS_ROOT = "cmsRoot";
     public static final String PLACEHOLDER_SOURCE = "source";
