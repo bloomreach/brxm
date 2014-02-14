@@ -19,6 +19,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -64,7 +65,7 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
     public static final String CATEGORIES = "workflow.categories";
     public static final String MENU_ORDER = "workflow.menuorder";
 
-    private List<IObserver<JcrNodeModel>> observers;
+    private Set<NodeObserver> observers;
     private PluginController plugins;
     private String[] categories;
     private String[] menuOrder;
@@ -93,7 +94,7 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
         }
         IServiceReference serviceReference = context.getReference(this);
         plugins = new PluginController(context, config, serviceReference.getServiceId());
-        observers = new LinkedList<>();
+        observers = new HashSet<>();
     }
 
     @Override
@@ -140,15 +141,13 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
 
         final MenuHierarchy menu = new MenuHierarchy(Arrays.asList(categories), Arrays.asList(menuOrder), form);
         plugins.stopRenderers();
-        IPluginContext context = getPluginContext();
-        for (IObserver<JcrNodeModel> observer : new ArrayList<>(observers)) {
-            context.unregisterService(observer, IObserver.class.getName());
-        }
-        observers.clear();
+
+        stopObservation();
+
         List<Panel> list = new LinkedList<>();
         for (Node node : nodeSet) {
             for (final String category : categories) {
-                List<Panel> panels = buildCategory(context, node, category);
+                List<Panel> panels = buildCategory(node, category);
                 for (Panel panel : panels) {
                     panel.visitChildren(Panel.class, new MenuVisitor(menu, category));
                     panel.setVisible(false);
@@ -161,7 +160,43 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
         view.populate();
         view.setVisible(false);
 
+        startObservation(nodeSet);
+
         return menu;
+    }
+
+    private void stopObservation() {
+        IPluginContext context = getPluginContext();
+        for (IObserver<JcrNodeModel> observer : new ArrayList<>(observers)) {
+            context.unregisterService(observer, IObserver.class.getName());
+        }
+        observers.clear();
+    }
+
+    private void startObservation(final Set<Node> nodeSet) {
+        IPluginContext context = getPluginContext();
+
+        Set<JcrNodeModel> models = new HashSet<>();
+        for (Node node : nodeSet) {
+            models.add(new JcrNodeModel(node));
+            try {
+                if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    for (Node child : new NodeIterable(node.getNodes())) {
+                        models.add(new JcrNodeModel(child));
+                    }
+                }
+            } catch (RepositoryException e) {
+                log.error("Unable to watch document for changes", e);
+            }
+        }
+
+        for (JcrNodeModel nodeModel : models) {
+            NodeObserver observer = new NodeObserver(nodeModel);
+            if (!observers.contains(observer)) {
+                observers.add(observer);
+                context.registerService(observer, IObserver.class.getName());
+            }
+        }
     }
 
     private Form getForm() {
@@ -175,7 +210,7 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
         return null;
     }
 
-    private List<Panel> buildCategory(final IPluginContext context, final Node node, final String category) {
+    private List<Panel> buildCategory(final Node node, final String category) {
         List<Panel> panels = new LinkedList<>();
         try {
             WorkflowManager workflowMgr = ((HippoWorkspace) node.getSession().getWorkspace()).getWorkflowManager();
@@ -189,7 +224,7 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
                         }
                         descriptor = workflowMgr.getWorkflowDescriptor(category, child);
                         if (descriptor != null) {
-                            Panel panel = buildCategoryForNode(context, child, descriptor, category);
+                            Panel panel = buildCategoryForNode(child, descriptor, category);
                             if (panel != null) {
                                 panels.add(panel);
                             }
@@ -197,7 +232,7 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
                     }
                 }
             } else {
-                Panel panel = buildCategoryForNode(context, node, descriptor, category);
+                Panel panel = buildCategoryForNode(node, descriptor, category);
                 if (panel != null) {
                     panels.add(panel);
                 }
@@ -208,28 +243,13 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
         return panels;
     }
 
-    private Panel buildCategoryForNode(final IPluginContext context, final Node node, WorkflowDescriptor descriptor, final String category) throws RepositoryException {
+    private Panel buildCategoryForNode(final Node node, WorkflowDescriptor descriptor, final String category) throws RepositoryException {
         final String pluginRenderer = descriptor.getAttribute(FrontendNodeType.FRONTEND_RENDERER);
         WorkflowDescriptorModel pluginModel = new WorkflowDescriptorModel(descriptor, category, node);
         Panel plugin = createPlugin(category, pluginRenderer, pluginModel);
         if (plugin == null) {
             return null;
         }
-
-        final JcrNodeModel nodeModel = new JcrNodeModel(node);
-        IObserver<JcrNodeModel> observer = new IObserver<JcrNodeModel>() {
-
-            public JcrNodeModel getObservable() {
-                return nodeModel;
-            }
-
-            public void onEvent(Iterator<? extends IEvent<JcrNodeModel>> events) {
-                modelChanged();
-            }
-
-        };
-        observers.add(observer);
-        context.registerService(observer, IObserver.class.getName());
 
         return plugin;
 
@@ -288,6 +308,40 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
         @Override
         protected void populateItem(Item<Panel> item) {
             item.add(item.getModelObject());
+        }
+    }
+
+    private class NodeObserver implements IObserver<JcrNodeModel> {
+
+        private final JcrNodeModel nodeModel;
+
+        public NodeObserver(final JcrNodeModel nodeModel) {
+            this.nodeModel = nodeModel;
+        }
+
+        public JcrNodeModel getObservable() {
+            return nodeModel;
+        }
+
+        public void onEvent(Iterator<? extends IEvent<JcrNodeModel>> events) {
+            modelChanged();
+        }
+
+        @Override
+        public int hashCode() {
+            return 127 * nodeModel.hashCode();
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (obj == this) {
+                return true;
+            }
+            if (!(obj instanceof NodeObserver)) {
+                return false;
+            }
+            NodeObserver that = (NodeObserver) obj;
+            return that.nodeModel.equals(nodeModel);
         }
     }
 }
