@@ -80,7 +80,6 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
         channelManagerService = loadService("channel manager service", CONFIG_CHANNEL_MANAGER_SERVICE_ID, IChannelManagerService.class);
 
         if (channelManagerService != null) {
-
             WorkflowDescriptorModel model = (WorkflowDescriptorModel) getDefaultModel();
             if (model != null) {
                 try {
@@ -88,8 +87,7 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
                     if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                         WorkflowManager workflowManager = UserSession.get().getWorkflowManager();
                         DocumentWorkflow workflow = (DocumentWorkflow) workflowManager.getWorkflow(model.getObject());
-                        Serializable isLive = workflow.hints().get("isLive");
-                        if ((isLive instanceof Boolean) && ((Boolean) isLive)) {
+                        if (Boolean.TRUE.equals(workflow.hints().get("previewAvailable"))) {
                             addMenuDescription(model);
                         }
                     }
