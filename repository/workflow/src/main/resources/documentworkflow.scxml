@@ -35,6 +35,7 @@
     def boolean isEditor() { draft?.holder == user }
     def boolean isLive() { published?.isAvailable('live') }
     def boolean isPreview() { unpublished?.isAvailable('preview') }
+    def boolean isPreviewAvailable() { unpublished?.isAvailable('preview') or published?.isAvailable('preview') }
     def boolean isModified() { unpublished and (!live or unpublished.lastModified!=published.lastModified) }
     def boolean isRequestPending() { dm.requestPending }
   </script>
@@ -45,6 +46,7 @@
       <onentry>
         <hippo:info info="status" value="editable"/>
         <hippo:info info="isLive" value="live"/>
+        <hippo:info info="previewAvailable" value="previewAvailable"/>
         <hippo:action action="checkModified" enabledExpr="draft and unpublished"/>
       </onentry>
 
