@@ -146,11 +146,14 @@ public class FreemarkerSyncResource extends BaseResource {
         final List<KeyValueRestful> items = paths.getItems();
         final NodeRestful scriptNodes = FSUtils.getScriptNodes(context);
         final Map<String, String> results = new HashMap<>();
+        final String freemarkerPath = (String) context.getPlaceholderData().get(EssentialConst.PLACEHOLDER_SITE_FREEMARKER_ROOT);
         for (KeyValueRestful item : items) {
             final String scriptPath = item.getValue();
+
             final NodeRestful nodeForPath = scriptNodes.getNodeForPath(scriptPath);
             if (nodeForPath != null) {
-                FSUtils.writeScriptNode(context, nodeForPath, results);
+
+                FSUtils.writeScriptNode(context, freemarkerPath, nodeForPath, results);
 
             }
         }

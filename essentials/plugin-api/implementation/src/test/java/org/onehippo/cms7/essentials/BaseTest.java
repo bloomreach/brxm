@@ -85,6 +85,7 @@ public abstract class BaseTest {
             context.setComponentsPackageName("org.onehippo.cms7.essentials.dashboard.test.components");
             context.setRestPackageName("org.onehippo.cms7.essentials.dashboard.test.rest");
             context.setRestPackageName("org.onehippo.cms7.essentials.dashboard.test.rest");
+
             final File file = new File(basePath);
             if(file.exists()){
                 final File cmsFolder = new File(basePath + File.separator + "cms");

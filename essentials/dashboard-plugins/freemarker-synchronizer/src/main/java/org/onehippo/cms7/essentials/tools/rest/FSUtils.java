@@ -79,18 +79,18 @@ public final class FSUtils {
     }
 
 
-    public static Map<String, String> writeFreemarkerFiles(final PluginContext context, final NodeRestful restful) {
+    public static Map<String, String> writeFreemarkerFiles(final PluginContext context, final String freemarkerPath,final NodeRestful restful) {
         final Map<String, String> nodeFileMappings = new HashMap<>();
         final List<NodeRestful> nodes = restful.getNodes();
         for (NodeRestful node : nodes) {
-            writeScriptNode(context, node, nodeFileMappings);
+            writeScriptNode(context, freemarkerPath, node, nodeFileMappings);
         }
 
         return nodeFileMappings;
 
     }
 
-    public static void writeScriptNode(final PluginContext context, final NodeRestful node, final Map<String, String> nodeFileMappings) {
+    public static void writeScriptNode(final PluginContext context, final String freemarkerPath , final NodeRestful node, final Map<String, String> nodeFileMappings) {
         final String path = node.getPath();
         if (path == null) {
             log.error("Path was null for node {}", node);
@@ -107,7 +107,7 @@ public final class FSUtils {
             return;
         }
         final String value = property.getValue();
-        final String freemarkerPath = (String) context.getPlaceholderData().get(EssentialConst.PLACEHOLDER_SITE_FREEMARKER_ROOT);
+
 
         try {
             final File dir = ensureDirs(freemarkerPath, context);

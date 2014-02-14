@@ -27,6 +27,7 @@ import javax.jcr.query.QueryResult;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.BaseTest;
+import org.onehippo.cms7.essentials.TestPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.rest.NodeRestful;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
@@ -45,16 +46,10 @@ public class FSUtilsTest extends BaseRepositoryTest {
 
     private static Logger log = LoggerFactory.getLogger(FSUtilsTest.class);
 
-    @Test
-    public void testTest() throws Exception {
-        final Map<String,Object> placeholderData = getContext().getPlaceholderData();
-        final String freemarkerRoot = (String) placeholderData.get(EssentialConst.PLACEHOLDER_SITE_FREEMARKER_ROOT);
-        assertNotNull(freemarkerRoot);
 
-    }
     @Test
     public void testWriting() throws Exception {
-        final  PluginContext context = getContext();
+        final TestPluginContext context = (TestPluginContext) getContext();
 
         session = context.getSession();
         // create hst nodes
@@ -69,8 +64,9 @@ public class FSUtilsTest extends BaseRepositoryTest {
         session.save();
         final NodeRestful scriptNodes = FSUtils.getScriptNodes(context);
         assertEquals(2, scriptNodes.getNodes().size());
+        final String freemarkerPath = (String) context.getTestContextPlaceholders().get(EssentialConst.PLACEHOLDER_SITE_FREEMARKER_ROOT);
 
-        final Map<String, String> map = FSUtils.writeFreemarkerFiles(context, scriptNodes);
+        final Map<String, String> map = FSUtils.writeFreemarkerFiles(context, freemarkerPath, scriptNodes);
         assertEquals(2, map.size());
 
     }
