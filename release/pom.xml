@@ -430,16 +430,6 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-cms-surf-frontend</artifactId>
-        <version>${hippo.cms.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-cms-surf-repository</artifactId>
-        <version>${hippo.cms.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms-automatic-export-frontend</artifactId>
         <version>${hippo.cms.version}</version>
       </dependency>
