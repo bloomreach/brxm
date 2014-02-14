@@ -13,23 +13,30 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.service.documenturl;
-
-import javax.jcr.Node;
+package org.hippoecm.frontend.service;
 
 import org.apache.wicket.util.io.IClusterable;
+import org.apache.wicket.markup.html.link.PopupSettings;
 
 /**
- * Returns the external URL to a Hippo document node.
+ * Opens a popup window for a URL.
  */
-public interface IDocumentUrlService extends IClusterable {
+public interface IPopupService extends IClusterable {
 
-    public static final String DEFAULT_SERVICE_ID = "default.document.url.service";
+    final static int DEFAULT_POPUP_SETTINGS =
+                    PopupSettings.RESIZABLE
+                    | PopupSettings.SCROLLBARS
+                    | PopupSettings.LOCATION_BAR
+                    | PopupSettings.MENU_BAR
+                    | PopupSettings.TOOL_BAR;
 
     /**
-     * @param documentNode the Hippo document node
-     * @return the external URL to a Hippo document node, or null of no external URL could be created.
+     * Opens a popup window for a URL.
+     *
+     * @param popupSettings
+     *
+     * @param url the URL to open
      */
-    public String getUrl(Node documentNode);
+    public void openPopupWindow(PopupSettings popupSettings, String url);
 
 }

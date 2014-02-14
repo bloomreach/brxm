@@ -305,7 +305,6 @@ api/src/main/java/org/hippoecm/frontend/plugins/standards/perspective/perspectiv
 api/src/main/java/org/hippoecm/frontend/plugins/standards/perspective/perspective-24.png -text svneol=unset#image/png
 api/src/main/java/org/hippoecm/frontend/plugins/standards/perspective/perspective-32.png -text svneol=unset#image/png
 api/src/main/java/org/hippoecm/frontend/plugins/standards/perspective/perspective-48.png -text svneol=unset#image/png
-api/src/main/java/org/hippoecm/frontend/plugins/standards/popup/IPopupService.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/standards/search/QueryResultModel.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/search/TextSearchBuilder.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/search/TextSearchDataProvider.java svneol=native#text/plain
@@ -516,6 +515,7 @@ api/src/main/java/org/hippoecm/frontend/service/IEditor.java svneol=native#text/
 api/src/main/java/org/hippoecm/frontend/service/IEditorFilter.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/service/IEditorManager.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/service/IFocusListener.java -text
+api/src/main/java/org/hippoecm/frontend/service/IPopupService.java -text
 api/src/main/java/org/hippoecm/frontend/service/IRenderService.java -text
 api/src/main/java/org/hippoecm/frontend/service/IRestProxyService.java -text
 api/src/main/java/org/hippoecm/frontend/service/ITitleDecorator.java svneol=native#text/plain
@@ -1931,6 +1931,12 @@ engine/src/main/java/org/hippoecm/frontend/plugins/login/images/loginback.png -t
 engine/src/main/java/org/hippoecm/frontend/plugins/login/images/loginbottom.png -text svneol=unset#image/png
 engine/src/main/java/org/hippoecm/frontend/plugins/login/images/loginhead_ce.png -text svneol=unset#image/png
 engine/src/main/java/org/hippoecm/frontend/plugins/login/images/wadden.png -text svneol=unset#image/png
+engine/src/main/java/org/hippoecm/frontend/service/popup/AjaxPopupService.java -text
+engine/src/main/java/org/hippoecm/frontend/service/popup/AjaxPopupService.properties -text
+engine/src/main/java/org/hippoecm/frontend/service/popup/AjaxPopupService_de.properties -text
+engine/src/main/java/org/hippoecm/frontend/service/popup/AjaxPopupService_fr.properties -text
+engine/src/main/java/org/hippoecm/frontend/service/popup/AjaxPopupService_it.properties -text
+engine/src/main/java/org/hippoecm/frontend/service/popup/AjaxPopupService_nl.properties -text
 engine/src/main/java/org/hippoecm/frontend/service/preferences/Preference.java -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/service/preferences/PreferencesStore.java -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/service/preferences/PreferencesStorePlugin.java -text svneol=unset#text/plain
@@ -2536,38 +2542,6 @@ search/src/main/java/org/hippoecm/frontend/plugins/search/yui/SearchNamespace.ja
 search/src/main/java/org/hippoecm/frontend/plugins/search/yui/SearchResult.java svneol=native#text/plain
 search/src/main/java/org/hippoecm/frontend/plugins/search/yui/js/searchbox/searchbox-debug.js svneol=native#text/plain
 search/src/main/java/org/hippoecm/frontend/plugins/search/yui/js/searchbox/searchbox.js svneol=native#text/plain
-surf/frontend/pom.xml -text
-surf/frontend/src/main/java/org/hippoecm/frontend/plugins/social/SocialSharingPlugin.html -text
-surf/frontend/src/main/java/org/hippoecm/frontend/plugins/social/SocialSharingPlugin.java -text
-surf/frontend/src/main/java/org/hippoecm/frontend/plugins/websiteactions/WebsiteActionsPlugin.html -text
-surf/frontend/src/main/java/org/hippoecm/frontend/plugins/websiteactions/WebsiteActionsPlugin.java -text
-surf/frontend/src/main/java/org/hippoecm/frontend/plugins/websiteactions/WebsiteActionsPlugin.properties -text
-surf/frontend/src/main/java/org/hippoecm/frontend/plugins/websiteactions/WebsiteActionsPlugin_de.properties -text
-surf/frontend/src/main/java/org/hippoecm/frontend/plugins/websiteactions/WebsiteActionsPlugin_fr.properties -text
-surf/frontend/src/main/java/org/hippoecm/frontend/plugins/websiteactions/WebsiteActionsPlugin_it.properties -text
-surf/frontend/src/main/java/org/hippoecm/frontend/plugins/websiteactions/WebsiteActionsPlugin_nl.properties -text
-surf/frontend/src/main/java/org/hippoecm/frontend/plugins/websiteactions/live-icon-16.png -text
-surf/frontend/src/main/java/org/hippoecm/frontend/plugins/websiteactions/preview-icon-16.png -text
-surf/frontend/src/main/java/org/hippoecm/frontend/service/documenturl/IDocumentUrlService.java -text
-surf/frontend/src/main/java/org/hippoecm/frontend/service/documenturl/SiteDocumentUrlService.java -text
-surf/frontend/src/main/java/org/hippoecm/frontend/service/popup/AjaxPopupService.java -text
-surf/frontend/src/main/java/org/hippoecm/frontend/service/popup/AjaxPopupService.properties -text
-surf/frontend/src/main/java/org/hippoecm/frontend/service/popup/AjaxPopupService_de.properties -text
-surf/frontend/src/main/java/org/hippoecm/frontend/service/popup/AjaxPopupService_fr.properties -text
-surf/frontend/src/main/java/org/hippoecm/frontend/service/popup/AjaxPopupService_it.properties -text
-surf/frontend/src/main/java/org/hippoecm/frontend/service/popup/AjaxPopupService_nl.properties -text
-surf/frontend/src/main/java/org/hippoecm/frontend/service/social/ISocialMediaService.java -text
-surf/frontend/src/main/java/org/hippoecm/frontend/service/social/ISocialMedium.java -text
-surf/frontend/src/main/java/org/hippoecm/frontend/service/social/PopupSocialMediaService.java -text
-surf/frontend/src/main/java/org/hippoecm/frontend/service/social/PopupSocialMedium.java -text
-surf/frontend/src/main/java/org/hippoecm/frontend/service/social/facebook-icon-16.png -text
-surf/frontend/src/main/java/org/hippoecm/frontend/service/social/linkedin-icon-16.png -text
-surf/frontend/src/main/java/org/hippoecm/frontend/service/social/twitter-icon-16.png -text
-surf/pom.xml -text
-surf/repository/pom.xml -text
-surf/repository/src/main/resources/cms-services-surf.xml -text
-surf/repository/src/main/resources/hippoecm-extension.xml -text
-surf/repository/src/main/resources/workflow-socialsharing.xml -text
 test/src/main/java/org/hippoecm/frontend/PluginSuite.java -text
 test/src/main/java/org/hippoecm/frontend/RepositoryTest.java -text
 test/src/main/resources/domain-defaultread.xml -text

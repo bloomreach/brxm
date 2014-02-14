@@ -63,7 +63,6 @@
     <module>editor</module>
     <module>google-analytics</module>
     <module>automatic-export</module>
-    <module>surf</module>
 
     <!-- obsolete? -->
     <!--

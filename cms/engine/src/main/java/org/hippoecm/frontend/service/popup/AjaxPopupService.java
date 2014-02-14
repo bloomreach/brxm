@@ -22,11 +22,11 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
-import org.hippoecm.frontend.plugins.standards.popup.IPopupService;
+import org.hippoecm.frontend.service.IPopupService;
 
 /**
- * Adds Javascript to the Wicket AJAX request target that opens a URL in a popup window. If the current Wicket
- * request target is not an AJAX request, nothing happens.
+ * Adds Javascript to the Wicket AJAX request target that opens a URL in a popup window. If the current Wicket request
+ * target is not an AJAX request, nothing happens.
  */
 public class AjaxPopupService extends Plugin implements IPopupService {
 
