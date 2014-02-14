@@ -2,6 +2,7 @@
 /LICENSE -text
 /NOTICE -text
 frontend-api/src/main/appended-resources/META-INF/LICENSE -text
+frontend-api/src/main/java/org/onehippo/cms7/channelmanager/service/IDocumentUrlService.java -text
 frontend/.bowerrc -text
 frontend/.jshintrc -text
 frontend/bower.json -text
@@ -142,6 +143,15 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/channelactions/C
 frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/channelactions/ChannelActionsPlugin_it.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/channelactions/ChannelActionsPlugin_nl.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/channelactions/channel-icon-16.png -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/social/ISocialMediaService.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/social/ISocialMedium.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/social/PopupSocialMediaService.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/social/PopupSocialMedium.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/social/SocialSharingPlugin.html -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/social/SocialSharingPlugin.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/social/facebook-icon-16.png -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/social/linkedin-icon-16.png -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/social/twitter-icon-16.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/service/ChannelDocumentUrlService.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/service/IChannelManagerService.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor.java -text
@@ -235,11 +245,11 @@ frontend/src/test/java/org/onehippo/cms7/channelmanager/widgets/JsonUtilTest.jav
 repository/pom.xml eol=lf
 repository/src/main/resources/channel-manager-cluster.xml eol=lf
 repository/src/main/resources/cms-pickers-documents-only.xml -text
+repository/src/main/resources/cms-services-surf.xml -text
 repository/src/main/resources/document-url-service.xml -text
 repository/src/main/resources/hippoecm-extension.xml eol=lf
+repository/src/main/resources/socialsharing-workflowmenu.xml -text
 repository/src/main/resources/workflow-channelactions.xml -text
-repository/src/main/resources/workflow-socialsharing.xml -text
-repository/src/main/resources/workflow-socialsharing_de.xml -text
 test/pom.xml -text
 test/src/main/webapp/HST-vbox.html -text
 test/src/main/webapp/WEB-INF/web.xml -text

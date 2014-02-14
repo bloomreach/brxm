@@ -35,8 +35,8 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Addon Channel Manager</notice.project.name>
 
-    <hippo.repository.version>2.25.05-iteration-9</hippo.repository.version>
-    <hippo.cms.version>2.25.04-iteration-9</hippo.cms.version>
+    <hippo.repository.version>2.25.05-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>2.25.04-SNAPSHOT</hippo.cms.version>
     <hippo.hst.version>2.27.03-page-mgmt-SNAPSHOT</hippo.hst.version>
     <hippo.addon-hst-configuration-editor.version>1.12.03-iteration-9</hippo.addon-hst-configuration-editor.version>
     <commons-lang.version>2.1</commons-lang.version>

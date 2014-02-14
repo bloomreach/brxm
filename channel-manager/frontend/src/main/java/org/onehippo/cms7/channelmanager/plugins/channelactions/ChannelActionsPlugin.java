@@ -16,6 +16,7 @@
 package org.onehippo.cms7.channelmanager.plugins.channelactions;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -25,7 +26,6 @@ import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Value;
 import javax.ws.rs.WebApplicationException;
 
 import org.apache.wicket.Component;
@@ -48,11 +48,15 @@ import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IRestProxyService;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.hst.rest.DocumentService;
 import org.hippoecm.hst.rest.beans.ChannelDocument;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.api.WorkflowManager;
 import org.onehippo.cms7.channelmanager.service.IChannelManagerService;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,14 +80,20 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
         channelManagerService = loadService("channel manager service", CONFIG_CHANNEL_MANAGER_SERVICE_ID, IChannelManagerService.class);
 
         if (channelManagerService != null) {
-            final WorkflowDescriptorModel model = (WorkflowDescriptorModel) getDefaultModel();
+
+            WorkflowDescriptorModel model = (WorkflowDescriptorModel) getDefaultModel();
             if (model != null) {
                 try {
                     Node node = model.getNode();
-                    if (isVisibleInPreview(node)) {
-                        addMenuDescription(model);
+                    if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        WorkflowManager workflowManager = UserSession.get().getWorkflowManager();
+                        DocumentWorkflow workflow = (DocumentWorkflow) workflowManager.getWorkflow(model.getObject());
+                        Serializable isLive = workflow.hints().get("isLive");
+                        if ((isLive instanceof Boolean) && ((Boolean) isLive)) {
+                            addMenuDescription(model);
+                        }
                     }
-                } catch (RepositoryException e) {
+                } catch (RepositoryException | RemoteException | WorkflowException e) {
                     log.error("Error getting document node from WorkflowDescriptorModel", e);
                 }
             }
@@ -107,7 +117,7 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
                 Fragment fragment = new Fragment("content", "actions", ChannelActionsPlugin.this);
                 try {
                     Node node = model.getNode();
-                    String handleUuid = node.getParent().getIdentifier();
+                    String handleUuid = node.getIdentifier();
                     fragment.add(createMenu(handleUuid));
                 } catch (RepositoryException e) {
                     log.warn("Unable to create channel menu", e);
@@ -189,22 +199,6 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
     protected Comparator<ChannelDocument> getChannelDocumentComparator() {
         return DEFAULT_CHANNEL_DOCUMENT_COMPARATOR;
     }
-
-    private static boolean isVisibleInPreview(Node documentNode) {
-        try {
-            if (documentNode.hasProperty(HippoNodeType.HIPPO_AVAILABILITY)) {
-                for (Value availability : documentNode.getProperty(HippoNodeType.HIPPO_AVAILABILITY).getValues()) {
-                    if ("preview".equals(availability.getString())) {
-                        return true;
-                    }
-                }
-            }
-        } catch (RepositoryException e) {
-            log.error("Error getting " + HippoNodeType.HIPPO_AVAILABILITY + " property from document", e);
-        }
-        return false;
-    }
-
 
     private class ViewChannelAction extends StdWorkflow {
 

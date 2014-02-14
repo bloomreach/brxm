@@ -1,36 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2011 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
 <sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="channelactions">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hipposys:workflowcategory</sv:value>
+    <sv:value>frontend:plugin</sv:value>
   </sv:property>
-  <sv:node sv:name="button">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:workflow</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:classname" sv:type="String">
-      <sv:value>org.hippoecm.repository.standardworkflow.NullWorkflowImpl</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:display" sv:type="String">
-      <sv:value>Show preview</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:nodetype" sv:type="String">
-      <sv:value>hippostdpubwf:document</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposys:types">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:types</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="frontend:renderer">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="rest.proxy.service.id" sv:type="String">
-        <sv:value>hst.rest.proxy.service</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.onehippo.cms7.channelmanager.plugins.channelactions.ChannelActionsPlugin</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
+  <sv:property sv:name="rest.proxy.service.id" sv:type="String">
+    <sv:value>hst.rest.proxy.service</sv:value>
+  </sv:property>
+  <sv:property sv:name="plugin.class" sv:type="String">
+    <sv:value>org.onehippo.cms7.channelmanager.plugins.channelactions.ChannelActionsPlugin</sv:value>
+  </sv:property>
+  <sv:property sv:name="wicket.id" sv:type="String">
+    <sv:value>${item}</sv:value>
+  </sv:property>
 </sv:node>
