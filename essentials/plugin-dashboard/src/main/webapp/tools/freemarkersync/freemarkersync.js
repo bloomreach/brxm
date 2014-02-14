@@ -6,12 +6,16 @@
                 $scope.writeAction = function (action) {
                     var map = Essentials.mapBuilder();
                     angular.forEach($scope.scriptNodes, function (value) {
-                        if(action=="file" && value.filePath !=null){
-                            map.put(value.displayValue, value.value);
+                        console.log("---------------------------------");
+                        console.log(value.selected);
+                        if (value.selected) {
+                            if (action == "file") {
+                                map.put(value.displayValue, value.value);
 
-                        }else{
-                            if(value.filePath !=null){
-                                map.put(value.value, value.filePath);
+                            } else {
+                                if (value.filePath != null) {
+                                    map.put(value.value, value.filePath);
+                                }
                             }
                         }
                     });
@@ -22,7 +26,7 @@
 
                 };
                 $scope.saveToRepository = function () {
-                     $scope.writeAction("repository");
+                    $scope.writeAction("repository");
                 };
                 $scope.saveToFile = function () {
                     $scope.writeAction("file");
@@ -34,7 +38,7 @@
                         angular.forEach(data.nodes, function (value) {
                             var myValue = value.path;
                             var displayValue = myValue.replace("/hst:hst/hst:configurations/", "").replace("/hst:templates/", "/");
-                            $scope.scriptNodes.push({"value": value.path, "displayValue": displayValue, "selected": false, "filePath":null});
+                            $scope.scriptNodes.push({"value": value.path, "displayValue": displayValue, "selected": false, "filePath": null});
                         });
                     });
 
@@ -45,7 +49,7 @@
                                 if (value && value.value) {
                                     var fileName = node.displayValue + ".ftl";
                                     var myValue = value.value;
-                                    if(myValue.indexOf(fileName, value.value.length - fileName.length) !== -1){
+                                    if (myValue.indexOf(fileName, value.value.length - fileName.length) !== -1) {
                                         node.filePath = myValue;
                                     }
                                 }

@@ -139,7 +139,8 @@ public class FreemarkerSyncResource extends BaseResource {
 
     @POST
     @Path("/file")
-    public RestfulList<KeyValueRestful> writeToFileSystem(final RestfulList<KeyValueRestful> paths, @Context ServletContext servletContext) {
+    public MessageRestful writeToFileSystem(final RestfulList<KeyValueRestful> paths, @Context ServletContext servletContext) {
+
 
         final PluginContext context = getContext(servletContext);
         final List<KeyValueRestful> items = paths.getItems();
@@ -150,6 +151,7 @@ public class FreemarkerSyncResource extends BaseResource {
             final NodeRestful nodeForPath = scriptNodes.getNodeForPath(scriptPath);
             if (nodeForPath != null) {
                 FSUtils.writeScriptNode(context, nodeForPath, results);
+
             }
         }
 
@@ -157,7 +159,21 @@ public class FreemarkerSyncResource extends BaseResource {
         for (Map.Entry<String, String> entry : results.entrySet()) {
             list.add(new KeyValueRestful(entry.getKey(), entry.getValue()));
         }
-        return list;
+
+
+        final MessageRestful message = new MessageRestful();
+
+        if (results.isEmpty()) {
+            message.setValue("No files were created");
+        } else {
+            StringBuilder messageBuilder = new StringBuilder();
+            messageBuilder.append("Successfully created / updated following files: ");
+            for (Map.Entry<String, String> entry : results.entrySet()) {
+                messageBuilder.append(entry.getValue()).append("; ");
+            }
+            message.setValue(messageBuilder.toString());
+        }
+        return message;
     }
 
 

@@ -28,8 +28,8 @@
                 <table ng-show="scriptNodes.length > 0" class="table table-striped table-bordered">
                     <thead>
                     <tr>
-                        <th colspan="2">
-                            <button tooltip="Save all scripts to file system" class="btn btn-default" ng-click="saveToFile()" style="vertical-align: middle">
+                        <th colspan="3">
+                            <button tooltip="Save all scripts to file system" class="btn btn-success" ng-click="saveToFile()" style="vertical-align: middle">
                                 <span class="glyphicon glyphicon-floppy-save"></span>
                                 Save/update to file system
                             </button>
@@ -41,17 +41,22 @@
 
                     </tr>
                     <tr>
-                        <th class="col-sm-7">Freemarker markup stored in the repository:</th>
+                        <th class="col-sm-1">&nbsp;</th>
+                        <th class="col-sm-6">Freemarker markup stored in the repository:</th>
                         <th class="col-sm-7">Freemarker markup stored on file system:</th>
                     </tr>
                     </thead>
                     <tbody>
                     </tbody>
                     <tr ng-repeat="node in scriptNodes">
+                        <td><span style="padding-right: 20px; cursor: default">
+                                <input type="checkbox" checked="{{node.selected}}" ng-model="node.selected"/></span>
+                        </td>
                         <td>
                             <a style="width:100%" href="http://localhost:8080/cms/console?path={{node.value}}" target="_blank">{{node.displayValue}}</a>
                         </td>
                         <td>{{node.filePath}}</td>
+
                     </tr>
                 </table>
 
