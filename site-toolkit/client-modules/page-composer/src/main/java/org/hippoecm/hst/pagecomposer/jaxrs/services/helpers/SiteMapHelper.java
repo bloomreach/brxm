@@ -15,9 +15,6 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,10 +22,7 @@ import java.util.Set;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryResult;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
@@ -37,9 +31,9 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,7 +76,6 @@ public class SiteMapHelper extends AbstractHelper {
     }
 
 
-
     public Node create(final SiteMapItemRepresentation siteMapItem, final String parentId) throws RepositoryException {
 
         HstRequestContext requestContext = pageComposerContextService.getRequestContext();
@@ -100,13 +93,14 @@ public class SiteMapHelper extends AbstractHelper {
         setLocalParameters(newChild, modifiedLocalParameters);
 
         final Set<String> modifiedRoles = siteMapItem.getRoles();
-        setRoles(newChild,modifiedRoles);
+        setRoles(newChild, modifiedRoles);
         return newChild;
     }
 
     public void move(final String id, final String parentId) throws RepositoryException {
         if (id.equals(parentId)) {
-            throw new IllegalStateException("Cannot move node to become child of itself");
+            final String msg = "Cannot move node to become child of itself";
+            throw new ClientException(ClientError.INVALID_MOVE_TO_SELF, msg);
         }
         HstRequestContext requestContext = pageComposerContextService.getRequestContext();
         final Session session = requestContext.getSession();
@@ -114,12 +108,12 @@ public class SiteMapHelper extends AbstractHelper {
         Node newParent = session.getNodeByIdentifier(parentId);
         Node oldParent = nodeToMove.getParent();
         if (oldParent.isSame(newParent)) {
-            log.info("Move to same parent for '"+nodeToMove.getPath()+"' does not result in a real move");
+            log.info("Move to same parent for '" + nodeToMove.getPath() + "' does not result in a real move");
             return;
         }
         if (hasSelfOrAncestorLockBySomeOneElse(newParent)) {
-            throw new IllegalStateException("Cannot move node to '"+newParent.getPath()+"' because that node is locked " +
-                    "by '"+getSelfOrAncestorLockedBy(newParent)+"'");
+            throw new IllegalStateException("Cannot move node to '" + newParent.getPath() + "' because that node is locked " +
+                    "by '" + getSelfOrAncestorLockedBy(newParent) + "'");
         }
         acquireLock(nodeToMove);
         String nodeName = nodeToMove.getName();
@@ -149,14 +143,15 @@ public class SiteMapHelper extends AbstractHelper {
             }
         }
 
-        throw new IllegalStateException(String.format("SiteMap item with id '%s' is not part of currently edited preview site.", siteMapItemId));
+        final String msg = "SiteMap item with id '%s' is not part of currently edited preview site.";
+        throw new ClientException(ClientError.ITEM_NOT_IN_PREVIEW, msg, siteMapItemId);
     }
 
     public static HstSiteMapItem getSiteMapItem(HstSiteMapItem siteMapItem, String siteMapItemId) {
         if (!(siteMapItem instanceof CanonicalInfo)) {
             return null;
         }
-        if (((CanonicalInfo)siteMapItem).getCanonicalIdentifier().equals(siteMapItemId)) {
+        if (((CanonicalInfo) siteMapItem).getCanonicalIdentifier().equals(siteMapItemId)) {
             return siteMapItem;
         }
         for (HstSiteMapItem child : siteMapItem.getChildren()) {
@@ -174,7 +169,6 @@ public class SiteMapHelper extends AbstractHelper {
         setProperty(jcrNode, HstNodeTypes.SITEMAPITEM_PROPERTY_SCHEME, siteMapItem.getScheme());
         setProperty(jcrNode, HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, siteMapItem.getRelativeContentPath());
     }
-
 
 
     private void createMarkedDeletedIfLiveExists(final Session session, final String oldLocation) throws RepositoryException {
@@ -196,7 +190,7 @@ public class SiteMapHelper extends AbstractHelper {
 
     private boolean liveExists(final Session session, final String previewLocation) throws RepositoryException {
         if (!previewLocation.contains("-preview/hst:workspace/")) {
-            throw new IllegalStateException("Unexpected location '"+previewLocation+"'");
+            throw new IllegalStateException("Unexpected location '" + previewLocation + "'");
         }
         String liveLocation = previewLocation.replace("-preview/hst:workspace/", "/hst:workspace/");
         return session.nodeExists(liveLocation);
@@ -208,7 +202,7 @@ public class SiteMapHelper extends AbstractHelper {
     }
 
     private boolean isMarkedDeleted(final Node node) throws RepositoryException {
-       return "deleted".equals(JcrUtils.getStringProperty(node, HstNodeTypes.EDITABLE_PROPERTY_STATE, null));
+        return "deleted".equals(JcrUtils.getStringProperty(node, HstNodeTypes.EDITABLE_PROPERTY_STATE, null));
     }
 
     private void validateTarget(final Session session, final String target) throws RepositoryException {
@@ -227,7 +221,8 @@ public class SiteMapHelper extends AbstractHelper {
                 acquireLock(targetNode);
                 targetNode.remove();
             } else {
-                throw new IllegalStateException("Target node '" + targetNode.getPath() + "' already exists");
+                final String msg = "Target node '%s' already exists";
+                throw new ClientException(ClientError.ITEM_NAME_NOT_UNIQUE, msg, targetNode.getPath());
             }
         } else {
             final CanonicalInfo canonical = (CanonicalInfo) siteMap;
@@ -254,8 +249,8 @@ public class SiteMapHelper extends AbstractHelper {
                 String siteMapRelPath = nonWorkspaceTarget.substring(siteMapNode.getPath().length() + 1);
                 String[] segments = siteMapRelPath.split("/");
                 if (siteMapNode.hasNode(segments[0])) {
-                    throw new IllegalArgumentException("Target '" + target + "' not allowed since the *non-workspace* " +
-                            "sitemap already contains '" + siteMapNode.getPath() + "/" + segments[0] + "'");
+                    final String msg = "Target '%s' not allowed since the *non-workspace* sitemap already contains '%s'";
+                    throw new ClientException(ClientError.ITEM_EXISTS_IN_NON_WORKSPACE, msg, target, siteMapNode.getPath() + "/" + segments[0]);
                 }
                 // valid!
                 return;
@@ -265,13 +260,13 @@ public class SiteMapHelper extends AbstractHelper {
 
     @Override
     protected String buildXPathQueryLockedWorkspaceNodesForUsers(final String previewWorkspacePath,
-                                                               final List<String> userIds) {
+                                                                 final List<String> userIds) {
         if (userIds.isEmpty()) {
             throw new IllegalArgumentException("List of user IDs cannot be empty");
         }
 
         StringBuilder xpath = new StringBuilder("/jcr:root");
-        xpath.append(ISO9075.encodePath(previewWorkspacePath + "/" +HstNodeTypes.NODENAME_HST_SITEMAP));
+        xpath.append(ISO9075.encodePath(previewWorkspacePath + "/" + HstNodeTypes.NODENAME_HST_SITEMAP));
 
         xpath.append("//element(*,");
         xpath.append(HstNodeTypes.NODETYPE_HST_SITEMAPITEM);

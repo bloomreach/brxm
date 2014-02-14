@@ -179,13 +179,13 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         try {
             helper.acquireLock(homeNode);
             fail("Expected an IllegalStateException when trying to acquire lock");
-        } catch (IllegalStateException e) {
+        } catch (ClientException e) {
             assertTrue(e.getMessage().contains("cannot be locked"));
         }
 
         try {
             helper.acquireLock(homeNodeByBob);
-        } catch (IllegalStateException e) {
+        } catch (ClientException e) {
             fail("Bob should still have the lock");
         }
 
@@ -318,13 +318,15 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
             news.setName("home");
             Response bobResponse = siteMapResource.update(news);
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), bobResponse.getStatus());
-            assertTrue(((ExtResponseRepresentation) bobResponse.getEntity()).getMessage().contains("lock"));
+            final ExtResponseRepresentation representation = (ExtResponseRepresentation) bobResponse.getEntity();
+            assertThat(representation.getMessage(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
 
             // bob also sees the 'renamedHome' locked
             news.setName("renamedHome");
             Response bobResponse2 = siteMapResource.update(news);
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), bobResponse2.getStatus());
-            assertTrue(((ExtResponseRepresentation) bobResponse2.getEntity()).getMessage().contains("already exists"));
+            final ExtResponseRepresentation entity = (ExtResponseRepresentation) bobResponse2.getEntity();
+            assertThat(entity.getMessage(), is(ClientError.ITEM_NAME_NOT_UNIQUE.name()));
         }
     }
 
@@ -423,7 +425,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         try {
             helper.acquireLock(deleteHomeNodeByBob);
             fail("Bob should 'see' locked deleted home node");
-        } catch (IllegalStateException e) {
+        } catch (ClientException e) {
 
         }
 
@@ -455,7 +457,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         try {
             helper.acquireLock(moveNewsNodeToHome);
             fail("Bob should 'see' the news move to home node as locked");
-        } catch (IllegalStateException e) {
+        } catch (ClientException e) {
 
         }
         bob.logout();
@@ -469,7 +471,8 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         Response response = siteMapResource.update(home);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-        assertTrue(((ExtResponseRepresentation) response.getEntity()).getMessage().contains("already exists"));
+        final ExtResponseRepresentation entity = (ExtResponseRepresentation) response.getEntity();
+        assertThat(entity.getMessage(), is(ClientError.ITEM_NAME_NOT_UNIQUE.name()));
     }
 
     @Test
@@ -487,7 +490,8 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         home.setName("renamed");
         Response failResponse = siteMapResource.update(home);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), failResponse.getStatus());
-        assertTrue(((ExtResponseRepresentation) failResponse.getEntity()).getMessage().contains("lock"));
+        final ExtResponseRepresentation entity = (ExtResponseRepresentation) failResponse.getEntity();
+        assertThat(entity.getMessage(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
 
         // news should still be possible to move
         final SiteMapItemRepresentation news = getSiteMapItemRepresentation(session, "news");
@@ -511,7 +515,8 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         home.setName("about-us");
         Response failResponse = siteMapResource.update(home);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), failResponse.getStatus());
-        assertTrue(((ExtResponseRepresentation) failResponse.getEntity()).getMessage().contains("*non-workspace* sitemap already contains"));
+        final String message = ((ExtResponseRepresentation) failResponse.getEntity()).getMessage();
+        assertThat(message, is(ClientError.ITEM_EXISTS_IN_NON_WORKSPACE.name()));
     }
 
     @Test

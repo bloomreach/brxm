@@ -75,7 +75,6 @@ public abstract class AbstractHelper {
         lockHelper.unlock(workspaceNode);
     }
 
-
     protected String getSelfOrAncestorLockedBy(final Node node) throws RepositoryException {
         return lockHelper.getSelfOrAncestorLockedBy(node);
     }

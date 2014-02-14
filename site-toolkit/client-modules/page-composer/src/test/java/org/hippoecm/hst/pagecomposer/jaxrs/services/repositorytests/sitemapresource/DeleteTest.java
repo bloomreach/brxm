@@ -17,7 +17,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.sitemapreso
 
 import java.util.UUID;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.ws.rs.core.Response;
@@ -26,11 +25,15 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.junit.Test;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -72,8 +75,9 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
         final SiteMapItemRepresentation nonWorkspaceItem = getSiteMapItemRepresentation(session, "about-us");
         final SiteMapResource siteMapResource = createResource();
         final Response delete = siteMapResource.delete(nonWorkspaceItem.getId());
+        final ExtResponseRepresentation representation = (ExtResponseRepresentation) delete.getEntity();
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), delete.getStatus());
-        assertTrue((((ExtResponseRepresentation) delete.getEntity()).getMessage().contains("not part of hst:workspace")));
+        assertThat(representation.getMessage(), is(ClientError.ITEM_NOT_IN_WORKSPACE.name()));
     }
 
     @Test
@@ -99,7 +103,7 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
 
         try {
             final Node deletedNode = session.getNodeByIdentifier(home.getId());
-            assertEquals("deleted",deletedNode.getProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE).getString());
+            assertEquals("deleted", deletedNode.getProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE).getString());
 
             final Session bob = createSession("bob", "bob");
             Node deleteHomeNodeByBob = bob.getNodeByIdentifier(home.getId());
@@ -107,12 +111,12 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
             try {
                 helper.acquireLock(deleteHomeNodeByBob);
                 fail("Bob should 'see' locked deleted home node");
-            } catch (IllegalStateException e) {
+            } catch (ClientException e) {
 
             }
             bob.logout();
 
-        } catch (ItemNotFoundException e) {
+        } catch (ClientException e) {
             fail("Node should still exist but marked as deleted");
         }
     }
@@ -132,8 +136,9 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
             // force reload of hst model
             getSiteMapItemRepresentation(session, "home");
             final Response deleteAgain = siteMapResource.delete(homeId);
+            final ExtResponseRepresentation representation = (ExtResponseRepresentation) deleteAgain.getEntity();
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), deleteAgain.getStatus());
-            assertTrue(((ExtResponseRepresentation) deleteAgain.getEntity()).getMessage().contains("not part of currently edited preview site"));
+            assertThat(representation.getMessage(), is(ClientError.ITEM_NOT_IN_PREVIEW.name()));
         }
     }
 }

@@ -58,7 +58,6 @@ public class SiteMenuResourceTest {
 
     public static final int OK = Response.Status.OK.getStatusCode();
     public static final int SERVER_ERROR = Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
-    public static final int BAD_REQUEST = Response.Status.BAD_REQUEST.getStatusCode();
     // class under test
     private SiteMenuResource siteMenuResource;
 
@@ -235,7 +234,7 @@ public class SiteMenuResourceTest {
         replay(mocks);
 
         final Response response = siteMenuResource.update(modifiedItem);
-        assertThat(response.getStatus(), is(BAD_REQUEST));
+        assertThat(response.getStatus(), is(SERVER_ERROR));
         assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
 
         final ExtResponseRepresentation extResponse = ExtResponseRepresentation.class.cast(response.getEntity());

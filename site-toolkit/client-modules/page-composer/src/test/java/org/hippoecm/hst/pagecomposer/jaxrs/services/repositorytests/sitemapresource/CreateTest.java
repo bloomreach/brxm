@@ -28,18 +28,20 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
-import org.junit.Ignore;
 import org.junit.Test;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class CreateTest extends AbstractSiteMapResourceTest {
-
 
 
     private void initContext() throws Exception {
@@ -61,10 +63,10 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final Response response = siteMapResource.create(newFoo);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
-        String newId  = (String) ((ExtResponseRepresentation) response.getEntity()).getData();
+        String newId = (String) ((ExtResponseRepresentation) response.getEntity()).getData();
 
         final Node newNode = session.getNodeByIdentifier(newId);
-        assertEquals("foo",newNode.getName());
+        assertEquals("foo", newNode.getName());
 
         final Session bob = createSession("bob", "bob");
         Node newNodeByBob = bob.getNodeByIdentifier(newId);
@@ -72,8 +74,8 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         // check only acquiring lock now
         try {
             helper.acquireLock(newNodeByBob);
-            fail("Expected an IllegalStateException when trying to acquire lock");
-        } catch (IllegalStateException e) {
+            fail("Expected an ClientException when trying to acquire lock");
+        } catch (ClientException e) {
             assertTrue(e.getMessage().contains("cannot be locked"));
         }
         bob.logout();
@@ -94,11 +96,11 @@ public class CreateTest extends AbstractSiteMapResourceTest {
             fooByBob.setName("bar");
             final Response bobResponse = siteMapResource.update(fooByBob);
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), bobResponse.getStatus());
-            assertTrue(((ExtResponseRepresentation)bobResponse.getEntity()).getMessage().contains("lock"));
+            assertThat(((ExtResponseRepresentation) bobResponse.getEntity()).getMessage(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
 
             final Response bobResponseDelete = siteMapResource.delete(fooByBob.getId());
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), bobResponseDelete.getStatus());
-            assertTrue(((ExtResponseRepresentation)bobResponseDelete.getEntity()).getMessage().contains("lock"));
+            assertThat(((ExtResponseRepresentation) bobResponseDelete.getEntity()).getMessage(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
 
             bob.logout();
         }
@@ -176,7 +178,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         assertEquals(Response.Status.OK.getStatusCode(), delete.getStatus());
         try {
             final Node fooToHomeNode = admin.getNodeByIdentifier(foo.getId());
-            assertEquals("deleted",fooToHomeNode.getProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE).getString());
+            assertEquals("deleted", fooToHomeNode.getProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE).getString());
 
             final Session bob = createSession("bob", "bob");
             assertNull(getSiteMapItemRepresentation(bob, "home"));
@@ -185,7 +187,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
             try {
                 helper.acquireLock(homeNodeByBob);
                 fail("Expected an IllegalStateException when trying to acquire lock");
-            } catch (IllegalStateException e) {
+            } catch (ClientException e) {
                 assertTrue(e.getMessage().contains("cannot be locked"));
             }
         } catch (ItemNotFoundException e) {
@@ -235,7 +237,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newItem);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-        assertTrue(((ExtResponseRepresentation) response.getEntity()).getMessage().contains("already exists"));
+        assertThat(((ExtResponseRepresentation) response.getEntity()).getMessage(), is(ClientError.ITEM_NAME_NOT_UNIQUE.name()));
     }
 
     @Test
@@ -264,7 +266,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
             homeByBob.setName("newName");
             final Response fail = siteMapResource.update(homeByBob);
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), fail.getStatus());
-            assertTrue(((ExtResponseRepresentation) fail.getEntity()).getMessage().contains("lock"));
+            assertThat(((ExtResponseRepresentation) fail.getEntity()).getMessage(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
             bob.logout();
         }
 
@@ -274,7 +276,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
             homeAgain.setName("newName");
             final Response fail = siteMapResource.update(homeAgain);
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), fail.getStatus());
-            assertTrue(((ExtResponseRepresentation) fail.getEntity()).getMessage().contains("lock"));
+            assertThat(((ExtResponseRepresentation) fail.getEntity()).getMessage(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
         }
 
         // delete the childByBob : after that, admin should be able to rename home
@@ -359,7 +361,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newItem);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-        assertTrue(((ExtResponseRepresentation) response.getEntity()).getMessage().contains("already contains"));
+        assertThat(((ExtResponseRepresentation) response.getEntity()).getMessage(), is(ClientError.ITEM_EXISTS_IN_NON_WORKSPACE.name()));
     }
 
     @Test

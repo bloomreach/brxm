@@ -23,6 +23,7 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -30,6 +31,8 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class MoveTest extends AbstractSiteMapResourceTest {
@@ -65,7 +68,7 @@ public class MoveTest extends AbstractSiteMapResourceTest {
         final Node markedDeletedHome = session.getNode(homePathBeforeMove);
         final Response moveDeletedFail = siteMapResource.move(markedDeletedHome.getIdentifier(), news.getId());
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), moveDeletedFail.getStatus());
-        assertTrue(((ExtResponseRepresentation) moveDeletedFail.getEntity()).getMessage().contains("not part of currently edited preview site"));
+        assertThat(((ExtResponseRepresentation) moveDeletedFail.getEntity()).getMessage(), is(ClientError.ITEM_NOT_IN_PREVIEW.name()));
     }
 
     @Test
@@ -112,7 +115,7 @@ public class MoveTest extends AbstractSiteMapResourceTest {
         SiteMapResource siteMapResource = createResource();
         final Response fail = siteMapResource.move(news.getId(), news.getId());
         Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), fail.getStatus());
-        assertTrue(((ExtResponseRepresentation) fail.getEntity()).getMessage().contains("Cannot move"));
+        assertThat(((ExtResponseRepresentation) fail.getEntity()).getMessage(), is(ClientError.INVALID_MOVE_TO_SELF.name()));
     }
 
 
@@ -137,7 +140,7 @@ public class MoveTest extends AbstractSiteMapResourceTest {
         SiteMapResource siteMapResource = createResource();
         final Response fail = siteMapResource.move(news.getId(), aboutUs.getId());
         Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), fail.getStatus());
-        assertTrue(((ExtResponseRepresentation) fail.getEntity()).getMessage().contains("is not part of hst:workspace"));
+        assertThat(((ExtResponseRepresentation) fail.getEntity()).getMessage(), is(ClientError.ITEM_NOT_IN_WORKSPACE.name()));
     }
 
     @Test
@@ -148,6 +151,6 @@ public class MoveTest extends AbstractSiteMapResourceTest {
         SiteMapResource siteMapResource = createResource();
         final Response fail = siteMapResource.move(aboutUs.getId(), news.getId());
         Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), fail.getStatus());
-        assertTrue(((ExtResponseRepresentation) fail.getEntity()).getMessage().contains("is not part of hst:workspace"));
+        assertThat(((ExtResponseRepresentation) fail.getEntity()).getMessage(), is(ClientError.ITEM_NOT_IN_WORKSPACE.name()));
     }
 }

@@ -19,8 +19,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import javax.jcr.ItemExistsException;
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.ws.rs.core.Response;
@@ -128,7 +126,7 @@ public class AbstractConfigResource {
                 HstConfigurationUtils.persistChanges(session);
             }
             return response;
-        } catch (ClientException | IllegalStateException | IllegalArgumentException | ItemNotFoundException | ItemExistsException e) {
+        } catch (ClientException e) {
             resetSession();
             return logAndReturnClientError(e);
         } catch (Exception e) {
@@ -164,15 +162,17 @@ public class AbstractConfigResource {
         return error(e.getMessage());
     }
 
-    protected Response logAndReturnClientError(Exception e) {
+    protected Response logAndReturnClientError(ClientException e) {
+        final String formattedMessage = e.getFormattedMessage();
         if (log.isDebugEnabled()) {
-            log.info(e.toString(), e);
+            log.info(formattedMessage, e);
         } else {
-            log.info(e.toString());
+            log.info(formattedMessage);
         }
         final ExtResponseRepresentation entity = new ExtResponseRepresentation();
         entity.setSuccess(false);
-        entity.setMessage(e.getMessage());
+        entity.setMessage(e.getError().name());
+        entity.setData(e.getMessageParameters());
         return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
     }
 

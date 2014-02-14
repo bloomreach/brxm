@@ -17,7 +17,6 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.sitemenuresource;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.ws.rs.core.Response;
 
@@ -26,14 +25,17 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMenuResource;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.junit.Test;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class MenuCRUDTest extends AbstractMenuResourceTest{
+public class MenuCRUDTest extends AbstractMenuResourceTest {
 
     @Test
     public void test_update() throws Exception {
@@ -122,7 +124,7 @@ public class MenuCRUDTest extends AbstractMenuResourceTest{
 
         final Response fail = resource.update(contactItem);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), fail.getStatus());
-        assertTrue(((ExtResponseRepresentation) fail.getEntity()).getMessage().contains("locked"));
+        assertThat(((ExtResponseRepresentation) fail.getEntity()).getMessage(), is(ClientError.ITEM_ALREADY_LOCKED.name()));
         bob.logout();
     }
 }

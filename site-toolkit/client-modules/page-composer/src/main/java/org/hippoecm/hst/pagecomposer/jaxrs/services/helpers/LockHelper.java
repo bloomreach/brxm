@@ -23,6 +23,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,14 +63,14 @@ public class LockHelper {
     }
 
     /**
-     * if the <code>node</code> is already locked for the user <code>node.getSession()</code> this method does not do anything.
-     * If there is no lock yet, a lock for the current session userID gets set on the node. If there is already a lock by another
-     * user a IllegalStateException is thrown,
+     * if the <code>node</code> is already locked for the user <code>node.getSession()</code> this method does not do
+     * anything. If there is no lock yet, a lock for the current session userID gets set on the node. If there is
+     * already a lock by another user a IllegalStateException is thrown,
      */
     void acquireLock(final Node node) throws RepositoryException {
         if (hasSelfOrDescendantLockBySomeOneElse(node)) {
-            throw new IllegalStateException("Node '"+node.getPath()+"' cannot be locked due to someone else who " +
-                    "has the lock (possibly a descendant that is locked).");
+            final String msg = "Node '%s' cannot be locked due to someone else who has the lock (possibly a descendant that is locked).";
+            throw new ClientException(ClientError.ITEM_ALREADY_LOCKED, msg, node.getPath());
         }
         String selfOrAncestorLockedBy = getSelfOrAncestorLockedBy(node);
         if (selfOrAncestorLockedBy != null) {
@@ -76,8 +78,8 @@ public class LockHelper {
                 log.debug("Node '{}' already locked", node.getSession().getUserID());
                 return;
             }
-            throw new IllegalStateException("Node '"+node.getPath()+"' cannot be locked due to someone else who " +
-                    "has the lock (possibly an ancestor that is locked).");
+            final String msg = "Node '%s' cannot be locked due to someone else who has the lock (possibly an ancestor that is locked).";
+            throw new ClientException(ClientError.ITEM_ALREADY_LOCKED, msg, node.getPath());
         }
         doLock(node);
     }
@@ -89,8 +91,8 @@ public class LockHelper {
      */
     void acquireSimpleLock(final Node node) throws RepositoryException {
         if (hasLockBySomeOneElse(node)) {
-            throw new IllegalStateException("Node '"+node.getPath()+"' cannot be locked due to someone else who " +
-                    "has the lock.");
+            final String msg = "Node '%s' cannot be locked due to someone else who has the lock.";
+            throw new ClientException(ClientError.ITEM_ALREADY_LOCKED, msg, node.getPath());
         }
         doLock(node);
     }
