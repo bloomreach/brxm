@@ -31,6 +31,7 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.Validator;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.repository.api.HippoSession;
@@ -72,7 +73,6 @@ public class AbstractConfigResource {
         entity.setSuccess(false);
         return Response.serverError().entity(entity).build();
     }
-
 
     protected Response created(String msg) {
         ExtResponseRepresentation entity = new ExtResponseRepresentation();
@@ -128,7 +128,7 @@ public class AbstractConfigResource {
                 HstConfigurationUtils.persistChanges(session);
             }
             return response;
-        } catch (IllegalStateException | IllegalArgumentException | ItemNotFoundException | ItemExistsException e) {
+        } catch (ClientException | IllegalStateException | IllegalArgumentException | ItemNotFoundException | ItemExistsException e) {
             resetSession();
             return logAndReturnClientError(e);
         } catch (Exception e) {
@@ -175,7 +175,6 @@ public class AbstractConfigResource {
         entity.setMessage(e.getMessage());
         return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
     }
-
 
     protected CanonicalInfo getCanonicalInfo(final Object o) throws IllegalStateException {
         if (o instanceof CanonicalInfo) {

@@ -16,22 +16,22 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.validaters;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 
-public class ChildExistsValidator implements Validator {
+public class ChildExistsValidator extends AbstractValidator {
 
     final String parentId;
     final String childId;
 
     public ChildExistsValidator(final String parentId, final String childId) {
         this.parentId = parentId;
-
         this.childId = childId;
     }
 
@@ -39,21 +39,15 @@ public class ChildExistsValidator implements Validator {
     public void validate(HstRequestContext requestContext) throws RuntimeException {
         try {
             final Session session = requestContext.getSession();
-            final Node parent = session.getNodeByIdentifier(parentId);
-            final Node child = session.getNodeByIdentifier(childId);
-
+            final Node parent = getNodeByIdentifier(parentId, session);
+            final Node child = getNodeByIdentifier(childId, session);
             if (!parent.isSame(child.getParent())) {
-                throw new IllegalArgumentException("Node '"+child.getPath()+"' is not a child of '"+parent.getPath()+"'");
+                final String msg = "Node '%s' is not a child of '%s";
+                throw new ClientException(ClientError.ITEM_NOT_CHILD_OF_PARENT, msg, child, parent);
             }
-
-        } catch (ItemNotFoundException e) {
-            throw new IllegalStateException("No repository configuration node for parent or child found : " + e.toString());
         } catch (RepositoryException e) {
             throw new RuntimeRepositoryException("RepositoryException during pre-validate", e);
         }
-
-
-
     }
 
 }

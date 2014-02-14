@@ -43,6 +43,8 @@ import static org.easymock.EasyMock.verify;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMENU;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMENUITEM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_REPOBASED;
@@ -62,17 +64,21 @@ public class SiteMenuItemHelperTest {
     private Session session;
     private Object[] mocks;
     private Property property;
+    private LockHelper lockHelper;
 
     @Before
     public void setUp() {
-        this.siteMenuItemHelper = new SiteMenuItemHelper();
         this.node = createMock(Node.class);
         this.parent = createMock(Node.class);
         this.childIterator = createMock(NodeIterator.class);
         this.sibling = createMock(Node.class);
         this.session = createMock(Session.class);
         this.property = createMock(Property.class);
-        this.mocks = new Object[]{node, parent, childIterator, sibling, session, property};
+        this.lockHelper = createMock(LockHelper.class);
+        this.mocks = new Object[]{node, parent, childIterator, sibling, session, property, lockHelper};
+
+        this.siteMenuItemHelper = new SiteMenuItemHelper();
+        this.siteMenuItemHelper.setLockHelper(lockHelper);
     }
 
     @Test
@@ -81,23 +87,30 @@ public class SiteMenuItemHelperTest {
         final SiteMenuItemRepresentation newItem = new SiteMenuItemRepresentation();
         newItem.setName("name");
 
+        // once for adding the new item to the parent
+        mockGetAncestor();
+        // once for updating the new item
+        mockGetAncestor();
         expect(node.addNode(newItem.getName(), HstNodeTypes.NODETYPE_HST_SITEMENUITEM)).andReturn(node);
         expect(node.getName()).andReturn(newItem.getName());
         expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
-
         replay(mocks);
-        siteMenuItemHelper.create(node, newItem);
+
+        final Node result = siteMenuItemHelper.create(node, newItem);
+        assertThat(result, is(node));
     }
 
     @Test
     public void testUpdateRepositoryBased() throws RepositoryException {
 
-        expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, true)).andReturn(null);
+        final boolean repositoryBased = true;
+
+        mockGetAncestor();
+        expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, repositoryBased)).andReturn(null);
+        replay(mocks);
 
         final SiteMenuItemRepresentation modifiedItem = new SiteMenuItemRepresentation();
-        modifiedItem.setRepositoryBased(true);
-
-        replay(mocks);
+        modifiedItem.setRepositoryBased(repositoryBased);
         siteMenuItemHelper.update(node, modifiedItem);
         verify(mocks);
     }
@@ -109,11 +122,12 @@ public class SiteMenuItemHelperTest {
         modifiedItem.setRoles(new HashSet<String>());
         modifiedItem.getRoles().add("role");
 
+        mockGetAncestor();
         final Capture<String[]> roles = new Capture<>();
         expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
         expect(node.setProperty(eq(SITEMENUITEM_PROPERTY_ROLES), capture(roles), eq(PropertyType.STRING))).andReturn(null);
-
         replay(mocks);
+
         siteMenuItemHelper.update(node, modifiedItem);
         assertThat(roles.getValue()[0], is("role"));
         verify(mocks);
@@ -126,13 +140,14 @@ public class SiteMenuItemHelperTest {
         modifiedItem.setLocalParameters(new HashMap<String, String>());
         modifiedItem.getLocalParameters().put("name", "value");
 
+        mockGetAncestor();
         expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
         final Capture<String[]> names = new Capture<>();
         expect(node.setProperty(eq(GENERAL_PROPERTY_PARAMETER_NAMES), capture(names), eq(PropertyType.STRING))).andReturn(null);
         final Capture<String[]> values = new Capture<>();
         expect(node.setProperty(eq(GENERAL_PROPERTY_PARAMETER_VALUES), capture(values), eq(PropertyType.STRING))).andReturn(null);
-
         replay(mocks);
+
         siteMenuItemHelper.update(node, modifiedItem);
         assertThat(names.getValue()[0], is("name"));
         assertThat(values.getValue()[0], is("value"));
@@ -141,6 +156,13 @@ public class SiteMenuItemHelperTest {
 
     @Test
     public void testUpdateName() throws RepositoryException {
+
+        // once for update
+        mockGetAncestor();
+        // once for rename
+        mockGetAncestor();
+        // once for move
+        mockGetAncestor();
 
         expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
         expect(node.getSession()).andReturn(session);
@@ -164,8 +186,8 @@ public class SiteMenuItemHelperTest {
 
         parent.orderBefore(newName, siblingName);
         expectLastCall().once();
-
         replay(mocks);
+
         final SiteMenuItemRepresentation newItem = new SiteMenuItemRepresentation();
         newItem.setName(newName);
         siteMenuItemHelper.update(node, newItem);
@@ -175,6 +197,7 @@ public class SiteMenuItemHelperTest {
     @Test
     public void testUpdateLinkToExternal() throws RepositoryException {
 
+        mockGetAncestor();
         expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
 
         final Capture<String> linkCapture = new Capture<>();
@@ -202,8 +225,8 @@ public class SiteMenuItemHelperTest {
     @Test
     public void testUpdateLinkToInternal() throws RepositoryException {
 
+        mockGetAncestor();
         expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
-
 
         final Capture<String> linkCapture = new Capture<>();
         expect(node.setProperty(eq(SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM), capture(linkCapture))).andReturn(null);
@@ -228,6 +251,7 @@ public class SiteMenuItemHelperTest {
     @Test
     public void testUpdateLinkToNone() throws RepositoryException {
 
+        mockGetAncestor();
         expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
         expect(node.hasProperty(SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM)).andReturn(false);
         expect(node.hasProperty(SITEMENUITEM_PROPERTY_EXTERNALLINK)).andReturn(true);
@@ -243,4 +267,12 @@ public class SiteMenuItemHelperTest {
 
         verify(mocks);
     }
+
+    private void mockGetAncestor() throws RepositoryException {
+        expect(node.isNodeType(NODETYPE_HST_SITEMENUITEM)).andReturn(false);
+        expect(node.isNodeType(NODETYPE_HST_SITEMENU)).andReturn(true);
+        lockHelper.acquireSimpleLock(node);
+        expectLastCall();
+    }
+
 }

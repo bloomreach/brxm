@@ -37,6 +37,8 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.PreviewWorkspaceNodeValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.Validator;
@@ -44,9 +46,11 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import static junit.framework.Assert.assertNull;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -87,8 +91,8 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
             try {
                 new PreviewWorkspaceNodeValidator(aboutUsUuid, HstNodeTypes.NODETYPE_HST_SITEMAPITEM).validate(ctx);
                 fail("Expected PreviewWorkspaceNodeValidator to fail on non workspace sitemap item");
-            } catch (IllegalArgumentException e) {
-
+            } catch (ClientException e) {
+                assertThat(e.getError(), is(ClientError.ITEM_NOT_IN_WORKSPACE));
             }
         }
 

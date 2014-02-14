@@ -288,8 +288,7 @@ public class SiteMenuResourceTest {
         mockGetSiteMenu("menuId");
         final String sourceId = "sourceId";
         mockGetMenuItem(node, sourceId);
-        expect(node.getSession()).andReturn(session);
-        node.remove();
+        siteMenuItemHelper.delete(node);
         expectLastCall().once();
         replay(mocks);
 

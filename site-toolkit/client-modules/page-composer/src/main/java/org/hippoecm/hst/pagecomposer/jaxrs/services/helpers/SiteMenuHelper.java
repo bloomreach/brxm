@@ -27,7 +27,8 @@ import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 
 public class SiteMenuHelper extends AbstractHelper {
 
@@ -38,16 +39,17 @@ public class SiteMenuHelper extends AbstractHelper {
     }
 
     public HstSiteMenuConfiguration getMenu(HstSite site, String menuId) {
-        final Map<String,HstSiteMenuConfiguration> siteMenuConfigurations = site.getSiteMenusConfiguration().getSiteMenuConfigurations();
+        final Map<String, HstSiteMenuConfiguration> siteMenuConfigurations = site.getSiteMenusConfiguration().getSiteMenuConfigurations();
         for (HstSiteMenuConfiguration menuConfiguration : siteMenuConfigurations.values()) {
             if (!(menuConfiguration instanceof CanonicalInfo)) {
                 continue;
             }
-            if (((CanonicalInfo)menuConfiguration).getCanonicalIdentifier().equals(menuId)) {
+            if (((CanonicalInfo) menuConfiguration).getCanonicalIdentifier().equals(menuId)) {
                 return menuConfiguration;
             }
         }
-        throw new IllegalStateException(String.format("Site menu with id '%s' is not part of currently edited preview site.", menuId));
+        final String msg = "%s with id '%s' is not part of currently edited preview site.";
+        throw new ClientException(ClientError.ITEM_NOT_IN_PREVIEW, msg, "Site menu", menuId);
     }
 
     public HstSiteMenuItemConfiguration getMenuItem(HstSiteMenuConfiguration menu, String menuItemId) {
@@ -57,14 +59,15 @@ public class SiteMenuHelper extends AbstractHelper {
                 return menuItem;
             }
         }
-        throw new IllegalStateException(String.format("Site menu item with id '%s' is not part of currently edited preview site.", menuItemId));
+        final String msg = "%s with id '%s' is not part of currently edited preview site.";
+        throw new ClientException(ClientError.ITEM_NOT_IN_PREVIEW, msg, "Site menu item", menuItemId);
     }
 
     private HstSiteMenuItemConfiguration getMenuItem(HstSiteMenuItemConfiguration menuItem, String menuItemId) {
         if (!(menuItem instanceof CanonicalInfo)) {
             return null;
         }
-        if (((CanonicalInfo)menuItem).getCanonicalIdentifier().equals(menuItemId)) {
+        if (((CanonicalInfo) menuItem).getCanonicalIdentifier().equals(menuItemId)) {
             return menuItem;
         }
         for (HstSiteMenuItemConfiguration child : menuItem.getChildItemConfigurations()) {

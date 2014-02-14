@@ -18,25 +18,25 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.validaters;
 
 import java.util.UUID;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 
-public class PreviewWorkspaceNodeValidator implements Validator {
+public class PreviewWorkspaceNodeValidator extends AbstractValidator {
 
     final String id;
     final String requiredNodeType;
 
-    public PreviewWorkspaceNodeValidator(final String id){
+    public PreviewWorkspaceNodeValidator(final String id) {
         this(id, null);
     }
 
-    public PreviewWorkspaceNodeValidator(final String id, final String requiredNodeType){
+    public PreviewWorkspaceNodeValidator(final String id, final String requiredNodeType) {
         this.id = id;
         this.requiredNodeType = requiredNodeType;
     }
@@ -44,24 +44,23 @@ public class PreviewWorkspaceNodeValidator implements Validator {
     @Override
     public void validate(HstRequestContext requestContext) throws RuntimeException {
         try {
-            final Session session = requestContext.getSession();
             try {
                 UUID.fromString(id);
             } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("Not a valid uuid '"+id+"'");
+                final String logMessage = "'%s' is not a valid uuid";
+                throw new ClientException(ClientError.INVALID_UUID, logMessage, id);
             }
-            final Node node = session.getNodeByIdentifier(id);
+            final Node node = getNodeByIdentifier(id, requestContext.getSession());
             if (requiredNodeType != null && !node.isNodeType(requiredNodeType)) {
-                throw new IllegalArgumentException("Required node of type '"+requiredNodeType+"' but node '"+node.getPath()+"' of " +
-                        "type '"+node.getPrimaryNodeType().getName()+"' found." );
+                final String msg = "Required node of type '%s' but node '%s' of type '%s' found.";
+                throw new ClientException(ClientError.INVALID_NODE_TYPE, msg, requiredNodeType, node.getPath(), node.getPrimaryNodeType().getName());
             }
 
             if (!isPreviewWorkspaceNode(node)) {
-                throw new IllegalArgumentException("Required workspace node but '"+node.getPath()+"' is not part of hst:workspace");
+                final String msg = "Required workspace node but '%s' is not part of hst:workspace";
+                throw new ClientException(ClientError.ITEM_NOT_IN_WORKSPACE, msg, node.getPath());
             }
 
-        } catch (ItemNotFoundException e) {
-            throw new IllegalStateException("No repository configuration node for id '"+id+"'");
         } catch (RepositoryException e) {
             throw new RuntimeRepositoryException("RepositoryException during pre-validate", e);
         }

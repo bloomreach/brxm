@@ -16,7 +16,6 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -48,10 +47,15 @@ public abstract class AbstractHelper {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractHelper.class);
 
+    private LockHelper lockHelper = new LockHelper();
     protected PageComposerContextService pageComposerContextService;
 
     public void setPageComposerContextService(final PageComposerContextService pageComposerContextService) {
         this.pageComposerContextService = pageComposerContextService;
+    }
+
+    void setLockHelper(LockHelper lockHelper) {
+        this.lockHelper = lockHelper;
     }
 
     /**
@@ -59,71 +63,30 @@ public abstract class AbstractHelper {
      */
     public abstract <T> T getConfigObject(String id);
 
+    public void acquireLock(final Node node) throws RepositoryException {
+        lockHelper.acquireLock(node);
+    }
+
+    public void acquireSimpleLock(final Node node) throws RepositoryException {
+        lockHelper.acquireSimpleLock(node);
+    }
+
+    protected void unlock(final Node workspaceNode) throws RepositoryException {
+        lockHelper.unlock(workspaceNode);
+    }
+
+
+    protected String getSelfOrAncestorLockedBy(final Node node) throws RepositoryException {
+        return lockHelper.getSelfOrAncestorLockedBy(node);
+    }
+
+    protected boolean hasSelfOrAncestorLockBySomeOneElse(final Node node) throws RepositoryException {
+        return lockHelper.hasSelfOrAncestorLockBySomeOneElse(node);
+    }
+
     protected void removeProperty(Node node, String name) throws RepositoryException {
         if (node.hasProperty(name)) {
             node.getProperty(name).remove();
-        }
-    }
-
-    /**
-     * if the <code>node</code> is already locked for the user <code>node.getSession()</code> this method does not do anything.
-     * If there is no lock yet, a lock for the current session userID gets set on the node. If there is already a lock by another
-     * user a IllegalStateException is thrown,
-     */
-    public void acquireLock(final Node node) throws RepositoryException {
-        if (hasSelfOrDescendantLockBySomeOneElse(node)) {
-            throw new IllegalStateException("Node '"+node.getPath()+"' cannot be locked due to someone else who " +
-                    "has the lock (possibly a descendant that is locked).");
-        }
-        String selfOrAncestorLockedBy = getSelfOrAncestorLockedBy(node);
-        if (selfOrAncestorLockedBy != null) {
-            if (selfOrAncestorLockedBy.equals(node.getSession().getUserID())) {
-                log.debug("Node '{}' already locked", node.getSession().getUserID());
-                return;
-            }
-            throw new IllegalStateException("Node '"+node.getPath()+"' cannot be locked due to someone else who " +
-                    "has the lock (possibly an ancestor that is locked).");
-        }
-        doLock(node);
-    }
-
-    /**
-     * @see {@link #acquireLock(javax.jcr.Node)} only for the acquireSimpleLock there is no need to check descendant or
-     * ancestors. It is only the node itself that needs to be checked. This is for example the case for sitemenu nodes
-     * where there is no fine-grained locking for the items below it
-     */
-    public void acquireSimpleLock(final Node node) throws RepositoryException {
-        if (hasLockBySomeOneElse(node)) {
-            throw new IllegalStateException("Node '"+node.getPath()+"' cannot be locked due to someone else who " +
-                    "has the lock.");
-        }
-        doLock(node);
-    }
-
-
-    private void doLock(final Node node) throws RepositoryException {
-        if (!node.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)) {
-            node.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
-        }
-
-        final Session session = node.getSession();
-        log.info("Node '{}' gets a lock for user '{}'.", node.getPath(), session.getUserID());
-        node.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, session.getUserID());
-        Calendar now = Calendar.getInstance();
-        if (!node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
-            node.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON, now);
-        }
-        node.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
-    }
-
-
-    protected void unlock(final Node workspaceNode) throws RepositoryException {
-        if (workspaceNode.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)) {
-            log.warn("Removing lock for '{}' since ancestor gets published", workspaceNode.getPath());
-            workspaceNode.removeMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
-        }
-        for (Node child : new NodeIterable(workspaceNode.getNodes())) {
-            unlock(child);
         }
     }
 
@@ -168,59 +131,7 @@ public abstract class AbstractHelper {
         return namesAndValues;
     }
 
-    /**
-     * returns the userID that contains the deep lock or <code>null</code> when no deep lock present
-     */
-    protected String getSelfOrAncestorLockedBy(final Node node) throws RepositoryException {
-        if (node == null || node.isSame(node.getSession().getRootNode())) {
-            return null;
-        }
-
-        if (node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
-            String lockedBy = node.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString();
-            return lockedBy;
-        }
-
-        if (node.isNodeType(HstNodeTypes.NODETYPE_HST_WORKSPACE)) {
-            return null;
-        }
-        return getSelfOrAncestorLockedBy(node.getParent());
-    }
-
-    protected boolean hasSelfOrAncestorLockBySomeOneElse(final Node node) throws RepositoryException {
-        String selfOrAncestorLockedBy = getSelfOrAncestorLockedBy(node);
-        if (selfOrAncestorLockedBy == null) {
-            return false;
-        }
-        return !node.getSession().getUserID().equals(selfOrAncestorLockedBy);
-    }
-
-    protected boolean hasSelfOrDescendantLockBySomeOneElse(final Node node) throws RepositoryException {
-        if (hasLockBySomeOneElse(node)) {
-            return true;
-        }
-        for (Node child : new NodeIterable(node.getNodes())) {
-            boolean hasDescendantLock = hasSelfOrDescendantLockBySomeOneElse(child);
-            if (hasDescendantLock) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    protected boolean hasLockBySomeOneElse(final Node node) throws RepositoryException {
-        if (node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
-            String lockedBy = node.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString();
-            if (!lockedBy.equals(node.getSession().getUserID())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-
-    public void publishWorkspaceChanges(final List<String> userIds)  throws RepositoryException {
+    public void publishWorkspaceChanges(final List<String> userIds) throws RepositoryException {
         List<Node> lockedNodeRoots = getLockedNodeRoots(userIds);
         publishWorkspaceNodeList(lockedNodeRoots);
     }
@@ -254,7 +165,7 @@ public abstract class AbstractHelper {
         }
     }
 
-    public void discardWorkspaceChanges(final List<String> userIds)  throws RepositoryException {
+    public void discardWorkspaceChanges(final List<String> userIds) throws RepositoryException {
         List<Node> lockedNodeRoots = getLockedNodeRoots(userIds);
         discardWorkspaceNodeList(lockedNodeRoots);
     }
@@ -281,7 +192,7 @@ public abstract class AbstractHelper {
     protected List<Node> getLockedNodeRoots(final List<String> userIds) throws RepositoryException {
 
         String previewConfigurationPath = pageComposerContextService.getEditingPreviewSite().getConfigurationPath();
-        final String previewWorkspacePath = previewConfigurationPath + "/"+HstNodeTypes.NODENAME_HST_WORKSPACE;
+        final String previewWorkspacePath = previewConfigurationPath + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
         final Session session = pageComposerContextService.getRequestContext().getSession();
 
         if (!session.nodeExists(previewWorkspacePath)) {
@@ -350,7 +261,7 @@ public abstract class AbstractHelper {
         final QueryResult result = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH).execute();
 
         List<Node> lockedNodesForUsers = new ArrayList<>();
-        for (Node lockedNodeForUsers : new NodeIterable(result.getNodes())){
+        for (Node lockedNodeForUsers : new NodeIterable(result.getNodes())) {
             lockedNodesForUsers.add(lockedNodeForUsers);
         }
         return lockedNodesForUsers;
