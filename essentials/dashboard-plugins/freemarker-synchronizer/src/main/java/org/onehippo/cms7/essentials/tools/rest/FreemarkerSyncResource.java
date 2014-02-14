@@ -22,6 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -39,8 +42,11 @@ import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.NodeRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 /**
  * @version "$Id$"
@@ -73,6 +79,55 @@ public class FreemarkerSyncResource extends BaseResource {
         return list;
 
 
+    }
+
+    @POST
+    @Path("/repository")
+    public MessageRestful writeToRepository(final RestfulList<KeyValueRestful> paths, @Context ServletContext servletContext) {
+        final List<KeyValueRestful> items = paths.getItems();
+        Session session = null;
+        final StringBuilder messageBuilder = new StringBuilder();
+
+        final MessageRestful message = new MessageRestful();
+        try {
+            final PluginContext context = getContext(servletContext);
+            session = context.getSession();
+            for (KeyValueRestful item : items) {
+                final String nodePath = item.getKey();
+                final String filePath = item.getValue();
+                final File file = new File(filePath);
+                if (!file.exists()) {
+                    log.error("File not found for path: {}", filePath);
+                    continue;
+                }
+                final StringBuilder builder = GlobalUtils.readTextFile(file.toPath());
+                final String content = builder.toString();
+                if (Strings.isNullOrEmpty(content)) {
+                    log.error("Content was empty for  {}", item);
+                    continue;
+                }
+                if (session.nodeExists(nodePath)) {
+                    final Node node = session.getNode(nodePath);
+                    node.setProperty("hst:script", content);
+                    session.save();
+                    messageBuilder.append(node.getName()).append(";   ");
+
+                }
+            }
+        } catch (RepositoryException e) {
+            log.error("Error fetching node", e);
+        } finally {
+            GlobalUtils.cleanupSession(session);
+        }
+
+        final String msg = messageBuilder.toString();
+        if (Strings.isNullOrEmpty(msg)) {
+            message.setValue("No nodes were updated");
+        } else {
+            message.setValue("Successfully updated following nodes: " + msg);
+        }
+
+        return message;
     }
 
     /**

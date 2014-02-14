@@ -3,20 +3,29 @@
     angular.module('hippo.essentials')
             .controller('freemarkerSyncCtrl', function ($scope, $sce, $log, $rootScope, $http) {
                 $scope.endpoint = $rootScope.REST.dynamic + 'freemarkersync/';
-                $scope.saveToRepository = function () {
-                    angular.forEach($scope.scriptNodes, function (value) {
-                        console.log(value);
-                    });
-                };
-                $scope.saveToFile = function () {
+                $scope.writeAction = function (action) {
                     var map = Essentials.mapBuilder();
                     angular.forEach($scope.scriptNodes, function (value) {
-                        map.put(value.displayValue, value.value);
+                        if(action=="file" && value.filePath !=null){
+                            map.put(value.displayValue, value.value);
+
+                        }else{
+                            if(value.filePath !=null){
+                                map.put(value.value, value.filePath);
+                            }
+                        }
                     });
 
-                    $http.post($scope.endpoint + "file", map).success(function (data) {
+                    $http.post($scope.endpoint + action, map).success(function (data) {
                         $scope.init();
                     });
+
+                };
+                $scope.saveToRepository = function () {
+                     $scope.writeAction("repository");
+                };
+                $scope.saveToFile = function () {
+                    $scope.writeAction("file");
                 };
                 $scope.init = function () {
                     var query = Essentials.queryBuilder("//hst:hst/hst:configurations//element(*, hst:template)[@hst:script]");
@@ -25,7 +34,7 @@
                         angular.forEach(data.nodes, function (value) {
                             var myValue = value.path;
                             var displayValue = myValue.replace("/hst:hst/hst:configurations/", "").replace("/hst:templates/", "/");
-                            $scope.scriptNodes.push({"value": myValue, "displayValue": displayValue, "selected": false, "filePath":null});
+                            $scope.scriptNodes.push({"value": value.path, "displayValue": displayValue, "selected": false, "filePath":null});
                         });
                     });
 
