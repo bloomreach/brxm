@@ -25,6 +25,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
+import org.onehippo.repository.util.JcrConstants;
 
 /**
  * Custom workflow task for copying (creating if necessary) from one variant node to another variant node
@@ -77,6 +78,9 @@ public class CopyVariantTask extends AbstractDocumentTask {
                 if (targetNode.isNodeType(HippoNodeType.NT_HARDDOCUMENT)) {
                     targetNode.removeMixin(HippoNodeType.NT_HARDDOCUMENT);
                 }
+            }
+            if (!targetNode.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
+                targetNode.addMixin(JcrConstants.MIX_REFERENCEABLE);
             }
 
             targetDoc = new DocumentVariant(targetNode);
