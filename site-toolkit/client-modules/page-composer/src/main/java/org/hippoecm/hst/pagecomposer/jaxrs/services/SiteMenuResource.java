@@ -42,8 +42,8 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.PreviewWorkspaceNodeValidator;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.Validator;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.PreviewWorkspaceNodeValidator;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 
 @Path("/" + HstNodeTypes.NODETYPE_HST_SITEMENU + "/")
 @Produces(MediaType.APPLICATION_JSON)

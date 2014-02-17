@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.hippoecm.hst.pagecomposer.jaxrs.services.validaters;
+package org.hippoecm.hst.pagecomposer.jaxrs.services.validators;
 
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.AbstractHelper;

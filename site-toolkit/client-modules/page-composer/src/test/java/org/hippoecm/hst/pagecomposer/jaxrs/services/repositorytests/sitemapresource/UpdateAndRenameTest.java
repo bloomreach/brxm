@@ -40,8 +40,8 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.PreviewWorkspaceNodeValidator;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.validaters.Validator;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.PreviewWorkspaceNodeValidator;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 

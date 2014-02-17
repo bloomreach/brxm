@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.hippoecm.hst.pagecomposer.jaxrs.services.validaters;
+package org.hippoecm.hst.pagecomposer.jaxrs.services.validators;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
