@@ -28,11 +28,10 @@ import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstru
 import org.onehippo.cms7.essentials.dashboard.instruction.parser.InstructionParser;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
+import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
 
 import static org.junit.Assert.assertEquals;
 
@@ -48,7 +47,7 @@ public class PluginInstructionExecutorTest extends BaseRepositoryTest {
     @Inject
     private PluginInstructionExecutor pluginInstructionExecutor;
     @Inject
-    private  InstructionParser instructionParser;
+    private InstructionParser instructionParser;
 
     @Test
     public void testExecute() throws Exception {
@@ -64,8 +63,40 @@ public class PluginInstructionExecutorTest extends BaseRepositoryTest {
             pluginInstructionExecutor.execute(instructionSet, getContext());
         }
 
+        // we had 6 executed, see /instructions.xml, 2 file and 2 XML instructions and 1 folder + default group (folder)
+        assertEquals(6, listener.getNrInstructions());
+
+    }
+
+    @Test
+    public void testExecuteByGroup() throws Exception {
+
+        final InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream("instructions.xml");
+        final String content = GlobalUtils.readStreamAsText(resourceAsStream);
+        log.info("content {}", content);
+        listener.reset();
+
+        final Instructions instructions = instructionParser.parseInstructions(content);
+        final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
+        for (InstructionSet instructionSet : instructionSets) {
+            if (instructionSet.getGroup().equals("myGroup")) {
+                pluginInstructionExecutor.execute(instructionSet, getContext());
+            }
+        }
+
         // we had 5 executed, see /instructions.xml, 2 file and 2 XML instructions and 1 folder
         assertEquals(5, listener.getNrInstructions());
+        // default group:
+        listener.reset();
+        for (InstructionSet instructionSet : instructionSets) {
+            if (instructionSet.getGroup().equals(EssentialConst.INSTRUCTION_GROUP_DEFAULT)) {
+                pluginInstructionExecutor.execute(instructionSet, getContext());
+            }
+        }
+
+        // default group has only 1 instruciton
+        assertEquals(1, listener.getNrInstructions());
+
 
     }
 }
