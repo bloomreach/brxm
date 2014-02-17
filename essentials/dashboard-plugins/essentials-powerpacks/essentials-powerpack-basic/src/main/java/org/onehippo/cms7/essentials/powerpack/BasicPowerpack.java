@@ -95,6 +95,8 @@ public class BasicPowerpack implements PowerpackPackage {
                     continue;
                 }
                 status = executor.execute(instructionSet, context);
+            }else{
+                log.debug("Skipping instruction group for name: [{}]", group);
             }
         }
         // TODO
