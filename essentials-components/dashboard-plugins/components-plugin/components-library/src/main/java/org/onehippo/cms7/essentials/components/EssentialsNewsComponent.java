@@ -4,6 +4,7 @@
 
 package org.onehippo.cms7.essentials.components;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.jcr.RepositoryException;
@@ -22,6 +23,7 @@ import org.onehippo.cms7.essentials.components.info.EssentialsDocumentListCompon
 import org.onehippo.cms7.essentials.components.info.EssentialsNewsComponentInfo;
 import org.onehippo.cms7.essentials.components.paging.Pageable;
 import org.onehippo.cms7.essentials.components.utils.query.HstQueryBuilder;
+import org.onehippo.cms7.essentials.components.utils.query.QueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +55,7 @@ public class EssentialsNewsComponent extends EssentialsListComponent {
 
     @Override
     protected <T extends EssentialsDocumentListComponentInfo> HstQuery buildQuery(final HstRequest request, final T paramInfo, final HippoBean scope) {
-        final HstQueryBuilder builder = new HstQueryBuilder(this, request);
+        final QueryBuilder builder = new HstQueryBuilder(this, request);
         EssentialsNewsComponentInfo newsComponentInfo = (EssentialsNewsComponentInfo) paramInfo;
         final String documentTypes = paramInfo.getDocumentTypes();
         final String[] types = parseDocumentTypes(documentTypes);
@@ -64,11 +66,9 @@ public class EssentialsNewsComponent extends EssentialsListComponent {
             try {
                 final Session session = request.getRequestContext().getSession();
                 Filter filter = new FilterImpl(session, DateTools.Resolution.DAY);
-                filter.addLessOrEqualThan(newsComponentInfo.getDocumentDateField(),new Date());
+                filter.addLessOrEqualThan(newsComponentInfo.getDocumentDateField(), Calendar.getInstance(), DateTools.Resolution.DAY);
                 builder.addFilter(filter);
-            } catch (RepositoryException e) {
-                log.error("An exception occurred while trying to create a query filter for hiding future items: {}", e);
-            } catch (FilterException e) {
+            } catch (RepositoryException | FilterException e) {
                 log.error("An exception occurred while trying to create a query filter for hiding future items: {}", e);
             }
         }
