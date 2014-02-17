@@ -107,10 +107,6 @@ html, body {
     border-right: 1px solid #dddddd;
 }
 
-.jstree-hippo li.jstree-node .jstree-icon {
-    /*margin-top: 23px;*/
-}
-
 form h4.page-header {
     margin-top: 12px;
 }
