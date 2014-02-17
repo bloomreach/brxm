@@ -5,11 +5,13 @@
 package org.onehippo.cms7.essentials.components;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.linking.HstLink;
@@ -173,4 +175,24 @@ public class CommonComponent extends BaseHstComponent {
         return p;
     }
 
+
+    /**
+     * Adds beans to collection for given path
+     * @param request
+     * @param path
+     * @param beans
+     */
+    public void addBeanForPath(final HstRequest request, final String path, final Collection<HippoDocument> beans) {
+        if (Strings.isNullOrEmpty(path)) {
+            return;
+        }
+
+        log.debug("Fetching carousel item for path: [{}]", path);
+        final HippoDocument bean = getHippoBeanForPath(path, HippoDocument.class, request);
+        if (bean != null) {
+            beans.add(bean);
+        } else {
+            log.debug("Couldn't find bean for path: {}", path);
+        }
+    }
 }
