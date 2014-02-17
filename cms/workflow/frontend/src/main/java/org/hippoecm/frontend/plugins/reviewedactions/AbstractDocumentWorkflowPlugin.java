@@ -65,7 +65,7 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
             if (wdm != null) {
                 Node node = wdm.getNode();
                 if (node != null) {
-                    folderModel = new JcrNodeModel(node.getParent().getParent());
+                    folderModel = new JcrNodeModel(node.getParent());
                 }
             }
         } catch (RepositoryException ex) {
