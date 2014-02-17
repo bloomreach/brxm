@@ -516,7 +516,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         Response failResponse = siteMapResource.update(home);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), failResponse.getStatus());
         final String message = ((ExtResponseRepresentation) failResponse.getEntity()).getMessage();
-        assertThat(message, is(ClientError.ITEM_EXISTS_IN_NON_WORKSPACE.name()));
+        assertThat(message, is(ClientError.ITEM_EXISTS_OUTSIDE_WORKSPACE.name()));
     }
 
     @Test

@@ -250,7 +250,7 @@ public class SiteMapHelper extends AbstractHelper {
                 String[] segments = siteMapRelPath.split("/");
                 if (siteMapNode.hasNode(segments[0])) {
                     final String msg = "Target '%s' not allowed since the *non-workspace* sitemap already contains '%s'";
-                    throw new ClientException(ClientError.ITEM_EXISTS_IN_NON_WORKSPACE, msg, target, siteMapNode.getPath() + "/" + segments[0]);
+                    throw new ClientException(ClientError.ITEM_EXISTS_OUTSIDE_WORKSPACE, msg, target, siteMapNode.getPath() + "/" + segments[0]);
                 }
                 // valid!
                 return;

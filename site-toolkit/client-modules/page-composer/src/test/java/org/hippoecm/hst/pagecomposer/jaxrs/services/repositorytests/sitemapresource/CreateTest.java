@@ -361,7 +361,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newItem);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-        assertThat(((ExtResponseRepresentation) response.getEntity()).getMessage(), is(ClientError.ITEM_EXISTS_IN_NON_WORKSPACE.name()));
+        assertThat(((ExtResponseRepresentation) response.getEntity()).getMessage(), is(ClientError.ITEM_EXISTS_OUTSIDE_WORKSPACE.name()));
     }
 
     @Test
