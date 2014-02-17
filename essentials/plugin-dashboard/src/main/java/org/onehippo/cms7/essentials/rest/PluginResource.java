@@ -52,13 +52,14 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.installer.InstallState;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.NodeRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
-import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.rest.model.ControllerRestful;
 import org.onehippo.cms7.essentials.rest.model.PluginRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.rest.model.RestList;
 import org.onehippo.cms7.essentials.rest.model.StatusRestful;
 import org.onehippo.cms7.essentials.servlet.DynamicRestPointsApplication;
@@ -71,17 +72,19 @@ import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 
 
 /**
- * Rest resource which provides information about plugins: e.g. installed or available plugins
- *
  * @version "$Id$"
  */
+
+@Api(value = "/plugins", description = "Rest resource which provides information about plugins: e.g. installed or available plugins")
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
-@Path("/plugins/")
+@Path("/plugins")
 public class PluginResource extends BaseResource {
 
     public static final int WEEK_OLD = -7;
@@ -91,12 +94,10 @@ public class PluginResource extends BaseResource {
     private boolean initialized;
     private static Logger log = LoggerFactory.getLogger(PluginResource.class);
 
-    /**
-     * Fetches a (remote) service and checks for available Hippo Essentials plugins
-     *
-     * @param servletContext servlet context
-     * @return JSON file of available plugins
-     */
+    @ApiOperation(
+            value = "Fetches a (remote) service and checks for available Hippo Essentials plugins",
+            notes = "Retrieves a list of PluginRestful objects",
+            response = RestfulList.class)
     @GET
     @Path("/")
     public RestfulList<PluginRestful> getPluginList(@Context ServletContext servletContext) {
@@ -179,7 +180,7 @@ public class PluginResource extends BaseResource {
             }
             // register:
             final ApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
-            final Object jsonProvider =  applicationContext.getBean("jsonProvider");
+            final Object jsonProvider = applicationContext.getBean("jsonProvider");
             final JAXRSServerFactoryBean factoryBean = delegate.createEndpoint(application, JAXRSServerFactoryBean.class);
             factoryBean.setProvider(jsonProvider);
             factoryBean.setBus(bus);
@@ -219,6 +220,9 @@ public static List<PluginRestful> parseGist() {
     }
 */
 
+    @ApiOperation(
+            value = "Adds a plugin to recently installed list of plugins",
+            response = RestfulList.class)
     @POST
     @Path("/configure/add")
     public RestfulList<PluginRestful> addToRecentlyInstalled(@Context ServletContext servletContext, final PostPayloadRestful payload) {
@@ -238,6 +242,10 @@ public static List<PluginRestful> parseGist() {
     }
 
 
+    @ApiOperation(
+            value = "Lists of all available plugins",
+            notes = "Retrieves list of  PluginRestful objects",
+            response = RestfulList.class)
     @GET
     @Path("/configure/list")
     public RestfulList<PluginRestful> getRecentlyInstalled(@Context ServletContext servletContext) {
@@ -255,6 +263,11 @@ public static List<PluginRestful> parseGist() {
     }
 
 
+    @ApiOperation(
+            value = "Checks if certain plugin is installed",
+            notes = "Sets PluginRestful installed flag to true or false",
+            response = PluginRestful.class)
+    @ApiParam(name = "className", value = "Plugin class name", defaultValue = "org.onehippo.cms7.essentials.dashboard.gallery.GalleryPlugin")
     @GET
     @Path("/installstate/{className}")
     public PluginRestful getPluginList(@Context ServletContext servletContext, @PathParam("className") String className) {
@@ -277,6 +290,10 @@ public static List<PluginRestful> parseGist() {
         return resource;
     }
 
+    @ApiOperation(
+            value = "Installs a plugin",
+            response = MessageRestful.class)
+    @ApiParam(name = "className", value = "Plugin class name", defaultValue = "org.onehippo.cms7.essentials.dashboard.gallery.GalleryPlugin")
     @POST
     @Path("/install/{className}")
     public MessageRestful installPlugin(@Context ServletContext servletContext, @PathParam("className") String className) {
@@ -318,6 +335,10 @@ public static List<PluginRestful> parseGist() {
         return message;
     }
 
+    @ApiOperation(
+            value = "Returns list of project settings like project namespace, project path etc. ",
+            notes = "Contains a list of KeyValueRestful objects",
+            response = RestfulList.class)
     @GET
     @Path("/settings")
     public RestfulList<KeyValueRestful> getKeyValue(@Context ServletContext servletContext) {

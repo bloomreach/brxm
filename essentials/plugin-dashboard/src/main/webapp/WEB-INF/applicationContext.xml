@@ -37,7 +37,7 @@
 
   <bean id="nodeResource" class="org.onehippo.cms7.essentials.rest.NodeResource"/>
   <bean id="pluginResource" class="org.onehippo.cms7.essentials.rest.PluginResource"/>
-  <bean id="propertiesResource" class="org.onehippo.cms7.essentials.rest.PropertiesResource"/>
+
   <bean id="powerpackResource" class="org.onehippo.cms7.essentials.rest.PowerpackResource"/>
 
 
@@ -49,7 +49,7 @@
       <ref bean="imageGalleryResource"/>
       <ref bean="nodeResource"/>
       <ref bean="pluginResource"/>
-      <ref bean="propertiesResource"/>
+
       <ref bean="powerpackResource"/>
 
       <!-- API -->

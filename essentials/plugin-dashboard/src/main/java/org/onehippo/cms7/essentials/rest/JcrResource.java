@@ -108,32 +108,7 @@ public class JcrResource extends BaseResource {
 
     }
 
-    private void populateNodes(final Node node, final NodeRestful nodeRestful, boolean anotherLevel) throws RepositoryException {
-        final NodeIterator nodes = node.getNodes();
-        while (nodes.hasNext()) {
-            final Node kid = nodes.nextNode();
-            final NodeRestful jcrKid = new NodeRestful(kid.getName(), kid.getPath());
-            nodeRestful.addNode(jcrKid);
-            populateProperties(kid, jcrKid);
-            if (anotherLevel) {
-                populateNodes(kid, jcrKid, false);
-            }
 
-
-        }
-    }
-
-
-    private void populateProperties(final Node node, final NodeRestful nodeRestful) throws RepositoryException {
-        final PropertyIterator properties = node.getProperties();
-        while (properties.hasNext()) {
-            final Property p = properties.nextProperty();
-            final PropertyRestful propertyRestful = new PropertyRestful();
-            propertyRestful.setName(p.getName());
-            propertyRestful.setValue(p.getPath());
-            nodeRestful.addProperty(propertyRestful);
-        }
-    }
 
 
     @POST
@@ -189,4 +164,30 @@ public class JcrResource extends BaseResource {
     }
 
 
+    private void populateNodes(final Node node, final NodeRestful nodeRestful, boolean anotherLevel) throws RepositoryException {
+        final NodeIterator nodes = node.getNodes();
+        while (nodes.hasNext()) {
+            final Node kid = nodes.nextNode();
+            final NodeRestful jcrKid = new NodeRestful(kid.getName(), kid.getPath());
+            nodeRestful.addNode(jcrKid);
+            populateProperties(kid, jcrKid);
+            if (anotherLevel) {
+                populateNodes(kid, jcrKid, false);
+            }
+
+
+        }
+    }
+
+
+    private void populateProperties(final Node node, final NodeRestful nodeRestful) throws RepositoryException {
+        final PropertyIterator properties = node.getProperties();
+        while (properties.hasNext()) {
+            final Property p = properties.nextProperty();
+            final PropertyRestful propertyRestful = new PropertyRestful();
+            propertyRestful.setName(p.getName());
+            propertyRestful.setValue(p.getPath());
+            nodeRestful.addProperty(propertyRestful);
+        }
+    }
 }
