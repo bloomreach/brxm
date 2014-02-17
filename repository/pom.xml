@@ -101,7 +101,7 @@
     <json-lib.version>2.2.2</json-lib.version>
     <easymock.version>3.1</easymock.version>
     <decentxml.version>1.4</decentxml.version>
-    <commons-scxml2.version>2.0-SNAPSHOT</commons-scxml2.version>
+    <commons-scxml2.version>2.0-m-r1568700</commons-scxml2.version>
   </properties>
 
   <scm>
