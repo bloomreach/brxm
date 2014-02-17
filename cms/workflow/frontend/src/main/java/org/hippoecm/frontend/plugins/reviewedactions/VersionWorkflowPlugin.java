@@ -133,6 +133,8 @@ public class VersionWorkflowPlugin extends RenderPlugin {
 
                 Version versionNode = (Version) frozenNode.getParent();
                 Calendar calendar = versionNode.getCreated();
+                // create a revision to prevent loss of content from unpublished.
+                documentWorkflow.version();
                 Document doc = documentWorkflow.obtainEditableInstance();
                 try {
                     documentWorkflow.versionRestoreTo(calendar, doc);
