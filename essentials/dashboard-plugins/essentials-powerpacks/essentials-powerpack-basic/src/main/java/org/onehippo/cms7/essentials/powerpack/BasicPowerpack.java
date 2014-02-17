@@ -32,8 +32,6 @@ import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
-import org.onehippo.cms7.essentials.dashboard.utils.inject.PropertiesModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -88,12 +86,16 @@ public class BasicPowerpack implements PowerpackPackage {
         InstructionStatus status = InstructionStatus.SUCCESS;
         final InstructionExecutor executor = new PluginInstructionExecutor();
         for (InstructionSet instructionSet : instructionSets) {
-            // currently we return fail if any of instructions is failed
-            if (status == InstructionStatus.FAILED) {
-                executor.execute(instructionSet, context);
-                continue;
+            final String group = instructionSet.getGroup();
+            // execute only or group(s)
+            if (groupNames().contains(group)) {
+                // currently we return fail if any of instructions is failed
+                if (status == InstructionStatus.FAILED) {
+                    executor.execute(instructionSet, context);
+                    continue;
+                }
+                status = executor.execute(instructionSet, context);
             }
-            status = executor.execute(instructionSet, context);
         }
         // TODO
         return status;

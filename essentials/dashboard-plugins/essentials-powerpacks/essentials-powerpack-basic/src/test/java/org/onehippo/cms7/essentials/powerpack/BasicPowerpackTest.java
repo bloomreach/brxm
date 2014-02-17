@@ -17,6 +17,7 @@
 package org.onehippo.cms7.essentials.powerpack;
 
 import java.io.File;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -25,6 +26,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
+import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
@@ -58,7 +60,8 @@ public class BasicPowerpackTest extends BaseRepositoryTest {
         final PowerpackPackage powerpackPackage = new BasicPowerpack();
         injector.autowireBean(powerpackPackage);
         final Instructions instructions = powerpackPackage.getInstructions();
-        assertEquals(10, instructions.getInstructionSets().size());
+        final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
+        assertEquals(12, instructionSets.size());
     }
 
     @Test
@@ -68,7 +71,7 @@ public class BasicPowerpackTest extends BaseRepositoryTest {
         final InstructionStatus status = powerpackPackage.execute(getContext());
         // create target node:
         assertEquals(InstructionStatus.SUCCESS, status);
-        assertEquals(jspDirectory.listFiles().length, 8);
+        assertEquals(jspDirectory.listFiles().length, 9);
 
 
     }
