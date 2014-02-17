@@ -108,7 +108,7 @@ html, body {
 }
 
 .jstree-hippo li.jstree-node .jstree-icon {
-    margin-top: 23px;
+    /*margin-top: 23px;*/
 }
 
 form h4.page-header {
