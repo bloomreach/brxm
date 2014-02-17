@@ -49,7 +49,7 @@ public class CommitTypeWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
             @Override
             public String getSubMenu() {
-                return "top";
+                return "committype";
             }
 
             @Override
