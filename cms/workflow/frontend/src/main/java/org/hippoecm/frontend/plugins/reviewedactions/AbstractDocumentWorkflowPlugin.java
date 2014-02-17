@@ -20,6 +20,7 @@ import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -37,11 +38,13 @@ import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +75,16 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
             log.warn("Could not determine folder path", ex);
         }
         return folderModel;
+    }
+
+    protected Node getVariant(Node handle, String state) throws RepositoryException {
+        String handlePath = handle.getPath();
+        for (Node variant : new NodeIterable(handle.getNodes(handle.getName()))) {
+            if (variant.hasProperty(HippoStdNodeType.HIPPOSTD_STATE) && state.equals(variant.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString())) {
+                return variant;
+            }
+        }
+        throw new ItemNotFoundException("No "+state+" variant found under path: "+handlePath);
     }
 
     protected IEditorManager getEditorManager() {

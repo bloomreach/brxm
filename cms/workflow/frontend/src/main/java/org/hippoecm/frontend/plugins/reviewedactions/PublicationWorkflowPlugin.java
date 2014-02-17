@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
@@ -38,6 +39,7 @@ import org.hippoecm.frontend.plugins.reviewedactions.dialogs.SchedulePublishDial
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.UnpublishedReferencesDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.model.ReferenceProvider;
 import org.hippoecm.frontend.plugins.reviewedactions.model.UnpublishedReferenceProvider;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.Workflow;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
@@ -197,11 +199,11 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected IDialogService.Dialog createRequestDialog() {
-                HippoNode node;
                 try {
-                    node = (HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode();
+                    Node handle = ((WorkflowDescriptorModel) getDefaultModel()).getNode();
+                    Node unpublished = getVariant(handle, HippoStdNodeType.UNPUBLISHED);
                     final UnpublishedReferenceProvider referenced = new UnpublishedReferenceProvider(
-                            new ReferenceProvider(new JcrNodeModel(node)));
+                            new ReferenceProvider(new JcrNodeModel(unpublished)));
                     if (referenced.size() > 0) {
                         return new UnpublishedReferencesDialog(publishAction, new UnpublishedReferenceNodeProvider(
                                 referenced), getEditorManager());
@@ -276,7 +278,8 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             protected IDialogService.Dialog createRequestDialog() {
                 WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
                 try {
-                    return new SchedulePublishDialog(this, new JcrNodeModel(wdm.getNode()), new PropertyModel<Date>(this, "date"), getEditorManager());
+                    Node unpublished = getVariant(wdm.getNode(), HippoStdNodeType.UNPUBLISHED);
+                    return new SchedulePublishDialog(this, new JcrNodeModel(unpublished), new PropertyModel<Date>(this, "date"), getEditorManager());
                 } catch (RepositoryException ex) {
                     log.warn("could not retrieve node for scheduling publish", ex);
                 }
@@ -313,7 +316,8 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             protected IDialogService.Dialog createRequestDialog() {
                 WorkflowDescriptorModel wdm = getModel();
                 try {
-                    return new SchedulePublishDialog(this, new JcrNodeModel(wdm.getNode()), new PropertyModel<Date>(this, "date"), getEditorManager());
+                    Node unpublished = getVariant(wdm.getNode(), HippoStdNodeType.UNPUBLISHED);
+                    return new SchedulePublishDialog(this, new JcrNodeModel(unpublished), new PropertyModel<Date>(this, "date"), getEditorManager());
                 } catch (RepositoryException ex) {
                     log.warn("could not retrieve node for scheduling publish", ex);
                 }
