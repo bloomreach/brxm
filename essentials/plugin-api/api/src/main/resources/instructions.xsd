@@ -32,7 +32,7 @@
       <xs:element type="cndType" name="cnd" minOccurs="0" maxOccurs="unbounded" />
       <xs:element type="folderType" name="folder" minOccurs="0" maxOccurs="unbounded"/>
     </xs:choice>
-    <xs:attribute use="optional" name="name" type="xs:string"/>
+    <xs:attribute use="optional" name="group" default="default" type="xs:string"/>
   </xs:complexType>
 
   <!--

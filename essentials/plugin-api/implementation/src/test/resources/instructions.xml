@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
-  <instructionSet>
+  <instructionSet group="myGroup">
     <file action="copy" overwrite="false" source="test_cnd.cnd" target="{{projectRoot}}/test_cnd2.cnd"/>
     <file action="delete" target="{{projectRoot}}/test_cnd2.cnd"/>
     <xml action="copy" source="instruction_xml_file.xml" target="/"/>

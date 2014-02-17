@@ -19,6 +19,7 @@ package org.onehippo.cms7.essentials.dashboard.instruction;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -26,6 +27,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
+
+import com.google.common.base.Strings;
 
 /**
  * @version "$Id$"
@@ -35,6 +38,9 @@ public class PluginInstructionSet implements InstructionSet {
 
 
     private Set<Instruction> instructions = new LinkedHashSet<>();
+
+    private String group;
+
 
     @XmlElementRefs({
             @XmlElementRef(type = XmlInstruction.class),
@@ -51,6 +57,7 @@ public class PluginInstructionSet implements InstructionSet {
         this.instructions = instructions;
     }
 
+    @Override
     public void addInstruction(final Instruction instruction) {
         if (instructions == null) {
             instructions = new LinkedHashSet<>();
@@ -59,10 +66,26 @@ public class PluginInstructionSet implements InstructionSet {
 
     }
 
+    @XmlAttribute
+    @Override
+    public String getGroup() {
+        if (Strings.isNullOrEmpty(group)) {
+            group =  EssentialConst.INSTRUCTION_GROUP_DEFAULT;
+        }
+        return group;
+    }
+
+    @Override
+    public void setGroup(final String group) {
+        this.group = group;
+    }
+
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("PluginInstructionSet{");
         sb.append("instructions=").append(instructions);
+        sb.append(", group='").append(group).append('\'');
         sb.append('}');
         return sb.toString();
     }

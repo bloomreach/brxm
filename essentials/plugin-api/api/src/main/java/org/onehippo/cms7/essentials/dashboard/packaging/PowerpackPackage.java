@@ -16,6 +16,8 @@
 
 package org.onehippo.cms7.essentials.dashboard.packaging;
 
+import java.util.Set;
+
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
@@ -24,6 +26,14 @@ import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
  * @version "$Id$"
  */
 public interface PowerpackPackage {
+
+    /**
+     * Defines a group name. Each instruction set can have a several group names
+     * <p></p>
+     * (FYI by default, instruction set name  is "default").
+     * @return
+     */
+    Set<String> groupNames();
 
     /**
      * Returns parsed instructions

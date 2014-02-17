@@ -35,6 +35,7 @@ import org.onehippo.cms7.essentials.dashboard.instruction.XmlInstruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
+import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +47,7 @@ import static org.junit.Assert.assertTrue;
  * @version "$Id$"
  */
 
-public class InstructionParserTest extends BaseTest{
+public class InstructionParserTest extends BaseTest {
 
     private static Logger log = LoggerFactory.getLogger(InstructionParserTest.class);
 
@@ -67,10 +68,14 @@ public class InstructionParserTest extends BaseTest{
         final Instructions myInstructions = instructionParser.parseInstructions(content);
         final Set<InstructionSet> iset = myInstructions.getInstructionSets();
         assertEquals(1, iset.size());
+
         final InstructionSet inSet = iset.iterator().next();
+
+        assertEquals("myGroup", inSet.getGroup());
         assertEquals(5, inSet.getInstructions().size());
         assertEquals(5, myInstructions.totalInstructions());
         assertEquals(1, myInstructions.totalInstructionSets());
+
 
 
         //############################################

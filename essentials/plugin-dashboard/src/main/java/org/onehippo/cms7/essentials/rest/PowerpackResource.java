@@ -45,6 +45,7 @@ import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.ProjectRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
+import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.onehippo.cms7.essentials.powerpack.BasicPowerpack;
@@ -60,6 +61,7 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.eventbus.EventBus;
 
 
@@ -92,6 +94,7 @@ public class PowerpackResource extends BaseResource {
             return messageRestfulRestfulList;
         }
         final PowerpackPackage powerpackPackage;
+        // TODO introduce packs as plugin packages
         switch (id) {
             case POWERPACK_NEWS_AND_EVENT_LABEL:
                 if (sampleContent) {
@@ -214,6 +217,11 @@ public class PowerpackResource extends BaseResource {
 
 
     private static class EmptyPowerPack implements PowerpackPackage {
+        @Override
+        public Set<String> groupNames() {
+            return new ImmutableSet.Builder<String>().add(EssentialConst.INSTRUCTION_GROUP_DEFAULT).build();
+        }
+
         @Override
         public Instructions getInstructions() {
             return new Instructions() {

@@ -17,27 +17,27 @@
 
 <instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
-  <instructionSet name="NAMESPACE">
+  <instructionSet>
     <cnd documentType="newsdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
     <cnd documentType="eventsdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
     <xml action="copy" source="xml/namespaces/newsdocument.xml" target="/hippo:namespaces/{{namespace}}"/>
     <xml action="copy" source="xml/namespaces/eventsdocument.xml" target="/hippo:namespaces/{{namespace}}"/>
   </instructionSet>
-  <instructionSet name="QUERIES">
+  <instructionSet>
     <xml action="copy" source="xml/folderoptions/new-news-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <xml action="copy" source="xml/folderoptions/new-news-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <xml action="copy" source="xml/folderoptions/new-events-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <xml action="copy" source="xml/folderoptions/new-events-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
   </instructionSet>
-  <instructionSet name="ICONS">
+  <instructionSet>
     <file action="copy" overwrite="true" source="icons/new-folder-16.png" target="{{cmsRoot}}/src/main/resources/org/hippoecm/frontend/plugins/standardworkflow/new-news-folder-16.png"/>
     <file action="copy" overwrite="true" source="icons/new-folder-16.png" target="{{cmsRoot}}/src/main/resources/org/hippoecm/frontend/plugins/standardworkflow/new-events-folder-16.png"/>
   </instructionSet>
-  <instructionSet name="CONTENT">
+  <instructionSet>
     <folder path="/content/documents/{{namespace}}" template="xml/content/news.xml"/>
     <folder path="/content/documents/{{namespace}}" template="xml/content/events.xml"/>
   </instructionSet>
-  <instructionSet name="JSP">
+  <instructionSet>
     <file action="copy" overwrite="true" source="jsp/essentials-layout-webpage.jsp" target="{{jspRoot}}/essentials/essentials-layout-webpage.jsp"/>
     <file action="copy" overwrite="true" source="jsp/essentials-standard-main.jsp" target="{{jspRoot}}/essentials/essentials-standard-main.jsp"/>
     <file action="copy" overwrite="true" source="jsp/essentials-component-list.jsp" target="{{jspRoot}}/essentials/essentials-component-list.jsp"/>
@@ -49,21 +49,21 @@
     <!--todo temporary:-->
     <file action="copy" overwrite="true" source="jsp/essentials-home.jsp" target="{{jspRoot}}/essentials/essentials-home.jsp"/>
   </instructionSet>
-  <instructionSet name="SITE-MAPS">
+  <instructionSet>
     <xml action="copy" source="xml/hst/sitemap/news.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
     <xml action="copy" source="xml/hst/sitemap/events.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
     <!--todo temporary:-->
     <xml action="copy" source="xml/hst/sitemap/root.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
   </instructionSet>
-  <instructionSet name="JAVA">
+  <instructionSet>
     <file action="copy" overwrite="true" source="java/NewsDocument.txt" target="{{beansFolder}}/NewsDocument.java"/>
     <file action="copy" overwrite="true" source="java/EventsDocument.txt" target="{{beansFolder}}/EventsDocument.java"/>
   </instructionSet>
-  <instructionSet name="COMPONENTS">
+  <instructionSet>
     <xml action="copy" source="xml/hst/components/list.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:components"/>
     <xml action="copy" source="xml/hst/components/content.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:components"/>
   </instructionSet>
-  <instructionSet name="PAGES">
+  <instructionSet>
     <xml action="copy" source="xml/hst/pages/standard.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="xml/hst/pages/newsoverview.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="xml/hst/pages/newspage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
@@ -72,7 +72,7 @@
     <!--todo temporary:-->
     <xml action="copy" source="xml/hst/pages/homepage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
   </instructionSet>
-  <instructionSet name="TEMPLATES">
+  <instructionSet>
     <xml action="copy" source="xml/hst/templates/layout-webpage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="xml/hst/templates/standard-main.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="xml/hst/templates/standard-main-overview-content.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
@@ -84,7 +84,13 @@
     <!--todo temporary:-->
     <xml action="copy" source="xml/hst/templates/homepage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
-  <instructionSet name="CATALOG">
+  <instructionSet>
     <xml action="copy" source="xml/hst/catalog/basic-powerpack-catalog.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:catalog"/>
+  </instructionSet>
+  <!-- SAMPLES GROUP-->
+  <instructionSet group="samples">
+    <xml action="copy" source="xml/samples/content/documents/events.xml" target="/content/documents/{{namespace}}"/>
+    <xml action="copy" source="xml/samples/content/documents/news.xml" target="/content/documents/{{namespace}}"/>
+    <xml action="copy" source="xml/samples/content/gallery/samples.xml" target="/content/gallery/{{namespace}}"/>
   </instructionSet>
 </instructions>

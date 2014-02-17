@@ -26,6 +26,10 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlTransient
 public interface InstructionSet {
 
+    String getGroup();
+
+    void setGroup(String group);
+
     Set<Instruction> getInstructions();
 
     void setInstructions(Set<Instruction> instructions);
