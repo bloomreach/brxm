@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
@@ -45,16 +46,21 @@ import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.config.DefaultDocumentManager;
 import org.onehippo.cms7.essentials.dashboard.config.DocumentManager;
 import org.onehippo.cms7.essentials.dashboard.config.InstallerDocument;
+import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.installer.InstallState;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
+import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
+import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
+import org.onehippo.cms7.essentials.rest.model.ControllerRestful;
 import org.onehippo.cms7.essentials.rest.model.PluginRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.rest.model.RestList;
+import org.onehippo.cms7.essentials.rest.model.StatusRestful;
 import org.onehippo.cms7.essentials.servlet.DynamicRestPointsApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +71,7 @@ import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.wordnik.swagger.annotations.ApiOperation;
 
 
 /**
@@ -309,5 +316,68 @@ public static List<PluginRestful> parseGist() {
         message.setSuccessMessage(false);
         message.setValue("Plugin was not found and could not be installed");
         return message;
+    }
+
+    @GET
+    @Path("/settings")
+    public RestfulList<KeyValueRestful> getKeyValue(@Context ServletContext servletContext) {
+        final PluginContext context = getContext(servletContext);
+        final Map<String, Object> placeholderData = context.getPlaceholderData();
+        final RestfulList<KeyValueRestful> list = new RestList<>();
+        for (Map.Entry<String, Object> entry : placeholderData.entrySet()) {
+            final Object value = entry.getValue();
+            if (value instanceof String) {
+                final KeyValueRestful keyValueRestful = new KeyValueRestful(entry.getKey(), (String) value);
+                list.add(keyValueRestful);
+            }
+        }
+        return list;
+
+    }
+
+    @GET
+    @Path("/controllers")
+    public RestfulList<ControllerRestful> getControllers(@Context ServletContext servletContext) {
+
+        final RestfulList<ControllerRestful> controllers = new RestList<>();
+        final List<Plugin> plugins = getPlugins(servletContext);
+        for (Plugin plugin : plugins) {
+            final String pluginLink = plugin.getPluginLink();
+            if (Strings.isNullOrEmpty(pluginLink)) {
+                continue;
+            }
+            controllers.add(new ControllerRestful(pluginLink, String.format("%sCtrl", pluginLink), String.format("plugins/%s/index.html", pluginLink)));
+
+        }
+        // TODO load from remote
+
+        return controllers;
+
+    }
+
+
+    @ApiOperation(
+            value = "Populated StatusRestful object",
+            notes = "Status contains true value if one of the Powerpacks is installed",
+            response = StatusRestful.class)
+    @GET
+    @Path("/status/powerpack")
+    public StatusRestful getMenu(@Context ServletContext servletContext) {
+        final StatusRestful status = new StatusRestful();
+        try {
+            final Plugin plugin = getPluginByClassName(ProjectSetupPlugin.class.getName(), servletContext);
+            final PluginContext context = new DefaultPluginContext(GlobalUtils.createSession(), plugin);
+            final ProjectSettingsBean document = context.getConfigService().read(ProjectSetupPlugin.class.getName(), ProjectSettingsBean.class);
+
+            if (document != null && document.getSetupDone()) {
+                status.setStatus(true);
+                return status;
+            }
+
+        } catch (Exception e) {
+
+            log.error("Error checking powerpack status", e);
+        }
+        return status;
     }
 }
