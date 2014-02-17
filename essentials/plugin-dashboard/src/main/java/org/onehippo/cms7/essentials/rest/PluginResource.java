@@ -267,7 +267,7 @@ public static List<PluginRestful> parseGist() {
             value = "Checks if certain plugin is installed",
             notes = "Sets PluginRestful installed flag to true or false",
             response = PluginRestful.class)
-    @ApiParam(name = "className", value = "Plugin class name")
+    @ApiParam(name = "className", value = "Plugin class name", required = true)
     @GET
     @Path("/installstate/{className}")
     public PluginRestful getPluginList(@Context ServletContext servletContext, @PathParam("className") String className) {
@@ -293,7 +293,7 @@ public static List<PluginRestful> parseGist() {
     @ApiOperation(
             value = "Installs a plugin",
             response = MessageRestful.class)
-    @ApiParam(name = "className", value = "Plugin class name")
+    @ApiParam(name = "className", value = "Plugin class name", required = true)
     @POST
     @Path("/install/{className}")
     public MessageRestful installPlugin(@Context ServletContext servletContext, @PathParam("className") String className) {

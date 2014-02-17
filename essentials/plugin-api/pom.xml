@@ -38,6 +38,7 @@
     <jsr311-api.version>1.1.1</jsr311-api.version>
     <cxf-bundle.version>2.7.8</cxf-bundle.version>
     <jackson.version>1.9.5</jackson.version>
+    <swagger-jaxrs_2.10.version>1.3.0</swagger-jaxrs_2.10.version>
   </properties>
 
   <modules>
@@ -110,6 +111,11 @@
         <version>${guava.version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>com.wordnik</groupId>
+        <artifactId>swagger-jaxrs_2.10</artifactId>
+        <version>${swagger-jaxrs_2.10.version}</version>
+      </dependency>
       <dependency>
         <groupId>commons-lang</groupId>
         <artifactId>commons-lang</artifactId>

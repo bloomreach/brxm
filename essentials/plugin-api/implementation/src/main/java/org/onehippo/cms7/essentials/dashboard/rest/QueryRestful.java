@@ -22,9 +22,12 @@ import org.onehippo.cms7.essentials.dashboard.rest.Restful;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.wordnik.swagger.annotations.ApiModel;
+
 /**
  * @version "$Id$"
  */
+@ApiModel
 @XmlRootElement(name = "query")
 public class QueryRestful implements Restful{
     private static final long serialVersionUID = 1L;

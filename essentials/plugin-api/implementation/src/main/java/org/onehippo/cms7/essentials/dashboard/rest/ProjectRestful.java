@@ -18,9 +18,12 @@ package org.onehippo.cms7.essentials.dashboard.rest;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.wordnik.swagger.annotations.ApiModel;
+
 /**
  * @version "$Id$"
  */
+@ApiModel
 @XmlRootElement(name = "project")
 public class ProjectRestful implements Restful {
 
