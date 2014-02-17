@@ -123,22 +123,8 @@ public class FileInstruction extends PluginInstruction {
                 try {
 
                     if (!destination.exists()) {
-                        //Recursively creates parent directories in case they don't exist yet
-                        Deque<String> directories = new ArrayDeque<>();
-                        String parent = destination.getParent();
-                        while (!new File(parent).exists()) {
-                            directories.push(parent);
-                            parent = new File(parent).getParent();
-                        }
-                        if (!directories.isEmpty()) {
-                            folderMessage = directories.size() > 1 ? directories.size() - 1 + " directories" : "directory";
-                            createdFolders = directories.getLast().substring(directories.getFirst().length());
-                            createdFoldersTarget = directories.getLast();
-                            Files.createDirectories(new File(directories.getLast()).toPath());
-                            eventBus.post(new InstructionEvent(messageFolderCreate));
-                        }
+                        createParentDirectories(destination);
 
-                        Files.createFile(destination.toPath());
                     }
                     // replace file placeholders if needed:
                     if (isBinary()) {
@@ -171,6 +157,34 @@ public class FileInstruction extends PluginInstruction {
         eventBus.post(new InstructionEvent(this));
         return InstructionStatus.FAILED;
 
+    }
+
+    /**
+     * Recursively creates parent directories in case they don't exist yet
+     * @param destination starting directory
+     * @throws IOException
+     */
+    private void createParentDirectories(final File destination) throws IOException {
+
+        Deque<String> directories = new ArrayDeque<>();
+        String parent = destination.getParent();
+        while (!new File(parent).exists()) {
+            directories.push(parent);
+            parent = new File(parent).getParent();
+        }
+        processDirectories(directories);
+
+        Files.createFile(destination.toPath());
+    }
+
+    private void processDirectories(final Deque<String> directories) throws IOException {
+        if (!directories.isEmpty()) {
+            folderMessage = directories.size() > 1 ? directories.size() - 1 + " directories" : "directory";
+            createdFolders = directories.getLast().substring(directories.getFirst().length());
+            createdFoldersTarget = directories.getLast();
+            Files.createDirectories(new File(directories.getLast()).toPath());
+            eventBus.post(new InstructionEvent(messageFolderCreate));
+        }
     }
 
     private boolean isBinary() {

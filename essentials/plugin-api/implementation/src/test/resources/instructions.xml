@@ -8,4 +8,8 @@
     <xml action="delete" target="/testNode"/>
     <folder path="/foo/bar/foobar" template="my_folder_template.xml"/>
   </instructionSet>
+  <!-- DEFAULT GROUP-->
+  <instructionSet>
+    <folder path="/foo/bar/foobar2" template="my_folder_template.xml"/>
+  </instructionSet>
 </instructions>

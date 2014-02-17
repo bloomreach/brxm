@@ -36,7 +36,6 @@ import org.apache.commons.io.FileUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.rest.NodeRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PropertyRestful;
-import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils;
 import org.slf4j.Logger;
@@ -79,7 +78,7 @@ public final class FSUtils {
     }
 
 
-    public static Map<String, String> writeFreemarkerFiles(final PluginContext context, final String freemarkerPath,final NodeRestful restful) {
+    public static Map<String, String> writeFreemarkerFiles(final PluginContext context, final String freemarkerPath, final NodeRestful restful) {
         final Map<String, String> nodeFileMappings = new HashMap<>();
         final List<NodeRestful> nodes = restful.getNodes();
         for (NodeRestful node : nodes) {
@@ -90,7 +89,7 @@ public final class FSUtils {
 
     }
 
-    public static void writeScriptNode(final PluginContext context, final String freemarkerPath , final NodeRestful node, final Map<String, String> nodeFileMappings) {
+    public static void writeScriptNode(final PluginContext context, final String freemarkerPath, final NodeRestful node, final Map<String, String> nodeFileMappings) {
         final String path = node.getPath();
         if (path == null) {
             log.error("Path was null for node {}", node);
@@ -115,7 +114,11 @@ public final class FSUtils {
             final File file = new File((fileName));
             if (!file.exists()) {
                 log.info("Creating file: {}", file);
-                file.createNewFile();
+                final boolean created = file.createNewFile();
+                if (!created) {
+                    log.error("Failed to create file {}", fileName);
+                    return;
+                }
             }
             GlobalUtils.writeToFile(value, file.toPath());
             nodeFileMappings.put(node.getPath(), file.getAbsolutePath());

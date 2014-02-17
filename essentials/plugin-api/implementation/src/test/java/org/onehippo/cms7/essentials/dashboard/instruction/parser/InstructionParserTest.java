@@ -67,14 +67,19 @@ public class InstructionParserTest extends BaseTest {
         final String content = GlobalUtils.readStreamAsText(resourceAsStream);
         final Instructions myInstructions = instructionParser.parseInstructions(content);
         final Set<InstructionSet> iset = myInstructions.getInstructionSets();
-        assertEquals(1, iset.size());
+        assertEquals(2, iset.size());
 
-        final InstructionSet inSet = iset.iterator().next();
+        final Iterator<InstructionSet> myIterator = iset.iterator();
+        final InstructionSet set1 = myIterator.next();
+        final InstructionSet set2 = myIterator.next();
 
-        assertEquals("myGroup", inSet.getGroup());
-        assertEquals(5, inSet.getInstructions().size());
-        assertEquals(5, myInstructions.totalInstructions());
-        assertEquals(1, myInstructions.totalInstructionSets());
+        assertEquals("myGroup", set1.getGroup());
+        assertEquals(EssentialConst.INSTRUCTION_GROUP_DEFAULT, set2.getGroup());
+        assertEquals(5, set1.getInstructions().size());
+        assertEquals(1, set2.getInstructions().size());
+        // total instructions is 6:
+        assertEquals(6, myInstructions.totalInstructions());
+        assertEquals(2, myInstructions.totalInstructionSets());
 
 
 
