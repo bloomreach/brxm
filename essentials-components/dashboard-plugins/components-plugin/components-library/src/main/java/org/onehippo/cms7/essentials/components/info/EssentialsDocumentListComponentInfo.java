@@ -6,6 +6,7 @@ package org.onehippo.cms7.essentials.components.info;
 
 import org.hippoecm.hst.core.parameters.DocumentLink;
 import org.hippoecm.hst.core.parameters.DropDownList;
+import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 
 /**
@@ -25,7 +26,11 @@ public interface EssentialsDocumentListComponentInfo {
 
 
     @Parameter(name = "path", required = false, displayName = "Documents path")
-    @DocumentLink(allowCreation = false, docLocation = "/content/documents", docType = "hippostd:folder")
+    @JcrPath(
+            pickerConfiguration = "cms-pickers/documents",
+            pickerSelectableNodeTypes = {"hippostd:folder"},
+            pickerInitialPath = "/content/documents"
+    )
     String getPath();
 
 
