@@ -119,6 +119,14 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
         }
     }
 
+    protected void hideIfNotAllowed(Map<String, Serializable> info, String key, StdWorkflow... actions) {
+        if (!(info.containsKey(key) && info.get(key) instanceof Boolean && (Boolean)info.get(key))) {
+            for (StdWorkflow action : actions) {
+                action.setVisible(false);
+            }
+        }
+    }
+
     /**
      * Use the IBrowseService to select the node referenced by parameter path
      *

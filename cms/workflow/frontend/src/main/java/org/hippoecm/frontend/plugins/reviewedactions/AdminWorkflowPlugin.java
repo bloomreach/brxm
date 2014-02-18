@@ -53,7 +53,7 @@ public class AdminWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
         });
 
         Map<String, Serializable> info = getHints();
-        hideOrDisable(info, "unlock", unlockAction);
+        hideIfNotAllowed(info, "unlock", unlockAction);
     }
 
 }
