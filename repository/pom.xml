@@ -105,9 +105,9 @@
   </properties>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/branches/scxml-workflow</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/repository/branches/scxml-workflow</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/branches/scxml-workflow</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/trunk</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/repository/trunk</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/trunk</url>
   </scm>
 
   <build>
