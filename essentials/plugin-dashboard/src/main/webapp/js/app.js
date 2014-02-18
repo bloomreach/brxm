@@ -14,7 +14,7 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.essentials', ['ngRoute', 'localytics.directives','ui.bootstrap', 'ui.sortable', 'ui.router'])
+    angular.module('hippo.essentials', ['ngRoute', 'localytics.directives', 'ui.bootstrap', 'ui.sortable', 'ui.router'])
 
 //############################################
 // GLOBAL LOADING
@@ -96,8 +96,8 @@
                 $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
 
                     // check if we need powerpacks install check
-                  /*  if(!$rootScope.checkDone && (toState != "powerpacks" && $location.url() != "/" || $location.url() != "")){
-                        $state.transitionTo('powerpacks');
+                    /*  if(!$rootScope.checkDone && (toState != "powerpacks" && $location.url() != "/" || $location.url() != "")){
+                     $state.transitionTo('powerpacks');
                      }*/
 
                 });
@@ -146,7 +146,6 @@
                      *  * /install/{className}
                      */
                     pluginInstall: plugins + '/install/',
-
 
 
                     documentTypes: root + '/documenttypes/',
@@ -200,7 +199,20 @@
 // FILTERS
 //############################################
 
-            .filter('splitString', function () {
+    /**
+     * Filter plugins for given group type
+     */
+            .filter('pluginType', function () {
+                return function (name, plugins) {
+                    var retVal = [];
+                    angular.forEach(plugins, function (plugin) {
+                        if(plugin.type == name){
+                            retVal.push(plugin);
+                        }
+                    });
+                    return retVal;
+                }
+            }).filter('splitString', function () {
                 return function (input, splitOn, idx) {
                     if (input) {
                         var split = input.split(splitOn);
