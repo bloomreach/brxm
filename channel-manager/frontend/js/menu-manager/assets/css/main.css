@@ -64,6 +64,7 @@ html, body {
     padding-bottom: 10px;
     display: table-cell;
     float: none;
+    position: relative;
 }
 
 .form-group .input-group .form-control-feedback {
@@ -114,4 +115,29 @@ form h4.page-header {
 .tooltip-container {
     position: relative;
     top: -35px;
+}
+
+/* --- Confirmation message --- */
+.feedback {
+    position: absolute;
+    width: 100%;
+    padding: 20px 25px 20px 25px;
+    z-index: 999999;
+    transition: .3s ease-out;
+    top: -96px;
+    border-radius: 0;
+    border-top: none;
+    left: 0;
+}
+
+.feedback.feedback-show {
+    top: 0;
+}
+
+.feedback a {
+    color: #8a6d3b;
+}
+
+.feedback .confirm {
+    font-weight: normal;
 }

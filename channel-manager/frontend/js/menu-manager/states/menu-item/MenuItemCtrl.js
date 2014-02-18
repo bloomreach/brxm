@@ -23,7 +23,10 @@
             '$scope',
             '$stateParams',
             function ($scope, $stateParams) {
-
+                $scope.confirmation = { show: false };
+                $scope.setShowConfirmation = function (value) {
+                    $scope.confirmation.show = value;
+                };
             }
         ]);
 }());

@@ -27,25 +27,6 @@
             'hippo.channelManager.menuManager.Container',
             '_hippo.channelManager.menuManager.OutstandingHttpRequests',
             function ($scope, $log, $state, $stateParams, MenuService, Container, OutstandingHttpRequests) {
-                $scope.deleteMenuItem = function () {
-                    var menuItemId = $stateParams.menuItemId;
-
-                    MenuService.deleteMenuItem(menuItemId).then(function () {
-                        MenuService.getFirstMenuItemId().then(
-                            function (firstMenuItemId) {
-                                // TODO: be smarter about which item we select. For now we select the first one again
-                                $state.go('menu-item.edit', {
-                                    menuItemId: firstMenuItemId
-                                });
-                            },
-                            function (error) {
-                                // TODO show error in UI
-                                $log.error(error);
-                            }
-                        );
-                    });
-                };
-
                 $scope.hasOutstandingChanges = function () {
                     return !OutstandingHttpRequests.isEmpty();
                 };

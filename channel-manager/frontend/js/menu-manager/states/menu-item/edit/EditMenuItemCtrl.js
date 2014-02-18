@@ -23,9 +23,10 @@
             '$scope',
             '$stateParams',
             '$state',
+            '$log',
             'hippo.channelManager.menuManager.MenuService',
             'hippo.channelManager.menuManager.FocusService',
-            function ($scope, $stateParams, $state, MenuService, FocusService) {
+            function ($scope, $stateParams, $state, $log, MenuService, FocusService) {
                 var savedMenuItem;
 
                 $scope.isSaving = {
@@ -78,13 +79,34 @@
                 $scope.createNewPage = function () {
                     $state.go('menu-item.add-page', { menuItemId: $stateParams.menuItemId });
                 };
+
+                // delete menu item
+                $scope.deleteMenuItem = function () {
+                    console.log('Execute delete menu item');
+                    var menuItemId = $stateParams.menuItemId;
+
+                    MenuService.deleteMenuItem(menuItemId).then(function () {
+                        MenuService.getFirstMenuItemId().then(
+                            function (firstMenuItemId) {
+                                // TODO: be smarter about which item we select. For now we select the first one again
+                                $state.go('menu-item.edit', {
+                                    menuItemId: firstMenuItemId
+                                });
+                            },
+                            function (error) {
+                                // TODO show error in UI
+                                $log.error(error);
+                            }
+                        );
+                    });
+                };
             }
         ])
+
         .directive('tooltip', [function() {
             return {
                 restrict: 'A',
                 link: function (scope, element, attrs) {
-
                     element.tooltip ({'trigger':'focus', 'title': attrs.title}).tooltip('show');
                 }
             };
