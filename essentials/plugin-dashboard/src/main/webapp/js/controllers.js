@@ -18,7 +18,46 @@
         //############################################
         // PLUGINS CONTROLLER LOADER
         //############################################
-            .controller('pluginLoaderCtrl',function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
+            .controller('pluginLoaderCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
+
+            })
+            .controller('powerpacksCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
+                $scope.selectedValue={value:"foooo"};
+                $scope.selectedDescription = "Please make a selection";
+                $scope.onPowerpackSelect = function () {
+                    angular.forEach($scope.packs, function (powerpack) {
+                        if (powerpack.value === $scope.selectedValue) {
+                            $scope.selectedDescription = $scope.getDescription($scope.selectedValue);
+                        }
+                    });
+
+                };
+
+                $scope.getDescription = function (name) {
+                    if (name.trim() == "news-events") {
+                        return  'A basic News and Events site that contains a homepage template, News   \
+    and Agenda components and detail pages  \
+    to render both News and Event articles. It comes with a standard navigational menu and URL structure. This is the \
+    most basic Power Pack to start with. \
+    You can easily extend with more components later on.'
+                    }
+                    return "A REST only site that contains only REST services and no pages.";
+                };
+                $scope.init = function () {
+                    if ($scope.initCalled) {
+                        return;
+                    }
+
+                    $scope.initCalled = true;
+                    $http.get($rootScope.REST.powerpacks).success(function (data) {
+                        $scope.packs = [{value: null, enabled: true, name: "Please select a powerpack"}];
+                        $scope.packs = [];
+                        $scope.packs.push.apply($scope.packs, data.items);
+
+                    });
+
+                };
+                $scope.init();
 
             })
             .controller('pluginCtrl', function ($scope, $location, $sce, $log, $rootScope, $http) {
@@ -44,15 +83,14 @@
                 };
 
 
-
                 $scope.showPluginDetail = function (pluginClass) {
-                    $scope.selectedPlugin  = extracted(pluginClass);
+                    $scope.selectedPlugin = extracted(pluginClass);
                 };
                 $scope.installPlugin = function (pluginClass) {
                     $rootScope.pluginsCache = null;
-                    $scope.selectedPlugin  = extracted(pluginClass);
-                    if($scope.selectedPlugin){
-                        $http.post($rootScope.REST.pluginInstall+pluginClass).success(function (data) {
+                    $scope.selectedPlugin = extracted(pluginClass);
+                    if ($scope.selectedPlugin) {
+                        $http.post($rootScope.REST.pluginInstall + pluginClass).success(function (data) {
                             // we'll get error message or
                             $scope.init();
                         });
@@ -63,7 +101,6 @@
                 //fetch plugin list
                 $scope.init = function () {
 
-                    console.log(".......................plugins loaded....");
                     if ($rootScope.pluginsCache) {
                         processItems($rootScope.pluginsCache);
                     } else {
@@ -103,7 +140,7 @@
                 $scope.plugins = [];
                 $scope.init = function () {
                     $http.get($rootScope.REST.plugins).success(function (data) {
-                        $scope.plugins =  [];
+                        $scope.plugins = [];
                         var items = data.items;
                         angular.forEach(items, function (plugin) {
                             if (plugin.dateInstalled) {
@@ -122,7 +159,7 @@
          // MENU CONTROLLER
          //############################################
          */
-            .controller('mainMenuCtrl', ['$scope', '$location', '$rootScope',  'menuService', function ($scope, $location, $rootScope, menuService) {
+            .controller('mainMenuCtrl', ['$scope', '$location', '$rootScope', 'menuService', function ($scope, $location, $rootScope, menuService) {
 
                 $scope.$watch(function () {
                     return $rootScope.busyLoading;
@@ -143,7 +180,7 @@
                 };
 
                 $scope.onMenuClick = function (menuItem) {
-                   //
+                    //
                 };
 
             }]);

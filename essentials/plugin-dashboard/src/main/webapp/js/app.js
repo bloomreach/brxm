@@ -193,6 +193,44 @@
         //############################################
         // DIRECTIVES
         //############################################
+            .directive("powerpacks", function () {
+                return {
+                    replace: true,
+                    restrict: 'E',
+                    scope: {
+                        label: '@',
+                        options: '=',
+                        selectedDescription: '=',
+                        placeholder: '@',
+                        ngModel: '=',
+                        onSelect:'&'
+                    },
+
+                    link: function (scope, element, attrs) {
+                        scope.onPowerpackSelect = function () {
+                            scope.onSelect();
+                        }
+                    },
+
+                    template: '<div><select  ng-required="true" ng-selected="onPowerpackSelect()" ng-model="ngModel">' +
+                            ' <option ng-repeat="option in options" value="{{option.value}}" ng-disabled="!option.enabled">{{option.name}}</option>' +
+                            '</select>' +
+                            '<div class="clearfix sep-10">&nbsp;</div>' +
+                            '<div id="option.description">{{selectedDescription}}</div>' +
+                            '<div class="clearfix sep-10">&nbsp;</div>' +
+                            '</div>'
+                };
+            })
+
+        /*
+         *  <!--select as label for value in array-->
+         <select  ng-required="true" ng-change="selectChange()"  ng-model="selectedItem">
+         <option ng-repeat="option in packs.items" value="{{option.value}}" ng-disabled="!option.enabled">{{option.name}}</option>
+         </select>
+         <div class="clearfix sep-10">&nbsp;</div>
+         <div id="pack.description">{{selectedDescription}}</div>
+
+         * */
 
 
 //############################################
@@ -206,7 +244,7 @@
                 return function (name, plugins) {
                     var retVal = [];
                     angular.forEach(plugins, function (plugin) {
-                        if(plugin.type == name){
+                        if (plugin.type == name) {
                             retVal.push(plugin);
                         }
                     });

@@ -33,7 +33,7 @@
   <%--  TODO make dynamic--%>
   <script src="${pageContext.request.contextPath}/plugins/contentBlocks/contentBlocks.js"></script>
   <script src="${pageContext.request.contextPath}/plugins/galleryPlugin/controller.js"></script>
-  <script src="${pageContext.request.contextPath}/plugins/newsEventsPowerpack/controller.js"></script>
+  <script src="${pageContext.request.contextPath}/powerpacks/newsEventsPowerpack/newsEventsPowerpack.js"></script>
   <script src="${pageContext.request.contextPath}/plugins/xinhaPlugin/xinhaPlugin.js"></script>
   <script src="${pageContext.request.contextPath}/tools/beanwriter/beanwriter.js"></script>
   <script src="${pageContext.request.contextPath}/tools/freemarkersync/freemarkersync.js"></script>

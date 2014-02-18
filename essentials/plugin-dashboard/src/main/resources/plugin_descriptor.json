@@ -85,5 +85,21 @@
             "name": "Hippo",
             "url": "http://www.onehippo.com"
         }
+    },
+    {
+        "needsInstallation": false,
+        "artifacts": [],
+        "assets": [],
+        "introduction": "Basic News and Events site",
+        "name": "Basic News and Events site",
+        "pluginClass": "",
+        "pluginLink": "newsEventsPowerpack",
+        "screenshots": [],
+        "restClasses": [],
+        "type": "powerpack",
+        "vendor": {
+            "name": "Hippo",
+            "url": "http://www.onehippo.com"
+        }
     }
 ]}

@@ -21,8 +21,14 @@
                         })
                         .state('powerpacks', {
                             url: '/powerpacks',
-                            templateUrl: 'plugins/newsEventsPowerpack/index.html',
-                            controller: 'newsEventsCtrl'
+                            templateUrl: 'powerpacks/index.html',
+                            controller: 'powerpacksCtrl'
+                        })
+                        .state('powerpacks-id', {
+                            url: '/powerpacks/:id',
+                            templateUrl: function ($stateParams) {
+                                return 'powerpacks/' + $stateParams.id + '/'+ $stateParams.id+ '.html';
+                            }
                         })
                         .state('tools-id', {
                             url: '/tools/:id',

@@ -5,6 +5,8 @@
 
             .controller('newsEventsCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
 
+
+
                 $scope.hideAll = false;
                 $scope.installSampleData = true;
                 $scope.stepVisible = [true, false];
@@ -75,16 +77,7 @@
                 //############################################
                 // DESCRIPTIONS:
                 //############################################
-                $scope.getDescription = function (name) {
-                      if(name.trim() =="Basic News and Events site"){
-                          return  'A basic News and Events site that contains a homepage template, News   \
-    and Agenda components and detail pages  \
-    to render both News and Event articles. It comes with a standard navigational menu and URL structure. This is the \
-    most basic Power Pack to start with. \
-    You can easily extend with more components later on.'
-                      }
-                    return "A REST only site that contains only REST services and no pages.";
-                };
+
 
 
 
