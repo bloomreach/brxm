@@ -24,7 +24,7 @@
             .controller('powerpacksCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
                 $scope.hideAll = false;
                 $scope.installSampleData = true;
-
+                $scope.includeTemplate = "/essentials/powerpacks/newsEventsPowerpack/newsEventsPowerpack.html";
                 $scope.resultMessages = null;
 
                 $scope.packs = null;

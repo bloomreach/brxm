@@ -7,18 +7,9 @@
 
 
 
-                $scope.initCalled = false;
+
                 $scope.init = function () {
-                    if ($scope.initCalled) {
-                        return;
-                    }
-
-                    $scope.initCalled = true;
-                    $http.get($rootScope.REST.powerpacks).success(function (data) {
-                        $scope.packs = data;
-
-                    });
-
+                    console.log("LOADED NEWS AND EVENTS");
                 };
 
                 $scope.init();
@@ -26,10 +17,6 @@
                 //############################################
                 // DESCRIPTIONS:
                 //############################################
-
-
-
-
 
             })
 })();
