@@ -30,7 +30,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * @version "$Id$"
  */
-public class InstallerDocumentTest extends BaseRepositoryTest{
+public class InstallerDocumentTest extends BaseRepositoryTest {
 
     private static Logger log = LoggerFactory.getLogger(InstallerDocumentTest.class);
 

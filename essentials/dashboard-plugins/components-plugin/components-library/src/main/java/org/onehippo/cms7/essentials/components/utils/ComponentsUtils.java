@@ -36,7 +36,6 @@ import com.google.common.base.Splitter;
 public final class ComponentsUtils {
 
 
-
     /**
      * Get content bean based on path e.g. {@code "/foo/bar/"}
      *

@@ -11,7 +11,6 @@ import org.onehippo.cms7.essentials.dashboard.utils.JcrMatcher;
 public class NotRelatedDocMatcher implements JcrMatcher {
 
 
-
     @Override
     public boolean matches(final Node node) throws RepositoryException {
         return !new HasRelatedDocMatcher().matches(node);

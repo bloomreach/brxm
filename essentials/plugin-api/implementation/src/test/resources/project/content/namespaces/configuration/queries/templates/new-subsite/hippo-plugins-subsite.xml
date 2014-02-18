@@ -83,19 +83,19 @@
         </sv:property>
         <sv:property sv:name="hippostd:content" sv:type="String">
           <sv:value>&lt;html&gt;
-&lt;body&gt;
+            &lt;body&gt;
 
-&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tempor, risus ac
-ullamcorper consectetur, lectus quam pharetra dolor, quis rhoncus tortor magna
-ac turpis. Nullam nunc diam, ornare vel pretium ac, lacinia sed dui. Nulla
-vehicula hendrerit turpis, sed rutrum erat pretium at. Pellentesque habitant
-morbi tristique senectus et netus et malesuada fames ac turpis egestas. Praesent
-vitae ultrices magna. Quisque feugiat, tortor eget vulputate blandit, neque est
-vestibulum risus, a venenatis dolor quam at eros. Phasellus ut massa mi, non
-tempus lorem.&lt;/p&gt;
+            &lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tempor, risus ac
+            ullamcorper consectetur, lectus quam pharetra dolor, quis rhoncus tortor magna
+            ac turpis. Nullam nunc diam, ornare vel pretium ac, lacinia sed dui. Nulla
+            vehicula hendrerit turpis, sed rutrum erat pretium at. Pellentesque habitant
+            morbi tristique senectus et netus et malesuada fames ac turpis egestas. Praesent
+            vitae ultrices magna. Quisque feugiat, tortor eget vulputate blandit, neque est
+            vestibulum risus, a venenatis dolor quam at eros. Phasellus ut massa mi, non
+            tempus lorem.&lt;/p&gt;
 
-&lt;/body&gt;
-&lt;/html&gt;</sv:value>
+            &lt;/body&gt;
+            &lt;/html&gt;</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>

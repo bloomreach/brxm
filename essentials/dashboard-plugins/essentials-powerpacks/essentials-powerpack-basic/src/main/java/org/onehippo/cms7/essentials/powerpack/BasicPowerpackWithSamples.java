@@ -1,14 +1,8 @@
 package org.onehippo.cms7.essentials.powerpack;
 
-import java.io.InputStream;
 import java.util.Set;
 
-import javax.inject.Inject;
-
-import org.onehippo.cms7.essentials.dashboard.instruction.parser.InstructionParser;
-import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.ImmutableSet;

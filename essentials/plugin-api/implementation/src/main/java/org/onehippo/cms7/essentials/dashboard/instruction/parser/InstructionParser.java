@@ -20,7 +20,6 @@ import java.io.StringReader;
 import java.util.Set;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -69,7 +68,6 @@ public class InstructionParser {
 
         return null;
     }
-
 
 
 }

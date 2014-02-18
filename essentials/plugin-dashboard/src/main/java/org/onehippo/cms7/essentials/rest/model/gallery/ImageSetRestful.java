@@ -22,8 +22,8 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.StringUtils;
-import org.onehippo.cms7.essentials.rest.model.PropertyRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.Restful;
+import org.onehippo.cms7.essentials.rest.model.PropertyRestful;
 import org.onehippo.cms7.essentials.rest.model.TranslationRestful;
 
 /**
@@ -120,8 +120,8 @@ public class ImageSetRestful implements Restful {
     }
 
     public boolean hasVariant(final String namespace, final String name) {
-        for(final ImageVariantRestful variant : getVariants()) {
-            if(StringUtils.equals(variant.getNamespace(), namespace) && StringUtils.equals(variant.getName(), name)) {
+        for (final ImageVariantRestful variant : getVariants()) {
+            if (StringUtils.equals(variant.getNamespace(), namespace) && StringUtils.equals(variant.getName(), name)) {
                 return true;
             }
         }
@@ -129,8 +129,8 @@ public class ImageSetRestful implements Restful {
     }
 
     public ImageVariantRestful getVariant(final String id) {
-        for(final ImageVariantRestful variant : this.variants) {
-            if(StringUtils.equals(variant.getId(), id)) {
+        for (final ImageVariantRestful variant : this.variants) {
+            if (StringUtils.equals(variant.getId(), id)) {
                 return variant;
             }
         }
@@ -138,8 +138,8 @@ public class ImageSetRestful implements Restful {
     }
 
     public ImageVariantRestful getVariant(final String namaspace, final String name) {
-        for(final ImageVariantRestful variant : this.variants) {
-            if(StringUtils.equals(variant.getNamespace(), namaspace) && StringUtils.equals(variant.getName(), name)) {
+        for (final ImageVariantRestful variant : this.variants) {
+            if (StringUtils.equals(variant.getNamespace(), namaspace) && StringUtils.equals(variant.getName(), name)) {
                 return variant;
             }
         }

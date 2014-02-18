@@ -16,9 +16,6 @@
 
 package org.onehippo.cms7.essentials.beanwriter.rest;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElementRef;
@@ -26,10 +23,7 @@ import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.Restful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
-
-import com.google.common.collect.Lists;
 
 /**
  * @version "$Id$"

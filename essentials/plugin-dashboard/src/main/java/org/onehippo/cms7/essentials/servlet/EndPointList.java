@@ -16,9 +16,7 @@
 
 package org.onehippo.cms7.essentials.servlet;
 
-import java.text.MessageFormat;
 import java.util.Collection;
-import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -35,13 +33,10 @@ import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.DestinationRegistry;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
-
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.rest.model.RestList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 /**
  * @version "$Id$"

@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="related-doc-updater">
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="related-doc-updater">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposys:updaterinfo</sv:value>
   </sv:property>
@@ -14,12 +15,12 @@
   <sv:property sv:name="hipposys:script" sv:type="String">
     <sv:value>package org.hippoecm.frontend.plugins.cms.dev.updater
 
-import org.onehippo.repository.update.BaseNodeUpdateVisitor
-import javax.jcr.Node
+      import org.onehippo.repository.update.BaseNodeUpdateVisitor
+      import javax.jcr.Node
 
-class UpdaterTemplate extends BaseNodeUpdateVisitor {
+      class UpdaterTemplate extends BaseNodeUpdateVisitor {
 
-  boolean doUpdate(Node node) {
+      boolean doUpdate(Node node) {
       if (node.canAddMixin("relateddocs:relatabledocs")) {
       log.debug "updating node ${r"${node.path}"}"
       node.addMixin("relateddocs:relatabledocs");
@@ -28,13 +29,14 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {
       log.debug "Cannot updating node ${r"${node.path}"}"
       }
       return false;
-  }
+      }
 
-  boolean undoUpdate(Node node) {
-    throw new UnsupportedOperationException('Updater does not implement undoUpdate method')
-  }
+      boolean undoUpdate(Node node) {
+      throw new UnsupportedOperationException('Updater does not implement undoUpdate method')
+      }
 
-}</sv:value>
+      }
+    </sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:throttle" sv:type="Long">
     <sv:value>1000</sv:value>

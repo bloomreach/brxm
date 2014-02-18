@@ -63,9 +63,9 @@ public final class ProjectUtils {
         return getJavaFolder(siteDirectory);
     }
 
-    public static File getSiteImagesFolder(){
+    public static File getSiteImagesFolder() {
         final File site = getSite();
-        final String absolutePath = site.getAbsolutePath() + File.separator + "src"+ File.separator + "main"+ File.separator + "webapp"+ File.separator + "images";
+        final String absolutePath = site.getAbsolutePath() + File.separator + "src" + File.separator + "main" + File.separator + "webapp" + File.separator + "images";
         return new File(absolutePath);
     }
 
@@ -81,7 +81,8 @@ public final class ProjectUtils {
 
     /**
      * Returns SITE root folder e.g. {@code /home/foo/myproject/site}
-     * @return  site project folder
+     *
+     * @return site project folder
      */
     public static File getSite() {
         return getFolder("site");

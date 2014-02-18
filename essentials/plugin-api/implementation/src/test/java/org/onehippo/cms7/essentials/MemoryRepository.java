@@ -57,7 +57,7 @@ public class MemoryRepository {
         Node queryNode;
         if (!config.hasNode("hippo:queries")) {
             queryNode = config.addNode("hippo:queries", "hipposys:queryfolder");
-        } else{
+        } else {
             queryNode = config.getNode("hippo:queries");
         }
         if (!queryNode.hasNode("hippo:templates")) {

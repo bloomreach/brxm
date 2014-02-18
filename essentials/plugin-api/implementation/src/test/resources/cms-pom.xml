@@ -16,18 +16,18 @@
   <dependencies>
 
     <!--<dependency>-->
-      <!--<groupId>org.onehippo</groupId>-->
-      <!--<artifactId>taxonomy-api</artifactId>-->
+    <!--<groupId>org.onehippo</groupId>-->
+    <!--<artifactId>taxonomy-api</artifactId>-->
     <!--</dependency>-->
 
     <!--<dependency>-->
-      <!--<groupId>org.onehippo</groupId>-->
-      <!--<artifactId>taxonomy-addon-frontend</artifactId>-->
+    <!--<groupId>org.onehippo</groupId>-->
+    <!--<artifactId>taxonomy-addon-frontend</artifactId>-->
     <!--</dependency>-->
 
     <!--<dependency>-->
-      <!--<groupId>org.onehippo</groupId>-->
-      <!--<artifactId>taxonomy-addon-repository</artifactId>-->
+    <!--<groupId>org.onehippo</groupId>-->
+    <!--<artifactId>taxonomy-addon-repository</artifactId>-->
     <!--</dependency>-->
 
 
@@ -43,7 +43,6 @@
       <artifactId>hst-repository-dependencies</artifactId>
       <type>pom</type>
     </dependency>
-
 
 
     <dependency>
@@ -91,7 +90,7 @@
         </exclusion>
       </exclusions>
     </dependency>
-   
+
   </dependencies>
 
   <build>

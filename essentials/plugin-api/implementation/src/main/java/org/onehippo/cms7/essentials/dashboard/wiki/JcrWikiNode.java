@@ -28,7 +28,7 @@ import javax.jcr.nodetype.NodeType;
  * This annotation is applied to types (classes or interfaces) that implement
  * JcrEntity, and provides the ability to specify what JCR node type to use
  * when creating a JCR node from the object being mapped, mixin types, and more.
- * 
+ *
  * @author Olafur Gauti Gudmundsson
  * @author Nicolas Dos Santos
  */
@@ -39,7 +39,7 @@ public @interface JcrWikiNode {
     /**
      * The node type to be applied for this JCR object.
      * Defaults to "nt:unstructured" ( {@link javax.jcr.nodetype.NodeType#NT_UNSTRUCTURED} ).
-     * 
+     *
      * @return the node type to use when creating a JCR node for this object
      */
     String nodeType() default NodeType.NT_UNSTRUCTURED;
@@ -47,7 +47,7 @@ public @interface JcrWikiNode {
     /**
      * Mixin types to be added to all new nodes created
      * from this class.
-     * 
+     *
      * @return the mixin types for new nodes created from the class
      */
     String[] mixinTypes() default {};

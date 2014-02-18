@@ -12,7 +12,6 @@ import static junit.framework.TestCase.assertTrue;
 public class ComponentsUtilsTest extends BaseTest {
 
 
-
     @Test
     public void testAddCatalog() throws Exception {
         assertTrue(true);

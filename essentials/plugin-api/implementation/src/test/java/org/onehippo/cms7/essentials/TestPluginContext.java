@@ -11,13 +11,10 @@ import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 
-import com.google.common.collect.Multimap;
-
 /**
  * @version "$Id: TestPluginContext.java 174579 2013-08-21 16:43:11Z mmilicevic $"
  */
 public class TestPluginContext extends DefaultPluginContext {
-
 
 
     private static final long serialVersionUID = 1L;
@@ -29,7 +26,6 @@ public class TestPluginContext extends DefaultPluginContext {
     }
 
 
-
     public Map<String, Object> getTestContextPlaceholders() {
 
         final Map<String, Object> placeholderData = new HashMap<>();
@@ -37,8 +33,8 @@ public class TestPluginContext extends DefaultPluginContext {
         placeholderData.put(EssentialConst.PLACEHOLDER_TMP_FOLDER, tmpDir);
         placeholderData.put(EssentialConst.PLACEHOLDER_NAMESPACE, getProjectNamespacePrefix());
         placeholderData.put(EssentialConst.PLACEHOLDER_PROJECT_ROOT, ProjectUtils.getBaseProjectDirectory());
-        final File site = new File(tmpDir+File.separator + "site");
-        if(!site.exists()){
+        final File site = new File(tmpDir + File.separator + "site");
+        if (!site.exists()) {
             site.mkdir();
         }
         placeholderData.put(EssentialConst.PLACEHOLDER_SITE_ROOT, site.getAbsolutePath());

@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * IterablePagination: a Pageable with HippoBean items.
+ *
  * @version $Id$
  */
 public class IterablePagination<T extends HippoBean> extends Pageable<T> {
@@ -39,7 +40,7 @@ public class IterablePagination<T extends HippoBean> extends Pageable<T> {
     /**
      * Constructor to be used when the paging has been done beforehand (for example in HST query).
      * The beans iterator size should be the same as pageSize (except maybe for the last page).
-     *
+     * <p/>
      * E.g. when HstQuery is used to get the beans, both HstQuery#setLimit and HstQuery#setOffset has been used.
      */
     public IterablePagination(final HippoBeanIterator beans, final int totalSize, final int pageSize, final int currentPage) {
@@ -94,7 +95,7 @@ public class IterablePagination<T extends HippoBean> extends Pageable<T> {
                 this.items = items.subList(fromIndex, toIndex);
             } catch (IndexOutOfBoundsException iobe) {
                 log.error("Sublist out of bounds: fromIndex=" + fromIndex + ", toIndex=" + toIndex + ", list size=" +
-                    items.size(), iobe);
+                        items.size(), iobe);
             }
         }
     }

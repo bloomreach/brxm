@@ -7,5 +7,5 @@
 <%@ taglib prefix="tag" tagdir="/WEB-INF/tags" %>
 
 <#list repeatable as item>
-    \${item}
+\${item}
 </#list>

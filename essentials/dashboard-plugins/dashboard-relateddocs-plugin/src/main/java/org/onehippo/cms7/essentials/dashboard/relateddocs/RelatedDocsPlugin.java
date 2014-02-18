@@ -14,6 +14,7 @@ public class RelatedDocsPlugin extends EssentialsPlugin {
 
 
     private final Installer installer;
+
     public RelatedDocsPlugin(final Plugin descriptor, final PluginContext context) {
         super(descriptor, context);
         installer = new RelatedDocsInstaller(getContext(), "http://forge.onehippo.org/relateddocs/nt/1.1");

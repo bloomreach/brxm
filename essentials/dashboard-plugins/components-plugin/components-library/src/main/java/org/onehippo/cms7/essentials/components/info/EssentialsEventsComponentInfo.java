@@ -24,6 +24,7 @@ import org.hippoecm.hst.core.parameters.Parameter;
 public interface EssentialsEventsComponentInfo extends EssentialsDocumentListComponentInfo {
     /**
      * Boolean flag which indicates if news items in that lay in the future will not be shown.
+     *
      * @return {@code true} if items should be hidden, {@code false} otherwise
      */
     @Parameter(name = "hidePastEvents", defaultValue = "off", required = false, displayName = "Hide past events")

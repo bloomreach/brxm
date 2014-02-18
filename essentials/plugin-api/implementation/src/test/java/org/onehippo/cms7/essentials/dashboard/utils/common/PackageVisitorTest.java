@@ -15,8 +15,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @version "$Id: PackageVisitorTest.java 174288 2013-08-19 16:21:19Z mmilicevic $"
  */
-public class PackageVisitorTest extends BaseTest{
-
+public class PackageVisitorTest extends BaseTest {
 
 
     @Test

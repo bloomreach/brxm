@@ -25,8 +25,6 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
-
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -44,7 +42,7 @@ public class FileInstructionTest extends BaseTest {
     private FileInstruction deleteInstruction;
 
     private static String createPlaceHolder(final String placeholderProjectRoot) {
-        return "{{" + placeholderProjectRoot +"}}";
+        return "{{" + placeholderProjectRoot + "}}";
     }
 
     @Test
@@ -54,7 +52,7 @@ public class FileInstructionTest extends BaseTest {
         set.addInstruction(copyInstruction);
         InstructionStatus status = executor.execute(set, getContext());
         // invalid instruction:
-        assertTrue(status == InstructionStatus.FAILED); 
+        assertTrue(status == InstructionStatus.FAILED);
         copyInstruction.setAction(PluginInstruction.COPY);
         copyInstruction.setSource(SOURCE);
         copyInstruction.setTarget(TARGET);

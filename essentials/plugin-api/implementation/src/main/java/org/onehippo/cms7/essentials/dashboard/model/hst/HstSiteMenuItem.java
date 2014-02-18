@@ -34,9 +34,6 @@ public class HstSiteMenuItem extends BaseJcrModel {
     private Boolean repoBased;
 
 
-
-
-
     public HstSiteMenuItem(final String name, final String referenceSitemapItem) {
         setName(name);
         this.referenceSitemapItem = referenceSitemapItem;

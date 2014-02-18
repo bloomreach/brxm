@@ -50,7 +50,7 @@ public class NonWorkflowWikiImporterTest extends BaseRepositoryTest {
 
         assertTrue(session.nodeExists("/content/documents/test/wikipedia"));
 
-       // session.getNode("/content/documents/test/wikipedia").getNodes();
+        // session.getNode("/content/documents/test/wikipedia").getNodes();
 
     }
 }

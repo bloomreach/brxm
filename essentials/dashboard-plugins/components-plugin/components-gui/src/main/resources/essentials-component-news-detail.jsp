@@ -7,12 +7,12 @@
 <%--@elvariable id="item" type="EL_BEAN"--%>
 
 <article>
-<hst:cmseditlink hippobean="${item}"/>
-<h3><a href="${link}"><c:out value="${item.title}"/></a></h3>
-<c:if test="${hst:isReadable(item, 'date.time')}">
-  <p>
-    <fmt:formatDate value="${item.date.time}" type="both" dateStyle="medium" timeStyle="short"/>
-  </p>
-</c:if>
-<p><c:out value="${item.detail}"/></p>
+  <hst:cmseditlink hippobean="${item}"/>
+  <h3><a href="${link}"><c:out value="${item.title}"/></a></h3>
+  <c:if test="${hst:isReadable(item, 'date.time')}">
+    <p>
+      <fmt:formatDate value="${item.date.time}" type="both" dateStyle="medium" timeStyle="short"/>
+    </p>
+  </c:if>
+  <p><c:out value="${item.detail}"/></p>
 </article>

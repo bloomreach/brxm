@@ -7,11 +7,6 @@ package org.onehippo.cms7.essentials.dashboard.utils;
 import java.util.List;
 import java.util.Set;
 
-import javax.jcr.Session;
-
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
 
@@ -35,9 +30,9 @@ public class HippoNodeUtilsTest extends BaseRepositoryTest {
 
     @Test
     public void testGetNameFromType() throws Exception {
-        assertEquals(null,HippoNodeUtils.getNameFromType(""));
-        assertEquals("document",HippoNodeUtils.getNameFromType("hippo:document"));
-        assertEquals("document",HippoNodeUtils.getNameFromType("document"));
+        assertEquals(null, HippoNodeUtils.getNameFromType(""));
+        assertEquals("document", HippoNodeUtils.getNameFromType("hippo:document"));
+        assertEquals("document", HippoNodeUtils.getNameFromType("document"));
     }
 
     @Test
@@ -57,7 +52,7 @@ public class HippoNodeUtilsTest extends BaseRepositoryTest {
     @Test
     public void testGetCompounds() throws Exception {
         final Set<String> compounds = HippoNodeUtils.getCompounds(session);
-        assertTrue(compounds.size()==0);
+        assertTrue(compounds.size() == 0);
     }
 
     @Test(expected = Exception.class)

@@ -79,11 +79,11 @@ public class NodeRestful implements Restful {
     }
 
 
-    public PropertyRestful  getProperty(final String name) {
+    public PropertyRestful getProperty(final String name) {
         if (properties == null) {
             return null;
         }
-        for (PropertyRestful  property : properties) {
+        for (PropertyRestful property : properties) {
             if (property.getName().equals(name)) {
                 return property;
             }
@@ -120,7 +120,7 @@ public class NodeRestful implements Restful {
     }
 
     public List<NodeRestful> getNodes() {
-        if(nodes ==null){
+        if (nodes == null) {
             return new ArrayList<>();
         }
         return nodes;
@@ -172,7 +172,7 @@ public class NodeRestful implements Restful {
     public NodeRestful getNodeForPath(final String scriptPath) {
         final List<NodeRestful> myNodes = getNodes();
         for (NodeRestful myNode : myNodes) {
-            if(myNode.getPath().equals(scriptPath)){
+            if (myNode.getPath().equals(scriptPath)) {
                 return myNode;
             }
 

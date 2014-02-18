@@ -26,7 +26,7 @@ import static org.onehippo.cms7.essentials.dashboard.utils.EssentialConst.URI_ES
 @XmlRootElement(name = "plugin", namespace = URI_ESSENTIALS_PLUGIN)
 public class EssentialsPlugin implements Plugin {
 
-    
+
     private static final long serialVersionUID = 1L;
     private String name;
     private String type;
@@ -146,11 +146,11 @@ public class EssentialsPlugin implements Plugin {
 
     @Override
     public Asset getAsset(final String id) {
-        if(id == null) {
+        if (id == null) {
             return null;
         }
-        for(final Asset asset : getAssets()) {
-            if(id.equals(asset.getId())) {
+        for (final Asset asset : getAssets()) {
+            if (id.equals(asset.getId())) {
                 return asset;
             }
         }
@@ -196,12 +196,12 @@ public class EssentialsPlugin implements Plugin {
 
     @Override
     public String getPath() {
-        return parentPath + '/' +name;
+        return parentPath + '/' + name;
     }
 
     @Override
     public void setParentPath(final String parentPath) {
-         this.parentPath = parentPath;
+        this.parentPath = parentPath;
     }
 
     @XmlElement(namespace = URI_ESSENTIALS_PLUGIN)

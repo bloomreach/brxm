@@ -42,6 +42,7 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
+import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.ProjectRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
@@ -50,7 +51,6 @@ import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.onehippo.cms7.essentials.powerpack.BasicPowerpack;
 import org.onehippo.cms7.essentials.powerpack.BasicPowerpackWithSamples;
-import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.rest.model.PowerpackListRestful;
 import org.onehippo.cms7.essentials.rest.model.PowerpackRestful;
 import org.onehippo.cms7.essentials.rest.model.RestList;
@@ -151,7 +151,8 @@ public class PowerpackResource extends BaseResource {
         // add documentation messages:
         eventBus.post(new DisplayEvent(
                 "mvn clean package\n" +
-                        "mvn -P cargo.run\n", DisplayEvent.DisplayType.PRE, true));
+                        "mvn -P cargo.run\n", DisplayEvent.DisplayType.PRE, true
+        ));
         //eventBus.post(new DisplayEvent("Please rebuild and restart your application:", DisplayEvent.DisplayType.STRONG, true));
 
         eventBus.post(new DisplayEvent("The installation of the powerpack was successfully completed. To view the changes reflected in the CMS and site, rebuild and restart your project by using following command:", DisplayEvent.DisplayType.P, true));

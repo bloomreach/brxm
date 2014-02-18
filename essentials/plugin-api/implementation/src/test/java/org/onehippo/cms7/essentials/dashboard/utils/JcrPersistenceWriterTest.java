@@ -74,9 +74,8 @@ public class JcrPersistenceWriterTest extends BaseRepositoryTest {
 
         // menu
         final HstSiteMenu myMenu = config.addMenu("myMenu");
-        final HstSiteMenuItem menuItem = new HstSiteMenuItem("HOME","home");
+        final HstSiteMenuItem menuItem = new HstSiteMenuItem("HOME", "home");
         myMenu.addMenuItem(menuItem);
-
 
 
         //############################################

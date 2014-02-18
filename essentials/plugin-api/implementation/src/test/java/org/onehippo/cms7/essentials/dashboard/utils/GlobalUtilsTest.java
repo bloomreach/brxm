@@ -21,7 +21,7 @@ public class GlobalUtilsTest extends BaseTest {
 
     @Test
     public void testNewInstance() throws Exception {
-         String myString = GlobalUtils.newInstance(String.class);
+        String myString = GlobalUtils.newInstance(String.class);
         assertTrue(myString != null);
         // test new instance from string:
         myString = GlobalUtils.newInstance(String.class.getName());

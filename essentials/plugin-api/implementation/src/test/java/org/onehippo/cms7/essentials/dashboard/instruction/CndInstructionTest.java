@@ -26,8 +26,6 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
 
-
-
 import static org.junit.Assert.assertTrue;
 
 /**

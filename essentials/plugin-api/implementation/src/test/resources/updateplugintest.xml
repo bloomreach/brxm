@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="new-1">
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="new-1">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposys:updaterinfo</sv:value>
   </sv:property>
@@ -14,21 +15,22 @@
   <sv:property sv:name="hipposys:script" sv:type="String">
     <sv:value>package org.hippoecm.frontend.plugins.cms.dev.updater
 
-import org.onehippo.repository.update.BaseNodeUpdateVisitor
-import javax.jcr.Node
+      import org.onehippo.repository.update.BaseNodeUpdateVisitor
+      import javax.jcr.Node
 
-class UpdaterTemplate extends BaseNodeUpdateVisitor {
+      class UpdaterTemplate extends BaseNodeUpdateVisitor {
 
-  boolean doUpdate(Node node) {
-    log.debug "Updating node ${node.path}"
-    return false
-  }
+      boolean doUpdate(Node node) {
+      log.debug "Updating node ${node.path}"
+      return false
+      }
 
-  boolean undoUpdate(Node node) {
-    throw new UnsupportedOperationException('Updater does not implement undoUpdate method')
-  }
+      boolean undoUpdate(Node node) {
+      throw new UnsupportedOperationException('Updater does not implement undoUpdate method')
+      }
 
-}</sv:value>
+      }
+    </sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:throttle" sv:type="Long">
     <sv:value>1000</sv:value>

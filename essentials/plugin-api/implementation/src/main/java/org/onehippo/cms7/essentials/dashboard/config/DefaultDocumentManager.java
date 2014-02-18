@@ -60,10 +60,9 @@ public class DefaultDocumentManager implements DocumentManager {
     @Override
     public boolean saveDocument(final Document document) {
 
-        return writer.write(document)!=null;
+        return writer.write(document) != null;
 
     }
-
 
 
 }

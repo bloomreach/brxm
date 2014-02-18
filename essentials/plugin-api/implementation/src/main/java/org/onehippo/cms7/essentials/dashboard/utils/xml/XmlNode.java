@@ -71,14 +71,14 @@ public class XmlNode implements NodeOrProperty {
         return Collections.emptyList();
     }
 
-    public XmlProperty getSupertypeProperty(){
+    public XmlProperty getSupertypeProperty() {
 
         XmlNode editNode = getEditNode();
-        if(editNode == null){
+        if (editNode == null) {
             return null;
         }
         final Collection<XmlNode> editNodes = editNode.getChildNodesByName(HIPPOSYSEDIT_NODETYPE);
-        if(editNodes.isEmpty()){
+        if (editNodes.isEmpty()) {
             return null;
         }
         editNode = editNodes.iterator().next();
@@ -88,9 +88,10 @@ public class XmlNode implements NodeOrProperty {
         return editNode.getXmlPropertyByName(HIPPOSYSEDIT_SUPERTYPE);
 
     }
+
     private XmlNode getEditType() {
 
-        final XmlNode myNode =  getEditNode();
+        final XmlNode myNode = getEditNode();
         final Collection<XmlNode> editTypes = myNode.getChildNodesByName(HIPPOSYSEDIT_NODETYPE);
         if (editTypes.size() == 1) {
             return editTypes.iterator().next();

@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -161,6 +160,7 @@ public class FileInstruction extends PluginInstruction {
 
     /**
      * Recursively creates parent directories in case they don't exist yet
+     *
      * @param destination starting directory
      * @throws IOException
      */

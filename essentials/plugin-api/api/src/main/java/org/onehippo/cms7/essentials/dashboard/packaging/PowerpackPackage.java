@@ -31,18 +31,21 @@ public interface PowerpackPackage {
      * Defines a group name. Each instruction set can have a several group names
      * <p></p>
      * (FYI by default, instruction set name  is "default").
+     *
      * @return
      */
     Set<String> groupNames();
 
     /**
      * Returns parsed instructions
-     * @return  instructions collection or null if not found
+     *
+     * @return instructions collection or null if not found
      */
     Instructions getInstructions();
 
     /**
      * Executes instructions
+     *
      * @return executions status
      */
     InstructionStatus execute(final PluginContext context);

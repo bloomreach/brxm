@@ -92,7 +92,8 @@ public class BeanWriterResource extends BaseResource {
 
             messages.add(new MessageRestful(
                     "mvn clean package\n" +
-                            "mvn -P cargo.run", DisplayEvent.DisplayType.PRE));
+                            "mvn -P cargo.run", DisplayEvent.DisplayType.PRE
+            ));
         }
 
         return messages;

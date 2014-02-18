@@ -21,5 +21,5 @@ public interface PluginConfigService {
      *
      * @return null object if nothing found
      */
-    <T extends Document> T  read(Class<T> clazz);
+    <T extends Document> T read(Class<T> clazz);
 }

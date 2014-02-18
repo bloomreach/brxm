@@ -43,7 +43,7 @@ public class PluginInstructions implements Instructions {
         if (instructionSets != null) {
             for (InstructionSet instructionSet : instructionSets) {
                 final Set<Instruction> instructions = instructionSet.getInstructions();
-                if(instructions !=null){
+                if (instructions != null) {
                     total += instructions.size();
                 }
             }
@@ -53,7 +53,7 @@ public class PluginInstructions implements Instructions {
 
     @Override
     public int totalInstructionSets() {
-        if(instructionSets !=null){
+        if (instructionSets != null) {
             return instructionSets.size();
         }
         return 0;

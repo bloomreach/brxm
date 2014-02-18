@@ -82,7 +82,6 @@ public class InstructionParserTest extends BaseTest {
         assertEquals(2, myInstructions.totalInstructionSets());
 
 
-
         //############################################
         // OBJECTS
         //############################################

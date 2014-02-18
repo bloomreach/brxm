@@ -22,8 +22,6 @@ import java.util.List;
 import javax.jcr.PropertyType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.onehippo.cms7.essentials.dashboard.rest.Restful;
-
 import com.wordnik.swagger.annotations.ApiModel;
 
 /**

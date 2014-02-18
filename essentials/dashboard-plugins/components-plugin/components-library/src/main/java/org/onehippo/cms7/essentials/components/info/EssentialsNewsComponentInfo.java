@@ -25,6 +25,7 @@ public interface EssentialsNewsComponentInfo extends EssentialsDocumentListCompo
 
     /**
      * Boolean flag which indicates if news items in that lay in the future will not be shown.
+     *
      * @return {@code true} if items should be hidden, {@code false} otherwise
      */
     @Parameter(name = "hideFutureItems", defaultValue = "true", required = false, displayName = "Hide future documents")

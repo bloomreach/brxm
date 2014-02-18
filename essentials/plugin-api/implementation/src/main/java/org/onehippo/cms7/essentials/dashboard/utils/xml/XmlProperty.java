@@ -79,7 +79,7 @@ public class XmlProperty implements NodeOrProperty {
 
     @XmlAttribute(name = "multiple", namespace = EssentialConst.URI_JCR_NAMESPACE)
     public Boolean getMultiple() {
-        if(multiple ==null){
+        if (multiple == null) {
             return Boolean.FALSE;
         }
         return multiple;

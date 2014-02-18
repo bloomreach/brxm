@@ -19,11 +19,12 @@ package org.onehippo.cms7.essentials.dashboard.event;
 /**
  * @version "$Id$"
  */
-public abstract class BaseEvent implements PluginEvent{
+public abstract class BaseEvent implements PluginEvent {
 
     private static final long serialVersionUID = 1L;
 
     private boolean canUndo;
+
     @Override
     public void setCanUndo(final boolean canUndo) {
         this.canUndo = canUndo;

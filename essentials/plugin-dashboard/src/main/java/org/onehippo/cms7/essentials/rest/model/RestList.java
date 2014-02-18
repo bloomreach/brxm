@@ -1,16 +1,10 @@
 package org.onehippo.cms7.essentials.rest.model;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonSubTypes;
-import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
@@ -22,17 +16,13 @@ import org.onehippo.cms7.essentials.rest.model.gallery.ImageProcessorRestful;
 import org.onehippo.cms7.essentials.rest.model.gallery.ImageSetRestful;
 import org.onehippo.cms7.essentials.rest.model.gallery.ImageVariantRestful;
 
-import com.google.common.collect.Lists;
-
 /**
  * @version "$Id: RestfulList.java 174870 2013-08-23 13:56:24Z mmilicevic $"
  */
 @XmlRootElement(name = "collection")
-public class RestList<T extends Restful> extends RestfulList<T>{
+public class RestList<T extends Restful> extends RestfulList<T> {
 
     private static final long serialVersionUID = 1L;
-
-
 
 
     @JsonSubTypes({

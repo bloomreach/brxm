@@ -178,6 +178,7 @@ public class CommonComponent extends BaseHstComponent {
 
     /**
      * Adds beans to collection for given path
+     *
      * @param request
      * @param path
      * @param beans

@@ -22,7 +22,7 @@ package org.onehippo.cms7.essentials.dashboard.utils.inject;
 public class TestEvent {
 
 
-    private final String  message;
+    private final String message;
 
     public TestEvent(final String message) {
         this.message = message;

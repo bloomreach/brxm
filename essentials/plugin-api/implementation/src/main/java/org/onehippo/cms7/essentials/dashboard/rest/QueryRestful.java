@@ -18,10 +18,6 @@ package org.onehippo.cms7.essentials.dashboard.rest;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.onehippo.cms7.essentials.dashboard.rest.Restful;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.wordnik.swagger.annotations.ApiModel;
 
 /**
@@ -29,7 +25,7 @@ import com.wordnik.swagger.annotations.ApiModel;
  */
 @ApiModel
 @XmlRootElement(name = "query")
-public class QueryRestful implements Restful{
+public class QueryRestful implements Restful {
     private static final long serialVersionUID = 1L;
 
     private String query;
@@ -52,7 +48,6 @@ public class QueryRestful implements Restful{
     public void setType(final String type) {
         this.type = type;
     }
-
 
 
     public int getPage() {

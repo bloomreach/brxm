@@ -17,7 +17,6 @@ import static org.junit.Assert.assertTrue;
 public class XinhaTest {
 
 
-
     @Test
     public void testXML() throws Exception {
         final URL resource = getClass().getResource("/root.xml");

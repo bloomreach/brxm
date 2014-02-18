@@ -55,7 +55,7 @@ public class JarResourceServlet extends HttpServlet {
         try {
 
             final String pluginClassName = getPluginClassName(path);
-            if(Strings.isNullOrEmpty(pluginClassName)) {
+            if (Strings.isNullOrEmpty(pluginClassName)) {
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }

@@ -35,6 +35,7 @@ public final class UpdateUtils {
 
     /**
      * Copies an entry from registry directly to the queue so it can immediately be executed.
+     *
      * @param context
      * @param name
      */
@@ -83,6 +84,7 @@ public final class UpdateUtils {
 
     /**
      * Uses the updater model to create a new queue or registry entry in the updater engine api
+     *
      * @param context
      * @param type
      * @param config
@@ -109,6 +111,7 @@ public final class UpdateUtils {
 
     /**
      * uses an inputstream to create a new queue or registry entry in the updater engine api. the inpustream is the jcr s:node xml
+     *
      * @param context
      * @param type
      * @param in

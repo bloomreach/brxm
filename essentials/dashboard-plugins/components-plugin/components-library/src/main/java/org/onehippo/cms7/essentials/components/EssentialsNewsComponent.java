@@ -5,7 +5,6 @@
 package org.onehippo.cms7.essentials.components;
 
 import java.util.Calendar;
-import java.util.Date;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -62,7 +61,7 @@ public class EssentialsNewsComponent extends EssentialsListComponent {
 
         builder.scope(scope).documents(types).includeSubtypes();
 
-        if(newsComponentInfo.isHideFutureItems()) {
+        if (newsComponentInfo.isHideFutureItems()) {
             try {
                 final Session session = request.getRequestContext().getSession();
                 Filter filter = new FilterImpl(session, DateTools.Resolution.DAY);

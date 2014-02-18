@@ -8,16 +8,16 @@
 
 <hst:link var="link" hippobean="${item}"/>
 <article>
-    <hst:cmseditlink hippobean="${item}"/>
-    <h3><a href="${link}"><c:out value="${item.title}"/></a></h3>
-    <c:if test="${hst:isReadable(item, 'date.time')}">
-        <p>
-            <fmt:formatDate value="${item.date.time}" type="both" dateStyle="medium" timeStyle="short"/>
-        </p>
-    </c:if>
-    <p><c:out value="${item.number}"/></p>
-    <p><c:out value="${item.street}"/></p>
-    <p><c:out value="${item.city}"/></p>
-    <p><c:out value="${item.province}"/></p>
-    <p><c:out value="${item.country}"/></p>
+  <hst:cmseditlink hippobean="${item}"/>
+  <h3><a href="${link}"><c:out value="${item.title}"/></a></h3>
+  <c:if test="${hst:isReadable(item, 'date.time')}">
+    <p>
+      <fmt:formatDate value="${item.date.time}" type="both" dateStyle="medium" timeStyle="short"/>
+    </p>
+  </c:if>
+  <p><c:out value="${item.number}"/></p>
+  <p><c:out value="${item.street}"/></p>
+  <p><c:out value="${item.city}"/></p>
+  <p><c:out value="${item.province}"/></p>
+  <p><c:out value="${item.country}"/></p>
 </article>

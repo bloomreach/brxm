@@ -20,8 +20,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
@@ -33,14 +31,14 @@ import static org.junit.Assert.assertEquals;
 /**
  * @version "$Id$"
  */
-public class MemoryPluginEventListenerTest extends BaseTest{
+public class MemoryPluginEventListenerTest extends BaseTest {
 
 
     @Inject
-    private  EventBus eventBus;
+    private EventBus eventBus;
 
     @Inject
-    private  MemoryPluginEventListener listener;
+    private MemoryPluginEventListener listener;
 
 
     @Test
@@ -48,7 +46,7 @@ public class MemoryPluginEventListenerTest extends BaseTest{
 
         final int maxItems = MemoryPluginEventListener.MAX_ITEMS + 10;
         for (int i = 0; i < maxItems; i++) {
-             eventBus.post(new DisplayEvent(String.valueOf(i)));
+            eventBus.post(new DisplayEvent(String.valueOf(i)));
         }
         List<DisplayEvent> pluginEvents = listener.consumeEvents();
         assertEquals(MemoryPluginEventListener.MAX_ITEMS, pluginEvents.size());

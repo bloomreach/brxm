@@ -69,15 +69,16 @@ public class PropertyRestful implements Restful {
 
     public Object getPropertyValue() {
         switch (getType()) {
-            case BOOLEAN: ;
+            case BOOLEAN:
+                ;
                 return Boolean.valueOf(getValue());
-            case STRING: ;
+            case STRING:
+                ;
                 return getValue();
             default:
                 return getValue();
         }
     }
-
 
 
     public PropertyType getType() {

@@ -11,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 public class VersionUtilsTest {
 
 
-
     @Test
     public void testCompareVersionNumbers() throws Exception {
         int result = VersionUtils.compareVersionNumbers("1.02.01", "1.02.00");

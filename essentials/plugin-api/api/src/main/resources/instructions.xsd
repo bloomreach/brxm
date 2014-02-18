@@ -29,7 +29,7 @@
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element type="fileType" name="file" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element type="xmlType" name="xml" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element type="cndType" name="cnd" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element type="cndType" name="cnd" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element type="folderType" name="folder" minOccurs="0" maxOccurs="unbounded"/>
     </xs:choice>
     <xs:attribute use="optional" name="group" default="default" type="xs:string"/>

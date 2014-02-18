@@ -8,7 +8,6 @@ import org.junit.Test;
 public class TemplateTest {
 
 
-
     private final String TEST = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><sv:node xmlns:sv=\"http://www.jcp.org/jcr/sv/1.0\" sv:name=\"related-doc-updater\">\n" +
             "  <sv:property sv:name=\"jcr:primaryType\" sv:type=\"Name\">\n" +
             "    <sv:value>hipposys:updaterinfo</sv:value>\n" +

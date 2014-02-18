@@ -144,7 +144,7 @@ public final class GalleryUtils {
             final Node node = iterator.nextNode();
             if (node.hasProperty(HippoNodeType.HIPPOSYSEDIT_TYPE)) {
                 final String type = node.getProperty(HippoNodeType.HIPPOSYSEDIT_TYPE).getString();
-                if(type.contains(":")) {
+                if (type.contains(":")) {
                     variants.add(node);
                 }
             }
@@ -162,7 +162,7 @@ public final class GalleryUtils {
      * @throws RepositoryException when exception in repository occurs while retrieving node
      */
     public static Node getGalleryProcessorNode(final Session session) throws RepositoryException {
-        if(session.nodeExists(GalleryUtils.GALLERY_PROCESSOR_SERVICE_PATH)) {
+        if (session.nodeExists(GalleryUtils.GALLERY_PROCESSOR_SERVICE_PATH)) {
             return session.getNode(GalleryUtils.GALLERY_PROCESSOR_SERVICE_PATH);
         }
         log.warn("Default gallery processor not available at {}", GALLERY_PROCESSOR_SERVICE_PATH);
@@ -170,7 +170,6 @@ public final class GalleryUtils {
     }
 
     /**
-     *
      * @param session
      * @param variant
      * @return
@@ -178,7 +177,7 @@ public final class GalleryUtils {
      */
     public static Node getGalleryProcessorVariant(final Session session, final String variant) throws RepositoryException {
         final Node galleryProcessorNode = getGalleryProcessorNode(session);
-        if(galleryProcessorNode != null && galleryProcessorNode.hasNode(variant)) {
+        if (galleryProcessorNode != null && galleryProcessorNode.hasNode(variant)) {
             return galleryProcessorNode.getNode(variant);
         }
         return null;

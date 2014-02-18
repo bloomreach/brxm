@@ -71,7 +71,7 @@ public class InstallationTest extends BaseRepositoryTest {
             int bang = resourceUrl.indexOf("!");
             resourceUrl = resourceUrl.substring(JAR_URI_PREFIX.length(), bang);
             JarFile jarFile = new JarFile(resourceUrl);
-            for (Enumeration<JarEntry> entries = jarFile.entries(); entries.hasMoreElements();) {
+            for (Enumeration<JarEntry> entries = jarFile.entries(); entries.hasMoreElements(); ) {
                 JarEntry entry = entries.nextElement();
                 if (entry.getName().startsWith("project") && entry.isDirectory()) {
                     FileOutputStream out = new FileOutputStream(projectRoot.toFile());
@@ -81,7 +81,7 @@ public class InstallationTest extends BaseRepositoryTest {
                     int s = 0;
                     while ((s = in.read(buffer)) > 0) {
                         out.write(buffer, 0, s);
-                     }
+                    }
                     IOUtils.closeQuietly(out);
                     IOUtils.closeQuietly(in);
 

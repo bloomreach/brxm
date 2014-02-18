@@ -31,12 +31,14 @@ public abstract class AbstractDependencyInstaller implements Installer {
 
     /**
      * Implement CMS dependencies
+     *
      * @return a list of CMS dependencies according to the apache maven model
      */
     public abstract List<Dependency> getCmsDependencies();
 
     /**
      * Implement SITE dependencies
+     *
      * @return a list of Site dependencies according to the apache maven model
      */
     public abstract List<Dependency> getSiteDependencies();

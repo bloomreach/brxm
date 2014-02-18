@@ -103,7 +103,7 @@ public class BeanWriterUtilsTest extends BaseTest {
         context.setProjectNamespacePrefix(HIPPOPLUGINS_NAMESPACE);
         final List<MemoryBean> memoryBeans = BeanWriterUtils.buildBeansGraph(getProjectRoot(), context, "txt");
         // NOTE: one bean is not mapped within XML (only java {@code DuplicateAnnotation.txt})
-        assertEquals(NAMESPACES_TEST_SET.size() -1, memoryBeans.size());
+        assertEquals(NAMESPACES_TEST_SET.size() - 1, memoryBeans.size());
         for (MemoryBean memoryBean : memoryBeans) {
             final String namespaced = String.format("%s:%s", memoryBean.getNamespace(), memoryBean.getName());
             assertTrue("expected " + namespaced, NAMESPACES_TEST_SET.contains(namespaced));

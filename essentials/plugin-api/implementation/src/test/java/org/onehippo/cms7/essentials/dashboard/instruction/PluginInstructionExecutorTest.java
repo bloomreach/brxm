@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.Set;
 
 import javax.inject.Inject;
-import javax.jcr.Session;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;

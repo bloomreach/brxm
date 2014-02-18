@@ -59,7 +59,7 @@ public abstract class BaseTest {
     @Before
     public void setUp() throws Exception {
 
-        context =  getPluginContextFile();
+        context = getPluginContextFile();
         if (System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY) != null && !System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY).isEmpty()) {
             oldSystemDir = System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY);
         }
@@ -87,9 +87,9 @@ public abstract class BaseTest {
             context.setRestPackageName("org.onehippo.cms7.essentials.dashboard.test.rest");
 
             final File file = new File(basePath);
-            if(file.exists()){
+            if (file.exists()) {
                 final File cmsFolder = new File(basePath + File.separator + "cms");
-                if(!cmsFolder.exists()){
+                if (!cmsFolder.exists()) {
                     cmsFolder.mkdir();
                 }
             }
@@ -103,7 +103,7 @@ public abstract class BaseTest {
 
     public PluginContext getContext() {
 
-        if(context ==null){
+        if (context == null) {
             context = getPluginContextFile();
         }
         return context;

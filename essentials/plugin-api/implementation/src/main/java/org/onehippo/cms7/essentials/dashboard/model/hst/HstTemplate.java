@@ -13,7 +13,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentProper
 /**
  */
 @PersistentNode(type = "hst:template")
-public class HstTemplate extends BaseJcrModel{
+public class HstTemplate extends BaseJcrModel {
     private static final String HST_TEMPLATES = "hst:templates";
     private static final String HST_TEMPLATE = "hst:template";
     private static final String HST_CONTAINERS = "hst:containers";
@@ -22,7 +22,7 @@ public class HstTemplate extends BaseJcrModel{
     private static final String HST_IS_NAMED = "hst:isnamed";
 
 
-    @PersistentMultiProperty(name=HST_CONTAINERS)
+    @PersistentMultiProperty(name = HST_CONTAINERS)
     private List<String> containers = new ArrayList<>();
     @PersistentProperty(name = HST_RENDER_PATH)
     private String renderPath = null;
@@ -72,28 +72,28 @@ public class HstTemplate extends BaseJcrModel{
     }
 
     public static Node createTemplateNode(final Node parent, final HstTemplate template) throws RepositoryException, TemplateExistsException {
-        if(parent == null) {
+        if (parent == null) {
             throw new RepositoryException("Parent is not available.");
         }
-        if(!parent.isNodeType(HST_TEMPLATES)) {
+        if (!parent.isNodeType(HST_TEMPLATES)) {
             throw new RepositoryException("Parent is no templates node.");
         }
 
-        if(parent.hasNode(template.getName())) {
+        if (parent.hasNode(template.getName())) {
             throw new TemplateExistsException("Template already exists.");
         }
 
         final Node templateNode = parent.addNode(template.getName(), HST_TEMPLATE);
-        if(template.getRenderPath() != null) {
+        if (template.getRenderPath() != null) {
             templateNode.setProperty(HST_RENDER_PATH, template.getRenderPath());
         }
-        if(template.getScript() != null) {
+        if (template.getScript() != null) {
             templateNode.setProperty(HST_SCRIPT, template.getScript());
         }
-        if(template.isNamed()) {
+        if (template.isNamed()) {
             templateNode.setProperty(HST_IS_NAMED, template.isNamed());
         }
-        if(template.getContainers().size() > 0) {
+        if (template.getContainers().size() > 0) {
             templateNode.setProperty(HST_CONTAINERS, template.getContainers().toArray(new String[template.getContainers().size()]));
         }
         return templateNode;

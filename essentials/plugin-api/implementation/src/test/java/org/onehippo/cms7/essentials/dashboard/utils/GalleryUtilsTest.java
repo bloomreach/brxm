@@ -36,7 +36,7 @@ public class GalleryUtilsTest {
 
     @Test
     public void testGetImagesetName() throws Exception {
-        assertNotNull(GalleryUtils.getImagesetName(SOME_NAMESPACE_PREFIX,"name"));
-        assertEquals("someprefix:name", GalleryUtils.getImagesetName(SOME_NAMESPACE_PREFIX,"name"));
+        assertNotNull(GalleryUtils.getImagesetName(SOME_NAMESPACE_PREFIX, "name"));
+        assertEquals("someprefix:name", GalleryUtils.getImagesetName(SOME_NAMESPACE_PREFIX, "name"));
     }
 }

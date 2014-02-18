@@ -31,6 +31,6 @@ public class EndpointsRestApplication extends javax.ws.rs.core.Application {
 
     @Override
     public Set<Class<?>> getClasses() {
-         return new HashSet<Class<?>>(Arrays.asList(EndPointList.class));
+        return new HashSet<Class<?>>(Arrays.asList(EndPointList.class));
     }
 }

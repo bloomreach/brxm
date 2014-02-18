@@ -26,7 +26,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode;
  * @version "$Id$"
  */
 @PersistentNode(type = "hst:sitemenu")
-public class HstSiteMenu extends BaseJcrModel{
+public class HstSiteMenu extends BaseJcrModel {
 
 
     protected HstSiteMenu(final String name) {
@@ -36,7 +36,7 @@ public class HstSiteMenu extends BaseJcrModel{
     @PersistentCollection
     private List<HstSiteMenuItem> menuItems = new ArrayList<>();
 
-    public void addMenuItem(final HstSiteMenuItem item){
+    public void addMenuItem(final HstSiteMenuItem item) {
         item.setParentPath(getParentPath() + '/' + getName());
         menuItems.add(item);
     }

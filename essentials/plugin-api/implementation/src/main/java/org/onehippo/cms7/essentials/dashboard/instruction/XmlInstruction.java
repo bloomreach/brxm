@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -135,9 +134,6 @@ public class XmlInstruction extends PluginInstruction {
     }
 
 
-
-
-
     private InstructionStatus delete() {
         final Session session = context.getSession();
         try {
@@ -150,7 +146,7 @@ public class XmlInstruction extends PluginInstruction {
             session.save();
             sendEvents();
             log.info("Deleted node: {}", target);
-            return   InstructionStatus.SUCCESS;
+            return InstructionStatus.SUCCESS;
         } catch (RepositoryException e) {
             log.error("Error deleting node", e);
         } finally {

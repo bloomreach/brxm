@@ -6,6 +6,7 @@ import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 
 /**
  * Removes namespace prefix from plugin nodes
+ *
  * @version "$Id: PluginNamespaceMapper.java 172296 2013-07-31 09:32:49Z mmilicevic $"
  */
 public class PluginNamespaceMapper extends NamespacePrefixMapper {

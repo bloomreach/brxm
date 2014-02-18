@@ -18,7 +18,6 @@ package org.onehippo.cms7.essentials.dashboard.utils.inject;
 
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
@@ -35,7 +34,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @version "$Id$"
  */
-public class PropertiesModuleTest extends BaseTest{
+public class PropertiesModuleTest extends BaseTest {
 
     private static Logger log = LoggerFactory.getLogger(PropertiesModuleTest.class);
 
@@ -47,8 +46,8 @@ public class PropertiesModuleTest extends BaseTest{
         assertTrue(!Strings.isNullOrEmpty(instance.getValue()));
         assertTrue(!Strings.isNullOrEmpty(instance.getName()));
         log.info("instance {}", instance);
-        assertEquals("Copied file from: {{source}} to: {{target}}",instance.getName());
-        assertEquals("Deleted file: {{target}}",instance.getValue());
+        assertEquals("Copied file from: {{source}} to: {{target}}", instance.getName());
+        assertEquals("Deleted file: {{target}}", instance.getValue());
 
 
     }
@@ -58,8 +57,6 @@ public class PropertiesModuleTest extends BaseTest{
      */
     @Component
     public static class PropertyTestObj {
-
-
 
 
         @Value("${instruction.message.file.delete}")

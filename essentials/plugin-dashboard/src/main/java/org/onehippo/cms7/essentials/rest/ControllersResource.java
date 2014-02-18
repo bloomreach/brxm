@@ -16,24 +16,12 @@
 
 package org.onehippo.cms7.essentials.rest;
 
-import java.util.List;
-
-import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
-import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
-import org.onehippo.cms7.essentials.rest.model.ControllerRestful;
-import org.onehippo.cms7.essentials.rest.model.RestList;
-
-
-import com.google.common.base.Strings;
 
 /**
  * @version "$Id$"
@@ -42,7 +30,6 @@ import com.google.common.base.Strings;
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/controllers/")
 public class ControllersResource extends BaseResource {
-
 
 
 }

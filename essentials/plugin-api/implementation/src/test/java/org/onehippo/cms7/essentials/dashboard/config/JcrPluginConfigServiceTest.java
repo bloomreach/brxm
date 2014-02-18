@@ -16,7 +16,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @version "$Id: JcrPluginConfigServiceTest.java 174288 2013-08-19 16:21:19Z mmilicevic $"
  */
-public class JcrPluginConfigServiceTest extends BaseRepositoryTest{
+public class JcrPluginConfigServiceTest extends BaseRepositoryTest {
 
 
     private Session mySession;
@@ -52,10 +52,7 @@ public class JcrPluginConfigServiceTest extends BaseRepositoryTest{
         service.write(document, DummyTestPlugin.class.getName());
 
 
-
-
     }
-
 
 
 }

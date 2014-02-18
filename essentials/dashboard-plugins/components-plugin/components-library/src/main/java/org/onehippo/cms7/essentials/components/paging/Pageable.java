@@ -23,6 +23,7 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 
 /**
  * Pageable
+ *
  * @version $Id$
  */
 public abstract class Pageable<T extends HippoBean> {
@@ -50,6 +51,7 @@ public abstract class Pageable<T extends HippoBean> {
     /**
      * Constructor. NOTE: you can always override <code><strong>setTotal()</strong></code> method in your own class if
      * total number of items is not available immediately
+     *
      * @param total total number of results query has returned
      * @see #setTotal(int)
      */
@@ -89,6 +91,7 @@ public abstract class Pageable<T extends HippoBean> {
 
     /**
      * Returns max page size which wis used to limit nr. of results when executing query
+     *
      * @return limit number
      */
     public long getMaxSize() {
@@ -97,6 +100,7 @@ public abstract class Pageable<T extends HippoBean> {
 
     /**
      * Returns current page number
+     *
      * @return pagenumber we are displaying
      */
     public int getCurrentPage() {
@@ -105,6 +109,7 @@ public abstract class Pageable<T extends HippoBean> {
 
     /**
      * Returns previous page number
+     *
      * @return pagenumber we are displaying
      */
     public Integer getPreviousPage() {
@@ -116,6 +121,7 @@ public abstract class Pageable<T extends HippoBean> {
 
     /**
      * Returns next page number
+     *
      * @return pagenumber we are displaying
      */
     public Integer getNextPage() {
@@ -127,6 +133,7 @@ public abstract class Pageable<T extends HippoBean> {
 
     /**
      * Has current page previous pages?
+     *
      * @return true if page is bigger than 1 false otherwise
      */
     public boolean isPrevious() {
@@ -135,6 +142,7 @@ public abstract class Pageable<T extends HippoBean> {
 
     /**
      * Has current page next pages?
+     *
      * @return true if page is followed  by other pages
      */
     public boolean isNext() {
@@ -143,6 +151,7 @@ public abstract class Pageable<T extends HippoBean> {
 
     /**
      * Does  pagenumber exceeds number of visible pages?
+     *
      * @return true if so, false otherwise
      */
     public boolean isPreviousBatch() {
@@ -151,6 +160,7 @@ public abstract class Pageable<T extends HippoBean> {
 
     /**
      * Is  pagenumber followed by next pages e.g. next 10
+     *
      * @return true if so, false otherwise
      */
     public boolean isNextBatch() {
@@ -159,6 +169,7 @@ public abstract class Pageable<T extends HippoBean> {
 
     /**
      * Returns a list of numbers (between start and end offset)
+     *
      * @return List containing page numbers..
      */
     public List<Long> getPageNumbersArray() {
@@ -173,6 +184,7 @@ public abstract class Pageable<T extends HippoBean> {
 
     /**
      * Get where result offset should start NOTE: it's zero based
+     *
      * @return int
      */
     public int getStartOffset() {
@@ -185,6 +197,7 @@ public abstract class Pageable<T extends HippoBean> {
 
     /**
      * get where result offset should end
+     *
      * @return int
      */
     public long getEndOffset() {
@@ -200,6 +213,7 @@ public abstract class Pageable<T extends HippoBean> {
 
     /**
      * get end page of the current page set (e.g. in pages 1...10 it will return 10)
+     *
      * @return end page nr. of page batch
      */
     public long getEndPage() {
@@ -216,6 +230,7 @@ public abstract class Pageable<T extends HippoBean> {
     /**
      * get start page of the offset, so, assuming visiblePages is set to 10: e.g. if pageNumber 3, it'll return 1,
      * pagenumber 19, it'll return  11)
+     *
      * @return int page number of visible page batch
      */
     public long getStartPage() {
@@ -233,6 +248,7 @@ public abstract class Pageable<T extends HippoBean> {
 
     /**
      * Return total number of pages (based on page size)
+     *
      * @return nr. of pages
      */
     public long getTotalPages() {
@@ -273,6 +289,7 @@ public abstract class Pageable<T extends HippoBean> {
 
     /**
      * Total number of results.
+     *
      * @return total nr. of results
      */
     public long getTotal() {
@@ -281,6 +298,7 @@ public abstract class Pageable<T extends HippoBean> {
 
     /**
      * Sets total number of results.
+     *
      * @param total number of results query returned/your collection holds
      */
     public void setTotal(int total) {

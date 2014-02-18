@@ -45,7 +45,7 @@ public class CndUtilsTest extends BaseRepositoryTest {
         assertTrue("Expected to be of supertype:" + GalleryUtils.HIPPOGALLERY_IMAGE_SET, isMySupertype);
         // fetch supertype nodes
         final List<String> superTypes = CndUtils.getNodeTypesOfType(getContext(), GalleryUtils.HIPPOGALLERY_IMAGE_SET);
-        assertEquals("Expected 2 gallery types",2, superTypes.size());
+        assertEquals("Expected 2 gallery types", 2, superTypes.size());
         // test un-register type
         boolean removed = CndUtils.unRegisterDocumentType(getContext(), TEST_PREFIX, "myname");
         assertTrue("Expected type to be removed", removed);

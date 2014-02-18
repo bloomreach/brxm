@@ -50,8 +50,6 @@ public final class XmlUtils {
     }
 
 
-
-
     public static String xmlNodeToString(final XmlNode value) {
         try {
             final JAXBContext context = JAXBContext.newInstance(XmlNode.class);

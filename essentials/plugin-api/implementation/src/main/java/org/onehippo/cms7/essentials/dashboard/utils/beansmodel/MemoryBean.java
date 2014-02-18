@@ -58,9 +58,10 @@ public class MemoryBean {
         this.beanPath = beanPath;
     }
 
-    public void addProperty(final MemoryProperty property){
+    public void addProperty(final MemoryProperty property) {
         properties.add(property);
     }
+
     public List<MemoryProperty> getProperties() {
         return properties;
     }

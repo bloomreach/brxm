@@ -46,7 +46,7 @@ public class PluginScannerTest {
         final Plugin plugin = scan.get(0);
         assertEquals("Gallery Plugin", plugin.getName());
         assertEquals("org.onehippo.cms7.essentials.dashboard.gallery.GalleryPlugin", plugin.getPluginClass());
-        final List<Plugin> empty = scanner.scan(new File(directory +"_test").getPath());
+        final List<Plugin> empty = scanner.scan(new File(directory + "_test").getPath());
         assertEquals(0, empty.size());
 
 

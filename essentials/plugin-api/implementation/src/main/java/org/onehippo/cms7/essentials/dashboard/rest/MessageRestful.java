@@ -19,7 +19,6 @@ package org.onehippo.cms7.essentials.dashboard.rest;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
-import org.onehippo.cms7.essentials.dashboard.rest.Restful;
 
 import com.wordnik.swagger.annotations.ApiModel;
 

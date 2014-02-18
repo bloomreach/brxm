@@ -70,7 +70,7 @@ public class PluginInstructionSet implements InstructionSet {
     @Override
     public String getGroup() {
         if (Strings.isNullOrEmpty(group)) {
-            group =  EssentialConst.INSTRUCTION_GROUP_DEFAULT;
+            group = EssentialConst.INSTRUCTION_GROUP_DEFAULT;
         }
         return group;
     }

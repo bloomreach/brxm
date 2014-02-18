@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * HstQuery wrapper
+ *
  * @version "$Id$"
  */
 public class HstQueryBuilder implements QueryBuilder {

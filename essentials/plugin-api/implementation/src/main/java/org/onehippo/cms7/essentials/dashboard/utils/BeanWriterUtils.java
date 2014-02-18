@@ -383,7 +383,7 @@ public final class BeanWriterUtils {
         final Set<String> superTypeValues = bean.getSuperTypeValues();
         String supertypeName = null;
         for (String superTypeValue : superTypeValues) {
-            if (superTypeValue.startsWith(bean.getNamespace()) ||superTypeValue.equals(EssentialConst.HIPPO_COMPOUND)) {
+            if (superTypeValue.startsWith(bean.getNamespace()) || superTypeValue.equals(EssentialConst.HIPPO_COMPOUND)) {
                 supertypeName = superTypeValue;
             }
         }
@@ -401,7 +401,7 @@ public final class BeanWriterUtils {
 
     private static void processKid(final MemoryBean bean, final XmlNode templateDocument, final NodeOrProperty nodeOrProperty, final String projectNamespacePrefix) {
         final String name = nodeOrProperty.getName();
-        if(Strings.isNullOrEmpty(name)){
+        if (Strings.isNullOrEmpty(name)) {
             return;
         }
 
