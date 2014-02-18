@@ -21,9 +21,12 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.wordnik.swagger.annotations.ApiModel;
+
 /**
  * @version "$Id$"
  */
+@ApiModel
 @XmlRootElement(name = "node")
 public class NodeRestful implements Restful {
 

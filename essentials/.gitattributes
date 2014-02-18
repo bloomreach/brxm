@@ -122,6 +122,7 @@ dashboard-plugins/components-plugin/components-library/src/main/java/org/onehipp
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/EssentialsDocumentComponent.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/EssentialsEventsComponent.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/EssentialsListComponent.java -text
+dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/EssentialsListPickerComponent.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/EssentialsMenuComponent.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/EssentialsNewsComponent.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/EssentialsRedirectComponent.java -text
@@ -275,6 +276,7 @@ dashboard-plugins/components-plugin/components-library/src/main/java/org/onehipp
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsDocumentListComponentInfo.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsDocumentListComponentInfo.properties -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsEventsComponentInfo.java -text
+dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsListPickerComponentInfo.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsMenuComponentInfo.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsNewsComponentInfo.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsRepositoryMenuComponentInfo.java -text
@@ -665,13 +667,9 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/ContentBlocksRe
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/ControllersResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/ImageGalleryResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/JcrResource.java -text
-plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/KeyValueResource.java -text
-plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/MenuResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/NodeResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/PluginResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/PowerpackResource.java -text
-plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/PropertiesResource.java -text
-plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/StatusResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/client/RestClient.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/config/RestServletListener.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/exc/EssentialsExceptionMapper.java -text

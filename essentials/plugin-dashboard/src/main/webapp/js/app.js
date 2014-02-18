@@ -117,13 +117,16 @@
                     jcr: root + '/jcr/',
                     jcrQuery: root + '/jcr/query/',
                     dynamic: root + '/dynamic/',
-                    projectSettings: root + '/keyvalue/settings',
+                    powerpacks: root + '/powerpacks/',
 
                     /**
                      * Returns list of all plugins
                      * //TODO: change this once we have marketplace up and running
                      */
                     plugins: root + "/plugins/",
+                    projectSettings: plugins + '/settings',
+                    powerpacksStatus: plugins + '/status/powerpack/',
+                    controllers: plugins + '/controllers/',
                     /**
                      * Returns list of all plugins that need configuration
                      */
@@ -144,10 +147,10 @@
                      */
                     pluginInstall: plugins + '/install/',
 
-                    status: root + '/status/',
-                    powerpacks: root + '/powerpacks/',
+
+
                     documentTypes: root + '/documenttypes/',
-                    controllers: root + '/controllers/',
+
                     powerpacks_install: root + '/powerpacks/install/',
 
                     compounds: root + '/documenttypes/compounds',
@@ -175,6 +178,8 @@
                     $http.get($rootScope.REST.controllers).success(function (data) {
                         $rootScope.controllers = data;
                     });
+
+
                     $http.get($rootScope.REST.projectSettings).success(function (data) {
                         $rootScope.projectSettings = data.keyvalue;
 

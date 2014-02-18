@@ -14,29 +14,23 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.rest;
+package org.onehippo.cms7.essentials.components;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
-import com.wordnik.swagger.annotations.ApiModel;
+import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.onehippo.cms7.essentials.components.info.EssentialsListPickerComponentInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
  */
-@ApiModel
-@XmlRootElement(name = "project")
-public class ProjectRestful implements Restful {
+@ParametersInfo(type = EssentialsListPickerComponentInfo.class)
+public class EssentialsListPickerComponent extends EssentialsListComponent {
 
-    private static final long serialVersionUID = 1L;
+    @Override
+    public void doBeforeRender(final HstRequest request, final HstResponse response) {
 
-    // TODO add more data
-    private String namespace;
-
-    public String getNamespace() {
-        return namespace;
-    }
-
-    public void setNamespace(final String namespace) {
-        this.namespace = namespace;
     }
 }

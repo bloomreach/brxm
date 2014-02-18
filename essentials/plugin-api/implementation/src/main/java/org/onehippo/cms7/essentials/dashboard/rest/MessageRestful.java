@@ -21,9 +21,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.rest.Restful;
 
+import com.wordnik.swagger.annotations.ApiModel;
+
 /**
  * @version "$Id$"
  */
+@ApiModel
 @XmlRootElement(name = "message")
 public class MessageRestful implements Restful {
 

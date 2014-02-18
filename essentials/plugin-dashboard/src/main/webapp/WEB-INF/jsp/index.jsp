@@ -77,6 +77,10 @@
       <li ng-repeat="item in menu" ng-class="{true:'active', false:''}[isPageSelected('{{item.link}}')]">
         <a href="{{item.link}}" ng-click="onMenuClick(item)">{{item.name}}</a>
       </li>
+      <li>
+        <a target="API" href="${pageContext.request.contextPath}/docs/rest-api/index.html">REST API</a>
+
+      </li>
     </ul>
 
   </div>

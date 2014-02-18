@@ -96,7 +96,7 @@
             return true;
         } else {
             var deferred = $q.defer();
-            $http.get($rootScope.REST.status + 'powerpack')
+            $http.get($rootScope.REST.powerpacksStatus)
                     .success(function (response) {
                         $rootScope.packsInstalled = response.status;
                         deferred.resolve(true);

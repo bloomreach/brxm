@@ -20,11 +20,14 @@ import java.util.LinkedHashMap;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.wordnik.swagger.annotations.ApiModel;
+
 /**
  * Holds ordered map of key value properties.
  *
  * @version "$Id$"
  */
+@ApiModel
 @XmlRootElement(name = "payload")
 public class PostPayloadRestful implements Restful {
 

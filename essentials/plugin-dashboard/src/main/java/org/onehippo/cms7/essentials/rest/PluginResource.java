@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
@@ -45,16 +46,22 @@ import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.config.DefaultDocumentManager;
 import org.onehippo.cms7.essentials.dashboard.config.DocumentManager;
 import org.onehippo.cms7.essentials.dashboard.config.InstallerDocument;
+import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.installer.InstallState;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
-import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
-import org.onehippo.cms7.essentials.rest.model.PluginRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.NodeRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
+import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.rest.model.ControllerRestful;
+import org.onehippo.cms7.essentials.rest.model.PluginRestful;
 import org.onehippo.cms7.essentials.rest.model.RestList;
+import org.onehippo.cms7.essentials.rest.model.StatusRestful;
 import org.onehippo.cms7.essentials.servlet.DynamicRestPointsApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,16 +72,19 @@ import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 
 
 /**
- * Rest resource which provides information about plugins: e.g. installed or available plugins
- *
  * @version "$Id$"
  */
+
+@Api(value = "/plugins", description = "Rest resource which provides information about plugins: e.g. installed or available plugins")
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
-@Path("/plugins/")
+@Path("/plugins")
 public class PluginResource extends BaseResource {
 
     public static final int WEEK_OLD = -7;
@@ -84,12 +94,10 @@ public class PluginResource extends BaseResource {
     private boolean initialized;
     private static Logger log = LoggerFactory.getLogger(PluginResource.class);
 
-    /**
-     * Fetches a (remote) service and checks for available Hippo Essentials plugins
-     *
-     * @param servletContext servlet context
-     * @return JSON file of available plugins
-     */
+    @ApiOperation(
+            value = "Fetches a (remote) service and checks for available Hippo Essentials plugins",
+            notes = "Retrieves a list of PluginRestful objects",
+            response = RestfulList.class)
     @GET
     @Path("/")
     public RestfulList<PluginRestful> getPluginList(@Context ServletContext servletContext) {
@@ -172,7 +180,7 @@ public class PluginResource extends BaseResource {
             }
             // register:
             final ApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
-            final Object jsonProvider =  applicationContext.getBean("jsonProvider");
+            final Object jsonProvider = applicationContext.getBean("jsonProvider");
             final JAXRSServerFactoryBean factoryBean = delegate.createEndpoint(application, JAXRSServerFactoryBean.class);
             factoryBean.setProvider(jsonProvider);
             factoryBean.setBus(bus);
@@ -212,6 +220,9 @@ public static List<PluginRestful> parseGist() {
     }
 */
 
+    @ApiOperation(
+            value = "Adds a plugin to recently installed list of plugins",
+            response = RestfulList.class)
     @POST
     @Path("/configure/add")
     public RestfulList<PluginRestful> addToRecentlyInstalled(@Context ServletContext servletContext, final PostPayloadRestful payload) {
@@ -231,6 +242,10 @@ public static List<PluginRestful> parseGist() {
     }
 
 
+    @ApiOperation(
+            value = "Lists of all available plugins",
+            notes = "Retrieves list of  PluginRestful objects",
+            response = RestfulList.class)
     @GET
     @Path("/configure/list")
     public RestfulList<PluginRestful> getRecentlyInstalled(@Context ServletContext servletContext) {
@@ -248,6 +263,11 @@ public static List<PluginRestful> parseGist() {
     }
 
 
+    @ApiOperation(
+            value = "Checks if certain plugin is installed",
+            notes = "Sets PluginRestful installed flag to true or false",
+            response = PluginRestful.class)
+    @ApiParam(name = "className", value = "Plugin class name", required = true)
     @GET
     @Path("/installstate/{className}")
     public PluginRestful getPluginList(@Context ServletContext servletContext, @PathParam("className") String className) {
@@ -270,6 +290,10 @@ public static List<PluginRestful> parseGist() {
         return resource;
     }
 
+    @ApiOperation(
+            value = "Installs a plugin",
+            response = MessageRestful.class)
+    @ApiParam(name = "className", value = "Plugin class name", required = true)
     @POST
     @Path("/install/{className}")
     public MessageRestful installPlugin(@Context ServletContext servletContext, @PathParam("className") String className) {
@@ -309,5 +333,72 @@ public static List<PluginRestful> parseGist() {
         message.setSuccessMessage(false);
         message.setValue("Plugin was not found and could not be installed");
         return message;
+    }
+
+    @ApiOperation(
+            value = "Returns list of project settings like project namespace, project path etc. ",
+            notes = "Contains a list of KeyValueRestful objects",
+            response = RestfulList.class)
+    @GET
+    @Path("/settings")
+    public RestfulList<KeyValueRestful> getKeyValue(@Context ServletContext servletContext) {
+        final PluginContext context = getContext(servletContext);
+        final Map<String, Object> placeholderData = context.getPlaceholderData();
+        final RestfulList<KeyValueRestful> list = new RestList<>();
+        for (Map.Entry<String, Object> entry : placeholderData.entrySet()) {
+            final Object value = entry.getValue();
+            if (value instanceof String) {
+                final KeyValueRestful keyValueRestful = new KeyValueRestful(entry.getKey(), (String) value);
+                list.add(keyValueRestful);
+            }
+        }
+        return list;
+
+    }
+
+    @GET
+    @Path("/controllers")
+    public RestfulList<ControllerRestful> getControllers(@Context ServletContext servletContext) {
+
+        final RestfulList<ControllerRestful> controllers = new RestList<>();
+        final List<Plugin> plugins = getPlugins(servletContext);
+        for (Plugin plugin : plugins) {
+            final String pluginLink = plugin.getPluginLink();
+            if (Strings.isNullOrEmpty(pluginLink)) {
+                continue;
+            }
+            controllers.add(new ControllerRestful(pluginLink, String.format("%sCtrl", pluginLink), String.format("plugins/%s/index.html", pluginLink)));
+
+        }
+        // TODO load from remote
+
+        return controllers;
+
+    }
+
+
+    @ApiOperation(
+            value = "Populated StatusRestful object",
+            notes = "Status contains true value if one of the Powerpacks is installed",
+            response = StatusRestful.class)
+    @GET
+    @Path("/status/powerpack")
+    public StatusRestful getMenu(@Context ServletContext servletContext) {
+        final StatusRestful status = new StatusRestful();
+        try {
+            final Plugin plugin = getPluginByClassName(ProjectSetupPlugin.class.getName(), servletContext);
+            final PluginContext context = new DefaultPluginContext(GlobalUtils.createSession(), plugin);
+            final ProjectSettingsBean document = context.getConfigService().read(ProjectSetupPlugin.class.getName(), ProjectSettingsBean.class);
+
+            if (document != null && document.getSetupDone()) {
+                status.setStatus(true);
+                return status;
+            }
+
+        } catch (Exception e) {
+
+            log.error("Error checking powerpack status", e);
+        }
+        return status;
     }
 }

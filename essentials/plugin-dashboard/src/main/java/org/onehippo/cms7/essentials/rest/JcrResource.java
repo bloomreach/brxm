@@ -44,16 +44,18 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 
 /**
  * @version "$Id$"
  */
 
-@Api(value = "/jcr/", description = "Generic API for accessing Hippo repository")
+@Api(value = "/jcr", description = "Generic API for accessing Hippo repository")
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
-@Path("/jcr/")
+@Path("/jcr")
 public class JcrResource extends BaseResource {
 
     private static final Logger log = LoggerFactory.getLogger(JcrResource.class);
@@ -62,7 +64,6 @@ public class JcrResource extends BaseResource {
             value = "Populated NodeRestful",
             notes = "Retrieves and returns root node",
             response = NodeRestful.class)
-
     @GET
     @Path("/")
     public NodeRestful getRootNode(@Context ServletContext servletContext) throws RepositoryException {
@@ -74,6 +75,7 @@ public class JcrResource extends BaseResource {
             notes = "Path is taken from payload object which is also of type NodeRestful",
             response = NodeRestful.class
     )
+    @ApiParam(value = "NodeRestful with path property declared e.g. '/content/documents/'", required = true)
     @POST
     @Path("/")
     public NodeRestful getNode(final NodeRestful payload, @Context ServletContext servletContext) throws RepositoryException {
@@ -106,32 +108,7 @@ public class JcrResource extends BaseResource {
 
     }
 
-    private void populateNodes(final Node node, final NodeRestful nodeRestful, boolean anotherLevel) throws RepositoryException {
-        final NodeIterator nodes = node.getNodes();
-        while (nodes.hasNext()) {
-            final Node kid = nodes.nextNode();
-            final NodeRestful jcrKid = new NodeRestful(kid.getName(), kid.getPath());
-            nodeRestful.addNode(jcrKid);
-            populateProperties(kid, jcrKid);
-            if (anotherLevel) {
-                populateNodes(kid, jcrKid, false);
-            }
 
-
-        }
-    }
-
-
-    private void populateProperties(final Node node, final NodeRestful nodeRestful) throws RepositoryException {
-        final PropertyIterator properties = node.getProperties();
-        while (properties.hasNext()) {
-            final Property p = properties.nextProperty();
-            final PropertyRestful propertyRestful = new PropertyRestful();
-            propertyRestful.setName(p.getName());
-            propertyRestful.setValue(p.getPath());
-            nodeRestful.addProperty(propertyRestful);
-        }
-    }
 
 
     @POST
@@ -142,6 +119,11 @@ public class JcrResource extends BaseResource {
     }
 
 
+    @ApiOperation(
+            value = "Populated NodeRestful",
+            notes = "Executes given query and wraps results into NodeRestful object. Root node is a dummy one containing a list of retrieved nodes",
+            response = NodeRestful.class)
+    @ApiParam(value = "QueryRestful with query property declared e.g. '//element(*, hst:template)[@hst:script]'", required = true)
     @POST
     @Path("/query/")
     public NodeRestful executeQuery(final QueryRestful payload, @Context ServletContext servletContext) {
@@ -153,7 +135,7 @@ public class JcrResource extends BaseResource {
 
             session = GlobalUtils.createSession();
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
-            final String s = "//element(*, hst:template)[@hst:script]";
+
             final Query query = queryManager.createQuery(payload.getQuery(), payload.getType());
             // TODO add paging
             final QueryResult result = query.execute();
@@ -182,4 +164,30 @@ public class JcrResource extends BaseResource {
     }
 
 
+    private void populateNodes(final Node node, final NodeRestful nodeRestful, boolean anotherLevel) throws RepositoryException {
+        final NodeIterator nodes = node.getNodes();
+        while (nodes.hasNext()) {
+            final Node kid = nodes.nextNode();
+            final NodeRestful jcrKid = new NodeRestful(kid.getName(), kid.getPath());
+            nodeRestful.addNode(jcrKid);
+            populateProperties(kid, jcrKid);
+            if (anotherLevel) {
+                populateNodes(kid, jcrKid, false);
+            }
+
+
+        }
+    }
+
+
+    private void populateProperties(final Node node, final NodeRestful nodeRestful) throws RepositoryException {
+        final PropertyIterator properties = node.getProperties();
+        while (properties.hasNext()) {
+            final Property p = properties.nextProperty();
+            final PropertyRestful propertyRestful = new PropertyRestful();
+            propertyRestful.setName(p.getName());
+            propertyRestful.setValue(p.getPath());
+            nodeRestful.addProperty(propertyRestful);
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package org.onehippo.cms7.essentials.components.info;
 
 import org.hippoecm.hst.core.parameters.DocumentLink;
+import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 
 /**
@@ -9,7 +10,11 @@ import org.hippoecm.hst.core.parameters.Parameter;
 public interface EssentialsDocumentComponentInfo {
 
     @Parameter(name = "document", required = false, displayName = "Document")
-    @DocumentLink(allowCreation = false, docLocation = "/content/documents", docType = "hippo:document")
+    @JcrPath(
+            pickerConfiguration = "cms-pickers/documents",
+            pickerSelectableNodeTypes = {"hippo:document"},
+            pickerInitialPath = "/content/documents"
+    )
     String getDocument();
 
 }

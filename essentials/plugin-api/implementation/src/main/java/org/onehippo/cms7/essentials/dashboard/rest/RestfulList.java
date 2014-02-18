@@ -26,12 +26,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonSubTypes;
 
 import com.google.common.collect.Lists;
+import com.wordnik.swagger.annotations.ApiModel;
 
 /**
  * @version "$Id$"
  */
 
 
+@ApiModel
 @XmlRootElement(name = "collection")
 public class RestfulList<T extends Restful> implements Serializable {
 

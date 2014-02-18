@@ -21,10 +21,7 @@
                     }
 
                     $scope.initCalled = true;
-                    $http({
-                        method: 'GET',
-                        url: $rootScope.REST.powerpacks
-                    }).success(function (data) {
+                    $http.get($rootScope.REST.powerpacks).success(function (data) {
                         $scope.packs = data;
 
                     });
@@ -34,8 +31,6 @@
                 // TODO fix HTML rendering
                 //$scope.trustedContent = $sce.trustAsHtml($scope.resultMessages.message.value);
                 $scope.selectChange = function () {
-
-
 
                     for (var i = 0; i < $scope.packs.items.length; i++) {
                         var powerpack = $scope.packs.items[i];

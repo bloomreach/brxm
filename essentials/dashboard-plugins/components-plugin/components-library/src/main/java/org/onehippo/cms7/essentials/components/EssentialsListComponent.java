@@ -19,6 +19,7 @@ import org.onehippo.cms7.essentials.components.info.EssentialsDocumentListCompon
 import org.onehippo.cms7.essentials.components.paging.IterablePagination;
 import org.onehippo.cms7.essentials.components.paging.Pageable;
 import org.onehippo.cms7.essentials.components.utils.query.HstQueryBuilder;
+import org.onehippo.cms7.essentials.components.utils.query.QueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,7 +103,7 @@ public class EssentialsListComponent extends CommonComponent {
      * @return the HST query to execute
      */
     protected <T extends EssentialsDocumentListComponentInfo> HstQuery buildQuery(final HstRequest request, final T paramInfo, final HippoBean scope) {
-        final HstQueryBuilder builder = new HstQueryBuilder(this, request);
+        final QueryBuilder builder = new HstQueryBuilder(this, request);
         final String documentTypes = paramInfo.getDocumentTypes();
         final String[] types = parseDocumentTypes(documentTypes);
         return builder.scope(scope).documents(types).includeSubtypes().build();

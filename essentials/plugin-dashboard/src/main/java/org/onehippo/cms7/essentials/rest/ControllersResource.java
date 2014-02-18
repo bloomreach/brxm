@@ -44,23 +44,5 @@ import com.google.common.base.Strings;
 public class ControllersResource extends BaseResource {
 
 
-    @GET
-    @Path("/")
-    public RestfulList<ControllerRestful> getControllers(@Context ServletContext servletContext) {
 
-        final RestfulList<ControllerRestful> controllers = new RestList<>();
-        final List<Plugin> plugins = getPlugins(servletContext);
-        for (Plugin plugin : plugins) {
-            final String pluginLink = plugin.getPluginLink();
-            if (Strings.isNullOrEmpty(pluginLink)) {
-                continue;
-            }
-            controllers.add(new ControllerRestful(pluginLink, String.format("%sCtrl", pluginLink), String.format("plugins/%s/index.html", pluginLink)));
-
-        }
-        // TODO load from remote
-
-        return controllers;
-
-    }
 }

@@ -32,28 +32,26 @@
   <!-- REST RESOURCES-->
   <bean id="jcrResource" class="org.onehippo.cms7.essentials.rest.JcrResource"/>
   <bean id="contentBlocksResource" class="org.onehippo.cms7.essentials.rest.ContentBlocksResource"/>
-  <bean id="controllersResource" class="org.onehippo.cms7.essentials.rest.ControllersResource"/>
+
   <bean id="imageGalleryResource" class="org.onehippo.cms7.essentials.rest.ImageGalleryResource"/>
-  <bean id="keyValueResource" class="org.onehippo.cms7.essentials.rest.KeyValueResource"/>
+
   <bean id="nodeResource" class="org.onehippo.cms7.essentials.rest.NodeResource"/>
   <bean id="pluginResource" class="org.onehippo.cms7.essentials.rest.PluginResource"/>
-  <bean id="propertiesResource" class="org.onehippo.cms7.essentials.rest.PropertiesResource"/>
+
   <bean id="powerpackResource" class="org.onehippo.cms7.essentials.rest.PowerpackResource"/>
-  <bean id="statusResource" class="org.onehippo.cms7.essentials.rest.StatusResource"/>
+
 
 
   <jaxrs:server id="restServer" address="/">
     <jaxrs:serviceBeans>
       <ref bean="jcrResource"/>
       <ref bean="contentBlocksResource"/>
-      <ref bean="controllersResource"/>
       <ref bean="imageGalleryResource"/>
-      <ref bean="keyValueResource"/>
       <ref bean="nodeResource"/>
       <ref bean="pluginResource"/>
-      <ref bean="propertiesResource"/>
+
       <ref bean="powerpackResource"/>
-      <ref bean="statusResource"/>
+
       <!-- API -->
       <ref bean="swaggerResourceJSON"/>
 
@@ -89,34 +87,5 @@
     <property name="licenseUrl" value="http://www.apache.org/licenses/LICENSE-2.0.html"/>
     <property name="scan" value="true"/>
   </bean>
-
-  <!--
-   //############################################
-   //   JSON FORMATTING
-   //############################################
- -->
-
-<!--
-  <bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.json.JSONProvider">
-    <property name="ignoreNamespaces" value="true"/>
-    <property name="dropRootElement" value="true"/>
-    <property name="serializeAsArray" value="true"/>
-
-    <property name="arrayKeys">
-      <list>
-        <value>items</value>
-        <value>item</value>
-        <value>properties</value>
-        <value>plugins</value>
-        <value>variants</value>
-        <value>imageSets</value>
-        <value>translations</value>
-        <value>restClasses</value>
-      </list>
-    </property>
-
-  </bean>
--->
-
 
 </beans>

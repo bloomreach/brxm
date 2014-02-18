@@ -4,6 +4,7 @@
 
 package org.onehippo.cms7.essentials.components;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.jcr.RepositoryException;
@@ -22,6 +23,7 @@ import org.onehippo.cms7.essentials.components.info.EssentialsDocumentListCompon
 import org.onehippo.cms7.essentials.components.info.EssentialsEventsComponentInfo;
 import org.onehippo.cms7.essentials.components.paging.Pageable;
 import org.onehippo.cms7.essentials.components.utils.query.HstQueryBuilder;
+import org.onehippo.cms7.essentials.components.utils.query.QueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +55,7 @@ public class EssentialsEventsComponent extends EssentialsListComponent {
 
     @Override
     protected <T extends EssentialsDocumentListComponentInfo> HstQuery buildQuery(final HstRequest request, final T componentInfo, final HippoBean scope) {
-        final HstQueryBuilder builder = new HstQueryBuilder(this, request);
+        final QueryBuilder builder = new HstQueryBuilder(this, request);
         final String documentTypes = componentInfo.getDocumentTypes();
         final String[] types = parseDocumentTypes(documentTypes);
         EssentialsEventsComponentInfo essentialsEventsComponentInfo = (EssentialsEventsComponentInfo) componentInfo;
@@ -66,7 +68,7 @@ public class EssentialsEventsComponent extends EssentialsListComponent {
                 final Session session = request.getRequestContext().getSession();
                 Filter filter = new FilterImpl(session, DateTools.Resolution.DAY);
                 dateField = essentialsEventsComponentInfo.getDocumentDateField();
-                filter.addGreaterOrEqualThan(dateField, new Date());
+                filter.addGreaterOrEqualThan(dateField, Calendar.getInstance(), DateTools.Resolution.DAY);
                 builder.addFilter(filter);
             } catch (FilterException | RepositoryException e) {
                 log.error("Error while creating query filter to hide past events using date field {}", dateField, e);
