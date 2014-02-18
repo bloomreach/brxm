@@ -16,10 +16,18 @@
 
 package org.onehippo.cms7.essentials.components;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo;
 import org.onehippo.cms7.essentials.components.info.EssentialsListPickerComponentInfo;
+import org.onehippo.cms7.essentials.components.paging.IterablePagination;
+import org.onehippo.cms7.essentials.components.paging.Pageable;
 
 /**
  * @version "$Id$"
@@ -27,8 +35,31 @@ import org.onehippo.cms7.essentials.components.info.EssentialsListPickerComponen
 @ParametersInfo(type = EssentialsListPickerComponentInfo.class)
 public class EssentialsListPickerComponent extends EssentialsListComponent {
 
+
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
 
+        final EssentialsListPickerComponentInfo info = getComponentParametersInfo(request);
+        final List<HippoDocument> documentItems = getDocumentItems(request, info);
+        final int size = getIntParameter(request, "size", 10);
+        final int page = getIntParameter(request, "page", 1);
+        final Pageable<HippoDocument> pageable = new IterablePagination<>(documentItems, size, page);
+        request.setAttribute(REQUEST_ATTR_PAGEABLE, pageable);
+    }
+
+
+    public List<HippoDocument> getDocumentItems(final HstRequest request, final EssentialsListPickerComponentInfo componentInfo) {
+        final List<HippoDocument> beans = new ArrayList<>();
+        addBeanForPath(request, componentInfo.getDocumentItem1(), beans);
+        addBeanForPath(request, componentInfo.getDocumentItem2(), beans);
+        addBeanForPath(request, componentInfo.getDocumentItem3(), beans);
+        addBeanForPath(request, componentInfo.getDocumentItem4(), beans);
+        addBeanForPath(request, componentInfo.getDocumentItem5(), beans);
+        addBeanForPath(request, componentInfo.getDocumentItem6(), beans);
+        addBeanForPath(request, componentInfo.getDocumentItem7(), beans);
+        addBeanForPath(request, componentInfo.getDocumentItem8(), beans);
+        addBeanForPath(request, componentInfo.getDocumentItem9(), beans);
+        addBeanForPath(request, componentInfo.getDocumentItem10(), beans);
+        return beans;
     }
 }
