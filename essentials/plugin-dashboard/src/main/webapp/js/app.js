@@ -201,7 +201,6 @@
                         label: '@',
                         options: '=',
                         selectedDescription: '=',
-                        placeholder: '@',
                         ngModel: '=',
                         onSelect:'&'
                     },

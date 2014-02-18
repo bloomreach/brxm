@@ -22,7 +22,17 @@
 
             })
             .controller('powerpacksCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
-                $scope.selectedValue={value:"foooo"};
+                $scope.hideAll = false;
+                $scope.installSampleData = true;
+
+                $scope.resultMessages = null;
+
+                $scope.packs = null;
+                $scope.buttons = [
+                    {buttonText: "Next", previousIndex: 0, nextIndex: 1}
+                ];
+                $scope.selectedValue={};
+                $scope.stepVisible = [true, false];
                 $scope.selectedDescription = "Please make a selection";
                 $scope.onPowerpackSelect = function () {
                     angular.forEach($scope.packs, function (powerpack) {
@@ -32,6 +42,38 @@
                     });
 
                 };
+
+
+                $scope.onWizardButton = function (idx) {
+                    if (idx == 0) {
+                        $scope.buttons = [
+                            {buttonText: "Next", previousIndex: 0, nextIndex: 1}
+
+                        ];
+                        $scope.stepVisible = [true, false];
+                    } else {
+                        $scope.buttons = [
+                            {buttonText: "Previous", previousIndex: 0, nextIndex: 1},
+                            {buttonText: "Finish", previousIndex: 0, nextIndex: 2}
+                        ];
+                        $scope.stepVisible = [false, true];
+                    }
+
+                    if (idx == 2) {
+
+                        // execute installation:
+                        $http({
+                            method: 'GET',
+                            url: $rootScope.REST.powerpacks_install + $scope.selectedItem + "/" + $scope.installSampleData
+                        }).success(function (data) {
+                            $scope.resultMessages = data;
+                            $scope.hideAll = true;
+                        });
+                    }
+
+
+                };
+
 
                 $scope.getDescription = function (name) {
                     if (name.trim() == "news-events") {
