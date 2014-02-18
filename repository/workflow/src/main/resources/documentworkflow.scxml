@@ -339,16 +339,18 @@
             <hippo:action action="rename" enabledExpr="false"/>
           </if>
         </onentry>
-        <transition target="terminateable" cond="!live and !editing and !requestPending"/>
+        <transition target="terminateable" cond="!live and !editing"/>
       </state>
 
       <state id="terminateable">
         <onentry>
-          <hippo:action action="requestDelete" enabledExpr="true"/>
-          <if cond="dm.isGranted(deleteSource, 'hippo:editor')">
-            <hippo:action action="delete" enabledExpr="true"/>
-            <hippo:action action="move" enabledExpr="true"/>
-            <hippo:action action="rename" enabledExpr="true"/>
+          <if cond="!requestPending">
+            <hippo:action action="requestDelete" enabledExpr="true"/>
+            <if cond="dm.isGranted(deleteSource, 'hippo:editor')">
+              <hippo:action action="delete" enabledExpr="true"/>
+              <hippo:action action="move" enabledExpr="true"/>
+              <hippo:action action="rename" enabledExpr="true"/>
+            </if>
           </if>
         </onentry>
 
