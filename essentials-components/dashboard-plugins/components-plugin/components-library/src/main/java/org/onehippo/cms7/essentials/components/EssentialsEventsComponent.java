@@ -5,7 +5,6 @@
 package org.onehippo.cms7.essentials.components;
 
 import java.util.Calendar;
-import java.util.Date;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -62,7 +61,7 @@ public class EssentialsEventsComponent extends EssentialsListComponent {
 
         builder.scope(scope).documents(types).includeSubtypes();
 
-        if(essentialsEventsComponentInfo.hidePastEvents()) {
+        if (essentialsEventsComponentInfo.hidePastEvents()) {
             String dateField = null;
             try {
                 final Session session = request.getRequestContext().getSession();

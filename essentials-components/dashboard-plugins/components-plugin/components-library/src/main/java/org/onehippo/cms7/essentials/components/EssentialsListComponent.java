@@ -97,9 +97,9 @@ public class EssentialsListComponent extends CommonComponent {
     /**
      * Build the HST query for the list.
      *
-     * @param request the current request
+     * @param request   the current request
      * @param paramInfo the parameter info
-     * @param scope the scope of the query
+     * @param scope     the scope of the query
      * @return the HST query to execute
      */
     protected <T extends EssentialsDocumentListComponentInfo> HstQuery buildQuery(final HstRequest request, final T paramInfo, final HippoBean scope) {
@@ -112,9 +112,9 @@ public class EssentialsListComponent extends CommonComponent {
     /**
      * Execute the list query.
      *
-     * @param request the current request
+     * @param request   the current request
      * @param paramInfo the parameter info
-     * @param query the query to execute
+     * @param query     the query to execute
      * @return the pageable result
      * @throws QueryException query exception when query fails
      */
@@ -143,7 +143,7 @@ public class EssentialsListComponent extends CommonComponent {
     /**
      * Determine the page size of the list query.
      *
-     * @param request the current request
+     * @param request   the current request
      * @param paramInfo the settings of the component
      * @return the page size of the query
      */
@@ -165,13 +165,13 @@ public class EssentialsListComponent extends CommonComponent {
     /**
      * Determine whether pagination should be shown.
      *
-     * @param request the current request
+     * @param request   the current request
      * @param paramInfo the settings of the component
      * @return
      */
     protected boolean isShowPagination(final HstRequest request, final EssentialsDocumentListComponentInfo paramInfo) {
         final Boolean showPagination = paramInfo.getShowPagination();
-        if(showPagination == null) {
+        if (showPagination == null) {
             log.debug("Show pagination not configured, use default value 'true'");
             return true;
         }
