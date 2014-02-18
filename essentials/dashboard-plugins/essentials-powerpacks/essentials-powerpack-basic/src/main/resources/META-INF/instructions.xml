@@ -15,6 +15,7 @@
   limitations under the License.
   -->
 
+
 <instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
   <instructionSet>
@@ -34,8 +35,8 @@
     <file action="copy" overwrite="true" source="icons/new-folder-16.png" target="{{cmsRoot}}/src/main/resources/org/hippoecm/frontend/plugins/standardworkflow/new-events-folder-16.png"/>
   </instructionSet>
   <instructionSet>
-    <folder path="/content/documents/{{namespace}}" template="xml/content/news.xml"/>
-    <folder path="/content/documents/{{namespace}}" template="xml/content/events.xml"/>
+    <folder path="/content/documents/{{namespace}}/news/{{dateRepoYearMonth}}" template="xml/content/news.xml"/>
+    <folder path="/content/documents/{{namespace}}/events/{{dateRepoYearMonth}}" template="xml/content/events.xml"/>
   </instructionSet>
   <instructionSet>
     <file action="copy" overwrite="true" source="jsp/essentials-layout-webpage.jsp" target="{{jspRoot}}/essentials/essentials-layout-webpage.jsp"/>
@@ -89,8 +90,12 @@
   </instructionSet>
   <!-- SAMPLES GROUP-->
   <instructionSet group="samples">
-    <xml action="copy" source="xml/samples/content/documents/events.xml" target="/content/documents/{{namespace}}"/>
-    <xml action="copy" source="xml/samples/content/documents/news.xml" target="/content/documents/{{namespace}}"/>
+    <xml action="copy" source="xml/samples/content/documents/events/sample_breakfast.xml" target="/content/documents/{{namespace}}/events/{{dateRepoYearMonth}}"/>
+    <xml action="copy" source="xml/samples/content/documents/events/sample_introduction_speech.xml" target="/content/documents/{{namespace}}/events/{{dateRepoYearMonth}}"/>
+    <xml action="copy" source="xml/samples/content/documents/events/sample_workshop.xml" target="/content/documents/{{namespace}}/events/{{dateRepoYearMonth}}"/>
+    <xml action="copy" source="xml/samples/content/documents/news/sample_medusa.xml" target="/content/documents/{{namespace}}/news/{{dateRepoYearMonth}}"/>
+    <xml action="copy" source="xml/samples/content/documents/news/sample_harvest.xml" target="/content/documents/{{namespace}}/news/{{dateRepoYearMonth}}"/>
+    <xml action="copy" source="xml/samples/content/documents/news/sample_gastropoda.xml" target="/content/documents/{{namespace}}/news/{{dateRepoYearMonth}}"/>
     <xml action="copy" source="xml/samples/content/gallery/samples.xml" target="/content/gallery/{{namespace}}"/>
   </instructionSet>
 </instructions>

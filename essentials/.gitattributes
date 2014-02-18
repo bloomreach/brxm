@@ -392,8 +392,12 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/reso
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/templates/standard-main.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/namespaces/eventsdocument.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/namespaces/newsdocument.xml -text
-dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/samples/content/documents/events.xml -text
-dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/samples/content/documents/news.xml -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/samples/content/documents/events/sample_breakfast.xml -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/samples/content/documents/events/sample_introduction_speech.xml -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/samples/content/documents/events/sample_workshop.xml -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/samples/content/documents/news/sample_gastropoda.xml -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/samples/content/documents/news/sample_harvest.xml -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/samples/content/documents/news/sample_medusa.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/samples/content/gallery/samples.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/java/org/onehippo/cms7/essentials/powerpack/BasicPowerpackTest.java -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/jsp/essentials-component-news-detail.jsp -text
