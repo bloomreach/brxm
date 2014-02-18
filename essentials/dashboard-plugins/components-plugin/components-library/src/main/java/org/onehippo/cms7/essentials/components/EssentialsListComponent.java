@@ -16,6 +16,7 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.onehippo.cms7.essentials.components.info.EssentialsDocumentListComponentInfo;
+import org.onehippo.cms7.essentials.components.info.EssentialsPageable;
 import org.onehippo.cms7.essentials.components.paging.IterablePagination;
 import org.onehippo.cms7.essentials.components.paging.Pageable;
 import org.onehippo.cms7.essentials.components.utils.query.HstQueryBuilder;
@@ -147,7 +148,7 @@ public class EssentialsListComponent extends CommonComponent {
      * @param paramInfo the settings of the component
      * @return the page size of the query
      */
-    protected int getPageSize(final HstRequest request, final EssentialsDocumentListComponentInfo paramInfo) {
+    protected int getPageSize(final HstRequest request, final EssentialsPageable paramInfo) {
         return paramInfo.getPageSize();
     }
 

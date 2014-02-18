@@ -21,7 +21,7 @@ import org.hippoecm.hst.core.parameters.Parameter;
                 value = {"pageSize"}
         )
 })*/
-public interface EssentialsDocumentListComponentInfo {
+public interface EssentialsDocumentListComponentInfo extends EssentialsPageable{
 
 
     @Parameter(name = "path", required = false, displayName = "Documents path")
@@ -54,11 +54,6 @@ public interface EssentialsDocumentListComponentInfo {
     String getSortOrder();
 
 
-    @Parameter(name = "pageSize", required = true, defaultValue = "10", displayName = "Page size", description = "Nr of items per page")
-    int getPageSize();
-
-    @Parameter(name = "showPagination", required = false, displayName = "Show pagination")
-    Boolean getShowPagination();
 
 
 }

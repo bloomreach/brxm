@@ -16,16 +16,35 @@
 
 package org.onehippo.cms7.essentials.components.info;
 
+import org.hippoecm.hst.core.parameters.FieldGroup;
+import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 
 /**
  * @version "$Id$"
  */
-public interface EssentialsListPickerComponentInfo {
+
+@FieldGroupList({
+        @FieldGroup(
+                value = {
+                        "document1",
+                        "document2",
+                        "document3",
+                        "document4",
+                        "document5",
+                        "document6",
+                        "document7",
+                        "document8",
+                        "document9",
+                        "document10"
+                }
+        )
+})
+public interface EssentialsListPickerComponentInfo extends EssentialsPageable {
 
 
-    @Parameter(name = "document1", required = false, displayName = "Carousel item 1")
+    @Parameter(name = "document1", required = false, displayName = "Document item 1")
     @JcrPath(
             pickerConfiguration = "cms-pickers/documents",
             pickerSelectableNodeTypes = {"hippo:document"},
@@ -68,5 +87,6 @@ public interface EssentialsListPickerComponentInfo {
     @Parameter(name = "document10", required = false, displayName = "Document item 10")
     @JcrPath(pickerConfiguration = "cms-pickers/documents", pickerSelectableNodeTypes = {"hippo:document"}, pickerInitialPath = "/content/documents")
     String getDocumentItem10();
+
 
 }
