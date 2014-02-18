@@ -45,6 +45,7 @@ public class EssentialsCarouselComponent extends CommonComponent {
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
         final EssentialsCarouselComponentInfo componentInfo = getComponentParametersInfo(request);
         final List<HippoDocument> items = getCarouselItems(request, componentInfo);
+
         request.setAttribute(ATTRIBUTE_DOCUMENTS, items);
     }
 
@@ -63,15 +64,5 @@ public class EssentialsCarouselComponent extends CommonComponent {
         return beans;
     }
 
-    private void addBeanForPath(final HstRequest request, final String path, final Collection<HippoDocument> beans) {
-        if (Strings.isNullOrEmpty(path)) {
-            return;
-        }
 
-        log.debug("Fetching carousel item for path: [{}]", path);
-        final HippoDocument bean = getHippoBeanForPath(path, HippoDocument.class, request);
-        if (bean != null) {
-            beans.add(bean);
-        }
-    }
 }
