@@ -71,7 +71,8 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
     private PluginController plugins;
     private String[] categories;
     private String[] menuOrder;
-    protected AbstractView view;
+    private final LinkedList<Panel> menuPanels;
+    private final PanelView menuPanelsView;
 
     protected AbstractWorkflowManagerPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -103,7 +104,10 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
             observers = new HashSet<>();
         }
 
-        add(new EmptyPanel("view"));
+        menuPanels = new LinkedList<>();
+        menuPanelsView = new PanelView(menuPanels);
+        add(menuPanelsView);
+
         add(new EmptyPanel("menu"));
     }
 
@@ -160,21 +164,20 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
 
         stopObservation();
 
-        List<Panel> list = new LinkedList<>();
+        menuPanels.clear();
         for (Node node : nodeSet) {
             for (final String category : categories) {
                 List<Panel> panels = buildCategory(node, category);
                 for (Panel panel : panels) {
                     panel.visitChildren(Panel.class, new MenuVisitor(menu, category));
                     panel.setVisible(false);
-                    list.add(panel);
+                    menuPanels.add(panel);
                 }
             }
         }
 
-        replace(view = new PanelView(list));
-        view.populate();
-        view.setVisible(false);
+        menuPanelsView.populate();
+        menuPanelsView.setVisible(false);
 
         startObservation(nodeSet);
 
