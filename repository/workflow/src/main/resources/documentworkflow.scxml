@@ -201,7 +201,7 @@
       <state id="no-publish">
         <onentry>
           <hippo:action action="requestPublication" enabledExpr="false"/>
-          <if cond="dm.isGranted(unpublished, 'hippo:editor')">
+          <if cond="dm.isGranted(unpublished ?: published ?: draft, 'hippo:editor')">
               <hippo:action action="publish" enabledExpr="false"/>
           </if>
         </onentry>
@@ -245,7 +245,7 @@
       <state id="no-depublish">
         <onentry>
           <hippo:action action="requestDepublication" enabledExpr="false"/>
-          <if cond="dm.isGranted(published, 'hippo:editor')"> 
+          <if cond="dm.isGranted(published ?: unpublished ?: draft, 'hippo:editor')">
             <hippo:action action="depublish" enabledExpr="false"/>
           </if>
         </onentry>
