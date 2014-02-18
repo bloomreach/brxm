@@ -7,7 +7,11 @@ package org.onehippo.cms7.essentials.dashboard.ctx;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -207,8 +211,15 @@ public class DefaultPluginContext implements PluginContext {
         if (placeholderData == null) {
             placeholderData = new HashMap<>();
         }
+
         placeholderData.put(EssentialConst.PLACEHOLDER_NAMESPACE, getProjectNamespacePrefix());
         placeholderData.put(EssentialConst.PLACEHOLDER_PROJECT_ROOT, ProjectUtils.getBaseProjectDirectory());
+        DateFormat formatter = new SimpleDateFormat(EssentialConst.REPO_FOLDER_FORMAT);
+        final Date today = Calendar.getInstance().getTime();
+        placeholderData.put(EssentialConst.PLACEHOLDER_DATE_REPO_YYYY_MM, formatter.format(today));
+        formatter = new SimpleDateFormat("yyyy" + File.separator + "MM");
+        final String fileFolder = formatter.format(today);
+        placeholderData.put(EssentialConst.PLACEHOLDER_DATE_FILE_YYYY_MM, fileFolder);
         placeholderData.put(EssentialConst.PLACEHOLDER_SITE_ROOT, ProjectUtils.getSite().getAbsolutePath());
         placeholderData.put(EssentialConst.PLACEHOLDER_SITE_WEB_ROOT, ProjectUtils.getSite().getAbsolutePath() + File.separator + EssentialConst.PATH_REL_WEB_ROOT);
         placeholderData.put(EssentialConst.PLACEHOLDER_SITE_FREEMARKER_ROOT, ProjectUtils.getSite().getAbsolutePath() + File.separator + EssentialConst.FREEMARKER_RELATIVE_FOLDER);

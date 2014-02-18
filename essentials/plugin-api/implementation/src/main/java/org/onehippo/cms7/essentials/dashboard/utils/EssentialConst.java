@@ -24,6 +24,8 @@ public final class EssentialConst {
      */
     public static final String PLACEHOLDER_NAMESPACE = "namespace";
     public static final String PLACEHOLDER_PROJECT_ROOT = "projectRoot";
+    public static final String PLACEHOLDER_DATE_REPO_YYYY_MM = "dateRepoYearMonth";
+    public static final String PLACEHOLDER_DATE_FILE_YYYY_MM = "dateFileYearMonth";
     public static final String PLACEHOLDER_SITE_ROOT = "siteRoot";
     public static final String PLACEHOLDER_SITE_WEB_ROOT = "siteWebRoot";
     public static final String PLACEHOLDER_SITE_FREEMARKER_ROOT = "freemarkerRoot";
@@ -112,6 +114,7 @@ public final class EssentialConst {
     public static final String HIPPO_DOCUMENT_IMPORT = "org.hippoecm.hst.content.beans.standard.HippoDocument";
     public static final String CONTENT_BLOCKS_TEMPLATE_XML = "content_blocks_template.xml";
     public static final String INSTRUCTION_GROUP_DEFAULT = "default";
+    public static final String REPO_FOLDER_FORMAT = "yyyy/MM";
 
 
     private EssentialConst() {

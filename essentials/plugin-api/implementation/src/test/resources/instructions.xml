@@ -10,6 +10,6 @@
   </instructionSet>
   <!-- DEFAULT GROUP-->
   <instructionSet>
-    <folder path="/foo/bar/foobar2" template="my_folder_template.xml"/>
+    <folder path="/foo/bar/foobar2/{{dateRepoYearMonth}}" template="my_folder_template.xml"/>
   </instructionSet>
 </instructions>

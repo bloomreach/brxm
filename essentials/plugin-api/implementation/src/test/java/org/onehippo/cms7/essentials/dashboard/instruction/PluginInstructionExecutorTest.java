@@ -17,9 +17,14 @@
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.jcr.Session;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
@@ -34,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @version "$Id$"
@@ -93,8 +99,13 @@ public class PluginInstructionExecutorTest extends BaseRepositoryTest {
                 pluginInstructionExecutor.execute(instructionSet, getContext());
             }
         }
-
-        // default group has only 1 instruciton
+        // check if date folder is created
+        DateFormat formatter = new SimpleDateFormat(EssentialConst.REPO_FOLDER_FORMAT);
+        final Date today = Calendar.getInstance().getTime();
+        final String folder = formatter.format(today);
+        final String folderPath = "/foo/bar/foobar2/" + folder;
+        assertTrue(session.nodeExists(folderPath));
+        // default group has only 1 instruction
         assertEquals(1, listener.getNrInstructions());
 
 
