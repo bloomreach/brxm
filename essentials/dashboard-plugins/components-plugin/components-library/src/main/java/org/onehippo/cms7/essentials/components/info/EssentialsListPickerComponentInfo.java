@@ -31,42 +31,42 @@ public interface EssentialsListPickerComponentInfo {
             pickerSelectableNodeTypes = {"hippo:document"},
             pickerInitialPath = "/content/documents"
     )
-    String getCarouselItem1();
+    String getDocumentItem1();
 
-    @Parameter(name = "document2", required = false, displayName = "Carousel item 2")
+    @Parameter(name = "document2", required = false, displayName = "Document item 2")
     @JcrPath(pickerConfiguration = "cms-pickers/documents", pickerSelectableNodeTypes = {"hippo:document"}, pickerInitialPath = "/content/documents")
-    String getCarouselItem2();
+    String getDocumentItem2();
 
-    @Parameter(name = "document3", required = false, displayName = "Carousel item 3")
+    @Parameter(name = "document3", required = false, displayName = "Document item 3")
     @JcrPath(pickerConfiguration = "cms-pickers/documents", pickerSelectableNodeTypes = {"hippo:document"}, pickerInitialPath = "/content/documents")
-    String getCarouselItem3();
+    String getDocumentItem3();
 
-    @Parameter(name = "document4", required = false, displayName = "Carousel item 4")
+    @Parameter(name = "document4", required = false, displayName = "Document item 4")
     @JcrPath(pickerConfiguration = "cms-pickers/documents", pickerSelectableNodeTypes = {"hippo:document"}, pickerInitialPath = "/content/documents")
-    String getCarouselItem4();
+    String getDocumentItem4();
 
-    @Parameter(name = "document5", required = false, displayName = "Carousel item 5")
+    @Parameter(name = "document5", required = false, displayName = "Document item 5")
     @JcrPath(pickerConfiguration = "cms-pickers/documents", pickerSelectableNodeTypes = {"hippo:document"}, pickerInitialPath = "/content/documents")
-    String getCarouselItem5();
+    String getDocumentItem5();
 
-    @Parameter(name = "document6", required = false, displayName = "Carousel item 6")
+    @Parameter(name = "document6", required = false, displayName = "Document item 6")
     @JcrPath(pickerConfiguration = "cms-pickers/documents", pickerSelectableNodeTypes = {"hippo:document"}, pickerInitialPath = "/content/documents")
-    String getCarouselItem6();
+    String getDocumentItem6();
 
-    @Parameter(name = "document7", required = false, displayName = "Carousel item 7")
+    @Parameter(name = "document7", required = false, displayName = "Document item 7")
     @JcrPath(pickerConfiguration = "cms-pickers/documents", pickerSelectableNodeTypes = {"hippo:document"}, pickerInitialPath = "/content/documents")
-    String getCarouselItem7();
+    String getDocumentItem7();
 
-    @Parameter(name = "document8", required = false, displayName = "Carousel item 8")
+    @Parameter(name = "document8", required = false, displayName = "Document item 8")
     @JcrPath(pickerConfiguration = "cms-pickers/documents", pickerSelectableNodeTypes = {"hippo:document"}, pickerInitialPath = "/content/documents")
-    String getCarouselItem8();
+    String getDocumentItem8();
 
-    @Parameter(name = "document9", required = false, displayName = "Carousel item 9")
+    @Parameter(name = "document9", required = false, displayName = "Document item 9")
     @JcrPath(pickerConfiguration = "cms-pickers/documents", pickerSelectableNodeTypes = {"hippo:document"}, pickerInitialPath = "/content/documents")
-    String getCarouselItem9();
+    String getDocumentItem9();
 
-    @Parameter(name = "document10", required = false, displayName = "Carousel item 10")
+    @Parameter(name = "document10", required = false, displayName = "Document item 10")
     @JcrPath(pickerConfiguration = "cms-pickers/documents", pickerSelectableNodeTypes = {"hippo:document"}, pickerInitialPath = "/content/documents")
-    String getCarouselItem10();
+    String getDocumentItem10();
 
 }
