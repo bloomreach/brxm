@@ -79,27 +79,6 @@
                 $scope.createNewPage = function () {
                     $state.go('menu-item.add-page', { menuItemId: $stateParams.menuItemId });
                 };
-
-                // delete menu item
-                $scope.deleteMenuItem = function () {
-                    console.log('Execute delete menu item');
-                    var menuItemId = $stateParams.menuItemId;
-
-                    MenuService.deleteMenuItem(menuItemId).then(function () {
-                        MenuService.getFirstMenuItemId().then(
-                            function (firstMenuItemId) {
-                                // TODO: be smarter about which item we select. For now we select the first one again
-                                $state.go('menu-item.edit', {
-                                    menuItemId: firstMenuItemId
-                                });
-                            },
-                            function (error) {
-                                // TODO show error in UI
-                                $log.error(error);
-                            }
-                        );
-                    });
-                };
             }
         ])
 

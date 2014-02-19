@@ -21,11 +21,37 @@
 
         .controller('hippo.channelManager.menuManager.MenuItemCtrl', [
             '$scope',
+            '$state',
             '$stateParams',
-            function ($scope, $stateParams) {
-                $scope.confirmation = { show: false };
-                $scope.setShowConfirmation = function (value) {
-                    $scope.confirmation.show = value;
+            '$log',
+            'hippo.channelManager.menuManager.MenuService',
+            function ($scope, $state, $stateParams, $log, MenuService) {
+                $scope.confirmation = {
+                    isVisible: false
+                };
+
+                $scope.deleteMenuItem = function () {
+                    // TODO: get the actual menuItemId, stateParams does not contain menuItemId
+                    var menuItemId = $stateParams.menuItemId;
+
+                    MenuService.deleteMenuItem(menuItemId).then(function () {
+                        MenuService.getFirstMenuItemId().then(
+                            function (firstMenuItemId) {
+                                // TODO: be smarter about which item we select. For now we select the first one again
+                                $state.go('menu-item.edit', {
+                                    menuItemId: firstMenuItemId
+                                });
+                            },
+                            function (error) {
+                                // TODO show error in UI
+                                $log.error(error);
+                            }
+                        );
+                    });
+                };
+
+                $scope.logIt = function(it) {
+                    $log.info(it);
                 };
             }
         ]);

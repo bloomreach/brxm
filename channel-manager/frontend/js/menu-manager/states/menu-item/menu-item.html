@@ -28,15 +28,18 @@
         <div ui-view class="col-sm-8" id="form-panel"></div>
 
         <!-- START confirmation dialog -->
-        <div class="overlay" data-ng-show="confirmation.show">&#160;</div>
-        <div class="feedback alert alert-warning clearfix" data-ng-class="{'feedback-show': confirmation.show}">
+        <div class="overlay" data-ng-show="confirmation.isVisible">&#160;</div>
+        <div class="feedback alert alert-warning clearfix" data-ng-class="{'feedback-show': confirmation.isVisible}">
             <p>
                 Are you sure you want to remove this menu item?
             </p>
             <p class="text-right buttons">
-                <a href="#" data-ng-click="deleteMenuItem();setShowConfirmation(false);" class="btn btn-default btn-sm"><strong><i class="fa fa-trash-o"></i> Delete item</strong></a>
+                <a href="#" class="btn btn-default btn-sm"
+                   data-ng-click="deleteMenuItem(); confirmation.isVisible = false">
+                    <strong><i class="fa fa-trash-o"></i> Delete item</strong>
+                </a>
                 &nbsp;&nbsp;
-                <a href="#" data-ng-click="setShowConfirmation(false)">Cancel</a>
+                <a href="#" data-ng-click="confirmation.isVisible = false">Cancel</a>
             </p>
         </div>
         <!-- END confirmation dialog -->
@@ -44,13 +47,16 @@
     </div>
     <div class="row">
         <div id="add" class="col-sm-4" data-ng-controller="hippo.channelManager.menuManager.TreeActionsCtrl">
-            <button type="button" class="btn btn-default btn-block" ng-click="addMenuItem()"><i class="fa fa-plus"></i> {{ 'ADD_MENU_ITEM' | translate }}</button>
+            <button type="button" class="btn btn-default btn-block"
+                    data-ng-click="addMenuItem()">
+                <i class="fa fa-plus"></i> {{ 'ADD_MENU_ITEM' | translate }}
+            </button>
         </div>
         <div id="actions" class="col-sm-8" data-ng-controller="hippo.channelManager.menuManager.MenuItemActionsCtrl">
-            <button type="button" class="btn btn-default" data-ng-click="setShowConfirmation(true)"><i class="fa fa-trash-o"></i> {{ 'DELETE_MENU_ITEM' | translate }}</button>
+            <button type="button" class="btn btn-default" data-ng-click="confirmation.isVisible = true"><i class="fa fa-trash-o"></i> {{ 'DELETE_MENU_ITEM' | translate }}</button>
             <button type="button" class="btn btn-default pull-right"
-                    ng-disabled="hasOutstandingChanges()"
-                    ng-click="closeContainer()">
+                    data-ng-disabled="hasOutstandingChanges()"
+                    data-ng-click="closeContainer()">
                 <i class="fa fa-check"></i> {{ 'CLOSE_WINDOW' | translate }}
             </button>
         </div>
