@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -77,8 +77,7 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
     /** The underlying workspace instance. */
     protected final Workspace workspace;
     protected Session session;
-    protected WorkflowManager workflowManager;
-    private SessionDecorator rootSession;
+    protected WorkflowManagerImpl workflowManager;
 
     /**
      * Creates a workspace decorator.
@@ -92,17 +91,6 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
         this.session = session;
         this.workspace = workspace;
         workflowManager = null;
-        rootSession = null;
-    }
-
-    @Override
-    protected void finalize() {
-        if (rootSession != null) {
-            if (rootSession.isLive()) {
-                rootSession.logout();
-            }
-            rootSession = null;
-        }
     }
 
     public void postMountEnabled(boolean enabled) {
@@ -128,28 +116,9 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
 
     @Override
     public WorkflowManager getWorkflowManager() throws RepositoryException {
-        if (rootSession == null) {
-            Repository repository = RepositoryDecorator.unwrap(session.getRepository());
-            try {
-                if (repository instanceof RepositoryImpl) {
-                    rootSession = (SessionDecorator) factory.getSessionDecorator(session.getRepository(), session
-                            .impersonate(new SimpleCredentials("workflowuser", new char[] {}))); // FIXME: hardcoded workflowuser
-                }
-            } catch (LoginException ex) {
-                logger.debug("User " + session.getUserID() + " is not allowed to impersonate to workflow session", ex);
-                throw new AccessDeniedException("User " + session.getUserID()
-                        + " is not allowed to obtain the workflow manager", ex);
-            } catch (RepositoryException ex) {
-                logger.error("Error while trying to obtain workflow session " + ex.getClass().getName() + ": "
-                        + ex.getMessage(), ex);
-                throw new RepositoryException("Error while trying to obtain workflow session", ex);
-            }
-        }
-
         if (workflowManager == null) {
-            workflowManager = new WorkflowManagerImpl(session, rootSession);
+            workflowManager = new WorkflowManagerImpl(session);
         }
-
         return workflowManager;
     }
 
@@ -365,5 +334,11 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
             AccessDeniedException, PathNotFoundException, ItemExistsException, LockException, RepositoryException {
         super.move(srcAbsPath, destAbsPath);
         touch(destAbsPath);
+    }
+
+    void dispose() {
+        if (workflowManager != null) {
+            workflowManager.close();
+        }
     }
 }

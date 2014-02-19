@@ -88,7 +88,7 @@ public class WorkflowManagerTest extends RepositoryTestCase {
 
     @Test
     public void subtypeIsResolvedOnHandle() throws RepositoryException {
-        WorkflowManagerImpl workflowManager = new WorkflowManagerImpl(session, session);
+        WorkflowManagerImpl workflowManager = new WorkflowManagerImpl(session);
         final Node handle = session.getNode("/test/doc");
         final TestWorkflow workflow = (TestWorkflow) workflowManager.getWorkflow("testworkflow", handle);
         assertNotNull(workflow);
@@ -97,7 +97,7 @@ public class WorkflowManagerTest extends RepositoryTestCase {
 
     @Test
     public void invalidSubtypeIsNotResolvedOnHandle() throws RepositoryException {
-        WorkflowManagerImpl workflowManager = new WorkflowManagerImpl(session, session);
+        WorkflowManagerImpl workflowManager = new WorkflowManagerImpl(session);
         final Node handle = session.getNode("/test/doc");
         session.getNode("/test/doc/doc").setPrimaryType("hippo:document");
         final TestWorkflow workflow = (TestWorkflow) workflowManager.getWorkflow("testworkflow", handle);
@@ -106,7 +106,7 @@ public class WorkflowManagerTest extends RepositoryTestCase {
 
     @Test
     public void typeIsResolvedOnDocument() throws RepositoryException {
-        WorkflowManagerImpl workflowManager = new WorkflowManagerImpl(session, session);
+        WorkflowManagerImpl workflowManager = new WorkflowManagerImpl(session);
         final Node doc = session.getNode("/test/doc/doc");
         final TestWorkflow workflow = (TestWorkflow) workflowManager.getWorkflow("testworkflow", doc);
         assertNotNull(workflow);

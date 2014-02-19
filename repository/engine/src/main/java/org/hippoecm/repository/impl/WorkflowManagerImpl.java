@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
 
 import org.hippoecm.repository.Modules;
@@ -81,36 +82,28 @@ public class WorkflowManagerImpl implements WorkflowManager {
      * a user.  It is however not used to instantiate workflows, persist and as execution context when performing a
      * workflow step (i.e. method invocation).
      */
-    Session session;
+    private Session session;
     Session rootSession;
     String configuration;
     List<WorkflowInvocation> invocationChain;
     ListIterator<WorkflowInvocation> invocationIndex;
     WorkflowEventLoggerWorkflow eventLoggerWorkflow;
 
-    public WorkflowManagerImpl(Session session, Session rootSession) {
+    public WorkflowManagerImpl(Session session) throws RepositoryException {
         this.session = session;
-        this.rootSession = rootSession;
-        try {
-            configuration = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH + "/" +
-                    HippoNodeType.WORKFLOWS_PATH).getIdentifier();
-            if (session.nodeExists("/hippo:log")) {
-                final Node logFolder = session.getNode("/hippo:log");
-                final WorkflowDefinition workflowDefinition = getWorkflowDefinition("internal", logFolder);
-                Workflow workflow = createWorkflow(logFolder, workflowDefinition);
-                if (workflow instanceof WorkflowEventLoggerWorkflow) {
-                    eventLoggerWorkflow = (WorkflowEventLoggerWorkflow) workflow;
-                }
+        this.rootSession = session.impersonate(new SimpleCredentials("workflowuser", new char[] {}));
+        configuration = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH + "/" +
+                HippoNodeType.WORKFLOWS_PATH).getIdentifier();
+        if (session.nodeExists("/hippo:log")) {
+            final Node logFolder = session.getNode("/hippo:log");
+            final WorkflowDefinition workflowDefinition = getWorkflowDefinition("internal", logFolder);
+            Workflow workflow = createWorkflow(logFolder, workflowDefinition);
+            if (workflow instanceof WorkflowEventLoggerWorkflow) {
+                eventLoggerWorkflow = (WorkflowEventLoggerWorkflow) workflow;
             }
-            if (eventLoggerWorkflow == null) {
-                eventLoggerWorkflow = new WorkflowEventLoggerWorkflowImpl(rootSession);
-            }
-        } catch (PathNotFoundException ex) {
-            log.info("No workflow configuration found. Workflow not started.");
-        } catch (RepositoryException ex) {
-            log.error("Workflow manager configuration failed: " + ex.getMessage(), ex);
-        } catch (WorkflowException e) {
-            log.error("Failed to create workflow logger: " + e.getMessage(), e);
+        }
+        if (eventLoggerWorkflow == null) {
+            eventLoggerWorkflow = new WorkflowEventLoggerWorkflowImpl(rootSession);
         }
     }
 
@@ -402,6 +395,13 @@ public class WorkflowManagerImpl implements WorkflowManager {
     @Override
     public WorkflowManager getContextWorkflowManager(Object specification) throws MappingException, RepositoryException {
         return null;
+    }
+
+    public void close() {
+        if (rootSession != null && rootSession.isLive()) {
+            rootSession.logout();
+            rootSession = null;
+        }
     }
 
     class WorkflowInvocationHandler implements InvocationHandler {
