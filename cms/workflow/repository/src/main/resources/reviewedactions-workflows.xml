@@ -76,23 +76,23 @@
           <sv:value>${item}</sv:value>
         </sv:property>
       </sv:node>
-      <sv:node sv:name="requests">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:plugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="plugin.class" sv:type="String">
-          <sv:value>org.hippoecm.frontend.plugins.reviewedactions.RequestsWorkflowPlugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="wicket.id" sv:type="String">
-          <sv:value>${item}</sv:value>
-        </sv:property>
-      </sv:node>
       <sv:node sv:name="top">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugin</sv:value>
         </sv:property>
         <sv:property sv:name="plugin.class" sv:type="String">
           <sv:value>org.hippoecm.frontend.plugins.reviewedactions.PreviewWorkflowPlugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.id" sv:type="String">
+          <sv:value>${item}</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="requests">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+          <sv:value>org.hippoecm.frontend.plugins.reviewedactions.RequestsWorkflowPlugin</sv:value>
         </sv:property>
         <sv:property sv:name="wicket.id" sv:type="String">
           <sv:value>${item}</sv:value>
