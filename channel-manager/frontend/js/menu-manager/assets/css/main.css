@@ -123,19 +123,26 @@ form h4.page-header {
     width: 100%;
     padding: 20px 25px 20px 25px;
     z-index: 999999;
-    transition: .3s ease-out;
-    top: -96px;
+    transition: .2s ease-out;
+    top: -117px;
     border-radius: 0;
     border-top: none;
-    left: 0;
+    left: -120px;
+    padding: 30px 20px;
+    padding-bottom: 16px;
+    border-color: #cac6af;
 }
 
 .feedback.feedback-show {
     top: 0;
 }
 
-.feedback a {
-    color: #8a6d3b;
+.feedback p, .feedback a {
+    color: #2c2c2d;
+}
+
+.feedback p {
+    font-weight: bold;
 }
 
 .feedback .confirm {
