@@ -92,7 +92,7 @@
     <!-- Project Dependencies -->
     <commons-io.version>1.4</commons-io.version>
     <lucene.version>2.2.0</lucene.version>
-    <tika.version>0.9</tika.version>
+    <tika.version>1.3</tika.version>
     <xmlbeans-java6.version>2.3.0</xmlbeans-java6.version>
     <pdfbox.version>1.7.1</pdfbox.version>
     <quartz.version>1.8.5</quartz.version>
