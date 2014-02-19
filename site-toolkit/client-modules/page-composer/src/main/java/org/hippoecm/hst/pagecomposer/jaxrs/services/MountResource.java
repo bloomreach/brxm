@@ -128,11 +128,13 @@ public class MountResource extends AbstractConfigResource {
     public Response getUsersWithChanges() {
         final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
         try {
+
             HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
             String previewConfigurationPath = getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
 
             Set<String> usersWithLockedMainConfigNode = findUsersWithLockedMainConfigNodes(session, previewConfigurationPath);
             Set<String> usersWithLockedContainers = findUsersWithLockedContainers(session, previewConfigurationPath);
+            Set<String> usersWithLockedMenus = findUsersWithLockedMenus(session, previewConfigurationPath);
             Set<String> usersWithLocks = new HashSet<String>();
             Channel previewChannel = getPageComposerContextService().getEditingPreviewChannel();
             if (previewChannel != null && previewChannel.getChannelNodeLockedBy() != null) {
@@ -140,12 +142,19 @@ public class MountResource extends AbstractConfigResource {
             }
             usersWithLocks.addAll(usersWithLockedMainConfigNode);
             usersWithLocks.addAll(usersWithLockedContainers);
+            usersWithLocks.addAll(usersWithLockedMenus);
             List<UserRepresentation> usersWithChanges = new ArrayList<UserRepresentation>(usersWithLocks.size());
             for (String userId : usersWithLocks) {
                 usersWithChanges.add(new UserRepresentation(userId));
             }
-            log.info("Found " + usersWithChanges.size() + " users with changes");
-            return ok("Found " + usersWithChanges.size() + " users with changes", usersWithChanges);
+            // TODO (meggermont): remove duplication by using ChannelLazyLoadingChangedBySet
+            // It seems ChannelLazyLoadingChangedBySet.load() does about the same as what happens here
+            // so it seems logical to reuse functionality by instantiating such a set here and get the
+            // set of users with changes from it.
+
+            final String msg = "Found " + usersWithChanges.size() + " users with changes";
+            log.info(msg);
+            return ok(msg, usersWithChanges);
         } catch (LoginException e) {
             log.warn("Could not get a JCR session. Cannot retrieve users with changes.", e);
             return error("Could not get a JCR session: " + e + ". Cannot retrieve users with changes.");
@@ -162,6 +171,11 @@ public class MountResource extends AbstractConfigResource {
 
     static Set<String> findUsersWithLockedContainers(final HippoSession session, String previewConfigurationPath) throws RepositoryException {
         final String xpath = buildXPathQueryToFindLockedContainersForUsers(previewConfigurationPath);
+        return collectFromQueryUsersForLockedBy(session, xpath);
+    }
+
+    static Set<String> findUsersWithLockedMenus(final HippoSession session, String previewConfigurationPath) throws RepositoryException {
+        final String xpath = buildXPathQueryToFindLockedMenusForUsers(previewConfigurationPath);
         return collectFromQueryUsersForLockedBy(session, xpath);
     }
 
@@ -505,6 +519,10 @@ public class MountResource extends AbstractConfigResource {
                 + "[@" + HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY + " != '']";
     }
 
+    static String buildXPathQueryToFindLockedMenusForUsers(String previewConfigurationPath) {
+        return "/jcr:root" + ISO9075.encodePath(previewConfigurationPath) + "//element(*," + HstNodeTypes.NODETYPE_HST_SITEMENU + ")"
+                + "[@" + HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY + " != '']";
+    }
 
     static String buildXPathQueryToFindContainersForUsers(String previewConfigurationPath, List<String> userIds) {
         if (userIds.isEmpty()) {

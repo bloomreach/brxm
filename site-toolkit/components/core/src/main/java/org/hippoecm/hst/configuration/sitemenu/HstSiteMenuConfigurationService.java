@@ -16,6 +16,7 @@
 package org.hippoecm.hst.configuration.sitemenu;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,15 +34,20 @@ public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration
     private HstSiteMenusConfiguration hstSiteMenusConfiguration;
     private List<HstSiteMenuItemConfiguration> siteMenuItems = new ArrayList<HstSiteMenuItemConfiguration>();
 
+    private String lockedBy;
+    private Calendar lockedOn;
+
     public HstSiteMenuConfigurationService(HstSiteMenusConfiguration hstSiteMenusConfiguration, HstNode siteMenu) {
         this.hstSiteMenusConfiguration = hstSiteMenusConfiguration;
         this.name = StringPool.get(siteMenu.getValueProvider().getName());
         this.canonicalIdentifier = siteMenu.getValueProvider().getIdentifier();
         this.workspaceConfiguration = ConfigurationUtils.isWorkspaceConfig(siteMenu);
-        for(HstNode siteMenuItem : siteMenu.getNodes()) {
+        for (HstNode siteMenuItem : siteMenu.getNodes()) {
             HstSiteMenuItemConfiguration siteMenuItemConfiguration = new HstSiteMenuItemConfigurationService(siteMenuItem, null, this);
             siteMenuItems.add(siteMenuItemConfiguration);
         }
+        this.lockedBy = siteMenu.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY);
+        this.lockedOn = siteMenu.getValueProvider().getDate(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON);
     }
 
 
@@ -67,4 +73,13 @@ public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration
         return hstSiteMenusConfiguration;
     }
 
+    @Override
+    public String getLockedBy() {
+        return lockedBy;
+    }
+
+    @Override
+    public Calendar getLockedOn() {
+        return lockedOn;
+    }
 }

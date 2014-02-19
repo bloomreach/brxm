@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
@@ -61,7 +63,16 @@ public class ChannelLazyLoadingChangedBySet implements Set<String> {
         for (HstComponentConfiguration hstComponentConfiguration : componentsConfiguration.getComponentConfigurations().values()) {
             addUsersWithContainerLock(hstComponentConfiguration, usersWithLock);
         }
+        for (ConfigurationLockInfo each : previewHstSite.getSiteMenusConfiguration().getSiteMenuConfigurations().values()) {
+            addUserWithSiteMenuLock(each.getLockedBy(), usersWithLock);
+        }
         return usersWithLock;
+    }
+
+    private static void addUserWithSiteMenuLock(String lockedBy, Set<String> usersWithLock) {
+        if (StringUtils.isNotBlank(lockedBy)) {
+            usersWithLock.add(lockedBy);
+        }
     }
 
     private static void addUsersWithContainerLock(final HstComponentConfiguration config, final Set<String> usersWithLock) {
