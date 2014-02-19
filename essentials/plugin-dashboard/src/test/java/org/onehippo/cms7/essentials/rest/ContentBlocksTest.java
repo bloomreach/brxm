@@ -59,7 +59,7 @@ public class ContentBlocksTest {
         cbPayload.setDocumentTypes(types);
         String jsonOutput = mapper.writeValueAsString(cbPayload);
         assertTrue(StringUtils.isNotEmpty(jsonOutput));
-        log.error("jsonOutput {}", jsonOutput);
+        log.info("jsonOutput {}", jsonOutput);
         final CBPayload payload = mapper.readValue(jsonOutput, CBPayload.class);
         assertEquals(2, payload.getDocumentTypes().getItems().size());
 
