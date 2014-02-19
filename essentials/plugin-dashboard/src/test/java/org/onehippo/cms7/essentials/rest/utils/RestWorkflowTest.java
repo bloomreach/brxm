@@ -25,7 +25,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @version "$Id$"
  */
-public class RestWorkflowTest extends BaseRepositoryTest{
+public class RestWorkflowTest extends BaseRepositoryTest {
 
     @Test
     public void testAddCompoundType() throws Exception {
@@ -41,7 +41,7 @@ public class RestWorkflowTest extends BaseRepositoryTest{
     public void testAddCompoundTypeFail() throws Exception {
 
 
-        final RestWorkflow workflow = new RestWorkflow(getContext().getSession(), "nonexistingNamesace",getContext());
+        final RestWorkflow workflow = new RestWorkflow(getContext().getSession(), "nonexistingNamesace", getContext());
         workflow.addContentBlockCompound("testing");
 
     }

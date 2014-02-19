@@ -4,8 +4,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonSubTypes;
-import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
+import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.rest.model.RestList;
 
 

@@ -16,9 +16,6 @@
 
 package org.onehippo.cms7.essentials.dashboard.model;
 
-import org.codehaus.jackson.annotate.JsonSubTypes;
-import org.codehaus.jackson.annotate.JsonTypeInfo;
-
 /**
  * @version "$Id$"
  */

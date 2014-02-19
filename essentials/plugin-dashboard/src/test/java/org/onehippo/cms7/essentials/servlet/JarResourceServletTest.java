@@ -26,7 +26,6 @@ import static org.junit.Assert.assertTrue;
 public class JarResourceServletTest {
 
 
-
     @Test
     public void testPattern() throws Exception {
         final JarResourceServlet servlet = new JarResourceServlet();

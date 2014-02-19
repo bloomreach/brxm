@@ -39,8 +39,6 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
-import org.onehippo.cms7.essentials.dashboard.model.EssentialsPlugin;
-import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.config.DefaultDocumentManager;
 import org.onehippo.cms7.essentials.dashboard.config.DocumentManager;
 import org.onehippo.cms7.essentials.dashboard.config.InstallerDocument;
@@ -52,6 +50,9 @@ import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.installer.InstallState;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.model.EssentialsPlugin;
+import org.onehippo.cms7.essentials.dashboard.model.Plugin;
+import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
 import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
@@ -61,7 +62,6 @@ import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.rest.model.ControllerRestful;
-import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
 import org.onehippo.cms7.essentials.rest.model.RestList;
 import org.onehippo.cms7.essentials.rest.model.StatusRestful;
 import org.onehippo.cms7.essentials.servlet.DynamicRestPointsApplication;
@@ -206,7 +206,7 @@ public class PluginResource extends BaseResource {
         final RestfulList<MessageRestful> messageRestfulRestfulList = new RestList<>();
         final Map<String, String> values = payloadRestful.getValues();
         final String pluginClass = values.get("pluginClass");
-        if(Strings.isNullOrEmpty(pluginClass)){
+        if (Strings.isNullOrEmpty(pluginClass)) {
             final MessageRestful resource = new MessageRestful("No valid powerpack was selected");
             resource.setSuccessMessage(false);
             messageRestfulRestfulList.add(resource);

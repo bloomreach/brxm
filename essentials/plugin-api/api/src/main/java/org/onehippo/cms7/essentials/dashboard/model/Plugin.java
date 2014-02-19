@@ -9,8 +9,6 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.codehaus.jackson.annotate.JsonSubTypes;
-
 
 /**
  * @version "$Id$"

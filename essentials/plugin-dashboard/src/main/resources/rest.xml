@@ -20,7 +20,7 @@
   </plugin>
   <plugin>
     <dependency>
-    <artifactId>dashboard-easyforms-plugin</artifactId>
+      <artifactId>dashboard-easyforms-plugin</artifactId>
       <groupId>org.onehippo.cms7.essentials</groupId>
       <repositoryId></repositoryId>
       <repositoryUrl></repositoryUrl>

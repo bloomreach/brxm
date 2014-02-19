@@ -25,11 +25,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonSubTypes;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
-import org.onehippo.cms7.essentials.dashboard.model.VendorRestful;
 
 import com.google.common.collect.Lists;
 import com.wordnik.swagger.annotations.ApiModel;

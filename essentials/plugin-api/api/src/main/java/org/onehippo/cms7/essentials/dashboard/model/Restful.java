@@ -18,9 +18,6 @@ package org.onehippo.cms7.essentials.dashboard.model;
 
 import java.io.Serializable;
 
-import org.codehaus.jackson.annotate.JsonSubTypes;
-import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
-
 /**
  * @version "$Id$"
  */

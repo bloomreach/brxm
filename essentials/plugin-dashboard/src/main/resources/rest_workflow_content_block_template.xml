@@ -22,7 +22,7 @@
         <sv:value>hipposysedit:remodel</sv:value>
         <sv:value>hippo:harddocument</sv:value>
       </sv:property>
-      <sv:property sv:multiple="true" sv:name="hippo:paths" sv:type="String" />
+      <sv:property sv:multiple="true" sv:name="hippo:paths" sv:type="String"/>
       <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
         <sv:value>true</sv:value>
       </sv:property>

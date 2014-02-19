@@ -65,6 +65,5 @@ public class PluginRestfulTest {
         assertEquals(vendor.getName(), fromXml.getVendor().getName());
 
 
-
     }
 }

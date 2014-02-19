@@ -13,8 +13,8 @@ import java.util.Map;
 
 import javax.jcr.Session;
 
-import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
+import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 
 import com.google.common.collect.Multimap;
 
