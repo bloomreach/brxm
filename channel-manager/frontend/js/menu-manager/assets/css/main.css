@@ -131,16 +131,13 @@ form h4.page-header {
 
 .feedback {
     position: absolute;
-    width: 100%;
-    padding: 20px 25px 20px 25px;
     z-index: 999999;
     transition: .2s ease-out;
     top: -117px;
     border-radius: 0;
     border-top: none;
     left: 190px;
-    padding: 30px 20px;
-    padding-bottom: 16px;
+    padding: 30px 20px 16px 20px;
     border-color: #cac6af;
     width: 500px;
 }
