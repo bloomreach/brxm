@@ -16,7 +16,6 @@
 package org.hippoecm.hst.core.jcr;
 
 import java.io.Serializable;
-import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 
 import javax.jcr.Credentials;
@@ -102,7 +101,7 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
 
         return lazySession;
     }
-    
+
     protected static class SessionsRefreshCounter implements Serializable {
         
         private static final long serialVersionUID = 1L;
@@ -123,21 +122,14 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
         private static final long serialVersionUID = 1L;
         
         private transient Repository repository;
-        private transient WeakReference<Session> sessionWeakRef;
+        private transient Session session;
         private Credentials credentials;
         private String workspaceName;
         private boolean logoutOnSessionUnbound;
         private long lastLoggedIn;
         private long lastRefreshed;
         private SessionsRefreshCounter sessionsRefreshCounter;
-        
-        public LazySessionInvoker() {
-        }
-        
-        public LazySessionInvoker(Repository repository, Credentials credentials, String workspaceName) {
-            this(repository, credentials, workspaceName, false);
-        }
-        
+
         public LazySessionInvoker(Repository repository, Credentials credentials, String workspaceName, boolean logoutOnSessionUnbound) {
             this.repository = repository;
             this.credentials = credentials;
@@ -174,7 +166,6 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
             }
             
             if (Session.class.isAssignableFrom(declaringClass)) {
-                Session session = (sessionWeakRef != null ? sessionWeakRef.get() : null);
                 
                 if (session == null) {
                     if ("logout".equals(methodName)) {
@@ -206,7 +197,6 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
                     }
                     
                     lastLoggedIn = System.currentTimeMillis();
-                    sessionWeakRef = new WeakReference<Session>(session);
                 }
                 
                 Object ret = null;
@@ -251,7 +241,6 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
             
             // to override default toString() implemented in AbstractInvocationHandler.
             if ("toString".equals(methodName)) {
-                Session session = (sessionWeakRef != null ? sessionWeakRef.get() : null);
                 return super.toString() + " (" + session + ")";
             }
             
@@ -262,14 +251,7 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
             if (!logoutOnSessionUnbound) {
                 return;
             }
-            
-            Session session = null;
-            
-            if (sessionWeakRef != null) {
-                session = sessionWeakRef.get();
-                sessionWeakRef.clear();
-            }
-            
+
             lastLoggedIn = 0L;
             lastRefreshed = 0L;
             
@@ -282,7 +264,7 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
                 if (session.isLive()) {
                     session.logout();
                 }
-
+                session = null;
                 log.debug("LazySession's session is logged out.");
             } catch (Throwable th) {
                 if (log.isDebugEnabled()) {
@@ -292,12 +274,7 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
                 }
             }
         }
-        
-        @Override
-        protected void finalize() {
-            log.debug("LazySession object is being finalized.");
-            clearSession();
-        }
+
     }
 
 }
