@@ -27,6 +27,20 @@
 
         <div ui-view class="col-sm-8" id="form-panel"></div>
 
+        <!-- START confirmation dialog -->
+        <div class="overlay" data-ng-show="confirmation.show">&#160;</div>
+        <div class="feedback alert alert-warning clearfix" data-ng-class="{'feedback-show': confirmation.show}">
+            <p>
+                Are you sure you want to remove this menu item?
+            </p>
+            <p class="text-right buttons">
+                <a href="#" data-ng-click="deleteMenuItem();setShowConfirmation(false);" class="btn btn-default btn-sm"><strong><i class="fa fa-trash-o"></i> Delete item</strong></a>
+                &nbsp;&nbsp;
+                <a href="#" data-ng-click="setShowConfirmation(false)">Cancel</a>
+            </p>
+        </div>
+        <!-- END confirmation dialog -->
+
     </div>
     <div class="row">
         <div id="add" class="col-sm-4" data-ng-controller="hippo.channelManager.menuManager.TreeActionsCtrl">
