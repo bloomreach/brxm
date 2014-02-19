@@ -50,7 +50,7 @@ public class RequestModel extends LoadableDetachableModel<Request> {
             String state = "unknown";
             Date schedule = null;
             if (node.isNodeType(HippoStdPubWfNodeType.NT_HIPPOSTDPUBWF_REQUEST)) {
-                state = node.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_TYPE).getString();
+                state = "request-"+ node.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_TYPE).getString();
                 if (node.hasProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_REQDATE)) {
                     schedule = new Date(node.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_REQDATE).getLong());
                 }
