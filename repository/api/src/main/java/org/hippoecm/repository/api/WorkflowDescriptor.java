@@ -20,13 +20,7 @@ import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
-/**
- * 
- */
 public interface WorkflowDescriptor {
-    /**
-     * 
-     */
 
     /**
      * Obtain the human-interpretable display name of this workflow.

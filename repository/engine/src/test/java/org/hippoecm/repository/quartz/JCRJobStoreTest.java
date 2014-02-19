@@ -138,8 +138,9 @@ public class JCRJobStoreTest extends RepositoryTestCase {
     }
 
     private Node createAndStoreJobAndRepeatedTrigger(final JCRJobStore store, final SchedulingContext context) throws RepositoryException, JobPersistenceException {
-        final Node jobNode = session.getNode("/test").addNode("job", "hipposched:job");
-        final JobDetail jobDetail = new JCRJobDetail(jobNode, Job.class);
+        final Node jobNode = session.getNode("/test").addNode("job", HippoSchedJcrConstants.HIPPOSCHED_REPOSITORY_JOB);
+        jobNode.setProperty(HippoSchedJcrConstants.HIPPOSCHED_REPOSITORY_JOB_CLASS, Job.class.getName());
+        final JobDetail jobDetail = new RepositoryJobDetail(jobNode);
         final SimpleTrigger trigger = new SimpleTrigger("trigger", 2, 1000);
         trigger.setNextFireTime(new Date());
         store.storeJobAndTrigger(context, jobDetail, trigger);
@@ -147,8 +148,9 @@ public class JCRJobStoreTest extends RepositoryTestCase {
     }
 
     private Node createAndStoreJobAndSimpleTrigger(final JCRJobStore store, final SchedulingContext context) throws RepositoryException, JobPersistenceException {
-        final Node jobNode = session.getNode("/test").addNode("job", "hipposched:job");
-        final JobDetail jobDetail = new JCRJobDetail(jobNode, Job.class);
+        final Node jobNode = session.getNode("/test").addNode("job", HippoSchedJcrConstants.HIPPOSCHED_REPOSITORY_JOB);
+        jobNode.setProperty(HippoSchedJcrConstants.HIPPOSCHED_REPOSITORY_JOB_CLASS, Job.class.getName());
+        final JobDetail jobDetail = new RepositoryJobDetail(jobNode);
         final SimpleTrigger trigger = new SimpleTrigger("trigger");
         trigger.setNextFireTime(new Date());
         store.storeJobAndTrigger(context, jobDetail, trigger);

@@ -46,13 +46,7 @@ public class RepositoryJobJob implements Job {
             final JCRScheduler scheduler = (JCRScheduler) context.getScheduler();
             final Session session = scheduler.getJCRSchedulingContext().getSession();
             repositoryJob.execute(new RepositoryJobExecutionContext(session, attributes));
-        } catch (ClassNotFoundException e) {
-            throw new JobExecutionException(e);
-        } catch (InstantiationException e) {
-            throw new JobExecutionException(e);
-        } catch (IllegalAccessException e) {
-            throw new JobExecutionException(e);
-        } catch (RepositoryException e) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | RepositoryException e) {
             throw new JobExecutionException(e);
         }
     }

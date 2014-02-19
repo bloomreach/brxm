@@ -99,7 +99,9 @@ public abstract class WorkflowImpl implements Remote, Workflow
      * @throws org.hippoecm.repository.api.MappingException when no implementation is available for the specification passed
      * @throws javax.jcr.RepositoryException when a generic error happens
      * @see WorkflowContext
+     * @deprecated
      */
+    @Deprecated
     final protected WorkflowContext getWorkflowContext(Object specification) throws MappingException, RepositoryException {
         return context.getWorkflowContext(specification);
     }

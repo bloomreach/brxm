@@ -16,6 +16,7 @@
 package org.hippoecm.repository.quartz;
 
 import java.text.ParseException;
+import java.util.Collection;
 import java.util.Date;
 
 import javax.jcr.Node;
@@ -39,8 +40,11 @@ import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.spi.TriggerFiredBundle;
 
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_ATTRIBUTE_NAMES;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_ATTRIBUTE_VALUES;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_JOBGROUP;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_REPOSITORY_JOB;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_REPOSITORY_JOB_CLASS;
 
 
 /**
@@ -112,11 +116,7 @@ public class RepositorySchedulerImpl implements RepositoryScheduler {
             final TriggerFiredBundle bundle = new TriggerFiredBundle(jobDetail, new SimpleTrigger("foo"), null,
                     false, now, now, now, now);
             job.execute(new JobExecutionContext(scheduler, bundle, job));
-        } catch (SchedulerException e) {
-            throw new RepositoryException(e);
-        } catch (InstantiationException e) {
-            throw new RepositoryException(e);
-        } catch (IllegalAccessException e) {
+        } catch (SchedulerException | InstantiationException | IllegalAccessException e) {
             throw new RepositoryException(e);
         }
 
@@ -145,7 +145,15 @@ public class RepositorySchedulerImpl implements RepositoryScheduler {
     }
 
     private JobDetail createQuartzJobDetail(final RepositoryJobInfo jobInfo) throws RepositoryException {
-        return new RepositoryJobDetail(newJobNode(jobInfo), jobInfo);
+        Node jobNode = jobInfo.createNode(session);
+        if (jobNode == null) {
+            jobNode = newJobNode(jobInfo);
+        }
+        jobNode.setProperty(HIPPOSCHED_REPOSITORY_JOB_CLASS, jobInfo.getJobClass().getName());
+        jobNode.setProperty(HIPPOSCHED_ATTRIBUTE_NAMES, attributeNames(jobInfo));
+        jobNode.setProperty(HIPPOSCHED_ATTRIBUTE_VALUES, attributeValues(jobInfo));
+
+        return new RepositoryJobDetail(jobNode, jobInfo);
     }
 
     private Node newJobNode(final RepositoryJobInfo info) throws RepositoryException {
@@ -175,6 +183,22 @@ public class RepositorySchedulerImpl implements RepositoryScheduler {
 
     private String getGroupName(final String groupName) {
         return StringUtils.isEmpty(groupName) ? "default" : groupName;
+    }
+
+    private String[] attributeNames(final RepositoryJobInfo info) {
+        final Collection<String> attributeNames = info.getAttributeNames();
+        return attributeNames.toArray(new String[attributeNames.size()]);
+    }
+
+    private String[] attributeValues(final RepositoryJobInfo info) {
+        final Collection<String> attributeNames = info.getAttributeNames();
+        final String[] attributeValues = new String[attributeNames.size()];
+        int i = 0;
+        for (String attributeName : attributeNames) {
+            attributeValues[i] = info.getAttribute(attributeName);
+            i++;
+        }
+        return attributeValues;
     }
 
 }

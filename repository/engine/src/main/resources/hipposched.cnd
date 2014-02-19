@@ -41,20 +41,12 @@
 - hipposched:data (binary) // deprecated
 - hippo:document (string) // deprecated
 
-[hipposched:workflowjob] > hipposched:job
-- hipposched:methodName (string) mandatory
-- hipposched:category (string)
-- hipposched:workflowName (string)
-- hipposched:subjectId (string)
-- hipposched:parameterTypes (string) multiple
-- hipposched:arguments (binary) multiple
-- hipposched:interactionId (string)
-- hipposched:interaction (string)
-
 [hipposched:repositoryjob] > hipposched:job
 - hipposched:repositoryJobClass (string) mandatory
 - hipposched:attributeNames (string) multiple
 - hipposched:attributeValues (string) multiple
+
+[hipposched:workflowjob] > hipposched:repositoryjob
 
 [hipposched:jobgroup] > nt:base
 + * (hipposched:job) = hipposched:job

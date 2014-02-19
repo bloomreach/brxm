@@ -15,8 +15,6 @@
  */
 package org.hippoecm.repository.ext;
 
-import java.io.Externalizable;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;

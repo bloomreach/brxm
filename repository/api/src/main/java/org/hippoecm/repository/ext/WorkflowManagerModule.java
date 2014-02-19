@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.ext;
 
+@Deprecated
 public interface WorkflowManagerModule {
 
     public void register(WorkflowManagerRegister register);

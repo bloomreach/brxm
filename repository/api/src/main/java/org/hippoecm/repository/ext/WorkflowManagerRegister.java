@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.ext;
 
+@Deprecated
 public interface WorkflowManagerRegister {
     public <T> void bind(Class<T> contextClass, WorkflowInvocationHandlerModuleFactory<T> handlerClass);
 }

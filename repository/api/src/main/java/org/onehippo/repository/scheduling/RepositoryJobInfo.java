@@ -20,6 +20,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
 /**
  * Captures information about a repository job.
  * <p>
@@ -33,7 +37,7 @@ public class RepositoryJobInfo {
     private final String name;
     private final String group;
     private final Class<? extends RepositoryJob> jobClass;
-    private final Map<String, String> attributes = new HashMap<String, String>();
+    private final Map<String, String> attributes = new HashMap<>();
 
     /**
      * Create a job within the default group.
@@ -100,4 +104,16 @@ public class RepositoryJobInfo {
     public Collection<String> getAttributeNames() {
         return Collections.unmodifiableCollection(attributes.keySet());
     }
+
+    /**
+     * Override the way the job node is created.
+     *
+     * @param session JCR session with which to create a new job node.
+     * @return  a newly created node representing the job,
+     * or <code>null</code> to let the system create one.
+     */
+    public Node createNode(final Session session) throws RepositoryException {
+        return null;
+    }
+
 }

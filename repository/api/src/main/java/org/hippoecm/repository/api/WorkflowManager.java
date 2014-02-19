@@ -108,6 +108,7 @@ public interface WorkflowManager {
      * @throws org.hippoecm.repository.api.MappingException when no implementation is available for the specificaiton passed
      * @throws javax.jcr.RepositoryException when a generic error happens
      */
+    @Deprecated
     public WorkflowManager getContextWorkflowManager(Object specification) throws MappingException, RepositoryException;
 }
 

@@ -202,16 +202,6 @@
             </goals>
           </execution>
         </executions>
-        <configuration>
-          <archive>
-            <manifest>
-             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-            </manifest>
-            <manifestEntries>
-              <Hippo-Modules>org.hippoecm.repository.quartz.workflow.SchedulerWorkflowModule</Hippo-Modules>
-            </manifestEntries>
-          </archive>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

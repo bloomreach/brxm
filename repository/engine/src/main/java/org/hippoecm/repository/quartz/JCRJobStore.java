@@ -41,12 +41,10 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
 import org.apache.jackrabbit.util.ISO8601;
-import org.hippoecm.repository.quartz.workflow.WorkflowJobDetail;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.repository.util.JcrConstants;
 import org.quartz.CronTrigger;
-import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.JobPersistenceException;
 import org.quartz.SchedulerConfigException;
@@ -66,11 +64,9 @@ import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_E
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_NEXTFIRETIME;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_REPEATCOUNT;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_REPEATINTERVAL;
-import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_REPOSITORY_JOB;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_SIMPLE_TRIGGER;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_STARTTIME;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_TRIGGERS;
-import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_WORKFLOW_JOB;
 
 public class JCRJobStore extends AbstractJobStore {
 
@@ -168,35 +164,14 @@ public class JCRJobStore extends AbstractJobStore {
             try {
                 final Node jobNode = session.getNodeByIdentifier(jobIdentifier);
                 jobPath = jobNode.getPath();
-                return createJobDetailFromNode(jobNode);
+                return new RepositoryJobDetail(jobNode);
             } catch (ItemNotFoundException e) {
                 throw new JobPersistenceException("No such job: " + jobIdentifier);
             } catch (RepositoryException e) {
                 refreshSession(session);
                 throw new JobPersistenceException("Failed to retrieve job at " + jobPath, e);
-            } catch (IOException e) {
-                throw new JobPersistenceException("Failed to read job from repository at " + jobPath, e);
-            } catch (ClassNotFoundException e) {
-                throw new JobPersistenceException("Failed to recreate job at " + jobPath, e);
             }
         }
-    }
-
-    private JobDetail createJobDetailFromNode(Node jobNode) throws RepositoryException, ClassNotFoundException, IOException {
-        JobDetail jobDetail = null;
-        if (jobNode.hasProperty(HIPPOSCHED_DATA)) {
-            log.warn("Cannot deserialize obsolete job definition at " + jobNode.getPath());
-        } else {
-            final String jobType = jobNode.getPrimaryNodeType().getName();
-            if (HIPPOSCHED_REPOSITORY_JOB.equals(jobType)) {
-                jobDetail = new RepositoryJobDetail(jobNode);
-            } else if (HIPPOSCHED_WORKFLOW_JOB.equals(jobType)) {
-                jobDetail = new WorkflowJobDetail(jobNode);
-            } else {
-                jobDetail = new JCRJobDetail(jobNode, Job.class);
-            }
-        }
-        return jobDetail;
     }
 
     @Override
@@ -243,22 +218,6 @@ public class JCRJobStore extends AbstractJobStore {
                 for (Node triggerNode : getPendingTriggers(session, noLaterThan)) {
                     if(triggerNode != null) {
                         final Node jobNode = triggerNode.getParent().getParent();
-                        try {
-                            // make sure we can load the job
-                            if (createJobDetailFromNode(jobNode) == null) {
-                                continue;
-                            }
-                        } catch (ClassNotFoundException e) {
-                            log.warn("Cannot execute job " + jobNode.getPath() + " on this cluster node. Skipping");
-                            continue;
-                        } catch (IOException e) {
-                            if (log.isDebugEnabled()) {
-                                log.error("Failed to load job " + jobNode.getPath(), e);
-                            } else {
-                                log.error("Failed to load job " + jobNode.getPath() + ": " + e.toString());
-                            }
-                            continue;
-                        }
                         if (lock(session, triggerNode.getPath())) {
                             try {
                                 startLockKeepAlive(session, triggerNode.getIdentifier());

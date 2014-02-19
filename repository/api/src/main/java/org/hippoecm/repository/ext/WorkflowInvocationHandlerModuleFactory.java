@@ -14,11 +14,13 @@
  *  limitations under the License.
  */
 package org.hippoecm.repository.ext;
+
 /**
  * Future interface to implement pluggable workflow engine implementations.
  * This API has not been stabalized, and currently cannot be plugged in
  * without modifying the repository implementation.
  */
+@Deprecated
 public interface WorkflowInvocationHandlerModuleFactory<T> {
             
     public WorkflowInvocationHandlerModule createInvocationHandler(T object);

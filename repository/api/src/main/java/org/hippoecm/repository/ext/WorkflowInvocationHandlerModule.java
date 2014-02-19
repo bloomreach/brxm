@@ -24,6 +24,7 @@ import org.hippoecm.repository.api.WorkflowManager;
  * This API has not been stabalized, and currently cannot be plugged in
  * without modifying the repository implementation.
  */
+@Deprecated
 public interface WorkflowInvocationHandlerModule {
 
     public Object submit(WorkflowManager workflowManager, WorkflowInvocation invocation) throws RepositoryException, WorkflowException;

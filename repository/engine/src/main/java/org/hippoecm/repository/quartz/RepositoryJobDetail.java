@@ -15,11 +15,9 @@
  */
 package org.hippoecm.repository.quartz;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -73,28 +71,11 @@ class RepositoryJobDetail extends JCRJobDetail {
         }
     }
 
-    @Override
-    public void persist(final Node node) throws RepositoryException {
-        node.setProperty(HIPPOSCHED_REPOSITORY_JOB_CLASS, repositoryJobClassName);
-        node.setProperty(HIPPOSCHED_ATTRIBUTE_NAMES, attributeNames());
-        node.setProperty(HIPPOSCHED_ATTRIBUTE_VALUES, attributeValues());
-    }
-
     public String getRepositoryJobClassName() {
         return repositoryJobClassName;
     }
 
     public Map<String, String> getAttributes() {
         return Collections.unmodifiableMap(attributes);
-    }
-
-    private String[] attributeNames() {
-        Set<String> attributeNames = attributes.keySet();
-        return attributeNames.toArray(new String[attributeNames.size()]);
-    }
-
-    private String[] attributeValues() {
-        final Collection<String> attributeValues = attributes.values();
-        return attributeValues.toArray(new String[attributeValues.size()]);
     }
 }

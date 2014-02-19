@@ -34,7 +34,9 @@ public interface WorkflowContext {
      * @return a work-flow context with alternate behavior
      * @throws org.hippoecm.repository.api.MappingException when no implementation is available for the specification passed
      * @throws javax.jcr.RepositoryException when a generic error happens
+     * @deprecated
      */
+    @Deprecated
     public WorkflowContext getWorkflowContext(Object specification) throws MappingException, RepositoryException;
 
     /**

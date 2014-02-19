@@ -314,6 +314,8 @@ public interface HippoNodeType {
 
     public static final String HIPPO_PATHS = "hippo:paths";
 
+    public static final String HIPPO_REQUEST = "hippo:request";
+
     public static final String HIPPO_TEXT = "hippo:text";
 
     public static final String HIPPO_PERMISSIONCACHESIZE = "hipposys:permissioncachesize";
