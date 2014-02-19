@@ -2,7 +2,7 @@
  * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
  */
 
-package org.onehippo.cms7.essentials.dashboard;
+package org.onehippo.cms7.essentials.dashboard.model;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.installer.InstallState;

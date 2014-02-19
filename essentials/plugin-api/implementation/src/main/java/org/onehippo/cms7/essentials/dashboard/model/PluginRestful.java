@@ -1,33 +1,46 @@
-package org.onehippo.cms7.essentials.rest.model;
+package org.onehippo.cms7.essentials.dashboard.model;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.onehippo.cms7.essentials.dashboard.rest.Restful;
+import org.codehaus.jackson.annotate.JsonSubTypes;
+import org.codehaus.jackson.annotate.JsonTypeInfo;
 
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "items")
-public class PluginRestful implements Restful {
+@XmlRootElement(name = "plugin")
+public class PluginRestful implements Restful, Plugin {
 
     private static final long serialVersionUID = 1L;
 
     private List<String> restClasses;
-    private VendorRestful vendor;
-    private List<DependencyRestful> dependencies;
+    private Vendor vendor;
+    private List<Dependency> dependencies;
     private String title;
     private String name;
     private String introduction;
+    private String description;
     private String pluginLink;
     private String pluginClass;
     private String type;
     private boolean installed;
     private boolean needsInstallation;
+    private boolean enabled;
     private Calendar dateInstalled;
+    private String documentationLink;
+
+    public PluginRestful(final String pluginClass) {
+        this.pluginClass = pluginClass;
+    }
+
+    public PluginRestful() {
+
+    }
 
     public Calendar getDateInstalled() {
         return dateInstalled;
@@ -37,68 +50,106 @@ public class PluginRestful implements Restful {
         this.dateInstalled = dateInstalled;
     }
 
+    @Override
     public String getType() {
         return type;
     }
 
+    @Override
     public void setType(final String type) {
         this.type = type;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-
+    @Override
     public boolean isNeedsInstallation() {
         return needsInstallation;
     }
 
+    @Override
     public void setNeedsInstallation(final boolean needsInstallation) {
         this.needsInstallation = needsInstallation;
     }
 
+    @Override
     public boolean isInstalled() {
         return installed;
     }
 
+    @Override
     public void setInstalled(final boolean installed) {
         this.installed = installed;
     }
 
+    @Override
     public String getPluginLink() {
         return pluginLink;
     }
 
+    @Override
     public void setPluginLink(final String pluginLink) {
         this.pluginLink = pluginLink;
     }
 
-    public VendorRestful getVendor() {
+    @Override
+    @XmlElementRef(type = VendorRestful.class)
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
+    @JsonSubTypes({@JsonSubTypes.Type(value = VendorRestful.class, name = "vendor")})
+    public Vendor getVendor() {
         return vendor;
     }
 
-    public void setVendor(final VendorRestful vendor) {
+    @Override
+    public void setVendor(final Vendor vendor) {
         this.vendor = vendor;
     }
 
+    @Override
+    public String getName() {
+        return name;
+    }
 
-    public List<DependencyRestful> getDependencies() {
+    @Override
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getDocumentationLink() {
+        return documentationLink;
+    }
+
+    @Override
+    public void setDocumentationLink(final String documentationLink) {
+        this.documentationLink = documentationLink;
+    }
+
+    @Override
+    public String getIssuesLink() {
+        return null;
+    }
+
+    @Override
+    public void setIssuesLink(final String issuesLink) {
+
+    }
+
+
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
+    @JsonSubTypes({@JsonSubTypes.Type(value = DependencyRestful.class, name = "dependency")})
+    @Override
+    public List<Dependency> getDependencies() {
         if (dependencies == null) {
             return new ArrayList<>();
         }
         return dependencies;
     }
 
-    public void setDependencies(final List<DependencyRestful> dependencies) {
+    @Override
+    public void setDependencies(final List<Dependency> dependencies) {
         this.dependencies = dependencies;
     }
 
-    public void addDependency(final DependencyRestful dependency) {
+    public void addDependency(final Dependency dependency) {
         if (dependencies == null) {
             dependencies = new ArrayList<>();
         }
@@ -123,10 +174,12 @@ public class PluginRestful implements Restful {
     }
 
 
+    @Override
     public String getPluginClass() {
         return pluginClass;
     }
 
+    @Override
     public void setPluginClass(final String pluginClass) {
         this.pluginClass = pluginClass;
     }
@@ -141,14 +194,35 @@ public class PluginRestful implements Restful {
     }
 
 
+    @Override
     public List<String> getRestClasses() {
         return restClasses;
     }
 
+    @Override
     public void setRestClasses(final List<String> restClasses) {
         this.restClasses = restClasses;
     }
 
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
+    public void setEnabled(final boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public void setDescription(final String description) {
+        this.description = description;
+    }
 
     @Override
     public String toString() {
@@ -168,5 +242,6 @@ public class PluginRestful implements Restful {
         sb.append('}');
         return sb.toString();
     }
+
 
 }

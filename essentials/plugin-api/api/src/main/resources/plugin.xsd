@@ -12,49 +12,23 @@
     //############################################
 
   -->
-  <xs:complexType name="screenshotsType">
+  <xs:complexType name="vendorsType">
     <xs:sequence>
-      <xs:element type="screenshotType" name="screenshot" minOccurs="0" maxOccurs="1"/>
+      <xs:element type="vendorType" name="vendor" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="screenshotType">
+  <xs:complexType name="vendorType">
     <xs:sequence>
       <xs:element type="xs:string" name="path"/>
     </xs:sequence>
   </xs:complexType>
 
-  <!--
-    //############################################
-    // ASSETS
-    //############################################
-
-  -->
-  <xs:simpleType name="mimeType">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="text/plain"/>
-      <xs:enumeration value="image/jpeg"/>
-      <xs:enumeration value="image/png"/>
-      <xs:enumeration value="application/pdf"/>
-      <xs:enumeration value="image/gif"/>
-    </xs:restriction>
-  </xs:simpleType>
-
-
-  <xs:complexType name="assetsType" mixed="true">
-    <xs:sequence>
-      <xs:element type="assetType" name="asset" minOccurs="0" maxOccurs="unbounded"/>
-    </xs:sequence>
-  </xs:complexType>
-  <!-- NOTE: if URI is defined, data value will be ignored-->
-  <xs:complexType name="assetType" mixed="true">
-    <xs:attribute use="required" name="id"/>
-    <xs:attribute use="required" name="type" type="mimeType" default="text/plain"/>
-    <xs:attribute use="optional" name="url" type="xs:anyURI"/>
-  </xs:complexType>
 
   <xs:complexType name="pluginType">
     <xs:all minOccurs="0" maxOccurs="1">
       <xs:element type="xs:string" name="name" minOccurs="1" maxOccurs="1"/>
+      <xs:element type="xs:boolean" name="needsInstallation" minOccurs="1" maxOccurs="1"/>
+      <xs:element type="xs:boolean" name="enabled" minOccurs="1" maxOccurs="1"/>
       <xs:element type="xs:string" name="plugin-class" minOccurs="1" maxOccurs="1"/>
       <xs:element type="xs:string" name="type" minOccurs="1" maxOccurs="1"/>
       <xs:element type="xs:string" name="vendor" minOccurs="1" maxOccurs="1"/>
@@ -62,10 +36,7 @@
       <xs:element type="xs:string" name="pluginLink" minOccurs="0" maxOccurs="1"/>
       <xs:element type="xs:string" name="documentation-link" minOccurs="0" maxOccurs="1"/>
       <xs:element type="xs:string" name="issues-link" minOccurs="0" maxOccurs="1"/>
-      <xs:element type="screenshotsType" name="screenshots" minOccurs="0" maxOccurs="1"/>
-      <xs:element type="assetsType" name="assets" minOccurs="0" maxOccurs="1"/>
-      <xs:element type="xs:string" name="vendorLink" minOccurs="0" maxOccurs="1"/>
-      <xs:element type="xs:string" name="icon" minOccurs="0" maxOccurs="1"/>
+      <xs:element type="vendorsType" name="vendor" minOccurs="0" maxOccurs="1"/>
     </xs:all>
   </xs:complexType>
 </xs:schema>

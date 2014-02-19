@@ -21,7 +21,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.onehippo.cms7.essentials.dashboard.DependencyType;
+import org.onehippo.cms7.essentials.dashboard.model.DependencyType;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.common.PackageVisitor;
 import org.slf4j.Logger;

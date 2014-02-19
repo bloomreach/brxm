@@ -1,7 +1,7 @@
 package org.onehippo.cms7.essentials.dashboard.contentblocks;
 
-import org.onehippo.cms7.essentials.dashboard.EssentialsPlugin;
-import org.onehippo.cms7.essentials.dashboard.Plugin;
+import org.onehippo.cms7.essentials.dashboard.model.EssentialsPlugin;
+import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.contentblocks.installer.ContentBlocksInstaller;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.installer.InstallState;

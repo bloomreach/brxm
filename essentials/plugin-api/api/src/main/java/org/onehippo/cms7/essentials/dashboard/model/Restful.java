@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.rest;
+package org.onehippo.cms7.essentials.dashboard.model;
 
 import java.io.Serializable;
+
+import org.codehaus.jackson.annotate.JsonSubTypes;
+import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
 
 /**
  * @version "$Id$"
  */
-public interface Restful extends Serializable {
 
+public interface Restful extends Serializable {
 
 }

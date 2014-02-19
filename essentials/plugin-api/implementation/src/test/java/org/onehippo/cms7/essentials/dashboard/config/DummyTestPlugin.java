@@ -1,9 +1,11 @@
 package org.onehippo.cms7.essentials.dashboard.config;
 
-import java.util.Collections;
 import java.util.List;
 
-import org.onehippo.cms7.essentials.dashboard.Plugin;
+import org.onehippo.cms7.essentials.dashboard.model.Dependency;
+import org.onehippo.cms7.essentials.dashboard.model.Plugin;
+import org.onehippo.cms7.essentials.dashboard.model.Vendor;
+import org.onehippo.cms7.essentials.dashboard.model.VendorRestful;
 
 /**
  * @version "$Id: DummyTestPlugin.java 174785 2013-08-23 08:28:52Z mmilicevic $"
@@ -14,13 +16,24 @@ public class DummyTestPlugin implements Plugin {
 
     private String parentPath;
 
+
     @Override
-    public void addScreenShot(final Screenshot screenShot) {
+    public List<String> getRestClasses() {
+        return null;
+    }
+
+    @Override
+    public void setRestClasses(final List<String> restClasses) {
 
     }
 
     @Override
-    public void addAsset(final Asset asset) {
+    public boolean isEnabled() {
+        return false;
+    }
+
+    @Override
+    public void setEnabled(final boolean enabled) {
 
     }
 
@@ -29,10 +42,6 @@ public class DummyTestPlugin implements Plugin {
         return "test";
     }
 
-    @Override
-    public void setScreenshots(final List<Screenshot> screenshots) {
-
-    }
 
     @Override
     public void setDescription(final String description) {
@@ -40,27 +49,22 @@ public class DummyTestPlugin implements Plugin {
     }
 
     @Override
-    public Asset getAsset(final String id) {
-        return null;
+    public boolean isNeedsInstallation() {
+        return false;
     }
 
     @Override
-    public List<Asset> getAssets() {
-        return null;
-    }
-
-    @Override
-    public void setAssets(final List<Asset> assets) {
+    public void setNeedsInstallation(final boolean needsInstallation) {
 
     }
 
     @Override
-    public String getVendorLink() {
-        return "test vendor link";
+    public boolean isInstalled() {
+        return false;
     }
 
     @Override
-    public void setVendorLink(final String vendorLink) {
+    public void setInstalled(final boolean installed) {
 
     }
 
@@ -75,12 +79,12 @@ public class DummyTestPlugin implements Plugin {
     }
 
     @Override
-    public String getVendor() {
-        return "vendor";
+    public Vendor getVendor() {
+        return new VendorRestful();
     }
 
     @Override
-    public void setVendor(final String vendor) {
+    public void setVendor(final Vendor vendor) {
 
     }
 
@@ -104,25 +108,8 @@ public class DummyTestPlugin implements Plugin {
 
     }
 
-    @Override
-    public List<Screenshot> getScreenshots() {
-        return null;
-    }
 
-    @Override
-    public List<String> getProperties() {
-        return Collections.emptyList();
-    }
 
-    @Override
-    public void setProperties(final List<String> properties) {
-
-    }
-
-    @Override
-    public void addProperty(final String value) {
-
-    }
 
     @Override
     public String getName() {
@@ -131,21 +118,6 @@ public class DummyTestPlugin implements Plugin {
 
     @Override
     public void setName(final String name) {
-
-    }
-
-    @Override
-    public String getParentPath() {
-        return parentPath;
-    }
-
-    @Override
-    public String getPath() {
-        return parentPath + '/' + getClass().getSimpleName();
-    }
-
-    @Override
-    public void setParentPath(final String path) {
 
     }
 
@@ -160,12 +132,12 @@ public class DummyTestPlugin implements Plugin {
     }
 
     @Override
-    public String getIcon() {
+    public List<Dependency> getDependencies() {
         return null;
     }
 
     @Override
-    public void setIcon(final String icon) {
+    public void setDependencies(final List<Dependency> dependencies) {
 
     }
 

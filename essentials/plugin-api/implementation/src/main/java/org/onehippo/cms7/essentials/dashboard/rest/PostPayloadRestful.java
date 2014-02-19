@@ -20,6 +20,8 @@ import java.util.LinkedHashMap;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.onehippo.cms7.essentials.dashboard.model.Restful;
+
 import com.wordnik.swagger.annotations.ApiModel;
 
 /**

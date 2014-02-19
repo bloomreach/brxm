@@ -17,6 +17,7 @@ import org.onehippo.cms7.essentials.rest.model.contentblocks.DocumentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -29,8 +30,6 @@ public class ContentBlocksTest {
     @Test
     public void testUnmarshalling() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        final TypeReference<CBPayload> typeReference = new TypeReference<CBPayload>() {
-        };
         final InputStream resourceAsStream = getClass().getResourceAsStream("/contentblocks-compare.json");
         String myString = IOUtils.toString(resourceAsStream, "UTF-8");
         //log.info("myString {}", myString);
@@ -48,6 +47,8 @@ public class ContentBlocksTest {
         String jsonOutput = mapper.writeValueAsString(cbPayload);
         assertTrue(StringUtils.isNotEmpty(jsonOutput));
         log.info("jsonOutput {}", jsonOutput);
+        final CBPayload payload = mapper.readValue(jsonOutput, CBPayload.class);
+        assertEquals(2, payload.getDocumentTypes().getItems().size());
 
     }
 

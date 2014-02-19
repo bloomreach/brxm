@@ -5,10 +5,12 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonSubTypes;
+import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
+import org.onehippo.cms7.essentials.dashboard.model.VendorRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.Restful;
+import org.onehippo.cms7.essentials.dashboard.model.Restful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.Compounds;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.DocumentType;
@@ -27,7 +29,6 @@ public class RestList<T extends Restful> extends RestfulList<T> {
 
     @JsonSubTypes({
             @JsonSubTypes.Type(PluginRestful.class),
-            @JsonSubTypes.Type(PowerpackRestful.class),
             @JsonSubTypes.Type(VendorRestful.class),
             @JsonSubTypes.Type(StatusRestful.class),
             @JsonSubTypes.Type(MessageRestful.class),

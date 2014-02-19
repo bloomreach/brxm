@@ -16,8 +16,8 @@
 
 package org.onehippo.cms7.essentials.tools.gui;
 
-import org.onehippo.cms7.essentials.dashboard.EssentialsPlugin;
-import org.onehippo.cms7.essentials.dashboard.Plugin;
+import org.onehippo.cms7.essentials.dashboard.model.EssentialsPlugin;
+import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 
 /**

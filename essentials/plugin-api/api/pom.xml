@@ -37,6 +37,11 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-core-asl</artifactId>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
   <build>
     <defaultGoal>package</defaultGoal>

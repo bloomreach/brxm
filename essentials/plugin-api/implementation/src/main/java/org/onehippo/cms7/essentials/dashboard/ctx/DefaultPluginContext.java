@@ -18,7 +18,7 @@ import java.util.Map;
 
 import javax.jcr.Session;
 
-import org.onehippo.cms7.essentials.dashboard.Plugin;
+import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.config.JcrPluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
@@ -71,6 +71,7 @@ public class DefaultPluginContext implements PluginContext {
         contextData.put(key, value);
     }
 
+    @Override
     public Session getSession() {
         return session;
     }

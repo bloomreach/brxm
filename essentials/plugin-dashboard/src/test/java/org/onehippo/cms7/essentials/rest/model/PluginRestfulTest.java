@@ -25,6 +25,8 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
+import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
+import org.onehippo.cms7.essentials.dashboard.model.VendorRestful;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +63,7 @@ public class PluginRestfulTest {
         assertEquals(2, fromXml.getRestClasses().size());
         assertEquals(today.getTime(), fromXml.getDateInstalled().getTime());
         assertEquals(vendor.getName(), fromXml.getVendor().getName());
+
 
 
     }

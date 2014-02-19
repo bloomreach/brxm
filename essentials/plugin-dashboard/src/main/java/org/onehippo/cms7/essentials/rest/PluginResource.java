@@ -16,9 +16,7 @@
 
 package org.onehippo.cms7.essentials.rest;
 
-import java.io.InputStream;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -41,15 +39,20 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
-import org.onehippo.cms7.essentials.dashboard.EssentialsPlugin;
-import org.onehippo.cms7.essentials.dashboard.Plugin;
+import org.onehippo.cms7.essentials.dashboard.model.EssentialsPlugin;
+import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.config.DefaultDocumentManager;
 import org.onehippo.cms7.essentials.dashboard.config.DocumentManager;
 import org.onehippo.cms7.essentials.dashboard.config.InstallerDocument;
+import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
+import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.installer.InstallState;
+import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
@@ -58,19 +61,18 @@ import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.rest.model.ControllerRestful;
-import org.onehippo.cms7.essentials.rest.model.PluginRestful;
+import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
 import org.onehippo.cms7.essentials.rest.model.RestList;
 import org.onehippo.cms7.essentials.rest.model.StatusRestful;
 import org.onehippo.cms7.essentials.servlet.DynamicRestPointsApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ContextLoader;
 
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -90,6 +92,14 @@ public class PluginResource extends BaseResource {
     @Inject
     private EventBus eventBus;
 
+
+    @Inject
+    private AutowireCapableBeanFactory injector;
+
+    @Inject
+    private MemoryPluginEventListener listener;
+
+
     private boolean initialized;
     private static Logger log = LoggerFactory.getLogger(PluginResource.class);
 
@@ -103,13 +113,7 @@ public class PluginResource extends BaseResource {
         final RestfulList<PluginRestful> plugins = new RestList<>();
 
 
-        final InputStream stream = getClass().getResourceAsStream("/plugin_descriptor.json");
-        final String json = GlobalUtils.readStreamAsText(stream);
-        final Gson gson = new Gson();
-        final Type listType = new TypeToken<RestfulList<PluginRestful>>() {
-        }.getType();
-        final RestfulList<PluginRestful> restfulList = gson.fromJson(json, listType);
-        final List<PluginRestful> items = restfulList.getItems();
+        final List<PluginRestful> items = getPlugins(servletContext);
 
         final Collection<String> restClasses = new ArrayList<>();
         final DocumentManager manager = new DefaultDocumentManager(getContext(servletContext));
@@ -125,7 +129,7 @@ public class PluginResource extends BaseResource {
                     @SuppressWarnings("unchecked")
                     final Class<EssentialsPlugin> clazz = (Class<EssentialsPlugin>) Class.forName(pluginClass);
                     final Constructor<EssentialsPlugin> constructor = clazz.getConstructor(Plugin.class, PluginContext.class);
-                    final org.onehippo.cms7.essentials.dashboard.model.EssentialsPlugin dummy = new org.onehippo.cms7.essentials.dashboard.model.EssentialsPlugin();
+                    final Plugin dummy = new PluginRestful();
                     final EssentialsPlugin instance = constructor.newInstance(dummy, new DefaultPluginContext(GlobalUtils.createSession(), dummy));
                     final InstallState installState = instance.getInstallState();
                     if (installState == InstallState.INSTALLED_AND_RESTARTED) {
@@ -191,6 +195,47 @@ public class PluginResource extends BaseResource {
         return plugins;
     }
 
+
+
+
+    @POST
+    @Path("/install/powerpack")
+    public RestfulList<MessageRestful> installPowerpack(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
+        final RestfulList<MessageRestful> messageRestfulRestfulList = new RestList<>();
+        final Map<String, String> values = payloadRestful.getValues();
+        final PowerpackPackage powerpackPackage = GlobalUtils.newInstance(values.get("powerpackClass"));
+        injector.autowireBean(powerpackPackage);
+        final String className = ProjectSetupPlugin.class.getName();
+        final PluginContext context = new DefaultPluginContext(GlobalUtils.createSession(), new PluginRestful(className));
+        // inject project settings:
+        final PluginConfigService service = context.getConfigService();
+
+        final ProjectSettingsBean document = service.read(className, ProjectSettingsBean.class);
+        if (document != null) {
+            context.setBeansPackageName(document.getSelectedBeansPackage());
+            context.setComponentsPackageName(document.getSelectedComponentsPackage());
+            context.setRestPackageName(document.getSelectedRestPackage());
+            context.setProjectNamespacePrefix(document.getProjectNamespace());
+        }
+
+
+        final InstructionStatus status = powerpackPackage.execute(context);
+        log.info("status {}", status);
+        // save status:
+        if (document != null) {
+            document.setSetupDone(true);
+            final boolean written = service.write(document, className);
+            log.info("Config saved: {}", written);
+        }
+        addRestartInformation(eventBus);
+        final List<DisplayEvent> displayEvents = listener.consumeEvents();
+        for (DisplayEvent displayEvent : displayEvents) {
+            messageRestfulRestfulList.add(new MessageRestful(displayEvent.getMessage(), displayEvent.getDisplayType()));
+        }
+        return messageRestfulRestfulList;
+    }
+
+
     // TODO mm: enable this after we figure out new endpoint
 /*
 public static List<PluginRestful> parseGist() {
@@ -227,7 +272,7 @@ public static List<PluginRestful> parseGist() {
     public RestfulList<PluginRestful> addToRecentlyInstalled(@Context ServletContext servletContext, final PostPayloadRestful payload) {
 
         final RestfulList<PluginRestful> plugins = new RestList<>();
-        final List<Plugin> pluginList = getPlugins(servletContext);
+        final List<PluginRestful> pluginList = getPlugins(servletContext);
         for (Plugin p : pluginList) {
 
             final PluginRestful resource = new PluginRestful();
@@ -250,7 +295,7 @@ public static List<PluginRestful> parseGist() {
     public RestfulList<PluginRestful> getRecentlyInstalled(@Context ServletContext servletContext) {
 
         final RestfulList<PluginRestful> plugins = new RestList<>();
-        final List<Plugin> pluginList = getPlugins(servletContext);
+        final List<PluginRestful> pluginList = getPlugins(servletContext);
         for (Plugin plugin : pluginList) {
             final PluginRestful resource = new PluginRestful();
             resource.setTitle(plugin.getName());
@@ -272,7 +317,7 @@ public static List<PluginRestful> parseGist() {
     public PluginRestful getPluginList(@Context ServletContext servletContext, @PathParam("className") String className) {
 
         final PluginRestful resource = new PluginRestful();
-        final List<Plugin> pluginList = getPlugins(servletContext);
+        final List<PluginRestful> pluginList = getPlugins(servletContext);
         for (Plugin plugin : pluginList) {
             if (plugin.getPluginClass().equals(className)) {
                 if (Strings.isNullOrEmpty(plugin.getPluginLink())) {
@@ -305,7 +350,7 @@ public static List<PluginRestful> parseGist() {
                 continue;
             }
             if (pluginClass.equals(className)) {
-                final Plugin p = new org.onehippo.cms7.essentials.dashboard.model.EssentialsPlugin();
+                final Plugin p = new PluginRestful();
                 p.setDescription(plugin.getIntroduction());
                 p.setPluginClass(pluginClass);
                 if (checkInstalled(p)) {
@@ -360,7 +405,7 @@ public static List<PluginRestful> parseGist() {
     public RestfulList<ControllerRestful> getControllers(@Context ServletContext servletContext) {
 
         final RestfulList<ControllerRestful> controllers = new RestList<>();
-        final List<Plugin> plugins = getPlugins(servletContext);
+        final List<PluginRestful> plugins = getPlugins(servletContext);
         for (Plugin plugin : plugins) {
             final String pluginLink = plugin.getPluginLink();
             if (Strings.isNullOrEmpty(pluginLink)) {

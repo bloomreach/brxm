@@ -38,7 +38,7 @@
   <bean id="nodeResource" class="org.onehippo.cms7.essentials.rest.NodeResource"/>
   <bean id="pluginResource" class="org.onehippo.cms7.essentials.rest.PluginResource"/>
 
-  <bean id="powerpackResource" class="org.onehippo.cms7.essentials.rest.PowerpackResource"/>
+
 
 
 
@@ -49,9 +49,6 @@
       <ref bean="imageGalleryResource"/>
       <ref bean="nodeResource"/>
       <ref bean="pluginResource"/>
-
-      <ref bean="powerpackResource"/>
-
       <!-- API -->
       <ref bean="swaggerResourceJSON"/>
 

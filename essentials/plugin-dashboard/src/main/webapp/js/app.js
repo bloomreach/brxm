@@ -221,15 +221,7 @@
                 };
             })
 
-        /*
-         *  <!--select as label for value in array-->
-         <select  ng-required="true" ng-change="selectChange()"  ng-model="selectedItem">
-         <option ng-repeat="option in packs.items" value="{{option.value}}" ng-disabled="!option.enabled">{{option.name}}</option>
-         </select>
-         <div class="clearfix sep-10">&nbsp;</div>
-         <div id="pack.description">{{selectedDescription}}</div>
 
-         * */
 
 
 //############################################

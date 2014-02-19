@@ -62,10 +62,8 @@
                     if (idx == 2) {
 
                         // execute installation:
-                        $http({
-                            method: 'GET',
-                            url: $rootScope.REST.powerpacks_install + $scope.selectedItem + "/" + $scope.installSampleData
-                        }).success(function (data) {
+                        $http($rootScope.REST.powerpacks_install + $scope.selectedItem + "/" + $scope.installSampleData)
+                                .success(function (data) {
                             $scope.resultMessages = data;
                             $scope.hideAll = true;
                         });

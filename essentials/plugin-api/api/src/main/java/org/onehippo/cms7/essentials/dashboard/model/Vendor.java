@@ -14,31 +14,34 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.rest;
+package org.onehippo.cms7.essentials.dashboard.model;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
-import org.onehippo.cms7.essentials.dashboard.model.Restful;
-
-import com.wordnik.swagger.annotations.ApiModel;
+import org.codehaus.jackson.annotate.JsonSubTypes;
+import org.codehaus.jackson.annotate.JsonTypeInfo;
 
 /**
  * @version "$Id$"
  */
-@ApiModel
-@XmlRootElement(name = "project")
-public class ProjectRestful implements Restful {
 
-    private static final long serialVersionUID = 1L;
+public interface Vendor {
 
-    // TODO add more data
-    private String namespace;
+    String getUrl() ;
 
-    public String getNamespace() {
-        return namespace;
-    }
+    void setUrl( String url);
 
-    public void setNamespace(final String namespace) {
-        this.namespace = namespace;
-    }
+    String getName();
+
+    void setName(String name);
+
+    String getLogo();
+
+    void setLogo( String logo);
+
+    String getIntroduction();
+    void setIntroduction( String introduction);
+
+    String getContent();
+
+    void setContent( String content);
+
 }

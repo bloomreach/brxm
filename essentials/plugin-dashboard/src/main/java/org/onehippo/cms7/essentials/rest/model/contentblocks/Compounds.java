@@ -3,7 +3,7 @@ package org.onehippo.cms7.essentials.rest.model.contentblocks;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.Restful;
+import org.onehippo.cms7.essentials.dashboard.model.Restful;
 
 /**
  * @version "$Id$"
