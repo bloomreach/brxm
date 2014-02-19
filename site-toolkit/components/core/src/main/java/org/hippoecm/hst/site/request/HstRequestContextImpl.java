@@ -49,6 +49,7 @@ import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactoryImpl;
 import org.hippoecm.hst.core.component.HstURLFactory;
+import org.hippoecm.hst.core.container.CmsSecurityValve;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.HstComponentWindowFilter;
 import org.hippoecm.hst.core.container.HstContainerURL;
@@ -77,9 +78,9 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
 
     private final static HstParameterInfoProxyFactory HST_PARAMETER_INFO_PROXY_FACTORY = new HstParameterInfoProxyFactoryImpl();
 
-	protected ServletContext servletContext;
-	protected HttpServletRequest servletRequest;
-	protected HttpServletResponse servletResponse;
+    protected ServletContext servletContext;
+    protected HttpServletRequest servletRequest;
+    protected HttpServletResponse servletResponse;
     protected Repository repository;
     protected ContextCredentialsProvider contextCredentialsProvider;
     protected Session session;
@@ -112,7 +113,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     private ObjectBeanManager defaultObjectBeanManager;
     private Map<Session, ObjectBeanManager> nonDefaultObjectBeanManagers;
     private HstQueryManager defaultHstQueryManager;
-    private Map<Session, HstQueryManager>  nonDefaultHstQueryManagers;
+    private Map<Session, HstQueryManager> nonDefaultHstQueryManagers;
 
     private Map<String, Object> unmodifiableAttributes;
 
@@ -126,15 +127,15 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     }
 
     public boolean isPreview() {
-    	return this.resolvedMount.getMount().isPreview();
+        return this.resolvedMount.getMount().isPreview();
     }
 
     public ServletContext getServletContext() {
-    	return servletContext;
+        return servletContext;
     }
 
     public void setServletContext(ServletContext servletContext) {
-    	this.servletContext = servletContext;
+        this.servletContext = servletContext;
     }
 
     public HttpServletRequest getServletRequest() {
@@ -224,7 +225,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         this.siteMapMatcher = siteMapMatcher;
     }
 
-    public HstSiteMapMatcher getSiteMapMatcher(){
+    public HstSiteMapMatcher getSiteMapMatcher() {
         return this.siteMapMatcher;
     }
 
@@ -243,7 +244,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
 
     @Override
     public HstParameterInfoProxyFactory getParameterInfoProxyFactory() {
-        if(parameterInfoProxyFactory == null) {
+        if (parameterInfoProxyFactory == null) {
             return HST_PARAMETER_INFO_PROXY_FACTORY;
         }
         return parameterInfoProxyFactory;
@@ -253,7 +254,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         this.siteMenus = siteMenus;
     }
 
-    public HstSiteMenus getHstSiteMenus(){
+    public HstSiteMenus getHstSiteMenus() {
         return this.siteMenus;
     }
 
@@ -340,7 +341,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     }
 
     public VirtualHost getVirtualHost() {
-       return resolvedMount.getMount().getVirtualHost();
+        return resolvedMount.getMount().getVirtualHost();
     }
 
     public ContextCredentialsProvider getContextCredentialsProvider() {
@@ -397,16 +398,16 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     }
 
     public Mount getMount(String alias) {
-        if(alias == null) {
+        if (alias == null) {
             throw new IllegalArgumentException("Alias is not allowed to be null");
         }
         // we first check whether there is a mapped alias: Mapped aliases have precedence
         Mount currentMount = getResolvedMount().getMount();
         String mappedAlias = currentMount.getMountProperties().get(alias.toLowerCase());
-        if(mappedAlias != null) {
+        if (mappedAlias != null) {
             log.debug("Did find mappedAlias '{}' for alias '{}'. Try to find a mount for this mappedAlias.", mappedAlias, alias);
             Mount mount = lookupMount(mappedAlias.toLowerCase());
-            if(mount != null) {
+            if (mount != null) {
                 return mount;
             }
             log.debug("did not find a Mount for mappedAlias '{}'. Try fallback to find a Mount having alias '{}'", mappedAlias, alias);
@@ -415,23 +416,23 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     }
 
     public Mount getMount(String alias, String type) {
-        if(alias == null || type == null) {
+        if (alias == null || type == null) {
             throw new IllegalArgumentException("Alias and type are not allowed to be null");
         }
         String mappedAlias = getResolvedMount().getMount().getMountProperties().get(alias.toLowerCase());
-        if(mappedAlias != null) {
-            Mount mount =  getVirtualHost().getVirtualHosts().getMountByGroupAliasAndType(getVirtualHost().getHostGroupName(), mappedAlias, type);
-            if(mount != null) {
+        if (mappedAlias != null) {
+            Mount mount = getVirtualHost().getVirtualHosts().getMountByGroupAliasAndType(getVirtualHost().getHostGroupName(), mappedAlias, type);
+            if (mount != null) {
                 return mount;
             } else {
-                log.debug("We did not find a mapped mount for mappedAlias '{}'. Try to find a mount for alias '{}' directly",mappedAlias, alias);
+                log.debug("We did not find a mapped mount for mappedAlias '{}'. Try to find a mount for alias '{}' directly", mappedAlias, alias);
             }
         } else {
             log.debug("Did not find a mappedAlias for alias '{}'. Try alias directly", alias);
         }
 
-        Mount mount =  getVirtualHost().getVirtualHosts().getMountByGroupAliasAndType(getVirtualHost().getHostGroupName(), alias.toLowerCase(), type);
-        if(mount == null) {
+        Mount mount = getVirtualHost().getVirtualHosts().getMountByGroupAliasAndType(getVirtualHost().getHostGroupName(), alias.toLowerCase(), type);
+        if (mount == null) {
             log.debug("We did not find a direct mount for alias '{}'. Return null.", alias);
         }
         return mount;
@@ -443,25 +444,25 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         VirtualHosts hosts = currentMount.getVirtualHost().getVirtualHosts();
         List<Mount> possibleMounts = new ArrayList<Mount>();
 
-        for(String type : currentMount.getTypes()) {
-           Mount possibleMount =  hosts.getMountByGroupAliasAndType(hostGroupName, alias, type);
-           if(possibleMount != null) {
-               possibleMounts.add(possibleMount);
-           }
+        for (String type : currentMount.getTypes()) {
+            Mount possibleMount = hosts.getMountByGroupAliasAndType(hostGroupName, alias, type);
+            if (possibleMount != null) {
+                possibleMounts.add(possibleMount);
+            }
         }
 
-        if(possibleMounts.size() == 0) {
+        if (possibleMounts.size() == 0) {
             log.debug("Did not find a mount for alias '{}'. Return null", alias);
             return null;
         }
 
-        if(possibleMounts.size() == 1) {
+        if (possibleMounts.size() == 1) {
             return possibleMounts.get(0);
         }
 
         // there are multiple possible. Let's return the best.
-        for(Mount possibleMount : possibleMounts) {
-            if(possibleMount.getType().equals(currentMount.getType())) {
+        for (Mount possibleMount : possibleMounts) {
+            if (possibleMount.getType().equals(currentMount.getType())) {
                 // found a primary match
                 return possibleMount;
             }
@@ -470,12 +471,12 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         // we did not find a primary match for best match. We return the mount with the most types in common.
 
         List<Mount> narrowedPossibleMounts = new ArrayList<Mount>();
-        if(possibleMounts.size() > 1) {
+        if (possibleMounts.size() > 1) {
             // find the Mount's with the most types in common
             int mostCommon = 0;
-            for(Mount s : possibleMounts) {
+            for (Mount s : possibleMounts) {
                 int inCommon = countCommon(s.getTypes(), currentMount.getTypes());
-                if(inCommon > mostCommon) {
+                if (inCommon > mostCommon) {
                     mostCommon = inCommon;
                     narrowedPossibleMounts.clear();
                     narrowedPossibleMounts.add(s);
@@ -488,7 +489,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         }
 
         // we won't continue searching for a better possible match as this most likely is never need:
-        if(narrowedPossibleMounts.size() > 0) {
+        if (narrowedPossibleMounts.size() > 0) {
             return narrowedPossibleMounts.get(0);
         }
 
@@ -497,11 +498,10 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     }
 
 
-
     private int countCommon(List<String> types, List<String> types2) {
         int counter = 0;
-        for(String type : types) {
-            if(types2.contains(type)) {
+        for (String type : types) {
+            if (types2.contains(type)) {
                 counter++;
             }
         }
@@ -510,7 +510,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
 
     @Override
     public void setFullyQualifiedURLs(boolean fullyQualifiedURLs) {
-       this.fullyQualifiedURLs = fullyQualifiedURLs;
+        this.fullyQualifiedURLs = fullyQualifiedURLs;
     }
 
     @Override
@@ -614,7 +614,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
             if ("".equals(relPath)) {
                 return (HippoBean) getObjectBeanManager().getObject("/" + base);
             } else {
-                return (HippoBean) getObjectBeanManager().getObject("/" + base+ "/" + relPath);
+                return (HippoBean) getObjectBeanManager().getObject("/" + base + "/" + relPath);
             }
         } catch (ObjectBeanManagerException e) {
             log.error("ObjectBeanManagerException. Return null : {}", e);
@@ -633,7 +633,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         } catch (RepositoryException e) {
             throw new IllegalStateException("Cannot get ObjectBeanManager", e);
         }
-        return  defaultObjectBeanManager;
+        return defaultObjectBeanManager;
     }
 
     @Override
@@ -659,7 +659,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         } catch (RepositoryException e) {
             throw new IllegalStateException("Cannot get HstQueryManager", e);
         }
-        return  defaultHstQueryManager;
+        return defaultHstQueryManager;
     }
 
     @Override
@@ -684,6 +684,16 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         }
         if (nonDefaultHstQueryManagers != null) {
             nonDefaultHstQueryManagers.clear();
+        }
+    }
+
+    @Override
+    public String getCmsUserID() {
+        if (isCmsRequest()) {
+            final Object userID = servletRequest.getSession(false).getAttribute(CmsSecurityValve.CMS_USER_ID_ATTR);
+            return userID != null ? userID.toString() : null;
+        } else {
+            return null;
         }
     }
 

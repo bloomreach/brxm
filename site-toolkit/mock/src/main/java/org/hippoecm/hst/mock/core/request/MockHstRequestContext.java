@@ -36,7 +36,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
-import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -99,19 +98,19 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     private ObjectBeanManager defaultObjectBeanManager;
     private Map<Session, ObjectBeanManager> nonDefaultObjectBeanManagers;
     private HstQueryManager defaultHstQueryManager;
-    private Map<Session, HstQueryManager>  nonDefaultHstQueryManagers;
+    private Map<Session, HstQueryManager> nonDefaultHstQueryManagers;
 
 
     public boolean isPreview() {
-    	return this.resolvedMount.getMount().isPreview();
+        return this.resolvedMount.getMount().isPreview();
     }
 
     public ServletContext getServletContext() {
-    	return servletContext;
+        return servletContext;
     }
 
     public void setServletContext(ServletContext servletContext) {
-    	this.servletContext = servletContext;
+        this.servletContext = servletContext;
     }
 
     public HttpServletRequest getServletRequest() {
@@ -166,11 +165,11 @@ public class MockHstRequestContext implements HstMutableRequestContext {
         this.defaultCredentials = defaultCredentials;
     }
 
-    public HstSiteMapMatcher getSiteMapMatcher(){
+    public HstSiteMapMatcher getSiteMapMatcher() {
         return this.siteMapMatcher;
     }
 
-    public void setSiteMapMatcher(HstSiteMapMatcher siteMapMatcher){
+    public void setSiteMapMatcher(HstSiteMapMatcher siteMapMatcher) {
         this.siteMapMatcher = siteMapMatcher;
     }
 
@@ -194,7 +193,7 @@ public class MockHstRequestContext implements HstMutableRequestContext {
         this.siteMenus = siteMenus;
     }
 
-    public HstSiteMenus getHstSiteMenus(){
+    public HstSiteMenus getHstSiteMenus() {
         return this.siteMenus;
     }
 
@@ -499,5 +498,10 @@ public class MockHstRequestContext implements HstMutableRequestContext {
 
     @Override
     public void clearObjectAndQueryManagers() {
+    }
+
+    @Override
+    public String getCmsUserID() {
+        return null;
     }
 }

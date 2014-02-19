@@ -16,6 +16,8 @@
 package org.hippoecm.hst.tag;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
@@ -33,7 +35,13 @@ import org.hippoecm.hst.core.sitemenu.HstSiteMenu;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HstCmsEditMenuTag extends TagSupport  {
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_CONTAINER_COMPONENT_LOCKED_BY;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_CONTAINER_COMPONENT_LOCKED_BY_CURRENT_USER;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_CONTAINER_COMPONENT_LOCKED_ON;
+import static org.hippoecm.hst.utils.TagUtils.encloseInHTMLComment;
+import static org.hippoecm.hst.utils.TagUtils.toJSONMap;
+
+public class HstCmsEditMenuTag extends TagSupport {
 
     private final static Logger log = LoggerFactory.getLogger(HstCmsEditMenuTag.class);
 
@@ -44,12 +52,12 @@ public class HstCmsEditMenuTag extends TagSupport  {
     protected HstSiteMenu menu;
 
     @Override
-    public int doStartTag() throws JspException{
+    public int doStartTag() throws JspException {
         return EVAL_BODY_INCLUDE;
     }
 
     @Override
-    public int doEndTag() throws JspException{
+    public int doEndTag() throws JspException {
         try {
 
             if (menu == null) {
@@ -81,7 +89,7 @@ public class HstCmsEditMenuTag extends TagSupport  {
 
             if (siteMenuConfiguration == null) {
                 log.debug("Skipping cms edit menu because no siteMenuConfiguration '{}' found for matched mount '{}'.",
-                        menu.getName(),  requestContext.getResolvedMount().getMount().toString());
+                        menu.getName(), requestContext.getResolvedMount().getMount().toString());
                 return EVAL_PAGE;
             }
 
@@ -97,7 +105,7 @@ public class HstCmsEditMenuTag extends TagSupport  {
                 return EVAL_PAGE;
             }
             try {
-                write(canonicalInfo.getCanonicalIdentifier());
+                write(siteMenuConfiguration);
             } catch (IOException ioe) {
                 throw new JspException("ResourceURL-Tag Exception: cannot write to the output writer.");
             }
@@ -111,20 +119,30 @@ public class HstCmsEditMenuTag extends TagSupport  {
         menu = null;
     }
 
-    protected void write(String menuId) throws IOException {
+    private void write(HstSiteMenuConfiguration siteMenuConfiguration) throws IOException {
         JspWriter writer = pageContext.getOut();
-        StringBuilder htmlComment = new StringBuilder();
-        htmlComment.append("<!-- ");
-        htmlComment.append(" {\"type\":\"menu\"");
-        // add uuid
-        htmlComment.append(", \"uuid\":\"");
-        htmlComment.append(menuId);
-        htmlComment.append("\" } -->");
-        writer.print(htmlComment.toString());
+        final String comment = encloseInHTMLComment(toJSONMap(getAttributeMap(siteMenuConfiguration)));
+        writer.print(comment);
+    }
+
+    private Map<?, ?> getAttributeMap(final HstSiteMenuConfiguration siteMenuConfiguration) {
+        final String canonicalIdentifier = ((CanonicalInfo) siteMenuConfiguration).getCanonicalIdentifier();
+        return new HashMap<String, Object>() {
+            {
+                put("type", "menu");
+                put("uuid", canonicalIdentifier);
+                final String lockedBy = siteMenuConfiguration.getLockedBy();
+                if (lockedBy != null) {
+                    put(HST_CONTAINER_COMPONENT_LOCKED_BY, lockedBy);
+                    put(HST_CONTAINER_COMPONENT_LOCKED_BY_CURRENT_USER, lockedBy.equals(RequestContextProvider.get().getCmsUserID()));
+                    put(HST_CONTAINER_COMPONENT_LOCKED_ON, siteMenuConfiguration.getLockedOn().getTimeInMillis());
+                }
+            }
+        };
     }
 
 
-    public HstSiteMenu getMenu(){
+    public HstSiteMenu getMenu() {
         return menu;
     }
 
