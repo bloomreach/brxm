@@ -21,11 +21,13 @@
             .controller('pluginLoaderCtrl', function ($scope, $sce, $log, $rootScope, $http, $filter) {
 
             })
-            .controller('powerpacksCtrl', function ($scope, $sce, $log, $rootScope, $http, $filter) {
+            .controller('powerpacksCtrl', function ($scope, $sce, $log, $rootScope, $http, $filter, eventBroadcastService) {
                 $scope.hideAll = false;
                 $scope.installSampleData = true;
                 $scope.includeTemplate = null;
                 $scope.resultMessages = null;
+                $scope.selectedPlugin = null;
+                $scope.powerpackProperties = [];
 
                 $scope.packs = null;
                 $scope.buttons = [
@@ -38,14 +40,28 @@
                     angular.forEach($scope.packs, function (powerpack) {
                         var pluginId = powerpack.pluginId;
                         if (pluginId === $scope.selectedValue) {
+                            $scope.selectedPlugin = powerpack;
                             $scope.selectedDescription = powerpack.description;
-                            $Scope.includeTemplate = "/essentials/powerpacks/"+ pluginId+"/"+ pluginId+".html"
+                            $scope.includeTemplate = "/essentials/powerpacks/" + pluginId + "/" + pluginId + ".html"
                         }
 
                     });
 
                 };
 
+                /**
+                 * Powerpack can broadcast properties that
+                 * needs to be passed to Powerpack class itself
+                 */
+                $scope.$on('powerpackEvent', function () {
+                    console.log(eventBroadcastService.event);
+                    $scope.powerpackProperties = eventBroadcastService.event;
+                    angular.forEach($scope.powerpackProperties, function (value) {
+                        console.log("=================================");
+                        console.log(value.key);
+                        console.log(value.value);
+                    });
+                });
 
                 $scope.onWizardButton = function (idx) {
                     if (idx == 0) {
@@ -65,7 +81,12 @@
                     if (idx == 2) {
 
                         // execute installation:
-                        $http.post($rootScope.REST.powerpacks_install)
+                        var payload = Essentials.addPayloadData("pluginClass", $scope.selectedPlugin.pluginClass, null);
+                        angular.forEach($scope.powerpackProperties, function (value) {
+                            Essentials.addPayloadData(value.key, value.value, payload);
+                        });
+                        Essentials.addPayloadData("powerpackClass", $scope.selectedPlugin.pluginClass, null);
+                        $http.post($rootScope.REST.powerpacks_install, payload)
                                 .success(function (data) {
                                     $scope.resultMessages = data;
                                     $scope.hideAll = true;

@@ -37,6 +37,13 @@
     };
 
 
+    /**
+     * Creates a payload objects if not created already and adds key/value to dictionary (map)
+     * @param key
+     * @param value
+     * @param payload optional, may be null
+     * @returns
+     */
     Essentials.addPayloadData = function (key, value, payload) {
         if (payload === undefined || payload == null) {
             payload = {"values":{}};

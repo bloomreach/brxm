@@ -201,7 +201,7 @@
                         options: '=',
                         selectedDescription: '=',
                         ngModel: '=',
-                        onSelect:'&'
+                        onSelect: '&'
                     },
 
                     link: function (scope, element, attrs, ctrl) {
@@ -219,8 +219,6 @@
                             '</div>'
                 };
             })
-
-
 
 
 //############################################
@@ -264,7 +262,26 @@
                     }
                     return collection;
                 }
+            })
+
+        //############################################
+        // BROADCAST SERVICE
+        //############################################
+            .factory('eventBroadcastService', function ($rootScope) {
+                var broadcaster = {};
+                broadcaster.event = '';
+                broadcaster.eventName = '';
+                broadcaster.broadcast = function (eventName, event) {
+                    this.event = event;
+                    this.eventName = eventName;
+                    this.broadcastItem();
+                };
+                broadcaster.broadcastItem = function () {
+                    $rootScope.$broadcast(this.eventName);
+                };
+                return broadcaster;
             });
+
 })();
 
 

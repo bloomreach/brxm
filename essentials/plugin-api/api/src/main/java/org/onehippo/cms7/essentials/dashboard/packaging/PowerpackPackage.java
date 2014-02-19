@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.essentials.dashboard.packaging;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
@@ -26,6 +27,11 @@ import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
  * @version "$Id$"
  */
 public interface PowerpackPackage {
+
+
+    void setProperties(Map<String, String> properties);
+
+    Map<String, String> getProperties();
 
     /**
      * Defines a group name. Each instruction set can have a several group names

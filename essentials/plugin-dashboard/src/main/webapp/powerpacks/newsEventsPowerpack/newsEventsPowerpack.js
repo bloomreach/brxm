@@ -3,13 +3,22 @@
 
     angular.module('hippo.essentials')
 
-            .controller('newsEventsCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
+            .controller('newsEventsCtrl', function ($scope, $rootScope, eventBroadcastService) {
 
-
-
-
+                $scope.installSampleData = true;
+                $scope.onChange = function () {
+                    eventBroadcastService.broadcast('powerpackEvent', [
+                        {'key': 'sampleDate', 'value': $scope.installSampleData}
+                    ])
+                };
                 $scope.init = function () {
-                    console.log("LOADED NEWS AND EVENTS");
+
+                    // broadcast our item:
+                    eventBroadcastService.broadcast('powerpackEvent', [
+                        {'key': 'sampleData', 'value': $scope.installSampleData}
+                    ])
+
+
                 };
 
                 $scope.init();

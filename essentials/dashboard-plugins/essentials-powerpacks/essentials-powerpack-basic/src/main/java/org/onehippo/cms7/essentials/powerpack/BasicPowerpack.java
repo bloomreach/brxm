@@ -17,6 +17,8 @@
 package org.onehippo.cms7.essentials.powerpack;
 
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -46,19 +48,26 @@ import com.google.common.eventbus.EventBus;
 @Component
 public class BasicPowerpack implements PowerpackPackage {
 
+    private static final ImmutableSet<String> INSTRUCTION_GROUPS_SAMPLE = new ImmutableSet.Builder<String>().add(EssentialConst.INSTRUCTION_GROUP_DEFAULT).add("samples").build();
+    private static final ImmutableSet<String> INSTRUCTION_GROUPS = new ImmutableSet.Builder<String>().add(EssentialConst.INSTRUCTION_GROUP_DEFAULT).build();
     private static Logger log = LoggerFactory.getLogger(BasicPowerpack.class);
 
     @Inject
     private InstructionParser instructionParser;
-
     private Instructions instructions;
 
     @Inject
     private EventBus eventBus;
 
+    private Map<String, String> properties;
+
+
     @Override
     public Set<String> groupNames() {
-        return new ImmutableSet.Builder<String>().add(EssentialConst.INSTRUCTION_GROUP_DEFAULT).build();
+        if (Boolean.valueOf(getProperties().get("sampleData"))) {
+            return INSTRUCTION_GROUPS_SAMPLE;
+        }
+        return INSTRUCTION_GROUPS;
     }
 
     @Override
@@ -103,4 +112,17 @@ public class BasicPowerpack implements PowerpackPackage {
         return status;
     }
 
+    @Override
+    public Map<String, String> getProperties() {
+
+        if (properties == null) {
+            return new HashMap<>();
+        }
+        return properties;
+    }
+
+    @Override
+    public void setProperties(final Map<String, String> properties) {
+        this.properties = properties;
+    }
 }

@@ -1,7 +1,7 @@
 <div ng-controller="newsEventsCtrl">
 
         <span>
-            <input id="sample-content" type="checkbox" ng-model="installSampleData"/>
+            <input id="sample-content" type="checkbox" ng-change="onChange()" ng-model="installSampleData"/>
             <label for="sample-content">
                 Add sample content
             </label>

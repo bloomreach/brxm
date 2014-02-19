@@ -198,17 +198,26 @@ public class PluginResource extends BaseResource {
 
     @ApiOperation(
             value = "Installs selected powerpack package",
-            notes = "Use PostPayloadRestful and set powerpackClass porperty",
+            notes = "Use PostPayloadRestful and set powerpackClass property",
             response = RestfulList.class)
     @POST
     @Path("/install/powerpack")
     public RestfulList<MessageRestful> installPowerpack(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
         final RestfulList<MessageRestful> messageRestfulRestfulList = new RestList<>();
         final Map<String, String> values = payloadRestful.getValues();
-        final PowerpackPackage powerpackPackage = GlobalUtils.newInstance(values.get("powerpackClass"));
+        final String pluginClass = values.get("pluginClass");
+        if(Strings.isNullOrEmpty(pluginClass)){
+            final MessageRestful resource = new MessageRestful("No valid powerpack was selected");
+            resource.setSuccessMessage(false);
+            messageRestfulRestfulList.add(resource);
+            return messageRestfulRestfulList;
+        }
+        final PowerpackPackage powerpackPackage = GlobalUtils.newInstance(pluginClass);
+        powerpackPackage.setProperties(values);
         injector.autowireBean(powerpackPackage);
         final String className = ProjectSetupPlugin.class.getName();
         final PluginContext context = new DefaultPluginContext(GlobalUtils.createSession(), new PluginRestful(className));
+
         // inject project settings:
         final PluginConfigService service = context.getConfigService();
 
