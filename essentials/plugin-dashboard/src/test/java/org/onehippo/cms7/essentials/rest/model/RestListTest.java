@@ -71,7 +71,10 @@ public class RestListTest {
         assertEquals(1, payloadList.getItems().size());
         PostPayloadRestful postPayloadRestful = payloadList.getItems().get(0);
         assertEquals(2, postPayloadRestful.getValues().size());
-        result = "{\"items\":[{\"values\":{\"path\":\"/hippo:namespaces/hippostd/html/editor:templates/_default_/root\",\"property\":\"Xinha.config.toolbar\"}}]}";
+        result = "{\"items\":[{" +
+                "\"@type\":\"payload\"," +
+                "\"values\":{" +
+                "\"path\":\"/hippo:namespaces/hippostd/html/editor:templates/_default_/root\",\"property\":\"Xinha.config.toolbar\"}}]}";
         payloadList = mapper.readValue(result, new TypeReference<RestfulList<PostPayloadRestful>>() {
         });
         assertEquals(1, payloadList.getItems().size());

@@ -5,6 +5,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonSubTypes;
+import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 import org.onehippo.cms7.essentials.dashboard.model.VendorRestful;
@@ -27,6 +28,7 @@ public class RestList<T extends Restful> extends RestfulList<T> {
     private static final long serialVersionUID = 1L;
 
 
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
     @JsonSubTypes({
             @JsonSubTypes.Type(PluginRestful.class),
             @JsonSubTypes.Type(VendorRestful.class),

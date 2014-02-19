@@ -4,6 +4,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonSubTypes;
+import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.rest.model.RestList;
@@ -28,8 +29,6 @@ public class DocumentType extends KeyValueRestful implements Restful {
     }
 
     @XmlElement(name = "providers")
-    @JsonSubTypes({
-            @JsonSubTypes.Type(value = KeyValueRestful.class, name = "keyvalue")})
     public RestList<KeyValueRestful> getProviders() {
         return providers;
     }

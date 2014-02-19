@@ -134,6 +134,7 @@ public class PluginRestful implements Plugin, Restful {
     }
 
 
+    @XmlElementRef(type = DependencyRestful.class)
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
     @JsonSubTypes({@JsonSubTypes.Type(value = DependencyRestful.class, name = "dependency")})
     @Override

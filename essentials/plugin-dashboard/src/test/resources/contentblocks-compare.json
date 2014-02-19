@@ -1,15 +1,22 @@
-{"documentTypes": {
+{
+
+    "documentTypes": {
+
     "items": [
         {
+            "@type": "DocumentType",
             "key": "News document",
             "value": "namespace:news",
             "providers": {
+
                 "items": [
                     {
+                        "@type": "KeyValueRestful",
                         "key": "Provider 1",
                         "value": "Provider 1"
                     },
                     {
+                        "@type": "KeyValueRestful",
                         "key": "Provider 2",
                         "value": "Provider 2"
                     }
@@ -17,15 +24,20 @@
             }
         },
         {
+            "@type": "DocumentType",
             "key": "News documen2",
             "value": "namespace:news",
             "providers": {
+
                 "items": [
                     {
+
+                        "@type": "KeyValueRestful",
                         "key": "Provider 1",
                         "value": "Provider 1"
                     },
                     {
+                        "@type": "KeyValueRestful",
                         "key": "Provider 2",
                         "value": "Provider 2"
                     }
