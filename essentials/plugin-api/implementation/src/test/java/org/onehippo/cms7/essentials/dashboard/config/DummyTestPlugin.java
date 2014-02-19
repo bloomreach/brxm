@@ -69,12 +69,12 @@ public class DummyTestPlugin implements Plugin {
     }
 
     @Override
-    public String getPluginLink() {
-        return "pluginLink";
+    public String getPluginId() {
+        return "pluginId";
     }
 
     @Override
-    public void setPluginLink(final String pluginLink) {
+    public void setPluginId(final String pluginId) {
 
     }
 
@@ -138,6 +138,26 @@ public class DummyTestPlugin implements Plugin {
 
     @Override
     public void setDependencies(final List<Dependency> dependencies) {
+
+    }
+
+    @Override
+    public String getTitle() {
+        return null;
+    }
+
+    @Override
+    public void setTitle(final String title) {
+
+    }
+
+    @Override
+    public String getIntroduction() {
+        return null;
+    }
+
+    @Override
+    public void setIntroduction(final String introduction) {
 
     }
 

@@ -6,12 +6,7 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified"
            xmlns="http://www.onehippo.org/essentials" targetNamespace="http://www.onehippo.org/essentials">
   <xs:element name="plugin" type="pluginType"/>
-  <!--
-    //############################################
-    // SCREENSHOTS
-    //############################################
 
-  -->
   <xs:complexType name="vendorsType">
     <xs:sequence>
       <xs:element type="vendorType" name="vendor" minOccurs="0" maxOccurs="1"/>
@@ -33,6 +28,7 @@
       <xs:element type="xs:string" name="type" minOccurs="1" maxOccurs="1"/>
       <xs:element type="xs:string" name="vendor" minOccurs="1" maxOccurs="1"/>
       <xs:element type="xs:string" name="description" minOccurs="1" maxOccurs="1"/>
+      <xs:element type="xs:string" name="introduction" minOccurs="0" maxOccurs="1"/>
       <xs:element type="xs:string" name="pluginLink" minOccurs="0" maxOccurs="1"/>
       <xs:element type="xs:string" name="documentation-link" minOccurs="0" maxOccurs="1"/>
       <xs:element type="xs:string" name="issues-link" minOccurs="0" maxOccurs="1"/>

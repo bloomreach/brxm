@@ -14,7 +14,7 @@ import org.codehaus.jackson.annotate.JsonTypeInfo;
  * @version "$Id$"
  */
 @XmlRootElement(name = "plugin")
-public class PluginRestful implements Restful, Plugin {
+public class PluginRestful implements Plugin, Restful {
 
     private static final long serialVersionUID = 1L;
 
@@ -81,13 +81,13 @@ public class PluginRestful implements Restful, Plugin {
     }
 
     @Override
-    public String getPluginLink() {
+    public String getPluginId() {
         return pluginLink;
     }
 
     @Override
-    public void setPluginLink(final String pluginLink) {
-        this.pluginLink = pluginLink;
+    public void setPluginId(final String pluginId) {
+        this.pluginLink = pluginId;
     }
 
     @Override
@@ -157,18 +157,22 @@ public class PluginRestful implements Restful, Plugin {
 
     }
 
+    @Override
     public String getTitle() {
         return title;
     }
 
+    @Override
     public void setTitle(final String title) {
         this.title = title;
     }
 
+    @Override
     public String getIntroduction() {
         return introduction;
     }
 
+    @Override
     public void setIntroduction(final String introduction) {
         this.introduction = introduction;
     }
@@ -233,7 +237,7 @@ public class PluginRestful implements Restful, Plugin {
         sb.append(", title='").append(title).append('\'');
         sb.append(", name='").append(name).append('\'');
         sb.append(", introduction='").append(introduction).append('\'');
-        sb.append(", pluginLink='").append(pluginLink).append('\'');
+        sb.append(", pluginId='").append(pluginLink).append('\'');
         sb.append(", pluginClass='").append(pluginClass).append('\'');
         sb.append(", type='").append(type).append('\'');
         sb.append(", installed=").append(installed);

@@ -18,27 +18,30 @@
         //############################################
         // PLUGINS CONTROLLER LOADER
         //############################################
-            .controller('pluginLoaderCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
+            .controller('pluginLoaderCtrl', function ($scope, $sce, $log, $rootScope, $http, $filter) {
 
             })
-            .controller('powerpacksCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
+            .controller('powerpacksCtrl', function ($scope, $sce, $log, $rootScope, $http, $filter) {
                 $scope.hideAll = false;
                 $scope.installSampleData = true;
-                $scope.includeTemplate = "/essentials/powerpacks/newsEventsPowerpack/newsEventsPowerpack.html";
+                $scope.includeTemplate = null;
                 $scope.resultMessages = null;
 
                 $scope.packs = null;
                 $scope.buttons = [
                     {buttonText: "Next", previousIndex: 0, nextIndex: 1}
                 ];
-                $scope.selectedValue={};
+                $scope.selectedValue = {};
                 $scope.stepVisible = [true, false];
                 $scope.selectedDescription = "Please make a selection";
                 $scope.onPowerpackSelect = function () {
                     angular.forEach($scope.packs, function (powerpack) {
-                        if (powerpack.value === $scope.selectedValue) {
-                            $scope.selectedDescription = $scope.getDescription($scope.selectedValue);
+                        var pluginId = powerpack.pluginId;
+                        if (pluginId === $scope.selectedValue) {
+                            $scope.selectedDescription = powerpack.description;
+                            $Scope.includeTemplate = "/essentials/powerpacks/"+ pluginId+"/"+ pluginId+".html"
                         }
+
                     });
 
                 };
@@ -62,38 +65,27 @@
                     if (idx == 2) {
 
                         // execute installation:
-                        $http($rootScope.REST.powerpacks_install + $scope.selectedItem + "/" + $scope.installSampleData)
+                        $http.post($rootScope.REST.powerpacks_install)
                                 .success(function (data) {
-                            $scope.resultMessages = data;
-                            $scope.hideAll = true;
-                        });
+                                    $scope.resultMessages = data;
+                                    $scope.hideAll = true;
+                                });
                     }
 
 
                 };
 
 
-                $scope.getDescription = function (name) {
-                    if (name.trim() == "news-events") {
-                        return  'A basic News and Events site that contains a homepage template, News   \
-    and Agenda components and detail pages  \
-    to render both News and Event articles. It comes with a standard navigational menu and URL structure. This is the \
-    most basic Power Pack to start with. \
-    You can easily extend with more components later on.'
-                    }
-                    return "A REST only site that contains only REST services and no pages.";
-                };
                 $scope.init = function () {
                     if ($scope.initCalled) {
                         return;
                     }
 
                     $scope.initCalled = true;
-                    $http.get($rootScope.REST.powerpacks).success(function (data) {
-                        $scope.packs = [{value: null, enabled: true, name: "Please select a powerpack"}];
+                    $http.get($rootScope.REST.plugins).success(function (data) {
                         $scope.packs = [];
-                        $scope.packs.push.apply($scope.packs, data.items);
-
+                        var powerpacks = $filter('pluginType')("powerpack", data.items);
+                        $scope.packs.push.apply($scope.packs, powerpacks);
                     });
 
                 };

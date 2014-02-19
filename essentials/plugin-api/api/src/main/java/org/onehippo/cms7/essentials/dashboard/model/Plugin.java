@@ -40,9 +40,9 @@ public interface Plugin extends Serializable {
 
     void setInstalled(boolean installed);
 
-    String getPluginLink();
+    String getPluginId();
 
-    void setPluginLink(String pluginLink);
+    void setPluginId(String pluginId);
 
 
     Vendor getVendor();
@@ -69,6 +69,14 @@ public interface Plugin extends Serializable {
     List<Dependency> getDependencies();
 
     void setDependencies(List<Dependency> dependencies);
+
+    String getTitle();
+
+    void setTitle(String title);
+
+    String getIntroduction();
+
+    void setIntroduction(String introduction);
 
     String getPluginClass();
 

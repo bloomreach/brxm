@@ -196,8 +196,10 @@ public class PluginResource extends BaseResource {
     }
 
 
-
-
+    @ApiOperation(
+            value = "Installs selected powerpack package",
+            notes = "Use PostPayloadRestful and set powerpackClass porperty",
+            response = RestfulList.class)
     @POST
     @Path("/install/powerpack")
     public RestfulList<MessageRestful> installPowerpack(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
@@ -299,7 +301,7 @@ public static List<PluginRestful> parseGist() {
         for (Plugin plugin : pluginList) {
             final PluginRestful resource = new PluginRestful();
             resource.setTitle(plugin.getName());
-            resource.setPluginLink(plugin.getPluginLink());
+            resource.setPluginId(plugin.getPluginId());
             resource.setInstalled(checkInstalled(plugin));
             plugins.add(resource);
         }
@@ -320,11 +322,11 @@ public static List<PluginRestful> parseGist() {
         final List<PluginRestful> pluginList = getPlugins(servletContext);
         for (Plugin plugin : pluginList) {
             if (plugin.getPluginClass().equals(className)) {
-                if (Strings.isNullOrEmpty(plugin.getPluginLink())) {
+                if (Strings.isNullOrEmpty(plugin.getPluginId())) {
                     continue;
                 }
                 resource.setTitle(plugin.getName());
-                resource.setPluginLink(plugin.getPluginLink());
+                resource.setPluginId(plugin.getPluginId());
                 resource.setInstalled(checkInstalled(plugin));
                 return resource;
             }
@@ -407,7 +409,7 @@ public static List<PluginRestful> parseGist() {
         final RestfulList<ControllerRestful> controllers = new RestList<>();
         final List<PluginRestful> plugins = getPlugins(servletContext);
         for (Plugin plugin : plugins) {
-            final String pluginLink = plugin.getPluginLink();
+            final String pluginLink = plugin.getPluginId();
             if (Strings.isNullOrEmpty(pluginLink)) {
                 continue;
             }

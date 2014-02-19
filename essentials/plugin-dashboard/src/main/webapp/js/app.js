@@ -117,7 +117,6 @@
                     jcr: root + '/jcr/',
                     jcrQuery: root + '/jcr/query/',
                     dynamic: root + '/dynamic/',
-                    powerpacks: root + '/powerpacks/',
 
                     /**
                      * Returns list of all plugins
@@ -150,7 +149,7 @@
 
                     documentTypes: root + '/documenttypes/',
 
-                    powerpacks_install: root + '/powerpacks/install/',
+                    powerpacks_install: plugins + '/install/powerpack',
 
                     compounds: root + '/documenttypes/compounds',
                     compoundsCreate: root + '/documenttypes/compounds/create/',
@@ -205,14 +204,14 @@
                         onSelect:'&'
                     },
 
-                    link: function (scope, element, attrs) {
+                    link: function (scope, element, attrs, ctrl) {
                         scope.onPowerpackSelect = function () {
                             scope.onSelect();
                         }
                     },
 
                     template: '<div><select  ng-required="true" ng-selected="onPowerpackSelect()" ng-model="ngModel">' +
-                            ' <option ng-repeat="option in options" value="{{option.value}}" ng-disabled="!option.enabled">{{option.name}}</option>' +
+                            ' <option ng-repeat="option in options" value="{{option.pluginId}}" ng-disabled="!option.enabled">{{option.name}}</option>' +
                             '</select>' +
                             '<div class="clearfix sep-10">&nbsp;</div>' +
                             '<div id="option.description">{{selectedDescription}}</div>' +
