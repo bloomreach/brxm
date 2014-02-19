@@ -144,7 +144,7 @@
                 $scope.init = function () {
                     // check if plugin is installed
                     $http.get($rootScope.REST.pluginInstallState + $scope.pluginClass).success(function (data) {
-                        //{"installed":false,"pluginLink":"contentBlocks","title":"Content Blocks Plugin"}
+                        //{"installed":false,"pluginId":"contentBlocks","title":"Content Blocks Plugin"}
                         // TODO enable check:
                         $scope.pluginInstalled = true;
                         //$scope.pluginInstalled = data.installed;
