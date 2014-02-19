@@ -26,8 +26,7 @@ import javax.jcr.Binary;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.tika.io.IOUtils;
-import org.codehaus.groovy.control.CompilationFailedException;
+import org.apache.commons.io.IOUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
