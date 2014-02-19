@@ -44,7 +44,7 @@ public class WorkflowEventLoggerWorkflowImpl implements WorkflowEventLoggerWorkf
 
     private Session session;
 
-    public WorkflowEventLoggerWorkflowImpl(Session session) throws RepositoryException, WorkflowException {
+    public WorkflowEventLoggerWorkflowImpl(Session session) throws RepositoryException {
         this.session = session;
     }
 
