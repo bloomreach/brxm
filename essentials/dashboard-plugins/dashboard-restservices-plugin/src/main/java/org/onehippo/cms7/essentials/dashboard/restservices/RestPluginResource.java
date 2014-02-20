@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.essentials.dashboard.restservices;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -27,6 +28,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
@@ -63,9 +66,11 @@ public class RestPluginResource extends BaseResource {
         if(Strings.isNullOrEmpty(restName) || Strings.isNullOrEmpty(restType)){
              return  new ErrorMessageRestful("REST service name / type or both were empty");
         }
-
+        final PluginContext context = getContext(servletContext);
+        context.addPlaceholderData(new HashMap<String, Object>(values));
+        final PowerpackPackage powerpack = new RestServicesPowerpack();
+        powerpack.execute(context);
         message.setValue("Please rebuild and restart your application");
-
         return message;
     }
 
