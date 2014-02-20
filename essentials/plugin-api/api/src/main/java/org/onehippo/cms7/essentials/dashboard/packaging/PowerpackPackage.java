@@ -20,8 +20,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.instructions.InstructionParser;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
+
+import com.google.common.eventbus.EventBus;
 
 /**
  * @version "$Id$"
@@ -55,4 +58,8 @@ public interface PowerpackPackage {
      * @return executions status
      */
     InstructionStatus execute(final PluginContext context);
+
+    InstructionParser getInstructionParser();
+
+    EventBus getEventBus();
 }

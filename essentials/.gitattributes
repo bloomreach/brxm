@@ -333,10 +333,11 @@ dashboard-plugins/dashboard-relateddocs-plugin/src/test/resources/project/site/p
 dashboard-plugins/dashboard-relateddocs-plugin/src/test/resources/related-doc-updater-test.xml -text
 dashboard-plugins/dashboard-relateddocs-plugin/src/test/resources/related-doc-updater.xml -text
 dashboard-plugins/dashboard-restservices-plugin/pom.xml -text
+dashboard-plugins/dashboard-restservices-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/RestPluginResource.java -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/RestServicesPlugin.java -text
+dashboard-plugins/dashboard-restservices-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/RestServicesPowerpack.java -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/HelloWorldContentResource.txt -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/HelloWorldPlainResource.txt -text
-dashboard-plugins/dashboard-restservices-plugin/src/main/resources/META-INF/plugin.xml -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/spring-content-rest-api.xml -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/spring-plain-rest-api.xml -text
 dashboard-plugins/dashboard-restservices-plugin/src/test/resources/log4j.xml -text
@@ -428,6 +429,7 @@ plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/installer/In
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/installer/Installer.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/Instruction.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/InstructionExecutor.java -text
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/InstructionParser.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/InstructionSet.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/InstructionStatus.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/Instructions.java -text
@@ -473,7 +475,7 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/i
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/XmlInstruction.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/executors/PluginInstructionExecutor.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/package-info.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/parser/InstructionParser.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/parser/DefaultInstructionParser.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/ActionType.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/BeanWriterLogEntry.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/DependencyRestful.java -text
@@ -492,6 +494,7 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/m
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/SimplePropertyModel.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/TemplateExistsException.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/package-info.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/packaging/DefaultPowerpack.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/rest/BaseResource.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/rest/KeyValueRestful.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/rest/MessageRestful.java -text
@@ -568,7 +571,7 @@ plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/i
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/NodeFolderInstructionTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/PluginInstructionExecutorTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/XmlInstructionTest.java -text
-plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/parser/InstructionParserTest.java -text
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/parser/DefaultInstructionParserTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/model/hst/HstConfigurationServiceTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/rest/BaseResourceTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/rest/QueryRestfulTest.java -text
@@ -2012,6 +2015,8 @@ plugin-dashboard/src/main/webapp/tools/beanwriter/beanwriter.html -text
 plugin-dashboard/src/main/webapp/tools/beanwriter/beanwriter.js -text
 plugin-dashboard/src/main/webapp/tools/freemarkersync/freemarkersync.html -text
 plugin-dashboard/src/main/webapp/tools/freemarkersync/freemarkersync.js -text
+plugin-dashboard/src/main/webapp/tools/restServices/restServices.html -text
+plugin-dashboard/src/main/webapp/tools/restServices/restServices.js -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/dashboard/contentblocks/ContentBlocksPluginTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/ContentBlocksTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/RestClientTest.java -text

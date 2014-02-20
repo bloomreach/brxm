@@ -16,50 +16,22 @@
 
 package org.onehippo.cms7.essentials.powerpack;
 
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Inject;
-
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
-import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
-import org.onehippo.cms7.essentials.dashboard.instruction.parser.InstructionParser;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
-import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
+import org.onehippo.cms7.essentials.dashboard.packaging.DefaultPowerpack;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.eventbus.EventBus;
 
 
 /**
  * @version "$Id$"
  */
 @Component
-public class BasicPowerpack implements PowerpackPackage {
+public class BasicPowerpack extends DefaultPowerpack {
 
     private static final ImmutableSet<String> INSTRUCTION_GROUPS_SAMPLE = new ImmutableSet.Builder<String>().add(EssentialConst.INSTRUCTION_GROUP_DEFAULT).add("samples").build();
-    private static final ImmutableSet<String> INSTRUCTION_GROUPS = new ImmutableSet.Builder<String>().add(EssentialConst.INSTRUCTION_GROUP_DEFAULT).build();
-    private static Logger log = LoggerFactory.getLogger(BasicPowerpack.class);
-
-    @Inject
-    private InstructionParser instructionParser;
-    private Instructions instructions;
-
-    @Inject
-    private EventBus eventBus;
-
-    private Map<String, String> properties;
 
 
     @Override
@@ -67,62 +39,8 @@ public class BasicPowerpack implements PowerpackPackage {
         if (Boolean.valueOf(getProperties().get("sampleData"))) {
             return INSTRUCTION_GROUPS_SAMPLE;
         }
-        return INSTRUCTION_GROUPS;
+        return DEFAULT_GROUPS;
     }
 
-    @Override
-    public Instructions getInstructions() {
-        if (instructions == null) {
-            final InputStream resourceAsStream = getClass().getResourceAsStream("/META-INF/instructions.xml");
-            final String content = GlobalUtils.readStreamAsText(resourceAsStream);
-            instructions = instructionParser.parseInstructions(content);
-        }
-        return instructions;
 
-    }
-
-    @Override
-    public InstructionStatus execute(final PluginContext context) {
-        if (instructions == null) {
-            instructions = getInstructions();
-        }
-        if (instructions == null) {
-            eventBus.post(new DisplayEvent("Couldn't parse instructions"));
-            log.error("Failed to parse instructions");
-            return InstructionStatus.FAILED;
-        }
-        final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
-        InstructionStatus status = InstructionStatus.SUCCESS;
-        final InstructionExecutor executor = new PluginInstructionExecutor();
-        for (InstructionSet instructionSet : instructionSets) {
-            final String group = instructionSet.getGroup();
-            // execute only or group(s)
-            if (groupNames().contains(group)) {
-                // currently we return fail if any of instructions is failed
-                if (status == InstructionStatus.FAILED) {
-                    executor.execute(instructionSet, context);
-                    continue;
-                }
-                status = executor.execute(instructionSet, context);
-            } else {
-                log.debug("Skipping instruction group for name: [{}]", group);
-            }
-        }
-        // TODO
-        return status;
-    }
-
-    @Override
-    public Map<String, String> getProperties() {
-
-        if (properties == null) {
-            return new HashMap<>();
-        }
-        return properties;
-    }
-
-    @Override
-    public void setProperties(final Map<String, String> properties) {
-        this.properties = properties;
-    }
 }

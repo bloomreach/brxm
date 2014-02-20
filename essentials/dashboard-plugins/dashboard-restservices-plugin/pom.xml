@@ -13,15 +13,25 @@
   <description>Hippo Essentials REST services plugin</description>
   <artifactId>hippo-dashboard-restservices-plugin</artifactId>
   <packaging>jar</packaging>
-
   <dependencies>
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
       <artifactId>hippo-essentials-plugin-api</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
       <artifactId>hippo-essentials-plugin-api-implementation</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
@@ -36,10 +46,30 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-modules</artifactId>
+      <version>${hippo.repository.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-connector</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-client</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
-
   <build>
     <defaultGoal>package</defaultGoal>
     <resources>
@@ -48,6 +78,7 @@
         <directory>${basedir}/src/main/java</directory>
         <includes>
           <include>**/*.woff</include>
+          <include>**/*.xml</include>
           <include>**/*.eot</include>
           <include>**/*.ttf</include>
           <include>**/*.svg</include>
@@ -65,7 +96,6 @@
         <includes>
           <include>**/*.cnd</include>
           <include>**/*.xml</include>
-          <include>**/*.txt</include>
           <include>**/*.MF</include>
           <include>**/*.properties</include>
         </includes>
@@ -79,4 +109,6 @@
     </plugins>
 
   </build>
+
+
 </project>

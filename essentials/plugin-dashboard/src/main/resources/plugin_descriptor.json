@@ -76,6 +76,23 @@
     },
     {
         "needsInstallation": false,
+        "enabled": true,
+        "@type": "plugin",
+        "introduction": "Creates REST services skeleton",
+        "name": "Rest Services plugin",
+        "pluginClass": "org.onehippo.cms7.essentials.dashboard.restservices.RestServicesPlugin",
+        "pluginId": "restServices",
+
+        "restClasses": ["org.onehippo.cms7.essentials.dashboard.restservices.RestPluginResource"],
+        "type": "tools",
+        "vendor": {
+            "@type": "vendor",
+            "name": "Hippo",
+            "url": "http://www.onehippo.com"
+        }
+    },
+    {
+        "needsInstallation": false,
         "enabled": false,
         "@type": "plugin",
         "introduction": "Freemarker synchronizing tool",

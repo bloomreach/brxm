@@ -22,7 +22,7 @@ import org.onehippo.cms7.essentials.BaseTest;
 import org.onehippo.cms7.essentials.MemoryRepository;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.InstructionsEventListener;
 import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
-import org.onehippo.cms7.essentials.dashboard.instruction.parser.InstructionParser;
+import org.onehippo.cms7.essentials.dashboard.instructions.InstructionParser;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;

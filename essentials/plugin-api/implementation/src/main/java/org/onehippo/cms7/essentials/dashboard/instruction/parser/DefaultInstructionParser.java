@@ -26,6 +26,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructions;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
+import org.onehippo.cms7.essentials.dashboard.instructions.InstructionParser;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.slf4j.Logger;
@@ -38,13 +39,14 @@ import org.springframework.stereotype.Component;
  * @version "$Id$"
  */
 @Component
-public class InstructionParser {
+public class DefaultInstructionParser implements InstructionParser{
 
     private static Logger log = LoggerFactory.getLogger(InstructionParser.class);
 
     @Inject
     private AutowireCapableBeanFactory injector;
 
+    @Override
     public Instructions parseInstructions(final String content) {
         try {
             final JAXBContext context = JAXBContext.newInstance(PluginInstructions.class);

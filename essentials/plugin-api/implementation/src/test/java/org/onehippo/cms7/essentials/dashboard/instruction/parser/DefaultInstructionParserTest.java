@@ -33,6 +33,7 @@ import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructions;
 import org.onehippo.cms7.essentials.dashboard.instruction.XmlInstruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
+import org.onehippo.cms7.essentials.dashboard.instructions.InstructionParser;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
@@ -47,9 +48,9 @@ import static org.junit.Assert.assertTrue;
  * @version "$Id$"
  */
 
-public class InstructionParserTest extends BaseTest {
+public class DefaultInstructionParserTest extends BaseTest {
 
-    private static Logger log = LoggerFactory.getLogger(InstructionParserTest.class);
+    private static Logger log = LoggerFactory.getLogger(DefaultInstructionParserTest.class);
 
 
     @Inject
