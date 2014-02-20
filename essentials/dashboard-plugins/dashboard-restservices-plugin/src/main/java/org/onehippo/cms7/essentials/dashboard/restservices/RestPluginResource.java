@@ -16,10 +16,6 @@
 
 package org.onehippo.cms7.essentials.dashboard.restservices;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -28,13 +24,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
-import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.NodeRestful;
-import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
-import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,15 +40,12 @@ public class RestPluginResource extends BaseResource {
     private static Logger log = LoggerFactory.getLogger(RestPluginResource.class);
 
     /**
-     * Writes nodes to files
-     *
-     * @param paths          list of XPATH entries
-     * @param servletContext
+     * Creates Rest services skeleton
      */
 
     @POST
     @Path("/")
-    public MessageRestful writeToFileSystem(final RestfulList<KeyValueRestful> paths, @Context ServletContext servletContext) {
+    public MessageRestful createSkeleton(@Context ServletContext servletContext) {
 
 
         final MessageRestful message = new MessageRestful("Invoked service");
