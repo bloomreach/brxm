@@ -24,9 +24,54 @@
                 <p class="list-group-item">
                     REST services setup plugin
                 </p>
-                <p class="list-group-item">
-                    <button class="btn btn-primary" ng-click="runRestSetup()">Run setup</button>
-                </p>
+                <div class="list-group-item">
+                    <form novalidate name="restForm">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                            <tr>
+                                <td>Choose endpoint name and REST type</td>
+
+                            </tr>
+
+                            </thead>
+                            <tr>
+
+                                <td>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">http://localhost:8080/site/</span>
+                                        <input type="hidden" ng-model="restType" class="form-control" ng-required="true"/>
+                                        <input type="text" ng-model="apiName" class="form-control" ng-required="true"/>
+                                        <div class="input-group-btn">
+                                            <button type="button" class="btn btn-default" tabindex="-1">{{selectedType}}</button>
+                                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" tabindex="-1">
+                                                <span class="caret"></span>
+                                                <span class="sr-only">Rest Type</span>
+                                            </button>
+                                            <ul class="dropdown-menu pull-right" role="menu">
+                                                <li>
+                                                    <a ng-click="restType =  'content'; selectedType =  'content'" href="javascript:void(0)">Content REST</a>
+                                                </li>
+                                                <li>
+                                                    <a ng-click="restType =  'plain'; selectedType =  'plain'" href="javascript:void(0)">Plain REST</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+
+                                </td>
+
+                            </tr>
+                            <tr>
+
+                                <td>
+                                    <button ng-disabled="!restForm.$valid" class="btn btn-primary pull-right" ng-click="runRestSetup()">Run setup</button>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </form>
+                </div>
             </div>
             <div class="list-group-item" ng-show="resultMessages.items.length > 0">
                 <div class="alert alert-info">
