@@ -32,9 +32,9 @@ import com.google.common.eventbus.EventBus;
 public interface PowerpackPackage {
 
 
-    void setProperties(Map<String, String> properties);
+    void setProperties(Map<String, Object> properties);
 
-    Map<String, String> getProperties();
+    Map<String, Object> getProperties();
 
     /**
      * Defines a group name. Each instruction set can have a several group names

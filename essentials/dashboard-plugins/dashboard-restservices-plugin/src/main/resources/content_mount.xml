@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="{{name}}">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hst:mount</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:alias" sv:type="String">
+    <sv:value>{{name}}</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:isSite" sv:type="Boolean">
+    <sv:value>false</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:namedpipeline" sv:type="String">
+    <sv:value>JaxrsRestContentPipeline</sv:value>
+  </sv:property>
+</sv:node>

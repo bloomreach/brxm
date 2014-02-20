@@ -190,6 +190,16 @@ public class DefaultPluginContext implements PluginContext {
         return getSiteDirectory().getAbsolutePath() + MAIN_JAVA_PART;
     }
 
+    @Override
+    public void addPlaceholderData(final String key, final Object value) {
+        getPlaceholderData().put(key, value);
+    }
+
+    @Override
+    public void addPlaceholderData(final Map<String, Object> data) {
+        getPlaceholderData().putAll(data);
+    }
+
     /**
      * @inherit
      * @see org.onehippo.cms7.essentials.dashboard.utils.EssentialConst#PLACEHOLDER_NAMESPACE
@@ -211,6 +221,8 @@ public class DefaultPluginContext implements PluginContext {
     public Map<String, Object> getPlaceholderData() {
         if (placeholderData == null) {
             placeholderData = new HashMap<>();
+        } else {
+            return placeholderData;
         }
 
         placeholderData.put(EssentialConst.PLACEHOLDER_NAMESPACE, getProjectNamespacePrefix());

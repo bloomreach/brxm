@@ -185,6 +185,11 @@ public interface PluginContext extends Serializable, AutoCloseable {
      */
     String getSiteJavaRoot();
 
+
+    void addPlaceholderData(String key, Object value);
+
+    void addPlaceholderData(Map<String, Object> data);
+
     /**
      * returns pre-filled nr of key value pairs for replacement injection in templates etc.
      *

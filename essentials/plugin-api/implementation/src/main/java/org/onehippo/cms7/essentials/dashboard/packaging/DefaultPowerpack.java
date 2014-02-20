@@ -55,11 +55,11 @@ public class DefaultPowerpack implements PowerpackPackage {
     @Inject
     private EventBus eventBus;
 
-    private Map<String, String> properties;
+    private Map<String, Object> properties;
     private Instructions instructions;
 
     @Override
-    public Map<String, String> getProperties() {
+    public Map<String, Object> getProperties() {
 
         if (properties == null) {
             return new HashMap<>();
@@ -68,7 +68,7 @@ public class DefaultPowerpack implements PowerpackPackage {
     }
 
     @Override
-    public void setProperties(final Map<String, String> properties) {
+    public void setProperties(final Map<String, Object> properties) {
         this.properties = properties;
     }
 
@@ -91,6 +91,10 @@ public class DefaultPowerpack implements PowerpackPackage {
 
     @Override
     public InstructionStatus execute(final PluginContext context) {
+        // NOTE: we'll add any additional context properties into context:
+        context.addPlaceholderData(properties);
+
+
         if (instructions == null) {
             instructions = getInstructions();
         }

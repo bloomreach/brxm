@@ -36,7 +36,7 @@ public class BasicPowerpack extends DefaultPowerpack {
 
     @Override
     public Set<String> groupNames() {
-        if (Boolean.valueOf(getProperties().get("sampleData"))) {
+        if (Boolean.valueOf((String) getProperties().get("sampleData"))) {
             return INSTRUCTION_GROUPS_SAMPLE;
         }
         return DEFAULT_GROUPS;

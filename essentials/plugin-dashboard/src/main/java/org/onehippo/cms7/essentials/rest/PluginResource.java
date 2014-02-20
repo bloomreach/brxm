@@ -20,6 +20,7 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -205,7 +206,7 @@ public class PluginResource extends BaseResource {
     public RestfulList<MessageRestful> installPowerpack(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
         final RestfulList<MessageRestful> messageRestfulRestfulList = new RestList<>();
         final Map<String, String> values = payloadRestful.getValues();
-        final String pluginClass = values.get("pluginClass");
+        final String pluginClass = String.valueOf(values.get("pluginClass"));
         if (Strings.isNullOrEmpty(pluginClass)) {
             final MessageRestful resource = new MessageRestful("No valid powerpack was selected");
             resource.setSuccessMessage(false);
@@ -213,7 +214,7 @@ public class PluginResource extends BaseResource {
             return messageRestfulRestfulList;
         }
         final PowerpackPackage powerpackPackage = GlobalUtils.newInstance(pluginClass);
-        powerpackPackage.setProperties(values);
+        powerpackPackage.setProperties(new HashMap<String, Object>(values));
         injector.autowireBean(powerpackPackage);
         final String className = ProjectSetupPlugin.class.getName();
         final PluginContext context = new DefaultPluginContext(GlobalUtils.createSession(), new PluginRestful(className));
