@@ -44,10 +44,10 @@ public class TemplateEditorWorkflowImpl extends WorkflowImpl implements Template
             RepositoryException, RemoteException {
 
         Document root = new Document(getWorkflowContext().getUserSession().getRootNode());
-        RepositoryWorkflow repositoryWorkflow = (RepositoryWorkflow) getNonChainingWorkflowContext().getWorkflow("internal", root);
+        RepositoryWorkflow repositoryWorkflow = (RepositoryWorkflow)getWorkflowContext().getWorkflow("internal", root);
         repositoryWorkflow.createNamespace(prefix, uri);
 
-        FolderWorkflow folderWorkflow = (FolderWorkflow) getNonChainingWorkflowContext().getWorkflow("internal");
+        FolderWorkflow folderWorkflow = (FolderWorkflow) getWorkflowContext().getWorkflow("internal");
         Map<String, String> replacements = new TreeMap<>();
         replacements.put("name", prefix);
         replacements.put("uri", uri);
@@ -55,7 +55,7 @@ public class TemplateEditorWorkflowImpl extends WorkflowImpl implements Template
         final Node namespace = getWorkflowContext().getUserSession().getNode(namespacePath);
         for (Node node : new NodeIterable(namespace.getNodes())) {
             if (node.isNodeType("hipposysedit:templatetype")) {
-                final EditmodelWorkflow editModelWorkflow = (EditmodelWorkflow) getNonChainingWorkflowContext().
+                final EditmodelWorkflow editModelWorkflow = (EditmodelWorkflow) getWorkflowContext().
                         getWorkflow("editing", new Document(node));
                 editModelWorkflow.edit();
                 editModelWorkflow.save();

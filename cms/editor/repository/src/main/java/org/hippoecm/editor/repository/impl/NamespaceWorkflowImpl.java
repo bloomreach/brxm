@@ -137,7 +137,7 @@ public class NamespaceWorkflowImpl extends WorkflowImpl implements NamespaceWork
 
     @Override
     public void addDocumentType(final String name, final String superType) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        WorkflowContext context = getWorkflowContext().getWorkflowContext(null);
+        WorkflowContext context = getWorkflowContext();
 
         NamespaceRegistry nsReg = session.getWorkspace().getNamespaceRegistry();
 
