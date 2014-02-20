@@ -6,7 +6,6 @@
                 $scope.writeAction = function (action) {
                     var map = Essentials.mapBuilder();
                     angular.forEach($scope.scriptNodes, function (value) {
-                        console.log("---------------------------------");
                         console.log(value.selected);
                         if (value.selected) {
                             if (action == "file") {
@@ -40,25 +39,28 @@
                             var displayValue = myValue.replace("/hst:hst/hst:configurations/", "").replace("/hst:templates/", "/");
                             $scope.scriptNodes.push({"value": value.path, "displayValue": displayValue, "selected": false, "filePath": null});
                         });
-                    });
-
-                    // get files and match with above paths:
-                    $http.get($scope.endpoint).success(function (data) {
-                        angular.forEach($scope.scriptNodes, function (node) {
-                            angular.forEach(data.items, function (value) {
-                                if (value && value.value) {
-                                    var fileName = node.displayValue + ".ftl";
-                                    var myValue = value.value;
-                                    if (myValue.indexOf(fileName, value.value.length - fileName.length) !== -1) {
-                                        node.filePath = myValue;
+                        // get files and match with above paths:
+                        $http.get($scope.endpoint).success(function (data) {
+                            angular.forEach($scope.scriptNodes, function (node) {
+                                var fileTemplates = data.items;
+                                angular.forEach(fileTemplates, function (value) {
+                                    if (value && value.value) {
+                                        var fileName = node.displayValue + ".ftl";
+                                        var myValue = value.value;
+                                        if (myValue.indexOf(fileName, value.value.length - fileName.length) !== -1) {
+                                            node.filePath = myValue;
+                                        }
                                     }
-                                }
-                            });
+                                });
 
+                            });
                         });
 
-
                     });
+
+
+
+
 
                 };
                 $scope.init();
