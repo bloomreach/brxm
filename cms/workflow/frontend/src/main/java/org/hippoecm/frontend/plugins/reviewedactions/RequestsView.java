@@ -211,7 +211,7 @@ public class RequestsView extends RepeatingView {
             @Override
             protected IModel getTitle() {
                 String state = getState();
-                if (state.equals("rejected")) {
+                if (state.equals("request-rejected")) {
                     return new StringResourceModel("drop-request", RequestsView.this, null);
                 } else {
                     return new StringResourceModel("cancel-request", RequestsView.this, null);
@@ -226,7 +226,7 @@ public class RequestsView extends RepeatingView {
             @Override
             protected Dialog createRequestDialog() {
                 String state = getState();
-                if (state.equals("rejected")) {
+                if (state.equals("request-rejected")) {
                     IModel<String> reason = null;
                     try {
                         String id = item.getModelObject().getId();
