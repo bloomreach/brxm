@@ -119,8 +119,12 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
         }
     }
 
+    protected boolean isActionAllowed(Map<String, Serializable> info, String key) {
+        return (info.containsKey(key) && info.get(key) instanceof Boolean && (Boolean)info.get(key));
+    }
+
     protected void hideIfNotAllowed(Map<String, Serializable> info, String key, StdWorkflow... actions) {
-        if (!(info.containsKey(key) && info.get(key) instanceof Boolean && (Boolean)info.get(key))) {
+        if (!isActionAllowed(info, key)) {
             for (StdWorkflow action : actions) {
                 action.setVisible(false);
             }

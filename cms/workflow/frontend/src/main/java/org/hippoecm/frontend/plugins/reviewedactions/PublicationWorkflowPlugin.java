@@ -338,22 +338,38 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
 
         Map<String, Serializable> info = getHints();
-        hideOrDisable(info, "publish", publishAction, schedulePublishAction);
-        hideOrDisable(info, "depublish", depublishAction, scheduleDepublishAction);
 
-        if (!info.containsKey("publish")) {
-            hideOrDisable(info, "requestPublication", requestPublishAction, requestSchedulePublishAction);
-        } else {
+        if (isActionAllowed(info, "publish") ||
+                isActionAllowed(info, "depublish") ||
+                isActionAllowed(info, "requestPublication") ||
+                isActionAllowed(info, "requestDepublication"))
+        {
+            hideOrDisable(info, "publish", publishAction, schedulePublishAction);
+            hideOrDisable(info, "depublish", depublishAction, scheduleDepublishAction);
+
+            if (!info.containsKey("publish")) {
+                hideOrDisable(info, "requestPublication", requestPublishAction, requestSchedulePublishAction);
+            } else {
+                requestPublishAction.setVisible(false);
+                requestSchedulePublishAction.setVisible(false);
+            }
+
+            if (!info.containsKey("depublish")) {
+                hideOrDisable(info, "requestDepublication", requestDepublishAction, requestScheduleDepublishAction);
+            } else {
+                requestDepublishAction.setVisible(false);
+                requestScheduleDepublishAction.setVisible(false);
+            }
+        }
+        else {
+            publishAction.setVisible(false);
+            depublishAction.setVisible(false);
             requestPublishAction.setVisible(false);
             requestSchedulePublishAction.setVisible(false);
-        }
-
-        if (!info.containsKey("depublish")) {
-            hideOrDisable(info, "requestDepublication", requestDepublishAction, requestScheduleDepublishAction);
-        } else {
             requestDepublishAction.setVisible(false);
             requestScheduleDepublishAction.setVisible(false);
+            schedulePublishAction.setVisible(false);
+            scheduleDepublishAction.setVisible(false);
         }
-
     }
 }
