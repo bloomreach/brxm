@@ -38,7 +38,6 @@ import javax.jcr.Value;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
@@ -466,10 +465,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
             this.workflowDefinition = workflowDefinition;
             this.subjectSession = subjectSession;
             this.subject = subject;
-        }
-
-        public WorkflowContext getWorkflowContext(Object specification) throws RepositoryException {
-            return new WorkflowContextImpl(workflowDefinition, subjectSession, subject);
         }
 
         public Workflow getWorkflow(String category, final Document document) throws WorkflowException, RepositoryException {

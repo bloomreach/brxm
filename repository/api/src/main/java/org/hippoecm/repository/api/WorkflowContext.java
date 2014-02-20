@@ -25,21 +25,6 @@ import javax.jcr.Session;
 public interface WorkflowContext {
 
     /**
-     * Obtains an alternative work-flow context, which has special behavior depending on the specification parameter passed.
-     * Any work-flow obtained though an alternative work-flow context (see #getWorkflow) will be subject to the alternate rules
-     * as indicated by the specification.  For example, the specification may indicate that any work-flow step invocation must
-     * not be performed immediately, but on a specific date.
-     * @param specification implementation dependent specification, alternate work-flow context implementations are passed
-     * this object in order to pass parameters.  The type of the object also determines which alternative implementation is used.
-     * @return a work-flow context with alternate behavior
-     * @throws org.hippoecm.repository.api.MappingException when no implementation is available for the specification passed
-     * @throws javax.jcr.RepositoryException when a generic error happens
-     * @deprecated
-     */
-    @Deprecated
-    public WorkflowContext getWorkflowContext(Object specification) throws RepositoryException;
-
-    /**
      * Obtains a workflow instance for the same document this workflow context 
      * @param category 
      * @return 

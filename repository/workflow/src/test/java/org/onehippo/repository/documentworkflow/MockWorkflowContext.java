@@ -43,11 +43,6 @@ public class MockWorkflowContext implements WorkflowContext {
     }
 
     @Override
-    public WorkflowContext getWorkflowContext(final Object specification) throws RepositoryException {
-        return this;
-    }
-
-    @Override
     public Workflow getWorkflow(final String category) throws WorkflowException, RepositoryException {
         return null;
     }

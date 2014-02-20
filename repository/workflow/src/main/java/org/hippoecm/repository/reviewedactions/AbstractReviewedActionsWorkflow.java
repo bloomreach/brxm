@@ -54,7 +54,7 @@ public class AbstractReviewedActionsWorkflow extends WorkflowImpl {
         Node handleNode = getSubjectHandleNode();
 
         try {
-            final Workflow handleWorkflow = getNonChainingWorkflowContext().getWorkflow("default", new Document(handleNode));
+            final Workflow handleWorkflow = getWorkflowContext().getWorkflow("default", new Document(handleNode));
             if (!(handleWorkflow instanceof DocumentWorkflow)) {
                 throw new RepositoryException("Workflow on handle, in category 'document', is not a DocumentWorkflow");
             }

@@ -25,7 +25,6 @@ import java.util.TreeMap;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
@@ -89,32 +88,6 @@ public abstract class WorkflowImpl implements Remote, Workflow
      */
     final protected WorkflowContext getWorkflowContext() {
         return context;
-    }
-
-    /**
-     * This is a shorthand for getWorkflowContext().getWorkflowContext(specification)
-     * @param specification implementation dependent specification, alternate work-flow context implementations are passed
-     * this object in order to pass parameters.  The type of the object also determines which alternative implementation is used.
-     * @return a work-flow context with alternate behavior
-     * @throws org.hippoecm.repository.api.MappingException when no implementation is available for the specification passed
-     * @throws javax.jcr.RepositoryException when a generic error happens
-     * @see WorkflowContext
-     * @deprecated
-     */
-    @Deprecated
-    final protected WorkflowContext getWorkflowContext(Object specification) throws MappingException, RepositoryException {
-        return context.getWorkflowContext(specification);
-    }
-
-    /**
-     * A shorthand method to get an unchained {@link WorkflowContext}
-     *
-     * @return
-     * @throws MappingException
-     * @throws RepositoryException
-     */
-    final protected WorkflowContext getNonChainingWorkflowContext() throws MappingException, RepositoryException {
-        return context.getWorkflowContext(null);
     }
 
     /**

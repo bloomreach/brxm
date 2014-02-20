@@ -738,7 +738,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             return duplicate(source, targetName);
         }
         if (source.getAncestor(folder.getDepth()).isSame(folder)) {
-            return ((EmbedWorkflow)workflowContext.getWorkflowContext(null).getWorkflow("embedded", new Document(destination))).copyTo(new Document(subject), offspring, targetName, arguments);
+            return ((EmbedWorkflow)workflowContext.getWorkflow("embedded", new Document(destination))).copyTo(new Document(subject), offspring, targetName, arguments);
         }
         return null;
     }

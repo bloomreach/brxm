@@ -78,8 +78,7 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
         Document targetFolder = new Document(folderTranslation);
         Node copiedDoc = null;
         if (userSubject.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-            Workflow defaultWorkflow = workflowContext.getWorkflowContext(null).
-                    getWorkflow("translation-copy", new Document(rootSubject));
+            Workflow defaultWorkflow = workflowContext.getWorkflow("translation-copy", new Document(rootSubject));
             if (defaultWorkflow instanceof CopyWorkflow) {
                 ((CopyWorkflow) defaultWorkflow).copy(targetFolder, name);
             } else {
@@ -99,7 +98,7 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
             JcrUtils.ensureIsCheckedOut(copiedDoc);
             copiedDoc.setProperty(HippoTranslationNodeType.LOCALE, language);
         } else {
-            Workflow internalWorkflow = workflowContext.getWorkflowContext(null).getWorkflow("internal", targetFolder);
+            Workflow internalWorkflow = workflowContext.getWorkflow("internal", targetFolder);
             if (!(internalWorkflow instanceof FolderWorkflow)) {
                 throw new WorkflowException(
                         "Target folder does not have a folder workflow in the category 'internal'.");
@@ -237,7 +236,7 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
         Document rootDocument = new Document(rootSubject);
         Workflow internalWorkflow;
         try {
-            internalWorkflow = workflowContext.getWorkflowContext(null).getWorkflow("internal", rootDocument);
+            internalWorkflow = workflowContext.getWorkflow("internal", rootDocument);
             if (!(internalWorkflow instanceof FolderWorkflow)) {
                 throw new WorkflowException(
                         "Target folder does not have a folder workflow in the category 'internal'.");

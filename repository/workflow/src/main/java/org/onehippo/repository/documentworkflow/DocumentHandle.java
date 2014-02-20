@@ -138,14 +138,14 @@ public class DocumentHandle implements SCXMLDataModel {
     }
 
     /**
-     * Checks if specific privileges (e.g. hippo:editor) are granted to the current user session against a specific
+     * Checks if specific privileges (e.g. hippo:editor) are granted to the current workflow subject (e.g. handle) its session for a specific
      * {@link Document}.
      * <p> Implementation note: previously evaluated privileges are cached against the Document node its path
      * within the DocumentHandle instance </p>
      *
-     * @param document the document to check permission against
+     * @param document the document to check permission for
      * @param privileges the privileges (, separated) to check permission for
-     * @return true if the current user session has been granted all of the specified privileges for the document node
+     * @return true if the current subject session has been granted all of the specified privileges for the document node
      */
     public boolean isGranted(Document document, String privileges) {
         if (privileges == null || document == null || document.getIdentity() == null) {
@@ -157,9 +157,9 @@ public class DocumentHandle implements SCXMLDataModel {
             return false;
         }
 
-        final Session userSession = context.getUserSession();
         try {
-            final Session workflowRequesterSession = handle.getSession();
+            final Session handleSession = handle.getSession();
+            final Session userSession = context.getUserSession();
             Node userDocumentNode = userSession.getNodeByIdentifier(document.getIdentity());
             String userDocumentPath = userDocumentNode.getPath();
             for (String priv : privs) {

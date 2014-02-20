@@ -29,7 +29,6 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.hippoecm.repository.reviewedactions.PublishableDocument;
@@ -162,10 +161,10 @@ public class DeprecatedFullReviewedActionsWorkflowImpl extends DeprecatedBasicRe
         }
         if (unpublishedDocument == null) {
             Document folder = getContainingFolder(publishedDocument);
-            Workflow workflow = getWorkflowContext(null).getWorkflow(folderWorkflowCategory, destination);
+            Workflow workflow = getWorkflowContext().getWorkflow(folderWorkflowCategory, destination);
             if (workflow instanceof EmbedWorkflow) {
                 Document copy = ((EmbedWorkflow)workflow).copyTo(folder, publishedDocument, newName, null);
-                FullReviewedActionsWorkflow copiedDocumentWorkflow = (FullReviewedActionsWorkflow) getWorkflowContext(null).getWorkflow("default", copy);
+                FullReviewedActionsWorkflow copiedDocumentWorkflow = (FullReviewedActionsWorkflow) getWorkflowContext().getWorkflow("default", copy);
                 copiedDocumentWorkflow.depublish();
             } else
                 throw new WorkflowException("cannot copy document which is not contained in a folder");
@@ -300,18 +299,11 @@ public class DeprecatedFullReviewedActionsWorkflowImpl extends DeprecatedBasicRe
     }
 
     void doSchedPublish(Date publicationDate) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        WorkflowContext wfCtx = getWorkflowContext();
-        wfCtx = wfCtx.getWorkflowContext(publicationDate);
-
-        FullReviewedActionsWorkflow wf = (FullReviewedActionsWorkflow) wfCtx.getWorkflow("default");
-        wf.publish();
+        throw new UnsupportedOperationException("workflow scheduling not supported");
     }
 
     void doSchedDepublish(Date depublicationDate) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        WorkflowContext wfCtx = getWorkflowContext();
-        wfCtx = wfCtx.getWorkflowContext(depublicationDate);
-        FullReviewedActionsWorkflow wf = (FullReviewedActionsWorkflow) wfCtx.getWorkflow("default");
-        wf.depublish();
+        throw new UnsupportedOperationException("workflow scheduling not supported");
     }
 
 }

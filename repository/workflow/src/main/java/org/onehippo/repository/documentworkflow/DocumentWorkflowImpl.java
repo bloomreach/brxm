@@ -108,8 +108,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
                 scxmlId = (String) workflowConfiguration.get(SCXML_DEFINITION_KEY);
             }
 
-            // Critical: MUST use getNonChainingWorkflowContext() or getWorkflowContext(null), NOT getWorkflowContext()!
-            dm = new DocumentHandle(scxmlId, getNonChainingWorkflowContext(), node);
+            dm = new DocumentHandle(scxmlId, getWorkflowContext(), node);
             workflowExecutor = new SCXMLWorkflowExecutor(dm);
         }
         catch (WorkflowException wfe) {
