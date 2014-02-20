@@ -101,16 +101,16 @@
             if (this.el.attr(HST.ATTR.HST_CONTAINER_DISABLED) === "true") {
                  overlay.addClass(this.cls.overlay.disabled);
                 if (this.el.attr(HST.ATTR.TYPE) === HST.CONTAINER) {
-                    if (this.el.attr(HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_BY) &&
-                           (this.el.attr(HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_BY_CURRENT_USER) === "false")) {
+                    if (this.el.attr(HST.ATTR.HST_LOCKED_BY) &&
+                           (this.el.attr(HST.ATTR.HST_LOCKED_BY_CURRENT_USER) === "false")) {
                        overlay.addClass(this.cls.overlay.locked);
-                        if (this.el.attr(HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_ON)) {
-                            formattedDate = new Date(parseInt(this.el.attr(HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_ON), 10));
+                        if (this.el.attr(HST.ATTR.HST_LOCKED_ON)) {
+                            formattedDate = new Date(parseInt(this.el.attr(HST.ATTR.HST_LOCKED_ON), 10));
                         }
                         if (formattedDate) {
-                            overlay.attr("title", "Locked by  '" + this.el.attr(HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_BY) + "' on " + formattedDate);
+                            overlay.attr("title", "Locked by  '" + this.el.attr(HST.ATTR.HST_LOCKED_BY) + "' on " + formattedDate);
                         } else {
-                            overlay.attr("title", "Locked by  '" + this.el.attr(HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_BY));
+                            overlay.attr("title", "Locked by  '" + this.el.attr(HST.ATTR.HST_LOCKED_BY));
                         }
                     }
                 }

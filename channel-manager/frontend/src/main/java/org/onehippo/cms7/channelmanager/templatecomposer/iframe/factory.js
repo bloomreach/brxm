@@ -136,24 +136,24 @@
                 }
 
                 if (type === HST.CONTAINER || type === HST.CONTAINERITEM) {
-                    hstContainerLockedBy = hstContainerMetaData[HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_BY];
+                    hstContainerLockedBy = hstContainerMetaData[HST.ATTR.HST_LOCKED_BY];
                     if (hstContainerLockedBy !== undefined) {
-                        element.setAttribute(HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_BY, hstContainerLockedBy);
+                        element.setAttribute(HST.ATTR.HST_LOCKED_BY, hstContainerLockedBy);
                     }
-                    hstContainerLockedByCurrentUser = hstContainerMetaData[HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_BY_CURRENT_USER];
+                    hstContainerLockedByCurrentUser = hstContainerMetaData[HST.ATTR.HST_LOCKED_BY_CURRENT_USER];
                     if (hstContainerLockedByCurrentUser !== undefined) {
-                        element.setAttribute(HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_BY_CURRENT_USER, hstContainerLockedByCurrentUser);
+                        element.setAttribute(HST.ATTR.HST_LOCKED_BY_CURRENT_USER, hstContainerLockedByCurrentUser);
                         if (hstContainerLockedBy && hstContainerLockedByCurrentUser === "false") {
                             element.setAttribute(HST.ATTR.HST_CONTAINER_DISABLED, "true");
                         }
                     }
-                    hstContainerLockedOn = hstContainerMetaData[HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_ON];
+                    hstContainerLockedOn = hstContainerMetaData[HST.ATTR.HST_LOCKED_ON];
                     if (hstContainerLockedOn !== undefined) {
-                        element.setAttribute(HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_ON, hstContainerLockedOn);
+                        element.setAttribute(HST.ATTR.HST_LOCKED_ON, hstContainerLockedOn);
                     }
-                    hstContainerLastModified = hstContainerMetaData[HST.ATTR.HST_CONTAINER_COMPONENT_LAST_MODIFIED];
+                    hstContainerLastModified = hstContainerMetaData[HST.ATTR.HST_LAST_MODIFIED];
                     if (hstContainerLastModified !== undefined) {
-                        element.setAttribute(HST.ATTR.HST_CONTAINER_COMPONENT_LAST_MODIFIED, hstContainerLastModified);
+                        element.setAttribute(HST.ATTR.HST_LAST_MODIFIED, hstContainerLastModified);
                     }
                 }
 
