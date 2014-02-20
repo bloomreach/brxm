@@ -22,8 +22,6 @@
     <essentials.version>1.01.02-SNAPSHOT</essentials.version>
     <!-- ***END temporary override of versions*** -->
 
-    <!--Solving duplicate CMS dependencies-->
-    <hippo.cms.version>2.24.07</hippo.cms.version>
 
     <jstl.version>1.1.2</jstl.version>
     <taglibs.version>1.1.2</taglibs.version>
