@@ -62,6 +62,7 @@ public class RestfulList<T extends Restful> implements Serializable {
             @JsonSubTypes.Type(value = PluginRestful.class, name = "plugin"),
             @JsonSubTypes.Type(value = ProjectRestful.class, name = "project"),
             @JsonSubTypes.Type(value = PostPayloadRestful.class, name = "payload"),
+            @JsonSubTypes.Type(value = ErrorMessageRestful.class, name = "error"),
             @JsonSubTypes.Type(value = MessageRestful.class, name = "message")})
     public List<T> getItems() {
         return items;

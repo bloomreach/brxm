@@ -16,6 +16,9 @@
 
 package org.onehippo.cms7.essentials.dashboard.restservices;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -25,9 +28,13 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
+import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 /**
  * @version "$Id$"
@@ -45,11 +52,19 @@ public class RestPluginResource extends BaseResource {
 
     @POST
     @Path("/")
-    public MessageRestful createSkeleton(@Context ServletContext servletContext) {
+    public MessageRestful createSkeleton(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
 
 
-        final MessageRestful message = new MessageRestful("Invoked service");
+        final MessageRestful message = new MessageRestful();
 
+        final Map<String,String> values = payloadRestful.getValues();
+        final String restName = values.get("restName");
+        final String restType = values.get("restType");
+        if(Strings.isNullOrEmpty(restName) || Strings.isNullOrEmpty(restType)){
+             return  new ErrorMessageRestful("REST service name / type or both were empty");
+        }
+
+        message.setValue("Please rebuild and restart your application");
 
         return message;
     }

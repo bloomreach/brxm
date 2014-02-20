@@ -1761,6 +1761,12 @@ dashboard-plugins/freemarker-synchronizer/target
 dashboard-plugins/hippo-plugins.iws
 dashboard-plugins/target
 /hippo-plugins.iws
+logs/*.iml
+logs/.DS_Store
+logs/.idea
+logs/atlassian-ide-plugin.xml
+logs/hippo-plugins.iws
+logs/target
 plugin-api/*.iml
 plugin-api/.DS_Store
 plugin-api/.idea
