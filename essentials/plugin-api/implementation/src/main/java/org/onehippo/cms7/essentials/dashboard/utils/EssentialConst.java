@@ -19,6 +19,7 @@ public final class EssentialConst {
      */
     public static final String FREEMARKER_RELATIVE_FOLDER = "src" + File.separator + "main" + File.separator + "webapp" + File.separator + "WEB-INF" + File.separator + "ftl";
     public static final String PATH_REL_WEB_ROOT = "src" + File.separator + "main" + File.separator + "webapp";
+    public static final String PATH_REL_OVERRIDE = "META-INF" + File.separator + "hst-assembly" + File.separator + "overrides";
     /**
      * Namespace placeholder name
      */
@@ -40,6 +41,7 @@ public final class EssentialConst {
     public static final String PLACEHOLDER_COMPONENTS_FOLDER = "componentsFolder";
     public static final String PLACEHOLDER_REST_FOLDER = "restFolder";
     public static final String PLACEHOLDER_TMP_FOLDER = "tmpFolder";
+    public static final String PLACEHOLDER_SITE_OVERRIDE_FOLDER = "siteOverrideFolder";
     /**
      * @see org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated#internalName()
      */

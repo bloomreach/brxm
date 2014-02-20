@@ -338,6 +338,7 @@ dashboard-plugins/dashboard-restservices-plugin/src/main/java/org/onehippo/cms7/
 dashboard-plugins/dashboard-restservices-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/RestServicesPowerpack.java -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/HelloWorldContentResource.txt -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/HelloWorldPlainResource.txt -text
+dashboard-plugins/dashboard-restservices-plugin/src/main/resources/META-INF/instructions.xml -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/spring-content-rest-api.xml -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/spring-plain-rest-api.xml -text
 dashboard-plugins/dashboard-restservices-plugin/src/test/resources/log4j.xml -text

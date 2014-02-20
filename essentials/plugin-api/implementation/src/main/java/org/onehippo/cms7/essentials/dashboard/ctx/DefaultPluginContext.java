@@ -222,7 +222,10 @@ public class DefaultPluginContext implements PluginContext {
         final String fileFolder = formatter.format(today);
         placeholderData.put(EssentialConst.PLACEHOLDER_DATE_FILE_YYYY_MM, fileFolder);
         placeholderData.put(EssentialConst.PLACEHOLDER_SITE_ROOT, ProjectUtils.getSite().getAbsolutePath());
-        placeholderData.put(EssentialConst.PLACEHOLDER_SITE_WEB_ROOT, ProjectUtils.getSite().getAbsolutePath() + File.separator + EssentialConst.PATH_REL_WEB_ROOT);
+        placeholderData.put(EssentialConst.PLACEHOLDER_SITE_WEB_ROOT, ProjectUtils.getSite().getAbsolutePath()
+                + File.separator + EssentialConst.PATH_REL_WEB_ROOT);
+        placeholderData.put(EssentialConst.PLACEHOLDER_SITE_OVERRIDE_FOLDER, ProjectUtils.getSite().getAbsolutePath()
+                + File.separator + EssentialConst.PATH_REL_OVERRIDE);
         placeholderData.put(EssentialConst.PLACEHOLDER_SITE_FREEMARKER_ROOT, ProjectUtils.getSite().getAbsolutePath() + File.separator + EssentialConst.FREEMARKER_RELATIVE_FOLDER);
         placeholderData.put(EssentialConst.PLACEHOLDER_JSP_ROOT, ProjectUtils.getSiteJspFolder());
         placeholderData.put(EssentialConst.PLACEHOLDER_CMS_ROOT, ProjectUtils.getCms().getAbsolutePath());

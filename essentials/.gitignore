@@ -1188,6 +1188,12 @@ dashboard-plugins/dashboard-restservices-plugin/src/main/java/target
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/*.iml
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/.DS_Store
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/.idea
+dashboard-plugins/dashboard-restservices-plugin/src/main/resources/META-INF/*.iml
+dashboard-plugins/dashboard-restservices-plugin/src/main/resources/META-INF/.DS_Store
+dashboard-plugins/dashboard-restservices-plugin/src/main/resources/META-INF/.idea
+dashboard-plugins/dashboard-restservices-plugin/src/main/resources/META-INF/atlassian-ide-plugin.xml
+dashboard-plugins/dashboard-restservices-plugin/src/main/resources/META-INF/hippo-plugins.iws
+dashboard-plugins/dashboard-restservices-plugin/src/main/resources/META-INF/target
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/atlassian-ide-plugin.xml
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/hippo-plugins.iws
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/target

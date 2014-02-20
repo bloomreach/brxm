@@ -20,7 +20,7 @@
         <!-- Wrap your JAX-RS component by SingletonResourceProvider. -->
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="${hstRestPackage}.HelloWorldPlainResource"/>
+            <bean class="{{restPackage}}.HelloWorldPlainResource"/>
           </constructor-arg>
         </bean>
       </list>

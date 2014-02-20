@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
+  <instructionSet group="content">
+    <file action="copy" overwrite="false" source="HelloWorldContentResource.txt" target="{{restFolder}}/HelloWorldContentResource.java"/>
+    <file action="copy" overwrite="false" source="spring-content-rest-api.xml" target="{{siteOverrideFolder}}/spring-content-rest-api.xml"/>
+  </instructionSet>
+  <instructionSet group="plain">
+    <file action="copy" overwrite="false" source="HelloWorldPlainResource.txt" target="{{restFolder}}/HelloWorldPlainResource.java"/>
+    <file action="copy" overwrite="false" source="spring-plain-rest-api.xml" target="{{siteOverrideFolder}}/spring-plain-rest-api.xml"/>
+  </instructionSet>
+</instructions>
