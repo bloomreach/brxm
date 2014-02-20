@@ -119,6 +119,32 @@
     </dependency>
 
     <dependency>
+      <groupId>org.apache.tika</groupId>
+      <artifactId>tika-parsers</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>boilerpipe</artifactId>
+          <groupId>de.l3s.boilerpipe</groupId>
+        </exclusion>
+        <!-- Exclude xmlbeans because it contains org/w3c/dom/** which is incompatible with Java6 or higher. -->
+        <exclusion>
+          <groupId>org.apache.xmlbeans</groupId>
+          <artifactId>xmlbeans</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.xmlbeans</groupId>
+      <artifactId>xmlbeans-java6</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.apache.pdfbox</groupId>
       <artifactId>pdfbox</artifactId>
     </dependency>

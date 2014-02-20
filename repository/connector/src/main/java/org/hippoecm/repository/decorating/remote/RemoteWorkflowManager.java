@@ -38,6 +38,4 @@ public interface RemoteWorkflowManager extends Remote {
     public Workflow getWorkflow(RemoteWorkflowDescriptor descriptor)
         throws RepositoryException, RemoteException;
 
-    public WorkflowManager getContextWorkflowManager(Object specification)
-        throws RepositoryException, RemoteException;
 }

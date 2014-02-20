@@ -98,12 +98,4 @@ public class ServerWorkflowManager extends ServerObject implements RemoteWorkflo
             throw getRepositoryException(ex);
         }
     }
-
-    public WorkflowManager getContextWorkflowManager(Object specification) throws RepositoryException, RemoteException {
-        try {
-            return workflowManager.getContextWorkflowManager(specification);
-        } catch (RepositoryException ex) {
-            throw getRepositoryException(ex);
-        }
-    }
 }

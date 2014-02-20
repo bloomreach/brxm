@@ -37,7 +37,7 @@ public interface WorkflowContext {
      * @deprecated
      */
     @Deprecated
-    public WorkflowContext getWorkflowContext(Object specification) throws MappingException, RepositoryException;
+    public WorkflowContext getWorkflowContext(Object specification) throws RepositoryException;
 
     /**
      * Obtains a workflow instance for the same document this workflow context 
@@ -47,7 +47,7 @@ public interface WorkflowContext {
      * @throws WorkflowException 
      * @throws RepositoryException
      */
-    public Workflow getWorkflow(String category) throws MappingException, WorkflowException, RepositoryException;
+    public Workflow getWorkflow(String category) throws WorkflowException, RepositoryException;
 
     /**
      * 
@@ -58,8 +58,7 @@ public interface WorkflowContext {
      * @throws org.hippoecm.repository.api.WorkflowException
      * @throws javax.jcr.RepositoryException
      */
-    public Workflow getWorkflow(String category, Document document) throws MappingException, WorkflowException,
-                                                                           RepositoryException;
+    public Workflow getWorkflow(String category, Document document) throws WorkflowException, RepositoryException;
 
     /**
      * 

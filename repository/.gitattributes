@@ -14,9 +14,6 @@ api/src/main/java/org/hippoecm/repository/api/MappingException.java -text
 api/src/main/java/org/hippoecm/repository/api/ReferenceWorkspace.java -text
 api/src/main/java/org/hippoecm/repository/api/SynchronousEventListener.java -text
 api/src/main/java/org/hippoecm/repository/ext/InternalWorkflow.java -text
-api/src/main/java/org/hippoecm/repository/ext/WorkflowInvocationHandlerModuleFactory.java -text
-api/src/main/java/org/hippoecm/repository/ext/WorkflowManagerModule.java -text
-api/src/main/java/org/hippoecm/repository/ext/WorkflowManagerRegister.java -text
 api/src/main/java/org/hippoecm/repository/util/DateTools.java -text
 api/src/main/java/org/hippoecm/repository/util/JcrUtils.java -text
 api/src/main/java/org/hippoecm/repository/util/NodeIterable.java -text

@@ -25,8 +25,6 @@ public interface RemoteWorkflowManager extends Remote {
 
     public RemoteWorkflowDescriptor getWorkflowDescriptor(String category, String identifier) throws MappingException, RepositoryException, RemoteException;
 
-    public RemoteWorkflowManager getContextWorkflowManager(Object specification) throws MappingException, RepositoryException, RemoteException;
-
     public Workflow getWorkflow(RemoteWorkflowDescriptor descriptor) throws MappingException, RepositoryException, RemoteException;
     
 }

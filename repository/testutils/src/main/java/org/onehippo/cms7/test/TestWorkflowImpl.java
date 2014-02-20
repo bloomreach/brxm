@@ -37,7 +37,4 @@ public class TestWorkflowImpl extends WorkflowImpl implements TestWorkflow, Inte
     public void test(Date date) throws RemoteException, WorkflowException, RepositoryException {
         ++invocationCountDateArg;
     }
-    public void schedule(Date date) throws RemoteException, WorkflowException, RepositoryException {
-        ((TestWorkflow)getWorkflowContext(date).getWorkflow("test")).test();
-    }
 }

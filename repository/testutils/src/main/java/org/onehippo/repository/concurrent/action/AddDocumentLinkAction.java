@@ -76,7 +76,9 @@ public class AddDocumentLinkAction extends Action {
             if (index > 0) {
                 documents.skip(index);
             }
-            target = documents.nextNode();
+            if (documents.hasNext()) {
+                target = documents.nextNode();
+            }
         }
         return target;
     }

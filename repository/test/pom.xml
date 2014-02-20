@@ -199,7 +199,6 @@
             <exclude>**/FacetedNavigationConcurrencyTest.java</exclude>
             <exclude>**/SampleRemoteWorkflowTest.java</exclude>
             <exclude>**/RemoteTest.java</exclude>
-            <exclude>**/WorkflowChainingTest.java</exclude>
             <exclude>**/TotalSizeTest.java</exclude>
             <exclude>**/CndUpdateTest.java</exclude>
             <exclude>**/DropboxTest.java</exclude>

@@ -97,18 +97,5 @@ public interface WorkflowManager {
      */
     public Workflow getWorkflow(WorkflowDescriptor descriptor) throws MappingException, RepositoryException;
 
-    /**
-     * Obtains an alternative workflow context, which has special behaviour depending on the specification parameter passed.
-     * Any workflow obtained though an alternative workflow manager (see {@link #getWorkflow}) will be subject to the alternate rules
-     * as indicated by the specification.  For example, the specification may indicate that any workflow step invocation must
-     * not be performed immediately, but on a specific date.
-     * @param specification implementation dependent specification, alternate workflow context implementations are passed
-     * this object in order to pass parameters.  The type of the object also determins which alternative implementation is used.
-     * @return a workflow context with alternate behaviour
-     * @throws org.hippoecm.repository.api.MappingException when no implementation is available for the specificaiton passed
-     * @throws javax.jcr.RepositoryException when a generic error happens
-     */
-    @Deprecated
-    public WorkflowManager getContextWorkflowManager(Object specification) throws MappingException, RepositoryException;
 }
 

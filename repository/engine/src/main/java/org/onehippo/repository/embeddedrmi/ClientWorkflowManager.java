@@ -98,12 +98,4 @@ class ClientWorkflowManager implements WorkflowManager {
         }
     }
 
-    public WorkflowManager getContextWorkflowManager(Object specification) throws MappingException, RepositoryException {
-        try {
-            return new ClientWorkflowManager(session, remote.getContextWorkflowManager(specification));
-        } catch (RemoteException ex) {
-            throw new RepositoryException(ex);
-        }
-    }
-    
 }

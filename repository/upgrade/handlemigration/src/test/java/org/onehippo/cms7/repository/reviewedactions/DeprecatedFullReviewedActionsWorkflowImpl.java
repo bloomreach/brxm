@@ -243,6 +243,7 @@ public class DeprecatedFullReviewedActionsWorkflowImpl extends DeprecatedBasicRe
             publishedDocument.setState(PublishableDocument.PUBLISHED);
             publishedDocument.setPublicationDate(new Date());
             publishedDocument.setAvailability(new String[] { "live", "preview" });
+            publishedDocument.getNode().getSession().save();
             VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("deprecated-versioning", publishedDocument);
             versionWorkflow.version();
         } catch(MappingException ex) {
@@ -274,6 +275,7 @@ public class DeprecatedFullReviewedActionsWorkflowImpl extends DeprecatedBasicRe
             else {
                 deleteDocument(publishedDocument);
             }
+            publishedDocument.getNode().getSession().save();
             publishedDocument = null;
             versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("deprecated-versioning", unpublishedDocument);
             try {

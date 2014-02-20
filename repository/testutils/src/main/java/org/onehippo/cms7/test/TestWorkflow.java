@@ -25,5 +25,5 @@ public interface TestWorkflow extends Workflow {
 
     public void test() throws RemoteException, WorkflowException, RepositoryException;
     public void test(Date date) throws RemoteException, WorkflowException, RepositoryException;
-    public void schedule(Date date) throws RemoteException, WorkflowException, RepositoryException;
+
 }
