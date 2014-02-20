@@ -175,12 +175,13 @@
                 };
                 $scope.init();
                 function extracted(pluginClass) {
+                    var sel = null;
                     angular.forEach($scope.plugins, function (selected) {
                         if (selected.pluginClass == pluginClass) {
-                            return selected;
+                            sel =  selected;
                         }
                     });
-                    return null;
+                    return sel;
                 }
             })
 
