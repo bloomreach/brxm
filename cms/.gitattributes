@@ -1942,7 +1942,6 @@ engine/src/main/java/org/hippoecm/frontend/service/preferences/PreferencesStore.
 engine/src/main/java/org/hippoecm/frontend/service/preferences/PreferencesStorePlugin.java -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/service/restproxy/RestProxyServicePlugin.java -text
 engine/src/main/java/org/hippoecm/frontend/session/JcrSessionReference.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/session/WorkflowManagerDecorator.java -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/util/NodeStateUtil.java -text
 engine/src/main/resources/hippoecm-layouts.xml svneol=native#text/plain
 engine/src/site/apt/index.apt -text
