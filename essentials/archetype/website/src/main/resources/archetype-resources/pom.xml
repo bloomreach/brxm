@@ -42,19 +42,16 @@
   </scm>
   -->
 
-  <dependencies>
-    <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>plugin-dashboard</artifactId>
-      <version>${essentials.version}</version>
-      <type>war</type>
-    </dependency>
-  </dependencies>
-
 
   <dependencyManagement>
     <dependencies>
 
+      <dependency>
+        <groupId>org.onehippo.cms7.essentials</groupId>
+        <artifactId>plugin-dashboard</artifactId>
+        <version>${essentials.version}</version>
+        <type>war</type>
+      </dependency>
       <!-- other predefined runtime scope versioned dependencies -->
       <dependency>
         <groupId>javax.servlet</groupId>
