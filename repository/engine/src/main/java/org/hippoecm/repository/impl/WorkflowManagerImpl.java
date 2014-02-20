@@ -81,7 +81,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
         this.rootSession = session.impersonate(new SimpleCredentials("workflowuser", new char[] {}));
         configuration = session.getRootNode().getNode(CONFIGURATION_PATH + "/" + WORKFLOWS_PATH).getIdentifier();
         if (session.nodeExists("/hippo:log")) {
-            final Node logFolder = session.getNode("/hippo:log");
+            final Node logFolder = rootSession.getNode("/hippo:log");
             final WorkflowDefinition workflowDefinition = getWorkflowDefinition("internal", logFolder);
             Workflow workflow = createWorkflow(logFolder, workflowDefinition);
             if (workflow instanceof WorkflowEventLoggerWorkflow) {
@@ -168,7 +168,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
             return null;
         }
         try {
-            Node documentNode = rootSession.getNodeByIdentifier(document.getIdentity());
+            Node documentNode = userSession.getNodeByIdentifier(document.getIdentity());
             return getWorkflowDefinition(category, documentNode);
         } catch (ItemNotFoundException e) {
             log.error("Workflow category does not exist or workflows definition missing {}", e.getMessage());
