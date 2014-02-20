@@ -40,7 +40,6 @@ import org.hippoecm.frontend.plugins.reviewedactions.dialogs.UnpublishedReferenc
 import org.hippoecm.frontend.plugins.reviewedactions.model.ReferenceProvider;
 import org.hippoecm.frontend.plugins.reviewedactions.model.UnpublishedReferenceProvider;
 import org.hippoecm.repository.HippoStdNodeType;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.Workflow;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
@@ -237,11 +236,11 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected IDialogService.Dialog createRequestDialog() {
-                HippoNode node;
                 try {
-                    node = (HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode();
+                    Node handle = ((WorkflowDescriptorModel) getDefaultModel()).getNode();
+                    Node unpublished = getVariant(handle, HippoStdNodeType.UNPUBLISHED);
                     final UnpublishedReferenceProvider referenced = new UnpublishedReferenceProvider(new ReferenceProvider(
-                            new JcrNodeModel(node)));
+                            new JcrNodeModel(unpublished)));
                     if (referenced.size() > 0) {
                         return new UnpublishedReferencesDialog(publishAction, new UnpublishedReferenceNodeProvider(referenced), getEditorManager());
                     }
