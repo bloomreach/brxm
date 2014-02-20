@@ -242,7 +242,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                     final UnpublishedReferenceProvider referenced = new UnpublishedReferenceProvider(new ReferenceProvider(
                             new JcrNodeModel(unpublished)));
                     if (referenced.size() > 0) {
-                        return new UnpublishedReferencesDialog(publishAction, new UnpublishedReferenceNodeProvider(referenced), getEditorManager());
+                        return new UnpublishedReferencesDialog(this, new UnpublishedReferenceNodeProvider(referenced), getEditorManager());
                     }
                 } catch (RepositoryException e) {
                     log.error(e.getMessage());
