@@ -35,9 +35,9 @@ import org.hippoecm.hst.core.sitemenu.HstSiteMenu;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_CONTAINER_COMPONENT_LOCKED_BY;
-import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_CONTAINER_COMPONENT_LOCKED_BY_CURRENT_USER;
-import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_CONTAINER_COMPONENT_LOCKED_ON;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_LOCKED_BY;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_LOCKED_ON;
 import static org.hippoecm.hst.utils.TagUtils.encloseInHTMLComment;
 import static org.hippoecm.hst.utils.TagUtils.toJSONMap;
 
@@ -133,9 +133,9 @@ public class HstCmsEditMenuTag extends TagSupport {
                 put("uuid", canonicalIdentifier);
                 final String lockedBy = siteMenuConfiguration.getLockedBy();
                 if (lockedBy != null) {
-                    put(HST_CONTAINER_COMPONENT_LOCKED_BY, lockedBy);
-                    put(HST_CONTAINER_COMPONENT_LOCKED_BY_CURRENT_USER, lockedBy.equals(RequestContextProvider.get().getCmsUserID()));
-                    put(HST_CONTAINER_COMPONENT_LOCKED_ON, siteMenuConfiguration.getLockedOn().getTimeInMillis());
+                    put(HST_LOCKED_BY, lockedBy);
+                    put(HST_LOCKED_BY_CURRENT_USER, lockedBy.equals(RequestContextProvider.get().getCmsUserID()));
+                    put(HST_LOCKED_ON, siteMenuConfiguration.getLockedOn().getTimeInMillis());
                 }
             }
         };

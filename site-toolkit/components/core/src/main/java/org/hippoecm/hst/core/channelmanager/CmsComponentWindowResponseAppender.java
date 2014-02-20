@@ -77,18 +77,18 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             if (mount instanceof MutableMount) {
                 if (compConfig.getLockedBy() != null) {
                     String cmsUserId = (String)session.getAttribute(CmsSecurityValve.CMS_USER_ID_ATTR);
-                    attributes.put(ChannelManagerConstants.HST_CONTAINER_COMPONENT_LOCKED_BY, compConfig.getLockedBy());
+                    attributes.put(ChannelManagerConstants.HST_LOCKED_BY, compConfig.getLockedBy());
                     if (compConfig.getLockedBy().equals(cmsUserId)) {
-                        attributes.put(ChannelManagerConstants.HST_CONTAINER_COMPONENT_LOCKED_BY_CURRENT_USER, "true");
+                        attributes.put(ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER, "true");
                     } else {
-                        attributes.put(ChannelManagerConstants.HST_CONTAINER_COMPONENT_LOCKED_BY_CURRENT_USER, "false");
+                        attributes.put(ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER, "false");
                     }
                     if (compConfig.getLockedOn() != null) {
-                        attributes.put(ChannelManagerConstants.HST_CONTAINER_COMPONENT_LOCKED_ON, String.valueOf(compConfig.getLockedOn().getTimeInMillis()));
+                        attributes.put(ChannelManagerConstants.HST_LOCKED_ON, String.valueOf(compConfig.getLockedOn().getTimeInMillis()));
                     }
                 }
                 if (compConfig.getLastModified() != null) {
-                    attributes.put(ChannelManagerConstants.HST_CONTAINER_COMPONENT_LAST_MODIFIED, String.valueOf(compConfig.getLastModified().getTimeInMillis()));
+                    attributes.put(ChannelManagerConstants.HST_LAST_MODIFIED, String.valueOf(compConfig.getLastModified().getTimeInMillis()));
                 }
             }
             Comment comment = createCommentWithAttr(attributes, response);
