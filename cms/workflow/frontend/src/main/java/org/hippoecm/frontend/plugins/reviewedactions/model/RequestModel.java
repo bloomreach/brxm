@@ -19,8 +19,10 @@ import java.util.Date;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.session.UserSession;
@@ -56,7 +58,7 @@ public class RequestModel extends LoadableDetachableModel<Request> {
                 }
             }
             else if (node.isNodeType("hipposched:workflowjob")) {
-                state = "scheduled" + JcrUtils.getStringProperty(node, "hipposched:methodName", state);
+                state = "scheduled" + getAttributeValue(node, "hipposched:methodName", state);
                 if (node.hasProperty("hipposched:triggers/default/hipposched:nextFireTime")) {
                     schedule = node.getProperty("hipposched:triggers/default/hipposched:nextFireTime").getDate().getTime();
                 }
@@ -68,5 +70,30 @@ public class RequestModel extends LoadableDetachableModel<Request> {
             log.info(ex.getClass().getName() + ": " + ex.getMessage());
         }
         return null;
+    }
+
+    private String getAttributeValue(final Node node, final String attributeName, final String defaultValue) throws RepositoryException {
+        final Property attributeNamesProperty = JcrUtils.getPropertyIfExists(node, "hipposched:attributeNames");
+        int i = 0, index = -1;
+        if (attributeNamesProperty != null) {
+            for (Value value : attributeNamesProperty.getValues()) {
+                if (value.getString().equals(attributeName)) {
+                    index = i;
+                    break;
+                }
+                i++;
+            }
+        }
+        if (index != -1) {
+            final Property attributeValuesProperty = JcrUtils.getPropertyIfExists(node, "hipposched:attributeValues");
+            i = 0;
+            for (Value value : attributeValuesProperty.getValues()) {
+                if (i == index) {
+                    return value.getString();
+                }
+                i++;
+            }
+        }
+        return defaultValue;
     }
 }
