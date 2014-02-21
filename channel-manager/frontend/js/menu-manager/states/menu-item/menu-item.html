@@ -31,11 +31,11 @@
         <div class="overlay" data-ng-show="confirmation.isVisible">&#160;</div>
         <div class="feedback alert alert-warning clearfix" data-ng-class="{'feedback-show': confirmation.isVisible}">
             <p>
-                Are you sure you want to remove this menu item?
+                Are you sure you want to delete the menu item 'TITLE OF MENU ITEM'?
             </p>
             <p class="text-right buttons">
                 <a href="#" class="btn btn-default btn-sm"
-                   data-ng-click="deleteMenuItem(); confirmation.isVisible = false">
+                   data-ng-click="remove();confirmation.isVisible = false">
                     <strong><i class="fa fa-trash-o"></i> Delete item</strong>
                 </a>
                 &nbsp;&nbsp;
@@ -46,17 +46,15 @@
 
     </div>
     <div class="row">
-        <div id="add" class="col-sm-4" data-ng-controller="hippo.channelManager.menuManager.TreeActionsCtrl">
-            <button type="button" class="btn btn-default btn-block"
-                    data-ng-click="addMenuItem()">
+        <div id="add" class="col-sm-4" data-ng-controller="hippo.channelManager.menuManager.MenuCtrl">
+            <button type="button" class="btn btn-default btn-block" data-ng-click="addItem()">
                 <i class="fa fa-plus"></i> {{ 'ADD_MENU_ITEM' | translate }}
             </button>
         </div>
-        <div id="actions" class="col-sm-8" data-ng-controller="hippo.channelManager.menuManager.MenuItemActionsCtrl">
-            <button type="button" class="btn btn-default" data-ng-click="confirmation.isVisible = true"><i class="fa fa-trash-o"></i> {{ 'DELETE_MENU_ITEM' | translate }}</button>
+        <div id="actions" class="col-sm-8" data-ng-controller="hippo.channelManager.menuManager.WindowCtrl">
             <button type="button" class="btn btn-default pull-right"
                     data-ng-disabled="hasOutstandingChanges()"
-                    data-ng-click="closeContainer()">
+                    data-ng-click="close()">
                 <i class="fa fa-check"></i> {{ 'CLOSE_WINDOW' | translate }}
             </button>
         </div>

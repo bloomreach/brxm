@@ -23,7 +23,8 @@
             'hippo.channelManager.menuManager.ConfigService',
             '$http',
             '$q',
-            function (ConfigService, $http, $q) {
+            '$log',
+            function (ConfigService, $http, $q, $log) {
                 var menuService = {},
                     menuData = {
                         children: null
@@ -112,7 +113,7 @@
                     return $http.post(menuServiceUrl(), menuItem)
                         .error(function (error) {
                             // TODO show error in UI
-                            console.error("An error occurred while saving the menu item with id '" + menuItem.id + "': " + error);
+                            $log.error("An error occurred while saving the menu item with id '" + menuItem.id + "': " + error);
                         });
                 };
 
@@ -122,9 +123,9 @@
                         .success(function(response) {
                             deferred.resolve(response.data);
                         })
-                        .error(function () {
+                        .error(function (response) {
                             // TODO show error in UI
-                            console.error("An error occured while creating a menu item");
+                            $log.error("An error occured while creating a menu item: " + response.message);
                             deferred.reject();
                         });
                     return deferred.promise;
@@ -152,7 +153,7 @@
                     $http.post(url)
                         .error(function (error) {
                             // TODO show error in UI
-                            console.error("An error occurred while moving the menu item with id '" + menuItemId + "': ", error);
+                            $log.error("An error occurred while moving the menu item with id '" + menuItemId + "': ", error);
                         });
                 };
 

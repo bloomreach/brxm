@@ -9,6 +9,10 @@ frontend/bower.json -text
 frontend/declutter.config.json -text
 frontend/js/menu-manager/assets/css/main.css -text
 frontend/js/menu-manager/assets/images/loader.gif -text
+frontend/js/menu-manager/controllers/MenuCtrl.js -text
+frontend/js/menu-manager/controllers/TreeCtrl.js -text
+frontend/js/menu-manager/controllers/WindowCtrl.js -text
+frontend/js/menu-manager/directives/tooltip.js -text
 frontend/js/menu-manager/i18n/en.json -text
 frontend/js/menu-manager/i18n/nl.json -text
 frontend/js/menu-manager/services/ConfigService.js -text
@@ -17,10 +21,7 @@ frontend/js/menu-manager/services/IFrameService.js -text
 frontend/js/menu-manager/services/MenuService.js -text
 frontend/js/menu-manager/states/loader/LoaderCtrl.js -text
 frontend/js/menu-manager/states/loader/loader.html -text
-frontend/js/menu-manager/states/menu-item/MenuItemActionsCtrl.js -text
 frontend/js/menu-manager/states/menu-item/MenuItemCtrl.js -text
-frontend/js/menu-manager/states/menu-item/TreeActionsCtrl.js -text
-frontend/js/menu-manager/states/menu-item/TreeCtrl.js -text
 frontend/js/menu-manager/states/menu-item/add-page/AddPageCtrl.js -text
 frontend/js/menu-manager/states/menu-item/add-page/add-page.html -text
 frontend/js/menu-manager/states/menu-item/add/AddMenuItemCtrl.js -text

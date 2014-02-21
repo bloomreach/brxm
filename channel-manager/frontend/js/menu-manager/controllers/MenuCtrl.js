@@ -18,13 +18,13 @@
 
     angular.module('hippo.channelManager.menuManager')
 
-        .controller('hippo.channelManager.menuManager.TreeActionsCtrl', [
+        .controller('hippo.channelManager.menuManager.MenuCtrl', [
             '$scope',
             '$state',
             '$stateParams',
             function ($scope, $state, $stateParams) {
-
-                $scope.addMenuItem = function () {
+                // add menu item
+                $scope.addItem = function () {
                     var parentItemId = $stateParams.menuItemId || $stateParams.menuId;
                     $state.go('menu-item.add', {menuItemId: parentItemId});
                 };

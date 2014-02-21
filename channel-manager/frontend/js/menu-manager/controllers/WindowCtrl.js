@@ -18,7 +18,7 @@
 
     angular.module('hippo.channelManager.menuManager')
 
-        .controller('hippo.channelManager.menuManager.MenuItemActionsCtrl', [
+        .controller('hippo.channelManager.menuManager.WindowCtrl', [
             '$scope',
             '$log',
             '$state',
@@ -31,7 +31,7 @@
                     return !OutstandingHttpRequests.isEmpty();
                 };
 
-                $scope.closeContainer = function () {
+                $scope.close = function () {
                     Container.close();
                 };
             }

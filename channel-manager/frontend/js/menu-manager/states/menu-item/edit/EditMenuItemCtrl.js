@@ -80,14 +80,5 @@
                     $state.go('menu-item.add-page', { menuItemId: $stateParams.menuItemId });
                 };
             }
-        ])
-
-        .directive('tooltip', [function() {
-            return {
-                restrict: 'A',
-                link: function (scope, element, attrs) {
-                    element.tooltip ({'trigger':'focus', 'title': attrs.title}).tooltip('show');
-                }
-            };
-        }]);
+        ]);
 }());

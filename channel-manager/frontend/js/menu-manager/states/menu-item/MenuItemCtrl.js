@@ -30,7 +30,12 @@
                     isVisible: false
                 };
 
-                $scope.deleteMenuItem = function () {
+                $scope.remove = function () {
+                    $log.info('Delete menu item');
+
+                    $log.info($stateParams);
+                    $log.info(window.location);
+
                     // TODO: get the actual menuItemId, stateParams does not contain menuItemId
                     var menuItemId = $stateParams.menuItemId;
 
@@ -50,8 +55,9 @@
                     });
                 };
 
-                $scope.logIt = function(it) {
-                    $log.info(it);
+                // add menu item
+                $scope.add = function () {
+                    $log.info('Add menu item');
                 };
             }
         ]);
