@@ -26,32 +26,42 @@
         iframeToHost = null;
     });
 
-    function replaceCommentWithEditButton(commentElement, btnClass, btnText, publishedEvent, publishedUuid) {
-        var link = document.createElement('a');
+    function replaceCommentWithEditButton(commentElement, btnClass, btnText, publishedEvent, publishedUuid, lockedByMessage) {
+        var publish, link = document.createElement('a');
         if (commentElement.nextSibling) {
             commentElement.parentNode.insertBefore(link, commentElement.nextSibling);
         } else {
             commentElement.parentNode.appendChild(link);
         }
 
-        $(link).append('<span class="' + btnClass + '-left"><span class="' + btnClass + '-right"><span class="' + btnClass + '-center">' + btnText + '</span></span></span>');
+
         link.setAttribute(HST.ATTR.ID, publishedUuid);
         link.setAttribute('href', '');
         link.setAttribute('class', btnClass);
 
+        if (publishedEvent === 'edit-menu' && lockedByMessage) {
+            $(link).append('<span class="' + btnClass + '-locked"' + ' title="' + lockedByMessage + '"</span>');
+            publish = function() {
+            };
+        } else {
+            $(link).append('<span class="' + btnClass + '-left"><span class="' + btnClass + '-right"><span class="' + btnClass + '-center">' + btnText + '</span></span></span>');
+            publish = function() {
+                iframeToHost.publish(publishedEvent, publishedUuid);
+            };
+        }
         /**
          * use plain old javascript event listener to prevent other jQuery instances hijacking the event.
          */
         if (link.addEventListener) {
             link.addEventListener('click', function(event) {
-                iframeToHost.publish(publishedEvent, publishedUuid);
+                publish();
                 event.stopPropagation();
                 event.preventDefault();
                 return false;
             }, false);
         } else if (link.attachEvent) {
             link.attachEvent('onclick', function(event) {
-                iframeToHost.publish(publishedEvent, publishedUuid);
+                publish();
                 event.cancelBubble = true;
                 return false;
             });
@@ -136,10 +146,22 @@
 
             visit: function(commentElement, commentData) {
                 var hstMetaData = readEditMenuData(commentData),
-                    menuUuid;
+                        menuUuid, lockedBy, lockedByCurrentUser, lockedOn, lockedOnFormatted, lockedByMessage ;
                 if (hstMetaData !== null) {
                     menuUuid = hstMetaData[HST.ATTR.ID];
-                    replaceCommentWithEditButton(commentElement, HST.CLASS.EDITMENU, resources['edit-menu'], 'edit-menu', menuUuid);
+                    lockedBy = hstMetaData[HST.ATTR.HST_LOCKED_BY];
+                    lockedByCurrentUser = hstMetaData[HST.ATTR.HST_LOCKED_BY_CURRENT_USER];
+                    lockedOn = hstMetaData[HST.ATTR.HST_LOCKED_ON];
+                    if (lockedBy && lockedByCurrentUser === 'false') {
+                        lockedByMessage = "Menu locked by " + lockedBy;
+                        if (lockedOn) {
+                            lockedOnFormatted = new Date(parseInt(lockedOn, 10));
+                            if(lockedOnFormatted) {
+                                lockedByMessage = lockedByMessage + " on " + lockedOnFormatted;
+                            }
+                        }
+                    }
+                    replaceCommentWithEditButton(commentElement, HST.CLASS.EDITMENU, resources['edit-menu'], 'edit-menu', menuUuid, lockedByMessage);
                 }
             }
 
