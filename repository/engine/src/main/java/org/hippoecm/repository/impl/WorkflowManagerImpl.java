@@ -62,14 +62,20 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
     static final Logger log = LoggerFactory.getLogger(WorkflowManagerImpl.class);
 
-    private static final ThreadLocal<String> INTERACTION_ID = new ThreadLocal<String>();
-    private static final ThreadLocal<String> INTERACTION = new ThreadLocal<String>();
+    private static final ThreadLocal<String> INTERACTION_ID = new ThreadLocal<>();
+    private static final ThreadLocal<String> INTERACTION = new ThreadLocal<>();
 
     /**
      * userSession is the session from which this WorkflowManager instance was created.
+     * <p>
      * It is used to look up which workflows are active for a user.
-     * It is however not used to instantiate workflows, persist and as execution context when performing a
-     * workflow step (i.e. method invocation). rootSession is used for that.
+     * Unless a workflow is {@link #getWorkflow(String, Node) requested} for a specific JCR Node, in which case
+     * the provide node its session is used for that purpose.
+     * </p>
+     * <p>
+     *  A separate internal workflow session is used to instantiate the actual workflows, as execution context
+     *  when performing a workflow step (i.e. method invocation), and to persist changes.
+     * </p>
      */
     private Session userSession;
     Session rootSession;
@@ -159,25 +165,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
         return null;
     }
 
-    private WorkflowDefinition getWorkflowDefinition(String category, Document document) {
-        if (configuration == null) {
-            return null;
-        }
-        if (document == null || document.getIdentity() == null) {
-            log.error("Cannot retrieve workflow for null document");
-            return null;
-        }
-        try {
-            Node documentNode = userSession.getNodeByIdentifier(document.getIdentity());
-            return getWorkflowDefinition(category, documentNode);
-        } catch (ItemNotFoundException e) {
-            log.error("Workflow category does not exist or workflows definition missing {}", e.getMessage());
-        } catch (RepositoryException e) {
-            log.error("Generic error accessing workflow definitions {}", e.getMessage(), e);
-        }
-        return null;
-    }
-
     private boolean checkWorkflowPermission(final Node item, final Node workflowNode) throws RepositoryException {
         boolean hasPermission = true;
         final Property privileges = JcrUtils.getPropertyIfExists(workflowNode, HippoNodeType.HIPPO_PRIVILEGES);
@@ -204,6 +191,21 @@ public class WorkflowManagerImpl implements WorkflowManager {
         return hasPermission;
     }
 
+    private Node getDocumentNode(Session session, Document document) {
+        if (document == null || document.getIdentity() == null) {
+            log.error("Cannot retrieve workflow for null document");
+            return null;
+        }
+        try {
+            return session.getNodeByIdentifier(document.getIdentity());
+        } catch (ItemNotFoundException e) {
+            log.error("Document not found {}", e.getMessage());
+        } catch (RepositoryException e) {
+            log.error("Unexpected error {}", e.getMessage(), e);
+        }
+        return null;
+    }
+
     public WorkflowDescriptor getWorkflowDescriptor(String category, Node item) throws RepositoryException {
         WorkflowDefinition workflowDefinition = getWorkflowDefinition(category, item);
         if (workflowDefinition != null) {
@@ -214,7 +216,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
     }
 
     public WorkflowDescriptor getWorkflowDescriptor(String category, Document document) throws RepositoryException {
-        WorkflowDefinition workflowDefinition = getWorkflowDefinition(category, document);
+        WorkflowDefinition workflowDefinition =  getWorkflowDefinition(category, getDocumentNode(userSession, document));
         if (workflowDefinition != null) {
             return new WorkflowDescriptorImpl(this, category, workflowDefinition, document);
         }
@@ -238,13 +240,12 @@ public class WorkflowManagerImpl implements WorkflowManager {
         if (workflowDefinition != null) {
             return createProxiedWorkflow(workflowDefinition, item);
         }
-
-        log.debug("Workflow for category {} on {} is not available", category, item.getPath());
+        log.debug("Workflow for category {} on {} is not available", category, item != null ? item.getPath() : null);
         return null;
     }
 
     public Workflow getWorkflow(String category, Document document) throws RepositoryException {
-        return getWorkflow(category, userSession.getNodeByIdentifier(document.getIdentity()));
+        return getWorkflow(category, getDocumentNode(userSession, document));
     }
 
     Workflow createProxiedWorkflow(WorkflowDefinition definition, Node subject) throws RepositoryException {
@@ -272,7 +273,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                             && Session.class.isAssignableFrom(params[2])
                             && Node.class.isAssignableFrom(params[3])) {
                         workflow = (Workflow) constructor.newInstance(
-                                new WorkflowContextImpl(workflowDefinition, getSession(), item), getSession(), rootSession, item);
+                                new WorkflowContextImpl(workflowDefinition, item.getSession(), item), userSession, rootSession, item);
                         break;
                     } else if (params.length == 3 && Session.class.isAssignableFrom(params[0])
                             && Session.class.isAssignableFrom(params[1])
@@ -307,6 +308,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
         return workflow;
     }
 
+    @SuppressWarnings("unchecked")
     private Workflow createWorkflowProxy(final Class<? extends Workflow> workflowClass, final Class[] interfaces, final InvocationHandler handler) throws RepositoryException {
         try {
             Class proxyClass = Proxy.getProxyClass(workflowClass.getClassLoader(), interfaces);
@@ -428,8 +430,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
         private void logAudit(final Method method, final Object[] args, final Object returnObject, final Throwable returnException) {
             StringBuffer sb = new StringBuffer();
             sb.append("AUDIT workflow invocation ").append(uuid).append(".")
-              .append(upstream != null ? upstream.getClass().getName() : "<unknown>")
-              .append(".").append(method != null ? method.getName() : "<unknown>").append("(");
+                    .append(upstream != null ? upstream.getClass().getName() : "<unknown>")
+                    .append(".").append(method != null ? method.getName() : "<unknown>").append("(");
             if (args != null) {
                 for (int i = 0; i < args.length; i++) {
                     if (i > 0) {
@@ -467,29 +469,38 @@ public class WorkflowManagerImpl implements WorkflowManager {
             this.subject = subject;
         }
 
+        @Override
         public Workflow getWorkflow(String category, final Document document) throws WorkflowException, RepositoryException {
-            return WorkflowManagerImpl.this.getWorkflow(category, document);
+            return WorkflowManagerImpl.this.getWorkflow(category, getDocumentNode(rootSession, document));
         }
 
+        @Override
         public Workflow getWorkflow(String category) throws WorkflowException, RepositoryException {
             return WorkflowManagerImpl.this.getWorkflow(category, subject);
         }
 
+        @Override
         public String getUserIdentity() {
             return userSession.getUserID();
         }
 
+        @Override
         public Session getUserSession() {
             return userSession;
         }
 
-        public Session getInternalWorkflowSession() {
-            return WorkflowManagerImpl.this.rootSession;
+        public Session getSubjectSession() {
+            return subjectSession;
         }
 
+        @Override
+        public Session getInternalWorkflowSession() {
+            return rootSession;
+        }
+
+        @Override
         public RepositoryMap getWorkflowConfiguration() {
             return workflowDefinition.getWorkflowConfiguration();
         }
     }
-
 }

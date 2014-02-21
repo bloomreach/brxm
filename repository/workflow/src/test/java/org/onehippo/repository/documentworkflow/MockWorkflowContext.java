@@ -62,6 +62,11 @@ public class MockWorkflowContext implements WorkflowContext {
     }
 
     @Override
+    public Session getSubjectSession() {
+        return session;
+    }
+
+    @Override
     public Session getUserSession() {
         return session;
     }

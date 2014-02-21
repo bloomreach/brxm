@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.api;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -25,19 +26,37 @@ import javax.jcr.Session;
 public interface WorkflowContext {
 
     /**
-     * Obtains a workflow instance for the same document this workflow context 
-     * @param category 
-     * @return 
+     * Obtains a workflow instance for this workflow context its subject.
+     * <p>
+     *   Be aware that the returned workflow is checked against the {@link #getInternalWorkflowSession()} privileges,
+     *   so <b>NOT</b> against the initial workflow invocation {@link #getUserSession()}.
+     * </p>
+     * <p>
+     *   For the returned workflow it is assumed there are no pending changes on its {@link #getInternalWorkflowSession()}.
+     *   So before using the returned workflow it might be required to first do a {@link Session#save()}
+     *   or {@link Session#refresh(boolean) Session.refresh(false)}.
+     * </p>
+     * @param category Name of the workflow category
+     * @return
      * @throws MappingException
-     * @throws WorkflowException 
+     * @throws WorkflowException
      * @throws RepositoryException
      */
     public Workflow getWorkflow(String category) throws WorkflowException, RepositoryException;
 
     /**
-     * 
-     * @param category
-     * @param document
+     * Obtains a workflow instance for a document subject
+     * <p>
+     *   Be aware that the returned workflow is checked against the {@link #getInternalWorkflowSession()} privileges,
+     *   so <b>NOT</b> against the initial workflow invocation {@link #getUserSession()}.
+     * </p>
+     * <p>
+     *   For the returned workflow it is assumed there are no pending changes on its {@link #getInternalWorkflowSession()}.
+     *   So before using the returned workflow it might be required to first do a {@link Session#save()}
+     *   or {@link Session#refresh(boolean) Session.refresh(false)}.
+     * </p>
+     * @param category Name of the workflow category
+     * @param document Document subject for which the new workflow instance will be returned
      * @return
      * @throws org.hippoecm.repository.api.MappingException
      * @throws org.hippoecm.repository.api.WorkflowException
@@ -46,41 +65,52 @@ public interface WorkflowContext {
     public Workflow getWorkflow(String category, Document document) throws WorkflowException, RepositoryException;
 
     /**
-     * 
+     *
      * @return the invocation user identity
      */
     public String getUserIdentity();
-    
+
     /**
-     * Obtains the current workflow invocation (user) session.
-     * Note that this doesn't have to be the first invocation session as workflows can be chained.
-     * <p>
-     *   <b>Do not use this session to make any changes as it might interfere with the workflow invocation state itself.</b>
-     * </p>
+     * Obtains the initial workflow invocation (user) session.
      * @return the invocation user session
      */
     public Session getUserSession();
 
     /**
-     * Obtain the internal workflow session which has 'root' privileges. This session is internally used by the
-     * workflow and used to persist workflow modifications.
+     * Obtain the subject session used to check and load the current workflow.
+     * <p>
+     *   For an initial workflow invocation this will be, in most cases, <em>but not all, see below</em>, the {@link #getUserSession()}.<br/>
+     *   For any subsequent (nested) workflow invocation this will be the {@link #getInternalWorkflowSession()}.
+     * </p>
+     * <p>
+     *   If the initial workflow was invoked through {@link WorkflowManager#getWorkflow(String, Node)}, the provided node parameter
+     *   its own session will be used as subject session, so potentially <em>different</em> from the user session invoking the workflow!
+     * </p>
+     * <p>
+     *   This separate session reference is useful to check {@link Session#hasPermission(String, String) JCR permissions} within the workflow as was used to
+     *   validate access the workflow itself.
+     * </p>
+     * @return the session to check permissions on and within the current workflow itself
+     */
+    public Session getSubjectSession();
+
+    /**
+     * Obain the internal workflow session which has 'root' privileges. This session is internally used by the
+     * workflow and used to persist workflow modifications. Also, the workflow subject (Node) itself will be loaded through
+     * this internal workflow session.
+     * <p>
+     *   Do <b>NOT</b> return JCR Items loaded through this internal workflow session back to the invoking user,
+     *   as it will expose access to this session.
+     * </p>
      * <p>
      *  <b>Be very careful making changes through the internal workflow session: state consistency can easily broken that way.</b>
      * </p>
-     * <p>
-     *  <b>Do not try to modify workflow managed Documents directly through the JCR API: that most certainly will lead to inconsistent state or even data corruption!</b>
-     * </p>
-     * <p>
-     *   <b>NEVER invoke session.save() yourself through the internal workflow session!</b><br/>
-     *   The workflow process hasn't been completed yet and doing intermediate saves easily can result in inconsistent (persisted) state.<br/>
-     *   The workflow process will do a session.save() (or revert) automatically at the end of the processing.
-     * </p> 
      * @return the internal workflow session with higer(st) privileges: be aware of possible dangerous side-effects when used for modifications
      */
     public Session getInternalWorkflowSession();
 
     /**
-     * 
+     *
      * @return
      */
     public RepositoryMap getWorkflowConfiguration();
