@@ -15,18 +15,9 @@
  */
 package org.hippoecm.frontend.editor.plugins.resource;
 
-import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.tika.config.TikaConfig;
-import org.apache.tika.exception.TikaException;
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.mime.MediaType;
-import org.apache.tika.parser.Parser;
-import org.apache.tika.sax.BodyContentHandler;
 import org.junit.Test;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -64,31 +55,4 @@ public class PdfParserTest {
             PdfParser.pdfParser.tika.setMaxStringLength(orginalTikaLength);
         }
     }
-
-    @Test(expected = TikaException.class)
-    public void testDeprecateTikaParseUtilsThrowTikaException() throws TikaException, IOException {
-        int s = PdfParser.pdfParser.tika.getMaxStringLength();
-        InputStream inputStream = getClass().getResourceAsStream("/test.pdf");
-        getStringContent(inputStream, TikaConfig.getDefaultConfig(), ResourceHelper.MIME_TYPE_PDF);
-    }
-
-    /**
-     * see {@link org.apache.tika.utils.ParseUtils#getStringContent(java.io.InputStream, org.apache.tika.config.TikaConfig, String)} only
-     * below we force the bosy content handler to have a writeLimit of just one char. Then, the deprecated Tika ParseUtil
-     * will throw a TikaException exception.
-     */
-    public static String getStringContent(
-            InputStream stream, TikaConfig config, String mimeType)
-            throws TikaException, IOException {
-        try {
-            Parser parser = config.getParser(MediaType.parse(mimeType));
-            ContentHandler handler = new BodyContentHandler(1);
-            parser.parse(stream, handler, new Metadata());
-            return handler.toString();
-        } catch (SAXException e) {
-            throw new TikaException("Unexpected SAX error", e);
-        }
-    }
-
-
 }
