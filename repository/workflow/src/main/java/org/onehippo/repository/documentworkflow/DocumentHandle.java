@@ -158,9 +158,8 @@ public class DocumentHandle implements SCXMLDataModel {
         }
 
         try {
-            final Session handleSession = handle.getSession();
-            final Session userSession = context.getUserSession();
-            Node userDocumentNode = userSession.getNodeByIdentifier(document.getIdentity());
+            final Session subjectSession = context.getSubjectSession();
+            Node userDocumentNode = subjectSession.getNodeByIdentifier(document.getIdentity());
             String userDocumentPath = userDocumentNode.getPath();
             for (String priv : privs) {
                 Map<String, Boolean> privilegesMap = pathPrivilegesMap.get(userDocumentPath);
@@ -172,7 +171,7 @@ public class DocumentHandle implements SCXMLDataModel {
                 if (hasPrivilege == null) {
                     hasPrivilege = Boolean.FALSE;
                     try {
-                        hasPrivilege = userSession.hasPermission(userDocumentPath, priv);
+                        hasPrivilege = subjectSession.hasPermission(userDocumentPath, priv);
                     } catch (AccessControlException | IllegalArgumentException | RepositoryException ignore) {
                     }
                     privilegesMap.put(priv, hasPrivilege);
