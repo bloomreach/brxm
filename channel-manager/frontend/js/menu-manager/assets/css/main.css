@@ -138,7 +138,11 @@ form h4.page-header {
     border-color: #cac6af;
     width: 500px;
 
-    /* TODO: add animation when showing / hiding the feedback dialog  */
+    -webkit-transition: top .5s;
+    -moz-transition: top .5s;
+    -ms-transition: top .5s;
+    -o-transition: top .5s;
+    transition: top .5s;
 }
 
 .feedback.feedback-show {
