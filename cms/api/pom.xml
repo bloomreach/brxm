@@ -208,6 +208,9 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <forkMode>always</forkMode>
+          <excludes>
+            <exclude>**/PdfParserTest.java</exclude>
+          </excludes>
         </configuration>
       </plugin>
       <plugin>
