@@ -33,7 +33,7 @@
                         });
                     },
                     function (error) {
-                        // TODO show error in UI
+                        // TODO: show error in UI
                         $log.error(error);
                     }
                 );

@@ -19,14 +19,5 @@
 
     angular.module('hippo.channelManager.menuManager')
 
-        .controller('hippo.channelManager.menuManager.MenuItemCtrl', [
-            '$scope',
-            '$state',
-            '$stateParams',
-            '$log',
-            'hippo.channelManager.menuManager.MenuService',
-            function ($scope, $state, $stateParams, $log, MenuService) {
-
-            }
-        ]);
+        .controller('hippo.channelManager.menuManager.MenuItemCtrl', [function () {}]);
 }());

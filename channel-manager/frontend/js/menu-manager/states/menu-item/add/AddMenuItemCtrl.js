@@ -27,7 +27,11 @@
             function ($scope, $state, $stateParams, MenuService) {
                 var parentItemId = $stateParams.menuItemId;
 
-                $scope.selectedMenuItem = {linkType: 'SITEMAPITEM', name: '', link: ''};
+                $scope.selectedMenuItem = {
+                    linkType: 'SITEMAPITEM',
+                    name: '',
+                    link: ''
+                };
 
                 $scope.submit = function() {
                     MenuService.createMenuItem(parentItemId, $scope.selectedMenuItem).then(

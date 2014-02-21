@@ -23,8 +23,8 @@
             '$state',
             '$stateParams',
             function ($scope, $state, $stateParams) {
-                // add menu item
                 $scope.addItem = function () {
+                    // navigate to the add menu item state
                     var parentItemId = $stateParams.menuItemId || $stateParams.menuId;
                     $state.go('menu-item.add', {menuItemId: parentItemId});
                 };
