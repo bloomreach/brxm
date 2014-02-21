@@ -41,6 +41,10 @@
                     link: true
                 };
 
+                $scope.confirmation = {
+                    isVisible: false
+                };
+
                 function shouldSaveSelectedMenuItemProperty(propertyName) {
                     if (!angular.isDefined($scope.selectedMenuItem)) {
                         return false;
@@ -78,6 +82,25 @@
 
                 $scope.createNewPage = function () {
                     $state.go('menu-item.add-page', { menuItemId: $stateParams.menuItemId });
+                };
+
+                $scope.remove = function () {
+                    var menuItemId = $stateParams.menuItemId;
+
+                    MenuService.deleteMenuItem(menuItemId).then(function () {
+                        MenuService.getFirstMenuItemId().then(
+                            function (firstMenuItemId) {
+                                // TODO: be smarter about which item we select. For now we select the first one again
+                                $state.go('menu-item.edit', {
+                                    menuItemId: firstMenuItemId
+                                });
+                            },
+                            function (error) {
+                                // TODO show error in UI
+                                $log.error(error);
+                            }
+                        );
+                    });
                 };
             }
         ]);

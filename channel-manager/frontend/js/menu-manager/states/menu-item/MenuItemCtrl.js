@@ -26,39 +26,7 @@
             '$log',
             'hippo.channelManager.menuManager.MenuService',
             function ($scope, $state, $stateParams, $log, MenuService) {
-                $scope.confirmation = {
-                    isVisible: false
-                };
 
-                $scope.remove = function () {
-                    $log.info('Delete menu item');
-
-                    $log.info($stateParams);
-                    $log.info(window.location);
-
-                    // TODO: get the actual menuItemId, stateParams does not contain menuItemId
-                    var menuItemId = $stateParams.menuItemId;
-
-                    MenuService.deleteMenuItem(menuItemId).then(function () {
-                        MenuService.getFirstMenuItemId().then(
-                            function (firstMenuItemId) {
-                                // TODO: be smarter about which item we select. For now we select the first one again
-                                $state.go('menu-item.edit', {
-                                    menuItemId: firstMenuItemId
-                                });
-                            },
-                            function (error) {
-                                // TODO show error in UI
-                                $log.error(error);
-                            }
-                        );
-                    });
-                };
-
-                // add menu item
-                $scope.add = function () {
-                    $log.info('Add menu item');
-                };
             }
         ]);
 }());

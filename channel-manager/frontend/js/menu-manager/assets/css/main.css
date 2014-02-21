@@ -119,12 +119,10 @@ form h4.page-header {
 
 /* --- Confirmation message --- */
 .overlay {
-    left: 0;
+    left: -282px;
     top: 0;
     background: white;
     position: absolute;
-    width: 100%;
-    height: 100%;
     z-index: 999999;
     opacity: 0;
 }
@@ -132,18 +130,19 @@ form h4.page-header {
 .feedback {
     position: absolute;
     z-index: 999999;
-    transition: .2s ease-out;
     top: -137px;
     border-radius: 0;
     border-top: none;
-    left: 190px;
+    left: -100px;
     padding: 30px 20px 16px 20px;
     border-color: #cac6af;
     width: 500px;
+
+    /* TODO: add animation when showing / hiding the feedback dialog  */
 }
 
 .feedback.feedback-show {
-    top: 0;
+    top: 0px;
 }
 
 .feedback p, .feedback a {

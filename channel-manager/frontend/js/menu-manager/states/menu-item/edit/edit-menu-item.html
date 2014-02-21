@@ -15,6 +15,22 @@
   -->
 
 <div>
+    <!-- START confirmation dialog -->
+    <div class="overlay" data-ng-show="confirmation.isVisible">&#160;</div>
+    <div class="feedback alert alert-warning clearfix" data-ng-class="{'feedback-show': confirmation.isVisible}">
+        <p>{{ 'REMOVE_CONFIRMATION' | translate:selectedMenuItem }}</p>
+        <p class="text-right buttons">
+            <a href="#" class="btn btn-default btn-sm"
+               data-ng-click="remove()">
+                <strong><i class="fa fa-trash-o"></i> {{ 'DELETE_ITEM' | translate }}</strong>
+            </a>
+            &nbsp;&nbsp;
+            <a href="#" data-ng-click="confirmation.isVisible = false">{{ 'CANCEL' | translate }}</a>
+        </p>
+    </div>
+    <!-- END confirmation dialog -->
+
+    <!-- START edit form -->
     <form name="form" role="form" novalidate>
         <h4 class="page-header">{{ 'EDIT_MENU_ITEM' | translate }}</h4>
         <div class="form-group has-feedback"
@@ -135,4 +151,6 @@
 
         <button type="button" class="btn btn-default" data-ng-click="confirmation.isVisible = true"><i class="fa fa-trash-o"></i> {{ 'DELETE_MENU_ITEM' | translate }}</button>
     </form>
+    <!-- END edit form -->
+
 </div>

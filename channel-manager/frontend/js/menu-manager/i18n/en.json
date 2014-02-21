@@ -18,8 +18,10 @@
     "NONE": "None",
     "PAGE_TITLE": "Page title",
     "PAGE_URL": "Page URL",
+    "SITEMAP_ITEM": "Sitemap item",
     "SEARCH_FOR_TEMPLATE": "Search for template",
     "SELECT_DOCUMENT": "Select document",
     "SELECT_LANDING_PAGE": "Select landing page",
-    "SITEMAP_ITEM": "Sitemap item"
+    "REMOVE_CONFIRMATION": "Are you sure you want to delete the menu item '{{ name }}'?",
+    "DELETE_ITEM": "Delete item"
 }
