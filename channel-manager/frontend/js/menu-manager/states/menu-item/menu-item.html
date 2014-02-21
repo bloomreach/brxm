@@ -17,10 +17,29 @@
 <div class="container" id="container">
     <div class="row">
 
+
         <!-- START Tree Component -->
         <div class="col-sm-4" id="menu-tree" data-ng-controller="hippo.channelManager.menuManager.TreeCtrl">
             <div class="l-sidebar">
-                <div hippo.theme.tree data="menuTree" on-select="navigateTo(itemId)" on-move="moveNode(node)" class="jstree"></div>
+                <!--<div hippo.theme.tree data="menuTree" on-select="navigateTo(itemId)" on-move="moveNode(node)" class="jstree"></div>-->
+
+                <!-- Nested list template -->
+                <script type="text/ng-template" id="items_renderer.html">
+                    <div ui-nested-sortable-handle="">
+                        {{item.title}}
+                        <a class="pull-right btn btn-danger btn-xs" nodrag ng-click="remove(this)"><span class="fa fa-times"></span></a>
+                        <a class="pull-right btn btn-success btn-xs" nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span class="fa fa-plus"></span></a>
+                    </div>
+                    <ol ui-nested-sortable="options" ng-model="item.items">
+                        <li ng-repeat="item in item.items" ui-nested-sortable-item="" ng-include="'items_renderer.html'"></li>
+                    </ol>
+                </script>
+
+                <h3>Tree view</h3>
+
+                <ol ui-nested-sortable="options" ng-model="list">
+                    <li ng-repeat="item in list" ui-nested-sortable-item="" ng-include="'items_renderer.html'"></li>
+                </ol>
             </div>
         </div>
         <!-- END Tree Component -->

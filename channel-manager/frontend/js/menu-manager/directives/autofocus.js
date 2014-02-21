@@ -23,7 +23,12 @@
             return {
                 restrict: 'A',
                 link: function(scope, element) {
-                    element[0].focus();
+                    // TODO: bugfix. The code below produces
+                    // Error: [$rootScope:inprog] $digest already in progress
+                    // when using AngularJS 1.2.14
+
+                    //$(element).focus();
+
                 }
             };
         });

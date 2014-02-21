@@ -20,7 +20,8 @@
         'hippo.theme',
         'ngRoute',
         'pascalprecht.translate',
-        'ui.router'
+        'ui.router',
+        'ui.nestedSortable'
     ]);
 
 }());

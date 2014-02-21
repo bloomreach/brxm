@@ -38,6 +38,7 @@ module.exports = function(config) {
             'components/angular-translate/angular-translate.js',
             'components/angular-translate-loader-static-files/angular-translate-loader-static-files.js',
             'components/angular-ui-router/release/angular-ui-router.min.js',
+            'components/Angular-NestedSortable/dist/angular-nested-sortable.js',
 
             // testing dependencies
             'components/jasmine-jquery/lib/jasmine-jquery.js',

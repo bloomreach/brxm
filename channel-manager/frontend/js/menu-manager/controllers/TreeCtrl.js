@@ -23,11 +23,12 @@
         _.each(menuItems, function (menuItem) {
             var node = {
                 id: menuItem.id,
-                text: menuItem.name
+                title: menuItem.name,
+                items: []
             };
 
             if (menuItem.children && menuItem.children.length > 0) {
-                node.children = createTree(menuItem.children);
+                node.items = createTree(menuItem.children);
             }
 
             nodes.push(node);
@@ -44,14 +45,10 @@
             'hippo.channelManager.menuManager.ConfigService',
             'hippo.channelManager.menuManager.MenuService',
             function ($scope, $state, ConfigService, MenuService) {
-                $scope.menuTree = [];
+                $scope.list = [];
 
                 MenuService.getMenu().then(function(menuData) {
-                    $scope.menuData = menuData;
-
-                    $scope.$watch('menuData', function(newMenuData, oldMenuData) {
-                        $scope.menuTree = createTree(newMenuData.children);
-                    }, true);
+                    $scope.list = createTree(menuData.children);
                 });
 
                 $scope.navigateTo = function (itemId) {
@@ -61,7 +58,6 @@
                 $scope.moveNode = function (node) {
                     MenuService.moveMenuItem(node.id, node.newParentId, node.position);
                 };
-
             }
         ]);
 }());
