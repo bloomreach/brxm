@@ -26,7 +26,7 @@
         iframeToHost = null;
     });
 
-    function replaceCommentWithEditButton(commentElement, btnClass, btnText, publishedEvent, publishedUuid, lockedByMessage) {
+    function replaceCommentWithEditButton(commentElement, btnClass, btnText, publishedEvent, publishedUuid, lockInfoMessage) {
         var publish, link = document.createElement('a');
         if (commentElement.nextSibling) {
             commentElement.parentNode.insertBefore(link, commentElement.nextSibling);
@@ -39,8 +39,8 @@
         link.setAttribute('href', '');
         link.setAttribute('class', btnClass);
 
-        if (publishedEvent === 'edit-menu' && lockedByMessage) {
-            $(link).append('<span class="' + btnClass + '-locked"' + ' title="' + lockedByMessage + '"</span>');
+        if (publishedEvent === 'edit-menu' && lockInfoMessage) {
+            $(link).append('<span class="' + btnClass + '-locked"' + ' title="' + lockInfoMessage + '"></span>');
             publish = function() {
             };
         } else {
@@ -146,22 +146,23 @@
 
             visit: function(commentElement, commentData) {
                 var hstMetaData = readEditMenuData(commentData),
-                        menuUuid, lockedBy, lockedByCurrentUser, lockedOn, lockedOnFormatted, lockedByMessage ;
+                        menuUuid, lockedBy, lockedByCurrentUser, lockedOn, lockedOnDate, lockedOnDateString, lockInfoMessage ;
                 if (hstMetaData !== null) {
                     menuUuid = hstMetaData[HST.ATTR.ID];
                     lockedBy = hstMetaData[HST.ATTR.HST_LOCKED_BY];
                     lockedByCurrentUser = hstMetaData[HST.ATTR.HST_LOCKED_BY_CURRENT_USER];
                     lockedOn = hstMetaData[HST.ATTR.HST_LOCKED_ON];
                     if (lockedBy && lockedByCurrentUser === 'false') {
-                        lockedByMessage = "Menu locked by " + lockedBy;
+                        lockInfoMessage = resources['menu-locked-by'].format(lockedBy);
                         if (lockedOn) {
-                            lockedOnFormatted = new Date(parseInt(lockedOn, 10));
-                            if(lockedOnFormatted) {
-                                lockedByMessage = lockedByMessage + " on " + lockedOnFormatted;
+                            lockedOnDate = new Date(parseInt(lockedOn, 10));
+                            if(lockedOnDate) {
+                                lockedOnDateString = lockedOnDate.toLocaleString();
+                                lockInfoMessage = resources['menu-locked-by-on'].format(lockedBy, lockedOnDateString);
                             }
                         }
                     }
-                    replaceCommentWithEditButton(commentElement, HST.CLASS.EDITMENU, resources['edit-menu'], 'edit-menu', menuUuid, lockedByMessage);
+                    replaceCommentWithEditButton(commentElement, HST.CLASS.EDITMENU, resources['edit-menu'], 'edit-menu', menuUuid, lockInfoMessage);
                 }
             }
 

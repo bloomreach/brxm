@@ -84,7 +84,7 @@
         },
 
         render : function(parent) {
-            var parentOverlay, overlay, self = this, formattedDate;
+            var parentOverlay, overlay, self = this, lockedOnDate, lockedOnDateString;
             if (this.rendered) {
                 return;
             }
@@ -105,12 +105,13 @@
                            (this.el.attr(HST.ATTR.HST_LOCKED_BY_CURRENT_USER) === "false")) {
                        overlay.addClass(this.cls.overlay.locked);
                         if (this.el.attr(HST.ATTR.HST_LOCKED_ON)) {
-                            formattedDate = new Date(parseInt(this.el.attr(HST.ATTR.HST_LOCKED_ON), 10));
+                            lockedOnDate = new Date(parseInt(this.el.attr(HST.ATTR.HST_LOCKED_ON), 10));
                         }
-                        if (formattedDate) {
-                            overlay.attr("title", "Locked by  '" + this.el.attr(HST.ATTR.HST_LOCKED_BY) + "' on " + formattedDate);
+                        if (lockedOnDate) {
+                            lockedOnDateString = lockedOnDate.toLocaleString();
+                            overlay.attr("title", this.resources['container-component-locked-by-on'].format(this.el.attr(HST.ATTR.HST_LOCKED_BY), lockedOnDateString));
                         } else {
-                            overlay.attr("title", "Locked by  '" + this.el.attr(HST.ATTR.HST_LOCKED_BY));
+                            overlay.attr("title", this.resources['container-component-locked-by'].format(this.el.attr(HST.ATTR.HST_LOCKED_BY)));
                         }
                     }
                 }
