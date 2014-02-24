@@ -38,6 +38,14 @@
     <sv:property sv:name="hipposys:subtype" sv:type="String">
       <sv:value>hippostdpubwf:document</sv:value>
     </sv:property>
+    <sv:node sv:name="hipposys:config">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>nt:unstructured</sv:value>
+      </sv:property>
+      <sv:property sv:name="scxml-definition" sv:type="String">
+        <sv:value>documentworkflow</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
   <sv:node sv:name="version">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
