@@ -31,7 +31,10 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
@@ -103,7 +106,13 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
             observers = new HashSet<>();
         }
 
-        add(new EmptyPanel("view"));
+        add(new WebMarkupContainer("view"){{
+            add(new ListView<Object>("id") {
+                @Override
+                protected void populateItem(final ListItem<Object> item) {
+                }
+            });
+        }});
         add(new EmptyPanel("menu"));
     }
 
