@@ -99,29 +99,7 @@
       <version>${project.version}</version>
     </dependency>
 
-    <!-- Testing needs a JTA implementation -->
-    <dependency>
-      <groupId>com.atomikos</groupId>
-      <artifactId>transactions-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.atomikos</groupId>
-      <artifactId>transactions</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.atomikos</groupId>
-      <artifactId>transactions-jta</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.atomikos</groupId>
-      <artifactId>atomikos-util</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-  </dependencies>
+   </dependencies>
 
   <build>
     <defaultGoal>install</defaultGoal>
