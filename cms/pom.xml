@@ -92,7 +92,6 @@
 
     <!-- Test dependencies  -->
     <easymock.version>2.4</easymock.version>
-    <atomikos.version>3.1.4</atomikos.version>
     <htmlunit.version>2.7</htmlunit.version>
     <junit.version>4.10</junit.version>
     <xmlunit.version>1.3</xmlunit.version>
@@ -397,28 +396,6 @@
         <groupId>org.mockito</groupId>
         <artifactId>mockito-all</artifactId>
         <version>${mockito.version}</version>
-      </dependency>
-
-      <!-- Testing needs a JTA implementation -->
-      <dependency>
-        <groupId>com.atomikos</groupId>
-        <artifactId>transactions-api</artifactId>
-        <version>${atomikos.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.atomikos</groupId>
-        <artifactId>transactions</artifactId>
-        <version>${atomikos.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.atomikos</groupId>
-        <artifactId>transactions-jta</artifactId>
-        <version>${atomikos.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.atomikos</groupId>
-        <artifactId>atomikos-util</artifactId>
-        <version>${atomikos.version}</version>
       </dependency>
 
       <dependency>
