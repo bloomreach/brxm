@@ -18,7 +18,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -61,14 +60,13 @@ public class RootResource extends AbstractConfigResource {
     @Path("/composermode/{renderingHost}/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response composerModeGet(@Context HttpServletRequest servletRequest,
-                                    @Context HttpServletResponse servletResponse,
                                     @PathParam("renderingHost") String renderingHost) {
         HttpSession session = servletRequest.getSession(true);
         session.setAttribute(ContainerConstants.RENDERING_HOST, renderingHost);
         session.setAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.TRUE);
         boolean canWrite;
         try {
-            HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+            HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
             canWrite = requestContext.getSession().hasPermission(rootPath + "/accesstest", Session.ACTION_SET_PROPERTY);
         } catch (RepositoryException e) {
             log.warn("Could not determine authorization", e);
@@ -86,7 +84,6 @@ public class RootResource extends AbstractConfigResource {
     @Path("/previewmode/{renderingHost}/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response previewMode(@Context HttpServletRequest servletRequest,
-                                @Context HttpServletResponse servletResponse,
                                 @PathParam("renderingHost") String renderingHost) {
         HttpSession session = servletRequest.getSession(true);
         session.setAttribute(ContainerConstants.RENDERING_HOST, renderingHost);

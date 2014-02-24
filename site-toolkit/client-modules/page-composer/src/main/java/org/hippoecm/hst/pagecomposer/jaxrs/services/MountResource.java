@@ -307,7 +307,6 @@ public class MountResource extends AbstractConfigResource {
     /**
      * Method that returns a {@link Response} containing the list of document of (sub)type <code>docType</code> that
      * belong to the content of the site that is currently composed.
-     * @param servletRequest
      * @param docType         the docType the found documents must be of. The documents can also be a subType of
      *                        docType
      * @return An ok Response containing the list of documents or an error response in case an exception occurred
@@ -315,8 +314,7 @@ public class MountResource extends AbstractConfigResource {
     @POST
     @Path("/documents/{docType}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getDocumentsByType(@Context HttpServletRequest servletRequest,
-                                       @PathParam("docType") String docType) {
+    public Response getDocumentsByType(@PathParam("docType") String docType) {
 
         final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
         final Mount editingMount = getPageComposerContextService().getEditingMount();

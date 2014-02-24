@@ -23,8 +23,6 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -32,7 +30,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -59,9 +56,8 @@ public class ContainerComponentResource extends AbstractConfigResource {
     @Path("/create/{itemUUID}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createContainerItem(@Context HttpServletRequest servletRequest,
-                                        @PathParam("itemUUID") String itemUUID,
-                                        @QueryParam("lastModifiedTimestamp") long lastModifiedTimestamp) throws ContainerException {
+    public Response createContainerItem(final @PathParam("itemUUID") String itemUUID,
+                                        final @QueryParam("lastModifiedTimestamp") long lastModifiedTimestamp) throws ContainerException {
 
         if (itemUUID == null) {
             throw new ContainerException("There must be a uuid of the containeritem to copy from ");
@@ -123,11 +119,9 @@ public class ContainerComponentResource extends AbstractConfigResource {
     @Path("/update/{itemUUID}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateContainer(@Context HttpServletRequest servletRequest,
-                                    @Context HttpServletResponse servletResponse,
-                                    @PathParam("itemUUID") String itemUUID,
-                                    @QueryParam("lastModifiedTimestamp") long lastModifiedTimestamp,
-                                    String json) {
+    public Response updateContainer(final @PathParam("itemUUID") String itemUUID,
+                                    final @QueryParam("lastModifiedTimestamp") long lastModifiedTimestamp,
+                                    final String json) {
 
         // TODO Instead of 'String json' in the argument it should be possible to have: ContainerRepresentation presentation
         // It should be possible to automatically bind to ContainerRepresentation. Also, I don't think we need a Gson dependency here
@@ -189,10 +183,8 @@ public class ContainerComponentResource extends AbstractConfigResource {
     @GET
     @Path("/delete/{itemUUID}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteContainerItem(@Context HttpServletRequest servletRequest,
-                                        @Context HttpServletResponse servletResponse,
-                                        @PathParam("itemUUID") String itemUUID,
-                                        @QueryParam("lastModifiedTimestamp") long lastModifiedTimestamp) {
+    public Response deleteContainerItem(final @PathParam("itemUUID") String itemUUID,
+                                        final @QueryParam("lastModifiedTimestamp") long lastModifiedTimestamp) {
         HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
         try {
             Session session = requestContext.getSession();
@@ -244,7 +236,9 @@ public class ContainerComponentResource extends AbstractConfigResource {
     /**
      * @return <code>true</code> is node got moved
      */
-    private void moveIfNeeded(Node parent, String childId, Session session) throws RepositoryException, NotFoundException {
+    private void moveIfNeeded(final Node parent,
+                              final String childId,
+                              final Session session) throws RepositoryException, NotFoundException {
         String parentPath = parent.getPath();
         Node childNode = session.getNodeByIdentifier(childId);
         String childPath = childNode.getPath();
