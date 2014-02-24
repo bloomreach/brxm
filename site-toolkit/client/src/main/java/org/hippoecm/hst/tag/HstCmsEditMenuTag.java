@@ -129,18 +129,16 @@ public class HstCmsEditMenuTag extends TagSupport {
 
     private Map<?, ?> getAttributeMap(final HstSiteMenuConfiguration siteMenuConfiguration) {
         final String canonicalIdentifier = ((CanonicalInfo) siteMenuConfiguration).getCanonicalIdentifier();
-        return new HashMap<String, Object>() {
-            {
-                put("type", "menu");
-                put("uuid", canonicalIdentifier);
-                final String lockedBy = siteMenuConfiguration.getLockedBy();
-                if (lockedBy != null) {
-                    put(HST_LOCKED_BY, lockedBy);
-                    put(HST_LOCKED_BY_CURRENT_USER, lockedBy.equals(getCurrentCmsUser()));
-                    put(HST_LOCKED_ON, siteMenuConfiguration.getLockedOn().getTimeInMillis());
-                }
-            }
-        };
+        final Map<String, Object> result = new HashMap<>();
+        result.put("type", "menu");
+        result.put("uuid", canonicalIdentifier);
+        final String lockedBy = siteMenuConfiguration.getLockedBy();
+        if (lockedBy != null) {
+            result.put(HST_LOCKED_BY, lockedBy);
+            result.put(HST_LOCKED_BY_CURRENT_USER, lockedBy.equals(getCurrentCmsUser()));
+            result.put(HST_LOCKED_ON, siteMenuConfiguration.getLockedOn().getTimeInMillis());
+        }
+        return result;
     }
 
 
