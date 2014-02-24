@@ -25,7 +25,7 @@ public class ClientException extends RuntimeException {
     private final Object[] messageParameters;
 
     public ClientException(ClientError error, String unformattedMessage, Object... messageParameters) {
-        super(unformattedMessage);
+        super(unformattedMessage == null ? null : String.format(unformattedMessage, messageParameters));
         this.error = error;
         this.messageParameters = messageParameters;
     }
@@ -38,7 +38,4 @@ public class ClientException extends RuntimeException {
         return Arrays.asList(messageParameters);
     }
 
-    public String getFormattedMessage() {
-        return String.format(super.getMessage(), messageParameters);
-    }
 }

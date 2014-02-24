@@ -21,6 +21,7 @@ import java.util.Date;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class ClientExceptionTest {
@@ -29,6 +30,14 @@ public class ClientExceptionTest {
     public void test_get_error() {
         final ClientException e = new ClientException(ClientError.ITEM_NOT_FOUND, null);
         assertThat(e.getError(), is(ClientError.ITEM_NOT_FOUND));
+        assertThat(e.getMessage(), nullValue());
+    }
+
+    @Test
+    public void test_get_message() {
+        final ClientException e = new ClientException(ClientError.ITEM_NOT_FOUND, "item not found");
+        assertThat(e.getError(), is(ClientError.ITEM_NOT_FOUND));
+        assertThat(e.getMessage(), is("item not found"));
     }
 
     @Test
@@ -41,7 +50,6 @@ public class ClientExceptionTest {
     public void test_get_formatted_message() {
         final Date now = new Date();
         final ClientException e = new ClientException(null, "%s not found at %s", "Something", now);
-        assertThat(e.getMessage(), is("%s not found at %s"));
-        assertThat(e.getFormattedMessage(), is("Something not found at " + now));
+        assertThat(e.getMessage(), is("Something not found at " + now));
     }
 }

@@ -163,7 +163,7 @@ public class AbstractConfigResource {
     }
 
     protected Response logAndReturnClientError(ClientException e) {
-        final String formattedMessage = e.getFormattedMessage();
+        final String formattedMessage = e.getMessage();
         if (log.isDebugEnabled()) {
             log.info(formattedMessage, e);
         } else {
