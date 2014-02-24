@@ -240,7 +240,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             } else {
                 EditableWorkflow workflow = getEditableWorkflow();
                 Map<String,Serializable> hints = workflow.hints();
-                if (hints.containsKey("checkModified") && Boolean.TRUE.equals(hints.get("checkModifled"))) {
+                if (hints.containsKey("checkModified") && Boolean.TRUE.equals(hints.get("checkModified"))) {
                     modified = workflow.isModified();
                     return modified;
                 } else {
