@@ -109,7 +109,7 @@ public class ImageMetaData implements IClusterable {
 
     private boolean isYCCK(final ReusableInputStream ris) throws IOException {
         try {
-            JpegSegmentReader reader = new JpegSegmentReader(ris);
+            JpegSegmentReader reader = new JpegSegmentReader(ris, false);
             byte[] appe = reader.readSegment(JpegSegmentReader.SEGMENT_APPE);
             return appe != null && appe[11] == 2;
         } catch (JpegProcessingException e1) {

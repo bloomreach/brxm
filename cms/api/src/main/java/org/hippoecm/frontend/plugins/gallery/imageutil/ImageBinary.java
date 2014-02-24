@@ -148,7 +148,7 @@ public class ImageBinary implements Binary {
     private boolean isYCCK() throws RepositoryException {
         InputStream stream = getStream();
         try {
-            JpegSegmentReader reader = new JpegSegmentReader(stream);
+            JpegSegmentReader reader = new JpegSegmentReader(stream, false);
             byte[] appe = reader.readSegment(JpegSegmentReader.SEGMENT_APPE);
             return appe != null && appe[11] == 2;
         } catch (JpegProcessingException e1) {
