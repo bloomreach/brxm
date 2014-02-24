@@ -27,6 +27,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
 import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
@@ -39,6 +40,8 @@ import org.onehippo.repository.documentworkflow.DocumentVariant;
 public class IsModifiedTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
+
+    private static final String[] IGNORED_PROPERTIES = new String[] { HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE };
 
     @Override
     public Object doExecute() throws RepositoryException {
@@ -75,6 +78,9 @@ public class IsModifiedTask extends AbstractDocumentTask {
             if (Arrays.binarySearch(PROTECTED_PROPERTIES, name) >= 0) {
                 continue;
             }
+            if (Arrays.binarySearch(IGNORED_PROPERTIES, name) >= 0) {
+                continue;
+            }
             if (property.getDefinition().isProtected()) {
                 continue;
             }
@@ -87,6 +93,9 @@ public class IsModifiedTask extends AbstractDocumentTask {
         for (Property bProp : new PropertyIterable(bProperties)) {
             final String name = bProp.getName();
             if (Arrays.binarySearch(PROTECTED_PROPERTIES, name) >= 0) {
+                continue;
+            }
+            if (Arrays.binarySearch(IGNORED_PROPERTIES, name) >= 0) {
                 continue;
             }
             if (bProp.getDefinition().isProtected()) {
