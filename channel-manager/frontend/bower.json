@@ -18,6 +18,11 @@
   },
   "resolutions": {
     "es5-shim": "2.3.0",
-    "angular": "1.2.14-build.2302+sha.f827d64"
+    "angular": "1.2.14-build.2302+sha.f827d64",
+    "angular-mocks": "1.2.14-build.2302+sha.f827d64",
+    "ExplorerCanvas": "1735174401034391aa632957b17ce4a167613a83",
+    "bootstrap-chosen": "972b807f0c39d06c07c5b8a44bd67a70091b1ea3",
+    "hippo-plugins": "f8b2d5af58d3344da011a2aeaebd8d91a1011c61",
+    "js-detect-ie": "241cd48c867c6c296fa772874b04bdaa15b81cb1"
   }
 }
