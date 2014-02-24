@@ -78,11 +78,16 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
         Document targetFolder = new Document(folderTranslation);
         Node copiedDoc = null;
         if (userSubject.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-            Workflow defaultWorkflow = workflowContext.getWorkflow("translation-copy", new Document(rootSubject));
-            if (defaultWorkflow instanceof CopyWorkflow) {
-                ((CopyWorkflow) defaultWorkflow).copy(targetFolder, name);
+            // first check if a copy workflow is configured on the handle itself
+            Workflow copyWorkflow = workflowContext.getWorkflow("translation-copy", new Document(rootSubject.getParent()));
+            if (copyWorkflow == null) {
+                // No? Fallback to a copy workflow on the subject itself
+                copyWorkflow = workflowContext.getWorkflow("translation-copy", new Document(rootSubject));
+            }
+            if (copyWorkflow instanceof CopyWorkflow) {
+                ((CopyWorkflow) copyWorkflow).copy(targetFolder, name);
             } else {
-                throw new WorkflowException("Unknown default workflow; cannot copy document");
+                throw new WorkflowException("No copy workflow defined; cannot copy document");
             }
             NodeIterator siblings = folderTranslation.getNodes(name);
             while (siblings.hasNext()) {
