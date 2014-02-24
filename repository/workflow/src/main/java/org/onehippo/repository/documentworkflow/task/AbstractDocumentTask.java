@@ -73,8 +73,7 @@ public abstract class AbstractDocumentTask implements WorkflowTask, Serializable
             HippoStdNodeType.HIPPOSTD_STATE,
             HippoStdNodeType.HIPPOSTD_HOLDER,
             HippoStdNodeType.HIPPOSTD_STATESUMMARY,
-            HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE,
-            HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE
+            HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE
     };
 
     static {
