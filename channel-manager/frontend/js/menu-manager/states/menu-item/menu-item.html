@@ -29,13 +29,14 @@
                         <a href="#" nodrag data-ng-mouseup="navigateTo(item.id)">{{ item.title }}</a>
                     </div>
                     <ol data-ui-nested-sortable="options" data-ng-model="item.items" class="nestedSortable-list">
-                        <li data-ng-repeat="item in item.items" data-ui-nested-sortable-item="" data-ng-include="'items_renderer.html'" class="nestedSortable-item"></li>
+                        <li data-ng-repeat="item in item.items" data-ui-nested-sortable-item="" data-ng-include="'items_renderer.html'" class="nestedSortable-item" data-ng-class="{ active: item.id === cfg.activeItem }"></li>
                     </ol>
                 </script>
 
                 <h3>Tree view</h3>
+                {{ activeItem }}
                 <ol data-ui-nested-sortable="options" data-ng-model="list" class="nestedSortable-list">
-                    <li data-ng-repeat="item in list" data-ui-nested-sortable-item="" data-ng-include="'items_renderer.html'" class="nestedSortable-item"></li>
+                    <li data-ng-repeat="item in list" data-ui-nested-sortable-item="" data-ng-include="'items_renderer.html'" class="nestedSortable-item" data-ng-class="{ active: item.id === cfg.activeItem }"></li>
                 </ol>
             </div>
         </div>

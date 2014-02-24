@@ -42,10 +42,15 @@
         .controller('hippo.channelManager.menuManager.TreeCtrl', [
             '$scope',
             '$state',
+            '$stateParams',
+            '$rootScope',
             'hippo.channelManager.menuManager.ConfigService',
             'hippo.channelManager.menuManager.MenuService',
-            function ($scope, $state, ConfigService, MenuService) {
+            function ($scope, $state, $stateParams, $rootScope, ConfigService, MenuService) {
                 $scope.list = [];
+                $scope.cfg = {
+                    activeItem: $stateParams.menuItemId
+                };
 
                 MenuService.getMenu().then(function(menuData) {
                     $scope.list = createTree(menuData.children);
@@ -58,6 +63,10 @@
                 $scope.moveNode = function (node) {
                     MenuService.moveMenuItem(node.id, node.newParentId, node.position);
                 };
+
+                $rootScope.$on('$stateChangeSuccess', function() {
+                    $scope.cfg.activeItem = $stateParams.menuItemId;
+                });
             }
         ]);
 }());
