@@ -121,7 +121,7 @@ public class HstCmsEditMenuTag extends TagSupport {
         menu = null;
     }
 
-    private void write(HstSiteMenuConfiguration siteMenuConfiguration) throws IOException {
+    private void write(final HstSiteMenuConfiguration siteMenuConfiguration) throws IOException {
         JspWriter writer = pageContext.getOut();
         final String comment = encloseInHTMLComment(toJSONMap(getAttributeMap(siteMenuConfiguration)));
         writer.print(comment);

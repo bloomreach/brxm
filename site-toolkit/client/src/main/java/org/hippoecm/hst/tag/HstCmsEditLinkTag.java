@@ -16,6 +16,8 @@
 package org.hippoecm.hst.tag;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -29,16 +31,23 @@ import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
+import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.EncodingUtils;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_LOCKED_BY;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_LOCKED_ON;
+import static org.hippoecm.hst.utils.TagUtils.encloseInHTMLComment;
+import static org.hippoecm.hst.utils.TagUtils.toJSONMap;
 
 /**
  * <p>
@@ -199,21 +208,21 @@ public class HstCmsEditLinkTag extends TagSupport  {
         scope = null;
     }
 
-    protected void write(String url, String nodeId) throws IOException {
+    private void write(final String url,final  String nodeId) throws IOException {
         JspWriter writer = pageContext.getOut();
-        StringBuilder htmlComment = new StringBuilder(); 
-        htmlComment.append("<!-- ");
-        htmlComment.append(" {\"type\":\"cmslink\"");
-        htmlComment.append(" , \"url\":\"");
-        htmlComment.append(url);
-        htmlComment.append("\"");
-        // add uuid
-        htmlComment.append(", \"uuid\":\"");
-        htmlComment.append(nodeId);
-        htmlComment.append("\" } -->");
-        writer.print(htmlComment.toString());
+        final String comment = encloseInHTMLComment(toJSONMap(getAttributeMap(url, nodeId)));
+        writer.print(comment);
     }
 
+    private Map<?, ?> getAttributeMap(final String url,final  String nodeId) {
+        return new HashMap<String, Object>() {
+            {
+                put("type", "cmslink");
+                put("uuid", nodeId);
+                put("url", url);
+            }
+        };
+    }
 
     /*
      * when a currentNode is of type hippo:handle, we return this node, else we check the parent, until we are at the jcr root node.
