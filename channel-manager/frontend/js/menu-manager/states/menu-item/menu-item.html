@@ -26,11 +26,7 @@
                 <!-- Nested list template -->
                 <script type="text/ng-template" id="items_renderer.html">
                     <div data-ui-nested-sortable-handle="" class="nestedSortable-handle">
-                        <a href="#" data-ng-click="selectItem(this)">{{ item.title }}</a>
-                        <!--
-                        <a class="pull-right btn btn-danger btn-xs" nodrag ng-click="remove(this)"><span class="fa fa-times"></span></a>
-                        <a class="pull-right btn btn-success btn-xs" nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span class="fa fa-plus"></span></a>
-                        -->
+                        <a href="#" data-nodrag data-ng-mouseup="navigateTo(item.id)">{{ item.title }}</a>
                     </div>
                     <ol data-ui-nested-sortable="options" data-ng-model="item.items" class="nestedSortable-list">
                         <li data-ng-repeat="item in item.items" data-ui-nested-sortable-item="" data-ng-include="'items_renderer.html'" class="nestedSortable-item"></li>
