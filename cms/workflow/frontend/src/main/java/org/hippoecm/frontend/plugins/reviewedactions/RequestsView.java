@@ -44,9 +44,7 @@ import org.hippoecm.frontend.plugins.reviewedactions.model.Request;
 import org.hippoecm.frontend.plugins.reviewedactions.model.RequestModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.WorkflowManager;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,10 +74,8 @@ public class RequestsView extends RepeatingView {
         List<IModel<Request>> requests = new ArrayList<>();
         try {
             WorkflowDescriptorModel model = getModel();
-            WorkflowManager manager = UserSession.get().getWorkflowManager();
-            WorkflowDescriptor workflowDescriptor = model.getObject();
-            if (workflowDescriptor != null) {
-                Workflow workflow = manager.getWorkflow(workflowDescriptor);
+            Workflow workflow = model.getWorkflow();
+            if (workflow != null) {
                 Map<String, Serializable> info = workflow.hints();
                 if (info.containsKey("requests")) {
                     Map<String, Map<String, ?>> infoRequests = (Map<String, Map<String, ?>>) info.get("requests");

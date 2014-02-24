@@ -41,9 +41,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
-import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
@@ -84,7 +82,7 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
                 return variant;
             }
         }
-        throw new ItemNotFoundException("No "+state+" variant found under path: "+handlePath);
+        throw new ItemNotFoundException("No " + state + " variant found under path: " + handlePath);
     }
 
     protected IEditorManager getEditorManager() {
@@ -120,7 +118,7 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
     }
 
     protected boolean isActionAllowed(Map<String, Serializable> info, String key) {
-        return (info.containsKey(key) && info.get(key) instanceof Boolean && (Boolean)info.get(key));
+        return (info.containsKey(key) && info.get(key) instanceof Boolean && (Boolean) info.get(key));
     }
 
     protected void hideIfNotAllowed(Map<String, Serializable> info, String key, StdWorkflow... actions) {
@@ -143,13 +141,15 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
 
         getPluginContext().getService(getPluginConfig().getString(IBrowseService.BROWSER_ID), IBrowseService.class)
                 .browse(nodeModel);
-    }IModel<String> getDocumentName() {
+    }
+
+    IModel<String> getDocumentName() {
         try {
             return (new NodeTranslator(new JcrNodeModel(((WorkflowDescriptorModel) getDefaultModel()).getNode())))
                     .getNodeName();
         } catch (RepositoryException ex) {
             try {
-                return new Model<String>(((WorkflowDescriptorModel) getDefaultModel()).getNode().getName());
+                return Model.of(((WorkflowDescriptorModel) getDefaultModel()).getNode().getName());
             } catch (RepositoryException e) {
                 return new StringResourceModel("unknown", this, null);
             }
@@ -157,17 +157,7 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
     }
 
     protected DocumentWorkflow getWorkflow() {
-        WorkflowManager manager = UserSession.get().getWorkflowManager();
-        WorkflowDescriptorModel wdm = getModel();
-        WorkflowDescriptor workflowDescriptor = wdm.getObject();
-        try {
-            if (workflowDescriptor != null) {
-                return (DocumentWorkflow) manager.getWorkflow(workflowDescriptor);
-            }
-        } catch (RepositoryException e) {
-            log.error("Unable to retrieve workflow", e);
-        }
-        return null;
+        return getModel().getWorkflow();
     }
 
     protected Map<String, Serializable> getHints() {

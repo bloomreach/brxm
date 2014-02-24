@@ -18,39 +18,59 @@ package org.hippoecm.addon.workflow;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.version.Version;
 
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.onehippo.repository.util.JcrConstants;
 
 public class WorkflowDescriptorModel extends LoadableDetachableModel<WorkflowDescriptor> {
 
-    private String uuid;
-    private String relPath;
+    private String id;
     private String category;
+    private transient Workflow workflow;
 
+    /**
+     * deprecated: use the alternative constructor instead
+     */
+    @Deprecated
     public WorkflowDescriptorModel(WorkflowDescriptor descriptor, String category, Node subject) throws RepositoryException {
         super(descriptor);
+        init(category, subject);
+    }
+
+    public WorkflowDescriptorModel(String category, Node subject) throws RepositoryException {
+        init(category, subject);
+    }
+
+    private void init(String category, Node subject) throws RepositoryException {
         this.category = category;
-        if (subject.isNodeType("mix:referenceable")) {
-            this.uuid = subject.getIdentifier();
-            this.relPath = null;
-        } else {
-            this.uuid = subject.getParent().getIdentifier();
-            this.relPath = subject.getName();
-            if (subject.getIndex() > 1) {
-                this.relPath += "[" + subject.getIndex() + "]";
-            }
-        }
+        this.id = subject.getIdentifier();
     }
 
     protected WorkflowDescriptor load() {
         try {
             Session session = UserSession.get().getJcrSession();
             WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-            return workflowManager.getWorkflowDescriptor(category, getNode(session));
+            Node node = getNode(session);
+            if (node.isNodeType(JcrConstants.NT_FROZEN_NODE)) {
+                Version version = (Version) node.getParent();
+                String docId = version.getContainingHistory().getVersionableIdentifier();
+                Node docNode = version.getSession().getNodeByIdentifier(docId);
+                if (docNode.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                    Node handle = docNode.getParent();
+                    return workflowManager.getWorkflowDescriptor(category, handle);
+                } else {
+                    return workflowManager.getWorkflowDescriptor(category, docNode);
+                }
+            } else {
+                return workflowManager.getWorkflowDescriptor(category, node);
+            }
         } catch (RepositoryException ex) {
             return null;
         }
@@ -62,15 +82,32 @@ public class WorkflowDescriptorModel extends LoadableDetachableModel<WorkflowDes
     }
 
     private Node getNode(Session session) throws RepositoryException {
+        return session.getNodeByIdentifier(id);
+    }
+
+    public <T extends Workflow> T getWorkflow() {
+        if (workflow != null) {
+            return (T) workflow;
+        }
+
+        WorkflowDescriptor descriptor = getObject();
+        if (descriptor == null) {
+            return null;
+        }
+
         try {
-            Node node = session.getNodeByIdentifier(uuid);
-            if (relPath != null) {
-                node = node.getNode(relPath);
-            }
-            return node;
-        } catch (RepositoryException ex) {
+            Session session = UserSession.get().getJcrSession();
+            WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
+            workflow = workflowManager.getWorkflow(descriptor);
+            return (T) workflow;
+        } catch (RepositoryException e) {
             return null;
         }
     }
 
+    @Override
+    protected void onDetach() {
+        super.onDetach();
+        workflow = null;
+    }
 }

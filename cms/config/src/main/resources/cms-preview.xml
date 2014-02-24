@@ -99,10 +99,11 @@
     </sv:property>
     <sv:property sv:name="workflow.categories" sv:type="String">
       <sv:value>default</sv:value>
-      <sv:value>versioning</sv:value>
       <sv:value>translation</sv:value>
       <sv:value>committype</sv:value>
-      <sv:value>custom</sv:value>
+    </sv:property>
+    <sv:property sv:name="workflow.version.categories" sv:type="String">
+      <sv:value>versioning</sv:value>
     </sv:property>
     <sv:property sv:name="workflow.menuorder" sv:type="String">
       <sv:value>publication</sv:value>

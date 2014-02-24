@@ -32,7 +32,6 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.junit.After;
 import org.junit.Before;
@@ -96,8 +95,7 @@ public class NamespaceWorkflowPluginTest extends PluginTest {
 
         Node documentNode = session.getRootNode().getNode("hippo:namespaces/testns");
         String category = "test";
-        WorkflowDescriptor descriptor = wflMgr.getWorkflowDescriptor(category, documentNode);
-        WorkflowDescriptorModel pluginModel = new WorkflowDescriptorModel(descriptor, category, documentNode);
+        WorkflowDescriptorModel pluginModel = new WorkflowDescriptorModel(category, documentNode);
 
         ModelReference ref = new ModelReference("service.model", pluginModel);
         ref.init(context);

@@ -34,7 +34,6 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.WorkflowManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -209,26 +208,22 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
     }
 
     protected void execute(WorkflowDescriptorModel model) throws Exception {
-        WorkflowDescriptor descriptor = model.getObject();
-        if (descriptor == null) {
+        javax.jcr.Session session = UserSession.get().getJcrSession();
+        session.save();
+
+        T workflow = model.getWorkflow();
+        if (workflow == null) {
             throw new MappingException("action no longer valid");
         }
-        WorkflowManager manager = UserSession.get().getWorkflowManager();
-        javax.jcr.Session session = UserSession.get().getJcrSession();
-        session.refresh(true);
-        session.save();
-        session.refresh(true);
-        Workflow workflow = manager.getWorkflow(descriptor);
-        String message = execute((T) workflow);
+
+        String message = execute(workflow);
         if (message != null) {
             throw new WorkflowException(message);
         }
 
-        // workflow may have closed existing session
-        // FIXME should be removed
-        UserSession us = UserSession.get();
-        session = us.getJcrSession();
+        // invalidate all virtual nodes & notify virtual node listeners
         session.refresh(false);
+        UserSession us = UserSession.get();
         us.getFacetRootsObserver().broadcastEvents();
     }
 

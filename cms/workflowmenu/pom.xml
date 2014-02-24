@@ -52,7 +52,7 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-engine</artifactId>
+      <artifactId>hippo-cms-test</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

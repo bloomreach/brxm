@@ -15,8 +15,6 @@
  */
 package org.hippoecm.addon.workflow;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -53,10 +51,9 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowDescriptor;
-import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.util.NodeIterable;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,11 +65,13 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
 
     public static final String OBSERVATION = "workflow.observation";
     public static final String CATEGORIES = "workflow.categories";
+    public static final String VERSION_CATEGORIES = "workflow.version.categories";
     public static final String MENU_ORDER = "workflow.menuorder";
 
     private Set<NodeObserver> observers;
     private PluginController plugins;
     private String[] categories;
+    private String[] versionCategories;
     private String[] menuOrder;
     protected AbstractView view;
 
@@ -100,13 +99,19 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
             menuOrder = categories;
         }
 
+        if (config.get(VERSION_CATEGORIES) != null) {
+            versionCategories = config.getStringArray(VERSION_CATEGORIES);
+        } else {
+            versionCategories = categories;
+        }
+
         IServiceReference serviceReference = context.getReference(this);
         plugins = new PluginController(context, config, serviceReference.getServiceId());
         if (config.getAsBoolean(OBSERVATION, true)) {
             observers = new HashSet<>();
         }
 
-        add(new WebMarkupContainer("view"){{
+        add(new WebMarkupContainer("view") {{
             add(new ListView<Object>("id") {
                 @Override
                 protected void populateItem(final ListItem<Object> item) {
@@ -171,13 +176,14 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
 
         List<Panel> list = new LinkedList<>();
         for (Node node : nodeSet) {
-            for (final String category : categories) {
-                List<Panel> panels = buildCategory(node, category);
-                for (Panel panel : panels) {
-                    panel.visitChildren(Panel.class, new MenuVisitor(menu, category));
-                    panel.setVisible(false);
-                    list.add(panel);
+            try {
+                if (node.isNodeType(JcrConstants.NT_FROZEN_NODE)) {
+                    list.addAll(buildPanelsForCategories(menu, node, versionCategories));
+                } else {
+                    list.addAll(buildPanelsForCategories(menu, node, categories));
                 }
+            } catch (RepositoryException ex) {
+                log.error("Error setting up workflow menu", ex);
             }
         }
 
@@ -239,91 +245,65 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
         return null;
     }
 
-    private List<Panel> buildCategory(final Node node, final String category) {
+    private List<Panel> buildPanelsForCategories(final MenuHierarchy menu, final Node subject, String[] categories) throws RepositoryException {
+        List<Panel> list = new ArrayList<>();
+        for (final String category : categories) {
+            List<Panel> panels = buildPanelsForCategory(subject, category);
+            for (Panel panel : panels) {
+                panel.visitChildren(Panel.class, new MenuVisitor(menu, category));
+                panel.setVisible(false);
+                list.add(panel);
+            }
+        }
+        return list;
+    }
+
+    private List<Panel> buildPanelsForCategory(final Node workflowSubject, final String category) throws RepositoryException {
         List<Panel> panels = new LinkedList<>();
-        try {
-            WorkflowManager workflowMgr = ((HippoWorkspace) node.getSession().getWorkspace()).getWorkflowManager();
-            WorkflowDescriptor descriptor = workflowMgr.getWorkflowDescriptor(category, node);
-            if (descriptor == null) {
-                // fall back to retrieving workflows on children
-                if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    for (Node child : new NodeIterable(node.getNodes())) {
-                        if (!child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                            continue;
-                        }
-                        descriptor = workflowMgr.getWorkflowDescriptor(category, child);
-                        if (descriptor != null) {
-                            Panel panel = buildCategoryForNode(child, descriptor, category);
-                            if (panel != null) {
-                                panels.add(panel);
-                            }
-                        }
+        WorkflowDescriptorModel model = new WorkflowDescriptorModel(category, workflowSubject);
+        WorkflowDescriptor descriptor = model.getObject();
+        if (descriptor == null) {
+            // fall back to retrieving workflows on children
+            if (workflowSubject.isNodeType(HippoNodeType.NT_HANDLE)) {
+                for (Node child : new NodeIterable(workflowSubject.getNodes())) {
+                    if (!child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                        continue;
                     }
-                }
-            } else {
-                Panel panel = buildCategoryForNode(node, descriptor, category);
-                if (panel != null) {
-                    panels.add(panel);
+                    panels.addAll(buildPanelsForCategory(child, category));
                 }
             }
-        } catch (RepositoryException ex) {
-            log.error("Error setting up workflow menu", ex);
+        } else {
+            Panel panel = createPluginForWorkflow(model);
+            if (panel != null) {
+                panels.add(panel);
+            }
         }
         return panels;
     }
 
-    private Panel buildCategoryForNode(final Node node, WorkflowDescriptor descriptor, final String category) throws RepositoryException {
-        final String pluginRenderer = descriptor.getAttribute(FrontendNodeType.FRONTEND_RENDERER);
-        WorkflowDescriptorModel pluginModel = new WorkflowDescriptorModel(descriptor, category, node);
-        Panel plugin = createPlugin(category, pluginRenderer, pluginModel);
-        if (plugin == null) {
+    private Panel createPluginForWorkflow(WorkflowDescriptorModel pluginModel) throws RepositoryException {
+        WorkflowDescriptor descriptor = pluginModel.getObject();
+        String pluginRenderer = descriptor.getAttribute(FrontendNodeType.FRONTEND_RENDERER);
+        if (pluginRenderer == null) {
+            log.warn("No plugin renderer configured.");
             return null;
         }
 
-        return plugin;
-    }
-
-    private Panel createPlugin(final String category, final String pluginRenderer, final WorkflowDescriptorModel pluginModel) throws RepositoryException {
-        final Panel plugin;
-        try {
-            if (pluginRenderer == null || pluginRenderer.trim().equals("")) {
-                plugin = new StdWorkflowPlugin("item", pluginModel);
+        pluginRenderer = pluginRenderer.trim();
+        if (!pluginRenderer.startsWith("/")) {
+            log.warn("The frontend:pluginrenderer property is no longer supported, only a child node of type frontend:plugin or frontend:plugincluster.");
+            return null;
+        } else {
+            Node node = UserSession.get().getJcrSession().getNode(pluginRenderer);
+            final JcrNodeModel nodeModel = new JcrNodeModel(node);
+            if (node.isNodeType(FrontendNodeType.NT_PLUGINCLUSTER)) {
+                JcrClusterConfig jcrPluginConfig = new JcrClusterConfig(nodeModel);
+                return (Panel) plugins.startRenderer(jcrPluginConfig, pluginModel);
             } else {
-                if (pluginRenderer.startsWith("/")) {
-                    Node node = UserSession.get().getJcrSession().getNode(pluginRenderer);
-                    final JcrNodeModel nodeModel = new JcrNodeModel(node);
-                    if (node.isNodeType(FrontendNodeType.NT_PLUGINCLUSTER)) {
-                        JcrClusterConfig jcrPluginConfig = new JcrClusterConfig(nodeModel);
-                        plugin = (Panel) plugins.startRenderer(jcrPluginConfig, pluginModel);
-                    } else {
-                        JcrPluginConfig jcrPluginConfig = new JcrPluginConfig(nodeModel);
-                        plugin = (Panel) plugins.startRenderer(jcrPluginConfig, pluginModel);
-                    }
-                } else {
-                    Class pluginClass = Class.forName(pluginRenderer);
-                    if (Panel.class.isAssignableFrom(pluginClass)) {
-                        Constructor constructor = pluginClass.getConstructor(
-                                new Class[]{String.class, WorkflowDescriptorModel.class});
-                        plugin = (Panel) constructor.newInstance(new Object[]{"item", pluginModel});
-                    } else {
-                        log.warn("Invalid plugin class '" + pluginRenderer + "', it does not extend Panel.");
-                        return null;
-                    }
-                }
+                JcrPluginConfig jcrPluginConfig = new JcrPluginConfig(nodeModel);
+                return (Panel) plugins.startRenderer(jcrPluginConfig, pluginModel);
             }
-            return plugin;
-        } catch (ClassNotFoundException ex) {
-            log.warn("Could not find plugin class '" + pluginRenderer + "' for category '" + category + "'", ex);
-        } catch (NoSuchMethodException ex) {
-            log.warn("Could not find legacy constructor for '" + pluginRenderer + "' for category '" + category + "'", ex);
-        } catch (InstantiationException ex) {
-            log.warn("Failed to instantiate '" + pluginRenderer + "' for category '" + category + "'", ex);
-        } catch (IllegalAccessException ex) {
-            log.warn("Could not access constructor of '" + pluginRenderer + "' for category '" + category + "'", ex);
-        } catch (InvocationTargetException ex) {
-            log.warn("Plugin '" + pluginRenderer + "' for category '" + category + "' threw exception while initializing", ex);
         }
-        return null;
     }
 
     private static class PanelView extends AbstractView<Panel> {

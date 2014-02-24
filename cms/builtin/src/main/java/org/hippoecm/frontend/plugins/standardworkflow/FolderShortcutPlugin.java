@@ -162,19 +162,17 @@ public class FolderShortcutPlugin extends RenderPlugin {
                         if (editNodeModelNode.isNodeType(HippoNodeType.NT_HANDLE)) {
                             editNodeModelNode = editNodeModelNode.getNode(editNodeModelNode.getName());
                         }
-                        WorkflowManager workflowManager = UserSession.get()
-                                .getWorkflowManager();
+                        WorkflowManager workflowManager = UserSession.get().getWorkflowManager();
                         Workflow workflow = workflowManager.getWorkflow("editing", editNodeModelNode);
                         try {
                             if (workflow instanceof EditableWorkflow) {
                                 EditableWorkflow editableWorkflow = (EditableWorkflow) workflow;
                                 Document editableDocument = editableWorkflow.obtainEditableInstance();
                                 if (editableDocument != null) {
-                                    Session jcrSession = UserSession.get()
-                                            .getJcrSession();
+                                    Session jcrSession = UserSession.get().getJcrSession();
                                     jcrSession.refresh(true);
-                                    editNodeModel = new JcrNodeModel(jcrSession.getNodeByUUID(editableDocument
-                                            .getIdentity()));
+                                    final String id = editableDocument.getIdentity();
+                                    editNodeModel = new JcrNodeModel(jcrSession.getNodeByIdentifier(id));
                                 } else {
                                     editNodeModel = null;
                                 }
@@ -260,17 +258,15 @@ public class FolderShortcutPlugin extends RenderPlugin {
 
             String workflowCategory = config.getString("workflow.categories");
             Session jcrSession = UserSession.get().getJcrSession();
-            WorkflowDescriptor folderWorkflowDescriptor = null;
+            WorkflowDescriptorModel folderWorkflowDescriptorModel = null;
             try {
                 if (folder == null) {
                     folder = jcrSession.getRootNode().getNode(
                             defaultFolder.startsWith(SLASH) ? defaultFolder.substring(1) : defaultFolder);
                 }
 
-                WorkflowManager manager = ((HippoWorkspace) (jcrSession.getWorkspace())).getWorkflowManager();
-                folderWorkflowDescriptor = manager.getWorkflowDescriptor(workflowCategory, folder);
-                Workflow workflow = (folderWorkflowDescriptor != null ? manager.getWorkflow(folderWorkflowDescriptor)
-                        : null);
+                folderWorkflowDescriptorModel = new WorkflowDescriptorModel(workflowCategory, folder);
+                Workflow workflow = folderWorkflowDescriptorModel.getWorkflow();
                 if (workflow instanceof FolderWorkflow) {
                     templates = ((FolderWorkflow) workflow).list();
                 } else {
@@ -377,13 +373,9 @@ public class FolderShortcutPlugin extends RenderPlugin {
 
             setOkEnabled(false);
 
-            if (folder != null && folderWorkflowDescriptor != null) {
-                try {
-                    setModel(new WorkflowDescriptorModel(folderWorkflowDescriptor, workflowCategory, folder));
-                    setOkEnabled(true);
-                } catch (RepositoryException ex) {
-                    setModel(null);
-                }
+            if (folder != null && folderWorkflowDescriptorModel != null) {
+                setModel(folderWorkflowDescriptorModel);
+                setOkEnabled(true);
             } else {
                 setModel(null);
             }

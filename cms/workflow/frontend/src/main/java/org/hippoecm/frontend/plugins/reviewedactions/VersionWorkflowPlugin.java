@@ -42,9 +42,7 @@ import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.WorkflowManager;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
@@ -124,12 +122,12 @@ public class VersionWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                Node frozenNode = getModel().getNode();
+                WorkflowDescriptorModel model = getModel();
+
+                Node frozenNode = model.getNode();
                 Session session = frozenNode.getSession();
 
-                WorkflowDescriptorModel handleWorkflowModel = getHandleWorkflowModel();
-                final WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-                DocumentWorkflow documentWorkflow = (DocumentWorkflow) workflowManager.getWorkflow(handleWorkflowModel.getObject());
+                DocumentWorkflow documentWorkflow = model.getWorkflow();
 
                 Version versionNode = (Version) frozenNode.getParent();
                 Calendar calendar = versionNode.getCreated();
@@ -173,13 +171,8 @@ public class VersionWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected Dialog createRequestDialog() {
-                try {
-                    WorkflowDescriptorModel wdm = getHandleWorkflowModel();
-                    return new HistoryDialog(wdm, getEditorManager());
-                } catch (RepositoryException e) {
-                    log.error(e.getMessage(), e);
-                    return null;
-                }
+                WorkflowDescriptorModel wdm = getModel();
+                return new HistoryDialog(wdm, getEditorManager());
             }
 
             @Override
@@ -208,14 +201,4 @@ public class VersionWorkflowPlugin extends RenderPlugin {
         return getPluginContext().getService(context.getReference(editor).getServiceId(), IRenderService.class);
     }
 
-    private WorkflowDescriptorModel getHandleWorkflowModel() throws RepositoryException {
-        Node frozenNode = ((WorkflowDescriptorModel) getDefaultModel()).getNode();
-
-        Session session = frozenNode.getSession();
-        Node currentNode = session.getNodeByIdentifier(frozenNode.getProperty(JcrConstants.JCR_FROZEN_UUID).getString());
-        Node handle = currentNode.getParent();
-
-        WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-        return new WorkflowDescriptorModel(workflowManager.getWorkflowDescriptor("default", handle), "default", handle);
-    }
 }

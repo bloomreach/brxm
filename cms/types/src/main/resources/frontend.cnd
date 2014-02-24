@@ -56,7 +56,7 @@
 
 [frontend:workflow] > hipposys:workflow
 + frontend:renderer (nt:base)
-- frontend:renderer (string)
+- frontend:renderer (string) // deprecated
 - * (string)
 
 [frontend:listener] > nt:base

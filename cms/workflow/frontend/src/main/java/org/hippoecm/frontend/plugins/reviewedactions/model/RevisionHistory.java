@@ -29,10 +29,7 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.WorkflowManager;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,9 +94,7 @@ public class RevisionHistory implements IDetachable {
     }
 
     public DocumentWorkflow getWorkflow() throws RepositoryException {
-        final WorkflowDescriptor workflowDescriptor = wdm.getObject();
-        WorkflowManager manager = UserSession.get().getWorkflowManager();
-        return (DocumentWorkflow) manager.getWorkflow(workflowDescriptor);
+        return wdm.getWorkflow();
     }
 
 }
