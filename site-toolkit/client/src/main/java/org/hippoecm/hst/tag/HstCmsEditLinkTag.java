@@ -215,13 +215,11 @@ public class HstCmsEditLinkTag extends TagSupport  {
     }
 
     private Map<?, ?> getAttributeMap(final String url,final  String nodeId) {
-        return new HashMap<String, Object>() {
-            {
-                put("type", "cmslink");
-                put("uuid", nodeId);
-                put("url", url);
-            }
-        };
+        final Map<String, Object> result = new HashMap<>();
+        result.put("type", "cmslink");
+        result.put("uuid", nodeId);
+        result.put("url", url);
+        return result;
     }
 
     /*
