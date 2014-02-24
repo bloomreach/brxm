@@ -1178,7 +1178,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder("HstCompoonentConfiguration [id=");
+        StringBuilder builder = new StringBuilder("HstComponentConfiguration [id=");
         builder.append(id).append(", stored jcr location=").append(canonicalStoredLocation)
                 .append(", className=").append(this.componentClassName)
                 .append(", template=").append(this.hstTemplate).append("]");

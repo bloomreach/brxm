@@ -16,30 +16,8 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.List;
-import java.util.Set;
-
-import javax.jcr.RepositoryException;
-
-import org.hippoecm.repository.api.HippoSession;
 
 public class MountResourceAccessor {
-
-    public static Set<String> findUsersWithLockedMainConfigNodes(final HippoSession session, String previewConfigurationPath) throws RepositoryException {
-        return MountResource.findUsersWithLockedMainConfigNodes(session, previewConfigurationPath);
-    }
-
-    public static Set<String> findUsersWithLockedContainers(final HippoSession session, String previewConfigurationPath) throws RepositoryException {
-        return MountResource.findUsersWithLockedContainers(session, previewConfigurationPath);
-    }
-
-    public static String buildXPathQueryToFindLockedMainConfigNodesForUsers(String previewConfigurationPath) {
-        return MountResource.buildXPathQueryToFindLockedMainConfigNodesForUsers(previewConfigurationPath);
-    }
-
-    public static String buildXPathQueryToFindLockedContainersForUsers(String previewConfigurationPath) {
-        return MountResource.buildXPathQueryToFindLockedContainersForUsers(previewConfigurationPath);
-    }
-
 
     public static String buildXPathQueryToFindContainersForUsers(String previewConfigurationPath, List<String> userIds) {
         return MountResource.buildXPathQueryToFindContainersForUsers(previewConfigurationPath, userIds);

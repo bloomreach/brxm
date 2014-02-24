@@ -18,7 +18,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -126,71 +125,16 @@ public class MountResource extends AbstractConfigResource {
     @Path("/userswithchanges/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUsersWithChanges() {
-        final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
-        try {
-
-            HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
-            String previewConfigurationPath = getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
-
-            Set<String> usersWithLockedMainConfigNode = findUsersWithLockedMainConfigNodes(session, previewConfigurationPath);
-            Set<String> usersWithLockedContainers = findUsersWithLockedContainers(session, previewConfigurationPath);
-            Set<String> usersWithLockedMenus = findUsersWithLockedMenus(session, previewConfigurationPath);
-            Set<String> usersWithLocks = new HashSet<String>();
-            Channel previewChannel = getPageComposerContextService().getEditingPreviewChannel();
-            if (previewChannel != null && previewChannel.getChannelNodeLockedBy() != null) {
-                usersWithLocks.add(previewChannel.getChannelNodeLockedBy());
-            }
-            usersWithLocks.addAll(usersWithLockedMainConfigNode);
-            usersWithLocks.addAll(usersWithLockedContainers);
-            usersWithLocks.addAll(usersWithLockedMenus);
-            List<UserRepresentation> usersWithChanges = new ArrayList<UserRepresentation>(usersWithLocks.size());
-            for (String userId : usersWithLocks) {
-                usersWithChanges.add(new UserRepresentation(userId));
-            }
-            // TODO (meggermont): remove duplication by using ChannelLazyLoadingChangedBySet
-            // It seems ChannelLazyLoadingChangedBySet.load() does about the same as what happens here
-            // so it seems logical to reuse functionality by instantiating such a set here and get the
-            // set of users with changes from it.
-
-            final String msg = "Found " + usersWithChanges.size() + " users with changes";
-            log.info(msg);
-            return ok(msg, usersWithChanges);
-        } catch (LoginException e) {
-            log.warn("Could not get a JCR session. Cannot retrieve users with changes.", e);
-            return error("Could not get a JCR session: " + e + ". Cannot retrieve users with changes.");
-        } catch (RepositoryException e) {
-            log.warn("Could not retrieve users with changes: ", e);
-            return error("Could not retrieve users with changes: " + e);
+        final Set<String> changedBySet = getPageComposerContextService().getEditingPreviewChannel().getChangedBySet();
+        List<UserRepresentation> usersWithChanges = new ArrayList<>(changedBySet.size());
+        System.out.println(changedBySet.toString());
+        final String msg = "Found " + changedBySet.size() + " users with changes : ";
+        log.info(msg);
+        for (String userId : changedBySet) {
+            usersWithChanges.add(new UserRepresentation(userId));
         }
-    }
+        return ok(msg, usersWithChanges);
 
-    static Set<String> findUsersWithLockedMainConfigNodes(final HippoSession session, String previewConfigurationPath) throws RepositoryException {
-        final String xpath = buildXPathQueryToFindLockedMainConfigNodesForUsers(previewConfigurationPath);
-        return collectFromQueryUsersForLockedBy(session, xpath);
-    }
-
-    static Set<String> findUsersWithLockedContainers(final HippoSession session, String previewConfigurationPath) throws RepositoryException {
-        final String xpath = buildXPathQueryToFindLockedContainersForUsers(previewConfigurationPath);
-        return collectFromQueryUsersForLockedBy(session, xpath);
-    }
-
-    static Set<String> findUsersWithLockedMenus(final HippoSession session, String previewConfigurationPath) throws RepositoryException {
-        final String xpath = buildXPathQueryToFindLockedMenusForUsers(previewConfigurationPath);
-        return collectFromQueryUsersForLockedBy(session, xpath);
-    }
-
-    private static Set<String> collectFromQueryUsersForLockedBy(final HippoSession session, final String xpath) throws RepositoryException {
-        final QueryResult result = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH).execute();
-        final NodeIterable lockedContainers = new NodeIterable(result.getNodes());
-        Set<String> userIds = new HashSet<String>();
-        for (Node lockedContainer : lockedContainers) {
-            String userId = JcrUtils.getStringProperty(lockedContainer, HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, null);
-            if (userId != null) {
-                userIds.add(userId);
-            }
-        }
-        log.info("For query '{}' collected '{}' users that have a lock", xpath, userIds.toString());
-        return userIds;
     }
 
     /**
@@ -507,21 +451,6 @@ public class MountResource extends AbstractConfigResource {
         log.info("Changed main config nodes for configuration '{}' for users '{}' are : {}",
                 new String[]{previewConfigurationPath, userIds.toString(), mainConfigNodeNamesForUsers.toString()});
         return mainConfigNodeNamesForUsers;
-    }
-
-
-    static String buildXPathQueryToFindLockedMainConfigNodesForUsers(String previewConfigurationPath) {
-        return "/jcr:root" + ISO9075.encodePath(previewConfigurationPath) + "/*[@" + HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY + " != '']";
-    }
-
-    static String buildXPathQueryToFindLockedContainersForUsers(String previewConfigurationPath) {
-        return "/jcr:root" + ISO9075.encodePath(previewConfigurationPath) + "//element(*," + HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT + ")"
-                + "[@" + HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY + " != '']";
-    }
-
-    static String buildXPathQueryToFindLockedMenusForUsers(String previewConfigurationPath) {
-        return "/jcr:root" + ISO9075.encodePath(previewConfigurationPath) + "//element(*," + HstNodeTypes.NODETYPE_HST_SITEMENU + ")"
-                + "[@" + HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY + " != '']";
     }
 
     static String buildXPathQueryToFindContainersForUsers(String previewConfigurationPath, List<String> userIds) {

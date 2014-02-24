@@ -40,11 +40,16 @@ public class ChannelLazyLoadingChangedBySet implements Set<String> {
         this.previewHstSite = previewHstSite;
         this.channel = channel;
     }
+
     private void load(){
         if (delegatee != null) {
             return;
         }
-        delegatee = getAllUsersWithAContainerLock(previewHstSite);
+        delegatee = getAllUsersWithContainerLock(previewHstSite);
+        delegatee.addAll(getAllUsersWithSiteMenuLock(previewHstSite));
+
+        // TODO ADD pages && sitemap locks
+
         for (HstNode mainConfigNode : channelRootConfigNode.getNodes()) {
             final String lockedBy = mainConfigNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY);
             if (lockedBy != null) {
@@ -57,14 +62,20 @@ public class ChannelLazyLoadingChangedBySet implements Set<String> {
         }
     }
 
-    private static Set<String> getAllUsersWithAContainerLock(final HstSite previewHstSite) {
+    private static Set<String> getAllUsersWithContainerLock(final HstSite previewHstSite) {
         Set<String> usersWithLock = new HashSet<>();
         final HstComponentsConfiguration componentsConfiguration = previewHstSite.getComponentsConfiguration();
         for (HstComponentConfiguration hstComponentConfiguration : componentsConfiguration.getComponentConfigurations().values()) {
             addUsersWithContainerLock(hstComponentConfiguration, usersWithLock);
         }
-        for (ConfigurationLockInfo each : previewHstSite.getSiteMenusConfiguration().getSiteMenuConfigurations().values()) {
-            addUserWithSiteMenuLock(each.getLockedBy(), usersWithLock);
+        return usersWithLock;
+    }
+
+
+    private static Set<String> getAllUsersWithSiteMenuLock(final HstSite previewHstSite) {
+        Set<String> usersWithLock = new HashSet<>();
+        for (ConfigurationLockInfo lockInfo : previewHstSite.getSiteMenusConfiguration().getSiteMenuConfigurations().values()) {
+            addUserWithSiteMenuLock(lockInfo.getLockedBy(), usersWithLock);
         }
         return usersWithLock;
     }
@@ -76,7 +87,12 @@ public class ChannelLazyLoadingChangedBySet implements Set<String> {
     }
 
     private static void addUsersWithContainerLock(final HstComponentConfiguration config, final Set<String> usersWithLock) {
-        if (config.getComponentType() == HstComponentConfiguration.Type.CONTAINER_COMPONENT && config.getLockedBy() != null) {
+        if (config.isInherited()) {
+            // skip inherited configuration changes as that is not supported currently
+           // return;
+        }
+        if (config.getComponentType() == HstComponentConfiguration.Type.CONTAINER_COMPONENT
+                && StringUtils.isNotBlank(config.getLockedBy())) {
             usersWithLock.add(config.getLockedBy());
         }
         for (HstComponentConfiguration hstComponentConfiguration : config.getChildren().values()) {
