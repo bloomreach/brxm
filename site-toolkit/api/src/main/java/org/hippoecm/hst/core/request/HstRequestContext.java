@@ -412,11 +412,4 @@ public interface HstRequestContext {
      */
     public HstQueryManager getQueryManager(Session session) throws IllegalStateException;
 
-    /**
-     * If the associated servlet request is a CMS request then it returns the ID of the user bound to this context,
-     * otherwise it returns <code>null</code>.
-     *
-     * @return user ID or <code>null</code>
-     */
-    String getCmsUserID();
 }

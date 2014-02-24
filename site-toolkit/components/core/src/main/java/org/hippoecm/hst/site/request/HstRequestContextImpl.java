@@ -687,16 +687,6 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         }
     }
 
-    @Override
-    public String getCmsUserID() {
-        if (isCmsRequest()) {
-            final Object userID = servletRequest.getSession(false).getAttribute(CmsSecurityValve.CMS_USER_ID_ATTR);
-            return userID != null ? userID.toString() : null;
-        } else {
-            return null;
-        }
-    }
-
     private ObjectBeanManager createObjectBeanManager(Session session) {
         return new ObjectBeanManagerImpl(session, getObjectConverter());
     }

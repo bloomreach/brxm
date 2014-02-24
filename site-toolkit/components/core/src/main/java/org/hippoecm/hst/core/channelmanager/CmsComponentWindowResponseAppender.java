@@ -26,7 +26,6 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.component.HstURLFactory;
-import org.hippoecm.hst.core.container.CmsSecurityValve;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.w3c.dom.Comment;
@@ -76,7 +75,7 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             attributes.put("refNS", window.getReferenceNamespace());
             if (mount instanceof MutableMount) {
                 if (compConfig.getLockedBy() != null) {
-                    String cmsUserId = (String)session.getAttribute(CmsSecurityValve.CMS_USER_ID_ATTR);
+                    String cmsUserId = (String)session.getAttribute(ContainerConstants.CMS_USER_ID_ATTR);
                     attributes.put(ChannelManagerConstants.HST_LOCKED_BY, compConfig.getLockedBy());
                     if (compConfig.getLockedBy().equals(cmsUserId)) {
                         attributes.put(ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER, "true");

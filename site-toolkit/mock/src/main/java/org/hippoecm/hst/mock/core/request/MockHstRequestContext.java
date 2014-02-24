@@ -500,8 +500,4 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     public void clearObjectAndQueryManagers() {
     }
 
-    @Override
-    public String getCmsUserID() {
-        return null;
-    }
 }
