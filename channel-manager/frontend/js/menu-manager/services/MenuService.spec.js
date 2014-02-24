@@ -48,6 +48,10 @@ describe('Menu Service', function () {
                                 name: 'Child 1'
                             }
                         ]
+                    },
+                    {
+                        id: '3',
+                        name: 'One'
                     }
                 ]
             }
@@ -75,7 +79,7 @@ describe('Menu Service', function () {
     it('should get menu by id ', function () {
         menuService.getMenu().then(function (menu) {
             expect(menu).toBeDefined();
-            expect(menu.children.length).toEqual(2);
+            expect(menu.children.length).toEqual(3);
         });
         expectGetMenu();
     });
@@ -128,15 +132,31 @@ describe('Menu Service', function () {
     });
 
     it('should delete a menu item by id', function () {
+        // make sure the menu has been loaded
+        menuService.getMenu().then(function (menu) {});
+
         var response = {data: {children: [{id: 1, name: 'One'}]}};
-        $httpBackend.expectPOST('api/menuId./delete/menuItemId').respond('OK');
+        $httpBackend.expectPOST('api/menuId./delete/3').respond('OK');
         $httpBackend.expectGET('api/menuId').respond(response);
 
-        menuService.deleteMenuItem('menuItemId');
-        var promise = menuService.getMenu();
-        promise.then(function (menuData) {
-            expect(menuData).toBeDefined();
-            expect(menuData.children.length).toEqual(1);
+        var deletePromise = menuService.deleteMenuItem('3');
+        deletePromise.then(function (itemId) {
+            expect(itemId).toBe('2');
+        });
+        $httpBackend.flush();
+    });
+
+    it('should select parent after delete if deleted item has no siblings left', function () {
+        // make sure the menu has been loaded
+        menuService.getMenu().then(function (menu) {});
+
+        var response = {data: {children: [{id: 1, name: 'One'}]}};
+        $httpBackend.expectPOST('api/menuId./delete/child1').respond('OK');
+        $httpBackend.expectGET('api/menuId').respond(response);
+
+        var deletePromise = menuService.deleteMenuItem('child1');
+        deletePromise.then(function (itemId) {
+            expect(itemId).toBe('2');
         });
         $httpBackend.flush();
     });

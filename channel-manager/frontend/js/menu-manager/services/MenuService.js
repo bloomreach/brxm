@@ -92,6 +92,40 @@
                     return deferred.promise;
                 }
 
+                function findItemAndItsParent(itemId, parent) {
+                    var items = parent.children;
+                    var item = _.findWhere (items, {id: itemId});
+                    if (item) {
+                        return {item: item, parent: parent};
+                    } else if (items) {
+                        var found;
+                        for (var i = 0, length = items.length; i < length && !found; i++) {
+                            found = findItemAndItsParent(itemId, items[i]);
+                        }
+                        return found;
+                    } else {
+                        return null;
+                    }
+                }
+
+                function getSelectedItemIdBeforeDeletion(toBeDeletedItemId) {
+                    var itemWithParent = findItemAndItsParent(toBeDeletedItemId, menuData);
+                    var parent = itemWithParent.parent;
+                    var items = parent.children;
+                    if (items.length == 1) {
+                        // item to delete has no siblings, so parent will be selected
+                        return parent.id;
+                    }
+                    var itemIndex = _.indexOf(items, itemWithParent.item);
+                    if (itemIndex === 0) {
+                        // Item to delete is first child, so select next child
+                        return items[itemIndex + 1].id;
+                    } else {
+                        // Item to delete is not first child, so select previous child
+                        return items[itemIndex - 1].id;
+                    }
+                }
+
                 menuService.getMenu = function () {
                     loadMenuOnce();
                     return menuLoaded.promise;
@@ -136,8 +170,9 @@
 
                     $http.post(menuServiceUrl('delete/' + menuItemId))
                         .success(function() {
+                            var selectedItemId = getSelectedItemIdBeforeDeletion(menuItemId);
                             loadMenu();
-                            deferred.resolve();
+                            deferred.resolve(selectedItemId);
                         })
                         .error(function () {
                             deferred.reject();

@@ -87,12 +87,10 @@
                 $scope.remove = function () {
                     var menuItemId = $stateParams.menuItemId;
 
-                    MenuService.deleteMenuItem(menuItemId).then(function () {
-                        MenuService.getFirstMenuItemId().then(
-                            function (firstMenuItemId) {
-                                // TODO: be smarter about which item we select. For now we select the first one again
+                    MenuService.deleteMenuItem(menuItemId).then(
+                            function (selectedItemId) {
                                 $state.go('menu-item.edit', {
-                                    menuItemId: firstMenuItemId
+                                    menuItemId: selectedItemId
                                 });
                             },
                             function (error) {
@@ -100,7 +98,6 @@
                                 $log.error(error);
                             }
                         );
-                    });
                 };
             }
         ]);
