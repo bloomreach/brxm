@@ -234,7 +234,7 @@ public class ResourceHelper {
         String nodePath = null;
         try {
             nodePath = node.getPath();
-            String content = PdfParser.synchronizedParse(inputStream);
+            String content = PdfParser.parse(inputStream);
             byteInputStream = new ByteArrayInputStream(content.getBytes());
             node.setProperty(HippoNodeType.HIPPO_TEXT, getValueFactory(node).createBinary(byteInputStream));
         } catch (RepositoryException e) {

@@ -19,8 +19,8 @@ import java.io.InputStream;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class PdfParserTest {
@@ -29,30 +29,29 @@ public class PdfParserTest {
     public void testHandlePdf() {
         try {
             InputStream inputStream = getClass().getResourceAsStream("/test.pdf");
-            String content = PdfParser.synchronizedParse(inputStream);
+            String content = PdfParser.parse(inputStream).trim();
             assertNotNull(content);
-            System.out.println(content);
-            assertTrue(content.startsWith("Simple pdf for testing the word : foobarlux"));
+            assertEquals(content, "Simple pdf for testing the word : foobarlux");
         } catch (IllegalStateException ex) {
             fail();
         }
     }
 
     @Test
-    public void testPdfLargerThanTikeMaxStringLenght() {
-        final int orginalTikaLength = PdfParser.pdfParser.tika.getMaxStringLength();
-        final int EXTRACT_LENGTH = 1;
-        PdfParser.pdfParser.tika.setMaxStringLength(EXTRACT_LENGTH);
+    public void testPdfLargerThanMaxStringLength() {
+        final int originalMaxStringLength = PdfParser.instance.tika.getMaxStringLength();
+        final int EXTRACT_LENGTH = 2;
+        PdfParser.instance.tika.setMaxStringLength(EXTRACT_LENGTH);
         try {
             InputStream inputStream = getClass().getResourceAsStream("/test.pdf");
-            String content = PdfParser.synchronizedParse(inputStream);
+            String content = PdfParser.parse(inputStream).trim();
             assertNotNull(content);
-            assertTrue(content.equals("S"));
+            assertEquals(content, "S");
         } catch (IllegalStateException ex) {
             fail();
         } finally {
             // set original value back otherwise other tests might be influenced
-            PdfParser.pdfParser.tika.setMaxStringLength(orginalTikaLength);
+            PdfParser.instance.tika.setMaxStringLength(originalMaxStringLength);
         }
     }
 }
