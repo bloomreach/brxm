@@ -49,11 +49,35 @@
     </sv:property>
     <sv:node sv:name="frontend:renderer">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
+        <sv:value>frontend:plugincluster</sv:value>
       </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.editor.workflow.EditingDefaultWorkflowPlugin</sv:value>
+      <sv:property sv:multiple="true" sv:name="frontend:references" sv:type="String">
+        <sv:value>browser.id</sv:value>
+        <sv:value>editor.id</sv:value>
+        <sv:value>wicket.model</sv:value>
       </sv:property>
+      <sv:property sv:multiple="true" sv:name="frontend:services" sv:type="String">
+        <sv:value>wicket.id</sv:value>
+      </sv:property>
+      <sv:property sv:name="item" sv:type="String">
+        <sv:value>${cluster.id}.item</sv:value>
+      </sv:property>
+      <sv:node sv:name="root">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+          <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="save">
+        <sv:property sv:name="plugin.class" sv:type="String">
+          <sv:value>org.hippoecm.frontend.editor.workflow.EditingDefaultWorkflowPlugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.id" sv:type="String">
+          <sv:value>${item}</sv:value>
+        </sv:property>
+      </sv:node>
     </sv:node>
   </sv:node>
 </sv:node>
