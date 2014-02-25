@@ -25,7 +25,9 @@ package org.hippoecm.repository.standardworkflow;
  * This interface is an extension to the now deprecated WorkflowEventWorkflow interface, and 
  * in addition sets the category and method names of the Workflow triggering the event
  * before the fire method is invoked.
+ * @deprecated to do workflow post processing, use the event bus mechanism instead
  */
+@Deprecated
 public interface WorkflowEventsWorkflow extends WorkflowEventWorkflow {
 
     /**
