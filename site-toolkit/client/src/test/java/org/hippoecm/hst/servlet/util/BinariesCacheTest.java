@@ -19,6 +19,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.hippoecm.hst.cache.HstCache;
@@ -155,39 +156,48 @@ public class BinariesCacheTest {
     }
 
 
-    private volatile boolean nextThreadIsSecond =false;            
     @Test
     public void testGetNullIsLockingForEverWhenNoTimeoutSet() throws InterruptedException {
         // NO put so page.getResourcePath() is not available in cache
         final long WAIT_BEFORE_PUT = 100;
         final List<Throwable> throwables = Collections.synchronizedList(new LinkedList<Throwable>());
         final Thread [] getters = new Thread[2];
+        final Semaphore firstOrSecond = new Semaphore(1);
+        final Semaphore secondCacheAccess = new Semaphore(0);
         for (int i = 0; i < getters.length; i++) {
             getters[i] = new Thread(new Runnable() {
                 public void run() {
-                    if (nextThreadIsSecond) {
+                    if (firstOrSecond.tryAcquire()) {
                         BinaryPage elem = bc.getPageFromBlockingCache(page.getResourcePath());
-                        // this thread will have been blocked for WAIT_BEFORE_PUT by the the 
-                        // first thread which acquired the lock and only freed it after the put
-                        try {
-                             assertNotNull(elem);
-                        } catch (AssertionError e) {
-                            throwables.add(e); 
-                        }
-                    } else {
-                        nextThreadIsSecond = true;
-                        BinaryPage elem = bc.getPageFromBlockingCache(page.getResourcePath());
+                        secondCacheAccess.release();
                         try {
                             assertNull(elem);
                         } catch (AssertionError e) {
                             throwables.add(e);
                         }
+
                         // after WAIT_BEFORE_PUT ms we PUT an element that should free the lock again
                         try {
                             Thread.sleep(WAIT_BEFORE_PUT);
                             bc.putPage(page);
                         } catch (InterruptedException e) {
-                            
+
+                        }
+                    } else {
+                        try {
+                            secondCacheAccess.acquire();
+                        } catch (InterruptedException e) {
+                            throwables.add(e);
+                            return;
+                        }
+
+                        BinaryPage elem = bc.getPageFromBlockingCache(page.getResourcePath());
+                        // this thread will have been blocked for WAIT_BEFORE_PUT by the the
+                        // first thread which acquired the lock and only freed it after the put
+                        try {
+                             assertNotNull(elem);
+                        } catch (AssertionError e) {
+                            throwables.add(e);
                         }
                     }
                 }
@@ -195,13 +205,13 @@ public class BinariesCacheTest {
         }
 
         long start = System.currentTimeMillis();
-        for (int i = 0; i < getters.length; i++) {
+        for (final Thread getter : getters) {
             Thread.sleep(10);
-            getters[i].start();
+            getter.start();
         }
-        
-        for (int i = 0; i < getters.length; i++) {
-            getters[i].join();
+
+        for (final Thread getter : getters) {
+            getter.join();
         }
         
         assertTrue((System.currentTimeMillis() - start) > WAIT_BEFORE_PUT);
