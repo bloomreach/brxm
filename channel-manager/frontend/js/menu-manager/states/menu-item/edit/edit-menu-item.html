@@ -31,33 +31,33 @@
     <!-- END confirmation dialog -->
 
     <!-- START edit form -->
-    <form name="form" role="form" novalidate>
+    <form name="form" data-role="form" novalidate>
         <h4 class="page-header">{{ 'EDIT_MENU_ITEM' | translate }}</h4>
         <span>{{error.message}}</span>
         <div class="form-group has-feedback"
              data-ng-class="{
-            'has-success': form.name.$dirty && !isSaving.name && form.name.$valid && isSaved.name,
-            'has-error': form.name.$dirty && !isSaving.name && (form.name.$invalid || !isSaved.name)
+            'has-success': form.title.$dirty && !isSaving.title && form.title.$valid && isSaved.title,
+            'has-error': form.title.$dirty && !isSaving.title && (form.title.$invalid || !isSaved.title)
         }">
-            <label for="hippo.channelManager.menuManager.menuItem.edit.name">{{ 'LABEL' | translate }}</label>
-            <input type="text" name="name" class="form-control" id="hippo.channelManager.menuManager.menuItem.edit.name"
+            <label for="hippo.channelManager.menuManager.menuItem.edit.title">{{ 'LABEL' | translate }}</label>
+            <input type="text" name="title" class="form-control" id="hippo.channelManager.menuManager.menuItem.edit.title"
                    placeholder="{{ 'LABEL' | translate }}"
-                   hippo.channel-manager.menu-manager.auto-focus
-                   data-ng-model="selectedMenuItem.name"
-                   data-ng-focus="form.name.$setPristine();"
+                   data-hippo.channel-manager.menu-manager.auto-focus
+                   data-ng-model="selectedMenuItem.title"
+                   data-ng-focus="form.title.$setPristine();"
                    data-ng-required="true"
-                   data-ng-blur="form.name.$valid ? saveSelectedMenuItem('name') : '';">
-            <div class="tooltip-container" ng-show="form.name.$invalid">
+                   data-ng-blur="form.title.$valid ? saveSelectedMenuItem('title') : '';">
+            <div class="tooltip-container" data-ng-show="form.title.$invalid">
                 <div data-tooltip
                      data-placement="top"
                      data-title="{{ 'LABEL_REQUIRED' | translate }}"></div>
             </div>
             <i class="fa form-control-feedback"
-               data-ng-show="form.name.$dirty"
+               data-ng-show="form.title.$dirty"
                data-ng-class="{
-            'fa-spinner fa-spin': isSaving.name,
-            'fa-check': form.name.$valid && isSaved.name,
-            'fa-times': form.name.$invalid || !isSaved.name
+            'fa-spinner fa-spin': isSaving.title,
+            'fa-check': form.title.$valid && isSaved.title,
+            'fa-times': form.title.$invalid || !isSaved.title
            }"></i>
         </div>
         <label for="hippo.channelManager.menuManager.menuItem.edit.linkType">{{ 'DESTINATION' | translate }}</label>

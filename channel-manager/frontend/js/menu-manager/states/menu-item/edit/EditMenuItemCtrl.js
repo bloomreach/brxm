@@ -50,19 +50,30 @@
                     message: null
                 };
 
+                $scope.focus = FocusService.focusElementWithId;
+
+                savedMenuItem = angular.copy($scope.selectedMenuItem);
+
                 function shouldSaveSelectedMenuItemProperty(propertyName) {
                     if (!angular.isDefined($scope.selectedMenuItem)) {
                         return false;
                     }
+
                     return $scope.selectedMenuItem[propertyName] !== savedMenuItem[propertyName];
                 }
 
                 function saveSelectedMenuItemProperty(propertyName) {
                     savedMenuItem = angular.copy($scope.selectedMenuItem);
 
+                    var itemToSave = angular.copy(savedMenuItem);
+                    itemToSave.name = itemToSave.title;
+                    itemToSave.children = itemToSave.items;
+                    delete itemToSave.title;
+                    delete itemToSave.items;
+
                     $scope.isSaving[propertyName] = true;
 
-                    MenuService.saveMenuItem($scope.selectedMenuItem).then(function () {
+                    MenuService.saveMenuItem(itemToSave).then(function () {
                         $scope.isSaving[propertyName] = false;
                         $scope.isSaved[propertyName] = true;
                     },
@@ -73,37 +84,36 @@
                     });
                 }
 
-                MenuService.getMenuItem($stateParams.menuItemId).then(function (menuItem) {
-                    $scope.selectedMenuItem = menuItem;
-                    savedMenuItem = angular.copy($scope.selectedMenuItem);
-                });
-
                 $scope.saveSelectedMenuItem = function(propertyName) {
                     if (shouldSaveSelectedMenuItemProperty(propertyName)) {
                         saveSelectedMenuItemProperty(propertyName);
                     }
                 };
-
-                $scope.focus = FocusService.focusElementWithId;
-
+                
                 $scope.createNewPage = function () {
                     $state.go('menu-item.add-page', { menuItemId: $stateParams.menuItemId });
                 };
 
                 $scope.remove = function () {
-                    var menuItemId = $stateParams.menuItemId;
+                    // hide confirmation dialog
+                    $scope.confirmation.isVisible = false;
 
-                    MenuService.deleteMenuItem(menuItemId).then(
-                            function (selectedItemId) {
-                                $state.go('menu-item.edit', {
-                                    menuItemId: selectedItemId
-                                });
-                            },
-                            function (error) {
-                                // TODO show error in UI
-                                $log.error(error);
-                            }
-                        );
+                    // remove menu item from the DOM
+                    var parentScope = $scope.findParent($scope.selectedMenuItem.id);
+                    var index = parentScope.items.indexOf($scope.selectedMenuItem);
+                    if (index > -1) {
+                        parentScope.items.splice(index, 1)[0];
+                    }
+
+                    // HTTP-request to delete the menu item
+                    MenuService.deleteMenuItem($scope.selectedMenuItem.id).then(function (selectedMenuItemId) {
+                        $state.go('menu-item.edit', {
+                            menuItemId: selectedMenuItemId
+                        });
+                    }, function (error) {
+                        // TODO show error in UI
+                        $log.error(error);
+                    });
                 };
             }
         ]);

@@ -16,34 +16,13 @@
 
 <div class="container" id="container">
     <div class="row">
-
-
-        <!-- START Tree Component -->
         <div class="col-sm-4" id="menu-tree" data-ng-controller="hippo.channelManager.menuManager.TreeCtrl">
             <div class="l-sidebar">
-                <!--<div hippo.theme.tree data="menuTree" on-select="navigateTo(itemId)" on-move="moveNode(node)" class="jstree"></div>-->
-
-                <!-- Nested list template -->
-                <script type="text/ng-template" id="items_renderer.html">
-                    <div data-ui-nested-sortable-handle="" class="nestedSortable-handle">
-                        <a href="#" nodrag data-ng-mouseup="navigateTo(item.id)">{{ item.title }}</a>
-                    </div>
-                    <ol data-ui-nested-sortable="options" data-ng-model="item.items" class="nestedSortable-list">
-                        <li data-ng-repeat="item in item.items" data-ui-nested-sortable-item="" data-ng-include="'items_renderer.html'" class="nestedSortable-item" data-ng-class="{ active: item.id === cfg.activeItem }"></li>
-                    </ol>
-                </script>
-
-                <h3>Tree view</h3>
-                {{ activeItem }}
-                <ol data-ui-nested-sortable="options" data-ng-model="list" class="nestedSortable-list">
-                    <li data-ng-repeat="item in list" data-ui-nested-sortable-item="" data-ng-include="'items_renderer.html'" class="nestedSortable-item" data-ng-class="{ active: item.id === cfg.activeItem }"></li>
-                </ol>
+                <div data-hippo.theme.tree data-items="list" data-callbacks="callbacks" data-selected-item-id="selectedMenuItem.id">{{ item.title }}</div>
             </div>
         </div>
-        <!-- END Tree Component -->
 
         <div data-ui-view class="col-sm-8" id="form-panel"></div>
-
     </div>
     <div class="row">
         <div id="add" class="col-sm-4" data-ng-controller="hippo.channelManager.menuManager.MenuCtrl">
@@ -51,6 +30,7 @@
                 <i class="fa fa-plus"></i> {{ 'ADD_MENU_ITEM' | translate }}
             </button>
         </div>
+
         <div id="actions" class="col-sm-8" data-ng-controller="hippo.channelManager.menuManager.WindowCtrl">
             <button type="button" class="btn btn-default pull-right"
                     data-ng-disabled="hasOutstandingChanges()"

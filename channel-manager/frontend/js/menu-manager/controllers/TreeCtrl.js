@@ -44,29 +44,28 @@
             '$state',
             '$stateParams',
             '$rootScope',
+            '$log',
             'hippo.channelManager.menuManager.ConfigService',
             'hippo.channelManager.menuManager.MenuService',
-            function ($scope, $state, $stateParams, $rootScope, ConfigService, MenuService) {
-                $scope.list = [];
-                $scope.cfg = {
-                    activeItem: $stateParams.menuItemId
+            function ($scope, $state, $stateParams, $rootScope, $log, ConfigService, MenuService) {
+                $scope.callbacks = {
+                    itemClicked: function (itemScope) {
+                        $scope.$apply(function () {
+
+                            $state.go('menu-item.edit', {menuItemId: itemScope.id});
+                            $scope.$parent.selectedMenuItem = itemScope;
+                        });
+                    },
+                    itemAdded: function (scope, modelData, destIndex) {
+                        // TODO: implement HTTP-request to add item
+                        $log.info('Tree callback: itemAdded');
+                    },
+                    itemMoved: function (sourceScope, modelData, sourceIndex, destScope, destIndex) {
+                        // TODO: implement HTTP-request to move item
+                        // MenuService.moveMenuItem(node.id, node.newParentId, node.position);
+                        $log.info('Tree callback: itemMoved');
+                    }
                 };
-
-                MenuService.getMenu().then(function(menuData) {
-                    $scope.list = createTree(menuData.children);
-                });
-
-                $scope.navigateTo = function (itemId) {
-                    $state.go('menu-item.edit', {menuItemId: itemId});
-                };
-
-                $scope.moveNode = function (node) {
-                    MenuService.moveMenuItem(node.id, node.newParentId, node.position);
-                };
-
-                $rootScope.$on('$stateChangeSuccess', function() {
-                    $scope.cfg.activeItem = $stateParams.menuItemId;
-                });
             }
         ]);
 }());
