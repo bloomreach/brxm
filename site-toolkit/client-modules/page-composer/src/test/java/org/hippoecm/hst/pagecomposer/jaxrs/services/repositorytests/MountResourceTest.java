@@ -131,7 +131,7 @@ public class MountResourceTest extends AbstractPageComposerTest {
         assertTrue(usersWithLockedContainers.isEmpty());
 
         final ContainerComponentResource containerComponentResource = createContainerComponentResource(mountResource);
-        containerComponentResource.createContainerItem(secondRequest, catalogItemUUID, System.currentTimeMillis());
+        containerComponentResource.createContainerItem(catalogItemUUID, System.currentTimeMillis());
 
         // reload model through new request, and then modify a container
         // give time for jcr events to evict model
@@ -273,7 +273,7 @@ public class MountResourceTest extends AbstractPageComposerTest {
         assertTrue(usersWithLockedContainers.isEmpty());
 
         final ContainerComponentResource containerComponentResource = createContainerComponentResource(mountResource);
-        containerComponentResource.createContainerItem(secondRequest, catalogItemUUID, System.currentTimeMillis());
+        containerComponentResource.createContainerItem(catalogItemUUID, System.currentTimeMillis());
 
         // reload model through new request, and then modify a container
         // give time for jcr events to evict model
