@@ -46,8 +46,6 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.ext.InternalWorkflow;
 import org.hippoecm.repository.ext.WorkflowImpl;
-import org.hippoecm.repository.standardworkflow.WorkflowEventLoggerWorkflow;
-import org.hippoecm.repository.standardworkflow.WorkflowEventLoggerWorkflowImpl;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.repository.api.annotation.WorkflowAction;
@@ -77,26 +75,16 @@ public class WorkflowManagerImpl implements WorkflowManager {
      *  when performing a workflow step (i.e. method invocation), and to persist changes.
      * </p>
      */
-    private Session userSession;
+    private final Session userSession;
     Session rootSession;
     String configuration;
-    private WorkflowEventLoggerWorkflow eventLoggerWorkflow;
+    private final WorkflowLogger workflowLogger;
 
     public WorkflowManagerImpl(Session session) throws RepositoryException {
         this.userSession = session;
         this.rootSession = session.impersonate(new SimpleCredentials("workflowuser", new char[] {}));
         configuration = session.getRootNode().getNode(CONFIGURATION_PATH + "/" + WORKFLOWS_PATH).getIdentifier();
-        if (session.nodeExists("/hippo:log")) {
-            final Node logFolder = rootSession.getNode("/hippo:log");
-            final WorkflowDefinition workflowDefinition = getWorkflowDefinition("internal", logFolder);
-            Workflow workflow = createWorkflow(logFolder, workflowDefinition);
-            if (workflow instanceof WorkflowEventLoggerWorkflow) {
-                eventLoggerWorkflow = (WorkflowEventLoggerWorkflow) workflow;
-            }
-        }
-        if (eventLoggerWorkflow == null) {
-            eventLoggerWorkflow = new WorkflowEventLoggerWorkflowImpl(rootSession);
-        }
+        workflowLogger = new WorkflowLogger(rootSession);
     }
 
     public Session getSession() throws RepositoryException {
@@ -343,22 +331,22 @@ public class WorkflowManagerImpl implements WorkflowManager {
         private final String category;
         private final String workflowName;
         private final Workflow upstream;
-        private final String uuid;
-        private final String path;
+        private final String subjectId;
+        private final String subjectPath;
         private final boolean objectPersist;
 
         private WorkflowInvocationHandler(WorkflowDefinition definition, Workflow upstream, Node subject) throws RepositoryException {
             this.category = definition.getCategory();
             this.workflowName = definition.getName();
             this.upstream = upstream;
-            this.uuid = subject.getIdentifier();
-            this.path = subject.getPath();
+            this.subjectId = subject.getIdentifier();
+            this.subjectPath = subject.getPath();
             this.objectPersist = upstream instanceof WorkflowImpl;
         }
 
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             Object returnObject = null;
-            Throwable returnException = null;
+            Throwable exception = null;
 
             if ("toString".equals(method.getName()) && (args == null || args.length == 0)) {
                 return "WorkflowInvocationHandler[" + category + ", " + workflowName + "]";
@@ -366,20 +354,19 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
             WorkflowPostActions postActions = null;
             boolean resetInteraction = false;
-            String interaction = null;
+            String interaction = INTERACTION.get();
+            String interactionId = INTERACTION_ID.get();
+            if (interactionId == null) {
+                interactionId = UUID.randomUUID().toString();
+                INTERACTION_ID.set(interactionId);
+                interaction = category + ":" + workflowName + ":" + method.getName();
+                INTERACTION.set(interaction);
+                resetInteraction = true;
+            }
+            Method targetMethod = null;
             try {
-                interaction = INTERACTION.get();
-                String interactionId = INTERACTION_ID.get();
-                if (interactionId == null) {
-                    interactionId = UUID.randomUUID().toString();
-                    INTERACTION_ID.set(interactionId);
-                    interaction = category + ":" + workflowName + ":" + method.getName();
-                    INTERACTION.set(interaction);
-                    resetInteraction = true;
-                }
-
-                Method targetMethod = upstream.getClass().getMethod(method.getName(), method.getParameterTypes());
-                postActions = WorkflowPostActionsImpl.createPostActions(WorkflowManagerImpl.this, category, targetMethod, uuid);
+                targetMethod = upstream.getClass().getMethod(method.getName(), method.getParameterTypes());
+                postActions = WorkflowPostActionsImpl.createPostActions(WorkflowManagerImpl.this, category, targetMethod, subjectId);
                 returnObject = targetMethod.invoke(upstream, args);
                 if (objectPersist && !targetMethod.getName().equals("hints")) {
                     rootSession.save();
@@ -393,24 +380,18 @@ public class WorkflowManagerImpl implements WorkflowManager {
                         ((Document) returnObject).setIdentity(doc.getIdentity());
                     }
                 }
-                WorkflowAction wfActionAnno = AnnotationUtils.findMethodAnnotation(targetMethod, WorkflowAction.class);
-                if (wfActionAnno == null || wfActionAnno.loggable()) {
-                    eventLoggerWorkflow.logWorkflowStep(userSession.getUserID(), upstream.getClass().getName(),
-                            targetMethod.getName(), args, returnObject, path, interaction, interactionId,
-                            category, workflowName);
-                }
                 if (postActions != null) {
                     postActions.execute(returnObject);
                 }
                 return returnObject;
             } catch (NoSuchMethodException | IllegalAccessException e) {
-                throw returnException = new RepositoryException("Failed to execute workflow action " + interaction, e);
+                throw exception = new RepositoryException("Failed to execute workflow action " + interaction, e);
             } catch (InvocationTargetException e) {
-                returnException = e.getCause();
-                if (returnException instanceof RepositoryException) {
+                exception = e.getCause();
+                if (exception instanceof RepositoryException) {
                     rootSession.refresh(false);
                 }
-                throw returnException;
+                throw exception;
             } catch (RepositoryException e) {
                 rootSession.refresh(false);
                 throw e;
@@ -422,39 +403,22 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 if (postActions != null) {
                     postActions.dispose();
                 }
-                logAudit(method, args, returnObject, returnException);
+                WorkflowAction wfActionAnno = AnnotationUtils.findMethodAnnotation(targetMethod, WorkflowAction.class);
+                if (wfActionAnno == null || wfActionAnno.loggable()) {
+                    logWorkflowStep(targetMethod, args, returnObject, interaction, interactionId, exception);
+                }
             }
         }
 
-        private void logAudit(final Method method, final Object[] args, final Object returnObject, final Throwable returnException) {
-            StringBuffer sb = new StringBuffer();
-            sb.append("AUDIT workflow invocation ").append(uuid).append(".")
-                    .append(upstream != null ? upstream.getClass().getName() : "<unknown>")
-                    .append(".").append(method != null ? method.getName() : "<unknown>").append("(");
-            if (args != null) {
-                for (int i = 0; i < args.length; i++) {
-                    if (i > 0) {
-                        sb.append(", ");
-                    }
-                    sb.append(args[i] != null ? args[i].toString() : "null");
-                }
-            }
-            sb.append(") -> ");
-            if (returnException != null) {
-                sb.append(returnException.getClass().getName());
-            } else if (returnObject != null) {
-                sb.append(returnObject.toString());
-            } else {
-                sb.append("<<null>>");
-            }
-            if (method != null && method.getName().equals("hints")) {
-                if (log.isDebugEnabled()) {
-                    log.debug(new String(sb));
-                }
-            } else {
-                log.info(new String(sb));
-            }
+        private void logWorkflowStep(final Method targetMethod, final Object[] args, final Object returnObject,
+                                     final String interaction, final String interactionId, final Throwable exception) {
+            final String className = targetMethod != null ? targetMethod.getDeclaringClass().getName() : null;
+            final String methodName = targetMethod != null ? targetMethod.getName() : null;
+            workflowLogger.logWorkflowStep(userSession.getUserID(), className,
+                    methodName, args, returnObject, subjectId, subjectPath, interaction, interactionId,
+                    category, workflowName, exception);
         }
+
     }
 
     private class WorkflowContextImpl implements WorkflowContext {

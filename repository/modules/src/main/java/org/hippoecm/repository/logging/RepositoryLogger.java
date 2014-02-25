@@ -127,17 +127,9 @@ public class RepositoryLogger implements DaemonModule {
             }
             final Object item = collection.iterator().next();
             int propertyType = getPropertyType(item);
-            if (propertyType == PropertyType.UNDEFINED) {
-                log.warn("Unknown property type: {}", item.getClass());
-                return;
-            }
             logNode.setProperty(key, getValues(collection, propertyType), propertyType);
         } else {
             int propertyType = getPropertyType(value);
-            if (propertyType == PropertyType.UNDEFINED) {
-                log.warn("Unknown property type: {}", value.getClass());
-                return;
-            }
             logNode.setProperty(key, getValue(value, propertyType), propertyType);
         }
     }
@@ -145,7 +137,7 @@ public class RepositoryLogger implements DaemonModule {
     private Value getValue(final Object value, final int propertyType) throws RepositoryException {
         final ValueFactory valueFactory = session.getValueFactory();
         switch (propertyType) {
-            case PropertyType.STRING : return valueFactory.createValue((String) value);
+            case PropertyType.STRING : return valueFactory.createValue(value.toString());
             case PropertyType.LONG : return valueFactory.createValue((Long) value);
             case PropertyType.BOOLEAN : return valueFactory.createValue((Boolean) value);
             case PropertyType.DATE : return valueFactory.createValue((Calendar) value);
@@ -154,9 +146,6 @@ public class RepositoryLogger implements DaemonModule {
     }
 
     private int getPropertyType(final Object next) {
-        if (next instanceof String) {
-            return PropertyType.STRING;
-        }
         if (next instanceof Long) {
             return PropertyType.LONG;
         }
@@ -166,7 +155,7 @@ public class RepositoryLogger implements DaemonModule {
         if (next instanceof Boolean) {
             return PropertyType.BOOLEAN;
         }
-        return PropertyType.UNDEFINED;
+        return PropertyType.STRING;
     }
 
     private Value[] getValues(final Collection collection, final int propertyType) throws RepositoryException {
@@ -175,7 +164,7 @@ public class RepositoryLogger implements DaemonModule {
         final ValueFactory valueFactory = session.getValueFactory();
         for (Object o : collection) {
             switch (propertyType) {
-                case PropertyType.STRING : values[count] = valueFactory.createValue((String) o); break;
+                case PropertyType.STRING : values[count] = valueFactory.createValue(o.toString()); break;
                 case PropertyType.BOOLEAN : values[count] = valueFactory.createValue((Boolean) o); break;
                 case PropertyType.DATE : values[count] = valueFactory.createValue((Calendar) o); break;
                 case PropertyType.LONG : values[count] = valueFactory.createValue((Long) o); break;

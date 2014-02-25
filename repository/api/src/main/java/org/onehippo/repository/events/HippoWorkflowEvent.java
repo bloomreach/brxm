@@ -25,7 +25,15 @@ public class HippoWorkflowEvent<T extends HippoWorkflowEvent<T>> extends HippoEv
 
     private static final String CLASS_NAME = "className";
     private static final String METHOD_NAME = "methodName";
+    private static final String SUBJECT_ID = "subjectId";
+    /**
+     * @deprecated use {@link #SUBJECT_ID instead}
+     */
     private static final String HANDLE_UUID = "handleUuid";
+    private static final String SUBJECT_PATH = "subjectPath";
+    /**
+     * @deprecated use {@link #SUBJECT_PATH} instead
+     */
     private static final String DOCUMENT_PATH = "documentPath";
     private static final String RETURN_VALUE = "returnValue";
     private static final String RETURN_TYPE = "returnType";
@@ -34,6 +42,7 @@ public class HippoWorkflowEvent<T extends HippoWorkflowEvent<T>> extends HippoEv
     private static final String INTERACTION = "interaction";
     private static final String WORKFLOW_CATEGORY = "workflowCategory";
     private static final String WORKFLOW_NAME = "workflowName";
+    private static final String EXCEPTION = "exception";
 
     public HippoWorkflowEvent() {
         super("repository");
@@ -60,10 +69,26 @@ public class HippoWorkflowEvent<T extends HippoWorkflowEvent<T>> extends HippoEv
         return set(METHOD_NAME, methodName);
     }
 
+    public String subjectId() {
+        return get(SUBJECT_ID);
+    }
+
+    public T subjectId(String subjectId) {
+        return set(SUBJECT_ID, subjectId);
+    }
+
+    /**
+     * @deprecated use {@link #subjectId()} instead
+     */
+    @Deprecated
     public String handleUuid() {
         return get(HANDLE_UUID);
     }
 
+    /**
+     * @deprecated use {@link #subjectId(String)} instead
+     */
+    @Deprecated
     public T handleUuid(String handleUuid) {
         return set(HANDLE_UUID, handleUuid);
     }
@@ -84,10 +109,26 @@ public class HippoWorkflowEvent<T extends HippoWorkflowEvent<T>> extends HippoEv
         return set(RETURN_VALUE, returnValue);
     }
 
+    public String subjectPath() {
+        return get(SUBJECT_PATH);
+    }
+
+    public T subjectPath(String subjectPath) {
+        return set(SUBJECT_PATH, subjectPath);
+    }
+
+    /**
+     * @deprecated use {@link #subjectPath()} instead
+     */
+    @Deprecated
     public String documentPath() {
         return get(DOCUMENT_PATH);
     }
 
+    /**
+     * @deprecated use {@link #subjectId(String)} instead
+     */
+    @Deprecated
     public T documentPath(String documentPath) {
         return set(DOCUMENT_PATH, documentPath);
     }
@@ -124,16 +165,24 @@ public class HippoWorkflowEvent<T extends HippoWorkflowEvent<T>> extends HippoEv
         return get(WORKFLOW_CATEGORY);
     }
 
-    public void workflowCategory(String category) {
-        set(WORKFLOW_CATEGORY, category);
+    public T workflowCategory(String category) {
+        return set(WORKFLOW_CATEGORY, category);
     }
 
     public String workflowName() {
         return get(WORKFLOW_NAME);
     }
 
-    public void workflowName(String workflowName) {
-        set(WORKFLOW_NAME, workflowName);
+    public T workflowName(String workflowName) {
+        return set(WORKFLOW_NAME, workflowName);
+    }
+
+    public Throwable exception() {
+        return get(EXCEPTION);
+    }
+
+    public T exception(Throwable e) {
+        return set(EXCEPTION, e);
     }
 
 }

@@ -55,11 +55,9 @@ builtin/src/main/java/org/hippoecm/repository/reviewedactions/BasicRequestWorkfl
 builtin/src/main/java/org/hippoecm/repository/reviewedactions/BasicReviewedActionsWorkflow.java -text
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/CopyWorkflow.java svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/DefaultWorkflow.java -text
-builtin/src/main/java/org/hippoecm/repository/standardworkflow/EventLoggerWorkflow.java svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/FolderWorkflow.java svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/NullWorkflow.java -text
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/RepositoryWorkflow.java svneol=native#text/plain
-builtin/src/main/java/org/hippoecm/repository/standardworkflow/WorkflowEventLoggerWorkflow.java -text
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/WorkflowEventsWorkflow.java -text
 builtin/src/main/java/org/hippoecm/repository/util/WorkflowUtils.java -text
 config/pom.xml svneol=native#text/plain
@@ -144,6 +142,7 @@ engine/src/main/java/org/hippoecm/repository/deriveddata/ResolvePropertyReferenc
 engine/src/main/java/org/hippoecm/repository/impl/InitializationProcessorImpl.java -text
 engine/src/main/java/org/hippoecm/repository/impl/ReferenceWorkspaceImpl.java -text
 engine/src/main/java/org/hippoecm/repository/impl/VersionManagerDecorator.java -text
+engine/src/main/java/org/hippoecm/repository/impl/WorkflowLogger.java -text
 engine/src/main/java/org/hippoecm/repository/impl/query/EnclosingDocument.java -text
 engine/src/main/java/org/hippoecm/repository/jackrabbit/HandleListener.java -text
 engine/src/main/java/org/hippoecm/repository/jackrabbit/HippoLockManager.java -text
@@ -198,7 +197,6 @@ engine/src/main/java/org/hippoecm/repository/security/service/SecurityServiceImp
 engine/src/main/java/org/hippoecm/repository/security/service/UserImpl.java -text
 engine/src/main/java/org/hippoecm/repository/security/user/HippoUserManager.java -text
 engine/src/main/java/org/hippoecm/repository/security/user/RepositoryUserManager.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/repository/standardworkflow/WorkflowEventLoggerWorkflowImpl.java -text
 engine/src/main/java/org/onehippo/repository/modules/ModuleManager.java -text
 engine/src/main/java/org/onehippo/repository/modules/ModuleRegistration.java -text
 engine/src/main/java/org/onehippo/repository/modules/ModuleRegistry.java -text
@@ -348,7 +346,7 @@ test/src/test/java/org/hippoecm/repository/integration/UpgradeIntegrationTest.ja
 test/src/test/java/org/hippoecm/repository/integration/VersioningWorkflowIntegrationTest.java -text
 test/src/test/java/org/hippoecm/repository/logging/EventLogCleanupModuleTest.java -text
 test/src/test/java/org/hippoecm/repository/logging/RepositoryLoggerTest.java -text
-test/src/test/java/org/hippoecm/repository/logging/WorkflowEventLoggerWorkflowImpTest.java -text
+test/src/test/java/org/hippoecm/repository/logging/WorkflowLoggerTest.java -text
 test/src/test/java/org/hippoecm/repository/quartz/SchedulerTest.java -text
 test/src/test/java/org/hippoecm/repository/test/MirrorPerfTest.java -text
 test/src/test/java/org/hippoecm/repository/test/TraversePerfTest.java -text

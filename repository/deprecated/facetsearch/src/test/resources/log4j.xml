@@ -68,7 +68,7 @@
     <level value="warn"/>
     <appender-ref ref="root"/>
   </category>
-  <category additivity="false" name="org.hippoecm.repository.standardworkflow.WorkflowEventLoggerWorkflowImpl">
+  <category additivity="false" name="org.hippoecm.repository.impl.WorkflowLogger">
     <level value="warn"/>
     <appender-ref ref="console"/>
   </category>

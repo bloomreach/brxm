@@ -18,13 +18,14 @@ package org.hippoecm.repository.logging;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.standardworkflow.WorkflowEventLoggerWorkflowImpl;
+import org.hippoecm.repository.impl.WorkflowLogger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
+import org.onehippo.repository.events.HippoWorkflowEvent;
 import org.onehippo.repository.security.SecurityService;
 import org.onehippo.repository.security.User;
 
@@ -33,7 +34,7 @@ import javax.jcr.Session;
 import static junit.framework.Assert.assertEquals;
 import static org.easymock.EasyMock.*;
 
-public class WorkflowEventLoggerWorkflowImpTest {
+public class WorkflowLoggerTest {
 
     private HippoEventBus eventBus;
 
@@ -51,7 +52,7 @@ public class WorkflowEventLoggerWorkflowImpTest {
     @Test
     public void testEventIsPostedToEventBus() throws Exception {
         final Session session = createNiceMock(Session.class);
-        WorkflowEventLoggerWorkflowImpl eventLogger = new WorkflowEventLoggerWorkflowImpl(null, session, null);
+        WorkflowLogger workflowLogger = new WorkflowLogger(session);
 
         final HippoWorkspace workspace = createMock(HippoWorkspace.class);
         final SecurityService securityService = createMock(SecurityService.class);
@@ -62,20 +63,27 @@ public class WorkflowEventLoggerWorkflowImpTest {
         expect(securityService.getUser(EasyMock.anyObject(String.class))).andReturn(user);
         expect(user.isSystemUser()).andReturn(false);
 
-        final Capture<HippoEvent> captured = new Capture<HippoEvent>();
+        final Capture<HippoWorkflowEvent> captured = new Capture<>();
         eventBus.post(EasyMock.capture(captured));
         replay(eventBus, session, workspace, securityService, user);
 
-        eventLogger.logEvent("userName", "className", "methodName");
+        workflowLogger.logWorkflowStep("userName", "className", "methodName", null, "returnValue", null,
+                "subjectPath", "interaction", "interactionId", "category", "workflowName", null);
 
         verify(eventBus, session);
 
-        final HippoEvent event = captured.getValue();
+        final HippoWorkflowEvent event = captured.getValue();
         assertEquals("repository", event.application());
         assertEquals("workflow", event.category());
         assertEquals("userName", event.user());
-        assertEquals("className", event.get("className"));
-        assertEquals("methodName", event.get("methodName"));
+        assertEquals("className", event.className());
+        assertEquals("methodName", event.methodName());
+        assertEquals("returnValue", event.returnValue());
+        assertEquals("subjectPath", event.subjectPath());
+        assertEquals("interaction", event.interaction());
+        assertEquals("interactionId", event.interactionId());
+        assertEquals("category", event.workflowCategory());
+        assertEquals("workflowName", event.workflowName());
     }
 
 }
