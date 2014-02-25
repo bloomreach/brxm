@@ -18,6 +18,7 @@
   },
   "resolutions": {
     "angular": "1.2.14-build.2302+sha.f827d64",
-    "angular-mocks": "1.2.14-build.2302+sha.f827d64"
+    "angular-mocks": "1.2.14-build.2302+sha.f827d64",
+    "Angular-NestedSortable": "1.2.5"
   }
 }
