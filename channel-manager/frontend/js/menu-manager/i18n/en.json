@@ -4,7 +4,6 @@
     "CANCEL": "Cancel",
     "CLOSE_WINDOW": "Close",
     "CREATE_MENU_ITEM": "Create menu item",
-    "CREATE_NEW_PAGE": "Create new page",
     "CREATE_PAGE": "Create page",
     "DELETE_MENU_ITEM": "Delete menu item",
     "DESTINATION": "Destination",
@@ -20,8 +19,6 @@
     "PAGE_URL": "Page URL",
     "SITEMAP_ITEM": "Sitemap item",
     "SEARCH_FOR_TEMPLATE": "Search for template",
-    "SELECT_DOCUMENT": "Select document",
-    "SELECT_LANDING_PAGE": "Select landing page",
     "REMOVE_CONFIRMATION": "Are you sure you want to delete the menu item '{{ name }}'?",
     "DELETE_ITEM": "Delete item",
 

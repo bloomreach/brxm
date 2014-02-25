@@ -4,7 +4,6 @@
     "CANCEL": "Annuleer",
     "CLOSE_WINDOW": "Afsluiten",
     "CREATE_MENU_ITEM": "Maak menu-item",
-    "CREATE_NEW_PAGE": "Maak nieuwe pagina",
     "CREATE_PAGE": "Maak pagina",
     "DELETE_MENU_ITEM": "Verwijder menu-item",
     "DESTINATION": "Doel",
@@ -20,8 +19,6 @@
     "PAGE_URL": "Pagina URL",
     "SITEMAP_ITEM": "Sitemap onderdeel",
     "SEARCH_FOR_TEMPLATE": "Zoek naar template",
-    "SELECT_DOCUMENT": "Selecteer document",
-    "SELECT_LANDING_PAGE": "Selecteer landingspagina",
     "REMOVE_CONFIRMATION": "Weet je zeker dat je het menu item '{{ name }}' wilt verwijderen?",
     "DELETE_ITEM": "Verwijder item",
 

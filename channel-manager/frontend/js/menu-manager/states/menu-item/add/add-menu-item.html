@@ -87,21 +87,7 @@
                 'fa-check': form.sitemapItem.$dirty && form.sitemapItem.$valid,
                 'fa-times': form.sitemapItem.$dirty && form.sitemapItem.$invalid
                }"></i>
-            <span class="input-group-btn">
-                <button class="btn btn-default" type="button"><i class="fa fa-external-link"></i></button>
-            </span>
             </div>
-        </div>
-        <div class="form-group" data-ng-show="selectedMenuItem.linkType === 'SITEMAPITEM'">
-            <button type="button" class="btn btn-default btn-sm">
-                <i class="fa fa-crosshairs"></i> {{ 'SELECT_DOCUMENT' | translate }}
-            </button>
-            <button type="button" class="btn btn-default btn-sm">
-                <i class="fa fa-crosshairs"></i> {{ 'SELECT_LANDING_PAGE' | translate }}
-            </button>
-            <button type="button" class="btn btn-default btn-sm" data-ng-click="createNewPage()">
-                <i class="fa fa-plus"></i> {{ 'CREATE_NEW_PAGE' | translate }}
-            </button>
         </div>
         <div class="form-group has-feedback"
              data-ng-show="selectedMenuItem.linkType === 'EXTERNAL'"
