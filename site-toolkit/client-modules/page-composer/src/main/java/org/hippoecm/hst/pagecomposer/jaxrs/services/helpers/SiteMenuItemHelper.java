@@ -20,16 +20,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import javax.jcr.AccessDeniedException;
+import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.version.VersionException;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM;
@@ -44,9 +43,13 @@ public class SiteMenuItemHelper extends AbstractHelper {
 
     public Node create(Node parent, SiteMenuItemRepresentation newItem) throws RepositoryException {
         acquireSimpleLock(getMenuAncestor(parent));
-        final Node newChild = parent.addNode(newItem.getName(), HstNodeTypes.NODETYPE_HST_SITEMENUITEM);
-        update(newChild, newItem);
-        return newChild;
+        try {
+            final Node newChild = parent.addNode(newItem.getName(), HstNodeTypes.NODETYPE_HST_SITEMENUITEM);
+            update(newChild, newItem);
+            return newChild;
+        } catch (ItemExistsException e) {
+            throw new ClientException(e.getMessage(), ClientError.ITEM_NAME_NOT_UNIQUE);
+        }
     }
 
 
@@ -90,7 +93,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
         setLocalParameters(node, modifiedLocalParameters);
 
         final Set<String> modifiedRoles = modifiedItem.getRoles();
-        setRoles(node,modifiedRoles);
+        setRoles(node, modifiedRoles);
 
     }
 
@@ -150,8 +153,8 @@ public class SiteMenuItemHelper extends AbstractHelper {
         if (current.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMENU)) {
             return current;
         }
-        throw new IllegalStateException("No ancestor of type '"+HstNodeTypes.NODETYPE_HST_SITEMENU+"' " +
-                "found for '"+node.getPath()+"'");
+        throw new IllegalStateException("No ancestor of type '" + HstNodeTypes.NODETYPE_HST_SITEMENU + "' " +
+                "found for '" + node.getPath() + "'");
     }
 
 }

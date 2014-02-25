@@ -19,6 +19,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
@@ -30,6 +31,8 @@ import org.easymock.Capture;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -266,6 +269,23 @@ public class SiteMenuItemHelperTest {
         siteMenuItemHelper.update(node, modifiedItem);
 
         verify(mocks);
+    }
+
+    @Test
+    public void testCreate_throws_client_exception_if_name_exists() throws RepositoryException {
+
+        mockGetAncestor();
+        final String name = "name";
+        expect(node.addNode(name, NODETYPE_HST_SITEMENUITEM)).andThrow(new ItemExistsException(""));
+        replay(mocks);
+
+        try {
+            final SiteMenuItemRepresentation newItem = new SiteMenuItemRepresentation();
+            newItem.setName(name);
+            siteMenuItemHelper.create(node, newItem);
+        } catch (ClientException e) {
+            assertThat(e.getError(), is(ClientError.ITEM_NAME_NOT_UNIQUE));
+        }
     }
 
     private void mockGetAncestor() throws RepositoryException {
