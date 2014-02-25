@@ -96,8 +96,12 @@ public class AbstractPageComposerTest {
 
     @After
     public void tearDown() throws Exception {
+
+        // to avoid jr problems with current session with shared depth kind of issues, use a refresh
+        session.refresh(false);
         session.getWorkspace().getObservationManager().removeEventListener(listener);
         restoreHstConfigBackup(session);
+
         session.logout();
         this.componentManager.stop();
         this.componentManager.close();

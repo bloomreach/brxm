@@ -84,6 +84,7 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
     @After
     @Override
     public void tearDown() throws Exception {
+        session.refresh(false);
         final Node users = session.getNode("/hippo:configuration/hippo:users");
         users.getNode("bob").remove();
         users.getNode("alice").remove();

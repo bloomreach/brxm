@@ -17,7 +17,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -71,16 +70,15 @@ public abstract class AbstractHelper {
         lockHelper.acquireSimpleLock(node);
     }
 
+    /**
+     * recursively unlocks <code>workspaceNode</code> and/or any descendant
+     */
     protected void unlock(final Node workspaceNode) throws RepositoryException {
         lockHelper.unlock(workspaceNode);
     }
 
-    protected String getSelfOrAncestorLockedBy(final Node node) throws RepositoryException {
-        return lockHelper.getSelfOrAncestorLockedBy(node);
-    }
-
-    protected boolean hasSelfOrAncestorLockBySomeOneElse(final Node node) throws RepositoryException {
-        return lockHelper.hasSelfOrAncestorLockBySomeOneElse(node);
+    protected Node getUnLockableNode(final Node node, boolean checkAncestors, boolean checkDescendants) throws RepositoryException {
+        return lockHelper.getUnLockableNode(node, checkAncestors, checkDescendants);
     }
 
     protected void removeProperty(Node node, String name) throws RepositoryException {
@@ -205,18 +203,6 @@ public abstract class AbstractHelper {
         }
 
         final Node previewWorkspaceNode = session.getNode(previewWorkspacePath);
-
-
-//        Set<String> lockedNodePaths = new HashSet<>();
-//        for (Node lockedNode : lockedNodes) {
-//            if (!lockedNode.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)) {
-//                throw new IllegalStateException("locked '" + lockedNode.getPath() + "' does not have mixin '" +
-//                        "" + HstNodeTypes.MIXINTYPE_HST_EDITABLE + "'. Should not happen");
-//
-//            }
-//            lockedNodePaths.add(lockedNode.getPath());
-//        }
-
         List<Node> lockedNodeRoots = new ArrayList<>();
 
         for (Node lockedNode : lockedNodes) {
@@ -229,10 +215,6 @@ public abstract class AbstractHelper {
                 break;
             }
 
-            for (Node child : new NodeIterable(lockedNode.getNodes())) {
-                removeDescendantLocks(child);
-            }
-
             if (lockedNode.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)) {
                 // the mixin is not removed above
                 lockedNodeRoots.add(lockedNode);
@@ -243,6 +225,7 @@ public abstract class AbstractHelper {
         // for userIds. Again, normally does not happen, but because of clustered setups / concurrency this state might happen
         for (Node lockedNodeRoot : lockedNodeRoots) {
             for (Node child : new NodeIterable(lockedNodeRoot.getNodes())) {
+                // unlock is recursive
                 unlock(child);
             }
         }
@@ -262,17 +245,6 @@ public abstract class AbstractHelper {
         }
         return false;
     }
-
-    private void removeDescendantLocks(final Node node) throws RepositoryException {
-        if (node.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)) {
-            log.info("Removing descendant lock '{}'.", node.getPath());
-            node.removeMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
-        }
-        for (Node child : new NodeIterable(node.getNodes())) {
-            removeDescendantLocks(child);
-        }
-    }
-
 
     protected List<Node> findChangedWorkspaceNodesForUsers(final String previewWorkspacePath, final List<String> userIds)
             throws RepositoryException {

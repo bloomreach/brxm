@@ -111,10 +111,12 @@ public class SiteMapHelper extends AbstractHelper {
             log.info("Move to same parent for '" + nodeToMove.getPath() + "' does not result in a real move");
             return;
         }
-        if (hasSelfOrAncestorLockBySomeOneElse(newParent)) {
+        final Node unLockableNode = getUnLockableNode(newParent, true, false);
+        if (unLockableNode != null) {
             throw new IllegalStateException("Cannot move node to '" + newParent.getPath() + "' because that node is locked " +
-                    "by '" + getSelfOrAncestorLockedBy(newParent) + "'");
+                    "by node '"+unLockableNode.getPath()+"' by '" + unLockableNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString() + "'");
         }
+
         acquireLock(nodeToMove);
         String nodeName = nodeToMove.getName();
         validateTarget(session, newParent.getPath() + "/" + nodeName);

@@ -35,6 +35,9 @@ public class LockHelper {
 
     private static final Logger log = LoggerFactory.getLogger(LockHelper.class);
 
+    /**
+     * recursively unlocks <code>workspaceNode</code> and/or any descendant
+     */
     void unlock(final Node workspaceNode) throws RepositoryException {
         if (workspaceNode.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)) {
             log.warn("Removing lock for '{}' since ancestor gets published", workspaceNode.getPath());
@@ -46,37 +49,15 @@ public class LockHelper {
     }
 
     /**
-     * returns the userID that contains the deep lock or <code>null</code> when no deep lock present
-     */
-    String getSelfOrAncestorLockedBy(final Node node) throws RepositoryException {
-        final Node lockedByNode = getSelfOrAncestorLockedByNode(node);
-        if (lockedByNode == null) {
-            return null;
-        } else {
-            return lockedByNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString();
-        }
-    }
-
-    /**
      * if the <code>node</code> is already locked for the user <code>node.getSession()</code> this method does not do
      * anything. If there is no lock yet, a lock for the current session userID gets set on the node. If there is
-     * already a lock by another user a IllegalStateException is thrown,
+     * already a lock by another user a ClientException is thrown,
      */
     void acquireLock(final Node node) throws RepositoryException {
-        final Node lockedNode = getSelfOrDescendantLockBySomeOneElse(node);
-        if (lockedNode != null) {
-            final String message = String.format("Node '%s' cannot be locked due to someone else who has the lock (possibly a descendant that is locked).", node.getPath());
-            throw new ClientException(message, ClientError.ITEM_ALREADY_LOCKED, getParameterMap(lockedNode));
-        }
-        final Node selfOrAncestorLockedByNode = getSelfOrAncestorLockedByNode(node);
-        if (selfOrAncestorLockedByNode != null) {
-            final String selfOrAncestorLockedBy = selfOrAncestorLockedByNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString();
-            if (selfOrAncestorLockedBy.equals(node.getSession().getUserID())) {
-                log.debug("Node '{}' already locked", node.getSession().getUserID());
-                return;
-            }
-            final String message = String.format("Node '%s' cannot be locked due to someone else who has the lock (possibly an ancestor that is locked).", node.getPath());
-            throw new ClientException(message, ClientError.ITEM_ALREADY_LOCKED, getParameterMap(selfOrAncestorLockedByNode));
+        final Node unLockableNode = getUnLockableNode(node, true, true);
+        if (unLockableNode != null) {
+            final String message = String.format("Node '%s' cannot be locked due to someone else who has the lock (possibly a descendant or ancestor that is locked).", node.getPath());
+            throw new ClientException(message, ClientError.ITEM_ALREADY_LOCKED, getParameterMap(unLockableNode));
         }
         doLock(node);
     }
@@ -87,19 +68,12 @@ public class LockHelper {
      * where there is no fine-grained locking for the items below it
      */
     void acquireSimpleLock(final Node node) throws RepositoryException {
-        if (isNotLockedBySessionUser(node)) {
+        final Node unLockableNode = getUnLockableNode(node, false, false);
+        if (unLockableNode != null) {
             final String message = String.format("Node '%s' cannot be locked due to someone else who has the lock.", node.getPath());
             throw new ClientException(message, ClientError.ITEM_ALREADY_LOCKED, getParameterMap(node));
         }
         doLock(node);
-    }
-
-    boolean hasSelfOrAncestorLockBySomeOneElse(final Node node) throws RepositoryException {
-        final Node selfOrAncestorLockedBy = getSelfOrAncestorLockedByNode(node);
-        if (selfOrAncestorLockedBy == null) {
-            return false;
-        }
-        return isNotLockedBySessionUser(selfOrAncestorLockedBy);
     }
 
     private void doLock(final Node node) throws RepositoryException {
@@ -116,23 +90,6 @@ public class LockHelper {
         node.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
     }
 
-
-    private Node getSelfOrAncestorLockedByNode(Node node) throws RepositoryException {
-        if (node == null || node.isSame(node.getSession().getRootNode())) {
-            return null;
-        }
-
-        if (node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
-            return node;
-        }
-
-        if (node.isNodeType(HstNodeTypes.NODETYPE_HST_WORKSPACE)) {
-            return null;
-        }
-
-        return getSelfOrAncestorLockedByNode(node.getParent());
-    }
-
     private Map<?, ?> getParameterMap(final Node node) throws RepositoryException {
         final Map<String, Object> parameterMap = new HashMap<>();
         parameterMap.put("lockedBy", node.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
@@ -140,25 +97,46 @@ public class LockHelper {
         return parameterMap;
     }
 
-    private Node getSelfOrDescendantLockBySomeOneElse(Node node) throws RepositoryException {
-        if (isNotLockedBySessionUser(node)) {
+    /**
+     * if present, returns the unlockable {@link Node} wrt <code>node</code> : A <code>node</code> can be unlockable (lock contained
+     * by someone else) due to an ancestor or descendant {@link Node} or because it is unlockable itself. If there are no unLockable
+     * nodes wrt <code>node</code>, then <code>node</code> is returned
+     */
+    Node getUnLockableNode(final Node node, boolean checkAncestors, boolean checkDescendants) throws RepositoryException {
+        if (!canLock(node)) {
             return node;
         }
-        for (Node child : new NodeIterable(node.getNodes())) {
-            Node hasDescendantLock = getSelfOrDescendantLockBySomeOneElse(child);
-            if (hasDescendantLock != null) {
-                return hasDescendantLock;
+        if (checkAncestors) {
+            final Node root = node.getSession().getRootNode();
+            Node ancestor = node;
+            while (!ancestor.isSame(root)) {
+                if (!canLock(ancestor)) {
+                    return ancestor;
+                }
+                ancestor = ancestor.getParent();
+            }
+        }
+        if (checkDescendants) {
+            for (Node child : new NodeIterable(node.getNodes())) {
+                Node unLockableDescendant = getUnLockableNode(child, false, true);
+                if (unLockableDescendant != null) {
+                    return unLockableDescendant;
+                }
             }
         }
         return null;
     }
 
-    private boolean isNotLockedBySessionUser(Node node) throws RepositoryException {
+    /**
+     * returns <code>true</code> if the {@link Session} tight to <code>node</code> can lock or already contains a lock
+     * on <code>node</code>
+     */
+    private boolean canLock(final Node node) throws RepositoryException {
         if (node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
             final String lockedBy = node.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString();
-            return !lockedBy.equals(node.getSession().getUserID());
+            return node.getSession().getUserID().equals(lockedBy);
         }
-        return false;
+        return true;
     }
 
 }

@@ -22,6 +22,7 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -113,20 +114,22 @@ public class LockHelperTest {
 
         replay(mocks);
 
-        assertThat(lockHelper.getSelfOrAncestorLockedBy(node), is(nullValue()));
+        assertThat(lockHelper.getUnLockableNode(node, true, false), is(nullValue()));
     }
 
     @Test
     public void testGetSelfOrAncestorLockedBy_for_non_root_node() throws RepositoryException {
 
         expect(node.isSame(root)).andReturn(false);
+        expect(root.isSame(root)).andReturn(true);
         expect(node.hasProperty(GENERAL_PROPERTY_LOCKED_BY)).andReturn(true);
-        expect(node.getProperty(GENERAL_PROPERTY_LOCKED_BY)).andReturn(lockedBy);
-        expect(lockedBy.getString()).andReturn("me");
+        expect(node.getProperty(GENERAL_PROPERTY_LOCKED_BY)).andReturn(lockedBy).anyTimes();
+        expect(session.getUserID()).andReturn("me").anyTimes();
+        expect(lockedBy.getString()).andReturn("notMe").anyTimes();
+        expect(node.getParent()).andReturn(root).anyTimes();
 
         replay(mocks);
-
-        assertThat(lockHelper.getSelfOrAncestorLockedBy(node), is("me"));
+        assertThat(lockHelper.getUnLockableNode(node, true, false).getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString(), is("notMe"));
     }
 
     @Test
@@ -137,11 +140,12 @@ public class LockHelperTest {
         expect(node.getProperty(GENERAL_PROPERTY_LOCKED_BY)).andReturn(lockedBy).atLeastOnce();
         expect(lockedBy.getString()).andReturn("me");
 
-        expect(session.getUserID()).andReturn("someone else");
+        expect(session.getUserID()).andReturn("someone else").anyTimes();
 
         replay(mocks);
 
-        assertThat(lockHelper.hasSelfOrAncestorLockBySomeOneElse(node), is(true));
+        final Node unLockableNode = lockHelper.getUnLockableNode(node, true, false);
+        assertThat(unLockableNode != null, is(true));
     }
 
     @Test
@@ -151,10 +155,11 @@ public class LockHelperTest {
         expect(nodeIterator.hasNext()).andReturn(false);
 
         expect(node.isSame(root)).andReturn(false);
-
+        expect(root.isSame(root)).andReturn(true);
         expect(session.getUserID()).andReturn("userID").atLeastOnce();
         expect(node.setProperty(GENERAL_PROPERTY_LOCKED_BY, "userID")).andReturn(null);
         expect(node.setProperty(GENERAL_PROPERTY_LAST_MODIFIED_BY, "userID")).andReturn(null);
+        expect(node.getParent()).andReturn(root).anyTimes();
 
         replay(mocks);
 

@@ -138,8 +138,8 @@ public class DiscardTest extends AbstractSiteMapResourceTest {
         // -news (locked by 'bob')
         //    ` * (locked by 'admin')
 
-        // that when discarding by admin, only news/* gets discarded and lock of 'admin' gets removed. 'news' stay locked
-        // by bob
+        // that when discarding by admin, only lock from news/* gets removed. Changes by admin that were already
+        // made stay there
 
         // NOTE the above is about handling incorrect states, which can occur due to concurrency or clustering
 
@@ -169,7 +169,7 @@ public class DiscardTest extends AbstractSiteMapResourceTest {
         assertTrue(session.nodeExists(previewDefaultNewsPath));
         // previewDefault should be discarded
         assertFalse(session.getNode(previewDefaultNewsPath).isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE));
-        assertEquals(newsDefaultComponentConfigIdBefore,
+        assertEquals("bar",
                 session.getNode(previewDefaultNewsPath).getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
 
         assertTrue(session.nodeExists(previewNewsPath));
