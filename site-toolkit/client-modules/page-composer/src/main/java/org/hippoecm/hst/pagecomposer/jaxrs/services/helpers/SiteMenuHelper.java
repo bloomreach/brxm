@@ -48,8 +48,8 @@ public class SiteMenuHelper extends AbstractHelper {
                 return menuConfiguration;
             }
         }
-        final String msg = "%s with id '%s' is not part of currently edited preview site.";
-        throw new ClientException(ClientError.ITEM_NOT_IN_PREVIEW, msg, "Site menu", menuId);
+        final String message = String.format("%s with id '%s' is not part of currently edited preview site.", "Site menu", menuId);
+        throw new ClientException(message, ClientError.ITEM_NOT_IN_PREVIEW);
     }
 
     public HstSiteMenuItemConfiguration getMenuItem(HstSiteMenuConfiguration menu, String menuItemId) {
@@ -59,8 +59,8 @@ public class SiteMenuHelper extends AbstractHelper {
                 return menuItem;
             }
         }
-        final String msg = "%s with id '%s' is not part of currently edited preview site.";
-        throw new ClientException(ClientError.ITEM_NOT_IN_PREVIEW, msg, "Site menu item", menuItemId);
+        final String message = String.format("%s with id '%s' is not part of currently edited preview site.", "Site menu item", menuItemId);
+        throw new ClientException(message, ClientError.ITEM_NOT_IN_PREVIEW);
     }
 
     private HstSiteMenuItemConfiguration getMenuItem(HstSiteMenuItemConfiguration menuItem, String menuItemId) {

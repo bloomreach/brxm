@@ -42,8 +42,8 @@ public class ChildExistsValidator extends AbstractValidator {
             final Node parent = getNodeByIdentifier(parentId, session);
             final Node child = getNodeByIdentifier(childId, session);
             if (!parent.isSame(child.getParent())) {
-                final String msg = "Node '%s' is not a child of '%s";
-                throw new ClientException(ClientError.ITEM_NOT_CHILD_OF_PARENT, msg, child, parent);
+                final String message = String.format("Node '%s' is not a child of '%s", child, parent);
+                throw new ClientException(message, ClientError.ITEM_NOT_CHILD_OF_PARENT);
             }
         } catch (RepositoryException e) {
             throw new RuntimeRepositoryException("RepositoryException during pre-validate", e);

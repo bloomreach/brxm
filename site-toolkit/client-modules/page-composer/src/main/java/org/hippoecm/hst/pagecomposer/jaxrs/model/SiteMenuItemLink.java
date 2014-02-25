@@ -41,7 +41,7 @@ public class SiteMenuItemLink {
             link = null;
             linkType = LinkType.NONE;
         }
-        // TODO (meggermont): what should happen if externalLink and siteMapItem are bot not null?
+        // TODO (meggermont): what should happen if externalLink and siteMapItem are both not null?
     }
 
     public LinkType getLinkType() {

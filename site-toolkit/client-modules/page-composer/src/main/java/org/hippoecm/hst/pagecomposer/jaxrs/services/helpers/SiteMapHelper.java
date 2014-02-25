@@ -99,8 +99,8 @@ public class SiteMapHelper extends AbstractHelper {
 
     public void move(final String id, final String parentId) throws RepositoryException {
         if (id.equals(parentId)) {
-            final String msg = "Cannot move node to become child of itself";
-            throw new ClientException(ClientError.INVALID_MOVE_TO_SELF, msg);
+            final String message = "Cannot move node to become child of itself";
+            throw new ClientException(message, ClientError.INVALID_MOVE_TO_SELF);
         }
         HstRequestContext requestContext = pageComposerContextService.getRequestContext();
         final Session session = requestContext.getSession();
@@ -143,8 +143,8 @@ public class SiteMapHelper extends AbstractHelper {
             }
         }
 
-        final String msg = "SiteMap item with id '%s' is not part of currently edited preview site.";
-        throw new ClientException(ClientError.ITEM_NOT_IN_PREVIEW, msg, siteMapItemId);
+        final String message = String.format("SiteMap item with id '%s' is not part of currently edited preview site.", siteMapItemId);
+        throw new ClientException(message, ClientError.ITEM_NOT_IN_PREVIEW);
     }
 
     public static HstSiteMapItem getSiteMapItem(HstSiteMapItem siteMapItem, String siteMapItemId) {
@@ -221,8 +221,8 @@ public class SiteMapHelper extends AbstractHelper {
                 acquireLock(targetNode);
                 targetNode.remove();
             } else {
-                final String msg = "Target node '%s' already exists";
-                throw new ClientException(ClientError.ITEM_NAME_NOT_UNIQUE, msg, targetNode.getPath());
+                final String message = String.format("Target node '%s' already exists", targetNode.getPath());
+                throw new ClientException(message, ClientError.ITEM_NAME_NOT_UNIQUE);
             }
         } else {
             final CanonicalInfo canonical = (CanonicalInfo) siteMap;
@@ -249,8 +249,8 @@ public class SiteMapHelper extends AbstractHelper {
                 String siteMapRelPath = nonWorkspaceTarget.substring(siteMapNode.getPath().length() + 1);
                 String[] segments = siteMapRelPath.split("/");
                 if (siteMapNode.hasNode(segments[0])) {
-                    final String msg = "Target '%s' not allowed since the *non-workspace* sitemap already contains '%s'";
-                    throw new ClientException(ClientError.ITEM_EXISTS_OUTSIDE_WORKSPACE, msg, target, siteMapNode.getPath() + "/" + segments[0]);
+                    final String message = String.format("Target '%s' not allowed since the *non-workspace* sitemap already contains '%s'", target, siteMapNode.getPath() + "/" + segments[0]);
+                    throw new ClientException(message, ClientError.ITEM_EXISTS_OUTSIDE_WORKSPACE);
                 }
                 // valid!
                 return;

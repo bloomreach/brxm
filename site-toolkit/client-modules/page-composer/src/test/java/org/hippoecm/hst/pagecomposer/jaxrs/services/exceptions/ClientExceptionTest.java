@@ -28,28 +28,28 @@ public class ClientExceptionTest {
 
     @Test
     public void test_get_error() {
-        final ClientException e = new ClientException(ClientError.ITEM_NOT_FOUND, null);
+        final ClientException e = new ClientException(null, ClientError.ITEM_NOT_FOUND);
         assertThat(e.getError(), is(ClientError.ITEM_NOT_FOUND));
         assertThat(e.getMessage(), nullValue());
     }
 
     @Test
     public void test_get_message() {
-        final ClientException e = new ClientException(ClientError.ITEM_NOT_FOUND, "item not found");
+        final ClientException e = new ClientException("item not found", ClientError.ITEM_NOT_FOUND);
         assertThat(e.getError(), is(ClientError.ITEM_NOT_FOUND));
         assertThat(e.getMessage(), is("item not found"));
     }
 
     @Test
     public void test_get_message_parameters() {
-        final ClientException e = new ClientException(null, "item not found");
-        assertThat(e.getMessageParameters().isEmpty(), is(true));
+        final ClientException e = new ClientException("item not found", null);
+        assertThat(e.getParameterMap().isEmpty(), is(true));
     }
 
     @Test
     public void test_get_formatted_message() {
         final Date now = new Date();
-        final ClientException e = new ClientException(null, "%s not found at %s", "Something", now);
+        final ClientException e = new ClientException(String.format("%s not found at %s", "Something", now), null);
         assertThat(e.getMessage(), is("Something not found at " + now));
     }
 }

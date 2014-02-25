@@ -47,18 +47,18 @@ public class PreviewWorkspaceNodeValidator extends AbstractValidator {
             try {
                 UUID.fromString(id);
             } catch (IllegalArgumentException e) {
-                final String logMessage = "'%s' is not a valid uuid";
-                throw new ClientException(ClientError.INVALID_UUID, logMessage, id);
+                final String message = String.format("'%s' is not a valid uuid", id);
+                throw new ClientException(message, ClientError.INVALID_UUID);
             }
             final Node node = getNodeByIdentifier(id, requestContext.getSession());
             if (requiredNodeType != null && !node.isNodeType(requiredNodeType)) {
-                final String msg = "Required node of type '%s' but node '%s' of type '%s' found.";
-                throw new ClientException(ClientError.INVALID_NODE_TYPE, msg, requiredNodeType, node.getPath(), node.getPrimaryNodeType().getName());
+                final String message = String.format("Required node of type '%s' but node '%s' of type '%s' found.", requiredNodeType, node.getPath(), node.getPrimaryNodeType().getName());
+                throw new ClientException(message, ClientError.INVALID_NODE_TYPE);
             }
 
             if (!isPreviewWorkspaceNode(node)) {
-                final String msg = "Required workspace node but '%s' is not part of hst:workspace";
-                throw new ClientException(ClientError.ITEM_NOT_IN_WORKSPACE, msg, node.getPath());
+                final String message = String.format("Required workspace node but '%s' is not part of hst:workspace", node.getPath());
+                throw new ClientException(message, ClientError.ITEM_NOT_IN_WORKSPACE);
             }
 
         } catch (RepositoryException e) {

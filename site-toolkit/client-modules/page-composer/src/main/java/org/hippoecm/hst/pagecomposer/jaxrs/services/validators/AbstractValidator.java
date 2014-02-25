@@ -24,14 +24,14 @@ import javax.jcr.Session;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 
-abstract class AbstractValidator  implements Validator {
+abstract class AbstractValidator implements Validator {
 
     protected final Node getNodeByIdentifier(String id, Session session) throws RepositoryException {
         try {
             return session.getNodeByIdentifier(id);
         } catch (ItemNotFoundException e) {
-            final String msg = "Repository configuration not found for node with id %s : %s";
-            throw new ClientException(ClientError.ITEM_NOT_FOUND, msg, id, e.toString());
+            final String message = String.format("Repository configuration not found for node with id %s : %s", id, e.toString());
+            throw new ClientException(message, ClientError.ITEM_NOT_FOUND);
         }
     }
 

@@ -18,19 +18,30 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions;
 
 public enum ClientError {
 
+    /**
+     * Represents a situation where a client tries to add a child node to a parent that does not allow same name
+     * siblings.
+     */
+    ITEM_NAME_NOT_UNIQUE,
+
+    /**
+     * Represents a situation where a client tries to mutate an item that has already been locked by another user
+     */
+    ITEM_ALREADY_LOCKED,
+
+    /**
+     * Represents a situation where a client tries to add an item that already exist outside of the workspace with the
+     * same name.
+     */
+    ITEM_EXISTS_OUTSIDE_WORKSPACE,
+
     ITEM_NOT_IN_PREVIEW,
 
     ITEM_NOT_FOUND,
 
     ITEM_NOT_IN_WORKSPACE,
 
-    ITEM_ALREADY_LOCKED,
-
-    ITEM_EXISTS_OUTSIDE_WORKSPACE,
-
     ITEM_NOT_CHILD_OF_PARENT,
-
-    ITEM_NAME_NOT_UNIQUE,
 
     INVALID_UUID,
 

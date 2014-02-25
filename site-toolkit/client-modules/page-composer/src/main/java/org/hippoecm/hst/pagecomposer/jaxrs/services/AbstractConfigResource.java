@@ -172,7 +172,7 @@ public class AbstractConfigResource {
         final ExtResponseRepresentation entity = new ExtResponseRepresentation();
         entity.setSuccess(false);
         entity.setMessage(e.getError().name());
-        entity.setData(e.getMessageParameters());
+        entity.setData(e.getParameterMap());
         return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
     }
 

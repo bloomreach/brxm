@@ -16,26 +16,29 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
+import java.util.Map;
 
 public class ClientException extends RuntimeException {
 
     private final ClientError error;
-    private final Object[] messageParameters;
+    private final Map<?, ?> parameterMap;
 
-    public ClientException(ClientError error, String unformattedMessage, Object... messageParameters) {
-        super(unformattedMessage == null ? null : String.format(unformattedMessage, messageParameters));
+    public ClientException(String message, ClientError error, Map<?, ?> parameterMap) {
+        super(message);
         this.error = error;
-        this.messageParameters = messageParameters;
+        this.parameterMap = parameterMap;
+    }
+
+    public ClientException(String message, ClientError error) {
+        this(message, error, Collections.emptyMap());
     }
 
     public ClientError getError() {
         return error;
     }
 
-    public List<?> getMessageParameters() {
-        return Arrays.asList(messageParameters);
+    public Map<?, ?> getParameterMap() {
+        return parameterMap;
     }
-
 }
