@@ -23,5 +23,9 @@
     "SELECT_DOCUMENT": "Selecteer document",
     "SELECT_LANDING_PAGE": "Selecteer landingspagina",
     "REMOVE_CONFIRMATION": "Weet je zeker dat je het menu item '{{ name }}' wilt verwijderen?",
-    "DELETE_ITEM": "Verwijder item"
+    "DELETE_ITEM": "Verwijder item",
+
+    "ITEM_ALREADY_LOCKED": "U kunt dit menu niet bewerken omdat '{{lockedBy}}' het menu al bewerkt.",
+    "ITEM_NAME_NOT_UNIQUE": "Er bestaat al een menu-item met dit label."
+
 }

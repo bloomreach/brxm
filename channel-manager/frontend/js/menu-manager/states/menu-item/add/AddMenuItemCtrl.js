@@ -23,14 +23,19 @@
             '$scope',
             '$state',
             '$stateParams',
+            '$translate',
             'hippo.channelManager.menuManager.MenuService',
-            function ($scope, $state, $stateParams, MenuService) {
+            function ($scope, $state, $stateParams, $translate, MenuService) {
                 var parentItemId = $stateParams.menuItemId;
 
                 $scope.selectedMenuItem = {
                     linkType: 'SITEMAPITEM',
                     name: '',
                     link: ''
+                };
+
+                $scope.error = {
+                    message: null
                 };
 
                 $scope.submit = function() {
@@ -43,6 +48,10 @@
                                             });
                                         }
                                 );
+                            },
+                            function (errorData) {
+                                $scope.error.message = $translate(errorData.translationId, errorData.interpolateParams);
+                                console.warn($scope.error.message);
                             }
                     );
                 };

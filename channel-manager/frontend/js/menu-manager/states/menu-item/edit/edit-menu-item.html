@@ -33,6 +33,7 @@
     <!-- START edit form -->
     <form name="form" role="form" novalidate>
         <h4 class="page-header">{{ 'EDIT_MENU_ITEM' | translate }}</h4>
+        <span>{{error.message}}</span>
         <div class="form-group has-feedback"
              data-ng-class="{
             'has-success': form.name.$dirty && !isSaving.name && form.name.$valid && isSaved.name,

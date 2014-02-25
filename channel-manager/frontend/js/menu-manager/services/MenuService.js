@@ -126,6 +126,10 @@
                     }
                 }
 
+                function getErrorData(errorResponse) {
+                    return {translationId: errorResponse.message, interpolateParams: errorResponse.data};
+                }
+
                 menuService.getMenu = function () {
                     loadMenuOnce();
                     return menuLoaded.promise;
@@ -144,11 +148,12 @@
                 };
 
                 menuService.saveMenuItem = function (menuItem) {
-                    return $http.post(menuServiceUrl(), menuItem)
-                        .error(function (error) {
-                            // TODO show error in UI
-                            $log.error("An error occurred while saving the menu item with id '" + menuItem.id + "': " + error);
+                    var deferred = $q.defer();
+                    $http.post(menuServiceUrl(), menuItem)
+                        .error(function (errorResponse) {
+                            deferred.reject(getErrorData(errorResponse));
                         });
+                    return deferred.promise;
                 };
 
                 menuService.createMenuItem = function (parentId, menuItem) {
@@ -157,27 +162,23 @@
                         .success(function(response) {
                             deferred.resolve(response.data);
                         })
-                        .error(function (response) {
-                            // TODO show error in UI
-                            $log.error("An error occured while creating a menu item: " + response.message);
-                            deferred.reject();
+                        .error(function (errorResponse) {
+                            deferred.reject(getErrorData(errorResponse));
                         });
                     return deferred.promise;
                 };
 
                 menuService.deleteMenuItem = function (menuItemId) {
                     var deferred = $q.defer();
-
                     $http.post(menuServiceUrl('delete/' + menuItemId))
                         .success(function() {
                             var selectedItemId = getSelectedItemIdBeforeDeletion(menuItemId);
                             loadMenu();
                             deferred.resolve(selectedItemId);
                         })
-                        .error(function () {
-                            deferred.reject();
+                        .error(function (errorResponse) {
+                            deferred.reject(getErrorData(errorResponse));
                         });
-
                     return deferred.promise;
                 };
 
@@ -185,11 +186,12 @@
                     newParentId = (newParentId === '#') ? ConfigService.menuId : newParentId;
                     var url = menuServiceUrl('move/' + menuItemId + '/' + newParentId + '/' + newPosition );
 
+                    var deferred = $q.defer();
                     $http.post(url)
-                        .error(function (error) {
-                            // TODO show error in UI
-                            $log.error("An error occurred while moving the menu item with id '" + menuItemId + "': ", error);
+                        .error(function (errorResponse) {
+                            deferred.reject(getErrorData(errorResponse));
                         });
+                    return deferred.promise;
                 };
 
                 menuService.loadMenu = function () {

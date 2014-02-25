@@ -24,9 +24,10 @@
             '$stateParams',
             '$state',
             '$log',
+            '$translate',
             'hippo.channelManager.menuManager.MenuService',
             'hippo.channelManager.menuManager.FocusService',
-            function ($scope, $stateParams, $state, $log, MenuService, FocusService) {
+            function ($scope, $stateParams, $state, $log, $translate, MenuService, FocusService) {
                 var savedMenuItem;
 
                 $scope.isSaving = {
@@ -45,6 +46,10 @@
                     isVisible: false
                 };
 
+                $scope.error = {
+                    message: null
+                };
+
                 function shouldSaveSelectedMenuItemProperty(propertyName) {
                     if (!angular.isDefined($scope.selectedMenuItem)) {
                         return false;
@@ -61,7 +66,8 @@
                         $scope.isSaving[propertyName] = false;
                         $scope.isSaved[propertyName] = true;
                     },
-                    function () {
+                    function (errorData) {
+                        $scope.error.message = $translate(errorData.translationId, errorData.interpolateParams);
                         $scope.isSaving[propertyName] = false;
                         $scope.isSaved[propertyName] = false;
                     });
