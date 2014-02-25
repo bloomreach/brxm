@@ -31,13 +31,13 @@
                 var savedMenuItem;
 
                 $scope.isSaving = {
-                    name: false,
+                    title: false,
                     linkType: false,
                     link: false
                 };
 
                 $scope.isSaved = {
-                    name: true,
+                    title: true,
                     linkType: true,
                     link: true
                 };
@@ -71,17 +71,23 @@
                     delete itemToSave.title;
                     delete itemToSave.items;
 
+                    console.log(itemToSave);
+
                     $scope.isSaving[propertyName] = true;
 
+                    console.log('menu service save');
                     MenuService.saveMenuItem(itemToSave).then(function () {
-                        $scope.isSaving[propertyName] = false;
-                        $scope.isSaved[propertyName] = true;
-                    },
-                    function (errorData) {
-                        $scope.error.message = $translate(errorData.translationId, errorData.interpolateParams);
-                        $scope.isSaving[propertyName] = false;
-                        $scope.isSaved[propertyName] = false;
-                    });
+                            console.log('after save - success');
+                            $scope.isSaving[propertyName] = false;
+                            $scope.isSaved[propertyName] = true;
+                        },
+                        function (errorData) {
+                            console.log('after save - error');
+                            $scope.error.message = $translate(errorData.translationId, errorData.interpolateParams);
+                            $scope.isSaving[propertyName] = false;
+                            $scope.isSaved[propertyName] = false;
+                        }
+                    );
                 }
 
                 $scope.saveSelectedMenuItem = function(propertyName) {

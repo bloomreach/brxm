@@ -150,6 +150,9 @@
                 menuService.saveMenuItem = function (menuItem) {
                     var deferred = $q.defer();
                     $http.post(menuServiceUrl(), menuItem)
+                        .success(function() {
+                            deferred.resolve();
+                        })
                         .error(function (errorResponse) {
                             deferred.reject(getErrorData(errorResponse));
                         });
