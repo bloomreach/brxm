@@ -17,6 +17,7 @@ package org.hippoecm.hst.security.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Locale;
@@ -424,7 +425,7 @@ public class LoginServlet extends HttpServlet {
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("j_username", username);
-        params.put("destination", response.encodeURL(destination));
+        params.put("destination", URLEncoder.encode(response.encodeURL(destination), "UTF-8"));
 
         renderTemplatePage(request, response, "login_form.ftl", params);
     }
@@ -462,7 +463,7 @@ public class LoginServlet extends HttpServlet {
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("j_username", username);
-        params.put("destination", response.encodeURL(destination));
+        params.put("destination", URLEncoder.encode(response.encodeURL(destination), "UTF-8"));
 
         renderTemplatePage(request, response, "login_failure.ftl", params);
     }
