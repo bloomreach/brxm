@@ -17,7 +17,6 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,19 +49,12 @@ public class LockHelper {
      * returns the userID that contains the deep lock or <code>null</code> when no deep lock present
      */
     String getSelfOrAncestorLockedBy(final Node node) throws RepositoryException {
-        if (node == null || node.isSame(node.getSession().getRootNode())) {
+        final Node lockedByNode = getSelfOrAncestorLockedByNode(node);
+        if (lockedByNode == null) {
             return null;
+        } else {
+            return lockedByNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString();
         }
-
-        if (node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
-            return node.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString();
-        }
-
-        if (node.isNodeType(HstNodeTypes.NODETYPE_HST_WORKSPACE)) {
-            return null;
-        }
-
-        return getSelfOrAncestorLockedBy(node.getParent());
     }
 
     /**
@@ -71,22 +63,20 @@ public class LockHelper {
      * already a lock by another user a IllegalStateException is thrown,
      */
     void acquireLock(final Node node) throws RepositoryException {
-        if (hasSelfOrDescendantLockBySomeOneElse(node)) {
+        final Node lockedNode = getSelfOrDescendantLockBySomeOneElse(node);
+        if (lockedNode != null) {
             final String message = String.format("Node '%s' cannot be locked due to someone else who has the lock (possibly a descendant that is locked).", node.getPath());
-            // TODO (meggermont): fill the map
-            final Map<?, ?> parameterMap = Collections.emptyMap();
-            throw new ClientException(message, ClientError.ITEM_ALREADY_LOCKED, parameterMap);
+            throw new ClientException(message, ClientError.ITEM_ALREADY_LOCKED, getParameterMap(lockedNode));
         }
-        String selfOrAncestorLockedBy = getSelfOrAncestorLockedBy(node);
-        if (selfOrAncestorLockedBy != null) {
+        final Node selfOrAncestorLockedByNode = getSelfOrAncestorLockedByNode(node);
+        if (selfOrAncestorLockedByNode != null) {
+            final String selfOrAncestorLockedBy = selfOrAncestorLockedByNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString();
             if (selfOrAncestorLockedBy.equals(node.getSession().getUserID())) {
                 log.debug("Node '{}' already locked", node.getSession().getUserID());
                 return;
             }
             final String message = String.format("Node '%s' cannot be locked due to someone else who has the lock (possibly an ancestor that is locked).", node.getPath());
-            // TODO (meggermont): fill the map
-            final Map<?, ?> parameterMap = Collections.emptyMap();
-            throw new ClientException(message, ClientError.ITEM_ALREADY_LOCKED, parameterMap);
+            throw new ClientException(message, ClientError.ITEM_ALREADY_LOCKED, getParameterMap(selfOrAncestorLockedByNode));
         }
         doLock(node);
     }
@@ -97,27 +87,19 @@ public class LockHelper {
      * where there is no fine-grained locking for the items below it
      */
     void acquireSimpleLock(final Node node) throws RepositoryException {
-        if (isLockedBySessionUser(node)) {
+        if (isNotLockedBySessionUser(node)) {
             final String message = String.format("Node '%s' cannot be locked due to someone else who has the lock.", node.getPath());
             throw new ClientException(message, ClientError.ITEM_ALREADY_LOCKED, getParameterMap(node));
         }
         doLock(node);
     }
 
-    private Map<?, ?> getParameterMap(final Node node) throws RepositoryException {
-        final Map<String, Object> parameterMap = new HashMap<>();
-        parameterMap.put("lockedBy", node.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
-        parameterMap.put("lockedOn", node.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON).getDate().getTimeInMillis());
-        return parameterMap;
-    }
-
-
     boolean hasSelfOrAncestorLockBySomeOneElse(final Node node) throws RepositoryException {
-        String selfOrAncestorLockedBy = getSelfOrAncestorLockedBy(node);
+        final Node selfOrAncestorLockedBy = getSelfOrAncestorLockedByNode(node);
         if (selfOrAncestorLockedBy == null) {
             return false;
         }
-        return !node.getSession().getUserID().equals(selfOrAncestorLockedBy);
+        return isNotLockedBySessionUser(selfOrAncestorLockedBy);
     }
 
     private void doLock(final Node node) throws RepositoryException {
@@ -128,27 +110,50 @@ public class LockHelper {
         final Session session = node.getSession();
         log.info("Node '{}' gets a lock for user '{}'.", node.getPath(), session.getUserID());
         node.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, session.getUserID());
-        Calendar now = Calendar.getInstance();
         if (!node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
-            node.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON, now);
+            node.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON, Calendar.getInstance());
         }
         node.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
     }
 
-    private boolean hasSelfOrDescendantLockBySomeOneElse(final Node node) throws RepositoryException {
-        if (isLockedBySessionUser(node)) {
-            return true;
+
+    private Node getSelfOrAncestorLockedByNode(Node node) throws RepositoryException {
+        if (node == null || node.isSame(node.getSession().getRootNode())) {
+            return null;
         }
-        for (Node child : new NodeIterable(node.getNodes())) {
-            boolean hasDescendantLock = hasSelfOrDescendantLockBySomeOneElse(child);
-            if (hasDescendantLock) {
-                return true;
-            }
+
+        if (node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
+            return node;
         }
-        return false;
+
+        if (node.isNodeType(HstNodeTypes.NODETYPE_HST_WORKSPACE)) {
+            return null;
+        }
+
+        return getSelfOrAncestorLockedByNode(node.getParent());
     }
 
-    private boolean isLockedBySessionUser(final Node node) throws RepositoryException {
+    private Map<?, ?> getParameterMap(final Node node) throws RepositoryException {
+        final Map<String, Object> parameterMap = new HashMap<>();
+        parameterMap.put("lockedBy", node.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
+        parameterMap.put("lockedOn", node.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON).getDate().getTimeInMillis());
+        return parameterMap;
+    }
+
+    private Node getSelfOrDescendantLockBySomeOneElse(Node node) throws RepositoryException {
+        if (isNotLockedBySessionUser(node)) {
+            return node;
+        }
+        for (Node child : new NodeIterable(node.getNodes())) {
+            Node hasDescendantLock = getSelfOrDescendantLockBySomeOneElse(child);
+            if (hasDescendantLock != null) {
+                return hasDescendantLock;
+            }
+        }
+        return null;
+    }
+
+    private boolean isNotLockedBySessionUser(Node node) throws RepositoryException {
         if (node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
             final String lockedBy = node.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString();
             return !lockedBy.equals(node.getSession().getUserID());

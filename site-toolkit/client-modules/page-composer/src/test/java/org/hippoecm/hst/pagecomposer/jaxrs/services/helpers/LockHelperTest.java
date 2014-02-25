@@ -26,6 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
@@ -33,6 +34,7 @@ import static org.easymock.EasyMock.reset;
 import static org.easymock.EasyMock.verify;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_EDITABLE;
 import static org.junit.Assert.assertThat;
@@ -53,10 +55,10 @@ public class LockHelperTest {
     @Before
     public void setUp() throws RepositoryException {
 
-        this.node = createMock(Node.class);
+        this.node = createNiceMock(Node.class);
         this.child = createMock(Node.class);
         this.root = createMock(Node.class);
-        this.session = createMock(Session.class);
+        this.session = createNiceMock(Session.class);
         this.nodeIterator = createMock(NodeIterator.class);
         this.lockedBy = createMock(Property.class);
 
@@ -64,6 +66,8 @@ public class LockHelperTest {
         reset(mocks);
 
         // Default expectations
+        expect(node.getSession()).andReturn(session).anyTimes();
+        expect(session.getRootNode()).andReturn(root).anyTimes();
 
         this.lockHelper = new LockHelper();
     }
@@ -105,8 +109,6 @@ public class LockHelperTest {
     @Test
     public void testGetSelfOrAncestorLockedBy_for_root_node() throws RepositoryException {
 
-        expect(node.getSession()).andReturn(session);
-        expect(session.getRootNode()).andReturn(root);
         expect(node.isSame(root)).andReturn(true);
 
         replay(mocks);
@@ -117,8 +119,6 @@ public class LockHelperTest {
     @Test
     public void testGetSelfOrAncestorLockedBy_for_non_root_node() throws RepositoryException {
 
-        expect(node.getSession()).andReturn(session);
-        expect(session.getRootNode()).andReturn(root);
         expect(node.isSame(root)).andReturn(false);
         expect(node.hasProperty(GENERAL_PROPERTY_LOCKED_BY)).andReturn(true);
         expect(node.getProperty(GENERAL_PROPERTY_LOCKED_BY)).andReturn(lockedBy);
@@ -132,14 +132,11 @@ public class LockHelperTest {
     @Test
     public void testHasSelfOrAncestorLockBySomeOneElse() throws RepositoryException {
 
-        expect(node.getSession()).andReturn(session);
-        expect(session.getRootNode()).andReturn(root);
         expect(node.isSame(root)).andReturn(false);
-        expect(node.hasProperty(GENERAL_PROPERTY_LOCKED_BY)).andReturn(true);
-        expect(node.getProperty(GENERAL_PROPERTY_LOCKED_BY)).andReturn(lockedBy);
+        expect(node.hasProperty(GENERAL_PROPERTY_LOCKED_BY)).andReturn(true).atLeastOnce();
+        expect(node.getProperty(GENERAL_PROPERTY_LOCKED_BY)).andReturn(lockedBy).atLeastOnce();
         expect(lockedBy.getString()).andReturn("me");
 
-        expect(node.getSession()).andReturn(session);
         expect(session.getUserID()).andReturn("someone else");
 
         replay(mocks);
@@ -149,13 +146,34 @@ public class LockHelperTest {
 
     @Test
     public void testAcquireLock() throws RepositoryException {
-        // TODO implement
-        // lockHelper.acquireLock(node);
+
+        expect(node.getNodes()).andReturn(nodeIterator);
+        expect(nodeIterator.hasNext()).andReturn(false);
+
+        expect(node.isSame(root)).andReturn(false);
+
+        expect(session.getUserID()).andReturn("userID").atLeastOnce();
+        expect(node.setProperty(GENERAL_PROPERTY_LOCKED_BY, "userID")).andReturn(null);
+        expect(node.setProperty(GENERAL_PROPERTY_LAST_MODIFIED_BY, "userID")).andReturn(null);
+
+        replay(mocks);
+
+        lockHelper.acquireLock(node);
+        verify(mocks);
     }
 
     @Test
     public void testAcquireSimpleLock() throws RepositoryException {
-        // TODO implement
-        // lockHelper.acquireSimpleLock(node);
+
+        expect(node.hasProperty(GENERAL_PROPERTY_LOCKED_BY)).andReturn(false).atLeastOnce();
+        expect(node.isNodeType(MIXINTYPE_HST_EDITABLE)).andReturn(true).atLeastOnce();
+
+        expect(session.getUserID()).andReturn("userID").atLeastOnce();
+        expect(node.setProperty(GENERAL_PROPERTY_LOCKED_BY, "userID")).andReturn(null);
+        expect(node.setProperty(GENERAL_PROPERTY_LAST_MODIFIED_BY, "userID")).andReturn(null);
+        replay(mocks);
+
+        lockHelper.acquireSimpleLock(node);
+        verify(mocks);
     }
 }
