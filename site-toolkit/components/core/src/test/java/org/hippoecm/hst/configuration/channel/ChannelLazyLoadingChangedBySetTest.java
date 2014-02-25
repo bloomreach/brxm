@@ -120,6 +120,7 @@ public class ChannelLazyLoadingChangedBySetTest {
         final Map<String, HstComponentConfiguration> configurationMap = new HashMap<>();
         expect(componentConfig.getComponentType()).andReturn(HstComponentConfiguration.Type.CONTAINER_COMPONENT);
         expect(componentConfig.getLockedBy()).andReturn("john").atLeastOnce();
+        expect(componentConfig.isInherited()).andReturn(false);
 
         final Map<String, HstComponentConfiguration> empty = Collections.emptyMap();
         expect(componentConfig.getChildren()).andReturn(empty);

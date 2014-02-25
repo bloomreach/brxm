@@ -89,7 +89,7 @@ public class ChannelLazyLoadingChangedBySet implements Set<String> {
     private static void addUsersWithContainerLock(final HstComponentConfiguration config, final Set<String> usersWithLock) {
         if (config.isInherited()) {
             // skip inherited configuration changes as that is not supported currently
-           // return;
+            return;
         }
         if (config.getComponentType() == HstComponentConfiguration.Type.CONTAINER_COMPONENT
                 && StringUtils.isNotBlank(config.getLockedBy())) {
