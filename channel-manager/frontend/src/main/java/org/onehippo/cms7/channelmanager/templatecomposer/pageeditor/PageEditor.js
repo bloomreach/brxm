@@ -852,6 +852,7 @@
                     this.setTitle(channelRecord.get('name'));
                     this.channelId = channelRecord.get('id');
                     this.channelName = channelRecord.get('name');
+                    this.channel = channelRecord.data;
                 }.createDelegate(this));
             }, this);
 
