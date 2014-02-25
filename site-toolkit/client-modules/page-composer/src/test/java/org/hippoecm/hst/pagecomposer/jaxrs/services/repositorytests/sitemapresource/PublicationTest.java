@@ -253,7 +253,6 @@ public class PublicationTest extends AbstractSiteMapResourceTest {
         final SiteMapItemRepresentation newsByBob = getSiteMapItemRepresentation(bob, "news");
 
         final String previewNewsPathBefore = session.getNodeByIdentifier(newsByBob.getId()).getPath();
-        final String liveNewsPathBefore = previewNewsPathBefore.replace("-preview/", "/");
 
         newsByBob.setName("bobNews");
         siteMapResource.update(newsByBob);
@@ -325,8 +324,7 @@ public class PublicationTest extends AbstractSiteMapResourceTest {
         // -news (locked by 'admin')
         //    ` ** (locked by 'bob')
 
-        // that when publishing by admin, also ** gets published and lock of 'bob' gets removed. If bob publishes,
-        // he publishes only ** and leaves 'news' untouched.
+        // that when publishing by admin, also * gets published and lock of 'bob' gets removed.
 
         // NOTE the above is about handling incorrect states, which can occur due to concurrency or clustering
 
@@ -336,7 +334,7 @@ public class PublicationTest extends AbstractSiteMapResourceTest {
         news.setComponentConfigurationId("bar");
         siteMapResource.update(news);
 
-        // now on jcr level modify the news/** item to be locked by bob. This cannot be done through siteMapResource
+        // now on jcr level modify the news/* item to be locked by bob. This cannot be done through siteMapResource
         // as that will result in lock exceptions
         final Node newsDefault = session.getNodeByIdentifier(news.getId()).getNode("_default_");
         // make it now as if it is locked by 'bob'
@@ -369,9 +367,9 @@ public class PublicationTest extends AbstractSiteMapResourceTest {
         // this test is to ensure that when we have the following exceptional situation
 
         // -news (locked by 'bob')
-        //    ` ** (locked by 'admin')
+        //    ` * (locked by 'admin')
 
-        // that when publishing by admin, only ** gets published and lock of 'admin' gets removed. 'news' stay locked
+        // that when publishing by admin, only the lock of 'admin' gets removed because ancestor is locked by 'bob'. 'news' stays locked
         // by bob
 
         // NOTE the above is about handling incorrect states, which can occur due to concurrency or clustering
@@ -382,7 +380,7 @@ public class PublicationTest extends AbstractSiteMapResourceTest {
         newsDefault.setComponentConfigurationId("bar");
         siteMapResource.update(newsDefault);
 
-        // now on jcr level modify the news/** item to be locked by bob. This cannot be done through siteMapResource
+        // now on jcr level modify the 'news' item to be locked by bob. This cannot be done through siteMapResource
         // as that will result in lock exceptions
         final Node news = session.getNodeByIdentifier(newsDefault.getId()).getParent();
         // make it now as if it is locked by 'bob'
@@ -395,14 +393,14 @@ public class PublicationTest extends AbstractSiteMapResourceTest {
         // now publish by 'admin'. 'news' should keep lock by 'bob'
         mountResource.publish();
 
-        final String previewNewsPath= news.getPath();
+        final String previewNewsPath = news.getPath();
         final String liveNewsPath = previewNewsPath.replace("-preview/", "/");
-        final String previewDefaultNewsPath= session.getNodeByIdentifier(newsDefault.getId()).getPath();
+        final String previewDefaultNewsPath = session.getNodeByIdentifier(newsDefault.getId()).getPath();
         final String liveDefaultNewsPath = previewDefaultNewsPath.replace("-preview/", "/");
 
         assertTrue(session.nodeExists(previewDefaultNewsPath));
         assertFalse(session.getNode(previewDefaultNewsPath).isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE));
-        assertEquals("bar" ,session.getNode(liveDefaultNewsPath).getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
+        assertNotSame("bar" ,session.getNode(liveDefaultNewsPath).getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
 
         assertTrue(session.nodeExists(previewNewsPath));
         // news is still locked by 'bob'
@@ -418,10 +416,10 @@ public class PublicationTest extends AbstractSiteMapResourceTest {
         // this test is to ensure that when we have the following exceptional situation
 
         // -newsRenamed (locked by 'bob')
-        //    ` ** (locked by 'admin')
+        //    ` * (locked by 'admin')
 
         // when 'admin' tries to publish, it cannot publish to live since live does not have 'renamedNews'
-        // only the lock gets removed from renamedNews/** since in the first place, 'bob' should be the
+        // only the lock gets removed from renamedNews/* since in the first place, 'bob' should be the
         // owner any way
 
         // NOTE the above is about handling incorrect states, which can occur due to concurrency or clustering

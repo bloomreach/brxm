@@ -206,32 +206,31 @@ public abstract class AbstractHelper {
 
         final Node previewWorkspaceNode = session.getNode(previewWorkspacePath);
 
-        // in principle, locked items should not contain descendant locked items, however, in a clustered or highly
-        // concurrent environment, this is possible. Hence extra checks here
 
-        Set<String> lockedNodePaths = new HashSet<>();
-        for (Node lockedNode : lockedNodes) {
-            if (!lockedNode.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)) {
-                throw new IllegalStateException("locked '" + lockedNode.getPath() + "' does not have mixin '" +
-                        "" + HstNodeTypes.MIXINTYPE_HST_EDITABLE + "'. Should not happen");
-
-            }
-            lockedNodePaths.add(lockedNode.getPath());
-        }
+//        Set<String> lockedNodePaths = new HashSet<>();
+//        for (Node lockedNode : lockedNodes) {
+//            if (!lockedNode.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)) {
+//                throw new IllegalStateException("locked '" + lockedNode.getPath() + "' does not have mixin '" +
+//                        "" + HstNodeTypes.MIXINTYPE_HST_EDITABLE + "'. Should not happen");
+//
+//            }
+//            lockedNodePaths.add(lockedNode.getPath());
+//        }
 
         List<Node> lockedNodeRoots = new ArrayList<>();
 
         for (Node lockedNode : lockedNodes) {
-            Node ancestor = lockedNode.getParent();
-            while (!ancestor.isSame(previewWorkspaceNode)) {
-                if (lockedNodePaths.contains(ancestor.getPath())) {
-                    // an ancestor is getting published already due to lock. Normally does not happen. Just remove lock
-                    log.info("Removing double lock of '{}' since ancestor already has lock '{}'", lockedNode.getPath(),
-                            ancestor.getPath());
-                    lockedNode.removeMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
-                    break;
-                }
-                ancestor = ancestor.getParent();
+
+            // in principle, locked items should not contain descendant/ascendant locked items by *someone else*, however, in a clustered or highly
+            // concurrent environment, this is possible. Hence extra checks here
+            if (containsAncestorLock(lockedNode, previewWorkspaceNode)) {
+                log.info("Removing double lock of '{}' since an ancestor already has a lock", lockedNode.getPath());
+                lockedNode.removeMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
+                break;
+            }
+
+            for (Node child : new NodeIterable(lockedNode.getNodes())) {
+                removeDescendantLocks(child);
             }
 
             if (lockedNode.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)) {
@@ -250,6 +249,31 @@ public abstract class AbstractHelper {
         return lockedNodeRoots;
     }
 
+
+    protected boolean containsAncestorLock(final Node lockedNode, final Node previewWorkspaceNode) throws RepositoryException {
+        Node ancestor = lockedNode.getParent();
+        while (!ancestor.isSame(previewWorkspaceNode)) {
+            if (ancestor.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE) &&
+                    ancestor.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
+                log.info("Ancestor '{}' already contains a lock.", ancestor.getPath());
+                return true;
+            }
+            ancestor = ancestor.getParent();
+        }
+        return false;
+    }
+
+    private void removeDescendantLocks(final Node node) throws RepositoryException {
+        if (node.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)) {
+            log.info("Removing descendant lock '{}'.", node.getPath());
+            node.removeMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
+        }
+        for (Node child : new NodeIterable(node.getNodes())) {
+            removeDescendantLocks(child);
+        }
+    }
+
+
     protected List<Node> findChangedWorkspaceNodesForUsers(final String previewWorkspacePath, final List<String> userIds)
             throws RepositoryException {
         if (userIds.isEmpty()) {
@@ -266,7 +290,7 @@ public abstract class AbstractHelper {
         return lockedNodesForUsers;
     }
 
-    // to override for helpers that need to be able to publish
+    // to override for helpers that need to be able to publish/discard
     protected String buildXPathQueryLockedWorkspaceNodesForUsers(final String previewWorkspacePath,
                                                                  final List<String> userIds) {
         throw new UnsupportedOperationException("buildXPathQueryLockedWorkspaceNodesForUsers not supported for: " +
