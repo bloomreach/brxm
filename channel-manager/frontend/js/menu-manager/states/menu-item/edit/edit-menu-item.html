@@ -97,18 +97,16 @@
             'has-error': !isSaving.link && (form.sitemapItem.$invalid || !isSaved.link)
          }">
             <label for="hippo.channelManager.menuManager.menuItem.edit.sitemapItem">{{ 'INTERNAL_LINK' | translate }}</label>
-            <div class="input-group">
-                <input type="text" name="sitemapItem" class="form-control" id="hippo.channelManager.menuManager.menuItem.edit.sitemapItem"
-                       data-ng-model="selectedMenuItem.link"
-                       data-ng-blur="form.sitemapItem.$valid ? saveSelectedMenuItem('link') : '';">
-                <i class="fa form-control-feedback"
-                   data-ng-show="form.sitemapItem.$dirty"
-                   data-ng-class="{
-                'fa-spinner fa-spin': isSaving.link,
-                'fa-check': form.sitemapItem.$valid && isSaved.link,
-                'fa-times': form.sitemapItem.$invalid || !isSaved.link
-               }"></i>
-            </div>
+            <input type="text" name="sitemapItem" class="form-control" id="hippo.channelManager.menuManager.menuItem.edit.sitemapItem"
+                   data-ng-model="selectedMenuItem.link"
+                   data-ng-blur="form.sitemapItem.$valid ? saveSelectedMenuItem('link') : '';">
+            <i class="fa form-control-feedback"
+               data-ng-show="form.sitemapItem.$dirty"
+               data-ng-class="{
+            'fa-spinner fa-spin': isSaving.link,
+            'fa-check': form.sitemapItem.$valid && isSaved.link,
+            'fa-times': form.sitemapItem.$invalid || !isSaved.link
+           }"></i>
         </div>
         <div class="form-group has-feedback"
              data-ng-show="selectedMenuItem.linkType === 'EXTERNAL'"
