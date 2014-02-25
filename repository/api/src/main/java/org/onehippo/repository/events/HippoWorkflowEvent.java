@@ -185,4 +185,7 @@ public class HippoWorkflowEvent<T extends HippoWorkflowEvent<T>> extends HippoEv
         return set(EXCEPTION, e);
     }
 
+    public Boolean success() {
+        return get(EXCEPTION) == null;
+    }
 }
