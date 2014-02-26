@@ -130,12 +130,21 @@ public abstract class AbstractAction extends Action {
     }
 
     /**
-     * @return the {@link SCXMLDataModel} from the {@link Context} of this action.
+     * @return the {@link SCXMLWorkflowData} from the {@link Context} of this action.
      * May only be called when invoked within the context of {@link #doExecute(EventDispatcher, ErrorReporter, Log, Collection)}
      */
-    protected SCXMLDataModel getDataModel() {
+    protected SCXMLWorkflowData getSCXMLWorkflowData() {
         Context context = tlContext.get();
-        return context != null ? (SCXMLDataModel)context.get(SCXMLDataModel.CONTEXT_KEY) : null;
+        return context != null ? (SCXMLWorkflowData)context.get(SCXMLWorkflowData.SCXML_CONTEXT_KEY) : null;
+    }
+
+    /**
+     * @return the {@link SCXMLWorkflowContext} from the {@link Context} of this action.
+     * May only be called when invoked within the context of {@link #doExecute(EventDispatcher, ErrorReporter, Log, Collection)}
+     */
+    protected SCXMLWorkflowContext getSCXMLWorkflowContext() {
+        Context context = tlContext.get();
+        return context != null ? (SCXMLWorkflowContext)context.get(SCXMLWorkflowContext.SCXML_CONTEXT_KEY) : null;
     }
 
     /**

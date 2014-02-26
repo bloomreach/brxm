@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.repository.documentworkflow.action;
+package org.onehippo.repository.scxml;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -26,24 +26,24 @@ import org.apache.commons.scxml2.EventDispatcher;
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.TriggerEvent;
 import org.apache.commons.scxml2.model.ModelException;
-import org.onehippo.repository.documentworkflow.DocumentHandle;
-import org.onehippo.repository.scxml.AbstractAction;
 
 /**
- * InfoAction stores a provided info value in the DocumentHandle
+ * InfoAction stores a provided feedback value in the SCXMLWorkflowContext
  */
-public class InfoAction extends AbstractAction {
+public class FeedbackAction extends AbstractAction {
 
     private static final long serialVersionUID = 1L;
 
-    public String getInfo() {
-        return getParameter("info");
+    public String getKey() {
+        return getParameter("key");
     }
 
-    public void setInfo(final String info) {
-        setParameter("info", info);
+    @SuppressWarnings("unused")
+    public void setKey(final String key) {
+        setParameter("key", key);
     }
 
+    @SuppressWarnings("unused")
     public String getValue() {
         return getParameter("valueExpr");
     }
@@ -56,20 +56,18 @@ public class InfoAction extends AbstractAction {
     protected void doExecute(EventDispatcher evtDispatcher, ErrorReporter errRep, Log appLog,
                              Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException {
 
-        String info = getInfo();
-        if (StringUtils.isBlank(info)) {
-            throw new ModelException("No info specified");
+        String key = getKey();
+        if (StringUtils.isBlank(key)) {
+            throw new ModelException("No feedback key specified");
         }
-
-        DocumentHandle dm = (DocumentHandle)getDataModel();
 
         String valueExpr = getValue();
         Serializable value = (Serializable)(StringUtils.isBlank(valueExpr) ? null : eval(valueExpr));
 
         if (value == null) {
-            dm.getInfo().remove(info);
+            getSCXMLWorkflowContext().getFeedback().remove(key);
         } else {
-            dm.getInfo().put(info, value);
+            getSCXMLWorkflowContext().getFeedback().put(key, value);
         }
     }
 }

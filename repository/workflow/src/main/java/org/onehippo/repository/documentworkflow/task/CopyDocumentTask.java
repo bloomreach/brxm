@@ -75,30 +75,30 @@ public class CopyDocumentTask extends AbstractDocumentTask {
         DocumentHandle dm = getDocumentHandle();
 
         String folderWorkflowCategory = "embedded";
-        RepositoryMap config = dm.getWorkflowContext().getWorkflowConfiguration();
+        RepositoryMap config = getWorkflowContext().getWorkflowConfiguration();
 
         if (config != null && config.exists() && config.get("folder-workflow-category") instanceof String) {
             folderWorkflowCategory = (String) config.get("folder-workflow-category");
         }
 
-        DocumentVariant unpublished = dm.getDocumentVariantByState(HippoStdNodeType.UNPUBLISHED);
+        DocumentVariant unpublished = dm.getDocuments().get(HippoStdNodeType.UNPUBLISHED);
 
         if (unpublished == null) {
-            DocumentVariant published = dm.getDocumentVariantByState(HippoStdNodeType.PUBLISHED);
+            DocumentVariant published = dm.getDocuments().get(HippoStdNodeType.PUBLISHED);
             Document folder = WorkflowUtils.getContainingFolder(published);
-            Workflow workflow = dm.getWorkflowContext().getWorkflow(folderWorkflowCategory, destination);
+            Workflow workflow = getWorkflowContext().getWorkflow(folderWorkflowCategory, destination);
 
             if (workflow instanceof EmbedWorkflow) {
                 Document copy = ((EmbedWorkflow) workflow).copyTo(folder, published, newName, null);
                 Node copyHandle = copy.getNode().getParent();
-                DocumentWorkflow copiedDocumentWorkflow = (DocumentWorkflow) dm.getWorkflowContext().getWorkflow("default", new Document(copyHandle));
+                DocumentWorkflow copiedDocumentWorkflow = (DocumentWorkflow) getWorkflowContext().getWorkflow("default", new Document(copyHandle));
                 copiedDocumentWorkflow.depublish();
             } else {
                 throw new WorkflowException("cannot copy document which is not contained in a folder");
             }
         } else {
             Document folder = WorkflowUtils.getContainingFolder(unpublished);
-            Workflow workflow = dm.getWorkflowContext().getWorkflow(folderWorkflowCategory, destination);
+            Workflow workflow = getWorkflowContext().getWorkflow(folderWorkflowCategory, destination);
 
             if (workflow instanceof EmbedWorkflow) {
                 ((EmbedWorkflow) workflow).copyTo(folder, unpublished, newName, null);

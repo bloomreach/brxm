@@ -37,6 +37,7 @@ public class SCXMLExecutionError extends RuntimeException implements Serializabl
         this.errorContext = errorContext;
     }
 
+    @SuppressWarnings("unused")
     public String getErrorCode() {
         return errorCode;
     }
@@ -45,6 +46,7 @@ public class SCXMLExecutionError extends RuntimeException implements Serializabl
         return errorDetail;
     }
 
+    @SuppressWarnings("unused")
     public Object getErrorContext() {
         return errorContext;
     }

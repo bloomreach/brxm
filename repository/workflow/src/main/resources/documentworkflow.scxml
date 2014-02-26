@@ -21,12 +21,12 @@
        initial="handle">
 
   <script>
-    def getScxmlId() { dm.scxmlId }
-    def getDraft() { dm.getDocumentVariantByState('draft') }
-    def getUnpublished() { dm.getDocumentVariantByState('unpublished') }
-    def getPublished() { dm.getDocumentVariantByState('published') }
-    def getUser() { dm.user }
-    def getRequests() { dm.requests }
+    def getScxmlId() { workflowContext.scxmlId }
+    def getDraft() { workflowData.documents['draft'] }
+    def getUnpublished() { workflowData.documents['unpublished'] }
+    def getPublished() { workflowData.documents['published'] }
+    def getUser() { workflowContext.user }
+    def getRequests() { workflowData.requests }
     def getCopySource() { published ?: unpublished ?: null }
     def getDeleteSource() { unpublished ?: published ?: draft }
     def getHolder() { draft?.holder }
@@ -37,22 +37,22 @@
     def boolean isPreview() { unpublished?.isAvailable('preview') }
     def boolean isPreviewAvailable() { unpublished?.isAvailable('preview') or published?.isAvailable('preview') }
     def boolean isModified() { unpublished and (!live or unpublished.lastModified!=published.lastModified) }
-    def boolean isRequestPending() { dm.requestPending }
+    def boolean isRequestPending() { workflowData.requestPending }
   </script>
 
   <parallel id="handle">
 
     <state id="status">
       <onentry>
-        <hippo:info info="status" value="editable"/>
-        <hippo:info info="isLive" value="live"/>
-        <hippo:info info="previewAvailable" value="previewAvailable"/>
+        <hippo:feedback key="status" value="editable"/>
+        <hippo:feedback key="isLive" value="live"/>
+        <hippo:feedback key="previewAvailable" value="previewAvailable"/>
         <hippo:action action="checkModified" enabledExpr="draft and unpublished"/>
       </onentry>
 
       <transition event="checkModified">
         <hippo:isModified/>
-        <hippo:result value="dm.info['modified']"/>
+        <hippo:result value="workflowContext.feedback['modified']"/>
       </transition>
     </state>
 
@@ -75,9 +75,9 @@
             <hippo:action action="obtainEditableInstance" enabledExpr="true"/>
             <hippo:action action="commitEditableInstance" enabledExpr="true"/>
           <else/>
-            <hippo:info info="inUseBy" value="holder"/>
+            <hippo:feedback key="inUseBy" value="holder"/>
           </if>
-          <if cond="!editor and dm.isGranted(draft,'hippo:admin')">
+          <if cond="!editor and workflowContext.isGranted(draft,'hippo:admin')">
             <hippo:action action="unlock" enabledExpr="true"/>
           </if>
         </onentry>
@@ -85,7 +85,7 @@
 
       <state id="editable">
         <onentry>
-          <if cond="dm.isGranted(draft,'hippo:admin')">
+          <if cond="workflowContext.isGranted(draft,'hippo:admin')">
             <hippo:action action="unlock" enabledExpr="false"/>
           </if>
           <hippo:action action="obtainEditableInstance" enabledExpr="true"/>
@@ -112,7 +112,7 @@
         <if cond="!!unpublished">
           <hippo:isModified/>
         </if>
-        <if cond="!unpublished or dm.info['modified']">
+        <if cond="!unpublished or workflowContext.feedback['modified']">
           <if cond="!unpublished and !!published">
             <if cond="live">
               <hippo:configVariant variant="published" availabilities="live"/>
@@ -142,7 +142,7 @@
         <onentry>
           <foreach item="request" array="requests.values()">
             <if cond="request.workflowRequest">
-              <if cond="dm.isGranted(request, 'hippo:editor')">
+              <if cond="workflowContext.isGranted(request, 'hippo:editor')">
                 <if cond="request.workflowType!='rejected'">
                   <hippo:requestAction identifierExpr="request.identity" action="rejectRequest" enabledExpr="true"/>
                 </if>
@@ -161,7 +161,7 @@
                 <hippo:requestAction identifierExpr="request.identity" action="cancelRequest" enabledExpr="true"/>
               </if>
             <else/>
-              <if cond="dm.isGranted(request, 'hippo:editor')">
+              <if cond="workflowContext.isGranted(request, 'hippo:editor')">
                 <hippo:requestAction identifierExpr="request.identity" action="cancelRequest" enabledExpr="true"/>
               </if>
             </if>
@@ -201,7 +201,7 @@
       <state id="no-publish">
         <onentry>
           <hippo:action action="requestPublication" enabledExpr="false"/>
-          <if cond="dm.isGranted(unpublished ?: published ?: draft, 'hippo:editor')">
+          <if cond="workflowContext.isGranted(unpublished ?: published ?: draft, 'hippo:editor')">
               <hippo:action action="publish" enabledExpr="false"/>
           </if>
         </onentry>
@@ -212,7 +212,7 @@
         <onentry>
           <if cond="!requestPending or user=='system'">
             <hippo:action action="requestPublication" enabledExpr="true"/>
-            <if cond="dm.isGranted(unpublished, 'hippo:editor')">
+            <if cond="workflowContext.isGranted(unpublished, 'hippo:editor')">
               <hippo:action action="publish" enabledExpr="true"/>
             </if>
           </if>
@@ -245,7 +245,7 @@
       <state id="no-depublish">
         <onentry>
           <hippo:action action="requestDepublication" enabledExpr="false"/>
-          <if cond="dm.isGranted(published ?: unpublished ?: draft, 'hippo:editor')">
+          <if cond="workflowContext.isGranted(published ?: unpublished ?: draft, 'hippo:editor')">
             <hippo:action action="depublish" enabledExpr="false"/>
           </if>
         </onentry>
@@ -256,7 +256,7 @@
         <onentry>
           <if cond="!requestPending or user=='system'">
             <hippo:action action="requestDepublication" enabledExpr="true"/>
-            <if cond="dm.isGranted(published, 'hippo:editor')">
+            <if cond="workflowContext.isGranted(published, 'hippo:editor')">
               <hippo:action action="depublish" enabledExpr="true"/>
             </if>
           </if>
@@ -297,7 +297,7 @@
         <onentry>
           <hippo:action action="listVersions" enabledExpr="true"/>
           <hippo:action action="retrieveVersion" enabledExpr="true"/>
-          <if cond="dm.isGranted(unpublished, 'hippo:editor')">
+          <if cond="workflowContext.isGranted(unpublished, 'hippo:editor')">
             <hippo:action action="version" enabledExpr="true"/>
             <hippo:action action="restoreVersion" enabledExpr="true"/>
             <hippo:action action="versionRestoreTo" enabledExpr="true"/>
@@ -333,7 +333,7 @@
       <state id="no-terminate">
         <onentry>
           <hippo:action action="requestDelete" enabledExpr="false"/>
-          <if cond="dm.isGranted(deleteSource, 'hippo:editor')">
+          <if cond="workflowContext.isGranted(deleteSource, 'hippo:editor')">
             <hippo:action action="delete" enabledExpr="false"/>
             <hippo:action action="move" enabledExpr="false"/>
             <hippo:action action="rename" enabledExpr="false"/>
@@ -346,7 +346,7 @@
         <onentry>
           <if cond="!requestPending">
             <hippo:action action="requestDelete" enabledExpr="true"/>
-            <if cond="dm.isGranted(deleteSource, 'hippo:editor')">
+            <if cond="workflowContext.isGranted(deleteSource, 'hippo:editor')">
               <hippo:action action="delete" enabledExpr="true"/>
               <hippo:action action="move" enabledExpr="true"/>
               <hippo:action action="rename" enabledExpr="true"/>
@@ -377,7 +377,7 @@
     <state id="copy" initial="no-copy">
 
       <state id="no-copy">
-        <transition target="copyable" cond="dm.isGranted(copySource,'hippo:editor')"/>
+        <transition target="copyable" cond="workflowContext.isGranted(copySource,'hippo:editor')"/>
       </state>
 
       <state id="copyable">

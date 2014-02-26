@@ -71,9 +71,9 @@ public class WorkflowRequestTask extends AbstractDocumentTask {
             WorkflowRequest req;
 
             if (targetDate == null) {
-                req = new WorkflowRequest(getType(), contextVariant.getNode(), contextVariant, dm.getUser());
+                req = new WorkflowRequest(getType(), contextVariant.getNode(), contextVariant, getWorkflowContext().getUserIdentity());
             } else {
-                req = new WorkflowRequest(getType(), contextVariant.getNode(), contextVariant, dm.getUser(), targetDate);
+                req = new WorkflowRequest(getType(), contextVariant.getNode(), contextVariant, getWorkflowContext().getUserIdentity(), targetDate);
             }
 
             req.getNode().getSession().save();

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.repository.documentworkflow.action;
+package org.onehippo.repository.scxml;
 
 import java.util.Collection;
 
@@ -26,7 +26,6 @@ import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.TriggerEvent;
 import org.apache.commons.scxml2.model.ModelException;
 import org.hippoecm.repository.api.WorkflowException;
-import org.onehippo.repository.scxml.AbstractAction;
 
 /**
  * WorkflowExceptionAction raises a WorkflowException with specified error message optionally under a specific condition
@@ -39,6 +38,7 @@ public class WorkflowExceptionAction extends AbstractAction {
         return getParameter("condExpr");
     }
 
+    @SuppressWarnings("unused")
     public void setCond(String condExpr) {
         setParameter("condExpr", condExpr);
     }
@@ -46,6 +46,7 @@ public class WorkflowExceptionAction extends AbstractAction {
         return getParameter("errorExpr");
     }
 
+    @SuppressWarnings("unused")
     public void setErrorExpr(final String errorExpr) {
         setParameter("errorExpr", errorExpr);
     }

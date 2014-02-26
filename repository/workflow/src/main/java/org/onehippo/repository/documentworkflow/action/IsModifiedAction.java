@@ -16,6 +16,8 @@
 
 package org.onehippo.repository.documentworkflow.action;
 
+import java.io.Serializable;
+
 import org.onehippo.repository.documentworkflow.task.IsModifiedTask;
 
 /**
@@ -28,5 +30,14 @@ public class IsModifiedAction extends AbstractDocumentTaskAction<IsModifiedTask>
     @Override
     protected IsModifiedTask createWorkflowTask() {
         return new IsModifiedTask();
+    }
+
+    protected void processTaskResult(Object taskResult) {
+        if (taskResult != null) {
+            getSCXMLWorkflowContext().getFeedback().put("modified", (Serializable)taskResult);
+        }
+        else {
+            getSCXMLWorkflowContext().getFeedback().remove("modified");
+        }
     }
 }

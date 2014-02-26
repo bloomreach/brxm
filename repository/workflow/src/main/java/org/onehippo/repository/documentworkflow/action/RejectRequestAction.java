@@ -28,6 +28,7 @@ public class RejectRequestAction extends AbstractDocumentTaskAction<RejectReques
 
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unused")
     public void setRequestExpr(String requestExpr) {
         setParameter("requestExpr", requestExpr);
     }
@@ -36,6 +37,7 @@ public class RejectRequestAction extends AbstractDocumentTaskAction<RejectReques
         return getParameter("requestExpr");
     }
 
+    @SuppressWarnings("unused")
     public void setReasonExpr(String reasonExpr) {
         setParameter("reasonExpr", reasonExpr);
     }

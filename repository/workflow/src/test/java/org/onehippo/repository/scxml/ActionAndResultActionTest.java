@@ -21,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.scxml2.SCXMLExecutor;
 import org.junit.Test;
+import org.onehippo.repository.documentworkflow.MockWorkflowContext;
 import org.onehippo.repository.mock.MockNode;
 
 /**
@@ -37,7 +38,7 @@ public class ActionAndResultActionTest {
                     "    <state id=\"world\">\n" +
                     "      <onentry>\n" +
                     "        <hippo:action action=\"hello\" enabledExpr=\"world\"/>\n" +
-                    "        <hippo:result value=\"dm\"/>\n" +
+                    "        <hippo:result value=\"workflowContext\"/>\n" +
                     "      </onentry>\n" +
                     "    </state>\n" +
                     "  </state>\n" +
@@ -61,12 +62,12 @@ public class ActionAndResultActionTest {
 
         SCXMLExecutor helloExec = execFactory.createSCXMLExecutor(helloScxml);
 
-        SCXMLDataModel dm = new MockSCXMLDataModel(helloScxml.getId());
-        helloExec.getRootContext().set(SCXMLDataModel.CONTEXT_KEY, dm);
+        SCXMLWorkflowContext workflowContext = new SCXMLWorkflowContext(helloScxml.getId(), new MockWorkflowContext("testuser"));
+        helloExec.getRootContext().set(SCXMLWorkflowContext.SCXML_CONTEXT_KEY, workflowContext);
         helloExec.getRootContext().set("world", Boolean.TRUE);
         helloExec.go();
 
-        assertTrue(dm.getActions().get("hello"));
-        assertEquals(dm, dm.getResult());
+        assertTrue(workflowContext.getActions().get("hello"));
+        assertEquals(workflowContext, workflowContext.getResult());
     }
 }

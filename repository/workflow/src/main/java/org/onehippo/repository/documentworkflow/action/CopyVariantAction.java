@@ -31,6 +31,7 @@ public class CopyVariantAction extends AbstractDocumentTaskAction<CopyVariantTas
         return getParameter("sourceState");
     }
 
+    @SuppressWarnings("unused")
     public void setSourceState(String sourceState) {
         setParameter("sourceState", sourceState);
     }
@@ -39,6 +40,7 @@ public class CopyVariantAction extends AbstractDocumentTaskAction<CopyVariantTas
         return getParameter("targetState");
     }
 
+    @SuppressWarnings("unused")
     public void setTargetState(String targetState) {
         setParameter("targetState", targetState);
     }

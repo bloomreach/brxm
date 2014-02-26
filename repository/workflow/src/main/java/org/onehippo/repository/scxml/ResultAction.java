@@ -27,7 +27,7 @@ import org.apache.commons.scxml2.TriggerEvent;
 import org.apache.commons.scxml2.model.ModelException;
 
 /**
- * ResultAction stores a provided result value in the {@link SCXMLDataModel}
+ * ResultAction stores a provided result value in the {@link SCXMLWorkflowData}
  */
 public class ResultAction extends AbstractAction {
 
@@ -47,6 +47,6 @@ public class ResultAction extends AbstractAction {
 
         String valueExpr = getValue();
         Object value = StringUtils.isBlank(valueExpr) ? null : eval(valueExpr);
-        getDataModel().setResult(value);
+        getSCXMLWorkflowContext().setResult(value);
     }
 }

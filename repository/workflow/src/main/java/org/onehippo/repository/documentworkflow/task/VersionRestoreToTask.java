@@ -124,7 +124,7 @@ public class VersionRestoreToTask extends AbstractDocumentTask {
                 getHistoric() == null) {
             throw new WorkflowException("Variant, target or date not provided");
         }
-        Node targetNode = getDocumentHandle().getWorkflowContext().getInternalWorkflowSession().getNodeByIdentifier(target.getIdentity());
+        Node targetNode = getWorkflowContext().getInternalWorkflowSession().getNodeByIdentifier(target.getIdentity());
         Node variantNode = getVariant().getNode();
 
         final Version version = lookupVersion(variantNode, getHistoric());

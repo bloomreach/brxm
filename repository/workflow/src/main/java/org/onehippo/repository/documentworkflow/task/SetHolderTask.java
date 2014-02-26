@@ -43,7 +43,7 @@ public class SetHolderTask extends AbstractDocumentTask {
 
         DocumentHandle dm = getDocumentHandle();
 
-        DocumentVariant draft = dm.getDocumentVariantByState(HippoStdNodeType.DRAFT);
+        DocumentVariant draft = dm.getDocuments().get(HippoStdNodeType.DRAFT);
         if (draft != null) {
             draft.setHolder(holder);
         }

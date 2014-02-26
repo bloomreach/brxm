@@ -27,7 +27,7 @@ import org.apache.commons.scxml2.TriggerEvent;
 import org.apache.commons.scxml2.model.ModelException;
 
 /**
- * ActionAction sets a provided action enabled setting in the {@link SCXMLDataModel}, or removes it if empty/null
+ * ActionAction sets a provided action enabled setting in the {@link SCXMLWorkflowData}, or removes it if empty/null
  */
 public class ActionAction extends AbstractAction {
 
@@ -45,6 +45,7 @@ public class ActionAction extends AbstractAction {
         return getParameter("enabledExpr");
     }
 
+    @SuppressWarnings("unused")
     public void setEnabledExpr(final String enabled) {
         setParameter("enabledExpr", enabled);
     }
@@ -61,11 +62,10 @@ public class ActionAction extends AbstractAction {
         String enabledExpr = getEnabledExpr();
         Boolean enabled = (StringUtils.isBlank(enabledExpr) ? null : (Boolean)eval(enabledExpr));
 
-        SCXMLDataModel dm = getDataModel();
         if (enabled == null) {
-            dm.getActions().remove(action);
+            getSCXMLWorkflowContext().getActions().remove(action);
         } else {
-            dm.getActions().put(action, enabled);
+            getSCXMLWorkflowContext().getActions().put(action, enabled);
         }
     }
 }

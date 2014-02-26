@@ -32,6 +32,7 @@ public class MoveDocumentAction extends AbstractDocumentTaskAction<MoveDocumentT
         return getParameter("destinationExpr");
     }
 
+    @SuppressWarnings("unused")
     public void setDestinationExpr(String destinationExpr) {
         setParameter("destinationExpr", destinationExpr);
     }
@@ -40,6 +41,7 @@ public class MoveDocumentAction extends AbstractDocumentTaskAction<MoveDocumentT
         return getParameter("newNameExpr");
     }
 
+    @SuppressWarnings("unused")
     public void setNewNameExpr(String newNameExpr) {
         setParameter("newNameExpr", newNameExpr);
     }

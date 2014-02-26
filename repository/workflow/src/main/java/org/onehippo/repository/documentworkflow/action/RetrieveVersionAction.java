@@ -33,6 +33,7 @@ public class RetrieveVersionAction extends AbstractDocumentTaskAction<RetrieveVe
         return getParameter("variantExpr");
     }
 
+    @SuppressWarnings("unused")
     public void setVariant(String variant) {
         setParameter("variantExpr", variant);
     }
@@ -41,6 +42,7 @@ public class RetrieveVersionAction extends AbstractDocumentTaskAction<RetrieveVe
         return getParameter("historicExpr");
     }
 
+    @SuppressWarnings("unused")
     public void setHistoric(String variant) {
         setParameter("historicExpr", variant);
     }

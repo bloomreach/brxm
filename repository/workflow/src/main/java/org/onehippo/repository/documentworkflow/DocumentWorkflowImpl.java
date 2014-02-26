@@ -18,6 +18,7 @@ package org.onehippo.repository.documentworkflow;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
+import org.onehippo.repository.scxml.SCXMLWorkflowContext;
 import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
 
 public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkflow {
@@ -40,8 +42,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     public static final String SCXML_DEFINITION_KEY = "scxml-definition";
 
-    private SCXMLWorkflowExecutor workflowExecutor;
-    private DocumentHandle dm;
+    private SCXMLWorkflowExecutor<SCXMLWorkflowContext, DocumentHandle> workflowExecutor;
 
     public DocumentWorkflowImpl() throws RemoteException {
     }
@@ -80,16 +81,17 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
         return map;
     }
 
+    @SuppressWarnings("unchecked")
     protected Map<String, Boolean> getRequestActionActions(String requestIdentifier, String action) throws WorkflowException {
         Map<String, Map<String, Boolean>> requestActionsInfo =
-                (Map<String, Map<String, Boolean>>)dm.getInfo().get("requests");
+                (Map<String, Map<String, Boolean>>)workflowExecutor.getContext().getFeedback().get("requests");
         if (requestActionsInfo != null) {
             Map<String, Boolean> requestActions = requestActionsInfo.get(requestIdentifier);
             if (requestActions != null) {
                 return requestActions;
             }
         }
-        throw new WorkflowException("Cannot invoke workflow "+dm.getScxmlId()+" action "+action+": request "+
+        throw new WorkflowException("Cannot invoke workflow "+workflowExecutor.getContext().getScxmlId()+" action "+action+": request "+
                 requestIdentifier+" not found");
     }
 
@@ -108,8 +110,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
                 scxmlId = (String) workflowConfiguration.get(SCXML_DEFINITION_KEY);
             }
 
-            dm = new DocumentHandle(scxmlId, getWorkflowContext(), node);
-            workflowExecutor = new SCXMLWorkflowExecutor(dm);
+            workflowExecutor = new SCXMLWorkflowExecutor<>(new SCXMLWorkflowContext(scxmlId, getWorkflowContext()), new DocumentHandle(node));
         }
         catch (WorkflowException wfe) {
             if (wfe.getCause() != null && wfe.getCause() instanceof RepositoryException) {
@@ -123,21 +124,15 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     public Map<String, Serializable> hints() throws WorkflowException {
         workflowExecutor.start();
         Map<String, Serializable> hints = super.hints();
-        hints.putAll(dm.getInfo());
-        hints.putAll(dm.getActions());
+        hints.putAll(workflowExecutor.getContext().getFeedback());
+        hints.putAll(workflowExecutor.getContext().getActions());
+        for (Map.Entry<String, Serializable> entry : hints.entrySet()) {
+            if (entry.getValue() instanceof Collection) {
+                // protect against modifications
+                entry.setValue((Serializable)Collections.unmodifiableCollection((Collection)entry.getValue()));
+            }
+        }
         return Collections.unmodifiableMap(hints);
-    }
-
-    @Override
-    public Map<String, Serializable> getInfo() throws WorkflowException {
-        workflowExecutor.start();
-        return Collections.unmodifiableMap(dm.getInfo());
-    }
-
-    @Override
-    public Map<String, Boolean> getActions() throws WorkflowException {
-        workflowExecutor.start();
-        return Collections.unmodifiableMap(dm.getActions());
     }
 
     // EditableWorkflow implementation
@@ -264,21 +259,21 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     public void cancelRequest(String requestIdentifier) throws WorkflowException {
         workflowExecutor.start();
         workflowExecutor.triggerAction("cancelRequest", getRequestActionActions(requestIdentifier, "cancelRequest"),
-                createPayload("request", dm.getRequests().get(requestIdentifier)));
+                createPayload("request", workflowExecutor.getData().getRequests().get(requestIdentifier)));
     }
 
     @Override
     public void acceptRequest(String requestIdentifier) throws WorkflowException {
         workflowExecutor.start();
         workflowExecutor.triggerAction("acceptRequest", getRequestActionActions(requestIdentifier, "acceptRequest"),
-                createPayload("request", dm.getRequests().get(requestIdentifier)));
+                createPayload("request", workflowExecutor.getData().getRequests().get(requestIdentifier)));
     }
 
     @Override
     public void rejectRequest(String requestIdentifier, final String reason) throws WorkflowException {
         workflowExecutor.start();
         workflowExecutor.triggerAction("rejectRequest", getRequestActionActions(requestIdentifier, "rejectRequest"),
-                createPayload("request", dm.getRequests().get(requestIdentifier), "reason", reason));
+                createPayload("request", workflowExecutor.getData().getRequests().get(requestIdentifier), "reason", reason));
     }
 
     // UnlockWorkflow implementation

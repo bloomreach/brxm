@@ -16,7 +16,9 @@
 
 package org.onehippo.repository.documentworkflow.action;
 
+import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -26,8 +28,8 @@ import org.apache.commons.scxml2.EventDispatcher;
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.TriggerEvent;
 import org.apache.commons.scxml2.model.ModelException;
-import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.scxml.AbstractAction;
+import org.onehippo.repository.scxml.SCXMLWorkflowContext;
 
 public class RequestActionAction extends AbstractAction {
 
@@ -37,6 +39,7 @@ public class RequestActionAction extends AbstractAction {
         return getParameter("identifierExpr");
     }
 
+    @SuppressWarnings("unused")
     public void setIdentifierExpr(String identifierExpr) {
         setParameter("identifierExpr", identifierExpr);
     }
@@ -45,6 +48,7 @@ public class RequestActionAction extends AbstractAction {
         return getParameter("action");
     }
 
+    @SuppressWarnings("unused")
     public void setAction(final String action) {
         setParameter("action", action);
     }
@@ -53,11 +57,13 @@ public class RequestActionAction extends AbstractAction {
         return getParameter("enabledExpr");
     }
 
+    @SuppressWarnings("unused")
     public void setEnabledExpr(final String enabled) {
         setParameter("enabledExpr", enabled);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void doExecute(EventDispatcher evtDispatcher, ErrorReporter errRep, Log appLog,
                              Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException {
 
@@ -74,8 +80,17 @@ public class RequestActionAction extends AbstractAction {
         String enabledExpr = getEnabledExpr();
         Boolean enabled = (StringUtils.isBlank(enabledExpr) ? null : (Boolean)eval(enabledExpr));
 
-        DocumentHandle dh = (DocumentHandle)getDataModel();
-        Map<String, Boolean> requestActions = dh.getRequestActions(identifier);
+        SCXMLWorkflowContext workflowContext = getSCXMLWorkflowContext();
+        Map<String, Map<String, Boolean>> requestsActionsMap = (Map<String, Map<String, Boolean>>)workflowContext.getFeedback().get("requests");
+        if (requestsActionsMap == null) {
+            requestsActionsMap = new HashMap<>();
+            workflowContext.getFeedback().put("requests", (Serializable)requestsActionsMap);
+        }
+        Map<String,Boolean> requestActions = requestsActionsMap.get(identifier);
+        if (requestActions == null) {
+            requestActions = new HashMap<>();
+            requestsActionsMap.put(identifier, requestActions);
+        }
         if (enabled == null) {
             requestActions.remove(action);
         } else {

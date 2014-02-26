@@ -34,6 +34,7 @@ public class WorkflowRequestAction extends AbstractDocumentTaskAction<WorkflowRe
         return getParameter("type");
     }
 
+    @SuppressWarnings("unused")
     public void setType(String type) {
         setParameter("type", type);
     }
@@ -42,6 +43,7 @@ public class WorkflowRequestAction extends AbstractDocumentTaskAction<WorkflowRe
         return getParameter("contextVariantExpr");
     }
 
+    @SuppressWarnings("unused")
     public void setContextVariantExpr(String contextVariantExpr) {
         setParameter("contextVariantExpr", contextVariantExpr);
     }
@@ -50,6 +52,7 @@ public class WorkflowRequestAction extends AbstractDocumentTaskAction<WorkflowRe
         return getParameter("targetDateExpr");
     }
 
+    @SuppressWarnings("unused")
     public void setTargetDateExpr(String targetDateExpr) {
         setParameter("targetDateExpr", targetDateExpr);
     }

@@ -32,6 +32,7 @@ public class ConfigVariantAction extends AbstractDocumentTaskAction<ConfigVarian
         return getParameter("variantExpr");
     }
 
+    @SuppressWarnings("unused")
     public void setVariant(String variant) {
         setParameter("variantExpr", variant);
     }
@@ -40,6 +41,7 @@ public class ConfigVariantAction extends AbstractDocumentTaskAction<ConfigVarian
         return getParameter("availabilities");
     }
 
+    @SuppressWarnings("unused")
     public void setAvailabilities(String availabilities) {
         setParameter("availabilities", availabilities);
     }
@@ -48,6 +50,7 @@ public class ConfigVariantAction extends AbstractDocumentTaskAction<ConfigVarian
         return Boolean.parseBoolean(getParameter("applyModified"));
     }
 
+    @SuppressWarnings("unused")
     public void setApplyModified(String applyModified) {
         setParameter("applyModified", applyModified);
     }
@@ -56,6 +59,7 @@ public class ConfigVariantAction extends AbstractDocumentTaskAction<ConfigVarian
         return Boolean.parseBoolean(getParameter("versionable"));
     }
 
+    @SuppressWarnings("unused")
     public void setVersionable(String versionable) {
         setParameter("versionable", versionable);
     }
@@ -64,16 +68,18 @@ public class ConfigVariantAction extends AbstractDocumentTaskAction<ConfigVarian
         return Boolean.parseBoolean(getParameter("setHolder"));
     }
 
+    @SuppressWarnings("unused")
     public void setSetHolder(String setHolder) {
         setParameter("setHolder", setHolder);
     }
 
-    public void setApplyPublished(String applyPublished) {
-        setParameter("applyPublished", applyPublished);
-    }
-
     public boolean isApplyPublished() {
         return Boolean.parseBoolean(getParameter("applyPublished"));
+    }
+
+    @SuppressWarnings("unused")
+    public void setApplyPublished(String applyPublished) {
+        setParameter("applyPublished", applyPublished);
     }
 
     @Override

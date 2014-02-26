@@ -34,6 +34,7 @@ import javax.jcr.version.VersionIterator;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.util.CopyHandler;
@@ -82,6 +83,7 @@ public abstract class AbstractDocumentTask implements WorkflowTask, Serializable
     }
 
     private DocumentHandle documentHandle;
+    private WorkflowContext workflowContext;
 
     /**
      * Execute this workflow task
@@ -106,8 +108,16 @@ public abstract class AbstractDocumentTask implements WorkflowTask, Serializable
         return documentHandle;
     }
 
-    public void setDocumentHandle(final DocumentHandle dataModel) {
-        this.documentHandle = dataModel;
+    public void setDocumentHandle(final DocumentHandle documentHandle) {
+        this.documentHandle = documentHandle;
+    }
+
+    public WorkflowContext getWorkflowContext() {
+        return workflowContext;
+    }
+
+    public void setWorkflowContext(final WorkflowContext workflowContext) {
+        this.workflowContext = workflowContext;
     }
 
     protected Node cloneDocumentNode(Node srcNode) throws RepositoryException {

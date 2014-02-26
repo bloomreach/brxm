@@ -45,12 +45,12 @@ public class ArchiveDocumentTask extends AbstractDocumentTask {
         DocumentHandle dh = getDocumentHandle();
         DocumentVariant variant;
         try {
-            variant = dh.getDocumentVariantByState(HippoStdNodeType.DRAFT);
+            variant = dh.getDocuments().get(HippoStdNodeType.DRAFT);
             if (variant != null) {
                 deleteDocument(variant);
             }
 
-            variant = dh.getDocumentVariantByState(HippoStdNodeType.PUBLISHED);
+            variant = dh.getDocuments().get(HippoStdNodeType.PUBLISHED);
             if (variant != null) {
                 deleteDocument(variant);
             }
@@ -59,8 +59,8 @@ public class ArchiveDocumentTask extends AbstractDocumentTask {
         }
 
         try {
-            variant = dh.getDocumentVariantByState(HippoStdNodeType.UNPUBLISHED);
-            DefaultWorkflow defaultWorkflow = (DefaultWorkflow) dh.getWorkflowContext().getWorkflow("core", variant);
+            variant = dh.getDocuments().get(HippoStdNodeType.UNPUBLISHED);
+            DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflowContext().getWorkflow("core", variant);
             defaultWorkflow.archive();
         } catch (MappingException e) {
             log.warn("Cannot archive document: no default workflow", e);

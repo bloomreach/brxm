@@ -114,11 +114,11 @@ public class ConfigVariantTask extends AbstractDocumentTask {
         }
 
         if (isApplyModified()) {
-            variant.setModified(dm.getUser());
+            variant.setModified(getWorkflowContext().getUserIdentity());
         }
 
         if (isSetHolder()) {
-            variant.setHolder(dm.getUser());
+            variant.setHolder(getWorkflowContext().getUserIdentity());
         }
 
         if (isApplyPublished()) {

@@ -21,6 +21,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.repository.documentworkflow.MockWorkflowContext;
 import org.onehippo.repository.mock.MockNode;
 
 import static org.junit.Assert.assertNull;
@@ -93,13 +94,13 @@ public class SCXMLWorkflowExecutorTest {
         registry.addCustomAction(scxmlDefNode, "http://www.onehippo.org/cms7/repository/scxml", "result", ResultAction.class.getName());
         registry.setUp(scxmlConfigNode);
 
-        SCXMLWorkflowExecutor workflowExecutor = new SCXMLWorkflowExecutor(new MockSCXMLDataModel("scxml"));
+        SCXMLWorkflowExecutor workflowExecutor = new SCXMLWorkflowExecutor(new SCXMLWorkflowContext("scxml", new MockWorkflowContext("testuser")), null);
         workflowExecutor.getSCXMLExecutor().getRootContext().set("message", "Hello world!");
         Object message = workflowExecutor.start();
 
         assertTrue(workflowExecutor.isStarted());
         assertFalse(workflowExecutor.isTerminated());
-        assertTrue(workflowExecutor.getDataModel().getActions().get("hello"));
+        assertTrue(workflowExecutor.getContext().getActions().get("hello"));
         assertEquals("Hello world!", message);
 
         try {
@@ -109,11 +110,11 @@ public class SCXMLWorkflowExecutorTest {
         catch (WorkflowException e) {
             assertEquals("Cannot invoke workflow scxml action foo: action not allowed or undefined", e.getMessage());
         }
-        assertTrue(workflowExecutor.getDataModel().getActions().get("hello"));
+        assertTrue(workflowExecutor.getContext().getActions().get("hello"));
         assertNull(workflowExecutor.triggerAction("hello"));
         assertTrue(workflowExecutor.isStarted());
 
-        workflowExecutor.setDataModel(new MockSCXMLDataModel("scxml"));
+        workflowExecutor.reset();
         assertFalse(workflowExecutor.isStarted());
         assertFalse(workflowExecutor.isTerminated());
 
@@ -136,7 +137,7 @@ public class SCXMLWorkflowExecutorTest {
         registry.addCustomAction(scxmlDefNode, "http://www.onehippo.org/cms7/repository/scxml", "action", ActionAction.class.getName());
         registry.setUp(scxmlConfigNode);
 
-        SCXMLWorkflowExecutor workflowExecutor = new SCXMLWorkflowExecutor(new MockSCXMLDataModel("scxml"));
+        SCXMLWorkflowExecutor workflowExecutor = new SCXMLWorkflowExecutor(new SCXMLWorkflowContext("scxml", new MockWorkflowContext("testuser")), null);
         try {
             workflowExecutor.start();
             fail("Workflow should have failed starting");
@@ -162,13 +163,13 @@ public class SCXMLWorkflowExecutorTest {
         registry.addCustomAction(scxmlDefNode, "http://www.onehippo.org/cms7/repository/scxml", "result", ResultAction.class.getName());
         registry.setUp(scxmlConfigNode);
 
-        SCXMLWorkflowExecutor workflowExecutor = new SCXMLWorkflowExecutor(new MockSCXMLDataModel("scxml"));
+        SCXMLWorkflowExecutor workflowExecutor = new SCXMLWorkflowExecutor(new SCXMLWorkflowContext("scxml", new MockWorkflowContext("testuser")), null);
         workflowExecutor.start();
 
         assertTrue(workflowExecutor.isStarted());
         assertFalse(workflowExecutor.isTerminated());
-        assertTrue(workflowExecutor.getDataModel().getActions().get("hello"));
-        assertTrue(workflowExecutor.getDataModel().getActions().get("terminate"));
+        assertTrue(workflowExecutor.getContext().getActions().get("hello"));
+        assertTrue(workflowExecutor.getContext().getActions().get("terminate"));
 
         Object message = workflowExecutor.triggerAction("hello", "Hello world!");
         assertEquals("Hello world!", message);
@@ -196,7 +197,7 @@ public class SCXMLWorkflowExecutorTest {
         assertTrue(workflowExecutor.isStarted());
         assertTrue(workflowExecutor.isTerminated());
         // force reset
-        workflowExecutor.setDataModel(new MockSCXMLDataModel("scxml"));
+        workflowExecutor.reset();
         workflowExecutor.start();
         message = workflowExecutor.triggerAction("hello", "Hello world!");
         assertEquals("Hello world!", message);

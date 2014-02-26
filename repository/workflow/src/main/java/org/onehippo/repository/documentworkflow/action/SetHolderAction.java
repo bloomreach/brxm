@@ -24,6 +24,7 @@ public class SetHolderAction extends AbstractDocumentTaskAction<SetHolderTask> {
 
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unused")
     public void setHolder(String holder) {
         setParameter("holderExpr", holder);
     }

@@ -25,6 +25,7 @@ public class SCXMLException extends Exception {
     /**
      * Constructs a new SCXMLException exception.
      */
+    @SuppressWarnings("unused")
     public SCXMLException() {
         super();
     }
@@ -35,6 +36,7 @@ public class SCXMLException extends Exception {
      * @param   message
      *          the exception message
      */
+    @SuppressWarnings("unused")
     public SCXMLException(String message) {
         super(message);
     }
@@ -45,6 +47,7 @@ public class SCXMLException extends Exception {
      * @param   nested
      *          the nested exception
      */
+    @SuppressWarnings("unused")
     public SCXMLException(Throwable nested) {
         super(nested);
     }

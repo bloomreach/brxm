@@ -35,6 +35,7 @@ public abstract class AbstractDocumentTaskAction<T extends AbstractDocumentTask>
     protected void initTask(T task) throws ModelException, SCXMLExpressionException {
         super.initTask(task);
 
-        task.setDocumentHandle((DocumentHandle) getDataModel());
+        task.setWorkflowContext(getSCXMLWorkflowContext().getWorkflowContext());
+        task.setDocumentHandle((DocumentHandle) getSCXMLWorkflowData());
     }
 }

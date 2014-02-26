@@ -33,6 +33,7 @@ public class ScheduleWorkflowAction extends AbstractDocumentTaskAction<ScheduleW
         return getParameter("type");
     }
 
+    @SuppressWarnings("unused")
     public void setType(String type) {
         setParameter("type", type);
     }
@@ -41,6 +42,7 @@ public class ScheduleWorkflowAction extends AbstractDocumentTaskAction<ScheduleW
         return getParameter("targetDateExpr");
     }
 
+    @SuppressWarnings("unused")
     public void setTargetDateExpr(String targetDateExpr) {
         setParameter("targetDateExpr", targetDateExpr);
     }

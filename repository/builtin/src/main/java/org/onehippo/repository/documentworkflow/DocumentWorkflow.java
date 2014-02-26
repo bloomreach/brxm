@@ -42,10 +42,6 @@ import org.onehippo.repository.api.annotation.WorkflowAction;
  */
 public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkflow, BasicReviewedActionsWorkflow, FullReviewedActionsWorkflow, UnlockWorkflow {
 
-    Map<String, Serializable> getInfo() throws WorkflowException;
-
-    Map<String, Boolean> getActions() throws WorkflowException;
-
     // Request Workflow on Document handle level
 
     /**

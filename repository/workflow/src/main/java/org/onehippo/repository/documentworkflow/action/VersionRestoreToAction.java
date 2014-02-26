@@ -34,6 +34,7 @@ public class VersionRestoreToAction extends AbstractDocumentTaskAction<VersionRe
         return getParameter("variantExpr");
     }
 
+    @SuppressWarnings("unused")
     public void setVariant(String variant) {
         setParameter("variantExpr", variant);
     }
@@ -42,6 +43,7 @@ public class VersionRestoreToAction extends AbstractDocumentTaskAction<VersionRe
         return getParameter("targetExpr");
     }
 
+    @SuppressWarnings("unused")
     public void setTarget(String targetExpr) {
         setParameter("targetExpr", targetExpr);
     }
@@ -50,6 +52,7 @@ public class VersionRestoreToAction extends AbstractDocumentTaskAction<VersionRe
         return getParameter("historicExpr");
     }
 
+    @SuppressWarnings("unused")
     public void setHistoric(String variant) {
         setParameter("historicExpr", variant);
     }

@@ -30,20 +30,22 @@ import org.slf4j.LoggerFactory;
 /**
  * SCXMLWorkflowExecutor wrapping {@link SCXMLExecutor} invocations with extra Workflow related error/exception/state handling
  */
-public class SCXMLWorkflowExecutor {
+public class SCXMLWorkflowExecutor<T extends SCXMLWorkflowContext, V extends SCXMLWorkflowData> {
 
     private static final Logger log = LoggerFactory.getLogger(SCXMLWorkflowExecutor.class);
 
     private final String scxmlId;
     private final SCXMLExecutor executor;
-    private SCXMLDataModel dm;
+    private final T context;
+    private final V data;
     private boolean started;
     private boolean terminated;
 
-    public SCXMLWorkflowExecutor(SCXMLDataModel dm) throws WorkflowException {
+    public SCXMLWorkflowExecutor(T context, V data) throws WorkflowException {
 
-        this.dm = dm;
-        this.scxmlId = dm.getScxmlId();
+        this.context = context;
+        this.data = data;
+        this.scxmlId = context.getScxmlId();
 
         SCXMLRegistry scxmlRegistry = HippoServiceRegistry.getService(SCXMLRegistry.class);
         SCXMLDefinition scxmlDef = scxmlRegistry.getSCXMLDefinition(scxmlId);
@@ -64,13 +66,12 @@ public class SCXMLWorkflowExecutor {
         return executor;
     }
 
-    public SCXMLDataModel getDataModel() {
-        return dm;
+    public T getContext() {
+        return context;
     }
 
-    public void setDataModel(SCXMLDataModel dm) throws WorkflowException {
-        this.dm = dm;
-        reset();
+    public V getData() {
+        return data;
     }
 
     public boolean isStarted() {
@@ -84,8 +85,9 @@ public class SCXMLWorkflowExecutor {
     public void reset() {
         terminated = false;
         started = false;
-        if (getDataModel().isInitialized()) {
-            getDataModel().reset();
+        context.reset();
+        if (data != null) {
+            data.reset();
         }
     }
 
@@ -135,17 +137,18 @@ public class SCXMLWorkflowExecutor {
 
     /**
      * Invokes {@link SCXMLExecutor#go()} on the wrapping SCXMLExecutor.
-     * @return {@link SCXMLDataModel#getResult()} if there's no exception.
+     * @return {@link SCXMLWorkflowContext#getResult()} if there's no exception.
      */
     public Object start() throws WorkflowException {
         if (terminated) {
             throw new WorkflowException("Workflow "+scxmlId+" already terminated");
         }
-        if (getDataModel().isInitialized()) {
-            getDataModel().reset();
+        context.initialize();
+        if (data != null) {
+            data.initialize();
         }
-        getDataModel().initialize();
-        getSCXMLExecutor().getRootContext().set(SCXMLDataModel.CONTEXT_KEY, getDataModel());
+        getSCXMLExecutor().getRootContext().set(SCXMLWorkflowContext.SCXML_CONTEXT_KEY, context);
+        getSCXMLExecutor().getRootContext().set(SCXMLWorkflowData.SCXML_CONTEXT_KEY, data);
         log.info("Starting workflow {}", scxmlId);
         try {
             executor.go();
@@ -157,40 +160,41 @@ public class SCXMLWorkflowExecutor {
             handleException(e);
         }
         // only reached when no exception
-        return getDataModel().getResult();
+        return context.getResult();
     }
 
     /**
      * Invokes {@link SCXMLExecutor#triggerEvent(TriggerEvent)} with a {@link TriggerEvent#SIGNAL_EVENT} and the provided action as event name
-     * <p>If the triggering of the action is allowed will first be validated against the {@link SCXMLDataModel#getActions()}</p>
-     * @return {@link SCXMLDataModel#getResult()} if there's no exception.
+     * <p>If the triggering of the action is allowed will first be validated against the {@link SCXMLWorkflowContext#getActions()}</p>
+     * @return {@link SCXMLWorkflowContext#getResult()} if there's no exception.
      */
     public Object triggerAction(String action) throws WorkflowException {
-        return triggerAction(action, getDataModel().getActions(), null);
+        return triggerAction(action, context.getActions(), null);
     }
 
     /**
      * Invokes {@link SCXMLExecutor#triggerEvent(TriggerEvent)} with a {@link TriggerEvent#SIGNAL_EVENT} and the provided action as event name
      * <p>If the triggering of the action is allowed will first be validated against the provided actionsMap}</p>
-     * @return {@link SCXMLDataModel#getResult()} if there's no exception.
+     * @return {@link SCXMLWorkflowContext#getResult()} if there's no exception.
      */
+    @SuppressWarnings("unused")
     public Object triggerAction(String action, Map<String, Boolean> actionsMap) throws WorkflowException {
         return triggerAction(action, actionsMap, null);
     }
 
     /**
      * Invokes {@link SCXMLExecutor#triggerEvent(TriggerEvent)} with a {@link TriggerEvent#SIGNAL_EVENT}, the provided action as event name and payload as event payload
-     * <p>If the triggering of the action is allowed will first be validated against the {@link SCXMLDataModel#getActions()}</p>
-     * @return {@link SCXMLDataModel#getResult()} if there's no exception.
+     * <p>If the triggering of the action is allowed will first be validated against the {@link SCXMLWorkflowContext#getActions()}</p>
+     * @return {@link SCXMLWorkflowContext#getResult()} if there's no exception.
      */
     public Object triggerAction(String action, Object payload) throws WorkflowException {
-        return triggerAction(action, getDataModel().getActions(), payload);
+        return triggerAction(action, context.getActions(), payload);
     }
 
     /**
      * Invokes {@link SCXMLExecutor#triggerEvent(TriggerEvent)} with a {@link TriggerEvent#SIGNAL_EVENT}, the provided action as event name and payload as event payload
      * <p>If the triggering of the action is allowed will first be validated against the provided actionsMap}</p>
-     * @return {@link SCXMLDataModel#getResult()} if there's no exception.
+     * @return {@link SCXMLWorkflowContext#getResult()} if there's no exception.
      */
     public Object triggerAction(String action, Map<String, Boolean> actionsMap, Object payload) throws WorkflowException {
         if (!started) {
@@ -212,7 +216,7 @@ public class SCXMLWorkflowExecutor {
                 log.info("Invoking workflow {} action {} with payload {}", new Object[]{scxmlId, action, payload.toString()});
             }
             // reset result
-            getDataModel().setResult(null);
+            context.setResult(null);
             executor.triggerEvent(event);
             if (executor.getCurrentStatus().isFinal()) {
                 terminated = true;
@@ -221,6 +225,6 @@ public class SCXMLWorkflowExecutor {
             handleException(e);
         }
         // only reached when no exception
-        return getDataModel().getResult();
+        return context.getResult();
     }
 }

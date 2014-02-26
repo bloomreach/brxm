@@ -32,6 +32,7 @@ public class ListVersionsVariantAction extends AbstractDocumentTaskAction<ListVe
         return getParameter("variantExpr");
     }
 
+    @SuppressWarnings("unused")
     public void setVariant(String variant) {
         setParameter("variantExpr", variant);
     }

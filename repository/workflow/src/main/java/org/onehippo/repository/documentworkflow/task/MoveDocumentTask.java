@@ -69,14 +69,14 @@ public class MoveDocumentTask extends AbstractDocumentTask {
 
         DocumentHandle dm = getDocumentHandle();
 
-        DocumentVariant document = dm.getDocumentVariantByState(HippoStdNodeType.UNPUBLISHED);
+        DocumentVariant document = dm.getDocuments().get(HippoStdNodeType.UNPUBLISHED);
 
         if (document == null) {
-            document = dm.getDocumentVariantByState(HippoStdNodeType.PUBLISHED);
+            document = dm.getDocuments().get(HippoStdNodeType.PUBLISHED);
         }
 
         if (document == null) {
-            document = dm.getDocumentVariantByState(HippoStdNodeType.DRAFT);
+            document = dm.getDocuments().get(HippoStdNodeType.DRAFT);
         }
 
         if (document == null) {
@@ -85,13 +85,13 @@ public class MoveDocumentTask extends AbstractDocumentTask {
 
         Document folder = getContainingFolder(document);
         String folderWorkflowCategory = "internal";
-        RepositoryMap config = dm.getWorkflowContext().getWorkflowConfiguration();
+        RepositoryMap config = getWorkflowContext().getWorkflowConfiguration();
 
         if (config != null && config.exists() && config.get("folder-workflow-category") instanceof String) {
             folderWorkflowCategory = (String) config.get("folder-workflow-category");
         }
 
-        Workflow workflow = dm.getWorkflowContext().getWorkflow(folderWorkflowCategory, folder);
+        Workflow workflow = getWorkflowContext().getWorkflow(folderWorkflowCategory, folder);
 
         if (workflow instanceof FolderWorkflow) {
             ((FolderWorkflow) workflow).move(document, destination, newName);

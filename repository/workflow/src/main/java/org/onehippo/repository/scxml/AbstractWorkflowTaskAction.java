@@ -63,13 +63,13 @@ public abstract class AbstractWorkflowTaskAction<T extends WorkflowTask> extends
     }
 
     /**
-     * Process the task execution result. By default, it stores the result through {@link SCXMLDataModel#setResult(Object)}
+     * Process the task execution result. By default, it stores the result through {@link SCXMLWorkflowContext#setResult(Object)}
      * if it's a non-null value.
      * This method can be overridden to do something else or more.
      */
     protected void processTaskResult(Object taskResult) {
         if (taskResult != null) {
-            getDataModel().setResult(taskResult);
+            getSCXMLWorkflowContext().setResult(taskResult);
         }
     }
 
@@ -78,5 +78,4 @@ public abstract class AbstractWorkflowTaskAction<T extends WorkflowTask> extends
      * This method is invoked to create a new workflow task.
      */
     protected abstract T createWorkflowTask();
-
 }

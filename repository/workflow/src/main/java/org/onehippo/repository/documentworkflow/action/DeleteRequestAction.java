@@ -28,6 +28,7 @@ public class DeleteRequestAction extends AbstractDocumentTaskAction<DeleteReques
 
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unused")
     public void setRequestExpr(String requestExpr) {
         setParameter("requestExpr", requestExpr);
     }

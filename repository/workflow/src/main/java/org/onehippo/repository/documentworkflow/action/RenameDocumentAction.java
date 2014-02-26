@@ -31,6 +31,7 @@ public class RenameDocumentAction extends AbstractDocumentTaskAction<RenameDocum
         return getParameter("newNameExpr");
     }
 
+    @SuppressWarnings("unused")
     public void setNewNameExpr(String newNameExpr) {
         setParameter("newNameExpr", newNameExpr);
     }

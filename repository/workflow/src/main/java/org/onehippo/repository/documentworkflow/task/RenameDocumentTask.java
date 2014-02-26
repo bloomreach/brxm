@@ -51,21 +51,21 @@ public class RenameDocumentTask extends AbstractDocumentTask {
 
         DocumentHandle dm = getDocumentHandle();
 
-        DocumentVariant document = dm.getDocumentVariantByState(HippoStdNodeType.UNPUBLISHED);
+        DocumentVariant document = dm.getDocuments().get(HippoStdNodeType.UNPUBLISHED);
 
         if (document == null) {
-            document = dm.getDocumentVariantByState(HippoStdNodeType.PUBLISHED);
+            document = dm.getDocuments().get(HippoStdNodeType.PUBLISHED);
         }
 
         if (document == null) {
-            document = dm.getDocumentVariantByState(HippoStdNodeType.DRAFT);
+            document = dm.getDocuments().get(HippoStdNodeType.DRAFT);
         }
 
         if (document == null) {
             throw new WorkflowException("No source document found.");
         }
 
-        DefaultWorkflow defaultWorkflow = (DefaultWorkflow) dm.getWorkflowContext().getWorkflow("core", document);
+        DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflowContext().getWorkflow("core", document);
         defaultWorkflow.rename(newName);
 
         return null;

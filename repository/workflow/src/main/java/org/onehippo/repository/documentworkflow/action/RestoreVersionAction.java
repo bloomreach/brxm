@@ -18,8 +18,6 @@ package org.onehippo.repository.documentworkflow.action;
 
 import java.util.Calendar;
 
-import javax.jcr.version.Version;
-
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
@@ -36,6 +34,7 @@ public class RestoreVersionAction extends AbstractDocumentTaskAction<RestoreVers
         return getParameter("variantExpr");
     }
 
+    @SuppressWarnings("unused")
     public void setVariant(String variant) {
         setParameter("variantExpr", variant);
     }
@@ -44,6 +43,7 @@ public class RestoreVersionAction extends AbstractDocumentTaskAction<RestoreVers
         return getParameter("historicExpr");
     }
 
+    @SuppressWarnings("unused")
     public void setHistoric(String variant) {
         setParameter("historicExpr", variant);
     }
