@@ -345,6 +345,7 @@ dashboard-plugins/dashboard-relateddocs-plugin/src/test/resources/project/site/p
 dashboard-plugins/dashboard-relateddocs-plugin/src/test/resources/related-doc-updater-test.xml -text
 dashboard-plugins/dashboard-relateddocs-plugin/src/test/resources/related-doc-updater.xml -text
 dashboard-plugins/dashboard-restservices-plugin/pom.xml -text
+dashboard-plugins/dashboard-restservices-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/RestMountInstruction.java -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/RestPluginConst.java -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/RestPluginResource.java -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/RestServicesPlugin.java -text
