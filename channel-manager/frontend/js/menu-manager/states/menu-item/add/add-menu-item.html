@@ -22,7 +22,8 @@
             'has-success': form.name.$dirty && form.name.$valid,
             'has-error': form.name.$dirty && form.name.$invalid
          }">
-            <div>{{error.message}}</div>
+            <div>{{feedback.clientErrorMessage}}</div>
+            <div>{{feedback.serverErrorMessage}}</div>
             <label for="hippo.channelManager.menuManager.menuItem.add.name">{{ 'LABEL' | translate }}</label>
             <input type="text" name="name" class="form-control" id="hippo.channelManager.menuManager.menuItem.add.name"
                    placeholder="{{ 'LABEL' | translate }}"

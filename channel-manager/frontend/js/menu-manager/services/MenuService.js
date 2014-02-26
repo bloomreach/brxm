@@ -126,10 +126,6 @@
                     }
                 }
 
-                function getErrorData(errorResponse) {
-                    return {translationId: errorResponse.message, interpolateParams: errorResponse.data};
-                }
-
                 menuService.getMenu = function () {
                     loadMenuOnce();
                     return menuLoaded.promise;
@@ -154,8 +150,8 @@
                             deferred.resolve();
                         })
                         .error(function (errorResponse) {
-                            deferred.reject(getErrorData(errorResponse));
-                        });
+                                deferred.reject(errorResponse);
+                            });
                     return deferred.promise;
                 };
 
@@ -166,8 +162,8 @@
                             deferred.resolve(response.data);
                         })
                         .error(function (errorResponse) {
-                            deferred.reject(getErrorData(errorResponse));
-                        });
+                                deferred.reject(errorResponse);
+                            });
                     return deferred.promise;
                 };
 
@@ -180,8 +176,8 @@
                             deferred.resolve(selectedItemId);
                         })
                         .error(function (errorResponse) {
-                            deferred.reject(getErrorData(errorResponse));
-                        });
+                                deferred.reject(errorResponse);
+                            });
                     return deferred.promise;
                 };
 
@@ -192,8 +188,8 @@
                     var deferred = $q.defer();
                     $http.post(url)
                         .error(function (errorResponse) {
-                            deferred.reject(getErrorData(errorResponse));
-                        });
+                                deferred.reject(errorResponse);
+                            });
                     return deferred.promise;
                 };
 

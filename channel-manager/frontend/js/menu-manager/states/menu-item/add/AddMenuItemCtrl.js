@@ -23,9 +23,9 @@
             '$scope',
             '$state',
             '$stateParams',
-            '$translate',
             'hippo.channelManager.menuManager.MenuService',
-            function ($scope, $state, $stateParams, $translate, MenuService) {
+            'hippo.channelManager.menuManager.FeedbackService',
+            function ($scope, $state, $stateParams, MenuService, FeedbackService) {
                 var parentItemId = $stateParams.menuItemId;
 
                 $scope.selectedMenuItem = {
@@ -34,8 +34,7 @@
                     link: ''
                 };
 
-                $scope.error = {
-                    message: null
+                $scope.feedback = {
                 };
 
                 $scope.submit = function() {
@@ -49,9 +48,8 @@
                                         }
                                 );
                             },
-                            function (errorData) {
-                                $scope.error.message = $translate(errorData.translationId, errorData.interpolateParams);
-                                console.warn($scope.error.message);
+                            function (errorResponse) {
+                                $scope.feedback = FeedbackService.getFeedback(errorResponse);
                             }
                     );
                 };

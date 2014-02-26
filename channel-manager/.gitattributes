@@ -17,6 +17,7 @@ frontend/js/menu-manager/i18n/en.json -text
 frontend/js/menu-manager/i18n/nl.json -text
 frontend/js/menu-manager/services/ConfigService.js -text
 frontend/js/menu-manager/services/ContainerService.js -text
+frontend/js/menu-manager/services/FeedbackService.js -text
 frontend/js/menu-manager/services/IFrameService.js -text
 frontend/js/menu-manager/services/MenuService.js -text
 frontend/js/menu-manager/states/loader/LoaderCtrl.js -text

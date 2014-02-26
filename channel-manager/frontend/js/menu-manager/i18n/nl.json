@@ -23,6 +23,6 @@
     "DELETE_ITEM": "Verwijder item",
 
     "ITEM_ALREADY_LOCKED": "U kunt dit menu niet bewerken omdat '{{lockedBy}}' het menu al bewerkt.",
-    "ITEM_NAME_NOT_UNIQUE": "Er bestaat al een menu-item met dit label."
-
+    "ITEM_NAME_NOT_UNIQUE": "Er bestaat al een menu-item met dit label.",
+    "TECHNICAL_ERROR": "Er is een technische fout opgetreden"
 }

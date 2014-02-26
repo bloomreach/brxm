@@ -24,10 +24,10 @@
             '$stateParams',
             '$state',
             '$log',
-            '$translate',
             'hippo.channelManager.menuManager.MenuService',
             'hippo.channelManager.menuManager.FocusService',
-            function ($scope, $stateParams, $state, $log, $translate, MenuService, FocusService) {
+            'hippo.channelManager.menuManager.FeedbackService',
+            function ($scope, $stateParams, $state, $log, MenuService, FocusService, FeedbackService) {
                 var savedMenuItem;
 
                 $scope.isSaving = {
@@ -46,8 +46,7 @@
                     isVisible: false
                 };
 
-                $scope.error = {
-                    message: null
+                $scope.feedback = {
                 };
 
                 $scope.focus = FocusService.focusElementWithId;
@@ -79,9 +78,9 @@
                             $scope.isSaving[propertyName] = false;
                             $scope.isSaved[propertyName] = true;
                         },
-                        function (errorData) {
+                        function (errorResponse) {
                             $log.info('after save - error');
-                            $scope.error.message = $translate(errorData.translationId, errorData.interpolateParams);
+                            $scope.feedback = FeedbackService.getFeedback(errorResponse);
                             $scope.isSaving[propertyName] = false;
                             $scope.isSaved[propertyName] = false;
                         }
