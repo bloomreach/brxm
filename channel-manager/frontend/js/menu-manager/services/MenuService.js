@@ -187,9 +187,12 @@
 
                     var deferred = $q.defer();
                     $http.post(url)
+                        .success(function () {
+                            deferred.resolve();
+                        })
                         .error(function (errorResponse) {
-                                deferred.reject(errorResponse);
-                            });
+                            deferred.reject(errorResponse);
+                        });
                     return deferred.promise;
                 };
 

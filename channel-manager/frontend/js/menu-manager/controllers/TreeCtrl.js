@@ -56,23 +56,15 @@
                             $scope.$parent.selectedMenuItem = itemScope;
                         });
                     },
-                    itemAdded: function (scope, modelData, destIndex) {
-                        // TODO: implement HTTP-request to add item
-                        $log.info('Tree callback: itemAdded');
-                    },
                     itemMoved: function (sourceScope, modelData, sourceIndex, destScope, destIndex) {
-                        // TODO: implement HTTP-request to move item
-                        // MenuService.moveMenuItem(node.id, node.newParentId, node.position);
-                        $log.info('Tree callback: itemMoved');
+                        var parentData = destScope.parentItemScope();
+                        var destId = (!parentData) ? ConfigService.menuId : parentData.itemData().id;
+                        MenuService.moveMenuItem(modelData.id, destId, destIndex);
                     },
                     orderChanged: function (scope, modelData, sourceIndex, destIndex) {
                         var parentData = scope.parentItemScope();
-                        if (!parentData) {
-                            MenuService.moveMenuItem(modelData.id, ConfigService.menuId, destIndex);
-                        } else {
-                            var parentModel = parentData.itemData();
-                            MenuService.moveMenuItem(modelData.id, parentModel.id, destIndex);
-                        }
+                        var destId = (!parentData) ? ConfigService.menuId : parentData.itemData().id;
+                        MenuService.moveMenuItem(modelData.id, destId, destIndex);
                     }
                 };
             }
