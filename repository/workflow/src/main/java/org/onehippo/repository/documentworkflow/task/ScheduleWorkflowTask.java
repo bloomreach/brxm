@@ -115,7 +115,7 @@ public class ScheduleWorkflowTask extends AbstractDocumentTask {
             String methodName = null;
             String subjectPath = null;
             try {
-                session = context.getSession(new SimpleCredentials("workflowuser", new char[] {}));
+                session = context.createSession(new SimpleCredentials("workflowuser", new char[] {}));
                 final String subjectId = context.getAttribute(HIPPOSCHED_SUBJECT_ID);
                 methodName = context.getAttribute(HIPPOSCHED_METHOD_NAME);
                 final Node subject = session.getNodeByIdentifier(subjectId);

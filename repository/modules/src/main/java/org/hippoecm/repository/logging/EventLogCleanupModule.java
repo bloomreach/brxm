@@ -151,7 +151,7 @@ public class EventLogCleanupModule extends AbstractReconfigurableDaemonModule {
         @Override
         public void execute(final RepositoryJobExecutionContext context) throws RepositoryException {
 
-            Session session = context.getSession(new SimpleCredentials("system", new char[] {}));
+            Session session = context.createSession(new SimpleCredentials("system", new char[] {}));
 
             try {
                 log.info("Running event log cleanup job");

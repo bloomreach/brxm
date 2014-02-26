@@ -211,11 +211,12 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
             final String usersPath = context.getAttribute(USERS_PATH_ATTRIBUTE);
             final String groupsPath = context.getAttribute(GROUPS_PATH_ATTRIBUTE);
 
+            Session syncSession = null;
             try {
 
                 log.info("Start ldap sync for: {}", providerId);
 
-                final Session syncSession = context.getSession(new SimpleCredentials("system", new char[] {}));
+                syncSession = context.createSession(new SimpleCredentials("system", new char[] {}));
                 final Node providerNode = syncSession.getRootNode().getNode(providerPath);
                 final LdapContextFactory lcf = LdapUtils.createContextFactory(providerNode);
 
@@ -234,11 +235,14 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
                 }
 
                 syncSession.save();
-                syncSession.logout();
 
                 log.info("Ldap users and groups synced for: {}", providerId);
             } catch (RepositoryException e) {
                 log.error("Unable to sync users and groups for provider: " + providerId, e);
+            } finally {
+                if (syncSession != null) {
+                    syncSession.logout();
+                }
             }
         }
     }
