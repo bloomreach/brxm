@@ -124,9 +124,15 @@ form h4.page-header {
     background: white;
     position: absolute;
     z-index: 999999;
-    opacity: 0;
     width: 840px;
     height: 485px;
+
+    /* opacity (via http://css-tricks.com/snippets/css/cross-browser-opacity/) */
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)"; /* IE8 */
+    filter: alpha(opacity=0); /* IE 5-7 */
+    -moz-opacity: 0; /* Netscape */
+    -khtml-opacity: 0; /* Safari 1.x */
+    opacity: 0; /* Good browsers */
 }
 
 .feedback {
