@@ -24,10 +24,14 @@
       <xs:enumeration value="copy"/>
     </xs:restriction>
   </xs:simpleType>
+  <xs:simpleType name="executeActionType">
+
+  </xs:simpleType>
 
   <xs:complexType name="instructionsSetType" mixed="true">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element type="fileType" name="file" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element type="executeType" name="execute" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element type="xmlType" name="xml" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element type="cndType" name="cnd" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element type="folderType" name="folder" minOccurs="0" maxOccurs="unbounded"/>
@@ -51,6 +55,10 @@
     <xs:attribute use="required" name="target" type="xs:string"/>
     <xs:attribute use="optional" name="overwrite" type="xs:boolean" default="false"/>
     <xs:attribute use="optional" name="message" type="xs:string" default="false"/>
+  </xs:complexType>
+  <!-- EXECUTE  -->
+  <xs:complexType name="executeType" mixed="true">
+    <xs:attribute use="required" name="class" type="xs:string"/>
   </xs:complexType>
 
   <xs:complexType name="xmlType" mixed="true">

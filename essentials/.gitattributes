@@ -106,6 +106,7 @@ dashboard-plugins/beanwriter-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/blog/BlogPlugin.java -text
 dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/blog/BlogPluginResource.java -text
 dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/blog/BlogPowerpack.java -text
+dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/blog/FacetInstruction.java -text
 dashboard-plugins/blog-plugin/src/main/resources/META-INF/instructions.xml -text
 dashboard-plugins/blog-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/components-plugin/components-gui/pom.xml -text
@@ -476,6 +477,7 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/e
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/listeners/MemoryPluginEventListener.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/listeners/ValidationEventListener.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/CndInstruction.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/ExecuteInstruction.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/FileInstruction.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/NodeFolderInstruction.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/PluginInstruction.java -text
@@ -577,6 +579,7 @@ plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/c
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/event/listeners/MemoryPluginEventListenerTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/event/listeners/ValidationEventListenerTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/CndInstructionTest.java -text
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/DummyInstruction.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/FileInstructionTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/NodeFolderInstructionTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/PluginInstructionExecutorTest.java -text

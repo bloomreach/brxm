@@ -18,5 +18,11 @@
   <!--
     FREEMARKER TEMPLATES
   -->
+  <!--
+    FACET
+  -->
+  <instructionSet>
+    <execute class="org.onehippo.cms7.essentials.dashboard.blog.FacetInstruction"/>
+  </instructionSet>
 
 </instructions>

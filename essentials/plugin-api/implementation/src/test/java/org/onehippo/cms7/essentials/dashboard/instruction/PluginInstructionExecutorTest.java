@@ -64,12 +64,13 @@ public class PluginInstructionExecutorTest extends BaseRepositoryTest {
 
         final Instructions instructions = instructionParser.parseInstructions(content);
         final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
+        assertEquals(3, instructionSets.size());
         for (InstructionSet instructionSet : instructionSets) {
             pluginInstructionExecutor.execute(instructionSet, getContext());
         }
 
-        // we had 6 executed, see /instructions.xml, 2 file and 2 XML instructions and 1 folder + default group (folder)
-        assertEquals(6, listener.getNrInstructions());
+        // we had 7 executed, see /instructions.xml, 2 file and 2 XML instructions and 1 folder + default group (folder)  + dummy
+        assertEquals(7, listener.getNrInstructions());
 
     }
 
@@ -104,8 +105,8 @@ public class PluginInstructionExecutorTest extends BaseRepositoryTest {
         final String folder = formatter.format(today);
         final String folderPath = "/foo/bar/foobar2/" + folder;
         assertTrue(session.nodeExists(folderPath));
-        // default group has only 1 instruction
-        assertEquals(1, listener.getNrInstructions());
+        // default group has only 2 instructions , execute and folder one.
+        assertEquals(2, listener.getNrInstructions());
 
 
     }
