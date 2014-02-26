@@ -69,6 +69,8 @@
 [hst:component] > hst:abstractcomponent orderable
 - hst:referencecomponent (string)
 - hst:lastmodified (date)
+- hst:prototype (boolean)
+- hst:iconpath (string)
 + * (hst:containercomponentreference)
 + * (hst:abstractcomponent)
 

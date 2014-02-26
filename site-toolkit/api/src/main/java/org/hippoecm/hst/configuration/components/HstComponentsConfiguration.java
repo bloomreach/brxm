@@ -23,14 +23,15 @@ import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.component.HstComponent;
 
 /**
- * A <code>HstComponentConfigurations</code> contains a map of (root) <code>HstComponentConfiguration</code> objects which themselves might 
- * contain additional <code>HstComponentConfiguration</code> children and so on.
- * Each root <code>HstComponentConfiguration</code> is identified by a unique id within the <code>HstComponentConfiguration<'/code>s object. 
- *
+ * A <code>HstComponentConfigurations</code> contains a map of (root) <code>HstComponentConfiguration</code> objects
+ * which themselves might contain additional <code>HstComponentConfiguration</code> children and so on. Each root
+ * <code>HstComponentConfiguration</code> is identified by a unique id within the <code>HstComponentConfiguration<'/code>s
+ * object.
  * <p/>
- * NOTE: As {@link HstComponent} instances can access <code>HstComponentConfigurations</code> instances but should not be able to modify them, 
- * implementations must make sure that through the api a <code>HstComponentConfigurations</code> instance cannot be changed. Returned List and Map
- * should be therefor unmodifiable.  
+ * <p/>
+ * NOTE: As {@link HstComponent} instances can access <code>HstComponentConfigurations</code> instances but should not
+ * be able to modify them, implementations must make sure that through the api a <code>HstComponentConfigurations</code>
+ * instance cannot be changed. Returned List and Map should be therefor unmodifiable.
  */
 public interface HstComponentsConfiguration {
 
@@ -49,33 +50,48 @@ public interface HstComponentsConfiguration {
         public List<HstComponentConfiguration> getAvailableContainerItems() {
             return null;
         }
+
+        @Override
+        public Map<String, HstComponentConfiguration> getPages() {
+            return Collections.emptyMap();
+        }
     };
 
     /**
-     * Return the map of all root <code>HstComponentConfiguration</code>'s where the keys are the the <code>HstComponentConfiguration</code>'s 
-     * ({@link HstComponentConfiguration#getId()}).
-     * Implementations should return an unmodifiable map, for example {@link java.util.Collections$UnmodifiableMap} to avoid 
-     * client code changing configuration
-     * @return the map of all root <code>HstComponentConfiguration</code>'s and an empty map 
-     * if not root <code>HstComponentConfiguration</code>'s are present. The keys in the map are the id's of the <code>HstComponentConfiguration</code>'s 
-     * ({@link HstComponentConfiguration#getId()})
+     * Return the map of all root <code>HstComponentConfiguration</code>'s where the keys are the the
+     * <code>HstComponentConfiguration</code>'s ({@link HstComponentConfiguration#getId()}). Implementations should
+     * return an unmodifiable map to avoid client code changing configuration
+     *
+     * @return the map of all root <code>HstComponentConfiguration</code>'s and an empty map if not root
+     *         <code>HstComponentConfiguration</code>'s are present. The keys in the map are the id's of the
+     *         <code>HstComponentConfiguration</code>'s ({@link HstComponentConfiguration#getId()})
      */
     Map<String, HstComponentConfiguration> getComponentConfigurations();
 
     /**
-     * Returns the root <code>HstComponentConfiguration</code> whose {@link HstComponentConfiguration#getId()} equals this <code>id</code>.
+     * Returns the root <code>HstComponentConfiguration</code> whose {@link HstComponentConfiguration#getId()} equals
+     * this <code>id</code>.
+     *
      * @param id the id of the root <code>HstComponentConfiguration</code>
-     * @return a root <code>HstComponentConfiguration</code> whose {@link HstComponentConfiguration#getId()} equals this <code>id</code>. 
-     * When there is no <code>HstComponentConfiguration</code> with this <code>id</code>, <code>null</code>  is returned.
+     * @return a root <code>HstComponentConfiguration</code> whose {@link HstComponentConfiguration#getId()} equals this
+     *         <code>id</code>. When there is no <code>HstComponentConfiguration</code> with this <code>id</code>,
+     *         <code>null</code>  is returned.
      */
     HstComponentConfiguration getComponentConfiguration(String id);
-    
+
     /**
-     * Returns all the available {@link HstComponentConfiguration}'s belonging to the {@link HstSite} 
-     * 
+     * Returns all the available {@link HstComponentConfiguration}'s belonging to the {@link HstSite}
+     * <p/>
      * Implementations should return an unmodifiable List
+     *
      * @return the {@link List} of all available container items
      */
     List<HstComponentConfiguration> getAvailableContainerItems();
 
+    /**
+     * @return the map of {@link HstComponentConfiguration}s directly configured below 'hst:pages' with key equals to
+     *         {@link org.hippoecm.hst.configuration.components.HstComponentConfiguration#getId()} . Unmodifiable
+     *         instance will be returned
+     */
+    Map<String, HstComponentConfiguration> getPages();
 }

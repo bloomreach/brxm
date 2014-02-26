@@ -88,6 +88,7 @@ public interface HstNodeTypes {
     static final String COMPONENT_PROPERTY_ICON_PATH = "hst:iconpath";
     static final String COMPONENT_PROPERTY_LABEL = "hst:label";
     static final String COMPONENT_PROPERTY_COMPONENT_FILTER_TAG = "hst:componentfiltertag";
+    static final String COMPONENT_PROPERTY_PROTOTYPE = "hst:prototype";
 
 
     static final String TEMPLATE_PROPERTY_RENDERPATH =  "hst:renderpath";

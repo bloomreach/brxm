@@ -16,31 +16,21 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryResult;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResourceAccessor;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
-import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.repository.util.NodeIterable;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -48,34 +38,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class MountResourceTest extends AbstractPageComposerTest {
+public class MountResourceTest extends AbstractMountResourceTest {
 
     @Test
     public void testEditAndPublishMount() throws Exception {
 
-        final Node unitTestConfigNode = session.getNode("/hst:hst/hst:configurations/unittestproject");
-        final Node workspace = unitTestConfigNode.addNode("hst:workspace", "hst:workspace");
-        final Node containers = workspace.addNode("hst:containers", "hst:containercomponentfolder");
-
-        final Node containerNode = containers.addNode("testcontainer", "hst:containercomponent");
-        containerNode.setProperty("hst:xtype", "HST.vBox");
-
-        // use the 'testcontainer' component from workspace otherwise it won't be part of the hst model, hence, no changes
-        // in it will be 'seen'
-        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestcommon/hst:pages",
-                                "/hst:hst/hst:configurations/unittestproject/hst:pages");
-
-        final Node container = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:pages/homepage")
-                .addNode("container", "hst:containercomponentreference");
-        container.setProperty("hst:referencecomponent", "testcontainer");
-
-        final Node catalog = unitTestConfigNode.addNode("hst:catalog", "hst:catalog");
-        final Node catalogPackage = catalog.addNode("testpackage", "hst:containeritempackage");
-        final Node catalogItem = catalogPackage.addNode("testitem", "hst:containeritemcomponent");
-        catalogItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE, "thankyou");
-        catalogItem.setProperty("hst:xtype", "HST.Item");
-
-        final String catalogItemUUID = catalogItem.getIdentifier();
+        movePagesFromCommonToUnitTestProject();
+        createWorkspaceWithTestContainer();
+        addReferencedContainerToHomePage();
+        String catalogItemUUID = addCatalogItem();
         session.save();
         // give time for jcr events to evict model
         Thread.sleep(200);
@@ -192,32 +163,12 @@ public class MountResourceTest extends AbstractPageComposerTest {
     @Test
     public void testEditAndPublishProjectThatStartsWithNumber() throws Exception {
 
+        movePagesFromCommonToUnitTestProject();
+        createWorkspaceWithTestContainer();
+        addReferencedContainerToHomePage();
+        String catalogItemUUID = addCatalogItem();
+
         session.move("/hst:hst/hst:configurations/unittestproject", "/hst:hst/hst:configurations/7_8");
-        final Node unitTestConfigNode = session.getNode("/hst:hst/hst:configurations/7_8");
-
-        final Node workspace = unitTestConfigNode.addNode("hst:workspace", "hst:workspace");
-        final Node containers = workspace.addNode("hst:containers", "hst:containercomponentfolder");
-
-        final Node containerNode = containers.addNode("testcontainer", "hst:containercomponent");
-        containerNode.setProperty("hst:xtype", "HST.vBox");
-
-        // use the 'testcontainer' component from workspace otherwise it won't be part of the hst model, hence, no changes
-        // in it will be 'seen'
-        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestcommon/hst:pages",
-                "/hst:hst/hst:configurations/7_8/hst:pages");
-
-        final Node container = session.getNode("/hst:hst/hst:configurations/7_8/hst:pages/homepage")
-                .addNode("container", "hst:containercomponentreference");
-        container.setProperty("hst:referencecomponent", "testcontainer");
-
-
-        final Node catalog = unitTestConfigNode.addNode("hst:catalog", "hst:catalog");
-        final Node catalogPackage = catalog.addNode("testpackage", "hst:containeritempackage");
-        final Node catalogItem = catalogPackage.addNode("testitem", "hst:containeritemcomponent");
-        catalogItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE, "thankyou");
-        catalogItem.setProperty("hst:xtype", "HST.Item");
-        final String catalogItemUUID = catalogItem.getIdentifier();
-
         // change default unittestproject site to map to /hst:hst/hst:configurations/7_8
         Node testSideNode = session.getNode("/hst:hst/hst:sites/unittestproject");
         testSideNode.setProperty("hst:configurationpath", "/hst:hst/hst:configurations/7_8");
@@ -307,22 +258,6 @@ public class MountResourceTest extends AbstractPageComposerTest {
         usersWithLockedContainers = mountResource.getPageComposerContextService().getEditingPreviewChannel().getChangedBySet();
         assertTrue(usersWithLockedContainers.isEmpty());
 
-    }
-
-    public static MountResource createResource() {
-        MountResource resource = new MountResource();
-        final PageComposerContextService pageComposerContextService = new PageComposerContextService();
-        resource.setPageComposerContextService(pageComposerContextService);
-        final SiteMapHelper siteMapHelper = new SiteMapHelper();
-        siteMapHelper.setPageComposerContextService(pageComposerContextService);
-        resource.setSiteMapHelper(siteMapHelper);
-        final PagesHelper pagesHelper = new PagesHelper();
-        pagesHelper.setPageComposerContextService(pageComposerContextService);
-        resource.setPagesHelper(pagesHelper);
-        final SiteMenuHelper siteMenuHelper = new SiteMenuHelper();
-        siteMenuHelper.setPageComposerContextService(pageComposerContextService);
-        resource.setSiteMenuHelper(siteMenuHelper);
-        return resource;
     }
 
 }

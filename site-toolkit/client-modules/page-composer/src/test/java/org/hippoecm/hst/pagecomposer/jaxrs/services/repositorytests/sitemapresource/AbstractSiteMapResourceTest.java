@@ -34,6 +34,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.AbstractMountResourceTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.MountResourceTest;
 import org.hippoecm.hst.site.HstServices;
 import org.junit.After;
@@ -51,7 +52,7 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
     public void setUp() throws Exception {
         super.setUp();
 
-        mountResource = MountResourceTest.createResource();
+        mountResource = AbstractMountResourceTest.createResource();
         // create users
         final Node users = session.getNode("/hippo:configuration/hippo:users");
 

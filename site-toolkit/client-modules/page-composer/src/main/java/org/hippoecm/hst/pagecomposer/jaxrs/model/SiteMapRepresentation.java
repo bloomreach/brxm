@@ -17,6 +17,8 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -38,13 +40,17 @@ public class SiteMapRepresentation {
         }
         id = ((CanonicalInfo) siteMap).getCanonicalIdentifier();
 
-        Map<String, SiteMapItemRepresentation> orderedChildren = new TreeMap<>();
         for (HstSiteMapItem childItem : siteMap.getSiteMapItems()) {
             SiteMapItemRepresentation child = new SiteMapItemRepresentation();
             child.represent(childItem);
-            orderedChildren.put(child.getName(), child);
+            children.add(child);
         }
-        children.addAll(orderedChildren.values());
+        Collections.sort(children, new Comparator<SiteMapItemRepresentation>() {
+            @Override
+            public int compare(final SiteMapItemRepresentation o1, final SiteMapItemRepresentation o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
 
         return this;
     }

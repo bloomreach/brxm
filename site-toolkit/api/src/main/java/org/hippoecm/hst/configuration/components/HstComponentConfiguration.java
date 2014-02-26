@@ -290,6 +290,12 @@ public interface HstComponentConfiguration extends HstComponentInfo, Configurati
     boolean isInherited();
 
     /**
+     * @return <code>true</code> when this {@link HstComponentConfiguration} can be used as a prototype to create other
+     * {@link HstComponentConfiguration}s with
+     */
+    boolean isPrototype();
+
+    /**
      * @return the label if present and <code>null</code> otherwise
      */
     String getLabel();

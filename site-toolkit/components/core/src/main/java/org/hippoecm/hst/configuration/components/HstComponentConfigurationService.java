@@ -101,6 +101,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
      * <code>true</code> when the backing {@link HstNode} of this {@link HstComponentConfiguration} is inherited
      */
     private boolean inherited;
+
+    /**
+     * whether this {@link HstComponentConfigurationService} can serve as prototype.
+     */
+    private boolean prototype;
     
     /**
      * <code>true</code> when this {@link HstComponentConfiguration} is configured to render standalone in case of {@link HstURL#COMPONENT_RENDERING_TYPE}
@@ -205,6 +210,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         this.inherited =  inherited;
         this.parent = parent;
 
+        prototype = node.getValueProvider().getBoolean(HstNodeTypes.COMPONENT_PROPERTY_PROTOTYPE).booleanValue();
 
         if (explicitName == null) {
             this.name = StringPool.get(node.getValueProvider().getName());
@@ -577,10 +583,15 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     public String getCanonicalIdentifier() {
         return canonicalIdentifier;
     }
-     
+
     @Override
     public boolean isInherited() {
         return inherited;
+    }
+
+    @Override
+    public boolean isPrototype() {
+        return prototype;
     }
 
     @Override
@@ -776,6 +787,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 }
 
                 // inherited variable flag not needed to take from the referencedComp so no check here for that variable!
+                // prototype variable flag not needed to take from the referencedComp so no check here for that variable!
                 
                 if (!referencedComp.parameters.isEmpty()) {
                     // as we already have parameters, add only the once we do not yet have

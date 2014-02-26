@@ -29,13 +29,11 @@ import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -51,6 +49,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.DocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtIdsRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.PageModelRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.PagesRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ToolkitRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.UserRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
@@ -105,20 +104,25 @@ public class MountResource extends AbstractConfigResource {
             return error("Failed to retrieve page model: " + e.toString());
         }
     }
-    
+
     @GET
     @Path("/toolkit/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getToolkitRepresentation() {
         final Mount editingMount = getPageComposerContextService().getEditingMount();
-        if (editingMount == null) {
-            log.error("Could not get the editing site to create the toolkit representation.");
-            return error("Could not get the editing site to create the toolkit representation.");
-        }
-
         ToolkitRepresentation toolkitRepresentation = new ToolkitRepresentation().represent(editingMount);
         log.info("Toolkit items loaded successfully");
         return ok("Toolkit items loaded successfully", toolkitRepresentation.getComponents().toArray());
+    }
+
+    @GET
+    @Path("/pages/prototypes")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getPrototypePages() {
+        final HstSite editingPreviewSite = getPageComposerContextService().getEditingPreviewSite();
+        PagesRepresentation prototypePagesRepresentation = new PagesRepresentation().represent(editingPreviewSite, true, false);
+        log.info("Prototype pages loaded successfully");
+        return ok("Prototype pages loaded successfully", prototypePagesRepresentation);
     }
 
     @GET
@@ -127,7 +131,6 @@ public class MountResource extends AbstractConfigResource {
     public Response getUsersWithChanges() {
         final Set<String> changedBySet = getPageComposerContextService().getEditingPreviewChannel().getChangedBySet();
         List<UserRepresentation> usersWithChanges = new ArrayList<>(changedBySet.size());
-        System.out.println(changedBySet.toString());
         final String msg = "Found " + changedBySet.size() + " users with changes : ";
         log.info(msg);
         for (String userId : changedBySet) {
@@ -287,10 +290,6 @@ public class MountResource extends AbstractConfigResource {
         final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
         try {
             final Mount editingMount = getPageComposerContextService().getEditingMount();
-            if (editingMount == null) {
-                log.warn("Could not get the editing mount to get the content path for creating the document.");
-                return error("Could not get the editing mount to get the content path for creating the document.");
-            }
             String canonicalContentPath = editingMount.getContentPath();
             WorkflowPersistenceManagerImpl workflowPersistenceManager = new WorkflowPersistenceManagerImpl(requestContext.getSession(),
                     getObjectConverter(requestContext));

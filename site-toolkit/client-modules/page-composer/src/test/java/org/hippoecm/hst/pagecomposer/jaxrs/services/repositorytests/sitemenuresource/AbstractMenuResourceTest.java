@@ -39,6 +39,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMenuResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.AbstractMountResourceTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.MountResourceTest;
 import org.hippoecm.hst.site.HstServices;
 import org.junit.After;
@@ -58,7 +59,7 @@ public abstract class AbstractMenuResourceTest extends AbstractPageComposerTest 
     public void setUp() throws Exception {
         super.setUp();
 
-        mountResource = MountResourceTest.createResource();
+        mountResource = AbstractMountResourceTest.createResource();
         // create users
         final Node users = session.getNode("/hippo:configuration/hippo:users");
 
