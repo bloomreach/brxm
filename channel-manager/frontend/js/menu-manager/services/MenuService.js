@@ -24,7 +24,7 @@
             '$http',
             '$q',
             '$log',
-            function (ConfigService, $http, $q, $log) {
+            function (ConfigService, $http, $q) {
                 var menuService = {},
                     menuData = {
                         children: null

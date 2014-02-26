@@ -71,18 +71,16 @@
                     delete itemToSave.title;
                     delete itemToSave.items;
 
-                    console.log(itemToSave);
-
                     $scope.isSaving[propertyName] = true;
 
-                    console.log('menu service save');
+                    $log.info('menu service save');
                     MenuService.saveMenuItem(itemToSave).then(function () {
-                            console.log('after save - success');
+                            $log.info('after save - success');
                             $scope.isSaving[propertyName] = false;
                             $scope.isSaved[propertyName] = true;
                         },
                         function (errorData) {
-                            console.log('after save - error');
+                            $log.info('after save - error');
                             $scope.error.message = $translate(errorData.translationId, errorData.interpolateParams);
                             $scope.isSaving[propertyName] = false;
                             $scope.isSaved[propertyName] = false;
@@ -106,7 +104,7 @@
 
                     // remove menu item from the DOM
                     var parentScope = $scope.findParent($scope.selectedMenuItem.id);
-                    var index = parentScope.items.indexOf($scope.selectedMenuItem);
+                    var index = $.inArray($scope.selectedMenuItem, parentScope.items);
                     if (index > -1) {
                         parentScope.items.splice(index, 1)[0];
                     }

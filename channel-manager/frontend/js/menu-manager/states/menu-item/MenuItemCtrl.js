@@ -43,7 +43,7 @@
         var result;
 
         if (sourceItem.items) {
-            sourceItem.items.forEach(function (item) {
+            angular.forEach(sourceItem.items, function (item) {
                 if (item.id === itemId) {
                     result = sourceItem;
                 }
@@ -51,7 +51,7 @@
         }
 
         if (!result && sourceItem.items) {
-            sourceItem.items.forEach(function (item) {
+            angular.forEach(sourceItem.items, function (item) {
                 var newRes = findParentByItemId(item, itemId);
                 if (newRes) {
                     result = item;
@@ -66,7 +66,7 @@
         var result;
 
         if (sourceItem) {
-            sourceItem.forEach(function (item) {
+            angular.forEach(sourceItem, function (item) {
                 if (item.id === itemId) {
                     result = item;
                 }
@@ -74,7 +74,7 @@
         }
 
         if (!result) {
-            sourceItem.forEach(function (item) {
+            angular.forEach(sourceItem, function (item) {
                 var newRes = findScopeByItemId(item.items, itemId);
 
                 if (newRes) {
@@ -103,7 +103,7 @@
                 });
 
                 // if we redirect to a url without DOM-interaction, we need to set the selected menu item manually
-                $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
+                $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState) {
                     if (fromState.name == 'menu-item.edit' && fromState.name == toState.name) {
                         if (toParams.menuItemId != $scope.selectedMenuItem.id) {
                             $scope.selectedMenuItem = findScopeByItemId($scope.list, toParams.menuItemId);
