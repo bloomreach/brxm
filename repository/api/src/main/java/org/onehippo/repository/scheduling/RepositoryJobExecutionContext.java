@@ -44,17 +44,37 @@ public class RepositoryJobExecutionContext {
     /**
      * Get a session with the given credentials.
      * Caller must log out the returned session after use.
+     * @deprecated  use {@link #createSession(javax.jcr.Credentials)} instead
      */
+    @Deprecated
     public Session getSession(Credentials credentials) throws LoginException, RepositoryException {
         return systemSession.impersonate(credentials);
+    }
+
+    /**
+     * Create a session with the given credentials.
+     * Caller must log out the returned session after use.
+     */
+    public Session createSession(Credentials credentials) throws LoginException, RepositoryException {
+        return systemSession.impersonate(credentials);
+    }
+
+    /**
+     * Create a system session.
+     * Caller must log out the returned session after use.
+     * @deprecated use {@link #createSystemSession()} instead
+     */
+    @Deprecated
+    public Session getSystemSession() throws LoginException, RepositoryException {
+        return getSession(SYSTEM_CREDENTIALS);
     }
 
     /**
      * Get a system session.
      * Caller must log out the returned session after use.
      */
-    public Session getSystemSession() throws LoginException, RepositoryException {
-        return getSession(SYSTEM_CREDENTIALS);
+    public Session createSystemSession() throws LoginException, RepositoryException {
+        return createSession(SYSTEM_CREDENTIALS);
     }
 
     /**
