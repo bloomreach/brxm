@@ -10,8 +10,9 @@
         "_": true,
         "angular": true,
         "console": true,
-        "jQuery": true,
+        "indexOf": true,
         "IE": true,
+        "jQuery": true,
         "module": true,
         "require": true,
 
