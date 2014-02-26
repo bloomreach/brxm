@@ -21,13 +21,7 @@ import java.util.Map;
  * This interface is not yet part of the public API.
  */
 public interface RepositoryMap extends Map {
-    /**
-     * 
-     */
 
-    /**
-     * 
-     * @return
-     */
     public boolean exists();
+
 }

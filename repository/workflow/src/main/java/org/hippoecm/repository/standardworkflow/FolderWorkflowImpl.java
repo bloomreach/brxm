@@ -406,7 +406,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     public void archive(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         String atticPath = null;
         RepositoryMap config = workflowContext.getWorkflowConfiguration();
-        if(config.exists() && config.containsKey("attic") && config.get("attic") instanceof String) {
+        if(config.exists() && config.get("attic") instanceof String) {
             atticPath = (String) config.get("attic");
         }
         if (atticPath == null) {
@@ -464,16 +464,16 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         String elt1 = handleId.substring(0,1);
         String elt2 = handleId.substring(1,2);
         String elt3 = handleId.substring(2,3);
+        String elt4 = handleId.substring(3,4);
         Node parent = rootSession.getNode(atticPath);
-        for (String pathElement : new String[] { elt1, elt2, elt3 }) {
+        for (String pathElement : new String[] { elt1, elt2, elt3, elt4 }) {
             if(!parent.hasNode(pathElement)) {
                 parent = parent.addNode(pathElement, JcrConstants.NT_UNSTRUCTURED);
             } else {
                 parent = parent.getNode(pathElement);
             }
         }
-        rootSession.save();
-        return elt1 + "/" + elt2 + "/" + elt3 + "/" + handle.getName();
+        return elt1 + "/" + elt2 + "/" + elt3 + "/" + elt4 + "/" + handle.getName();
     }
 
     public void reorder(List<String> newOrder) throws WorkflowException, MappingException, RepositoryException, RemoteException {
@@ -642,7 +642,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
 
     public Document duplicate(Document offspring, Map<String,String> arguments)
         throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        Node source = rootSession.getNodeByUUID(offspring.getIdentity());
+        Node source = rootSession.getNodeByIdentifier(offspring.getIdentity());
         String targetName = arguments.get("name");
         return duplicate(source, targetName);
     }
@@ -731,8 +731,8 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         }
         String path = subject.getPath().substring(1);
         Node folder = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
-        Node destination = rootSession.getNodeByUUID(targetFolder.getIdentity());
-        Node source = rootSession.getNodeByUUID(offspring.getIdentity());
+        Node destination = rootSession.getNodeByIdentifier(targetFolder.getIdentity());
+        Node source = rootSession.getNodeByIdentifier(offspring.getIdentity());
         if (folder.isSame(destination)) {
             //throw new WorkflowException("Cannot copy document to same folder, use duplicate instead");
             return duplicate(source, targetName);
@@ -752,7 +752,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         if (folder.hasNode(targetName)) {
             throw new WorkflowException("Cannot copy document when document with same name exists");
         }
-        Node source = rootSession.getNodeByUUID(offspring.getIdentity());
+        Node source = rootSession.getNodeByIdentifier(offspring.getIdentity());
         if (!folder.isCheckedOut()) {
             folder.checkout();
         }
@@ -805,11 +805,11 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         throws WorkflowException, MappingException, RepositoryException, RemoteException {
         String path = subject.getPath().substring(1);
         Node folder = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
-        Node destination = rootSession.getNodeByUUID(targetFolder.getIdentity());
+        Node destination = rootSession.getNodeByIdentifier(targetFolder.getIdentity());
         if (folder.isSame(destination)) {
             throw new WorkflowException("Cannot move document to same folder");
         }
-        Node source = rootSession.getNodeByUUID(offspring.getIdentity());
+        Node source = rootSession.getNodeByIdentifier(offspring.getIdentity());
         if (!folder.isCheckedOut()) {
             folder.checkout();
         }

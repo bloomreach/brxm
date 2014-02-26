@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,12 @@
 package org.hippoecm.repository;
 
 import java.rmi.RemoteException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.jcr.AccessDeniedException;
@@ -53,6 +58,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeNotNull;
+import static org.junit.Assume.assumeTrue;
 
 public class FolderWorkflowTest extends RepositoryTestCase {
 
@@ -63,22 +70,21 @@ public class FolderWorkflowTest extends RepositoryTestCase {
     WorkflowManager manager;
     String[] content = {
         "/test/f", "hippostd:folder",
-            "jcr:mixinTypes", "mix:versionable",
+        "/test/attic", "hippostd:folder",
         "/test/aap", "hippostd:folder",
-            "jcr:mixinTypes", "mix:versionable",
             "/test/aap/noot", "nt:unstructured",
                 "/test/aap/noot/mies", "hippostd:folder",
-                    "jcr:mixinTypes", "mix:versionable",
                     "/test/aap/noot/mies/vuur", "nt:unstructured",
                         "/test/aap/noot/mies/vuur/jot", "nt:unstructured",
                             "/test/aap/noot/mies/vuur/jot/gijs", "hippo:coredocument",
-                                "jcr:mixinTypes", "mix:versionable",
                                 "/test/aap/noot/mies/vuur/jot/gijs/duif", "hippo:document",
                                     "jcr:mixinTypes", "mix:versionable"
     };
 
     Value[] embeddedModifyOnCopy;
     Value[] internalModifyOnCopy;
+    Value embeddedAttic;
+    Value internalAttic;
 
     @Before
     public void setUp() throws Exception {
@@ -98,12 +104,20 @@ public class FolderWorkflowTest extends RepositoryTestCase {
             embeddedModifyOnCopy = folderWorkflowConfig.getProperty("modify-on-copy").getValues();
         }
         folderWorkflowConfig.setProperty("modify-on-copy", new String[] { "./hippostd:content", CONTENT_ON_COPY });
+        if (folderWorkflowConfig.hasProperty("attic")) {
+            embeddedAttic = folderWorkflowConfig.getProperty("attic").getValue();
+        }
+        folderWorkflowConfig.setProperty("attic", "/test/attic");
 
         folderWorkflowConfig = session.getNode("/hippo:configuration/hippo:workflows/internal/folder/hipposys:config");
         if (folderWorkflowConfig.hasProperty("modify-on-copy")) {
             internalModifyOnCopy = folderWorkflowConfig.getProperty("modify-on-copy").getValues();
         }
         folderWorkflowConfig.setProperty("modify-on-copy", new String[] { "./hippostd:content", CONTENT_ON_COPY });
+        if (folderWorkflowConfig.hasProperty("attic")) {
+            internalAttic = folderWorkflowConfig.getProperty("attic").getValue();
+        }
+        folderWorkflowConfig.setProperty("attic", "/test/attic");
 
         session.save();
     }
@@ -113,8 +127,10 @@ public class FolderWorkflowTest extends RepositoryTestCase {
         Node folderWorkflowConfig = session.getNode(
                 "/hippo:configuration/hippo:workflows/embedded/folder-extended/hipposys:config");
         folderWorkflowConfig.setProperty("modify-on-copy", embeddedModifyOnCopy);
+        folderWorkflowConfig.setProperty("attic", embeddedAttic);
         folderWorkflowConfig = session.getNode("/hippo:configuration/hippo:workflows/internal/folder/hipposys:config");
         folderWorkflowConfig.setProperty("modify-on-copy", internalModifyOnCopy);
+        folderWorkflowConfig.setProperty("attic", internalAttic);
         session.save();
 
         super.tearDown();
@@ -123,8 +139,7 @@ public class FolderWorkflowTest extends RepositoryTestCase {
     @Test
     public void testDeleteFolderWithHandlesFails() throws Exception {
         final Node g = node.addNode("g", "hippostd:folder");
-        g.addMixin("mix:versionable");
-        g.addNode("h", "hippo:handle").addMixin("hippo:hardhandle");
+        g.addNode("h", "hippo:handle");
         session.save();
 
         Workflow workflow = manager.getWorkflow("internal", node);
@@ -142,7 +157,6 @@ public class FolderWorkflowTest extends RepositoryTestCase {
     @Test
     public void testDeleteFolderWithTranslationsButNoHandlesPass() throws Exception {
         final Node g = node.addNode("g", "hippostd:folder");
-        g.addMixin("mix:versionable");
         g.addMixin("hippo:translated");
         Node translation = g.addNode("hippo:translation", "hippo:translation");
         translation.setProperty("hippo:message", "test");
@@ -227,7 +241,7 @@ public class FolderWorkflowTest extends RepositoryTestCase {
         String path = workflow.add("simple", "new-document", "d");
         assertNotNull(path);
 
-        Node docNode = session.getRootNode().getNode(path.substring(1));
+        Node docNode = session.getNode(path);
         assertEquals("/test/f/d/d",docNode.getPath());
         assertTrue(docNode.isNodeType(HippoNodeType.NT_DOCUMENT));
 
@@ -238,6 +252,16 @@ public class FolderWorkflowTest extends RepositoryTestCase {
         assertTrue(docNode.isNodeType("hippostd:document"));
         assertTrue(docNode.hasProperty(HippoNodeType.HIPPO_AVAILABILITY));
         assertEquals(0, docNode.getProperty(HippoNodeType.HIPPO_AVAILABILITY).getValues().length);
+    }
+
+    @Test
+    public void testArchiveDocument() throws Exception {
+        FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);
+        assumeNotNull(workflow);
+        final String docPath = workflow.add("simple", "new-document", "d");
+        assumeTrue(session.nodeExists(docPath));
+        workflow.archive("d");
+        assertFalse(session.nodeExists(docPath));
     }
 
     @Test
@@ -343,7 +367,7 @@ public class FolderWorkflowTest extends RepositoryTestCase {
 
         FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);
         Document copy = workflow.copy(new Document(originalDocument), new Document(node), "dc");
-        Node copyNode = session.getNodeByUUID(copy.getIdentity());
+        Node copyNode = session.getNodeByIdentifier(copy.getIdentity());
         assertEquals("/test/f/dc/dc", copyNode.getPath());
         assertTrue(copyNode.isNodeType("hippostd:document"));
         assertEquals(CONTENT_ON_COPY, copyNode.getProperty("hippostd:content").getString());
@@ -356,7 +380,7 @@ public class FolderWorkflowTest extends RepositoryTestCase {
         Node target = session.getNode("/test/aap");
         FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);
         Document copy = workflow.copy(new Document(originalDocument), new Document(target), "dc");
-        Node copyNode = session.getNodeByUUID(copy.getIdentity());
+        Node copyNode = session.getNodeByIdentifier(copy.getIdentity());
         assertEquals("/test/aap/dc/dc", copyNode.getPath());
         assertTrue(copyNode.isNodeType("hippostd:document"));
         assertEquals(CONTENT_ON_COPY, copyNode.getProperty("hippostd:content").getString());
