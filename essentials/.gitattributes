@@ -308,9 +308,6 @@ dashboard-plugins/components-plugin/components-library/src/main/java/org/onehipp
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/utils/SiteUtils.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/utils/query/HstQueryBuilder.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/utils/query/QueryBuilder.java -text
-dashboard-plugins/components-plugin/components-library/src/main/resources/META-INF/instructions.xml -text
-dashboard-plugins/components-plugin/components-library/src/main/resources/META-INF/plugin.xml -text
-dashboard-plugins/components-plugin/components-library/src/test/java/InstallationTest.java -text
 dashboard-plugins/components-plugin/components-library/src/test/resources/log4j.xml -text
 dashboard-plugins/components-plugin/pom.xml -text
 dashboard-plugins/dashboard-contentblocks-plugin/pom.xml -text

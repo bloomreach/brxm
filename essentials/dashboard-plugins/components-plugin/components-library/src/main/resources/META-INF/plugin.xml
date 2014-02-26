@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
-  -->
-
-<plugin>
-  <name>Gallery Plugin</name>
-  <plugin-class>org.onehippo.cms7.essentials.essentials.gallery.GalleryPlugin</plugin-class>
-</plugin>
