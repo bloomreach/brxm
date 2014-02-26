@@ -17,10 +17,12 @@
 package org.onehippo.cms7.essentials.dashboard.restservices;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -31,8 +33,12 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
+import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
 import com.google.common.base.Strings;
 
@@ -44,13 +50,25 @@ import com.google.common.base.Strings;
 @Path("/restservices")
 public class RestPluginResource extends BaseResource {
 
-    /**
-     * Creates Rest services skeleton
-     */
 
+    @GET
+    @Path("/beans")
+    public RestfulList<KeyValueRestful> getHippoBeans(@Context ServletContext servletContext) {
+
+        final RestfulList<KeyValueRestful> list = new RestfulList<>();
+        final Map<String, java.nio.file.Path> hippoBeans = BeanWriterUtils.mapExitingBeanNames(getContext(servletContext), EssentialConst.FILE_EXTENSION_JAVA);
+        for (Map.Entry<String, java.nio.file.Path> bean : hippoBeans.entrySet()) {
+            list.add(new KeyValueRestful(bean.getKey(), bean.getValue().toString()));
+        }
+        return list;
+    }
+
+    /**
+     * Executes REST powerpack
+     */
     @POST
     @Path("/")
-    public MessageRestful createSkeleton(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
+    public MessageRestful executePowerpack(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
 
 
         final MessageRestful message = new MessageRestful();
