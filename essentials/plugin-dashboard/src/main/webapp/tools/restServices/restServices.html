@@ -63,6 +63,19 @@
 
                             </tr>
                             <tr>
+                                <td>
+                                    <div ng-show="documentTypes.length">
+                                        <p>Select document(s) to expose through REST</p>
+                                        <ul class="list-group">
+                                            <li ng-repeat="doc in documentTypes" style="cursor: move; height: 28px; padding-top: 2px" class="list-group-item">
+                                                <span style="padding-right: 20px; cursor: default"><input type="checkbox" checked="{{doc.checked}}" ng-model="doc.checked"/></span>
+                                                {{doc.name}}
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
 
                                 <td>
                                     <button ng-disabled="!restForm.$valid" class="btn btn-primary pull-right" ng-click="runRestSetup()">Run setup</button>
@@ -74,11 +87,7 @@
                 </div>
             </div>
 
-           <div ng-show="documentTypes.length"> <!-- TODO: select document types-->
-            <h3>Select which document types you want to expose via REST:</h3>
-            <div ng-repeat="doc in documentTypes">
-                <p>{{doc.key}}</p>
-            </div></div>
+
             <div class="list-group-item" ng-show="resultMessages.items.length > 0">
                 <div class="alert alert-info">
                     <div ng-repeat="message in resultMessages.items" ng-switch="message.displayType">

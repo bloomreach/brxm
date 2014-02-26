@@ -12,14 +12,19 @@
 
                 $scope.init = function () {
 
-                }; $scope.onChangeType = function (restType) {
+                };
+                $scope.onChangeType = function (restType) {
                     $scope.restType = restType;
-                    if(restType=='plain'){
+                    if (restType == 'plain') {
                         // fetch documents:
                         $http.get($scope.endpoint + 'beans').success(function (data) {
                             $scope.documentTypes = data.items;
+                            angular.forEach($scope.documentTypes, function (doc) {
+                                doc.checked = false;
+                                doc.name = doc.key.replace(".java", "");
+                            });
                         });
-                    } else{
+                    } else {
                         $scope.documentTypes = [];
                     }
                 };
