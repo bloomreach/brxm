@@ -108,7 +108,11 @@ public class SiteMenuItemHelper extends AbstractHelper {
      */
     public void move(Node node, String newNodeName, Node newParent) throws RepositoryException {
         lockHelper.acquireSimpleLock(getMenuAncestor(node));
-        node.getSession().move(node.getPath(), newParent.getPath() + "/" + newNodeName);
+        try {
+            node.getSession().move(node.getPath(), newParent.getPath() + "/" + newNodeName);
+        } catch (ItemExistsException e) {
+            throw new ClientException(e.getMessage(), ClientError.ITEM_NAME_NOT_UNIQUE);
+        }
     }
 
     /**

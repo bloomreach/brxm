@@ -198,6 +198,47 @@ public class SiteMenuItemHelperTest {
     }
 
     @Test
+    public void testUpdateName_throws_client_exception() throws RepositoryException {
+
+        // once for update
+        mockGetAncestor();
+        // once for rename
+        mockGetAncestor();
+        // once for move
+        mockGetAncestor();
+
+        expect(node.getSession()).andReturn(session);
+        expect(node.getParent()).andReturn(parent);
+
+        final String oldName = "hst";
+        final String pathPrefix = "hst:hst/hst/hst/hst";
+        expect(node.getName()).andReturn(oldName).times(3);
+        expect(node.getPath()).andReturn(pathPrefix + "/" + oldName);
+
+        expect(parent.getNodes()).andReturn(childIterator);
+        expect(parent.getPath()).andReturn(pathPrefix);
+        expect(childIterator.hasNext()).andReturn(true).times(2);
+        expect(childIterator.next()).andReturn(node).andReturn(sibling);
+        final String siblingName = "someSiblingName";
+        expect(sibling.getName()).andReturn(siblingName);
+
+        final String newName = "newName";
+        session.move(pathPrefix + "/" + oldName, pathPrefix + "/" + newName);
+        expectLastCall().andThrow(new ItemExistsException());
+
+        replay(mocks);
+
+        final SiteMenuItemRepresentation newItem = new SiteMenuItemRepresentation();
+        newItem.setName(newName);
+        try {
+            siteMenuItemHelper.update(node, newItem);
+        } catch (ClientException e) {
+            assertThat(e.getError(), is(ClientError.ITEM_NAME_NOT_UNIQUE));
+        }
+        verify(mocks);
+    }
+
+    @Test
     public void testUpdateLinkToExternal() throws RepositoryException {
 
         mockGetAncestor();
