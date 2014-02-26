@@ -18,9 +18,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 import java.util.List;
 import java.util.Map;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
 import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
@@ -32,10 +29,11 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 
 public class SiteMenuHelper extends AbstractHelper {
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <T> T getConfigObject(final String itemId) {
+    public HstSiteMenuConfiguration getConfigObject(final String itemId) {
         final HstSite editingPreviewSite = pageComposerContextService.getEditingPreviewSite();
-        return (T) getMenu(editingPreviewSite, itemId);
+        return getMenu(editingPreviewSite, itemId);
     }
 
     public HstSiteMenuConfiguration getMenu(HstSite site, String menuId) {
@@ -77,13 +75,6 @@ public class SiteMenuHelper extends AbstractHelper {
             }
         }
         return null;
-    }
-
-
-    @Override
-    protected void unlock(final Node node) throws RepositoryException {
-        // site menus never have descendant sitemenu items locked
-        return;
     }
 
     @Override

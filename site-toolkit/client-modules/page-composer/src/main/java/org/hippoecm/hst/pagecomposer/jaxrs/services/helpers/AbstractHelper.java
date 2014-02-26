@@ -46,7 +46,7 @@ public abstract class AbstractHelper {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractHelper.class);
 
-    private LockHelper lockHelper = new LockHelper();
+    protected LockHelper lockHelper = new LockHelper();
     protected PageComposerContextService pageComposerContextService;
 
     public void setPageComposerContextService(final PageComposerContextService pageComposerContextService) {
@@ -61,25 +61,6 @@ public abstract class AbstractHelper {
      * @return the configuration object for <code>id</code> and <code>null</code> if not existing
      */
     public abstract <T> T getConfigObject(String id);
-
-    public void acquireLock(final Node node) throws RepositoryException {
-        lockHelper.acquireLock(node);
-    }
-
-    public void acquireSimpleLock(final Node node) throws RepositoryException {
-        lockHelper.acquireSimpleLock(node);
-    }
-
-    /**
-     * recursively unlocks <code>workspaceNode</code> and/or any descendant
-     */
-    protected void unlock(final Node workspaceNode) throws RepositoryException {
-        lockHelper.unlock(workspaceNode);
-    }
-
-    protected Node getUnLockableNode(final Node node, boolean checkAncestors, boolean checkDescendants) throws RepositoryException {
-        return lockHelper.getUnLockableNode(node, checkAncestors, checkDescendants);
-    }
 
     protected void removeProperty(Node node, String name) throws RepositoryException {
         if (node.hasProperty(name)) {
@@ -226,7 +207,7 @@ public abstract class AbstractHelper {
         for (Node lockedNodeRoot : lockedNodeRoots) {
             for (Node child : new NodeIterable(lockedNodeRoot.getNodes())) {
                 // unlock is recursive
-                unlock(child);
+                lockHelper.unlock(child);
             }
         }
         return lockedNodeRoots;

@@ -42,10 +42,11 @@ public class SiteMapHelper extends AbstractHelper {
     private static final Logger log = LoggerFactory.getLogger(SiteMapHelper.class);
     private static final String WORKSPACE_PATH_ELEMENT = "/" + HstNodeTypes.NODENAME_HST_WORKSPACE + "/";
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <T> T getConfigObject(final String itemId) {
+    public HstSiteMapItem getConfigObject(final String itemId) {
         final HstSite editingPreviewSite = pageComposerContextService.getEditingPreviewSite();
-        return (T) getSiteMapItem(editingPreviewSite.getSiteMap(), itemId);
+        return getSiteMapItem(editingPreviewSite.getSiteMap(), itemId);
     }
 
     public void update(final SiteMapItemRepresentation siteMapItem) throws RepositoryException {
@@ -54,7 +55,7 @@ public class SiteMapHelper extends AbstractHelper {
         final String itemId = siteMapItem.getId();
         Node jcrNode = session.getNodeByIdentifier(itemId);
 
-        acquireLock(jcrNode);
+        lockHelper.acquireLock(jcrNode);
 
         final String modifiedName = siteMapItem.getName();
         if (modifiedName != null && !modifiedName.equals(jcrNode.getName())) {
@@ -85,7 +86,7 @@ public class SiteMapHelper extends AbstractHelper {
         validateTarget(session, parent.getPath() + "/" + siteMapItem.getName());
 
         final Node newChild = parent.addNode(siteMapItem.getName(), HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
-        acquireLock(newChild);
+        lockHelper.acquireLock(newChild);
         // TODO clone page definition
         setSitemapItemProperties(siteMapItem, newChild);
 
@@ -111,18 +112,18 @@ public class SiteMapHelper extends AbstractHelper {
             log.info("Move to same parent for '" + nodeToMove.getPath() + "' does not result in a real move");
             return;
         }
-        final Node unLockableNode = getUnLockableNode(newParent, true, false);
+        final Node unLockableNode = lockHelper.getUnLockableNode(newParent, true, false);
         if (unLockableNode != null) {
             throw new IllegalStateException("Cannot move node to '" + newParent.getPath() + "' because that node is locked " +
-                    "by node '"+unLockableNode.getPath()+"' by '" + unLockableNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString() + "'");
+                    "by node '" + unLockableNode.getPath() + "' by '" + unLockableNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString() + "'");
         }
 
-        acquireLock(nodeToMove);
+        lockHelper.acquireLock(nodeToMove);
         String nodeName = nodeToMove.getName();
         validateTarget(session, newParent.getPath() + "/" + nodeName);
         String oldLocation = nodeToMove.getPath();
         session.move(oldParent.getPath() + "/" + nodeName, newParent.getPath() + "/" + nodeName);
-        acquireLock(nodeToMove);
+        lockHelper.acquireLock(nodeToMove);
 
         createMarkedDeletedIfLiveExists(session, oldLocation);
     }
@@ -131,7 +132,7 @@ public class SiteMapHelper extends AbstractHelper {
         HstRequestContext requestContext = pageComposerContextService.getRequestContext();
         final Session session = requestContext.getSession();
         Node toDelete = session.getNodeByIdentifier(id);
-        acquireLock(toDelete);
+        lockHelper.acquireLock(toDelete);
         deleteOrMarkDeletedIfLiveExists(toDelete);
     }
 
@@ -199,7 +200,7 @@ public class SiteMapHelper extends AbstractHelper {
     }
 
     private void markDeleted(final Node deleted) throws RepositoryException {
-        acquireLock(deleted);
+        lockHelper.acquireLock(deleted);
         deleted.setProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE, "deleted");
     }
 
@@ -220,7 +221,7 @@ public class SiteMapHelper extends AbstractHelper {
             Node targetNode = session.getNode(target);
             if (isMarkedDeleted(targetNode)) {
                 // see if we own the lock
-                acquireLock(targetNode);
+                lockHelper.acquireLock(targetNode);
                 targetNode.remove();
             } else {
                 final String message = String.format("Target node '%s' already exists", targetNode.getPath());

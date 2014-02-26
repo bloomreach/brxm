@@ -36,13 +36,14 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_
 
 public class SiteMenuItemHelper extends AbstractHelper {
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <T> T getConfigObject(final String itemId) {
+    public Object getConfigObject(final String itemId) {
         throw new UnsupportedOperationException("Cannot fetch site menu item without menu id");
     }
 
     public Node create(Node parent, SiteMenuItemRepresentation newItem) throws RepositoryException {
-        acquireSimpleLock(getMenuAncestor(parent));
+        lockHelper.acquireSimpleLock(getMenuAncestor(parent));
         try {
             final Node newChild = parent.addNode(newItem.getName(), HstNodeTypes.NODETYPE_HST_SITEMENUITEM);
             update(newChild, newItem);
@@ -54,7 +55,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
 
 
     public void delete(final Node node) throws RepositoryException {
-        acquireSimpleLock(getMenuAncestor(node));
+        lockHelper.acquireSimpleLock(getMenuAncestor(node));
         node.remove();
     }
 
@@ -67,7 +68,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
      */
     public void update(Node node, SiteMenuItemRepresentation modifiedItem) throws RepositoryException {
 
-        acquireSimpleLock(getMenuAncestor(node));
+        lockHelper.acquireSimpleLock(getMenuAncestor(node));
 
         final String modifiedName = modifiedItem.getName();
         if (modifiedName != null && !modifiedName.equals(node.getName())) {
@@ -106,7 +107,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
      * @throws RepositoryException
      */
     public void move(Node node, String newNodeName, Node newParent) throws RepositoryException {
-        acquireSimpleLock(getMenuAncestor(node));
+        lockHelper.acquireSimpleLock(getMenuAncestor(node));
         node.getSession().move(node.getPath(), newParent.getPath() + "/" + newNodeName);
     }
 
@@ -122,7 +123,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
     }
 
     private void rename(Node node, String newName) throws RepositoryException {
-        acquireSimpleLock(getMenuAncestor(node));
+        lockHelper.acquireSimpleLock(getMenuAncestor(node));
         final Node parent = node.getParent();
         // remember the next sibling name, to be able to restore the node's position
         final String nextSiblingName = getNextSiblingName(node, parent);

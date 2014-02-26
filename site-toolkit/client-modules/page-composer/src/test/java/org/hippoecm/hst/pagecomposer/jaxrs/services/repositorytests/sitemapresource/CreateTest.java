@@ -30,7 +30,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -43,6 +43,7 @@ import static org.junit.Assert.fail;
 
 public class CreateTest extends AbstractSiteMapResourceTest {
 
+    private final LockHelper helper = new LockHelper();
 
     private void initContext() throws Exception {
         // call below will init request context
@@ -70,7 +71,6 @@ public class CreateTest extends AbstractSiteMapResourceTest {
 
         final Session bob = createSession("bob", "bob");
         Node newNodeByBob = bob.getNodeByIdentifier(newId);
-        SiteMapHelper helper = new SiteMapHelper();
         // check only acquiring lock now
         try {
             helper.acquireLock(newNodeByBob);
@@ -183,7 +183,6 @@ public class CreateTest extends AbstractSiteMapResourceTest {
             final Session bob = createSession("bob", "bob");
             assertNull(getSiteMapItemRepresentation(bob, "home"));
             Node homeNodeByBob = bob.getNodeByIdentifier(foo.getId());
-            SiteMapHelper helper = new SiteMapHelper();
             try {
                 helper.acquireLock(homeNodeByBob);
                 fail("Expected an IllegalStateException when trying to acquire lock");

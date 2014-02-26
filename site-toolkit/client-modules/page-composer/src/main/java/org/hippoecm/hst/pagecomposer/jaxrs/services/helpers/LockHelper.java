@@ -53,7 +53,7 @@ public class LockHelper {
      * anything. If there is no lock yet, a lock for the current session userID gets set on the node. If there is
      * already a lock by another user a ClientException is thrown,
      */
-    void acquireLock(final Node node) throws RepositoryException {
+    public void acquireLock(final Node node) throws RepositoryException {
         final Node unLockableNode = getUnLockableNode(node, true, true);
         if (unLockableNode != null) {
             final String message = String.format("Node '%s' cannot be locked due to someone else who has the lock (possibly a descendant or ancestor that is locked).", node.getPath());
@@ -98,9 +98,9 @@ public class LockHelper {
     }
 
     /**
-     * if present, returns the unlockable {@link Node} wrt <code>node</code> : A <code>node</code> can be unlockable (lock contained
-     * by someone else) due to an ancestor or descendant {@link Node} or because it is unlockable itself. If there are no unLockable
-     * nodes wrt <code>node</code>, then <code>node</code> is returned
+     * if present, returns the unlockable {@link Node} wrt <code>node</code> : A <code>node</code> can be unlockable
+     * (lock contained by someone else) due to an ancestor or descendant {@link Node} or because it is unlockable
+     * itself. If there are no unLockable nodes wrt <code>node</code>, then <code>node</code> is returned
      */
     Node getUnLockableNode(final Node node, boolean checkAncestors, boolean checkDescendants) throws RepositoryException {
         if (!canLock(node)) {

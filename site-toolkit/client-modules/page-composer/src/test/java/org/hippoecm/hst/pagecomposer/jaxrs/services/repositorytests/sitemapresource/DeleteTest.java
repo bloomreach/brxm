@@ -27,7 +27,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -38,6 +38,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class DeleteTest extends AbstractSiteMapResourceTest {
+
+    private LockHelper helper = new LockHelper();
 
     private void initContext() throws Exception {
         // call below will init request context
@@ -107,7 +109,6 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
 
             final Session bob = createSession("bob", "bob");
             Node deleteHomeNodeByBob = bob.getNodeByIdentifier(home.getId());
-            SiteMapHelper helper = new SiteMapHelper();
             try {
                 helper.acquireLock(deleteHomeNodeByBob);
                 fail("Bob should 'see' locked deleted home node");

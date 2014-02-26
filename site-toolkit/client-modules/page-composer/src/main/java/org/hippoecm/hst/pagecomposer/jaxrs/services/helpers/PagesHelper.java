@@ -19,13 +19,12 @@ import java.util.List;
 
 import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.model.HstNode;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 
 public class PagesHelper extends AbstractHelper {
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <T> T getConfigObject(final String itemId) {
+    public Object getConfigObject(final String itemId) {
         throw new UnsupportedOperationException("not supported");
     }
 

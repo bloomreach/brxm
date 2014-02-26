@@ -39,7 +39,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.PreviewWorkspaceNodeValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 import org.junit.Test;
@@ -55,6 +55,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
+
+    private LockHelper helper = new LockHelper();
 
     @Test
     public void test_preview_workspace() throws Exception {
@@ -160,7 +162,6 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
 
         final Session bob = createSession("bob", "bob");
         Node homeNodeByBob = bob.getNodeByIdentifier(home.getId());
-        SiteMapHelper helper = new SiteMapHelper();
         helper.acquireLock(homeNodeByBob);
         bob.save();
 
@@ -202,7 +203,6 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
 
         final Session bob = createSession("bob", "bob");
         Node newsAnyNodeByBob = bob.getNodeByIdentifier(newsAny.getId());
-        SiteMapHelper helper = new SiteMapHelper();
         helper.acquireLock(newsAnyNodeByBob);
         bob.save();
 
@@ -255,7 +255,6 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         final SiteMapItemRepresentation news = getSiteMapItemRepresentation(session, "news");
         final Session bob = createSession("bob", "bob");
         Node newsNodeByBob = bob.getNodeByIdentifier(news.getId());
-        SiteMapHelper helper = new SiteMapHelper();
         helper.acquireLock(newsNodeByBob);
         bob.save();
 
@@ -421,7 +420,6 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         // bob sees the old home item locked
         final Session bob = createSession("bob", "bob");
         Node deleteHomeNodeByBob = bob.getNode(oldHomeParentPath + "/home");
-        SiteMapHelper helper = new SiteMapHelper();
         try {
             helper.acquireLock(deleteHomeNodeByBob);
             fail("Bob should 'see' locked deleted home node");
@@ -480,7 +478,6 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
 
-        SiteMapHelper helper = new SiteMapHelper();
         // lock home by 'bob'
         final Session bob = createSession("bob", "bob");
         helper.acquireLock(bob.getNodeByIdentifier(home.getId()));
