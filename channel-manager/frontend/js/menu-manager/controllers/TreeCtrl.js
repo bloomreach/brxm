@@ -37,6 +37,30 @@
         return nodes;
     }
 
+    function findScopeByItemId(sourceItem, itemId) {
+        var result;
+
+        if (sourceItem) {
+            angular.forEach(sourceItem, function (item) {
+                if (item.itemData().id === itemId) {
+                    result = item;
+                }
+            });
+        }
+
+        if (!result) {
+            angular.forEach(sourceItem, function (item) {
+                var newRes = findScopeByItemId(item.itemData().items, itemId);
+
+                if (newRes) {
+                    result = newRes;
+                }
+            });
+        }
+
+        return result;
+    }
+
     angular.module('hippo.channelManager.menuManager')
 
         .controller('hippo.channelManager.menuManager.TreeCtrl', [
@@ -64,6 +88,16 @@
                         // TODO: implement HTTP-request to move item
                         // MenuService.moveMenuItem(node.id, node.newParentId, node.position);
                         $log.info('Tree callback: itemMoved');
+                    },
+                    orderChanged: function (scope, modelData, sourceIndex, destIndex) {
+                        $log.info('Tree callback: orderChanged');
+                        $log.info(scope, modelData, sourceIndex, destIndex);
+
+                        var parentData = findScopeByItemId(scope.items, modelData.id).itemData();
+
+                        if (parentData.id === modelData.id) {
+                            MenuService.moveMenuItem(modelData.id, ConfigService.menuId, destIndex);
+                        }
                     }
                 };
             }
