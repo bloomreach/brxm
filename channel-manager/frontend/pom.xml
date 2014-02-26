@@ -345,6 +345,34 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>clean-bower-cache</id>
+      <activation>
+        <file>
+          <exists>node_modules/bower</exists>
+        </file>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>${maven.plugin.exec.version}</version>
+            <executions>
+              <execution>
+                <id>clean-bower-cache</id>
+                <phase>clean</phase>
+                <goals><goal>exec</goal></goals>
+                <configuration>
+                  <executable>bower</executable>
+                  <commandlineArgs>cache clean</commandlineArgs>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 
 </project>
