@@ -119,12 +119,14 @@ form h4.page-header {
 
 /* --- Confirmation message --- */
 .overlay {
-    left: -282px;
+    margin-left: -292px;
     top: 0;
     background: white;
     position: absolute;
     z-index: 999999;
     opacity: 0;
+    width: 840px;
+    height: 485px;
 }
 
 .feedback {
@@ -133,7 +135,7 @@ form h4.page-header {
     top: -137px;
     border-radius: 0;
     border-top: none;
-    left: -100px;
+    margin-left: -100px;
     padding: 30px 20px 16px 20px;
     border-color: #cac6af;
     width: 500px;
