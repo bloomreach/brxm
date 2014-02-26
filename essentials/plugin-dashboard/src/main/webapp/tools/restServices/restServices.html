@@ -49,10 +49,10 @@
                                             </button>
                                             <ul class="dropdown-menu pull-right" role="menu">
                                                 <li>
-                                                    <a ng-click="restType =  'content'; selectedType =  'content'" href="javascript:void(0)">Content REST</a>
+                                                    <a ng-click="onChangeType('content')" href="javascript:void(0)">Content REST</a>
                                                 </li>
                                                 <li>
-                                                    <a ng-click="restType =  'plain'; selectedType =  'plain'" href="javascript:void(0)">Plain REST</a>
+                                                    <a ng-click="onChangeType('plain')" href="javascript:void(0)">Plain REST</a>
                                                 </li>
                                             </ul>
                                         </div>
@@ -73,6 +73,12 @@
                     </form>
                 </div>
             </div>
+
+           <div ng-show="documentTypes.length"> <!-- TODO: select document types-->
+            <h3>Select which document types you want to expose via REST:</h3>
+            <div ng-repeat="doc in documentTypes">
+                <p>{{doc.key}}</p>
+            </div></div>
             <div class="list-group-item" ng-show="resultMessages.items.length > 0">
                 <div class="alert alert-info">
                     <div ng-repeat="message in resultMessages.items" ng-switch="message.displayType">

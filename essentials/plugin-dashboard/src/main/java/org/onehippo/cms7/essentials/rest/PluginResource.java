@@ -103,7 +103,8 @@ public class PluginResource extends BaseResource {
     private static Logger log = LoggerFactory.getLogger(PluginResource.class);
 
     @ApiOperation(
-            value = "Fetches a (remote) service and checks for available Hippo Essentials plugins",
+            value = "Fetches a (remote) service and checks for available Hippo Essentials plugins. " +
+                    "It also registers any plugin REST endpoints which come available under /dynamic endpoint e.g. /dynamic/{pluginEndpoint}",
             notes = "Retrieves a list of PluginRestful objects",
             response = RestfulList.class)
     @GET

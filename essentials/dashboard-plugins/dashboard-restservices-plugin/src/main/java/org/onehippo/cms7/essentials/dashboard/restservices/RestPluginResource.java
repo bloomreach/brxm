@@ -56,7 +56,7 @@ public class RestPluginResource extends BaseResource {
     public RestfulList<KeyValueRestful> getHippoBeans(@Context ServletContext servletContext) {
 
         final RestfulList<KeyValueRestful> list = new RestfulList<>();
-        final Map<String, java.nio.file.Path> hippoBeans = BeanWriterUtils.mapExitingBeanNames(getContext(servletContext), EssentialConst.FILE_EXTENSION_JAVA);
+        final Map<String, java.nio.file.Path> hippoBeans = BeanWriterUtils.mapExitingBeanNames(getContext(servletContext), "java");
         for (Map.Entry<String, java.nio.file.Path> bean : hippoBeans.entrySet()) {
             list.add(new KeyValueRestful(bean.getKey(), bean.getValue().toString()));
         }
