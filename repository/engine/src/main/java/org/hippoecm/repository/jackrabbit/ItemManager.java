@@ -17,12 +17,7 @@ package org.hippoecm.repository.jackrabbit;
 
 import org.apache.jackrabbit.core.session.SessionContext;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class ItemManager extends org.apache.jackrabbit.core.ItemManager {
-
-    private static Logger log = LoggerFactory.getLogger(ItemManager.class);
 
     protected ItemManager(SessionContext context) {
         super(context);

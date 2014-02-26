@@ -212,7 +212,6 @@ engine/src/main/resources/hippofacnav.cnd -text
 engine/src/main/resources/hipposched.cnd -text
 engine/src/main/resources/hipposys.cnd -text
 engine/src/main/resources/hipposysedit.cnd -text
-engine/src/main/resources/org/hippoecm/repository/BootstrapHippoRepository.xml svneol=native#text/plain
 engine/src/main/resources/org/hippoecm/repository/configuration.xml svneol=native#text/plain
 engine/src/main/resources/org/hippoecm/repository/impl/reference-workspace.xml -text
 engine/src/test/fixtures/dump.zip -text
