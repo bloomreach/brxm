@@ -49,7 +49,6 @@ public class MountResourceTest extends AbstractMountResourceTest {
 
         mockNewRequest(session, "localhost", "/home");
 
-        MountResource mountResource = createResource();
         final PageComposerContextService pccs = mountResource.getPageComposerContextService();
         final HstRequestContext ctx = pccs.getRequestContext();
 
@@ -154,8 +153,6 @@ public class MountResourceTest extends AbstractMountResourceTest {
         // give time for jcr events to evict model
         Thread.sleep(200);
 
-
-        MountResource mountResource = createResource();
         final PageComposerContextService pccs = mountResource.getPageComposerContextService();
         mockNewRequest(session, "localhost", "/home");
 

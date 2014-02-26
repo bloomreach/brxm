@@ -19,6 +19,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.codehaus.jackson.map.Module;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -30,11 +31,19 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
 import org.hippoecm.repository.util.JcrUtils;
+import org.junit.Before;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 public abstract class AbstractMountResourceTest extends AbstractPageComposerTest {
 
+    protected MountResource mountResource;
 
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        mountResource = createResource();
+    }
 
     public static MountResource createResource() {
         MountResource resource = new MountResource();
