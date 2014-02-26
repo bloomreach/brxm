@@ -2,7 +2,7 @@
 
     {
         "needsInstallation": true,
-        "enabled": false,
+        "enabled": true,
         "@type": "plugin",
         "introduction": "Content Blocks plugin provides the content/document editors an ability to add multiple pre-configured compound type blocks to a document. The CMS administrator can configure the available content blocks on per document type basis.",
         "name": "Content Blocks",
@@ -27,7 +27,7 @@
     {
 
         "needsInstallation": false,
-        "enabled": false,
+        "enabled": true,
         "@type": "plugin",
         "introduction": "Xinha configuration plugin",
         "name": "Xinha configuration",
@@ -43,7 +43,24 @@
     },
     {
         "needsInstallation": false,
-        "enabled": false,
+        "enabled": true,
+        "@type": "plugin",
+        "introduction": "Blog plugin",
+        "description": "Hippo Blog plugin contains Blog document types, HST components and markup files",
+        "name": "Blog plugin",
+        "pluginClass": "org.onehippo.cms7.essentials.dashboard.blog.BlogPlugin",
+        "restClasses": ["org.onehippo.cms7.essentials.dashboard.blog.BlogPluginResource"],
+        "pluginId": "blogPlugin",
+        "type": "plugins",
+        "vendor": {
+            "@type": "vendor",
+            "name": "Hippo",
+            "url": "http://www.onehippo.com"
+        }
+    },
+    {
+        "needsInstallation": false,
+        "enabled": true,
         "@type": "plugin",
         "introduction": "Configuration of Hippo image sets",
         "name": "Gallery plugin",
@@ -59,7 +76,7 @@
     },
     {
         "needsInstallation": false,
-        "enabled": false,
+        "enabled": true,
         "@type": "plugin",
         "introduction": "Creates (re-generates) HST beans",
         "name": "Beanwriter plugin",
@@ -93,7 +110,7 @@
     },
     {
         "needsInstallation": false,
-        "enabled": false,
+        "enabled": true,
         "@type": "plugin",
         "introduction": "Freemarker synchronizing tool",
         "name": "Freemarker synchronizing",

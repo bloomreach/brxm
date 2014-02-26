@@ -40,6 +40,7 @@
   </properties>
 
   <modules>
+    <module>blog-plugin</module>
     <module>dashboard-gallery-plugin</module>
     <module>dashboard-setup-plugin</module>
     <module>essentials-powerpacks</module>

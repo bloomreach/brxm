@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
+  <!--
+    DOCUMENT TYPES REGISTRATION
+  -->
+  <instructionSet>
+    <cnd documentType="blogpost" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
+    <cnd documentType="author" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
+  </instructionSet>
+  <!--
+    COMPONENTS
+  -->
+
+  <!--
+    JSP TEMPLATES
+  -->
+  <!--
+    FREEMARKER TEMPLATES
+  -->
+
+</instructions>

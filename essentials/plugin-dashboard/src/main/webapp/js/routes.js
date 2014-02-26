@@ -27,13 +27,13 @@
                         .state('powerpacks-id', {
                             url: '/powerpacks/:id',
                             templateUrl: function ($stateParams) {
-                                return 'powerpacks/' + $stateParams.id + '/'+ $stateParams.id+ '.html';
+                                return 'powerpacks/' + $stateParams.id + '/' + $stateParams.id + '.html';
                             }
                         })
                         .state('tools-id', {
                             url: '/tools/:id',
                             templateUrl: function ($stateParams) {
-                                return 'tools/' + $stateParams.id + '/'+ $stateParams.id+ '.html';
+                                return 'tools/' + $stateParams.id + '/' + $stateParams.id + '.html';
                             }
                         })
                         .state('home', {
@@ -85,10 +85,10 @@
                                 }, "plugintabs": {
                                     templateUrl: 'pages/plugins-installed-tabs.html',
                                     controller: 'pluginCtrl'
-                                },"plugininstance":{
+                                }, "plugininstance": {
                                     url: '/plugins/:id',
                                     templateUrl: function ($stateParams) {
-                                        return 'plugins/' + $stateParams.id + '/index.html';
+                                        return 'plugins/' + $stateParams.id + '/' + $stateParams.id + '.html';
                                     }
                                 }
                             }
