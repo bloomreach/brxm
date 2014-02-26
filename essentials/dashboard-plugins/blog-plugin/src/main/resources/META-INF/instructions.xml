@@ -5,8 +5,17 @@
     DOCUMENT TYPES REGISTRATION
   -->
   <instructionSet>
+    <!-- cnd-->
     <cnd documentType="blogpost" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
     <cnd documentType="author" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
+    <!-- templates-->
+    <xml action="copy" source="xml/namespaces/blogpost.xml" target="/hippo:namespaces/{{namespace}}"/>
+    <xml action="copy" source="xml/namespaces/author.xml" target="/hippo:namespaces/{{namespace}}"/>
+    <xml action="copy" source="xml/namespaces/account.xml" target="/hippo:namespaces/{{namespace}}"/>
+    <!-- beans-->
+    <file action="copy" overwrite="false" source="java/Author.txt" target="{{beansFolder}}/Author.java"/>
+    <file action="copy" overwrite="false" source="java/Blogpost.txt" target="{{beansFolder}}/Blogpost.java"/>
+    <file action="copy" overwrite="false" source="java/Account.txt" target="{{beansFolder}}/Account.java"/>
   </instructionSet>
   <!--
     COMPONENTS
@@ -18,6 +27,7 @@
   <!--
     FREEMARKER TEMPLATES
   -->
+
   <!--
     FACET
   -->

@@ -99,7 +99,6 @@
         "name": "Rest Services plugin",
         "pluginClass": "org.onehippo.cms7.essentials.dashboard.restservices.RestServicesPlugin",
         "pluginId": "restServices",
-
         "restClasses": ["org.onehippo.cms7.essentials.dashboard.restservices.RestPluginResource"],
         "type": "tools",
         "vendor": {

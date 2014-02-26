@@ -1,0 +1,24 @@
+package {{beansPackage}};
+
+import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.standard.HippoCompound;
+
+
+@HippoEssentialsGenerated(internalName = "{{namespace}}:account")
+@Node(jcrType = "{{namespace}}:account")
+public class Account extends HippoCompound {
+
+    public static final String TYPE = "{{namespace}}:type";
+    public static final String LINK = "{{namespace}}:link";
+
+    @HippoEssentialsGenerated(internalName = "{{namespace}}:type")
+    public String getType() {
+        return getProperty(TYPE);
+    }
+
+    @HippoEssentialsGenerated(internalName = "{{namespace}}:link")
+    public String getLink() {
+        return getProperty(LINK);
+    }
+
+}

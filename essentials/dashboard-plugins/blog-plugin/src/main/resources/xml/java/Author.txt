@@ -1,0 +1,32 @@
+package {{beansPackage}};
+
+import java.util.List;
+
+import org.hippoecm.hst.content.beans.Node;
+
+@HippoEssentialsGenerated(internalName = "{{namespace}}:author")
+@Node(jcrType = "{{namespace}}:author")
+public class Author extends HippoDocument {
+
+    public static final String ROLE = "{{namespace}}:role";
+    public static final String ACCOUNTS = "{{namespace}}:accounts";
+
+    @HippoEssentialsGenerated(internalName = "{{namespace}}:title")
+    public String getFullName() {
+        return getTitle();
+    }
+
+    @HippoEssentialsGenerated(internalName = "{{namespace}}:role")
+    public String getRole() {
+        return getProperty(ROLE);
+    }
+
+    /**
+    @HippoEssentialsGenerated(internalName = "{{namespace}}:account")
+    // TODO mm account...
+    public List<Account> getAccounts() {
+        return getChildBeansByName(ACCOUNTS, Account.class);
+    }
+    */
+
+}
