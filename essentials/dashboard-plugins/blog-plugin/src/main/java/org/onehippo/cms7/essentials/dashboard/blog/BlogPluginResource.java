@@ -50,6 +50,8 @@ public class BlogPluginResource extends BaseResource {
     public MessageRestful executePowerpack(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
         final MessageRestful message = new MessageRestful();
         final Map<String, String> values = payloadRestful.getValues();
+
+
         final PluginContext context = getContext(servletContext);
         final PowerpackPackage powerpack = new BlogPowerpack();
         getInjector().autowireBean(powerpack);

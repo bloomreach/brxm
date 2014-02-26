@@ -19,7 +19,16 @@
     angular.module('hippo.essentials')
             .controller('blogPluginCtrl', function ($scope, $sce, $log, $rootScope, $http) {
                 $scope.endpoint = $rootScope.REST.dynamic + 'blog/';
+                $scope.templateNames = ['jsp', 'freemarker'];
+                $scope.templateName = "jsp";
                 $scope.introMessage = "Blog plugin....";
+                $scope.execute = function () {
+                    var payload = Essentials.addPayloadData("templateName", $scope.templateName, null);
+
+                    $http.post($scope.endpoint, payload).success(function (data) {
+
+                    });
+                };
                 $scope.init = function () {
                     console.log("*** blog plugin ***");
                 };

@@ -25,9 +25,15 @@
   <!--
     JSP TEMPLATES
   -->
+  <instructionSet group="jsp">
+    <file action="copy" overwrite="true" source="jsp/essentials-blog-detail.jsp" target="{{jspRoot}}/essentials/blog/essentials-blog-detail.jsp"/>
+  </instructionSet>
   <!--
     FREEMARKER TEMPLATES
   -->
+  <instructionSet group="freemarker">
+    <file action="copy" overwrite="true" source="freemarker/essentials-blog-detail.ftl" target="{{jspRoot}}/essentials/blog/essentials-blog-detail.jsp"/>
+  </instructionSet>
 
   <!--
     FACET
