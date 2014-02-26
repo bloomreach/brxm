@@ -33,6 +33,7 @@ import javax.jcr.query.qom.QueryObjectModel;
 import javax.jcr.query.qom.Selector;
 import javax.jcr.query.qom.Source;
 
+import org.apache.jackrabbit.api.stats.RepositoryStatistics;
 import org.apache.jackrabbit.core.RepositoryContext;
 import org.apache.jackrabbit.core.SearchManager;
 import org.apache.jackrabbit.core.SessionImpl;
@@ -46,6 +47,7 @@ import org.apache.jackrabbit.core.query.lucene.SearchIndex;
 import org.apache.jackrabbit.core.query.lucene.join.QueryEngine;
 import org.apache.jackrabbit.core.session.SessionContext;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
+import org.apache.jackrabbit.core.stats.RepositoryStatisticsImpl;
 import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
 import org.apache.jackrabbit.spi.commons.query.qom.ConstraintImpl;
 import org.apache.jackrabbit.spi.commons.query.qom.QOMTreeVisitor;
@@ -53,6 +55,8 @@ import org.apache.jackrabbit.spi.commons.query.qom.QueryObjectModelFactoryImpl;
 import org.apache.jackrabbit.spi.commons.query.qom.QueryObjectModelTree;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Search manager that adds an authorization constraints to each query that is executed.
@@ -60,6 +64,8 @@ import org.apache.lucene.search.Query;
  * are implemented using the QOM.  (e.g. SQL2 support is implemented this way)
  */
 public class HippoSearchManager extends SearchManager {
+
+    private static final Logger log = LoggerFactory.getLogger(HippoSearchManager.class);
 
     public HippoSearchManager(final String workspace,
                               final RepositoryContext repositoryContext,
@@ -114,6 +120,7 @@ public class HippoSearchManager extends SearchManager {
         @Override
         public QueryResult execute() throws RepositoryException {
 
+            long time = System.nanoTime();
             final LuceneQueryFactory lqf = new AuthorizedLuceneQueryFactory(sessionContext.getSessionImpl(),
                                                                             (SearchIndex) handler, variables);
 
@@ -130,7 +137,17 @@ public class HippoSearchManager extends SearchManager {
                 fullConstraint = authorizationConstraint;
             }
 
-            return engine.execute(getColumns(), getSource(), fullConstraint, getOrderings(), offset, limit);
+            final QueryResult result = engine.execute(getColumns(), getSource(), fullConstraint, getOrderings(), offset, limit);
+            time = System.nanoTime() - time;
+            final long timeMs = time / 1000000;
+            log.debug("executed in {} ms. ({})", timeMs, statement);
+            RepositoryStatisticsImpl statistics = sessionContext
+                    .getRepositoryContext().getRepositoryStatistics();
+            statistics.getCounter(RepositoryStatistics.Type.QUERY_COUNT).incrementAndGet();
+            statistics.getCounter(RepositoryStatistics.Type.QUERY_DURATION).addAndGet(timeMs);
+            sessionContext.getRepositoryContext().getStatManager().getQueryStat()
+                    .logQuery(language, statement, timeMs);
+            return result;
         }
 
         private Constraint getAuthorizationConstraint(final HippoQueryObjectModelFactoryImpl factory, final Source source)
