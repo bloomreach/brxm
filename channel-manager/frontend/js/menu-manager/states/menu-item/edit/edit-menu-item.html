@@ -20,10 +20,9 @@
     <div class="feedback alert alert-warning clearfix" data-ng-class="{'feedback-show': confirmation.isVisible}">
         <p>{{ 'REMOVE_CONFIRMATION' | translate:selectedMenuItem }}</p>
         <p class="text-right buttons">
-            <a href="#" class="btn btn-default btn-sm"
-               data-ng-click="remove()">
+            <button class="btn btn-default btn-sm" data-ng-click="remove()">
                 <strong><i class="fa fa-trash-o"></i> {{ 'DELETE_ITEM' | translate }}</strong>
-            </a>
+            </button>
             &nbsp;&nbsp;
             <a href="#" data-ng-click="confirmation.isVisible = false">{{ 'CANCEL' | translate }}</a>
         </p>
