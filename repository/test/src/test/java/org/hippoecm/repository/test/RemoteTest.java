@@ -36,7 +36,6 @@ import org.onehippo.repository.testutils.RepositoryTestCase;
  */
 @RunWith(RemoteTest.class)
 @Suite.SuiteClasses({
-    org.hippoecm.repository.TrivialServerTest.class,
     org.hippoecm.repository.CanonicalPathTest.class,
     org.hippoecm.repository.CopyNodeTest.class,
     org.hippoecm.repository.DerivedDataTest.class,
