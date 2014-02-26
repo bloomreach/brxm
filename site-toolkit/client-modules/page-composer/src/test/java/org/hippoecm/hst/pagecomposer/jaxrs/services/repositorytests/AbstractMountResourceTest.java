@@ -17,17 +17,23 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.core.internal.HstMutableRequestContext;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
+import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
 import org.hippoecm.repository.util.JcrUtils;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 public abstract class AbstractMountResourceTest extends AbstractPageComposerTest {
+
 
 
     public static MountResource createResource() {
@@ -44,6 +50,15 @@ public abstract class AbstractMountResourceTest extends AbstractPageComposerTest
         siteMenuHelper.setPageComposerContextService(pageComposerContextService);
         resource.setSiteMenuHelper(siteMenuHelper);
         return resource;
+    }
+
+    protected void mockNewRequest(Session jcrSession, String host, String pathInfo) throws Exception {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL(request, host, pathInfo);
+        final String mountId = ctx.getResolvedMount().getMount().getIdentifier();
+        ((HstMutableRequestContext) ctx).setSession(jcrSession);
+        ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, mountId);
+        setMountIdOnHttpSession(request, mountId);
     }
 
     protected void createWorkspaceWithTestContainer() throws RepositoryException {

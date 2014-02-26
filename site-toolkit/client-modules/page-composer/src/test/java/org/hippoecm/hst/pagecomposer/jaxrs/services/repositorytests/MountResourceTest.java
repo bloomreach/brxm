@@ -19,18 +19,14 @@ import java.util.Arrays;
 import java.util.Set;
 
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResourceAccessor;
-import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -51,20 +47,17 @@ public class MountResourceTest extends AbstractMountResourceTest {
         // give time for jcr events to evict model
         Thread.sleep(200);
 
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL(request, "localhost", "/home");
-        final String mountId = ctx.getResolvedMount().getMount().getIdentifier();
-        ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, mountId);
+        mockNewRequest(session, "localhost", "/home");
 
-        setMountIdOnHttpSession(request, mountId);
+        MountResource mountResource = createResource();
+        final PageComposerContextService pccs = mountResource.getPageComposerContextService();
+        final HstRequestContext ctx = pccs.getRequestContext();
 
         final String previewConfigurationPath = ctx.getResolvedMount().getMount().getHstSite().getConfigurationPath() + "-preview";
         assertFalse("Preview config node should not exist yet.",
                 session.nodeExists(previewConfigurationPath));
 
-        ((HstMutableRequestContext) ctx).setSession(session);
 
-        MountResource mountResource = createResource();
         mountResource.startEdit();
 
         assertTrue("Live config node should exist",
@@ -81,21 +74,17 @@ public class MountResourceTest extends AbstractMountResourceTest {
         // reload model through new request, and then modify a container
         // give time for jcr events to evict model
         Thread.sleep(200);
-        final MockHttpServletRequest secondRequest = new MockHttpServletRequest();
-        final HstRequestContext secondCtx = getRequestContextWithResolvedSiteMapItemAndContainerURL(secondRequest, "localhost", "/home");
-        ((HstMutableRequestContext) secondCtx).setSession(session);
 
-        final ContextualizableMount mount = (ContextualizableMount) secondCtx.getResolvedMount().getMount();
+        mockNewRequest(session, "localhost", "/home");
 
-        setMountIdOnHttpSession(secondRequest, mount.getIdentifier());
-        assertTrue(mount.getPreviewHstSite().getConfigurationPath().equals(mount.getHstSite().getConfigurationPath() + "-preview"));
-        assertTrue(mount.getPreviewChannel().getHstConfigPath().equals(mount.getPreviewHstSite().getConfigurationPath()));
-        assertEquals(0, mount.getPreviewChannel().getChangedBySet().size());
-        assertTrue(mount.getPreviewChannel().getId().equals(mount.getChannel().getId() + "-preview"));
+        assertTrue(pccs.getEditingPreviewSite().getConfigurationPath().equals(pccs.getEditingLiveSite().getConfigurationPath() + "-preview"));
+        assertTrue(pccs.getEditingPreviewChannel().getHstConfigPath().equals(pccs.getEditingPreviewSite().getConfigurationPath()));
+        assertEquals(0, pccs.getEditingPreviewChannel().getChangedBySet().size());
+        assertTrue(pccs.getEditingPreviewChannel().getId().equals(pccs.getEditingMount().getChannel().getId() + "-preview"));
 
         final String previewContainerNodeUUID = session.getNode(previewConfigurationPath)
                 .getNode("hst:workspace/hst:containers/testcontainer").getIdentifier();
-        secondCtx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, previewContainerNodeUUID);
+        pccs.getRequestContext().setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, previewContainerNodeUUID);
 
         // there should be not yet any locks
         Set<String> usersWithLockedContainers = mountResource.getPageComposerContextService().getEditingPreviewChannel().getChangedBySet();
@@ -107,16 +96,10 @@ public class MountResourceTest extends AbstractMountResourceTest {
         // reload model through new request, and then modify a container
         // give time for jcr events to evict model
         Thread.sleep(200);
-        final MockHttpServletRequest thirdRequest = new MockHttpServletRequest();
-        final HstRequestContext thirdCtx = getRequestContextWithResolvedSiteMapItemAndContainerURL(thirdRequest, "localhost", "/home");
-        ((HstMutableRequestContext) thirdCtx).setSession(session);
 
-        final String thirdMountIdentifier = thirdCtx.getResolvedMount().getMount().getIdentifier();
+        mockNewRequest(session, "localhost", "/home");
 
-        setMountIdOnHttpSession(thirdRequest, thirdMountIdentifier);
-        thirdCtx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, thirdMountIdentifier);
-
-        usersWithLockedContainers = mountResource.getPageComposerContextService().getEditingPreviewChannel().getChangedBySet();
+        usersWithLockedContainers = pccs.getEditingPreviewChannel().getChangedBySet();
         assertTrue(usersWithLockedContainers.contains("admin"));
 
         mountResource.publish();
@@ -124,17 +107,11 @@ public class MountResourceTest extends AbstractMountResourceTest {
         // reload model through new request, and then modify a container
         // give time for jcr events to evict model
         Thread.sleep(200);
-        final MockHttpServletRequest fourthRequest = new MockHttpServletRequest();
-        final HstRequestContext fourthCtx = getRequestContextWithResolvedSiteMapItemAndContainerURL(fourthRequest, "localhost", "/home");
-        ((HstMutableRequestContext) fourthCtx).setSession(session);
 
-        final String fourthMountIdentifier = fourthCtx.getResolvedMount().getMount().getIdentifier();
-
-        setMountIdOnHttpSession(fourthRequest, fourthMountIdentifier);
-        fourthCtx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, fourthMountIdentifier);
+        mockNewRequest(session, "localhost", "/home");
 
         // there should be no locks
-        usersWithLockedContainers = mountResource.getPageComposerContextService().getEditingPreviewChannel().getChangedBySet();
+        usersWithLockedContainers = pccs.getEditingPreviewChannel().getChangedBySet();
         assertTrue(usersWithLockedContainers.isEmpty());
 
     }
@@ -177,50 +154,28 @@ public class MountResourceTest extends AbstractMountResourceTest {
         // give time for jcr events to evict model
         Thread.sleep(200);
 
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL(request, "localhost", "/home");
-
-        assertEquals("/hst:hst/hst:configurations/7_8", ctx.getResolvedMount().getMount().getHstSite().getConfigurationPath());
-
-        final String mountId = ctx.getResolvedMount().getMount().getIdentifier();
-        ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, mountId);
-        setMountIdOnHttpSession(request, mountId);
-
-        final String previewConfigurationPath = ctx.getResolvedMount().getMount().getHstSite().getConfigurationPath() + "-preview";
-        assertFalse("Preview config node should not exist yet.",
-                session.nodeExists(previewConfigurationPath));
-
-        ((HstMutableRequestContext) ctx).setSession(session);
 
         MountResource mountResource = createResource();
+        final PageComposerContextService pccs = mountResource.getPageComposerContextService();
+        mockNewRequest(session, "localhost", "/home");
+
+        assertEquals("/hst:hst/hst:configurations/7_8", pccs.getRequestContext().getResolvedMount().getMount().getHstSite().getConfigurationPath());
+
         mountResource.startEdit();
-
-        assertTrue("Live config node should exist",
-                session.nodeExists(ctx.getResolvedMount().getMount().getHstSite().getConfigurationPath()));
-        assertTrue("Preview config node should exist",
-                session.nodeExists(previewConfigurationPath));
-
 
         // reload model through new request, and then modify a container
         // give time for jcr events to evict model
         Thread.sleep(200);
 
-        final MockHttpServletRequest secondRequest = new MockHttpServletRequest();
-        final HstRequestContext secondCtx = getRequestContextWithResolvedSiteMapItemAndContainerURL(secondRequest, "localhost", "/home");
-        ((HstMutableRequestContext) secondCtx).setSession(session);
+        mockNewRequest(session, "localhost", "/home");
 
-        final String secondMountId = secondCtx.getResolvedMount().getMount().getIdentifier();
-        ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, secondMountId);
-        setMountIdOnHttpSession(secondRequest, secondMountId);
-
-
-        final String previewContainerNodeUUID = session.getNode(previewConfigurationPath)
+        final String previewContainerNodeUUID = session.getNode(pccs.getEditingPreviewSite().getConfigurationPath())
                 .getNode("hst:workspace/hst:containers/testcontainer").getIdentifier();
 
-        secondCtx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, previewContainerNodeUUID);
+        pccs.getRequestContext().setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, previewContainerNodeUUID);
 
         // there should be not yet any locks
-        Set<String> usersWithLockedContainers = mountResource.getPageComposerContextService().getEditingPreviewChannel().getChangedBySet();
+        Set<String> usersWithLockedContainers = pccs.getEditingPreviewChannel().getChangedBySet();
         assertTrue(usersWithLockedContainers.isEmpty());
 
         final ContainerComponentResource containerComponentResource = createContainerComponentResource(mountResource);
@@ -229,16 +184,9 @@ public class MountResourceTest extends AbstractMountResourceTest {
         // reload model through new request, and then modify a container
         // give time for jcr events to evict model
         Thread.sleep(200);
-        final MockHttpServletRequest thirdRequest = new MockHttpServletRequest();
-        final HstRequestContext thirdCtx = getRequestContextWithResolvedSiteMapItemAndContainerURL(thirdRequest, "localhost", "/home");
-        ((HstMutableRequestContext) thirdCtx).setSession(session);
+        mockNewRequest(session, "localhost", "/home");
 
-        final String thirdMountId = thirdCtx.getResolvedMount().getMount().getIdentifier();
-        ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, thirdMountId);
-        setMountIdOnHttpSession(thirdRequest, thirdMountId);
-        thirdCtx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, thirdCtx.getResolvedMount().getMount().getIdentifier());
-
-        usersWithLockedContainers = mountResource.getPageComposerContextService().getEditingPreviewChannel().getChangedBySet();
+        usersWithLockedContainers = pccs.getEditingPreviewChannel().getChangedBySet();
         assertTrue(usersWithLockedContainers.contains("admin"));
 
         mountResource.publish();
@@ -247,15 +195,9 @@ public class MountResourceTest extends AbstractMountResourceTest {
         // give time for jcr events to evict model
         Thread.sleep(200);
 
-        final MockHttpServletRequest fourthRequest = new MockHttpServletRequest();
-        final HstRequestContext fourthCtx = getRequestContextWithResolvedSiteMapItemAndContainerURL(fourthRequest, "localhost", "/home");
-        ((HstMutableRequestContext) fourthCtx).setSession(session);
+        mockNewRequest(session, "localhost", "/home");
 
-        final String fourthMountId = fourthCtx.getResolvedMount().getMount().getIdentifier();
-        ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, fourthMountId);
-        setMountIdOnHttpSession(fourthRequest, fourthMountId);
-        fourthCtx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, fourthCtx.getResolvedMount().getMount().getIdentifier());
-        usersWithLockedContainers = mountResource.getPageComposerContextService().getEditingPreviewChannel().getChangedBySet();
+        usersWithLockedContainers = pccs.getEditingPreviewChannel().getChangedBySet();
         assertTrue(usersWithLockedContainers.isEmpty());
 
     }
