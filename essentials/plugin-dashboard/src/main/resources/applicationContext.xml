@@ -23,7 +23,7 @@
    http://cxf.apache.org/schemas/jaxrs.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
 
-  <context:component-scan base-package="org.onehippo.cms7.essentials"/>
+  <context:component-scan base-package="org.onehippo.cms7.essentials,org.onehippo.cms7.essentials.dashboard.rest"/>
 
   <import resource="classpath:META-INF/essentialsSpringSdk.xml"/>
   <import resource="classpath:jackson.xml"/>

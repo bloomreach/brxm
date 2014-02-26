@@ -38,7 +38,7 @@ import com.google.common.eventbus.EventBus;
  */
 
 @Configuration
-@ComponentScan("org.onehippo.cms7.essentials")
+@ComponentScan(value = {"org.onehippo.cms7.essentials","org.onehippo.cms7.essentials.dashboard.rest"})
 public class ApplicationModule {
 
 

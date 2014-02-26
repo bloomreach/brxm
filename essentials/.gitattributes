@@ -333,6 +333,7 @@ dashboard-plugins/dashboard-relateddocs-plugin/src/test/resources/project/site/p
 dashboard-plugins/dashboard-relateddocs-plugin/src/test/resources/related-doc-updater-test.xml -text
 dashboard-plugins/dashboard-relateddocs-plugin/src/test/resources/related-doc-updater.xml -text
 dashboard-plugins/dashboard-restservices-plugin/pom.xml -text
+dashboard-plugins/dashboard-restservices-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/RestPluginConst.java -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/RestPluginResource.java -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/RestServicesPlugin.java -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/RestServicesPowerpack.java -text
@@ -709,6 +710,7 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/EndPointList
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/EndpointsRestApplication.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/JarResourceServlet.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/RestServlet.java -text
+plugin-dashboard/src/main/resources/applicationContext.xml -text
 plugin-dashboard/src/main/resources/jackson.xml -text
 plugin-dashboard/src/main/resources/nodetype.xml -text
 plugin-dashboard/src/main/resources/plugin_descriptor.json -text
@@ -716,7 +718,6 @@ plugin-dashboard/src/main/resources/rest.xml -text
 plugin-dashboard/src/main/resources/rest_workflow_content_block_template.xml -text
 plugin-dashboard/src/main/resources/template.xml -text
 plugin-dashboard/src/main/webapp/META-INF/context.xml -text
-plugin-dashboard/src/main/webapp/WEB-INF/applicationContext.xml -text
 plugin-dashboard/src/main/webapp/WEB-INF/jsp/errors/404.jsp -text
 plugin-dashboard/src/main/webapp/WEB-INF/jsp/errors/500.jsp -text
 plugin-dashboard/src/main/webapp/WEB-INF/jsp/index.jsp -text

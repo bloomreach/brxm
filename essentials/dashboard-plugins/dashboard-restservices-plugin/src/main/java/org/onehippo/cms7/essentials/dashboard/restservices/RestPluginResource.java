@@ -17,7 +17,6 @@
 package org.onehippo.cms7.essentials.dashboard.restservices;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -34,8 +33,6 @@ import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
@@ -46,8 +43,6 @@ import com.google.common.base.Strings;
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/restservices")
 public class RestPluginResource extends BaseResource {
-
-    private static Logger log = LoggerFactory.getLogger(RestPluginResource.class);
 
     /**
      * Creates Rest services skeleton
@@ -60,15 +55,18 @@ public class RestPluginResource extends BaseResource {
 
         final MessageRestful message = new MessageRestful();
 
-        final Map<String,String> values = payloadRestful.getValues();
-        final String restName = values.get("restName");
-        final String restType = values.get("restType");
-        if(Strings.isNullOrEmpty(restName) || Strings.isNullOrEmpty(restType)){
-             return  new ErrorMessageRestful("REST service name / type or both were empty");
+        final Map<String, String> values = payloadRestful.getValues();
+        final String restName = values.get(RestPluginConst.REST_NAME);
+        final String restType = values.get(RestPluginConst.REST_TYPE);
+        if (Strings.isNullOrEmpty(restName) || Strings.isNullOrEmpty(restType)) {
+            return new ErrorMessageRestful("REST service name / type or both were empty");
         }
         final PluginContext context = getContext(servletContext);
-        context.addPlaceholderData(new HashMap<String, Object>(values));
+
         final PowerpackPackage powerpack = new RestServicesPowerpack();
+        // TODO: figure out injection part
+        getInjector().autowireBean(powerpack);
+        powerpack.setProperties(new HashMap<String, Object>(values));
         powerpack.execute(context);
         message.setValue("Please rebuild and restart your application");
         return message;

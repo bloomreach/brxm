@@ -16,23 +16,15 @@
 
 package org.onehippo.cms7.essentials.dashboard.restservices;
 
-import java.util.Set;
-
-import org.onehippo.cms7.essentials.dashboard.packaging.DefaultPowerpack;
-
-import com.google.common.collect.ImmutableSet;
-
 /**
  * @version "$Id$"
  */
-public class RestServicesPowerpack extends DefaultPowerpack {
+public final class RestPluginConst {
 
-    @Override
-    public Set<String> groupNames() {
-        final String restName = (String) getProperties().get(RestPluginConst.REST_NAME);
-        if (restName != null) {
-            return new ImmutableSet.Builder<String>().add(restName).build();
-        }
-        return DEFAULT_GROUPS;
+
+    public static final String REST_NAME = "restName";
+    public static final String REST_TYPE = "restType";
+
+    private RestPluginConst() {
     }
 }

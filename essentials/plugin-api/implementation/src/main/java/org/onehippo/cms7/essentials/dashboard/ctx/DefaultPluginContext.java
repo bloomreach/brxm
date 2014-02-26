@@ -197,7 +197,9 @@ public class DefaultPluginContext implements PluginContext {
 
     @Override
     public void addPlaceholderData(final Map<String, Object> data) {
-        getPlaceholderData().putAll(data);
+        if (data != null) {
+            getPlaceholderData().putAll(data);
+        }
     }
 
     /**

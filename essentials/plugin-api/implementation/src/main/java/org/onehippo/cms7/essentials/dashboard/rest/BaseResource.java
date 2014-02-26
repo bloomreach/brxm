@@ -24,6 +24,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.servlet.ServletContext;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -41,6 +42,9 @@ import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
@@ -51,6 +55,14 @@ import com.google.common.eventbus.EventBus;
 public class BaseResource {
 
     private static Logger log = LoggerFactory.getLogger(BaseResource.class);
+
+    @Inject
+    private AutowireCapableBeanFactory injector;
+
+    private  ApplicationContext applicationContext;
+
+
+
 
     @SuppressWarnings("InstanceofInterfaces")
     protected boolean installPlugin(final Plugin plugin) {
@@ -144,7 +156,6 @@ public class BaseResource {
     }
 
 
-
     protected void addRestartInformation(final EventBus eventBus) {
         eventBus.post(new DisplayEvent(DisplayEvent.DisplayType.BR.name(), DisplayEvent.DisplayType.BR, true));
 
@@ -189,7 +200,14 @@ public class BaseResource {
     }
 
 
+    public AutowireCapableBeanFactory getInjector() {
+        if (injector == null) {
+            if(applicationContext==null){
+                applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+            }
+            injector = applicationContext.getAutowireCapableBeanFactory();
+        }
+        return injector;
 
-
-
+    }
 }

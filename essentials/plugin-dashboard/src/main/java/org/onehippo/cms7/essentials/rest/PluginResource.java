@@ -94,8 +94,6 @@ public class PluginResource extends BaseResource {
     private EventBus eventBus;
 
 
-    @Inject
-    private AutowireCapableBeanFactory injector;
 
     @Inject
     private MemoryPluginEventListener listener;
@@ -215,7 +213,7 @@ public class PluginResource extends BaseResource {
         }
         final PowerpackPackage powerpackPackage = GlobalUtils.newInstance(pluginClass);
         powerpackPackage.setProperties(new HashMap<String, Object>(values));
-        injector.autowireBean(powerpackPackage);
+        getInjector().autowireBean(powerpackPackage);
         final String className = ProjectSetupPlugin.class.getName();
         final PluginContext context = new DefaultPluginContext(GlobalUtils.createSession(), new PluginRestful(className));
 

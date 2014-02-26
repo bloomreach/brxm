@@ -45,6 +45,9 @@ public class PostPayloadRestful implements Restful {
     // keep concrete class:
     @SuppressWarnings("CollectionDeclaredAsConcreteClass")
     public LinkedHashMap<String, String> getValues() {
+        if (values == null) {
+            return new LinkedHashMap<>();
+        }
         return values;
     }
 
