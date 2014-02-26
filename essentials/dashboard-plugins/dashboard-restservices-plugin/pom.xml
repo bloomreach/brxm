@@ -95,6 +95,7 @@
         <directory>${basedir}/src/main/resources</directory>
         <includes>
           <include>**/*.cnd</include>
+          <include>**/*.txt</include>
           <include>**/*.xml</include>
           <include>**/*.MF</include>
           <include>**/*.properties</include>

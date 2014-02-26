@@ -1,0 +1,2 @@
+26.02.2014 11:13:08 INFO  http-8080-2 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Copied file from: HelloWorldPlainResource.txt to: /home/machak/java/projects/hippo/appstore/site/src/main/java/org/onehippo/appstore/rest/HelloWorldPlainResource.java
+26.02.2014 11:13:08 INFO  http-8080-2 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Copied file from: spring-plain-rest-api.xml to: /home/machak/java/projects/hippo/appstore/site/META-INF/hst-assembly/overrides/spring-plain-rest-api.xml

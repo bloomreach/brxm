@@ -29,9 +29,9 @@ public class RestServicesPowerpack extends DefaultPowerpack {
 
     @Override
     public Set<String> groupNames() {
-        final String restName = (String) getProperties().get(RestPluginConst.REST_NAME);
-        if (restName != null) {
-            return new ImmutableSet.Builder<String>().add(restName).build();
+        final String restType = (String) getProperties().get(RestPluginConst.REST_TYPE);
+        if (restType != null) {
+            return new ImmutableSet.Builder<String>().add(restType).build();
         }
         return DEFAULT_GROUPS;
     }

@@ -1,4 +1,4 @@
-package ${hstRestPackage};
+package {{restPackage}};
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -8,6 +8,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
 import org.hippoecm.hst.jaxrs.services.AbstractResource;
+
 
 @Path("/")
 @Produces("text/plain")
