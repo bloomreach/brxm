@@ -261,7 +261,6 @@
         <sv:value>{{namespace}}:blogpost</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>relateddocs:relatabledocs</sv:value>
         <sv:value>hippo:harddocument</sv:value>
       </sv:property>
       <sv:property sv:name="{{namespace}}:author" sv:type="String">
