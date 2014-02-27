@@ -11,10 +11,11 @@ public class Author extends HippoDocument {
 
     public static final String ROLE = "{{namespace}}:role";
     public static final String ACCOUNTS = "{{namespace}}:accounts";
+    public static final String FULL_NAME = "{{namespace}}:fullname";
 
-    @HippoEssentialsGenerated(internalName = "{{namespace}}:title")
+    @HippoEssentialsGenerated(internalName = "{{namespace}}:fullname")
     public String getFullName() {
-        return getTitle();
+        return  getProperty(FULL_NAME);
     }
 
     @HippoEssentialsGenerated(internalName = "{{namespace}}:role")

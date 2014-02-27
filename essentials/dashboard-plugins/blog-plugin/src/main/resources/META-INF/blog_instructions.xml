@@ -38,24 +38,26 @@
   <!--
     SAMPLE DATA
   -->
-<!--
-  <instructionSet>
-    <xml action="copy" source="xml/samples/blog_entry_1.xml" target="/content/documents/blog/{{dateRepoYearMonth}}"/>
-    <xml action="copy" source="xml/samples/blog_entry_1.xml" target="/content/documents/blog/{{dateRepoYearMonth}}"/>
-  </instructionSet>
--->
+  <!--
+    <instructionSet>
+      <xml action="copy" source="xml/samples/blog_entry_1.xml" target="/content/documents/blog/{{dateRepoYearMonth}}"/>
+      <xml action="copy" source="xml/samples/blog_entry_1.xml" target="/content/documents/blog/{{dateRepoYearMonth}}"/>
+    </instructionSet>
+  -->
 
   <!--
     JSP TEMPLATES
   -->
   <instructionSet group="jsp">
-    <file action="copy" overwrite="true" source="jsp/essentials_blog_detail.jsp" target="{{jspRoot}}/essentials/blog/essentials-blog-detail.jsp"/>
+    <file action="copy" overwrite="true" source="jsp/essentials-blog-detail.jsp" target="{{jspRoot}}/essentials/blog/essentials-blog-detail.jsp"/>
+    <file action="copy" overwrite="true" source="jsp/essentials-blog-list.jsp" target="{{jspRoot}}/essentials/blog/essentials-blog-list.jsp"/>
   </instructionSet>
   <!--
     FREEMARKER TEMPLATES
   -->
   <instructionSet group="freemarker">
-    <file action="copy" overwrite="true" source="freemarker/essentials-blog-detail.ftl" target="{{jspRoot}}/essentials/blog/essentials-blog-detail.jsp"/>
+    <file action="copy" overwrite="true" source="freemarker/essentials-blog-detail.ftl" target="{{jspRoot}}/essentials/blog/essentials-blog-detail.ftl"/>
+    <file action="copy" overwrite="true" source="freemarker/essentials-blog-list.ftl" target="{{jspRoot}}/essentials/blog/essentials-blog-list.ftl"/>
   </instructionSet>
   <!--
     FACET

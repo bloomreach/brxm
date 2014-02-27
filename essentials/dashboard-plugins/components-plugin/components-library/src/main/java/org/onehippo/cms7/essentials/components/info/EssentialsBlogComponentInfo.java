@@ -21,4 +21,11 @@ package org.onehippo.cms7.essentials.components.info;
  */
 public interface EssentialsBlogComponentInfo {
 
+    boolean showTagCloud();
+
+    boolean showAuthorList();
+
+    int pageSize();
+
+
 }

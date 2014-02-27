@@ -109,12 +109,14 @@ dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboa
 dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/blog/BlogPowerpack.java -text
 dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/blog/FacetInstruction.java -text
 dashboard-plugins/blog-plugin/src/main/resources/META-INF/blog_instructions.xml -text
-dashboard-plugins/blog-plugin/src/main/resources/freemarker/essentials_blog_detail.ftl -text
+dashboard-plugins/blog-plugin/src/main/resources/freemarker/essentials-blog-detail.ftl -text
+dashboard-plugins/blog-plugin/src/main/resources/freemarker/essentials-blog-list.ftl -text
 dashboard-plugins/blog-plugin/src/main/resources/img/blog-icon.png -text
 dashboard-plugins/blog-plugin/src/main/resources/java/Account.txt -text
 dashboard-plugins/blog-plugin/src/main/resources/java/Author.txt -text
 dashboard-plugins/blog-plugin/src/main/resources/java/Blogpost.txt -text
-dashboard-plugins/blog-plugin/src/main/resources/jsp/essentials_blog_detail.jsp -text
+dashboard-plugins/blog-plugin/src/main/resources/jsp/essentials-blog-detail.jsp -text
+dashboard-plugins/blog-plugin/src/main/resources/jsp/essentials-blog-list.jsp -text
 dashboard-plugins/blog-plugin/src/main/resources/xml/folder/blog_folder.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/xml/folderoptions/new-blog-document.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/xml/folderoptions/new-blog-folder.xml -text
