@@ -18,6 +18,7 @@ package org.onehippo.cms7.essentials.dashboard.blog;
 
 import java.util.Set;
 
+import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.packaging.DefaultPowerpack;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
@@ -27,6 +28,8 @@ import com.google.common.collect.ImmutableSet;
  * @version "$Id$"
  */
 public class BlogPowerpack extends DefaultPowerpack {
+
+
 
     public static final ImmutableSet<String> JSP_GROUPS = new ImmutableSet.Builder<String>()
             .add(EssentialConst.INSTRUCTION_GROUP_DEFAULT)
@@ -42,5 +45,10 @@ public class BlogPowerpack extends DefaultPowerpack {
                     .build();
         }
         return JSP_GROUPS;
+    }
+
+    @Override
+    public String getInstructionPath() {
+        return "/META-INF/blog_instructions.xml";
     }
 }

@@ -108,7 +108,7 @@ dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboa
 dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/blog/BlogPluginResource.java -text
 dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/blog/BlogPowerpack.java -text
 dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/blog/FacetInstruction.java -text
-dashboard-plugins/blog-plugin/src/main/resources/META-INF/instructions.xml -text
+dashboard-plugins/blog-plugin/src/main/resources/META-INF/blog_instructions.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/essentials_blog_detail.ftl -text
 dashboard-plugins/blog-plugin/src/main/resources/java/Account.txt -text
 dashboard-plugins/blog-plugin/src/main/resources/java/Author.txt -text

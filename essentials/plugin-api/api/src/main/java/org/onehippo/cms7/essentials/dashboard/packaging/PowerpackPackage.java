@@ -52,6 +52,9 @@ public interface PowerpackPackage {
      */
     Instructions getInstructions();
 
+
+    String  getInstructionPath();
+
     /**
      * Executes instructions
      *

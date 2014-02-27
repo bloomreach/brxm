@@ -79,9 +79,15 @@ public class DefaultPowerpack implements PowerpackPackage {
 
 
     @Override
+    public String getInstructionPath() {
+        return "/META-INF/instructions.xml";
+    }
+
+    @Override
     public Instructions getInstructions() {
         if (instructions == null) {
-            final InputStream resourceAsStream = getClass().getResourceAsStream("/META-INF/instructions.xml");
+
+            final InputStream resourceAsStream = getClass().getResourceAsStream(getInstructionPath());
             final String content = GlobalUtils.readStreamAsText(resourceAsStream);
             instructions = instructionParser.parseInstructions(content);
         }
