@@ -49,7 +49,7 @@
     JSP TEMPLATES
   -->
   <instructionSet group="jsp">
-    <file action="copy" overwrite="true" source="jsp/essentials-blog-detail.jsp" target="{{jspRoot}}/essentials/blog/essentials-blog-detail.jsp"/>
+    <file action="copy" overwrite="true" source="jsp/essentials_blog_detail.jsp" target="{{jspRoot}}/essentials/blog/essentials-blog-detail.jsp"/>
   </instructionSet>
   <!--
     FREEMARKER TEMPLATES
