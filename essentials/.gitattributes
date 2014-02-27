@@ -118,7 +118,7 @@ dashboard-plugins/blog-plugin/src/main/resources/java/Blogpost.txt -text
 dashboard-plugins/blog-plugin/src/main/resources/jsp/essentials-blog-detail.jsp -text
 dashboard-plugins/blog-plugin/src/main/resources/jsp/essentials-blog-list.jsp -text
 dashboard-plugins/blog-plugin/src/main/resources/xml/data/account-types.xml -text
-dashboard-plugins/blog-plugin/src/main/resources/xml/folder/adminstration_folder.xml -text
+dashboard-plugins/blog-plugin/src/main/resources/xml/folder/administration_folder.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/xml/folder/blog_author_folder.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/xml/folder/blog_folder.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/xml/folderoptions/new-blog-document.xml -text

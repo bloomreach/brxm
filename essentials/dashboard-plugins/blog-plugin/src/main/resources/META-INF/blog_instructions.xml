@@ -36,21 +36,29 @@
     CREATE DATA FOLDERS
   -->
   <instructionSet>
-    <folder path="/content/documents/{{namespace}}/administration" template="xml/folder/administration_folder.xml"/>
+    <folder path="/content/documents/administration" template="xml/folder/administration_folder.xml"/>
     <folder path="/content/documents/{{namespace}}/blog/authors" template="xml/folder/blog_author_folder.xml"/>
     <folder path="/content/documents/{{namespace}}/blog/{{dateRepoYearMonth}}" template="xml/folder/blog_folder.xml"/>
   </instructionSet>
   <!--
+    DATA
+  -->
+
+  <instructionSet>
+    <xml action="copy" overwrite="false" source="xml/data/account-types.xml" target="/content/documents/administration"/>
+
+  </instructionSet>
+
+  <!--
     SAMPLE DATA
   -->
-  <!--
     <instructionSet>
+
+      <!--<xml action="copy" source="xml/samples/blog_entry_1.xml" target="/content/documents/{{namespace}}/blog/{{dateRepoYearMonth}}"/>
       <xml action="copy" source="xml/samples/blog_entry_1.xml" target="/content/documents/{{namespace}}/blog/{{dateRepoYearMonth}}"/>
-      <xml action="copy" source="xml/samples/blog_entry_1.xml" target="/content/documents/{{namespace}}/blog/{{dateRepoYearMonth}}"/>
-      <xml action="copy" source="xml/samples/author_1.xml" target="/content/documents/{{namespace}}/blog/authors"/>
-      <xml action="copy" source="xml/samples/author_2.xml" target="/content/documents/{{namespace}}/blog/authors"/>
+      <xml action="copy" source="xml/samples/author_1.xml" target="/content/documents/{{namespace}}/blog/authors"/>-->
+      <xml action="copy" overwrite="false" source="xml/samples/author_1.xml" target="/content/documents/{{namespace}}/blog/authors"/>
     </instructionSet>
-  -->
 
   <!--
     JSP TEMPLATES
