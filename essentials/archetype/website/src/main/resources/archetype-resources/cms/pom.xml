@@ -17,9 +17,8 @@
   <dependencies>
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-essentials-plugin-sdk</artifactId>
+      <artifactId>hippo-essentials-plugin-api</artifactId>
       <version>${dollar}{essentials.version}</version>
-      <type>pom</type>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.hst.dependencies</groupId>
@@ -71,6 +70,18 @@
           <artifactId>wicket</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.forge.selectionplugins</groupId>
+      <artifactId>selectionplugins-addon-repository</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.forge.selectionplugins</groupId>
+      <artifactId>selectionplugins-addon-cms</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.forge.properties</groupId>
+      <artifactId>properties-addon-repository</artifactId>
     </dependency>
 
   </dependencies>
