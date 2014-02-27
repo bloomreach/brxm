@@ -28,11 +28,15 @@
   <instructionSet>
     <xml action="copy" source="xml/folderoptions/new-blog-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <xml action="copy" source="xml/folderoptions/new-blog-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+
+    <xml action="copy" source="xml/folderoptions/new-blogauthor-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+    <xml action="copy" source="xml/folderoptions/new-blogauthor-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
   </instructionSet>
   <!--
-    CREATE DATA FOLDER
+    CREATE DATA FOLDERS
   -->
   <instructionSet>
+    <folder path="/content/documents/blog/authors" template="xml/folder/blog_author_folder.xml"/>
     <folder path="/content/documents/blog/{{dateRepoYearMonth}}" template="xml/folder/blog_folder.xml"/>
   </instructionSet>
   <!--
@@ -42,6 +46,8 @@
     <instructionSet>
       <xml action="copy" source="xml/samples/blog_entry_1.xml" target="/content/documents/blog/{{dateRepoYearMonth}}"/>
       <xml action="copy" source="xml/samples/blog_entry_1.xml" target="/content/documents/blog/{{dateRepoYearMonth}}"/>
+      <xml action="copy" source="xml/samples/author_1.xml" target="/content/documents/blog/authors"/>
+      <xml action="copy" source="xml/samples/author_2.xml" target="/content/documents/blog/authors"/>
     </instructionSet>
   -->
 
