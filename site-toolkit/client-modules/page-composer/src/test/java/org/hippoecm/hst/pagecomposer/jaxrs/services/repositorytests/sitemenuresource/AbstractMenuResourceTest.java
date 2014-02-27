@@ -40,7 +40,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMenuResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.AbstractMountResourceTest;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.MountResourceTest;
 import org.hippoecm.hst.site.HstServices;
 import org.junit.After;
 import org.junit.Before;
@@ -75,7 +74,7 @@ public abstract class AbstractMenuResourceTest extends AbstractPageComposerTest 
         extra[0] = session.getValueFactory().createValue("bob");
         extra[1] = session.getValueFactory().createValue("alice");
 
-        final Value[] values = (Value[])ArrayUtils.addAll(adminMembers, extra);
+        final Value[] values = (Value[]) ArrayUtils.addAll(adminMembers, extra);
         adminGroup.setProperty("hipposys:members", values);
 
         // move hst:sitemenus/main to workspace
@@ -97,14 +96,14 @@ public abstract class AbstractMenuResourceTest extends AbstractPageComposerTest 
         Value[] adminMembers = adminGroup.getProperty("hipposys:members").getValues();
 
         // remove bob and alice again
-        Value[] original = (Value[])ArrayUtils.subarray(adminMembers, 0, adminMembers.length - 2);
+        Value[] original = (Value[]) ArrayUtils.subarray(adminMembers, 0, adminMembers.length - 2);
 
         adminGroup.setProperty("hipposys:members", original);
         session.save();
         super.tearDown();
     }
 
-    protected Session createSession(final String userName,final String password) throws RepositoryException {
+    protected Session createSession(final String userName, final String password) throws RepositoryException {
         Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
         return repository.login(new SimpleCredentials(userName, password.toCharArray()));
     }
@@ -113,7 +112,7 @@ public abstract class AbstractMenuResourceTest extends AbstractPageComposerTest 
     protected void assertBobCanMakeModications(final SiteMenuResource resource) throws Exception {
         final Session bob = createSession("bob", "bob");
         final SiteMenuItemRepresentation contactItem = getSiteMenuItemRepresentation(bob, "main", "Contact");
-        contactItem.setName("test");
+        contactItem.setTitle("test");
         final Response fail = resource.update(contactItem);
         assertEquals(Response.Status.OK.getStatusCode(), fail.getStatus());
         bob.logout();
@@ -140,7 +139,7 @@ public abstract class AbstractMenuResourceTest extends AbstractPageComposerTest 
 
         final HstSiteMenuConfiguration hstSiteMenuConfiguration = getHstSiteMenuConfiguration(requestSession, menuName);
         mountResource.getPageComposerContextService().getRequestContext().setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER,
-                ((CanonicalInfo)hstSiteMenuConfiguration).getCanonicalIdentifier());
+                ((CanonicalInfo) hstSiteMenuConfiguration).getCanonicalIdentifier());
         String[] segments = relPathMenuItem.split("/");
 
         HstSiteMenuItemConfiguration found = null;

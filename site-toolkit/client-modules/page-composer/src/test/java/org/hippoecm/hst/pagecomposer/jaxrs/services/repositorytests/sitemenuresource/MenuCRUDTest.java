@@ -65,7 +65,7 @@ public class MenuCRUDTest extends AbstractMenuResourceTest {
     public void test_rename() throws Exception {
         final SiteMenuResource resource = createResource();
         final SiteMenuItemRepresentation newsItem = getSiteMenuItemRepresentation(session, "main", "News");
-        newsItem.setName("NewsRenamed");
+        newsItem.setTitle("NewsRenamed");
         final Response update = resource.update(newsItem);
         assertEquals(Response.Status.OK.getStatusCode(), update.getStatus());
         final Node newsNode = session.getNodeByIdentifier(newsItem.getId());
@@ -120,7 +120,7 @@ public class MenuCRUDTest extends AbstractMenuResourceTest {
     private void assertBobCannotMakeModications(final SiteMenuResource resource) throws Exception {
         final Session bob = createSession("bob", "bob");
         final SiteMenuItemRepresentation contactItem = getSiteMenuItemRepresentation(bob, "main", "Contact");
-        contactItem.setName("test");
+        contactItem.setTitle("test");
 
         final Response fail = resource.update(contactItem);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), fail.getStatus());

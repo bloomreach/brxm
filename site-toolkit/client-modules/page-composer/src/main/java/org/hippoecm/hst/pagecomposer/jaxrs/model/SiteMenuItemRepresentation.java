@@ -26,13 +26,19 @@ import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 public class SiteMenuItemRepresentation {
 
     private String id;
-    private String name;
+
+    // Property is called title instead of name because using
+    // annotation JsonProperty("title") does not seem to work.
+    private String title;
+
     private boolean repositoryBased;
     private Map<String, String> localParameters;
     private Set<String> roles;
     private SiteMenuItemLink siteMenuItemLink = new SiteMenuItemLink(null, null);
 
-    private List<SiteMenuItemRepresentation> children = new ArrayList<>();
+    // Property is called items instead of children because using
+    // annotation JsonProperty("items") does not seem to work.
+    private List<SiteMenuItemRepresentation> items = new ArrayList<>();
 
     public SiteMenuItemRepresentation() {
         super();
@@ -44,13 +50,13 @@ public class SiteMenuItemRepresentation {
             throw new IllegalArgumentException("Expected object of type CanonicalInfo");
         }
 
-        name = item.getName();
+        title = item.getName();
         id = ((CanonicalInfo) item).getCanonicalIdentifier();
         repositoryBased = item.isRepositoryBased();
         localParameters = item.getLocalParameters();
         roles = item.getRoles();
         for (HstSiteMenuItemConfiguration childItem : item.getChildItemConfigurations()) {
-            children.add(new SiteMenuItemRepresentation(childItem));
+            items.add(new SiteMenuItemRepresentation(childItem));
         }
         this.siteMenuItemLink = new SiteMenuItemLink(item);
     }
@@ -63,12 +69,12 @@ public class SiteMenuItemRepresentation {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(final String name) {
-        this.name = name;
+    public void setTitle(final String title) {
+        this.title = title;
     }
 
     public boolean isRepositoryBased() {
@@ -95,12 +101,12 @@ public class SiteMenuItemRepresentation {
         this.roles = roles;
     }
 
-    public List<SiteMenuItemRepresentation> getChildren() {
-        return children;
+    public List<SiteMenuItemRepresentation> getItems() {
+        return items;
     }
 
-    public void setChildren(final List<SiteMenuItemRepresentation> children) {
-        this.children = children;
+    public void setItems(final List<SiteMenuItemRepresentation> items) {
+        this.items = items;
     }
 
     public LinkType getLinkType() {

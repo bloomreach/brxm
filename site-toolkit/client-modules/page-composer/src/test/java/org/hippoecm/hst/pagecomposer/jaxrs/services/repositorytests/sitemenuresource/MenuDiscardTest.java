@@ -85,7 +85,7 @@ public class MenuDiscardTest extends AbstractMenuResourceTest{
         final Node newsNode = session.getNodeByIdentifier(newsItem.getId());
         final String oldPreviewLocation = newsNode.getPath();
         final String menuPath = newsNode.getParent().getPath();
-        newsItem.setName("NewsRenamed");
+        newsItem.setTitle("NewsRenamed");
         resource.update(newsItem);
 
         final String newPreviewLocation = session.getNodeByIdentifier(newsItem.getId()).getPath();

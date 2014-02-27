@@ -26,9 +26,16 @@ import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 public class SiteMenuRepresentation {
 
     private String id;
-    private String name;
+
+    // Property is called title instead of name because using
+    // annotation JsonProperty("title") does not seem to work.
+    private String title;
+
     private long lastModifiedTimestamp;
-    private List<SiteMenuItemRepresentation> children = new ArrayList<>();
+
+    // Property is called items instead of children because using
+    // annotation JsonProperty("items") does not seem to work.
+    private List<SiteMenuItemRepresentation> items = new ArrayList<>();
 
     public SiteMenuRepresentation() {
         super();
@@ -39,13 +46,13 @@ public class SiteMenuRepresentation {
             throw new IllegalArgumentException("Expected object of type CanonicalInfo");
         }
         id = ((CanonicalInfo) siteMenuConfiguration).getCanonicalIdentifier();
-        name = siteMenuConfiguration.getName();
+        title = siteMenuConfiguration.getName();
 
         // TODO last modified timestamp / etc etc
         lastModifiedTimestamp = Calendar.getInstance().getTimeInMillis();
 
         for (HstSiteMenuItemConfiguration item : siteMenuConfiguration.getSiteMenuConfigurationItems()) {
-            children.add(new SiteMenuItemRepresentation(item));
+            items.add(new SiteMenuItemRepresentation(item));
         }
     }
 
@@ -57,12 +64,12 @@ public class SiteMenuRepresentation {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public long getLastModifiedTimestamp() {
@@ -73,11 +80,11 @@ public class SiteMenuRepresentation {
         this.lastModifiedTimestamp = lastModifiedTimestamp;
     }
 
-    public List<SiteMenuItemRepresentation> getChildren() {
-        return children;
+    public List<SiteMenuItemRepresentation> getItems() {
+        return items;
     }
 
-    public void setChildren(final List<SiteMenuItemRepresentation> children) {
-        this.children = children;
+    public void setItems(final List<SiteMenuItemRepresentation> items) {
+        this.items = items;
     }
 }

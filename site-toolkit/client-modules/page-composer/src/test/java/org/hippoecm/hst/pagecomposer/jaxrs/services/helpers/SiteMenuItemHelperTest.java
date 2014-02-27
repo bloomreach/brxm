@@ -88,14 +88,14 @@ public class SiteMenuItemHelperTest {
     public void testSave() throws RepositoryException {
 
         final SiteMenuItemRepresentation newItem = new SiteMenuItemRepresentation();
-        newItem.setName("name");
+        newItem.setTitle("name");
 
         // once for adding the new item to the parent
         mockGetAncestor();
         // once for updating the new item
         mockGetAncestor();
-        expect(node.addNode(newItem.getName(), HstNodeTypes.NODETYPE_HST_SITEMENUITEM)).andReturn(node);
-        expect(node.getName()).andReturn(newItem.getName());
+        expect(node.addNode(newItem.getTitle(), HstNodeTypes.NODETYPE_HST_SITEMENUITEM)).andReturn(node);
+        expect(node.getName()).andReturn(newItem.getTitle());
         expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
         replay(mocks);
 
@@ -192,7 +192,7 @@ public class SiteMenuItemHelperTest {
         replay(mocks);
 
         final SiteMenuItemRepresentation newItem = new SiteMenuItemRepresentation();
-        newItem.setName(newName);
+        newItem.setTitle(newName);
         siteMenuItemHelper.update(node, newItem);
         verify(mocks);
     }
@@ -229,7 +229,7 @@ public class SiteMenuItemHelperTest {
         replay(mocks);
 
         final SiteMenuItemRepresentation newItem = new SiteMenuItemRepresentation();
-        newItem.setName(newName);
+        newItem.setTitle(newName);
         try {
             siteMenuItemHelper.update(node, newItem);
         } catch (ClientException e) {
@@ -322,7 +322,7 @@ public class SiteMenuItemHelperTest {
 
         try {
             final SiteMenuItemRepresentation newItem = new SiteMenuItemRepresentation();
-            newItem.setName(name);
+            newItem.setTitle(name);
             siteMenuItemHelper.create(node, newItem);
         } catch (ClientException e) {
             assertThat(e.getError(), is(ClientError.ITEM_NAME_NOT_UNIQUE));

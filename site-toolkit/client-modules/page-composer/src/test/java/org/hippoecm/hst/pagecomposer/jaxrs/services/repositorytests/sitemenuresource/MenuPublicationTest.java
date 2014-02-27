@@ -17,8 +17,6 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.sitemenuresource;
 
 import javax.jcr.Node;
-import javax.jcr.Session;
-import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType;
@@ -66,7 +64,7 @@ public class MenuPublicationTest extends AbstractMenuResourceTest{
 
         final String oldPreviewLocation = session.getNodeByIdentifier(newsItem.getId()).getPath();
 
-        newsItem.setName("NewsRenamed");
+        newsItem.setTitle("NewsRenamed");
         resource.update(newsItem);
         mountResource.publish();
 
