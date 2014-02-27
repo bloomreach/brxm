@@ -83,6 +83,15 @@ public class CreateTest extends AbstractSiteMapResourceTest {
     }
 
     @Test
+    public void test_create_fails_no_name() throws Exception {
+        initContext();
+        final SiteMapItemRepresentation newFoo = new SiteMapItemRepresentation();
+        final SiteMapResource siteMapResource = createResource();
+        final Response response = siteMapResource.create(newFoo);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+    }
+
+    @Test
     public void test_delete_new_created() throws Exception {
         initContext();
         final SiteMapItemRepresentation newFoo = new SiteMapItemRepresentation();

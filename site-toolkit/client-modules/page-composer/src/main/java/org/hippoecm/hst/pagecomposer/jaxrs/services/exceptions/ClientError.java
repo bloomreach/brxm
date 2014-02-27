@@ -35,6 +35,11 @@ public enum ClientError {
      */
     ITEM_EXISTS_OUTSIDE_WORKSPACE,
 
+    /**
+     * Represents a situation where a client tries to add an item that has no name (title in case of menu)
+     */
+    ITEM_NO_NAME,
+
     ITEM_NOT_IN_PREVIEW,
 
     ITEM_NOT_FOUND,

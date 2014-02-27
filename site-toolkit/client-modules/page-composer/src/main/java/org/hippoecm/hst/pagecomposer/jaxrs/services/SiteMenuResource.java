@@ -40,8 +40,10 @@ import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.NotNullValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.PreviewWorkspaceNodeValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 
@@ -92,6 +94,7 @@ public class SiteMenuResource extends AbstractConfigResource {
     public Response create(final @PathParam("parentId") String parentId,
                            final SiteMenuItemRepresentation newMenuItem) {
         List<Validator> preValidators = getDefaultMenuModificationValidators();
+        preValidators.add(new NotNullValidator(newMenuItem.getTitle(), ClientError.ITEM_NO_NAME));
         preValidators.add(new PreviewWorkspaceNodeValidator(parentId));
         return tryExecute(new Callable<Response>() {
             @Override
@@ -111,6 +114,7 @@ public class SiteMenuResource extends AbstractConfigResource {
     public Response update(final SiteMenuItemRepresentation modifiedItem) {
 
         List<Validator> preValidators = getDefaultMenuModificationValidators();
+        preValidators.add(new NotNullValidator(modifiedItem.getTitle(), ClientError.ITEM_NO_NAME));
         preValidators.add(new PreviewWorkspaceNodeValidator(modifiedItem.getId()));
         return tryExecute(new Callable<Response>() {
             @Override

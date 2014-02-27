@@ -35,8 +35,10 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.CurrentPreviewValidator;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.NotNullValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.PreviewWorkspaceNodeValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 import org.slf4j.Logger;
@@ -73,7 +75,7 @@ public class SiteMapResource extends AbstractConfigResource {
         final List<Validator> preValidators = new ArrayList<>();
         preValidators.add(new CurrentPreviewValidator(siteMapItem.getId(), siteMapHelper));
         preValidators.add(new PreviewWorkspaceNodeValidator(siteMapItem.getId(), HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
-
+        preValidators.add(new NotNullValidator(siteMapItem.getName(), ClientError.ITEM_NO_NAME));
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
@@ -96,7 +98,7 @@ public class SiteMapResource extends AbstractConfigResource {
                            final @PathParam("parentId") String parentId) {
 
         final List<Validator> preValidators = new ArrayList<>();
-
+        preValidators.add(new NotNullValidator(siteMapItem.getName(), ClientError.ITEM_NO_NAME));
         if (parentId != null) {
             preValidators.add(new CurrentPreviewValidator(parentId, siteMapHelper));
             preValidators.add(new PreviewWorkspaceNodeValidator(parentId, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
