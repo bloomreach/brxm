@@ -68,3 +68,114 @@
 27.02.2014 16:35:00 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Copied file from: jsp/essentials-blog-detail.jsp to: /home/machak/java/projects/hippo/appstore/site/src/main/webapp/WEB-INF/jsp/essentials/blog/essentials-blog-detail.jsp
 27.02.2014 16:35:00 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Copied file from: jsp/essentials-blog-list.jsp to: /home/machak/java/projects/hippo/appstore/site/src/main/webapp/WEB-INF/jsp/essentials/blog/essentials-blog-list.jsp
 27.02.2014 16:35:00 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Created blog facet at: {{message}}
+27.02.2014 17:01:15 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: null
+27.02.2014 17:01:15 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: null
+27.02.2014 17:01:15 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: null
+27.02.2014 17:01:15 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:namespaces/appstore
+27.02.2014 17:01:15 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:namespaces/appstore
+27.02.2014 17:01:15 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:namespaces/appstore
+27.02.2014 17:01:15 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Copied file from: java/Author.txt to: /home/machak/java/projects/hippo/appstore/site/src/main/java/org/onehippo/appstore/beans/Author.java
+27.02.2014 17:01:15 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Copied file from: java/Blogpost.txt to: /home/machak/java/projects/hippo/appstore/site/src/main/java/org/onehippo/appstore/beans/Blogpost.java
+27.02.2014 17:01:15 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Copied file from: java/Account.txt to: /home/machak/java/projects/hippo/appstore/site/src/main/java/org/onehippo/appstore/beans/Account.java
+27.02.2014 17:01:15 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:configuration/hippo:queries/hippo:templates
+27.02.2014 17:01:15 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:configuration/hippo:queries/hippo:templates
+27.02.2014 17:01:15 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:configuration/hippo:queries/hippo:templates
+27.02.2014 17:01:16 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:configuration/hippo:queries/hippo:templates
+27.02.2014 17:01:16 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Created /content/documents/administration
+27.02.2014 17:01:16 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Created /content/documents/appstore/blog/authors
+27.02.2014 17:01:16 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Created /content/documents/appstore/blog/2014/02
+27.02.2014 17:01:16 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /content/documents/administration
+27.02.2014 17:01:16 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /content/documents/administration
+27.02.2014 17:01:16 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /content/documents/appstore/blog/authors
+27.02.2014 17:01:16 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Copied file from: jsp/essentials-blog-detail.jsp to: /home/machak/java/projects/hippo/appstore/site/src/main/webapp/WEB-INF/jsp/essentials/blog/essentials-blog-detail.jsp
+27.02.2014 17:01:16 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Copied file from: jsp/essentials-blog-list.jsp to: /home/machak/java/projects/hippo/appstore/site/src/main/webapp/WEB-INF/jsp/essentials/blog/essentials-blog-list.jsp
+27.02.2014 17:01:16 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Created blog facet at: {{message}}
+27.02.2014 17:03:45 INFO  http-8080-3 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: null
+27.02.2014 17:03:45 INFO  http-8080-3 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: null
+27.02.2014 17:03:45 INFO  http-8080-3 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: null
+27.02.2014 17:03:45 INFO  http-8080-3 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:namespaces/appstore
+27.02.2014 17:03:45 INFO  http-8080-3 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:namespaces/appstore
+27.02.2014 17:03:46 INFO  http-8080-3 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:namespaces/appstore
+27.02.2014 17:03:46 INFO  http-8080-3 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Copied file from: java/Author.txt to: /home/machak/java/projects/hippo/appstore/site/src/main/java/org/onehippo/appstore/beans/Author.java
+27.02.2014 17:03:46 INFO  http-8080-3 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Copied file from: java/Blogpost.txt to: /home/machak/java/projects/hippo/appstore/site/src/main/java/org/onehippo/appstore/beans/Blogpost.java
+27.02.2014 17:03:46 INFO  http-8080-3 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Copied file from: java/Account.txt to: /home/machak/java/projects/hippo/appstore/site/src/main/java/org/onehippo/appstore/beans/Account.java
+27.02.2014 17:03:46 INFO  http-8080-3 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:configuration/hippo:queries/hippo:templates
+27.02.2014 17:03:46 INFO  http-8080-3 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:configuration/hippo:queries/hippo:templates
+27.02.2014 17:03:46 INFO  http-8080-3 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:configuration/hippo:queries/hippo:templates
+27.02.2014 17:03:46 INFO  http-8080-3 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:configuration/hippo:queries/hippo:templates
+27.02.2014 17:03:46 INFO  http-8080-3 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Created /content/documents/administration
+27.02.2014 17:03:46 INFO  http-8080-3 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Created /content/documents/appstore/blog/authors
+27.02.2014 17:03:46 INFO  http-8080-3 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Created /content/documents/appstore/blog/2014/02
+27.02.2014 17:03:46 INFO  http-8080-3 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /content/documents/administration
+27.02.2014 17:03:46 INFO  http-8080-3 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /content/documents/administration
+27.02.2014 17:03:46 INFO  http-8080-3 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /content/documents/appstore/blog/authors
+27.02.2014 17:03:46 INFO  http-8080-3 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Copied file from: jsp/essentials-blog-detail.jsp to: /home/machak/java/projects/hippo/appstore/site/src/main/webapp/WEB-INF/jsp/essentials/blog/essentials-blog-detail.jsp
+27.02.2014 17:03:46 INFO  http-8080-3 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Copied file from: jsp/essentials-blog-list.jsp to: /home/machak/java/projects/hippo/appstore/site/src/main/webapp/WEB-INF/jsp/essentials/blog/essentials-blog-list.jsp
+27.02.2014 17:03:46 INFO  http-8080-3 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Created blog facet at: {{message}}
+27.02.2014 17:11:57 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: null
+27.02.2014 17:11:57 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: null
+27.02.2014 17:11:57 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: null
+27.02.2014 17:11:57 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:namespaces/appstore
+27.02.2014 17:11:57 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:namespaces/appstore
+27.02.2014 17:11:57 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:namespaces/appstore
+27.02.2014 17:11:57 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Copied file from: java/Author.txt to: /home/machak/java/projects/hippo/appstore/site/src/main/java/org/onehippo/appstore/beans/Author.java
+27.02.2014 17:11:57 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Copied file from: java/Blogpost.txt to: /home/machak/java/projects/hippo/appstore/site/src/main/java/org/onehippo/appstore/beans/Blogpost.java
+27.02.2014 17:11:57 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Copied file from: java/Account.txt to: /home/machak/java/projects/hippo/appstore/site/src/main/java/org/onehippo/appstore/beans/Account.java
+27.02.2014 17:11:57 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:configuration/hippo:queries/hippo:templates
+27.02.2014 17:11:57 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:configuration/hippo:queries/hippo:templates
+27.02.2014 17:11:57 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:configuration/hippo:queries/hippo:templates
+27.02.2014 17:11:57 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:configuration/hippo:queries/hippo:templates
+27.02.2014 17:11:57 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Created /content/documents/administration
+27.02.2014 17:11:57 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Created /content/documents/appstore/blog/authors
+27.02.2014 17:11:57 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Created /content/documents/appstore/blog/2014/02
+27.02.2014 17:11:57 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /content/documents/administration
+27.02.2014 17:11:57 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /content/documents/administration
+27.02.2014 17:11:57 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /content/documents/appstore/blog/authors
+27.02.2014 17:11:57 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Copied file from: jsp/essentials-blog-detail.jsp to: /home/machak/java/projects/hippo/appstore/site/src/main/webapp/WEB-INF/jsp/essentials/blog/essentials-blog-detail.jsp
+27.02.2014 17:11:57 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Copied file from: jsp/essentials-blog-list.jsp to: /home/machak/java/projects/hippo/appstore/site/src/main/webapp/WEB-INF/jsp/essentials/blog/essentials-blog-list.jsp
+27.02.2014 17:11:57 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Created blog facet at: {{message}}
+27.02.2014 17:18:06 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: null
+27.02.2014 17:18:06 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: null
+27.02.2014 17:18:06 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: null
+27.02.2014 17:18:06 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:namespaces/appstore
+27.02.2014 17:18:06 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:namespaces/appstore
+27.02.2014 17:18:06 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Copied file from: java/Author.txt to: /home/machak/java/projects/hippo/appstore/site/src/main/java/org/onehippo/appstore/beans/Author.java
+27.02.2014 17:18:06 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Copied file from: java/Blogpost.txt to: /home/machak/java/projects/hippo/appstore/site/src/main/java/org/onehippo/appstore/beans/Blogpost.java
+27.02.2014 17:18:06 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Copied file from: java/Account.txt to: /home/machak/java/projects/hippo/appstore/site/src/main/java/org/onehippo/appstore/beans/Account.java
+27.02.2014 17:18:06 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:configuration/hippo:queries/hippo:templates
+27.02.2014 17:18:06 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:configuration/hippo:queries/hippo:templates
+27.02.2014 17:18:06 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:configuration/hippo:queries/hippo:templates
+27.02.2014 17:18:06 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:configuration/hippo:queries/hippo:templates
+27.02.2014 17:18:06 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Created /content/documents/administration
+27.02.2014 17:18:06 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Created /content/documents/appstore/blog/authors
+27.02.2014 17:18:06 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Created /content/documents/appstore/blog/2014/02
+27.02.2014 17:18:06 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /content/documents/administration
+27.02.2014 17:18:06 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /content/documents/administration
+27.02.2014 17:18:06 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /content/documents/appstore/blog/authors
+27.02.2014 17:18:06 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /content/documents/appstore/blog/2014/02
+27.02.2014 17:18:06 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Copied file from: jsp/essentials-blog-detail.jsp to: /home/machak/java/projects/hippo/appstore/site/src/main/webapp/WEB-INF/jsp/essentials/blog/essentials-blog-detail.jsp
+27.02.2014 17:18:06 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Copied file from: jsp/essentials-blog-list.jsp to: /home/machak/java/projects/hippo/appstore/site/src/main/webapp/WEB-INF/jsp/essentials/blog/essentials-blog-list.jsp
+27.02.2014 17:18:06 INFO  http-8080-1 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Created blog facet at: {{message}}
+27.02.2014 17:20:00 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: null
+27.02.2014 17:20:00 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: null
+27.02.2014 17:20:00 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: null
+27.02.2014 17:20:00 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:namespaces/appstore
+27.02.2014 17:20:00 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:namespaces/appstore
+27.02.2014 17:20:00 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:namespaces/appstore
+27.02.2014 17:20:00 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Copied file from: java/Author.txt to: /home/machak/java/projects/hippo/appstore/site/src/main/java/org/onehippo/appstore/beans/Author.java
+27.02.2014 17:20:00 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Copied file from: java/Blogpost.txt to: /home/machak/java/projects/hippo/appstore/site/src/main/java/org/onehippo/appstore/beans/Blogpost.java
+27.02.2014 17:20:00 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Copied file from: java/Account.txt to: /home/machak/java/projects/hippo/appstore/site/src/main/java/org/onehippo/appstore/beans/Account.java
+27.02.2014 17:20:00 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:configuration/hippo:queries/hippo:templates
+27.02.2014 17:20:00 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:configuration/hippo:queries/hippo:templates
+27.02.2014 17:20:00 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:configuration/hippo:queries/hippo:templates
+27.02.2014 17:20:00 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /hippo:configuration/hippo:queries/hippo:templates
+27.02.2014 17:20:00 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Created /content/documents/administration
+27.02.2014 17:20:00 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Created /content/documents/appstore/blog/authors
+27.02.2014 17:20:00 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Created /content/documents/appstore/blog/2014/02
+27.02.2014 17:20:00 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /content/documents/administration
+27.02.2014 17:20:01 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /content/documents/administration
+27.02.2014 17:20:01 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /content/documents/appstore/blog/authors
+27.02.2014 17:20:01 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Added xml node to /content/documents/appstore/blog/2014/02
+27.02.2014 17:20:01 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Copied file from: jsp/essentials-blog-detail.jsp to: /home/machak/java/projects/hippo/appstore/site/src/main/webapp/WEB-INF/jsp/essentials/blog/essentials-blog-detail.jsp
+27.02.2014 17:20:01 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Copied file from: jsp/essentials-blog-list.jsp to: /home/machak/java/projects/hippo/appstore/site/src/main/webapp/WEB-INF/jsp/essentials/blog/essentials-blog-list.jsp
+27.02.2014 17:20:01 INFO  http-8080-6 [InstructionsEventListener.onPluginEvent:43] INSTRUCTION EVENT: Created blog facet at: {{message}}

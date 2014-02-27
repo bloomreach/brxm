@@ -54,11 +54,10 @@
     SAMPLE DATA
   -->
     <instructionSet>
-
-      <!--<xml action="copy" source="xml/samples/blog_entry_1.xml" target="/content/documents/{{namespace}}/blog/{{dateRepoYearMonth}}"/>
-      <xml action="copy" source="xml/samples/blog_entry_1.xml" target="/content/documents/{{namespace}}/blog/{{dateRepoYearMonth}}"/>
-      <xml action="copy" source="xml/samples/author_1.xml" target="/content/documents/{{namespace}}/blog/authors"/>-->
       <xml action="copy" overwrite="false" source="xml/samples/author_1.xml" target="/content/documents/{{namespace}}/blog/authors"/>
+      <xml action="copy" overwrite="false" source="xml/samples/author_2.xml" target="/content/documents/{{namespace}}/blog/authors"/>
+      <xml action="copy" source="xml/samples/blog_entry_1.xml" target="/content/documents/{{namespace}}/blog/{{dateRepoYearMonth}}"/>
+      <xml action="copy" source="xml/samples/blog_entry_2.xml" target="/content/documents/{{namespace}}/blog/{{dateRepoYearMonth}}"/>
     </instructionSet>
 
   <!--

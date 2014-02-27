@@ -16,8 +16,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.jackrabbit.value.ValueFactoryImpl;
 import org.onehippo.cms7.essentials.dashboard.config.JcrPluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.model.Plugin;
@@ -230,7 +232,8 @@ public class DefaultPluginContext implements PluginContext {
         placeholderData.put(EssentialConst.PLACEHOLDER_NAMESPACE, getProjectNamespacePrefix());
         placeholderData.put(EssentialConst.PLACEHOLDER_PROJECT_ROOT, ProjectUtils.getBaseProjectDirectory());
         DateFormat formatter = new SimpleDateFormat(EssentialConst.REPO_FOLDER_FORMAT);
-        final Date today = Calendar.getInstance().getTime();
+        final Calendar calendarInstance = Calendar.getInstance();
+        final Date today = calendarInstance.getTime();
         placeholderData.put(EssentialConst.PLACEHOLDER_DATE_REPO_YYYY_MM, formatter.format(today));
         formatter = new SimpleDateFormat("yyyy" + File.separator + "MM");
         final String fileFolder = formatter.format(today);
@@ -252,6 +255,14 @@ public class DefaultPluginContext implements PluginContext {
         placeholderData.put(EssentialConst.PLACEHOLDER_REST_FOLDER, getRestPackagePath().toString());
         placeholderData.put(EssentialConst.PLACEHOLDER_COMPONENTS_FOLDER, getComponentsPackagePath().toString());
         placeholderData.put(EssentialConst.PLACEHOLDER_TMP_FOLDER, System.getProperty("java.io.tmpdir"));
+        // JCR date
+        try {
+            final String jcrDate = ValueFactoryImpl.getInstance().createValue(calendarInstance).getString();
+            placeholderData.put(EssentialConst.PLACEHOLDER_JCR_TODAY_DATE, jcrDate);
+        } catch (RepositoryException e) {
+            log.error("Error setting date instance", e);
+            placeholderData.put(EssentialConst.PLACEHOLDER_JCR_TODAY_DATE, "1970-01-01T01:00:00.000+01:00");
+        }
 
         return placeholderData;
     }

@@ -221,7 +221,7 @@
         <sv:value/>
       </sv:property>
       <sv:property sv:name="{{namespace}}:publicationdate" sv:type="Date">
-        <sv:value>1970-01-01T01:00:00.000+01:00</sv:value>
+        <sv:value>{{jcrDate}}</sv:value>
       </sv:property>
       <sv:property sv:name="{{namespace}}:title" sv:type="String">
         <sv:value/>
@@ -239,10 +239,10 @@
         <sv:value/>
       </sv:property>
       <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-        <sv:value>1970-01-01T01:00:00.000+01:00</sv:value>
+        <sv:value>{{jcrDate}}</sv:value>
       </sv:property>
       <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-        <sv:value>1970-01-01T01:00:00.000+01:00</sv:value>
+        <sv:value>{{jcrDate}}</sv:value>
       </sv:property>
       <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
         <sv:value/>

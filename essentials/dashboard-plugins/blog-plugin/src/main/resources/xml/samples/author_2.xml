@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node sv:name="hippo-essentials-author" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hippo:handle</sv:value>
+  </sv:property>
+  <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+    <sv:value>hippo:hardhandle</sv:value>
+    <sv:value>hippo:translated</sv:value>
+  </sv:property>
+  <sv:property sv:name="jcr:uuid" sv:type="String">
+    <sv:value>696a2657-448f-4a5a-89f5-1426d9ba1f7d</sv:value>
+  </sv:property>
+  <sv:node sv:name="hippo:translation">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:translation</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:language" sv:type="String">
+      <sv:value/>
+    </sv:property>
+    <sv:property sv:name="hippo:message" sv:type="String">
+      <sv:value>Hippo Essentials Author</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="hippo-essentials-author">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>{{namespace}}:author</sv:value>
+    </sv:property>
+    <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>hippo:harddocument</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>9aefb6fb-8407-41b3-8c8e-b8ab058e6721</sv:value>
+    </sv:property>
+    <sv:property sv:name="{{namespace}}:role" sv:type="String">
+      <sv:value>Owner</sv:value>
+    </sv:property>
+    <sv:property sv:name="{{namespace}}:title" sv:type="String">
+      <sv:value>Hippo Essentials Author</sv:value>
+    </sv:property>
+    <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
+      <sv:value>live</sv:value>
+      <sv:value>preview</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+      <sv:value>hippo-essentials-author</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippostd:holder" sv:type="String">
+      <sv:value>admin</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippostd:state" sv:type="String">
+      <sv:value>published</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+      <sv:value>live</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+      <sv:value>admin</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+      <sv:value>{{jcrDate}}</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+      <sv:value>{{jcrDate}}</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+      <sv:value>admin</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
+      <sv:value>{{jcrDate}}</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippotranslation:id" sv:type="String">
+      <sv:value>7c43628e-4859-4fdc-afa0-9c05b302598b</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippotranslation:locale" sv:type="String">
+      <sv:value>en</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippotranslation:translations">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippotranslation:translations</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="{{namespace}}:body">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippostd:html</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:content" sv:type="String">
+        <sv:value>&lt;html&gt;
+          &lt;body&gt;
+
+          &lt;p&gt;Hippo CMS is a powerful, enterprise-class foundation to deliver outstanding
+          Customer Experiences based on Enterprise Agility and Innovation Power. Hippo CMS
+          is open source, 100% Java and convinces with its lean product architecture that
+          is built for uptime, security and performance.&lt;/p&gt;
+
+          &lt;p&gt; &lt;/p&gt;
+
+          &lt;/body&gt;
+          &lt;/html&gt;</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="{{namespace}}:accounts">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>{{namespace}}:account</sv:value>
+      </sv:property>
+      <sv:property sv:name="{{namespace}}:link" sv:type="String">
+        <sv:value>https://github.com/onehippo</sv:value>
+      </sv:property>
+      <sv:property sv:name="{{namespace}}:type" sv:type="String">
+        <sv:value>github</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="{{namespace}}:image">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippogallerypicker:imagelink</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+      </sv:property>
+      <sv:property sv:multiple="true" sv:name="hippo:facets" sv:type="String"/>
+      <sv:property sv:multiple="true" sv:name="hippo:modes" sv:type="String"/>
+      <sv:property sv:multiple="true" sv:name="hippo:values" sv:type="String"/>
+    </sv:node>
+    <sv:node sv:name="{{namespace}}:accounts">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>{{namespace}}:account</sv:value>
+      </sv:property>
+      <sv:property sv:name="{{namespace}}:link" sv:type="String">
+        <sv:value>https://twitter.com/onehippo</sv:value>
+      </sv:property>
+      <sv:property sv:name="{{namespace}}:type" sv:type="String">
+        <sv:value>twitter</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+</sv:node>

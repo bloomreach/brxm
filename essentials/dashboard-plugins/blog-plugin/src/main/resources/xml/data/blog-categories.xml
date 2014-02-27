@@ -6,7 +6,7 @@
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
     <sv:value>hippo:hardhandle</sv:value>
   </sv:property>
-  <sv:node sv:name="categories">
+  <sv:node sv:name="blog-categories">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>selection:valuelist</sv:value>
     </sv:property>
