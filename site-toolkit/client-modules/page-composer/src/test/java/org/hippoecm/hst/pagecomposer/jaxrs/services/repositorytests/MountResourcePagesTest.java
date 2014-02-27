@@ -15,16 +15,20 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests;
 
+import javax.jcr.Node;
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.PageRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.PagesRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
+import org.hippoecm.repository.util.NodeIterable;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class MountResourcePagesTest extends AbstractMountResourceTest {
 
@@ -83,6 +87,31 @@ public class MountResourcePagesTest extends AbstractMountResourceTest {
         mockNewRequest(session, "localhost", "/home");
         PagesRepresentation representation = (PagesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
         assertEquals(0, representation.getPages().size());
+    }
+
+    @Test
+    public void test_prototype_pages_are_sorted() throws Exception {
+        movePagesFromCommonToUnitTestProject();
+        // make a all pages prototype
+        for (Node page : new NodeIterable(session.getNode("/hst:hst/hst:configurations/unittestproject/hst:pages").getNodes())) {
+            page.setProperty(HstNodeTypes.COMPONENT_PROPERTY_PROTOTYPE, true);
+        }
+        session.save();
+        // give time for jcr events to evict model
+        Thread.sleep(200);
+        mockNewRequest(session, "localhost", "/home");
+        PagesRepresentation representation = (PagesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
+
+        PageRepresentation prev = null;
+        for (PageRepresentation pageRepresentation : representation.getPages()) {
+            if (prev == null) {
+                prev = pageRepresentation;
+                continue;
+            }
+            assertTrue(pageRepresentation.getName().compareTo(prev.getName()) >= 0);
+            prev = pageRepresentation;
+        }
+
     }
 
 }
