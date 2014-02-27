@@ -46,6 +46,7 @@
 
   <instructionSet>
     <xml action="copy" overwrite="false" source="xml/data/account-types.xml" target="/content/documents/administration"/>
+    <xml action="copy" overwrite="false" source="xml/data/blog-categories.xml" target="/content/documents/administration"/>
 
   </instructionSet>
 

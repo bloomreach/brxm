@@ -14,7 +14,6 @@ import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerat
 public class Blogpost extends HippoDocument {
 
     public static final String CATEGORIES = "{{namespace}}:categories";
-    public static final String SUBJECT = "{{namespace}}:subject";
     public static final String AUTHOR = "{{namespace}}:author";
     public static final String LINK = "{{namespace}}:link";
     public static final String AUTHORS = "{{namespace}}:authors";
@@ -27,11 +26,6 @@ public class Blogpost extends HippoDocument {
     @HippoEssentialsGenerated(internalName = "{{namespace}}:link")
     public String getLink() {
         return getProperty(LINK);
-    }
-
-    @HippoEssentialsGenerated(internalName = "{{namespace}}:subject")
-    public List<String> getSubject() {
-        return getProperty(SUBJECT);
     }
 
     @HippoEssentialsGenerated(internalName = "{{namespace}}:categories")
