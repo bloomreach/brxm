@@ -643,6 +643,12 @@ dashboard-plugins/blog-plugin/src/main/resources/xml/*.iml
 dashboard-plugins/blog-plugin/src/main/resources/xml/.DS_Store
 dashboard-plugins/blog-plugin/src/main/resources/xml/.idea
 dashboard-plugins/blog-plugin/src/main/resources/xml/atlassian-ide-plugin.xml
+dashboard-plugins/blog-plugin/src/main/resources/xml/data/*.iml
+dashboard-plugins/blog-plugin/src/main/resources/xml/data/.DS_Store
+dashboard-plugins/blog-plugin/src/main/resources/xml/data/.idea
+dashboard-plugins/blog-plugin/src/main/resources/xml/data/atlassian-ide-plugin.xml
+dashboard-plugins/blog-plugin/src/main/resources/xml/data/hippo-plugins.iws
+dashboard-plugins/blog-plugin/src/main/resources/xml/data/target
 dashboard-plugins/blog-plugin/src/main/resources/xml/folder/*.iml
 dashboard-plugins/blog-plugin/src/main/resources/xml/folder/.DS_Store
 dashboard-plugins/blog-plugin/src/main/resources/xml/folder/.idea
