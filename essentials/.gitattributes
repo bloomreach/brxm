@@ -114,9 +114,14 @@ dashboard-plugins/blog-plugin/src/main/resources/java/Account.txt -text
 dashboard-plugins/blog-plugin/src/main/resources/java/Author.txt -text
 dashboard-plugins/blog-plugin/src/main/resources/java/Blogpost.txt -text
 dashboard-plugins/blog-plugin/src/main/resources/jsp/essentials_blog_detail.jsp -text
+dashboard-plugins/blog-plugin/src/main/resources/xml/folder/blog_folder.xml -text
+dashboard-plugins/blog-plugin/src/main/resources/xml/folderoptions/new-blog-document.xml -text
+dashboard-plugins/blog-plugin/src/main/resources/xml/folderoptions/new-blog-folder.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/xml/namespaces/account.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/xml/namespaces/author.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/xml/namespaces/blogpost.xml -text
+dashboard-plugins/blog-plugin/src/main/resources/xml/samples/blog_entry_1.xml -text
+dashboard-plugins/blog-plugin/src/main/resources/xml/samples/blog_entry_2.xml -text
 dashboard-plugins/blog-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/components-plugin/components-gui/pom.xml -text
 dashboard-plugins/components-plugin/components-gui/src/main/resources/essentials-component-document.jsp -text

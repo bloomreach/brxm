@@ -23,6 +23,29 @@
   -->
 
   <!--
+    CREATE FOLDER QUERIES
+  -->
+  <instructionSet>
+    <xml action="copy" source="xml/folderoptions/new-blog-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+    <xml action="copy" source="xml/folderoptions/new-blog-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+  </instructionSet>
+  <!--
+    CREATE DATA FOLDER
+  -->
+  <instructionSet>
+    <folder path="/content/documents/blog/{{dateRepoYearMonth}}" template="xml/folder/blog_folder.xml"/>
+  </instructionSet>
+  <!--
+    SAMPLE DATA
+  -->
+<!--
+  <instructionSet>
+    <xml action="copy" source="xml/samples/blog_entry_1.xml" target="/content/documents/blog/{{dateRepoYearMonth}}"/>
+    <xml action="copy" source="xml/samples/blog_entry_1.xml" target="/content/documents/blog/{{dateRepoYearMonth}}"/>
+  </instructionSet>
+-->
+
+  <!--
     JSP TEMPLATES
   -->
   <instructionSet group="jsp">
@@ -34,7 +57,6 @@
   <instructionSet group="freemarker">
     <file action="copy" overwrite="true" source="freemarker/essentials-blog-detail.ftl" target="{{jspRoot}}/essentials/blog/essentials-blog-detail.jsp"/>
   </instructionSet>
-
   <!--
     FACET
   -->
