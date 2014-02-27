@@ -20,6 +20,11 @@
             .controller('blogPluginCtrl', function ($scope, $sce, $log, $rootScope, $http) {
                 $scope.endpoint = $rootScope.REST.dynamic + 'blog/';
                 $scope.templateName = null;
+                $scope.installSampleData = true;
+                $scope.facetAuthor = true;
+                $scope.facetDate = true;
+                $scope.facetCategory = true;
+
 
                 $scope.execute = function () {
                     var payload = Essentials.addPayloadData("templateName", $scope.templateName, null);
