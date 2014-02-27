@@ -19,7 +19,7 @@
     "PAGE_URL": "Page URL",
     "SITEMAP_ITEM": "Sitemap item",
     "SEARCH_FOR_TEMPLATE": "Search for template",
-    "REMOVE_CONFIRMATION": "Are you sure you want to delete the menu item '{{ name }}'?",
+    "REMOVE_CONFIRMATION": "Are you sure you want to delete the menu item '{{ title }}'?",
     "DELETE_ITEM": "Delete item",
 
     "ITEM_ALREADY_LOCKED": "You cannot edit this menu because '{{lockedBy}}' is already editing it.",

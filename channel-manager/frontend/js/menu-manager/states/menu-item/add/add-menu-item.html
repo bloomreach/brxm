@@ -19,27 +19,27 @@
         <h4 class="page-header">{{ 'ADD_NEW_MENU_ITEM' | translate }}</h4>
         <div class="form-group has-feedback"
              data-ng-class="{
-            'has-success': form.name.$dirty && form.name.$valid,
-            'has-error': form.name.$dirty && form.name.$invalid
+            'has-success': form.title.$dirty && form.title.$valid,
+            'has-error': form.title.$dirty && form.title.$invalid
          }">
             <div>{{feedback.clientErrorMessage}}</div>
             <div>{{feedback.serverErrorMessage}}</div>
-            <label for="hippo.channelManager.menuManager.menuItem.add.name">{{ 'LABEL' | translate }}</label>
-            <input type="text" name="name" class="form-control" id="hippo.channelManager.menuManager.menuItem.add.name"
+            <label for="hippo.channelManager.menuManager.menuItem.add.title">{{ 'LABEL' | translate }}</label>
+            <input type="text" name="title" class="form-control" id="hippo.channelManager.menuManager.menuItem.add.title"
                    placeholder="{{ 'LABEL' | translate }}"
                    hippo.channel-manager.menu-manager.auto-focus
-                   data-ng-model="selectedMenuItem.name"
-                   data-ng-focus="form.name.$setPristine();"
+                   data-ng-model="selectedMenuItem.title"
+                   data-ng-focus="form.title.$setPristine();"
                    data-ng-required="true">
-            <div class="tooltip-container" data-ng-show="form.name.$dirty && form.name.$invalid">
+            <div class="tooltip-container" data-ng-show="form.title.$dirty && form.title.$invalid">
                 <div data-tooltip
                      data-placement="top"
                      data-title="{{ 'LABEL_REQUIRED' | translate }}"></div>
             </div>
             <i class="fa form-control-feedback"
                data-ng-class="{
-            'fa-check': form.name.$dirty && form.name.$valid,
-            'fa-times': form.name.$dirty && form.name.$invalid
+            'fa-check': form.title.$dirty && form.title.$valid,
+            'fa-times': form.title.$dirty && form.title.$invalid
            }"></i>
         </div>
         <label for="hippo.channelManager.menuManager.menuItem.add.linkType">{{ 'DESTINATION' | translate }}</label>

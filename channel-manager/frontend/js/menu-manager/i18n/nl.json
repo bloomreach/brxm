@@ -19,7 +19,7 @@
     "PAGE_URL": "Pagina URL",
     "SITEMAP_ITEM": "Sitemap onderdeel",
     "SEARCH_FOR_TEMPLATE": "Zoek naar template",
-    "REMOVE_CONFIRMATION": "Weet je zeker dat je het menu item '{{ name }}' wilt verwijderen?",
+    "REMOVE_CONFIRMATION": "Weet je zeker dat je het menu item '{{ title }}' wilt verwijderen?",
     "DELETE_ITEM": "Verwijder item",
 
     "ITEM_ALREADY_LOCKED": "U kunt dit menu niet bewerken omdat '{{lockedBy}}' het menu al bewerkt.",
