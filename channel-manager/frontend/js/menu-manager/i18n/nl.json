@@ -19,6 +19,7 @@
     "PAGE_URL": "Pagina URL",
     "SITEMAP_ITEM": "Sitemap onderdeel",
     "SEARCH_FOR_TEMPLATE": "Zoek naar template",
+    "REMOVE_CONFIRMATION_TITLE": "Verwijder menu item",
     "REMOVE_CONFIRMATION": "Weet je zeker dat je het menu item '{{ title }}' wilt verwijderen?",
     "DELETE_ITEM": "Verwijder item",
 

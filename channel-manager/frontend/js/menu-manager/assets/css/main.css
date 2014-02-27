@@ -138,13 +138,15 @@ form h4.page-header {
 .feedback {
     position: absolute;
     z-index: 999999;
-    top: -137px;
+    top: -158px;
     border-radius: 0;
     border-top: none;
     margin-left: -100px;
     padding: 30px 20px 16px 20px;
     border-color: #cac6af;
     width: 500px;
+    background-color: rgb(245, 245, 245);
+    background-color: rgba(245, 245, 245, 0.92);
 
     -webkit-transition: top .5s;
     -moz-transition: top .5s;
@@ -157,12 +159,12 @@ form h4.page-header {
     top: 0;
 }
 
-.feedback p, .feedback a {
+.feedback p {
     color: #2c2c2d;
 }
 
-.feedback p {
-    font-weight: bold;
+.feedback a {
+    font-weight: normal;
 }
 
 .feedback .confirm {
@@ -170,10 +172,75 @@ form h4.page-header {
 }
 
 .feedback .buttons {
-    margin-top: 20px;
+    margin-top: 30px;
+    font-weight: normal;
 }
 
 /* --- NestedSortable --- */
-.nestedSortable-handle {
-    border-right: none;
-}
+/*.nestedSortable-handle {*/
+    /*border-right: none;*/
+/*}*/
+
+/*.nestedSortable-drag {*/
+    /*position: absolute;*/
+    /*pointer-events: none;*/
+    /*z-index: 99999999999999999;*/
+    /*opacity: .5;*/
+/*}*/
+
+
+/*.nestedSortable-list {*/
+    /*display: block;*/
+    /*position: relative;*/
+    /*margin: 0px;*/
+    /*padding: 0px;*/
+    /*list-style: none;*/
+/*}*/
+/*.nestedSortable-list .nestedSortable-list {*/
+    /*padding-left: 30px;*/
+/*}*/
+/*.nestedSortable-item, .nestedSortable-placeholder {*/
+    /*display: block;*/
+    /*position: relative;*/
+    /*margin: 0px;*/
+    /*padding: 0px;*/
+    /*min-height: 20px;*/
+    /*line-height: 20px;*/
+/*}*/
+/*.nestedSortable-handle {*/
+    /*cursor: move;*/
+    /*display: block;*/
+    /*margin: 5px 0;*/
+    /*padding: 8px 12px;*/
+    /*background: #f8faff;*/
+    /*border: 1px solid #dae2ea;*/
+    /*color: #7c9eb2;*/
+    /*text-decoration: none;*/
+    /*font-weight: bold;*/
+    /*-webkit-box-sizing: border-box;*/
+    /*-moz-box-sizing: border-box;*/
+    /*box-sizing: border-box;*/
+    /*line-height: 1.5em;*/
+/*}*/
+/*.nestedSortable-handle:hover {*/
+    /*color: #438eb9;*/
+    /*background: #f4f6f7;*/
+    /*border-color: #dce2e8;*/
+/*}*/
+/*.nestedSortable-placeholder {*/
+    /*margin: 5px 0;*/
+    /*padding: 0;*/
+    /*min-height: 30px;*/
+    /*background: #f0f9ff;*/
+    /*border: 2px dashed #bed2db;*/
+    /*-webkit-box-sizing: border-box;*/
+    /*-moz-box-sizing: border-box;*/
+    /*box-sizing: border-box;*/
+/*}*/
+
+/*.nestedSortable-drag {*/
+    /*position: absolute;*/
+    /*pointer-events: none;*/
+    /*z-index: 999;*/
+    /*opacity: .8;*/
+/*}*/

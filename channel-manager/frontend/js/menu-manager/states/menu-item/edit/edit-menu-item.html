@@ -18,10 +18,15 @@
     <!-- START confirmation dialog -->
     <div class="overlay" data-ng-show="confirmation.isVisible">&#160;</div>
     <div class="feedback alert alert-warning clearfix" data-ng-class="{'feedback-show': confirmation.isVisible}">
-        <p>{{ 'REMOVE_CONFIRMATION' | translate:selectedMenuItem }}</p>
+        <p>
+            <strong>{{ 'REMOVE_CONFIRMATION_TITLE' | translate }}</strong>
+        </p>
+        <p>
+            {{ 'REMOVE_CONFIRMATION' | translate:selectedMenuItem }}
+        </p>
         <p class="text-right buttons">
-            <button class="btn btn-default btn-sm" data-ng-click="remove()">
-                <strong><i class="fa fa-trash-o"></i> {{ 'DELETE_ITEM' | translate }}</strong>
+            <button class="btn btn-default" data-ng-click="remove()">
+                <i class="fa fa-trash-o"></i> {{ 'DELETE_ITEM' | translate }}
             </button>
             &nbsp;&nbsp;
             <a href="#" data-ng-click="confirmation.isVisible = false">{{ 'CANCEL' | translate }}</a>
