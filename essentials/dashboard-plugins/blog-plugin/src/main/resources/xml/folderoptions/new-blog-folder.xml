@@ -44,8 +44,8 @@
         <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
-        <sv:value>new-blog-folder</sv:value>
         <sv:value>new-blog-document</sv:value>
+        <sv:value>new-blog-folder</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:id" sv:type="String">
         <sv:value>generated id</sv:value>

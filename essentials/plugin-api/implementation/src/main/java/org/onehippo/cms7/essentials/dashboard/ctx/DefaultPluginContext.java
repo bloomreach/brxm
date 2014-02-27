@@ -74,7 +74,7 @@ public class DefaultPluginContext implements PluginContext {
     }
 
     @Override
-    public Session getSession() {
+    public Session createSession() {
         return session;
     }
 

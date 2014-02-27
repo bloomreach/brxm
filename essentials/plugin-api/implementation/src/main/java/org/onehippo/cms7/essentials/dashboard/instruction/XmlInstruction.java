@@ -99,7 +99,7 @@ public class XmlInstruction extends PluginInstruction {
     }
 
     private InstructionStatus copy() {
-        final Session session = context.getSession();
+        final Session session = context.createSession();
         InputStream stream = null;
         try {
             if (!session.itemExists(target)) {
@@ -135,7 +135,7 @@ public class XmlInstruction extends PluginInstruction {
 
 
     private InstructionStatus delete() {
-        final Session session = context.getSession();
+        final Session session = context.createSession();
         try {
             if (!session.itemExists(target)) {
                 log.error("Target node doesn't exist: {}", target);

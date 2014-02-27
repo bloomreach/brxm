@@ -63,7 +63,7 @@ public class JcrPersistenceWriter {
         }
         //save changes
         try {
-            context.getSession().save();
+            context.createSession().save();
             return rootNode;
         } catch (RepositoryException e) {
             log.error("Error saving model", e);
@@ -191,7 +191,7 @@ public class JcrPersistenceWriter {
 
         final String[] pathParts = StringUtils.split(path, PATH_SEPARATOR);
         final StringBuilder parent = new StringBuilder();
-        final Session session = context.getSession();
+        final Session session = context.createSession();
         Node parentNode = session.getRootNode();
         for (final String pathPart : pathParts) {
             parent.append(PATH_SEPARATOR);

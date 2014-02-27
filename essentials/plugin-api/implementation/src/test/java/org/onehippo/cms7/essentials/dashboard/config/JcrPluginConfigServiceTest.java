@@ -47,8 +47,8 @@ public class JcrPluginConfigServiceTest extends BaseRepositoryTest {
         //assertEquals(copy.getProperties().get(0), "test");
         assertTrue("Expected setup to be done", copy.getSetupDone());
         // delete:
-        getContext().getSession().getNode("/essentials/plugins/").remove();
-        getContext().getSession().save();
+        getContext().createSession().getNode("/essentials/plugins/").remove();
+        getContext().createSession().save();
         service.write(document, DummyTestPlugin.class.getName());
 
 

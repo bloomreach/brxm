@@ -91,7 +91,7 @@ public class FreemarkerSyncResource extends BaseResource {
         final MessageRestful message = new MessageRestful();
         try {
             final PluginContext context = getContext(servletContext);
-            session = context.getSession();
+            session = context.createSession();
             for (KeyValueRestful item : items) {
                 final String nodePath = item.getKey();
                 final String filePath = item.getValue();

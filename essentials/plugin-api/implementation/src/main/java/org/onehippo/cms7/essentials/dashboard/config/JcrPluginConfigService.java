@@ -36,7 +36,7 @@ public class JcrPluginConfigService implements PluginConfigService {
 
     public JcrPluginConfigService(final PluginContext context) {
         this.context = context;
-        this.session = context.getSession();
+        this.session = context.createSession();
         this.manager = new DefaultDocumentManager(context);
     }
 

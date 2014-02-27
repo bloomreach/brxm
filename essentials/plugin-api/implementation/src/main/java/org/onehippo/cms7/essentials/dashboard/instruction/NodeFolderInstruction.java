@@ -80,7 +80,7 @@ public class NodeFolderInstruction extends PluginInstruction {
 
     private InstructionStatus createFolders() {
 
-        final Session session = context.getSession();
+        final Session session = context.createSession();
 
         InputStream stream = null;
         try {

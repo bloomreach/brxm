@@ -64,7 +64,7 @@ public class TestPluginContext extends DefaultPluginContext {
     }
 
     @Override
-    public Session getSession() {
+    public Session createSession() {
         return session;
     }
 

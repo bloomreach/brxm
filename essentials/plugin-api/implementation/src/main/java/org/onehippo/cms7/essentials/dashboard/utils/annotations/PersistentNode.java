@@ -62,7 +62,7 @@ public @interface PersistentNode {
                     log.error("Cannot read node for empty path");
                     return null;
                 }
-                final Session session = context.getSession();
+                final Session session = context.createSession();
                 try {
                     if (parent != null && !parent.hasNode(path)) {
                         if (log.isDebugEnabled()) {
@@ -92,7 +92,7 @@ public @interface PersistentNode {
                 log.error("Parent path was null for model: {}", model);
                 return null;
             }
-            final Session session = context.getSession();
+            final Session session = context.createSession();
             try {
                 if (session.itemExists(parentPath)) {
                     final Node parent = session.getNode(parentPath);

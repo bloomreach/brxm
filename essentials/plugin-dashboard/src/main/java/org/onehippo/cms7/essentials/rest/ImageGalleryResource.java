@@ -93,7 +93,7 @@ public class ImageGalleryResource extends BaseResource {
         // TODO verify the use and creation of the plugin context
         final PluginContext pluginContext = getPluginContext();
 
-        final Session session = pluginContext.getSession();
+        final Session session = pluginContext.createSession();
 
         try {
             final Node processorNode = session.getNode(GALLERY_PROCESSOR_SERVICE_PATH);
@@ -130,7 +130,7 @@ public class ImageGalleryResource extends BaseResource {
                 ImageProcessorRestful imageProcessor = (ImageProcessorRestful) object;
 
                 final PluginContext pluginContext = getPluginContext();
-                final Session session = pluginContext.getSession();
+                final Session session = pluginContext.createSession();
                 try {
                     saveImageProcessor(session, imageProcessor);
                 } catch (RepositoryException e) {
@@ -286,7 +286,7 @@ public class ImageGalleryResource extends BaseResource {
                 ImageSetsRestful imageSets = (ImageSetsRestful) object;
 
                 final PluginContext pluginContext = getPluginContext();
-                final Session session = pluginContext.getSession();
+                final Session session = pluginContext.createSession();
                 for (final ImageSetRestful imageSet : imageSets.getImageSets()) {
                     try {
                         saveImageSet(session, imageSet);
@@ -348,7 +348,7 @@ public class ImageGalleryResource extends BaseResource {
         // TODO verify the use and creation of the plugin context
         final PluginContext pluginContext = getPluginContext();
 
-        final Session session = pluginContext.getSession();
+        final Session session = pluginContext.createSession();
 
 
         final Node processorNode = session.getNode(GALLERY_PROCESSOR_SERVICE_PATH);

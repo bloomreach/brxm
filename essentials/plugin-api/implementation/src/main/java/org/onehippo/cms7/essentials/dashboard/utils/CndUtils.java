@@ -43,7 +43,7 @@ public final class CndUtils {
      * @throws RepositoryException when unable to register namespace
      */
     public static void registerNamespace(final PluginContext context, final String prefix, final String uri) throws RepositoryException {
-        final Session session = context.getSession();
+        final Session session = context.createSession();
         final NamespaceRegistry namespaceRegistry = session.getWorkspace().getNamespaceRegistry();
         namespaceRegistry.registerNamespace(prefix, uri);
     }
@@ -57,7 +57,7 @@ public final class CndUtils {
      */
     public static boolean namespaceUriExists(final PluginContext context, final String uri) {
         try {
-            final Session session = context.getSession();
+            final Session session = context.createSession();
             final NamespaceRegistry namespaceRegistry = session.getWorkspace().getNamespaceRegistry();
             // Check whether a prefix is mapped for the prefix
             final String p = namespaceRegistry.getPrefix(uri);
@@ -80,7 +80,7 @@ public final class CndUtils {
      */
     public static boolean namespacePrefixExists(final PluginContext context, final String prefix) {
         try {
-            final Session session = context.getSession();
+            final Session session = context.createSession();
             final NamespaceRegistry namespaceRegistry = session.getWorkspace().getNamespaceRegistry();
             // Check whether a URI is mapped for the prefix
             final String p = namespaceRegistry.getURI(prefix);
@@ -101,7 +101,7 @@ public final class CndUtils {
             final boolean orderable,
             final boolean mixin,
             final String... superTypes) throws RepositoryException {
-        final Session session = context.getSession();
+        final Session session = context.createSession();
         final Workspace workspace = session.getWorkspace();
         final NodeTypeManager manager = workspace.getNodeTypeManager();
         final NodeTypeTemplate template = manager.createNodeTypeTemplate();
@@ -123,7 +123,7 @@ public final class CndUtils {
             final String prefix,
             final String name
     ) throws RepositoryException {
-        final Session session = context.getSession();
+        final Session session = context.createSession();
         final Workspace workspace = session.getWorkspace();
         final NodeTypeManager manager = workspace.getNodeTypeManager();
 
@@ -156,7 +156,7 @@ public final class CndUtils {
             throw new RepositoryException("Unable to create namespace for empty prefix");
         }
 
-        final Session session = context.getSession();
+        final Session session = context.createSession();
         final Node namespaces = session.getRootNode().getNode(HippoNodeType.NAMESPACES_PATH);
         if (namespaces.hasNode(prefix)) {
             log.info("Namespace '{}' already registered", prefix);
@@ -178,7 +178,7 @@ public final class CndUtils {
             log.debug("Empty node type does not exist");
             return false;
         }
-        final Session session = context.getSession();
+        final Session session = context.createSession();
         final Workspace workspace = session.getWorkspace();
         final NodeTypeManager manager = workspace.getNodeTypeManager();
         return manager.hasNodeType(nodeType);
@@ -198,7 +198,7 @@ public final class CndUtils {
             log.debug("Empty node type does not exist");
             return false;
         }
-        final Session session = context.getSession();
+        final Session session = context.createSession();
         final Workspace workspace = session.getWorkspace();
         final NodeTypeManager manager = workspace.getNodeTypeManager();
         if (manager.hasNodeType(nodeType)) {
@@ -244,7 +244,7 @@ public final class CndUtils {
             log.debug("Return empty list for empty super type");
             return nodeTypes;
         }
-        final Session session = context.getSession();
+        final Session session = context.createSession();
         final Workspace workspace = session.getWorkspace();
         final NodeTypeManager manager = workspace.getNodeTypeManager();
         final NodeTypeIterator primaryNodeTypes = manager.getPrimaryNodeTypes();

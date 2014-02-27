@@ -53,7 +53,7 @@ public final class FSUtils {
         final NodeRestful restful = new NodeRestful(true);
         Session session = null;
         try {
-            session = context.getSession();
+            session = context.createSession();
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
             final String q = "//element(*, hst:template)[@hst:script]";
             final Query query = queryManager.createQuery(q, "xpath");

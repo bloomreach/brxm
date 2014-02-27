@@ -56,7 +56,7 @@ public interface PluginContext extends Serializable, AutoCloseable {
      *
      * @return instance of JCR session, with admin rights
      */
-    Session getSession();
+    Session createSession();
 
     /**
      * Returns root of the site directory

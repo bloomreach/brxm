@@ -43,7 +43,7 @@ public class FSUtilsTest extends BaseRepositoryTest {
     public void testWriting() throws Exception {
         final TestPluginContext context = (TestPluginContext) getContext();
 
-        session = context.getSession();
+        session = context.createSession();
         // create hst nodes
         createHstRootConfig();
         String path = "/hst:hst/hst:configurations/" + getContext().getProjectNamespacePrefix() + "/hst:templates";

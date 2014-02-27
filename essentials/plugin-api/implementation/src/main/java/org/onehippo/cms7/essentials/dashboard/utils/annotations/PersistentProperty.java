@@ -84,7 +84,7 @@ public @interface PersistentProperty {
             final SimplePropertyModel ourModel = (SimplePropertyModel) model;
             final Object value = ourModel.getValue();
             final String name = ourModel.getName();
-            final Session session = context.getSession();
+            final Session session = context.createSession();
             try {
                 final String parentPath = ourModel.getParentPath();
                 if (session.itemExists(parentPath)) {

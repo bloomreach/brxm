@@ -40,7 +40,7 @@ public final class UpdateUtils {
      * @param name
      */
     public static void copyFromRegistryToQueue(final PluginContext context, final String name) {
-        final Session session = context.getSession();
+        final Session session = context.createSession();
         try {
             if (session.itemExists(UPDATE_UTIL_PATH + UpdateType.REGISTRY.getPath() + '/' + name)) {
                 session.getWorkspace().copy(UPDATE_UTIL_PATH + UpdateType.REGISTRY.getPath() + '/' + name, UPDATE_UTIL_PATH + UpdateType.QUEUE.getPath() + '/' + name);
@@ -90,7 +90,7 @@ public final class UpdateUtils {
      * @param config
      */
     private static void addToUpdaterInfo(PluginContext context, UpdateType type, UpdateConfig config) {
-        final Session session = context.getSession();
+        final Session session = context.createSession();
         try {
             if (session.itemExists(UPDATE_UTIL_PATH + type.getPath())) {
                 final Node updateTypeNode = session.getNode(UPDATE_UTIL_PATH + type.getPath());
@@ -117,7 +117,7 @@ public final class UpdateUtils {
      * @param in
      */
     private static void addToUpdaterInfo(final PluginContext context, final UpdateType type, final InputStream in) {
-        final Session session = context.getSession();
+        final Session session = context.createSession();
         try {
             if (session.itemExists(UPDATE_UTIL_PATH + type.getPath())) {
                 if (session instanceof HippoSession) {

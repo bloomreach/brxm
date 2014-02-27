@@ -86,17 +86,17 @@ public class CndInstruction extends PluginInstruction {
                 superTypes = ArrayUtils.EMPTY_STRING_ARRAY;
             }
             CndUtils.registerDocumentType(context, prefix, documentType, true, false, superTypes);
-            context.getSession().save();
+            context.createSession().save();
             // TODO add message
             eventBus.post(new InstructionEvent(this));
             return InstructionStatus.SUCCESS;
         } catch (NodeTypeExistsException e) {
             // just add already exiting ones:
-            GlobalUtils.refreshSession(context.getSession(), false);
+            GlobalUtils.refreshSession(context.createSession(), false);
 
         } catch (RepositoryException e) {
             log.error(String.format("Error registering document type: %s", namespace), e);
-            GlobalUtils.refreshSession(context.getSession(), false);
+            GlobalUtils.refreshSession(context.createSession(), false);
         }
 
         message = messageRegisterError;

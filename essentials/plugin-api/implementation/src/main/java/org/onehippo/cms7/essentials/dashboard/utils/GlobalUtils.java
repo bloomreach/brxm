@@ -169,7 +169,7 @@ public final class GlobalUtils {
     }
 
     public static void refreshSession(final PluginContext context, final boolean keepChanges) {
-        final Session session = context.getSession();
+        final Session session = context.createSession();
         refreshSession(session, keepChanges);
     }
 
