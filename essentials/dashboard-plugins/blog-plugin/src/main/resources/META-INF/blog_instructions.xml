@@ -76,6 +76,7 @@
   </instructionSet>
   <!--
     FACET
+    NOTE: execute after creating folders etc, because we need to fetch blog folder UUID
   -->
   <instructionSet>
     <execute class="org.onehippo.cms7.essentials.dashboard.blog.FacetInstruction"/>

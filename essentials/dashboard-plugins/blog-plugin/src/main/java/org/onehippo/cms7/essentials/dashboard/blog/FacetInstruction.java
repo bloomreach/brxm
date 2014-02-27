@@ -99,14 +99,21 @@ public class FacetInstruction implements Instruction {
 
     @Override
     public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
+        processPlaceholders(context.getPlaceholderData());
         final String namespace = (String) context.getPlaceholderData().get(EssentialConst.PLACEHOLDER_NAMESPACE);
         final String targetNode = "/content/documents/" + namespace;
         Session session = null;
         try {
             session = context.createSession();
             final Node root = session.getNode(targetNode);
-            final Node blogFacets = root.addNode("blogFacets", "hippofacnav:facetnavigation");
-            blogFacets.setProperty("hippo:docbase", "c48aff49-0ef7-4808-8a6e-9b1c52f88ad8");
+            final String facetName = "blogFacets";
+            if (root.hasNode(facetName)) {
+                root.getNode(facetName).remove();
+            }
+
+            final Node blogFacets = root.addNode(facetName, "hippofacnav:facetnavigation");
+            final String docRef = session.getNode(targetNode +"/blog").getIdentifier();
+            blogFacets.setProperty("hippo:docbase", docRef);
             blogFacets.setProperty("hippo:count", "2");
             // TODO read from config
             blogFacets.setProperty("hippofacnav:facetnodenames", new String[]{"Author"});
@@ -114,8 +121,8 @@ public class FacetInstruction implements Instruction {
             //..
             blogFacets.setProperty("hippofacnav:filters", new String[]{"jcr:primaryType = " + namespace + ":blogpost"});
             blogFacets.setProperty("hippofacnav:sortby", new String[]{namespace + ":publicationdate"});
-            blogFacets.setProperty("hippofacnav:sortorder", "descending");
-
+            blogFacets.setProperty("hippofacnav:sortorder", new String[]{"descending"});
+            session.save();
 
         } catch (RepositoryException e) {
             log.error("Error creating blog facet", e);
