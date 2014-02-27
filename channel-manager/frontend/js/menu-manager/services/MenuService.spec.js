@@ -34,24 +34,24 @@ describe('Menu Service', function () {
         $httpBackend = $injector.get('$httpBackend');
         $httpBackend.when('GET', 'api/menuId').respond({
             data: {
-                children: [
+                items: [
                     {
                         id: '1',
-                        name: 'One'
+                        title: 'One'
                     },
                     {
                         id: '2',
-                        name: 'Two',
-                        children: [
+                        title: 'Two',
+                        items: [
                             {
                                 id: 'child1',
-                                name: 'Child 1'
+                                title: 'Child 1'
                             }
                         ]
                     },
                     {
                         id: '3',
-                        name: 'One'
+                        title: 'One'
                     }
                 ]
             }
@@ -79,7 +79,7 @@ describe('Menu Service', function () {
     it('should get menu by id ', function () {
         menuService.getMenu().then(function (menu) {
             expect(menu).toBeDefined();
-            expect(menu.children.length).toEqual(3);
+            expect(menu.items.length).toEqual(3);
         });
         expectGetMenu();
     });
@@ -114,18 +114,18 @@ describe('Menu Service', function () {
         expectGetMenu();
     });
 
-    it('should update the returned menu data when the name of a menu item changes', function () {
+    it('should update the returned menu data when the title of a menu item changes', function () {
         menuService.getMenu().then(function(menu) {
             menuService.getMenuItem('child1').then(function(child1) {
-                child1.name = 'New Name';
-                expect(menu.children[1].children[0].name).toEqual('New Name');
+                child1.title = 'New title';
+                expect(menu.items[1].items[0].title).toEqual('New title');
             });
         });
         expectGetMenu();
     });
 
     it('should save a menu item', function () {
-        var savedMenuItem = { id: 'child1', name: 'New Name' };
+        var savedMenuItem = { id: 'child1', title: 'New title' };
         $httpBackend.expectPOST('api/menuId', savedMenuItem).respond('OK');
         menuService.saveMenuItem(savedMenuItem);
         $httpBackend.flush();
@@ -135,7 +135,7 @@ describe('Menu Service', function () {
         // make sure the menu has been loaded
         menuService.getMenu().then(function (menu) {});
 
-        var response = {data: {children: [{id: 1, name: 'One'}]}};
+        var response = {data: {items: [{id: 1, title: 'One'}]}};
         $httpBackend.expectPOST('api/menuId./delete/3').respond('OK');
         $httpBackend.expectGET('api/menuId').respond(response);
 
@@ -150,7 +150,7 @@ describe('Menu Service', function () {
         // make sure the menu has been loaded
         menuService.getMenu().then(function (menu) {});
 
-        var response = {data: {children: [{id: 1, name: 'One'}]}};
+        var response = {data: {items: [{id: 1, title: 'One'}]}};
         $httpBackend.expectPOST('api/menuId./delete/child1').respond('OK');
         $httpBackend.expectGET('api/menuId').respond(response);
 
@@ -178,7 +178,7 @@ describe('Menu Service', function () {
     });
 
     it('should create a menu item', function () {
-        var newMenuItem = { id: 'child1', name: 'New Name' };
+        var newMenuItem = { id: 'child1', title: 'New title' };
         $httpBackend.expectPOST('api/menuId./create/parentId', newMenuItem).respond('OK');
         menuService.createMenuItem('parentId', newMenuItem);
         $httpBackend.flush();

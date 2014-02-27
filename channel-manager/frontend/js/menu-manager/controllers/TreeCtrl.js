@@ -17,26 +17,6 @@
 (function () {
     "use strict";
 
-    function createTree(menuItems) {
-        var nodes = [];
-
-        _.each(menuItems, function (menuItem) {
-            var node = {
-                id: menuItem.id,
-                title: menuItem.name,
-                items: []
-            };
-
-            if (menuItem.children && menuItem.children.length > 0) {
-                node.items = createTree(menuItem.children);
-            }
-
-            nodes.push(node);
-        });
-
-        return nodes;
-    }
-
     angular.module('hippo.channelManager.menuManager')
 
         .controller('hippo.channelManager.menuManager.TreeCtrl', [

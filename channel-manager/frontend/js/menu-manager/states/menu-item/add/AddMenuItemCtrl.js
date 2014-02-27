@@ -30,7 +30,7 @@
 
                 $scope.selectedMenuItem = {
                     linkType: 'SITEMAPITEM',
-                    name: '',
+                    title: '',
                     link: ''
                 };
 

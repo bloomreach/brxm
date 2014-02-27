@@ -27,7 +27,7 @@
             function (ConfigService, $http, $q) {
                 var menuService = {},
                     menuData = {
-                        children: null
+                        items: null
                     },
                     menuDataLoading = false,
                     menuLoaded = null;
@@ -46,7 +46,7 @@
                         menuLoaded = $q.defer();
                         return $http.get(menuServiceUrl())
                             .success(function (response) {
-                                menuData.children = response.data.children;
+                                menuData.items = response.data.items;
                                 menuLoaded.resolve(menuData);
                             })
                             .error(function (error) {
@@ -59,7 +59,7 @@
                 }
 
                 function loadMenuOnce() {
-                    if (menuData.children === null) {
+                    if (menuData.items === null) {
                         loadMenu();
                     }
                 }
@@ -68,14 +68,14 @@
                     var found = _.findWhere(items, { id: id });
                     if (found === undefined && angular.isArray(items)) {
                         for (var i = 0, length = items.length; i < length && !found; i++) {
-                            found = findMenuItem(items[i].children, id);
+                            found = findMenuItem(items[i].items, id);
                         }
                     }
                     return found;
                 }
 
                 function getMenuItem(id) {
-                    return findMenuItem(menuData.children, id);
+                    return findMenuItem(menuData.items, id);
                 }
 
                 function whenMenuLoaded(getResolved) {
@@ -93,7 +93,7 @@
                 }
 
                 function findItemAndItsParent(itemId, parent) {
-                    var items = parent.children;
+                    var items = parent.items;
                     var item = _.findWhere (items, {id: itemId});
                     if (item) {
                         return {item: item, parent: parent};
@@ -111,7 +111,7 @@
                 function getSelectedItemIdBeforeDeletion(toBeDeletedItemId) {
                     var itemWithParent = findItemAndItsParent(toBeDeletedItemId, menuData);
                     var parent = itemWithParent.parent;
-                    var items = parent.children;
+                    var items = parent.items;
                     if (items.length == 1) {
                         // item to delete has no siblings, so parent will be selected
                         return parent.id;
@@ -133,7 +133,7 @@
 
                 menuService.getFirstMenuItemId = function () {
                     return whenMenuLoaded(function () {
-                        return menuData.children[0].id;
+                        return menuData.items[0].id;
                     });
                 };
 

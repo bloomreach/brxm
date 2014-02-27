@@ -63,17 +63,13 @@
 
                 function saveSelectedMenuItemProperty(propertyName) {
                     savedMenuItem = angular.copy($scope.selectedMenuItem);
-
-                    var itemToSave = angular.copy(savedMenuItem);
-                    itemToSave.name = itemToSave.title;
-                    itemToSave.children = itemToSave.items;
-                    delete itemToSave.title;
-                    delete itemToSave.items;
+                    // Child properties haven't changed, so don't send them
+                    delete savedMenuItem.items;
 
                     $scope.isSaving[propertyName] = true;
 
                     $log.info('menu service save');
-                    MenuService.saveMenuItem(itemToSave).then(function () {
+                    MenuService.saveMenuItem(savedMenuItem).then(function () {
                             $log.info('after save - success');
                             $scope.isSaving[propertyName] = false;
                             $scope.isSaved[propertyName] = true;

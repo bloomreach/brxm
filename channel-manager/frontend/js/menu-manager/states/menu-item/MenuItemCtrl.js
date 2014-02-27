@@ -17,28 +17,6 @@
 (function () {
     "use strict";
 
-    function createTree(menuItems) {
-        var nodes = [];
-
-        _.each(menuItems, function (menuItem) {
-            var node = {
-                id: menuItem.id,
-                title: menuItem.name,
-                items: [],
-                link: menuItem.link,
-                linkType: menuItem.linkType
-            };
-
-            if (menuItem.children && menuItem.children.length > 0) {
-                node.items = createTree(menuItem.children);
-            }
-
-            nodes.push(node);
-        });
-
-        return nodes;
-    }
-
     function findParentByItemId(sourceItem, itemId) {
         var result;
 
@@ -98,13 +76,13 @@
 
                 // initial load of menu tree structure
                 MenuService.getMenu().then(function (menuData) {
-                    $scope.list = createTree(menuData.children);
+                    $scope.list = menuData.items;
                     $scope.selectedMenuItem = $scope.list[0];
                 });
 
                 // if we redirect to a url without DOM-interaction, we need to set the selected menu item manually
                 $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
-                    if (fromState.name == 'menu-item.edit' && fromState.name == toState.name) {
+                    if (fromState.title == 'menu-item.edit' && fromState.title == toState.title) {
                         if (toParams.menuItemId != $scope.selectedMenuItem.id) {
                             $scope.selectedMenuItem = findScopeByItemId($scope.list, toParams.menuItemId);
                         }
