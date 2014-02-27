@@ -82,7 +82,7 @@
 
                 // if we redirect to a url without DOM-interaction, we need to set the selected menu item manually
                 $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
-                    if (fromState.title == 'menu-item.edit' && fromState.title == toState.title) {
+                    if (fromState.name == 'menu-item.edit' && fromState.name == toState.name) {
                         if (toParams.menuItemId != $scope.selectedMenuItem.id) {
                             $scope.selectedMenuItem = findScopeByItemId($scope.list, toParams.menuItemId);
                         }
