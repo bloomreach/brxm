@@ -120,7 +120,8 @@ public class MountResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPrototypePages() {
         final HstSite editingPreviewSite = getPageComposerContextService().getEditingPreviewSite();
-        PagesRepresentation prototypePagesRepresentation = new PagesRepresentation().represent(editingPreviewSite, true, false);
+        PagesRepresentation prototypePagesRepresentation = new PagesRepresentation().represent(editingPreviewSite,
+                true, false, getPageComposerContextService().getEditingMount());
         log.info("Prototype pages loaded successfully");
         return ok("Prototype pages loaded successfully", prototypePagesRepresentation);
     }

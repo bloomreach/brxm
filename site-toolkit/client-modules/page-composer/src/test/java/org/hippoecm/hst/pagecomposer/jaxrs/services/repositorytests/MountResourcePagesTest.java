@@ -19,11 +19,9 @@ import javax.jcr.Node;
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.PageRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.PagesRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.repository.util.NodeIterable;
 import org.junit.Test;
 
@@ -102,8 +100,8 @@ public class MountResourcePagesTest extends AbstractMountResourceTest {
         mockNewRequest(session, "localhost", "/home");
         PagesRepresentation representation = (PagesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
 
-        PageRepresentation prev = null;
-        for (PageRepresentation pageRepresentation : representation.getPages()) {
+        ComponentRepresentation prev = null;
+        for (ComponentRepresentation pageRepresentation : representation.getPages()) {
             if (prev == null) {
                 prev = pageRepresentation;
                 continue;

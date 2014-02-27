@@ -37,6 +37,9 @@ public class ComponentRepresentation {
     private String iconURL;
     private String parentId;
 
+    private boolean inherited;
+    private boolean prototype;
+
     private String componentClassName;
     private String template;
 
@@ -54,6 +57,9 @@ public class ComponentRepresentation {
         if (parent != null) {
             parentId = parent.getCanonicalIdentifier();
         }
+
+        this.inherited = componentConfiguration.isInherited();
+        this.prototype = componentConfiguration.isPrototype();
 
         componentClassName = componentConfiguration.getComponentClassName();
         template = componentConfiguration.getRenderPath();
@@ -141,6 +147,22 @@ public class ComponentRepresentation {
 
     public void setParentId(String parentId) {
         this.parentId = parentId;
+    }
+
+    public boolean isInherited() {
+        return inherited;
+    }
+
+    public void setInherited(final boolean inherited) {
+        this.inherited = inherited;
+    }
+
+    public boolean isPrototype() {
+        return prototype;
+    }
+
+    public void setPrototype(final boolean prototype) {
+        this.prototype = prototype;
     }
 
     public String getLabel() {

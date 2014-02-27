@@ -22,15 +22,17 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 
 public class PagesRepresentation {
 
-    private List<PageRepresentation> pages = new ArrayList<>();
+    private List<ComponentRepresentation> pages = new ArrayList<>();
 
     public PagesRepresentation represent(final HstSite editingPreviewSite,
                                          final boolean prototypeOnly,
-                                         final boolean includeInherited) {
+                                         final boolean includeInherited,
+                                         final Mount mount) {
         for (HstComponentConfiguration page : editingPreviewSite.getComponentsConfiguration().getPages().values()) {
             if (prototypeOnly && !page.isPrototype()) {
                 // skipping non prototype
@@ -40,23 +42,23 @@ public class PagesRepresentation {
                 // skipping inherited
                 continue;
             }
-            PageRepresentation pageRepresentation = new PageRepresentation().represent(page);
+            ComponentRepresentation pageRepresentation = new ComponentRepresentation().represent(page, mount);
             pages.add(pageRepresentation);
         }
-        Collections.sort(pages, new Comparator<PageRepresentation>() {
+        Collections.sort(pages, new Comparator<ComponentRepresentation>() {
             @Override
-            public int compare(final PageRepresentation o1, final PageRepresentation o2) {
-               return o1.getName().compareTo(o2.getName());
+            public int compare(final ComponentRepresentation o1, final ComponentRepresentation o2) {
+                return o1.getName().compareTo(o2.getName());
             }
         });
         return this;
     }
 
-    public List<PageRepresentation> getPages() {
+    public List<ComponentRepresentation> getPages() {
         return pages;
     }
 
-    public void setPages(final List<PageRepresentation> pages) {
+    public void setPages(final List<ComponentRepresentation> pages) {
         this.pages = pages;
     }
 }
