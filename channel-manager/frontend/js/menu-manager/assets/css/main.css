@@ -182,6 +182,11 @@ form h4.page-header {
     font-weight: normal;
 }
 
+/* --- NestedSortable --- */
+.nestedSortable-handle {
+    border-right: none;
+}
+
 /* --- Top bar --- */
 #top-bar {
     background-color: rgb(245, 245, 245);
