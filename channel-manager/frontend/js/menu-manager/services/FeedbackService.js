@@ -35,12 +35,12 @@
                     var clientErrorMessage = $translate(translationId, interpolateParams);
                     if (clientErrorMessage.match(translationIdRegex)) {
                         // Apparently there is no translation
-                        return {serverErrorMessage: $translate(technicalErrorTranslationId)};
+                        return {message: $translate(technicalErrorTranslationId)};
                     } else {
-                        return {clientErrorMessage: $translate(translationId, interpolateParams)};
+                        return {message: $translate(translationId, interpolateParams)};
                     }
                 } else {
-                    return {serverErrorMessage: $translate(technicalErrorTranslationId)};
+                    return {message: $translate(technicalErrorTranslationId)};
                 }
             };
 
