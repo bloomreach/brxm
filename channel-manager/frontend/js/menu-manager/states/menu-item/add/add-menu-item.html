@@ -15,15 +15,17 @@
   -->
 
 <div>
-    <form name="form" role="form" novalidate>
+    <form name="form" role="form" novalidate class="l-fixed-height">
         <h4 class="page-header">{{ 'ADD_NEW_MENU_ITEM' | translate }}</h4>
+        <p class="alert alert-danger alert-dismissable" ng-show="feedback.clientErrorMessage">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{feedback.clientErrorMessage}}
+        </p>
         <div class="form-group has-feedback"
              data-ng-class="{
             'has-success': form.title.$dirty && form.title.$valid,
             'has-error': form.title.$dirty && form.title.$invalid
          }">
-            <div>{{feedback.clientErrorMessage}}</div>
-            <div>{{feedback.serverErrorMessage}}</div>
             <label for="hippo.channelManager.menuManager.menuItem.add.title">{{ 'LABEL' | translate }}</label>
             <input type="text" name="title" class="form-control" id="hippo.channelManager.menuManager.menuItem.add.title"
                    placeholder="{{ 'LABEL' | translate }}"

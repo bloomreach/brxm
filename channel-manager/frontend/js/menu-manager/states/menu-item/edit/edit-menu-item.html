@@ -29,17 +29,18 @@
                 <i class="fa fa-trash-o"></i> {{ 'DELETE_MENU_ITEM' | translate }}
             </button>
             &nbsp;&nbsp;
-            <a href="#" data-ng-click="confirmation.isVisible = false">{{ 'CANCEL' | translate }}</a>
+            <button class="btn btn-link" data-ng-click="confirmation.isVisible = false">{{ 'CANCEL' | translate }}</button>
         </p>
     </div>
     <!-- END confirmation dialog -->
 
     <!-- START edit form -->
-    <form name="form" data-role="form" novalidate>
+    <form name="form" data-role="form" novalidate class="l-fixed-height">
         <h4 class="page-header">{{ 'EDIT_MENU_ITEM' | translate }}</h4>
         <p class="alert alert-danger alert-dismissable" ng-show="feedback.clientErrorMessage">
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-            {{feedback.clientErrorMessage}}</p>
+            {{feedback.clientErrorMessage}}
+        </p>
         <div class="form-group has-feedback"
              data-ng-class="{
             'has-success': form.title.$dirty && !isSaving.title && form.title.$valid && isSaved.title,

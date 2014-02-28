@@ -27,11 +27,11 @@
             '$log',
             'hippo.channelManager.menuManager.ConfigService',
             'hippo.channelManager.menuManager.MenuService',
-            function ($scope, $state, $stateParams, $rootScope, $log, ConfigService, MenuService) {
+            'hippo.channelManager.menuManager.FeedbackService',
+            function ($scope, $state, $stateParams, $rootScope, $log, ConfigService, MenuService, FeedbackService) {
                 $scope.callbacks = {
                     itemClicked: function (itemScope) {
                         $scope.$apply(function () {
-
                             $state.go('menu-item.edit', {menuItemId: itemScope.id});
                             $scope.$parent.selectedMenuItem = itemScope;
                         });
@@ -39,7 +39,12 @@
                     itemMoved: function (sourceScope, modelData, sourceIndex, destScope, destIndex) {
                         var parentData = destScope.parentItemScope();
                         var destId = (!parentData) ? ConfigService.menuId : parentData.itemData().id;
-                        MenuService.moveMenuItem(modelData.id, destId, destIndex);
+                        MenuService.moveMenuItem(modelData.id, destId, destIndex).then(function (message) {
+                            console.log('message: ', message);
+                        }, function (errorResponse) {
+                            console.log('error: ', errorResponse);
+                            FeedbackService.getFeedback(errorResponse);
+                        });
                     },
                     orderChanged: function (scope, modelData, sourceIndex, destIndex) {
                         var parentData = scope.parentItemScope();

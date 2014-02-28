@@ -67,6 +67,12 @@ html, body {
     position: relative;
 }
 
+.l-fixed-height {
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 .form-group .input-group .form-control-feedback {
     top: 0;
     right: 40px;
