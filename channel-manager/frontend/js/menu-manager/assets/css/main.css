@@ -60,7 +60,6 @@ html, body {
 }
 
 #form-panel {
-    padding-top: 10px;
     padding-bottom: 10px;
     display: table-cell;
     float: none;
@@ -71,6 +70,7 @@ html, body {
     max-height: 364px;
     overflow-y: auto;
     overflow-x: hidden;
+    padding-top: 10px;
 }
 
 .form-group .input-group .form-control-feedback {
