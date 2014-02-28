@@ -330,8 +330,57 @@ public class SiteMenuItemHelperTest {
     }
 
     @Test
-    public void testMove() {
-        // TODO (meggermont) implement
+    public void testMove_to_front_within_parent() throws RepositoryException {
+
+        expect(node.getName()).andReturn("node");
+
+        expect(parent.getNodes()).andReturn(childIterator);
+        expect(childIterator.hasNext()).andReturn(true).andReturn(true).andReturn(false);
+        expect(childIterator.next()).andReturn(node).andReturn(node);
+        expect(node.getName()).andReturn("child-0").andReturn("node");
+
+        expect(node.getParent()).andReturn(parent);
+        expect(parent.isSame(parent)).andReturn(true);
+
+        mockGetAncestor();
+        expectLastCall();
+        parent.orderBefore("node", "child-0");
+        expectLastCall();
+
+        replay(mocks);
+
+        siteMenuItemHelper.move(parent, node, 0);
+    }
+
+    @Test
+    public void testMove_to_front_in_other_parent() throws RepositoryException {
+
+        expect(node.getName()).andReturn("node");
+
+        expect(parent.getNodes()).andReturn(childIterator);
+        expect(childIterator.hasNext()).andReturn(true).andReturn(true).andReturn(false);
+        expect(childIterator.next()).andReturn(node).andReturn(node);
+        expect(node.getName()).andReturn("child-0").andReturn("node");
+
+        expect(node.getParent()).andReturn(parent);
+        expect(parent.isSame(parent)).andReturn(false);
+
+        mockGetAncestor();
+        expectLastCall();
+        expect(node.getSession()).andReturn(session);
+        expect(node.getPath()).andReturn("/a/node");
+        expect(parent.getPath()).andReturn("/b");
+        session.move("/a/node", "/b/node");
+        expectLastCall();
+
+        mockGetAncestor();
+        expectLastCall();
+        parent.orderBefore("node", "child-0");
+        expectLastCall();
+
+        replay(mocks);
+
+        siteMenuItemHelper.move(parent, node, 0);
     }
 
     private void mockGetAncestor() throws RepositoryException {

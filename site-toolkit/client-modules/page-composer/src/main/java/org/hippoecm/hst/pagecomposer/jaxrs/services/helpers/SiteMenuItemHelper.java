@@ -145,7 +145,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
         if (!source.getParent().isSame(parent)) {
             move(source, parent);
         }
-        lockHelper.acquireSimpleLock(getMenuAncestor(parent));
+        lockHelper.acquireSimpleLock(getMenuAncestor(source));
         try {
             parent.orderBefore(sourceName, successorNodeName);
         } catch (ItemExistsException e) {
