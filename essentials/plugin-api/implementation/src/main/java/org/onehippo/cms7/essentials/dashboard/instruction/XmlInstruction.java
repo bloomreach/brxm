@@ -37,6 +37,8 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.XmlUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.xml.XmlNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -100,7 +102,7 @@ public class XmlInstruction extends PluginInstruction {
 
     private InstructionStatus copy() {
         final Session session = context.createSession();
-        InputStream stream = null;
+        InputStream stream = getClass().getClassLoader().getResourceAsStream(source);
         try {
             if (!session.itemExists(target)) {
                 log.error("Target node doesn't exist {}", target);
@@ -108,13 +110,20 @@ public class XmlInstruction extends PluginInstruction {
             }
             final Node destination = session.getNode(target);
 
-            stream = getClass().getClassLoader().getResourceAsStream(source);
+
             if (stream == null) {
                 log.error("Source file not found {}", source);
                 message = messageCopyError;
                 eventBus.post(new InstructionEvent(this));
                 return InstructionStatus.FAILED;
             }
+
+            // first check if node exists:
+            if (!isOverwrite() && nodeExists(session, source, destination.getPath())) {
+                eventBus.post(new InstructionEvent(this));
+                return InstructionStatus.SKIPPED;
+            }
+
 
             // Import XML with replaced NAMESPACE placeholder
             final String myData = TemplateUtils.replaceTemplateData(GlobalUtils.readStreamAsText(stream), context.getPlaceholderData());
@@ -131,6 +140,30 @@ public class XmlInstruction extends PluginInstruction {
         }
         return InstructionStatus.FAILED;
 
+    }
+
+    private boolean nodeExists(final Session session, final String source, final String parentPath) throws RepositoryException {
+
+        final InputStream stream = getClass().getClassLoader().getResourceAsStream(source);
+        try {
+            final XmlNode xmlNode = XmlUtils.parseXml(stream);
+            final String name = xmlNode.getName();
+            if (!Strings.isNullOrEmpty(name)) {
+                if (session.itemExists(parentPath)) {
+                    final String absPath = parentPath.endsWith("/") ? parentPath + name : parentPath + '/' + name;
+                    if (session.itemExists(absPath)) {
+                        log.debug("Node already exists: {}", absPath);
+                        return true;
+                    }
+                }
+            }
+
+        } finally {
+            IOUtils.closeQuietly(stream);
+        }
+
+
+        return false;
     }
 
 
