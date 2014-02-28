@@ -19,7 +19,7 @@ package org.onehippo.cms7.essentials.components.info;
 /**
  * @version "$Id$"
  */
-public interface EssentialsBlogComponentInfo {
+public interface EssentialsBlogComponentInfo extends EssentialsDocumentListComponentInfo {
 
     boolean showTagCloud();
 

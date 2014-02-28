@@ -35,6 +35,7 @@ public class EssentialsBlogComponent extends EssentialsListComponent {
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
         // TODO implement
         log.info("**** BLOG COMPONENT ****");
+        super.doBeforeRender(request, response);
 
     }
 
