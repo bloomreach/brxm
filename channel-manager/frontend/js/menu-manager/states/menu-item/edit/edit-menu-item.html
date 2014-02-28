@@ -36,9 +36,8 @@
 
     <!-- START edit form -->
     <form name="form" data-role="form" novalidate class="l-fixed-height">
-        <h4 class="page-header">{{ 'EDIT_MENU_ITEM' | translate }}</h4>
         <p class="alert alert-danger alert-dismissable" ng-show="feedback.clientErrorMessage">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <button type="button" class="close" data-ng-click="dismissFeedback()" data-dismiss="alert" aria-hidden="true">&times;</button>
             {{feedback.clientErrorMessage}}
         </p>
         <div class="form-group has-feedback"

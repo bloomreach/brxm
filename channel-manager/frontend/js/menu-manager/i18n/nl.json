@@ -1,4 +1,5 @@
 {
+    "EDIT_MENU": "Wijzig menu",
     "ADD_MENU_ITEM": "Voeg menu-item toe",
     "ADD_NEW_MENU_ITEM": "Voeg menu-item toe",
     "CANCEL": "Annuleer",
@@ -23,7 +24,7 @@
     "REMOVE_CONFIRMATION": "Weet je zeker dat je het menu item '{{ title }}' wilt verwijderen?",
     "DELETE_ITEM": "Verwijder item",
 
-    "ITEM_ALREADY_LOCKED": "U kunt dit menu niet bewerken omdat '{{lockedBy}}' het menu al bewerkt.",
+    "ITEM_ALREADY_LOCKED": "U kunt dit menu niet bewerken omdat '{{ lockedBy }}' het menu al bewerkt.",
     "ITEM_NAME_NOT_UNIQUE": "Er bestaat al een menu-item met dit label.",
     "TECHNICAL_ERROR": "Er is een technische fout opgetreden"
 }

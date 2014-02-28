@@ -34,9 +34,17 @@
 
 <body>
     <div data-ng-app="hippo.channelManager.menuManager" id="application">
+        <div class="container" id="top-bar">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h4>{{ 'EDIT_MENU' | translate }}</h4>
+                </div>
+            </div>
+        </div>
+
         <div ui-view></div>
     </div>
-
+    
     <script src="../components/jquery/jquery.min.js"></script>
     <script src="../components/angular/angular.js"></script>
     <script src="../components/angular-route/angular-route.min.js"></script>
