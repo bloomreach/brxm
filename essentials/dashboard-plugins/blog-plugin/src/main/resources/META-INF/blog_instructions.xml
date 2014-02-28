@@ -84,8 +84,10 @@
    HST CONFIG
   -->
   <instructionSet>
-    <xml action="copy" source="xml/hst/blog-catalog.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:catalog"/>
-    <xml action="copy" source="xml/hst/sitemap/blog-sitemap.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
+    <xml action="copy" source="hst/blog-catalog.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:catalog"/>
+    <xml action="copy" source="hst/blog-sitemap.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
+    <xml action="copy" source="hst/page-blog-list.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
+    <xml action="copy" source="hst/page-blog-page.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
   </instructionSet>
   <!-- HST TEMPLATES -->
   <instructionSet group="jsp">
