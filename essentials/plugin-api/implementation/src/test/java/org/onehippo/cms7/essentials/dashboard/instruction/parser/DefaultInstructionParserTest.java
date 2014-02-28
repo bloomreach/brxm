@@ -64,11 +64,11 @@ public class DefaultInstructionParserTest extends BaseTest {
         //############################################
         // READ FROM FILE
         //############################################
-        final InputStream resourceAsStream = getClass().getResourceAsStream("/instructions.xml");
+        final InputStream resourceAsStream = getClass().getResourceAsStream("/parser_instructions.xml");
         final String content = GlobalUtils.readStreamAsText(resourceAsStream);
         final Instructions myInstructions = instructionParser.parseInstructions(content);
         final Set<InstructionSet> iset = myInstructions.getInstructionSets();
-        assertEquals(2, iset.size());
+        assertEquals(3, iset.size());
 
         final Iterator<InstructionSet> myIterator = iset.iterator();
         final InstructionSet set1 = myIterator.next();
@@ -79,8 +79,8 @@ public class DefaultInstructionParserTest extends BaseTest {
         assertEquals(5, set1.getInstructions().size());
         assertEquals(1, set2.getInstructions().size());
         // total instructions is 6:
-        assertEquals(6, myInstructions.totalInstructions());
-        assertEquals(2, myInstructions.totalInstructionSets());
+        assertEquals(7, myInstructions.totalInstructions());
+        assertEquals(3, myInstructions.totalInstructionSets());
 
 
         //############################################

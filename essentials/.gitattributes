@@ -647,12 +647,12 @@ plugin-api/implementation/src/test/resources/TestMockBean.java -text
 plugin-api/implementation/src/test/resources/cms-pom.xml -text
 plugin-api/implementation/src/test/resources/custom_nodetypes.xml -text
 plugin-api/implementation/src/test/resources/instruction_xml_file.xml -text
-plugin-api/implementation/src/test/resources/instructions.xml -text
 plugin-api/implementation/src/test/resources/log4j.xml -text
 plugin-api/implementation/src/test/resources/my_folder_template.xml -text
 plugin-api/implementation/src/test/resources/mytestproject.cnd -text
 plugin-api/implementation/src/test/resources/news_template.xml -text
 plugin-api/implementation/src/test/resources/no-plugin-example.jar -text
+plugin-api/implementation/src/test/resources/parser_instructions.xml -text
 plugin-api/implementation/src/test/resources/plugin-example.jar -text
 plugin-api/implementation/src/test/resources/plugin-example/META-INF/MANIFEST.MF -text
 plugin-api/implementation/src/test/resources/plugin-example/META-INF/maven/org.onehippo.essentials/hippo-dahsboard-gallery-plugin/pom.properties -text

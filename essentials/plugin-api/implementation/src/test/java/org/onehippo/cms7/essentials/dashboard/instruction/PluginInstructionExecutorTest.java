@@ -57,7 +57,7 @@ public class PluginInstructionExecutorTest extends BaseRepositoryTest {
     @Test
     public void testExecute() throws Exception {
 
-        final InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream("instructions.xml");
+        final InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream("parser_instructions.xml");
         final String content = GlobalUtils.readStreamAsText(resourceAsStream);
         log.info("content {}", content);
         listener.reset();
@@ -77,7 +77,7 @@ public class PluginInstructionExecutorTest extends BaseRepositoryTest {
     @Test
     public void testExecuteByGroup() throws Exception {
 
-        final InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream("instructions.xml");
+        final InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream("parser_instructions.xml");
         final String content = GlobalUtils.readStreamAsText(resourceAsStream);
         log.info("content {}", content);
         listener.reset();

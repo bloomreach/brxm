@@ -130,7 +130,7 @@ public class PluginResource extends BaseResource {
                     final Class<EssentialsPlugin> clazz = (Class<EssentialsPlugin>) Class.forName(pluginClass);
                     final Constructor<EssentialsPlugin> constructor = clazz.getConstructor(Plugin.class, PluginContext.class);
                     final Plugin dummy = new PluginRestful();
-                    final EssentialsPlugin instance = constructor.newInstance(dummy, new DefaultPluginContext(GlobalUtils.createSession(), dummy));
+                    final EssentialsPlugin instance = constructor.newInstance(dummy, new DefaultPluginContext(dummy));
                     final InstallState installState = instance.getInstallState();
                     if (installState == InstallState.INSTALLED_AND_RESTARTED) {
                         item.setNeedsInstallation(false);
@@ -216,7 +216,7 @@ public class PluginResource extends BaseResource {
         powerpackPackage.setProperties(new HashMap<String, Object>(values));
         getInjector().autowireBean(powerpackPackage);
         final String className = ProjectSetupPlugin.class.getName();
-        final PluginContext context = new DefaultPluginContext(GlobalUtils.createSession(), new PluginRestful(className));
+        final PluginContext context = new DefaultPluginContext(new PluginRestful(className));
 
         // inject project settings:
         final PluginConfigService service = context.getConfigService();
@@ -442,7 +442,7 @@ public static List<PluginRestful> parseGist() {
         final StatusRestful status = new StatusRestful();
         try {
             final Plugin plugin = getPluginByClassName(ProjectSetupPlugin.class.getName(), servletContext);
-            final PluginContext context = new DefaultPluginContext(GlobalUtils.createSession(), plugin);
+            final PluginContext context = new DefaultPluginContext(plugin);
             final ProjectSettingsBean document = context.getConfigService().read(ProjectSetupPlugin.class.getName(), ProjectSettingsBean.class);
 
             if (document != null && document.getSetupDone()) {

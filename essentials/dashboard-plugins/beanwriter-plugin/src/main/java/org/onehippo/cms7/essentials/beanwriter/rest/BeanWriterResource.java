@@ -62,7 +62,7 @@ public class BeanWriterResource extends BaseResource {
 
 
         final String className = ProjectSetupPlugin.class.getName();
-        final PluginContext context = new DefaultPluginContext(GlobalUtils.createSession(), new PluginRestful(className));
+        final PluginContext context = new DefaultPluginContext(new PluginRestful(className));
         // inject project settings:
         final PluginConfigService service = context.getConfigService();
         final RestfulList<MessageRestful> messages = new MyRestList();

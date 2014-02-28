@@ -7,6 +7,7 @@ import javax.jcr.Node;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
+import org.onehippo.cms7.essentials.TestPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.update.UpdateUtils;
@@ -34,7 +35,7 @@ public class UpdateUtilsTest extends BaseRepositoryTest {
 
     @Test
     public void testUpdateStreamUtil() throws Exception {
-        PluginContext context = new DefaultPluginContext(session, null);
+        PluginContext context = new TestPluginContext(repository, null);
         final InputStream resourceAsStream = getClass().getResourceAsStream("/updateplugintest.xml");
         UpdateUtils.addToRegistry(context, resourceAsStream);
         assertTrue(session.itemExists(UpdateUtils.UPDATE_UTIL_PATH + UpdateUtils.UpdateType.REGISTRY.getPath() + "/new-1"));

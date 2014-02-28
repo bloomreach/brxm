@@ -20,19 +20,20 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 public abstract class BaseRepositoryTest extends BaseTest {
 
 
+
     protected MemoryRepository repository;
     protected Session session;
     protected Session hippoSession;
 
     @Override
     public PluginContext getContext() {
-        final TestPluginContext context = (TestPluginContext) super.getContext();
-        context.setSession(session);
-
-
-        return context;
+        final TestPluginContext testPluginContext = new TestPluginContext(repository, null);
+        testPluginContext.setBeansPackageName("org.onehippo.essentials.test.beans");
+        testPluginContext.setRestPackageName("org.onehippo.essentials.test.rest");
+        return testPluginContext;
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -41,6 +42,7 @@ public abstract class BaseRepositoryTest extends BaseTest {
 
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
 

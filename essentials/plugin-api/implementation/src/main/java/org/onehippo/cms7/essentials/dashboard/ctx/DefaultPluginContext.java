@@ -24,6 +24,7 @@ import org.onehippo.cms7.essentials.dashboard.config.JcrPluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +44,7 @@ public class DefaultPluginContext implements PluginContext {
             + File.separator;
     private static final Logger log = LoggerFactory.getLogger(DefaultPluginContext.class);
     private static final long serialVersionUID = 1L;
-    private final transient Session session;
+
     private final Plugin plugin;
     private final Multimap<String, Object> contextData = ArrayListMultimap.create();
     private transient File siteFile;
@@ -53,8 +54,7 @@ public class DefaultPluginContext implements PluginContext {
     private String projectNamespace;
     private Map<String, Object> placeholderData;
 
-    public DefaultPluginContext(final Session session, final Plugin plugin) {
-        this.session = session;
+    public DefaultPluginContext(final Plugin plugin) {
         this.plugin = plugin;
     }
 
@@ -75,7 +75,7 @@ public class DefaultPluginContext implements PluginContext {
 
     @Override
     public Session createSession() {
-        return session;
+        return GlobalUtils.createSession();
     }
 
     @Override
@@ -253,7 +253,10 @@ public class DefaultPluginContext implements PluginContext {
         // folders
         placeholderData.put(EssentialConst.PLACEHOLDER_BEANS_FOLDER, getBeansPackagePath().toString());
         placeholderData.put(EssentialConst.PLACEHOLDER_REST_FOLDER, getRestPackagePath().toString());
-        placeholderData.put(EssentialConst.PLACEHOLDER_COMPONENTS_FOLDER, getComponentsPackagePath().toString());
+        final Path componentsPackagePath = getComponentsPackagePath();
+        if (componentsPackagePath != null) {
+            placeholderData.put(EssentialConst.PLACEHOLDER_COMPONENTS_FOLDER, componentsPackagePath.toString());
+        }
         placeholderData.put(EssentialConst.PLACEHOLDER_TMP_FOLDER, System.getProperty("java.io.tmpdir"));
         // JCR date
         try {
@@ -265,14 +268,6 @@ public class DefaultPluginContext implements PluginContext {
         }
 
         return placeholderData;
-    }
-
-    @Override
-    public void close() throws Exception {
-        log.info("Closing hippo session");
-        if (session != null) {
-            session.logout();
-        }
     }
 
 

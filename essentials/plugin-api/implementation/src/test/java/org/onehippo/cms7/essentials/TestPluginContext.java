@@ -4,25 +4,32 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 /**
- * @version "$Id: TestPluginContext.java 174579 2013-08-21 16:43:11Z mmilicevic $"
+ * @version "$Id$"
  */
 public class TestPluginContext extends DefaultPluginContext {
 
-
+    private static final Logger log = LoggerFactory.getLogger(TestPluginContext.class);
     private static final long serialVersionUID = 1L;
 
-    private Session session;
 
-    public TestPluginContext(final Session session, final Plugin plugin) {
-        super(session, plugin);
+    private final MemoryRepository repository;
+
+    public TestPluginContext(final MemoryRepository repository, final Plugin plugin) {
+        super(plugin);
+        this.repository = repository;
     }
 
 
@@ -64,11 +71,23 @@ public class TestPluginContext extends DefaultPluginContext {
     }
 
     @Override
-    public Session createSession() {
-        return session;
+    public String getProjectNamespacePrefix() {
+        final String projectNamespacePrefix = super.getProjectNamespacePrefix();
+        if(Strings.isNullOrEmpty(projectNamespacePrefix)){
+            return BaseTest.PROJECT_NAMESPACE_TEST;
+        }
+        return projectNamespacePrefix;
     }
 
-    public void setSession(final Session session) {
-        this.session = session;
+    @Override
+    public Session createSession() {
+        try {
+            return repository.getSession();
+        } catch (RepositoryException e) {
+            log.error("", e);
+        }
+        return null;
     }
+
+
 }

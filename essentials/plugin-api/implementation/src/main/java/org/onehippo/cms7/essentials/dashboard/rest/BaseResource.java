@@ -68,7 +68,7 @@ public class BaseResource {
     protected boolean installPlugin(final Plugin plugin) {
 
         final String pluginClass = plugin.getPluginClass();
-        final EssentialsPlugin essentialsPlugin = instantiatePlugin(plugin, new DefaultPluginContext(GlobalUtils.createSession(), plugin), pluginClass);
+        final EssentialsPlugin essentialsPlugin = instantiatePlugin(plugin, new DefaultPluginContext(plugin), pluginClass);
         if (essentialsPlugin != null) {
             essentialsPlugin.install();
             return true;
@@ -80,7 +80,7 @@ public class BaseResource {
     protected boolean checkInstalled(final Plugin plugin) {
 
         final String pluginClass = plugin.getPluginClass();
-        final EssentialsPlugin essentialsPlugin = instantiatePlugin(plugin, new DefaultPluginContext(GlobalUtils.createSession(), plugin), pluginClass);
+        final EssentialsPlugin essentialsPlugin = instantiatePlugin(plugin, new DefaultPluginContext(plugin), pluginClass);
         if (essentialsPlugin != null) {
 
             final InstallState installState = essentialsPlugin.getInstallState();
@@ -112,7 +112,7 @@ public class BaseResource {
     }
 
     protected ProjectRestful getProjectRestful() {
-        final PluginContext context = new DefaultPluginContext(GlobalUtils.createSession(), null);
+        final PluginContext context = new DefaultPluginContext(null);
         // inject project settings:
         final ProjectSettingsBean document = context.getConfigService().read(ProjectSetupPlugin.class.getName(), ProjectSettingsBean.class);
         final ProjectRestful projectRestful = new ProjectRestful();
@@ -142,7 +142,7 @@ public class BaseResource {
 
     public PluginContext getContext(ServletContext servletContext) {
         final String className = ProjectSetupPlugin.class.getName();
-        final PluginContext context = new DefaultPluginContext(GlobalUtils.createSession(), new PluginRestful(className));
+        final PluginContext context = new DefaultPluginContext(new PluginRestful(className));
         final PluginConfigService service = context.getConfigService();
 
         final ProjectSettingsBean document = service.read(className, ProjectSettingsBean.class);

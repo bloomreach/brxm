@@ -29,8 +29,10 @@ import com.google.common.collect.ImmutableSet;
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {ApplicationModule.class, PropertiesModule.class})
 public abstract class BaseTest {
 
+
     public static final String HIPPOPLUGINS_NAMESPACE = "hippoplugins";
     public static final String PROJECT_NAMESPACE_TEST = "testnamespace";
+    public static final String PROJECT_NAMESPACE_TEST_URI = "http://www.onehippo.org/tesnamespace/nt/1.0";
     public static final Set<String> NAMESPACES_TEST_SET = new ImmutableSet.Builder<String>()
             .add("hippoplugins:extendingnews")
             .add("myproject:newsdocument")

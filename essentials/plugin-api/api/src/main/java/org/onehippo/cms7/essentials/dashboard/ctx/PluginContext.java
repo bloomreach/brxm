@@ -23,7 +23,7 @@ import com.google.common.collect.Multimap;
  *
  * @version "$Id$"
  */
-public interface PluginContext extends Serializable, AutoCloseable {
+public interface PluginContext extends Serializable {
 
 
     /**

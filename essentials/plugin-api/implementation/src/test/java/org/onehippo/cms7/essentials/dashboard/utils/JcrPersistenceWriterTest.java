@@ -42,8 +42,6 @@ public class JcrPersistenceWriterTest extends BaseRepositoryTest {
 
     private Session session;
 
-    private final boolean useHippoSesson = false;
-
     @Override
     @Before
     public void setUp() throws Exception {
@@ -57,9 +55,7 @@ public class JcrPersistenceWriterTest extends BaseRepositoryTest {
     public void testWrite() throws Exception {
         final PluginContext context = getContext();
 
-        if (useHippoSesson) {
-            ((TestPluginContext) context).setSession(getHippoSession());
-        }
+
         JcrPersistenceWriter writer = new JcrPersistenceWriter(context);
         //############################################
         // POPULATE TREE:

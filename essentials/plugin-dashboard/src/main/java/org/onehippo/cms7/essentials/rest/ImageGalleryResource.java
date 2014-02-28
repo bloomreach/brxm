@@ -509,7 +509,7 @@ public class ImageGalleryResource extends BaseResource {
     }
 
     private PluginContext getPluginContext() {
-        return new DefaultPluginContext(GlobalUtils.createSession(), null);
+        return new DefaultPluginContext(null);
     }
 
 
