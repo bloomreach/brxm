@@ -30,11 +30,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.cms.dashboard.current.CurrentActivityPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.util.JcrUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DocumentEvent {
 
@@ -159,20 +156,15 @@ public class DocumentEvent {
 
         if (path != null) {
             return path;
-        } else {
-            // Maybe both variants have been deleted, try to create a link to the handle
-            String handle;
-            if (targetVariant != null) {
-                handle = StringUtils.substringBeforeLast(targetVariant, "/");
-            } else if (sourceVariant != null) {
-                handle = StringUtils.substringBeforeLast(sourceVariant, "/");
-            } else {
-                handle = null;
-            }
-            if (handle != null) {
-                return handle;
-            }
         }
+
+        // Maybe both variants have been deleted, try to create a link to the handle
+        if (targetVariant != null) {
+            return targetVariant;
+        } else if (sourceVariant != null) {
+            return sourceVariant;
+        }
+
         return null;
     }
 

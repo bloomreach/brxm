@@ -148,8 +148,8 @@ public class EventLabelTest extends PluginTest {
 
         Long timestamp = Calendar.getInstance().getTimeInMillis();
         Node eventNode = createEventNode(timestamp, "testDocumentMethod", "testUser");
-        eventNode.setProperty("hippolog:returnValue", "document[uuid=" + docNode.getUUID() + ",path='"
-                + docNode.getPath() + "']");
+        eventNode.setProperty("hippolog:returnValue", "document[uuid=" + handleNode.getUUID() + ",path='"
+                + handleNode.getPath() + "']");
         docNode.remove();
         session.save();
 
