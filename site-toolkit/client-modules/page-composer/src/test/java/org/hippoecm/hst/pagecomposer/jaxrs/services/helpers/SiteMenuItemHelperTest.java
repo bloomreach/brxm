@@ -329,6 +329,11 @@ public class SiteMenuItemHelperTest {
         }
     }
 
+    @Test
+    public void testMove() {
+        // TODO (meggermont) implement
+    }
+
     private void mockGetAncestor() throws RepositoryException {
         expect(node.isNodeType(NODETYPE_HST_SITEMENUITEM)).andReturn(false);
         expect(node.isNodeType(NODETYPE_HST_SITEMENU)).andReturn(true);

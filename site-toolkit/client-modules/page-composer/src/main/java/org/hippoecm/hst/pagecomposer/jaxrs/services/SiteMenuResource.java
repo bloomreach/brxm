@@ -30,9 +30,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.google.common.collect.Lists;
-
-import org.apache.jackrabbit.commons.JcrUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
@@ -136,54 +133,25 @@ public class SiteMenuResource extends AbstractConfigResource {
                          final @PathParam("childIndex") Integer childIndex) {
 
         List<Validator> preValidators = getDefaultMenuModificationValidators();
-        preValidators.add(new PreviewNodeValidator(getPreviewConfigurationPath(),sourceId, null, true));
-        preValidators.add(new PreviewNodeValidator(getPreviewConfigurationPath(),parentId, null, true));
+        preValidators.add(new PreviewNodeValidator(getPreviewConfigurationPath(), sourceId, null, true));
+        preValidators.add(new PreviewNodeValidator(getPreviewConfigurationPath(), parentId, null, true));
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
                 final Session session = getPageComposerContextService().getRequestContext().getSession();
                 final Node parent = session.getNodeByIdentifier(parentId);
                 final Node source = session.getNodeByIdentifier(sourceId);
-                final String sourceName = source.getName();
-                final String successorNodeName = getSuccessorOfSourceNodeName(parent, sourceName, childIndex);
-
-                if (!source.getParent().isSame(parent)) {
-                    siteMenuItemHelper.move(source, parent);
-                }
-                parent.orderBefore(sourceName, successorNodeName);
+                siteMenuItemHelper.move(parent, source, childIndex);
                 return ok("Item moved successfully", sourceId);
             }
         }, preValidators);
-    }
-
-    private String getSuccessorOfSourceNodeName(Node parent, String sourceName, Integer newIndex) throws RepositoryException {
-        final List<Node> childNodes = Lists.newArrayList(JcrUtils.getChildNodes(parent));
-        if (newIndex == 0) {
-            // move to start
-            return childNodes.isEmpty() ? null : childNodes.get(0).getName();
-        }
-        if (newIndex >= childNodes.size() - 1) {
-            // move to end
-            return null;
-        }
-        int currentIndex = 0;
-        while (currentIndex < childNodes.size() && !sourceName.equals(childNodes.get(currentIndex).getName())) {
-            currentIndex++;
-        }
-        if (currentIndex < newIndex) {
-            // current index is before new index, so successor node is at position newIndex + 1
-            return childNodes.get(newIndex + 1).getName();
-        } else {
-            // current index is at or after new index, so successor node is at position newIndex
-            return childNodes.get(newIndex).getName();
-        }
     }
 
     @POST
     @Path("/delete/{menuItemId}")
     public Response delete(final @PathParam("menuItemId") String menuItemId) {
         List<Validator> preValidators = getDefaultMenuModificationValidators();
-        preValidators.add(new PreviewNodeValidator(getPreviewConfigurationPath(),menuItemId, null, true));
+        preValidators.add(new PreviewNodeValidator(getPreviewConfigurationPath(), menuItemId, null, true));
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {

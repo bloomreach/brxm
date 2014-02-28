@@ -17,6 +17,7 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,6 +25,9 @@ import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import com.google.common.collect.Lists;
+
+import org.apache.jackrabbit.commons.JcrUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
@@ -126,6 +130,29 @@ public class SiteMenuItemHelper extends AbstractHelper {
         move(node, node.getName(), newParent);
     }
 
+    /**
+     * Move the source node into the parent at the given childIndex position.
+     *
+     * @param parent the target parent
+     * @param source the target source
+     * @param childIndex the index of child within parent
+     * @throws RepositoryException
+     */
+    public void move(Node parent, Node source, Integer childIndex) throws RepositoryException {
+        final String sourceName = source.getName();
+        final String successorNodeName = getSuccessorOfSourceNodeName(parent, sourceName, childIndex);
+
+        if (!source.getParent().isSame(parent)) {
+            move(source, parent);
+        }
+        lockHelper.acquireSimpleLock(getMenuAncestor(parent));
+        try {
+            parent.orderBefore(sourceName, successorNodeName);
+        } catch (ItemExistsException e) {
+            throw new ClientException(e.getMessage(), ClientError.ITEM_NAME_NOT_UNIQUE);
+        }
+    }
+
     private void rename(Node node, String newName) throws RepositoryException {
         lockHelper.acquireSimpleLock(getMenuAncestor(node));
         final Node parent = node.getParent();
@@ -136,6 +163,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
         // restore the position
         parent.orderBefore(newName, nextSiblingName);
     }
+
 
     private String getNextSiblingName(final Node node, final Node parent) throws RepositoryException {
         final String currentName = node.getName();
@@ -149,7 +177,6 @@ public class SiteMenuItemHelper extends AbstractHelper {
         }
     }
 
-
     private Node getMenuAncestor(final Node node) throws RepositoryException {
         Node current = node;
         while (current.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMENUITEM)) {
@@ -162,4 +189,26 @@ public class SiteMenuItemHelper extends AbstractHelper {
                 "found for '" + node.getPath() + "'");
     }
 
+    private String getSuccessorOfSourceNodeName(Node parent, String sourceName, Integer newIndex) throws RepositoryException {
+        final List<Node> childNodes = Lists.newArrayList(JcrUtils.getChildNodes(parent));
+        if (newIndex == 0) {
+            // move to start
+            return childNodes.isEmpty() ? null : childNodes.get(0).getName();
+        }
+        if (newIndex >= childNodes.size() - 1) {
+            // move to end
+            return null;
+        }
+        int currentIndex = 0;
+        while (currentIndex < childNodes.size() && !sourceName.equals(childNodes.get(currentIndex).getName())) {
+            currentIndex++;
+        }
+        if (currentIndex < newIndex) {
+            // current index is before new index, so successor node is at position newIndex + 1
+            return childNodes.get(newIndex + 1).getName();
+        } else {
+            // current index is at or after new index, so successor node is at position newIndex
+            return childNodes.get(newIndex).getName();
+        }
+    }
 }

@@ -235,18 +235,8 @@ public class SiteMenuResourceTest {
         final String parentTargetId = "parentId";
         expect(menuConfig.getCanonicalIdentifier()).andReturn("parentId");
         expect(session.getNodeByIdentifier(parentTargetId)).andReturn(parentNode);
-        expect(parentNode.isSame(parentNode)).andReturn(true);
-        expect(parentNode.getIdentifier()).andReturn(parentTargetId);
-
-        expect(nodeIterator.hasNext()).andReturn(true).times(2).andReturn(false);
-        expect(nodeIterator.next()).andReturn(childNode).andReturn(node);
-        expect(parentNode.getNodes()).andReturn(nodeIterator);
-
-        expect(node.getParent()).andReturn(parentNode);
-        expect(node.getName()).andReturn("src").anyTimes();
-        expect(childNode.getName()).andReturn("dest").anyTimes();
-        parentNode.orderBefore("src", "dest");
-        expectLastCall().once();
+        siteMenuItemHelper.move(parentNode, node, childTargetIndex);
+        expectLastCall();
         replay(mocks);
 
         final Response response = siteMenuResource.move(sourceId, parentTargetId, childTargetIndex);
