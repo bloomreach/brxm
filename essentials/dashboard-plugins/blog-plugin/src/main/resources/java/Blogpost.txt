@@ -1,5 +1,6 @@
 package {{beansPackage}};
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.hippoecm.hst.content.beans.Node;
@@ -14,11 +15,17 @@ public class Blogpost extends HippoDocument {
     public static final String TITLE = "{{namespace}}:title";
     public static final String INTRODUCTION = "{{namespace}}:introduction";
     public static final String CONTENT = "{{namespace}}:content";
+    public static final String PUBLICATION_DATE = "appstore:publicationdate";
     public static final String CATEGORIES = "{{namespace}}:categories";
     public static final String AUTHOR = "{{namespace}}:author";
     public static final String LINK = "{{namespace}}:link";
     public static final String AUTHORS = "{{namespace}}:authors";
 
+
+   @HippoEssentialsGenerated(internalName = "appstore:publicationdate")
+    public Calendar getPublicationDate() {
+        return getProperty(PUBLICATION_DATE);
+    }
 
     @HippoEssentialsGenerated(internalName = "{{namespace}}:author")
     public String getAuthor() {

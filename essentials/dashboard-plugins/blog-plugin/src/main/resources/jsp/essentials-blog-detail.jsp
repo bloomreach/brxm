@@ -6,5 +6,6 @@
 <%--@elvariable id="document" type="{{beansPackage}}.Blogpost"--%>
 <h1>${document.title}</h1>
 <h2>by: ${document.author}</h2>
+<strong><fmt:formatDate type="date" pattern="yyyy-MM-dd" value="${document.publicationDate.time}"/></strong>
 <p>${document.introduction}</p>
 <div><hst:html hippohtml="${document.content}"/></div>
