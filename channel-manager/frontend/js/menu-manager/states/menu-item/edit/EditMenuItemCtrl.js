@@ -46,9 +46,6 @@
                     isVisible: false
                 };
 
-                $scope.feedback = {
-                };
-
                 $scope.focus = FocusService.focusElementWithId;
 
                 savedMenuItem = angular.copy($scope.selectedMenuItem);

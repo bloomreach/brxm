@@ -73,6 +73,7 @@
             function ($scope, $rootScope, MenuService) {
                 $scope.list = [];
                 $scope.selectedMenuItem = {};
+                $scope.feedback = {};
 
                 // initial load of menu tree structure
                 MenuService.getMenu().then(function (menuData) {

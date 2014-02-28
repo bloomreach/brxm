@@ -39,11 +39,14 @@
                     itemMoved: function (sourceScope, modelData, sourceIndex, destScope, destIndex) {
                         var parentData = destScope.parentItemScope();
                         var destId = (!parentData) ? ConfigService.menuId : parentData.itemData().id;
-                        MenuService.moveMenuItem(modelData.id, destId, destIndex).then(function (message) {
-                            console.log('message: ', message);
-                        }, function (errorResponse) {
-                            console.log('error: ', errorResponse);
-                            FeedbackService.getFeedback(errorResponse);
+                        MenuService.moveMenuItem(modelData.id, destId, destIndex).then(
+                            function (message) {},
+                            function (errorResponse) {
+                            $scope.$parent.feedback = FeedbackService.getFeedback(errorResponse);
+
+                            // move the item back at it's original place in the DOM
+                            var removedItem = destScope.sortableModelValue.splice(destIndex, 1)[0];
+                            sourceScope.sortableModelValue.splice(sourceIndex, 0, removedItem);
                         });
                     },
                     orderChanged: function (scope, modelData, sourceIndex, destIndex) {
