@@ -125,6 +125,7 @@ dashboard-plugins/blog-plugin/src/main/resources/java/Author.txt -text
 dashboard-plugins/blog-plugin/src/main/resources/java/Blogpost.txt -text
 dashboard-plugins/blog-plugin/src/main/resources/jsp/essentials-blog-detail.jsp -text
 dashboard-plugins/blog-plugin/src/main/resources/jsp/essentials-blog-list.jsp -text
+dashboard-plugins/blog-plugin/src/main/resources/jsp/pagination.jsp -text
 dashboard-plugins/blog-plugin/src/main/resources/xml/data/account-types.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/xml/data/blog-categories.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/xml/folder/administration_folder.xml -text

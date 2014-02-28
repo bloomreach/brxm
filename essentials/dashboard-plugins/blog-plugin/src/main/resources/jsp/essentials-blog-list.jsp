@@ -19,3 +19,6 @@
     <p><c:out value="${item.introduction}"/></p>
   </article>
 </c:forEach>
+<c:if test="${showPagination}">
+  <%@ include file="/WEB-INF/jsp/essentials/common/pagination.jsp" %>
+</c:if>
