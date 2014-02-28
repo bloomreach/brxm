@@ -158,6 +158,10 @@ public class SiteMenuResource extends AbstractConfigResource {
 
     private String getSuccessorOfSourceNodeName(Node parent, String sourceName, Integer newIndex) throws RepositoryException {
         final List<Node> childNodes = Lists.newArrayList(JcrUtils.getChildNodes(parent));
+        if (newIndex == 0) {
+            // move to start
+            return childNodes.isEmpty() ? null : childNodes.get(0).getName();
+        }
         if (newIndex >= childNodes.size() - 1) {
             // move to end
             return null;
