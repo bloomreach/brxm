@@ -147,8 +147,7 @@ public class DiscardTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         final SiteMapItemRepresentation newsDefault = getSiteMapItemRepresentation(session, "news/_default_");
         final String previewDefaultNewsPath = session.getNodeByIdentifier(newsDefault.getId()).getPath();
-        String newsDefaultComponentConfigIdBefore = newsDefault.getComponentConfigurationId();
-        newsDefault.setComponentConfigurationId("bar");
+        newsDefault.setRelativeContentPath("bar");
         siteMapResource.update(newsDefault);
 
         // now on jcr level modify the 'news' item to be locked by bob. This cannot be done through siteMapResource
@@ -157,7 +156,7 @@ public class DiscardTest extends AbstractSiteMapResourceTest {
         // make it now as if it is locked by 'bob'
         news.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
         news.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, "bob");
-        news.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID, "foo");
+        news.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "foo");
 
         session.save();
 
@@ -170,13 +169,13 @@ public class DiscardTest extends AbstractSiteMapResourceTest {
         // previewDefault should be discarded
         assertFalse(session.getNode(previewDefaultNewsPath).isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE));
         assertEquals("bar",
-                session.getNode(previewDefaultNewsPath).getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
+                session.getNode(previewDefaultNewsPath).getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH).getString());
 
         assertTrue(session.nodeExists(previewNewsPath));
         // news is still locked by 'bob'
         assertTrue(session.getNode(previewNewsPath).isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE));
         assertEquals("bob", session.getNode(previewNewsPath).getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
-        assertEquals("foo", session.getNode(previewNewsPath).getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
+        assertEquals("foo", session.getNode(previewNewsPath).getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH).getString());
 
     }
 
@@ -195,7 +194,7 @@ public class DiscardTest extends AbstractSiteMapResourceTest {
 
         final SiteMapResource siteMapResource = createResource();
         final SiteMapItemRepresentation newsDefault = getSiteMapItemRepresentation(session, "news/_default_");
-        newsDefault.setComponentConfigurationId("bar");
+        newsDefault.setRelativeContentPath("bar");
         siteMapResource.update(newsDefault);
 
         // now on jcr level rename 'news' and lock it for bob. This cannot be done through siteMapResource
@@ -204,7 +203,7 @@ public class DiscardTest extends AbstractSiteMapResourceTest {
         // make it now as if it is locked by 'bob'
         news.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
         news.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, "bob");
-        news.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID, "foo");
+        news.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "foo");
         session.move(news.getPath(), news.getPath() + "Renamed");
         session.save();
 
@@ -222,7 +221,7 @@ public class DiscardTest extends AbstractSiteMapResourceTest {
         assertFalse(previewDefaultNewsNode.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE));
 
         // assert component config id is not reverted from live but still 'bar'
-        assertEquals("bar", previewDefaultNewsNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
+        assertEquals("bar", previewDefaultNewsNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH).getString());
 
 
         final String previewNewsPath = news.getPath();
@@ -233,7 +232,7 @@ public class DiscardTest extends AbstractSiteMapResourceTest {
         // newsRenamed is still locked by 'bob'
         assertTrue(session.getNode(previewNewsPath).isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE));
         assertEquals("bob", session.getNode(previewNewsPath).getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
-        assertEquals("foo" ,session.getNode(previewNewsPath).getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
+        assertEquals("foo" ,session.getNode(previewNewsPath).getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH).getString());
 
     }
 }

@@ -31,10 +31,8 @@ import javax.ws.rs.core.Response;
 
 import com.google.common.collect.Lists;
 
-import org.apache.commons.collections.ListUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtIdsRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.junit.Test;
@@ -44,13 +42,16 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
+/**
+ * these tests do not cover new sitemap item with a new page tests. These are more complex and covered in
+ * {@link CreateAndPublicationTest}
+ */
 public class PublicationTest extends AbstractSiteMapResourceTest {
 
     @Test
     public void test_update() throws Exception {
 
         final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
-        home.setComponentConfigurationId("testCompId");
         home.setRelativeContentPath("testRelPath");
         home.setScheme("https");
         Set<String> roles = new HashSet<>();
@@ -85,7 +86,6 @@ public class PublicationTest extends AbstractSiteMapResourceTest {
         Node liveHomeNode = session.getNode(liveHomeNodePath);
         assertFalse(liveHomeNode.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE));
         assertFalse(liveHomeNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
-        assertEquals("testCompId", liveHomeNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
         assertEquals("testRelPath", liveHomeNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH).getString());
         assertEquals("https", liveHomeNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_SCHEME).getString());
 
@@ -206,40 +206,6 @@ public class PublicationTest extends AbstractSiteMapResourceTest {
         assertFalse(session.nodeExists(liveHomePathBefore));
     }
 
-
-    @Test
-    public void test_create() throws Exception {
-        // init context
-        getSiteMapItemRepresentation(session, "home");
-        final SiteMapItemRepresentation newFoo = new SiteMapItemRepresentation();
-        newFoo.setName("foo");
-        final SiteMapResource siteMapResource = createResource();
-        final Response response = siteMapResource.create(newFoo);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-
-        String newId = (String) ((ExtResponseRepresentation) response.getEntity()).getData();
-
-        final Node newNode = session.getNodeByIdentifier(newId);
-        assertEquals("foo", newNode.getName());
-
-        final String previewNewNode = newNode.getPath();
-        final String liveNewNode = previewNewNode.replace("-preview/", "/");
-
-        assertNotSame(previewNewNode, liveNewNode);
-
-        assertTrue(session.nodeExists(previewNewNode));
-        assertFalse(session.nodeExists(liveNewNode));
-
-        mountResource.publish();
-
-        assertTrue(session.nodeExists(previewNewNode));
-        assertTrue(session.nodeExists(liveNewNode));
-
-        assertFalse(session.getNode(previewNewNode).isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE));
-        assertFalse(session.getNode(liveNewNode).isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE));
-    }
-
-
     @Test
     public void test_multi_user_change_single_user_publication() throws Exception {
         final SiteMapResource siteMapResource = createResource();
@@ -251,8 +217,6 @@ public class PublicationTest extends AbstractSiteMapResourceTest {
         final Session bob = createSession("bob", "bob");
 
         final SiteMapItemRepresentation newsByBob = getSiteMapItemRepresentation(bob, "news");
-
-        final String previewNewsPathBefore = session.getNodeByIdentifier(newsByBob.getId()).getPath();
 
         newsByBob.setName("bobNews");
         siteMapResource.update(newsByBob);
@@ -331,7 +295,7 @@ public class PublicationTest extends AbstractSiteMapResourceTest {
         // below ADMIN publishes
         final SiteMapResource siteMapResource = createResource();
         final SiteMapItemRepresentation news = getSiteMapItemRepresentation(session, "news");
-        news.setComponentConfigurationId("bar");
+        news.setRelativeContentPath("bar");
         siteMapResource.update(news);
 
         // now on jcr level modify the news/* item to be locked by bob. This cannot be done through siteMapResource
@@ -340,7 +304,7 @@ public class PublicationTest extends AbstractSiteMapResourceTest {
         // make it now as if it is locked by 'bob'
         newsDefault.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
         newsDefault.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, "bob");
-        newsDefault.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID, "foo");
+        newsDefault.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "foo");
 
         session.save();
 
@@ -354,12 +318,12 @@ public class PublicationTest extends AbstractSiteMapResourceTest {
 
         assertTrue(session.nodeExists(previewNewsPath));
         assertFalse(session.getNode(previewNewsPath).isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE));
-        assertEquals("bar" ,session.getNode(liveNewsPath).getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
+        assertEquals("bar" ,session.getNode(liveNewsPath).getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH).getString());
 
         // even though only 'admin' nodes are published, also the incorrect descendant news/_default_ must be published
         assertTrue(session.nodeExists(previewDefaultNewsPath));
         assertFalse(session.getNode(previewDefaultNewsPath).isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE));
-        assertEquals("foo", session.getNode(liveDefaultNewsPath).getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
+        assertEquals("foo", session.getNode(liveDefaultNewsPath).getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH).getString());
     }
 
     @Test
@@ -377,7 +341,7 @@ public class PublicationTest extends AbstractSiteMapResourceTest {
         // below ADMIN publishes
         final SiteMapResource siteMapResource = createResource();
         final SiteMapItemRepresentation newsDefault = getSiteMapItemRepresentation(session, "news/_default_");
-        newsDefault.setComponentConfigurationId("bar");
+        newsDefault.setRelativeContentPath("bar");
         siteMapResource.update(newsDefault);
 
         // now on jcr level modify the 'news' item to be locked by bob. This cannot be done through siteMapResource
@@ -386,7 +350,7 @@ public class PublicationTest extends AbstractSiteMapResourceTest {
         // make it now as if it is locked by 'bob'
         news.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
         news.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, "bob");
-        news.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID, "foo");
+        news.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "foo");
 
         session.save();
 
@@ -400,14 +364,14 @@ public class PublicationTest extends AbstractSiteMapResourceTest {
 
         assertTrue(session.nodeExists(previewDefaultNewsPath));
         assertFalse(session.getNode(previewDefaultNewsPath).isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE));
-        assertNotSame("bar" ,session.getNode(liveDefaultNewsPath).getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
+        assertNotSame("bar" ,session.getNode(liveDefaultNewsPath).getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH).getString());
 
         assertTrue(session.nodeExists(previewNewsPath));
         // news is still locked by 'bob'
         assertTrue(session.getNode(previewNewsPath).isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE));
         assertEquals("bob", session.getNode(previewNewsPath).getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
-        assertEquals("foo", session.getNode(previewNewsPath).getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
-        assertNotSame("foo" ,session.getNode(liveNewsPath).getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
+        assertEquals("foo", session.getNode(previewNewsPath).getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH).getString());
+        assertNotSame("foo" ,session.getNode(liveNewsPath).getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH).getString());
 
     }
 
@@ -426,7 +390,7 @@ public class PublicationTest extends AbstractSiteMapResourceTest {
 
         final SiteMapResource siteMapResource = createResource();
         final SiteMapItemRepresentation newsDefault = getSiteMapItemRepresentation(session, "news/_default_");
-        newsDefault.setComponentConfigurationId("bar");
+        newsDefault.setRelativeContentPath("bar");
         siteMapResource.update(newsDefault);
 
         // now on jcr level rename 'news' and lock it for bob. This cannot be done through siteMapResource
@@ -435,7 +399,7 @@ public class PublicationTest extends AbstractSiteMapResourceTest {
         // make it now as if it is locked by 'bob'
         news.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
         news.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, "bob");
-        news.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID, "foo");
+        news.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "foo");
         session.move(news.getPath(), news.getPath() + "Renamed");
         session.save();
 
@@ -469,7 +433,7 @@ public class PublicationTest extends AbstractSiteMapResourceTest {
         // newsRenamed is still locked by 'bob'
         assertTrue(session.getNode(previewNewsPath).isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE));
         assertEquals("bob", session.getNode(previewNewsPath).getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
-        assertEquals("foo" ,session.getNode(previewNewsPath).getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
+        assertEquals("foo" ,session.getNode(previewNewsPath).getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH).getString());
 
         // live path should not exist
         assertFalse(session.nodeExists(liveNewsPath));

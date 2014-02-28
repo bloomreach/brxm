@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs;
 
+import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -23,6 +24,7 @@ import javax.jcr.observation.Event;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.cache.HstEventsCollector;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstConfigurationEventListener;
@@ -212,6 +214,40 @@ public class AbstractPageComposerTest {
             session.removeItem("/hst-backup");
             session.save();
         }
+    }
+
+
+    protected void createWorkspaceWithTestContainer() throws RepositoryException {
+        final Node unitTestConfigNode = session.getNode("/hst:hst/hst:configurations/unittestproject");
+        final Node workspace = unitTestConfigNode.addNode("hst:workspace", "hst:workspace");
+        final Node containers = workspace.addNode("hst:containers", "hst:containercomponentfolder");
+
+        final Node containerNode = containers.addNode("testcontainer", "hst:containercomponent");
+        containerNode.setProperty("hst:xtype", "HST.vBox");
+    }
+
+    protected void movePagesFromCommonToUnitTestProject() throws RepositoryException {
+
+        // use the 'testcontainer' component from workspace otherwise it won't be part of the hst model, hence, no changes
+        // in it will be 'seen'
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestcommon/hst:pages",
+                "/hst:hst/hst:configurations/unittestproject/hst:pages");
+    }
+
+    protected void addReferencedContainerToHomePage() throws RepositoryException {
+        final Node container = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:pages/homepage")
+                .addNode("container", "hst:containercomponentreference");
+        container.setProperty("hst:referencecomponent", "testcontainer");
+    }
+
+    protected String addCatalogItem() throws RepositoryException {
+        Node unitTestConfigNode = session.getNode("/hst:hst/hst:configurations/unittestproject");
+        final Node catalog = unitTestConfigNode.addNode("hst:catalog", "hst:catalog");
+        final Node catalogPackage = catalog.addNode("testpackage", "hst:containeritempackage");
+        final Node catalogItem = catalogPackage.addNode("testitem", "hst:containeritemcomponent");
+        catalogItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE, "thankyou");
+        catalogItem.setProperty("hst:xtype", "HST.Item");
+        return catalogItem.getIdentifier();
     }
 
 

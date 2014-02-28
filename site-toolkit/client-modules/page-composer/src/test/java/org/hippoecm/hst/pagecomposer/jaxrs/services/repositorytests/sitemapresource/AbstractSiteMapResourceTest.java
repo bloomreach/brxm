@@ -78,6 +78,8 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap/news",
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/news");
 
+        movePagesFromCommonToUnitTestProject();
+
         session.save();
         createPreviewWithSiteMapWorkspace();
     }
@@ -185,4 +187,10 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         siteMapResource.setSiteMapHelper(siteMapHelper);
         return siteMapResource;
     }
+
+
+    protected String getPreviewConfigurationPath() {
+        return mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
+    }
+
 }

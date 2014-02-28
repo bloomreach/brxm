@@ -13,26 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.sitemapresource;
 
-package org.hippoecm.hst.pagecomposer.jaxrs.services.validators;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper;
+import org.junit.Test;
 
-import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.AbstractHelper;
+public class UpdateAndPublishRePrototypeTest extends AbstractSiteMapResourceTest {
 
-public class CurrentPreviewValidator implements Validator {
+    private LockHelper helper = new LockHelper();
 
-    private final String id;
-    private final AbstractHelper helper;
+    @Test
+    public void test() throws Exception {
 
-    public CurrentPreviewValidator(final String id, final AbstractHelper helper){
-        this.id = id;
-        this.helper = helper;
-
-    }
-
-    @Override
-    public void validate(HstRequestContext requestContext) throws RuntimeException {
-        helper.getConfigObject(id);
     }
 
 }

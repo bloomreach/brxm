@@ -40,7 +40,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.PreviewWorkspaceNodeValidator;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.PreviewNodeValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -70,7 +70,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
             assertTrue(home instanceof CanonicalInfo);
             assertTrue(((CanonicalInfo) home).isWorkspaceConfiguration());
             final String homeUuid = ((CanonicalInfo) home).getCanonicalIdentifier();
-            Validator validator = new PreviewWorkspaceNodeValidator(homeUuid, HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
+            Validator validator = new PreviewNodeValidator(getPreviewConfigurationPath(), homeUuid, HstNodeTypes.NODETYPE_HST_SITEMAPITEM, true);
             validator.validate(ctx);
         }
 
@@ -78,12 +78,12 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
             final HstSiteMapItem news = mount.getPreviewHstSite().getSiteMap().getSiteMapItem("news");
             assertTrue(((CanonicalInfo) news).isWorkspaceConfiguration());
             final String newsUuid = ((CanonicalInfo) news).getCanonicalIdentifier();
-            new PreviewWorkspaceNodeValidator(newsUuid, HstNodeTypes.NODETYPE_HST_SITEMAPITEM).validate(ctx);
+            new PreviewNodeValidator(getPreviewConfigurationPath(), newsUuid, HstNodeTypes.NODETYPE_HST_SITEMAPITEM, true).validate(ctx);
 
             final HstSiteMapItem newsWildcardChild = news.getChild("_default_");
             assertTrue(((CanonicalInfo) newsWildcardChild).isWorkspaceConfiguration());
             final String newsWildcardChildUuid = ((CanonicalInfo) newsWildcardChild).getCanonicalIdentifier();
-            new PreviewWorkspaceNodeValidator(newsWildcardChildUuid, HstNodeTypes.NODETYPE_HST_SITEMAPITEM).validate(ctx);
+            new PreviewNodeValidator(getPreviewConfigurationPath(), newsWildcardChildUuid, HstNodeTypes.NODETYPE_HST_SITEMAPITEM, true).validate(ctx);
         }
 
         {
@@ -91,7 +91,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
             assertFalse(((CanonicalInfo) aboutUs).isWorkspaceConfiguration());
             final String aboutUsUuid = ((CanonicalInfo) aboutUs).getCanonicalIdentifier();
             try {
-                new PreviewWorkspaceNodeValidator(aboutUsUuid, HstNodeTypes.NODETYPE_HST_SITEMAPITEM).validate(ctx);
+                new PreviewNodeValidator(getPreviewConfigurationPath(), aboutUsUuid, HstNodeTypes.NODETYPE_HST_SITEMAPITEM, true).validate(ctx);
                 fail("Expected PreviewWorkspaceNodeValidator to fail on non workspace sitemap item");
             } catch (ClientException e) {
                 assertThat(e.getError(), is(ClientError.ITEM_NOT_IN_WORKSPACE));
@@ -106,7 +106,6 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
         assertNotNull(home);
 
-        home.setComponentConfigurationId("testCompId");
         home.setRelativeContentPath("testRelPath");
         home.setScheme("https");
         Set<String> roles = new HashSet<>();
@@ -125,7 +124,6 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
         Node homeNode = session.getNodeByIdentifier(home.getId());
-        assertEquals("testCompId", homeNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
         assertEquals("testRelPath", homeNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH).getString());
         assertEquals("https", homeNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_SCHEME).getString());
 
@@ -208,7 +206,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
 
         // now news/_any_ has explicit lock: as a result, 'news' is partially locked
 
-        news.setComponentConfigurationId("foo");
+        news.setRelativeContentPath("foo");
         final SiteMapResource siteMapResource = createResource();
 
         session.getRootNode().addNode("dummy-to-show-changes-are-discarded-when-update-fails");
@@ -223,12 +221,12 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
 
         final SiteMapItemRepresentation newsDefault = getSiteMapItemRepresentation(session, "news/_default_");
         {
-            newsDefault.setComponentConfigurationId("foobar");
+            newsDefault.setRelativeContentPath("foobar");
             Response response = siteMapResource.update(newsDefault);
             assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
                     Response.Status.OK.getStatusCode(), response.getStatus());
             final Node newsDefaultNode = session.getNodeByIdentifier(newsDefault.getId());
-            assertEquals("foobar", newsDefaultNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
+            assertEquals("foobar", newsDefaultNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH).getString());
             assertEquals("admin", newsDefaultNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
         }
 
@@ -243,7 +241,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
             assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
                     Response.Status.OK.getStatusCode(), response.getStatus());
             final Node newsNode = session.getNodeByIdentifier(news.getId());
-            assertEquals("foo", newsNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
+            assertEquals("foo", newsNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH).getString());
             assertEquals("admin", newsNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
         }
 
@@ -262,7 +260,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         // now news/_any_ has implicit lock due to ancestor lock
 
         final SiteMapItemRepresentation newsAny = getSiteMapItemRepresentation(session, "news/_any_");
-        newsAny.setComponentConfigurationId("foo");
+        newsAny.setRelativeContentPath("foo");
         {
             Response response = siteMapResource.update(newsAny);
             assertEquals("update should fail because of partial lock.", Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
@@ -280,7 +278,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
             assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
                     Response.Status.OK.getStatusCode(), response.getStatus());
             final Node newsAnyNode = session.getNodeByIdentifier(newsAny.getId());
-            assertEquals("foo", newsAnyNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
+            assertEquals("foo", newsAnyNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH).getString());
             assertEquals("admin", newsAnyNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
         }
 

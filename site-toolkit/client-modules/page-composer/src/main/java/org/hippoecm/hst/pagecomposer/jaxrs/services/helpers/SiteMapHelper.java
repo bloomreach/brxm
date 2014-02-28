@@ -42,6 +42,10 @@ public class SiteMapHelper extends AbstractHelper {
     private static final Logger log = LoggerFactory.getLogger(SiteMapHelper.class);
     private static final String WORKSPACE_PATH_ELEMENT = "/" + HstNodeTypes.NODENAME_HST_WORKSPACE + "/";
 
+
+    /**
+     * @throws ClientException if not found
+     */
     @SuppressWarnings("unchecked")
     @Override
     public HstSiteMapItem getConfigObject(final String itemId) {
@@ -87,6 +91,11 @@ public class SiteMapHelper extends AbstractHelper {
 
         final Node newChild = parent.addNode(siteMapItem.getName(), HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
         lockHelper.acquireLock(newChild);
+
+        // clone page definition
+
+        //setProperty(jcrNode, HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID, siteMapItem.getComponentConfigurationId());
+
         // TODO clone page definition
         setSitemapItemProperties(siteMapItem, newChild);
 
@@ -137,6 +146,9 @@ public class SiteMapHelper extends AbstractHelper {
     }
 
 
+    /**
+     * @throws ClientException if not found
+     */
     public static HstSiteMapItem getSiteMapItem(HstSiteMap siteMap, String siteMapItemId) {
 
         for (HstSiteMapItem hstSiteMapItem : siteMap.getSiteMapItems()) {
@@ -168,7 +180,6 @@ public class SiteMapHelper extends AbstractHelper {
 
 
     private void setSitemapItemProperties(final SiteMapItemRepresentation siteMapItem, final Node jcrNode) throws RepositoryException {
-        setProperty(jcrNode, HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID, siteMapItem.getComponentConfigurationId());
         setProperty(jcrNode, HstNodeTypes.SITEMAPITEM_PROPERTY_SCHEME, siteMapItem.getScheme());
         setProperty(jcrNode, HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, siteMapItem.getRelativeContentPath());
     }

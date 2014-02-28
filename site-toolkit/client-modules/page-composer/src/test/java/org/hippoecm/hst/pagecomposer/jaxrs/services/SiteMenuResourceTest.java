@@ -199,34 +199,12 @@ public class SiteMenuResourceTest {
 
     @Test
     public void testUpdateReturnsServerErrorOnRepositoryException() throws RepositoryException {
+
+        expect(pageComposerContextService.getEditingPreviewSite()).andReturn(site).anyTimes();
+        expect(site.getConfigurationPath()).andReturn("/preview/configuration/path").anyTimes();
         expect(pageComposerContextService.getRequestConfigIdentifier()).andReturn(null).anyTimes();
-        expect(pageComposerContextService.getRequestContext()).andReturn(context).times(2);
-        expect(context.getSession()).andThrow(new RepositoryException("failed"));
-        expect(context.getSession()).andReturn(session);
-        expect(session.hasPendingChanges()).andReturn(false);
-
-        final String id = "uuid-of-menu-item";
-        final SiteMenuItemRepresentation modifiedItem = new SiteMenuItemRepresentation();
-        modifiedItem.setId(id);
-        replay(mocks);
-
-        final Response response = siteMenuResource.update(modifiedItem);
-        assertThat(response.getStatus(), is(SERVER_ERROR));
-        assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
-
-        final ExtResponseRepresentation extResponse = ExtResponseRepresentation.class.cast(response.getEntity());
-        assertThat(extResponse.isSuccess(), is(false));
-        assertThat(extResponse.getData(), is(String[].class));
-
-    }
-
-    @Test
-    public void testUpdateReturnsClientErrorOnIllegalStateException() throws RepositoryException {
-        expect(pageComposerContextService.getRequestConfigIdentifier()).andReturn(null).anyTimes();
-        expect(pageComposerContextService.getRequestContext()).andReturn(context).times(2);
-        expect(context.getSession()).andThrow(new IllegalStateException("failed"));
-        expect(context.getSession()).andReturn(session);
-        expect(session.hasPendingChanges()).andReturn(false);
+        expect(pageComposerContextService.getRequestContext()).andReturn(context).anyTimes();
+        expect(context.getSession()).andThrow(new RepositoryException("failed")).anyTimes();
 
         final String id = "uuid-of-menu-item";
         final SiteMenuItemRepresentation modifiedItem = new SiteMenuItemRepresentation();
@@ -327,7 +305,9 @@ public class SiteMenuResourceTest {
         expect(virtualHost.getVirtualHosts()).andReturn(virtualHosts);
         expect(virtualHosts.getMountByIdentifier("mount")).andReturn(mount);
         expect(mount.getPreviewHstSite()).andReturn(site);
+        expect(site.getConfigurationPath()).andReturn("/preview/configuration/path").anyTimes();
         expect(pageComposerContextService.getEditingPreviewSite()).andReturn(site).anyTimes();
+
     }
 
 }

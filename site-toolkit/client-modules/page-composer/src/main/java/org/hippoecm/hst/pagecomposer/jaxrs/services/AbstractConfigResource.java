@@ -183,4 +183,9 @@ public class AbstractConfigResource {
         throw new IllegalStateException("HstSiteMenuItemConfiguration not instanceof CanonicalInfo");
     }
 
+    protected String getPreviewConfigurationPath() {
+        return getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
+    }
+
+
 }
