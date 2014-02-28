@@ -191,11 +191,9 @@
                     var deferred = $q.defer();
                     $http.post(url, {})
                         .success(function (data) {
-                            console.log('+ success');
                             deferred.resolve(data);
                         })
                         .error(function (errorResponse) {
-                            console.log('- error');
                             deferred.reject(errorResponse);
                         });
                     return deferred.promise;
