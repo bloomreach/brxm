@@ -1,27 +1,45 @@
 package {{beansPackage}};
 
-import java.util.Calendar;
 import java.util.List;
 
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
-import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
 
 @HippoEssentialsGenerated(internalName = "{{namespace}}:blogpost")
-@Node(jcrType="{{namespace}}:blogpost")
+@Node(jcrType = "{{namespace}}:blogpost")
 public class Blogpost extends HippoDocument {
 
+    public static final String TITLE = "{{namespace}}:title";
+    public static final String INTRODUCTION = "{{namespace}}:introduction";
+    public static final String CONTENT = "{{namespace}}:content";
     public static final String CATEGORIES = "{{namespace}}:categories";
     public static final String AUTHOR = "{{namespace}}:author";
     public static final String LINK = "{{namespace}}:link";
     public static final String AUTHORS = "{{namespace}}:authors";
 
+
     @HippoEssentialsGenerated(internalName = "{{namespace}}:author")
     public String getAuthor() {
         return getProperty(AUTHOR);
     }
+
+    @HippoEssentialsGenerated(internalName = "{{namespace}}:title")
+    public String getTitle() {
+        return getProperty(TITLE);
+    }
+
+    @HippoEssentialsGenerated(internalName = "{{namespace}}:content")
+    public HippoHtml getContent() {
+        return getHippoHtml(CONTENT);
+    }
+
+    @HippoEssentialsGenerated(internalName = "{{namespace}}:introduction")
+    public String getIntroduction() {
+        return getProperty(INTRODUCTION);
+    }
+
 
     @HippoEssentialsGenerated(internalName = "{{namespace}}:link")
     public String getLink() {

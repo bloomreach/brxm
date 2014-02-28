@@ -2,7 +2,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="hst" uri="http://www.hippoecm.org/jsp/hst/core" %>
-<%--@elvariable id="document" type="{{beansPackage}}\.NewsDocument"--%>
+<%--@elvariable id="document" type="{{beansPackage}}.NewsDocument"--%>
 
 <hst:link var="link" hippobean="${document}"/>
 <article>

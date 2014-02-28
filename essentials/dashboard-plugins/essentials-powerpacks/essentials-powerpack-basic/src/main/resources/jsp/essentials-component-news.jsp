@@ -3,7 +3,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="hst" uri="http://www.hippoecm.org/jsp/hst/core" %>
 <%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
-<%--@elvariable id="document" type="{{beansPackage}}\.NewsDocument"--%>
+<%--@elvariable id="document" type="{{beansPackage}}.NewsDocument"--%>
 <%--@elvariable id="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable"--%>
 
 <c:forEach var="item" items="${pageable.items}" varStatus="status">
