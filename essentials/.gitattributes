@@ -111,6 +111,7 @@ dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboa
 dashboard-plugins/blog-plugin/src/main/resources/META-INF/blog_instructions.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/essentials-blog-detail.ftl -text
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/essentials-blog-list.ftl -text
+dashboard-plugins/blog-plugin/src/main/resources/hst/blog-sitemap.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/img/blog-icon.png -text
 dashboard-plugins/blog-plugin/src/main/resources/java/Account.txt -text
 dashboard-plugins/blog-plugin/src/main/resources/java/Author.txt -text

@@ -81,5 +81,13 @@
   <instructionSet>
     <execute class="org.onehippo.cms7.essentials.dashboard.blog.FacetInstruction"/>
   </instructionSet>
+ <!--
+  HST CONFIG
+ -->
+  <instructionSet>
+    <xml action="copy" source="xml/hst/sitemap/blog-sitemap.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
+  </instructionSet>
+
+
 
 </instructions>
