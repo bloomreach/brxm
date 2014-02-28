@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
@@ -27,15 +30,11 @@ public class SiteMenuRepresentation {
 
     private String id;
 
-    // Property is called title instead of name because using
-    // annotation JsonProperty("title") does not seem to work.
-    private String title;
+    private String name;
 
     private long lastModifiedTimestamp;
 
-    // Property is called items instead of children because using
-    // annotation JsonProperty("items") does not seem to work.
-    private List<SiteMenuItemRepresentation> items = new ArrayList<>();
+    private List<SiteMenuItemRepresentation> children = new ArrayList<>();
 
     public SiteMenuRepresentation() {
         super();
@@ -46,13 +45,13 @@ public class SiteMenuRepresentation {
             throw new IllegalArgumentException("Expected object of type CanonicalInfo");
         }
         id = ((CanonicalInfo) siteMenuConfiguration).getCanonicalIdentifier();
-        title = siteMenuConfiguration.getName();
+        name = siteMenuConfiguration.getName();
 
         // TODO last modified timestamp / etc etc
         lastModifiedTimestamp = Calendar.getInstance().getTimeInMillis();
 
         for (HstSiteMenuItemConfiguration item : siteMenuConfiguration.getSiteMenuConfigurationItems()) {
-            items.add(new SiteMenuItemRepresentation(item));
+            children.add(new SiteMenuItemRepresentation(item));
         }
     }
 
@@ -64,12 +63,13 @@ public class SiteMenuRepresentation {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+    @XmlAttribute(name = "title")
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public long getLastModifiedTimestamp() {
@@ -80,11 +80,12 @@ public class SiteMenuRepresentation {
         this.lastModifiedTimestamp = lastModifiedTimestamp;
     }
 
-    public List<SiteMenuItemRepresentation> getItems() {
-        return items;
+    @XmlElement(name = "items")
+    public List<SiteMenuItemRepresentation> getChildren() {
+        return children;
     }
 
-    public void setItems(final List<SiteMenuItemRepresentation> items) {
-        this.items = items;
+    public void setChildren(final List<SiteMenuItemRepresentation> children) {
+        this.children = children;
     }
 }

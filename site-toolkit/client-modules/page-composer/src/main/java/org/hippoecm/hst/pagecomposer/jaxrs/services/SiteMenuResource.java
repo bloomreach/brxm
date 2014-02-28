@@ -91,7 +91,7 @@ public class SiteMenuResource extends AbstractConfigResource {
     public Response create(final @PathParam("parentId") String parentId,
                            final SiteMenuItemRepresentation newMenuItem) {
         List<Validator> preValidators = getDefaultMenuModificationValidators();
-        preValidators.add(new NotNullValidator(newMenuItem.getTitle(), ClientError.ITEM_NO_NAME));
+        preValidators.add(new NotNullValidator(newMenuItem.getName(), ClientError.ITEM_NO_NAME));
         preValidators.add(new PreviewNodeValidator(getPreviewConfigurationPath(),
                 parentId, null, true));
         return tryExecute(new Callable<Response>() {
@@ -112,7 +112,7 @@ public class SiteMenuResource extends AbstractConfigResource {
     public Response update(final SiteMenuItemRepresentation modifiedItem) {
 
         List<Validator> preValidators = getDefaultMenuModificationValidators();
-        preValidators.add(new NotNullValidator(modifiedItem.getTitle(), ClientError.ITEM_NO_NAME));
+        preValidators.add(new NotNullValidator(modifiedItem.getName(), ClientError.ITEM_NO_NAME));
         preValidators.add(new PreviewNodeValidator(getPreviewConfigurationPath(),
                 modifiedItem.getId(), null, true));
         return tryExecute(new Callable<Response>() {

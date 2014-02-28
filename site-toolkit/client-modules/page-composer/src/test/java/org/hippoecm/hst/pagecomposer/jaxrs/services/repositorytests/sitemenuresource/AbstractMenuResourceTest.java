@@ -112,7 +112,7 @@ public abstract class AbstractMenuResourceTest extends AbstractPageComposerTest 
     protected void assertBobCanMakeModications(final SiteMenuResource resource) throws Exception {
         final Session bob = createSession("bob", "bob");
         final SiteMenuItemRepresentation contactItem = getSiteMenuItemRepresentation(bob, "main", "Contact");
-        contactItem.setTitle("test");
+        contactItem.setName("test");
         final Response fail = resource.update(contactItem);
         assertEquals(Response.Status.OK.getStatusCode(), fail.getStatus());
         bob.logout();

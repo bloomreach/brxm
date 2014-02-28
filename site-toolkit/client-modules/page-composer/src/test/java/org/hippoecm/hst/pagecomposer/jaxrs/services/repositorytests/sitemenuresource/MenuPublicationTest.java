@@ -64,7 +64,7 @@ public class MenuPublicationTest extends AbstractMenuResourceTest{
 
         final String oldPreviewLocation = session.getNodeByIdentifier(newsItem.getId()).getPath();
 
-        newsItem.setTitle("NewsRenamed");
+        newsItem.setName("NewsRenamed");
         resource.update(newsItem);
         mountResource.publish();
 

@@ -20,6 +20,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 
@@ -27,18 +30,14 @@ public class SiteMenuItemRepresentation {
 
     private String id;
 
-    // Property is called title instead of name because using
-    // annotation JsonProperty("title") does not seem to work.
-    private String title;
+    private String name;
 
     private boolean repositoryBased;
     private Map<String, String> localParameters;
     private Set<String> roles;
     private SiteMenuItemLink siteMenuItemLink = new SiteMenuItemLink(null, null);
 
-    // Property is called items instead of children because using
-    // annotation JsonProperty("items") does not seem to work.
-    private List<SiteMenuItemRepresentation> items = new ArrayList<>();
+    private List<SiteMenuItemRepresentation> children = new ArrayList<>();
 
     public SiteMenuItemRepresentation() {
         super();
@@ -50,13 +49,13 @@ public class SiteMenuItemRepresentation {
             throw new IllegalArgumentException("Expected object of type CanonicalInfo");
         }
 
-        title = item.getName();
+        name = item.getName();
         id = ((CanonicalInfo) item).getCanonicalIdentifier();
         repositoryBased = item.isRepositoryBased();
         localParameters = item.getLocalParameters();
         roles = item.getRoles();
         for (HstSiteMenuItemConfiguration childItem : item.getChildItemConfigurations()) {
-            items.add(new SiteMenuItemRepresentation(childItem));
+            children.add(new SiteMenuItemRepresentation(childItem));
         }
         this.siteMenuItemLink = new SiteMenuItemLink(item);
     }
@@ -69,12 +68,13 @@ public class SiteMenuItemRepresentation {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+    @XmlAttribute(name = "title")
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(final String title) {
-        this.title = title;
+    public void setName(final String name) {
+        this.name = name;
     }
 
     public boolean isRepositoryBased() {
@@ -101,12 +101,13 @@ public class SiteMenuItemRepresentation {
         this.roles = roles;
     }
 
-    public List<SiteMenuItemRepresentation> getItems() {
-        return items;
+    @XmlElement(name = "items")
+    public List<SiteMenuItemRepresentation> getChildren() {
+        return children;
     }
 
-    public void setItems(final List<SiteMenuItemRepresentation> items) {
-        this.items = items;
+    public void setChildren(final List<SiteMenuItemRepresentation> children) {
+        this.children = children;
     }
 
     public LinkType getLinkType() {

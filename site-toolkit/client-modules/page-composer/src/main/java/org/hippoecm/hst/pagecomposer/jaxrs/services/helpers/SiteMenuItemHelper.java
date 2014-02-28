@@ -49,7 +49,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
     public Node create(Node parent, SiteMenuItemRepresentation newItem) throws RepositoryException {
         lockHelper.acquireSimpleLock(getMenuAncestor(parent));
         try {
-            final Node newChild = parent.addNode(newItem.getTitle(), HstNodeTypes.NODETYPE_HST_SITEMENUITEM);
+            final Node newChild = parent.addNode(newItem.getName(), HstNodeTypes.NODETYPE_HST_SITEMENUITEM);
             update(newChild, newItem);
             return newChild;
         } catch (ItemExistsException e) {
@@ -74,7 +74,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
 
         lockHelper.acquireSimpleLock(getMenuAncestor(node));
 
-        final String modifiedName = modifiedItem.getTitle();
+        final String modifiedName = modifiedItem.getName();
         if (modifiedName != null && !modifiedName.equals(node.getName())) {
             rename(node, modifiedName);
         }
