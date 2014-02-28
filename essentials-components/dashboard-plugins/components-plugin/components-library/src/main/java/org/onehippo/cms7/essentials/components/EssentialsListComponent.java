@@ -42,6 +42,8 @@ public class EssentialsListComponent extends CommonComponent {
      * Request parameter to set the current page.
      */
     protected static final String REQUEST_PARAM_PAGE = "page";
+    protected static final String REQUEST_PARAM_PAGE_SIZE = "pageSize";
+    protected static final String REQUEST_PARAM_PAGE_PAGINATION = "showPagination";
 
     /**
      * Request attribute to store pageable result in.
@@ -72,6 +74,9 @@ public class EssentialsListComponent extends CommonComponent {
 
         final Pageable<HippoBean> pageable = doSearch(request, paramInfo, scope);
         request.setAttribute(REQUEST_ATTR_PAGEABLE, pageable);
+        request.setAttribute(REQUEST_PARAM_PAGE, getCurrentPage(request));
+        request.setAttribute(REQUEST_PARAM_PAGE_SIZE, paramInfo.getPageSize());
+        request.setAttribute(REQUEST_PARAM_PAGE_PAGINATION, paramInfo.getShowPagination());
     }
 
     protected <T extends EssentialsDocumentListComponentInfo> Pageable<HippoBean> doSearch(final HstRequest request, final T paramInfo, final HippoBean scope) {
