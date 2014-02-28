@@ -53,7 +53,13 @@
                     orderChanged: function (scope, modelData, sourceIndex, destIndex) {
                         var parentData = scope.parentItemScope();
                         var destId = (!parentData) ? ConfigService.menuId : parentData.itemData().id;
-                        MenuService.moveMenuItem(modelData.id, destId, destIndex);
+                        MenuService.moveMenuItem(modelData.id, destId, destIndex).then(
+                            function (message) {},
+                            function (errorResponse) {
+                            $scope.$parent.feedback = FeedbackService.getFeedback(errorResponse);
+                            var removedItem = scope.sortableModelValue.splice(destIndex, 1)[0];
+                            scope.sortableModelValue.splice(sourceIndex, 0, removedItem);
+                        });
                     }
                 };
             }
