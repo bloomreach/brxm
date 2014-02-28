@@ -940,11 +940,11 @@
       </sv:property>
     </sv:node>
   </sv:node>
-  <sv:node sv:name="hst-modifiable">
+  <sv:node sv:name="hst-workspace">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposys:domainrule</sv:value>
     </sv:property>
-    <sv:node sv:name="type-hst-channelinfo">
+    <sv:node sv:name="type-hst-workspace">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hipposys:facetrule</sv:value>
       </sv:property>
@@ -970,7 +970,7 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposys:domainrule</sv:value>
     </sv:property>
-    <sv:node sv:name="type-hst-channelinfo">
+    <sv:node sv:name="type-hst-containercomponentfolder">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hipposys:facetrule</sv:value>
       </sv:property>
@@ -991,5 +991,7 @@
       </sv:property>
     </sv:node>
   </sv:node>
+
+
 
 </sv:node>
