@@ -24,14 +24,13 @@
       <xs:enumeration value="copy"/>
     </xs:restriction>
   </xs:simpleType>
-  <xs:simpleType name="executeActionType">
 
-  </xs:simpleType>
 
   <xs:complexType name="instructionsSetType" mixed="true">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element type="fileType" name="file" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element type="executeType" name="execute" minOccurs="0" maxOccurs="unbounded"/>
+      <!--<xs:element type="placeHoldersType" name="placeholders" minOccurs="0" maxOccurs="unbounded"/>-->
       <xs:element type="xmlType" name="xml" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element type="cndType" name="cnd" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element type="folderType" name="folder" minOccurs="0" maxOccurs="unbounded"/>
@@ -59,6 +58,19 @@
   <!-- EXECUTE  -->
   <xs:complexType name="executeType" mixed="true">
     <xs:attribute use="required" name="class" type="xs:string"/>
+  </xs:complexType>
+  <!-- PLACEHOLDER  -->
+  <xs:complexType name="placeHolderType" mixed="true">
+    <xs:attribute use="required" name="key" type="xs:string" />
+    <xs:attribute use="required" name="value" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- PLACEHOLDERS  -->
+  <xs:complexType name="placeHoldersType" mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element type="placeHolderType" name="placeholder"/>
+    </xs:choice>
+
   </xs:complexType>
 
   <xs:complexType name="xmlType" mixed="true">

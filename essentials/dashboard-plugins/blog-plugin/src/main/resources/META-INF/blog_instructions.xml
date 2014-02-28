@@ -53,26 +53,27 @@
   <!--
     SAMPLE DATA
   -->
-    <instructionSet>
-      <xml action="copy" overwrite="false" source="xml/samples/author_1.xml" target="/content/documents/{{namespace}}/blog/authors"/>
-      <xml action="copy" overwrite="false" source="xml/samples/author_2.xml" target="/content/documents/{{namespace}}/blog/authors"/>
-      <xml action="copy" source="xml/samples/blog_entry_1.xml" target="/content/documents/{{namespace}}/blog/{{dateRepoYearMonth}}"/>
-      <xml action="copy" source="xml/samples/blog_entry_2.xml" target="/content/documents/{{namespace}}/blog/{{dateRepoYearMonth}}"/>
-    </instructionSet>
+  <instructionSet>
+    <xml action="copy" overwrite="false" source="xml/samples/author_1.xml" target="/content/documents/{{namespace}}/blog/authors"/>
+    <xml action="copy" overwrite="false" source="xml/samples/author_2.xml" target="/content/documents/{{namespace}}/blog/authors"/>
+    <xml action="copy" source="xml/samples/blog_entry_1.xml" target="/content/documents/{{namespace}}/blog/{{dateRepoYearMonth}}"/>
+    <xml action="copy" source="xml/samples/blog_entry_2.xml" target="/content/documents/{{namespace}}/blog/{{dateRepoYearMonth}}"/>
+  </instructionSet>
 
   <!--
     JSP TEMPLATES
   -->
   <instructionSet group="jsp">
-    <file action="copy" overwrite="true" source="jsp/essentials-blog-detail.jsp" target="{{jspRoot}}/essentials/blog/essentials-blog-detail.jsp"/>
-    <file action="copy" overwrite="true" source="jsp/essentials-blog-list.jsp" target="{{jspRoot}}/essentials/blog/essentials-blog-list.jsp"/>
+    <file action="copy" overwrite="false" source="jsp/essentials-blog-detail.jsp" target="{{jspRoot}}/essentials/blog/essentials-blog-detail.jsp"/>
+    <file action="copy" overwrite="false" source="jsp/essentials-blog-list.jsp" target="{{jspRoot}}/essentials/blog/essentials-blog-list.jsp"/>
+
   </instructionSet>
   <!--
     FREEMARKER TEMPLATES
   -->
   <instructionSet group="freemarker">
-    <file action="copy" overwrite="true" source="freemarker/essentials-blog-detail.ftl" target="{{jspRoot}}/essentials/blog/essentials-blog-detail.ftl"/>
-    <file action="copy" overwrite="true" source="freemarker/essentials-blog-list.ftl" target="{{jspRoot}}/essentials/blog/essentials-blog-list.ftl"/>
+    <file action="copy" overwrite="false" source="freemarker/essentials-blog-detail.ftl" target="{{jspRoot}}/essentials/blog/essentials-blog-detail.ftl"/>
+    <file action="copy" overwrite="false" source="freemarker/essentials-blog-list.ftl" target="{{jspRoot}}/essentials/blog/essentials-blog-list.ftl"/>
   </instructionSet>
   <!--
     FACET
@@ -81,13 +82,21 @@
   <instructionSet>
     <execute class="org.onehippo.cms7.essentials.dashboard.blog.FacetInstruction"/>
   </instructionSet>
- <!--
-  HST CONFIG
- -->
+  <!--
+   HST CONFIG
+  -->
   <instructionSet>
     <xml action="copy" source="xml/hst/sitemap/blog-sitemap.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
   </instructionSet>
-
+  <!-- HST TEMPLATES -->
+  <instructionSet group="jsp">
+    <xml action="copy" source="hst/template-blog-detail-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="hst/template-blog-list-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+  </instructionSet>
+  <instructionSet group="freemarker">
+    <xml action="copy" source="hst/template-blog-detail-ftl.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="hst/template-blog-list-ftl.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+  </instructionSet>
 
 
 </instructions>
