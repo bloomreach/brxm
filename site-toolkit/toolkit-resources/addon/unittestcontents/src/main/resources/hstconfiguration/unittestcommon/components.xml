@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -15,167 +15,167 @@
   limitations under the License.
 -->
 <sv:node sv:name="hst:components" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hst:components</sv:value>
+  </sv:property>
+  <sv:node sv:name="header">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:components</sv:value>
+      <sv:value>hst:component</sv:value>
     </sv:property>
-    <sv:node sv:name="header">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:template" sv:type="String">
-            <sv:value>header</sv:value>
-        </sv:property>
-        <sv:node sv:name="title">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:component</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:template" sv:type="String">
-                <sv:value>title</sv:value>
-            </sv:property>
-        </sv:node>
+    <sv:property sv:name="hst:template" sv:type="String">
+      <sv:value>header</sv:value>
+    </sv:property>
+    <sv:node sv:name="title">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:component</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:template" sv:type="String">
+        <sv:value>title</sv:value>
+      </sv:property>
     </sv:node>
+  </sv:node>
 
 
-    <sv:node sv:name="overview">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:template" sv:type="String">
-            <sv:value>overview</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
-        </sv:property>
-    </sv:node>
-    
-    <sv:node sv:name="detail">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:template" sv:type="String">
-            <sv:value>detail</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
-        </sv:property>
-    </sv:node>
+  <sv:node sv:name="overview">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:template" sv:type="String">
+      <sv:value>overview</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:componentclassname" sv:type="String">
+      <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
+    </sv:property>
+  </sv:node>
 
-    <sv:node sv:name="leftmenu">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:template" sv:type="String">
-            <sv:value>leftmenu</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
-        </sv:property>
-    </sv:node>
+  <sv:node sv:name="detail">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:template" sv:type="String">
+      <sv:value>detail</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:componentclassname" sv:type="String">
+      <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
+    </sv:property>
+  </sv:node>
 
-    <sv:node sv:name="contactform">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:template" sv:type="String">
-            <sv:value>contact</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
-        </sv:property>
-    </sv:node>
-    
-    <sv:node sv:name="simplesearch">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:template" sv:type="String">
-            <sv:value>simplesearch</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
-        </sv:property>
-    </sv:node>
-    
-    <sv:node sv:name="contactspringform">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:template" sv:type="String">
-            <sv:value>contactspring</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:parameternames" sv:type="String">
-            <sv:value>spring-delegated-bean</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:parametervalues" sv:type="String">
-            <sv:value>contactBean</sv:value>
-        </sv:property>
-    </sv:node>
-    
-    <sv:node sv:name="contactdispatchform">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:parameternames" sv:type="String">
-            <sv:value>dispatch-path</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:parametervalues" sv:type="String">
-            <sv:value>jsp/components/contactdispatch.jsp</sv:value>
-        </sv:property>
-    </sv:node>
-    
-    <sv:node sv:name="contactspringmvcform">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:template" sv:type="String">
-            <sv:value>contactspringmvc</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:parameternames" sv:type="String">
-            <sv:value>action-path</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:parametervalues" sv:type="String">
-            <sv:value>spring/contactspringmvc.do</sv:value>
-        </sv:property>
-    </sv:node>
+  <sv:node sv:name="leftmenu">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:template" sv:type="String">
+      <sv:value>leftmenu</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:componentclassname" sv:type="String">
+      <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
+    </sv:property>
+  </sv:node>
 
-    <sv:node sv:name="twopaneoverview">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:template" sv:type="String">
-            <sv:value>twopaneoverview</sv:value>
-        </sv:property>
-        <sv:node sv:name="top">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:component</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:componentclassname" sv:type="String">
-                <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:template" sv:type="String">
-                <sv:value>overview</sv:value>
-            </sv:property>
-        </sv:node>
-        <sv:node sv:name="bottom">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:component</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:componentclassname" sv:type="String">
-                <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:template" sv:type="String">
-                <sv:value>overview</sv:value>
-            </sv:property>
-        </sv:node>
+  <sv:node sv:name="contactform">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:template" sv:type="String">
+      <sv:value>contact</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:componentclassname" sv:type="String">
+      <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="simplesearch">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:template" sv:type="String">
+      <sv:value>simplesearch</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:componentclassname" sv:type="String">
+      <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="contactspringform">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:template" sv:type="String">
+      <sv:value>contactspring</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:componentclassname" sv:type="String">
+      <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:parameternames" sv:type="String">
+      <sv:value>spring-delegated-bean</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:parametervalues" sv:type="String">
+      <sv:value>contactBean</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="contactdispatchform">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:componentclassname" sv:type="String">
+      <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:parameternames" sv:type="String">
+      <sv:value>dispatch-path</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:parametervalues" sv:type="String">
+      <sv:value>jsp/components/contactdispatch.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="contactspringmvcform">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:template" sv:type="String">
+      <sv:value>contactspringmvc</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:componentclassname" sv:type="String">
+      <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:parameternames" sv:type="String">
+      <sv:value>action-path</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:parametervalues" sv:type="String">
+      <sv:value>spring/contactspringmvc.do</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="twopaneoverview">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:template" sv:type="String">
+      <sv:value>twopaneoverview</sv:value>
+    </sv:property>
+    <sv:node sv:name="top">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:component</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentclassname" sv:type="String">
+        <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:template" sv:type="String">
+        <sv:value>overview</sv:value>
+      </sv:property>
     </sv:node>
-    
+    <sv:node sv:name="bottom">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:component</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentclassname" sv:type="String">
+        <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:template" sv:type="String">
+        <sv:value>overview</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+
 </sv:node>

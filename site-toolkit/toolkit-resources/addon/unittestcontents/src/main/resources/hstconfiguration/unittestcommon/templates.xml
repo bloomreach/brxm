@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+    Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
     
     Licensed under the Apache License, Version 2.0 (the  "License");
     you may not use this file except in compliance with the License.
@@ -14,133 +14,133 @@
     See the License for the specific language governing permissions and
     limitations under the License. -->
 <sv:node sv:name="hst:templates" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hst:templates</sv:value>
+  </sv:property>
+
+  <sv:node sv:name="webpage">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:templates</sv:value>
+      <sv:value>hst:template</sv:value>
     </sv:property>
-    
-    <sv:node sv:name="webpage">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/webpage.jsp</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:containers" sv:type="String">
-            <sv:value>header</sv:value>
-        </sv:property>
-    </sv:node>
-    
-    <sv:node sv:name="header">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/components/header.jsp</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:containers" sv:type="String">
-            <sv:value>title</sv:value>
-        </sv:property>
-    </sv:node>
-    
-    <sv:node sv:name="title">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/components/title.jsp</sv:value>
-        </sv:property>
-    </sv:node>
-    
-    <sv:node sv:name="overview">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/components/overview.jsp</sv:value>
-        </sv:property>
-    </sv:node>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/webpage.jsp</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:containers" sv:type="String">
+      <sv:value>header</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="header">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/header.jsp</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:containers" sv:type="String">
+      <sv:value>title</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="title">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/title.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="overview">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/overview.jsp</sv:value>
+    </sv:property>
+  </sv:node>
 
 
-    <sv:node sv:name="twopaneoverview">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/components/twopaneoverview.jsp</sv:value>
-        </sv:property>
-    </sv:node>
-    
+  <sv:node sv:name="twopaneoverview">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/twopaneoverview.jsp</sv:value>
+    </sv:property>
+  </sv:node>
 
-    <sv:node sv:name="detail">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/components/detail.jsp</sv:value>
-        </sv:property>
-    </sv:node>
-    
-    <sv:node sv:name="contact">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/components/contact.jsp</sv:value>
-        </sv:property>
-    </sv:node>
-    
-    <sv:node sv:name="simplesearch">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/components/simplesearch.jsp</sv:value>
-        </sv:property>
-    </sv:node>
-    
-    <sv:node sv:name="uniquelinks">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/components/uniquelinks.jsp</sv:value>
-        </sv:property>
-    </sv:node>
-    
-    <sv:node sv:name="contactspring">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>spring/contactspring.do</sv:value>
-        </sv:property>
-    </sv:node>
-    
-    <sv:node sv:name="contactspringmvc">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>spring/contactspringmvc.do</sv:value>
-        </sv:property>
-    </sv:node>
-    
-    <sv:node sv:name="thankyou">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/components/thankyou.jsp</sv:value>
-        </sv:property>
-    </sv:node>
-    
-    <sv:node sv:name="leftmenu">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/components/leftmenu.jsp</sv:value>
-        </sv:property>
-    </sv:node>
-    
+
+  <sv:node sv:name="detail">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/detail.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="contact">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/contact.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="simplesearch">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/simplesearch.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="uniquelinks">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/uniquelinks.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="contactspring">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>spring/contactspring.do</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="contactspringmvc">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>spring/contactspringmvc.do</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="thankyou">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/thankyou.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="leftmenu">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/leftmenu.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+
 </sv:node>

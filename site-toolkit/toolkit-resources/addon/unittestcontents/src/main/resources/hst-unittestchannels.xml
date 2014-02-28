@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+    Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
     
     Licensed under the Apache License, Version 2.0 (the  "License");
     you may not use this file except in compliance with the License.
@@ -16,18 +16,18 @@
     limitations under the License. -->
 <sv:node sv:name="hst:channels" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:channels</sv:value>
+    <sv:value>hst:channels</sv:value>
   </sv:property>
   <sv:node sv:name="testchannel">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:channel</sv:value>
+      <sv:value>hst:channel</sv:value>
     </sv:property>
     <sv:property sv:name="hst:name" sv:type="String">
-       <sv:value>Test Channel</sv:value>
+      <sv:value>Test Channel</sv:value>
     </sv:property>
     <sv:node sv:name="hst:channelinfo">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-         <sv:value>hst:channelinfo</sv:value>
+        <sv:value>hst:channelinfo</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

@@ -106,7 +106,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
      * whether this {@link HstComponentConfigurationService} can serve as prototype.
      */
     private boolean prototype;
-    
+
     /**
      * <code>true</code> when this {@link HstComponentConfiguration} is configured to render standalone in case of {@link HstURL#COMPONENT_RENDERING_TYPE}
      * The default value is <code>true</code> when the property {@link HstNodeTypes#COMPONENT_PROPERTY_STANDALONE} is not configured.
@@ -209,8 +209,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
         this.inherited =  inherited;
         this.parent = parent;
-
-        prototype = node.getValueProvider().getBoolean(HstNodeTypes.COMPONENT_PROPERTY_PROTOTYPE).booleanValue();
+        this.prototype = HstNodeTypes.NODENAME_HST_PAGEPROTOTYPES.equals(rootNodeName);
 
         if (explicitName == null) {
             this.name = StringPool.get(node.getValueProvider().getName());
@@ -359,6 +358,13 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                                                                 final String rootNodeName,
                                                                 final Map<String, HstNode> referenceableContainers) {
         if (isHstComponentOrReferenceType(child)) {
+            if (isPrototype() && !isAllowedInPrototype(child)) {
+                log.warn("Component child of type '{}' found for a prototype page. Only nodes of type " +
+                        "'{}' or '{}' are allowed for prototype pages. Skipping component '{}'.",
+                        new String[]{child.getNodeTypeName(), HstNodeTypes.NODETYPE_HST_COMPONENT,
+                                HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT, child.getValueProvider().getPath()});
+                return null;
+            }
             if (child.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)) {
                 usedChildReferenceNames.add(StringPool.get(child.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)));
             }
@@ -397,6 +403,12 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 || HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName())
                 || HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTREFERENCE.equals(node.getNodeTypeName());
     }
+
+    private boolean isAllowedInPrototype(final HstNode node) {
+        return HstNodeTypes.NODETYPE_HST_COMPONENT.equals(node.getNodeTypeName())
+                || HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(node.getNodeTypeName());
+    }
+
 
     private HstNode getReferencedContainer(final HstNode child, final Map<String, HstNode> referenceableContainers) {
         if (referenceableContainers == null || referenceableContainers.isEmpty()) {

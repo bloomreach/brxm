@@ -191,6 +191,8 @@ public interface HstNodeTypes {
     static final String NODENAME_HST_COMPONENTS = "hst:components";
     static final String NODENAME_HST_CATALOG = "hst:catalog";
     static final String NODENAME_HST_PAGES = "hst:pages";
+    static final String NODENAME_HST_ABSTRACTPAGES = "hst:abstractpages";
+    static final String NODENAME_HST_PAGEPROTOTYPES = "hst:pageprototypes";
     static final String NODENAME_HST_TEMPLATES = "hst:templates";
     static final String NODENAME_HST_SITEMAPITEMHANDLERS = "hst:sitemapitemhandlers";
     static final String NODENAME_HST_HSTDEFAULT = "hst:default";

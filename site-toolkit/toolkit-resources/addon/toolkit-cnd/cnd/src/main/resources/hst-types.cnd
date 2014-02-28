@@ -69,7 +69,6 @@
 [hst:component] > hst:abstractcomponent orderable
 - hst:referencecomponent (string)
 - hst:lastmodified (date)
-- hst:prototype (boolean)
 - hst:iconpath (string)
 + * (hst:containercomponentreference)
 + * (hst:abstractcomponent)
@@ -209,7 +208,9 @@
 // deprecated : not used any more as only fine grained locking
 - hst:lockedon (date)
 + hst:components (hst:components) = hst:components
++ hst:abstractpages (hst:pages) = hst:pages
 + hst:pages (hst:pages) = hst:pages
++ hst:pageprototypes (hst:pages) = hst:pages
 + hst:sitemap (hst:sitemap) = hst:sitemap
 + hst:templates (hst:templates) = hst:templates
 + hst:sitemenus (hst:sitemenus) = hst:sitemenus

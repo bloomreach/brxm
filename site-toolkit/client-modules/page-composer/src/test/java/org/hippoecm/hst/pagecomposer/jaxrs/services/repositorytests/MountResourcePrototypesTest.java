@@ -21,56 +21,40 @@ import javax.ws.rs.core.Response;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.PagesRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.PagePrototypesRepresentation;
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class MountResourcePagesTest extends AbstractMountResourceTest {
+public class MountResourcePrototypesTest extends AbstractMountResourceTest {
 
     @Test
     public void test_no_prototype_pages() throws Exception {
-        movePagesFromCommonToUnitTestProject();
-        session.save();
         // give time for jcr events to evict model
         Thread.sleep(200);
         mockNewRequest(session, "localhost", "/home");
-        final Response response = mountResource.getPrototypePages();
+        final Response response = mountResource.getPagePrototypes();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        PagesRepresentation representation = (PagesRepresentation)((ExtResponseRepresentation) response.getEntity()).getData();
+        PagePrototypesRepresentation representation = (PagePrototypesRepresentation)((ExtResponseRepresentation) response.getEntity()).getData();
         assertEquals(0, representation.getPages().size());
     }
 
     @Test
     public void test_prototype_pages() throws Exception {
-        movePagesFromCommonToUnitTestProject();
         // make a page prototype
-        session.getNode("/hst:hst/hst:configurations/unittestproject/hst:pages/standarddetail")
-                .setProperty(HstNodeTypes.COMPONENT_PROPERTY_PROTOTYPE, true);
-        session.save();
-        // give time for jcr events to evict model
-        Thread.sleep(200);
-        mockNewRequest(session, "localhost", "/home");
-        PagesRepresentation representation = (PagesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
-        assertEquals(1, representation.getPages().size());
-        assertEquals("standarddetail", representation.getPages().get(0).getName());
-    }
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestcommon/hst:pages/homepage",
+                "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/proto");
 
-    @Test
-    public void test_only_direct_pages_children_can_be_prototype() throws Exception {
-        movePagesFromCommonToUnitTestProject();
-        // make a sub component of page a prototype: this does not work as only root page components can be
-        // a prototype
-        session.getNode("/hst:hst/hst:configurations/unittestproject/hst:pages/standarddetail/body")
-                .setProperty(HstNodeTypes.COMPONENT_PROPERTY_PROTOTYPE, true);
         session.save();
         // give time for jcr events to evict model
         Thread.sleep(200);
         mockNewRequest(session, "localhost", "/home");
-        PagesRepresentation representation = (PagesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
-        assertEquals(0, representation.getPages().size());
+        PagePrototypesRepresentation representation = (PagePrototypesRepresentation)((ExtResponseRepresentation) mountResource.getPagePrototypes().getEntity()).getData();
+        assertEquals(1, representation.getPages().size());
+        assertEquals("proto", representation.getPages().get(0).getName());
     }
 
     @Test
@@ -83,7 +67,7 @@ public class MountResourcePagesTest extends AbstractMountResourceTest {
         // give time for jcr events to evict model
         Thread.sleep(200);
         mockNewRequest(session, "localhost", "/home");
-        PagesRepresentation representation = (PagesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
+        PagePrototypesRepresentation representation = (PagePrototypesRepresentation)((ExtResponseRepresentation) mountResource.getPagePrototypes().getEntity()).getData();
         assertEquals(0, representation.getPages().size());
     }
 
@@ -98,7 +82,7 @@ public class MountResourcePagesTest extends AbstractMountResourceTest {
         // give time for jcr events to evict model
         Thread.sleep(200);
         mockNewRequest(session, "localhost", "/home");
-        PagesRepresentation representation = (PagesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
+        PagePrototypesRepresentation representation = (PagePrototypesRepresentation)((ExtResponseRepresentation) mountResource.getPagePrototypes().getEntity()).getData();
 
         ComponentRepresentation prev = null;
         for (ComponentRepresentation pageRepresentation : representation.getPages()) {

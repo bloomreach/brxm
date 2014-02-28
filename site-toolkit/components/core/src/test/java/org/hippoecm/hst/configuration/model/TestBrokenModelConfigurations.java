@@ -453,6 +453,7 @@ public class TestBrokenModelConfigurations extends AbstractTestConfigurations {
     public void testProjectMissingHstPageAndComponents() throws Exception {
         session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:components").remove();
         session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:pages").remove();
+        session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:abstractpages").remove();
 
         session.save();
         final VirtualHosts firstModel = hstManager.getVirtualHosts();
@@ -465,6 +466,7 @@ public class TestBrokenModelConfigurations extends AbstractTestConfigurations {
     public void testProjectAndDefaultMissingHstPageAndComponents() throws Exception {
         session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:components").remove();
         session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:pages").remove();
+        session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:abstractpages").remove();
         session.getNode("/hst:hst/hst:configurations/hst:default/hst:components").remove();
         session.getNode("/hst:hst/hst:configurations/hst:default/hst:pages").remove();
         session.save();

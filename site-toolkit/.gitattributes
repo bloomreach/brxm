@@ -302,7 +302,7 @@ client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/m
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/DocumentRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ExtResponseRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/PageModelRepresentation.java -text svneol=unset#text/plain
-client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/PagesRepresentation.java -text
+client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/PagePrototypesRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/PostRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/SiteMapItemRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/SiteMapRepresentation.java -text
@@ -342,7 +342,7 @@ client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/s
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/DummyInfo.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/MountResourceAccessor.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/AbstractMountResourceTest.java -text
-client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/MountResourcePagesTest.java -text
+client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/MountResourcePrototypesTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/MountResourceTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/sitemapresource/AbstractSiteMapResourceTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/sitemapresource/CreateAndPublicationTest.java -text
@@ -1199,7 +1199,9 @@ toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/glo
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/sub1/sitemap.xml -text svneol=unset#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/sub2/sitemap.xml -text svneol=unset#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/subsub1/sitemap.xml -text svneol=unset#text/plain
+toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestcommon/abstractpages.xml -text
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestcommon/components.xml -text
+toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestcommon/pageprototypes.xml -text
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestcommon/pages.xml -text
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestcommon/sitemenus.xml -text svneol=unset#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestcommon/templates.xml -text

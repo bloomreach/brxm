@@ -90,13 +90,11 @@ public class TestPagesModels extends AbstractTestConfigurations {
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         for (HstComponentConfiguration hstComponentConfiguration : hstSite.getComponentsConfiguration().getComponentConfigurations().values()) {
-            if (hstComponentConfiguration.getCanonicalStoredLocation().contains("hst:components")) {
+            if (hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestcommon/")) {
                 // components are still from /unittestcommon
                 assertTrue(hstComponentConfiguration.isInherited());
-                assertTrue(hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestcommon"));
             } else {
                 assertFalse(hstComponentConfiguration.isInherited());
-                assertTrue(hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestproject"));
             }
         }
     }
@@ -110,13 +108,11 @@ public class TestPagesModels extends AbstractTestConfigurations {
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         for (HstComponentConfiguration hstComponentConfiguration : hstSite.getComponentsConfiguration().getComponentConfigurations().values()) {
-            if (hstComponentConfiguration.getCanonicalStoredLocation().contains("hst:components")) {
+            if (hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestcommon/")) {
                 // components are still from /unittestcommon
                 assertTrue(hstComponentConfiguration.isInherited());
-                assertTrue(hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestcommon"));
             } else {
                 assertFalse(hstComponentConfiguration.isInherited());
-                assertTrue(hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestproject/hst:workspace"));
             }
         }
     }
@@ -128,26 +124,25 @@ public class TestPagesModels extends AbstractTestConfigurations {
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages");
 
         session.getNode("/hst:hst/hst:configurations/unittestproject").addNode("hst:pages");
-        session.move("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/basepage",
-                "/hst:hst/hst:configurations/unittestproject/hst:pages/basepage");
+        session.move("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/standarddetail",
+                "/hst:hst/hst:configurations/unittestproject/hst:pages/standarddetail");
 
         session.save();
 
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         for (HstComponentConfiguration hstComponentConfiguration : hstSite.getComponentsConfiguration().getComponentConfigurations().values()) {
-            if (hstComponentConfiguration.getCanonicalStoredLocation().contains("hst:components")) {
+            if (hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestcommon/")) {
                 // components are still from /unittestcommon
                 assertTrue(hstComponentConfiguration.isInherited());
-                assertTrue(hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestcommon"));
             } else {
                 HstComponentConfiguration root = hstComponentConfiguration;
                 while (root.getParent() != null) {
                     root = root.getParent();
                 }
-                if (root.getName().equals("basepage")) {
+                if (root.getName().equals("standarddetail")) {
                     assertFalse(hstComponentConfiguration.isInherited());
-                    assertTrue(hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestproject/hst:pages/basepage"));
+                    assertTrue(hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestproject/hst:pages/standarddetail"));
                 } else {
                     assertFalse(hstComponentConfiguration.isInherited());
                     assertTrue(hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestproject/hst:workspace"));
@@ -164,26 +159,25 @@ public class TestPagesModels extends AbstractTestConfigurations {
 
         session.getNode("/hst:hst/hst:configurations/unittestproject").addNode("hst:pages");
 
-        JcrUtils.copy(session,"/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/basepage",
-                "/hst:hst/hst:configurations/unittestproject/hst:pages/basepage");
+        JcrUtils.copy(session,"/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/standarddetail",
+                "/hst:hst/hst:configurations/unittestproject/hst:pages/standarddetail");
 
         session.save();
 
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         for (HstComponentConfiguration hstComponentConfiguration : hstSite.getComponentsConfiguration().getComponentConfigurations().values()) {
-            if (hstComponentConfiguration.getCanonicalStoredLocation().contains("hst:components")) {
+            if (hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestcommon/")) {
                 // components are still from /unittestcommon
                 assertTrue(hstComponentConfiguration.isInherited());
-                assertTrue(hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestcommon"));
             } else {
                 HstComponentConfiguration root = hstComponentConfiguration;
                 while (root.getParent() != null) {
                     root = root.getParent();
                 }
-                if (root.getName().equals("basepage")) {
+                if (root.getName().equals("standarddetail")) {
                     assertFalse(hstComponentConfiguration.isInherited());
-                    assertTrue(hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestproject/hst:pages/basepage"));
+                    assertTrue(hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestproject/hst:pages/standarddetail"));
                 } else {
                     assertFalse(hstComponentConfiguration.isInherited());
                     assertTrue(hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestproject/hst:workspace"));
@@ -202,9 +196,9 @@ public class TestPagesModels extends AbstractTestConfigurations {
         final HstSite hstSite = mount.getMount().getHstSite();
         for (HstComponentConfiguration hstComponentConfiguration : hstSite.getComponentsConfiguration().getComponentConfigurations().values()) {
             assertTrue(hstComponentConfiguration.isInherited());
-            assertTrue(hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestcommon/hst:components"));
+            assertTrue(hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestcommon/"));
         }
-        assertNull(hstSite.getComponentsConfiguration().getComponentConfigurations().get("basepage"));
+        assertNull(hstSite.getComponentsConfiguration().getComponentConfigurations().get("standarddetail"));
     }
 
     @Test

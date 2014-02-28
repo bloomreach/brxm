@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -243,8 +243,8 @@
           </sv:property>
           <sv:property sv:name="hippostd:content" sv:type="String">
             <sv:value>&lt;html&gt; &lt;body&gt;
-                            &lt;p&gt;body&lt;/p&gt; &lt;/body&gt;
-                            &lt;/html&gt;</sv:value>
+              &lt;p&gt;body&lt;/p&gt; &lt;/body&gt;
+              &lt;/html&gt;</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
@@ -431,8 +431,8 @@
           </sv:property>
           <sv:property sv:name="hippostd:content" sv:type="String">
             <sv:value>&lt;html&gt; &lt;body&gt;
-                            &lt;p&gt;body&lt;/p&gt; &lt;/body&gt;
-                            &lt;/html&gt;</sv:value>
+              &lt;p&gt;body&lt;/p&gt; &lt;/body&gt;
+              &lt;/html&gt;</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>

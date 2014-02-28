@@ -25,19 +25,14 @@ import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 
-public class PagesRepresentation {
+public class PagePrototypesRepresentation {
 
     private List<ComponentRepresentation> pages = new ArrayList<>();
 
-    public PagesRepresentation represent(final HstSite editingPreviewSite,
-                                         final boolean prototypeOnly,
+    public PagePrototypesRepresentation represent(final HstSite editingPreviewSite,
                                          final boolean includeInherited,
                                          final Mount mount) {
-        for (HstComponentConfiguration page : editingPreviewSite.getComponentsConfiguration().getPages().values()) {
-            if (prototypeOnly && !page.isPrototype()) {
-                // skipping non prototype
-                continue;
-            }
+        for (HstComponentConfiguration page : editingPreviewSite.getComponentsConfiguration().getPagePrototypes().values()) {
             if (!includeInherited && page.isInherited()) {
                 // skipping inherited
                 continue;

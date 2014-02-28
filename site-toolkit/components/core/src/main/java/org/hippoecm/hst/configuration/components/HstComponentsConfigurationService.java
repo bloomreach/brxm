@@ -45,10 +45,10 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     private Map<String, HstComponentConfiguration> canonicalComponentConfigurations;
 
     /*
-     * pages are component configurations that are retrievable through getComponentConfiguration(String id) and are directly
-     * configured below 'hst:pages'
+     * pagePrototypes are component configurations that are retrievable through getComponentConfiguration(String id) and are directly
+     * configured below 'hst:pagePrototypes'
      */
-    private Map<String, HstComponentConfiguration> pages = new HashMap<>();
+    private Map<String, HstComponentConfiguration> pagePrototypes = new HashMap<>();
 
     /*
      * The Map of all containter items. These are the hst:containeritemcomponent's that are configured as child of hst:containeritemcomponent's
@@ -73,23 +73,25 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
             containers = Collections.emptyMap();
         }
 
-        final CompositeConfigurationNodes.CompositeConfigurationNode componentNodes = ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_COMPONENTS);
+        String[] mainComponentNodeNames = {HstNodeTypes.NODENAME_HST_COMPONENTS,
+                HstNodeTypes.NODENAME_HST_ABSTRACTPAGES,
+                HstNodeTypes.NODENAME_HST_PAGES,
+                HstNodeTypes.NODENAME_HST_PAGEPROTOTYPES};
 
         final String rootConfigurationPathPrefix = ccn.getConfigurationRootNode().getValueProvider().getPath() + "/";
 
-        List<HstComponentConfiguration> childComponents  = new ArrayList<>();
-        if (componentNodes != null) {
-            log.debug("Initializing the components");
-            init(componentNodes, HstNodeTypes.NODENAME_HST_COMPONENTS, rootConfigurationPathPrefix, containers, childComponents);
+        List<HstComponentConfiguration> nonPrototypeRootComponents  = new ArrayList<>();
+        for (String mainComponentNodeName : mainComponentNodeNames) {
+            log.debug("Initializing the {}", mainComponentNodeName);
+            final CompositeConfigurationNodes.CompositeConfigurationNode componentNodes = ccn.getCompositeConfigurationNodes().get(mainComponentNodeName);
+            if (componentNodes == null) {
+                log.debug("No configuration nodes present for {}", mainComponentNodeName);
+                continue;
+            }
+            init(componentNodes, mainComponentNodeName, rootConfigurationPathPrefix, containers, nonPrototypeRootComponents);
         }
 
-        final CompositeConfigurationNodes.CompositeConfigurationNode pagesNodes = ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_PAGES);
-
-        if (pagesNodes != null) {
-            log.debug("Initializing the pages");
-            init(pagesNodes, HstNodeTypes.NODENAME_HST_PAGES, rootConfigurationPathPrefix, containers, childComponents);
-            pages = Collections.unmodifiableMap(pages);
-        }
+        pagePrototypes = Collections.unmodifiableMap(pagePrototypes);
 
         // populate all the available containeritems that are part of hst:catalog. These container items do *not* need to be enhanced as they
         // are *never* used directly. They are only to be used by the page composer that can drop these containeritems into containers
@@ -110,10 +112,10 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
             availableContainerItems = Collections.unmodifiableList(availableContainerItems);
         }
 
-        if (childComponents.isEmpty()) {
+        if (nonPrototypeRootComponents.isEmpty()) {
             canonicalComponentConfigurations = Collections.emptyMap();
         } else {
-            canonicalComponentConfigurations = Collections.unmodifiableMap(getCanonicalComponentConfigurations(childComponents));
+            canonicalComponentConfigurations = Collections.unmodifiableMap(getCanonicalComponentConfigurations(nonPrototypeRootComponents));
         }
 
         /*
@@ -125,7 +127,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
          */
         
         Map<String, HstNode> templateResourceMap = getTemplateResourceMap(ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_TEMPLATES));
-        enhanceComponentTree(templateResourceMap, childComponents);
+        enhanceComponentTree(templateResourceMap, nonPrototypeRootComponents);
 
     }
 
@@ -210,8 +212,8 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     }
 
     @Override
-    public Map<String, HstComponentConfiguration> getPages() {
-        return pages;
+    public Map<String, HstComponentConfiguration> getPagePrototypes() {
+        return pagePrototypes;
     }
 
     private void autocreateReferenceNames(HstComponentConfiguration componentConfiguration) {
@@ -226,12 +228,13 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     }
     
     /*
-     * rootNodeName is either hst:components or hst:pages.
+     * rootNodeName is either hst:components, hst:pages, hst:abstractpages or hst:pageprototypes.
      */
     private void init(final CompositeConfigurationNodes.CompositeConfigurationNode node,
                       final String rootNodeName,
                       final String rootConfigurationPathPrefix,
-                      final Map<String, HstNode> modifiableContainers, final List<HstComponentConfiguration> childComponents) {
+                      final Map<String, HstNode> modifiableContainers,
+                      final List<HstComponentConfiguration> nonPrototypeRootComponents) {
 
         for (HstNode child : node.getCompositeChildren().values()) {
             if ("deleted".equals(child.getValueProvider().getString(HstNodeTypes.EDITABLE_PROPERTY_STATE))) {
@@ -247,9 +250,11 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
                     boolean inherited = !child.getValueProvider().getPath().startsWith(rootConfigurationPathPrefix);
                     HstComponentConfiguration componentConfiguration = new HstComponentConfigurationService(child,
                             null, rootNodeName, modifiableContainers, inherited);
-                    childComponents.add(componentConfiguration);
-                    if (rootNodeName.equals(HstNodeTypes.NODENAME_HST_PAGES)) {
-                        pages.put(componentConfiguration.getId(), componentConfiguration);
+
+                    if (rootNodeName.equals(HstNodeTypes.NODENAME_HST_PAGEPROTOTYPES)) {
+                        pagePrototypes.put(componentConfiguration.getId(), componentConfiguration);
+                    } else {
+                        nonPrototypeRootComponents.add(componentConfiguration);
                     }
                     log.debug("Added component service with key '{}'", componentConfiguration.getId());
                 } catch (ModelLoadingException e) {

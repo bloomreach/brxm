@@ -52,19 +52,16 @@ public interface HstComponentsConfiguration {
         }
 
         @Override
-        public Map<String, HstComponentConfiguration> getPages() {
+        public Map<String, HstComponentConfiguration> getPagePrototypes() {
             return Collections.emptyMap();
         }
     };
 
     /**
-     * Return the map of all root <code>HstComponentConfiguration</code>'s where the keys are the the
+     * Return the map of all *non prototype* root <code>HstComponentConfiguration</code>'s where the keys are the the
      * <code>HstComponentConfiguration</code>'s ({@link HstComponentConfiguration#getId()}). Implementations should
      * return an unmodifiable map to avoid client code changing configuration
      *
-     * @return the map of all root <code>HstComponentConfiguration</code>'s and an empty map if not root
-     *         <code>HstComponentConfiguration</code>'s are present. The keys in the map are the id's of the
-     *         <code>HstComponentConfiguration</code>'s ({@link HstComponentConfiguration#getId()})
      */
     Map<String, HstComponentConfiguration> getComponentConfigurations();
 
@@ -89,9 +86,8 @@ public interface HstComponentsConfiguration {
     List<HstComponentConfiguration> getAvailableContainerItems();
 
     /**
-     * @return the map of {@link HstComponentConfiguration}s directly configured below 'hst:pages' with key equals to
-     *         {@link org.hippoecm.hst.configuration.components.HstComponentConfiguration#getId()} . Unmodifiable
-     *         instance will be returned
+     * @return the map of {@link HstComponentConfiguration}s that are page prototypes . Unmodifiable
+     *         instance will be returned. Empty map will be returned if no prototypes available
      */
-    Map<String, HstComponentConfiguration> getPages();
+    Map<String, HstComponentConfiguration> getPagePrototypes();
 }
