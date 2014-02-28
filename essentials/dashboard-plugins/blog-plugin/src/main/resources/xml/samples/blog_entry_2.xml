@@ -28,7 +28,7 @@
       <sv:value>{{jcrDate}}</sv:value>
     </sv:property>
     <sv:property sv:name="{{namespace}}:title" sv:type="String">
-      <sv:value>First blog post</sv:value>
+      <sv:value>Second blog post</sv:value>
     </sv:property>
     <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
       <sv:value>live</sv:value>

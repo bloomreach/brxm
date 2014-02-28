@@ -12,7 +12,7 @@
     <li class="disabled"><a href="#">${pageable.total} document(s)</a></li>
     <c:forEach var="pageNr" items="${pageable.pageNumbersArray}" varStatus="index">
       <hst:renderURL var="pageUrl">
-        <hst:param name="page" value="${pageable}"/>
+        <hst:param name="page" value="${pageNr}"/>
         <hst:param name="pageSize" value="${pageSize}"/>
       </hst:renderURL>
       <c:if test="${index.first and pageable.previous}">
