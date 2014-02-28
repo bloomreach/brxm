@@ -145,7 +145,7 @@
       </sv:property>
       <sv:property sv:name="jcr:statement" sv:type="String">
         <!-- As per request of HREPTWO-3159 also display rejected requests -->
-        <sv:value>SELECT * FROM hippostdpubwf:request</sv:value>
+        <sv:value>SELECT * FROM hippostdpubwf:request WHERE NOT hippostdpubwf:type = 'rejected' OR hippostdpubwf:username='__USER__'</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
