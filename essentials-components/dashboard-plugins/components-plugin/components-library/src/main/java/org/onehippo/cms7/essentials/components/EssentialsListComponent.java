@@ -127,7 +127,8 @@ public class EssentialsListComponent extends CommonComponent {
     protected <T extends EssentialsDocumentListComponentInfo> Pageable<HippoBean> executeQuery(final HstRequest request, final T paramInfo, final HstQuery query) throws QueryException {
         final int pageSize = getPageSize(request, paramInfo);
         final int page = getCurrentPage(request);
-        query.setLimit(page * pageSize);
+        query.setLimit(pageSize);
+        query.setOffset((page - 1) * pageSize);
         final HstQueryResult execute = query.execute();
         final Pageable<HippoBean> pageable = new IterablePagination<>(
                 execute.getHippoBeans(),
