@@ -123,6 +123,10 @@ form h4.page-header {
     top: -35px;
 }
 
+hr {
+    border-top-color: #dddddd;
+}
+
 /* --- Confirmation message --- */
 .overlay {
     margin-left: -292px;
