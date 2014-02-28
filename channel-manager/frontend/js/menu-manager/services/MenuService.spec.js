@@ -137,40 +137,42 @@ describe('Menu Service', function () {
 
         var response = {data: {items: [{id: 1, title: 'One'}]}};
         $httpBackend.expectPOST('api/menuId./delete/3').respond('OK');
-        $httpBackend.expectGET('api/menuId').respond(response);
 
-        var deletePromise = menuService.deleteMenuItem('3');
-        deletePromise.then(function (itemId) {
-            expect(itemId).toBe('2');
+        menuService.getMenu().then(function (menu) {
+            var deletePromise = menuService.deleteMenuItem('3');
+            deletePromise.then(function (itemId) {
+                expect(itemId).toBe('2');
+            });
         });
-        $httpBackend.flush();
+        expectGetMenu();
     });
 
     it('should select parent after delete if deleted item has no siblings left', function () {
-        // make sure the menu has been loaded
-        menuService.getMenu().then(function (menu) {});
 
         var response = {data: {items: [{id: 1, title: 'One'}]}};
         $httpBackend.expectPOST('api/menuId./delete/child1').respond('OK');
-        $httpBackend.expectGET('api/menuId').respond(response);
 
-        var deletePromise = menuService.deleteMenuItem('child1');
-        deletePromise.then(function (itemId) {
-            expect(itemId).toBe('2');
+        menuService.getMenu().then(function (menu) {
+            var deletePromise = menuService.deleteMenuItem('child1');
+            deletePromise.then(function (itemId) {
+                expect(itemId).toBe('2');
+            });
         });
-        $httpBackend.flush();
+        expectGetMenu();
     });
 
     it('should not delete a menu item by id on server error', function () {
 
-        $httpBackend.expectPOST('api/menuId./delete/menuItemId').respond(500, 'NOT OK');
+        $httpBackend.expectPOST('api/menuId./delete/1').respond(500, 'NOT OK');
 
         var spy = {errorFn: function (reason) {}};
         spyOn(spy, 'errorFn');
 
-        var promise = menuService.deleteMenuItem('menuItemId');
-        promise.then(undefined, function(reason) {
-            spy.errorFn();
+        menuService.getMenu().then(function (menu) {
+            var promise = menuService.deleteMenuItem('1');
+            promise.then(undefined, function(reason) {
+                spy.errorFn();
+            });
         });
         $httpBackend.flush();
 

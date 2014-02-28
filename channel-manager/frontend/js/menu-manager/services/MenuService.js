@@ -47,6 +47,7 @@
                         return $http.get(menuServiceUrl())
                             .success(function (response) {
                                 menuData.items = response.data.items;
+                                menuData.id = response.data.id;
                                 menuLoaded.resolve(menuData);
                             })
                             .error(function (error) {
@@ -168,10 +169,12 @@
                 };
 
                 menuService.deleteMenuItem = function (menuItemId) {
+                    console.info('delete ', menuItemId);
+                    var selectedItemId = getSelectedItemIdBeforeDeletion(menuItemId);
+                    console.info('selected after delete ', selectedItemId);
                     var deferred = $q.defer();
                     $http.post(menuServiceUrl('delete/' + menuItemId))
                         .success(function() {
-                            var selectedItemId = getSelectedItemIdBeforeDeletion(menuItemId);
                             loadMenu();
                             deferred.resolve(selectedItemId);
                         })

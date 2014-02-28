@@ -97,15 +97,15 @@
                     // hide confirmation dialog
                     $scope.confirmation.isVisible = false;
 
-                    // remove menu item from the DOM
-                    var parentScope = $scope.findParent($scope.selectedMenuItem.id);
-                    var index = $.inArray($scope.selectedMenuItem, parentScope.items);
-                    if (index > -1) {
-                        parentScope.items.splice(index, 1)[0];
-                    }
 
                     // HTTP-request to delete the menu item
                     MenuService.deleteMenuItem($scope.selectedMenuItem.id).then(function (selectedMenuItemId) {
+                        // remove menu item from the DOM
+                        var parentScope = $scope.findParent($scope.selectedMenuItem.id);
+                        var index = $.inArray($scope.selectedMenuItem, parentScope.items);
+                        if (index > -1) {
+                            parentScope.items.splice(index, 1)[0];
+                        }
                         $state.go('menu-item.edit', {
                             menuItemId: selectedMenuItemId
                         });
