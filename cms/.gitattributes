@@ -2540,7 +2540,6 @@ test/src/main/resources/domain-defaultwrite.xml -text
 test/src/main/resources/frontendtest.cnd -text
 test/src/main/resources/group-everybody.xml -text
 test/src/main/resources/hippoecm-extension.xml -text
-test/src/main/resources/jta.properties svneol=native#text/plain
 test/src/main/resources/log4j.dtd svneol=native#text/plain
 test/src/main/resources/log4j.xml svneol=native#text/plain
 test/src/main/resources/org/hippoecm/repository/repository.xml svneol=native#text/plain
