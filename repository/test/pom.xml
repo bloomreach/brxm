@@ -184,9 +184,6 @@
             <exclude>**/StampedeTest.java</exclude>
             <exclude>**/integration/*.java</exclude>
             <exclude>**/UpdaterExecutorTest.java</exclude>
-            <!-- TODO DEJDO: following tests rely on JDO like inheritance behavior: either have to be rewritten or removed -->
-            <exclude>**/SampleWorkflowTest.java</exclude>
-            <!-- end TODO DEJDO -->
             <exclude>**/SchedulerTest.java</exclude>
           </excludes>
         </configuration>

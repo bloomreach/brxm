@@ -155,7 +155,7 @@ public class DeprecatedBasicReviewedActionsWorkflowImpl extends WorkflowImpl imp
             }
         }
         catch (RepositoryException ex) {
-            // TODO DEJDO: ignore?
+            log.error("Failed to calculate hints", ex);
         }
         info.put("obtainEditableInstance", editable);
         info.put("publish", publishable);

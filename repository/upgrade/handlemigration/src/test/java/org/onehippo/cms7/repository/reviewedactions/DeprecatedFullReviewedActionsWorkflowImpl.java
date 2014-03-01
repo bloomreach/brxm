@@ -66,7 +66,7 @@ public class DeprecatedFullReviewedActionsWorkflowImpl extends DeprecatedBasicRe
                     || (unpublishedDocument == null && publishedDocument != null && PublishableDocument.PUBLISHED.equals(state)));
         }
         catch (RepositoryException ex) {
-            // TODO DEDJO: ignore?
+            log.error("Failed to calculate hints", ex);
         }
         return info;
     }
