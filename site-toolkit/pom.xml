@@ -99,7 +99,6 @@
     <woodstox.version>4.1.1</woodstox.version>
 
     <mime4j.version>0.6</mime4j.version>
-    <atomikos.version>3.1.4</atomikos.version>
     <maven.plugin.site.version>3.0-beta-3</maven.plugin.site.version>
     <maven.plugin.jxr.version>2.2</maven.plugin.jxr.version>
     <maven.plugins.jaxb-schemagen.version>1.2</maven.plugins.jaxb-schemagen.version>
