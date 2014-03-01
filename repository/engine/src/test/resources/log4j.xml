@@ -40,9 +40,6 @@
   <!-- ====================================================================== -->
   <!-- L O G G E R S                                                          -->
   <!-- ====================================================================== -->
-  <category name="com.atomikos">
-    <level value="error"/>
-  </category>
   <category name="org.apache.jackrabbit">
     <level value="warn"/>
   </category>
