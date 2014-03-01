@@ -17,6 +17,7 @@ package org.hippoecm.repository.util;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -29,11 +30,12 @@ public final class WorkflowUtils {
      * Get the containing folder of a document.
      *
      * @param document either a document, a handle or a folder
+     * @param session the session to use to get the containing folder for
      * @return  the folder containing this document or the root document
      * @throws RepositoryException
      */
-    public static Document getContainingFolder(Document document) throws RepositoryException {
-        return new Document(getContainingFolder(document.getNode()));
+    public static Document getContainingFolder(Document document, Session session) throws RepositoryException {
+        return new Document(getContainingFolder(document.getNode(session)));
     }
 
     /**

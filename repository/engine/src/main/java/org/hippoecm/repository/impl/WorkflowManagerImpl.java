@@ -185,7 +185,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
             return null;
         }
         try {
-            return session.getNodeByIdentifier(document.getIdentity());
+            return document.getNode(session);
         } catch (ItemNotFoundException e) {
             log.error("Document not found {}", e.getMessage());
         } catch (RepositoryException e) {
@@ -372,13 +372,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     rootSession.save();
                 }
                 if (returnObject instanceof Document) {
-                    Document doc = (Document) returnObject;
-                    if (doc.getNode() != null) {
-                        returnObject = new Document(doc.getNode());
-                    } else {
-                        returnObject = new Document();
-                        ((Document) returnObject).setIdentity(doc.getIdentity());
-                    }
+                    // only return a simple Document instance
+                    returnObject = new Document((Document)returnObject);
                 }
                 if (postActions != null) {
                     postActions.execute(returnObject);

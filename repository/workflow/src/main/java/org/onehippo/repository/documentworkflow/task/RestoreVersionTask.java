@@ -53,10 +53,10 @@ public class RestoreVersionTask extends AbstractDocumentTask {
 
     @Override
     public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
-        if (getVariant() == null || getVariant().getNode() == null || getHistoric() == null) {
+        if (getVariant() == null || !getVariant().hasNode() || getHistoric() == null) {
             throw new WorkflowException("No variant or date provided");
         }
-        Node variant = getVariant().getNode();
+        Node variant = getVariant().getNode(getWorkflowContext().getInternalWorkflowSession());
 
         final Version version = lookupVersion(variant, getHistoric());
         if (version != null) {

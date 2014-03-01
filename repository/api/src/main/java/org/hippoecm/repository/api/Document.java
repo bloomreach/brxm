@@ -21,6 +21,7 @@ import java.util.Date;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.Value;
 
 import org.hippoecm.repository.util.JcrUtils;
@@ -28,13 +29,6 @@ import org.hippoecm.repository.util.JcrUtils;
 /**
  * A Plain Old Java Object (POJO) representing a document in a JCR repository.
  * Instances of this object can be returned by workflow calls to indicate to the callee which document has been created or otherwise affected.
- * See {@link DocumentManager} on how to obtain a document instance manually.
- * </p>
- * Workflows returning specific implementation of a document
- * object will notice that the caller of the workflow gets only a simple Document object back, however through the
- * DocumentManager more complex Document based objects may be obtained.  The Document as returned by workflow calls
- * are only useful in subseqent calls to the workflowmanager to return a new workflow, or from a document the
- * getIdentity() method may be used to obtain the UUID of the javax.jcr.Node representing the document.
  */
 public class Document implements Serializable {
 
@@ -50,7 +44,23 @@ public class Document implements Serializable {
     }
 
     /**
-     * <b>This call is not part of the API, in no circumstance should this call be used.</b><p/>
+     * Lightweight constructor of a Document only providing a identity.
+     * @param identity the identifier of a backing {@link javax.jcr.Node} in the repository that this document instance represents.
+     */
+    public Document(String identity) {
+        this.identity = identity;
+    }
+
+    /**
+     * Copy constructor which allows to pass on a lightweight Document using its internal backing Node
+     * @param document source document to copy the identity and possible the internal backing Node from
+     */
+    public Document(Document document) {
+        this.identity = document.identity;
+        this.node = document.node;
+    }
+
+    /**
      * Extended classes <b>must</b> honor this constructor!
      * @param node the backing {@link javax.jcr.Node} in the repository that this document instance represents.
      */
@@ -59,30 +69,39 @@ public class Document implements Serializable {
     }
 
     /**
-     * <b>This call is not part of the API, in no circumstance should this call be used.</b><p/>
-     * TODO DEJDO: this method should be 'protected' such as not to expose the internal backing Node as it is bound
-     *             to the WorkflowManager <em>root</em> Session
-     * @return the backing Node of this Document
+     * Returns the backing Node of this Document, either directly if available and already tied to the provided Session
+     * or else retrieved from the provided Session based on its {@link #getIdentity()}.
+     * @param session The session for which to return the backing Node
+     * @return the backing Node of this Document or null if this Document doesn't contain a identity
      */
-    public Node getNode() {
-        return node;
+    public Node getNode(Session session) throws RepositoryException {
+        if (node != null && session == node.getSession()) {
+            return node;
+        }
+        if (identity != null) {
+            return session.getNodeByIdentifier(identity);
+        }
+        return null;
     }
 
     /**
-     * <b>This call is not part of the API, in no circumstance should this call be used.</b><p/>
-     * TODO DEJDO: this method should be 'protected' such as not to expose the internal backing Node as it is bound
-     *             to the WorkflowManager <em>root</em> Session
-     * @return the ensured to be checked out backing Node of this Document
+     * Returns the ensured to be checked out backing Node of this Document, either directly if available and already
+     * tied to the provided Session or else retrieved from the provided Session based on its {@link #getIdentity()}.
+     * @param session The session for which to return the backing Node
+     * @return the ensured to be checked out backing Node of this Document or null if this Document doesn't contain a identity
      */
-    public Node getCheckedOutNode() throws RepositoryException {
-        JcrUtils.ensureIsCheckedOut(node);
+    public Node getCheckedOutNode(Session session) throws RepositoryException {
+        Node node = getNode(session);
+        if (node != null) {
+            JcrUtils.ensureIsCheckedOut(node);
+        }
         return node;
     }
 
     /**
      * @return true if this document has a backing Node
      */
-    protected boolean hasNode() {
+    public boolean hasNode() {
         return node != null;
     }
 
@@ -92,7 +111,9 @@ public class Document implements Serializable {
      * used in persisting the data of the document.</p>
      * A Document returned for example by a workflow step can be accessed
      * using:
-     * <pre>Node node = session.getNodeByUUID(document.getIdentity());</pre>
+     * <pre>Node node = session.getNodeByIdentifier(document.getIdentity());</pre>
+     * or even easier and possibly more efficient:
+     * <pre>Node node = document.getNode(session);</pre>
      *
      * @return a string containing the UUID of the Node representing the Document.
      * or <code>null</code> if not available.
@@ -101,22 +122,21 @@ public class Document implements Serializable {
         return identity;
     }
 
-    /**
-     * <b>This call is not part of the API, in no circumstance should this call be used.</b><p/>
-     * @param uuid the UUID of the backing {@link javax.jcr.Node} this document instance represents
-     */
-    public final void setIdentity(String uuid) {
-        identity = uuid;
-        node = null;
+    protected Node getNode() {
+        return node;
+    }
+
+    protected Node getCheckedOutNode() throws RepositoryException {
+        JcrUtils.ensureIsCheckedOut(node);
+        return node;
     }
 
     /**
-     * <b>This call is not part of the API, in no circumstance should this call be used.</b><p/>
      * Extended classes which need custom/extra initialization based on the backing Node should
      * use the {@link #initialized()} method to get wired into the initialization chain.
      * @param node the backing {@link javax.jcr.Node} in the repository that this document instance represents.
      */
-    public final void initialize(Node node) throws RepositoryException {
+    protected final void initialize(Node node) throws RepositoryException {
         this.node = node;
         this.identity = node.getIdentifier();
         initialized();

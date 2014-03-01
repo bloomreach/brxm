@@ -110,7 +110,7 @@ public class WorkflowLogger {
             if (document.getIdentity() != null) {
                 sb.append(",path='");
                 try {
-                    sb.append(session.getNodeByIdentifier(document.getIdentity()).getPath());
+                    sb.append(document.getNode(session).getPath());
                 } catch (RepositoryException e) {
                     sb.append("error:").append(e.getMessage());
                 }

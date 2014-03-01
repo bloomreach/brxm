@@ -44,10 +44,10 @@ public class VersionVariantTask extends AbstractDocumentTask {
     @Override
     public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
 
-        if (getVariant() == null || getVariant().getNode() == null) {
+        if (getVariant() == null || !getVariant().hasNode()) {
             throw new WorkflowException("No variant provided");
         }
-        Node targetNode = getVariant().getNode();
+        Node targetNode = getVariant().getNode(getWorkflowContext().getInternalWorkflowSession());
 
         // ensure no pending changes which would fail the checkin
         targetNode.getSession().save();

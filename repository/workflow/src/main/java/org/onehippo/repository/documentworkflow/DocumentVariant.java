@@ -24,11 +24,18 @@ import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
-import org.hippoecm.repository.util.JcrUtils;
 
 public class DocumentVariant extends Document {
 
     public DocumentVariant() {
+    }
+
+    /**
+     * Enabling package access
+     * @return backing Node
+     */
+    protected Node getNode() {
+        return super.getNode();
     }
 
     public DocumentVariant(Node node) throws RepositoryException {

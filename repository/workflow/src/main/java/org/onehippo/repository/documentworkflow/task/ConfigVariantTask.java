@@ -96,10 +96,10 @@ public class ConfigVariantTask extends AbstractDocumentTask {
 
         DocumentHandle dm = getDocumentHandle();
 
-        if (getVariant() == null || getVariant().getNode() == null) {
+        if (getVariant() == null || !getVariant().hasNode()) {
             throw new WorkflowException("No variant provided");
         }
-        Node targetNode = getVariant().getNode();
+        Node targetNode = getVariant().getNode(getWorkflowContext().getInternalWorkflowSession());
 
         if (targetNode.isNodeType(HippoNodeType.NT_HARDDOCUMENT)) {
             targetNode.removeMixin(HippoNodeType.NT_HARDDOCUMENT);

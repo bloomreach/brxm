@@ -56,7 +56,7 @@ public class AddAssetAction extends AbstractGalleryWorkflowAction {
         } while (node.hasNode(nodeName));
         Document document = workflow.createGalleryItem(nodeName, "hippogallery:exampleAssetSet");
         node.getSession().refresh(false);
-        Node assetNode = node.getSession().getNodeByIdentifier(document.getIdentity());
+        Node assetNode = document.getNode(node.getSession());
         InputStream istream = getClass().getClassLoader().getResourceAsStream("org/onehippo/repository/concurrent/action/Hippo.pdf");
         makeImage(assetNode, istream, "application/pdf");
         node.getSession().save();

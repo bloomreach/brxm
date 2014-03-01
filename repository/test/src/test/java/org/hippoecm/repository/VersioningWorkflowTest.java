@@ -81,7 +81,7 @@ public class VersioningWorkflowTest extends RepositoryTestCase {
         iter.next();
         Document restored = versionwf.restore(iter.next().getKey());
         session.refresh(false);
-        assertFalse(session.getNodeByIdentifier(restored.getIdentity()).hasProperty("aap"));
+        assertFalse(restored.getNode(session).hasProperty("aap"));
     }
 
     @Test
@@ -106,7 +106,7 @@ public class VersioningWorkflowTest extends RepositoryTestCase {
         assertNotNull(versionwf);
 
         Document initial = versionwf.version();
-        Version initialVersion = (Version)session.getNodeByIdentifier(initial.getIdentity());
+        Version initialVersion = (Version)initial.getNode(session);
 
         SortedMap<Calendar,Set<String>> list = versionwf.list();
         assertEquals(1, list.size());

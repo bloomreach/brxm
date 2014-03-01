@@ -405,7 +405,7 @@ public class DeprecatedVersionWorkflowImpl extends Document implements VersionWo
             throw new WorkflowException("No version available to restore");
         }
 
-        Node target = subject.getSession().getNodeByUUID(targetDocument.getIdentity());
+        Node target = targetDocument.getNode(subject.getSession());
         Node handle = getHandle(target);
         if (handle != null) {
             handle.checkin();

@@ -43,7 +43,7 @@ public class DeleteRequestTask extends AbstractDocumentTask {
 
     @Override
     public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
-        Node requestNode = request.getCheckedOutNode();
+        Node requestNode = request.getCheckedOutNode(getWorkflowContext().getInternalWorkflowSession());
         JcrUtils.ensureIsCheckedOut(requestNode.getParent());
         requestNode.remove();
         return null;

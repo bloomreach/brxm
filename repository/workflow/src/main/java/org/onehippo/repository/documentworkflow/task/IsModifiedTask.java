@@ -50,12 +50,12 @@ public class IsModifiedTask extends AbstractDocumentTask {
         DocumentVariant unpublished = dm.getDocuments().get(HippoStdNodeType.UNPUBLISHED);
 
         if (draft != null && unpublished != null) {
-            Node draftNode = draft.getNode();
+            Node draftNode = draft.getNode(getWorkflowContext().getInternalWorkflowSession());
             if (getWorkflowContext().getUserIdentity().equals(draft.getHolder())) {
                 // use user session bound draftNode which might contain outstanding changes
-                draftNode = getWorkflowContext().getUserSession().getNodeByIdentifier(draftNode.getIdentifier());
+                draftNode = draft.getNode(getWorkflowContext().getUserSession());
             }
-            return !equals(draftNode, unpublished.getNode());
+            return !equals(draftNode, unpublished.getNode(getWorkflowContext().getInternalWorkflowSession()));
         }
         return null;
     }

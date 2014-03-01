@@ -151,7 +151,7 @@ public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest 
         LinkedList<DocVersion> versions = new LinkedList<DocVersion>();
         for (Map.Entry<Calendar, Set<String>> entry : history.entrySet()) {
             document = versionwf.retrieve(entry.getKey());
-            Node version = session.getNodeByUUID(document.getIdentity());
+            Node version = document.getNode(session);
             versions.add(new DocVersion(version));
         }
 
@@ -201,14 +201,14 @@ public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest 
         session.refresh(false);
 
         // edit
-        node = session.getNodeByUUID(document.getIdentity());
+        node = document.getNode(session);
         Long counter = node.getProperty("counter").getLong();
         node.setProperty("counter", counter + 1);
         session.save();
         session.refresh(false);
 
         // commit edit
-        node = session.getNodeByUUID(document.getIdentity());
+        node = document.getNode(session);
         publishwf = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
         publishwf.commitEditableInstance();
         session.save();

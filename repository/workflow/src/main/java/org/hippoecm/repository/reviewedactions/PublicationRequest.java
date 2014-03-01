@@ -39,6 +39,14 @@ public class PublicationRequest extends Document {
 
     public PublicationRequest() {}
 
+    /**
+     * Enabling package access
+     * @return backing Node
+     */
+    protected Node getNode() {
+        return super.getNode();
+    }
+
     public PublicationRequest(Node node) throws RepositoryException {
         super(node);
     }

@@ -51,23 +51,6 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
         return workflowExecutor;
     }
 
-    protected Document toUserDocument(Document document) throws RepositoryException {
-        return new Document(getWorkflowContext().getUserSession().getNodeByIdentifier(document.getIdentity()));
-    }
-
-    protected Document workflowResultToUserDocument(Object obj) throws RepositoryException {
-        Document document = null;
-        if (obj != null) {
-            if (obj instanceof DocumentVariant) {
-                document = (DocumentVariant)obj;
-            }
-            if (obj instanceof Document) {
-                document = (Document)obj;
-            }
-        }
-        return document != null && document.getIdentity() != null ? toUserDocument(document) : null;
-    }
-
     protected Map<String, Object> createPayload(String var, Object val) {
         HashMap<String, Object> map = new HashMap<>();
         map.put(var, val);
@@ -146,19 +129,19 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     @Override
     public Document obtainEditableInstance() throws RepositoryException, WorkflowException {
         workflowExecutor.start();
-        return workflowResultToUserDocument(workflowExecutor.triggerAction("obtainEditableInstance"));
+        return (Document)workflowExecutor.triggerAction("obtainEditableInstance");
     }
 
     @Override
     public Document commitEditableInstance() throws WorkflowException, RepositoryException {
         workflowExecutor.start();
-        return workflowResultToUserDocument(workflowExecutor.triggerAction("commitEditableInstance"));
+        return (Document)workflowExecutor.triggerAction("commitEditableInstance");
     }
 
     @Override
     public Document disposeEditableInstance() throws WorkflowException, RepositoryException {
         workflowExecutor.start();
-        return workflowResultToUserDocument(workflowExecutor.triggerAction("disposeEditableInstance"));
+        return (Document)workflowExecutor.triggerAction("disposeEditableInstance");
     }
 
     // BasicReviewedActionsWorkflow implementation
@@ -289,21 +272,19 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     @Override
     public Document version() throws WorkflowException, RepositoryException {
         workflowExecutor.start();
-        return workflowResultToUserDocument(workflowExecutor.triggerAction("version"));
+        return (Document)workflowExecutor.triggerAction("version");
     }
 
     @Override
     public Document versionRestoreTo(final Calendar historic, Document target) throws WorkflowException, RepositoryException {
         workflowExecutor.start();
-        return workflowResultToUserDocument(workflowExecutor.triggerAction("versionRestoreTo",
-                createPayload("date", historic, "target", target)));
+        return (Document)workflowExecutor.triggerAction("versionRestoreTo", createPayload("date", historic, "target", target));
     }
 
     @Override
     public Document restoreVersion(final Calendar historic) throws WorkflowException, RepositoryException {
         workflowExecutor.start();
-        return workflowResultToUserDocument(workflowExecutor.triggerAction("restoreVersion",
-                createPayload("date",historic)));
+        return (Document)workflowExecutor.triggerAction("restoreVersion", createPayload("date",historic));
     }
 
     @Override
@@ -316,7 +297,6 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     @Override
     public Document retrieveVersion(final Calendar historic) throws WorkflowException, RepositoryException {
         workflowExecutor.start();
-        return workflowResultToUserDocument(workflowExecutor.triggerAction("retrieveVersion",
-                createPayload("date", historic)));
+        return (Document)workflowExecutor.triggerAction("retrieveVersion", createPayload("date", historic));
     }
 }

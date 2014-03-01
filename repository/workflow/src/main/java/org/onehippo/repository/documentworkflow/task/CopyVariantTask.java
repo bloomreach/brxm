@@ -61,11 +61,11 @@ public class CopyVariantTask extends AbstractDocumentTask {
         DocumentVariant sourceDoc = dm.getDocuments().get(getSourceState());
         DocumentVariant targetDoc = dm.getDocuments().get(getTargetState());
 
-        if (sourceDoc == null || sourceDoc.getNode() == null) {
+        if (sourceDoc == null || !sourceDoc.hasNode()) {
             throw new WorkflowException("Source document variant (node) is not available.");
         }
 
-        final Node sourceNode = sourceDoc.getNode();
+        final Node sourceNode = sourceDoc.getNode(getWorkflowContext().getInternalWorkflowSession());
         Node targetNode;
 
         boolean saveNeeded = false;
@@ -87,7 +87,7 @@ public class CopyVariantTask extends AbstractDocumentTask {
             targetDoc.setState(getTargetState());
         }
         else {
-            targetNode = targetDoc.getNode();
+            targetNode = targetDoc.getNode(getWorkflowContext().getInternalWorkflowSession());
 
             if (sourceNode.isSame(targetNode)) {
                 throw new WorkflowException(
@@ -97,7 +97,7 @@ public class CopyVariantTask extends AbstractDocumentTask {
         }
 
         if (saveNeeded) {
-            targetDoc.getNode().getSession().save();
+            getWorkflowContext().getInternalWorkflowSession().save();
         }
 
         dm.getDocuments().put(targetDoc.getState(), targetDoc);

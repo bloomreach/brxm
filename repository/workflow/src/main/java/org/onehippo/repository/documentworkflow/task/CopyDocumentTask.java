@@ -85,19 +85,19 @@ public class CopyDocumentTask extends AbstractDocumentTask {
 
         if (unpublished == null) {
             DocumentVariant published = dm.getDocuments().get(HippoStdNodeType.PUBLISHED);
-            Document folder = WorkflowUtils.getContainingFolder(published);
+            Document folder = WorkflowUtils.getContainingFolder(published, getWorkflowContext().getInternalWorkflowSession());
             Workflow workflow = getWorkflowContext().getWorkflow(folderWorkflowCategory, destination);
 
             if (workflow instanceof EmbedWorkflow) {
                 Document copy = ((EmbedWorkflow) workflow).copyTo(folder, published, newName, null);
-                Node copyHandle = copy.getNode().getParent();
+                Node copyHandle = copy.getNode(getWorkflowContext().getInternalWorkflowSession()).getParent();
                 DocumentWorkflow copiedDocumentWorkflow = (DocumentWorkflow) getWorkflowContext().getWorkflow("default", new Document(copyHandle));
                 copiedDocumentWorkflow.depublish();
             } else {
                 throw new WorkflowException("cannot copy document which is not contained in a folder");
             }
         } else {
-            Document folder = WorkflowUtils.getContainingFolder(unpublished);
+            Document folder = WorkflowUtils.getContainingFolder(unpublished, getWorkflowContext().getInternalWorkflowSession());
             Workflow workflow = getWorkflowContext().getWorkflow(folderWorkflowCategory, destination);
 
             if (workflow instanceof EmbedWorkflow) {

@@ -391,28 +391,28 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
             workflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
             document = workflow.obtainEditableInstance();
             assertNotNull(document);
-            node = session.getNodeByUUID(document.getIdentity());
+            node = document.getNode(session);
             assertNotNull(node);
             assertEquals("draft", node.getProperty("hippostd:state").getString());
 
             workflow = (FullReviewedActionsWorkflow) getWorkflow(document, "default");
             document = workflow.disposeEditableInstance();
             assertNotNull(document);
-            node = session.getNodeByUUID(document.getIdentity());
+            node = document.getNode(session);
             assertNotNull(node);
             assertEquals("unpublished", node.getProperty("hippostd:state").getString());
 
             workflow = (FullReviewedActionsWorkflow) getWorkflow(document, "default");
             document = workflow.obtainEditableInstance();
             assertNotNull(document);
-            node = session.getNodeByUUID(document.getIdentity());
+            node = document.getNode(session);
             assertNotNull(node);
             assertEquals("draft", node.getProperty("hippostd:state").getString());
 
             workflow = (FullReviewedActionsWorkflow) getWorkflow(document, "default");
             document = workflow.commitEditableInstance();
             assertNotNull(document);
-            node = session.getNodeByUUID(document.getIdentity());
+            node = document.getNode(session);
             assertNotNull(node);
             assertEquals("unpublished", node.getProperty("hippostd:state").getString());
 

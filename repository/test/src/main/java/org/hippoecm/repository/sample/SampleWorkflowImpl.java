@@ -34,8 +34,7 @@ public class SampleWorkflowImpl extends WorkflowImpl implements SampleWorkflow {
     public void renameAuthor(String newName) throws WorkflowException, RepositoryException {
         final Session session = getWorkflowContext().getUserSession();
         final Node node = session.getNode("/files/myauthor");
-        AuthorDocument author = new AuthorDocument();
-        author.initialize(node);
+        AuthorDocument author = new AuthorDocument(node);
         getArticle().setAuthorId(author.authorId);
     }
 

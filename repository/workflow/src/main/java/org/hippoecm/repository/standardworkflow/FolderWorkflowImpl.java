@@ -445,7 +445,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         }
         String path = subject.getPath();
         Node folderNode = rootSession.getNode(path);
-        Node documentNode = rootSession.getNodeByIdentifier(document.getIdentity());
+        Node documentNode = document.getNode(rootSession);
         if (documentNode.getPath().startsWith(path + "/")) {
             if (documentNode.isNodeType(HippoNodeType.NT_DOCUMENT) && documentNode.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
                 documentNode = documentNode.getParent();
@@ -531,7 +531,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     public void delete(Document document) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         String path = subject.getPath().substring(1);
         Node folderNode = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
-        Node documentNode = rootSession.getNodeByIdentifier(document.getIdentity());
+        Node documentNode = document.getNode(rootSession);
         if (documentNode.getPath().startsWith(folderNode.getPath()+"/")) {
             delete(folderNode, documentNode);
         }
@@ -584,7 +584,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
 
     public void rename(Document document, String newName) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         Node folderNode = rootSession.getNode(subject.getPath());
-        Node documentNode = rootSession.getNodeByIdentifier(document.getIdentity());
+        Node documentNode = document.getNode(rootSession);
         if(documentNode.isNodeType(HippoNodeType.NT_DOCUMENT) && documentNode.getParent().isNodeType(HippoNodeType.NT_HANDLE))  {
             documentNode = documentNode.getParent();
         }
@@ -630,7 +630,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
 
     public Document duplicate(Document offspring)
         throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        Node source = rootSession.getNodeByIdentifier(offspring.getIdentity());
+        Node source = offspring.getNode(rootSession);
         return duplicate(source, "Copy of "+source.getName());
     }
 
@@ -642,7 +642,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
 
     public Document duplicate(Document offspring, Map<String,String> arguments)
         throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        Node source = rootSession.getNodeByIdentifier(offspring.getIdentity());
+        Node source = offspring.getNode(rootSession);
         String targetName = arguments.get("name");
         return duplicate(source, targetName);
     }
@@ -731,8 +731,8 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         }
         String path = subject.getPath().substring(1);
         Node folder = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
-        Node destination = rootSession.getNodeByIdentifier(targetFolder.getIdentity());
-        Node source = rootSession.getNodeByIdentifier(offspring.getIdentity());
+        Node destination = targetFolder.getNode(rootSession);
+        Node source = offspring.getNode(rootSession);
         if (folder.isSame(destination)) {
             //throw new WorkflowException("Cannot copy document to same folder, use duplicate instead");
             return duplicate(source, targetName);
@@ -752,7 +752,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         if (folder.hasNode(targetName)) {
             throw new WorkflowException("Cannot copy document when document with same name exists");
         }
-        Node source = rootSession.getNodeByIdentifier(offspring.getIdentity());
+        Node source = offspring.getNode(rootSession);
         if (!folder.isCheckedOut()) {
             folder.checkout();
         }
@@ -805,11 +805,11 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         throws WorkflowException, MappingException, RepositoryException, RemoteException {
         String path = subject.getPath().substring(1);
         Node folder = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
-        Node destination = rootSession.getNodeByIdentifier(targetFolder.getIdentity());
+        Node destination = targetFolder.getNode(rootSession);
         if (folder.isSame(destination)) {
             throw new WorkflowException("Cannot move document to same folder");
         }
-        Node source = rootSession.getNodeByIdentifier(offspring.getIdentity());
+        Node source = offspring.getNode(rootSession);
         if (!folder.isCheckedOut()) {
             folder.checkout();
         }
@@ -825,7 +825,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         if (folder.hasNode(targetName)) {
             throw new WorkflowException("Cannot move document when document with same name exists");
         }
-        Node source = rootSession.getNodeByIdentifier(offspring.getIdentity());
+        Node source = offspring.getNode(rootSession);
         if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
             source = source.getParent();
         }

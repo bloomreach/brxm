@@ -71,12 +71,14 @@ public class WorkflowRequestTask extends AbstractDocumentTask {
             WorkflowRequest req;
 
             if (targetDate == null) {
-                req = new WorkflowRequest(getType(), contextVariant.getNode(), contextVariant, getWorkflowContext().getUserIdentity());
+                req = new WorkflowRequest(getType(), contextVariant.getNode(getWorkflowContext().getInternalWorkflowSession()),
+                        contextVariant, getWorkflowContext().getUserIdentity());
             } else {
-                req = new WorkflowRequest(getType(), contextVariant.getNode(), contextVariant, getWorkflowContext().getUserIdentity(), targetDate);
+                req = new WorkflowRequest(getType(), contextVariant.getNode(getWorkflowContext().getInternalWorkflowSession()),
+                        contextVariant, getWorkflowContext().getUserIdentity(), targetDate);
             }
 
-            req.getNode().getSession().save();
+            getWorkflowContext().getInternalWorkflowSession().save();
 //            dm.setRequest(req);
         } else {
             throw new WorkflowException("publication request already pending");

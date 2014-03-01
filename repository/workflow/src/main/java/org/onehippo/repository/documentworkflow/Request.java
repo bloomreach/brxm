@@ -32,6 +32,14 @@ public abstract class Request extends Document {
         super(node);
     }
 
+    /**
+     * Enabling package access
+     * @return backing Node
+     */
+    protected Node getNode() {
+        return super.getNode();
+    }
+
     public static Request createRequest(Node requestNode) throws RepositoryException {
         Request request = createWorkflowRequest(requestNode);
         if (request == null) {

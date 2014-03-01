@@ -70,7 +70,7 @@ public class SCXMLWorkflowContext {
 
         try {
             final Session subjectSession = workflowContext.getSubjectSession();
-            Node userDocumentNode = subjectSession.getNodeByIdentifier(document.getIdentity());
+            Node userDocumentNode = document.getNode(subjectSession);
             String userDocumentPath = userDocumentNode.getPath();
             for (String priv : privs) {
                 Map<String, Boolean> privilegesMap = pathPrivilegesMap.get(userDocumentPath);

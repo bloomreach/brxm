@@ -175,9 +175,7 @@ class WorkflowPostActionSimpleQuery implements WorkflowPostActions {
                                     return new Document(node);
                                 } catch (RepositoryException ex) {
                                     // deliberate ignore of error, possible because document has been deleted, denied, but id is still relevant
-                                    Document doc = new Document();
-                                    doc.setIdentity(id);
-                                    return doc;
+                                    return new Document(id);
                                 }
                             }
                             public void remove() {

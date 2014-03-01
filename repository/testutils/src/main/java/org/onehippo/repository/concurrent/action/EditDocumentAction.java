@@ -37,7 +37,7 @@ public class EditDocumentAction extends AbstractDocumentWorkflowAction {
         Node handle = node.getParent();
         Document document = getDocumentWorkflow(handle).obtainEditableInstance();
         node.getSession().refresh(false);
-        Node draft = node.getSession().getNodeByIdentifier(document.getIdentity());
+        Node draft = document.getNode(node.getSession());
         String value = draft.getProperty("testcontent:introduction").getString();
         value += "x";
         draft.setProperty("testcontent:introduction", value);
@@ -58,7 +58,7 @@ public class EditDocumentAction extends AbstractDocumentWorkflowAction {
             throw new RepositoryException("edit action failed "+Thread.currentThread().getName()+" document "+handle.getPath()+" "+variantUUID+" is "+(variantValue!=null?variantValue.length():-1)+" expected "+value.length());
         }
 
-        node = node.getSession().getNodeByIdentifier(document.getIdentity());
+        node = document.getNode(node.getSession());
         node = node.getParent();
         if (node.isNodeType("hippo:handle")) {
             node = node.getParent();

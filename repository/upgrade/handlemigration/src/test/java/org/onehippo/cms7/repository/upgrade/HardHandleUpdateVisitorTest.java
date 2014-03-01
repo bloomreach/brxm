@@ -189,10 +189,10 @@ public class HardHandleUpdateVisitorTest extends RepositoryTestCase {
     }
 
     private Node editTestDocument(final Node document, int i) throws Exception {
-        final Node draft = getFullReviewedActionsWorkflow(document).obtainEditableInstance().getNode();
+        final Node draft = getFullReviewedActionsWorkflow(document).obtainEditableInstance().getNode(session);
         draft.setProperty("foo", "bar" + i);
         draft.getSession().save();
-        return getFullReviewedActionsWorkflow(draft).commitEditableInstance().getNode();
+        return getFullReviewedActionsWorkflow(draft).commitEditableInstance().getNode(session);
     }
 
     private void createTestDocuments(final int count) throws Exception {

@@ -83,7 +83,7 @@ public class MoveDocumentTask extends AbstractDocumentTask {
             throw new WorkflowException("No source document found.");
         }
 
-        Document folder = getContainingFolder(document);
+        Document folder = getContainingFolder(document, getWorkflowContext().getInternalWorkflowSession());
         String folderWorkflowCategory = "internal";
         RepositoryMap config = getWorkflowContext().getWorkflowConfiguration();
 

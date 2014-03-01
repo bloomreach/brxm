@@ -104,8 +104,8 @@ public class DeprecatedFullReviewedActionsWorkflowImpl extends DeprecatedBasicRe
     }
 
     private void archive() throws RepositoryException {
-        final Session session = unpublishedDocument.getNode().getSession();
-        Node handle = unpublishedDocument.getNode().getParent();
+        final Session session = getWorkflowContext().getInternalWorkflowSession();
+        Node handle = unpublishedDocument.getNode(session).getParent();
         final String source = handle.getPath();
         final String destination = "/content/attic/" + atticName("/content/attic", handle.getName(), true, session);
         session.getWorkspace().move(source, destination);
@@ -160,7 +160,7 @@ public class DeprecatedFullReviewedActionsWorkflowImpl extends DeprecatedBasicRe
             folderWorkflowCategory = (String) config.get("folder-workflow-category");
         }
         if (unpublishedDocument == null) {
-            Document folder = getContainingFolder(publishedDocument);
+            Document folder = getContainingFolder(publishedDocument, getWorkflowContext().getInternalWorkflowSession());
             Workflow workflow = getWorkflowContext().getWorkflow(folderWorkflowCategory, destination);
             if (workflow instanceof EmbedWorkflow) {
                 Document copy = ((EmbedWorkflow)workflow).copyTo(folder, publishedDocument, newName, null);
@@ -169,7 +169,7 @@ public class DeprecatedFullReviewedActionsWorkflowImpl extends DeprecatedBasicRe
             } else
                 throw new WorkflowException("cannot copy document which is not contained in a folder");
         } else {
-            Document folder = getContainingFolder(unpublishedDocument);
+            Document folder = getContainingFolder(unpublishedDocument, getWorkflowContext().getInternalWorkflowSession());
             Workflow workflow = getWorkflowContext().getWorkflow(folderWorkflowCategory, destination);
             if(workflow instanceof EmbedWorkflow) {
                 ((EmbedWorkflow)workflow).copyTo(folder, unpublishedDocument, newName, null);
@@ -189,7 +189,7 @@ public class DeprecatedFullReviewedActionsWorkflowImpl extends DeprecatedBasicRe
         if(draftDocument != null)
             throw new WorkflowException("cannot move document being edited");
 
-        Document folder = getContainingFolder(unpublishedDocument);
+        Document folder = getContainingFolder(unpublishedDocument, getWorkflowContext().getInternalWorkflowSession());
         String folderWorkflowCategory = "internal";
         RepositoryMap config = getWorkflowContext().getWorkflowConfiguration();
         if (config != null && config.exists() && config.get("folder-workflow-category") instanceof String) {
@@ -242,7 +242,7 @@ public class DeprecatedFullReviewedActionsWorkflowImpl extends DeprecatedBasicRe
             publishedDocument.setState(PublishableDocument.PUBLISHED);
             publishedDocument.setPublicationDate(new Date());
             publishedDocument.setAvailability(new String[] { "live", "preview" });
-            publishedDocument.getNode().getSession().save();
+            getWorkflowContext().getInternalWorkflowSession().save();
             VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("deprecated-versioning", publishedDocument);
             versionWorkflow.version();
         } catch(MappingException ex) {
@@ -274,7 +274,7 @@ public class DeprecatedFullReviewedActionsWorkflowImpl extends DeprecatedBasicRe
             else {
                 deleteDocument(publishedDocument);
             }
-            publishedDocument.getNode().getSession().save();
+            getWorkflowContext().getInternalWorkflowSession().save();
             publishedDocument = null;
             versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("deprecated-versioning", unpublishedDocument);
             try {

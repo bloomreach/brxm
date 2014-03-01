@@ -105,7 +105,7 @@ public class VersioningWorkflowIntegrationTest extends RepositoryTestCase {
         for (Map.Entry<Calendar, Set<String>> entry : entries) {
             document = versionwf.retrieve(entry.getKey());
             if(document != null) {
-                Node version = session.getNodeByIdentifier(document.getIdentity());
+                Node version = document.getNode(session);
                 assertEquals("Version " + version.getParent().getName() + " contains unexpected holder property",
                         "admin" + "...........".substring(0, count+1), version.getProperty("hippostd:holder").getString());
             }
@@ -130,7 +130,7 @@ public class VersioningWorkflowIntegrationTest extends RepositoryTestCase {
         for (Map.Entry<Calendar, Set<String>> entry : history.entrySet()) {
             final Document version = versionwf.retrieve(entry.getKey());
             assertNotNull(version);
-            versions.add(version.getNode().getProperty("hippostd:language").getString());
+            versions.add(version.getNode(session).getProperty("hippostd:language").getString());
         }
 
         assertEquals(expected.size(), versions.size());
@@ -165,7 +165,7 @@ public class VersioningWorkflowIntegrationTest extends RepositoryTestCase {
         for (Map.Entry<Calendar, Set<String>> entry : history.entrySet()) {
             Document version = versionwf.retrieve(entry.getKey());
             if (version != null) {
-                versions.add(version.getNode().getProperty("hippostd:language").getString());
+                versions.add(version.getNode(session).getProperty("hippostd:language").getString());
             } else {
                 versions.add("--");
             }

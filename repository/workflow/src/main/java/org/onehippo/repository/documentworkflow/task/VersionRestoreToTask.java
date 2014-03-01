@@ -119,13 +119,13 @@ public class VersionRestoreToTask extends AbstractDocumentTask {
 
     @Override
     public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
-        if (getVariant() == null || getVariant().getNode() == null ||
+        if (getVariant() == null || !getVariant().hasNode() ||
                 getTarget() == null || getTarget().getIdentity() == null ||
                 getHistoric() == null) {
             throw new WorkflowException("Variant, target or date not provided");
         }
-        Node targetNode = getWorkflowContext().getInternalWorkflowSession().getNodeByIdentifier(target.getIdentity());
-        Node variantNode = getVariant().getNode();
+        Node targetNode = getTarget().getNode(getWorkflowContext().getInternalWorkflowSession());
+        Node variantNode = getVariant().getNode(getWorkflowContext().getInternalWorkflowSession());
 
         final Version version = lookupVersion(variantNode, getHistoric());
         if (version != null) {

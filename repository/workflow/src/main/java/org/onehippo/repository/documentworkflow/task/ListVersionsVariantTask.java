@@ -52,10 +52,10 @@ public class ListVersionsVariantTask extends AbstractDocumentTask {
 
     @Override
     public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
-        if (getVariant() == null || getVariant().getNode() == null) {
+        if (getVariant() == null || !getVariant().hasNode()) {
             throw new WorkflowException("No variant provided");
         }
-        Node subject = getVariant().getNode();
+        Node subject = getVariant().getNode(getWorkflowContext().getInternalWorkflowSession());
         if (subject.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
             final SortedMap<Calendar, Set<String>> listing = new TreeMap<>();
             VersionHistory versionHistory = subject.getVersionHistory();

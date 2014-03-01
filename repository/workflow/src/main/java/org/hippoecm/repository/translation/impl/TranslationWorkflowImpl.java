@@ -166,7 +166,7 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
             throw new WorkflowException("Language already exists");
         }
 
-        Node copiedDocNode = rootSession.getNodeByIdentifier(document.getIdentity());
+        Node copiedDocNode = document.getNode(rootSession);
         JcrUtils.ensureIsCheckedOut(copiedDocNode);
         if (!copiedDocNode.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
             copiedDocNode.addMixin(HippoTranslationNodeType.NT_TRANSLATED);

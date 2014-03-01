@@ -17,6 +17,7 @@ package org.onehippo.repository.documentworkflow.task;
 
 import java.rmi.RemoteException;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.HippoStdNodeType;
@@ -70,9 +71,9 @@ public class ArchiveDocumentTask extends AbstractDocumentTask {
     }
 
     protected void deleteDocument(Document document) throws RepositoryException {
-        JcrUtils.ensureIsCheckedOut(document.getNode());
-        JcrUtils.ensureIsCheckedOut(document.getNode().getParent());
-        document.getNode().remove();
+        Node node = document.getCheckedOutNode(getWorkflowContext().getInternalWorkflowSession());
+        JcrUtils.ensureIsCheckedOut(node.getParent());
+        node.remove();
     }
 
 }

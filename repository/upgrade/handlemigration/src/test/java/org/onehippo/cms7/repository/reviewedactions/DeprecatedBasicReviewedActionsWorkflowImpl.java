@@ -50,16 +50,16 @@ public class DeprecatedBasicReviewedActionsWorkflowImpl extends WorkflowImpl imp
     protected PublicationRequest current;
 
     protected Node cloneDocumentNode(Document document) throws RepositoryException {
-        Node srcNode = document.getNode();
+        Node srcNode = document.getNode(getWorkflowContext().getInternalWorkflowSession());
         final Node parent = srcNode.getParent();
         JcrUtils.ensureIsCheckedOut(parent);
         return JcrUtils.copy(srcNode, srcNode.getName(), parent);
     }
 
     protected void deleteDocument(Document document) throws RepositoryException {
-        JcrUtils.ensureIsCheckedOut(document.getNode());
-        JcrUtils.ensureIsCheckedOut(document.getNode().getParent());
-        document.getNode().remove();
+        Node node = document.getCheckedOutNode(getWorkflowContext().getInternalWorkflowSession());
+        JcrUtils.ensureIsCheckedOut(node.getParent());
+        node.remove();
     }
 
     public void setNode(Node node) throws RepositoryException {

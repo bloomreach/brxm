@@ -40,7 +40,15 @@ public class PublishableDocument extends Document {
         super(node);
     }
 
-   public void setState(String state) throws RepositoryException {
+    /**
+     * Enabling package access
+     * @return backing Node
+     */
+    protected Node getNode() {
+        return super.getNode();
+    }
+
+    public void setState(String state) throws RepositoryException {
        setStringProperty("hippostd:state", state);
     }
 

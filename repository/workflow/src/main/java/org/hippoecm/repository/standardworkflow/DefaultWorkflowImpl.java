@@ -87,7 +87,7 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
     @Override
     public boolean isModified() throws WorkflowException, MappingException, RepositoryException, RemoteException {
         final HippoSession session = (HippoSession) context.getUserSession();
-        final Node node = session.getNodeByIdentifier(document.getIdentity());
+        final Node node = document.getNode(session);
         return session.pendingChanges(node, "nt:base", true).hasNext();
     }
 
