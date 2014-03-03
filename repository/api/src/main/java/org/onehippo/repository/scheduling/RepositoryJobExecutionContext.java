@@ -66,7 +66,7 @@ public class RepositoryJobExecutionContext {
      */
     @Deprecated
     public Session getSystemSession() throws LoginException, RepositoryException {
-        return createSession(SYSTEM_CREDENTIALS);
+        return getSession(SYSTEM_CREDENTIALS);
     }
 
     /**
