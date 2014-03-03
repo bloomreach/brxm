@@ -47,6 +47,7 @@ public class PluginInstructionSet implements InstructionSet {
             @XmlElementRef(type = NodeFolderInstruction.class),
             @XmlElementRef(type = CndInstruction.class),
             @XmlElementRef(type = ExecuteInstruction.class),
+            @XmlElementRef(type = DirectoryInstruction.class),
             @XmlElementRef(type = FileInstruction.class)})
     @Override
     public Set<Instruction> getInstructions() {

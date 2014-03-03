@@ -158,7 +158,7 @@ public class FileInstruction extends PluginInstruction {
         return InstructionStatus.FAILED;
     }
 
-    private InputStream extractStream() throws FileNotFoundException {
+    protected InputStream extractStream() throws FileNotFoundException {
         // try to read file first:
         final File file = new File(source);
         if (file.exists()) {
@@ -174,7 +174,7 @@ public class FileInstruction extends PluginInstruction {
      * @param destination starting directory
      * @throws IOException
      */
-    private void createParentDirectories(final File destination) throws IOException {
+    protected void createParentDirectories(final File destination) throws IOException {
 
         Deque<String> directories = new ArrayDeque<>();
         String parent = destination.getParent();
@@ -261,7 +261,7 @@ public class FileInstruction extends PluginInstruction {
         message = TemplateUtils.replaceTemplateData(message, data);
     }
 
-    private boolean valid() {
+    protected boolean valid() {
         if (Strings.isNullOrEmpty(action) || !VALID_ACTIONS.contains(action) || Strings.isNullOrEmpty(target)) {
             return false;
         }

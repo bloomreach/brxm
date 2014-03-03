@@ -76,6 +76,7 @@
     <file action="copy"  source="freemarker/essentials-blog-detail.ftl" target="{{jspRoot}}/essentials/blog/essentials-blog-detail.ftl"/>
     <file action="copy"  source="freemarker/essentials-blog-list.ftl" target="{{jspRoot}}/essentials/blog/essentials-blog-list.ftl"/>
     <file action="copy" source="freemarker/pagination.ftl" target="{{jspRoot}}/essentials/common/pagination.ftl"/>
+    <file action="copy" source="freemarker/imports.ftl" target="{{jspRoot}}/essentials/common/imports.ftl"/>
   </instructionSet>
   <!--
     FACET

@@ -112,6 +112,7 @@ dashboard-plugins/blog-plugin/src/main/resources/META-INF/blog_instructions.xml 
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/essentials-blog-detail.ftl -text
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/essentials-blog-list.ftl -text
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/essentials-facet.ftl -text
+dashboard-plugins/blog-plugin/src/main/resources/freemarker/imports.ftl -text
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/pagination.ftl -text
 dashboard-plugins/blog-plugin/src/main/resources/hst/blog-catalog.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/hst/blog-sitemap.xml -text
@@ -525,6 +526,7 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/e
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/listeners/MemoryPluginEventListener.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/listeners/ValidationEventListener.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/CndInstruction.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/DirectoryInstruction.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/ExecuteInstruction.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/FileInstruction.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/NodeFolderInstruction.java -text
@@ -627,6 +629,7 @@ plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/c
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/event/listeners/MemoryPluginEventListenerTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/event/listeners/ValidationEventListenerTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/CndInstructionTest.java -text
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/DirectoryInstructionTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/DummyInstruction.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/FileInstructionTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/NodeFolderInstructionTest.java -text
