@@ -31,10 +31,14 @@
             function ($scope, $state, $stateParams, $rootScope, $log, ConfigService, MenuService, FeedbackService) {
                 $scope.callbacks = {
                     itemClicked: function (itemScope) {
-                        $scope.$apply(function () {
-                            $state.go('menu-item.edit', {menuItemId: itemScope.id});
-                            $scope.$parent.selectedMenuItem = itemScope;
-                        });
+                        MenuService.saveMenuItem($scope.$parent.selectedMenuItem).then(function () {
+                                $state.go('menu-item.edit', {menuItemId: itemScope.id});
+                                $scope.$parent.selectedMenuItem = itemScope;
+                            },
+                            function (errorResponse) {
+                                $scope.$parent.feedback = FeedbackService.getFeedback(errorResponse);
+                            }
+                        );
                     },
                     itemMoved: function (sourceScope, modelData, sourceIndex, destScope, destIndex) {
                         var parentData = destScope.parentItemScope();
