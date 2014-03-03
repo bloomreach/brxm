@@ -42,7 +42,7 @@
     <file action="copy" overwrite="true" source="jsp/essentials-layout-webpage.jsp" target="{{jspRoot}}/essentials/essentials-layout-webpage.jsp"/>
     <file action="copy" overwrite="true" source="jsp/essentials-standard-main.jsp" target="{{jspRoot}}/essentials/essentials-standard-main.jsp"/>
     <file action="copy" overwrite="true" source="jsp/essentials-component-list.jsp" target="{{jspRoot}}/essentials/essentials-component-list.jsp"/>
-    <file action="copy" overwrite="true" source="jsp/essentials-component-menu.jsp" target="{{jspRoot}}/essentials/essentials-component-menu.jsp"/>
+    <file action="copy" overwrite="true" source="jsp/essentials-standard-menu.jsp" target="{{jspRoot}}/essentials/essentials-standard-menu.jsp"/>
     <file action="copy" overwrite="true" source="jsp/essentials-component-document.jsp" target="{{jspRoot}}/essentials/essentials-component-document.jsp"/>
     <file action="copy" overwrite="true" source="jsp/essentials-component-news.jsp" target="{{jspRoot}}/essentials/essentials-component-news.jsp"/>
     <file action="copy" overwrite="true" source="jsp/essentials-component-news-detail.jsp" target="{{jspRoot}}/essentials/essentials-component-news-detail.jsp"/>

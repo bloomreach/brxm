@@ -406,12 +406,12 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/reso
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-component-event-detail.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-component-events.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-component-list.jsp -text
-dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-component-menu.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-component-news-detail.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-component-news.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-home.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-layout-webpage.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-standard-main.jsp -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-standard-menu.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/content/events.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/content/news.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/folderoptions/new-events-document.xml -text
