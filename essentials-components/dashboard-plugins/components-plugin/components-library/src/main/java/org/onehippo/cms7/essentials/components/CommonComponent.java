@@ -7,9 +7,9 @@ package org.onehippo.cms7.essentials.components;
 import java.io.IOException;
 import java.util.Collection;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
@@ -17,14 +17,12 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
-import org.hippoecm.hst.util.PathUtils;
+import org.hippoecm.hst.util.SearchInputParsingUtils;
 import org.onehippo.cms7.essentials.components.utils.SiteUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
 
 /**
  * Base HST component, containing default values and utility methods
@@ -40,7 +38,22 @@ public class CommonComponent extends BaseHstComponent {
     /**
      * Attributes  names used within Essentials
      */
-    public static final String ATTRIBUTE_DOCUMENTS = "documents";
+
+    /**
+     * Request parameter to set the current page.
+     */
+    protected static final String REQUEST_PARAM_PAGE = "page";
+    protected static final String REQUEST_PARAM_PAGE_SIZE = "pageSize";
+    protected static final String REQUEST_PARAM_PAGE_PAGINATION = "showPagination";
+
+    /**
+     * Request attribute to store pageable result in.
+     */
+    protected static final String REQUEST_PARAM_PAGEABLE = "pageable";
+    protected static final String REQUEST_PARAM_DOCUMENT = "document";
+    protected static final String REQUEST_PARAM_QUERY = "query";
+
+
     private static Logger log = LoggerFactory.getLogger(CommonComponent.class);
 
     @Override
@@ -122,12 +135,12 @@ public class CommonComponent extends BaseHstComponent {
         return SiteUtils.getScopeBean(request, path, this);
     }
 
-    public  int getIntParameter(HstRequest request, String parameter, int defaultValue) {
-        return SiteUtils.getIntParameter(request, parameter, defaultValue, this);
+    public  int getAnyIntParameter(HstRequest request, String parameter, int defaultValue) {
+        return SiteUtils.getAnyIntParameter(request, parameter, defaultValue, this);
     }
 
-    public boolean getBooleanParam(HstRequest request, String parameter, boolean defaultValue) {
-        return SiteUtils.getBooleanParam(request, parameter, defaultValue, this);
+    public boolean getAnyBooleanParam(HstRequest request, String parameter, boolean defaultValue) {
+        return SiteUtils.getAnyBooleanParam(request, parameter, defaultValue, this);
     }
 
     /**
@@ -165,5 +178,9 @@ public class CommonComponent extends BaseHstComponent {
         }
     }
 
+    @Nullable
+    public String cleanupSearchQuery(final String query){
+        return SearchInputParsingUtils.parse(query, false);
+    }
 
 }

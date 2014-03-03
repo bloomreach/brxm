@@ -21,7 +21,7 @@ import org.hippoecm.hst.core.parameters.Parameter;
 /**
  * @version "$Id$"
  */
-public interface EssentialsFacetsComponentInfo {
+public interface EssentialsFacetsComponentInfo extends EssentialsDocumentListComponentInfo {
 
     @Parameter(name = "facetPath", required = true, displayName = "Facet path")
     String getFacetPath();
