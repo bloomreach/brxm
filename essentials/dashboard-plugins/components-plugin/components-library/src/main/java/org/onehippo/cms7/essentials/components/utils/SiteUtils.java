@@ -62,7 +62,7 @@ public final class SiteUtils {
     }
 
 
-    public static  boolean getBooleanParam(HstRequest request, String parameter, boolean defaultValue, final BaseHstComponent component) {
+    public static  boolean getAnyBooleanParam(HstRequest request, String parameter, boolean defaultValue, final BaseHstComponent component) {
         final String p = getAnyParameter(parameter, request, component);
         if (p == null) {
             return defaultValue;
@@ -71,7 +71,7 @@ public final class SiteUtils {
     }
 
     
-    public static int getIntParameter(HstRequest request, String parameter, int defaultValue, final BaseHstComponent component) {
+    public static int getAnyIntParameter(HstRequest request, String parameter, int defaultValue, final BaseHstComponent component) {
         final String p = getAnyParameter(parameter, request, component);
         if (p == null) {
             return defaultValue;

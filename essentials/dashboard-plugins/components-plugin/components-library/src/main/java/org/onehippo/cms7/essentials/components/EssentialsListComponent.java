@@ -36,17 +36,6 @@ public class EssentialsListComponent extends CommonComponent {
 
     private static Logger log = LoggerFactory.getLogger(EssentialsListComponent.class);
 
-    /**
-     * Request parameter to set the current page.
-     */
-    protected static final String REQUEST_PARAM_PAGE = "page";
-    protected static final String REQUEST_PARAM_PAGE_SIZE = "pageSize";
-    protected static final String REQUEST_PARAM_PAGE_PAGINATION = "showPagination";
-
-    /**
-     * Request attribute to store pageable result in.
-     */
-    protected static final String REQUEST_ATTR_PAGEABLE = "pageable";
 
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
@@ -71,7 +60,7 @@ public class EssentialsListComponent extends CommonComponent {
         }
 
         final Pageable<HippoBean> pageable = doSearch(request, paramInfo, scope);
-        request.setAttribute(REQUEST_ATTR_PAGEABLE, pageable);
+        request.setAttribute(REQUEST_PARAM_PAGEABLE, pageable);
         request.setAttribute(REQUEST_PARAM_PAGE, getCurrentPage(request));
         request.setAttribute(REQUEST_PARAM_PAGE_SIZE, paramInfo.getPageSize());
         request.setAttribute(REQUEST_PARAM_PAGE_PAGINATION, paramInfo.getShowPagination());
@@ -148,7 +137,7 @@ public class EssentialsListComponent extends CommonComponent {
      * @return the current page of the query
      */
     protected int getCurrentPage(final HstRequest request) {
-        return getIntParameter(request, REQUEST_PARAM_PAGE, 1);
+        return getAnyIntParameter(request, REQUEST_PARAM_PAGE, 1);
     }
 
     /**
