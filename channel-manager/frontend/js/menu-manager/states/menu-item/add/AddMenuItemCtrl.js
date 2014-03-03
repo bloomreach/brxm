@@ -34,9 +34,6 @@
                     link: ''
                 };
 
-                $scope.feedback = {
-                };
-
                 $scope.submit = function() {
                     MenuService.createMenuItem(parentItemId, $scope.selectedMenuItem).then(
                             function (menuItemId) {

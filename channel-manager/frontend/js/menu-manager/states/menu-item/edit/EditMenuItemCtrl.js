@@ -106,9 +106,8 @@
                         $state.go('menu-item.edit', {
                             menuItemId: selectedMenuItemId
                         });
-                    }, function (error) {
-                        // TODO show error in UI
-                        $log.error(error);
+                    }, function (errorResponse) {
+                        $scope.feedback = FeedbackService.getFeedback(errorResponse);
                     });
                 };
             }
