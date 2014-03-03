@@ -16,7 +16,6 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,7 +39,7 @@ public class SiteMapItemRepresentation {
     boolean any;
     boolean containsWildCard;
     boolean containsAny;
-    boolean isExplicitPath;
+    boolean isExplicitElement;
 
 
     private List<SiteMapItemRepresentation> children = new ArrayList<>();
@@ -61,7 +60,7 @@ public class SiteMapItemRepresentation {
         any = item.isAny();
         containsWildCard = item.containsWildCard();
         containsAny = item.containsAny();
-        isExplicitPath = !(wildCard || any || containsAny || containsAny);
+        isExplicitElement = !(wildCard || any || containsAny || containsAny);
         localParameters = item.getLocalParameters();
         roles = item.getRoles();
         Map<String, SiteMapItemRepresentation> orderedChildren = new TreeMap<>();
@@ -162,12 +161,12 @@ public class SiteMapItemRepresentation {
         this.containsAny = containsAny;
     }
 
-    public boolean isExplicitPath() {
-        return isExplicitPath;
+    public boolean isExplicitElement() {
+        return isExplicitElement;
     }
 
-    public void setExplicitPath(final boolean explicitPath) {
-        isExplicitPath = explicitPath;
+    public void setExplicitElement(final boolean explicitElement) {
+        isExplicitElement = explicitElement;
     }
 
     public Map<String, String> getLocalParameters() {

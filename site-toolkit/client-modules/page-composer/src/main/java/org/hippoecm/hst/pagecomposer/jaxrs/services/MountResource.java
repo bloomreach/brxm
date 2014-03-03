@@ -390,7 +390,7 @@ public class MountResource extends AbstractConfigResource {
             List<String> mainConfigNodeNamesToRevert = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds);
             pushContainerChildrenNodes(session, liveConfigurationPath, previewConfigurationPath, relativeContainerPathsToRevert);
             copyChangedMainConfigNodes(session, liveConfigurationPath, previewConfigurationPath, mainConfigNodeNamesToRevert);
-            discardChannelChanges(session, requestContext, userIds);
+            discardChannelChanges(session, userIds);
 
             siteMapHelper.discardWorkspaceChanges(userIds);
             pagesHelper.discardWorkspaceChanges(userIds);
@@ -597,7 +597,6 @@ public class MountResource extends AbstractConfigResource {
 
 
     private void discardChannelChanges(final HippoSession session,
-                                       final HstRequestContext requestContext,
                                        final List<String> userIds) throws RepositoryException {
         if (userIds.isEmpty()) {
             return;
