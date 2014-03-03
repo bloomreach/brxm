@@ -45,10 +45,10 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     private Map<String, HstComponentConfiguration> canonicalComponentConfigurations;
 
     /*
-     * pagePrototypes are component configurations that are retrievable through getComponentConfiguration(String id) and are directly
-     * configured below 'hst:pagePrototypes'
+     * prototypePages are component configurations that are retrievable through getComponentConfiguration(String id) and are directly
+     * configured below 'hst:prototypepages'
      */
-    private Map<String, HstComponentConfiguration> pagePrototypes = new HashMap<>();
+    private Map<String, HstComponentConfiguration> prototypePages = new HashMap<>();
 
     /*
      * The Map of all containter items. These are the hst:containeritemcomponent's that are configured as child of hst:containeritemcomponent's
@@ -76,7 +76,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         String[] mainComponentNodeNames = {HstNodeTypes.NODENAME_HST_COMPONENTS,
                 HstNodeTypes.NODENAME_HST_ABSTRACTPAGES,
                 HstNodeTypes.NODENAME_HST_PAGES,
-                HstNodeTypes.NODENAME_HST_PAGEPROTOTYPES};
+                HstNodeTypes.NODENAME_HST_PROTOTYPEPAGES};
 
         final String rootConfigurationPathPrefix = ccn.getConfigurationRootNode().getValueProvider().getPath() + "/";
 
@@ -91,7 +91,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
             init(componentNodes, mainComponentNodeName, rootConfigurationPathPrefix, containers, nonPrototypeRootComponents);
         }
 
-        pagePrototypes = Collections.unmodifiableMap(pagePrototypes);
+        prototypePages = Collections.unmodifiableMap(prototypePages);
 
         // populate all the available containeritems that are part of hst:catalog. These container items do *not* need to be enhanced as they
         // are *never* used directly. They are only to be used by the page composer that can drop these containeritems into containers
@@ -212,8 +212,8 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     }
 
     @Override
-    public Map<String, HstComponentConfiguration> getPagePrototypes() {
-        return pagePrototypes;
+    public Map<String, HstComponentConfiguration> getPrototypePages() {
+        return prototypePages;
     }
 
     private void autocreateReferenceNames(HstComponentConfiguration componentConfiguration) {
@@ -228,7 +228,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     }
     
     /*
-     * rootNodeName is either hst:components, hst:pages, hst:abstractpages or hst:pageprototypes.
+     * rootNodeName is either hst:components, hst:pages, hst:abstractpages or hst:prototypepages.
      */
     private void init(final CompositeConfigurationNodes.CompositeConfigurationNode node,
                       final String rootNodeName,
@@ -251,8 +251,8 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
                     HstComponentConfiguration componentConfiguration = new HstComponentConfigurationService(child,
                             null, rootNodeName, modifiableContainers, inherited);
 
-                    if (rootNodeName.equals(HstNodeTypes.NODENAME_HST_PAGEPROTOTYPES)) {
-                        pagePrototypes.put(componentConfiguration.getId(), componentConfiguration);
+                    if (rootNodeName.equals(HstNodeTypes.NODENAME_HST_PROTOTYPEPAGES)) {
+                        prototypePages.put(componentConfiguration.getId(), componentConfiguration);
                     } else {
                         nonPrototypeRootComponents.add(componentConfiguration);
                     }

@@ -52,7 +52,7 @@ public interface HstComponentsConfiguration {
         }
 
         @Override
-        public Map<String, HstComponentConfiguration> getPagePrototypes() {
+        public Map<String, HstComponentConfiguration> getPrototypePages() {
             return Collections.emptyMap();
         }
     };
@@ -89,5 +89,5 @@ public interface HstComponentsConfiguration {
      * @return the map of {@link HstComponentConfiguration}s that are page prototypes . Unmodifiable
      *         instance will be returned. Empty map will be returned if no prototypes available
      */
-    Map<String, HstComponentConfiguration> getPagePrototypes();
+    Map<String, HstComponentConfiguration> getPrototypePages();
 }

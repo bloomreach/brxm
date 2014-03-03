@@ -209,7 +209,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
         this.inherited =  inherited;
         this.parent = parent;
-        this.prototype = HstNodeTypes.NODENAME_HST_PAGEPROTOTYPES.equals(rootNodeName);
+        this.prototype = HstNodeTypes.NODENAME_HST_PROTOTYPEPAGES.equals(rootNodeName);
 
         if (explicitName == null) {
             this.name = StringPool.get(node.getValueProvider().getName());

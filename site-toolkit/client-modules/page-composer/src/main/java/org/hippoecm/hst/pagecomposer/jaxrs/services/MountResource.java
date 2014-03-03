@@ -49,7 +49,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.DocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtIdsRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.PageModelRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.PagePrototypesRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.PrototypePagesRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ToolkitRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.UserRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
@@ -116,14 +116,14 @@ public class MountResource extends AbstractConfigResource {
     }
 
     @GET
-    @Path("/pageprototypes")
+    @Path("/prototypepages")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPagePrototypes() {
+    public Response getPrototypePages() {
         final HstSite editingPreviewSite = getPageComposerContextService().getEditingPreviewSite();
-        PagePrototypesRepresentation prototypePagePrototypesRepresentation = new PagePrototypesRepresentation().represent(editingPreviewSite,
+        PrototypePagesRepresentation prototypePagesRepresentation = new PrototypePagesRepresentation().represent(editingPreviewSite,
                  false, getPageComposerContextService().getEditingMount());
         log.info("Prototype pages loaded successfully");
-        return ok("Prototype pages loaded successfully", prototypePagePrototypesRepresentation);
+        return ok("Prototype pages loaded successfully", prototypePagesRepresentation);
     }
 
     @GET

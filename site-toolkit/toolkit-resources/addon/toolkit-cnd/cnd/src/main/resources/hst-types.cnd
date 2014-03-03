@@ -210,7 +210,7 @@
 + hst:components (hst:components) = hst:components
 + hst:abstractpages (hst:pages) = hst:pages
 + hst:pages (hst:pages) = hst:pages
-+ hst:pageprototypes (hst:pages) = hst:pages
++ hst:prototypepages (hst:pages) = hst:pages
 + hst:sitemap (hst:sitemap) = hst:sitemap
 + hst:templates (hst:templates) = hst:templates
 + hst:sitemenus (hst:sitemenus) = hst:sitemenus

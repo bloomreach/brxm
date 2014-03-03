@@ -302,8 +302,8 @@ client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/m
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/DocumentRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ExtResponseRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/PageModelRepresentation.java -text svneol=unset#text/plain
-client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/PagePrototypesRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/PostRepresentation.java -text
+client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/PrototypePagesRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/SiteMapItemRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/SiteMapRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/SiteMenuItemRepresentation.java -text
@@ -1201,11 +1201,11 @@ toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/sub
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/subsub1/sitemap.xml -text svneol=unset#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestcommon/abstractpages.xml -text
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestcommon/components.xml -text
-toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestcommon/pageprototypes.xml -text
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestcommon/pages.xml -text
+toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestcommon/prototypepages.xml -text
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestcommon/sitemenus.xml -text svneol=unset#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestcommon/templates.xml -text
-toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestproject/pageprototypes.xml -text
+toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestproject/prototypepages.xml -text
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestproject/sitemap.xml svneol=native#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestproject/sitemapitemhandlers.xml -text svneol=unset#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestproject/sitemenus.xml svneol=native#text/plain

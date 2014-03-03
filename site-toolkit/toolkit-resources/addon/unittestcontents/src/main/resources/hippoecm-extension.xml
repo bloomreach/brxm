@@ -125,7 +125,7 @@
       <sv:value>/hst:hst/hst:configurations/unittestcommon</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="unittestcommon-pageprototypes">
+  <sv:node sv:name="unittestcommon-prototypepages">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -133,7 +133,7 @@
       <sv:value>11059</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hstconfiguration/unittestcommon/pageprototypes.xml</sv:value>
+      <sv:value>hstconfiguration/unittestcommon/prototypepages.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hst:hst/hst:configurations/unittestcommon</sv:value>
@@ -186,7 +186,7 @@
   </sv:node>
 
   <!--unittestproject  -->
-  <sv:node sv:name="unittestproject-pageprototypes">
+  <sv:node sv:name="unittestproject-prototypepages">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -194,7 +194,7 @@
       <sv:value>11057</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hstconfiguration/unittestproject/pageprototypes.xml</sv:value>
+      <sv:value>hstconfiguration/unittestproject/prototypepages.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hst:hst/hst:configurations/unittestproject</sv:value>

@@ -82,7 +82,7 @@ public class TestHstComponentsConfigurationModels extends AbstractTestConfigurat
      */
     @Test
     public void testSharedHstComponentsConfigurations() throws Exception {
-        // since unittestproject contains its own 'hst:pageprototypes' node, we first move this node away (otherwise
+        // since unittestproject contains its own 'hst:prototypepages' node, we first move this node away (otherwise
         // instance won't be shared)
         Session session = createSession();
         removePagePrototypeFromConfig(session);
@@ -439,12 +439,12 @@ public class TestHstComponentsConfigurationModels extends AbstractTestConfigurat
 
 
     private void restorePagePrototypesFromConfig(final Session session) throws RepositoryException {
-        session.move("/hst:pageprototypes", "/hst:hst/hst:configurations/unittestproject/hst:pageprototypes");
+        session.move("/hst:prototypepages", "/hst:hst/hst:configurations/unittestproject/hst:prototypepages");
         session.save();
     }
 
     private void removePagePrototypeFromConfig(final Session session) throws RepositoryException {
-        session.move("/hst:hst/hst:configurations/unittestproject/hst:pageprototypes", "/hst:pageprototypes");
+        session.move("/hst:hst/hst:configurations/unittestproject/hst:prototypepages", "/hst:prototypepages");
         session.save();
     }
 

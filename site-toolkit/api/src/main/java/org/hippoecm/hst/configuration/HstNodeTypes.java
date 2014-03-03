@@ -88,8 +88,6 @@ public interface HstNodeTypes {
     static final String COMPONENT_PROPERTY_ICON_PATH = "hst:iconpath";
     static final String COMPONENT_PROPERTY_LABEL = "hst:label";
     static final String COMPONENT_PROPERTY_COMPONENT_FILTER_TAG = "hst:componentfiltertag";
-    static final String COMPONENT_PROPERTY_PROTOTYPE = "hst:prototype";
-
 
     static final String TEMPLATE_PROPERTY_RENDERPATH =  "hst:renderpath";
     static final String TEMPLATE_PROPERTY_IS_NAMED =  "hst:isnamed";
@@ -192,7 +190,7 @@ public interface HstNodeTypes {
     static final String NODENAME_HST_CATALOG = "hst:catalog";
     static final String NODENAME_HST_PAGES = "hst:pages";
     static final String NODENAME_HST_ABSTRACTPAGES = "hst:abstractpages";
-    static final String NODENAME_HST_PAGEPROTOTYPES = "hst:pageprototypes";
+    static final String NODENAME_HST_PROTOTYPEPAGES = "hst:prototypepages";
     static final String NODENAME_HST_TEMPLATES = "hst:templates";
     static final String NODENAME_HST_SITEMAPITEMHANDLERS = "hst:sitemapitemhandlers";
     static final String NODENAME_HST_HSTDEFAULT = "hst:default";
