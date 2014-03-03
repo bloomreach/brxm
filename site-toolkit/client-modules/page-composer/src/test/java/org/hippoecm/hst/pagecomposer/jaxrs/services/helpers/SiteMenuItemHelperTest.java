@@ -212,11 +212,12 @@ public class SiteMenuItemHelperTest {
 
         final String oldName = "hst";
         final String pathPrefix = "hst:hst/hst/hst/hst";
-        expect(node.getName()).andReturn(oldName).times(3);
+        expect(node.getName()).andReturn(oldName).anyTimes();
         expect(node.getPath()).andReturn(pathPrefix + "/" + oldName);
 
         expect(parent.getNodes()).andReturn(childIterator);
         expect(parent.getPath()).andReturn(pathPrefix);
+        expect(parent.getName()).andReturn("parent").anyTimes();
         expect(childIterator.hasNext()).andReturn(true).times(2);
         expect(childIterator.next()).andReturn(node).andReturn(sibling);
         final String siblingName = "someSiblingName";
@@ -317,6 +318,7 @@ public class SiteMenuItemHelperTest {
 
         mockGetAncestor();
         final String name = "name";
+        expect(node.getName()).andReturn(name).anyTimes();
         expect(node.addNode(name, NODETYPE_HST_SITEMENUITEM)).andThrow(new ItemExistsException(""));
         replay(mocks);
 

@@ -25,6 +25,7 @@ import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 import org.apache.jackrabbit.commons.JcrUtils;
@@ -48,15 +49,16 @@ public class SiteMenuItemHelper extends AbstractHelper {
 
     public Node create(Node parent, SiteMenuItemRepresentation newItem) throws RepositoryException {
         lockHelper.acquireSimpleLock(getMenuAncestor(parent));
+        final String newItemName = newItem.getName();
         try {
-            final Node newChild = parent.addNode(newItem.getName(), HstNodeTypes.NODETYPE_HST_SITEMENUITEM);
+            final Node newChild = parent.addNode(newItemName, HstNodeTypes.NODETYPE_HST_SITEMENUITEM);
             update(newChild, newItem);
             return newChild;
         } catch (ItemExistsException e) {
-            throw new ClientException(e.getMessage(), ClientError.ITEM_NAME_NOT_UNIQUE);
+            final Map<?, ?> params = getParameterMap(newItemName, parent.getName());
+            throw new ClientException(e.getMessage(), ClientError.ITEM_NAME_NOT_UNIQUE, params);
         }
     }
-
 
     public void delete(final Node node) throws RepositoryException {
         lockHelper.acquireSimpleLock(getMenuAncestor(node));
@@ -115,7 +117,8 @@ public class SiteMenuItemHelper extends AbstractHelper {
         try {
             node.getSession().move(node.getPath(), newParent.getPath() + "/" + newNodeName);
         } catch (ItemExistsException e) {
-            throw new ClientException(e.getMessage(), ClientError.ITEM_NAME_NOT_UNIQUE);
+            final Map<?, ?> params = getParameterMap(newNodeName, newParent.getName());
+            throw new ClientException(e.getMessage(), ClientError.ITEM_NAME_NOT_UNIQUE, params);
         }
     }
 
@@ -133,8 +136,8 @@ public class SiteMenuItemHelper extends AbstractHelper {
     /**
      * Move the source node into the parent at the given childIndex position.
      *
-     * @param parent the target parent
-     * @param source the target source
+     * @param parent     the target parent
+     * @param source     the target source
      * @param childIndex the index of child within parent
      * @throws RepositoryException
      */
@@ -149,7 +152,8 @@ public class SiteMenuItemHelper extends AbstractHelper {
         try {
             parent.orderBefore(sourceName, successorNodeName);
         } catch (ItemExistsException e) {
-            throw new ClientException(e.getMessage(), ClientError.ITEM_NAME_NOT_UNIQUE);
+            final Map<?, ?> params = getParameterMap(sourceName, parent.getName());
+            throw new ClientException(e.getMessage(), ClientError.ITEM_NAME_NOT_UNIQUE, params);
         }
     }
 
@@ -163,7 +167,6 @@ public class SiteMenuItemHelper extends AbstractHelper {
         // restore the position
         parent.orderBefore(newName, nextSiblingName);
     }
-
 
     private String getNextSiblingName(final Node node, final Node parent) throws RepositoryException {
         final String currentName = node.getName();
@@ -210,5 +213,12 @@ public class SiteMenuItemHelper extends AbstractHelper {
             // current index is at or after new index, so successor node is at position newIndex
             return childNodes.get(newIndex).getName();
         }
+    }
+
+    private Map<?, ?> getParameterMap(String itemName, String parentName) {
+        return ImmutableMap.builder()
+                .put("item", itemName)
+                .put("parent", parentName)
+                .build();
     }
 }
