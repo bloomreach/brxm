@@ -3,66 +3,80 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:component</sv:value>
   </sv:property>
+  <sv:property sv:name="jcr:uuid" sv:type="String">
+    <sv:value>3ee2bd86-7134-44a3-b616-36d1f8cc826d</sv:value>
+  </sv:property>
   <sv:property sv:name="hst:referencecomponent" sv:type="String">
     <sv:value>hst:pages/blog</sv:value>
   </sv:property>
   <sv:node sv:name="main">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:containercomponent</sv:value>
+      <sv:value>hst:component</sv:value>
     </sv:property>
-    <sv:property sv:name="hst:lastmodified" sv:type="Date">
-      <sv:value>2014-02-28T18:04:56.940+01:00</sv:value>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>f514b2af-fc14-4dec-99aa-4ba03e0116d9</sv:value>
     </sv:property>
-    <sv:property sv:name="hst:lastmodifiedby" sv:type="String">
-      <sv:value>admin</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:xtype" sv:type="String">
-      <sv:value>HST.vBox</sv:value>
-    </sv:property>
-    <sv:node sv:name="detail">
+    <sv:node sv:name="sidebarcontainer">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:containeritemcomponent</sv:value>
+        <sv:value>hst:containercomponent</sv:value>
       </sv:property>
-      <sv:property sv:name="hst:componentclassname" sv:type="String">
-        <sv:value>org.onehippo.cms7.essentials.components.EssentialsDocumentComponent</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:label" sv:type="String">
-        <sv:value>Document Component</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
-        <sv:value>document</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
-        <sv:value/>
-      </sv:property>
-      <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>blog.main.content</sv:value>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>955dbe6d-0e17-40e1-95e6-3e3415e9b40d</sv:value>
       </sv:property>
       <sv:property sv:name="hst:xtype" sv:type="String">
-        <sv:value>HST.Item</sv:value>
+        <sv:value>HST.vBox</sv:value>
       </sv:property>
+      <sv:node sv:name="sidebar">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:containeritemcomponent</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+          <sv:value>6298f28a-b3f9-4d33-8fb4-d1760aa9c4c5</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:componentclassname" sv:type="String">
+          <sv:value>org.onehippo.cms7.essentials.components.EssentialsBlogComponent</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:label" sv:type="String">
+          <sv:value>Blog List</sv:value>
+        </sv:property>
+        <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
+          <sv:value>documentTypes</sv:value>
+          <sv:value>sortField</sv:value>
+          <sv:value>sortOrder</sv:value>
+          <sv:value>showPagination</sv:value>
+          <sv:value>includeSubtypes</sv:value>
+          <sv:value>pageSize</sv:value>
+          <sv:value>path</sv:value>
+        </sv:property>
+        <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
+          <sv:value>appstore:blogpost</sv:value>
+          <sv:value/>
+          <sv:value>desc</sv:value>
+          <sv:value>on</sv:value>
+          <sv:value>off</sv:value>
+          <sv:value>1</sv:value>
+          <sv:value/>
+        </sv:property>
+        <sv:property sv:name="hst:template" sv:type="String">
+          <sv:value>blog.list.content</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:xtype" sv:type="String">
+          <sv:value>HST.Item</sv:value>
+        </sv:property>
+      </sv:node>
     </sv:node>
-    <sv:node sv:name="sidebar">
+    <sv:node sv:name="detailcontainer">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:containeritemcomponent</sv:value>
+        <sv:value>hst:component</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>20c4be56-495c-4a9f-b6eb-c7a215220e91</sv:value>
       </sv:property>
       <sv:property sv:name="hst:componentclassname" sv:type="String">
-        <sv:value>org.onehippo.cms7.essentials.components.EssentialsDocumentComponent</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:label" sv:type="String">
-        <sv:value>Document Component</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
-        <sv:value>document</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
-        <sv:value/>
+        <sv:value>org.onehippo.cms7.essentials.components.info.EssentialsDocumentComponentInfo</sv:value>
       </sv:property>
       <sv:property sv:name="hst:template" sv:type="String">
         <sv:value>blog.main.content</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:xtype" sv:type="String">
-        <sv:value>HST.Item</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

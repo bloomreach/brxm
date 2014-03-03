@@ -3,13 +3,18 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <hst:link var="link" path="/css/boostrap.css"/>
+
+  <link rel="stylesheet" href="<hst:link  path="/css/bootstrap.css"/>" type="text/css"/>
   <hst:headContributions categoryExcludes="scripts" xhtml="true"/>
 </head>
 <body>
 <div class="container">
-  <hst:include ref="menu"/>
-  <hst:include ref="main"/>
+  <div class="row">
+    <hst:include ref="menu"/>
+  </div>
+  <div class="row">
+    <hst:include ref="main"/>
+  </div>
 </div>
 </body>
 </html>
