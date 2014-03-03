@@ -112,6 +112,9 @@ public class EssentialsListComponent extends CommonComponent {
         final QueryBuilder builder = new HstQueryBuilder(this, request);
         final String documentTypes = paramInfo.getDocumentTypes();
         final String[] types = parseDocumentTypes(documentTypes);
+        if (log.isDebugEnabled()) {
+            log.debug("Searching for document types:  {}, and including subtypes: {}", documentTypes, paramInfo.getIncludeSubtypes());
+        }
         return builder.scope(scope).documents(types).includeSubtypes().build();
     }
 
