@@ -120,13 +120,19 @@ public class HstQueryBuilder implements QueryBuilder {
             mappings = new ArrayList<>();
         }
         final ObjectConverter objectConverter = component.getObjectConverter();
+        int typeCounter = 0;
         for (String primaryNodeType : primaryNodeTypes) {
             final Class<? extends HippoBean> clazz = objectConverter.getAnnotatedClassFor(primaryNodeType);
             if (clazz != null) {
                 mappings.add(clazz);
+                typeCounter++;
             }
 
         }
+        if(typeCounter != primaryNodeTypes.length){
+            log.warn("Couldn't resolve all primary node types through object converter: {}", primaryNodeTypes);
+        }
+
         return this;
     }
 
