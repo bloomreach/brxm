@@ -42,7 +42,11 @@ public class EssentialsMenuComponent extends CommonComponent {
         final EssentialsMenuComponentInfo info = getComponentParametersInfo(request);
         String siteMenu = info.getSiteMenu();
         if (Strings.isNullOrEmpty(siteMenu)) {
-            log.warn("No site menu is selected within EssentialsMenuComponent");
+            // check if set as component parameter:
+            siteMenu = getComponentParameter("menuName");
+            if (Strings.isNullOrEmpty(siteMenu)) {
+                log.warn("No site menu is selected within EssentialsMenuComponent nor set as a component parameter (menuName)");
+            }
             return;
         }
         siteMenu = CharMatcher.WHITESPACE.trimFrom(siteMenu);

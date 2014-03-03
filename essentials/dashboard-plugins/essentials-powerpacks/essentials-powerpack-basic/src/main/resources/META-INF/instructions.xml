@@ -42,6 +42,7 @@
     <file action="copy" overwrite="true" source="jsp/essentials-layout-webpage.jsp" target="{{jspRoot}}/essentials/essentials-layout-webpage.jsp"/>
     <file action="copy" overwrite="true" source="jsp/essentials-standard-main.jsp" target="{{jspRoot}}/essentials/essentials-standard-main.jsp"/>
     <file action="copy" overwrite="true" source="jsp/essentials-component-list.jsp" target="{{jspRoot}}/essentials/essentials-component-list.jsp"/>
+    <file action="copy" overwrite="true" source="jsp/essentials-component-menu.jsp" target="{{jspRoot}}/essentials/essentials-component-menu.jsp"/>
     <file action="copy" overwrite="true" source="jsp/essentials-component-document.jsp" target="{{jspRoot}}/essentials/essentials-component-document.jsp"/>
     <file action="copy" overwrite="true" source="jsp/essentials-component-news.jsp" target="{{jspRoot}}/essentials/essentials-component-news.jsp"/>
     <file action="copy" overwrite="true" source="jsp/essentials-component-news-detail.jsp" target="{{jspRoot}}/essentials/essentials-component-news-detail.jsp"/>
@@ -76,6 +77,7 @@
   <instructionSet>
     <xml action="copy" source="xml/hst/templates/layout-webpage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="xml/hst/templates/standard-main.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="xml/hst/templates/standard-menu.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="xml/hst/templates/standard-main-overview-content.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="xml/hst/templates/standard-main-content.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="xml/hst/templates/news-main-overview-content.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
@@ -88,6 +90,26 @@
   <instructionSet>
     <xml action="copy" source="xml/hst/catalog/basic-powerpack-catalog.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:catalog"/>
   </instructionSet>
+
+  <!--
+    MENU
+  -->
+  <instructionSet>
+    <xml action="copy"  source="xml/hst/menu/main.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemenus"/>
+  </instructionSet>
+  <!--
+    css
+  -->
+  <instructionSet>
+    <xml action="copy" source="bootstrap/css/bootstrap.css" target="{{siteWebRoot}}/css/bootstrap.css"/>
+    <xml action="copy" source="bootstrap/css/bootstrap.min.css" target="{{siteWebRoot}}/css/bootstrap.min.css"/>
+    <xml action="copy" source="bootstrap/fonts/glyphicons-halflings-regular.eot" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.eot"/>
+    <xml action="copy" source="bootstrap/fonts/glyphicons-halflings-regular.svg" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.svg"/>
+    <xml action="copy" source="bootstrap/fonts/glyphicons-halflings-regular.ttf" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.ttf"/>
+    <xml action="copy" source="bootstrap/fonts/glyphicons-halflings-regular.woff" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.woff"/>
+  </instructionSet>
+
+
   <!-- SAMPLES GROUP-->
   <instructionSet group="samples">
     <xml action="copy" source="xml/samples/content/documents/events/sample_breakfast.xml" target="/content/documents/{{namespace}}/events/{{dateRepoYearMonth}}"/>

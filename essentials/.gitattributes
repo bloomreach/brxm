@@ -393,6 +393,12 @@ dashboard-plugins/dashboard-xinha-plugin/src/test/resources/root.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/pom.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/java/org/onehippo/cms7/essentials/powerpack/BasicPowerpack.java -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/META-INF/instructions.xml -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/bootstrap/css/bootstrap.css -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/bootstrap/css/bootstrap.min.css -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/bootstrap/fonts/glyphicons-halflings-regular.eot -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/bootstrap/fonts/glyphicons-halflings-regular.svg -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/bootstrap/fonts/glyphicons-halflings-regular.ttf -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/bootstrap/fonts/glyphicons-halflings-regular.woff -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/icons/new-folder-16.png -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/java/EventsDocument.txt -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/java/NewsDocument.txt -text
@@ -400,6 +406,7 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/reso
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-component-event-detail.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-component-events.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-component-list.jsp -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-component-menu.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-component-news-detail.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-component-news.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-home.jsp -text
@@ -414,6 +421,7 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/reso
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/catalog/basic-powerpack-catalog.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/components/content.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/components/list.xml -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/menu/main.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/pages/eventsoverview.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/pages/eventspage.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/pages/homepage.xml -text
@@ -432,6 +440,7 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/reso
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/templates/standard-main-content.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/templates/standard-main-overview-content.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/templates/standard-main.xml -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/templates/standard-menu.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/namespaces/eventsdocument.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/namespaces/newsdocument.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/samples/content/documents/events/sample_breakfast.xml -text
