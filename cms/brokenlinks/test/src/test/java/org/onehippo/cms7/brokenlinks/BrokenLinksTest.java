@@ -86,7 +86,7 @@ public class BrokenLinksTest extends RepositoryTestCase {
         jobContextAttrs.put(CheckExternalBrokenLinksConfig.CONFIG_HTTP_CLIENT_CLASSNAME, TestHttpClient.class.getName());
         jobContext = new RepositoryJobExecutionContext(session, jobContextAttrs) {
             @Override
-            public Session getSession(Credentials credentials) throws LoginException, RepositoryException {
+            public Session createSession(Credentials credentials) throws LoginException, RepositoryException {
                 return session.impersonate(new SimpleCredentials(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD));
             }
         };

@@ -68,7 +68,7 @@ public class BrokenLinksCheckingJob implements RepositoryJob {
         Session session = null;
 
         try {
-            session = context.getSystemSession();
+            session = context.createSystemSession();
             session.refresh(false);
             Map<String, String> params = new HashMap<String, String>();
 
