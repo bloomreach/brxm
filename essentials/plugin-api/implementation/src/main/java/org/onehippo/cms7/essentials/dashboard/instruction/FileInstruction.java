@@ -17,6 +17,8 @@
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -37,6 +39,7 @@ import org.onehippo.cms7.essentials.dashboard.event.InstructionEvent;
 import org.onehippo.cms7.essentials.dashboard.event.MessageEvent;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +64,7 @@ public class FileInstruction extends PluginInstruction {
             .build();
     private static final Logger log = LoggerFactory.getLogger(FileInstruction.class);
     private String message;
+    private boolean binary;
 
     @Inject
     private EventBus eventBus;
@@ -114,48 +118,54 @@ public class FileInstruction extends PluginInstruction {
             eventBus.post(new InstructionEvent(this));
             return InstructionStatus.SKIPPED;
         }
-        File file = new File(source);
-        if (!file.exists()) {
-            // try to read as resource:
-            final InputStream stream = getClass().getClassLoader().getResourceAsStream(source);
-            if (stream != null) {
-                try {
 
-                    if (!destination.exists()) {
-                        createParentDirectories(destination);
+        InputStream stream = null;
 
-                    }
-                    // replace file placeholders if needed:
-                    if (isBinary()) {
-                        FileUtils.copyInputStreamToFile(stream, destination);
-                    } else {
-                        final String replacedData = TemplateUtils.injectTemplate(source, context.getPlaceholderData(), getClass());
-                        FileUtils.copyInputStreamToFile(IOUtils.toInputStream(replacedData), destination);
-                    }
-
-                    sendEvents();
-                    return InstructionStatus.SUCCESS;
-                } catch (IOException e) {
-                    log.error("Error while copy resource", e);
-                } finally {
-                    IOUtils.closeQuietly(stream);
+        try {
+            stream = extractStream();
+            if (stream == null) {
+                log.error("Stream was null for source: ", source);
+                return InstructionStatus.FAILED;
+            }
+            if (destination.exists()) {
+                final boolean success = destination.delete();
+                if (!success) {
+                    log.error("Failed to delete destination file: ", destination);
+                    return InstructionStatus.FAILED;
                 }
             }
-            log.error("Source file doesn't exists: {}", file);
-            message = messageCopyError;
-            eventBus.post(new InstructionEvent(this));
-            return InstructionStatus.FAILED;
-        }
-        try {
-            FileUtils.copyFile(file, destination);
+            // try to read as resource:
+            if (!destination.exists()) {
+                createParentDirectories(destination);
+            }
+            // replace file placeholders if needed:
+            if (isBinary()) {
+                FileUtils.copyInputStreamToFile(stream, destination);
+            } else {
+                final String content = GlobalUtils.readStreamAsText(stream);
+                final String replacedData = TemplateUtils.replaceTemplateData(content, context.getPlaceholderData());
+                FileUtils.copyInputStreamToFile(IOUtils.toInputStream(replacedData), destination);
+            }
             sendEvents();
             return InstructionStatus.SUCCESS;
         } catch (IOException e) {
-            log.error("Error creating file", e);
+            message = messageCopyError;
+            log.error("Error while copy resource", e);
+        } finally {
+            IOUtils.closeQuietly(stream);
         }
         eventBus.post(new InstructionEvent(this));
         return InstructionStatus.FAILED;
+    }
 
+    private InputStream extractStream() throws FileNotFoundException {
+        // try to read file first:
+        final File file = new File(source);
+        if (file.exists()) {
+           return new FileInputStream(file);
+        } else {
+           return getClass().getClassLoader().getResourceAsStream(source);
+        }
     }
 
     /**
@@ -187,8 +197,13 @@ public class FileInstruction extends PluginInstruction {
         }
     }
 
-    private boolean isBinary() {
-        return source.endsWith(".png") || source.endsWith(".jpeg");
+    @XmlAttribute(name = "binary")
+    public boolean isBinary() {
+        return binary;
+    }
+
+    public void setBinary(final boolean binary) {
+        this.binary = binary;
     }
 
     private InstructionStatus delete() {

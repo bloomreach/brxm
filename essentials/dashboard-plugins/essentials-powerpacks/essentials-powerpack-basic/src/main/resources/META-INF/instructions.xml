@@ -31,8 +31,8 @@
     <xml action="copy" source="xml/folderoptions/new-events-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
   </instructionSet>
   <instructionSet>
-    <file action="copy" overwrite="true" source="icons/new-folder-16.png" target="{{cmsRoot}}/src/main/resources/org/hippoecm/frontend/plugins/standardworkflow/new-news-folder-16.png"/>
-    <file action="copy" overwrite="true" source="icons/new-folder-16.png" target="{{cmsRoot}}/src/main/resources/org/hippoecm/frontend/plugins/standardworkflow/new-events-folder-16.png"/>
+    <file action="copy" binary="true" overwrite="true" source="icons/new-folder-16.png" target="{{cmsRoot}}/src/main/resources/org/hippoecm/frontend/plugins/standardworkflow/new-news-folder-16.png"/>
+    <file action="copy" binary="true" overwrite="true" source="icons/new-folder-16.png" target="{{cmsRoot}}/src/main/resources/org/hippoecm/frontend/plugins/standardworkflow/new-events-folder-16.png"/>
   </instructionSet>
   <instructionSet>
     <folder path="/content/documents/{{namespace}}/news/{{dateRepoYearMonth}}" template="xml/content/news.xml"/>

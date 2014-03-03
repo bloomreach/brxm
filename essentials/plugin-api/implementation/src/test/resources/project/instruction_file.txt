@@ -1,2 +1,2 @@
 FOR [FileInstructions] TESTING ONLY:
-project namespace is: ${namespace}
+project namespace is: {{namespace}}
