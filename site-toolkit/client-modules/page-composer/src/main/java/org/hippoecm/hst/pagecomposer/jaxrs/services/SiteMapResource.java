@@ -39,8 +39,8 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.CurrentPreviewConfigurationValidator;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.NodePathPrefixValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.NotNullValidator;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.PreviewNodeValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,17 +75,17 @@ public class SiteMapResource extends AbstractConfigResource {
     public Response update(final SiteMapItemRepresentation siteMapItem) {
         final List<Validator> preValidators = new ArrayList<>();
         preValidators.add(new CurrentPreviewConfigurationValidator(siteMapItem.getId(), siteMapHelper));
-        preValidators.add(new PreviewNodeValidator(getPreviewConfigurationPath(),
-                siteMapItem.getId(), HstNodeTypes.NODETYPE_HST_SITEMAPITEM, true));
+        preValidators.add(new NodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
+                siteMapItem.getId(), HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
 
-        // if the update has a uuid for componenent id, we need to re-prototype. In that case we also need to
+        // if the update has a uuid for componenent id, we need to re-apply a prototype. In that case we also need to
         // validate the prototype page
         if (siteMapItem.getComponentConfigurationId() != null) {
             try {
                 UUID.fromString(siteMapItem.getComponentConfigurationId());
                 // new page id (re-prototype)
-                preValidators.add(new PreviewNodeValidator(getPreviewConfigurationPath(),
-                        siteMapItem.getComponentConfigurationId(), "hst:abstractcomponent", false));
+                preValidators.add(new NodePathPrefixValidator(getPreviewConfigurationPrototypePath(),
+                        siteMapItem.getComponentConfigurationId(), "hst:abstractcomponent"));
             } catch (IllegalArgumentException e) {
                 // no problem: no new page id has been set
             }
@@ -115,13 +115,13 @@ public class SiteMapResource extends AbstractConfigResource {
         final List<Validator> preValidators = new ArrayList<>();
 
         preValidators.add(new NotNullValidator(siteMapItem.getName(), ClientError.ITEM_NO_NAME));
-        preValidators.add(new PreviewNodeValidator(getPreviewConfigurationPath(),
-                siteMapItem.getComponentConfigurationId(), "hst:abstractcomponent", false));
+        preValidators.add(new NodePathPrefixValidator(getPreviewConfigurationPrototypePath(),
+                siteMapItem.getComponentConfigurationId(), "hst:abstractcomponent"));
 
         if (parentId != null) {
             preValidators.add(new CurrentPreviewConfigurationValidator(parentId, siteMapHelper));
-            preValidators.add(new PreviewNodeValidator(getPreviewConfigurationPath(),
-                    parentId, HstNodeTypes.NODETYPE_HST_SITEMAPITEM, true));
+            preValidators.add(new NodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
+                    parentId, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
         }
 
         return tryExecute(new Callable<Response>() {
@@ -149,12 +149,12 @@ public class SiteMapResource extends AbstractConfigResource {
 
         final List<Validator> preValidators = new ArrayList<>();
         preValidators.add(new CurrentPreviewConfigurationValidator(id, siteMapHelper));
-        preValidators.add(new PreviewNodeValidator(getPreviewConfigurationPath(),
-                id, HstNodeTypes.NODETYPE_HST_SITEMAPITEM, true));
+        preValidators.add(new NodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
+                id, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
         if (parentId != null) {
             preValidators.add(new CurrentPreviewConfigurationValidator(parentId, siteMapHelper));
-            preValidators.add(new PreviewNodeValidator(getPreviewConfigurationPath(),
-                    parentId, HstNodeTypes.NODETYPE_HST_SITEMAPITEM, true));
+            preValidators.add(new NodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
+                    parentId, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
         }
         return tryExecute(new Callable<Response>() {
             @Override
@@ -177,8 +177,8 @@ public class SiteMapResource extends AbstractConfigResource {
         final List<Validator> preValidators = new ArrayList<>();
 
         preValidators.add(new CurrentPreviewConfigurationValidator(id, siteMapHelper));
-        preValidators.add(new PreviewNodeValidator(getPreviewConfigurationPath(),
-                id, HstNodeTypes.NODETYPE_HST_SITEMAPITEM, true));
+        preValidators.add(new NodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
+                id, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
 
         return tryExecute(new Callable<Response>() {
             @Override

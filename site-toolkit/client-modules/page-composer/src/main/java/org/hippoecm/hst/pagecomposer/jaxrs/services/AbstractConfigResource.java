@@ -24,6 +24,7 @@ import javax.jcr.Session;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
@@ -187,5 +188,14 @@ public class AbstractConfigResource {
         return getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
     }
 
+
+    protected String getPreviewConfigurationWorkspacePath() {
+        return getPreviewConfigurationPath() + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
+    }
+
+
+    protected String getPreviewConfigurationPrototypePath() {
+        return getPreviewConfigurationPath() + "/" + HstNodeTypes.NODENAME_HST_PROTOTYPEPAGES;
+    }
 
 }

@@ -40,8 +40,8 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.NodePathPrefixValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.NotNullValidator;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.PreviewNodeValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 
 @Path("/" + HstNodeTypes.NODETYPE_HST_SITEMENU + "/")
@@ -92,8 +92,8 @@ public class SiteMenuResource extends AbstractConfigResource {
                            final SiteMenuItemRepresentation newMenuItem) {
         List<Validator> preValidators = getDefaultMenuModificationValidators();
         preValidators.add(new NotNullValidator(newMenuItem.getName(), ClientError.ITEM_NO_NAME));
-        preValidators.add(new PreviewNodeValidator(getPreviewConfigurationPath(),
-                parentId, null, true));
+        preValidators.add(new NodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
+                parentId, null));
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
@@ -113,8 +113,8 @@ public class SiteMenuResource extends AbstractConfigResource {
 
         List<Validator> preValidators = getDefaultMenuModificationValidators();
         preValidators.add(new NotNullValidator(modifiedItem.getName(), ClientError.ITEM_NO_NAME));
-        preValidators.add(new PreviewNodeValidator(getPreviewConfigurationPath(),
-                modifiedItem.getId(), null, true));
+        preValidators.add(new NodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
+                modifiedItem.getId(), null));
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
@@ -133,8 +133,8 @@ public class SiteMenuResource extends AbstractConfigResource {
                          final @PathParam("childIndex") Integer childIndex) {
 
         List<Validator> preValidators = getDefaultMenuModificationValidators();
-        preValidators.add(new PreviewNodeValidator(getPreviewConfigurationPath(), sourceId, null, true));
-        preValidators.add(new PreviewNodeValidator(getPreviewConfigurationPath(), parentId, null, true));
+        preValidators.add(new NodePathPrefixValidator(getPreviewConfigurationWorkspacePath(), sourceId, null));
+        preValidators.add(new NodePathPrefixValidator(getPreviewConfigurationWorkspacePath(), parentId, null));
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
@@ -151,7 +151,7 @@ public class SiteMenuResource extends AbstractConfigResource {
     @Path("/delete/{menuItemId}")
     public Response delete(final @PathParam("menuItemId") String menuItemId) {
         List<Validator> preValidators = getDefaultMenuModificationValidators();
-        preValidators.add(new PreviewNodeValidator(getPreviewConfigurationPath(), menuItemId, null, true));
+        preValidators.add(new NodePathPrefixValidator(getPreviewConfigurationWorkspacePath(), menuItemId, null));
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
@@ -184,8 +184,8 @@ public class SiteMenuResource extends AbstractConfigResource {
     private List<Validator> getDefaultMenuModificationValidators() {
         List<Validator> preValidators = new ArrayList<>();
         final String requestConfigIdentifier = getPageComposerContextService().getRequestConfigIdentifier();
-        preValidators.add(new PreviewNodeValidator(getPreviewConfigurationPath(),
-                requestConfigIdentifier, HstNodeTypes.NODETYPE_HST_SITEMENU, true));
+        preValidators.add(new NodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
+                requestConfigIdentifier, HstNodeTypes.NODETYPE_HST_SITEMENU));
         return preValidators;
     }
 

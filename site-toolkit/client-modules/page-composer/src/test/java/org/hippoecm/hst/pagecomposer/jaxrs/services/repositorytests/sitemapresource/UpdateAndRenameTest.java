@@ -40,7 +40,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.PreviewNodeValidator;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.NodePathPrefixValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -70,7 +70,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
             assertTrue(home instanceof CanonicalInfo);
             assertTrue(((CanonicalInfo) home).isWorkspaceConfiguration());
             final String homeUuid = ((CanonicalInfo) home).getCanonicalIdentifier();
-            Validator validator = new PreviewNodeValidator(getPreviewConfigurationPath(), homeUuid, HstNodeTypes.NODETYPE_HST_SITEMAPITEM, true);
+            Validator validator = new NodePathPrefixValidator(getPreviewConfigurationWorkspacePath() , homeUuid, HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
             validator.validate(ctx);
         }
 
@@ -78,12 +78,12 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
             final HstSiteMapItem news = mount.getPreviewHstSite().getSiteMap().getSiteMapItem("news");
             assertTrue(((CanonicalInfo) news).isWorkspaceConfiguration());
             final String newsUuid = ((CanonicalInfo) news).getCanonicalIdentifier();
-            new PreviewNodeValidator(getPreviewConfigurationPath(), newsUuid, HstNodeTypes.NODETYPE_HST_SITEMAPITEM, true).validate(ctx);
+            new NodePathPrefixValidator(getPreviewConfigurationWorkspacePath(), newsUuid, HstNodeTypes.NODETYPE_HST_SITEMAPITEM).validate(ctx);
 
             final HstSiteMapItem newsWildcardChild = news.getChild("_default_");
             assertTrue(((CanonicalInfo) newsWildcardChild).isWorkspaceConfiguration());
             final String newsWildcardChildUuid = ((CanonicalInfo) newsWildcardChild).getCanonicalIdentifier();
-            new PreviewNodeValidator(getPreviewConfigurationPath(), newsWildcardChildUuid, HstNodeTypes.NODETYPE_HST_SITEMAPITEM, true).validate(ctx);
+            new NodePathPrefixValidator(getPreviewConfigurationWorkspacePath(), newsWildcardChildUuid, HstNodeTypes.NODETYPE_HST_SITEMAPITEM).validate(ctx);
         }
 
         {
@@ -91,7 +91,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
             assertFalse(((CanonicalInfo) aboutUs).isWorkspaceConfiguration());
             final String aboutUsUuid = ((CanonicalInfo) aboutUs).getCanonicalIdentifier();
             try {
-                new PreviewNodeValidator(getPreviewConfigurationPath(), aboutUsUuid, HstNodeTypes.NODETYPE_HST_SITEMAPITEM, true).validate(ctx);
+                new NodePathPrefixValidator(getPreviewConfigurationWorkspacePath(), aboutUsUuid, HstNodeTypes.NODETYPE_HST_SITEMAPITEM).validate(ctx);
                 fail("Expected PreviewWorkspaceNodeValidator to fail on non workspace sitemap item");
             } catch (ClientException e) {
                 assertThat(e.getError(), is(ClientError.ITEM_NOT_IN_WORKSPACE));

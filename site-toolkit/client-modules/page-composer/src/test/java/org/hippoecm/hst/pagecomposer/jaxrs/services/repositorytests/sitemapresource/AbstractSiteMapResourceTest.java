@@ -24,6 +24,7 @@ import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
@@ -191,6 +192,11 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
 
     protected String getPreviewConfigurationPath() {
         return mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
+    }
+
+
+    protected String getPreviewConfigurationWorkspacePath() {
+        return getPreviewConfigurationPath() + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
     }
 
 }

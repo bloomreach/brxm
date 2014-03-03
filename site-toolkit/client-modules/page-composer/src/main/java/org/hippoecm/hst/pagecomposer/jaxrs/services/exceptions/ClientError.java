@@ -42,6 +42,8 @@ public enum ClientError {
 
     ITEM_NOT_IN_PREVIEW,
 
+    ITEM_NOT_CORRECT_LOCATION,
+
     ITEM_NOT_FOUND,
 
     ITEM_NOT_IN_WORKSPACE,
