@@ -21,6 +21,7 @@ import org.hippoecm.repository.util.DateTools;
 import org.onehippo.cms7.essentials.components.info.EssentialsDocumentListComponentInfo;
 import org.onehippo.cms7.essentials.components.info.EssentialsNewsComponentInfo;
 import org.onehippo.cms7.essentials.components.paging.Pageable;
+import org.onehippo.cms7.essentials.components.utils.SiteUtils;
 import org.onehippo.cms7.essentials.components.utils.query.HstQueryBuilder;
 import org.onehippo.cms7.essentials.components.utils.query.QueryBuilder;
 import org.slf4j.Logger;
@@ -57,7 +58,7 @@ public class EssentialsNewsComponent extends EssentialsListComponent {
         final QueryBuilder builder = new HstQueryBuilder(this, request);
         EssentialsNewsComponentInfo newsComponentInfo = (EssentialsNewsComponentInfo) paramInfo;
         final String documentTypes = paramInfo.getDocumentTypes();
-        final String[] types = parseDocumentTypes(documentTypes);
+        final String[] types = SiteUtils.parseCommaSeparatedValue(documentTypes);
 
         builder.scope(scope).documents(types).includeSubtypes();
 

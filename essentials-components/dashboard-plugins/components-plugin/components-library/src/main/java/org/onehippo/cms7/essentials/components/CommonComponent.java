@@ -9,6 +9,7 @@ import java.util.Collection;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
@@ -17,13 +18,16 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.util.PathUtils;
+import org.onehippo.cms7.essentials.components.utils.SiteUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
 
 /**
- * Base HST component, containing default values and methods
+ * Base HST component, containing default values and utility methods
  *
  * @version "$Id$"
  */
@@ -115,41 +119,15 @@ public class CommonComponent extends BaseHstComponent {
      * @return null if document of folder exists
      */
     public HippoBean getScopeBean(final HstRequest request, final String path) {
-        HippoBean scope;
-        final HippoBean siteBean = getSiteContentBaseBean(request);
-        if (Strings.isNullOrEmpty(path)) {
-            scope = siteBean;
-        } else {
-            final String myPath = PathUtils.normalizePath(path);
-            log.debug("Looking for bean {}", myPath);
-            scope = siteBean.getBean(myPath);
-            if (scope == null) {
-                log.warn("Bean was null for selected path:  {}", myPath);
-                scope = siteBean;
-            }
-        }
-        return scope;
+        return SiteUtils.getScopeBean(request, path, this);
     }
 
-    public int getIntParameter(HstRequest request, String parameter, int defaultValue) {
-        final String p = getAnyParameter(request, parameter);
-        if (p == null) {
-            return defaultValue;
-        }
-        try {
-            return Integer.parseInt(p);
-        } catch (NumberFormatException ignore) {
-            // ignore exception
-        }
-        return defaultValue;
+    public  int getIntParameter(HstRequest request, String parameter, int defaultValue) {
+        return SiteUtils.getIntParameter(request, parameter, defaultValue, this);
     }
 
     public boolean getBooleanParam(HstRequest request, String parameter, boolean defaultValue) {
-        final String p = getAnyParameter(request, parameter);
-        if (p == null) {
-            return defaultValue;
-        }
-        return Boolean.valueOf(p);
+        return SiteUtils.getBooleanParam(request, parameter, defaultValue, this);
     }
 
     /**
@@ -163,16 +141,7 @@ public class CommonComponent extends BaseHstComponent {
      * @return null if empty or undefined
      */
     public String getAnyParameter(HstRequest request, String parameter) {
-
-        String p = request.getParameter(parameter);
-        if (Strings.isNullOrEmpty(p)) {
-            p = getPublicRequestParameter(request, parameter);
-        }
-
-        if (Strings.isNullOrEmpty(p)) {
-            p = getComponentParameter(parameter);
-        }
-        return p;
+       return SiteUtils.getAnyParameter(parameter, request, this);
     }
 
 
@@ -187,8 +156,7 @@ public class CommonComponent extends BaseHstComponent {
         if (Strings.isNullOrEmpty(path)) {
             return;
         }
-
-        log.debug("Fetching carousel item for path: [{}]", path);
+        log.debug("Fetching item for path: [{}]", path);
         final HippoDocument bean = getHippoBeanForPath(path, HippoDocument.class, request);
         if (bean != null) {
             beans.add(bean);
@@ -196,4 +164,6 @@ public class CommonComponent extends BaseHstComponent {
             log.debug("Couldn't find bean for path: {}", path);
         }
     }
+
+
 }
