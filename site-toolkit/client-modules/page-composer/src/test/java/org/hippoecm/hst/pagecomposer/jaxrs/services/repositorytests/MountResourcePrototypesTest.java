@@ -16,6 +16,8 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
@@ -33,6 +35,9 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
 
     @Test
     public void test_no_prototype_pages() throws Exception {
+        // delete existing prototype page first
+        session.getNode("/hst:hst/hst:configurations/unittestproject/hst:pageprototypes").remove();
+        session.save();
         // give time for jcr events to evict model
         Thread.sleep(200);
         mockNewRequest(session, "localhost", "/home");
@@ -44,25 +49,19 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
 
     @Test
     public void test_prototype_pages() throws Exception {
-        // make a page prototype
-        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestcommon/hst:pages/homepage",
-                "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/proto");
+        // "/hst:hst/hst:configurations/unittestproject/hst:pageprototypes" contains 1 prototype 'singlerow-page'
 
-        session.save();
-        // give time for jcr events to evict model
-        Thread.sleep(200);
         mockNewRequest(session, "localhost", "/home");
         PagePrototypesRepresentation representation = (PagePrototypesRepresentation)((ExtResponseRepresentation) mountResource.getPagePrototypes().getEntity()).getData();
         assertEquals(1, representation.getPages().size());
-        assertEquals("proto", representation.getPages().get(0).getName());
+        assertEquals("singlerow-page", representation.getPages().get(0).getName());
     }
 
     @Test
     public void test_prototype_pages_not_from_inherited_config() throws Exception {
         // make a common config page prototype : inherited config pages should not be available as prototype
-        // TODO discuss whether we want to support inherited config pages as prototype
-        session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:pages/standarddetail")
-                .setProperty(HstNodeTypes.COMPONENT_PROPERTY_PROTOTYPE, true);
+        session.move("/hst:hst/hst:configurations/unittestproject/hst:pageprototypes/singlerow-page",
+                "/hst:hst/hst:configurations/unittestcommon/hst:pageprototypes/singlerow-page");
         session.save();
         // give time for jcr events to evict model
         Thread.sleep(200);
@@ -73,12 +72,15 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
 
     @Test
     public void test_prototype_pages_are_sorted() throws Exception {
-        movePagesFromCommonToUnitTestProject();
-        // make a all pages prototype
-        for (Node page : new NodeIterable(session.getNode("/hst:hst/hst:configurations/unittestproject/hst:pages").getNodes())) {
-            page.setProperty(HstNodeTypes.COMPONENT_PROPERTY_PROTOTYPE, true);
-        }
+
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:pageprototypes/singlerow-page",
+                "/hst:hst/hst:configurations/unittestproject/hst:pageprototypes/aaa-page");
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:pageprototypes/singlerow-page",
+                "/hst:hst/hst:configurations/unittestproject/hst:pageprototypes/ccc-page");
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:pageprototypes/singlerow-page",
+                "/hst:hst/hst:configurations/unittestproject/hst:pageprototypes/bbb-page");
         session.save();
+
         // give time for jcr events to evict model
         Thread.sleep(200);
         mockNewRequest(session, "localhost", "/home");

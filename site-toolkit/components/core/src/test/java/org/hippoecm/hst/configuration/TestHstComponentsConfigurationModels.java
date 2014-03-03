@@ -82,6 +82,10 @@ public class TestHstComponentsConfigurationModels extends AbstractTestConfigurat
      */
     @Test
     public void testSharedHstComponentsConfigurations() throws Exception {
+        // since unittestproject contains its own 'hst:pageprototypes' node, we first move this node away (otherwise
+        // instance won't be shared)
+        Session session = createSession();
+        removePagePrototypeFromConfig(session);
 
         ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "", "/");
         ResolvedMount mount2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "", "/");
@@ -140,6 +144,9 @@ public class TestHstComponentsConfigurationModels extends AbstractTestConfigurat
 
         assertNotSame("Expected non shared HstComponentsConfiguration objects failed", service1 , WithDiffHstCompServ1);
         assertNotSame("Expected non shared HstComponentsConfiguration objects failed", service1 , WithDiffHstCompServ2);
+
+        restorePagePrototypesFromConfig(session);
+        session.logout();
     }
 
     /**
@@ -149,7 +156,8 @@ public class TestHstComponentsConfigurationModels extends AbstractTestConfigurat
      */
     @Test
     public void testReloadOnlyChangedHstComponentsConfigurations() throws Exception {
-        final Session session = getSession();
+        final Session session = createSession();
+        removePagePrototypeFromConfig(session);
 
         final ResolvedMount mountBefore1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "", "/");
         final ResolvedMount mountBefore2 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "", "/");
@@ -248,6 +256,7 @@ public class TestHstComponentsConfigurationModels extends AbstractTestConfigurat
 
         session.getNode("/hst:hst/hst:configurations/global").getNode("hst:sitemenus").remove();
         session.save();
+        restorePagePrototypesFromConfig(session);
         session.logout();
     }
 
@@ -268,7 +277,7 @@ public class TestHstComponentsConfigurationModels extends AbstractTestConfigurat
         HstComponentsConfiguration service6 = mount6.getMount().getHstSite().getComponentsConfiguration();
         HstComponentsConfiguration service7 = mount7.getMount().getHstSite().getComponentsConfiguration();
 
-        final Session session = getSession();
+        final Session session = createSession();
         Node defaultComponents = session.getNode("/hst:hst/hst:configurations/hst:default/hst:components");
         defaultComponents.addNode("testNewUniqueNamedNodeInHstDefaultConfigurationTriggersReloadAll", "hst:component");
 
@@ -350,7 +359,7 @@ public class TestHstComponentsConfigurationModels extends AbstractTestConfigurat
         HstComponentsConfiguration service6 = mount6.getMount().getHstSite().getComponentsConfiguration();
         HstComponentsConfiguration service7 = mount7.getMount().getHstSite().getComponentsConfiguration();
 
-        final Session session = getSession();
+        final Session session = createSession();
         Node configurationsNode = session.getNode("/hst:hst/hst:configurations");
         Node commonCatalog = configurationsNode.addNode("hst:catalog","hst:catalog");
         commonCatalog.addNode("testNewUniqueNamedNodeInCommonCatalogTriggersReloadAll", "hst:containeritempackage");
@@ -428,7 +437,19 @@ public class TestHstComponentsConfigurationModels extends AbstractTestConfigurat
         }
     }
 
-    protected Session getSession() throws RepositoryException {
+
+    private void restorePagePrototypesFromConfig(final Session session) throws RepositoryException {
+        session.move("/hst:pageprototypes", "/hst:hst/hst:configurations/unittestproject/hst:pageprototypes");
+        session.save();
+    }
+
+    private void removePagePrototypeFromConfig(final Session session) throws RepositoryException {
+        session.move("/hst:hst/hst:configurations/unittestproject/hst:pageprototypes", "/hst:pageprototypes");
+        session.save();
+    }
+
+
+    protected Session createSession() throws RepositoryException {
         Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
         return repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
     }

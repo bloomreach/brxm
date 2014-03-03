@@ -1205,6 +1205,7 @@ toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/uni
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestcommon/pages.xml -text
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestcommon/sitemenus.xml -text svneol=unset#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestcommon/templates.xml -text
+toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestproject/pageprototypes.xml -text
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestproject/sitemap.xml svneol=native#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestproject/sitemapitemhandlers.xml -text svneol=unset#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestproject/sitemenus.xml svneol=native#text/plain
