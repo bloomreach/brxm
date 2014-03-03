@@ -6,7 +6,6 @@ package org.onehippo.cms7.essentials.components;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
@@ -19,14 +18,13 @@ import org.onehippo.cms7.essentials.components.info.EssentialsDocumentListCompon
 import org.onehippo.cms7.essentials.components.info.EssentialsPageable;
 import org.onehippo.cms7.essentials.components.paging.IterablePagination;
 import org.onehippo.cms7.essentials.components.paging.Pageable;
+import org.onehippo.cms7.essentials.components.utils.SiteUtils;
 import org.onehippo.cms7.essentials.components.utils.query.HstQueryBuilder;
 import org.onehippo.cms7.essentials.components.utils.query.QueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
 
 /**
  * HST component used for listing of documents.
@@ -111,7 +109,7 @@ public class EssentialsListComponent extends CommonComponent {
     protected <T extends EssentialsDocumentListComponentInfo> HstQuery buildQuery(final HstRequest request, final T paramInfo, final HippoBean scope) {
         final QueryBuilder builder = new HstQueryBuilder(this, request);
         final String documentTypes = paramInfo.getDocumentTypes();
-        final String[] types = parseDocumentTypes(documentTypes);
+        final String[] types = SiteUtils.parseCommaSeparatedValue(documentTypes);
         if (log.isDebugEnabled()) {
             log.debug("Searching for document types:  {}, and including subtypes: {}", documentTypes, paramInfo.getIncludeSubtypes());
         }
@@ -191,18 +189,5 @@ public class EssentialsListComponent extends CommonComponent {
         return showPagination;
     }
 
-    /**
-     * For given string, comma separate it and convert to array
-     *
-     * @param documentTypes comma separated document types
-     * @return empty array if empty
-     */
-    protected String[] parseDocumentTypes(final String documentTypes) {
-        if (Strings.isNullOrEmpty(documentTypes)) {
-            return ArrayUtils.EMPTY_STRING_ARRAY;
-        }
-        final Iterable<String> iterable = Splitter.on(",").trimResults().omitEmptyStrings().split(documentTypes);
-        return Iterables.toArray(iterable, String.class);
-    }
 
 }
