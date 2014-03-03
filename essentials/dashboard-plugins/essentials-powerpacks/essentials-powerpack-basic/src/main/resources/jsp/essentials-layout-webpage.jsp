@@ -7,10 +7,8 @@
   <hst:headContributions categoryExcludes="scripts" xhtml="true"/>
 </head>
 <body>
-<div>
+<div class="container">
   <hst:include ref="menu"/>
-</div>
-<div>
   <hst:include ref="main"/>
 </div>
 </body>
