@@ -128,6 +128,10 @@ hr {
 }
 
 /* --- Confirmation message --- */
+.edit-menu-item-container {
+    position: relative;
+}
+
 .overlay {
     margin-left: -292px;
     top: 0;
