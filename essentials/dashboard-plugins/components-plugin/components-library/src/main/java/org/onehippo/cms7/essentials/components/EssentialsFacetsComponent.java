@@ -51,10 +51,14 @@ public class EssentialsFacetsComponent extends CommonComponent {
             request.setAttribute(REQUEST_PARAM_PAGEABLE, DefaultPagination.emptyCollection());
             return;
         }
-
         final String query = cleanupSearchQuery(getAnyParameter(request, REQUEST_PARAM_QUERY));
         // NOTE: query may be null in this case
-        final HippoFacetNavigationBean hippoFacetNavigationBean = BeanUtils.getFacetNavigationBean(request, query, getObjectConverter());
+        final HippoFacetNavigationBean hippoFacetNavigationBean = BeanUtils.getFacetNavigationBean(request, facetPath, query, getObjectConverter());
+        if(hippoFacetNavigationBean==null){
+            log.warn("Facet navigation bean for facet path: {} was null", facetPath);
+            request.setAttribute(REQUEST_PARAM_PAGEABLE, DefaultPagination.emptyCollection());
+            return;
+        }
         final HippoResultSetBean hippoResultSetBean = hippoFacetNavigationBean.getResultSet();
         final int pageSize = componentInfo.getPageSize();
         final int page = getAnyIntParameter(request, REQUEST_PARAM_PAGE, 1);
