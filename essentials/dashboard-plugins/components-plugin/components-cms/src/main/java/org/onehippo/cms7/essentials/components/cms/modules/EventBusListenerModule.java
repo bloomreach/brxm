@@ -28,7 +28,7 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.onehippo.cms7.services.eventbus.Subscribe;
 import org.onehippo.repository.events.HippoWorkflowEvent;
-import org.onehippo.repository.modules.DaemonModule;
+import org.onehippo.repository.modules.ConfigurableDaemonModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * we're only interested in the "save" event for blogposts. The blog-post specific code can be found in the
  * BlogUpdater class.
  */
-public class EventBusListenerModule implements DaemonModule {
+public class EventBusListenerModule implements ConfigurableDaemonModule {
 
     public static final Logger log = LoggerFactory.getLogger(EventBusListenerModule.class);
 
@@ -47,9 +47,17 @@ public class EventBusListenerModule implements DaemonModule {
 
     private Session session;
     private EventBusListener listener;
+    private String projectNamespace;
 
+    @Override
+    public void configure(final Node moduleConfig) throws RepositoryException {
+        if (moduleConfig.hasProperty("projectNamespace")) {
+            projectNamespace = moduleConfig.getProperty("projectNamespace").getString();
+        }
+    }
     /**
      * Initialization of daemon module, register listener.
+     *
      * @param session module's JCR session
      */
     @Override
@@ -57,6 +65,7 @@ public class EventBusListenerModule implements DaemonModule {
         this.session = session;
         listener = new EventBusListener();
         HippoServiceRegistry.registerService(listener, HippoEventBus.class);
+
     }
 
     /**
@@ -70,9 +79,10 @@ public class EventBusListenerModule implements DaemonModule {
     /**
      * Helper function to derive a certain document variant, given a hippo:mirror node.
      * Optimally, the CMS or repository would provide this functionality.
+     *
      * @param mirror repository node of type hippo:mirror
      * @param state  desired state of the variant
-     * @return       JCR node representing that variant, or null.
+     * @return JCR node representing that variant, or null.
      * @throws javax.jcr.RepositoryException
      */
     public static Node getReferencedVariant(final Node mirror, final String state) throws RepositoryException {
@@ -88,10 +98,9 @@ public class EventBusListenerModule implements DaemonModule {
     }
 
     /**
-     *
      * @param handle JCR node representing a handle
      * @param state  desired state of the variant
-     * @return       JCR node representing that variant, or null.
+     * @return JCR node representing that variant, or null.
      * @throws javax.jcr.RepositoryException
      */
     public static Node getVariant(final Node handle, final String state) throws RepositoryException {
@@ -99,13 +108,14 @@ public class EventBusListenerModule implements DaemonModule {
         while (variants.hasNext()) {
             final Node variant = variants.nextNode();
             if (variant.hasProperty("hippostd:state")
-                && variant.getProperty("hippostd:state").getString().equals(state))
-            {
+                    && variant.getProperty("hippostd:state").getString().equals(state)) {
                 return variant;
             }
         }
         return null;
     }
+
+
 
     /**
      * The actual listener being called by the Hippo Event Bus.
@@ -114,6 +124,7 @@ public class EventBusListenerModule implements DaemonModule {
 
         /**
          * Dispatch the event per workflow action.
+         *
          * @param event the event.
          */
         @Subscribe
@@ -130,6 +141,7 @@ public class EventBusListenerModule implements DaemonModule {
         /**
          * Dispatch a "save" event.
          * Derive the unpublished variant of the document the save event pertains to, and check who wants it.
+         *
          * @param event the event.
          */
         private void dispatchSaveEvent(HippoWorkflowEvent<?> event) {
@@ -139,8 +151,8 @@ public class EventBusListenerModule implements DaemonModule {
                 final Node variant = getVariant(handle, "unpublished");
                 boolean doSave = false;
                 if (variant != null) {
-                    if (BlogUpdater.wants(variant)) {
-                        doSave = BlogUpdater.handleSaved(variant);
+                    if (BlogUpdater.wants(variant, projectNamespace + ":blogpost")) {
+                        doSave = BlogUpdater.handleSaved(variant,projectNamespace +":authornames");
                     }
                 }
                 if (doSave) {
