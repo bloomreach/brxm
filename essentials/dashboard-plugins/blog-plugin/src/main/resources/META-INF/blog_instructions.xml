@@ -6,7 +6,7 @@
   -->
   <instructionSet>
     <!-- cnd-->
-    <cnd documentType="blogpost" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
+    <cnd documentType="blogpost" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated,hippostd:taggable" />
     <cnd documentType="author" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
     <cnd documentType="account" superType="hippo:compound,hippostd:relaxed"/>
     <!-- templates-->

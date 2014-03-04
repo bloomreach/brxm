@@ -44,6 +44,7 @@
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
         <sv:value>hipposysedit:remodel</sv:value>
         <sv:value>hippo:harddocument</sv:value>
+
       </sv:property>
       <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
       <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
@@ -51,6 +52,7 @@
       </sv:property>
       <sv:property sv:name="hipposysedit:supertype" sv:type="String" sv:multiple="true">
         <sv:value>{{namespace}}:basedocument</sv:value>
+        <sv:value>hippostd:taggable</sv:value>
       </sv:property>
       <sv:property sv:name="hipposysedit:uri" sv:type="String">
         <sv:value>http://www.onehippo.org/{{namespace}}/nt/1.0</sv:value>
@@ -213,6 +215,7 @@
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
         <sv:value>hippo:harddocument</sv:value>
+        <sv:value>hippostd:taggable</sv:value>
       </sv:property>
       <sv:property sv:name="{{namespace}}:author" sv:type="String">
         <sv:value/>
@@ -592,6 +595,25 @@
           </sv:property>
           <sv:property sv:name="source" sv:type="String">
             <sv:value>/content/documents/administration/valuelists/blog-authors</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="taggable">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="mixin" sv:type="String">
+          <sv:value>hippostd:taggable</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+          <sv:value>org.hippoecm.frontend.editor.plugins.mixin.MixinLoaderPlugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.id" sv:type="String">
+          <sv:value>${cluster.id}.left.item</sv:value>
+        </sv:property>
+        <sv:node sv:name="cluster.options">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:pluginconfig</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
