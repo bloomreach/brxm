@@ -109,12 +109,12 @@ dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboa
 dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/blog/BlogPowerpack.java -text
 dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/blog/FacetInstruction.java -text
 dashboard-plugins/blog-plugin/src/main/resources/META-INF/blog_instructions.xml -text
+dashboard-plugins/blog-plugin/src/main/resources/freemarker/essentials-blog-author-post.ftl -text
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/essentials-blog-detail.ftl -text
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/essentials-blog-list.ftl -text
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/essentials-facet.ftl -text
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/imports.ftl -text
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/pagination.ftl -text
-dashboard-plugins/blog-plugin/src/main/resources/freemarker/template-blog-author-post.ftl -text
 dashboard-plugins/blog-plugin/src/main/resources/hst/blog-catalog.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/hst/blog-sitemap.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/hst/page-blog-list.xml -text
@@ -134,6 +134,7 @@ dashboard-plugins/blog-plugin/src/main/resources/img/blog-icon.png -text
 dashboard-plugins/blog-plugin/src/main/resources/java/Account.txt -text
 dashboard-plugins/blog-plugin/src/main/resources/java/Author.txt -text
 dashboard-plugins/blog-plugin/src/main/resources/java/Blogpost.txt -text
+dashboard-plugins/blog-plugin/src/main/resources/jsp/essentials-blog-author-post.jsp -text
 dashboard-plugins/blog-plugin/src/main/resources/jsp/essentials-blog-detail.jsp -text
 dashboard-plugins/blog-plugin/src/main/resources/jsp/essentials-blog-list.jsp -text
 dashboard-plugins/blog-plugin/src/main/resources/jsp/essentials-blog-main.jsp -text
@@ -141,7 +142,6 @@ dashboard-plugins/blog-plugin/src/main/resources/jsp/essentials-blog-sidebar.jsp
 dashboard-plugins/blog-plugin/src/main/resources/jsp/essentials-facet.jsp -text
 dashboard-plugins/blog-plugin/src/main/resources/jsp/imports.jsp -text
 dashboard-plugins/blog-plugin/src/main/resources/jsp/pagination.jsp -text
-dashboard-plugins/blog-plugin/src/main/resources/jsp/template-blog-author-post.jsp -text
 dashboard-plugins/blog-plugin/src/main/resources/xml/data/account-types.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/xml/data/blog-categories.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/xml/folder/administration-folder.xml -text
