@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>24.1-SNAPSHOT</version>
+    <version>24.1-iteration-12</version>
   </parent>
 
   <name>Hippo CMS7 Commons</name>
@@ -30,7 +30,7 @@
   <inceptionYear>2012</inceptionYear>
 
   <artifactId>hippo-cms7-commons</artifactId>
-  <version>1.03.01-SNAPSHOT</version>
+  <version>1.03.01-iteration-12</version>
 
   <dependencies>
 
@@ -54,9 +54,9 @@
      This is used by normal plugins, but also to autogenerate documentation in .../target/site/source-repository.html
   -->
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/commons/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/commons/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/commons/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/commons/tags/hippo-cms7-commons-1.03.01-iteration-12</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/commons/tags/hippo-cms7-commons-1.03.01-iteration-12</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/commons/tags/hippo-cms7-commons-1.03.01-iteration-12</url>
   </scm>
 
   <repositories>
