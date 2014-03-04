@@ -16,19 +16,21 @@
 
 package org.onehippo.cms7.essentials.components.info;
 
+import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 
 /**
  * @version "$Id$"
  */
-public interface EssentialsBlogComponentInfo extends EssentialsDocumentListComponentInfo {
+public interface EssentialsBlogAuthorPostsComponentInfo {
 
-/*
-    @Parameter(name = "showTagCloud", required = false, displayName = "Show tag cloud")
-    Boolean showTagCloud();
 
-    @Parameter(name = "Show author list", required = false, displayName = "Show author list")
-    Boolean showAuthorList();
-*/
+    @Parameter(name = "path", required = false, displayName = "Blog document type")
+    @JcrPath(
+            pickerConfiguration = "cms-pickers/documents",
+            pickerSelectableNodeTypes = {"hippostd:folder"},
+            pickerInitialPath = "/content/documents"
+    )
+    String getDocumentType();
 
 }
