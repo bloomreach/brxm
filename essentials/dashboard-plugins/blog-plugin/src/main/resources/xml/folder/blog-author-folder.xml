@@ -24,8 +24,8 @@
     <sv:value>hippotranslation:translated</sv:value>
   </sv:property>
   <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
-    <sv:value>new-blogauthor-folder</sv:value>
     <sv:value>new-blogauthor-document</sv:value>
+    <sv:value>new-blogauthor-folder</sv:value>
   </sv:property>
   <!-- NOTE: TEST ONLY-->
   <sv:property sv:multiple="true" sv:name="hippo:paths" sv:type="String">

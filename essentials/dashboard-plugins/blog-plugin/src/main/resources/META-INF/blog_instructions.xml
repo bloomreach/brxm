@@ -34,9 +34,9 @@
     CREATE DATA FOLDERS
   -->
   <instructionSet>
-    <folder path="/content/documents/administration" template="xml/folder/administration_folder.xml"/>
-    <folder path="/content/documents/{{namespace}}/blog/authors" template="xml/folder/blog_author_folder.xml"/>
-    <folder path="/content/documents/{{namespace}}/blog/{{dateRepoYearMonth}}" template="xml/folder/blog_folder.xml"/>
+    <folder template="xml/folder/administration-folder.xml" path="/content/documents/administration" />
+    <folder template="xml/folder/blog-author-folder.xml" path="/content/documents/{{namespace}}/blog/authors" />
+    <folder template="xml/folder/blog-folder.xml" path="/content/documents/{{namespace}}/blog/{{dateRepoYearMonth}}" />
   </instructionSet>
   <!--
     DATA

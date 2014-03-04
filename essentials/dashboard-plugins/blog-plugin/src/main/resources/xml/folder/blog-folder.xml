@@ -12,8 +12,8 @@
   </sv:property>
   <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
   <sv:property sv:multiple="true" sv:name="hippostd:foldertype" sv:type="String">
-    <sv:value>new-blogauthor-folder</sv:value>
-    <sv:value>new-blogauthor-document</sv:value>
+    <sv:value>new-blog-document</sv:value>
+    <sv:value>new-blog-folder</sv:value>
   </sv:property>
   <sv:property sv:name="hippotranslation:id" sv:type="String">
     <sv:value>55b3284c-6da8-4249-88f7-49a17870ba90</sv:value>
