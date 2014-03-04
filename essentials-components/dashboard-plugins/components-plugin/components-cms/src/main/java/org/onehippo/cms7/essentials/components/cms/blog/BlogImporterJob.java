@@ -19,12 +19,13 @@ package org.onehippo.cms7.essentials.components.cms.blog;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -59,7 +60,10 @@ public class BlogImporterJob implements InterruptableJob {
     private static final String URLS = "urls";
     private static final String AUTHORS_BASE_PATH = "authorsBasePath";
     private static final String AUTHORS = "authors";
+    private static final String PROJECT_NAMESPACE = "projectNamespace";
     private static final String MAX_DESCRIPTION_LENGTH = "maxDescriptionLength";
+    private static final Pattern PATH_PATTERN = Pattern.compile("/");
+
 
     @Override
     public void interrupt() throws UnableToInterruptJobException {
@@ -80,12 +84,13 @@ public class BlogImporterJob implements InterruptableJob {
             return;
         }
 
-        JobConfiguration jobConfiguration = (JobConfiguration) context.getMergedJobDataMap().get(JobConfiguration.class.getName());
+        final JobConfiguration jobConfiguration = (JobConfiguration) context.getMergedJobDataMap().get(JobConfiguration.class.getName());
+        final String blogBasePath = jobConfiguration.getString(BLOGS_BASE_PATH);
+        final String[] urls = jobConfiguration.getStrings(URLS, ArrayUtils.EMPTY_STRING_ARRAY);
+        final String authorsBasePath = jobConfiguration.getString(AUTHORS_BASE_PATH, null);
+        final String projectNamespace = jobConfiguration.getString(PROJECT_NAMESPACE, null);
+        final String[] authors = jobConfiguration.getStrings(AUTHORS, null);
         int maxDescriptionLength;
-        String blogBasePath = jobConfiguration.getString(BLOGS_BASE_PATH);
-        String[] urls = jobConfiguration.getStrings(URLS, ArrayUtils.EMPTY_STRING_ARRAY);
-        String authorsBasePath = jobConfiguration.getString(AUTHORS_BASE_PATH, null);
-        String[] authors = jobConfiguration.getStrings(AUTHORS, null);
         try {
             maxDescriptionLength = Integer.parseInt(jobConfiguration.getString(MAX_DESCRIPTION_LENGTH));
 
@@ -93,7 +98,7 @@ public class BlogImporterJob implements InterruptableJob {
             maxDescriptionLength = -1;
         }
         if (urls != null && urls.length > 0 && blogBasePath != null && maxDescriptionLength > -1) {
-            importBlogs(jcrSession, blogBasePath, urls, authorsBasePath, authors, maxDescriptionLength);
+            importBlogs(jcrSession, projectNamespace, blogBasePath, urls, authorsBasePath, authors, maxDescriptionLength);
         }
 
         log.info("+----------------------------------------------------+");
@@ -101,8 +106,7 @@ public class BlogImporterJob implements InterruptableJob {
         log.info("+----------------------------------------------------+");
     }
 
-    private void importBlogs(Session session, String blogsBasePath, String[] blogUrls, String authorsBasePath, String[] authors, int maxDescriptionLength) {
-        Node blogNode;
+    private void importBlogs(Session session, String projectNamespace, String blogsBasePath, String[] blogUrls, String authorsBasePath, String[] authors, int maxDescriptionLength) {
         try {
             if (blogsBasePath.startsWith("/")) {
                 blogsBasePath = blogsBasePath.substring(1);
@@ -110,7 +114,7 @@ public class BlogImporterJob implements InterruptableJob {
             if (!session.getRootNode().hasNode(blogsBasePath)) {
                 log.warn("Blog base path (" + blogsBasePath + ") is missing, attempting to create it");
                 Node node = session.getRootNode();
-                for (String path : blogsBasePath.split("/")) {
+                for (String path : PATH_PATTERN.split(blogsBasePath)) {
                     if (!node.hasNode(path)) {
                         createBlogFolder(node, path);
                         session.save();
@@ -118,7 +122,7 @@ public class BlogImporterJob implements InterruptableJob {
                     node = node.getNode(path);
                 }
             }
-            blogNode = session.getRootNode().getNode(blogsBasePath);
+            final Node blogNode = session.getRootNode().getNode(blogsBasePath);
 
             for (int i = 0; i < blogUrls.length; i++) {
                 Node authorNode = null;
@@ -131,7 +135,7 @@ public class BlogImporterJob implements InterruptableJob {
                         Node authorsNode = session.getRootNode().getNode(authorsBasePath);
                         authorNode = authorsNode.getNode(author);
                     } catch (RepositoryException e) {
-                        log.error("Error finding author document for " + author, e);
+                        log.error(MessageFormat.format("Error finding author document for {0}", author), e);
                     }
                 }
 
@@ -141,11 +145,9 @@ public class BlogImporterJob implements InterruptableJob {
                 try {
                     feed = input.build(new XmlReader(new URL(url)));
                 } catch (MalformedURLException mExp) {
-                    log.error("Blog URL is malformed  URL is " + url, mExp);
-                } catch (FeedException fExp) {
-                    log.error("Error in parsing feed " + url, fExp);
-                } catch (IOException ioExp) {
-                    log.error("Error in parsing feed " + url, ioExp);
+                    log.error(MessageFormat.format("Blog URL is malformed  URL is {0}", url), mExp);
+                } catch (FeedException | IOException fExp) {
+                    log.error(MessageFormat.format("Error in parsing feed {0}", url), fExp);
                 }
                 if (feed != null) {
                     for (Object entry : feed.getEntries()) {
@@ -153,8 +155,8 @@ public class BlogImporterJob implements InterruptableJob {
                             SyndEntry syndEntry = (SyndEntry) entry;
                             try {
                                 if (!blogExists(blogNode, syndEntry)) {
-                                    createBlogDocument(blogNode, authorNode, syndEntry, maxDescriptionLength);
-                                    BlogUpdater.handleSaved(blogNode);
+                                    createBlogDocument(projectNamespace, blogNode, authorNode, syndEntry, maxDescriptionLength);
+                                    BlogUpdater.handleSaved(blogNode, projectNamespace);
                                     session.save();
                                 }
                             } catch (RepositoryException rExp) {
@@ -164,8 +166,6 @@ public class BlogImporterJob implements InterruptableJob {
                     }
                 }
             }
-        } catch (PathNotFoundException pnfExp) {
-            log.error("Error in getting base folder for blogs", pnfExp);
         } catch (RepositoryException rExp) {
             log.error("Error in getting base folder for blogs", rExp);
         }
@@ -177,30 +177,30 @@ public class BlogImporterJob implements InterruptableJob {
         return blogFolder.hasNode(documentName);
     }
 
-    private boolean createBlogDocument(Node baseNode, Node authorHandleNode, SyndEntry syndEntry, int maxDescriptionLength) throws RepositoryException {
+    private boolean createBlogDocument(final String projectNamespace, Node baseNode, Node authorHandleNode, SyndEntry syndEntry, int maxDescriptionLength) throws RepositoryException {
         Node blogFolder = getBlogFolder(baseNode, syndEntry);
         String documentName = NodeNameCodec.encode(syndEntry.getTitle(), true).replace("?", "");
         Node handleNode = blogFolder.addNode(documentName, "hippo:handle");
         handleNode.addMixin("hippo:hardhandle");
-        Node documentNode = handleNode.addNode(documentName, "connect:blogpost");
+        Node documentNode = handleNode.addNode(documentName, projectNamespace + "blogpost");
         documentNode.addMixin("hippo:harddocument");
         documentNode.setProperty("hippo:availability", new String[]{"live", "preview"});
-        documentNode.setProperty("connect:title", syndEntry.getTitle());
-        documentNode.setProperty("connect:introduction", processDescription(syndEntry, maxDescriptionLength));
+        documentNode.setProperty(projectNamespace + "title", syndEntry.getTitle());
+        documentNode.setProperty(projectNamespace + "introduction", processDescription(syndEntry, maxDescriptionLength));
         if (authorHandleNode != null) {
-            link(documentNode, "connect:authors", authorHandleNode);
+            link(documentNode, projectNamespace + "authors", authorHandleNode);
             final Node authorNode = authorHandleNode.getNode(authorHandleNode.getName());
-            final Property nameProperty = authorNode.getProperty("connect:title");
+            final Property nameProperty = authorNode.getProperty(projectNamespace + "title");
             final String name = nameProperty.getString();
-            documentNode.setProperty("connect:author", name);
-            documentNode.setProperty("connect:authornames", name);
+            documentNode.setProperty(projectNamespace + "author", name);
+            documentNode.setProperty(projectNamespace + "authornames", name);
         } else {
-            documentNode.setProperty("connect:author", syndEntry.getAuthor());
+            documentNode.setProperty(projectNamespace + "author", syndEntry.getAuthor());
         }
-        documentNode.setProperty("connect:link", syndEntry.getLink());
+        documentNode.setProperty(projectNamespace + "link", syndEntry.getLink());
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(syndEntry.getPublishedDate());
-        documentNode.setProperty("connect:publicationdate", calendar);
+        documentNode.setProperty(projectNamespace + "publicationdate", calendar);
         documentNode.setProperty("hippostdpubwf:lastModifiedBy", "admin");
         documentNode.setProperty("hippostdpubwf:createdBy", "admin");
         calendar.setTime(new Date());
@@ -209,14 +209,17 @@ public class BlogImporterJob implements InterruptableJob {
         documentNode.setProperty("hippostd:stateSummary", "preview");
         documentNode.setProperty("hippostd:state", "published");
         documentNode.setProperty("hippostd:holder", "admin");
-        documentNode.addNode("connect:body", "hippostd:html");
-        documentNode.getNode("connect:body").setProperty("hippostd:content", processContent(syndEntry));
-        documentNode.addNode("connect:image", "hippostd:html");
-        documentNode.getNode("connect:image").setProperty("hippostd:content", "");
+        documentNode.addNode(projectNamespace + "body", "hippostd:html");
+        documentNode.getNode(projectNamespace + "body").setProperty("hippostd:content", processContent(syndEntry));
+        documentNode.addNode(projectNamespace + "image", "hippostd:html");
+        documentNode.getNode(projectNamespace + "image").setProperty("hippostd:content", "");
+/*
+// TODO check this: project specific
+        setEmptyLinkProperty(documentNode, projectNamespace + "documentlink");
+        setEmptyLinkProperty(documentNode, projectNamespace + "downloadlink");
+        setEmptyLinkProperty(documentNode, projectNamespace + "relatedboxdocument");
 
-        setEmptyLinkProperty(documentNode, "connect:documentlink");
-        setEmptyLinkProperty(documentNode, "connect:downloadlink");
-        setEmptyLinkProperty(documentNode, "connect:relatedboxdocument");
+*/
         return true;
     }
 

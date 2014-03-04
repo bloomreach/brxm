@@ -53,10 +53,15 @@
           <sv:value>scheduler:jobConfiguration</sv:value>
         </sv:property>
         <sv:property sv:name="blogsBasePath" sv:type="String">
-          <sv:value>/content/documents/onehippoenglish/resources/blogs</sv:value>
+          <!-- TODO populate this-->
+          <sv:value>/content/documents/essentials/blogs</sv:value>
         </sv:property>
         <sv:property sv:name="maxDescriptionLength" sv:type="String">
           <sv:value>297</sv:value>
+        </sv:property>
+        <sv:property sv:name="projectNamespace" sv:type="String">
+          <!--  TODO populate this-->
+          <sv:value>essentials</sv:value>
         </sv:property>
         <sv:property sv:name="urls" sv:type="String" sv:multiple="true">
           <sv:value/>

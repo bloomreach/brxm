@@ -17,7 +17,7 @@
 package org.onehippo.cms7.essentials.components.cms.blog;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -32,50 +32,51 @@ import org.onehippo.cms7.essentials.components.cms.modules.EventBusListenerModul
  */
 public final class BlogUpdater {
 
-    private static final String TYPE_BLOGPOST = "connect:blogpost";
-    private static final String PROP_BLOGPOST_AUTHOR_NAMES = "connect:authornames";
-    private static final String NODE_BLOGPOST_AUTHORS = "connect:authors";
-    private static final String PROP_AUTHOR_NAME = "connect:title";
 
     private BlogUpdater() {
     }
 
     /**
      * Indicate if the document variant represented by node should be handled.
+     *
      * @param node JCR node to consider
-     * @return     true if the node is interesting, false otherwise.
+     * @return true if the node is interesting, false otherwise.
      * @throws javax.jcr.RepositoryException
      */
-    public static boolean wants(final Node node) throws RepositoryException {
-        return node.getPrimaryNodeType().isNodeType(TYPE_BLOGPOST);
+    public static boolean wants(final Node node, final String documentType) throws RepositoryException {
+        return node.getPrimaryNodeType().isNodeType(documentType);
     }
 
     /**
      * Handle the Save event for a blogpost document.
+     *
      * @param blogpost JCR node representing the blogpost
-     * @return         indication whether or not changes need to be saved.
+     * @return indication whether or not changes need to be saved.
      * @throws javax.jcr.RepositoryException
      */
-    public static boolean handleSaved(final Node blogpost) throws RepositoryException {
+    public static boolean handleSaved(final Node blogpost, final String projectNamespace) throws RepositoryException {
         // Delete the old property
-        if (blogpost.hasProperty(PROP_BLOGPOST_AUTHOR_NAMES)) {
-            blogpost.getProperty(PROP_BLOGPOST_AUTHOR_NAMES).remove();
+        final String authorNamesProp = projectNamespace + "authornames";
+        if (blogpost.hasProperty(authorNamesProp)) {
+            blogpost.getProperty(authorNamesProp).remove();
         }
-
-
         // Construct the new property
-        NodeIterator authorMirrors = blogpost.getNodes(NODE_BLOGPOST_AUTHORS);
-        List<String> authorNames = new ArrayList<String>();
+        final NodeIterator authorMirrors = blogpost.getNodes(projectNamespace + ":authors");
+        final Collection<String> authorNames = new ArrayList<String>();
+        // TODO mm check this (was :title???)
+        final String authorProperty = projectNamespace + ":author";
         while (authorMirrors.hasNext()) {
             final Node mirror = authorMirrors.nextNode();
             final Node author = EventBusListenerModule.getReferencedVariant(mirror, "published");
+
             if (author != null) {
-                authorNames.add(author.getProperty(PROP_AUTHOR_NAME).getString());
+
+                authorNames.add(author.getProperty(authorProperty).getString());
             }
         }
 
         if (authorNames.size() > 0) {
-            blogpost.setProperty(PROP_BLOGPOST_AUTHOR_NAMES, authorNames.toArray(new String[authorNames.size()]));
+            blogpost.setProperty(authorNamesProp, authorNames.toArray(new String[authorNames.size()]));
         }
         return true;
     }
