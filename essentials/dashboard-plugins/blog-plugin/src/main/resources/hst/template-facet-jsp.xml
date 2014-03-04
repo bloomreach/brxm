@@ -15,7 +15,7 @@
   limitations under the License.
   -->
 
-<sv:node sv:name="blog.main" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<sv:node sv:name="facet.template" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:template</sv:value>
   </sv:property>
