@@ -19,23 +19,22 @@ package org.onehippo.cms7.essentials.components;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
-import org.onehippo.cms7.essentials.components.info.EssentialsBlogComponentInfo;
+import org.onehippo.cms7.essentials.components.info.EssentialsBlogAuthorPostsComponentInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * @version "$Id$"
  */
-@ParametersInfo(type = EssentialsBlogComponentInfo.class)
-public class EssentialsBlogComponent extends EssentialsListComponent {
+@ParametersInfo(type = EssentialsBlogAuthorPostsComponentInfo.class)
+public class EssentialsBlogAuthorPostsComponent extends EssentialsListComponent {
 
-    private static Logger log = LoggerFactory.getLogger(EssentialsBlogComponent.class);
+    private static Logger log = LoggerFactory.getLogger(EssentialsBlogAuthorPostsComponent.class);
 
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
         // TODO implement
-        log.info("**** BLOG COMPONENT ****");
+        log.info("**** BLOG AUTHOR COMPONENT ****");
         super.doBeforeRender(request, response);
 
     }

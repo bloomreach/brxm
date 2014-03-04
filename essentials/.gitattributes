@@ -114,11 +114,14 @@ dashboard-plugins/blog-plugin/src/main/resources/freemarker/essentials-blog-list
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/essentials-facet.ftl -text
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/imports.ftl -text
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/pagination.ftl -text
+dashboard-plugins/blog-plugin/src/main/resources/freemarker/template-blog-author-post.ftl -text
 dashboard-plugins/blog-plugin/src/main/resources/hst/blog-catalog.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/hst/blog-sitemap.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/hst/page-blog-list.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/hst/page-blog-main.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/hst/page-blog-page.xml -text
+dashboard-plugins/blog-plugin/src/main/resources/hst/template-blog-author-post-ftl.xml -text
+dashboard-plugins/blog-plugin/src/main/resources/hst/template-blog-author-post-jsp.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/hst/template-blog-detail-ftl.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/hst/template-blog-detail-jsp.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/hst/template-blog-list-ftl.xml -text
@@ -138,6 +141,7 @@ dashboard-plugins/blog-plugin/src/main/resources/jsp/essentials-blog-sidebar.jsp
 dashboard-plugins/blog-plugin/src/main/resources/jsp/essentials-facet.jsp -text
 dashboard-plugins/blog-plugin/src/main/resources/jsp/imports.jsp -text
 dashboard-plugins/blog-plugin/src/main/resources/jsp/pagination.jsp -text
+dashboard-plugins/blog-plugin/src/main/resources/jsp/template-blog-author-post.jsp -text
 dashboard-plugins/blog-plugin/src/main/resources/xml/data/account-types.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/xml/data/blog-categories.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/xml/folder/administration-folder.xml -text
@@ -167,6 +171,7 @@ dashboard-plugins/components-plugin/components-gui/src/test/java/InstallationTes
 dashboard-plugins/components-plugin/components-gui/src/test/resources/log4j.xml -text
 dashboard-plugins/components-plugin/components-library/pom.xml -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/CommonComponent.java -text
+dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/EssentialsBlogAuthorPostsComponent.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/EssentialsBlogComponent.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/EssentialsCarouselComponent.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/EssentialsDocumentComponent.java -text
@@ -321,6 +326,7 @@ dashboard-plugins/components-plugin/components-library/src/main/java/org/onehipp
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/icons/9_av_shuffle.png -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/icons/9_av_stop.png -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/icons/9_av_upload.png -text
+dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsBlogAuthorPostsComponentInfo.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsBlogComponentInfo.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsCarouselComponentInfo.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsDocumentComponentInfo.java -text
