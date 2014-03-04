@@ -20,23 +20,13 @@
             <div class="l-sidebar">
                 <div data-hippo.theme.tree data-items="list" data-callbacks="callbacks" data-selected-item-id="selectedMenuItem.id">{{ item.title }}</div>
             </div>
+            <div id="add" class="col-sm-4" data-ng-controller="hippo.channelManager.menuManager.MenuCtrl">
+                <button type="button" class="btn btn-default btn-block" data-ng-click="addItem()">
+                    <i class="fa fa-plus"></i> {{ 'ADD_MENU_ITEM' | translate }}
+                </button>
+            </div>
         </div>
 
         <div data-ui-view class="col-sm-8" id="form-panel"></div>
-    </div>
-    <div class="row">
-        <div id="add" class="col-sm-4" data-ng-controller="hippo.channelManager.menuManager.MenuCtrl">
-            <button type="button" class="btn btn-default btn-block" data-ng-click="addItem()">
-                <i class="fa fa-plus"></i> {{ 'ADD_MENU_ITEM' | translate }}
-            </button>
-        </div>
-
-        <div id="actions" class="col-sm-8" data-ng-controller="hippo.channelManager.menuManager.WindowCtrl">
-            <button type="button" class="btn btn-default pull-right"
-                    data-ng-disabled="hasOutstandingChanges()"
-                    data-ng-click="close()">
-                <i class="fa fa-check"></i> {{ 'CLOSE_WINDOW' | translate }}
-            </button>
-        </div>
     </div>
 </div>

@@ -21,7 +21,7 @@
 
     angular.module('hippo.channelManager.menuManager')
 
-        .service('_hippo.channelManager.menuManagement.IFrameService', ['$window', '$log', function ($window, $log) {
+        .service('_hippo.channelManager.menuManager.IFrameService', ['$window', '$log', function ($window, $log) {
 
             function getParentIFramePanelId() {
                 var idParam = 'parentExtIFramePanelId',

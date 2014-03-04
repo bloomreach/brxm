@@ -21,25 +21,28 @@
 
         .service('hippo.channelManager.menuManager.Container', [
             '$log',
-            '_hippo.channelManager.menuManagement.IFrameService',
-            function($log, IFrameService) {
-                function closeIFrame() {
-                    var iframePanel;
+            '_hippo.channelManager.menuManager.IFrameService',
+            '_hippo.channelManager.menuManager.OutstandingHttpRequests',
+            function($log, IFrameService, OutstandingHttpRequests) {
 
+                function handleClose() {
                     if (IFrameService.isActive) {
-                        iframePanel = IFrameService.getContainer();
+                        var iframePanel = IFrameService.getContainer();
 
-                        if (iframePanel) {
-                            iframePanel.iframeToHost.publish('close');
-                        } else {
-                            $log.info("Ignoring close, there is no parent iframe");
-                        }
+                        iframePanel.hostToIFrame.subscribe('close-request', function() {
+                            if (OutstandingHttpRequests.isEmpty()) {
+                                iframePanel.iframeToHost.publish('close-reply-ok');
+                            } else {
+                                iframePanel.iframeToHost.publish('close-reply-not-ok');
+                            }
+                        });
                     }
                 }
 
                 return {
-                    close: closeIFrame
+                    handleClose: handleClose
                 };
             }
         ]);
+
 }());

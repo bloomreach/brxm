@@ -20,6 +20,8 @@
 
     Hippo.ChannelManager.TemplateComposer.EditMenuWindow = Ext.extend(Ext.Window, {
 
+        isClosing: false,
+
         constructor: function(config) {
             this.iframePanelId = Ext.id();
 
@@ -28,7 +30,6 @@
                 width: 860,
                 minWidth: 790,
                 height: 517,
-                closable: false,
                 modal: true,
                 resizeHandles: 'e w',
                 layout: 'fit',
@@ -47,13 +48,28 @@
                 ],
                 listeners: {
                     'afterrender': function(self) {
-                        var iframePanel = Ext.getCmp(self.iframePanelId);
-                        iframePanel.iframeToHost.subscribe('close', self.close, self);
+                        self.getIFramePanel().iframeToHost.subscribe('close-reply-ok', function() {
+                            self.isClosing = true;
+                            self.close();
+                        });
+                        self.getIFramePanel().iframeToHost.subscribe('close-reply-not-ok', function() {
+                            self.isClosing = false;
+                        });
+                    },
+                    'beforeclose': function(self) {
+                        if (!self.isClosing) {
+                            self.getIFramePanel().hostToIFrame.publish('close-request');
+                            return false;
+                        }
                     }
                 }
             });
 
             Hippo.ChannelManager.TemplateComposer.EditMenuWindow.superclass.constructor.call(this, config);
+        },
+
+        getIFramePanel: function() {
+            return Ext.getCmp(this.iframePanelId);
         }
 
     });

@@ -22,13 +22,17 @@
             '$translate',
             '$state',
             'hippo.channelManager.menuManager.ConfigService',
-            '_hippo.channelManager.menuManagement.IFrameService',
-            function ($translate, $state, Config, IFrame) {
+            'hippo.channelManager.menuManager.Container',
+            '_hippo.channelManager.menuManager.IFrameService',
+            function ($translate, $state, Config, Container, IFrame) {
                 // go to default state
                 $state.go('loader');
 
                 // set language
                 $translate.uses(Config.locale);
+
+                // close the app when the container is closed
+                Container.handleClose();
 
                 // enable live reload
                 IFrame.enableLiveReload();

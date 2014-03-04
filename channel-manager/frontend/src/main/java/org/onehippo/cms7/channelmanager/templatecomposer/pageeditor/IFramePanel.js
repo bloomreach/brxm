@@ -69,7 +69,11 @@
 
             if (newLocation !== this.currentLocation) {
                 this.previousLocation = this.currentLocation;
-                this._detachFrame();
+
+                if (this.currentLocation !== null) {
+                    this._detachFrame();
+                }
+
                 this.currentLocation = newLocation;
                 this.fireEvent('locationchanged');
             }
