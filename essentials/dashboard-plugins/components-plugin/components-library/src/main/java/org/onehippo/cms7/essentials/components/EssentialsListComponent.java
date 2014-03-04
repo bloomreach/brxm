@@ -68,7 +68,7 @@ public class EssentialsListComponent extends CommonComponent {
             final HippoFacetNavigationBean facetBean = (HippoFacetNavigationBean) scope;
             final HippoResultSetBean resultSet = facetBean.getResultSet();
             final HippoDocumentIterator<HippoBean> iterator = resultSet.getDocumentIterator(HippoBean.class);
-            pageable = new IterablePagination<>(iterator, resultSet.getCount().intValue(), getCurrentPage(request), paramInfo.getPageSize());
+            pageable = new IterablePagination<>(iterator, resultSet.getCount().intValue(), paramInfo.getPageSize(), getCurrentPage(request));
         }
         else{
             pageable = doSearch(request, paramInfo, scope);
