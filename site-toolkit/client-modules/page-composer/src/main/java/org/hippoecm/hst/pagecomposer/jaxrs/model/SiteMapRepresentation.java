@@ -34,7 +34,7 @@ public class SiteMapRepresentation {
     private String id;
     private List<SiteMapItemRepresentation> children = new ArrayList<>();
 
-    public SiteMapRepresentation represent(HstSiteMap siteMap) throws IllegalArgumentException {
+    public SiteMapRepresentation represent(HstSiteMap siteMap, String previewConfigurationPath) throws IllegalArgumentException {
         if (!(siteMap instanceof CanonicalInfo)) {
             throw new IllegalArgumentException("Expected object of type CanonicalInfo");
         }
@@ -42,7 +42,7 @@ public class SiteMapRepresentation {
 
         for (HstSiteMapItem childItem : siteMap.getSiteMapItems()) {
             SiteMapItemRepresentation child = new SiteMapItemRepresentation();
-            child.represent(childItem);
+            child.represent(childItem, previewConfigurationPath);
             children.add(child);
         }
         Collections.sort(children, new Comparator<SiteMapItemRepresentation>() {

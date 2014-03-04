@@ -33,6 +33,7 @@ public class SiteMapItemRepresentation {
     String componentConfigurationId;
     boolean cacheable;
     boolean workspaceConfiguration;
+    boolean inherited;
     String relativeContentPath;
     String scheme;
     boolean wildCard;
@@ -44,7 +45,7 @@ public class SiteMapItemRepresentation {
 
     private List<SiteMapItemRepresentation> children = new ArrayList<>();
 
-    public SiteMapItemRepresentation represent(HstSiteMapItem item)
+    public SiteMapItemRepresentation represent(HstSiteMapItem item, String previewConfigurationPath)
             throws IllegalArgumentException {
         if (!(item instanceof CanonicalInfo)) {
             throw new IllegalArgumentException("Expected object of type CanonicalInfo");
@@ -54,6 +55,7 @@ public class SiteMapItemRepresentation {
         componentConfigurationId = item.getComponentConfigurationId();
         cacheable = item.isCacheable();
         workspaceConfiguration = ((CanonicalInfo) item).isWorkspaceConfiguration();
+        inherited = !((CanonicalInfo) item).getCanonicalPath().startsWith(previewConfigurationPath);
         relativeContentPath = item.getRelativeContentPath();
         scheme = item.getScheme();
         wildCard = item.isWildCard();
@@ -66,7 +68,7 @@ public class SiteMapItemRepresentation {
         Map<String, SiteMapItemRepresentation> orderedChildren = new TreeMap<>();
         for (HstSiteMapItem childItem : item.getChildren()) {
             SiteMapItemRepresentation child = new SiteMapItemRepresentation();
-            child.represent(childItem);
+            child.represent(childItem, previewConfigurationPath);
             orderedChildren.put(child.getName(), child);
         }
         children.addAll(orderedChildren.values());
@@ -111,6 +113,14 @@ public class SiteMapItemRepresentation {
 
     public void setWorkspaceConfiguration(final boolean workspaceConfiguration) {
         this.workspaceConfiguration = workspaceConfiguration;
+    }
+
+    public boolean isInherited() {
+        return inherited;
+    }
+
+    public void setInherited(final boolean inherited) {
+        this.inherited = inherited;
     }
 
     public String getRelativeContentPath() {

@@ -175,7 +175,7 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL(request, "localhost", "/home");
         ((HstMutableRequestContext) ctx).setSession(requestSession);
         final HstSiteMap siteMap = mountResource.getPageComposerContextService().getEditingPreviewSite().getSiteMap();
-        return new SiteMapRepresentation().represent(siteMap);
+        return new SiteMapRepresentation().represent(siteMap, getPreviewConfigurationPath());
     }
 
     protected SiteMapResource createResource() {

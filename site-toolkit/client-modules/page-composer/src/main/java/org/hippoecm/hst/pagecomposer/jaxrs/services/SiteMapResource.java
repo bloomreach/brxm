@@ -64,7 +64,7 @@ public class SiteMapResource extends AbstractConfigResource {
             @Override
             public Response call() throws Exception {
                 final HstSiteMap siteMap = getPageComposerContextService().getEditingPreviewSite().getSiteMap();
-                final SiteMapRepresentation representation = new SiteMapRepresentation().represent(siteMap);
+                final SiteMapRepresentation representation = new SiteMapRepresentation().represent(siteMap, getPreviewConfigurationPath());
                 return ok("Sitemap loaded successfully", representation);
             }
         });

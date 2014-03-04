@@ -43,6 +43,7 @@ public class HstSiteMapService implements HstSiteMap, CanonicalInfo {
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstSiteMapService.class);
 
     private final String canonicalIdentifier;
+    private final String canonicalPath;
 
     private final boolean workspaceConfiguration;
     
@@ -68,6 +69,7 @@ public class HstSiteMapService implements HstSiteMap, CanonicalInfo {
         this.hstSite = hstSite;
 
         canonicalIdentifier = siteMapNode.getMainConfigNode().getValueProvider().getIdentifier();
+        canonicalPath = siteMapNode.getMainConfigNode().getValueProvider().getPath();
 
         workspaceConfiguration = ConfigurationUtils.isWorkspaceConfig(siteMapNode.getMainConfigNode());
 
@@ -124,6 +126,11 @@ public class HstSiteMapService implements HstSiteMap, CanonicalInfo {
     @Override
     public String getCanonicalIdentifier() {
         return canonicalIdentifier;
+    }
+
+    @Override
+    public String getCanonicalPath() {
+        return canonicalPath;
     }
 
     @Override

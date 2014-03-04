@@ -58,6 +58,7 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
     private String id;
 
     private final String canonicalIdentifier;
+    private final String canonicalPath;
 
     private final boolean workspaceConfiguration;
 
@@ -152,6 +153,7 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
         String nodePath = StringPool.get(node.getValueProvider().getPath());
 
         canonicalIdentifier = node.getValueProvider().getIdentifier();
+        canonicalPath = node.getValueProvider().getPath();
         workspaceConfiguration = ConfigurationUtils.isWorkspaceConfig(node);
 
         this.qualifiedId = nodePath;
@@ -472,6 +474,11 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
     @Override
     public String getCanonicalIdentifier() {
         return canonicalIdentifier;
+    }
+
+    @Override
+    public String getCanonicalPath() {
+        return canonicalPath;
     }
 
     @Override

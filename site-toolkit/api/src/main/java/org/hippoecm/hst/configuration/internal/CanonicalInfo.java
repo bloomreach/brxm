@@ -22,12 +22,17 @@ package org.hippoecm.hst.configuration.internal;
 public interface CanonicalInfo {
 
     /**
-     * Returns the identifier of the backing stored site map configuration. Note that multiple <code>HstSiteMap</code>'s can share the same
-     * canonical identifier due to inheritance.
+     * Returns the identifier of the backing stored configuration node. Note that multiple configuration objects can
+     * share the same identifier due to inheritance
      *
-     * @return the identifier of the backing stored site map configuration
+     * @return the identifier of the backing stored configuration node.
      */
     String getCanonicalIdentifier();
+
+    /**
+     * @see {@link #getCanonicalIdentifier()} only now the path
+     */
+    String getCanonicalPath();
 
     boolean isWorkspaceConfiguration();
 

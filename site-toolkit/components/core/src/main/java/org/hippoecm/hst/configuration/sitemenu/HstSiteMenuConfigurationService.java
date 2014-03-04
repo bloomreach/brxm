@@ -30,6 +30,7 @@ public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration
 
     private String name;
     private final String canonicalIdentifier;
+    private final String canonicalPath;
     private final boolean workspaceConfiguration;
     private HstSiteMenusConfiguration hstSiteMenusConfiguration;
     private List<HstSiteMenuItemConfiguration> siteMenuItems = new ArrayList<HstSiteMenuItemConfiguration>();
@@ -41,6 +42,7 @@ public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration
         this.hstSiteMenusConfiguration = hstSiteMenusConfiguration;
         this.name = StringPool.get(siteMenu.getValueProvider().getName());
         this.canonicalIdentifier = siteMenu.getValueProvider().getIdentifier();
+        this.canonicalPath =  siteMenu.getValueProvider().getPath();
         this.workspaceConfiguration = ConfigurationUtils.isWorkspaceConfig(siteMenu);
         for (HstNode siteMenuItem : siteMenu.getNodes()) {
             HstSiteMenuItemConfiguration siteMenuItemConfiguration = new HstSiteMenuItemConfigurationService(siteMenuItem, null, this);
@@ -58,6 +60,11 @@ public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration
     @Override
     public String getCanonicalIdentifier() {
         return canonicalIdentifier;
+    }
+
+    @Override
+    public String getCanonicalPath() {
+        return canonicalPath;
     }
 
     @Override
