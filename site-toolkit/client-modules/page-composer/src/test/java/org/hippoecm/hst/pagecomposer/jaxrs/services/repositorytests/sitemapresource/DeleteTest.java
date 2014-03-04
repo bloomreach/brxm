@@ -79,7 +79,7 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
         final Response delete = siteMapResource.delete(nonWorkspaceItem.getId());
         final ExtResponseRepresentation representation = (ExtResponseRepresentation) delete.getEntity();
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), delete.getStatus());
-        assertThat(representation.getMessage(), is(ClientError.ITEM_NOT_IN_WORKSPACE.name()));
+        assertThat(representation.getMessage(), is(ClientError.ITEM_NOT_CORRECT_LOCATION.name()));
     }
 
     @Test

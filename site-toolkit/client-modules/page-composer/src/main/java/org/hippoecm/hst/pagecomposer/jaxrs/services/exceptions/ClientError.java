@@ -48,8 +48,6 @@ public enum ClientError {
 
     ITEM_NOT_FOUND,
 
-    ITEM_NOT_IN_WORKSPACE,
-
     ITEM_NOT_CHILD_OF_PARENT,
 
     INVALID_UUID,

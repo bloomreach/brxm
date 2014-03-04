@@ -57,14 +57,15 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         initContext();
         final SiteMapItemRepresentation newFoo = new SiteMapItemRepresentation();
         newFoo.setName("foo");
-        newFoo.setComponentConfigurationId(getHomePageUUID());
+        newFoo.setComponentConfigurationId(getSingleRowPrototypePageUUID());
         newFoo.setRelativeContentPath("relFoo");
         Map<String, String> params = new HashMap<>();
         params.put("lux", "qux");
         newFoo.setLocalParameters(params);
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newFoo);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+                Response.Status.OK.getStatusCode(), response.getStatus());
 
         String newId = (String) ((ExtResponseRepresentation) response.getEntity()).getData();
 
@@ -90,11 +91,12 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final SiteMapItemRepresentation newFoo = new SiteMapItemRepresentation();
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newFoo);
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+                Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
 
     @Test
-    public void test_create_fails_non_existing_component_id() throws Exception {
+    public void test_create_fails_non_existing_prototype_id() throws Exception {
         initContext();
         final SiteMapItemRepresentation newFoo = new SiteMapItemRepresentation();
         newFoo.setName("foo");
@@ -103,7 +105,8 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newFoo);
 
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+                Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
 
 
@@ -115,8 +118,41 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         newFoo.setComponentConfigurationId("invalid-uuid");
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newFoo);
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+                Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
+
+
+    @Test
+    public void test_create_fails_if_component_id_not_of_prototype_page() throws Exception {
+        initContext();
+        final SiteMapItemRepresentation newFoo = new SiteMapItemRepresentation();
+        newFoo.setName("foo");
+        // home page is not allowed as prototype
+        newFoo.setComponentConfigurationId(getHomePageUUID());
+        final SiteMapResource siteMapResource = createResource();
+        final Response response = siteMapResource.create(newFoo);
+        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+                Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+    }
+
+
+    @Test
+    public void test_create_fails_if_component_id_is_prototype_page_of_inherited_config() throws Exception {
+        String prototypePath = "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/singlerow-page";
+        String commonConfigPrototypePath = "/hst:hst/hst:configurations/unittestcommon/hst:prototypepages/singlerow-page";
+        session.move(prototypePath, commonConfigPrototypePath);
+        initContext();
+        final SiteMapItemRepresentation newFoo = new SiteMapItemRepresentation();
+        newFoo.setName("foo");
+        newFoo.setComponentConfigurationId(session.getNode(commonConfigPrototypePath).getIdentifier());
+        final SiteMapResource siteMapResource = createResource();
+        final Response response = siteMapResource.create(newFoo);
+        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+                Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+    }
+
+
 
     @Test
     public void test_create_two_sitemap_items_from_same_prototype_page() throws Exception {
@@ -129,17 +165,11 @@ public class CreateTest extends AbstractSiteMapResourceTest {
     }
 
     @Test
-    public void test_create_sitemap_page_denormalization_container_items_from_workspace() {
-
-    }
-
-
-    @Test
     public void test_delete_new_created() throws Exception {
         initContext();
         final SiteMapItemRepresentation newFoo = new SiteMapItemRepresentation();
         newFoo.setName("foo");
-        newFoo.setComponentConfigurationId(getHomePageUUID());
+        newFoo.setComponentConfigurationId(getSingleRowPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
         siteMapResource.create(newFoo);
         {
@@ -177,7 +207,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         initContext();
         final SiteMapItemRepresentation newFoo = new SiteMapItemRepresentation();
         newFoo.setName("foo");
-        newFoo.setComponentConfigurationId(getHomePageUUID());
+        newFoo.setComponentConfigurationId(getSingleRowPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
         siteMapResource.create(newFoo);
 
@@ -215,7 +245,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
 
         final SiteMapItemRepresentation newFoo = new SiteMapItemRepresentation();
         newFoo.setName("foo");
-        newFoo.setComponentConfigurationId(getHomePageUUID());
+        newFoo.setComponentConfigurationId(getSingleRowPrototypePageUUID());
         siteMapResource.create(newFoo);
 
         // because of Jackrabbit issue we need a fresh session for tests with this move because
@@ -223,7 +253,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final Session admin = createSession("admin", "admin");
         final SiteMapItemRepresentation foo = getSiteMapItemRepresentation(admin, "foo");
         foo.setName("home");
-        newFoo.setComponentConfigurationId(getHomePageUUID());
+        newFoo.setComponentConfigurationId(getSingleRowPrototypePageUUID());
         final Response renamed = siteMapResource.update(foo);
         assertEquals(Response.Status.OK.getStatusCode(), renamed.getStatus());
 
@@ -257,7 +287,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         initContext();
         final SiteMapItemRepresentation newFoo = new SiteMapItemRepresentation();
         newFoo.setName("foo");
-        newFoo.setComponentConfigurationId(getHomePageUUID());
+        newFoo.setComponentConfigurationId(getSingleRowPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
         siteMapResource.create(newFoo);
 
@@ -290,7 +320,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         initContext();
         final SiteMapItemRepresentation newItem = new SiteMapItemRepresentation();
         newItem.setName("home");
-        newItem.setComponentConfigurationId(getHomePageUUID());
+        newItem.setComponentConfigurationId(getSingleRowPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newItem);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
@@ -302,7 +332,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
         final SiteMapItemRepresentation homeChild = new SiteMapItemRepresentation();
         homeChild.setName("homeChild");
-        homeChild.setComponentConfigurationId(getHomePageUUID());
+        homeChild.setComponentConfigurationId(getSingleRowPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
         {
             final Response response = siteMapResource.create(homeChild, home.getId());
@@ -317,7 +347,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
             final SiteMapItemRepresentation homeByBob = getSiteMapItemRepresentation(bob, "home");
             final SiteMapItemRepresentation childByBob = new SiteMapItemRepresentation();
             childByBob.setName("childByBob");
-            childByBob.setComponentConfigurationId(getHomePageUUID());
+            childByBob.setComponentConfigurationId(getSingleRowPrototypePageUUID());
             final Response bobResponse = siteMapResource.create(childByBob, homeByBob.getId());
             assertEquals(Response.Status.OK.getStatusCode(), bobResponse.getStatus());
 
@@ -417,7 +447,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         initContext();
         final SiteMapItemRepresentation newItem = new SiteMapItemRepresentation();
         newItem.setName("about-us");
-        newItem.setComponentConfigurationId(getHomePageUUID());
+        newItem.setComponentConfigurationId(getSingleRowPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newItem);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
@@ -432,15 +462,10 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         initContext();
         final SiteMapItemRepresentation newItem = new SiteMapItemRepresentation();
         newItem.setName("about-us");
-        newItem.setComponentConfigurationId(getHomePageUUID());
+        newItem.setComponentConfigurationId(getSingleRowPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newItem);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
-
-    private String getHomePageUUID() throws RepositoryException {
-        String previewConfigurationPath = mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
-        return session.getNode(previewConfigurationPath).getNode("hst:pages/homepage").getIdentifier();
-    }
 }

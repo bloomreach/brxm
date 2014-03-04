@@ -16,13 +16,9 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.sitemapresource;
 
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper;
 import org.junit.Test;
@@ -47,9 +43,7 @@ public class CreateAndPublicationTest extends AbstractSiteMapResourceTest {
         initContext();
         final SiteMapItemRepresentation newFoo = new SiteMapItemRepresentation();
         newFoo.setName("foo");
-        String previewConfigurationPath = mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
-        String pageUuid = session.getNode(previewConfigurationPath).getNode("hst:pages/homepage").getIdentifier();
-        newFoo.setComponentConfigurationId(pageUuid);
+        newFoo.setComponentConfigurationId(getSingleRowPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newFoo);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());

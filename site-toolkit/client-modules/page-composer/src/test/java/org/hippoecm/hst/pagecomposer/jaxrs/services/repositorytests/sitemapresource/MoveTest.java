@@ -140,7 +140,7 @@ public class MoveTest extends AbstractSiteMapResourceTest {
         SiteMapResource siteMapResource = createResource();
         final Response fail = siteMapResource.move(news.getId(), aboutUs.getId());
         Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), fail.getStatus());
-        assertThat(((ExtResponseRepresentation) fail.getEntity()).getMessage(), is(ClientError.ITEM_NOT_IN_WORKSPACE.name()));
+        assertThat(((ExtResponseRepresentation) fail.getEntity()).getMessage(), is(ClientError.ITEM_NOT_CORRECT_LOCATION.name()));
     }
 
     @Test
@@ -151,6 +151,6 @@ public class MoveTest extends AbstractSiteMapResourceTest {
         SiteMapResource siteMapResource = createResource();
         final Response fail = siteMapResource.move(aboutUs.getId(), news.getId());
         Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), fail.getStatus());
-        assertThat(((ExtResponseRepresentation) fail.getEntity()).getMessage(), is(ClientError.ITEM_NOT_IN_WORKSPACE.name()));
+        assertThat(((ExtResponseRepresentation) fail.getEntity()).getMessage(), is(ClientError.ITEM_NOT_CORRECT_LOCATION.name()));
     }
 }

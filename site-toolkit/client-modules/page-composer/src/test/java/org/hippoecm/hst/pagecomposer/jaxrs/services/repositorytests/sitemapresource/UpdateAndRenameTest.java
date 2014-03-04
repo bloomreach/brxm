@@ -94,7 +94,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
                 new NodePathPrefixValidator(getPreviewConfigurationWorkspacePath(), aboutUsUuid, HstNodeTypes.NODETYPE_HST_SITEMAPITEM).validate(ctx);
                 fail("Expected PreviewWorkspaceNodeValidator to fail on non workspace sitemap item");
             } catch (ClientException e) {
-                assertThat(e.getError(), is(ClientError.ITEM_NOT_IN_WORKSPACE));
+                assertThat(e.getError(), is(ClientError.ITEM_NOT_CORRECT_LOCATION));
             }
         }
 

@@ -199,4 +199,14 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         return getPreviewConfigurationPath() + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
     }
 
+    protected String getHomePageUUID() throws RepositoryException {
+        String previewConfigurationPath = mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
+        return session.getNode(previewConfigurationPath).getNode("hst:pages/homepage").getIdentifier();
+    }
+
+    protected String getSingleRowPrototypePageUUID() throws RepositoryException {
+        String previewConfigurationPath = mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
+        return session.getNode(previewConfigurationPath).getNode("hst:prototypepages/singlerow-page").getIdentifier();
+    }
+
 }
