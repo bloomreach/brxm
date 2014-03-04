@@ -114,14 +114,13 @@ public class FacetInstruction implements Instruction {
             final Node blogFacets = root.addNode(facetName, "hippofacnav:facetnavigation");
             final String docRef = session.getNode(targetNode +"/blog").getIdentifier();
             blogFacets.setProperty("hippo:docbase", docRef);
-            blogFacets.setProperty("hippo:count", "2");
-            // TODO read from config
-            blogFacets.setProperty("hippofacnav:facetnodenames", new String[]{"Author"});
-            blogFacets.setProperty("hippofacnav:facets", new String[]{namespace + ":author"});
-            //..
+            blogFacets.setProperty("hippo:count", "0");
+            blogFacets.setProperty("hippofacnav:facetnodenames", new String[]{"Authors", "Categories", "Tags"});
+            blogFacets.setProperty("hippofacnav:facets", new String[]{namespace + ":author", namespace + ":categories", "hippostd:tags"});
             blogFacets.setProperty("hippofacnav:filters", new String[]{"jcr:primaryType = " + namespace + ":blogpost"});
             blogFacets.setProperty("hippofacnav:sortby", new String[]{namespace + ":publicationdate"});
             blogFacets.setProperty("hippofacnav:sortorder", new String[]{"descending"});
+            blogFacets.setProperty("hippofacnav:limit", 100L);
             session.save();
 
         } catch (RepositoryException e) {
