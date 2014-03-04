@@ -24,7 +24,8 @@
     "REMOVE_CONFIRMATION": "Are you sure you want to delete the menu item '{{ title }}'?",
     "DELETE_ITEM": "Delete item",
 
-    "ITEM_ALREADY_LOCKED": "You cannot edit this menu because '{{lockedBy}}' is already editing it.",
-    "ITEM_NAME_NOT_UNIQUE": "A menu item with this label already exists.",
+    "ITEM_ALREADY_LOCKED": "You cannot edit this menu because '{{lockedBy}}' is already editing it",
+    "ITEM_NAME_NOT_UNIQUE": "The menu item '{{item}}' already exists in the sub menu '{{parentPath}}'",
+    "ITEM_NAME_NOT_UNIQUE_IN_ROOT": "The menu item '{{item}}' already exists as a top menu item",
     "TECHNICAL_ERROR": "A technical error has occurred"
 }
