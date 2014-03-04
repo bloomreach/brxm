@@ -155,6 +155,10 @@ dashboard-plugins/blog-plugin/src/main/resources/xml/samples/author_2.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/xml/samples/blog_entry_1.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/xml/samples/blog_entry_2.xml -text
 dashboard-plugins/blog-plugin/src/test/resources/log4j.xml -text
+dashboard-plugins/components-plugin/components-cms/pom.xml -text
+dashboard-plugins/components-plugin/components-cms/src/main/java/org/onehippo/cms7/essentials/components/cms/blog/BlogImporterJob.java -text
+dashboard-plugins/components-plugin/components-cms/src/main/java/org/onehippo/cms7/essentials/components/cms/blog/BlogUpdater.java -text
+dashboard-plugins/components-plugin/components-cms/src/main/java/org/onehippo/cms7/essentials/components/cms/modules/EventBusListenerModule.java -text
 dashboard-plugins/components-plugin/components-gui/pom.xml -text
 dashboard-plugins/components-plugin/components-gui/src/test/java/InstallationTest.java -text
 dashboard-plugins/components-plugin/components-gui/src/test/resources/log4j.xml -text
