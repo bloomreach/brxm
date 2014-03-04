@@ -29,6 +29,7 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.quartz.JCRScheduler;
 import org.jsoup.Jsoup;
@@ -40,6 +41,7 @@ import org.quartz.UnableToInterruptJobException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
 import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
@@ -81,7 +83,7 @@ public class BlogImporterJob implements InterruptableJob {
         JobConfiguration jobConfiguration = (JobConfiguration) context.getMergedJobDataMap().get(JobConfiguration.class.getName());
         int maxDescriptionLength;
         String blogBasePath = jobConfiguration.getString(BLOGS_BASE_PATH);
-        String[] urls = jobConfiguration.getStrings(URLS, new String[]{});
+        String[] urls = jobConfiguration.getStrings(URLS, ArrayUtils.EMPTY_STRING_ARRAY);
         String authorsBasePath = jobConfiguration.getString(AUTHORS_BASE_PATH, null);
         String[] authors = jobConfiguration.getStrings(AUTHORS, null);
         try {
@@ -226,25 +228,25 @@ public class BlogImporterJob implements InterruptableJob {
     private void setEmptyLinkProperty(Node documentNode, String propertyName) throws RepositoryException {
         documentNode.addNode(propertyName, propertyName);
         documentNode.getNode(propertyName).setProperty("hippo:docbase", "cafebabe-cafe-babe-cafe-babecafebabe");
-        documentNode.getNode(propertyName).setProperty("hippo:facets", new String[]{});
-        documentNode.getNode(propertyName).setProperty("hippo:modes", new String[]{});
-        documentNode.getNode(propertyName).setProperty("hippo:values", new String[]{});
+        documentNode.getNode(propertyName).setProperty("hippo:facets", ArrayUtils.EMPTY_STRING_ARRAY);
+        documentNode.getNode(propertyName).setProperty("hippo:modes", ArrayUtils.EMPTY_STRING_ARRAY);
+        documentNode.getNode(propertyName).setProperty("hippo:values", ArrayUtils.EMPTY_STRING_ARRAY);
     }
 
     private String processContent(SyndEntry entry) {
-        List contents = entry.getContents();
+        List<?> contents = entry.getContents();
         if (contents != null && contents.size() > 0) {
             StringBuilder blogContent = new StringBuilder();
             for (Object contentObject : contents) {
                 SyndContent content = (SyndContent) contentObject;
-                if (content != null && content.getValue() != null && !content.getValue().equals("")) {
+                if (content != null && !Strings.isNullOrEmpty(content.getValue())) {
                     blogContent.append(content.getValue());
                 }
             }
             return blogContent.toString();
         } else {
             SyndContent description = entry.getDescription();
-            if (description != null && description.getValue() != null && !description.getValue().equals("")) {
+            if (description != null && !Strings.isNullOrEmpty(description.getValue())) {
                 return description.getValue();
             }
         }
@@ -253,7 +255,7 @@ public class BlogImporterJob implements InterruptableJob {
 
     private String processDescription(SyndEntry entry, int maxDescriptionLength) {
         SyndContent description = entry.getDescription();
-        if (description != null && description.getValue() != null && !description.getValue().equals("")) {
+        if (description != null && !Strings.isNullOrEmpty(description.getValue())) {
             String text = Jsoup.parse(description.getValue()).text();
             if (text.length() > maxDescriptionLength) {
                 return text.substring(0, maxDescriptionLength) + "...";
@@ -261,12 +263,12 @@ public class BlogImporterJob implements InterruptableJob {
                 return text;
             }
         } else {
-            List contents = entry.getContents();
+            List<?> contents = entry.getContents();
             if (contents != null && contents.size() > 0) {
                 StringBuilder blogContent = new StringBuilder();
                 for (Object contentObject : contents) {
                     SyndContent content = (SyndContent) contentObject;
-                    if (content != null && content.getValue() != null && !content.getValue().equals("")) {
+                    if (content != null && !Strings.isNullOrEmpty(content.getValue())) {
                         blogContent.append(Jsoup.parse(content.getValue()).text());
                     }
                 }
@@ -283,8 +285,6 @@ public class BlogImporterJob implements InterruptableJob {
 
     private Node getBlogFolder(Node blogFolder, SyndEntry syndEntry) throws RepositoryException {
 
-        Node baseNode;
-        String timePart;
         Date blogDate = syndEntry.getPublishedDate();
         if (blogDate == null) {
             blogDate = new Date();
@@ -292,16 +292,17 @@ public class BlogImporterJob implements InterruptableJob {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(blogDate);
 
-        timePart = calendar.get(Calendar.YEAR) + "";
+        String timePart = String.valueOf(calendar.get(Calendar.YEAR));
+        Node baseNode;
         if (blogFolder.hasNode(timePart)) {
             baseNode = blogFolder.getNode(timePart);
         } else {
             baseNode = createBlogFolder(blogFolder, timePart);
         }
 
-        timePart = (calendar.get(Calendar.MONTH) + 1) + "";
+        timePart = String.valueOf(calendar.get(Calendar.MONTH) + 1);
         if (timePart.length() == 1) {
-            timePart = "0" + timePart;
+            timePart = '0' + timePart;
         }
         if (baseNode.hasNode(timePart)) {
             baseNode = baseNode.getNode(timePart);
@@ -315,7 +316,7 @@ public class BlogImporterJob implements InterruptableJob {
     private Node createBlogFolder(Node node, String name) throws RepositoryException {
         Node blogFolder = node.addNode(name, "hippostd:folder");
         blogFolder.addMixin("hippo:harddocument");
-        blogFolder.setProperty("hippostd:foldertype", new String[]{"new-connect-translated-folder", "new-document"});
+        blogFolder.setProperty("hippostd:foldertype", new String[]{"new-blog-folder", "new-blog-document"});
         return blogFolder;
     }
 }
