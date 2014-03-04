@@ -16,6 +16,8 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +30,7 @@ import javax.jcr.RepositoryException;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType;
@@ -55,8 +58,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
             update(newChild, newItem);
             return newChild;
         } catch (ItemExistsException e) {
-            final Map<?, ?> params = getParameterMap(newItemName, parent.getName());
-            throw new ClientException(e.getMessage(), ClientError.ITEM_NAME_NOT_UNIQUE, params);
+            throw getClientException(parent, newItemName, e.getMessage());
         }
     }
 
@@ -117,8 +119,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
         try {
             node.getSession().move(node.getPath(), newParent.getPath() + "/" + newNodeName);
         } catch (ItemExistsException e) {
-            final Map<?, ?> params = getParameterMap(newNodeName, newParent.getName());
-            throw new ClientException(e.getMessage(), ClientError.ITEM_NAME_NOT_UNIQUE, params);
+            throw getClientException(newParent, newNodeName, e.getMessage());
         }
     }
 
@@ -152,8 +153,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
         try {
             parent.orderBefore(sourceName, successorNodeName);
         } catch (ItemExistsException e) {
-            final Map<?, ?> params = getParameterMap(sourceName, parent.getName());
-            throw new ClientException(e.getMessage(), ClientError.ITEM_NAME_NOT_UNIQUE, params);
+            throw getClientException(parent, sourceName, e.getMessage());
         }
     }
 
@@ -215,10 +215,28 @@ public class SiteMenuItemHelper extends AbstractHelper {
         }
     }
 
-    private Map<?, ?> getParameterMap(String itemName, String parentName) {
-        return ImmutableMap.builder()
+    private ClientException getClientException(Node parent, String itemName, String message) throws RepositoryException {
+        final String path = toPath(parent);
+        final Map<?, ?> params = ImmutableMap.builder()
                 .put("item", itemName)
-                .put("parent", parentName)
+                .put("parentPath", path)
                 .build();
+        if (path.isEmpty()) {
+            return new ClientException(message, ClientError.ITEM_NAME_NOT_UNIQUE_IN_ROOT, params);
+        } else {
+            return new ClientException(message, ClientError.ITEM_NAME_NOT_UNIQUE, params);
+        }
     }
+
+    private String toPath(Node node) throws RepositoryException {
+        final List<String> names = new ArrayList<>();
+        while (!node.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMENU)) {
+            names.add(node.getName());
+            node = node.getParent();
+        }
+        names.add("");
+        Collections.reverse(names);
+        return StringUtils.join(names, '/');
+    }
+
 }

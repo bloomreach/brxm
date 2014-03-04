@@ -217,6 +217,8 @@ public class SiteMenuItemHelperTest {
 
         expect(parent.getNodes()).andReturn(childIterator);
         expect(parent.getPath()).andReturn(pathPrefix);
+        expect(parent.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMENU)).andReturn(false).andReturn(true);
+        expect(parent.getParent()).andReturn(parent);
         expect(parent.getName()).andReturn("parent").anyTimes();
         expect(childIterator.hasNext()).andReturn(true).times(2);
         expect(childIterator.next()).andReturn(node).andReturn(sibling);
@@ -235,6 +237,8 @@ public class SiteMenuItemHelperTest {
             siteMenuItemHelper.update(node, newItem);
         } catch (ClientException e) {
             assertThat(e.getError(), is(ClientError.ITEM_NAME_NOT_UNIQUE));
+            assertThat(e.getParameterMap().get("item").toString(), is(newName));
+            assertThat(e.getParameterMap().get("parentPath").toString(), is("/parent"));
         }
         verify(mocks);
     }
@@ -319,6 +323,7 @@ public class SiteMenuItemHelperTest {
         mockGetAncestor();
         final String name = "name";
         expect(node.getName()).andReturn(name).anyTimes();
+        expect(node.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMENU)).andReturn(true);
         expect(node.addNode(name, NODETYPE_HST_SITEMENUITEM)).andThrow(new ItemExistsException(""));
         replay(mocks);
 
@@ -327,7 +332,9 @@ public class SiteMenuItemHelperTest {
             newItem.setName(name);
             siteMenuItemHelper.create(node, newItem);
         } catch (ClientException e) {
-            assertThat(e.getError(), is(ClientError.ITEM_NAME_NOT_UNIQUE));
+            assertThat(e.getParameterMap().get("item").toString(), is(name));
+            assertThat(e.getParameterMap().get("parentPath").toString(), is(""));
+            assertThat(e.getError(), is(ClientError.ITEM_NAME_NOT_UNIQUE_IN_ROOT));
         }
     }
 

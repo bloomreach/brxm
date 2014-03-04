@@ -24,6 +24,8 @@ public enum ClientError {
      */
     ITEM_NAME_NOT_UNIQUE,
 
+    ITEM_NAME_NOT_UNIQUE_IN_ROOT,
+    
     /**
      * Represents a situation where a client tries to mutate an item that has already been locked by another user
      */
