@@ -15,7 +15,7 @@
       <sv:value>hippo:harddocument</sv:value>
     </sv:property>
     <sv:property sv:name="{{namespace}}:author" sv:type="String">
-      <sv:value/>
+      <sv:value>Hippo Author</sv:value>
     </sv:property>
     <sv:property sv:multiple="true" sv:name="{{namespace}}:categories" sv:type="String">
       <sv:value>cms</sv:value>

@@ -10,6 +10,11 @@ import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoDocumentIterator;
+import org.hippoecm.hst.content.beans.standard.HippoFacetChildNavigationBean;
+import org.hippoecm.hst.content.beans.standard.HippoFacetNavigationBean;
+import org.hippoecm.hst.content.beans.standard.HippoResultSetBean;
+import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSubNavigation;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -58,8 +63,16 @@ public class EssentialsListComponent extends CommonComponent {
             handleInvalidScope(request, response);
             return;
         }
-
-        final Pageable<HippoBean> pageable = doSearch(request, paramInfo, scope);
+        final Pageable<HippoBean> pageable;
+        if(scope instanceof HippoFacetNavigationBean) {
+            final HippoFacetNavigationBean facetBean = (HippoFacetNavigationBean) scope;
+            final HippoResultSetBean resultSet = facetBean.getResultSet();
+            final HippoDocumentIterator<HippoBean> iterator = resultSet.getDocumentIterator(HippoBean.class);
+            pageable = new IterablePagination<>(iterator, resultSet.getCount().intValue(), getCurrentPage(request), paramInfo.getPageSize());
+        }
+        else{
+            pageable = doSearch(request, paramInfo, scope);
+        }
         request.setAttribute(REQUEST_PARAM_PAGEABLE, pageable);
         request.setAttribute(REQUEST_PARAM_PAGE, getCurrentPage(request));
         request.setAttribute(REQUEST_PARAM_PAGE_SIZE, paramInfo.getPageSize());
