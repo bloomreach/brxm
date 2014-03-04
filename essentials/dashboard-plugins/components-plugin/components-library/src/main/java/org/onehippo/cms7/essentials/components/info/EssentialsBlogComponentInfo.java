@@ -16,16 +16,18 @@
 
 package org.onehippo.cms7.essentials.components.info;
 
+import org.hippoecm.hst.core.parameters.Parameter;
+
 /**
  * @version "$Id$"
  */
-public interface EssentialsBlogComponentInfo extends EssentialsDocumentListComponentInfo {
+public interface EssentialsBlogComponentInfo {
 
-    boolean showTagCloud();
 
-    boolean showAuthorList();
+    @Parameter(name = "showTagCloud", required = false, displayName = "Show tag cloud")
+    Boolean showTagCloud();
 
-    int pageSize();
-
+    @Parameter(name = "Show author list", required = false, displayName = "Show author list")
+    Boolean showAuthorList();
 
 }
