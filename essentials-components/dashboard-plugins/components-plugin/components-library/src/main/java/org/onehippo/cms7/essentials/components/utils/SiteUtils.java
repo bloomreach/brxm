@@ -7,10 +7,14 @@ package org.onehippo.cms7.essentials.components.utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -25,6 +29,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 /**
  * @version "$Id$"
@@ -254,11 +259,27 @@ public final class SiteUtils {
      * @param inputString comma separated document types
      * @return empty array if null or empty
      */
+    @Nonnull
     public static String[] parseCommaSeparatedValue(final String inputString) {
         if (Strings.isNullOrEmpty(inputString)) {
             return ArrayUtils.EMPTY_STRING_ARRAY;
         }
         final Iterable<String> iterable = Splitter.on(",").trimResults().omitEmptyStrings().split(inputString);
         return Iterables.toArray(iterable, String.class);
+    }
+
+    /**
+     * For given string, comma separate it and convert to Set
+     *
+     * @param inputString comma separated document types
+     * @return empty Set if null or empty
+     */
+    @Nonnull
+    public static Set<String> parseCommaSeparatedValueAsSet(final String inputString) {
+        if (Strings.isNullOrEmpty(inputString)) {
+            return Collections.emptySet();
+        }
+        final Iterable<String> iterable = Splitter.on(",").trimResults().omitEmptyStrings().split(inputString);
+        return Sets.newHashSet(iterable);
     }
 }

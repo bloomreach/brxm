@@ -16,6 +16,9 @@
 
 package org.onehippo.cms7.essentials.components;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentIterator;
 import org.hippoecm.hst.content.beans.standard.HippoFacetNavigationBean;
@@ -23,6 +26,9 @@ import org.hippoecm.hst.content.beans.standard.HippoResultSetBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.util.PathUtils;
+import org.hippoecm.hst.util.SearchInputParsingUtils;
 import org.hippoecm.hst.utils.BeanUtils;
 import org.onehippo.cms7.essentials.components.info.EssentialsFacetsComponentInfo;
 import org.onehippo.cms7.essentials.components.paging.DefaultPagination;
@@ -46,20 +52,13 @@ public class EssentialsFacetsComponent extends CommonComponent {
         log.info("**** FACET COMPONENT **** ");
         final EssentialsFacetsComponentInfo componentInfo = getComponentParametersInfo(request);
         final String facetPath = componentInfo.getFacetPath();
-        if (Strings.isNullOrEmpty(facetPath)) {
-            log.warn("Facetpath was empty {}", facetPath);
-            request.setAttribute(REQUEST_PARAM_PAGEABLE, DefaultPagination.emptyCollection());
-            return;
-        }
-        final String query = cleanupSearchQuery(getAnyParameter(request, REQUEST_PARAM_QUERY));
-        // NOTE: query may be null in this case
-        final HippoFacetNavigationBean hippoFacetNavigationBean = BeanUtils.getFacetNavigationBean(request, facetPath, query, getObjectConverter());
-        if(hippoFacetNavigationBean==null){
+        final HippoFacetNavigationBean hippoFacetNavigationBean = getFacetNavigationBean(request, facetPath, getAnyParameter(request, REQUEST_PARAM_QUERY));
+        if (hippoFacetNavigationBean == null) {
             log.warn("Facet navigation bean for facet path: {} was null", facetPath);
             request.setAttribute(REQUEST_PARAM_PAGEABLE, DefaultPagination.emptyCollection());
             return;
         }
-        final HippoResultSetBean hippoResultSetBean = hippoFacetNavigationBean.getResultSet();
+        /*final HippoResultSetBean hippoResultSetBean = hippoFacetNavigationBean.getResultSet();
         final int pageSize = componentInfo.getPageSize();
         final int page = getAnyIntParameter(request, REQUEST_PARAM_PAGE, 1);
         final Pageable<HippoBean> results;
@@ -70,6 +69,27 @@ public class EssentialsFacetsComponent extends CommonComponent {
         } else {
             results = DefaultPagination.emptyCollection();
         }
-        request.setAttribute(REQUEST_PARAM_PAGEABLE, results);
+
+        request.setAttribute(REQUEST_PARAM_PAGEABLE, results);*/
+        request.setAttribute(REQUEST_PARAM_FACETS, hippoFacetNavigationBean);
     }
+
+    protected HippoFacetNavigationBean getFacetNavigationBean(HstRequest request, String path, String query) {
+        if (Strings.isNullOrEmpty(path)) {
+            log.warn("Facetpath was empty {}", path);
+            return null;
+        }
+        ResolvedSiteMapItem resolvedSiteMapItem = request.getRequestContext().getResolvedSiteMapItem();
+        String resolvedContentPath = PathUtils.normalizePath(resolvedSiteMapItem.getRelativeContentPath());
+        HippoFacetNavigationBean resolvedContentBean = getSiteContentBaseBean(request).getBean(resolvedContentPath, HippoFacetNavigationBean.class);
+        String parsedQuery = SearchInputParsingUtils.parse(query, false);
+        HippoFacetNavigationBean facNavBean;
+        if (resolvedContentBean != null) {
+            facNavBean = BeanUtils.getFacetNavigationBean(request, resolvedContentPath, parsedQuery, getObjectConverter());
+        } else {
+            facNavBean = BeanUtils.getFacetNavigationBean(request, path, parsedQuery, getObjectConverter());
+        }
+        return facNavBean;
+    }
+
 }

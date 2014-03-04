@@ -46,10 +46,11 @@ public class CommonComponent extends BaseHstComponent {
     protected static final String REQUEST_PARAM_PAGE_SIZE = "pageSize";
     protected static final String REQUEST_PARAM_PAGE_PAGINATION = "showPagination";
 
+    protected static final String REQUEST_PARAM_PAGEABLE = "pageable";
     /**
      * Request attribute to store pageable result in.
      */
-    protected static final String REQUEST_PARAM_PAGEABLE = "pageable";
+    protected static final String REQUEST_PARAM_FACETS = "facets";
     protected static final String REQUEST_PARAM_DOCUMENT = "document";
     protected static final String REQUEST_PARAM_QUERY = "query";
 
@@ -66,6 +67,7 @@ public class CommonComponent extends BaseHstComponent {
             final HippoBean root = getSiteContentBaseBean(request);
             return root.getBean(documentPath, beanMappingClass);
         }
+
         return null;
     }
 
@@ -135,7 +137,7 @@ public class CommonComponent extends BaseHstComponent {
         return SiteUtils.getScopeBean(request, path, this);
     }
 
-    public  int getAnyIntParameter(HstRequest request, String parameter, int defaultValue) {
+    public int getAnyIntParameter(HstRequest request, String parameter, int defaultValue) {
         return SiteUtils.getAnyIntParameter(request, parameter, defaultValue, this);
     }
 
@@ -154,7 +156,7 @@ public class CommonComponent extends BaseHstComponent {
      * @return null if empty or undefined
      */
     public String getAnyParameter(HstRequest request, String parameter) {
-       return SiteUtils.getAnyParameter(parameter, request, this);
+        return SiteUtils.getAnyParameter(parameter, request, this);
     }
 
 
@@ -179,7 +181,7 @@ public class CommonComponent extends BaseHstComponent {
     }
 
     @Nullable
-    public String cleanupSearchQuery(final String query){
+    public String cleanupSearchQuery(final String query) {
         return SearchInputParsingUtils.parse(query, false);
     }
 
