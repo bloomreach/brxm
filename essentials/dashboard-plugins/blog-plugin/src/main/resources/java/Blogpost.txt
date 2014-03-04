@@ -20,6 +20,7 @@ public class Blogpost extends HippoDocument {
     public static final String AUTHOR = "{{namespace}}:author";
     public static final String LINK = "{{namespace}}:link";
     public static final String AUTHORS = "{{namespace}}:authors";
+    public static final String TAGS = "hippostd:tags";
 
 
    @HippoEssentialsGenerated(internalName = "appstore:publicationdate")
@@ -61,6 +62,11 @@ public class Blogpost extends HippoDocument {
     @HippoEssentialsGenerated(internalName = "{{namespace}}:authors")
     public List<Author> getAuthors() {
         return getLinkedBeans(AUTHORS, Author.class);
+    }
+
+      @HippoEssentialsGenerated(internalName = "hippostd:tags")
+    public String[] getTags() {
+        return getProperty(TAGS);
     }
 
 }
