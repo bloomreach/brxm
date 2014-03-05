@@ -20,8 +20,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
+import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -134,9 +136,7 @@ public class SiteMapResource extends AbstractConfigResource {
     @Path("/create/{parentId}")
     public Response create(final SiteMapItemRepresentation siteMapItem,
                            final @PathParam("parentId") String parentId) {
-
         final List<Validator> preValidators = new ArrayList<>();
-
         preValidators.add(new NotNullValidator(siteMapItem.getName(), ClientError.ITEM_NO_NAME));
         preValidators.add(new NodePathPrefixValidator(getPreviewConfigurationPrototypePath(),
                 siteMapItem.getComponentConfigurationId(), "hst:abstractcomponent"));
@@ -171,7 +171,6 @@ public class SiteMapResource extends AbstractConfigResource {
     @Path("/move/{id}/{parentId}")
     public Response move(final @PathParam("id") String id,
                          final @PathParam("parentId") String parentId) {
-
         final List<Validator> preValidators = new ArrayList<>();
         preValidators.add(new CurrentPreviewConfigurationValidator(id, siteMapHelper));
         preValidators.add(new NodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
@@ -203,7 +202,6 @@ public class SiteMapResource extends AbstractConfigResource {
     @Path("/delete/{id}")
     public Response delete(final @PathParam("id") String id) {
         final List<Validator> preValidators = new ArrayList<>();
-
         preValidators.add(new CurrentPreviewConfigurationValidator(id, siteMapHelper));
         preValidators.add(new NodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
                 id, HstNodeTypes.NODETYPE_HST_SITEMAPITEM));
@@ -240,6 +238,5 @@ public class SiteMapResource extends AbstractConfigResource {
         }
         return workspaceSiteMapId;
     }
-
 
 }

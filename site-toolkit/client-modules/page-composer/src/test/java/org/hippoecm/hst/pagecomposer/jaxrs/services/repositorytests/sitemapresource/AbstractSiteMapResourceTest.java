@@ -16,6 +16,9 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.sitemapresource;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
@@ -225,5 +228,19 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         String previewConfigurationPath = mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
         return session.getNode(previewConfigurationPath).getNode("hst:prototypepages/singlerow-page").getIdentifier();
     }
+
+
+    protected SiteMapItemRepresentation createSiteMapItemRepresentation(final String name,
+                                                                        final String prototypeUUID) throws RepositoryException {
+        final SiteMapItemRepresentation newFoo = new SiteMapItemRepresentation();
+        newFoo.setName(name);
+        newFoo.setComponentConfigurationId(prototypeUUID);
+        newFoo.setRelativeContentPath("relFoo");
+        Map<String, String> params = new HashMap<>();
+        params.put("lux", "qux");
+        newFoo.setLocalParameters(params);
+        return newFoo;
+    }
+
 
 }

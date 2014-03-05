@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.ws.rs.core.Response;
@@ -30,6 +31,7 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
@@ -111,8 +113,9 @@ public class AbstractConfigResource {
                 return callable.call();
             }
 
-            final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
+            createMandatoryWorkspaceNodesIfMissing();
 
+            final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
             for (Validator validator : preValidators) {
                 validator.validate(requestContext);
             }
@@ -133,6 +136,36 @@ public class AbstractConfigResource {
         } catch (Exception e) {
             resetSession();
             return logAndReturnServerError(e);
+        }
+    }
+
+
+    private void createMandatoryWorkspaceNodesIfMissing() throws RepositoryException {
+        final String liveConfigPath = getPageComposerContextService().getEditingLiveSite().getConfigurationPath();
+        final String previewConfigPath = getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
+        createMandatoryWorkspaceNodesIfMissing(liveConfigPath);
+        createMandatoryWorkspaceNodesIfMissing(previewConfigPath);
+    }
+
+    private void createMandatoryWorkspaceNodesIfMissing(String configPath) throws RepositoryException {
+        final Session session = getPageComposerContextService().getRequestContext().getSession();
+        if (!session.nodeExists(configPath)) {
+            String msg = String.format("Expected configuration node at %s'%", configPath);
+            throw new ClientException(msg, ClientError.ITEM_NOT_FOUND);
+        }
+        Node configNode = session.getNode(configPath);
+        if (configNode.hasNode(HstNodeTypes.NODENAME_HST_WORKSPACE)) {
+            Node workspace = configNode.getNode(HstNodeTypes.NODENAME_HST_WORKSPACE);
+            if (!workspace.hasNode(HstNodeTypes.NODENAME_HST_PAGES)) {
+                workspace.addNode(HstNodeTypes.NODENAME_HST_PAGES);
+            }
+            if (!workspace.hasNode(HstNodeTypes.NODENAME_HST_SITEMAP)) {
+                workspace.addNode(HstNodeTypes.NODENAME_HST_SITEMAP);
+            }
+        } else {
+            Node workspace = configNode.addNode(HstNodeTypes.NODENAME_HST_WORKSPACE);
+            workspace.addNode(HstNodeTypes.NODENAME_HST_PAGES);
+            workspace.addNode(HstNodeTypes.NODENAME_HST_SITEMAP);
         }
     }
 
@@ -188,11 +221,9 @@ public class AbstractConfigResource {
         return getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
     }
 
-
     protected String getPreviewConfigurationWorkspacePath() {
         return getPreviewConfigurationPath() + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
     }
-
 
     protected String getPreviewConfigurationPrototypePath() {
         return getPreviewConfigurationPath() + "/" + HstNodeTypes.NODENAME_HST_PROTOTYPEPAGES;
