@@ -2,7 +2,6 @@
 <%--@elvariable id="item" type="{{beansPackage}}.Blogpost"--%>
 <%--@elvariable id="showPagination" type="java.lang.Boolean"--%>
 <%--@elvariable id="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable"--%>
-<h1>${pageable.total}</h1>
 <c:if test="${(pageable ne null) and(pageable.total gt 0)}">
   <div class="panel panel-default">
     <div class="panel-heading">

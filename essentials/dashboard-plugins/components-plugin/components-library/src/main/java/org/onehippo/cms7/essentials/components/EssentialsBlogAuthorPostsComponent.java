@@ -57,6 +57,7 @@ public class EssentialsBlogAuthorPostsComponent extends EssentialsListComponent 
                 final Class<? extends HippoBean> clazz = getPrimaryType(document);
                 final EssentialsBlogAuthorPostsComponentInfo componentInfo = getComponentParametersInfo(request);
                 final int pageSize = componentInfo.getPageSize();
+                final String sortField = componentInfo.getSortField();
                 final int limit = pageSize + 1;
                 final List<HippoBean> beans = new ArrayList<>(limit);
                 final HippoBean scopeBean = getScopeBean(request, componentInfo.getScope());
@@ -64,6 +65,7 @@ public class EssentialsBlogAuthorPostsComponent extends EssentialsListComponent 
                     for (AuthorEntry author : authors) {
                         final HstQuery hstQuery = ContentBeanUtils.createIncomingBeansQuery(author, scopeBean, getSearchDepth(), getObjectConverter(), clazz, true);
                         hstQuery.setLimit(limit);
+                        hstQuery.addOrderByDescending(sortField);
                         final HippoBeanIterator it = hstQuery.execute().getHippoBeans();
                         while (it.hasNext()) {
                             final HippoBean bean = it.nextHippoBean();

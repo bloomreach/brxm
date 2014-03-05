@@ -22,7 +22,7 @@ import org.hippoecm.hst.core.parameters.Parameter;
 /**
  * @version "$Id$"
  */
-public interface EssentialsBlogAuthorPostsComponentInfo  {
+public interface EssentialsBlogAuthorPostsComponentInfo {
     @Parameter(name = "postScope", required = false, displayName = "Blog posts location")
     @JcrPath(
             pickerConfiguration = "cms-pickers/documents",
@@ -32,7 +32,14 @@ public interface EssentialsBlogAuthorPostsComponentInfo  {
     String getScope();
 
 
-    @Parameter(name = "pageSize", required = true, defaultValue = "3", displayName = "Nr. of items toshow", description = "Nr of items per page")
+    @Parameter(name = "pageSize", required = true, defaultValue = "3", displayName = "Nr. of posts to show", description = "Nr of items per page")
     int getPageSize();
+
+    @Parameter(name = "sortField", required = true, defaultValue = "hippostdpubwf:publicationDate", displayName = "Sort field")
+    String getSortField();
+
+   /* @Parameter(name = "sortOrder", required = false, defaultValue = "desc", displayName = "Sort order", description = "Order results ascending or descending")
+    @DropDownList(value = {"asc", "desc"})
+    String getSortOrder();*/
 
 }
