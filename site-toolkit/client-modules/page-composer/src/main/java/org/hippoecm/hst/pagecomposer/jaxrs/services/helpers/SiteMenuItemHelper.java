@@ -41,6 +41,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_REPOBASED;
+import static org.hippoecm.repository.api.NodeNameCodec.decode;
 import static org.hippoecm.repository.api.NodeNameCodec.encode;
 
 public class SiteMenuItemHelper extends AbstractHelper {
@@ -55,7 +56,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
         lockHelper.acquireSimpleLock(getMenuAncestor(parent));
         final String newItemName = newItem.getName();
         try {
-            final Node newChild = parent.addNode(newItemName, HstNodeTypes.NODETYPE_HST_SITEMENUITEM);
+            final Node newChild = parent.addNode(encode(newItemName), HstNodeTypes.NODETYPE_HST_SITEMENUITEM);
             update(newChild, newItem);
             return newChild;
         } catch (ItemExistsException e) {
@@ -80,7 +81,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
         lockHelper.acquireSimpleLock(getMenuAncestor(node));
 
         final String modifiedName = modifiedItem.getName();
-        if (modifiedName != null && !modifiedName.equals(node.getName())) {
+        if (modifiedName != null && !modifiedName.equals(decode(node.getName()))) {
             rename(node, modifiedName);
         }
 
@@ -219,7 +220,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
     private ClientException getClientException(Node parent, String itemName, String message) throws RepositoryException {
         final String path = toPath(parent);
         final Map<?, ?> params = ImmutableMap.builder()
-                .put("item", itemName)
+                .put("item", decode(itemName))
                 .put("parentPath", path)
                 .build();
         if (path.isEmpty()) {
