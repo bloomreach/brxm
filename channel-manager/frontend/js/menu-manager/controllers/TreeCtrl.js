@@ -35,9 +35,7 @@
                                 $state.go('menu-item.edit', {menuItemId: itemScope.id});
                                 $scope.$parent.selectedMenuItem = itemScope;
                             },
-                            function (errorResponse) {
-                                $scope.$parent.feedback = FeedbackService.getFeedback(errorResponse);
-                            }
+                            function (errorResponse) {}
                         );
                     },
                     itemMoved: function (sourceScope, modelData, sourceIndex, destScope, destIndex) {
@@ -53,6 +51,14 @@
                                 sourceScope.sortableModelValue.splice(sourceIndex, 0, removedItem);
                             }
                         );
+
+                        // prevent move action when the edit menu item form is invalid
+                        MenuService.saveMenuItem($scope.$parent.selectedMenuItem).then(function () {},
+                            function () {
+                                var removedItem = destScope.sortableModelValue.splice(destIndex, 1)[0];
+                                sourceScope.sortableModelValue.splice(sourceIndex, 0, removedItem);
+                            }
+                        );
                     },
                     orderChanged: function (scope, modelData, sourceIndex, destIndex) {
                         var parentData = scope.parentItemScope();
@@ -64,6 +70,14 @@
                             var removedItem = scope.sortableModelValue.splice(destIndex, 1)[0];
                             scope.sortableModelValue.splice(sourceIndex, 0, removedItem);
                         });
+
+                        // prevent order change when the edit menu item form is invalid
+                        MenuService.saveMenuItem($scope.$parent.selectedMenuItem).then(function () {},
+                            function () {
+                                var removedItem = scope.sortableModelValue.splice(destIndex, 1)[0];
+                                scope.sortableModelValue.splice(sourceIndex, 0, removedItem);
+                            }
+                        );
                     }
                 };
             }
