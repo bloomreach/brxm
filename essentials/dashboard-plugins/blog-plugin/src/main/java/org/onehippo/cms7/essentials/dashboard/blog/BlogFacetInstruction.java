@@ -38,7 +38,7 @@ import com.google.common.eventbus.EventBus;
 /**
  * @version "$Id$"
  */
-public class FacetInstruction implements Instruction {
+public class BlogFacetInstruction implements Instruction {
 
     private static final String DATE_FACET = ":publicationdate$[\n" +
             "                {name:'last 7 days',resolution:'day', begin:-6, end:1},\n" +
@@ -47,7 +47,7 @@ public class FacetInstruction implements Instruction {
             "                {name:'last 6 months',resolution:'day', begin:-182, end:1},\n" +
             "                {name:'last year',resolution:'day', begin:-365, end:1}\n" +
             "                ]";
-    private static Logger log = LoggerFactory.getLogger(FacetInstruction.class);
+    private static Logger log = LoggerFactory.getLogger(BlogFacetInstruction.class);
 
 
     @Inject

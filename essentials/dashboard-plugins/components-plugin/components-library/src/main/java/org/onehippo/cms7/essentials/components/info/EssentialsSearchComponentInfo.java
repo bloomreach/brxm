@@ -16,9 +16,21 @@
 
 package org.onehippo.cms7.essentials.components.info;
 
+import org.hippoecm.hst.core.parameters.JcrPath;
+import org.hippoecm.hst.core.parameters.Parameter;
+
 /**
  * @version "$Id$"
  */
 public interface EssentialsSearchComponentInfo {
+
+    @Parameter(name = "searchScope", required = false, displayName = "Search scope (folder)")
+    @JcrPath(
+            pickerConfiguration = "cms-pickers/documents",
+            pickerSelectableNodeTypes = {"hippostd:folder"},
+            pickerInitialPath = "/content/documents"
+    )
+    String getScope();
+
 
 }

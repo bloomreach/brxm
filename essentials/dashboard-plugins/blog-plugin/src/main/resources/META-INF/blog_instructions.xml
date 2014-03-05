@@ -82,11 +82,12 @@
     <file action="copy" source="freemarker/imports.ftl" target="{{freemarkerRoot}}/essentials/common/imports.ftl"/>
   </instructionSet>
   <!--
-    FACET
+    FACET & DAEMON MODULE SETUP
     NOTE: execute after creating folders etc, because we need to fetch blog folder UUID
   -->
   <instructionSet>
-    <execute class="org.onehippo.cms7.essentials.dashboard.blog.FacetInstruction"/>
+    <execute class="org.onehippo.cms7.essentials.dashboard.blog.BlogFacetInstruction"/>
+    <execute class="org.onehippo.cms7.essentials.dashboard.blog.BlogDaemonModuleInstruction"/>
   </instructionSet>
   <!--
    HST CONFIG

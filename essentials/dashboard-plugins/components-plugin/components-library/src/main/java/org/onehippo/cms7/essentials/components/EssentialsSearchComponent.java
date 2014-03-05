@@ -31,6 +31,6 @@ public class EssentialsSearchComponent extends CommonComponent {
 
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
-        // TODO implement
+
     }
 }
