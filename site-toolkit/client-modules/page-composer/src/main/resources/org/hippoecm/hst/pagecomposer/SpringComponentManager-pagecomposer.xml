@@ -29,9 +29,6 @@
     <property name="pageComposerContextService" ref="pageComposerContextService"/>
   </bean>
 
-  <bean id="abstractHelper" abstract="true">
-    <property name="pageComposerContextService" ref="pageComposerContextService"/>
-  </bean>
 
   <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerItemComponentResource" id="containerItemComponentResource"
         parent="abstractConfigResource">
@@ -42,11 +39,18 @@
 
   <bean id="pageComposerContextService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService"/>
 
+  <bean id="abstractHelper" abstract="true">
+    <property name="pageComposerContextService" ref="pageComposerContextService"/>
+  </bean>
+
   <bean id="siteMenuHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper" parent="abstractHelper"/>
 
-  <bean id="siteMapHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper" parent="abstractHelper"/>
-
   <bean id="pagesHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper" parent="abstractHelper"/>
+
+  <bean id="siteMapHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper" parent="abstractHelper">
+    <property name="pagesHelper" ref="pagesHelper"/>
+  </bean>
+
 
   <!--
     The internal server factory. 

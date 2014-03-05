@@ -34,6 +34,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.AbstractMountResourceTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.MountResourceTest;
@@ -73,11 +74,15 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         adminGroup.setProperty("hipposys:members", values);
 
         // move 2 sitemap items to workspace, keep rest in unittestproject/hst:sitemap
-        session.getNode("/hst:hst/hst:configurations/unittestproject").addNode("hst:workspace").addNode("hst:sitemap");
+        final Node workspaceNode = session.getNode("/hst:hst/hst:configurations/unittestproject").addNode("hst:workspace");
+        workspaceNode.addNode("hst:sitemap");
         session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap/home",
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/home");
         session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap/news",
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/news");
+
+        // create workspace pages
+        workspaceNode.addNode("hst:pages");
 
         movePagesFromCommonToUnitTestProject();
 
@@ -180,8 +185,11 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
 
     protected SiteMapResource createResource() {
 
+        final PagesHelper pagesHelper = new PagesHelper();
+        pagesHelper.setPageComposerContextService(mountResource.getPageComposerContextService());
         final SiteMapHelper siteMapHelper = new SiteMapHelper();
         siteMapHelper.setPageComposerContextService(mountResource.getPageComposerContextService());
+        siteMapHelper.setPagesHelper(pagesHelper);
 
         final SiteMapResource siteMapResource = new SiteMapResource();
         siteMapResource.setPageComposerContextService(mountResource.getPageComposerContextService());
@@ -194,9 +202,14 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         return mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
     }
 
-
     protected String getPreviewConfigurationWorkspacePath() {
         return getPreviewConfigurationPath() + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
+    }
+    protected String getPreviewConfigurationWorkspaceSitemapPath() {
+        return getPreviewConfigurationWorkspacePath() + "/" + HstNodeTypes.NODENAME_HST_SITEMAP;
+    }
+    protected String getPreviewConfigurationWorkspacePagesPath() {
+        return getPreviewConfigurationWorkspacePath() + "/" + HstNodeTypes.NODENAME_HST_PAGES;
     }
 
     protected String getHomePageUUID() throws RepositoryException {

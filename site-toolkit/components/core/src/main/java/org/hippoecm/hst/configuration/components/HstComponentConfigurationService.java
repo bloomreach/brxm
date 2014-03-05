@@ -358,11 +358,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                                                                 final String rootNodeName,
                                                                 final Map<String, HstNode> referenceableContainers) {
         if (isHstComponentOrReferenceType(child)) {
-            if (isPrototype() && !isAllowedInPrototype(child)) {
-                log.warn("Component child of type '{}' found for a prototype page. Only nodes of type " +
-                        "'{}' or '{}' are allowed for prototype pages. Skipping component '{}'.",
-                        new String[]{child.getNodeTypeName(), HstNodeTypes.NODETYPE_HST_COMPONENT,
-                                HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT, child.getValueProvider().getPath()});
+            if (isPrototype() && isNotAllowedInPrototype(child)) {
+                log.warn("Component child of type '{}' are not allowed in a prototype page. Skipping component '{}'.",
+                        child.getNodeTypeName(), child.getValueProvider().getPath());
                 return null;
             }
             if (child.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)) {
@@ -404,9 +402,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 || HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTREFERENCE.equals(node.getNodeTypeName());
     }
 
-    private boolean isAllowedInPrototype(final HstNode node) {
-        return HstNodeTypes.NODETYPE_HST_COMPONENT.equals(node.getNodeTypeName())
-                || HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(node.getNodeTypeName());
+    private boolean isNotAllowedInPrototype(final HstNode node) {
+        return HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTREFERENCE.equals(node.getNodeTypeName());
     }
 
 

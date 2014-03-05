@@ -57,7 +57,8 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         initContext();
         final SiteMapItemRepresentation newFoo = new SiteMapItemRepresentation();
         newFoo.setName("foo");
-        newFoo.setComponentConfigurationId(getSingleRowPrototypePageUUID());
+        final String singleRowPrototypePageUUID = getSingleRowPrototypePageUUID();
+        newFoo.setComponentConfigurationId(singleRowPrototypePageUUID);
         newFoo.setRelativeContentPath("relFoo");
         Map<String, String> params = new HashMap<>();
         params.put("lux", "qux");
@@ -69,20 +70,65 @@ public class CreateTest extends AbstractSiteMapResourceTest {
 
         String newId = (String) ((ExtResponseRepresentation) response.getEntity()).getData();
 
-        final Node newNode = session.getNodeByIdentifier(newId);
-        assertEquals("foo", newNode.getName());
+        final Node newSitemapItemNode = session.getNodeByIdentifier(newId);
+        assertEquals("foo", newSitemapItemNode.getName());
 
+        String newPageNodeName = "foo-" + session.getNodeByIdentifier(singleRowPrototypePageUUID).getName();
+
+        assertEquals("hst:pages/"+newPageNodeName,
+                newSitemapItemNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
+
+        assertTrue(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + newPageNodeName));
+
+        // ASSERT NEW NODES ARE NOT LOCKED FOR CURRENT SESSION
+        try {
+            helper.acquireLock(newSitemapItemNode);
+        } catch (ClientException e) {
+            fail("Session '"+session.getUserID()+"' should contain the lock");
+        }
+        try {
+            helper.acquireLock(session.getNode(getPreviewConfigurationWorkspacePagesPath() + "/" + newPageNodeName));
+        } catch (ClientException e) {
+            fail("Session '"+session.getUserID()+"' should contain the lock");
+        }
+
+        // ASSERT NEW NODES ARE LOCKED FOR BOB
         final Session bob = createSession("bob", "bob");
         Node newNodeByBob = bob.getNodeByIdentifier(newId);
-        // check only acquiring lock now
+        //  acquiring should fail now
         try {
             helper.acquireLock(newNodeByBob);
             fail("Expected an ClientException when trying to acquire lock");
         } catch (ClientException e) {
             assertTrue(e.getMessage().contains("cannot be locked"));
         }
+
+        Node newPageNodeByBob = bob.getNode(getPreviewConfigurationWorkspacePagesPath() + "/" + newPageNodeName);
+        //  acquiring should fail now
+        try {
+            helper.acquireLock(newPageNodeByBob);
+            fail("Expected an ClientException when trying to acquire lock");
+        } catch (ClientException e) {
+            assertTrue(e.getMessage().contains("cannot be locked"));
+        }
+
         bob.logout();
 
+    }
+
+    @Test
+    public void test_create_succeeds_when_workspace_missing() throws Exception {
+        // TODO
+    }
+
+    @Test
+    public void test_create_succeeds_when_workspace_pages_missing() throws Exception {
+        // TODO
+    }
+
+    @Test
+    public void test_create_succeeds_when_workspace_sitemap_missing() throws Exception {
+        // TODO
     }
 
     @Test
@@ -156,12 +202,80 @@ public class CreateTest extends AbstractSiteMapResourceTest {
 
     @Test
     public void test_create_two_sitemap_items_from_same_prototype_page() throws Exception {
+        initContext();
+        final SiteMapItemRepresentation newFoo = new SiteMapItemRepresentation();
+        final SiteMapItemRepresentation newBar = new SiteMapItemRepresentation();
+        newFoo.setName("foo");
+        newBar.setName("bar");
+        final String singleRowPrototypePageUUID = getSingleRowPrototypePageUUID();
+        newFoo.setComponentConfigurationId(singleRowPrototypePageUUID);
+        newBar.setComponentConfigurationId(singleRowPrototypePageUUID);
 
+        final SiteMapResource siteMapResource = createResource();
+        siteMapResource.create(newFoo);
+        siteMapResource.create(newBar);
+
+        String newFooPageNodeName = "foo-" + session.getNodeByIdentifier(singleRowPrototypePageUUID).getName();
+        String newBarPageNodeName = "bar-" + session.getNodeByIdentifier(singleRowPrototypePageUUID).getName();
+        assertTrue(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + newFooPageNodeName));
+        assertTrue(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + newBarPageNodeName));
+    }
+
+    @Test
+    public void test_create_sitemap_creates_page_name_with_postfix() throws Exception {
+        // the 'foo' sitemap item below with in the end try to create a new page
+        // called 'foo-'+prototypePageNodeName . If this node already exists, we expect that a node
+        // 'foo-'+prototypePageNodeName + '-1' is created
+        initContext();
+        final String singleRowPrototypePageUUID = getSingleRowPrototypePageUUID();
+        String prototypePageNodeName = session.getNodeByIdentifier(singleRowPrototypePageUUID).getName();
+        final Node node = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages")
+                .addNode("foo-" + prototypePageNodeName, HstNodeTypes.NODETYPE_HST_COMPONENT);
+        session.save();
+
+        final SiteMapItemRepresentation newFoo = new SiteMapItemRepresentation();
+        newFoo.setName("foo");
+        newFoo.setComponentConfigurationId(singleRowPrototypePageUUID);
+
+        final SiteMapResource siteMapResource = createResource();
+        final Response response = siteMapResource.create(newFoo);
+        String expectedPageName = "foo-"+prototypePageNodeName +"-1";
+        assertTrue(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + expectedPageName));
+        String newSitemapItemId = (String) ((ExtResponseRepresentation) response.getEntity()).getData();
+        final Node newSitemapItemNode = session.getNodeByIdentifier(newSitemapItemId);
+        assertEquals("hst:pages/"+expectedPageName,
+                newSitemapItemNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
     }
 
     @Test
     public void test_create_sitemap_creates_page_name_until_finds_valid_one() throws Exception {
+        // Same as above but now we already have
+        // 'foo-'+prototypePageNodeName
+        // and
+        // 'foo-'+prototypePageNodeName + '-1'
+        initContext();
+        final String singleRowPrototypePageUUID = getSingleRowPrototypePageUUID();
+        String prototypePageNodeName = session.getNodeByIdentifier(singleRowPrototypePageUUID).getName();
+        session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages")
+                .addNode("foo-"+prototypePageNodeName, HstNodeTypes.NODETYPE_HST_COMPONENT);
 
+        session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages")
+                .addNode("foo-"+prototypePageNodeName + "-1", HstNodeTypes.NODETYPE_HST_COMPONENT);
+
+        session.save();
+
+        final SiteMapItemRepresentation newFoo = new SiteMapItemRepresentation();
+        newFoo.setName("foo");
+        newFoo.setComponentConfigurationId(singleRowPrototypePageUUID);
+
+        final SiteMapResource siteMapResource = createResource();
+        final Response response = siteMapResource.create(newFoo);
+        String expectedPageName = "foo-"+prototypePageNodeName +"-2";
+        assertTrue(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + expectedPageName));
+        String newSitemapItemId = (String) ((ExtResponseRepresentation) response.getEntity()).getData();
+        final Node newSitemapItemNode = session.getNodeByIdentifier(newSitemapItemId);
+        assertEquals("hst:pages/"+expectedPageName,
+                newSitemapItemNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
     }
 
     @Test
@@ -326,6 +440,25 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
         assertThat(((ExtResponseRepresentation) response.getEntity()).getMessage(), is(ClientError.ITEM_NAME_NOT_UNIQUE.name()));
     }
+
+    @Test
+    public void test_create_fails_for_existing_sitemap_item_name() throws Exception {
+        initContext();
+        final SiteMapItemRepresentation newItem = new SiteMapItemRepresentation();
+        newItem.setName("foo");
+        newItem.setComponentConfigurationId(getSingleRowPrototypePageUUID());
+        final SiteMapResource siteMapResource = createResource();
+        final Response response = siteMapResource.create(newItem);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+        final SiteMapItemRepresentation next = new SiteMapItemRepresentation();
+        next.setName("foo");
+        next.setComponentConfigurationId(getSingleRowPrototypePageUUID());
+        final Response fail = siteMapResource.create(next);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), fail.getStatus());
+        assertThat(((ExtResponseRepresentation) fail.getEntity()).getMessage(), is(ClientError.ITEM_NAME_NOT_UNIQUE.name()));
+    }
+
 
     @Test
     public void test_create_below_parent() throws Exception {

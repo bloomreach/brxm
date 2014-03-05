@@ -250,4 +250,13 @@ public abstract class AbstractHelper {
                 this.getClass().getName());
     }
 
+    protected void markDeleted(final Node deleted) throws RepositoryException {
+        lockHelper.acquireLock(deleted);
+        deleted.setProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE, "deleted");
+    }
+
+    protected boolean isMarkedDeleted(final Node node) throws RepositoryException {
+        return "deleted".equals(JcrUtils.getStringProperty(node, HstNodeTypes.EDITABLE_PROPERTY_STATE, null));
+    }
+
 }
