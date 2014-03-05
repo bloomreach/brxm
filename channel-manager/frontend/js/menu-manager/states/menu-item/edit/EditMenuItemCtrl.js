@@ -54,12 +54,12 @@
 
                 savedMenuItem = angular.copy($scope.selectedMenuItem);
 
-                function shouldSaveSelectedMenuItemProperty(propertyName) {
+                function shouldSaveSelectedMenuItemProperty() {
                     if (!angular.isDefined($scope.selectedMenuItem)) {
                         return false;
                     }
 
-                    return $scope.selectedMenuItem[propertyName] !== savedMenuItem[propertyName];
+                    return true;
                 }
 
                 function saveSelectedMenuItemProperty(propertyName) {
@@ -72,6 +72,7 @@
                     $log.info('menu service save');
                     MenuService.saveMenuItem(savedMenuItem).then(function () {
                             $log.info('after save - success');
+                            $scope.feedback.message = '';
                             $scope.isSaving[propertyName] = false;
                             $scope.isSaved[propertyName] = true;
                         },
@@ -113,6 +114,10 @@
                     }, function (errorResponse) {
                         $scope.feedback = FeedbackService.getFeedback(errorResponse);
                     });
+                };
+
+                $scope.dismissFeedback = function () {
+                    $scope.feedback.message = '';
                 };
             }
         ]);

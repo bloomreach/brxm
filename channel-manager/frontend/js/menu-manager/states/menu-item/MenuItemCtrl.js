@@ -93,10 +93,6 @@
                 $scope.findParent = function (itemId) {
                     return findParentByItemId({items: $scope.list}, itemId);
                 };
-
-                $scope.dismissFeedback = function () {
-                    $scope.feedback = {};
-                };
             }
         ]);
 }());
