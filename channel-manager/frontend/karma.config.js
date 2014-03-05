@@ -48,6 +48,7 @@ module.exports = function(config) {
             'menu-manager/app-dependencies.js',
             'menu-manager/services/*.js',
             'menu-manager/states/**/*.js',
+            'menu-manager/directives/**/*.js',
 
             // tests
             {
