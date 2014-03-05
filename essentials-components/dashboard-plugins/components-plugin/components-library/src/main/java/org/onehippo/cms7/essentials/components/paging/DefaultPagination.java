@@ -59,14 +59,14 @@ public class DefaultPagination<T extends HippoBean> extends Pageable<T> {
         items = new ArrayList<>();
     }
 
-    public DefaultPagination(Collection<T> items) {
+    public DefaultPagination(List<T> items) {
         super(items.size());
-        items = new ArrayList<>();
+       this.items = items;
     }
 
-    public DefaultPagination(int total, List<T> items) {
+    public DefaultPagination(List<T> items, int total) {
         super(total);
-        this.items = new ArrayList<>(items);
+        this.items = items;
     }
 
     public void addItem(T item) {
