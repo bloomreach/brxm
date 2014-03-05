@@ -52,7 +52,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
     private List<LocationResolver> locationResolvers;
     
     public void setBinariesPrefix(String binariesPrefix){
-        this.binariesPrefix = PathUtils.normalizePath(binariesPrefix);
+        this.binariesPrefix = binariesPrefix;
     }
     
     public void setBinaryLocations(String[] binaryLocations) {
