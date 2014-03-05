@@ -22,16 +22,21 @@ import javax.servlet.http.HttpSession;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.MutableMount;
+import org.hippoecm.hst.configuration.internal.CanonicalInfo;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Comment;
 
 public class CmsComponentWindowResponseAppender extends AbstractComponentWindowResponseAppender implements ComponentWindowResponseAppender {
 
+    private static final Logger log = LoggerFactory.getLogger(CmsComponentWindowResponseAppender.class);
 
     @Override
     public void process(final HstComponentWindow rootWindow, final HstComponentWindow rootRenderingWindow, final HstComponentWindow window, final HstRequest request, final HstResponse response) {
@@ -51,6 +56,13 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             response.addHeader(ChannelManagerConstants.HST_MOUNT_ID, mount.getIdentifier());
             response.addHeader(ChannelManagerConstants.HST_SITE_ID, mount.getHstSite().getCanonicalIdentifier());
             response.addHeader(ChannelManagerConstants.HST_PAGE_ID, compConfig.getCanonicalIdentifier());
+
+            final HstSiteMap siteMap = mount.getHstSite().getSiteMap();
+            if (siteMap instanceof CanonicalInfo) {
+                response.addHeader(ChannelManagerConstants.HST_SITEMAP_ID, ((CanonicalInfo)siteMap).getCanonicalIdentifier());
+            } else {
+                log.warn("Expected sitemap of subtype {}. Cannot set sitemap id.", CanonicalInfo.class.getName());
+            }
             Object variant = session.getAttribute(ContainerConstants.RENDER_VARIANT);
             if (variant == null) {
                 variant = ContainerConstants.DEFAULT_PARAMETER_PREFIX;
