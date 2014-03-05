@@ -21,7 +21,7 @@ import org.hippoecm.hst.core.parameters.Parameter;
                 value = {"pageSize"}
         )
 })*/
-public interface EssentialsDocumentListComponentInfo extends EssentialsPageable{
+public interface EssentialsDocumentListComponentInfo extends EssentialsPageable {
 
 
     @Parameter(name = "path", required = false, displayName = "Documents path")
@@ -52,8 +52,6 @@ public interface EssentialsDocumentListComponentInfo extends EssentialsPageable{
     @Parameter(name = "sortOrder", required = false, defaultValue = "desc", displayName = "Sort order", description = "Order results ascending or descending")
     @DropDownList(value = {"asc", "desc"})
     String getSortOrder();
-
-
 
 
 }

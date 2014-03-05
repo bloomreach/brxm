@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.essentials.components;
 
+import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
@@ -27,10 +28,16 @@ import org.onehippo.cms7.essentials.components.info.EssentialsSearchComponentInf
  * @version "$Id$"
  */
 @ParametersInfo(type = EssentialsSearchComponentInfo.class)
-public class EssentialsSearchComponent extends CommonComponent {
+public class EssentialsSearchComponent extends EssentialsListComponent {
 
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
+        super.doBeforeRender(request, response);
+    }
 
+    @Override
+    protected HippoBean getSearchScope(final HstRequest request, final String path) {
+        final EssentialsSearchComponentInfo componentInfo = getComponentParametersInfo(request);
+        return super.getSearchScope(request, componentInfo.getScope());
     }
 }
