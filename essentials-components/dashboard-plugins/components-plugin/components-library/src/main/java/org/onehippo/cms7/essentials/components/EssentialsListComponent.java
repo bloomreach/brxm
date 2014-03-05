@@ -51,7 +51,7 @@ public class EssentialsListComponent extends CommonComponent {
         if (Strings.isNullOrEmpty(path)) {
             scope = getContentBean(request);
             if (scope == null) {
-                // TODO check if we should use global scope:
+                // use global scope by default
                 scope = getSiteContentBaseBean(request);
             }
         } else {
@@ -127,7 +127,7 @@ public class EssentialsListComponent extends CommonComponent {
      * @return the pageable result
      * @throws QueryException query exception when query fails
      */
-    protected <T extends EssentialsDocumentListComponentInfo> Pageable<HippoBean> executeQuery(final HstRequest request, final T paramInfo, final HstQuery query) throws QueryException {
+    protected <T extends EssentialsPageable> Pageable<HippoBean> executeQuery(final HstRequest request, final T paramInfo, final HstQuery query) throws QueryException {
         final int pageSize = getPageSize(request, paramInfo);
         final int page = getCurrentPage(request);
         query.setLimit(pageSize);
@@ -161,6 +161,8 @@ public class EssentialsListComponent extends CommonComponent {
      * @return the page size of the query
      */
     protected int getPageSize(final HstRequest request, final EssentialsPageable paramInfo) {
+        // NOTE although unused, leave request parameter so devs
+        // can use it if they override this method
         return paramInfo.getPageSize();
     }
 
@@ -182,7 +184,7 @@ public class EssentialsListComponent extends CommonComponent {
      * @param paramInfo the settings of the component
      * @return
      */
-    protected boolean isShowPagination(final HstRequest request, final EssentialsDocumentListComponentInfo paramInfo) {
+    protected boolean isShowPagination(final HstRequest request, final EssentialsPageable paramInfo) {
         final Boolean showPagination = paramInfo.getShowPagination();
         if (showPagination == null) {
             log.debug("Show pagination not configured, use default value 'true'");
