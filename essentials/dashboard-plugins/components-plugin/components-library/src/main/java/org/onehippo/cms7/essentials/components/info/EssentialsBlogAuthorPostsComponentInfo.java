@@ -22,15 +22,17 @@ import org.hippoecm.hst.core.parameters.Parameter;
 /**
  * @version "$Id$"
  */
-public interface EssentialsBlogAuthorPostsComponentInfo {
-
-
-    @Parameter(name = "path", required = false, displayName = "Blog document type")
+public interface EssentialsBlogAuthorPostsComponentInfo  {
+    @Parameter(name = "postScope", required = false, displayName = "Blog posts location")
     @JcrPath(
             pickerConfiguration = "cms-pickers/documents",
             pickerSelectableNodeTypes = {"hippostd:folder"},
             pickerInitialPath = "/content/documents"
     )
-    String getDocumentType();
+    String getScope();
+
+
+    @Parameter(name = "pageSize", required = true, defaultValue = "3", displayName = "Nr. of items toshow", description = "Nr of items per page")
+    int getPageSize();
 
 }

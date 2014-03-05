@@ -4,11 +4,12 @@ package {{beansPackage}};
 
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
+import org.onehippo.cms7.essentials.components.model.AuthorEntry;
 import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
 
 @HippoEssentialsGenerated(internalName = "{{namespace}}:author")
 @Node(jcrType = "{{namespace}}:author")
-public class Author extends HippoDocument {
+public class Author extends HippoDocument implements AuthorEntry {
 
     public static final String ROLE = "{{namespace}}:role";
     public static final String ACCOUNTS = "{{namespace}}:accounts";

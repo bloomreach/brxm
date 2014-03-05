@@ -6,11 +6,12 @@ import java.util.List;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
+import org.onehippo.cms7.essentials.components.model.Authors;
 import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
 
 @HippoEssentialsGenerated(internalName = "{{namespace}}:blogpost")
 @Node(jcrType = "{{namespace}}:blogpost")
-public class Blogpost extends HippoDocument {
+public class Blogpost extends HippoDocument implements BlogEntry{
 
     public static final String TITLE = "{{namespace}}:title";
     public static final String INTRODUCTION = "{{namespace}}:introduction";
@@ -59,12 +60,13 @@ public class Blogpost extends HippoDocument {
         return getProperty(CATEGORIES);
     }
 
+    @Override
     @HippoEssentialsGenerated(internalName = "{{namespace}}:authors")
     public List<Author> getAuthors() {
         return getLinkedBeans(AUTHORS, Author.class);
     }
 
-      @HippoEssentialsGenerated(internalName = "hippostd:tags")
+    @HippoEssentialsGenerated(internalName = "hippostd:tags")
     public String[] getTags() {
         return getProperty(TAGS);
     }
