@@ -18,22 +18,21 @@
 
     Ext.namespace('Hippo.ChannelManager.TemplateComposer');
 
-    Hippo.ChannelManager.TemplateComposer.EditMenuWindow = Ext.extend(Hippo.ChannelManager.TemplateComposer.IFrameWindow, {
+    Hippo.ChannelManager.TemplateComposer.PagesWindow = Ext.extend(Hippo.ChannelManager.TemplateComposer.IFrameWindow, {
 
         constructor: function(config) {
             Ext.apply(config, {
-                title: config.resources['edit-menu'],
+                title: config.resources['pages-window-title'],
                 width: 860,
                 minWidth: 790,
                 height: 517,
                 modal: true,
                 resizeHandles: 'e w',
-                iframeUrl: './angular/menu-manager/index.html',
+                iframeUrl: './angular/page-manager/index.html',
                 iframeConfig: {
                     apiUrlPrefix: config.composerRestMountUrl,
                     debug: config.debug,
-                    locale: config.locale,
-                    menuId: config.menuId
+                    locale: config.locale
                 }
             });
 
@@ -42,6 +41,6 @@
 
     });
 
-    Ext.reg('Hippo.ChannelManager.TemplateComposer.EditMenuWindow', Hippo.ChannelManager.TemplateComposer.EditMenuWindow);
+    Ext.reg('Hippo.ChannelManager.TemplateComposer.PagesWindow', Hippo.ChannelManager.TemplateComposer.PagesWindow);
 
 }());

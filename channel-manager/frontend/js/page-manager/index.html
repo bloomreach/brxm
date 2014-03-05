@@ -26,7 +26,7 @@
 
     <link rel="stylesheet" href="../components/hippo-theme/dist/css/main.min.css">
     <link rel="stylesheet" href="../shared/assets/css/shared.css">
-    <link rel="stylesheet" href="assets/css/menu-manager.css">
+    <link rel="stylesheet" href="assets/css/page-manager.css">
 
     <!--[if lte IE 8]>
     <script type="text/javascript" src="../components/es5-shim/es5-shim.min.js"></script>
@@ -34,8 +34,9 @@
 </head>
 
 <body>
-    <div data-ng-app="hippo.channelManager.menuManager" id="application">
-        <div ui-view></div>
+    <div data-ng-app="hippo.channelManager.pageManager" id="application">
+        <h1>TODO: show list of pages</h1>
+        <!--<div ui-view></div>-->
     </div>
     
     <script src="../components/jquery/jquery.min.js"></script>
@@ -60,25 +61,8 @@
     <script src="../shared/services/OutstandingHttpRequests.js"></script>
 
     <!-- App -->
-    <script src="menu-manager-dependencies.js"></script>
-    <script src="menu-manager-config.js"></script>
-    <script src="menu-manager-run.js"></script>
-
-    <script src="states/menu-item/MenuItemCtrl.js"></script>
-    <script src="states/menu-item/MenuCtrl.js"></script>
-    <script src="states/menu-item/TreeCtrl.js"></script>
-
-    <script src="states/menu-item/add-page/AddPageCtrl.js"></script>
-    <script src="states/menu-item/edit/EditMenuItemCtrl.js"></script>
-    <script src="states/menu-item/add/AddMenuItemCtrl.js"></script>
-    <script src="states/loader/LoaderCtrl.js"></script>
-
-    <script src="services/FeedbackService.js"></script>
-    <script src="services/FocusService.js"></script>
-    <script src="services/MenuService.js"></script>
-
-    <script src="directives/autofocus.js"></script>
-    <script src="directives/tooltip.js"></script>
-    <script src="directives/illegalCharacters.js"></script>
+    <script src="page-manager-dependencies.js"></script>
+    <script src="page-manager-config.js"></script>
+    <script src="page-manager-run.js"></script>
 </body>
 </html>

@@ -20,7 +20,7 @@
     angular.module('hippo.channelManager.menuManager')
 
         .service('hippo.channelManager.menuManager.MenuService', [
-            'hippo.channelManager.menuManager.ConfigService',
+            'hippo.channelManager.ConfigService',
             '$http',
             '$q',
             '$log',

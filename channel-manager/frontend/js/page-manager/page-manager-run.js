@@ -16,14 +16,14 @@
 (function() {
     "use strict";
 
-    angular.module('hippo.channelManager.menuManager')
+    angular.module('hippo.channelManager.pageManager')
 
         .run([
             '$translate',
             '$state',
-            'hippo.channelManager.menuManager.ConfigService',
-            'hippo.channelManager.menuManager.Container',
-            '_hippo.channelManager.menuManager.IFrameService',
+            'hippo.channelManager.ConfigService',
+            'hippo.channelManager.Container',
+            '_hippo.channelManager.IFrameService',
             function ($translate, $state, Config, Container, IFrame) {
                 // go to default state
                 $state.go('loader');

@@ -16,9 +16,9 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.channelManager.menuManager')
+    angular.module('hippo.channelManager')
 
-        .factory('_hippo.channelManager.menuManager.OutstandingHttpRequests', ['$q', function($q) {
+        .factory('_hippo.channelManager.OutstandingHttpRequests', ['$q', function($q) {
             var outstandingRequests = 0;
 
             return {
@@ -44,7 +44,7 @@
         }])
 
         .config(['$httpProvider', function($httpProvider) {
-            $httpProvider.interceptors.push('_hippo.channelManager.menuManager.OutstandingHttpRequests');
+            $httpProvider.interceptors.push('_hippo.channelManager.OutstandingHttpRequests');
         }]);
 
 }());

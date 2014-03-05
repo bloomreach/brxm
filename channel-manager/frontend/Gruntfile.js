@@ -87,6 +87,40 @@ module.exports = function (grunt) {
                 ]
             },
 
+            pageManager: {
+                files: [
+                    {
+                        expand: true,
+                        dot: true,
+                        cwd: '<%= build.source %>/page-manager',
+                        dest: '<%= build.target %>/page-manager',
+                        src: [
+                            '**/*.html',
+                            '**/*.js',
+                            '**/assets/css/*',
+                            '**/assets/images/*',
+                            '**/i18n/*.json'
+                        ]
+                    }
+                ]
+            },
+
+            shared: {
+                files: [
+                    {
+                        expand: true,
+                        dot: true,
+                        cwd: '<%= build.source %>/shared',
+                        dest: '<%= build.target %>/shared',
+                        src: [
+                            '**/*.js',
+                            '**/assets/css/*',
+                            '**/assets/images/*'
+                        ]
+                    }
+                ]
+            },
+
             components: {
                 files: [
                     {
@@ -109,6 +143,20 @@ module.exports = function (grunt) {
                 tasks: ['jshint', 'copy:menuManager']
             },
 
+            pageManager: {
+                files: [
+                    '<%= build.source %>/page-manager/**/*'
+                ],
+                tasks: ['jshint', 'copy:pageManager']
+            },
+
+            shared: {
+                files: [
+                    '<%= build.source %>/shared/**/*'
+                ],
+                tasks: ['jshint', 'copy:shared']
+            },
+
             components: {
                 files: [
                     '<%= build.source %>/components/**/*'
@@ -121,7 +169,9 @@ module.exports = function (grunt) {
                     livereload: true
                 },
                 files: [
-                    '<%= build.source %>/menu-manager/**/*'
+                    '<%= build.source %>/menu-manager/**/*',
+                    '<%= build.source %>/page-manager/**/*',
+                    '<%= build.source %>/shared/**/*'
                 ]
             }
         },
@@ -143,11 +193,15 @@ module.exports = function (grunt) {
                 jshintrc: true
             },
             app: [
+                '<%= build.source %>/shared/**/*.js',
                 '<%= build.source %>/menu-manager/**/*.js',
-                '!<%= build.source %>/menu-manager/**/*.spec.js'
+                '<%= build.source %>/page-manager/**/*.js',
+                '!<%= build.source %>/**/*.spec.js'
             ],
             tests: [
-                '<%= build.source %>/menu-manager/**/*.spec.js'
+                '<%= build.source %>/shared/**/*.spec.js',
+                '<%= build.source %>/menu-manager/**/*.spec.js',
+                '<%= build.source %>/page-manager/**/*.spec.js'
             ]
         },
 
@@ -177,6 +231,8 @@ module.exports = function (grunt) {
             'declutter',
             'clean:target',
             'copy:menuManager',
+            'copy:pageManager',
+            'copy:shared',
             'copy:components'
         ]);
     });

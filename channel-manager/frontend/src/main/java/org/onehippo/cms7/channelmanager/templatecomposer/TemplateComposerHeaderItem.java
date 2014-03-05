@@ -46,6 +46,10 @@ public class TemplateComposerHeaderItem extends HeaderItem {
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.TOOLKIT_GRID_PANEL));
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.ICON_TOOLBAR_WINDOW));
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.MANAGE_CHANGES_WINDOW));
+        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.MESSAGE_BUS));
+        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.IFRAME_PANEL));
+        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.IFRAME_WINDOW));
+        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.PAGES_WINDOW));
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.EDIT_MENU_WINDOW));
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.NOTIFICATION));
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.REST_STORE));
@@ -53,8 +57,6 @@ public class TemplateComposerHeaderItem extends HeaderItem {
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.DRAG_DROP_ONE));
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.MSG));
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.TOOLKIT_STORE));
-        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.MESSAGE_BUS));
-        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.IFRAME_PANEL));
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.PAGE_MODEL_STORE));
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.PAGE_CONTEXT));
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.PAGE_CONTAINER));

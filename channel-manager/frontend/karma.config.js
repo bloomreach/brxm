@@ -44,11 +44,16 @@ module.exports = function(config) {
             'components/jasmine-jquery/lib/jasmine-jquery.js',
             'components/angular-mocks/angular-mocks.js',
 
-            // sources
-            'menu-manager/app-dependencies.js',
+            // shared sources
+            'shared/shared-dependencies.js',
+            'shared/services/*.js',
+
+            // apps sources
+            'menu-manager/menu-manager-dependencies.js',
+            'menu-manager/directives/*.js',
             'menu-manager/services/*.js',
             'menu-manager/states/**/*.js',
-            'menu-manager/directives/**/*.js',
+            'page-manager/page-manager-dependencies.js',
 
             // tests
             {

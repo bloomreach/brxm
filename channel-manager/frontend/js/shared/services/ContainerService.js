@@ -17,12 +17,12 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.channelManager.menuManager')
+    angular.module('hippo.channelManager')
 
-        .service('hippo.channelManager.menuManager.Container', [
+        .service('hippo.channelManager.Container', [
             '$log',
-            '_hippo.channelManager.menuManager.IFrameService',
-            '_hippo.channelManager.menuManager.OutstandingHttpRequests',
+            '_hippo.channelManager.IFrameService',
+            '_hippo.channelManager.OutstandingHttpRequests',
             function($log, IFrameService, OutstandingHttpRequests) {
 
                 function handleClose() {

@@ -16,25 +16,13 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.channelManager.menuManager')
+    angular.module('hippo.channelManager.pageManager')
 
-        .controller('hippo.channelManager.menuManager.LoaderCtrl', [
+        .controller('hippo.channelManager.pageManager.LoaderCtrl', [
             '$log',
             '$state',
-            'hippo.channelManager.menuManager.MenuService',
-            function ($log, $state, MenuService) {
-                MenuService.getFirstMenuItemId().then(
-                    function (firstMenuItemId) {
-                        // go to default state
-                        $state.go('menu-item.edit', {
-                            menuItemId: firstMenuItemId
-                        });
-                    },
-                    function (error) {
-                        // TODO: show error in UI
-                        $log.error(error);
-                    }
-                );
+            function ($log, $state) {
+                $log.info("TODO: show pages");
             }
         ]);
 }());

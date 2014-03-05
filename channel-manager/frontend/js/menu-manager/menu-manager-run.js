@@ -13,26 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function () {
+(function() {
     "use strict";
 
     angular.module('hippo.channelManager.menuManager')
 
-        .service('hippo.channelManager.menuManager.ConfigService', [
-            '_hippo.channelManager.menuManager.IFrameService',
-            function(IFrame) {
-                var config = {
-                    apiUrlPrefix: 'http://localhost:8080/site/_rp',
-                    locale: 'en',
-                    menuId: 'bcc7e597-8105-417c-a98b-3d6a9a152a37'
-                };
+        .run([
+            '$translate',
+            '$state',
+            'hippo.channelManager.ConfigService',
+            'hippo.channelManager.Container',
+            '_hippo.channelManager.IFrameService',
+            function ($translate, $state, Config, Container, IFrame) {
+                // go to default state
+                $state.go('loader');
 
-                // override default config when app runs in iframe
-                if (IFrame.isActive) {
-                    config = IFrame.getConfig();
-                }
+                // set language
+                $translate.uses(Config.locale);
 
-                return config;
+                // close the app when the container is closed
+                Container.handleClose();
+
+                // enable live reload
+                IFrame.enableLiveReload();
             }
         ]);
 }());

@@ -25,7 +25,7 @@
             '$stateParams',
             '$rootScope',
             '$log',
-            'hippo.channelManager.menuManager.ConfigService',
+            'hippo.channelManager.ConfigService',
             'hippo.channelManager.menuManager.MenuService',
             'hippo.channelManager.menuManager.FeedbackService',
             function ($scope, $state, $stateParams, $rootScope, $log, ConfigService, MenuService, FeedbackService) {

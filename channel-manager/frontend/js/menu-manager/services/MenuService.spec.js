@@ -23,7 +23,7 @@ describe('Menu Service', function () {
 
     beforeEach(function() {
         module(function($provide) {
-            $provide.value('hippo.channelManager.menuManager.ConfigService', {
+            $provide.value('hippo.channelManager.ConfigService', {
                 apiUrlPrefix: 'api',
                 menuId: 'menuId'
             });

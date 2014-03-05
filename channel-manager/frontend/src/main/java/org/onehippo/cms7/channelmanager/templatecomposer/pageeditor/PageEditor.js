@@ -387,18 +387,29 @@
                         variantsComboBox,
                         this.getFullScreenButtonConfig(false)
                 );
-            } else if (this.pageContainer.canEdit) {
+            } else {
                 toolbarButtons = this.getToolbarButtons();
-                toolbar.add(
+
+                if (this.pageContainer.canEdit) {
+                    toolbar.add(
                         toolbarButtons.edit,
                         toolbarButtons.publish,
                         toolbarButtons.discard,
                         toolbarButtons.manageChanges,
+                        ' '
+                    );
+                }
+                toolbar.add(
+                    toolbarButtons.pages
+                );
+                if (this.pageContainer.canEdit) {
+                    toolbar.add(
                         ' ',
                         variantsComboBoxLabel,
                         variantsComboBox,
                         this.getFullScreenButtonConfig(true)
-                );
+                    );
+                }
             }
             if (this.fullscreen || this.pageContainer.canEdit) {
                 this.addToolbarPlugins(toolbar, 'view');
@@ -1030,8 +1041,19 @@
             editMenuWindow.show();
         },
 
+        showPages: function() {
+            var pagesWindow = new Hippo.ChannelManager.TemplateComposer.PagesWindow({
+                resources: this.resources,
+                composerRestMountUrl: this.composerRestMountUrl,
+                debug: this.debug,
+                locale: this.locale,
+                sitemapId: 'TODO'
+            });
+            pagesWindow.show();
+        },
+
         getToolbarButtons: function() {
-            var editButton, publishButton, discardButton, manageChangesButton;
+            var editButton, publishButton, discardButton, manageChangesButton, pagesButton;
             editButton = new Ext.Toolbar.Button({
                 id: 'template-composer-toolbar-edit-button',
                 text: this.initialConfig.resources['edit-button'],
@@ -1095,6 +1117,18 @@
                     }
                 }
             });
+            pagesButton = new Ext.Toolbar.Button({
+                id: 'template-composer-toolbar-pages-button',
+                text: this.initialConfig.resources['pages-button'],
+                iconCls: 'edit-channel',
+                width: 80,
+                listeners: {
+                    click: {
+                        fn: this.showPages,
+                        scope: this
+                    }
+                }
+            });
 
             this.showOrHideButtons(Ext.getCmp('template-composer-toolbar-publish-button'),
                     Ext.getCmp('template-composer-toolbar-discard-button'));
@@ -1103,7 +1137,8 @@
                 edit: editButton,
                 publish: publishButton,
                 discard: discardButton,
-                manageChanges: manageChangesButton
+                manageChanges: manageChangesButton,
+                pages: pagesButton
             };
         }
 
