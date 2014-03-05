@@ -19,29 +19,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 
 public class SiteMapItemRepresentation {
 
-    String id;
-    String name;
-    Map<String, String> localParameters;
-    Set<String> roles;
-    String componentConfigurationId;
-    boolean cacheable;
-    boolean workspaceConfiguration;
-    boolean inherited;
-    String relativeContentPath;
-    String scheme;
-    boolean wildCard;
-    boolean any;
-    boolean containsWildCard;
-    boolean containsAny;
-    boolean isExplicitElement;
-
+    private String id;
+    private String name;
+    private Map<String, String> localParameters;
+    private Set<String> roles;
+    private String componentConfigurationId;
+    private boolean cacheable;
+    private boolean workspaceConfiguration;
+    private boolean inherited;
+    private String relativeContentPath;
+    private String scheme;
+    private boolean wildCard;
+    private boolean any;
+    private boolean containsWildCard;
+    private boolean containsAny;
+    private boolean isExplicitElement;
 
     private List<SiteMapItemRepresentation> children = new ArrayList<>();
 
@@ -65,13 +63,12 @@ public class SiteMapItemRepresentation {
         isExplicitElement = !(wildCard || any || containsAny || containsAny);
         localParameters = item.getLocalParameters();
         roles = item.getRoles();
-        Map<String, SiteMapItemRepresentation> orderedChildren = new TreeMap<>();
         for (HstSiteMapItem childItem : item.getChildren()) {
             SiteMapItemRepresentation child = new SiteMapItemRepresentation();
             child.represent(childItem, previewConfigurationPath);
-            orderedChildren.put(child.getName(), child);
+            children.add(child);
         }
-        children.addAll(orderedChildren.values());
+
         return this;
     }
 
