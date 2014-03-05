@@ -41,6 +41,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_REPOBASED;
+import static org.hippoecm.repository.api.NodeNameCodec.encode;
 
 public class SiteMenuItemHelper extends AbstractHelper {
 
@@ -117,7 +118,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
     public void move(Node node, String newNodeName, Node newParent) throws RepositoryException {
         lockHelper.acquireSimpleLock(getMenuAncestor(node));
         try {
-            node.getSession().move(node.getPath(), newParent.getPath() + "/" + newNodeName);
+            node.getSession().move(node.getPath(), newParent.getPath() + "/" + encode(newNodeName));
         } catch (ItemExistsException e) {
             throw getClientException(newParent, newNodeName, e.getMessage());
         }
@@ -151,7 +152,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
         }
         lockHelper.acquireSimpleLock(getMenuAncestor(source));
         try {
-            parent.orderBefore(sourceName, successorNodeName);
+            parent.orderBefore(encode(sourceName), successorNodeName);
         } catch (ItemExistsException e) {
             throw getClientException(parent, sourceName, e.getMessage());
         }
@@ -165,7 +166,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
         // rename the node by moving it within the same parent
         move(node, newName, parent);
         // restore the position
-        parent.orderBefore(newName, nextSiblingName);
+        parent.orderBefore(encode(newName), nextSiblingName);
     }
 
     private String getNextSiblingName(final Node node, final Node parent) throws RepositoryException {

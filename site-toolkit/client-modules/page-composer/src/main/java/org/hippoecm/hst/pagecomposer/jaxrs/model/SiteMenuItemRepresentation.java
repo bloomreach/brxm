@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
+import org.hippoecm.repository.api.NodeNameCodec;
 
 public class SiteMenuItemRepresentation {
 
@@ -49,7 +50,7 @@ public class SiteMenuItemRepresentation {
             throw new IllegalArgumentException("Expected object of type CanonicalInfo");
         }
 
-        name = item.getName();
+        name = item.getName() != null ? NodeNameCodec.decode(item.getName()) : null;
         id = ((CanonicalInfo) item).getCanonicalIdentifier();
         repositoryBased = item.isRepositoryBased();
         localParameters = item.getLocalParameters();
