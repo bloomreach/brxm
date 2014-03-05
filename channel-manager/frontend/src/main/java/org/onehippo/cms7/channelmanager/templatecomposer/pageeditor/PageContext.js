@@ -35,7 +35,8 @@
                 this.ids = {
                     pageUrl: oldContext.ids.pageUrl,
                     pageId: oldContext.ids.pageId,
-                    mountId: oldContext.ids.mountId
+                    mountId: oldContext.ids.mountId,
+                    sitemapId: oldContext.ids.sitemapId
                 };
 
                 this.stores = {
@@ -48,7 +49,8 @@
                 this.ids = {
                     pageUrl: null,
                     pageId: null,
-                    mountId: null
+                    mountId: null,
+                    sitemapId: null
                 };
 
                 this.stores = {
@@ -140,7 +142,7 @@
             }.createDelegate(this));
         },
 
-        _initPageModelStore: function(mountId, pageId) {
+        _initPageModelStore: function(mountId, pageId, sitemapId) {
             if (this.ids.pageId === pageId) {
                 return new Hippo.Future(function(onSuccess) {
                     onSuccess(this.stores.pageModel);
@@ -148,6 +150,8 @@
             }
 
             this.ids.pageId = pageId;
+            this.ids.sitemapId = sitemapId;
+
             this.stores.pageModel = this._createPageModelStore(mountId, pageId);
             this.stores.pageModel.on('exception', function(dataProxy, type, action, options, response) {
                 if (type === 'response') {
@@ -180,12 +184,13 @@
                 var self = this;
 
                 function handleResponse(response) {
-                    var pageId, mountId, pageRequestVariantsHeader, futures;
+                    var pageId, mountId, sitemapId, pageRequestVariantsHeader, futures;
                     pageId = response.getResponseHeader('HST-Page-Id');
                     mountId = response.getResponseHeader('HST-Mount-Id');
+                    sitemapId = response.getResponseHeader('HST-Sitemap-Id');
 
-                    if (pageId === undefined || mountId === undefined) {
-                        onFail('No page and/or mount information found');
+                    if (pageId === undefined || mountId === undefined || sitemapId === undefined) {
+                        onFail('No page, mount and/or sitemap information found');
                         return;
                     }
 
@@ -205,7 +210,7 @@
                     if (canEdit) {
                         futures = [
                             self._initToolkitStore.call(self, mountId),
-                            self._initPageModelStore.apply(self, [mountId, pageId])
+                            self._initPageModelStore.apply(self, [mountId, pageId, sitemapId])
                         ];
                         Hippo.Future.join(futures).when(function() {
                             onSuccess();

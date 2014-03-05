@@ -21,8 +21,9 @@
         .controller('hippo.channelManager.pageManager.LoaderCtrl', [
             '$log',
             '$state',
-            function ($log, $state) {
-                $log.info("TODO: show pages");
+            'hippo.channelManager.ConfigService',
+            function ($log, $state, Config) {
+                $log.info("TODO: show pages of sitemap " + Config.sitemapId);
             }
         ]);
 }());

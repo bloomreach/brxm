@@ -32,7 +32,8 @@
                 iframeConfig: {
                     apiUrlPrefix: config.composerRestMountUrl,
                     debug: config.debug,
-                    locale: config.locale
+                    locale: config.locale,
+                    sitemapId: config.sitemapId
                 }
             });
 

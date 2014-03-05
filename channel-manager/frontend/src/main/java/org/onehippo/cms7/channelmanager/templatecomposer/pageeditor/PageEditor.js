@@ -647,6 +647,7 @@
             }
 
             this.renderedVariant = pageContext.renderedVariant;
+            this.currentSitemapId = pageContext.ids.sitemapId;
 
             if (!this.pageContainer.previewMode) {
                 this.createEditToolbar();
@@ -1047,7 +1048,7 @@
                 composerRestMountUrl: this.composerRestMountUrl,
                 debug: this.debug,
                 locale: this.locale,
-                sitemapId: 'TODO'
+                sitemapId: this.currentSitemapId
             });
             pagesWindow.show();
         },
