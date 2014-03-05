@@ -40,6 +40,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.MockSiteMenuConfiguration;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.MockSiteMenuItemConfiguration;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.Position;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper;
 import org.junit.Before;
@@ -154,14 +155,14 @@ public class SiteMenuResourceTest {
         // Mock creating the site menu item
         final SiteMenuItemRepresentation newMenuItem = new SiteMenuItemRepresentation();
         newMenuItem.setName(name);
-        expect(siteMenuItemHelper.create(parentNode, newMenuItem)).andReturn(node);
+        expect(siteMenuItemHelper.create(parentNode, newMenuItem, Position.ANY)).andReturn(node);
 
         final String menuItemId = "menuItemId";
         expect(node.getIdentifier()).andReturn(menuItemId);
 
         replay(mocks);
 
-        final Response response = siteMenuResource.create(menuId, newMenuItem);
+        final Response response = siteMenuResource.create(menuId, "last", newMenuItem);
 
         assertThat(response.getStatus(), is(OK));
         assertThat(response.getEntity(), is(ExtResponseRepresentation.class));

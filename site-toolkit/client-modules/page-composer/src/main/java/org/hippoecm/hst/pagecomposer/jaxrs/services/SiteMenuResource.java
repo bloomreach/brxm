@@ -22,11 +22,13 @@ import java.util.concurrent.Callable;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -38,6 +40,7 @@ import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.Position;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.NodePathPrefixValidator;
@@ -89,6 +92,7 @@ public class SiteMenuResource extends AbstractConfigResource {
     @POST
     @Path("/create/{parentId}")
     public Response create(final @PathParam("parentId") String parentId,
+                           final @DefaultValue(Position.LAST_AS_STRING) @QueryParam("position") String position,
                            final SiteMenuItemRepresentation newMenuItem) {
         List<Validator> preValidators = getDefaultMenuModificationValidators();
         preValidators.add(new NotNullValidator(newMenuItem.getName(), ClientError.ITEM_NO_NAME));
@@ -100,7 +104,7 @@ public class SiteMenuResource extends AbstractConfigResource {
                 final Session session = getPageComposerContextService().getRequestContext().getSession();
                 final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration();
                 final Node parentNode = getParentNode(parentId, session, menu);
-                Node menuItemNode = siteMenuItemHelper.create(parentNode, newMenuItem);
+                Node menuItemNode = siteMenuItemHelper.create(parentNode, newMenuItem, Position.fromString(position));
                 return ok("Item created successfully", menuItemNode.getIdentifier());
             }
         }, preValidators);

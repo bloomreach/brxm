@@ -46,17 +46,23 @@ import static org.hippoecm.repository.api.NodeNameCodec.encode;
 
 public class SiteMenuItemHelper extends AbstractHelper {
 
+
     @SuppressWarnings("unchecked")
     @Override
     public Object getConfigObject(final String itemId) {
         throw new UnsupportedOperationException("Cannot fetch site menu item without menu id");
     }
 
-    public Node create(Node parent, SiteMenuItemRepresentation newItem) throws RepositoryException {
+    public Node create(Node parent, SiteMenuItemRepresentation newItem, Position position) throws RepositoryException {
         lockHelper.acquireSimpleLock(getMenuAncestor(parent));
         final String newItemName = newItem.getName();
         try {
             final Node newChild = parent.addNode(encode(newItemName, true), HstNodeTypes.NODETYPE_HST_SITEMENUITEM);
+            if (position == Position.FIRST && parent.getNodes().getSize() > 1) {
+                Node firstChild = parent.getNodes().nextNode();
+                parent.orderBefore(newChild.getName() + '[' + newChild.getIndex() + ']',
+                        firstChild.getName() + '[' + firstChild.getIndex() + ']');
+            }
             update(newChild, newItem);
             return newChild;
         } catch (ItemExistsException e) {

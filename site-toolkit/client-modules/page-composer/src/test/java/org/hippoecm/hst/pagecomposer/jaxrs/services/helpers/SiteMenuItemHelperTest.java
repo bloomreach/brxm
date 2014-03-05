@@ -99,7 +99,7 @@ public class SiteMenuItemHelperTest {
         expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
         replay(mocks);
 
-        final Node result = siteMenuItemHelper.create(node, newItem);
+        final Node result = siteMenuItemHelper.create(node, newItem, Position.ANY);
         assertThat(result, is(node));
     }
 
@@ -330,12 +330,46 @@ public class SiteMenuItemHelperTest {
         try {
             final SiteMenuItemRepresentation newItem = new SiteMenuItemRepresentation();
             newItem.setName(name);
-            siteMenuItemHelper.create(node, newItem);
+            siteMenuItemHelper.create(node, newItem, Position.ANY);
         } catch (ClientException e) {
             assertThat(e.getParameterMap().get("item").toString(), is(name));
             assertThat(e.getParameterMap().get("parentPath").toString(), is(""));
             assertThat(e.getError(), is(ClientError.ITEM_NAME_NOT_UNIQUE_IN_ROOT));
         }
+    }
+
+    @Test
+    public void testCreate_first_reorders_children() throws RepositoryException {
+
+        expect(parent.isNodeType(NODETYPE_HST_SITEMENUITEM)).andReturn(false);
+        expect(parent.isNodeType(NODETYPE_HST_SITEMENU)).andReturn(true);
+        lockHelper.acquireSimpleLock(parent);
+        expectLastCall();
+
+        final String name = "name";
+        expect(parent.getName()).andReturn(name).anyTimes();
+        expect(parent.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMENU)).andReturn(true).anyTimes();
+        expect(parent.addNode(name, NODETYPE_HST_SITEMENUITEM)).andReturn(node);
+        expect(parent.getNodes()).andReturn(childIterator).anyTimes();
+        expect(childIterator.getSize()).andReturn(2L);
+        expect(childIterator.nextNode()).andReturn(sibling);
+        expect(node.getName()).andReturn(name).anyTimes();
+        expect(node.getIndex()).andReturn(1);
+        expect(sibling.getName()).andReturn("sibling").anyTimes();
+        expect(sibling.getIndex()).andReturn(1);
+        parent.orderBefore("name[1]", "sibling[1]");
+
+        mockGetAncestor();
+
+        expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(property);
+
+        replay(mocks);
+
+        final SiteMenuItemRepresentation newItem = new SiteMenuItemRepresentation();
+        newItem.setName(name);
+        siteMenuItemHelper.create(parent, newItem, Position.FIRST);
+
+        verify(mocks);
     }
 
     @Test
