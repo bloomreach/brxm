@@ -36,7 +36,7 @@
 
     <!-- START edit form -->
     <form name="form" data-role="form" novalidate class="l-fixed-height">
-        <p class="alert alert-danger alert-dismissable" data-ng-show="feedback.message">
+        <p class="alert alert-danger alert-dismissable" ng-show="feedback.message">
             <button type="button" class="close" data-ng-click="dismissFeedback()" aria-hidden="true">&times;</button>
             {{feedback.message}}
         </p>
@@ -50,7 +50,6 @@
                    placeholder="{{ 'LABEL' | translate }}"
                    data-hippo.channel-manager.menu-manager.auto-focus
                    data-ng-model="selectedMenuItem.title"
-                   data-ng-focus="form.title.$setPristine();"
                    data-ng-required="true"
                    data-ng-blur="form.title.$valid ? saveSelectedMenuItem('title') : '';"
                    data-illegal-characters="validation.invalidCharacters">
@@ -125,7 +124,7 @@
              data-ng-class="{
             'has-success': form.url.$dirty && !isSaving.link && form.url.$valid && isSaved.link,
             'has-error': !isSaving.link && (form.url.$invalid || !isSaved.link)
-         }">
+        }">
             <label for="hippo.channelManager.menuManager.menuItem.edit.url">{{ 'EXTERNAL_LINK' | translate }}</label>
             <input type="url" name="url" class="form-control" id="hippo.channelManager.menuManager.menuItem.edit.url"
                    placeholder="{{ 'EXAMPLE_DOMAIN' | translate }}"
