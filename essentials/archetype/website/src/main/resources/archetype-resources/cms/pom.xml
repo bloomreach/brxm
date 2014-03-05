@@ -15,6 +15,13 @@
   <packaging>war</packaging>
 
   <dependencies>
+    <!-- TODO: should be added by installer-->
+    <dependency>
+      <groupId>org.onehippo.cms7.essentials</groupId>
+      <artifactId>hippo-components-cms-plugin-library</artifactId>
+      <version>${dollar}{essentials.version}</version>
+    </dependency>
+
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
       <artifactId>hippo-essentials-plugin-api</artifactId>

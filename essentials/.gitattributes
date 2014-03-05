@@ -110,6 +110,7 @@ dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboa
 dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/blog/BlogPluginResource.java -text
 dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/blog/BlogPowerpack.java -text
 dashboard-plugins/blog-plugin/src/main/resources/META-INF/blog_instructions.xml -text
+dashboard-plugins/blog-plugin/src/main/resources/freemarker/essentials-author.ftl -text
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/essentials-blog-author-post.ftl -text
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/essentials-blog-detail.ftl -text
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/essentials-blog-list.ftl -text
@@ -121,6 +122,8 @@ dashboard-plugins/blog-plugin/src/main/resources/hst/blog-sitemap.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/hst/page-blog-list.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/hst/page-blog-main.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/hst/page-blog-page.xml -text
+dashboard-plugins/blog-plugin/src/main/resources/hst/template-author-ftl.xml -text
+dashboard-plugins/blog-plugin/src/main/resources/hst/template-author-jsp.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/hst/template-blog-author-post-ftl.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/hst/template-blog-author-post-jsp.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/hst/template-blog-detail-ftl.xml -text
@@ -135,6 +138,7 @@ dashboard-plugins/blog-plugin/src/main/resources/img/blog-icon.png -text
 dashboard-plugins/blog-plugin/src/main/resources/java/Account.txt -text
 dashboard-plugins/blog-plugin/src/main/resources/java/Author.txt -text
 dashboard-plugins/blog-plugin/src/main/resources/java/Blogpost.txt -text
+dashboard-plugins/blog-plugin/src/main/resources/jsp/essentials-author.jsp -text
 dashboard-plugins/blog-plugin/src/main/resources/jsp/essentials-blog-author-post.jsp -text
 dashboard-plugins/blog-plugin/src/main/resources/jsp/essentials-blog-detail.jsp -text
 dashboard-plugins/blog-plugin/src/main/resources/jsp/essentials-blog-list.jsp -text

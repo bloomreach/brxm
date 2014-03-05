@@ -69,6 +69,7 @@
     <file action="copy"  source="jsp/essentials-blog-detail.jsp" target="{{jspRoot}}/essentials/blog/essentials-blog-detail.jsp"/>
     <file action="copy"  source="jsp/essentials-blog-list.jsp" target="{{jspRoot}}/essentials/blog/essentials-blog-list.jsp"/>
     <file action="copy"  source="jsp/pagination.jsp" target="{{jspRoot}}/essentials/common/pagination.jsp"/>
+    <file action="copy"  source="jsp/essentials-author.jsp" target="{{jspRoot}}/essentials/author/essentials-author.jsp"/>
   </instructionSet>
   <!--
     FREEMARKER TEMPLATES
@@ -80,6 +81,7 @@
     <file action="copy"  source="freemarker/essentials-blog-list.ftl" target="{{freemarkerRoot}}/essentials/blog/essentials-blog-list.ftl"/>
     <file action="copy" source="freemarker/pagination.ftl" target="{{freemarkerRoot}}/essentials/common/pagination.ftl"/>
     <file action="copy" source="freemarker/imports.ftl" target="{{freemarkerRoot}}/essentials/common/imports.ftl"/>
+    <file action="copy" source="freemarker/essentials-author.ftl" target="{{freemarkerRoot}}/essentials/author/essentials-author.ftl"/>
   </instructionSet>
   <!--
     FACET & DAEMON MODULE SETUP
@@ -101,6 +103,7 @@
   </instructionSet>
   <!-- HST TEMPLATES -->
   <instructionSet group="jsp">
+    <xml action="copy" source="hst/template-author-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="hst/template-facet-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="hst/template-blog-author-post-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="hst/template-blog-main-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
@@ -108,6 +111,7 @@
     <xml action="copy" source="hst/template-blog-list-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
   <instructionSet group="freemarker">
+    <xml action="copy" source="hst/template-author-ftl.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="hst/template-blog-author-post-ftl.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="hst/template-facet-ftl.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="hst/template-blog-main-ftl.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
