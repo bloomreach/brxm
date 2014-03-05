@@ -22,7 +22,7 @@
     <sv:property sv:name="{{namespace}}:role" sv:type="String">
       <sv:value>Owner</sv:value>
     </sv:property>
-    <sv:property sv:name="{{namespace}}:title" sv:type="String">
+    <sv:property sv:name="{{namespace}}:fullname" sv:type="String">
       <sv:value>Hippo Author</sv:value>
     </sv:property>
     <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
@@ -67,7 +67,7 @@
         <sv:value>hippotranslation:translations</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="{{namespace}}:body">
+    <sv:node sv:name="{{namespace}}:content">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippostd:html</sv:value>
       </sv:property>

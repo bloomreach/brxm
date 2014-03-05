@@ -5,6 +5,9 @@ package {{beansPackage}};
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.onehippo.cms7.essentials.components.model.AuthorEntry;
+import org.hippoecm.hst.content.beans.standard.HippoGalleryImage;
+import org.hippoecm.hst.content.beans.standard.HippoHtml;
+
 import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
 
 @HippoEssentialsGenerated(internalName = "{{namespace}}:author")
@@ -13,17 +16,30 @@ public class Author extends HippoDocument implements AuthorEntry {
 
     public static final String ROLE = "{{namespace}}:role";
     public static final String ACCOUNTS = "{{namespace}}:accounts";
-    public static final String FULL_NAME = "{{namespace}}:title";
+    public static final String FULL_NAME = "{{namespace}}:fullname";
+    public static final String IMAGE = "{{namespace}}:image";
+    public static final String CONTENT = "{{namespace}}:content";
 
-    @HippoEssentialsGenerated(internalName = "{{namespace}}:title")
+    @HippoEssentialsGenerated(internalName = "{{namespace}}:fullname")
     public String getFullName() {
         return  getProperty(FULL_NAME);
+    }
+
+    @HippoEssentialsGenerated(internalName = "appstore:content")
+    public HippoHtml getContent() {
+        return getHippoHtml(CONTENT);
     }
 
     @HippoEssentialsGenerated(internalName = "{{namespace}}:role")
     public String getRole() {
         return getProperty(ROLE);
     }
+
+    @HippoEssentialsGenerated(internalName = "{{namespace}}:image")
+    public HippoGalleryImage getImage() {
+        return getLinkedBean(IMAGE, HippoGalleryImage.class);
+    }
+
 
     /**
     @HippoEssentialsGenerated(internalName = "{{namespace}}:account")

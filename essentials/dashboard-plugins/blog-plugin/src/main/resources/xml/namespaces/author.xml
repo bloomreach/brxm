@@ -35,7 +35,7 @@
       <sv:property sv:name="hipposysedit:uri" sv:type="String">
         <sv:value>http://www.onehippo.org/{{namespace}}/nt/1.0</sv:value>
       </sv:property>
-      <sv:node sv:name="title">
+      <sv:node sv:name="fullname">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hipposysedit:field</sv:value>
         </sv:property>
@@ -49,7 +49,7 @@
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:path" sv:type="String">
-          <sv:value>{{namespace}}:title</sv:value>
+          <sv:value>{{namespace}}:fullname</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
           <sv:value>false</sv:value>
@@ -62,7 +62,7 @@
           <sv:value>required</sv:value>
         </sv:property>
       </sv:node>
-      <sv:node sv:name="body">
+      <sv:node sv:name="content">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hipposysedit:field</sv:value>
         </sv:property>
@@ -76,7 +76,7 @@
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:path" sv:type="String">
-          <sv:value>{{namespace}}:body</sv:value>
+          <sv:value>{{namespace}}:content</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
           <sv:value>false</sv:value>
@@ -173,7 +173,7 @@
       <sv:property sv:name="{{namespace}}:role" sv:type="String">
         <sv:value/>
       </sv:property>
-      <sv:property sv:name="{{namespace}}:title" sv:type="String">
+      <sv:property sv:name="{{namespace}}:fullname" sv:type="String">
         <sv:value/>
       </sv:property>
       <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
@@ -209,7 +209,7 @@
           <sv:value>hippotranslation:translations</sv:value>
         </sv:property>
       </sv:node>
-      <sv:node sv:name="{{namespace}}:body">
+      <sv:node sv:name="{{namespace}}:content">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippostd:html</sv:value>
         </sv:property>
@@ -311,7 +311,7 @@
           <sv:value>${cluster.id}.right</sv:value>
         </sv:property>
       </sv:node>
-      <sv:node sv:name="title">
+      <sv:node sv:name="fullname">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugin</sv:value>
         </sv:property>
@@ -319,7 +319,7 @@
           <sv:value>Name</sv:value>
         </sv:property>
         <sv:property sv:name="field" sv:type="String">
-          <sv:value>title</sv:value>
+          <sv:value>fullname</sv:value>
         </sv:property>
         <sv:property sv:name="hint" sv:type="String">
           <sv:value>Full name</sv:value>
@@ -358,7 +358,7 @@
           </sv:property>
         </sv:node>
       </sv:node>
-      <sv:node sv:name="body">
+      <sv:node sv:name="content">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugin</sv:value>
         </sv:property>
@@ -366,7 +366,7 @@
           <sv:value>Description</sv:value>
         </sv:property>
         <sv:property sv:name="field" sv:type="String">
-          <sv:value>body</sv:value>
+          <sv:value>content</sv:value>
         </sv:property>
         <sv:property sv:name="hint" sv:type="String">
           <sv:value>Information about the author</sv:value>
