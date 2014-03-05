@@ -1,8 +1,20 @@
 <%@ include file="/WEB-INF/jsp/essentials/common/imports.jsp" %>
 <%--@elvariable id="facets" type="org.hippoecm.hst.content.beans.standard.HippoFacetNavigationBean"--%>
 <%--@elvariable id="facetLimit" type="java.lang.Integer"--%>
-<c:set var="facetLimit" value="50"/>
+<%--@elvariable id="query" type="java.lang.String"--%>
+<form action="<hst:actionURL />" method="get">
+  <div class="form-group">
+    <div class="col-xs-8">
+      <input type="search" value="<c:out value="${query}"/>" name="query" class="form-control" placeholder="Search blog posts">
+
+    </div>
+    <div class="col-xs-4">
+      <button type="submit" class="btn btn-primary pull-right">Search</button>
+    </div>
+  </div>
+</form>
 <c:if test="${facets ne null}">
+  <c:set var="facetLimit" value="50"/>
   <ul class="nav nav-list">
     <c:forEach var="facetvalue" items="${facets.folders}">
       <c:if test="${not empty facetvalue.folders}">
