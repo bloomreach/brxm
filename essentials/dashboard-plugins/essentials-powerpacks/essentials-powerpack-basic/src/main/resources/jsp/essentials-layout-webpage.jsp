@@ -10,7 +10,7 @@
 <body>
 <div class="container">
   <div class="row">
-    <hst:include ref="menu"/>
+    <div class="col-md-6 col-md-offset-3"><hst:include ref="menu"/></div>
   </div>
   <div class="row">
     <hst:include ref="main"/>

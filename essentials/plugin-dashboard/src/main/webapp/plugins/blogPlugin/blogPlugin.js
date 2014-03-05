@@ -19,11 +19,19 @@
     angular.module('hippo.essentials')
             .controller('blogPluginCtrl', function ($scope, $sce, $log, $rootScope, $http) {
                 $scope.endpoint = $rootScope.REST.dynamic + 'blog/';
-                $scope.templateName = null;
+                $scope.templateName = 'jsp';
+                $scope.setupImport = true;
+
+                $scope.importConfig = {
+                    'active': true,
+                    'cronExpression': '0 0 6 ? * SUN',
+                    'cronExpressionDescription': 'Fires @ 6am on every sunday, More info @ http://www.quartz-scheduler.org/',
+                    'maxDescriptionLength': 300,
+                    urls: [
+                        {'value': ''}
+                    ]
+                };
                 $scope.installSampleData = true;
-                $scope.facetAuthor = true;
-                $scope.facetDate = true;
-                $scope.facetCategory = true;
 
 
                 $scope.execute = function () {
@@ -32,8 +40,30 @@
 
                     });
                 };
+
+
+                $scope.addUrl = function () {
+                    $scope.importConfig.urls.push({'value': ''});
+                };
+                $scope.removeUrl = function (url) {
+                    // we need at least on URL
+                    if ($scope.importConfig.urls.length <= 1) {
+                        return;
+                    }
+                    var idx = $scope.importConfig.urls.indexOf(url);
+                    if (idx > -1) {
+                        $scope.importConfig.urls.splice(idx, 1);
+                    }
+                };
                 $scope.init = function () {
                     console.log("*** blog plugin ***");
+                    $http.get($rootScope.REST.projectSettings).success(function (data) {
+                        $rootScope.projectSettings = Essentials.keyValueAsDict(data.items);
+                        $scope.importConfig.blogsBasePath = '/content/documents/' + $rootScope.projectSettings.namespace + '/blog';
+                        $scope.importConfig.projectNamespace = $rootScope.projectSettings.namespace;
+                    });
+
+
                 };
                 $scope.init();
             })

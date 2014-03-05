@@ -4,7 +4,6 @@
             <div class="panel-heading"><h2>Blog plugin</h2></div>
             <div class="panel-body">
                 <form novalidate name="blogForm">
-
                     <div class="form-group">
                         <label>Please select templating language:</label>
                     </div>
@@ -26,37 +25,102 @@
                     <div class="checkbox">
                         <label>
                             Add sample content
+                            <input type="checkbox" ng-model="installSampleData"/>
                         </label>
-                        <input  type="checkbox"  ng-model="installSampleData"/>
-                    </div>
-                    <div class="form-group">
-                        <label>Facets:</label>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                           Create date facet
-                        </label>
-                        <input type="checkbox"  ng-model="facetDate"/>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                           Create authors facet
-                        </label>
-                        <input type="checkbox"  ng-model="facetAuthor"/>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                           Create categories facet
-                        </label>
-                        <input type="checkbox"  ng-model="facetCategory"/>
-                    </div>
-                    <div class="input-group">
-                      <span class="input-group-btn">
-                        <button ng-disabled="!blogForm.$valid" class="btn btn-primary pull-right" type="submit" ng-click="execute()">Add Blog support</button>
-                      </span>
 
                     </div>
+
+                    <div class="form-group">
+                        <label>Services:</label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            Schedule blog RSS feeds importer
+                            <input type="checkbox" ng-model="setupImport"/>
+                        </label>
+
+                    </div>
+                    <div>
+
+                    </div>
+
+
                 </form>
+                <!--
+                    //############################################
+                    // IMPORTER SETUP
+                    //############################################
+                -->
+                <form ng-show="setupImport" class="form-horizontal" novalidate name="importForm">
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-8">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" ng-model="importConfig.active"> Active
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-8">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" ng-model="importConfig.runInstantly"> Run immediately
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Blog root directory</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" required ng-model="importConfig.blogsBasePath">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Cron expression</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" placeholder="0 0 6 ? * SUN" required ng-model="importConfig.cronExpression">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Cron description</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" placeholder="Fires @ 6am on every sunday, More info @ http://www.quartz-scheduler.org/"
+                                   ng-model="importConfig.cronExpressionDescription">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Max description text length</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" required placeholder="300"
+                                   ng-model="importConfig.maxDescriptionLength">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Setup urls:</label>
+                        <label class="col-sm-6 control-label">
+                            <a href="javascript:void(0);" ng-click="addUrl()"><span class="glyphicon glyphicon-plus pull-right text-primary">Add new url</span></a>
+                        </label>
+                    </div>
+                    <div ng-repeat="url in importConfig.urls">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">RSS feed url {{$index +1}}</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" required ng-model="url.value">
+                                <a ng-show="importConfig.urls.length > 1" href="javascript:void(0);" ng-click="removeUrl(url)"><span class="glyphicon glyphicon-minus pull-right text-warning">Remove url</span></a>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+
+
+                <div class="input-group">
+                      <span class="input-group-btn">
+                        <button ng-disabled="!blogForm.$valid || (setupImport && !importForm.$valid)" class="btn btn-primary pull-right" type="submit" ng-click="execute()">Add Blog support</button>
+                      </span>
+
+                </div>
             </div>
         </div>
     </div>

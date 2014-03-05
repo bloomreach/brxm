@@ -179,7 +179,7 @@
 
 
                     $http.get($rootScope.REST.projectSettings).success(function (data) {
-                        $rootScope.projectSettings = data.keyvalue;
+                        $rootScope.projectSettings = Essentials.keyValueAsDict(data.items);
 
                     });
 

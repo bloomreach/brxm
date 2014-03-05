@@ -120,6 +120,16 @@
     Essentials.isEmpty = function (str) {
         return typeof str === "undefined" || str == null || str.trim().length == 0;
     };
+     Essentials.keyValueAsDict = function (keyValArray) {
+         var dict = {};
+         if(keyValArray){
+             for (var i = 0; i < keyValArray.length; i++) {
+                 var keyValue = keyValArray[i];
+                 dict[keyValue.key] = keyValue.value;
+             }
+         }
+         return dict;
+    };
 
     Essentials.asArray = function (obj) {
         var array = [];
