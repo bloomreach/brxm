@@ -1,5 +1,4 @@
 {
-    "EDIT_MENU": "Wijzig menu",
     "ADD_MENU_ITEM": "Voeg menu-item toe",
     "ADD_NEW_MENU_ITEM": "Voeg menu-item toe",
     "CANCEL": "Annuleer",
@@ -7,7 +6,6 @@
     "CREATE_PAGE": "Maak pagina",
     "DELETE_MENU_ITEM": "Verwijder menu-item",
     "DESTINATION": "Doel",
-    "EDIT_MENU_ITEM": "Wijzig menu-item",
     "EXAMPLE_DOMAIN": "http://www.voorbeeld.nl",
     "EXTERNAL_LINK": "Externe link",
     "EXTERNAL_LINK_INVALID": "Externe link is niet geldig",

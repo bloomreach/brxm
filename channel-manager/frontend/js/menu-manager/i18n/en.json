@@ -1,5 +1,4 @@
 {
-    "EDIT_MENU": "Edit menu",
     "ADD_MENU_ITEM": "Add menu item",
     "ADD_NEW_MENU_ITEM": "Add new menu item",
     "CANCEL": "Cancel",
@@ -7,7 +6,6 @@
     "CREATE_PAGE": "Create page",
     "DELETE_MENU_ITEM": "Delete menu item",
     "DESTINATION": "Destination",
-    "EDIT_MENU_ITEM": "Edit menu item",
     "EXAMPLE_DOMAIN": "http://www.example.com",
     "EXTERNAL_LINK": "External link",
     "EXTERNAL_LINK_INVALID": "External link is invalid",
@@ -23,9 +21,9 @@
     "REMOVE_CONFIRMATION": "Are you sure you want to delete the menu item '{{ title }}'?",
     "DELETE_ITEM": "Delete item",
 
-    "ITEM_ALREADY_LOCKED": "You cannot edit this menu because '{{lockedBy}}' is already editing it",
-    "ITEM_NAME_NOT_UNIQUE": "The menu item '{{item}}' already exists in the sub menu '{{parentPath}}'",
-    "ITEM_NAME_NOT_UNIQUE_IN_ROOT": "The menu item '{{item}}' already exists as a top menu item",
+    "ITEM_ALREADY_LOCKED": "You cannot edit this menu because '{{ lockedBy }}' is already editing it",
+    "ITEM_NAME_NOT_UNIQUE": "The menu item '{{ item }}' already exists in the sub menu '{{ parentPath }}'",
+    "ITEM_NAME_NOT_UNIQUE_IN_ROOT": "The menu item '{{ item }}' already exists as a top menu item",
     "TECHNICAL_ERROR": "A technical error has occurred",
 
     "INVALID_CHARACTERS": "The following characters are not allowed in the label: {{ invalidCharacters }}"

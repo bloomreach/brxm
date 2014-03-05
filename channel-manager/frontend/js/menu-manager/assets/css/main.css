@@ -44,6 +44,11 @@ html, body {
     width: 100%;
 }
 
+/* prevent small margin between the left window border and the tree */
+#container > .row:before {
+    content: none;
+}
+
 /* --- Tree --- */
 #menu-tree {
     padding: 0;
@@ -67,7 +72,7 @@ html, body {
 }
 
 .l-fixed-height {
-    max-height: 364px;
+    max-height: 478px;
     overflow-y: auto;
     overflow-x: hidden;
     padding-top: 10px;
@@ -109,7 +114,7 @@ html, body {
 }
 
 .l-sidebar {
-    height: 383px;
+    height: 433px;
     overflow-y: auto;
     border-right: 1px solid #dddddd;
 }
@@ -156,7 +161,7 @@ hr {
 .feedback {
     position: absolute;
     z-index: 999999;
-    top: -206px;
+    top: -158px;
     border-radius: 0;
     border-top: none;
     margin-left: -100px;
@@ -174,7 +179,7 @@ hr {
 }
 
 .feedback.feedback-show {
-    top: -50px;
+    top: 0;
 }
 
 .feedback p {
