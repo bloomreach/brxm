@@ -69,15 +69,12 @@
 
                     $scope.isSaving[propertyName] = true;
 
-                    $log.info('menu service save');
                     MenuService.saveMenuItem(savedMenuItem).then(function () {
-                            $log.info('after save - success');
                             $scope.feedback.message = '';
                             $scope.isSaving[propertyName] = false;
                             $scope.isSaved[propertyName] = true;
                         },
                         function (errorResponse) {
-                            $log.info('after save - error');
                             $scope.feedback = FeedbackService.getFeedback(errorResponse);
                             $scope.isSaving[propertyName] = false;
                             $scope.isSaved[propertyName] = false;
