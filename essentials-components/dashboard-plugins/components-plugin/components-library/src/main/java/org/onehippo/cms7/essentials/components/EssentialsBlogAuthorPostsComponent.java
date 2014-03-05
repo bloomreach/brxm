@@ -54,6 +54,10 @@ public class EssentialsBlogAuthorPostsComponent extends EssentialsListComponent 
             final Authors entry = (Authors) document;
             final List<? extends AuthorEntry> authors = entry.getAuthors();
             if (authors.size() > 0) {
+                // NOTE: most use-cases will only have one author,
+                // so for convenience purposes  also add first author on request
+                request.setAttribute("author", authors.get(0));
+                request.setAttribute("authors", authors);
                 final Class<? extends HippoBean> clazz = getPrimaryType(document);
                 final EssentialsBlogAuthorPostsComponentInfo componentInfo = getComponentParametersInfo(request);
                 final int pageSize = componentInfo.getPageSize();
