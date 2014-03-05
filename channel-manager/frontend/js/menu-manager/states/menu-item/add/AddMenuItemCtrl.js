@@ -39,20 +39,40 @@
                 };
 
                 $scope.submit = function() {
-                    MenuService.createMenuItem(parentItemId, $scope.selectedMenuItem).then(
-                            function (menuItemId) {
-                                MenuService.loadMenu().then(
-                                        function () {
-                                            $state.go('menu-item.edit', {
-                                                menuItemId: menuItemId
-                                            });
-                                        }
-                                );
-                            },
-                            function (errorResponse) {
-                                $scope.feedback = FeedbackService.getFeedback(errorResponse);
+                    if ($stateParams.menuItemId) {
+                        MenuService.getPathToMenuItem($stateParams.menuItemId).then(addMenuItemToPath);
+                    } else {
+                        addMenuItemToPath([]);
+                    }
+
+                    function addMenuItemToPath(path) {
+                        var currentItem, parentItemId, first = false;
+
+                        // create child if currently selected item already has children.
+                        // otherwise, create sibling.
+                        if (path && path.length >= 1) {
+                            currentItem = path.pop();
+                            if (currentItem.items && currentItem.items.length > 0) {
+                                parentItemId = currentItem.id;
+                                first = true;
+                            } else if (path.length >= 1) {
+                                currentItem = path.pop();
+                                parentItemId = currentItem.id;
                             }
-                    );
+                        }
+
+                        MenuService.createMenuItem(parentItemId, $scope.selectedMenuItem, first).then(
+                                function (menuItemId) {
+                                    $state.go('menu-item.edit', {
+                                        menuItemId: menuItemId
+                                    });
+                                },
+                                function (errorResponse) {
+                                    $scope.feedback = FeedbackService.getFeedback(errorResponse);
+                                }
+                        );
+
+                    }
                 };
 
                 $scope.cancel = function () {

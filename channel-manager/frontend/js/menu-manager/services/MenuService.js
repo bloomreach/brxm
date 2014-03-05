@@ -44,7 +44,7 @@
                     if (!menuDataLoading) {
                         menuDataLoading = true;
                         menuLoaded = $q.defer();
-                        return $http.get(menuServiceUrl())
+                        $http.get(menuServiceUrl())
                             .success(function (response) {
                                 menuData.items = response.data.items;
                                 menuData.id = response.data.id;
@@ -57,6 +57,7 @@
                                 menuDataLoading = false;
                             });
                     }
+                    return menuLoaded.promise;
                 }
 
                 function loadMenuOnce() {
@@ -72,6 +73,22 @@
                             found = findMenuItem(items[i].items, id);
                         }
                     }
+                    return found;
+                }
+
+                function findPathToMenuItem(items, id) {
+                    var found;
+                    _.every(items, function (item) {
+                        if (item.id == id) {
+                            found = [item];
+                        } else if (item.items) {
+                            found = findPathToMenuItem(item.items, id);
+                            if (found) {
+                                found.unshift(item);
+                            }
+                        }
+                        return found === undefined;
+                    });
                     return found;
                 }
 
@@ -138,6 +155,12 @@
                     });
                 };
 
+                menuService.getPathToMenuItem = function(menuItemId) {
+                    return whenMenuLoaded(function () {
+                        return findPathToMenuItem(menuData.items, menuItemId);
+                    });
+                };
+
                 menuService.getMenuItem = function (menuItemId) {
                     return whenMenuLoaded(function () {
                         return getMenuItem(menuItemId);
@@ -148,20 +171,46 @@
                     var deferred = $q.defer();
                     $http.post(menuServiceUrl(), menuItem)
                         .success(function() {
-                            deferred.resolve();
-                        })
+                                deferred.resolve();
+                            })
                         .error(function (errorResponse) {
                                 deferred.reject(errorResponse);
                             });
                     return deferred.promise;
                 };
 
-                menuService.createMenuItem = function (parentId, menuItem) {
-                    var deferred = $q.defer();
-                    $http.post(menuServiceUrl('create/' + parentId), menuItem)
+                /**
+                 * Create a new menu item.
+
+                 * @param parentItemId When specified, the item will be created under the parent.
+                 *                     Otherwise, the item will be created as a root item.
+                 * @param menuItem The item to be created
+                 * @param first Whether the item should be positioned as the first child.
+                 * @returns {promise|Promise.promise|Q.promise}
+                 */
+                menuService.createMenuItem = function (parentItemId, menuItem, first) {
+                    var deferred = $q.defer(), parentId = parentItemId;
+                    if (parentId === undefined) {
+                        parentId = ConfigService.menuId;
+                    }
+                    $http.post(menuServiceUrl('create/' + parentId + (first ? '?position=first' : '')), menuItem)
                         .success(function(response) {
-                            deferred.resolve(response.data);
-                        })
+                                var siblings, parentItem = parentItemId ? getMenuItem(parentId) : undefined;
+                                menuItem.id = response.data;
+                                if (parentItem) {
+                                    siblings = parentItem.items;
+                                } else if (!parentItemId) {
+                                    siblings = menuData.items;
+                                }
+                                if (siblings) {
+                                    if (first) {
+                                        siblings.unshift(menuItem);
+                                    } else {
+                                        siblings.push(menuItem);
+                                    }
+                                }
+                                deferred.resolve(response.data);
+                            })
                         .error(function (errorResponse) {
                                 deferred.reject(errorResponse);
                             });
@@ -200,7 +249,7 @@
                 };
 
                 menuService.loadMenu = function () {
-                    return loadMenu();
+                    loadMenu();
                 };
 
                 return menuService;
