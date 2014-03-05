@@ -44,6 +44,6 @@ html, body {
 /* --- Loader --- */
 #loader {
     width: 100%;
-    height: 100%;
+    height: 480px;
     background: url(../images/loader.gif) no-repeat center center;
 }
