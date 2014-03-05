@@ -56,7 +56,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
         lockHelper.acquireSimpleLock(getMenuAncestor(parent));
         final String newItemName = newItem.getName();
         try {
-            final Node newChild = parent.addNode(encode(newItemName), HstNodeTypes.NODETYPE_HST_SITEMENUITEM);
+            final Node newChild = parent.addNode(encode(newItemName, true), HstNodeTypes.NODETYPE_HST_SITEMENUITEM);
             update(newChild, newItem);
             return newChild;
         } catch (ItemExistsException e) {
@@ -119,7 +119,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
     public void move(Node node, String newNodeName, Node newParent) throws RepositoryException {
         lockHelper.acquireSimpleLock(getMenuAncestor(node));
         try {
-            node.getSession().move(node.getPath(), newParent.getPath() + "/" + encode(newNodeName));
+            node.getSession().move(node.getPath(), newParent.getPath() + "/" + encode(newNodeName, true));
         } catch (ItemExistsException e) {
             throw getClientException(newParent, newNodeName, e.getMessage());
         }
@@ -153,7 +153,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
         }
         lockHelper.acquireSimpleLock(getMenuAncestor(source));
         try {
-            parent.orderBefore(encode(sourceName), successorNodeName);
+            parent.orderBefore(encode(sourceName, true), successorNodeName);
         } catch (ItemExistsException e) {
             throw getClientException(parent, sourceName, e.getMessage());
         }
@@ -167,7 +167,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
         // rename the node by moving it within the same parent
         move(node, newName, parent);
         // restore the position
-        parent.orderBefore(encode(newName), nextSiblingName);
+        parent.orderBefore(encode(newName, true), nextSiblingName);
     }
 
     private String getNextSiblingName(final Node node, final Node parent) throws RepositoryException {
