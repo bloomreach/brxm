@@ -36,38 +36,17 @@ import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 
 /**
- * <?xml version="1.0" encoding="UTF-8"?>
- * <sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="blogfacets">
- * <sv:property sv:name="jcr:primaryType" sv:type="Name">
- * <sv:value>hippofacnav:facetnavigation</sv:value>
- * </sv:property>
- * <sv:property sv:name="hippo:count" sv:type="Long">
- * <sv:value>15</sv:value>
- * </sv:property>
- * <sv:property sv:name="hippo:docbase" sv:type="String">
- * <sv:value>0a137b2f-2e7c-411b-a810-cd86d3ee48cc</sv:value>
- * </sv:property>
- * <sv:property sv:name="hippofacnav:facetnodenames" sv:type="String" sv:multiple="true">
- * <sv:value>Author</sv:value>
- * </sv:property>
- * <sv:property sv:name="hippofacnav:facets" sv:type="String" sv:multiple="true">
- * <sv:value>connect:author</sv:value>
- * </sv:property>
- * <sv:property sv:name="hippofacnav:filters" sv:type="String" sv:multiple="true">
- * <sv:value>jcr:primaryType = connect:blogpost</sv:value>
- * </sv:property>
- * <sv:property sv:name="hippofacnav:sortby" sv:type="String" sv:multiple="true">
- * <sv:value>connect:publicationdate</sv:value>
- * </sv:property>
- * <sv:property sv:name="hippofacnav:sortorder" sv:type="String" sv:multiple="true">
- * <sv:value>descending</sv:value>
- * </sv:property>
- * </sv:node>
- *
  * @version "$Id$"
  */
 public class FacetInstruction implements Instruction {
 
+    private static final String DATE_FACET = ":publicationdate$[\n" +
+            "                {name:'last 7 days',resolution:'day', begin:-6, end:1},\n" +
+            "                {name:'last month',resolution:'day', begin:-30, end:1},\n" +
+            "                {name:'last 3 months',resolution:'day', begin:-91, end:1},\n" +
+            "                {name:'last 6 months',resolution:'day', begin:-182, end:1},\n" +
+            "                {name:'last year',resolution:'day', begin:-365, end:1}\n" +
+            "                ]";
     private static Logger log = LoggerFactory.getLogger(FacetInstruction.class);
 
 
@@ -112,11 +91,11 @@ public class FacetInstruction implements Instruction {
             }
 
             final Node blogFacets = root.addNode(facetName, "hippofacnav:facetnavigation");
-            final String docRef = session.getNode(targetNode +"/blog").getIdentifier();
+            final String docRef = session.getNode(targetNode + "/blog").getIdentifier();
             blogFacets.setProperty("hippo:docbase", docRef);
             blogFacets.setProperty("hippo:count", "0");
-            blogFacets.setProperty("hippofacnav:facetnodenames", new String[]{"Authors", "Categories", "Tags"});
-            blogFacets.setProperty("hippofacnav:facets", new String[]{namespace + ":author", namespace + ":categories", "hippostd:tags"});
+            blogFacets.setProperty("hippofacnav:facetnodenames", new String[]{"Authors", "Categories", "Tags", "Date"});
+            blogFacets.setProperty("hippofacnav:facets", new String[]{namespace + ":author", namespace + ":categories", "hippostd:tags", namespace + DATE_FACET});
             blogFacets.setProperty("hippofacnav:filters", new String[]{"jcr:primaryType = " + namespace + ":blogpost"});
             blogFacets.setProperty("hippofacnav:sortby", new String[]{namespace + ":publicationdate"});
             blogFacets.setProperty("hippofacnav:sortorder", new String[]{"descending"});
