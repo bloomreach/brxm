@@ -22,11 +22,18 @@
             '$scope',
             '$state',
             '$stateParams',
-            function ($scope, $state, $stateParams) {
+            'hippo.channelManager.menuManager.MenuService',
+            function ($scope, $state, $stateParams, MenuService) {
                 $scope.addItem = function () {
-                    // navigate to the add menu item state
-                    var parentItemId = $stateParams.menuItemId || $stateParams.menuId;
-                    $state.go('menu-item.add', {menuItemId: parentItemId});
+                    // only navigate to the add menu item form when there there are no
+                    // validation errors for the edit menu item form
+                    MenuService.saveMenuItem($scope.$parent.selectedMenuItem).then(function () {
+                            // navigate to the add menu item state
+                            var parentItemId = $stateParams.menuItemId || $stateParams.menuId;
+                            $state.go('menu-item.add', {menuItemId: parentItemId});
+                        },
+                        function (errorResponse) {}
+                    );
                 };
             }
         ]);
