@@ -34,6 +34,10 @@
                     link: ''
                 };
 
+                $scope.validation = {
+                    invalidCharacters: '/ *'
+                };
+
                 $scope.submit = function() {
                     MenuService.createMenuItem(parentItemId, $scope.selectedMenuItem).then(
                             function (menuItemId) {

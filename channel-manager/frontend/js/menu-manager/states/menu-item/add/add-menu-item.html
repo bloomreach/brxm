@@ -31,11 +31,17 @@
                    hippo.channel-manager.menu-manager.auto-focus
                    data-ng-model="selectedMenuItem.title"
                    data-ng-focus="form.title.$setPristine();"
-                   data-ng-required="true">
-            <div class="tooltip-container" data-ng-show="form.title.$dirty && form.title.$invalid">
+                   data-ng-required="true"
+                   data-illegal-characters="validation.invalidCharacters">
+            <div class="tooltip-container" data-ng-show="form.title.$dirty && form.title.$error.required">
                 <div data-tooltip
                      data-placement="top"
                      data-title="{{ 'LABEL_REQUIRED' | translate }}"></div>
+            </div>
+            <div class="tooltip-container" data-ng-show="form.title.$error.illegalCharacters">
+                <div data-tooltip
+                     data-placement="top"
+                     data-title="{{ 'INVALID_CHARACTERS' | translate:validation }}"></div>
             </div>
             <i class="fa form-control-feedback"
                data-ng-class="{

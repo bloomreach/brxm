@@ -51,6 +51,7 @@
 
                     var validator = function (value) {
                         var valid = true;
+                        value = value || '';
 
                         angular.forEach(scope.characters.split(' '), function (character) {
                             if (value.indexOf(character) >= 0) {
