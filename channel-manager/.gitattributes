@@ -11,6 +11,7 @@ frontend/js/menu-manager/assets/css/main.css -text
 frontend/js/menu-manager/assets/images/loader.gif -text
 frontend/js/menu-manager/controllers/MenuCtrl.js -text
 frontend/js/menu-manager/controllers/TreeCtrl.js -text
+frontend/js/menu-manager/directives/illegalCharacters.js -text
 frontend/js/menu-manager/directives/tooltip.js -text
 frontend/js/menu-manager/i18n/en.json -text
 frontend/js/menu-manager/i18n/nl.json -text

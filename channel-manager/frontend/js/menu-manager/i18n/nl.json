@@ -26,5 +26,7 @@
     "ITEM_ALREADY_LOCKED": "U kunt dit menu niet bewerken omdat '{{ lockedBy }}' het menu al bewerkt",
     "ITEM_NAME_NOT_UNIQUE": "Het menu item '{{item}}' bestaat al in het sub menu '{{parent}}'",
     "ITEM_NAME_NOT_UNIQUE_IN_ROOT": "Het item '{{item}}' bestaat al als hoofd menu item",
-    "TECHNICAL_ERROR": "Er is een technische fout opgetreden"
+    "TECHNICAL_ERROR": "Er is een technische fout opgetreden",
+
+    "INVALID_CHARACTERS": "De volgende karakters zijn niet toegestaan in het label: {{ invalidCharacters }}"
 }

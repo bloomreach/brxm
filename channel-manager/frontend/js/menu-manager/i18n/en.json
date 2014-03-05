@@ -26,5 +26,7 @@
     "ITEM_ALREADY_LOCKED": "You cannot edit this menu because '{{lockedBy}}' is already editing it",
     "ITEM_NAME_NOT_UNIQUE": "The menu item '{{item}}' already exists in the sub menu '{{parentPath}}'",
     "ITEM_NAME_NOT_UNIQUE_IN_ROOT": "The menu item '{{item}}' already exists as a top menu item",
-    "TECHNICAL_ERROR": "A technical error has occurred"
+    "TECHNICAL_ERROR": "A technical error has occurred",
+
+    "INVALID_CHARACTERS": "The following characters are not allowed in the label: {{ invalidCharacters }}"
 }

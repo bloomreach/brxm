@@ -48,6 +48,10 @@
 
                 $scope.focus = FocusService.focusElementWithId;
 
+                $scope.validation = {
+                    invalidCharacters: '/ *'
+                };
+
                 savedMenuItem = angular.copy($scope.selectedMenuItem);
 
                 function shouldSaveSelectedMenuItemProperty(propertyName) {
