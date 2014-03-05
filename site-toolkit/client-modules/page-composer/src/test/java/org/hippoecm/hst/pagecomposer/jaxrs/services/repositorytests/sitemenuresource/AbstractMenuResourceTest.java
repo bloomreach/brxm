@@ -183,7 +183,11 @@ public abstract class AbstractMenuResourceTest extends AbstractPageComposerTest 
         final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL(request, "localhost", "/home");
         ((HstMutableRequestContext) ctx).setSession(requestSession);
         final HstSite editingPreviewHstSite = mountResource.getPageComposerContextService().getEditingPreviewSite();
-        return editingPreviewHstSite.getSiteMenusConfiguration().getSiteMenuConfiguration(menuName);
+        final HstSiteMenuConfiguration siteMenuConfiguration = editingPreviewHstSite.getSiteMenusConfiguration().getSiteMenuConfiguration(menuName);
+
+        // override the config identifier to have sitemenu id
+        ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, ((CanonicalInfo)siteMenuConfiguration).getCanonicalIdentifier());
+        return siteMenuConfiguration;
     }
 
     protected SiteMenuResource createResource() {
