@@ -8,13 +8,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
+import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
+import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentIterator;
-import org.hippoecm.hst.content.beans.standard.HippoFacetChildNavigationBean;
 import org.hippoecm.hst.content.beans.standard.HippoFacetNavigationBean;
 import org.hippoecm.hst.content.beans.standard.HippoResultSetBean;
-import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSubNavigation;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -47,6 +47,54 @@ public class EssentialsListComponent extends CommonComponent {
         final EssentialsDocumentListComponentInfo paramInfo = getComponentParametersInfo(request);
         final String path = getScopePath(paramInfo);
         log.debug("Calling EssentialsListComponent for documents path:  [{}]", path);
+        final HippoBean scope = getSearchScope(request, path);
+
+        if (scope == null) {
+            log.warn("Search scope was null");
+            handleInvalidScope(request, response);
+            return;
+        }
+
+        final Pageable<HippoBean> pageable;
+        if (scope instanceof HippoFacetNavigationBean) {
+            final HippoFacetNavigationBean facetBean = (HippoFacetNavigationBean) scope;
+            final HippoResultSetBean resultSet = facetBean.getResultSet();
+            final HippoDocumentIterator<HippoBean> iterator = resultSet.getDocumentIterator(HippoBean.class);
+            pageable = new IterablePagination<>(iterator, resultSet.getCount().intValue(), paramInfo.getPageSize(), getCurrentPage(request));
+        } else {
+            pageable = doSearch(request, paramInfo, scope);
+        }
+        populateRequest(request, paramInfo, pageable);
+    }
+
+    /**
+     * Populates request with search results
+     *
+     * @param request   HstRequest
+     * @param paramInfo EssentialsPageable instance
+     * @param pageable  search results (Pageable<HippoBean>)
+     * @see CommonComponent#REQUEST_PARAM_QUERY
+     * @see CommonComponent#REQUEST_PARAM_PAGEABLE
+     * @see CommonComponent#REQUEST_PARAM_PAGE
+     * @see CommonComponent#REQUEST_PARAM_PAGE_SIZE
+     * @see CommonComponent#REQUEST_PARAM_PAGE_PAGINATION
+     */
+    protected void populateRequest(final HstRequest request, final EssentialsPageable paramInfo, final Pageable<? extends HippoBean> pageable) {
+        request.setAttribute(REQUEST_PARAM_QUERY, getSearchQuery(request));
+        request.setAttribute(REQUEST_PARAM_PAGEABLE, pageable);
+        request.setAttribute(REQUEST_PARAM_PAGE, getCurrentPage(request));
+        request.setAttribute(REQUEST_PARAM_PAGE_SIZE, paramInfo.getPageSize());
+        request.setAttribute(REQUEST_PARAM_PAGE_PAGINATION, paramInfo.getShowPagination());
+    }
+
+    /**
+     * Returns Search scope for given path. If path is null, current scope bean will be used, site wide scope otherwise
+     *
+     * @param request
+     * @param path    path (optional)
+     * @return hippo bean or null
+     */
+    protected HippoBean getSearchScope(final HstRequest request, final String path) {
         HippoBean scope;
         if (Strings.isNullOrEmpty(path)) {
             scope = getContentBean(request);
@@ -57,26 +105,7 @@ public class EssentialsListComponent extends CommonComponent {
         } else {
             scope = getScopeBean(request, path);
         }
-
-        if (scope == null) {
-            log.warn("Search scope was null");
-            handleInvalidScope(request, response);
-            return;
-        }
-        final Pageable<HippoBean> pageable;
-        if(scope instanceof HippoFacetNavigationBean) {
-            final HippoFacetNavigationBean facetBean = (HippoFacetNavigationBean) scope;
-            final HippoResultSetBean resultSet = facetBean.getResultSet();
-            final HippoDocumentIterator<HippoBean> iterator = resultSet.getDocumentIterator(HippoBean.class);
-            pageable = new IterablePagination<>(iterator, resultSet.getCount().intValue(), paramInfo.getPageSize(), getCurrentPage(request));
-        }
-        else{
-            pageable = doSearch(request, paramInfo, scope);
-        }
-        request.setAttribute(REQUEST_PARAM_PAGEABLE, pageable);
-        request.setAttribute(REQUEST_PARAM_PAGE, getCurrentPage(request));
-        request.setAttribute(REQUEST_PARAM_PAGE_SIZE, paramInfo.getPageSize());
-        request.setAttribute(REQUEST_PARAM_PAGE_PAGINATION, paramInfo.getShowPagination());
+        return scope;
     }
 
     protected <T extends EssentialsDocumentListComponentInfo> Pageable<HippoBean> doSearch(final HstRequest request, final T paramInfo, final HippoBean scope) {
@@ -132,6 +161,9 @@ public class EssentialsListComponent extends CommonComponent {
         final int page = getCurrentPage(request);
         query.setLimit(pageSize);
         query.setOffset((page - 1) * pageSize);
+        applySearchFilter(request, query);
+
+
         final HstQueryResult execute = query.execute();
         final Pageable<HippoBean> pageable = new IterablePagination<>(
                 execute.getHippoBeans(),
@@ -140,6 +172,35 @@ public class EssentialsListComponent extends CommonComponent {
                 page);
         pageable.setShowPagination(isShowPagination(request, paramInfo));
         return pageable;
+    }
+
+    /**
+     * Apply search filter (query) to result list
+     *
+     * @param request HstRequest
+     * @param query   HstQuery
+     * @throws FilterException
+     */
+    protected void applySearchFilter(final HstRequest request, final HstQuery query) throws FilterException {
+        // check if we have query parameter
+        final String queryParam = getSearchQuery(request);
+        if (!Strings.isNullOrEmpty(queryParam)) {
+            final Filter filter = query.createFilter();
+            filter.addContains(".", queryParam);
+            log.debug("using search query {}", queryParam);
+            query.setFilter(filter);
+        }
+    }
+
+
+    /**
+     * Fetches search query from reqest and cleans it
+     *
+     * @param request HstRequest
+     * @return null if query was null or invalid
+     */
+    protected String getSearchQuery(HstRequest request) {
+        return cleanupSearchQuery(getAnyParameter(request, REQUEST_PARAM_QUERY));
     }
 
 
