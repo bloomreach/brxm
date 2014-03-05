@@ -13,9 +13,9 @@ public class Author extends HippoDocument implements AuthorEntry {
 
     public static final String ROLE = "{{namespace}}:role";
     public static final String ACCOUNTS = "{{namespace}}:accounts";
-    public static final String FULL_NAME = "{{namespace}}:fullname";
+    public static final String FULL_NAME = "{{namespace}}:title";
 
-    @HippoEssentialsGenerated(internalName = "{{namespace}}:fullname")
+    @HippoEssentialsGenerated(internalName = "{{namespace}}:title")
     public String getFullName() {
         return  getProperty(FULL_NAME);
     }
