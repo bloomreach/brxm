@@ -27,11 +27,17 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 abstract class AbstractValidator implements Validator {
 
     protected final Node getNodeByIdentifier(String id, Session session) throws RepositoryException {
+        if (id == null) {
+            throw new ClientException("uuid not allowed to be null", ClientError.INVALID_UUID);
+        }
         try {
             return session.getNodeByIdentifier(id);
         } catch (ItemNotFoundException e) {
             final String message = String.format("Repository configuration not found for node with id %s : %s", id, e.toString());
             throw new ClientException(message, ClientError.ITEM_NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            final String message = String.format("'%s' is not a valid uuid", id);
+            throw new ClientException(message, ClientError.INVALID_UUID);
         }
     }
 
