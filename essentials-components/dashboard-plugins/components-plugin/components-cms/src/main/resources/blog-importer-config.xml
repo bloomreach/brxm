@@ -15,7 +15,7 @@
   limitations under the License.
   -->
 
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="blogscheduler">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="blog-importer">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>scheduler:scheduler</sv:value>
   </sv:property>
@@ -63,9 +63,11 @@
           <!--  TODO populate this-->
           <sv:value>essentials</sv:value>
         </sv:property>
+<!--
         <sv:property sv:name="urls" sv:type="String" sv:multiple="true">
           <sv:value/>
         </sv:property>
+-->
       </sv:node>
     </sv:node>
   </sv:node>
