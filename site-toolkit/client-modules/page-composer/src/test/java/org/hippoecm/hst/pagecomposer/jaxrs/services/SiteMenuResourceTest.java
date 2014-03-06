@@ -155,7 +155,7 @@ public class SiteMenuResourceTest {
         // Mock creating the site menu item
         final SiteMenuItemRepresentation newMenuItem = new SiteMenuItemRepresentation();
         newMenuItem.setName(name);
-        expect(siteMenuItemHelper.create(parentNode, newMenuItem, Position.ANY)).andReturn(node);
+        expect(siteMenuItemHelper.create(parentNode, newMenuItem, Position.LAST)).andReturn(node);
 
         final String menuItemId = "menuItemId";
         expect(node.getIdentifier()).andReturn(menuItemId);
