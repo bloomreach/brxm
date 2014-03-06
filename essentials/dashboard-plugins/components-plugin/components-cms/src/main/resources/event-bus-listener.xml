@@ -15,21 +15,23 @@
   limitations under the License.
   -->
 
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="eventbuslistener">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="essentials-eventbus-listener">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposys:module</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:className" sv:type="String">
     <sv:value>org.onehippo.cms7.essentials.components.cms.modules.EventBusListenerModule</sv:value>
   </sv:property>
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>nt:unstructured</sv:value>
-  </sv:property>
-  <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-    <sv:value>mix:lockable</sv:value>
-  </sv:property>
-  <sv:property sv:name="projectNamespace" sv:type="String">
-    <!-- TODO set this property within Essentials config-->
-    <sv:value>essentials</sv:value>
-  </sv:property>
+  <sv:node sv:name="hippo:moduleconfig">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>nt:unstructured</sv:value>
+    </sv:property>
+    <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>mix:lockable</sv:value>
+    </sv:property>
+    <sv:property sv:name="projectNamespace" sv:type="String">
+      <!-- TODO set this property within Essentials config-->
+      <sv:value>essentials</sv:value>
+    </sv:property>
+  </sv:node>
 </sv:node>

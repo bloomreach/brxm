@@ -30,10 +30,10 @@
       <sv:value>/hippo:configuration/hippo:modules</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>30010</sv:value>
+      <sv:value>31000.1</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="blog-importer-scheduler">
+  <sv:node sv:name="essentials-blog-importer-scheduler">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
