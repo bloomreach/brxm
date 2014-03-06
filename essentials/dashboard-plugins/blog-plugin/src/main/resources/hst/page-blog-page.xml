@@ -23,42 +23,40 @@
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>955dbe6d-0e17-40e1-95e6-3e3415e9b40d</sv:value>
       </sv:property>
+      <sv:property sv:name="hst:lastmodified" sv:type="Date">
+        <sv:value>2014-03-06T22:33:28.490+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:lastmodifiedby" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
       <sv:property sv:name="hst:xtype" sv:type="String">
         <sv:value>HST.vBox</sv:value>
       </sv:property>
-      <sv:node sv:name="sidebar">
+      <sv:node sv:name="blogauthorposts">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hst:containeritemcomponent</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>6298f28a-b3f9-4d33-8fb4-d1760aa9c4c5</sv:value>
+          <sv:value>f73ff458-de8c-4c52-81e3-bf4ccd8682de</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentclassname" sv:type="String">
-          <sv:value>org.onehippo.cms7.essentials.components.EssentialsBlogComponent</sv:value>
+          <sv:value>org.onehippo.cms7.essentials.components.EssentialsBlogAuthorPostsComponent</sv:value>
         </sv:property>
         <sv:property sv:name="hst:label" sv:type="String">
-          <sv:value>Blog List</sv:value>
+          <sv:value>Blog posts by author</sv:value>
         </sv:property>
         <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
-          <sv:value>documentTypes</sv:value>
           <sv:value>sortField</sv:value>
-          <sv:value>sortOrder</sv:value>
-          <sv:value>showPagination</sv:value>
-          <sv:value>includeSubtypes</sv:value>
+          <sv:value>postScope</sv:value>
           <sv:value>pageSize</sv:value>
-          <sv:value>path</sv:value>
         </sv:property>
         <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
-          <sv:value>{{namespace}}:blogpost</sv:value>
-          <sv:value/>
-          <sv:value>desc</sv:value>
-          <sv:value>on</sv:value>
-          <sv:value>off</sv:value>
-          <sv:value>1</sv:value>
-          <sv:value/>
+          <sv:value>hippostdpubwf:publicationDate</sv:value>
+          <sv:value>/content/documents/{{namespace}}/blog</sv:value>
+          <sv:value>3</sv:value>
         </sv:property>
         <sv:property sv:name="hst:template" sv:type="String">
-          <sv:value>blog.list.content</sv:value>
+          <sv:value>blog.author.posts</sv:value>
         </sv:property>
         <sv:property sv:name="hst:xtype" sv:type="String">
           <sv:value>HST.Item</sv:value>
