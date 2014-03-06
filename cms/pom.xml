@@ -316,6 +316,35 @@
       </dependency>
 
       <dependency>
+        <groupId>org.apache.tika</groupId>
+        <artifactId>tika-parsers</artifactId>
+        <version>${tika.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>asm</groupId>
+            <artifactId>asm</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-debug-all</artifactId>
+          </exclusion>
+          <exclusion>
+            <artifactId>boilerpipe</artifactId>
+            <groupId>de.l3s.boilerpipe</groupId>
+          </exclusion>
+          <!-- Exclude xmlbeans because it contains org/w3c/dom/** which is incompatible with Java6 or higher. -->
+          <exclusion>
+            <groupId>org.apache.xmlbeans</groupId>
+            <artifactId>xmlbeans</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
         <groupId>org.apache.wicket</groupId>
         <artifactId>wicket-core</artifactId>
         <version>${wicket.version}</version>
