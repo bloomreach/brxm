@@ -71,7 +71,7 @@ public class PagesTest extends AbstractSiteMapResourceTest{
 
     @Test
     public void test_sitemap_item_page_title() throws Exception {
-        final Node home = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/home");
+        final Node home = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home");
         home.setProperty(HstNodeTypes.SITEMAPITEM_PAGE_TITLE, "foo");
         session.save();
         initContext();
