@@ -25,8 +25,9 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 
 public class SiteMapItemRepresentation {
 
-    private String id;
     private String name;
+    private String id;
+    private String pageTitle;
     private Map<String, String> localParameters;
     private Set<String> roles;
     private String componentConfigurationId;
@@ -50,6 +51,7 @@ public class SiteMapItemRepresentation {
         }
         name = item.getValue();
         id = ((CanonicalInfo) item).getCanonicalIdentifier();
+        pageTitle = item.getPageTitle();
         componentConfigurationId = item.getComponentConfigurationId();
         cacheable = item.isCacheable();
         workspaceConfiguration = ((CanonicalInfo) item).isWorkspaceConfiguration();
@@ -94,6 +96,14 @@ public class SiteMapItemRepresentation {
 
     public void setComponentConfigurationId(final String componentConfigurationId) {
         this.componentConfigurationId = componentConfigurationId;
+    }
+
+    public String getPageTitle() {
+        return pageTitle;
+    }
+
+    public void setPageTitle(final String pageTitle) {
+        this.pageTitle = pageTitle;
     }
 
     public boolean isCacheable() {

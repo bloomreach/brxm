@@ -65,6 +65,8 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
     // note refId is frequently just null. Only when it is configured, it is not null. The id is however never null!
     private String refId;
 
+    private String pageTitle;
+
     private String qualifiedId;
 
     private String value;
@@ -156,7 +158,7 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
         canonicalPath = node.getValueProvider().getPath();
         workspaceConfiguration = ConfigurationUtils.isWorkspaceConfig(node);
 
-        this.qualifiedId = nodePath;
+        qualifiedId = nodePath;
 
         // the id is the relative path below the root sitemap node. You cannot do a substring on the value provider getPath because due to inheritance
         // there can be completely different paths for the root sitemap node than for the inherited sitemap items.
@@ -167,38 +169,42 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
             idBuilder.insert(0, crNode.getValueProvider().getName()).insert(0, "/");
         }
         // we take substring(1) to remove the first slash
-        this.id = StringPool.get(idBuilder.toString().substring(1));
+        id = StringPool.get(idBuilder.toString().substring(1));
 
         // currently, the value is always the nodename
-        this.value = StringPool.get(node.getValueProvider().getName());
+        value = StringPool.get(node.getValueProvider().getName());
 
         if(node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_REF_ID)) {
-            this.refId = StringPool.get(node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_REF_ID));
+            refId = StringPool.get(node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_REF_ID));
         }
 
-        this.statusCode = node.getValueProvider().getLong(HstNodeTypes.SITEMAPITEM_PROPERTY_STATUSCODE).intValue();
-        this.errorCode = node.getValueProvider().getLong(HstNodeTypes.SITEMAPITEM_PROPERTY_ERRORCODE).intValue();
+        if(node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PAGE_TITLE)) {
+            pageTitle = StringPool.get(node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PAGE_TITLE));
+        }
+
+        statusCode = node.getValueProvider().getLong(HstNodeTypes.SITEMAPITEM_PROPERTY_STATUSCODE).intValue();
+        errorCode = node.getValueProvider().getLong(HstNodeTypes.SITEMAPITEM_PROPERTY_ERRORCODE).intValue();
 
         if(parentItem != null) {
-            this.parameterizedPath = this.parentItem.getParameterizedPath()+"/";
-            this.occurences = this.parentItem.getWildCardAnyOccurences();
+            parameterizedPath = this.parentItem.getParameterizedPath()+"/";
+            occurences = this.parentItem.getWildCardAnyOccurences();
         } else {
             parameterizedPath = "";
         }
         if(HstNodeTypes.WILDCARD.equals(value)) {
             occurences++;
             parameterizedPath = parameterizedPath + "${" + occurences + "}";
-            this.isWildCard = true;
+            isWildCard = true;
         } else if(HstNodeTypes.ANY.equals(value)) {
             occurences++;
             parameterizedPath = parameterizedPath + "${" + occurences + "}";
-            this.isAny = true;
+            isAny = true;
         } else if(value.contains(HstNodeTypes.WILDCARD)) {
-            this.containsWildCard = true;
-            this.postfix = value.substring(value.indexOf(HstNodeTypes.WILDCARD) + HstNodeTypes.WILDCARD.length());
-            this.prefix = value.substring(0, value.indexOf(HstNodeTypes.WILDCARD));
-            if(this.postfix.contains(".")) {
-                this.extension = this.postfix.substring(this.postfix.indexOf("."));
+            containsWildCard = true;
+            postfix = value.substring(value.indexOf(HstNodeTypes.WILDCARD) + HstNodeTypes.WILDCARD.length());
+            prefix = value.substring(0, value.indexOf(HstNodeTypes.WILDCARD));
+            if(postfix.contains(".")) {
+                extension = postfix.substring(postfix.indexOf("."));
             }
             if(parentItem != null) {
                 ((HstSiteMapItemService)parentItem).addWildCardPrefixedChildSiteMapItems(this);
@@ -206,12 +212,12 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
             occurences++;
             parameterizedPath = parameterizedPath + value.replace(HstNodeTypes.WILDCARD, "${"+occurences+"}" );
         } else if(value.contains(HstNodeTypes.ANY)) {
-            this.containsAny = true;
-            this.postfix = value.substring(value.indexOf(HstNodeTypes.ANY) + HstNodeTypes.ANY.length());
-            if(this.postfix.contains(".")) {
-                this.extension = this.postfix.substring(this.postfix.indexOf("."));
+            containsAny = true;
+            postfix = value.substring(value.indexOf(HstNodeTypes.ANY) + HstNodeTypes.ANY.length());
+            if(postfix.contains(".")) {
+                extension = postfix.substring(postfix.indexOf("."));
             }
-            this.prefix = value.substring(0, value.indexOf(HstNodeTypes.ANY));
+            prefix = value.substring(0, value.indexOf(HstNodeTypes.ANY));
             if(parentItem != null) {
                 ((HstSiteMapItemService)parentItem).addAnyPrefixedChildSiteMapItems(this);
             }
@@ -222,10 +228,10 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
             parameterizedPath = parameterizedPath + value;
         }
 
-        this.parameterizedPath = StringPool.get(this.parameterizedPath);
-        this.prefix = StringPool.get(this.prefix);
-        this.postfix = StringPool.get(this.postfix);
-        this.extension = StringPool.get(this.extension);
+        parameterizedPath = StringPool.get(parameterizedPath);
+        prefix = StringPool.get(prefix);
+        postfix = StringPool.get(postfix);
+        extension = StringPool.get(extension);
 
         Properties mountParameters = new Properties();
         for (Map.Entry<String, String> entry : mountSiteMapConfiguration.getParameters().entrySet()) {
@@ -247,7 +253,7 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
             if(componentConfigurationNames.length != componentConfigurationValues.length) {
                 log.warn("Skipping componentConfigurationMappings for sitemapitem '{}' because they only make sense if there are equal number of names and values", qualifiedId);
             }  else {
-                componentConfigurationIdMappings = new HashMap<String, String>();
+                componentConfigurationIdMappings = new HashMap<>();
                 for(int i = 0; i < componentConfigurationNames.length ; i++) {
                     this.componentConfigurationIdMappings.put(StringPool.get(componentConfigurationNames[i]), StringPool.get(componentConfigurationValues[i]));
                 }
@@ -270,22 +276,22 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
                            parameterValues[i] = resolved;
                        }
                    }
-                   this.parameters.put(StringPool.get(parameterNames[i]), StringPool.get(parameterValues[i]));
-                   this.localParameters.put(StringPool.get(parameterNames[i]), StringPool.get(parameterValues[i]));
+                   parameters.put(StringPool.get(parameterNames[i]), StringPool.get(parameterValues[i]));
+                   localParameters.put(StringPool.get(parameterNames[i]), StringPool.get(parameterValues[i]));
                }
            }
         }
 
-        if(this.parentItem != null){
+        if(parentItem != null){
             // add the parent parameters that are not already present
             for(Entry<String, String> parentParam : this.parentItem.getParameters().entrySet()) {
-                if(!this.parameters.containsKey(parentParam.getKey())) {
-                    this.parameters.put(StringPool.get(parentParam.getKey()), StringPool.get(parentParam.getValue()));
+                if(!parameters.containsKey(parentParam.getKey())) {
+                    parameters.put(StringPool.get(parentParam.getKey()), StringPool.get(parentParam.getValue()));
                 }
             }
         }
 
-        this.relativeContentPath = node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH);
+        relativeContentPath = node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH);
         if(relativeContentPath != null && relativeContentPath.contains(PARENT_PROPERTY_PLACEHOLDER)) {
              if(parentItem == null || parentItem.getRelativeContentPath() == null) {
                  log.error("Cannot use '{}' for a sitemap item that does not have a parent or a parent without relative content path. Used at: '{}'", PARENT_PROPERTY_PLACEHOLDER, id);
@@ -338,38 +344,38 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
         }
 
         if (node.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCALE)) {
-            this.locale = node.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCALE);
-        } else if(this.parentItem != null){
-            this.locale = parentItem.getLocale();
+            locale = node.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCALE);
+        } else if(parentItem != null){
+            locale = parentItem.getLocale();
         } else {
-            this.locale = mountSiteMapConfiguration.getLocale();
+            locale = mountSiteMapConfiguration.getLocale();
         }
         locale = StringPool.get(locale);
 
         if (node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_AUTHENTICATED)) {
-            this.authenticated = node.getValueProvider().getBoolean(HstNodeTypes.SITEMAPITEM_PROPERTY_AUTHENTICATED);
+            authenticated = node.getValueProvider().getBoolean(HstNodeTypes.SITEMAPITEM_PROPERTY_AUTHENTICATED);
         } else if(this.parentItem != null){
-            this.authenticated = parentItem.isAuthenticated();
+            authenticated = parentItem.isAuthenticated();
         }
 
         if (node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_ROLES)) {
             String [] rolesProp = node.getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_ROLES);
-            this.roles = new HashSet<String>();
+            roles = new HashSet<>();
             CollectionUtils.addAll(this.roles, rolesProp);
         } else if (this.parentItem != null){
-            this.roles = new HashSet<String>(parentItem.getRoles());
+            roles = new HashSet<>(parentItem.getRoles());
         } else {
-            this.roles = new HashSet<String>(0);
+            roles = new HashSet<>(0);
         }
 
         if (node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_USERS)) {
             String [] usersProp = node.getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_USERS);
-            this.users = new HashSet<String>();
+            users = new HashSet<>();
             CollectionUtils.addAll(this.users, usersProp);
-        } else if (this.parentItem != null){
-            this.users = new HashSet<String>(parentItem.getUsers());
+        } else if (parentItem != null){
+            users = new HashSet<>(parentItem.getUsers());
         } else {
-            this.users = new HashSet<String>();
+            users = new HashSet<>();
         }
 
         if(node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING)) {
@@ -377,22 +383,22 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
         }
 
         if(node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_NAMEDPIPELINE)) {
-            this.namedPipeline = node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_NAMEDPIPELINE);
+            namedPipeline = node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_NAMEDPIPELINE);
         } else if(this.parentItem != null) {
-            this.namedPipeline = parentItem.getNamedPipeline();
+            namedPipeline = parentItem.getNamedPipeline();
         } else {
             // inherit the namedPipeline from the mount (can be null)
-            this.namedPipeline = mountSiteMapConfiguration.getNamedPipeline();
+            namedPipeline = mountSiteMapConfiguration.getNamedPipeline();
         }
 
         namedPipeline = StringPool.get(namedPipeline);
 
         if(node.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE)) {
-            this.cacheable = node.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE);
+            cacheable = node.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE);
         } else if(this.parentItem != null) {
-            this.cacheable = parentItem.isCacheable();
+            cacheable = parentItem.isCacheable();
         } else {
-            this.cacheable = mountSiteMapConfiguration.isCacheable();
+            cacheable = mountSiteMapConfiguration.isCacheable();
         }
 
         scheme = null;
@@ -423,9 +429,9 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
         }
 
         if (node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RESOURCE_BUNDLE_ID)) {
-            this.resourceBundleIds = StringUtils.split(StringPool.get(node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_RESOURCE_BUNDLE_ID)), " ,\t\f\r\n");
+            resourceBundleIds = StringUtils.split(StringPool.get(node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_RESOURCE_BUNDLE_ID)), " ,\t\f\r\n");
         } else {
-            this.resourceBundleIds = parentItem != null ? parentItem.getResourceBundleIds() : mountSiteMapConfiguration.getDefaultResourceBundleIds();
+            resourceBundleIds = parentItem != null ? parentItem.getResourceBundleIds() : mountSiteMapConfiguration.getDefaultResourceBundleIds();
         }
 
         for(HstNode child : node.getNodes()) {
@@ -449,17 +455,17 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
     }
 
     public HstSiteMapItem getChild(String value) {
-        return this.childSiteMapItems.get(value);
+        return childSiteMapItems.get(value);
     }
 
 
 
     public List<HstSiteMapItem> getChildren() {
-        return Collections.unmodifiableList(new ArrayList<HstSiteMapItem>(this.childSiteMapItems.values()));
+        return Collections.unmodifiableList(new ArrayList<>(childSiteMapItems.values()));
     }
 
     public String getComponentConfigurationId() {
-        return this.componentConfigurationId;
+        return componentConfigurationId;
     }
 
     @Override
@@ -468,7 +474,7 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
     }
 
     public String getId() {
-        return this.id;
+        return id;
     }
 
     @Override
@@ -492,26 +498,26 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
     }
 
     public String getRelativeContentPath() {
-        return this.relativeContentPath;
+        return relativeContentPath;
     }
 
 
     public String getParameter(String name) {
-        return this.parameters.get(name);
+        return parameters.get(name);
     }
 
 
     public Map<String, String> getParameters() {
-        return this.parameters;
+        return parameters;
     }
 
 
 	public String getLocalParameter(String name) {
-		return this.localParameters.get(name);
+		return localParameters.get(name);
 	}
 
 	public Map<String, String> getLocalParameters() {
-		return this.localParameters;
+		return localParameters;
 	}
 
 
@@ -520,31 +526,35 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
 	}
 
     public List<HstSiteMapItemHandlerConfiguration> getSiteMapItemHandlerConfigurations() {
-        return Collections.unmodifiableList(new ArrayList<HstSiteMapItemHandlerConfiguration>(siteMapItemHandlerConfigurations.values()));
+        return Collections.unmodifiableList(new ArrayList<>(siteMapItemHandlerConfigurations.values()));
     }
 
     public int getStatusCode() {
-        return this.statusCode;
+        return statusCode;
     }
 
     public int getErrorCode() {
-        return this.errorCode;
+        return errorCode;
     }
 
     public boolean isAuthenticated() {
-        return this.authenticated;
+        return authenticated;
     }
 
     public Set<String> getRoles() {
-        return this.roles;
+        return roles;
     }
 
     public Set<String> getUsers() {
-        return this.users;
+        return users;
     }
 
     public String getValue() {
-        return this.value;
+        return value;
+    }
+
+    public String getPageTitle() {
+        return pageTitle;
     }
 
     public String getLocale() {
@@ -552,15 +562,15 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
     }
 
     public boolean isWildCard() {
-        return this.isWildCard;
+        return isWildCard;
     }
 
     public boolean isAny() {
-        return this.isAny;
+        return isAny;
     }
 
     public HstSiteMap getHstSiteMap() {
-        return this.hstSiteMap;
+        return hstSiteMap;
     }
 
     @Override
@@ -602,26 +612,26 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
     }
 
     public HstSiteMapItem getParentItem() {
-        return this.parentItem;
+        return parentItem;
     }
 
     public String getParameterizedPath(){
-        return this.parameterizedPath;
+        return parameterizedPath;
     }
 
     public int getWildCardAnyOccurences(){
-        return this.occurences;
+        return occurences;
     }
 
 
     // ---- BELOW FOR INTERNAL CORE SITEMAP MAP RESOLVING && LINKREWRITING ONLY
 
     public void addWildCardPrefixedChildSiteMapItems(HstSiteMapItemService hstSiteMapItem){
-        this.containsWildCardChildSiteMapItems.add(hstSiteMapItem);
+        containsWildCardChildSiteMapItems.add(hstSiteMapItem);
     }
 
     public void addAnyPrefixedChildSiteMapItems(HstSiteMapItemService hstSiteMapItem){
-        this.containsAnyChildSiteMapItems.add(hstSiteMapItem);
+        containsAnyChildSiteMapItems.add(hstSiteMapItem);
     }
 
     public HstSiteMapItem getWildCardPatternChild(String value, List<HstSiteMapItem> excludeList){
@@ -687,47 +697,47 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
 
 
     public String getNamedPipeline() {
-        return this.namedPipeline;
+        return namedPipeline;
     }
 
     public String getPostfix(){
-        return this.postfix;
+        return postfix;
     }
 
     public String getExtension(){
-        return this.extension;
+        return extension;
     }
 
     public String getPrefix(){
-        return this.prefix;
+        return prefix;
     }
 
     public boolean containsWildCard() {
-        return this.containsWildCard;
+        return containsWildCard;
     }
 
     public boolean containsAny() {
-        return this.containsAny;
+        return containsAny;
     }
 
     public void setUseableInRightContextOnly(boolean useableInRightContextOnly) {
-        this.useableInRightContextOnly = useableInRightContextOnly;
+        useableInRightContextOnly = useableInRightContextOnly;
     }
 
     public boolean isUseableInRightContextOnly() {
-        return this.useableInRightContextOnly;
+        return useableInRightContextOnly;
     }
 
     public void setKeyToPropertyPlaceHolderMap(Map<String, String> keyToPropertyPlaceHolderMap) {
-       this.keyToPropertyPlaceHolderMap = keyToPropertyPlaceHolderMap;
+       keyToPropertyPlaceHolderMap = keyToPropertyPlaceHolderMap;
     }
 
     public Map<String, String> getKeyToPropertyPlaceHolderMap() {
-        return this.keyToPropertyPlaceHolderMap;
+        return keyToPropertyPlaceHolderMap;
     }
 
     public int getDepth() {
-        return this.depth;
+        return depth;
     }
 
     public String getQualifiedId() {

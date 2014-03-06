@@ -15,8 +15,10 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.sitemapresource;
 
+import javax.jcr.Node;
 import javax.ws.rs.core.Response;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPageRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPagesRepresentation;
@@ -64,6 +66,23 @@ public class PagesTest extends AbstractSiteMapResourceTest{
 
         assertEquals("/", siteMapPagesRepresentation.getPages().get(0).getPathInfo());
         assertEquals("home", siteMapPagesRepresentation.getPages().get(0).getName());
+    }
+
+
+    @Test
+    public void test_sitemap_item_page_title() throws Exception {
+        final Node home = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/home");
+        home.setProperty(HstNodeTypes.SITEMAPITEM_PAGE_TITLE, "foo");
+        session.save();
+        initContext();
+        final SiteMapResource siteMapResource = createResource();
+        final Response response = siteMapResource.getSiteMapPages();
+        SiteMapPagesRepresentation siteMapPagesRepresentation =
+                (SiteMapPagesRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+
+        assertEquals("/", siteMapPagesRepresentation.getPages().get(0).getPathInfo());
+        assertEquals("home", siteMapPagesRepresentation.getPages().get(0).getName());
+        assertEquals("foo", siteMapPagesRepresentation.getPages().get(0).getPageTitle());
     }
 
 }

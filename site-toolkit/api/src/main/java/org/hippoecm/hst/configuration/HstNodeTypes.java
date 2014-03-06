@@ -110,6 +110,7 @@ public interface HstNodeTypes {
     static final String SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING = "hst:excludedforlinkrewriting";
     static final String SITEMAPITEM_PROPERTY_SCHEME = "hst:scheme";
     static final String SITEMAPITEM_PROPERTY_RESOURCE_BUNDLE_ID = "hst:resourcebundleid";
+    static final String SITEMAPITEM_PAGE_TITLE = "hst:pagetitle";
 
     static final String SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM =  "hst:referencesitemapitem";
     static final String SITEMENUITEM_PROPERTY_EXTERNALLINK =  "hst:externallink";

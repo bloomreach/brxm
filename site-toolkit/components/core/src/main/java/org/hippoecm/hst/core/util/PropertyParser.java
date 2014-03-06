@@ -108,7 +108,6 @@ public class PropertyParser {
                 s = propertyPlaceHolderHelper.replacePlaceholders((String) o, placeholderResolver);
             } catch (IllegalArgumentException e) {
                 log.debug("Unable to replace property expression for property '" + name + "'. Return null.", e);
-
                 return null;
             }
             

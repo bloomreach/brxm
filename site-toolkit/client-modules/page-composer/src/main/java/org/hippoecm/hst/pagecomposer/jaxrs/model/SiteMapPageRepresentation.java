@@ -24,6 +24,7 @@ public class SiteMapPageRepresentation {
     // siteMap, then the parentId is null)
     private String parentId;
     private String name;
+    private String pageTitle;
     private String pathInfo;
     private String componentConfigurationId;
     private boolean workspaceConfiguration;
@@ -38,6 +39,7 @@ public class SiteMapPageRepresentation {
         id = siteMapItemRepresentation.getId();
         this.parentId = parentId;
         name = siteMapItemRepresentation.getName();
+        pageTitle = siteMapItemRepresentation.getPageTitle();
         if (StringUtils.isEmpty(parentPathInfo)) {
             pathInfo = name;
         } else {
@@ -75,6 +77,14 @@ public class SiteMapPageRepresentation {
 
     public void setName(final String name) {
         this.name = name;
+    }
+
+    public String getPageTitle() {
+        return pageTitle;
+    }
+
+    public void setPageTitle(final String pageTitle) {
+        this.pageTitle = pageTitle;
     }
 
     public String getPathInfo() {

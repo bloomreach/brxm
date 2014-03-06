@@ -68,6 +68,11 @@ public interface HstSiteMapItem {
     String getValue();
 
     /**
+     * @return the page title for this {@link HstSiteMapItem} or <code>null</code> if not configured
+     */
+    String getPageTitle();
+
+    /**
      * Returns a boolean indicating whether this <code>HstSiteMapItem</code> represents a path with a <code>wildcard</code> value <code>*</code>
      * @return <code>true</code> if this <code>HstSiteMapItem</code> represents <code>*</code>
      */

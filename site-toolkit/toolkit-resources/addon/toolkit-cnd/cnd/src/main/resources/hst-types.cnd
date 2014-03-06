@@ -135,6 +135,7 @@
 - hst:value
 - hst:relativecontentpath (string)
 - hst:componentconfigurationid (string)
+- hst:pagetitle (string)
 // deprecated and unused: do not use
 - hst:portletcomponentconfigurationid (string)
 - hst:sitemapitemhandlerids (string) multiple
