@@ -28,5 +28,5 @@
     "INVALID_CHARACTERS": "De volgende karakters zijn niet toegestaan in het label: {{ invalidCharacters }}",
 
     "UNTITLED": "Naamloos",
-    "MENU_ITEM": "Menu-item"
+    "MENU_ITEM": "menu-item"
 }

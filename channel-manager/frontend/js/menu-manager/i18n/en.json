@@ -28,5 +28,5 @@
     "INVALID_CHARACTERS": "The following characters are not allowed in the label: {{ invalidCharacters }}",
 
     "UNTITLED": "Untitled",
-    "MENU_ITEM": "Menu item"
+    "MENU_ITEM": "menu item"
 }
