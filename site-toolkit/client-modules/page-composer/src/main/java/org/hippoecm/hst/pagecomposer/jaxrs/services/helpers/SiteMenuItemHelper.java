@@ -66,7 +66,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
             update(newChild, newItem);
             return newChild;
         } catch (ItemExistsException e) {
-            throw getClientException(parent, newItemName, e.getMessage());
+            throw createClientException(parent, newItemName, e.getMessage());
         }
     }
 
@@ -127,7 +127,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
         try {
             node.getSession().move(node.getPath(), newParent.getPath() + "/" + encode(newNodeName, true));
         } catch (ItemExistsException e) {
-            throw getClientException(newParent, newNodeName, e.getMessage());
+            throw createClientException(newParent, newNodeName, e.getMessage());
         }
     }
 
@@ -161,7 +161,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
         try {
             parent.orderBefore(encode(sourceName, true), successorNodeName);
         } catch (ItemExistsException e) {
-            throw getClientException(parent, sourceName, e.getMessage());
+            throw createClientException(parent, sourceName, e.getMessage());
         }
     }
 
@@ -223,7 +223,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
         }
     }
 
-    private ClientException getClientException(Node parent, String itemName, String message) throws RepositoryException {
+    private ClientException createClientException(Node parent, String itemName, String message) throws RepositoryException {
         final String path = toPath(parent);
         final Map<?, ?> params = ImmutableMap.builder()
                 .put("item", decode(itemName))
