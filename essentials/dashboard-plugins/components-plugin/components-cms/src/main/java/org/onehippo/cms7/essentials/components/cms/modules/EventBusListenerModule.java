@@ -32,6 +32,8 @@ import org.onehippo.repository.modules.ConfigurableDaemonModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
+
 /**
  * The EventBusListenerModule is a daemon module started by the CMS (based on the corresponding hippo:modules
  * repository configuration. It registers a HippoEventBus listener, which then dispatches events. Currently,
@@ -47,14 +49,16 @@ public class EventBusListenerModule implements ConfigurableDaemonModule {
 
     private Session session;
     private EventBusListener listener;
-    private String projectNamespace;
+
+    private String projectNamespacePath;
 
     @Override
     public void configure(final Node moduleConfig) throws RepositoryException {
         if (moduleConfig.hasProperty("projectNamespace")) {
-            projectNamespace = moduleConfig.getProperty("projectNamespace").getString();
+            projectNamespacePath = moduleConfig.getProperty("projectNamespace").getPath();
         }
     }
+
     /**
      * Initialization of daemon module, register listener.
      *
@@ -116,7 +120,6 @@ public class EventBusListenerModule implements ConfigurableDaemonModule {
     }
 
 
-
     /**
      * The actual listener being called by the Hippo Event Bus.
      */
@@ -144,6 +147,7 @@ public class EventBusListenerModule implements ConfigurableDaemonModule {
          *
          * @param event the event.
          */
+        @SuppressWarnings("HippoHstCallNodeRefreshInspection")
         private void dispatchSaveEvent(HippoWorkflowEvent<?> event) {
             final String handleUuid = event.handleUuid();
             try {
@@ -151,8 +155,18 @@ public class EventBusListenerModule implements ConfigurableDaemonModule {
                 final Node variant = getVariant(handle, "unpublished");
                 boolean doSave = false;
                 if (variant != null) {
-                    if (BlogUpdater.wants(variant, projectNamespace + ":blogpost")) {
-                        doSave = BlogUpdater.handleSaved(variant,projectNamespace +":authornames");
+                    if (session.propertyExists(projectNamespacePath)) {
+                        final String projectNamespace = session.getProperty(projectNamespacePath).getString();
+                        if(Strings.isNullOrEmpty(projectNamespace)){
+                            log.warn("projectNamespace property not set @{}", projectNamespacePath);
+                            return;
+                        }
+
+                        if (BlogUpdater.wants(variant, projectNamespace + ":blogpost")) {
+                            doSave = BlogUpdater.handleSaved(variant, projectNamespace);
+                        }
+                    } else {
+                        log.warn("projectNamespace property not set");
                     }
                 }
                 if (doSave) {
@@ -160,6 +174,11 @@ public class EventBusListenerModule implements ConfigurableDaemonModule {
                 }
             } catch (RepositoryException ex) {
                 log.debug("Failed to process node for handle UUID '" + handleUuid + "'.", ex);
+                try {
+                    session.refresh(false);
+                } catch (RepositoryException e) {
+                    log.error("Error refreshing session", e);
+                }
             }
         }
     }

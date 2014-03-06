@@ -49,7 +49,7 @@
           <sv:value>path</sv:value>
         </sv:property>
         <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
-          <sv:value>appstore:blogpost</sv:value>
+          <sv:value>{{namespace}}:blogpost</sv:value>
           <sv:value/>
           <sv:value>desc</sv:value>
           <sv:value>on</sv:value>

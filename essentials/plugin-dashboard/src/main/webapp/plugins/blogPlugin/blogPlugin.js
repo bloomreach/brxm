@@ -46,7 +46,7 @@
                                 if (key == 'urls') {
                                     for (var i = 0; i < value.length; i++) {
                                         var v = value[i].value;
-                                        var k = value[i].key;
+                                        var k = 'url' + i;
                                         Essentials.addPayloadData(prefix + k, v, payload);
                                     }
                                 } else {

@@ -16,23 +16,33 @@ public class Blogpost extends HippoDocument implements BlogEntry{
     public static final String TITLE = "{{namespace}}:title";
     public static final String INTRODUCTION = "{{namespace}}:introduction";
     public static final String CONTENT = "{{namespace}}:content";
-    public static final String PUBLICATION_DATE = "appstore:publicationdate";
+    public static final String PUBLICATION_DATE = "{{namespace}}:publicationdate";
     public static final String CATEGORIES = "{{namespace}}:categories";
     public static final String AUTHOR = "{{namespace}}:author";
+    public static final String AUTHOR_NAMES = "{{namespace}}:auhtornames";
     public static final String LINK = "{{namespace}}:link";
     public static final String AUTHORS = "{{namespace}}:authors";
     public static final String TAGS = "hippostd:tags";
 
 
-   @HippoEssentialsGenerated(internalName = "appstore:publicationdate")
+   @HippoEssentialsGenerated(internalName = "{{namespace}}:publicationdate")
     public Calendar getPublicationDate() {
         return getProperty(PUBLICATION_DATE);
     }
 
-    @HippoEssentialsGenerated(internalName = "{{namespace}}:author")
-    public String getAuthor() {
-        return getProperty(AUTHOR);
+    @HippoEssentialsGenerated(internalName = "{{namespace}}:auhtornames")
+    public String[] getAuthorNames() {
+        return getProperty(AUTHOR_NAMES);
     }
+
+    public String getAuthor() {
+        final String[] authorNames = getAuthorNames();
+        if(authorNames !=null && authorNames.length > 0){
+            return authorNames[0];
+        }
+        return null;
+    }
+
 
     @HippoEssentialsGenerated(internalName = "{{namespace}}:title")
     public String getTitle() {
