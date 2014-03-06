@@ -154,6 +154,7 @@ public class BlogImporterJob implements InterruptableJob {
                         authorNode = authorsNode.getNode(author);
                     } catch (RepositoryException e) {
                         log.error(MessageFormat.format("Error finding author document for {0}", author), e);
+                        cleanupSession(session);
                     }
                 }
 
@@ -167,25 +168,39 @@ public class BlogImporterJob implements InterruptableJob {
                 } catch (FeedException | IOException fExp) {
                     log.error(MessageFormat.format("Error in parsing feed {0}", url), fExp);
                 }
-                if (feed != null) {
-                    for (Object entry : feed.getEntries()) {
-                        if (entry instanceof SyndEntry) {
-                            SyndEntry syndEntry = (SyndEntry) entry;
-                            try {
-                                if (!blogExists(blogNode, syndEntry)) {
-                                    createBlogDocument(projectNamespace, blogNode, authorNode, syndEntry, maxDescriptionLength);
-                                    BlogUpdater.handleSaved(blogNode, projectNamespace);
-                                    session.save();
-                                }
-                            } catch (RepositoryException rExp) {
-                                log.error("Error in saving blog document", rExp);
-                            }
-                        }
-                    }
-                }
+                processFeed(session, projectNamespace, maxDescriptionLength, blogNode, authorNode, feed);
             }
         } catch (RepositoryException rExp) {
             log.error("Error in getting base folder for blogs", rExp);
+            cleanupSession(session);
+        }
+    }
+
+    @SuppressWarnings("HippoHstCallNodeRefreshInspection")
+    private void cleanupSession(final Session session)  {
+        try {
+            session.refresh(false);
+        } catch (RepositoryException e) {
+            log.error("Error refreshing session", e);
+        }
+    }
+
+    private void processFeed(final Session session, final String projectNamespace, final int maxDescriptionLength, final Node blogNode, final Node authorNode, final SyndFeed feed) {
+        if (feed != null) {
+            for (Object entry : feed.getEntries()) {
+                if (entry instanceof SyndEntry) {
+                    SyndEntry syndEntry = (SyndEntry) entry;
+                    try {
+                        if (!blogExists(blogNode, syndEntry)) {
+                            createBlogDocument(projectNamespace, blogNode, authorNode, syndEntry, maxDescriptionLength);
+                            BlogUpdater.handleSaved(blogNode, projectNamespace);
+                            session.save();
+                        }
+                    } catch (RepositoryException rExp) {
+                        log.error("Error in saving blog document", rExp);
+                    }
+                }
+            }
         }
     }
 
@@ -195,30 +210,31 @@ public class BlogImporterJob implements InterruptableJob {
         return blogFolder.hasNode(documentName);
     }
 
-    private boolean createBlogDocument(final String projectNamespace, Node baseNode, Node authorHandleNode, SyndEntry syndEntry, int maxDescriptionLength) throws RepositoryException {
+    private boolean createBlogDocument(final String namespace, Node baseNode, Node authorHandleNode, SyndEntry syndEntry, int maxDescriptionLength) throws RepositoryException {
+        final String prefixedNamespace = namespace +':';
         Node blogFolder = getBlogFolder(baseNode, syndEntry);
         String documentName = NodeNameCodec.encode(syndEntry.getTitle(), true).replace("?", "");
         Node handleNode = blogFolder.addNode(documentName, "hippo:handle");
         handleNode.addMixin("hippo:hardhandle");
-        Node documentNode = handleNode.addNode(documentName, projectNamespace + "blogpost");
+        Node documentNode = handleNode.addNode(documentName, prefixedNamespace + "blogpost");
         documentNode.addMixin("hippo:harddocument");
         documentNode.setProperty("hippo:availability", new String[]{"live", "preview"});
-        documentNode.setProperty(projectNamespace + "title", syndEntry.getTitle());
-        documentNode.setProperty(projectNamespace + "introduction", processDescription(syndEntry, maxDescriptionLength));
+        documentNode.setProperty(prefixedNamespace + "title", syndEntry.getTitle());
+        documentNode.setProperty(prefixedNamespace + "introduction", processDescription(syndEntry, maxDescriptionLength));
         if (authorHandleNode != null) {
-            link(documentNode, projectNamespace + "authors", authorHandleNode);
+            link(documentNode, prefixedNamespace + "authors", authorHandleNode);
             final Node authorNode = authorHandleNode.getNode(authorHandleNode.getName());
-            final Property nameProperty = authorNode.getProperty(projectNamespace + "fullname");
+            final Property nameProperty = authorNode.getProperty(prefixedNamespace + "fullname");
             final String name = nameProperty.getString();
-            documentNode.setProperty(projectNamespace + "author", name);
-            documentNode.setProperty(projectNamespace + "authornames", name);
+            documentNode.setProperty(prefixedNamespace + "author", name);
+            documentNode.setProperty(prefixedNamespace + "authornames", name);
         } else {
-            documentNode.setProperty(projectNamespace + "author", syndEntry.getAuthor());
+            documentNode.setProperty(prefixedNamespace + "author", syndEntry.getAuthor());
         }
-        documentNode.setProperty(projectNamespace + "link", syndEntry.getLink());
+        documentNode.setProperty(prefixedNamespace + "link", syndEntry.getLink());
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(syndEntry.getPublishedDate());
-        documentNode.setProperty(projectNamespace + "publicationdate", calendar);
+        documentNode.setProperty(prefixedNamespace + "publicationdate", calendar);
         documentNode.setProperty("hippostdpubwf:lastModifiedBy", "admin");
         documentNode.setProperty("hippostdpubwf:createdBy", "admin");
         calendar.setTime(new Date());
@@ -227,10 +243,10 @@ public class BlogImporterJob implements InterruptableJob {
         documentNode.setProperty("hippostd:stateSummary", "preview");
         documentNode.setProperty("hippostd:state", "published");
         documentNode.setProperty("hippostd:holder", "admin");
-        documentNode.addNode(projectNamespace + "content", "hippostd:html");
-        documentNode.getNode(projectNamespace + "content").setProperty("hippostd:content", processContent(syndEntry));
-        documentNode.addNode(projectNamespace + "image", "hippostd:html");
-        documentNode.getNode(projectNamespace + "image").setProperty("hippostd:content", "");
+        documentNode.addNode(prefixedNamespace + "content", "hippostd:html");
+        documentNode.getNode(prefixedNamespace + "content").setProperty("hippostd:content", processContent(syndEntry));
+        documentNode.addNode(prefixedNamespace + "image", "hippostd:html");
+        documentNode.getNode(prefixedNamespace + "image").setProperty("hippostd:content", "");
 /*
 // TODO check this: project specific
         setEmptyLinkProperty(documentNode, projectNamespace + "documentlink");
