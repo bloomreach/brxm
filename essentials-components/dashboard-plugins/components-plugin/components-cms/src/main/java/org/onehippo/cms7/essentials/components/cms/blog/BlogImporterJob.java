@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -32,9 +33,9 @@ import javax.jcr.Session;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
-import org.onehippo.forge.utilities.repository.scheduler.jcr.JCRScheduler;
 import org.jsoup.Jsoup;
 import org.onehippo.forge.utilities.repository.scheduler.JobConfiguration;
+import org.onehippo.forge.utilities.repository.scheduler.jcr.JCRScheduler;
 import org.quartz.InterruptableJob;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -86,7 +87,12 @@ public class BlogImporterJob implements InterruptableJob {
 
         final JobConfiguration jobConfiguration = (JobConfiguration) context.getMergedJobDataMap().get(JobConfiguration.class.getName());
         final String blogBasePath = jobConfiguration.getString(BLOGS_BASE_PATH);
-        final String[] urls = jobConfiguration.getStrings(URLS, ArrayUtils.EMPTY_STRING_ARRAY);
+        final String[] urls = cleanupUrls(jobConfiguration.getStrings(URLS, ArrayUtils.EMPTY_STRING_ARRAY));
+        if (urls.length == 0) {
+            log.warn("There are no valid URL configured to import");
+            return;
+        }
+
         final String authorsBasePath = jobConfiguration.getString(AUTHORS_BASE_PATH, null);
         final String projectNamespace = jobConfiguration.getString(PROJECT_NAMESPACE, null);
         final String[] authors = jobConfiguration.getStrings(AUTHORS, null);
@@ -104,6 +110,18 @@ public class BlogImporterJob implements InterruptableJob {
         log.info("+----------------------------------------------------+");
         log.info("|           Finished importing blogs                 |");
         log.info("+----------------------------------------------------+");
+    }
+
+    private String[] cleanupUrls(final String[] urls) {
+        final List<String> urlList = new ArrayList<>();
+        for (String url : urls) {
+            if (Strings.isNullOrEmpty(url)) {
+                continue;
+            }
+            urlList.add(url);
+        }
+
+        return urlList.toArray(new String[urlList.size()]);
     }
 
     private void importBlogs(Session session, String projectNamespace, String blogsBasePath, String[] blogUrls, String authorsBasePath, String[] authors, int maxDescriptionLength) {
