@@ -16,9 +16,6 @@
     <sv:property sv:name="hst:componentclassname" sv:type="String">
       <sv:value>org.onehippo.cms7.essentials.components.EssentialsMenuComponent</sv:value>
     </sv:property>
-    <sv:property sv:name="hst:componentclassname" sv:type="String">
-      <sv:value>org.onehippo.cms7.essentials.components.EssentialsMenuComponent</sv:value>
-    </sv:property>
     <sv:property sv:name="hst:parameternames" sv:multiple="true" sv:type="String">
       <sv:value>menuName</sv:value>
     </sv:property>

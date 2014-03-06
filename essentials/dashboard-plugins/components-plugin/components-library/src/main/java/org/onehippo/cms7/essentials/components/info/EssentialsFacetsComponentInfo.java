@@ -21,7 +21,7 @@ import org.hippoecm.hst.core.parameters.Parameter;
 /**
  * @version "$Id$"
  */
-public interface EssentialsFacetsComponentInfo extends EssentialsPageable {
+public interface EssentialsFacetsComponentInfo {
 
     @Parameter(name = "facetPath", required = true, displayName = "Facet path")
     String getFacetPath();
