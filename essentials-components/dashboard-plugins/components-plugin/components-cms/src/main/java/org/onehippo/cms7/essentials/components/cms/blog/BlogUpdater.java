@@ -21,9 +21,12 @@ import java.util.Collection;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.onehippo.cms7.essentials.components.cms.modules.EventBusListenerModule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -32,6 +35,7 @@ import org.onehippo.cms7.essentials.components.cms.modules.EventBusListenerModul
  */
 public final class BlogUpdater {
 
+    private static final Logger log = LoggerFactory.getLogger(BlogUpdater.class);
 
     private BlogUpdater() {
     }
@@ -56,7 +60,7 @@ public final class BlogUpdater {
      */
     public static boolean handleSaved(final Node blogpost, final String projectNamespace) throws RepositoryException {
         // Delete the old property
-        final String authorNamesProp = projectNamespace + "authornames";
+        final String authorNamesProp = projectNamespace + ":authornames";
         if (blogpost.hasProperty(authorNamesProp)) {
             blogpost.getProperty(authorNamesProp).remove();
         }
@@ -64,14 +68,21 @@ public final class BlogUpdater {
         final NodeIterator authorMirrors = blogpost.getNodes(projectNamespace + ":authors");
         final Collection<String> authorNames = new ArrayList<String>();
         // TODO mm check this (was :title???)
-        final String authorProperty = projectNamespace + ":author";
+        final String authorProperty = projectNamespace + ":fullname";
         while (authorMirrors.hasNext()) {
             final Node mirror = authorMirrors.nextNode();
             final Node author = EventBusListenerModule.getReferencedVariant(mirror, "published");
 
             if (author != null) {
 
-                authorNames.add(author.getProperty(authorProperty).getString());
+                if (author.hasProperty(authorProperty)) {
+                    final Property property = author.getProperty(authorProperty);
+                    authorNames.add(property.getString());
+                } else {
+                    log.warn("Author node:[{}] has no property:[{}]", author.getPath(), authorProperty);
+                }
+            } else {
+                log.warn("Author property couldn't be updated because referenced author node is not published yet: {}", mirror.getPath());
             }
         }
 
