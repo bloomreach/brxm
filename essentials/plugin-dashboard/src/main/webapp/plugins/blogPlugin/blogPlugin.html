@@ -1,5 +1,5 @@
 <div ng-controller="blogPluginCtrl">
-    <div class="col-md-12">
+    <div class="col-md-11">
         <div class="panel">
             <div class="panel-heading"><h2>Blog plugin</h2></div>
             <div class="panel-body">
@@ -70,25 +70,26 @@
                             </div>
                         </div>
                     </div>
-
-                        <div class="form-group text-success">
+                    <div class="bg-info">
+                        <div class="form-group">
                             <label class="col-sm-2 control-label">Blogs root directory</label>
                             <div class="col-sm-6">
                                 <input type="text" class="form-control" readonly required ng-model="importConfig.blogsBasePath">
                             </div>
                         </div>
-                        <div class="form-group text-success">
+                        <div class="form-group">
                             <label class="col-sm-2 control-label">Authors root directory</label>
                             <div class="col-sm-6">
                                 <input type="text" class="form-control" readonly required ng-model="importConfig.authorsBasePath">
                             </div>
                         </div>
-                        <div class="form-group text-success">
-                            <label class="col-sm-2 control-label bg-info">Project namespace</label>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Project namespace</label>
                             <div class="col-sm-6">
                                 <input type="text" class="form-control" readonly required ng-model="importConfig.projectNamespace">
                             </div>
                         </div>
+                    </div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label">Cron expression</label>
                         <div class="col-sm-6">
