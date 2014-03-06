@@ -63,6 +63,27 @@ public class PagesHelper extends AbstractHelper {
         return newPage;
     }
 
+
+    public void delete(final Node sitemapItemNodeToDelete) throws RepositoryException {
+        final String componentConfigId = JcrUtils.getStringProperty(sitemapItemNodeToDelete, HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID, null);
+        if (componentConfigId == null){
+            log.debug("No component id configured for '{}'. No page to delete.", sitemapItemNodeToDelete.getPath());
+            return;
+        }
+        final String pageNodePath = getPreviewWorkspacePath() + "/" + componentConfigId;
+        final Session session = pageComposerContextService.getRequestContext().getSession();
+        if (!session.nodeExists(pageNodePath)) {
+            log.info("No page found in hst:workspace for '{}' which is referenced by sitemap item '{}'. Skip deleting the page",
+                    pageNodePath, sitemapItemNodeToDelete.getPath());
+            return;
+        }
+        Node pageNode = session.getNode(pageNodePath);
+        lockHelper.acquireLock(pageNode);
+        deleteOrMarkDeletedIfLiveExists(pageNode);
+    }
+
+    // TODO when implementing re-applying a prototype to a page, ensure the page is from the workspace!
+
     private void validatePrototypePage(final Node component) throws RepositoryException {
         if (!component.isNodeType("hst:abstractcomponent")) {
             throw new ClientException("Expected node of subtype 'hst:abstractcomponent'", ClientError.INVALID_NODE_TYPE);
@@ -120,9 +141,12 @@ public class PagesHelper extends AbstractHelper {
         return !session.nodeExists(previewPagesPath + "/" + testTargetNodeName);
     }
 
+    protected String getPreviewWorkspacePath() {
+        return pageComposerContextService.getEditingPreviewSite().getConfigurationPath() + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
+    }
+
     private String getPreviewWorkspacePagesPath() {
-        return pageComposerContextService.getEditingPreviewSite().getConfigurationPath()
-                + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE + "/" + HstNodeTypes.NODENAME_HST_PAGES;
+        return getPreviewWorkspacePath() + "/" + HstNodeTypes.NODENAME_HST_PAGES;
     }
 
     private String getPreviewPagesPath() {
@@ -159,4 +183,5 @@ public class PagesHelper extends AbstractHelper {
 
         return xpath.toString();
     }
+
 }

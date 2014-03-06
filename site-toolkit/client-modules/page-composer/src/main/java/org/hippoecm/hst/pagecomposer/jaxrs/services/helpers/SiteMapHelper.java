@@ -147,11 +147,11 @@ public class SiteMapHelper extends AbstractHelper {
     public void delete(final String id) throws RepositoryException {
         HstRequestContext requestContext = pageComposerContextService.getRequestContext();
         final Session session = requestContext.getSession();
-        Node toDelete = session.getNodeByIdentifier(id);
-        lockHelper.acquireLock(toDelete);
-        deleteOrMarkDeletedIfLiveExists(toDelete);
+        Node sitemapItemNodeToDelete = session.getNodeByIdentifier(id);
+        lockHelper.acquireLock(sitemapItemNodeToDelete);
+        pagesHelper.delete(sitemapItemNodeToDelete);
+        deleteOrMarkDeletedIfLiveExists(sitemapItemNodeToDelete);
     }
-
 
     /**
      * @throws ClientException if not found
@@ -185,37 +185,13 @@ public class SiteMapHelper extends AbstractHelper {
         return null;
     }
 
-
     private void setSitemapItemProperties(final SiteMapItemRepresentation siteMapItem, final Node jcrNode) throws RepositoryException {
         setProperty(jcrNode, HstNodeTypes.SITEMAPITEM_PROPERTY_SCHEME, siteMapItem.getScheme());
         setProperty(jcrNode, HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, siteMapItem.getRelativeContentPath());
     }
 
 
-    private void createMarkedDeletedIfLiveExists(final Session session, final String oldLocation) throws RepositoryException {
-        boolean liveExists = liveExists(session, oldLocation);
-        if (liveExists) {
-            Node deleted = session.getRootNode().addNode(oldLocation.substring(1), HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
-            markDeleted(deleted);
-        }
-    }
 
-    private void deleteOrMarkDeletedIfLiveExists(final Node toDelete) throws RepositoryException {
-        boolean liveExists = liveExists(toDelete.getSession(), toDelete.getPath());
-        if (liveExists) {
-            markDeleted(toDelete);
-        } else {
-            toDelete.remove();
-        }
-    }
-
-    private boolean liveExists(final Session session, final String previewLocation) throws RepositoryException {
-        if (!previewLocation.contains("-preview/hst:workspace/")) {
-            throw new IllegalStateException("Unexpected location '" + previewLocation + "'");
-        }
-        String liveLocation = previewLocation.replace("-preview/hst:workspace/", "/hst:workspace/");
-        return session.nodeExists(liveLocation);
-    }
 
     private void validateTarget(final Session session, final String target) throws RepositoryException {
         // check non workspace sitemap for collisions

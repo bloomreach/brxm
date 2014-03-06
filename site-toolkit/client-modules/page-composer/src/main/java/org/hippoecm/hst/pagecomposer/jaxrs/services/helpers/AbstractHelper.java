@@ -227,6 +227,31 @@ public abstract class AbstractHelper {
         return false;
     }
 
+    protected void createMarkedDeletedIfLiveExists(final Session session, final String oldLocation) throws RepositoryException {
+        boolean liveExists = liveExists(session, oldLocation);
+        if (liveExists) {
+            Node deleted = session.getRootNode().addNode(oldLocation.substring(1), HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
+            markDeleted(deleted);
+        }
+    }
+
+    protected void deleteOrMarkDeletedIfLiveExists(final Node toDelete) throws RepositoryException {
+        boolean liveExists = liveExists(toDelete.getSession(), toDelete.getPath());
+        if (liveExists) {
+            markDeleted(toDelete);
+        } else {
+            toDelete.remove();
+        }
+    }
+
+    protected boolean liveExists(final Session session, final String previewLocation) throws RepositoryException {
+        if (!previewLocation.contains("-preview/hst:workspace/")) {
+            throw new IllegalStateException("Unexpected location '" + previewLocation + "'");
+        }
+        String liveLocation = previewLocation.replace("-preview/hst:workspace/", "/hst:workspace/");
+        return session.nodeExists(liveLocation);
+    }
+
     protected List<Node> findChangedWorkspaceNodesForUsers(final String previewWorkspacePath, final List<String> userIds)
             throws RepositoryException {
         if (userIds.isEmpty()) {

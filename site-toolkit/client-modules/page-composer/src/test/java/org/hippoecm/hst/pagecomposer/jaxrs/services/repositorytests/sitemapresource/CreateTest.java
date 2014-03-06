@@ -49,7 +49,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
 
     private void initContext() throws Exception {
         // call below will init request context
-        final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
+        getSiteMapItemRepresentation(session, "home");
     }
 
     @Test
@@ -262,7 +262,8 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages")
                 .addNode("foo-"+prototypePageNodeName, HstNodeTypes.NODETYPE_HST_COMPONENT);
 
-        session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages")
+        // and a non workspace page
+        session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:pages")
                 .addNode("foo-"+prototypePageNodeName + "-1", HstNodeTypes.NODETYPE_HST_COMPONENT);
 
         session.save();
@@ -284,6 +285,8 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo",getSingleRowPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
         siteMapResource.create(newFoo);
+        String newPageNodeName = "foo-" + session.getNodeByIdentifier(getSingleRowPrototypePageUUID()).getName();
+        assertTrue(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + newPageNodeName));
         {
             // assert bob cannot move/delete new one
             final Session bob = createSession("bob", "bob");
@@ -310,7 +313,9 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         } catch (ItemNotFoundException e) {
             // correct
         }
-
+        // also assert the newly created page is removed
+        assertFalse("When sitemap item gets deleted, the workspace page should also be deleted. ",
+                session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + newPageNodeName));
     }
 
 
@@ -320,7 +325,8 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo",getSingleRowPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
         siteMapResource.create(newFoo);
-
+        String newPageNodeName = "foo-" + session.getNodeByIdentifier(getSingleRowPrototypePageUUID()).getName();
+        assertTrue(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + newPageNodeName));
         final SiteMapItemRepresentation foo = getSiteMapItemRepresentation(session, "foo");
 
         String pathNewCreated = session.getNodeByIdentifier(foo.getId()).getPath();
@@ -343,6 +349,9 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         } catch (ItemNotFoundException e) {
             // correct
         }
+        // also assert the newly created page is removed
+        assertFalse("When sitemap item gets deleted, the workspace page should also be deleted. ",
+                session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + newPageNodeName));
     }
 
     @Test
@@ -355,6 +364,9 @@ public class CreateTest extends AbstractSiteMapResourceTest {
 
         final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo",getSingleRowPrototypePageUUID());
         siteMapResource.create(newFoo);
+
+        String newPageNodeName = "foo-" + session.getNodeByIdentifier(getSingleRowPrototypePageUUID()).getName();
+        assertTrue(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + newPageNodeName));
 
         // because of Jackrabbit issue we need a fresh session for tests with this move because
         // JR sometimes throws a incorrect repository exception during SessionMoveOperation
@@ -387,6 +399,10 @@ public class CreateTest extends AbstractSiteMapResourceTest {
             fail("Node should be marked as deleted as exists in live!");
         }
 
+        // since there was no live variant for the 'page' the newPageNodeName should be removed
+        assertFalse("When sitemap item gets deleted, the workspace page should also be deleted. ",
+                session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + newPageNodeName));
+
         admin.logout();
     }
 
@@ -397,10 +413,15 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         siteMapResource.create(newFoo);
 
+        String newPageNodeName = "foo-" + session.getNodeByIdentifier(getSingleRowPrototypePageUUID()).getName();
+        assertTrue(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + newPageNodeName));
+
         final SiteMapItemRepresentation foo = getSiteMapItemRepresentation(session, "foo");
         foo.setName("bar");
         final Response renamed = siteMapResource.update(foo);
         assertEquals(Response.Status.OK.getStatusCode(), renamed.getStatus());
+
+        assertTrue(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + newPageNodeName));
 
         final Node fooBar = session.getNodeByIdentifier(foo.getId());
         assertEquals("bar", fooBar.getName());
@@ -418,6 +439,8 @@ public class CreateTest extends AbstractSiteMapResourceTest {
             assertEquals("foo", barFoo.getName());
             admin.logout();
         }
+
+        assertTrue(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + newPageNodeName));
     }
 
 
@@ -453,9 +476,13 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         homeChild.setName("homeChild");
         homeChild.setComponentConfigurationId(getSingleRowPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
+
+        // page node name is the sitemap pathInfo with slashes replaced by '-'
+        String newPageNodeName = "home-homeChild-" + session.getNodeByIdentifier(getSingleRowPrototypePageUUID()).getName();
         {
             final Response response = siteMapResource.create(homeChild, home.getId());
             assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+            assertTrue(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + newPageNodeName));
         }
         // assert parent *not* locked and bob can add sibling child.
         // after this, neither bob nor admin are allowed to rename 'home' any more
@@ -498,6 +525,8 @@ public class CreateTest extends AbstractSiteMapResourceTest {
             renameHome.setName("newName");
             final Response success = siteMapResource.update(renameHome);
             assertEquals(Response.Status.OK.getStatusCode(), success.getStatus());
+            // page for newHomeChild still available on old place
+            assertTrue(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + newPageNodeName));
         }
     }
 
