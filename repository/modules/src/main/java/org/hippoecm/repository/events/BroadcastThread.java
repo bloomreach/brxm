@@ -40,7 +40,7 @@ class BroadcastThread extends Thread {
 
     private static final long DEFAULT_POLLING_TIME = 5000L; // 5 seconds (5000 milliseconds)
     private static final long DEFAULT_QUERY_LIMIT = 500L;
-    private static final long DEFAULT_MAX_EVENT_AGE = 120L; // 5 days (5*24 hours)
+    private static final long DEFAULT_MAX_EVENT_AGE = 24L; // 1 day (24 hours)
 
     private volatile boolean keepRunning = true;
 
@@ -258,6 +258,4 @@ class BroadcastThread extends Thread {
         int colonIndex = name.indexOf(':');
         return colonIndex != -1 ? name.substring(colonIndex + 1) : name;
     }
-
-
 }

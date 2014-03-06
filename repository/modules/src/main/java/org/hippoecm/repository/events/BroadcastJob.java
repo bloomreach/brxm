@@ -19,7 +19,7 @@ import org.onehippo.repository.events.HippoWorkflowEvent;
 
 public interface BroadcastJob {
 
-    String getName();
+    String getChannelName();
 
     long getLastProcessed();
 

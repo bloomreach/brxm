@@ -25,9 +25,11 @@ import java.lang.annotation.Target;
  * to persisted events.
  * <p>
  * Methods with the annotation will receive all persisted events.
+ * @deprecated No longer used. Use the {@link PersistedWorkflowEventListener} interface instead
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
+@Deprecated
 public @interface Persisted {
 
     String name();

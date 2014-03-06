@@ -24,23 +24,31 @@ import org.hippoecm.repository.logging.RepositoryLogger;
 import org.hippoecm.repository.util.NodeIterable;
 import org.junit.Test;
 import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.eventbus.HippoEventBus;
-import org.onehippo.cms7.services.eventbus.Subscribe;
 import org.onehippo.repository.events.HippoWorkflowEvent;
-import org.onehippo.repository.events.Persisted;
+import org.onehippo.repository.events.PersistedWorkflowEventListener;
+import org.onehippo.repository.events.PersistedWorkflowEventsService;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
 
 public class BroadcastModuleTest extends RepositoryTestCase {
 
-    static class Listener {
+    static class Listener implements PersistedWorkflowEventListener {
 
-        List<HippoWorkflowEvent> seenEvents = new LinkedList<HippoWorkflowEvent>();
+        List<HippoWorkflowEvent> seenEvents = new LinkedList<>();
 
-        @Subscribe
-        @Persisted(name = "basic")
-        public void handleWorkflowEvent(HippoWorkflowEvent event) {
+        @Override
+        public String getChannelName() {
+            return "basic";
+        }
+
+        @Override
+        public boolean onlyNewEvents() {
+            return false;
+        }
+
+        @Override
+        public void onWorkflowEvent(HippoWorkflowEvent event) {
             seenEvents.add(event);
         }
     }
@@ -72,11 +80,11 @@ public class BroadcastModuleTest extends RepositoryTestCase {
         HippoWorkflowEvent in = new HippoWorkflowEvent();
         in.className("hoho");
         in.methodName("hihi");
-        in.documentPath("/content/documents/test");
+        in.subjectPath("/content/documents/test");
         in.workflowCategory("haha");
         in.interaction("hehe");
 
-        HippoServiceRegistry.registerService(listener, HippoEventBus.class);
+        HippoServiceRegistry.registerService(listener, PersistedWorkflowEventsService.class);
         try {
             RepositoryLogger logger = new RepositoryLogger();
             logger.initialize(session);
@@ -92,7 +100,7 @@ public class BroadcastModuleTest extends RepositoryTestCase {
             HippoWorkflowEvent out = listener.seenEvents.get(0);
             assertEquals(in.className(), out.className());
             assertEquals(in.methodName(), out.methodName());
-            assertEquals(in.documentPath(), out.documentPath());
+            assertEquals(in.subjectPath(), out.subjectPath());
             assertEquals(in.workflowCategory(), out.workflowCategory());
             assertEquals(in.interaction(), out.interaction());
 
@@ -113,7 +121,7 @@ public class BroadcastModuleTest extends RepositoryTestCase {
 
             assertEquals(1, listener.seenEvents.size());
         } finally {
-            HippoServiceRegistry.unregisterService(listener, HippoEventBus.class);
+            HippoServiceRegistry.unregisterService(listener, PersistedWorkflowEventsService.class);
         }
 
     }
