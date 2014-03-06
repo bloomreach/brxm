@@ -190,7 +190,7 @@ public class BlogImporterJob implements InterruptableJob {
         if (authorHandleNode != null) {
             link(documentNode, projectNamespace + "authors", authorHandleNode);
             final Node authorNode = authorHandleNode.getNode(authorHandleNode.getName());
-            final Property nameProperty = authorNode.getProperty(projectNamespace + "title");
+            final Property nameProperty = authorNode.getProperty(projectNamespace + "fullname");
             final String name = nameProperty.getString();
             documentNode.setProperty(projectNamespace + "author", name);
             documentNode.setProperty(projectNamespace + "authornames", name);
@@ -209,8 +209,8 @@ public class BlogImporterJob implements InterruptableJob {
         documentNode.setProperty("hippostd:stateSummary", "preview");
         documentNode.setProperty("hippostd:state", "published");
         documentNode.setProperty("hippostd:holder", "admin");
-        documentNode.addNode(projectNamespace + "body", "hippostd:html");
-        documentNode.getNode(projectNamespace + "body").setProperty("hippostd:content", processContent(syndEntry));
+        documentNode.addNode(projectNamespace + "content", "hippostd:html");
+        documentNode.getNode(projectNamespace + "content").setProperty("hippostd:content", processContent(syndEntry));
         documentNode.addNode(projectNamespace + "image", "hippostd:html");
         documentNode.getNode(projectNamespace + "image").setProperty("hippostd:content", "");
 /*
