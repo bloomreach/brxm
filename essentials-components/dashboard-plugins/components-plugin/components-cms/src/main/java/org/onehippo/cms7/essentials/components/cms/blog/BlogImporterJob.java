@@ -32,7 +32,7 @@ import javax.jcr.Session;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
-import org.hippoecm.repository.quartz.JCRScheduler;
+import org.onehippo.forge.utilities.repository.scheduler.jcr.JCRScheduler;
 import org.jsoup.Jsoup;
 import org.onehippo.forge.utilities.repository.scheduler.JobConfiguration;
 import org.quartz.InterruptableJob;
