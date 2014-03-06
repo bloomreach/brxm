@@ -25,5 +25,8 @@
     "ITEM_NAME_NOT_UNIQUE_IN_ROOT": "Het item '{{item}}' bestaat al als hoofd menu item",
     "TECHNICAL_ERROR": "Er is een technische fout opgetreden",
 
-    "INVALID_CHARACTERS": "De volgende karakters zijn niet toegestaan in het label: {{ invalidCharacters }}"
+    "INVALID_CHARACTERS": "De volgende karakters zijn niet toegestaan in het label: {{ invalidCharacters }}",
+
+    "UNTITLED": "Naamloos",
+    "MENU_ITEM": "Menu-item"
 }

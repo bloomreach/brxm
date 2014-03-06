@@ -25,5 +25,8 @@
     "ITEM_NAME_NOT_UNIQUE_IN_ROOT": "The menu item '{{ item }}' already exists as a top menu item",
     "TECHNICAL_ERROR": "A technical error has occurred",
 
-    "INVALID_CHARACTERS": "The following characters are not allowed in the label: {{ invalidCharacters }}"
+    "INVALID_CHARACTERS": "The following characters are not allowed in the label: {{ invalidCharacters }}",
+
+    "UNTITLED": "Untitled",
+    "MENU_ITEM": "Menu item"
 }

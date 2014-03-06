@@ -40,12 +40,14 @@
             <button type="button" class="close" data-ng-click="dismissFeedback()" aria-hidden="true">&times;</button>
             {{feedback.message}}
         </p>
+        <h3 class="lead item-title"><strong>{{ selectedMenuItem.title }}</strong> {{ 'MENU_ITEM' | translate }}</h3>
         <div class="form-group has-feedback"
              data-ng-class="{
             'has-success': form.title.$dirty && !isSaving.title && form.title.$valid && isSaved.title,
             'has-error': form.title.$dirty && !isSaving.title && (form.title.$invalid || !isSaved.title)
         }">
             <label for="hippo.channelManager.menuManager.menuItem.edit.title">{{ 'LABEL' | translate }}</label>
+            <input type="text" name="title" class="form-control" id="hippo.channelManager.menuManager.menuItem.edit.title"
             <input type="text" name="title" class="form-control" id="hippo.channelManager.menuManager.menuItem.edit.title"
                    placeholder="{{ 'LABEL' | translate }}"
                    data-hippo.channel-manager.menu-manager.auto-focus
@@ -73,7 +75,7 @@
         </div>
         <label for="hippo.channelManager.menuManager.menuItem.edit.linkType">{{ 'DESTINATION' | translate }}</label>
         <div class="form-group has-feedback" id="hippo.channelManager.menuManager.menuItem.edit.linkType">
-            <div class="radio">
+            <div class="radio first">
                 <label>
                     <input type="radio" name="destination"
                            data-ng-model="selectedMenuItem.linkType"
