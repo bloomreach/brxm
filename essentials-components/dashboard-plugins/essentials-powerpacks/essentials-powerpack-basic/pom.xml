@@ -107,6 +107,11 @@
         <directory>${basedir}/src/main/resources</directory>
         <includes>
           <include>**/*.cnd</include>
+          <include>**/*.css</include>
+          <include>**/*.eot</include>
+          <include>**/*.svg</include>
+          <include>**/*.ttf</include>
+          <include>**/*.woff</include>
           <include>**/*.jsp</include>
           <include>**/*.xml</include>
           <include>**/*.MF</include>
