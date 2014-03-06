@@ -26,9 +26,9 @@
             '$rootScope',
             '$log',
             'hippo.channelManager.ConfigService',
+            'hippo.channelManager.FeedbackService',
             'hippo.channelManager.menuManager.MenuService',
-            'hippo.channelManager.menuManager.FeedbackService',
-            function ($scope, $state, $stateParams, $rootScope, $log, ConfigService, MenuService, FeedbackService) {
+            function ($scope, $state, $stateParams, $rootScope, $log, ConfigService, FeedbackService, MenuService) {
                 $scope.callbacks = {
                     itemClicked: function (itemScope) {
                         MenuService.saveMenuItem($scope.$parent.selectedMenuItem).then(function () {

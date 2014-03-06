@@ -55,6 +55,7 @@ module.exports = function(config) {
             'menu-manager/states/**/*.js',
             'menu-manager/filters/**/*.js',
             'page-manager/page-manager-dependencies.js',
+            'page-manager/services/*.js',
 
             // tests
             {

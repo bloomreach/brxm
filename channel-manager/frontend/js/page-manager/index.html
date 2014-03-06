@@ -34,8 +34,8 @@
 </head>
 
 <body>
-    <div data-ng-app="hippo.channelManager.pageManager" id="application">
-        <div ui-view></div>
+    <div data-ng-app="hippo.channelManager.pageManager" id="application" class="loading-icon l-stretch">
+        <div class="l-stretch" ui-view></div>
     </div>
     
     <script src="../components/jquery/jquery.min.js"></script>
@@ -57,12 +57,15 @@
     <script src="../shared/services/IFrameService.js"></script>
     <script src="../shared/services/ConfigService.js"></script>
     <script src="../shared/services/ContainerService.js"></script>
+    <script src="../shared/services/FeedbackService.js"></script>
     <script src="../shared/services/OutstandingHttpRequests.js"></script>
 
     <!-- App -->
     <script src="page-manager-dependencies.js"></script>
     <script src="page-manager-config.js"></script>
     <script src="page-manager-run.js"></script>
+    <script src="services/PageService.js"></script>
     <script src="states/loader/LoaderCtrl.js"></script>
+    <script src="states/pages/PagesCtrl.js"></script>
 </body>
 </html>

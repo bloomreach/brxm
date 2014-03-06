@@ -24,10 +24,10 @@
             '$stateParams',
             '$state',
             '$log',
+            'hippo.channelManager.FeedbackService',
             'hippo.channelManager.menuManager.MenuService',
             'hippo.channelManager.menuManager.FocusService',
-            'hippo.channelManager.menuManager.FeedbackService',
-            function ($scope, $stateParams, $state, $log, MenuService, FocusService, FeedbackService) {
+            function ($scope, $stateParams, $state, $log, FeedbackService, MenuService, FocusService) {
                 var savedMenuItem;
 
                 $scope.isSaving = {

@@ -30,20 +30,37 @@
  */
 
 /* --- General --- */
-html, body {
-    width: 100%;
-    height: 100%;
-}
-
 #application {
-    width: 100%;
-    height: 100%;
     overflow: hidden;
 }
 
-/* --- Loader --- */
-#loader {
-    width: 100%;
-    height: 480px;
+.loading-icon {
     background: url(../images/loader.gif) no-repeat center center;
+}
+
+/*
+  Centers a block horizontally and vertically using the technique from http://css-tricks.com/centering-in-the-unknown/
+  Requires that all parent elements of the 'l-center-container' element have the class 'l-stretch'.
+*/
+html, body, .l-stretch, .l-center-container {
+    width: 100%;
+    height: 100%;
+}
+
+.l-center-container {
+    text-align: center;
+}
+
+.l-center-container:before {
+    content: '';
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+    margin-right: -0.25em;
+}
+
+.l-center-block {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
 }

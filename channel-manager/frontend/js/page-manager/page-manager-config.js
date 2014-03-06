@@ -22,10 +22,10 @@
 
             // routing
             $stateProvider
-                .state('loader', {
-                    url: '/loader',
-                    controller: 'hippo.channelManager.pageManager.LoaderCtrl',
-                    templateUrl: 'states/loader/loader.html'
+                .state('pages', {
+                    url: '/pages',
+                    controller: 'hippo.channelManager.pageManager.PagesCtrl',
+                    templateUrl: 'states/pages/pages.html'
                 });
 
             // translations

@@ -16,9 +16,9 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.channelManager.menuManager')
+    angular.module('hippo.channelManager')
 
-        .service('hippo.channelManager.menuManager.FeedbackService', [
+        .service('hippo.channelManager.FeedbackService', [
         '$translate',
         function ($translate) {
 

@@ -26,7 +26,7 @@
             '_hippo.channelManager.IFrameService',
             function ($translate, $state, Config, Container, IFrame) {
                 // go to default state
-                $state.go('loader');
+                $state.go('pages');
 
                 // set language
                 $translate.uses(Config.locale);

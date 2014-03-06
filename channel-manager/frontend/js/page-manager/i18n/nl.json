@@ -1,2 +1,4 @@
 {
+    "TECHNICAL_ERROR": "Er is een technische fout opgetreden",
+    "ITEM_NOT_CORRECT_LOCATION": "Er is een interne fout opgetreden: er zijn pagina's van de verkeerde sitemap opgevraagd."
 }

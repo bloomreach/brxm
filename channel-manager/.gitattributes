@@ -15,7 +15,6 @@ frontend/js/menu-manager/filters/placeholder.js -text
 frontend/js/menu-manager/filters/placeholder.spec.js -text
 frontend/js/menu-manager/i18n/en.json -text
 frontend/js/menu-manager/i18n/nl.json -text
-frontend/js/menu-manager/services/FeedbackService.js -text
 frontend/js/menu-manager/services/MenuService.js -text
 frontend/js/menu-manager/states/loader/LoaderCtrl.js -text
 frontend/js/menu-manager/states/loader/loader.html -text
@@ -29,11 +28,11 @@ frontend/js/menu-manager/states/menu-item/edit/EditMenuItemCtrl.js -text
 frontend/js/menu-manager/states/menu-item/menu-item.html -text
 frontend/js/page-manager/i18n/en.json -text
 frontend/js/page-manager/i18n/nl.json -text
-frontend/js/page-manager/states/loader/LoaderCtrl.js -text
-frontend/js/page-manager/states/loader/loader.html -text
+frontend/js/page-manager/services/PageService.js -text
 frontend/js/shared/assets/images/loader.gif -text
 frontend/js/shared/services/ConfigService.js -text
 frontend/js/shared/services/ContainerService.js -text
+frontend/js/shared/services/FeedbackService.js -text
 frontend/js/shared/services/IFrameService.js -text
 frontend/package.json -text
 frontend/pom.xml eol=lf

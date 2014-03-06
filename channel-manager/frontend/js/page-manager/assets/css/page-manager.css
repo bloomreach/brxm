@@ -13,3 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+/* --- Pages --- */
+
+#pages .panel {
+    border-top-width: 0;
+    border-left-width: 0;
+    border-right-width: 0;
+    border-radius: 0;
+}
+
+#pages .l-fixed-height-list {
+    height: 485px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}

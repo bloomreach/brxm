@@ -18,12 +18,16 @@
 
     angular.module('hippo.channelManager.pageManager')
 
-        .controller('hippo.channelManager.pageManager.LoaderCtrl', [
-            '$log',
-            '$state',
-            'hippo.channelManager.ConfigService',
-            function ($log, $state, Config) {
-                $log.info("TODO: show pages of sitemap " + Config.sitemapId);
+        .controller('hippo.channelManager.pageManager.PagesCtrl', [
+            '$scope',
+            'hippo.channelManager.FeedbackService',
+            'hippo.channelManager.pageManager.PageService',
+            function ($scope, FeedbackService, PageService) {
+                PageService.getPages().then(function (pages) {
+                    $scope.pages = pages;
+                }, function (errorResponse) {
+                    $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
+                });
             }
         ]);
 }());

@@ -23,11 +23,10 @@
         constructor: function(config) {
             Ext.apply(config, {
                 title: config.resources['pages-window-title'],
-                width: 860,
-                minWidth: 790,
+                width: 587,
                 height: 517,
                 modal: true,
-                resizeHandles: 'e w',
+                resizable: false,
                 iframeUrl: './angular/page-manager/index.html',
                 iframeConfig: {
                     apiUrlPrefix: config.composerRestMountUrl,

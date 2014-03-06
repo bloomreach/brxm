@@ -23,9 +23,9 @@
             '$scope',
             '$state',
             '$stateParams',
+            'hippo.channelManager.FeedbackService',
             'hippo.channelManager.menuManager.MenuService',
-            'hippo.channelManager.menuManager.FeedbackService',
-            function ($scope, $state, $stateParams, MenuService, FeedbackService) {
+            function ($scope, $state, $stateParams, FeedbackService, MenuService) {
                 var parentItemId = $stateParams.menuItemId;
 
                 $scope.selectedMenuItem = {
