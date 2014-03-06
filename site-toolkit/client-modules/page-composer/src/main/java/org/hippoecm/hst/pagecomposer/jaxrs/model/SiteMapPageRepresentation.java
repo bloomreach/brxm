@@ -32,7 +32,8 @@ public class SiteMapPageRepresentation {
 
     public SiteMapPageRepresentation represent(final SiteMapItemRepresentation siteMapItemRepresentation,
                                                final String parentId,
-                                               final String parentPathInfo) throws IllegalArgumentException {
+                                               final String parentPathInfo,
+                                               final String homePagePathInfo) throws IllegalArgumentException {
 
         id = siteMapItemRepresentation.getId();
         this.parentId = parentId;
@@ -41,6 +42,9 @@ public class SiteMapPageRepresentation {
             pathInfo = name;
         } else {
             pathInfo = parentPathInfo + "/" + name;
+        }
+        if (pathInfo.equals(homePagePathInfo)) {
+            pathInfo = "/";
         }
         componentConfigurationId = siteMapItemRepresentation.getComponentConfigurationId();
         workspaceConfiguration = siteMapItemRepresentation.isWorkspaceConfiguration();

@@ -20,15 +20,18 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.util.HstSiteMapUtils;
+
 public class SiteMapPagesRepresentation {
 
     private String id;
     private List<SiteMapPageRepresentation> pages = new ArrayList<>();
 
-    public SiteMapPagesRepresentation represent(SiteMapRepresentation siteMapRepresentation) throws IllegalArgumentException {
+    public SiteMapPagesRepresentation represent(SiteMapRepresentation siteMapRepresentation, final Mount mount) throws IllegalArgumentException {
         id = siteMapRepresentation.getId();
         for (SiteMapItemRepresentation siteMapItemRepresentation : siteMapRepresentation.getChildren()) {
-            addPages(siteMapItemRepresentation, null);
+            addPages(siteMapItemRepresentation, null, HstSiteMapUtils.getPath(mount, mount.getHomePage()));
         }
         Collections.sort(pages, new Comparator<SiteMapPageRepresentation>() {
             @Override
@@ -43,7 +46,8 @@ public class SiteMapPagesRepresentation {
     }
 
     private void addPages(final SiteMapItemRepresentation siteMapItemRepresentation,
-                          final SiteMapPageRepresentation parent) {
+                          final SiteMapPageRepresentation parent,
+                          final String homePagePathInfo) {
         if (!siteMapItemRepresentation.isExplicitElement()) {
             // wildcards are not the pages we want to expose
             return;
@@ -51,12 +55,12 @@ public class SiteMapPagesRepresentation {
         final SiteMapPageRepresentation siteMapPageRepresentation = new SiteMapPageRepresentation();
         pages.add(siteMapPageRepresentation);
         if (parent == null) {
-            siteMapPageRepresentation.represent(siteMapItemRepresentation, null, null);
+            siteMapPageRepresentation.represent(siteMapItemRepresentation, null, null, homePagePathInfo);
         } else {
-            siteMapPageRepresentation.represent(siteMapItemRepresentation, parent.getId(), parent.getPathInfo());
+            siteMapPageRepresentation.represent(siteMapItemRepresentation, parent.getId(), parent.getPathInfo(), homePagePathInfo);
         }
         for (SiteMapItemRepresentation child : siteMapItemRepresentation.getChildren()) {
-            addPages(child, siteMapPageRepresentation);
+            addPages(child, siteMapPageRepresentation, homePagePathInfo);
         }
     }
 

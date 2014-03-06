@@ -33,6 +33,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -86,8 +87,9 @@ public class SiteMapResource extends AbstractConfigResource {
             @Override
             public Response call() throws Exception {
                 final HstSiteMap siteMap = getPageComposerContextService().getEditingPreviewSite().getSiteMap();
+                final Mount mount = getPageComposerContextService().getEditingMount();
                 final SiteMapRepresentation sitemap = new SiteMapRepresentation().represent(siteMap, getPreviewConfigurationPath());
-                final SiteMapPagesRepresentation pages = new SiteMapPagesRepresentation().represent(sitemap);
+                final SiteMapPagesRepresentation pages = new SiteMapPagesRepresentation().represent(sitemap, mount);
                 return ok("Sitemap loaded successfully", pages);
             }
         }, preValidators);
