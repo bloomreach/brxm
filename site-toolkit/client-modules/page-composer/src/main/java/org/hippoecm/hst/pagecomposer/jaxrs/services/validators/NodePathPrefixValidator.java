@@ -44,15 +44,6 @@ public class NodePathPrefixValidator extends AbstractValidator {
     @Override
     public void validate(HstRequestContext requestContext) throws RuntimeException {
         try {
-            if (id == null) {
-                throw new ClientException("null is not a valid uuid", ClientError.INVALID_UUID);
-            }
-            try {
-                UUID.fromString(id);
-            } catch (IllegalArgumentException e) {
-                final String message = String.format("'%s' is not a valid uuid", id);
-                throw new ClientException(message, ClientError.INVALID_UUID);
-            }
             final Node node = getNodeByIdentifier(id, requestContext.getSession());
             if (!node.getPath().startsWith(nodePathPrefix + "/")) {
                 final String message = String.format("'%s' is not part of required node path '%s'.", node.getPath(), nodePathPrefix);
@@ -67,19 +58,6 @@ public class NodePathPrefixValidator extends AbstractValidator {
         } catch (RepositoryException e) {
             throw new RuntimeRepositoryException("RepositoryException during pre-validate", e);
         }
-
     }
-
-//    private boolean isPreviewWorkspaceNode(final Node node) throws RepositoryException {
-//        Node cr = node;
-//        Node root = cr.getSession().getRootNode();
-//        while (!cr.isSame(root)) {
-//            if (cr.isNodeType(HstNodeTypes.NODETYPE_HST_WORKSPACE) && cr.getParent().getName().endsWith("-preview")) {
-//                return true;
-//            }
-//            cr = cr.getParent();
-//        }
-//        return false;
-//    }
 
 }
