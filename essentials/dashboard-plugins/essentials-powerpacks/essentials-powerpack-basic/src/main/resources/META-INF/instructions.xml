@@ -101,12 +101,12 @@
     css
   -->
   <instructionSet>
-    <xml action="copy" source="bootstrap/css/bootstrap.css" target="{{siteWebRoot}}/css/bootstrap.css"/>
-    <xml action="copy" source="bootstrap/css/bootstrap.min.css" target="{{siteWebRoot}}/css/bootstrap.min.css"/>
-    <xml action="copy" source="bootstrap/fonts/glyphicons-halflings-regular.eot" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.eot"/>
-    <xml action="copy" source="bootstrap/fonts/glyphicons-halflings-regular.svg" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.svg"/>
-    <xml action="copy" source="bootstrap/fonts/glyphicons-halflings-regular.ttf" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.ttf"/>
-    <xml action="copy" source="bootstrap/fonts/glyphicons-halflings-regular.woff" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.woff"/>
+    <file action="copy" binary="true" source="bootstrap/css/bootstrap.css" target="{{siteWebRoot}}/css/bootstrap.css"/>
+    <file action="copy" binary="true" source="bootstrap/css/bootstrap.min.css" target="{{siteWebRoot}}/css/bootstrap.min.css"/>
+    <file action="copy" binary="true" source="bootstrap/fonts/glyphicons-halflings-regular.eot" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.eot"/>
+    <file action="copy" binary="true" source="bootstrap/fonts/glyphicons-halflings-regular.svg" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.svg"/>
+    <file action="copy" binary="true" source="bootstrap/fonts/glyphicons-halflings-regular.ttf" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.ttf"/>
+    <file action="copy" binary="true" source="bootstrap/fonts/glyphicons-halflings-regular.woff" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.woff"/>
   </instructionSet>
 
 
