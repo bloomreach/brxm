@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * @version "$Id$"
@@ -39,6 +40,9 @@ public final class BeanWriterUtils {
     public static final String MSG_ADDED_METHOD = "@@@ added [{}] method";
     private static Logger log = LoggerFactory.getLogger(BeanWriterUtils.class);
 
+    public static final Set<String> EXPOSABLE_BUILT_IN_PROPERTIES = new ImmutableSet.Builder<String>()
+            .add("hippostd:tags")
+            .build();
     private BeanWriterUtils() {
     }
 
@@ -405,18 +409,23 @@ public final class BeanWriterUtils {
             return;
         }
 
-        if (name.startsWith(projectNamespacePrefix)) {
+        // add all project & built in types:
+        if (canAddProperty(projectNamespacePrefix, name)) {
             addBeanProperty(bean, templateDocument, nodeOrProperty, name);
         }
 
         final Collection<NodeOrProperty> childNodes = nodeOrProperty.getXmlNodeOrXmlProperty();
         for (NodeOrProperty childNode : childNodes) {
             String aName = childNode.getName();
-            if (aName.startsWith(projectNamespacePrefix)) {
+            if (canAddProperty(projectNamespacePrefix, aName)) {
                 addBeanProperty(bean, templateDocument, childNode, aName);
             }
             processKid(bean, templateDocument, childNode, projectNamespacePrefix);
         }
+    }
+
+    private static boolean canAddProperty(final String projectNamespacePrefix, final String name) {
+        return name.startsWith(projectNamespacePrefix) || EXPOSABLE_BUILT_IN_PROPERTIES.contains(name);
     }
 
     private static void addBeanProperty(final MemoryBean bean, final XmlNode templateDocument, final NodeOrProperty nodeOrProperty, final String name) {
