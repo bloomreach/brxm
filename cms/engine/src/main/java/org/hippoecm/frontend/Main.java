@@ -30,6 +30,7 @@ import javax.jcr.SimpleCredentials;
 import javax.jcr.observation.EventListener;
 import javax.jcr.observation.EventListenerIterator;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.DefaultPageManagerProvider;
 import org.apache.wicket.IPageRendererProvider;
@@ -112,6 +113,21 @@ public class Main extends PluginApplication {
     public final static String ENCRYPT_URLS = "encrypt-urls";
     public final static String OUTPUT_WICKETPATHS = "output-wicketpaths";
     public final static String PLUGIN_APPLICATION_NAME_PARAMETER = "config";
+
+    /**
+     * Wicket RequestCycleSettings timeout configuration parameter name in development mode.
+     */
+    public final static String DEVELOPMENT_REQUEST_TIMEOUT_PARAM = "wicket.development.request.timeout";
+
+    /**
+     * Default Wicket RequestCycleSettings timeout milliseconds in development mode.
+     */
+    public final static long DEFAULT_DEVELOPMENT_REQUEST_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
+
+    /**
+     * Wicket RequestCycleSettings timeout configuration parameter name in deployment mode.
+     */
+    public final static String DEPLOYMENT_REQUEST_TIMEOUT_PARAM = "wicket.deployment.request.timeout";
 
     // class in the root package, to make it possible to use the caching resource stream locator
     // for resources that are not associated with a class.
@@ -342,7 +358,13 @@ public class Main extends PluginApplication {
         if (RuntimeConfigurationType.DEVELOPMENT.equals(getConfigurationType())) {
             // disable cache
             resourceSettings.getLocalizer().setEnableCache(false);
-            getRequestCycleSettings().setTimeout(Duration.minutes(10));
+
+            final long timeout = NumberUtils.toLong(getConfigurationParameter(DEVELOPMENT_REQUEST_TIMEOUT_PARAM, null), DEFAULT_DEVELOPMENT_REQUEST_TIMEOUT_MS);
+
+            if (timeout > 0L) {
+                log.info("Setting wicket request timeout to {} ms.", timeout);
+                getRequestCycleSettings().setTimeout(Duration.milliseconds(timeout));
+            }
 
             getDebugSettings().setOutputMarkupContainerClassName(true);
         } else {
@@ -360,6 +382,13 @@ public class Main extends PluginApplication {
 
             // don't show exception page
             getExceptionSettings().setUnexpectedExceptionDisplay(IExceptionSettings.SHOW_NO_EXCEPTION_PAGE);
+
+            final long timeout = NumberUtils.toLong(getConfigurationParameter(DEPLOYMENT_REQUEST_TIMEOUT_PARAM, null));
+
+            if (timeout > 0L) {
+                log.info("Setting wicket request timeout to {} ms.", timeout);
+                getRequestCycleSettings().setTimeout(Duration.milliseconds(timeout));
+            }
         }
 
         String outputWicketpaths = obtainOutputWicketPathsParameter();
