@@ -53,6 +53,7 @@ module.exports = function(config) {
             'menu-manager/directives/*.js',
             'menu-manager/services/*.js',
             'menu-manager/states/**/*.js',
+            'menu-manager/filters/**/*.js',
             'page-manager/page-manager-dependencies.js',
 
             // tests

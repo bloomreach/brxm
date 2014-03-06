@@ -11,8 +11,9 @@ frontend/js/menu-manager/assets/css/main.css -text
 frontend/js/menu-manager/assets/css/menu-manager.css -text
 frontend/js/menu-manager/directives/illegalCharacter.spec.js -text
 frontend/js/menu-manager/directives/illegalCharacters.js -text
-frontend/js/menu-manager/directives/placeholder.js -text
 frontend/js/menu-manager/directives/tooltip.js -text
+frontend/js/menu-manager/filters/placeholder.js -text
+frontend/js/menu-manager/filters/placeholder.spec.js -text
 frontend/js/menu-manager/i18n/en.json -text
 frontend/js/menu-manager/i18n/nl.json -text
 frontend/js/menu-manager/services/FeedbackService.js -text
