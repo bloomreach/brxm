@@ -41,11 +41,11 @@ import com.google.common.eventbus.EventBus;
 public class BlogFacetInstruction implements Instruction {
 
     private static final String DATE_FACET = ":publicationdate$[\n" +
-            "                {name:'last 7 days',resolution:'day', begin:-6, end:1},\n" +
-            "                {name:'last month',resolution:'day', begin:-30, end:1},\n" +
-            "                {name:'last 3 months',resolution:'day', begin:-91, end:1},\n" +
-            "                {name:'last 6 months',resolution:'day', begin:-182, end:1},\n" +
-            "                {name:'last year',resolution:'day', begin:-365, end:1}\n" +
+            "                {name:'Last 7 days',resolution:'day', begin:-6, end:1},\n" +
+            "                {name:'Last month',resolution:'day', begin:-30, end:1},\n" +
+            "                {name:'Last 3 months',resolution:'day', begin:-91, end:1},\n" +
+            "                {name:'Last 6 months',resolution:'day', begin:-182, end:1},\n" +
+            "                {name:'Last year',resolution:'day', begin:-365, end:1}\n" +
             "                ]";
     private static Logger log = LoggerFactory.getLogger(BlogFacetInstruction.class);
 
@@ -95,7 +95,7 @@ public class BlogFacetInstruction implements Instruction {
             blogFacets.setProperty("hippo:docbase", docRef);
             blogFacets.setProperty("hippo:count", "0");
             blogFacets.setProperty("hippofacnav:facetnodenames", new String[]{"Authors", "Categories", "Tags", "Date"});
-            blogFacets.setProperty("hippofacnav:facets", new String[]{namespace + ":author", namespace + ":categories", "hippostd:tags", namespace + DATE_FACET});
+            blogFacets.setProperty("hippofacnav:facets", new String[]{namespace + ":authornames", namespace + ":categories", "hippostd:tags", namespace + DATE_FACET});
             blogFacets.setProperty("hippofacnav:filters", new String[]{"jcr:primaryType = " + namespace + ":blogpost"});
             blogFacets.setProperty("hippofacnav:sortby", new String[]{namespace + ":publicationdate"});
             blogFacets.setProperty("hippofacnav:sortorder", new String[]{"descending"});

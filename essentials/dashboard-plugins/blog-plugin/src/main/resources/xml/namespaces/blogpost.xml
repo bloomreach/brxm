@@ -197,7 +197,7 @@
           <sv:value>required</sv:value>
         </sv:property>
       </sv:node>
-      <sv:node sv:name="string">
+      <sv:node sv:name="authornames">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hipposysedit:field</sv:value>
         </sv:property>
@@ -612,7 +612,7 @@
           <sv:value>Author names (readonly)</sv:value>
         </sv:property>
         <sv:property sv:name="field" sv:type="String">
-          <sv:value>string</sv:value>
+          <sv:value>authornames</sv:value>
         </sv:property>
         <sv:property sv:name="hint" sv:type="String">
           <sv:value>Author names extracted by system from linked Authors</sv:value>
@@ -622,6 +622,9 @@
         </sv:property>
         <sv:property sv:name="wicket.id" sv:type="String">
           <sv:value>${cluster.id}.right.item</sv:value>
+        </sv:property>
+        <sv:property sv:name="mode" sv:type="String">
+          <sv:value>view</sv:value>
         </sv:property>
         <sv:node sv:name="cluster.options">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
