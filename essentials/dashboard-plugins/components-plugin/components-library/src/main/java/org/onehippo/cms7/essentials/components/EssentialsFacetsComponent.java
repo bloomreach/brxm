@@ -52,12 +52,14 @@ public class EssentialsFacetsComponent extends CommonComponent {
         log.info("**** FACET COMPONENT **** ");
         final EssentialsFacetsComponentInfo componentInfo = getComponentParametersInfo(request);
         final String facetPath = componentInfo.getFacetPath();
-        final HippoFacetNavigationBean hippoFacetNavigationBean = getFacetNavigationBean(request, facetPath, getAnyParameter(request, REQUEST_PARAM_QUERY));
+        final String queryParam = cleanupSearchQuery(getAnyParameter(request, REQUEST_PARAM_QUERY));
+        final HippoFacetNavigationBean hippoFacetNavigationBean = getFacetNavigationBean(request, facetPath, queryParam);
         if (hippoFacetNavigationBean == null) {
             log.warn("Facet navigation bean for facet path: {} was null", facetPath);
             return;
         }
 
+        request.setAttribute(REQUEST_PARAM_QUERY, queryParam);
         request.setAttribute(REQUEST_PARAM_FACETS, hippoFacetNavigationBean);
     }
 
