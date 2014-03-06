@@ -54,6 +54,9 @@
     <jmxremote.port>9875</jmxremote.port>
 
     <dependency.solr.version>3.5.0</dependency.solr.version>
+
+    <json-lib.version>2.2.2</json-lib.version>
+
   </properties>
 
   <repositories>
@@ -112,6 +115,19 @@
         <artifactId>junit</artifactId>
         <version>${junit.version}</version>
         <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>net.sf.json-lib</groupId>
+        <artifactId>json-lib</artifactId>
+        <version>${json-lib.version}</version>
+        <classifier>jdk15</classifier>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>

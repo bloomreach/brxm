@@ -39,6 +39,15 @@
     </layout>
   </appender>
 
+  <!-- hippo-demo-events.log -->
+  <appender name="demo-events" class="org.apache.log4j.DailyRollingFileAppender">
+    <param name="File" value="${catalina.base}/logs/hippo-demo-events.log"/>
+    <param name="Append" value="true"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%t] [%C.%M():%L] %m%n"/>
+    </layout>
+  </appender>
+
   <!-- hippo-site-diagnostic.log -->
   <appender name="site-diagnostic" class="org.apache.log4j.DailyRollingFileAppender">
     <param name="File" value="${catalina.base}/logs/hippo-site-diagnostic.log"/>
@@ -94,6 +103,12 @@
   <logger additivity="false" name="org.onehippo.audit">
     <level value="info"/>
     <appender-ref ref="audit"/>
+  </logger>
+
+  <!-- demo events logging -->
+  <logger additivity="false" name="org.hippoecm.hst.demo.events">
+    <level value="info"/>
+    <appender-ref ref="demo-events"/>
   </logger>
 
   <logger additivity="false" name="org.onehippo.cms7.brokenlinks">

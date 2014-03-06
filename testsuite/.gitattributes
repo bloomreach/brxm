@@ -93,6 +93,7 @@ components/src/main/resources/META-INF/hst-assembly/overrides/componentWindowFil
 components/src/main/resources/META-INF/hst-assembly/overrides/custom-jaxrs-resources.xml -text
 components/src/main/resources/META-INF/hst-assembly/overrides/customLinkProcessorsExample.xml svneol=native#text/plain
 components/src/main/resources/META-INF/hst-assembly/overrides/customResourceContainers.xml svneol=native#text/plain
+components/src/main/resources/META-INF/hst-assembly/overrides/event-listeners.xml svneol=native#text/plain
 components/src/main/resources/META-INF/hst-assembly/overrides/hst-cms-rest.xml -text
 components/src/main/resources/META-INF/hst-assembly/overrides/httpsSchemeExample-valve.xml -text svneol=unset#text/plain
 components/src/main/resources/META-INF/hst-assembly/overrides/jndi-repository.xml svneol=native#text/plain
