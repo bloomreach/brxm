@@ -20,11 +20,14 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.picker.NodePickerController;
@@ -68,6 +71,26 @@ public class LinkPickerDialog extends AbstractDialog<String> {
                     log.error("Error while getting link picker model for the node with UUID '" + uuid + "'", e);
                 }
                 return null;
+            }
+
+            @Override
+            protected IModel<Node> getPropertyNodeModel() {
+                JcrItemModel itemModel =
+                        ((JcrPropertyValueModel)((IChainingModel) getModel()).getChainedModel()).getJcrPropertymodel().getItemModel();
+                final JcrItemModel parentModel = itemModel.getParentModel();
+                final String uuid = parentModel.getUuid();
+                try {
+                    if (StringUtils.isNotEmpty(uuid)) {
+                        return new JcrNodeModel(UserSession.get().getJcrSession().getNodeByIdentifier(uuid));
+                    }
+                } catch (ItemNotFoundException e) {
+                    // valid case, node does not exist
+                    return null;
+                } catch (RepositoryException e) {
+                    log.error("Error while getting link picker model for the node with UUID '" + uuid + "'", e);
+                }
+                return null;
+
             }
 
             @Override

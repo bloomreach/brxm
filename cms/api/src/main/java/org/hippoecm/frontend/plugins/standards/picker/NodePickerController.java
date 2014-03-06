@@ -18,10 +18,13 @@ package org.hippoecm.frontend.plugins.standards.picker;
 import java.util.Iterator;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IModelReference;
@@ -37,13 +40,14 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.preferences.IPreferencesStore;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class NodePickerController implements IDetachable {
     private static final long serialVersionUID = 1L;
 
-
+    private static final String ROOT_PATH = "/content/documents";
     static final Logger log = LoggerFactory.getLogger(NodePickerController.class);
 
     private static final String LAST_VISITED = "last.visited";
@@ -63,6 +67,8 @@ public abstract class NodePickerController implements IDetachable {
     private IModel<Node> selectedModel;
     private IModel<Node> lastModelVisited;
     private IModel<Node> baseModel;
+    private String documentLocale;
+
 
     public NodePickerController(IPluginContext context, NodePickerControllerSettings settings) {
         this.context = context;
@@ -71,16 +77,60 @@ public abstract class NodePickerController implements IDetachable {
         if (settings.isLastVisitedEnabled()) {
            lastModelVisited = getLastVisitedFromPreferences();
         }
-        if(settings.hasBaseUUID()) {
+
+
+        if (settings.isLanguageContextWare() && getPropertyNodeModel()!=null) {
+            try {
+                Node node = getPropertyNodeModel().getObject();
+
+                while (documentLocale == null && node!=null) {
+                    node = node.getParent();
+                    final boolean isTranslatedDocument = node.isNodeType(HippoTranslationNodeType.NT_TRANSLATED);
+                    if (isTranslatedDocument) {
+                        if (node.hasProperty(HippoTranslationNodeType.LOCALE)) {
+                            final Property p = node.getProperty(HippoTranslationNodeType.LOCALE);
+                            documentLocale = p.getString();
+                        }
+                    }
+                }
+                final Node rootNode = UserSession.get().getJcrSession().getRootNode();
+                Node languageRootNode = null;
+                while (node!=null && rootNode!=null && !rootNode.getPath().equals(node.getPath())) {
+                    node = node.getParent();
+                    final boolean isTranslatedNode = node.isNodeType(HippoTranslationNodeType.NT_TRANSLATED);
+                    if (isTranslatedNode) {
+                        if (node.hasProperty(HippoTranslationNodeType.LOCALE)) {
+                            languageRootNode = node;
+                        }
+                    }
+                }
+                if (rootNode!=null && !rootNode.equals(node)) {
+                    baseModel = new JcrNodeModel(languageRootNode);
+                }
+
+
+            } catch (RepositoryException e) {
+                log.warn(e.getMessage());
+            }
+
+
+        }
+
+        if (settings.hasBaseUUID()) {
             String baseUUID = settings.getBaseUUID();
             try {
                 Node baseNode = UserSession.get().getJcrSession().getNodeByIdentifier(baseUUID);
+
+                if (settings.isLanguageContextWare()) {
+                    baseNode = getTranslatedNode(baseNode);
+                }
                 baseModel = new JcrNodeModel(baseNode);
             } catch (RepositoryException e) {
                 log.error("Could not create base model from UUID[" + baseUUID + "]", e);
             }
-        }   
+        }
     }
+
 
     public Component create(final String id) {
         IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
@@ -93,7 +143,7 @@ public abstract class NodePickerController implements IDetachable {
         control.start();
 
         IClusterConfig clusterConfig = control.getClusterConfig();
-        
+
         final String selectionModelServiceId = clusterConfig.getString(settings.getSelectionServiceKey());
         selectionModelReference = context.getService(selectionModelServiceId, IModelReference.class);
         context.registerService(selectionModelObserver = new IObserver() {
@@ -166,7 +216,7 @@ public abstract class NodePickerController implements IDetachable {
     }
 
     /**
-     * A hook that allows subclasses to specify a default location. 
+     * A hook that allows subclasses to specify a default location.
      *
      * @return An model used as default initial selection
      */
@@ -194,6 +244,12 @@ public abstract class NodePickerController implements IDetachable {
      * @return The model that is initially selected
      */
     protected abstract IModel<Node> getInitialModel();
+
+    /**
+     * Return the model of the Node where the reference to the link is stored
+     * @return The model of the Node that contains a reference to the link
+     */
+    protected abstract IModel<Node> getPropertyNodeModel();
 
     /**
      * This method is called when a new model is selected.
@@ -261,26 +317,35 @@ public abstract class NodePickerController implements IDetachable {
      * @throws RepositoryException Something went wrong in the repository
      */
     protected boolean isValidNodeType(Node node) throws RepositoryException {
-        boolean isDocument = false;
+        boolean isValid = false;
         if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
             if (node.hasNode(node.getName())) {
-                isDocument = true;
+                isValid = true;
                 node = node.getNode(node.getName());
             } else {
                 return false; //deleted node
             }
         }
 
-        if(settings.hasSelectableNodeTypes()) {
+        if (settings.hasSelectableNodeTypes()) {
             for (String allowedNodeType : settings.getSelectableNodeTypes()) {
                 if (node.isNodeType(allowedNodeType)) {
-                    return true;
+                    isValid = true;
                 }
             }
-            return false;
         }
 
-        return isDocument;
+        if (settings.isLanguageContextWare() && getPropertyNodeModel()!=null) {
+            if (node.hasProperty(HippoTranslationNodeType.LOCALE)) {
+                final Property property = node.getProperty(HippoTranslationNodeType.LOCALE);
+                final String locale = property.getString();
+                isValid = (documentLocale.equals(locale));
+            }
+
+        }
+
+
+        return isValid;
     }
 
     public IRenderService getRenderer() {
@@ -288,7 +353,7 @@ public abstract class NodePickerController implements IDetachable {
     }
 
     public final void onClose() {
-        if(settings.isLastVisitedEnabled()) {
+        if (settings.isLastVisitedEnabled()) {
             saveLastModelVisited();
         }
 
@@ -329,7 +394,14 @@ public abstract class NodePickerController implements IDetachable {
         IPreferencesStore store = context.getService(IPreferencesStore.SERVICE_ID, IPreferencesStore.class);
         String lastVisited = store.getString(settings.getLastVisitedKey(), LAST_VISITED);
         if (lastVisited != null) {
-            return new JcrNodeModel(lastVisited);
+
+            try {
+                final Node node = UserSession.get().getJcrSession().getNode(lastVisited);
+                final Node translatedNode = getTranslatedNode(node);
+                return new JcrNodeModel(translatedNode.getPath());
+            } catch (RepositoryException e) {
+                log.warn(e.getMessage());
+            }
         }
         return null;
     }
@@ -338,7 +410,7 @@ public abstract class NodePickerController implements IDetachable {
      * Save the last visited location in the preferences store. By default, only nodes of type hippostd:folder are
      * allowed, other nodetypes can be specified by configuring a multi-value String property named "last.visited.nodetypes".
      *
-     * By default, all nodes except hippo document are allowed 
+     * By default, all nodes except hippo document are allowed
      */
     private void saveLastModelVisited() {
         if (lastModelVisited != null && lastModelVisited.getObject() != null) {
@@ -391,5 +463,27 @@ public abstract class NodePickerController implements IDetachable {
             return folderModelReference.getModel();
         }
         return null;
+    }
+
+    private Node getTranslatedNode(Node node) {
+        String t9Id = null;
+        try {
+            final javax.jcr.Session jcrSession = UserSession.get().getJcrSession();
+            t9Id = node.getProperty(HippoTranslationNodeType.ID).getString();
+            QueryManager qm = jcrSession.getWorkspace().getQueryManager();
+            Query query = qm.createQuery(
+                    "/jcr:root" + ROOT_PATH + "//element(*, " + HippoTranslationNodeType.NT_TRANSLATED + ")[@"
+                            + HippoTranslationNodeType.ID + "='" + t9Id + "']", Query.XPATH);
+            for (NodeIterator iter = query.execute().getNodes(); iter.hasNext(); ) {
+                Node sibling = iter.nextNode();
+                String siblingLocale = sibling.getProperty(HippoTranslationNodeType.LOCALE).getString();
+                if (siblingLocale.equals(documentLocale)) {
+                    return sibling;
+                }
+            }
+        } catch (RepositoryException e) {
+            throw new RuntimeException("Unable to retrieve siblings for " + t9Id, e);
+        }
+        return node;
     }
 }
