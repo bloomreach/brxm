@@ -7,7 +7,6 @@ frontend/.bowerrc -text
 frontend/.jshintrc -text
 frontend/bower.json -text
 frontend/declutter.config.json -text
-frontend/js/menu-manager/assets/css/main.css -text
 frontend/js/menu-manager/assets/css/menu-manager.css -text
 frontend/js/menu-manager/directives/illegalCharacter.spec.js -text
 frontend/js/menu-manager/directives/illegalCharacters.js -text

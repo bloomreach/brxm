@@ -86,12 +86,6 @@
 }
 
 /* --- Panel component --- */
-.jstree-hippo li.jstree-node {
-    border-radius: 0;
-    border-left: none;
-    border-right: none;
-}
-
 .l-sidebar {
     height: 433px;
     overflow-y: auto;
@@ -113,6 +107,15 @@ form h4.page-header {
 
 hr {
     border-top-color: #dddddd;
+}
+
+h3.lead.item-title {
+    margin-top: 6px;
+    margin-bottom: 15px;
+}
+
+.radio.first {
+    margin-top: 0;
 }
 
 /* --- Confirmation message --- */
