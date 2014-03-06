@@ -425,7 +425,7 @@ dashboard-plugins/dashboard-xinha-plugin/src/test/java/org/onehippo/cms7/essenti
 dashboard-plugins/dashboard-xinha-plugin/src/test/resources/root.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/pom.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/java/org/onehippo/cms7/essentials/powerpack/BasicPowerpack.java -text
-dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/META-INF/instructions.xml -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/META-INF/basic_powerpack_instructions.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/bootstrap/css/bootstrap-theme.css -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/bootstrap/css/bootstrap-theme.min.css -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/bootstrap/css/bootstrap.css -text

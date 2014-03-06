@@ -35,6 +35,11 @@ public class BasicPowerpack extends DefaultPowerpack {
 
 
     @Override
+    public String getInstructionPath() {
+        return "/META-INF/basic_powerpack_instructions.xml";
+    }
+
+    @Override
     public Set<String> groupNames() {
         if (Boolean.valueOf((String) getProperties().get("sampleData"))) {
             return INSTRUCTION_GROUPS_SAMPLE;

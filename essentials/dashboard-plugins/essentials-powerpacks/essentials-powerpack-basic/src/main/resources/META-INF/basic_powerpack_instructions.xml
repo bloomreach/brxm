@@ -31,25 +31,25 @@
     <xml action="copy" source="xml/folderoptions/new-events-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
   </instructionSet>
   <instructionSet>
-    <file action="copy" binary="true" overwrite="true" source="icons/new-folder-16.png" target="{{cmsRoot}}/src/main/resources/org/hippoecm/frontend/plugins/standardworkflow/new-news-folder-16.png"/>
-    <file action="copy" binary="true" overwrite="true" source="icons/new-folder-16.png" target="{{cmsRoot}}/src/main/resources/org/hippoecm/frontend/plugins/standardworkflow/new-events-folder-16.png"/>
+    <file action="copy" binary="true"  source="icons/new-folder-16.png" target="{{cmsRoot}}/src/main/resources/org/hippoecm/frontend/plugins/standardworkflow/new-news-folder-16.png"/>
+    <file action="copy" binary="true"  source="icons/new-folder-16.png" target="{{cmsRoot}}/src/main/resources/org/hippoecm/frontend/plugins/standardworkflow/new-events-folder-16.png"/>
   </instructionSet>
   <instructionSet>
     <folder path="/content/documents/{{namespace}}/news/{{dateRepoYearMonth}}" template="xml/content/news.xml"/>
     <folder path="/content/documents/{{namespace}}/events/{{dateRepoYearMonth}}" template="xml/content/events.xml"/>
   </instructionSet>
   <instructionSet>
-    <file action="copy" overwrite="true" source="jsp/essentials-layout-webpage.jsp" target="{{jspRoot}}/essentials/essentials-layout-webpage.jsp"/>
-    <file action="copy" overwrite="true" source="jsp/essentials-standard-main.jsp" target="{{jspRoot}}/essentials/essentials-standard-main.jsp"/>
-    <file action="copy" overwrite="true" source="jsp/essentials-component-list.jsp" target="{{jspRoot}}/essentials/essentials-component-list.jsp"/>
-    <file action="copy" overwrite="true" source="jsp/essentials-standard-menu.jsp" target="{{jspRoot}}/essentials/essentials-standard-menu.jsp"/>
-    <file action="copy" overwrite="true" source="jsp/essentials-component-document.jsp" target="{{jspRoot}}/essentials/essentials-component-document.jsp"/>
-    <file action="copy" overwrite="true" source="jsp/essentials-component-news.jsp" target="{{jspRoot}}/essentials/essentials-component-news.jsp"/>
-    <file action="copy" overwrite="true" source="jsp/essentials-component-news-detail.jsp" target="{{jspRoot}}/essentials/essentials-component-news-detail.jsp"/>
-    <file action="copy" overwrite="true" source="jsp/essentials-component-events.jsp" target="{{jspRoot}}/essentials/essentials-component-events.jsp"/>
-    <file action="copy" overwrite="true" source="jsp/essentials-component-event-detail.jsp" target="{{jspRoot}}/essentials/essentials-component-event-detail.jsp"/>
+    <file action="copy" source="jsp/essentials-layout-webpage.jsp" target="{{jspRoot}}/essentials/essentials-layout-webpage.jsp"/>
+    <file action="copy" source="jsp/essentials-standard-main.jsp" target="{{jspRoot}}/essentials/essentials-standard-main.jsp"/>
+    <file action="copy" source="jsp/essentials-component-list.jsp" target="{{jspRoot}}/essentials/essentials-component-list.jsp"/>
+    <file action="copy" source="jsp/essentials-standard-menu.jsp" target="{{jspRoot}}/essentials/essentials-standard-menu.jsp"/>
+    <file action="copy"  source="jsp/essentials-component-document.jsp" target="{{jspRoot}}/essentials/essentials-component-document.jsp"/>
+    <file action="copy"  source="jsp/essentials-component-news.jsp" target="{{jspRoot}}/essentials/essentials-component-news.jsp"/>
+    <file action="copy"  source="jsp/essentials-component-news-detail.jsp" target="{{jspRoot}}/essentials/essentials-component-news-detail.jsp"/>
+    <file action="copy"  source="jsp/essentials-component-events.jsp" target="{{jspRoot}}/essentials/essentials-component-events.jsp"/>
+    <file action="copy"  source="jsp/essentials-component-event-detail.jsp" target="{{jspRoot}}/essentials/essentials-component-event-detail.jsp"/>
     <!--todo temporary:-->
-    <file action="copy" overwrite="true" source="jsp/essentials-home.jsp" target="{{jspRoot}}/essentials/essentials-home.jsp"/>
+    <file action="copy"  source="jsp/essentials-home.jsp" target="{{jspRoot}}/essentials/essentials-home.jsp"/>
   </instructionSet>
   <instructionSet>
     <xml action="copy" source="xml/hst/sitemap/news.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
@@ -58,8 +58,8 @@
     <xml action="copy" source="xml/hst/sitemap/root.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
   </instructionSet>
   <instructionSet>
-    <file action="copy" overwrite="true" source="java/NewsDocument.txt" target="{{beansFolder}}/NewsDocument.java"/>
-    <file action="copy" overwrite="true" source="java/EventsDocument.txt" target="{{beansFolder}}/EventsDocument.java"/>
+    <file action="copy"  source="java/NewsDocument.txt" target="{{beansFolder}}/NewsDocument.java"/>
+    <file action="copy"  source="java/EventsDocument.txt" target="{{beansFolder}}/EventsDocument.java"/>
   </instructionSet>
   <instructionSet>
     <xml action="copy" source="xml/hst/components/list.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:components"/>
