@@ -27,6 +27,7 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import static org.junit.Assert.assertTrue;
 
@@ -41,8 +42,10 @@ public class FileInstructionTest extends BaseTest {
     @Inject
     private InstructionExecutor executor;
     @Inject
+    @Qualifier("fileInstruction")
     private FileInstruction copyInstruction;
     @Inject
+    @Qualifier("fileInstruction")
     private FileInstruction deleteInstruction;
 
     private static String createPlaceHolder(final String placeholderProjectRoot) {
