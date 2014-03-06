@@ -243,6 +243,8 @@ public class BlogImporterJob implements InterruptableJob {
         documentNode.setProperty("hippostd:stateSummary", "preview");
         documentNode.setProperty("hippostd:state", "published");
         documentNode.setProperty("hippostd:holder", "admin");
+        // TODO make locale dynamic
+        documentNode.setProperty("hippotranslation:locale", "en");
         documentNode.addNode(prefixedNamespace + "content", "hippostd:html");
         documentNode.getNode(prefixedNamespace + "content").setProperty("hippostd:content", processContent(syndEntry));
         documentNode.addNode(prefixedNamespace + "image", "hippostd:html");
