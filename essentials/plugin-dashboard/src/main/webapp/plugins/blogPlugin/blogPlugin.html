@@ -70,12 +70,25 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">Blog root directory</label>
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control" required ng-model="importConfig.blogsBasePath">
+
+                        <div class="form-group text-success">
+                            <label class="col-sm-2 control-label">Blogs root directory</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" readonly required ng-model="importConfig.blogsBasePath">
+                            </div>
                         </div>
-                    </div>
+                        <div class="form-group text-success">
+                            <label class="col-sm-2 control-label">Authors root directory</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" readonly required ng-model="importConfig.authorsBasePath">
+                            </div>
+                        </div>
+                        <div class="form-group text-success">
+                            <label class="col-sm-2 control-label bg-info">Project namespace</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" readonly required ng-model="importConfig.projectNamespace">
+                            </div>
+                        </div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label">Cron expression</label>
                         <div class="col-sm-6">

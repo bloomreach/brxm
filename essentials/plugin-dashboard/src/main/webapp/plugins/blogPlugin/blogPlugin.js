@@ -36,6 +36,27 @@
 
                 $scope.execute = function () {
                     var payload = Essentials.addPayloadData("templateName", $scope.templateName, null);
+                    if ($scope.setupImport) {
+                        // prefix importer values, so we have no key clashes:
+                        var prefix = "importer_";
+                        Essentials.addPayloadData('importer_setupImport', true, payload);
+                        for (var key in $scope.importConfig) {
+                            if ($scope.importConfig.hasOwnProperty(key)) {
+                                var value = $scope.importConfig[key];
+                                if (key == 'urls') {
+                                    for (var i = 0; i < value.length; i++) {
+                                        var v = value[i].value;
+                                        var k = value[i].key;
+                                        Essentials.addPayloadData(prefix + k, v, payload);
+                                    }
+                                } else {
+                                    Essentials.addPayloadData(prefix + key, value, payload);
+                                }
+
+                            }
+                        }
+                    }
+                    console.log(payload);
                     $http.post($scope.endpoint, payload).success(function (data) {
 
                     });
@@ -60,6 +81,7 @@
                     $http.get($rootScope.REST.projectSettings).success(function (data) {
                         $rootScope.projectSettings = Essentials.keyValueAsDict(data.items);
                         $scope.importConfig.blogsBasePath = '/content/documents/' + $rootScope.projectSettings.namespace + '/blog';
+                        $scope.importConfig.authorsBasePath = '/content/documents/' + $rootScope.projectSettings.namespace + '/blog' + '/authors';
                         $scope.importConfig.projectNamespace = $rootScope.projectSettings.namespace;
                     });
 

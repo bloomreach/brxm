@@ -56,6 +56,10 @@
           <!-- TODO populate this-->
           <sv:value>/content/documents/essentials/blogs</sv:value>
         </sv:property>
+        <sv:property sv:name="authorsBasePath" sv:type="String">
+          <!-- TODO populate this-->
+          <sv:value>/content/documents/essentials/blogs</sv:value>
+        </sv:property>
         <sv:property sv:name="maxDescriptionLength" sv:type="String">
           <sv:value>300</sv:value>
         </sv:property>

@@ -42,6 +42,7 @@ public class DefaultPluginContext implements PluginContext {
 
     public static final String MAIN_JAVA_PART = File.separator + "src" + File.separator + "main" + File.separator + "java"
             + File.separator;
+    public static final String MAIN_RESOURCE_PART = File.separator + "src" + File.separator + "main" + File.separator + "resources";
     private static final Logger log = LoggerFactory.getLogger(DefaultPluginContext.class);
     private static final long serialVersionUID = 1L;
 
@@ -243,12 +244,12 @@ public class DefaultPluginContext implements PluginContext {
                 + File.separator + EssentialConst.PATH_REL_WEB_ROOT;
         placeholderData.put(EssentialConst.PLACEHOLDER_SITE_WEB_ROOT, siteWebRoot);
 
-        placeholderData.put(EssentialConst.PLACEHOLDER_SITE_RESOURCES, siteWebRoot + File.separator + "resources");
+        placeholderData.put(EssentialConst.PLACEHOLDER_SITE_RESOURCES, getSiteDirectory() + MAIN_RESOURCE_PART);
 
         final String cmsWebRoot = ProjectUtils.getCms().getAbsolutePath()
                 + File.separator + EssentialConst.PATH_REL_WEB_ROOT;
         placeholderData.put(EssentialConst.PLACEHOLDER_CMS_WEB_ROOT, cmsWebRoot);
-        placeholderData.put(EssentialConst.PLACEHOLDER_CMS_RESOURCES, cmsWebRoot + File.separator + "resources");
+        placeholderData.put(EssentialConst.PLACEHOLDER_CMS_RESOURCES, getCmsDirectory() + MAIN_RESOURCE_PART);
         placeholderData.put(EssentialConst.PLACEHOLDER_SITE_OVERRIDE_FOLDER, ProjectUtils.getSite().getAbsolutePath()
                 + File.separator + EssentialConst.PATH_REL_OVERRIDE);
         placeholderData.put(EssentialConst.PLACEHOLDER_SITE_FREEMARKER_ROOT, ProjectUtils.getSite().getAbsolutePath() + File.separator + EssentialConst.FREEMARKER_RELATIVE_FOLDER);

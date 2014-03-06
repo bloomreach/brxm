@@ -16,11 +16,19 @@
 
 package org.onehippo.cms7.essentials.dashboard.blog;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,9 +39,13 @@ import org.slf4j.LoggerFactory;
  */
 public class BlogDaemonModuleInstruction implements Instruction {
 
+    public static final String PREFIX = "importer_";
+    private static final Pattern PREFIX_PATTERN = Pattern.compile(PREFIX);
     private static Logger log = LoggerFactory.getLogger(BlogDaemonModuleInstruction.class);
 
-    private static final String CONFIG_PATH = "/blog-importer/blogscheduler/blogJobSchedule/scheduler:jobConfiguration";
+    private static final String CONFIG_DATA = "/blog-importer/blogscheduler/blogJobSchedule/scheduler:jobConfiguration";
+    private static final String CONFIG_SCHEDULER = "/blog-importer/blogscheduler/blogJobSchedule";
+
 
     @Override
     public String getMessage() {
@@ -57,7 +69,47 @@ public class BlogDaemonModuleInstruction implements Instruction {
 
     @Override
     public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
+        final Map<String, Object> placeholderData = context.getPlaceholderData();
+        final String runSetup = (String) placeholderData.get(PREFIX + "setupImport");
+        if (!Boolean.valueOf(runSetup)) {
+            log.info("setupImport was disabled: {}", runSetup);
+            return InstructionStatus.SKIPPED;
 
+        }
+        final Session session = context.createSession();
+
+        try {
+            final Node schedulerNode = session.getNode(CONFIG_SCHEDULER);
+            final Node dataNode = session.getNode(CONFIG_DATA);
+            final Set<String> urls = new HashSet<>();
+            for (Map.Entry<String, Object> entry : placeholderData.entrySet()) {
+                final String originalKey = entry.getKey();
+                // skip invalid keys
+                if (!originalKey.startsWith(PREFIX)) {
+                    continue;
+                }
+                final String key = PREFIX_PATTERN.matcher(originalKey).replaceFirst("");
+                final String value = (String) entry.getValue();
+                if (key.equals("active") || key.equals("runInstantly")) {
+                    schedulerNode.setProperty(key, Boolean.valueOf(value));
+                } else if (key.equals("cronExpression") || key.equals("cronExpressionDescription") || key.equals("jobClassName")) {
+                    schedulerNode.setProperty(key, value);
+                } else if (key.startsWith("urls")) {
+                    urls.add(value);
+                } else {
+                    dataNode.setProperty(key, value);
+                }
+            }
+            final String[] myUrls = urls.toArray(new String[urls.size()]);
+            dataNode.setProperty("urls", myUrls);
+
+        } catch (RepositoryException e) {
+            log.error("Error setting up Blog importer module", e);
+        } finally {
+            GlobalUtils.cleanupSession(session);
+        }
+
+        log.info("placeholderData {}", placeholderData);
         return InstructionStatus.SUCCESS;
     }
 
