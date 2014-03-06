@@ -239,8 +239,16 @@ public class DefaultPluginContext implements PluginContext {
         final String fileFolder = formatter.format(today);
         placeholderData.put(EssentialConst.PLACEHOLDER_DATE_FILE_YYYY_MM, fileFolder);
         placeholderData.put(EssentialConst.PLACEHOLDER_SITE_ROOT, ProjectUtils.getSite().getAbsolutePath());
-        placeholderData.put(EssentialConst.PLACEHOLDER_SITE_WEB_ROOT, ProjectUtils.getSite().getAbsolutePath()
-                + File.separator + EssentialConst.PATH_REL_WEB_ROOT);
+        final String siteWebRoot = ProjectUtils.getSite().getAbsolutePath()
+                + File.separator + EssentialConst.PATH_REL_WEB_ROOT;
+        placeholderData.put(EssentialConst.PLACEHOLDER_SITE_WEB_ROOT, siteWebRoot);
+
+        placeholderData.put(EssentialConst.PLACEHOLDER_SITE_RESOURCES, siteWebRoot + File.separator + "resources");
+
+        final String cmsWebRoot = ProjectUtils.getCms().getAbsolutePath()
+                + File.separator + EssentialConst.PATH_REL_WEB_ROOT;
+        placeholderData.put(EssentialConst.PLACEHOLDER_CMS_WEB_ROOT, cmsWebRoot);
+        placeholderData.put(EssentialConst.PLACEHOLDER_CMS_RESOURCES, cmsWebRoot + File.separator + "resources");
         placeholderData.put(EssentialConst.PLACEHOLDER_SITE_OVERRIDE_FOLDER, ProjectUtils.getSite().getAbsolutePath()
                 + File.separator + EssentialConst.PATH_REL_OVERRIDE);
         placeholderData.put(EssentialConst.PLACEHOLDER_SITE_FREEMARKER_ROOT, ProjectUtils.getSite().getAbsolutePath() + File.separator + EssentialConst.FREEMARKER_RELATIVE_FOLDER);

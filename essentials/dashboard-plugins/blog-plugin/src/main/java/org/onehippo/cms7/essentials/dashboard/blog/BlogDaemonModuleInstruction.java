@@ -33,6 +33,8 @@ public class BlogDaemonModuleInstruction implements Instruction {
 
     private static Logger log = LoggerFactory.getLogger(BlogDaemonModuleInstruction.class);
 
+    private static final String CONFIG_PATH = "/blog-importer/blogscheduler/blogJobSchedule/scheduler:jobConfiguration";
+
     @Override
     public String getMessage() {
         return "Configured Blog Daemon module";

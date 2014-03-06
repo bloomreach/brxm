@@ -118,6 +118,13 @@
     <xml action="copy" source="hst/template-blog-detail-ftl.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="hst/template-blog-list-ftl.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
+  <!--
+    SYSTEM
+  -->
+  <instructionSet>
+    <file action="copy" source="properties/project.properties" target="{{cmsResources}}/project.properties"/>
+
+  </instructionSet>
 
 
 </instructions>

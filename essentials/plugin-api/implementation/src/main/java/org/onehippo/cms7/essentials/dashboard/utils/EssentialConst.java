@@ -29,9 +29,12 @@ public final class EssentialConst {
     public static final String PLACEHOLDER_DATE_FILE_YYYY_MM = "dateFileYearMonth";
     public static final String PLACEHOLDER_SITE_ROOT = "siteRoot";
     public static final String PLACEHOLDER_SITE_WEB_ROOT = "siteWebRoot";
+    public static final String PLACEHOLDER_SITE_RESOURCES = "siteResources";
     public static final String PLACEHOLDER_SITE_FREEMARKER_ROOT = "freemarkerRoot";
     public static final String PLACEHOLDER_JSP_ROOT = "jspRoot";
     public static final String PLACEHOLDER_CMS_ROOT = "cmsRoot";
+    public static final String PLACEHOLDER_CMS_RESOURCES = "cmsResources";
+    public static final String PLACEHOLDER_CMS_WEB_ROOT = "cmsWebRoot";
     public static final String PLACEHOLDER_SOURCE = "source";
     public static final String PLACEHOLDER_TARGET = "target";
     public static final String PLACEHOLDER_BEANS_PACKAGE = "beansPackage";

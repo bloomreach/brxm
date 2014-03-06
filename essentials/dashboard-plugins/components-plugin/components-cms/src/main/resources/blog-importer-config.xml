@@ -20,14 +20,14 @@
     <sv:value>scheduler:scheduler</sv:value>
   </sv:property>
   <sv:property sv:name="scheduler:active" sv:type="Boolean">
-    <sv:value>false</sv:value>
+    <sv:value>true</sv:value>
   </sv:property>
   <sv:node sv:name="blogscheduler">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>scheduler:jobScheduleGroup</sv:value>
     </sv:property>
     <sv:property sv:name="scheduler:active" sv:type="Boolean">
-      <sv:value>false</sv:value>
+      <sv:value>true</sv:value>
     </sv:property>
     <sv:node sv:name="blogJobSchedule">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">

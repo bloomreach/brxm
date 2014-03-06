@@ -147,6 +147,7 @@ dashboard-plugins/blog-plugin/src/main/resources/jsp/essentials-blog-sidebar.jsp
 dashboard-plugins/blog-plugin/src/main/resources/jsp/essentials-facet.jsp -text
 dashboard-plugins/blog-plugin/src/main/resources/jsp/imports.jsp -text
 dashboard-plugins/blog-plugin/src/main/resources/jsp/pagination.jsp -text
+dashboard-plugins/blog-plugin/src/main/resources/properties/project.properties -text
 dashboard-plugins/blog-plugin/src/main/resources/xml/data/account-types.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/xml/data/blog-categories.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/xml/folder/administration-folder.xml -text
@@ -171,6 +172,7 @@ dashboard-plugins/components-plugin/components-cms/src/main/java/org/onehippo/cm
 dashboard-plugins/components-plugin/components-cms/src/main/resources/blog-importer-config.xml -text
 dashboard-plugins/components-plugin/components-cms/src/main/resources/event-bus-listener.xml -text
 dashboard-plugins/components-plugin/components-cms/src/main/resources/hippoecm-extension.xml -text
+dashboard-plugins/components-plugin/components-cms/src/main/resources/project.properties -text
 dashboard-plugins/components-plugin/components-gui/pom.xml -text
 dashboard-plugins/components-plugin/components-gui/src/test/java/InstallationTest.java -text
 dashboard-plugins/components-plugin/components-gui/src/test/resources/log4j.xml -text

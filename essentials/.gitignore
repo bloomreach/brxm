@@ -644,6 +644,12 @@ dashboard-plugins/blog-plugin/src/main/resources/jsp/.idea
 dashboard-plugins/blog-plugin/src/main/resources/jsp/atlassian-ide-plugin.xml
 dashboard-plugins/blog-plugin/src/main/resources/jsp/hippo-plugins.iws
 dashboard-plugins/blog-plugin/src/main/resources/jsp/target
+dashboard-plugins/blog-plugin/src/main/resources/properties/*.iml
+dashboard-plugins/blog-plugin/src/main/resources/properties/.DS_Store
+dashboard-plugins/blog-plugin/src/main/resources/properties/.idea
+dashboard-plugins/blog-plugin/src/main/resources/properties/atlassian-ide-plugin.xml
+dashboard-plugins/blog-plugin/src/main/resources/properties/hippo-plugins.iws
+dashboard-plugins/blog-plugin/src/main/resources/properties/target
 dashboard-plugins/blog-plugin/src/main/resources/target
 dashboard-plugins/blog-plugin/src/main/resources/xml/*.iml
 dashboard-plugins/blog-plugin/src/main/resources/xml/.DS_Store
