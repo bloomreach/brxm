@@ -72,7 +72,7 @@
         <sv:value>hippotranslation:translations</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="{{namespace}}:body">
+    <sv:node sv:name="{{namespace}}:content">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippostd:html</sv:value>
       </sv:property>

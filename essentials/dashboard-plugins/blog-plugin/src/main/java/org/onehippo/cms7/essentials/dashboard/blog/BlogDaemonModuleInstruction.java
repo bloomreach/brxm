@@ -17,6 +17,7 @@
 package org.onehippo.cms7.essentials.dashboard.blog;
 
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -85,7 +86,8 @@ public class BlogDaemonModuleInstruction implements Instruction {
 
             final Node schedulerNode = session.getNode(CONFIG_SCHEDULER);
             final Node dataNode = session.getNode(CONFIG_DATA);
-            final Set<String> urls = new HashSet<>();
+            final Collection<String> urls = new HashSet<>();
+            final Collection<String> authors = new HashSet<>();
             for (Map.Entry<String, Object> entry : placeholderData.entrySet()) {
                 final String originalKey = entry.getKey();
                 // skip invalid keys
@@ -101,12 +103,16 @@ public class BlogDaemonModuleInstruction implements Instruction {
                     schedulerNode.setProperty(schedulerPropName, value);
                 } else if (key.startsWith("url")) {
                     urls.add(value);
+                } else if (key.startsWith("author")) {
+                    authors.add(value);
                 } else {
                     dataNode.setProperty(key, value);
                 }
             }
             final String[] myUrls = urls.toArray(new String[urls.size()]);
             dataNode.setProperty("urls", myUrls);
+            final String[] myAuthors = urls.toArray(new String[authors.size()]);
+            dataNode.setProperty("authors", myAuthors);
 
             session.save();
         } catch (RepositoryException e) {

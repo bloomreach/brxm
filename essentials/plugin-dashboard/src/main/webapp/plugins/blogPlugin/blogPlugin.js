@@ -21,14 +21,13 @@
                 $scope.endpoint = $rootScope.REST.dynamic + 'blog/';
                 $scope.templateName = 'jsp';
                 $scope.setupImport = true;
-
                 $scope.importConfig = {
                     'active': true,
                     'cronExpression': '0 0 6 ? * SUN',
                     'cronExpressionDescription': 'Fires @ 6am on every sunday, More info @ http://www.quartz-scheduler.org/',
                     'maxDescriptionLength': 300,
                     urls: [
-                        {'value': ''}
+                        {'value': 'http://blog.jeroenreijn.com/feeds/posts/default', 'author':'Jeroen Rijn'}
                     ]
                 };
                 $scope.installSampleData = true;
@@ -44,11 +43,18 @@
                             if ($scope.importConfig.hasOwnProperty(key)) {
                                 var value = $scope.importConfig[key];
                                 if (key == 'urls') {
-                                    for (var i = 0; i < value.length; i++) {
-                                        var v = value[i].value;
-                                        var k = 'url' + i;
+                                    var suffix = 0;
+                                    angular.forEach(value, function (val) {
+                                        suffix++;
+                                        var v = val.value;
+                                        var author = val.author;
+                                        console.log(author);
+                                        var k = 'url' + suffix;
+                                        var keyAuthor = 'author' + suffix;
                                         Essentials.addPayloadData(prefix + k, v, payload);
-                                    }
+                                        Essentials.addPayloadData(prefix + keyAuthor, author, payload);
+
+                                    });
                                 } else {
                                     Essentials.addPayloadData(prefix + key, value, payload);
                                 }
