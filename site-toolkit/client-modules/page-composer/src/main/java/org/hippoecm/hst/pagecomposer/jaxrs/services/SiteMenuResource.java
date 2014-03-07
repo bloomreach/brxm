@@ -32,6 +32,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.google.common.base.Predicate;
+
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
@@ -45,6 +47,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.NodePathPrefixValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.NotNullValidator;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.SiteMenuItemRepresentationValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 
 @Path("/" + HstNodeTypes.NODETYPE_HST_SITEMENU + "/")
@@ -53,6 +56,7 @@ public class SiteMenuResource extends AbstractConfigResource {
 
     private SiteMenuHelper siteMenuHelper;
     private SiteMenuItemHelper siteMenuItemHelper;
+    private Predicate<String> uriValidator;
 
     public void setSiteMenuHelper(final SiteMenuHelper siteMenuHelper) {
         this.siteMenuHelper = siteMenuHelper;
@@ -60,6 +64,10 @@ public class SiteMenuResource extends AbstractConfigResource {
 
     public void setSiteMenuItemHelper(final SiteMenuItemHelper siteMenuItemHelper) {
         this.siteMenuItemHelper = siteMenuItemHelper;
+    }
+
+    public void setUriValidator(final Predicate<String> uriValidator) {
+        this.uriValidator = uriValidator;
     }
 
     @GET
@@ -98,6 +106,7 @@ public class SiteMenuResource extends AbstractConfigResource {
         preValidators.add(new NotNullValidator(newMenuItem.getName(), ClientError.ITEM_NO_NAME));
         preValidators.add(new NodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
                 parentId, null));
+        preValidators.add(newValidator(newMenuItem));
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
@@ -119,6 +128,7 @@ public class SiteMenuResource extends AbstractConfigResource {
         preValidators.add(new NotNullValidator(modifiedItem.getName(), ClientError.ITEM_NO_NAME));
         preValidators.add(new NodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
                 modifiedItem.getId(), null));
+        preValidators.add(newValidator(modifiedItem));
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
@@ -193,4 +203,7 @@ public class SiteMenuResource extends AbstractConfigResource {
         return preValidators;
     }
 
+    private SiteMenuItemRepresentationValidator newValidator(SiteMenuItemRepresentation representation) {
+        return new SiteMenuItemRepresentationValidator(uriValidator, representation);
+    }
 }

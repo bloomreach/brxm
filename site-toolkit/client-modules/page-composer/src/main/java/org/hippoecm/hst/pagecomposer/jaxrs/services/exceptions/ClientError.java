@@ -24,8 +24,12 @@ public enum ClientError {
      */
     ITEM_NAME_NOT_UNIQUE,
 
+    /**
+     * Represents a situation where a client tries to add a child node to a parent that does not allow same name
+     * siblings, where the parent represents the root of a certain node hierarchy.
+     */
     ITEM_NAME_NOT_UNIQUE_IN_ROOT,
-    
+
     /**
      * Represents a situation where a client tries to mutate an item that has already been locked by another user
      */
@@ -42,6 +46,8 @@ public enum ClientError {
      */
     ITEM_NO_NAME,
 
+    INVALID_URL,
+
     ITEM_NOT_IN_PREVIEW,
 
     ITEM_NOT_CORRECT_LOCATION,
@@ -55,4 +61,5 @@ public enum ClientError {
     INVALID_MOVE_TO_SELF,
 
     INVALID_NODE_TYPE
+
 }
