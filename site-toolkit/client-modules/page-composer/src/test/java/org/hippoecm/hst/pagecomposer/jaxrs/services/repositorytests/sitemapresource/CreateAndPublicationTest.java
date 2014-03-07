@@ -63,7 +63,6 @@ public class CreateAndPublicationTest extends AbstractSiteMapResourceTest {
         Node previewPageNode = session.getNode(getLiveConfigurationWorkspacePagesPath() + "/" + newPageNodeName);
 
         // assert pages not locked for bob
-        // ASSERT NEW NODES ARE LOCKED FOR BOB
         final Session bob = createSession("bob", "bob");
 
         Node[] newPageNodes = {livePageNode, previewPageNode};
