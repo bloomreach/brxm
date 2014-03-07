@@ -42,6 +42,23 @@
         }
     },
     {
+
+        "needsInstallation": false,
+        "enabled": true,
+        "@type": "plugin",
+        "introduction": "Carousel",
+        "name": "Carousel",
+        "pluginClass": "org.onehippo.cms7.essentials.xinha.gui.XinhaPlugin",
+        "pluginId": "carouselPlugin",
+        "restClasses": ["org.onehippo.cms7.essentials.dashboard.carousel.CarouselResource"],
+         "type": "plugins",
+        "vendor": {
+            "@type": "vendor",
+            "name": "Hippo",
+            "url": "http://www.onehippo.com"
+        }
+    },
+    {
         "needsInstallation": false,
         "enabled": true,
         "@type": "plugin",
@@ -64,13 +81,15 @@
                 "artifactId": "properties-addon-repository",
                 "scope": "compile",
                 "type": "cms"
-            }, {
+            },
+            {
                 "@type": "dependency",
                 "groupId": "org.onehippo.forge.selectionplugins",
                 "artifactId": "selectionplugins-addon-repository",
                 "scope": "compile",
                 "type": "cms"
-            }, {
+            },
+            {
                 "@type": "dependency",
                 "groupId": "org.onehippo.forge.selectionplugins",
                 "artifactId": "selectionplugins-addon-cms",

@@ -1,5 +1,5 @@
 #set( $dollar = '$' )
-<?xml version="1.0" encoding="UTF-8"?>
+  <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
@@ -42,7 +42,14 @@
   </scm>
   -->
 
-
+  <dependencies>
+    <dependency>
+      <groupId>org.onehippo.cms7.essentials</groupId>
+      <artifactId>plugin-dashboard</artifactId>
+      <version>${essentials.version}</version>
+      <type>war</type>
+    </dependency>
+  </dependencies>
   <dependencyManagement>
     <dependencies>
 
@@ -52,6 +59,7 @@
         <version>${essentials.version}</version>
         <type>war</type>
       </dependency>
+
       <!-- other predefined runtime scope versioned dependencies -->
       <dependency>
         <groupId>javax.servlet</groupId>
