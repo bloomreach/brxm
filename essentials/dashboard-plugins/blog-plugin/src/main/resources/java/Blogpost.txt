@@ -11,7 +11,7 @@ import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerat
 
 @HippoEssentialsGenerated(internalName = "{{namespace}}:blogpost")
 @Node(jcrType = "{{namespace}}:blogpost")
-public class Blogpost extends HippoDocument implements BlogEntry{
+public class Blogpost extends HippoDocument implements Authors{
 
     public static final String TITLE = "{{namespace}}:title";
     public static final String INTRODUCTION = "{{namespace}}:introduction";
