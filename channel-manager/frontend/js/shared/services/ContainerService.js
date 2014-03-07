@@ -23,14 +23,15 @@
             '$log',
             '_hippo.channelManager.IFrameService',
             '_hippo.channelManager.OutstandingHttpRequests',
-            function($log, IFrameService, OutstandingHttpRequests) {
+            'hippo.channelManager.menuManager.FormValidationService',
+            function($log, IFrameService, OutstandingHttpRequests, FormValidationService) {
 
                 function handleClose() {
                     if (IFrameService.isActive) {
                         var iframePanel = IFrameService.getContainer();
 
                         iframePanel.hostToIFrame.subscribe('close-request', function() {
-                            if (OutstandingHttpRequests.isEmpty()) {
+                            if (OutstandingHttpRequests.isEmpty() && FormValidationService.getValidity()) {
                                 iframePanel.iframeToHost.publish('close-reply-ok');
                             } else {
                                 iframePanel.iframeToHost.publish('close-reply-not-ok');
@@ -44,5 +45,4 @@
                 };
             }
         ]);
-
 }());

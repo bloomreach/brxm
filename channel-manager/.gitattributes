@@ -15,6 +15,7 @@ frontend/js/menu-manager/filters/placeholder.js -text
 frontend/js/menu-manager/filters/placeholder.spec.js -text
 frontend/js/menu-manager/i18n/en.json -text
 frontend/js/menu-manager/i18n/nl.json -text
+frontend/js/menu-manager/services/FormValidationService.js -text
 frontend/js/menu-manager/services/MenuService.js -text
 frontend/js/menu-manager/states/loader/LoaderCtrl.js -text
 frontend/js/menu-manager/states/loader/loader.html -text

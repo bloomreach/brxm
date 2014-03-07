@@ -28,14 +28,17 @@
             'hippo.channelManager.ConfigService',
             'hippo.channelManager.FeedbackService',
             'hippo.channelManager.menuManager.MenuService',
-            function ($scope, $state, $stateParams, $rootScope, $log, ConfigService, FeedbackService, MenuService) {
+            'hippo.channelManager.menuManager.FormValidationService',
+            function ($scope, $state, $stateParams, $rootScope, $log, ConfigService, FeedbackService, MenuService, FormValidationService) {
                 $scope.callbacks = {
                     itemClicked: function (itemScope) {
                         MenuService.saveMenuItem($scope.$parent.selectedMenuItem).then(function () {
                                 $state.go('menu-item.edit', {menuItemId: itemScope.id});
                                 $scope.$parent.selectedMenuItem = itemScope;
                             },
-                            function (errorResponse) {}
+                            function () {
+                                FormValidationService.setValidity(false);
+                            }
                         );
                     },
                     itemMoved: function (sourceScope, modelData, sourceIndex, destScope, destIndex) {
