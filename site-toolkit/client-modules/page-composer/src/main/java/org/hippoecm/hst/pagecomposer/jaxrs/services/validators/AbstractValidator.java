@@ -16,6 +16,8 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.validators;
 
+import java.util.UUID;
+
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -31,6 +33,8 @@ abstract class AbstractValidator implements Validator {
             throw new ClientException("uuid not allowed to be null", ClientError.INVALID_UUID);
         }
         try {
+            // if not valid id, we want an IllegalArgumentException
+            UUID.fromString(id);
             return session.getNodeByIdentifier(id);
         } catch (ItemNotFoundException e) {
             final String message = String.format("Repository configuration not found for node with id %s : %s", id, e.toString());
