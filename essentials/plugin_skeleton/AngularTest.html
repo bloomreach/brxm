@@ -1,0 +1,98 @@
+<!doctype html>
+<html ng-app="hippo.essentials">
+<head>
+    <title>Hippo Essentials</title>
+    <link rel="stylesheet" href="/essentials/theme/hippo-theme/main.css"/>
+    <link rel="stylesheet" href="/essentials/css/hippo-essentials.css"/>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/js/lib/jquery.ui.min.js"></script>
+
+    <script src="/essentials/js/lib/angular.js"></script>
+    <script src="/essentials/js/lib/angular-route.min.js"></script>
+    <script src="/essentials/js/lib/angular-ui-router.js"></script>
+
+    <script src="/essentials/js/lib/chosen.jquery.js"></script>
+    <script src="/essentials/js/lib/chosen.js"></script>
+    <script src="/essentials/js/lib/ui-sortable.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="/essentials/css/chosen.css"/>
+    <link rel="stylesheet" type="text/css" href="/essentials/css/chosen-spinner.css"/>
+
+
+    <!--<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.3/angular.min.js"></script>-->
+
+    <script src="/essentials/js/lib/ui-bootstrap-0.10.js"></script>
+
+    <script src="/essentials/js/Essentials.js"></script>
+    <script src="/essentials/js/app.js"></script>
+    <script src="/essentials/js/routes.js"></script>
+    <script src="/essentials/js/controllers.js"></script>
+
+    <script src="/essentials/plugins/contentBlocks/contentBlocks.js"></script>
+    <script src="/essentials/plugins/galleryPlugin/galleryPlugin.js"></script>
+    <script src="/essentials/powerpacks/newsEventsPowerpack/newsEventsPowerpack.js"></script>
+    <script src="/essentials/plugins/xinhaPlugin/xinhaPlugin.js"></script>
+    <script src="/essentials/plugins/blogPlugin/blogPlugin.js"></script>
+    <script src="/essentials/plugins/carouselPlugin/carouselPlugin.js"></script>
+    <script src="/essentials/tools/beanwriter/beanwriter.js"></script>
+    <script src="/essentials/tools/freemarkersync/freemarkersync.js"></script>
+    <script src="/essentials/tools/restServices/restServices.js"></script>
+    <link rel="icon" href="/essentials/images/favicon.ico" type="image/x-icon"/>
+    <link rel="shortcut icon" href="/essentials/images/favicon.ico" type="image/x-icon"/>
+</head>
+<body>
+<!-- LOADER ON HTTP REQUESTS -->
+<div class="busy-loader" ng-show="busyLoading">
+    <img src="/essentials/images/loader.gif"/>
+</div>
+<!-- ERROR MESSAGES -->
+<div class="alert-danger messages" ng-show="globalError.length > 0">
+    <strong>An error occurred:</strong>
+    <div ng-repeat="message in globalError">
+        {{message}}
+    </div>
+</div>
+<div class="alert-success messages" ng-show="feedbackMessages.length > 0">
+    <div ng-repeat="message in feedbackMessages">
+        <strong>{{message}}</strong>
+    </div>
+</div>
+
+
+<div class="container-full">
+    <div class="hippo-header">
+        <div class="hippo-header-logo">
+            <a href="/essentials"><img src="/essentials/images/hippo-logo.png"></a>
+        </div>
+        <div class="hippo-header-text">
+            {{headerMessage}}
+        </div>
+
+    </div>
+    <div class="col-sm-2" style="margin-right: 20px;" ng-controller="mainMenuCtrl">
+        <ul class="nav nav-stacked nav-pills" ng-show="packsInstalled">
+            <li ng-repeat="item in menu" ng-class="{true:'active', false:''}[isPageSelected('{{item.link}}')]">
+                <a href="{{item.link}}" ng-click="onMenuClick(item)">{{item.name}}</a>
+            </li>
+            <li>
+                <a target="API" href="/essentials/docs/rest-api/index.html">REST API</a>
+
+            </li>
+        </ul>
+
+    </div>
+    <div class="col-sm-9" ng-controller="homeCtrl">
+        <div ui-view="submenu" autoscroll="false"></div>
+        <div ui-view="plugintabs" autoscroll="false"></div>
+        <div style="margin-left: 220px;" ui-view="plugininstance" autoscroll="false"></div>
+        <div ui-view autoscroll="false"></div>
+
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-sm-12 footer">&copy; Hippo B.V., All Rights Reserved</div>
+</div>
+
+
+</body>
+</html>
