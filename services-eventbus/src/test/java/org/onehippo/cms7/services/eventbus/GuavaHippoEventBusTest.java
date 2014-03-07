@@ -37,7 +37,7 @@ public class GuavaHippoEventBusTest {
 
     @Test
     public void testEventBusWithDirectListener() throws InterruptedException {
-        HippoEventBus eventBus = new GuavaHippoEventBus();
+        GuavaHippoEventBus eventBus = new GuavaHippoEventBus();
         Listener listener = new Listener();
         eventBus.register(listener);
         eventBus.post(new Object());

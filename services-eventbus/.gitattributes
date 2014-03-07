@@ -1,5 +1,3 @@
 * text=auto !eol
 /LICENSE -text
 /NOTICE -text
-src/main/java/com/google/common/eventbus/HippoAnnotationHandlerFinder.java -text
-src/test/java/org/onehippo/cms7/services/eventbus/HippoAnnotationHandlerFinderTest.java -text svneol=unset#text/plain

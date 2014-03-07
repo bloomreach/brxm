@@ -15,8 +15,6 @@
  */
 package org.onehippo.cms7.services.eventbus;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -25,11 +23,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.google.common.eventbus.AsyncEventBus;
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.HippoAnnotationHandlerFinder;
 
 import org.onehippo.cms7.event.HippoEvent;
-import org.onehippo.cms7.services.HippoServiceException;
 import org.onehippo.cms7.services.HippoServiceRegistration;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
@@ -37,53 +32,37 @@ import org.slf4j.LoggerFactory;
 
 public class GuavaHippoEventBus implements HippoEventBus {
 
-    static final Logger log = LoggerFactory.getLogger(GuavaHippoEventBus.class);
+    private static final Logger log = LoggerFactory.getLogger(GuavaHippoEventBus.class);
 
-    final ExecutorService executor = Executors.newSingleThreadExecutor();
-    final AsyncEventBus eventBus = new AsyncEventBus(executor);
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final AsyncEventBus eventBus = new AsyncEventBus(executor);
 
-    final List<HippoServiceRegistration> listeners = Collections.synchronizedList(new ArrayList<HippoServiceRegistration>());
+    private final List<HippoServiceRegistration> listeners = Collections.synchronizedList(new ArrayList<HippoServiceRegistration>());
+    private final GuavaEventBusListenerProxyFactory proxyFactory = new GuavaEventBusListenerProxyFactory();
 
     private volatile int version = -1;
     
-    public GuavaHippoEventBus() {
-        try {
-            Field finderField = EventBus.class.getDeclaredField("finder");
-            finderField.setAccessible(true);
-            finderField.set(eventBus, new HippoAnnotationHandlerFinder() {
-                @Override
-                protected boolean acceptMethod(final Object listener, final Annotation[] annotations, final Class<?> parameterType) {
-                    return GuavaHippoEventBus.this.acceptMethod(listener, annotations, parameterType);
-                }
-            });
-        } catch (NoSuchFieldException e) {
-            throw new HippoServiceException("Unable to initialize event bus", e);
-        } catch (IllegalAccessException e) {
-            throw new HippoServiceException("Unable to initialize event bus", e);
-        }
-    }
-
-    protected boolean acceptMethod(final Object listener, final Annotation[] annotations, final Class<?> parameterType) {
-        return true;
-    }
-
     public void destroy() {
+        for (GuavaEventBusListenerProxy proxy : proxyFactory.clear()) {
+            eventBus.unregister(proxy);
+        }
+        listeners.clear();
         executor.shutdown();
     }
 
     @Override
     public void register(final Object listener) {
-        eventBus.register(listener);
+        registerProxy(listener);
         log.warn("HippoEventBus method #register is deprecated, use whiteboard pattern instead");
     }
 
     @Override
     public void unregister(final Object listener) {
-        eventBus.unregister(listener);
+        unregisterProxy(listener);
     }
 
     public void post(final Object event) {
-        if (updateListenersNeeded()) {
+        if (version != HippoServiceRegistry.getVersion()) {
             updateListeners();
         }
         if (event instanceof HippoEvent) {
@@ -92,19 +71,27 @@ public class GuavaHippoEventBus implements HippoEventBus {
         eventBus.post(event);
     }
 
-    private boolean updateListenersNeeded() {
-        if (version == HippoServiceRegistry.getVersion()) {
-            return false;
+    protected void unregisterProxy(final Object listener) {
+
+        GuavaEventBusListenerProxy proxy = proxyFactory.removeProxy(listener);
+        if (proxy != null) {
+            eventBus.unregister(proxy);
         }
-        return true;
+    }
+
+    protected void registerProxy(final Object listener) {
+        GuavaEventBusListenerProxy proxy = proxyFactory.createProxy(listener);
+        if (proxy != null) {
+            eventBus.register(proxy);
+        }
     }
 
     private void updateListeners() {
-        List<HippoServiceRegistration> registered = getServiceRegistrations();
+        List<HippoServiceRegistration> registered = HippoServiceRegistry.getRegistrations(HippoEventBus.class);
         for (HippoServiceRegistration registration : registered) {
             if (!listeners.contains(registration)) {
                 listeners.add(registration);
-                eventBus.register(registration);
+                registerProxy(registration);
             }
         }
         Iterator<HippoServiceRegistration> iterator = listeners.iterator();
@@ -112,13 +99,9 @@ public class GuavaHippoEventBus implements HippoEventBus {
             HippoServiceRegistration registration = iterator.next();
             if (!registered.contains(registration)) {
                 iterator.remove();
-                eventBus.unregister(registration);
+                unregisterProxy(registration);
             }
         }
         version = HippoServiceRegistry.getVersion();
-    }
-
-    protected List<HippoServiceRegistration> getServiceRegistrations() {
-        return HippoServiceRegistry.getRegistrations(HippoEventBus.class);
     }
 }
