@@ -21,7 +21,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.HashMultimap;
@@ -74,21 +75,21 @@ class GuavaEventBusListenerProxyFactory {
 
     static final Logger log = LoggerFactory.getLogger(GuavaEventBusListenerProxyFactory.class);
 
-    private HashMap<Object, GuavaEventBusListenerProxy> proxyMap = new HashMap<>();
-    private SetMultimap<Class, Object> listenerMap = HashMultimap.create();
+    private Map<Object, GuavaEventBusListenerProxy> proxyMap = new IdentityHashMap<>();
+    private SetMultimap<Class, Object> subjectMap = HashMultimap.create();
 
     GuavaEventBusListenerProxyFactory(){}
 
     /**
-     * returns the annotated method with annotation clazz and null if the clazz annotation is not present
+     * Returns the {@link Subscribe} annotated method or null if this annotation is not present on this method nor on
+     * its possible (public) parent class(es) or interface(s).
      * @param m method
-     * @param clazz the annotation to look for
      * @return the {@link Method} that contains the annotation <code>clazz</code> and <code>null</code> if none found
      */
-    private Method getAnnotatedMethod(final Method m, Class<? extends Annotation> clazz) {
+    private Method getSubscribeMethod(final Method m) {
 
         if (m != null) {
-            Annotation annotation = m.getAnnotation(clazz);
+            Annotation annotation = m.getAnnotation(Subscribe.class);
             if(annotation != null ) {
                 return m;
             }
@@ -96,7 +97,7 @@ class GuavaEventBusListenerProxyFactory {
             Class<?> superC = m.getDeclaringClass().getSuperclass();
             if (superC != null && Object.class != superC) {
                 try {
-                    Method method = getAnnotatedMethod(superC.getMethod(m.getName(), m.getParameterTypes()), clazz);
+                    Method method = getSubscribeMethod(superC.getMethod(m.getName(), m.getParameterTypes()));
                     if (method != null) {
                         return method;
                     }
@@ -106,7 +107,7 @@ class GuavaEventBusListenerProxyFactory {
             }
             for (Class<?> i : m.getDeclaringClass().getInterfaces()) {
                 try {
-                    Method method = getAnnotatedMethod(i.getMethod(m.getName(), m.getParameterTypes()), clazz);
+                    Method method = getSubscribeMethod(i.getMethod(m.getName(), m.getParameterTypes()));
                     if (method != null) {
                         return method;
                     }
@@ -119,32 +120,27 @@ class GuavaEventBusListenerProxyFactory {
     }
 
     @SuppressWarnings("unchecked")
-    private GuavaEventBusListenerProxy generateProxy(Object listener) {
+    private GuavaEventBusListenerProxy generateProxy(Object listener, ClassLoader cl) {
 
         String className = listener.getClass().getName();
         ArrayList<Method> subscribeMethods = new ArrayList<>();
         for (Method m : listener.getClass().getMethods()) {
-            Method subscribeMethod = getAnnotatedMethod(m, Subscribe.class);
-            if (subscribeMethod != null) {
-                Class<?>[] parameterTypes = subscribeMethod.getParameterTypes();
-                if (parameterTypes.length != 1) {
-                    throw new IllegalArgumentException(
-                            "Method " + subscribeMethod + " has @Subscribe annotation, but requires " +
-                                    parameterTypes.length + " arguments.  Event handler methods " +
-                                    "must require a single argument.");
-                }
-                Annotation[] annotations = subscribeMethod.getAnnotations();
-                boolean ignoreMethod = false;
-                for (Annotation ann : annotations) {
-                    if (ann.getClass().getName().equals("org.onehippo.repository.events.Persisted")) {
-                        log.warn("Method " + subscribeMethod + "is annotated with both @Subscribe and @Persisted, "+
-                                "which is no longer supported: Listener method ignored.");
-                        ignoreMethod = true;
-                        break;
+            if (m.getParameterTypes().length == 1) {
+                Method subscribeMethod = getSubscribeMethod(m);
+                if (subscribeMethod != null) {
+                    Annotation[] annotations = subscribeMethod.getAnnotations();
+                    boolean ignoreMethod = false;
+                    for (Annotation ann : annotations) {
+                        if (ann.getClass().getName().equals("org.onehippo.repository.events.Persisted")) {
+                            log.warn("Method " + subscribeMethod + "is annotated with both @Subscribe and @Persisted, "+
+                                    "which is no longer supported: Listener method ignored.");
+                            ignoreMethod = true;
+                            break;
+                        }
                     }
-                }
-                if (!ignoreMethod) {
-                    subscribeMethods.add(subscribeMethod);
+                    if (!ignoreMethod) {
+                        subscribeMethods.add(subscribeMethod);
+                    }
                 }
             }
         }
@@ -159,8 +155,7 @@ class GuavaEventBusListenerProxyFactory {
             }.defineClass(className, proxyClassBytes);
             try {
                 Constructor constructor = proxyClass.getConstructor(Object.class, ClassLoader.class, Method[].class);
-                return (GuavaEventBusListenerProxy)constructor.newInstance(listener,
-                        Thread.currentThread().getContextClassLoader(), methods);
+                return (GuavaEventBusListenerProxy)constructor.newInstance(listener, cl, methods);
             }
             catch (Exception e)
             {
@@ -277,45 +272,35 @@ class GuavaEventBusListenerProxyFactory {
      *   {@link HippoServiceRegistration#getClassLoader()} is used instead of the current ContextClassLoader to be
      *   used by the proxy instance when delegating and invoking the {@link Subscribe} annotated listener method.
      * </p>
-     * @param listener The listener for which to generate a proxy wrapper
-     * @return A new proxy wrapper for the provided listener
+     * @param subject The listener for which to generate a proxy wrapper, or a HippoRegistration with a listener service
+     * @return A new proxy wrapper for the provided listener, or null if the provided listener does not have any
+     *         (proper) {@link Subscribe} annotations.
      */
-    synchronized GuavaEventBusListenerProxy createProxy(Object listener) {
-        ClassLoader cl;
-        if (listener instanceof HippoServiceRegistration) {
-            HippoServiceRegistration registration = (HippoServiceRegistration)listener;
-            listener = registration.getService();
-            cl = registration.getClassLoader();
-        } else {
-            cl = Thread.currentThread().getContextClassLoader();
-        }
-        Class listenerClass = listener.getClass();
-        Set<Object> listeners = listenerMap.get(listenerClass);
-        GuavaEventBusListenerProxy proxy = null;
-        if (listeners != null && !listeners.isEmpty()) {
-            proxy = proxyMap.get(listeners.iterator().next());
-        }
-        else {
-            listeners = null;
-        }
+    synchronized GuavaEventBusListenerProxy createProxy(Object subject) {
+        GuavaEventBusListenerProxy proxy = proxyMap.get(subject);
         if (proxy == null) {
-            if (listeners == null) {
-                ClassLoader ccl = Thread.currentThread().getContextClassLoader();
-                try {
-                    Thread.currentThread().setContextClassLoader(cl);
-                    proxy = generateProxy(listener);
-                }
-                finally {
-                    Thread.currentThread().setContextClassLoader(ccl);
-                }
+            Object listener;
+            ClassLoader cl;
+            if (subject instanceof HippoServiceRegistration) {
+                HippoServiceRegistration registration = (HippoServiceRegistration)subject;
+                listener = registration.getService();
+                cl = registration.getClassLoader();
+            } else {
+                listener = subject;
+                cl = Thread.currentThread().getContextClassLoader();
             }
-        }
-        else {
-            proxy = proxy.clone(listener);
-        }
-        if (proxy != null) {
-            listenerMap.put(listenerClass, listener);
-            proxyMap.put(listener, proxy);
+            Class listenerClass = listener.getClass();
+            Set<Object> subjects = subjectMap.get(listenerClass);
+            if (!subjects.isEmpty()) {
+                proxy = proxyMap.get(subjects.iterator().next()).clone(listener);
+            }
+            else {
+                proxy = generateProxy(listener, cl);
+            }
+            if (proxy != null) {
+                subjectMap.put(listenerClass, subject);
+                proxyMap.put(subject, proxy);
+            }
         }
         return proxy;
     }
@@ -328,22 +313,24 @@ class GuavaEventBusListenerProxyFactory {
      *   reference to its generated proxy class either. Subsequent registering another listener of the same instance
      *   will then lead to anew generation of such a proxy class.
      * </p>
-     * @param listener The listener to remove the cached proxy for
-     * @return The already {@link GuavaEventBusListenerProxy#destroy() destroyed} proxy for the provided listener.
+     * @param subject The listener previously used to create a proxy for
+     * @return The already {@link GuavaEventBusListenerProxy#destroy() destroyed} proxy for the provided listener, or
+     *         null if no proxy is registered for this listener
      */
-    synchronized GuavaEventBusListenerProxy removeProxy(Object listener) {
-        if (listener instanceof HippoServiceRegistration) {
-            listener = ((HippoServiceRegistration)listener).getService();
-        }
-        Class listenerClass = listener.getClass();
-        if (listenerMap.remove(listenerClass, listener)) {
-            if (!listenerMap.containsKey(listenerClass)) {
-                GuavaEventBusListenerProxy proxy = proxyMap.remove(listener);
-                proxy.destroy();
-                return proxy;
+    synchronized GuavaEventBusListenerProxy removeProxy(Object subject) {
+        GuavaEventBusListenerProxy proxy = proxyMap.remove(subject);
+        if (proxy != null) {
+            Object listener;
+            if (subject instanceof HippoServiceRegistration) {
+                listener = ((HippoServiceRegistration)subject).getService();
             }
+            else {
+                listener = subject;
+            }
+            subjectMap.remove(listener.getClass(), subject);
+            proxy.destroy();
         }
-        return null;
+        return proxy;
     }
 
     /**
@@ -355,7 +342,7 @@ class GuavaEventBusListenerProxyFactory {
      * @return the previously cached and already {@link GuavaEventBusListenerProxy#destroy() destroyed} proxy instances
      */
     public Collection<GuavaEventBusListenerProxy> clear() {
-        listenerMap.clear();
+        subjectMap.clear();
         Collection<GuavaEventBusListenerProxy> proxies = proxyMap.values();
         for (GuavaEventBusListenerProxy proxy : proxyMap.values()) {
             proxy.destroy();
