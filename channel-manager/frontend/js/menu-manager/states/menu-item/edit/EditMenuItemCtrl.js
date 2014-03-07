@@ -26,9 +26,7 @@
             '$log',
             'hippo.channelManager.FeedbackService',
             'hippo.channelManager.menuManager.MenuService',
-            'hippo.channelManager.menuManager.FocusService',
-            'hippo.channelManager.menuManager.FormValidationService',
-            function ($scope, $stateParams, $state, $log, FeedbackService, MenuService, FocusService, FormValidationService) {
+            function ($scope, $stateParams, $state, $log, FeedbackService, MenuService) {
                 var savedMenuItem;
 
                 $scope.isSaving = {
@@ -47,43 +45,11 @@
                     isVisible: false
                 };
 
-                $scope.focus = FocusService.focusElementWithId;
-
                 $scope.validation = {
                     invalidCharacters: '/ *'
                 };
 
                 savedMenuItem = angular.copy($scope.selectedMenuItem);
-
-                // form validation service
-                $scope.$watch('form.title.$valid', function () {
-                    checkFormValidity();
-                });
-
-                $scope.$watch('selectedMenuItem.linkType', function () {
-                    checkFormValidity();
-                });
-
-                $scope.$watch('form.sitemapItem.$valid', function () {
-                    checkFormValidity();
-                });
-
-                $scope.$watch('form.url.$valid', function () {
-                    checkFormValidity();
-                });
-
-                function checkFormValidity() {
-                    var isValid = $scope.form.title.$valid &&
-                        $scope.form.destination.$valid;
-
-                    if ($scope.selectedMenuItem.linkType === 'EXTERNAL') {
-                        isValid = isValid && ($scope.form.url.$valid);
-                    } else if ($scope.selectedMenuItem.linkType === 'SITEMAPITEM') {
-                        isValid = isValid && ($scope.form.sitemapItem.$valid);
-                    }
-
-                    FormValidationService.setValidity(isValid);
-                }
 
                 function shouldSaveSelectedMenuItemProperty() {
                     if (!angular.isDefined($scope.selectedMenuItem)) {

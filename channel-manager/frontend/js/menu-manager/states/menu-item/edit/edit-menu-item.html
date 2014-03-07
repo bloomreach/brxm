@@ -35,8 +35,8 @@
     <!-- END confirmation dialog -->
 
     <!-- START edit form -->
-    <form name="form" data-role="form" novalidate class="l-fixed-height">
-        <p class="alert alert-danger alert-dismissable" ng-show="feedback.message">
+    <form name="form" data-role="form" novalidate class="l-fixed-height" data-ng-controller="hippo.channelManager.menuManager.EditMenuItemFormCtrl">
+        <p class="alert alert-danger alert-dismissable" data-ng-show="feedback.message">
             <button type="button" class="close" data-ng-click="dismissFeedback()" aria-hidden="true">&times;</button>
             {{feedback.message}}
         </p>
