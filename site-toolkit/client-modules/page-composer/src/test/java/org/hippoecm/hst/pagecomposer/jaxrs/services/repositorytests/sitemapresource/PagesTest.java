@@ -85,4 +85,16 @@ public class PagesTest extends AbstractSiteMapResourceTest{
         assertEquals("foo", siteMapPagesRepresentation.getPages().get(0).getPageTitle());
     }
 
+    @Test
+    public void test_sitemap_contains_host_and_mountPath() throws Exception {
+        session.save();
+        initContext();
+        final SiteMapResource siteMapResource = createResource();
+        final Response response = siteMapResource.getSiteMapPages();
+        SiteMapPagesRepresentation siteMapPagesRepresentation =
+                (SiteMapPagesRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+        assertEquals("localhost", siteMapPagesRepresentation.getHost());
+        assertEquals("", siteMapPagesRepresentation.getMount());
+    }
+
 }

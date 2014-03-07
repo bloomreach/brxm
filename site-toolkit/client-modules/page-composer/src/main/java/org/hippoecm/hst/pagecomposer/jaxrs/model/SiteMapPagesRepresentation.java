@@ -26,10 +26,14 @@ import org.hippoecm.hst.util.HstSiteMapUtils;
 public class SiteMapPagesRepresentation {
 
     private String id;
+    private String host;
+    private String mount;
     private List<SiteMapPageRepresentation> pages = new ArrayList<>();
 
     public SiteMapPagesRepresentation represent(SiteMapRepresentation siteMapRepresentation, final Mount mount) throws IllegalArgumentException {
         id = siteMapRepresentation.getId();
+        host = mount.getVirtualHost().getHostName();
+        this.mount = mount.getMountPath();
         for (SiteMapItemRepresentation siteMapItemRepresentation : siteMapRepresentation.getChildren()) {
             addPages(siteMapItemRepresentation, null, HstSiteMapUtils.getPath(mount, mount.getHomePage()));
         }
@@ -70,6 +74,22 @@ public class SiteMapPagesRepresentation {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(final String host) {
+        this.host = host;
+    }
+
+    public String getMount() {
+        return mount;
+    }
+
+    public void setMount(final String mount) {
+        this.mount = mount;
     }
 
     public List<SiteMapPageRepresentation> getPages() {
