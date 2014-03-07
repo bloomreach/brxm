@@ -16,8 +16,11 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -42,6 +45,11 @@ public class LockHelper {
         if (workspaceNode.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)) {
             log.warn("Removing lock for '{}' since ancestor gets published", workspaceNode.getPath());
             workspaceNode.removeMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
+        } else if(workspaceNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)){
+            workspaceNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).remove();
+            if(workspaceNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)){
+                workspaceNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON).remove();
+            }
         }
         for (Node child : new NodeIterable(workspaceNode.getNodes())) {
             unlock(child);
@@ -52,36 +60,56 @@ public class LockHelper {
      * if the <code>node</code> is already locked for the user <code>node.getSession()</code> this method does not do
      * anything. If there is no lock yet, a lock for the current session userID gets set on the node. If there is
      * already a lock by another user a ClientException is thrown,
+     * @param node the node to lock
+     * @param versionStamp if > 0, it will be used as a requirement that the <code>node</code> has the same stamp
      */
-    public void acquireLock(final Node node) throws RepositoryException {
+    public void acquireLock(final Node node, final long versionStamp) throws RepositoryException {
         final Node unLockableNode = getUnLockableNode(node, true, true);
         if (unLockableNode != null) {
             final String message = String.format("Node '%s' cannot be locked due to someone else who has the lock (possibly a descendant or ancestor that is locked).", node.getPath());
             throw new ClientException(message, ClientError.ITEM_ALREADY_LOCKED, getParameterMap(unLockableNode));
         }
-        doLock(node);
+        doLock(node, versionStamp);
     }
 
     /**
-     * @see {@link #acquireLock(javax.jcr.Node)} only for the acquireSimpleLock there is no need to check descendant or
+     * @see {@link #acquireLock(javax.jcr.Node, long)} only for the acquireSimpleLock there is no need to check descendant or
      * ancestors. It is only the node itself that needs to be checked. This is for example the case for sitemenu nodes
      * where there is no fine-grained locking for the items below it
+     * @param node the node to lock
+     * @param versionStamp if > 0, it will be used as a requirement that the <code>node</code> has the same stamp
      */
-    void acquireSimpleLock(final Node node) throws RepositoryException {
+    void acquireSimpleLock(final Node node, final long versionStamp) throws RepositoryException {
         final Node unLockableNode = getUnLockableNode(node, false, false);
         if (unLockableNode != null) {
             final String message = String.format("Node '%s' cannot be locked due to someone else who has the lock.", node.getPath());
             throw new ClientException(message, ClientError.ITEM_ALREADY_LOCKED, getParameterMap(node));
         }
-        doLock(node);
+        doLock(node, versionStamp);
     }
 
-    private void doLock(final Node node) throws RepositoryException {
-        if (!node.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)) {
+    private void doLock(final Node node, final long versionStamp) throws RepositoryException {
+        if (!node.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)
+                && !node.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT)) {
             node.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
+        }
+        if (node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
+            // user already has the lock
+            return;
         }
 
         final Session session = node.getSession();
+        if (versionStamp != 0 && node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED)) {
+            long existingStamp = node.getProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED).getDate().getTimeInMillis();
+            if (existingStamp != versionStamp) {
+                Calendar existing = Calendar.getInstance();
+                existing.setTimeInMillis(existingStamp);
+                String msg = String.format("Node '%s' has been modified wrt versionStamp. Cannot acquire lock now for user '%s'.",
+                        node.getPath() , session.getUserID());
+                log.info(msg);
+                throw new ClientException(msg, ClientError.ITEM_NOT_IN_PREVIEW);
+            }
+        }
         log.info("Node '{}' gets a lock for user '{}'.", node.getPath(), session.getUserID());
         node.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, session.getUserID());
         if (!node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {

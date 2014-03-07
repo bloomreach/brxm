@@ -20,7 +20,6 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.ws.rs.core.Response;
 
-import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
@@ -39,6 +38,8 @@ public class CreateAndPublicationTest extends AbstractSiteMapResourceTest {
 
     private final LockHelper helper = new LockHelper();
 
+    private long versionStamp = 0;
+
     private void initContext() throws Exception {
         // call below will init request context
         getSiteMapItemRepresentation(session, "home");
@@ -47,14 +48,14 @@ public class CreateAndPublicationTest extends AbstractSiteMapResourceTest {
     @Test
     public void test_create_and_publish() throws Exception {
         initContext();
-        final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getSingleRowPrototypePageUUID());
+        final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newFoo);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         final Response publish = mountResource.publish();
         assertEquals(Response.Status.OK.getStatusCode(), publish.getStatus());
 
-        String newPageNodeName = "foo-" + session.getNodeByIdentifier(getSingleRowPrototypePageUUID()).getName();
+        String newPageNodeName = "foo-" + session.getNodeByIdentifier(getPrototypePageUUID()).getName();
 
         assertTrue(session.nodeExists(getLiveConfigurationWorkspacePagesPath() + "/" + newPageNodeName));
         assertTrue(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + newPageNodeName));
@@ -70,7 +71,7 @@ public class CreateAndPublicationTest extends AbstractSiteMapResourceTest {
             Node newPageNodeByBob = bob.getNodeByIdentifier(newPageNode.getIdentifier());
             //  acquiring should fail now
             try {
-                helper.acquireLock(newPageNodeByBob);
+                helper.acquireLock(newPageNodeByBob, versionStamp);
             } catch (ClientException e) {
                 fail("Should not be locked");
             }
@@ -84,7 +85,7 @@ public class CreateAndPublicationTest extends AbstractSiteMapResourceTest {
         session.removeItem("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace");
         session.save();
         initContext();
-        final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getSingleRowPrototypePageUUID());
+        final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newFoo);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -98,7 +99,7 @@ public class CreateAndPublicationTest extends AbstractSiteMapResourceTest {
         session.removeItem("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages");
         session.save();
         initContext();
-        final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getSingleRowPrototypePageUUID());
+        final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newFoo);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -112,7 +113,7 @@ public class CreateAndPublicationTest extends AbstractSiteMapResourceTest {
         session.removeItem("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap");
         session.save();
         initContext();
-        final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getSingleRowPrototypePageUUID());
+        final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newFoo);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());

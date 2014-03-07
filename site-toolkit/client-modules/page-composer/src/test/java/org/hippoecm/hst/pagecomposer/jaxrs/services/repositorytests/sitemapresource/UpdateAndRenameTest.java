@@ -58,6 +58,8 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
 
     private LockHelper helper = new LockHelper();
 
+    private long versionStamp = 0;
+
     @Test
     public void test_preview_workspace() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -160,7 +162,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
 
         final Session bob = createSession("bob", "bob");
         Node homeNodeByBob = bob.getNodeByIdentifier(home.getId());
-        helper.acquireLock(homeNodeByBob);
+        helper.acquireLock(homeNodeByBob, versionStamp);
         bob.save();
 
         final Node homeNode = session.getNodeByIdentifier(home.getId());
@@ -176,14 +178,14 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
 
         // check only acquiring lock now
         try {
-            helper.acquireLock(homeNode);
+            helper.acquireLock(homeNode, versionStamp);
             fail("Expected an IllegalStateException when trying to acquire lock");
         } catch (ClientException e) {
             assertTrue(e.getMessage().contains("cannot be locked"));
         }
 
         try {
-            helper.acquireLock(homeNodeByBob);
+            helper.acquireLock(homeNodeByBob, versionStamp);
         } catch (ClientException e) {
             fail("Bob should still have the lock");
         }
@@ -201,7 +203,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
 
         final Session bob = createSession("bob", "bob");
         Node newsAnyNodeByBob = bob.getNodeByIdentifier(newsAny.getId());
-        helper.acquireLock(newsAnyNodeByBob);
+        helper.acquireLock(newsAnyNodeByBob, versionStamp);
         bob.save();
 
         // now news/_any_ has explicit lock: as a result, 'news' is partially locked
@@ -253,7 +255,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         final SiteMapItemRepresentation news = getSiteMapItemRepresentation(session, "news");
         final Session bob = createSession("bob", "bob");
         Node newsNodeByBob = bob.getNodeByIdentifier(news.getId());
-        helper.acquireLock(newsNodeByBob);
+        helper.acquireLock(newsNodeByBob, versionStamp);
         bob.save();
 
         final SiteMapResource siteMapResource = createResource();
@@ -419,7 +421,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         final Session bob = createSession("bob", "bob");
         Node deleteHomeNodeByBob = bob.getNode(oldHomeParentPath + "/home");
         try {
-            helper.acquireLock(deleteHomeNodeByBob);
+            helper.acquireLock(deleteHomeNodeByBob, versionStamp);
             fail("Bob should 'see' locked deleted home node");
         } catch (ClientException e) {
 
@@ -427,7 +429,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
 
         Node deleteHomeNodeByAdmin = session.getNode(oldHomeParentPath + "/home");
         try {
-            helper.acquireLock(deleteHomeNodeByAdmin);
+            helper.acquireLock(deleteHomeNodeByAdmin, versionStamp);
         } catch (IllegalStateException e) {
             fail("Admin should have the locked deleted home node");
         }
@@ -451,7 +453,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         // bob sees the new home item locked
         Node moveNewsNodeToHome = bob.getNode(oldHomeParentPath + "/home");
         try {
-            helper.acquireLock(moveNewsNodeToHome);
+            helper.acquireLock(moveNewsNodeToHome, versionStamp);
             fail("Bob should 'see' the news move to home node as locked");
         } catch (ClientException e) {
 
@@ -478,7 +480,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
 
         // lock home by 'bob'
         final Session bob = createSession("bob", "bob");
-        helper.acquireLock(bob.getNodeByIdentifier(home.getId()));
+        helper.acquireLock(bob.getNodeByIdentifier(home.getId()), versionStamp);
         bob.save();
 
         // assert home is locked for 'admin'

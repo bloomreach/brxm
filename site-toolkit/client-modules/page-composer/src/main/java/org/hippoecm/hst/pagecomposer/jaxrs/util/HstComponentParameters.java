@@ -30,6 +30,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,10 +43,12 @@ public class HstComponentParameters {
     private static final Logger log = LoggerFactory.getLogger(HstComponentParameters.class);
 
     private final Node node;
+    private final ContainerItemHelper containerItemHelper;
     private final Map<String, Map<String, String>> prefixedParameters;
 
-    public HstComponentParameters(Node node) throws RepositoryException {
+    public HstComponentParameters(final Node node, final ContainerItemHelper containerItemHelper) throws RepositoryException {
         this.node = node;
+        this.containerItemHelper = containerItemHelper;
         prefixedParameters = new HashMap<String, Map<String, String>>();
         initialize();
     }
@@ -172,7 +175,7 @@ public class HstComponentParameters {
         return false;
     }
 
-    public void save(long validateLastModifiedTimestampAgainst) throws RepositoryException, IllegalStateException {
+    public void save(long versionStamp) throws RepositoryException, IllegalStateException {
         setNodeChanges();
         if (RequestContextProvider.get() == null) {
             node.getSession().save();
@@ -181,8 +184,7 @@ public class HstComponentParameters {
                 throw new IllegalStateException("Node to be saved must be of type '"+HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT+"' but " +
                         "was of type '"+node.getPrimaryNodeType().getName()+"'. Skip save");
             }
-            HstConfigurationUtils.tryLockIfNeeded(node, validateLastModifiedTimestampAgainst);
-            HstConfigurationUtils.setLastModifiedTimestampForContainer(node);
+            containerItemHelper.acquireLock(node, versionStamp);
             HstConfigurationUtils.persistChanges(node.getSession());
         }
     }

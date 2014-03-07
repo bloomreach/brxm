@@ -257,7 +257,7 @@ public class MountResource extends AbstractConfigResource {
             String previewConfigurationPath = getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
 
             HippoSession session = HstConfigurationUtils.getNonProxiedSession(getPageComposerContextService().getRequestContext().getSession(false));
-            List<String> relativeContainerPathsToPublish = findChangedContainersForUsers(session, previewConfigurationPath, userIds);
+            List<String> relativeContainerPathsToPublish = findChangedNonWorkspacePagesContainersForUsers(session, previewConfigurationPath, userIds);
             List<String> mainConfigNodeNamesToPublish = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds);
 
             pushContainerChildrenNodes(session, previewConfigurationPath, liveConfigurationPath, relativeContainerPathsToPublish);
@@ -386,7 +386,7 @@ public class MountResource extends AbstractConfigResource {
             String previewConfigurationPath = editingPreviewSite.getConfigurationPath();
 
             HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
-            List<String> relativeContainerPathsToRevert = findChangedContainersForUsers(session, previewConfigurationPath, userIds);
+            List<String> relativeContainerPathsToRevert = findChangedNonWorkspacePagesContainersForUsers(session, previewConfigurationPath, userIds);
             List<String> mainConfigNodeNamesToRevert = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds);
             pushContainerChildrenNodes(session, liveConfigurationPath, previewConfigurationPath, relativeContainerPathsToRevert);
             copyChangedMainConfigNodes(session, liveConfigurationPath, previewConfigurationPath, mainConfigNodeNamesToRevert);
@@ -405,7 +405,7 @@ public class MountResource extends AbstractConfigResource {
         }
     }
 
-    private List<String> findChangedContainersForUsers(final HippoSession session, String previewConfigurationPath, List<String> userIds) throws RepositoryException {
+    private List<String> findChangedNonWorkspacePagesContainersForUsers(final HippoSession session, String previewConfigurationPath, List<String> userIds) throws RepositoryException {
         if (userIds.isEmpty()) {
             return Collections.emptyList();
         }
@@ -421,7 +421,12 @@ public class MountResource extends AbstractConfigResource {
                 log.warn("Cannot discard container '{}' because does not start with preview config path '{}'.");
                 continue;
             }
-            relativeContainersForUsers.add(containerForUsers.getPath().substring(previewConfigurationPath.length()));
+            final String relativeContainerPath = containerForUsers.getPath().substring(previewConfigurationPath.length());
+            if (relativeContainerPath.startsWith("/hst:workspace/hst:pages/")) {
+                log.debug("Skip container with relative path '{}' as this container will be published by the PagesHelper", relativeContainerPath);
+                continue;
+            }
+            relativeContainersForUsers.add(relativeContainerPath);
         }
         log.info("Changed containers for configuration '{}' for users '{}' are : {}",
                 new String[]{previewConfigurationPath, userIds.toString(), relativeContainersForUsers.toString()});

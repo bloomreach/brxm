@@ -343,7 +343,7 @@ public class SiteMenuItemHelperTest {
 
         expect(parent.isNodeType(NODETYPE_HST_SITEMENUITEM)).andReturn(false);
         expect(parent.isNodeType(NODETYPE_HST_SITEMENU)).andReturn(true);
-        lockHelper.acquireSimpleLock(parent);
+        lockHelper.acquireSimpleLock(parent, 0);
         expectLastCall();
 
         final String name = "name";
@@ -429,7 +429,7 @@ public class SiteMenuItemHelperTest {
     private void mockGetAncestor() throws RepositoryException {
         expect(node.isNodeType(NODETYPE_HST_SITEMENUITEM)).andReturn(false);
         expect(node.isNodeType(NODETYPE_HST_SITEMENU)).andReturn(true);
-        lockHelper.acquireSimpleLock(node);
+        lockHelper.acquireSimpleLock(node, 0);
         expectLastCall();
     }
 

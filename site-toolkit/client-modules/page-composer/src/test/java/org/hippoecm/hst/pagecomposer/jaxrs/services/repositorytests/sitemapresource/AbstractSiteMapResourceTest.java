@@ -240,9 +240,9 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         return session.getNode(previewConfigurationPath).getNode("hst:pages/homepage").getIdentifier();
     }
 
-    protected String getSingleRowPrototypePageUUID() throws RepositoryException {
+    protected String getPrototypePageUUID() throws RepositoryException {
         String previewConfigurationPath = mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
-        return session.getNode(previewConfigurationPath).getNode("hst:prototypepages/singlerow-page").getIdentifier();
+        return session.getNode(previewConfigurationPath).getNode("hst:prototypepages/prototype-page").getIdentifier();
     }
 
 

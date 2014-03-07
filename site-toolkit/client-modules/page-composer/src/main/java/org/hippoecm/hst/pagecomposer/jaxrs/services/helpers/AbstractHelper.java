@@ -192,11 +192,19 @@ public abstract class AbstractHelper {
             // concurrent environment, this is possible. Hence extra checks here
             if (containsAncestorLock(lockedNode, previewWorkspaceNode)) {
                 log.info("Removing double lock of '{}' since an ancestor already has a lock", lockedNode.getPath());
-                lockedNode.removeMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
+                if (lockedNode.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)) {
+                    lockedNode.removeMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
+                } else {
+                    lockedNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).remove();
+                    if(lockedNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
+                        lockedNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON).remove();
+                    }
+                }
+
                 break;
             }
 
-            if (lockedNode.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)) {
+            if (lockedNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
                 // the mixin is not removed above
                 lockedNodeRoots.add(lockedNode);
             }
@@ -217,8 +225,7 @@ public abstract class AbstractHelper {
     protected boolean containsAncestorLock(final Node lockedNode, final Node previewWorkspaceNode) throws RepositoryException {
         Node ancestor = lockedNode.getParent();
         while (!ancestor.isSame(previewWorkspaceNode)) {
-            if (ancestor.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE) &&
-                    ancestor.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
+            if (ancestor.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
                 log.info("Ancestor '{}' already contains a lock.", ancestor.getPath());
                 return true;
             }
@@ -276,7 +283,7 @@ public abstract class AbstractHelper {
     }
 
     protected void markDeleted(final Node deleted) throws RepositoryException {
-        lockHelper.acquireLock(deleted);
+        lockHelper.acquireLock(deleted, 0);
         deleted.setProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE, "deleted");
     }
 

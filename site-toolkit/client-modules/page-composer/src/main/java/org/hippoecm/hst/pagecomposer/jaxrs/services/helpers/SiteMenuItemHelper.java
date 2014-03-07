@@ -54,7 +54,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
     }
 
     public Node create(Node parent, SiteMenuItemRepresentation newItem, Position position) throws RepositoryException {
-        lockHelper.acquireSimpleLock(getMenuAncestor(parent));
+        lockHelper.acquireSimpleLock(getMenuAncestor(parent), 0);
         final String newItemName = newItem.getName();
         try {
             final Node newChild = parent.addNode(encode(newItemName, true), HstNodeTypes.NODETYPE_HST_SITEMENUITEM);
@@ -71,7 +71,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
     }
 
     public void delete(final Node node) throws RepositoryException {
-        lockHelper.acquireSimpleLock(getMenuAncestor(node));
+        lockHelper.acquireSimpleLock(getMenuAncestor(node), 0);
         node.remove();
     }
 
@@ -84,7 +84,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
      */
     public void update(Node node, SiteMenuItemRepresentation modifiedItem) throws RepositoryException {
 
-        lockHelper.acquireSimpleLock(getMenuAncestor(node));
+        lockHelper.acquireSimpleLock(getMenuAncestor(node), 0);
 
         final String modifiedName = modifiedItem.getName();
         if (modifiedName != null && !modifiedName.equals(decode(node.getName()))) {
@@ -123,7 +123,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
      * @throws RepositoryException
      */
     public void move(Node node, String newNodeName, Node newParent) throws RepositoryException {
-        lockHelper.acquireSimpleLock(getMenuAncestor(node));
+        lockHelper.acquireSimpleLock(getMenuAncestor(node), 0);
         try {
             node.getSession().move(node.getPath(), newParent.getPath() + "/" + encode(newNodeName, true));
         } catch (ItemExistsException e) {
@@ -157,7 +157,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
         if (!source.getParent().isSame(parent)) {
             move(source, parent);
         }
-        lockHelper.acquireSimpleLock(getMenuAncestor(source));
+        lockHelper.acquireSimpleLock(getMenuAncestor(source), 0);
         try {
             parent.orderBefore(encode(sourceName, true), successorNodeName);
         } catch (ItemExistsException e) {
@@ -166,7 +166,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
     }
 
     private void rename(Node node, String newName) throws RepositoryException {
-        lockHelper.acquireSimpleLock(getMenuAncestor(node));
+        lockHelper.acquireSimpleLock(getMenuAncestor(node), 0);
         final Node parent = node.getParent();
         // remember the next sibling name, to be able to restore the node's position
         final String nextSiblingName = getNextSiblingName(node, parent);

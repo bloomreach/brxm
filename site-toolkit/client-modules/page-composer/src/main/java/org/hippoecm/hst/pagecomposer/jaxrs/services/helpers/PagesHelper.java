@@ -23,8 +23,6 @@ import javax.jcr.Session;
 
 import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.internal.CanonicalInfo;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.repository.util.JcrUtils;
@@ -59,7 +57,7 @@ public class PagesHelper extends AbstractHelper {
             validTargetPageNodeName = targetPageNodeName + "-" + counter;
         }
         Node newPage = JcrUtils.copy(session, prototypePage.getPath(), previewWorkspacePagesPath + "/" + validTargetPageNodeName);
-        lockHelper.acquireLock(newPage);
+        lockHelper.acquireLock(newPage, 0);
         return newPage;
     }
 
@@ -78,7 +76,7 @@ public class PagesHelper extends AbstractHelper {
             return;
         }
         Node pageNode = session.getNode(pageNodePath);
-        lockHelper.acquireLock(pageNode);
+        lockHelper.acquireLock(pageNode, 0);
         deleteOrMarkDeletedIfLiveExists(pageNode);
     }
 
@@ -127,7 +125,7 @@ public class PagesHelper extends AbstractHelper {
             if (isMarkedDeleted(targetNode)) {
                 // see if we own the lock
                 try {
-                    lockHelper.acquireLock(targetNode);
+                    lockHelper.acquireLock(targetNode, 0);
                 } catch (ClientException e) {
                     return false;
                 }

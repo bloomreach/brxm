@@ -60,6 +60,12 @@ public enum ClientError {
 
     INVALID_MOVE_TO_SELF,
 
-    INVALID_NODE_TYPE
+    INVALID_NODE_TYPE,
+
+    /**
+     * When trying to lock a node that has in the mean time been locked, changed and published by someone else,
+     * this error can be used to return.
+     */
+    INVALID_VERSION_STAMP
 
 }

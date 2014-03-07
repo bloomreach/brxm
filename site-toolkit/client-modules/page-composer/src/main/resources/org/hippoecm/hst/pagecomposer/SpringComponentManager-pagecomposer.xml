@@ -29,19 +29,14 @@
     <property name="pageComposerContextService" ref="pageComposerContextService"/>
   </bean>
 
-
-  <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerItemComponentResource" id="containerItemComponentResource"
-        parent="abstractConfigResource">
-    <property name="processor">
-      <bean class="org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor"/>
-    </property>
-  </bean>
-
   <bean id="pageComposerContextService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService"/>
 
   <bean id="abstractHelper" abstract="true">
     <property name="pageComposerContextService" ref="pageComposerContextService"/>
   </bean>
+
+  <bean id="containerHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerHelper" parent="abstractHelper"/>
+  <bean id="containerItemHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper" parent="abstractHelper"/>
 
   <bean id="siteMenuHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper" parent="abstractHelper"/>
 
@@ -49,6 +44,16 @@
 
   <bean id="siteMapHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper" parent="abstractHelper">
     <property name="pagesHelper" ref="pagesHelper"/>
+  </bean>
+
+
+
+  <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerItemComponentResource" id="containerItemComponentResource"
+        parent="abstractConfigResource">
+    <property name="processor">
+      <bean class="org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor"/>
+    </property>
+    <property name="containerItemHelper" ref="containerItemHelper"/>
   </bean>
 
   <!--
@@ -75,7 +80,9 @@
       <list>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource" parent="abstractConfigResource"/>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource"  parent="abstractConfigResource">
+              <property name="containerHelper" ref="containerHelper"/>
+            </bean>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">

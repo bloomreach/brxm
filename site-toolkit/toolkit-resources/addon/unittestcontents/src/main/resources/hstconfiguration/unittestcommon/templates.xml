@@ -143,12 +143,12 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="singlerow">
+  <sv:node sv:name="prototype">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:template</sv:value>
     </sv:property>
     <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/singlerow.jsp</sv:value>
+      <sv:value>jsp/components/prototype.jsp</sv:value>
     </sv:property>
   </sv:node>
 

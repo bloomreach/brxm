@@ -33,7 +33,6 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
-import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +63,7 @@ public class SiteMapHelper extends AbstractHelper {
         final String itemId = siteMapItem.getId();
         Node jcrNode = session.getNodeByIdentifier(itemId);
 
-        lockHelper.acquireLock(jcrNode);
+        lockHelper.acquireLock(jcrNode, 0);
 
         final String modifiedName = siteMapItem.getName();
         if (modifiedName != null && !modifiedName.equals(jcrNode.getName())) {
@@ -95,7 +94,7 @@ public class SiteMapHelper extends AbstractHelper {
         validateTarget(session, parent.getPath() + "/" + siteMapItem.getName());
 
         final Node newSitemapNode = parent.addNode(siteMapItem.getName(), HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
-        lockHelper.acquireLock(newSitemapNode);
+        lockHelper.acquireLock(newSitemapNode, 0);
 
         setSitemapItemProperties(siteMapItem, newSitemapNode);
         // clone page definition
@@ -134,12 +133,12 @@ public class SiteMapHelper extends AbstractHelper {
                     "by node '" + unLockableNode.getPath() + "' by '" + unLockableNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString() + "'");
         }
 
-        lockHelper.acquireLock(nodeToMove);
+        lockHelper.acquireLock(nodeToMove, 0);
         String nodeName = nodeToMove.getName();
         validateTarget(session, newParent.getPath() + "/" + nodeName);
         String oldLocation = nodeToMove.getPath();
         session.move(oldParent.getPath() + "/" + nodeName, newParent.getPath() + "/" + nodeName);
-        lockHelper.acquireLock(nodeToMove);
+        lockHelper.acquireLock(nodeToMove, 0);
 
         createMarkedDeletedIfLiveExists(session, oldLocation);
     }
@@ -148,7 +147,7 @@ public class SiteMapHelper extends AbstractHelper {
         HstRequestContext requestContext = pageComposerContextService.getRequestContext();
         final Session session = requestContext.getSession();
         Node sitemapItemNodeToDelete = session.getNodeByIdentifier(id);
-        lockHelper.acquireLock(sitemapItemNodeToDelete);
+        lockHelper.acquireLock(sitemapItemNodeToDelete, 0);
         pagesHelper.delete(sitemapItemNodeToDelete);
         deleteOrMarkDeletedIfLiveExists(sitemapItemNodeToDelete);
     }
@@ -206,7 +205,7 @@ public class SiteMapHelper extends AbstractHelper {
             Node targetNode = session.getNode(target);
             if (isMarkedDeleted(targetNode)) {
                 // see if we own the lock
-                lockHelper.acquireLock(targetNode);
+                lockHelper.acquireLock(targetNode, 0);
                 targetNode.remove();
             } else {
                 final String message = String.format("Target node '%s' already exists", targetNode.getPath());

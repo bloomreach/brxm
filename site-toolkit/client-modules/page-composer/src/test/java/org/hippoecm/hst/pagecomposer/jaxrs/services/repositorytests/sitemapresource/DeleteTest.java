@@ -41,6 +41,8 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
 
     private LockHelper helper = new LockHelper();
 
+    private long versionStamp = 0;
+
     private void initContext() throws Exception {
         // call below will init request context
         final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
@@ -110,7 +112,7 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
             final Session bob = createSession("bob", "bob");
             Node deleteHomeNodeByBob = bob.getNodeByIdentifier(home.getId());
             try {
-                helper.acquireLock(deleteHomeNodeByBob);
+                helper.acquireLock(deleteHomeNodeByBob, versionStamp);
                 fail("Bob should 'see' locked deleted home node");
             } catch (ClientException e) {
 

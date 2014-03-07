@@ -44,19 +44,19 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
 
     @Test
     public void test_prototype_pages() throws Exception {
-        // "/hst:hst/hst:configurations/unittestproject/hst:prototypepages" contains 1 prototype 'singlerow-page'
+        // "/hst:hst/hst:configurations/unittestproject/hst:prototypepages" contains 1 prototype 'prototype-page'
 
         mockNewRequest(session, "localhost", "/home");
         PrototypePagesRepresentation representation = (PrototypePagesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
         assertEquals(1, representation.getPages().size());
-        assertEquals("singlerow-page", representation.getPages().get(0).getName());
+        assertEquals("prototype-page", representation.getPages().get(0).getName());
     }
 
     @Test
     public void test_prototype_pages_not_from_inherited_config() throws Exception {
         // make a common config page prototype : inherited config pages should not be available as prototype
-        session.move("/hst:hst/hst:configurations/unittestproject/hst:prototypepages/singlerow-page",
-                "/hst:hst/hst:configurations/unittestcommon/hst:prototypepages/singlerow-page");
+        session.move("/hst:hst/hst:configurations/unittestproject/hst:prototypepages/prototype-page",
+                "/hst:hst/hst:configurations/unittestcommon/hst:prototypepages/prototype-page");
         session.save();
         // give time for jcr events to evict model
         Thread.sleep(200);
@@ -68,11 +68,11 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
     @Test
     public void test_prototype_pages_are_sorted() throws Exception {
 
-        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/singlerow-page",
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/prototype-page",
                 "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/aaa-page");
-        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/singlerow-page",
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/prototype-page",
                 "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/ccc-page");
-        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/singlerow-page",
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/prototype-page",
                 "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/bbb-page");
         session.save();
 

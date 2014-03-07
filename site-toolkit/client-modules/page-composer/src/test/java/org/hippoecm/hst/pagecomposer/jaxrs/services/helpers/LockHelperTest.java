@@ -163,7 +163,7 @@ public class LockHelperTest {
 
         replay(mocks);
 
-        lockHelper.acquireLock(node);
+        lockHelper.acquireLock(node, 0);
         verify(mocks);
     }
 
@@ -178,7 +178,7 @@ public class LockHelperTest {
         expect(node.setProperty(GENERAL_PROPERTY_LAST_MODIFIED_BY, "userID")).andReturn(null);
         replay(mocks);
 
-        lockHelper.acquireSimpleLock(node);
+        lockHelper.acquireSimpleLock(node, 0);
         verify(mocks);
     }
 }

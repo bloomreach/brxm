@@ -53,9 +53,7 @@ import org.slf4j.LoggerFactory;
 @Produces(MediaType.APPLICATION_JSON)
 public class SiteMapResource extends AbstractConfigResource {
 
-    private static Logger log = LoggerFactory.getLogger(SiteMapResource.class);
-
-    private SiteMapHelper siteMapHelper = new SiteMapHelper();
+    private SiteMapHelper siteMapHelper;
 
     public void setSiteMapHelper(final SiteMapHelper siteMapHelper) {
         this.siteMapHelper = siteMapHelper;
