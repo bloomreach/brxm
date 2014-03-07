@@ -1,0 +1,16 @@
+package {{beansPackage}};
+
+import java.util.List;
+
+import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
+
+/**
+ * Interface for Blog post beans
+ *
+ * @version "$Id$"
+ */
+public interface Authors extends HippoDocumentBean {
+
+    List<? extends AuthorEntry> getAuthors();
+
+}

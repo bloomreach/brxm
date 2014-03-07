@@ -15,6 +15,8 @@
     <xml action="copy" source="xml/namespaces/account.xml" target="/hippo:namespaces/{{namespace}}"/>
     <!-- beans-->
     <file action="copy"  source="java/Author.txt" target="{{beansFolder}}/Author.java"/>
+    <file action="copy"  source="java/AuthorEntry.txt" target="{{beansFolder}}/AuthorEntry.java"/>
+    <file action="copy"  source="java/Authors.txt" target="{{beansFolder}}/Authors.java"/>
     <file action="copy"  source="java/Blogpost.txt" target="{{beansFolder}}/Blogpost.java"/>
     <file action="copy"  source="java/Account.txt" target="{{beansFolder}}/Account.java"/>
   </instructionSet>

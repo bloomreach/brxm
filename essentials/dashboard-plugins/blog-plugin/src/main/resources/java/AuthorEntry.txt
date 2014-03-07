@@ -1,0 +1,13 @@
+package {{beansPackage}};
+
+import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
+
+/**
+ * Marker interface for Author beans
+ *
+ * @version "$Id$"
+ */
+public interface AuthorEntry extends HippoDocumentBean {
+
+
+}
