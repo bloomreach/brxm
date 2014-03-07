@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import javax.jcr.Node;
@@ -130,7 +131,7 @@ public class BlogImporterJob implements InterruptableJob {
                 blogsBasePath = blogsBasePath.substring(1);
             }
             if (!session.getRootNode().hasNode(blogsBasePath)) {
-                log.warn("Blog base path (" + blogsBasePath + ") is missing, attempting to create it");
+                log.warn("Blog base path ({}) is missing, attempting to create it", blogsBasePath);
                 Node node = session.getRootNode();
                 for (String path : PATH_PATTERN.split(blogsBasePath)) {
                     if (!node.hasNode(path)) {
@@ -159,6 +160,7 @@ public class BlogImporterJob implements InterruptableJob {
                 }
 
                 final String url = blogUrls[i];
+                log.info("Starting feed import for url {}", url);
                 SyndFeedInput input = new SyndFeedInput();
                 SyndFeed feed = null;
                 try {
@@ -177,7 +179,7 @@ public class BlogImporterJob implements InterruptableJob {
     }
 
     @SuppressWarnings("HippoHstCallNodeRefreshInspection")
-    private void cleanupSession(final Session session)  {
+    private void cleanupSession(final Session session) {
         try {
             session.refresh(false);
         } catch (RepositoryException e) {
@@ -195,23 +197,32 @@ public class BlogImporterJob implements InterruptableJob {
                             createBlogDocument(projectNamespace, blogNode, authorNode, syndEntry, maxDescriptionLength);
                             BlogUpdater.handleSaved(blogNode, projectNamespace);
                             session.save();
+                        }else{
+                            log.info("Blogpost already exists for node: {}", blogNode.getPath());
                         }
                     } catch (RepositoryException rExp) {
                         log.error("Error in saving blog document", rExp);
+                        cleanupSession(session);
                     }
                 }
             }
+        } else {
+            log.debug("Feed was null");
         }
     }
 
     private boolean blogExists(Node baseNode, SyndEntry syndEntry) throws RepositoryException {
         Node blogFolder = getBlogFolder(baseNode, syndEntry);
         String documentName = NodeNameCodec.encode(syndEntry.getTitle().replace("?", ""), true);
-        return blogFolder.hasNode(documentName);
+        final boolean exist = blogFolder.hasNode(documentName);
+        if(exist){
+            log.info("Blog folder {} already has document with name: {}", blogFolder.getPath(), documentName);
+        }
+        return exist;
     }
 
     private boolean createBlogDocument(final String namespace, Node baseNode, Node authorHandleNode, SyndEntry syndEntry, int maxDescriptionLength) throws RepositoryException {
-        final String prefixedNamespace = namespace +':';
+        final String prefixedNamespace = namespace + ':';
         Node blogFolder = getBlogFolder(baseNode, syndEntry);
         String documentName = NodeNameCodec.encode(syndEntry.getTitle(), true).replace("?", "");
         Node handleNode = blogFolder.addNode(documentName, "hippo:handle");
@@ -245,6 +256,7 @@ public class BlogImporterJob implements InterruptableJob {
         documentNode.setProperty("hippostd:holder", "admin");
         // TODO make locale dynamic
         documentNode.setProperty("hippotranslation:locale", "en");
+        documentNode.setProperty("hippotranslation:id", UUID.randomUUID().toString());
         documentNode.addNode(prefixedNamespace + "content", "hippostd:html");
         documentNode.getNode(prefixedNamespace + "content").setProperty("hippostd:content", processContent(syndEntry));
         documentNode.addNode(prefixedNamespace + "image", "hippostd:html");
