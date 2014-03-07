@@ -209,14 +209,30 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         return mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
     }
 
+    protected String getLiveConfigurationPath() {
+        return mountResource.getPageComposerContextService().getEditingLiveSite().getConfigurationPath();
+    }
+
     protected String getPreviewConfigurationWorkspacePath() {
         return getPreviewConfigurationPath() + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
     }
+
+    protected String getLiveConfigurationWorkspacePath() {
+        return getLiveConfigurationPath() + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
+    }
+
     protected String getPreviewConfigurationWorkspaceSitemapPath() {
         return getPreviewConfigurationWorkspacePath() + "/" + HstNodeTypes.NODENAME_HST_SITEMAP;
     }
+    protected String getLiveConfigurationWorkspaceSitemapPath() {
+        return getLiveConfigurationWorkspacePath() + "/" + HstNodeTypes.NODENAME_HST_SITEMAP;
+    }
+
     protected String getPreviewConfigurationWorkspacePagesPath() {
         return getPreviewConfigurationWorkspacePath() + "/" + HstNodeTypes.NODENAME_HST_PAGES;
+    }
+    protected String getLiveConfigurationWorkspacePagesPath() {
+        return getLiveConfigurationWorkspacePath() + "/" + HstNodeTypes.NODENAME_HST_PAGES;
     }
 
     protected String getHomePageUUID() throws RepositoryException {
