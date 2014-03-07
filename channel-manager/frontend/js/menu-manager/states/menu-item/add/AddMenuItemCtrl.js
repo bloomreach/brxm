@@ -25,8 +25,12 @@
             '$stateParams',
             'hippo.channelManager.FeedbackService',
             'hippo.channelManager.menuManager.MenuService',
-            function ($scope, $state, $stateParams, FeedbackService, MenuService) {
+            'hippo.channelManager.menuManager.FormValidationService',
+            function ($scope, $state, $stateParams, FeedbackService, MenuService, FormValidationService) {
                 var parentItemId = $stateParams.menuItemId;
+
+                // the user should submit or cancel before closing the menu
+                FormValidationService.setValidity(false);
 
                 $scope.selectedMenuItem = {
                     linkType: 'SITEMAPITEM',
@@ -62,20 +66,23 @@
                         }
 
                         MenuService.createMenuItem(parentItemId, $scope.selectedMenuItem, first).then(
-                                function (menuItemId) {
-                                    $state.go('menu-item.edit', {
-                                        menuItemId: menuItemId
-                                    });
-                                },
-                                function (errorResponse) {
-                                    $scope.feedback = FeedbackService.getFeedback(errorResponse);
-                                }
-                        );
+                            function (menuItemId) {
+                                FormValidationService.setValidity(true);
 
+                                $state.go('menu-item.edit', {
+                                    menuItemId: menuItemId
+                                });
+                            },
+                            function (errorResponse) {
+                                $scope.feedback = FeedbackService.getFeedback(errorResponse);
+                            }
+                        );
                     }
                 };
 
                 $scope.cancel = function () {
+                    FormValidationService.setValidity(true);
+
                     $state.go('menu-item.edit', {
                         menuItemId: parentItemId
                     });
