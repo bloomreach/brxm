@@ -36,13 +36,11 @@ $ mvn clean install
 ```
 
 ### run archetype
-```
-mvn archetype:generate \
--DarchetypeGroupId=org.onehippo.cms7 \
--DarchetypeArtifactId=essentials-archetype-website \
--DarchetypeVersion=1.01.02-SNAPSHOT
 
+```shell
+mvn archetype:generate -D "archetypeGroupId=org.onehippo.cms7" -D "archetypeArtifactId=essentials-archetype-website" -D "archetypeVersion=1.01.02-SNAPSHOT"
 ```
+
 ## Working with Git
 
 Create local working branch to work on:
