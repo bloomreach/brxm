@@ -59,7 +59,7 @@
     <log4j.version>1.2.16</log4j.version>
     <commons-logging.version>1.1.1</commons-logging.version>
     <commons-logging-api.version>1.1</commons-logging-api.version>
-    <guava.version>12.0.1</guava.version>
+    <guava.version>16.0.1</guava.version>
     <jsr311.version>1.1.1</jsr311.version>
 
     <!--
