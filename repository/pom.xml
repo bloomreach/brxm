@@ -86,7 +86,7 @@
     <hippo.utilities.version>1.02.01-SNAPSHOT</hippo.utilities.version>
 
     <!-- Test dependencies  -->
-    <junit.version>4.11</junit.version>
+    <junit.version>4.10</junit.version>
 
     <!-- Project Dependencies -->
     <commons-io.version>2.4</commons-io.version>
