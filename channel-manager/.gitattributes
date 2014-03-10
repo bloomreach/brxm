@@ -19,6 +19,7 @@ frontend/js/menu-manager/services/FormValidationService.js -text
 frontend/js/menu-manager/services/MenuService.js -text
 frontend/js/menu-manager/states/loader/LoaderCtrl.js -text
 frontend/js/menu-manager/states/loader/loader.html -text
+frontend/js/menu-manager/states/menu-item/CloseConfirmationCtrl.js -text
 frontend/js/menu-manager/states/menu-item/MenuCtrl.js -text
 frontend/js/menu-manager/states/menu-item/MenuItemCtrl.js -text
 frontend/js/menu-manager/states/menu-item/TreeCtrl.js -text

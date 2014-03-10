@@ -35,13 +35,21 @@
                                 iframePanel.iframeToHost.publish('close-reply-ok');
                             } else {
                                 iframePanel.iframeToHost.publish('close-reply-not-ok');
+
+                                // TODO: implement general confirmation service
                             }
                         });
                     }
                 }
 
+                function performClose() {
+                    var iFramePanel = IFrameService.getContainer();
+                    iFramePanel.iframeToHost.publish('close-reply-ok');
+                }
+
                 return {
-                    handleClose: handleClose
+                    handleClose: handleClose,
+                    performClose: performClose
                 };
             }
         ]);

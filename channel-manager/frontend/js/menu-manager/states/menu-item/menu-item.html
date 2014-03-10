@@ -28,5 +28,24 @@
         </div>
 
         <div data-ui-view class="col-sm-8" id="form-panel"></div>
+
+        <!-- START general confirmation dialog -->
+        <div data-ng-controller="CloseConfirmationCtrl" id="close-confirmation">
+            <div class="overlay" data-ng-show="dialog.visible">&#160;</div>
+            <div hippo.theme.confirmation-dialog
+                 data-show="dialog.visible"
+                 data-perform-confirmation="confirm()"
+                 data-perform-cancel="cancel()"
+                 data-confirm-label="{{ 'DELETE_MENU_ITEM' | translate }}"
+                 data-cancel-label="{{ 'CANCEL' | translate }}">
+                <p>
+                    <strong>{{ 'REMOVE_CONFIRMATION_TITLE' | translate }}</strong>
+                </p>
+                <p>
+                    {{ 'REMOVE_CONFIRMATION' | translate:selectedMenuItem }}
+                </p>
+            </div>
+        </div>
+        <!-- END confirmation dialog -->
     </div>
 </div>

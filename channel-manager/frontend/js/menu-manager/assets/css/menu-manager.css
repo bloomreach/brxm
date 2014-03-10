@@ -35,6 +35,7 @@
     margin-right: 0;
     display: table-row;
     width: 100%;
+    position: relative;
 }
 
 /* prevent small margin between the left window border and the tree */
@@ -157,6 +158,19 @@ h3.lead.item-title {
 
 .confirmation-dialog.s-visible {
     top: 0;
+}
+
+#close-confirmation {
+    left: 0;
+    position: absolute;
+}
+
+#close-confirmation .overlay {
+    margin-left: 0;
+}
+
+#close-confirmation .confirmation-dialog {
+    margin-left: 180px;
 }
 
 /* --- NestedSortable --- */
