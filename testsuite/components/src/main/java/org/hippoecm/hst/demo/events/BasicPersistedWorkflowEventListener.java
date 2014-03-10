@@ -16,25 +16,31 @@
 
 package org.hippoecm.hst.demo.events;
 
+import org.onehippo.cms7.event.HippoEvent;
+import org.onehippo.cms7.event.HippoEventConstants;
 import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.repository.events.HippoWorkflowEvent;
-import org.onehippo.repository.events.PersistedWorkflowEventListener;
-import org.onehippo.repository.events.PersistedWorkflowEventsService;
+import org.onehippo.repository.events.PersistedHippoEventListener;
+import org.onehippo.repository.events.PersistedHippoEventsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.json.JSONObject;
 
-public class BasicPersistedWorkflowEventListener implements PersistedWorkflowEventListener {
+public class BasicPersistedWorkflowEventListener implements PersistedHippoEventListener {
 
     private static Logger log = LoggerFactory.getLogger(BasicPersistedWorkflowEventListener.class);
 
     public void register() {
-        HippoServiceRegistry.registerService(this, PersistedWorkflowEventsService.class);
+        HippoServiceRegistry.registerService(this, PersistedHippoEventsService.class);
     }
 
     public void unregister() {
-        HippoServiceRegistry.unregisterService(this, PersistedWorkflowEventsService.class);
+        HippoServiceRegistry.unregisterService(this, PersistedHippoEventsService.class);
+    }
+
+    @Override
+    public  String getEventCategory() {
+        return HippoEventConstants.CATEGORY_WORKFLOW;
     }
 
     @Override
@@ -48,7 +54,7 @@ public class BasicPersistedWorkflowEventListener implements PersistedWorkflowEve
     }
 
     @Override
-    public void onWorkflowEvent(final HippoWorkflowEvent event) {
+    public void onHippoEvent(final HippoEvent event) {
         if (log.isInfoEnabled()) {
             JSONObject jsonObject = new JSONObject();
             jsonObject.putAll(event.getValues());
