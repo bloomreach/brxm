@@ -25,7 +25,6 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
-import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
@@ -40,13 +39,6 @@ import org.slf4j.LoggerFactory;
 public class AbstractConfigResource {
 
     private static Logger log = LoggerFactory.getLogger(AbstractConfigResource.class);
-
-    private static final Validator VOID_VALIDATOR = new Validator() {
-        @Override
-        public void validate(HstRequestContext requestContext) throws RuntimeException {
-            // intentionally left blank
-        }
-    };
 
     private PageComposerContextService pageComposerContextService;
 
@@ -98,25 +90,10 @@ public class AbstractConfigResource {
         return requestContext.getContentBeansTool().getObjectConverter();
     }
 
-    protected Response tryExecute(final Callable<Response> callable) {
-        return tryExecute(callable, VOID_VALIDATOR);
-    }
-
-    protected Response tryExecute(final Callable<Response> callable,
-                                  final Validator preValidator) {
-        return tryExecute(callable, preValidator, VOID_VALIDATOR);
-    }
-
-
     protected Response tryExecute(final Callable<Response> callable,
                                   final Validator preValidator,
                                   final Validator postValidator) {
         try {
-            if (RequestContextProvider.get() == null) {
-                // unit test use case. Skip all the jcr based validators and persisting of changes
-                // TODO (meggermont): remove this utility and properly unit test
-                return callable.call();
-            }
 
             createMandatoryWorkspaceNodesIfMissing();
 

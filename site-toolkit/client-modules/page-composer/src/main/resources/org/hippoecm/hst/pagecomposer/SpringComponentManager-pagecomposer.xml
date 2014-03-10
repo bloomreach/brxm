@@ -69,6 +69,8 @@
     Each JAX-RS service component is registered by "resourceProvider" property. 
   -->
 
+  <bean id="validatiorFactory" class="org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory"/>
+
   <bean id="jaxrsHstConfigCxfServerFactoryBean" class="org.apache.cxf.jaxrs.JAXRSServerFactoryBean">
     <property name="address" value="/"/>
     <property name="providers">
@@ -98,6 +100,7 @@
                 <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper" parent="abstractHelper"/>
               </property>
               <property name="uriValidator" ref="uriValidator"/>
+              <property name="validatorFactory" ref="validatiorFactory"/>
             </bean>
           </constructor-arg>
         </bean>
@@ -105,6 +108,7 @@
           <constructor-arg>
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource" parent="abstractConfigResource">
               <property name="siteMapHelper" ref="siteMapHelper"/>
+              <property name="validatorFactory" ref="validatiorFactory"/>
             </bean>
           </constructor-arg>
         </bean>

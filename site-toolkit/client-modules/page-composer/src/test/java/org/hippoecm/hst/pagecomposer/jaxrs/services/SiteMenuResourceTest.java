@@ -27,6 +27,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Response;
 
+import com.google.common.base.Predicate;
+
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
@@ -38,14 +41,19 @@ import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.MockSiteMenuConfiguration;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.MockSiteMenuItemConfiguration;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.Position;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
@@ -63,6 +71,8 @@ public class SiteMenuResourceTest {
     private SiteMenuResource siteMenuResource;
 
     // mocks
+    private ValidatorFactory validatorFactory;
+    private Validator validator;
     private SiteMenuHelper siteMenuHelper;
     private SiteMenuItemHelper siteMenuItemHelper;
     private HttpServletRequest request;
@@ -82,6 +92,8 @@ public class SiteMenuResourceTest {
 
     @Before
     public void setUp() {
+        this.validatorFactory = createNiceMock(ValidatorFactory.class);
+        this.validator = createNiceMock(Validator.class);
         this.siteMenuHelper = createMock(SiteMenuHelper.class);
         this.siteMenuItemHelper = createMock(SiteMenuItemHelper.class);
         this.request = createMock(HttpServletRequest.class);
@@ -99,9 +111,10 @@ public class SiteMenuResourceTest {
         this.childNode = createMock(Node.class);
         this.pageComposerContextService = createMock(PageComposerContextService.class);
         this.nodeIterator = createMock(NodeIterator.class);
-        this.mocks = new Object[]{siteMenuHelper, siteMenuItemHelper, request, context, session, httpSession, virtualHost, virtualHosts, mount, site, menuConfig, itemConfig, node, parentNode, childNode, pageComposerContextService, nodeIterator};
+        this.mocks = new Object[]{validator, validatorFactory, siteMenuHelper, siteMenuItemHelper, request, context, session, httpSession, virtualHost, virtualHosts, mount, site, menuConfig, itemConfig, node, parentNode, childNode, pageComposerContextService, nodeIterator};
 
         this.siteMenuResource = new SiteMenuResource();
+        this.siteMenuResource.setValidatorFactory(validatorFactory);
         this.siteMenuResource.setSiteMenuHelper(siteMenuHelper);
         this.siteMenuResource.setSiteMenuItemHelper(siteMenuItemHelper);
         this.siteMenuResource.setPageComposerContextService(pageComposerContextService);
@@ -109,12 +122,15 @@ public class SiteMenuResourceTest {
 
     @Test
     public void testGetMenu() throws RepositoryException {
+        mockCreateMandatoryWorkspaceNodesIfMissing();
         mockGetPreviewSite();
+        mockGetPreValidators();
         mockGetSiteMenu("menuId");
         expect(menuConfig.getCanonicalIdentifier()).andReturn("uuid-of-menu");
         expect(menuConfig.getName()).andReturn("menuMane");
         final List<HstSiteMenuItemConfiguration> children = Collections.emptyList();
         expect(menuConfig.getSiteMenuConfigurationItems()).andReturn(children);
+        expect(session.hasPendingChanges()).andReturn(false);
         replay(mocks);
 
         final Response response = siteMenuResource.getMenu();
@@ -126,10 +142,13 @@ public class SiteMenuResourceTest {
 
     @Test
     public void testGetMenuItem() throws RepositoryException {
+        mockCreateMandatoryWorkspaceNodesIfMissing();
         mockGetPreviewSite();
+        mockGetPreValidators();
         mockGetSiteMenu("menuId");
         final String id = "uuid-of-menu-item";
         mockGetMenuItem(node, id);
+        expect(session.hasPendingChanges()).andReturn(false);
         replay(mocks);
 
         final Response response = siteMenuResource.getMenuItem(id);
@@ -142,7 +161,9 @@ public class SiteMenuResourceTest {
     @Test
     public void testCreateAsChildOfMenu() throws RepositoryException {
 
+        mockCreateMandatoryWorkspaceNodesIfMissing();
         mockGetPreviewSite();
+        mockGetPreValidators();
         final String menuId = "uuid-of-menu";
         mockGetSiteMenu(menuId);
 
@@ -160,6 +181,7 @@ public class SiteMenuResourceTest {
         final String menuItemId = "menuItemId";
         expect(node.getIdentifier()).andReturn(menuItemId);
 
+        expect(session.hasPendingChanges()).andReturn(false);
         replay(mocks);
 
         final Response response = siteMenuResource.create(menuId, "last", newMenuItem);
@@ -172,10 +194,13 @@ public class SiteMenuResourceTest {
         assertThat(extResponse.getData().toString(), is(menuItemId));
     }
 
+
     @Test
     public void testUpdate() throws RepositoryException {
 
+        mockCreateMandatoryWorkspaceNodesIfMissing();
         mockGetPreviewSite();
+        mockGetPreValidators();
         mockGetSiteMenu("menuId");
 
         final String id = "uuid-of-menu-item";
@@ -186,6 +211,7 @@ public class SiteMenuResourceTest {
         modifiedItem.setId(id);
         siteMenuItemHelper.update(node, modifiedItem);
         expectLastCall().once();
+        expect(session.hasPendingChanges()).andReturn(false);
         replay(mocks);
 
         final Response response = siteMenuResource.update(modifiedItem);
@@ -201,15 +227,17 @@ public class SiteMenuResourceTest {
     @Test
     public void testUpdateReturnsServerErrorOnRepositoryException() throws RepositoryException {
 
-        expect(pageComposerContextService.getEditingPreviewSite()).andReturn(site).anyTimes();
-        expect(site.getConfigurationPath()).andReturn("/preview/configuration/path").anyTimes();
-        expect(pageComposerContextService.getRequestConfigIdentifier()).andReturn(null).anyTimes();
-        expect(pageComposerContextService.getRequestContext()).andReturn(context).anyTimes();
-        expect(context.getSession()).andThrow(new RepositoryException("failed")).anyTimes();
+        mockCreateMandatoryWorkspaceNodesIfMissing();
+        mockGetPreviewSite();
+        mockGetPreValidators();
+        mockGetSiteMenu("menuId");
 
         final String id = "uuid-of-menu-item";
         final SiteMenuItemRepresentation modifiedItem = new SiteMenuItemRepresentation();
         modifiedItem.setId(id);
+
+        expect(session.getNodeByIdentifier(modifiedItem.getId())).andThrow(new RuntimeException());
+        expect(session.hasPendingChanges()).andReturn(false);
         replay(mocks);
 
         final Response response = siteMenuResource.update(modifiedItem);
@@ -225,7 +253,9 @@ public class SiteMenuResourceTest {
     @Test
     public void testMove() throws RepositoryException {
 
+        mockCreateMandatoryWorkspaceNodesIfMissing();
         mockGetPreviewSite();
+        mockGetPreValidators();
         mockGetSiteMenu("menuId");
 
         final String sourceId = "sourceId";
@@ -238,6 +268,7 @@ public class SiteMenuResourceTest {
         expect(session.getNodeByIdentifier(parentTargetId)).andReturn(parentNode);
         siteMenuItemHelper.move(parentNode, node, childTargetIndex);
         expectLastCall();
+        expect(session.hasPendingChanges()).andReturn(false);
         replay(mocks);
 
         final Response response = siteMenuResource.move(sourceId, parentTargetId, childTargetIndex);
@@ -252,12 +283,15 @@ public class SiteMenuResourceTest {
     @Test
     public void testDelete() throws RepositoryException {
 
+        mockCreateMandatoryWorkspaceNodesIfMissing();
         mockGetPreviewSite();
+        mockGetPreValidators();
         mockGetSiteMenu("menuId");
         final String sourceId = "sourceId";
         mockGetMenuItem(node, sourceId);
         siteMenuItemHelper.delete(node);
         expectLastCall().once();
+        expect(session.hasPendingChanges()).andReturn(false);
         replay(mocks);
 
         final Response response = siteMenuResource.delete(sourceId);
@@ -281,24 +315,44 @@ public class SiteMenuResourceTest {
     private void mockGetSiteMenu(String menuId) {
         // Mock getting the site menu
         expect(pageComposerContextService.getRequestConfigIdentifier()).andReturn(menuId).anyTimes();
-        expect(pageComposerContextService.getRequestContext()).andReturn(context);
+        expect(pageComposerContextService.getRequestContext()).andReturn(context).anyTimes();
         expect(context.getAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER)).andReturn(menuId).anyTimes();
         expect(siteMenuHelper.getMenu(site, menuId)).andReturn(menuConfig);
     }
 
     private void mockGetPreviewSite() throws RepositoryException {
         // Due to the inheritance the following mock calls are required to get the preview site
-        expect(context.getSession()).andReturn(session);
-        expect(context.getServletRequest()).andReturn(request);
-        expect(request.getSession(true)).andReturn(httpSession);
+        expect(context.getSession()).andReturn(session).anyTimes();
+        expect(context.getServletRequest()).andReturn(request).anyTimes();
+        expect(request.getSession(true)).andReturn(httpSession).anyTimes();
         expect(httpSession.getAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID)).andReturn("mount");
-        expect(context.getVirtualHost()).andReturn(virtualHost);
-        expect(virtualHost.getVirtualHosts()).andReturn(virtualHosts);
-        expect(virtualHosts.getMountByIdentifier("mount")).andReturn(mount);
-        expect(mount.getPreviewHstSite()).andReturn(site);
+        expect(context.getVirtualHost()).andReturn(virtualHost).anyTimes();
+        expect(virtualHost.getVirtualHosts()).andReturn(virtualHosts).anyTimes();
+        expect(virtualHosts.getMountByIdentifier("mount")).andReturn(mount).anyTimes();
+        expect(mount.getPreviewHstSite()).andReturn(site).anyTimes();
         expect(site.getConfigurationPath()).andReturn("/preview/configuration/path").anyTimes();
         expect(pageComposerContextService.getEditingPreviewSite()).andReturn(site).anyTimes();
 
     }
 
+    private void mockCreateMandatoryWorkspaceNodesIfMissing() throws RepositoryException {
+        expect(pageComposerContextService.getEditingLiveSite()).andReturn(site).anyTimes();
+        expect(session.nodeExists("/preview/configuration/path")).andReturn(true).anyTimes();
+        expect(session.getNode("/preview/configuration/path")).andReturn(node).anyTimes();
+        expect(node.hasNode(HstNodeTypes.NODENAME_HST_WORKSPACE)).andReturn(false).anyTimes();
+        expect(node.addNode(HstNodeTypes.NODENAME_HST_WORKSPACE)).andReturn(node).anyTimes();
+        expect(node.addNode(HstNodeTypes.NODENAME_HST_PAGES)).andReturn(node).anyTimes();
+        expect(node.addNode(HstNodeTypes.NODENAME_HST_SITEMAP)).andReturn(node).anyTimes();
+    }
+
+    private void mockGetPreValidators() {
+        expect(validatorFactory.getChildExistsValidator(anyObject(String.class), anyObject(String.class))).andReturn(validator).anyTimes();
+        expect(validatorFactory.getCurrentPreviewConfigurationValidator(anyObject(String.class), anyObject(SiteMapHelper.class))).andReturn(validator).anyTimes();
+        expect(validatorFactory.getNodePathPrefixValidator(anyObject(String.class), anyObject(String.class), anyObject(String.class))).andReturn(validator).anyTimes();
+        expect(validatorFactory.getNotNullValidator(anyObject(), anyObject(ClientError.class))).andReturn(validator).anyTimes();
+        expect(validatorFactory.getSiteMenuItemRepresentationValidator(anyObject(Predicate.class), anyObject(SiteMenuItemRepresentation.class))).andReturn(validator).anyTimes();
+        expect(validatorFactory.getVoidValidator()).andReturn(validator).anyTimes();
+        validator.validate(anyObject(HstRequestContext.class));
+        expectLastCall().anyTimes();
+    }
 }

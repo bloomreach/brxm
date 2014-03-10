@@ -42,7 +42,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.AbstractMountResourceTest;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.MountResourceTest;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
 import org.hippoecm.hst.site.HstServices;
 import org.junit.After;
 import org.junit.Before;
@@ -75,7 +75,7 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         extra[0] = session.getValueFactory().createValue("bob");
         extra[1] = session.getValueFactory().createValue("alice");
 
-        final Value[] values = (Value[])ArrayUtils.addAll(adminMembers, extra);
+        final Value[] values = (Value[]) ArrayUtils.addAll(adminMembers, extra);
         adminGroup.setProperty("hipposys:members", values);
 
         // move 2 sitemap items to workspace, keep rest in unittestproject/hst:sitemap
@@ -107,14 +107,14 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         Value[] adminMembers = adminGroup.getProperty("hipposys:members").getValues();
 
         // remove bob and alice again
-        Value[] original = (Value[])ArrayUtils.subarray(adminMembers, 0, adminMembers.length - 2);
+        Value[] original = (Value[]) ArrayUtils.subarray(adminMembers, 0, adminMembers.length - 2);
 
         adminGroup.setProperty("hipposys:members", original);
         session.save();
         super.tearDown();
     }
 
-    protected Session createSession(final String userName,final String password) throws RepositoryException {
+    protected Session createSession(final String userName, final String password) throws RepositoryException {
         Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
         return repository.login(new SimpleCredentials(userName, password.toCharArray()));
     }
@@ -186,7 +186,7 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         ((HstMutableRequestContext) ctx).setSession(requestSession);
         final HstSiteMap siteMap = mountResource.getPageComposerContextService().getEditingPreviewSite().getSiteMap();
         // override the config identifier to have sitemap id
-        ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, ((CanonicalInfo)siteMap).getCanonicalIdentifier());
+        ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, ((CanonicalInfo) siteMap).getCanonicalIdentifier());
         return new SiteMapRepresentation().represent(siteMap, getPreviewConfigurationPath());
     }
 
@@ -201,6 +201,7 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         final SiteMapResource siteMapResource = new SiteMapResource();
         siteMapResource.setPageComposerContextService(mountResource.getPageComposerContextService());
         siteMapResource.setSiteMapHelper(siteMapHelper);
+        siteMapResource.setValidatorFactory(new ValidatorFactory());
         return siteMapResource;
     }
 
@@ -224,6 +225,7 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
     protected String getPreviewConfigurationWorkspaceSitemapPath() {
         return getPreviewConfigurationWorkspacePath() + "/" + HstNodeTypes.NODENAME_HST_SITEMAP;
     }
+
     protected String getLiveConfigurationWorkspaceSitemapPath() {
         return getLiveConfigurationWorkspacePath() + "/" + HstNodeTypes.NODENAME_HST_SITEMAP;
     }
@@ -231,6 +233,7 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
     protected String getPreviewConfigurationWorkspacePagesPath() {
         return getPreviewConfigurationWorkspacePath() + "/" + HstNodeTypes.NODENAME_HST_PAGES;
     }
+
     protected String getLiveConfigurationWorkspacePagesPath() {
         return getLiveConfigurationWorkspacePath() + "/" + HstNodeTypes.NODENAME_HST_PAGES;
     }

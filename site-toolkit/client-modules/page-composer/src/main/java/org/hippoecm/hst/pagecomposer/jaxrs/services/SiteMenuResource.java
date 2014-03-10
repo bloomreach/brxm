@@ -43,11 +43,9 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.Position;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.NodePathPrefixValidator;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.NotNullValidator;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.SiteMenuItemRepresentationValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorBuilder;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
 
 @Path("/" + HstNodeTypes.NODETYPE_HST_SITEMENU + "/")
 @Produces(MediaType.APPLICATION_JSON)
@@ -56,6 +54,7 @@ public class SiteMenuResource extends AbstractConfigResource {
     private SiteMenuHelper siteMenuHelper;
     private SiteMenuItemHelper siteMenuItemHelper;
     private Predicate<String> uriValidator;
+    private ValidatorFactory validatorFactory = new ValidatorFactory();
 
     public void setSiteMenuHelper(final SiteMenuHelper siteMenuHelper) {
         this.siteMenuHelper = siteMenuHelper;
@@ -69,6 +68,10 @@ public class SiteMenuResource extends AbstractConfigResource {
         this.uriValidator = uriValidator;
     }
 
+    public void setValidatorFactory(final ValidatorFactory validatorFactory) {
+        this.validatorFactory = validatorFactory;
+    }
+
     @GET
     @Path("/")
     public Response getMenu() {
@@ -79,7 +82,7 @@ public class SiteMenuResource extends AbstractConfigResource {
                 final SiteMenuRepresentation representation = new SiteMenuRepresentation(menu);
                 return ok("Menu item loaded successfully", representation);
             }
-        });
+        }, validatorFactory.getVoidValidator(), validatorFactory.getVoidValidator());
     }
 
     @GET
@@ -93,7 +96,7 @@ public class SiteMenuResource extends AbstractConfigResource {
                 final SiteMenuItemRepresentation representation = new SiteMenuItemRepresentation(menuItem);
                 return ok("Menu item loaded successfully", representation);
             }
-        });
+        }, validatorFactory.getVoidValidator(), validatorFactory.getVoidValidator());
     }
 
     @POST
@@ -101,10 +104,11 @@ public class SiteMenuResource extends AbstractConfigResource {
     public Response create(final @PathParam("parentId") String parentId,
                            final @DefaultValue(Position.LAST_AS_STRING) @QueryParam("position") String position,
                            final SiteMenuItemRepresentation newMenuItem) {
-        final Validator preValidator = getDefaultMenuModificationValidatorBuilder()
-                .add(new NotNullValidator(newMenuItem.getName(), ClientError.ITEM_NO_NAME))
-                .add(new NodePathPrefixValidator(getPreviewConfigurationWorkspacePath(), parentId, null))
-                .add(newValidator(newMenuItem))
+        final Validator preValidator = ValidatorBuilder.builder()
+                .add(getDefaultMenuModificationValidator())
+                .add(validatorFactory.getNotNullValidator(newMenuItem.getName(), ClientError.ITEM_NO_NAME))
+                .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(), parentId, null))
+                .add(validatorFactory.getSiteMenuItemRepresentationValidator(uriValidator, newMenuItem))
                 .build();
         return tryExecute(new Callable<Response>() {
             @Override
@@ -115,7 +119,7 @@ public class SiteMenuResource extends AbstractConfigResource {
                 Node menuItemNode = siteMenuItemHelper.create(parentNode, newMenuItem, Position.fromString(position));
                 return ok("Item created successfully", menuItemNode.getIdentifier());
             }
-        }, preValidator);
+        }, preValidator, validatorFactory.getVoidValidator());
     }
 
 
@@ -123,10 +127,11 @@ public class SiteMenuResource extends AbstractConfigResource {
     @Path("/")
     public Response update(final SiteMenuItemRepresentation modifiedItem) {
 
-        final Validator preValidator = getDefaultMenuModificationValidatorBuilder()
-                .add(new NotNullValidator(modifiedItem.getName(), ClientError.ITEM_NO_NAME))
-                .add(new NodePathPrefixValidator(getPreviewConfigurationWorkspacePath(), modifiedItem.getId(), null))
-                .add(newValidator(modifiedItem))
+        final Validator preValidator = ValidatorBuilder.builder()
+                .add(getDefaultMenuModificationValidator())
+                .add(validatorFactory.getNotNullValidator(modifiedItem.getName(), ClientError.ITEM_NO_NAME))
+                .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(), modifiedItem.getId(), null))
+                .add(validatorFactory.getSiteMenuItemRepresentationValidator(uriValidator, modifiedItem))
                 .build();
         return tryExecute(new Callable<Response>() {
             @Override
@@ -136,7 +141,7 @@ public class SiteMenuResource extends AbstractConfigResource {
                 siteMenuItemHelper.update(menuItemNode, modifiedItem);
                 return ok("Item updated successfully", modifiedItem.getId());
             }
-        }, preValidator);
+        }, preValidator, validatorFactory.getVoidValidator());
     }
 
     @POST
@@ -145,9 +150,10 @@ public class SiteMenuResource extends AbstractConfigResource {
                          final @PathParam("parentId") String parentId,
                          final @PathParam("childIndex") Integer childIndex) {
 
-        final Validator preValidator = getDefaultMenuModificationValidatorBuilder()
-                .add(new NodePathPrefixValidator(getPreviewConfigurationWorkspacePath(), sourceId, null))
-                .add(new NodePathPrefixValidator(getPreviewConfigurationWorkspacePath(), parentId, null))
+        final Validator preValidator = ValidatorBuilder.builder()
+                .add(getDefaultMenuModificationValidator())
+                .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(), sourceId, null))
+                .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(), parentId, null))
                 .build();
         return tryExecute(new Callable<Response>() {
             @Override
@@ -158,14 +164,15 @@ public class SiteMenuResource extends AbstractConfigResource {
                 siteMenuItemHelper.move(parent, source, childIndex);
                 return ok("Item moved successfully", sourceId);
             }
-        }, preValidator);
+        }, preValidator, validatorFactory.getVoidValidator());
     }
 
     @POST
     @Path("/delete/{menuItemId}")
     public Response delete(final @PathParam("menuItemId") String menuItemId) {
-        final Validator preValidator = getDefaultMenuModificationValidatorBuilder()
-                .add(new NodePathPrefixValidator(getPreviewConfigurationWorkspacePath(), menuItemId, null))
+        final Validator preValidator = ValidatorBuilder.builder()
+                .add(getDefaultMenuModificationValidator())
+                .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(), menuItemId, null))
                 .build();
         return tryExecute(new Callable<Response>() {
             @Override
@@ -174,7 +181,7 @@ public class SiteMenuResource extends AbstractConfigResource {
                 siteMenuItemHelper.delete(session.getNodeByIdentifier(menuItemId));
                 return ok("Item deleted successfully", menuItemId);
             }
-        }, preValidator);
+        }, preValidator, validatorFactory.getVoidValidator());
     }
 
 
@@ -196,15 +203,10 @@ public class SiteMenuResource extends AbstractConfigResource {
     }
 
 
-    private ValidatorBuilder getDefaultMenuModificationValidatorBuilder() {
-        final ValidatorBuilder builder = ValidatorBuilder.builder();
+    private Validator getDefaultMenuModificationValidator() {
         final String requestConfigIdentifier = getPageComposerContextService().getRequestConfigIdentifier();
-        builder.add(new NodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
-                requestConfigIdentifier, HstNodeTypes.NODETYPE_HST_SITEMENU));
-        return builder;
+        final String path = getPreviewConfigurationWorkspacePath();
+        return validatorFactory.getNodePathPrefixValidator(path, requestConfigIdentifier, HstNodeTypes.NODETYPE_HST_SITEMENU);
     }
 
-    private SiteMenuItemRepresentationValidator newValidator(SiteMenuItemRepresentation representation) {
-        return new SiteMenuItemRepresentationValidator(uriValidator, representation);
-    }
 }

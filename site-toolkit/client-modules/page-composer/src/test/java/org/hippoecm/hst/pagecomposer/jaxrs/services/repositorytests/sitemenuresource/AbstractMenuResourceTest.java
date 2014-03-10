@@ -40,6 +40,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMenuResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.AbstractMountResourceTest;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
 import org.hippoecm.hst.site.HstServices;
 import org.junit.After;
 import org.junit.Before;
@@ -186,7 +187,7 @@ public abstract class AbstractMenuResourceTest extends AbstractPageComposerTest 
         final HstSiteMenuConfiguration siteMenuConfiguration = editingPreviewHstSite.getSiteMenusConfiguration().getSiteMenuConfiguration(menuName);
 
         // override the config identifier to have sitemenu id
-        ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, ((CanonicalInfo)siteMenuConfiguration).getCanonicalIdentifier());
+        ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, ((CanonicalInfo) siteMenuConfiguration).getCanonicalIdentifier());
         return siteMenuConfiguration;
     }
 
@@ -202,6 +203,7 @@ public abstract class AbstractMenuResourceTest extends AbstractPageComposerTest 
         final SiteMenuItemHelper siteMenuItemHelper = new SiteMenuItemHelper();
         siteMenuItemHelper.setPageComposerContextService(mountResource.getPageComposerContextService());
         siteMenuResource.setSiteMenuItemHelper(siteMenuItemHelper);
+        siteMenuResource.setValidatorFactory(new ValidatorFactory());
         return siteMenuResource;
     }
 }
