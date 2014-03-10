@@ -34,6 +34,10 @@ public enum ClientError {
      * Represents a situation where a client tries to mutate an item that has already been locked by another user
      */
     ITEM_ALREADY_LOCKED,
+    /**
+     * Represents a situation where a client tries to mutate an item that has been changed by another user
+     */
+    ITEM_CHANGED,
 
     /**
      * Represents a situation where a client tries to add an item that already exist outside of the workspace with the

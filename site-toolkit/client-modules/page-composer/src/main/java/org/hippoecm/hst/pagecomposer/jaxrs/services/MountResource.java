@@ -16,7 +16,6 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -52,6 +51,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.PageModelRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.PrototypePagesRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ToolkitRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.UserRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
@@ -70,6 +70,7 @@ public class MountResource extends AbstractConfigResource {
     private SiteMapHelper siteMapHelper;
     private SiteMenuHelper siteMenuHelper;
     private PagesHelper pagesHelper;
+    private LockHelper lockHelper = new LockHelper();
 
     public void setSiteMapHelper(final SiteMapHelper siteMapHelper) {
         this.siteMapHelper = siteMapHelper;
@@ -257,16 +258,13 @@ public class MountResource extends AbstractConfigResource {
             String previewConfigurationPath = getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
 
             HippoSession session = HstConfigurationUtils.getNonProxiedSession(getPageComposerContextService().getRequestContext().getSession(false));
-            List<String> relativeContainerPathsToPublish = findChangedNonWorkspacePagesContainersForUsers(session, previewConfigurationPath, userIds);
             List<String> mainConfigNodeNamesToPublish = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds);
-
-            pushContainerChildrenNodes(session, previewConfigurationPath, liveConfigurationPath, relativeContainerPathsToPublish);
             copyChangedMainConfigNodes(session, previewConfigurationPath, liveConfigurationPath, mainConfigNodeNamesToPublish);
             publishChannelChanges(session, userIds);
 
-            siteMapHelper.publishWorkspaceChanges(userIds);
-            pagesHelper.publishWorkspaceChanges(userIds);
-            siteMenuHelper.publishWorkspaceChanges(userIds);
+            siteMapHelper.publishChanges(userIds);
+            pagesHelper.publishChanges(userIds);
+            siteMenuHelper.publishChanges(userIds);
             HstConfigurationUtils.persistChanges(session);
             log.info("Site is published");
             return ok("Site is published");
@@ -386,15 +384,13 @@ public class MountResource extends AbstractConfigResource {
             String previewConfigurationPath = editingPreviewSite.getConfigurationPath();
 
             HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
-            List<String> relativeContainerPathsToRevert = findChangedNonWorkspacePagesContainersForUsers(session, previewConfigurationPath, userIds);
             List<String> mainConfigNodeNamesToRevert = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds);
-            pushContainerChildrenNodes(session, liveConfigurationPath, previewConfigurationPath, relativeContainerPathsToRevert);
             copyChangedMainConfigNodes(session, liveConfigurationPath, previewConfigurationPath, mainConfigNodeNamesToRevert);
             discardChannelChanges(session, userIds);
 
-            siteMapHelper.discardWorkspaceChanges(userIds);
-            pagesHelper.discardWorkspaceChanges(userIds);
-            siteMenuHelper.discardWorkspaceChanges(userIds);
+            siteMapHelper.discardChanges(userIds);
+            pagesHelper.discardChanges(userIds);
+            siteMenuHelper.discardChanges(userIds);
 
             HstConfigurationUtils.persistChanges(session);
             log.info("Changes of user '{}' for site '{}' are discarded.", session.getUserID(), editingPreviewSite.getName());
@@ -422,10 +418,6 @@ public class MountResource extends AbstractConfigResource {
                 continue;
             }
             final String relativeContainerPath = containerForUsers.getPath().substring(previewConfigurationPath.length());
-            if (relativeContainerPath.startsWith("/hst:workspace/hst:pages/")) {
-                log.debug("Skip container with relative path '{}' as this container will be published by the PagesHelper", relativeContainerPath);
-                continue;
-            }
             relativeContainersForUsers.add(relativeContainerPath);
         }
         log.info("Changed containers for configuration '{}' for users '{}' are : {}",
@@ -506,60 +498,6 @@ public class MountResource extends AbstractConfigResource {
         return xpath.toString();
     }
 
-    private void pushContainerChildrenNodes(final HippoSession session,
-                                            final String fromConfig,
-                                            final String toConfig,
-                                            final List<String> relativeContainerPaths) throws RepositoryException {
-
-        for (String relativeContainerPath : relativeContainerPaths) {
-            String absFromPath = fromConfig + relativeContainerPath;
-            String absToContainerPath = toConfig + relativeContainerPath;
-            final Node rootNode = session.getRootNode();
-            if (rootNode.hasNode(absFromPath.substring(1)) && rootNode.hasNode(absToContainerPath.substring(1))) {
-                final Node containerToRelaceChildrenFrom = rootNode.getNode(absToContainerPath.substring(1));
-                Node fromNode = rootNode.getNode(absFromPath.substring(1));
-                if (!containerToRelaceChildrenFrom.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT) ||
-                        !fromNode.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT)) {
-                    log.warn("Cannot publish/discard nodes that are not of type hst:containercomponent. Cannot push " +
-                            " '{}' to '{}'.", containerToRelaceChildrenFrom.getPath(), fromNode.getPath());
-                    continue;
-                }
-                // WARN DO NOT JUST DELETE OLD CONTAINER AS THIS INTRODUCES ORDERING ISSUES IN CASE OF SIBBLING CONTAINERS
-                // WHEN THE NEW CONTAINER IS COPIED BACK. INSTEAD, REMOVE CHILDREN AND ADD
-                for (Node oldNode : new NodeIterable(containerToRelaceChildrenFrom.getNodes())) {
-                    log.debug("Removing old node '{}'", oldNode.getPath());
-                    oldNode.remove();
-                }
-
-                if (fromNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
-                    fromNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).remove();
-                }
-                if (fromNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
-                    fromNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON).remove();
-                }
-                if (containerToRelaceChildrenFrom.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
-                    containerToRelaceChildrenFrom.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).remove();
-                }
-                if (containerToRelaceChildrenFrom.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
-                    containerToRelaceChildrenFrom.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON).remove();
-                }
-                fromNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED, Calendar.getInstance());
-                fromNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
-                containerToRelaceChildrenFrom.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED, Calendar.getInstance());
-                containerToRelaceChildrenFrom.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
-                for (Node newNode : new NodeIterable(fromNode.getNodes())) {
-                    session.copy(newNode, absToContainerPath + "/" + newNode.getName());
-                    log.debug("Added new node '{}'", absToContainerPath + "/" + newNode.getName());
-                }
-                log.info("Containers '{}' pushed succesfully from '{}' to '{}'.",
-                        new String[]{relativeContainerPaths.toString(), fromConfig, toConfig});
-            } else {
-                log.warn("Cannot push node path '{}' because live or preview version for '{}' is not available.",
-                        absToContainerPath, relativeContainerPath);
-            }
-        }
-    }
-
     private void copyChangedMainConfigNodes(final HippoSession session,
                                             final String fromConfig,
                                             final String toConfig,
@@ -579,15 +517,7 @@ public class MountResource extends AbstractConfigResource {
                 }
 
                 nodeToReplace.remove();
-
-                if (fromNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
-                    fromNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).remove();
-                }
-                if (fromNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
-                    fromNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON).remove();
-                }
-
-                fromNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED, Calendar.getInstance());
+                lockHelper.unlock(fromNode);
                 fromNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
                 JcrUtils.copy(session, fromNode.getPath(), absToPath);
             } else {
@@ -665,7 +595,6 @@ public class MountResource extends AbstractConfigResource {
         if (channelFromNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
             channelFromNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON).remove();
         }
-        channelFromNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED, Calendar.getInstance());
         channelFromNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
         JcrUtils.copy(session, fromConfig, toConfig);
     }

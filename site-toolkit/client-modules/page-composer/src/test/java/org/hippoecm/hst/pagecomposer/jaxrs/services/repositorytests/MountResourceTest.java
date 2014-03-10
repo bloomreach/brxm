@@ -19,14 +19,17 @@ import java.util.Arrays;
 import java.util.Set;
 
 import javax.jcr.Node;
+import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResourceAccessor;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerHelper;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -86,11 +89,13 @@ public class MountResourceTest extends AbstractMountResourceTest {
         pccs.getRequestContext().setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, previewContainerNodeUUID);
 
         // there should be not yet any locks
-        Set<String> usersWithLockedContainers = mountResource.getPageComposerContextService().getEditingPreviewChannel().getChangedBySet();
-        assertTrue(usersWithLockedContainers.isEmpty());
+        Set<String> changedBySet = mountResource.getPageComposerContextService().getEditingPreviewChannel().getChangedBySet();
+        assertTrue(changedBySet.isEmpty());
 
-        final ContainerComponentResource containerComponentResource = createContainerComponentResource(mountResource);
-        containerComponentResource.createContainerItem(catalogItemUUID, System.currentTimeMillis());
+        final ContainerComponentResource containerComponentResource = createContainerResource();
+        final Response response = containerComponentResource.createContainerItem(catalogItemUUID, 0);
+        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+                Response.Status.OK.getStatusCode(), response.getStatus());
 
         // reload model through new request, and then modify a container
         // give time for jcr events to evict model
@@ -98,8 +103,8 @@ public class MountResourceTest extends AbstractMountResourceTest {
 
         mockNewRequest(session, "localhost", "/home");
 
-        usersWithLockedContainers = pccs.getEditingPreviewChannel().getChangedBySet();
-        assertTrue(usersWithLockedContainers.contains("admin"));
+        changedBySet = pccs.getEditingPreviewChannel().getChangedBySet();
+        assertTrue(changedBySet.contains("admin"));
 
         mountResource.publish();
 
@@ -110,15 +115,18 @@ public class MountResourceTest extends AbstractMountResourceTest {
         mockNewRequest(session, "localhost", "/home");
 
         // there should be no locks
-        usersWithLockedContainers = pccs.getEditingPreviewChannel().getChangedBySet();
-        assertTrue(usersWithLockedContainers.isEmpty());
+        changedBySet = pccs.getEditingPreviewChannel().getChangedBySet();
+        assertTrue(changedBySet.isEmpty());
 
     }
 
-    private ContainerComponentResource createContainerComponentResource(MountResource mountResource) {
-        ContainerComponentResource ccr = new ContainerComponentResource();
-        ccr.setPageComposerContextService(mountResource.getPageComposerContextService());
-        return ccr;
+    protected ContainerComponentResource createContainerResource() {
+        final ContainerComponentResource containerComponentResource = new ContainerComponentResource();
+        containerComponentResource.setPageComposerContextService(mountResource.getPageComposerContextService());
+        ContainerHelper helper = new ContainerHelper();
+        helper.setPageComposerContextService(mountResource.getPageComposerContextService());
+        containerComponentResource.setContainerHelper(helper);
+        return containerComponentResource;
     }
 
     @Test
@@ -175,8 +183,10 @@ public class MountResourceTest extends AbstractMountResourceTest {
         Set<String> usersWithLockedContainers = pccs.getEditingPreviewChannel().getChangedBySet();
         assertTrue(usersWithLockedContainers.isEmpty());
 
-        final ContainerComponentResource containerComponentResource = createContainerComponentResource(mountResource);
-        containerComponentResource.createContainerItem(catalogItemUUID, System.currentTimeMillis());
+        final ContainerComponentResource containerComponentResource = createContainerResource();
+        final Response response = containerComponentResource.createContainerItem(catalogItemUUID, 0);
+        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+                Response.Status.OK.getStatusCode(), response.getStatus());
 
         // reload model through new request, and then modify a container
         // give time for jcr events to evict model

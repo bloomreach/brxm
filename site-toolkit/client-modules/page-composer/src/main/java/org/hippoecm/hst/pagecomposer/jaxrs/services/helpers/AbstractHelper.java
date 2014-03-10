@@ -109,46 +109,46 @@ public abstract class AbstractHelper {
         return namesAndValues;
     }
 
-    public void publishWorkspaceChanges(final List<String> userIds) throws RepositoryException {
-        List<Node> lockedNodeRoots = getLockedNodeRoots(userIds);
-        publishWorkspaceNodeList(lockedNodeRoots);
+    public void publishChanges(final List<String> userIds) throws RepositoryException {
+        List<Node> lockedNodes = getLockedNodeRoots(userIds);
+        publishNodeList(lockedNodes);
     }
 
-    protected void publishWorkspaceNodeList(final List<Node> lockedNodeRoots) throws RepositoryException {
+    protected void publishNodeList(final List<Node> lockedNodes) throws RepositoryException {
         String liveConfigurationPath = pageComposerContextService.getEditingLiveSite().getConfigurationPath();
         String previewConfigurationPath = pageComposerContextService.getEditingPreviewSite().getConfigurationPath();
         final Session session = pageComposerContextService.getRequestContext().getSession();
-        for (Node lockedNodeRoot : lockedNodeRoots) {
-            String relPath = lockedNodeRoot.getPath().substring(previewConfigurationPath.length());
+        for (Node lockedNode : lockedNodes) {
+            String relPath = lockedNode.getPath().substring(previewConfigurationPath.length());
 
             if (session.nodeExists(liveConfigurationPath + relPath)) {
                 session.removeItem(liveConfigurationPath + relPath);
             }
-            if (lockedNodeRoot.hasProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE) &&
-                    "deleted".equals(lockedNodeRoot.getProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE).getString())) {
-                lockedNodeRoot.remove();
+            if (lockedNode.hasProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE) &&
+                    "deleted".equals(lockedNode.getProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE).getString())) {
+                lockedNode.remove();
             } else {
-                lockedNodeRoot.removeMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
+                lockHelper.unlock(lockedNode);
                 // we can only publish *IF* and only *IF* the parent exists. Otherwise we log an error and continue
                 String liveParentRelPath = StringUtils.substringBeforeLast(relPath, "/");
                 if (!session.nodeExists(liveConfigurationPath + liveParentRelPath)) {
                     log.warn("Cannot publish preview node '{}' because the live parent '{}' is missing. Skip publishing node",
-                            lockedNodeRoot.getPath(), liveConfigurationPath + liveParentRelPath);
+                            lockedNode.getPath(), liveConfigurationPath + liveParentRelPath);
                 } else {
-                    log.info("Publishing '{}'", lockedNodeRoot.getPath());
-                    JcrUtils.copy(session, lockedNodeRoot.getPath(), liveConfigurationPath + relPath);
+                    log.info("Publishing '{}'", lockedNode.getPath());
+                    JcrUtils.copy(session, lockedNode.getPath(), liveConfigurationPath + relPath);
                 }
             }
 
         }
     }
 
-    public void discardWorkspaceChanges(final List<String> userIds) throws RepositoryException {
-        List<Node> lockedNodeRoots = getLockedNodeRoots(userIds);
-        discardWorkspaceNodeList(lockedNodeRoots);
+    public void discardChanges(final List<String> userIds) throws RepositoryException {
+        List<Node> lockedNodes = getLockedNodeRoots(userIds);
+        discardNodeList(lockedNodes);
     }
 
-    protected void discardWorkspaceNodeList(final List<Node> lockedNodeRoots) throws RepositoryException {
+    protected void discardNodeList(final List<Node> lockedNodeRoots) throws RepositoryException {
         String liveConfigurationPath = pageComposerContextService.getEditingLiveSite().getConfigurationPath();
         String previewConfigurationPath = pageComposerContextService.getEditingPreviewSite().getConfigurationPath();
         final Session session = pageComposerContextService.getRequestContext().getSession();
@@ -170,61 +170,42 @@ public abstract class AbstractHelper {
     protected List<Node> getLockedNodeRoots(final List<String> userIds) throws RepositoryException {
 
         String previewConfigurationPath = pageComposerContextService.getEditingPreviewSite().getConfigurationPath();
-        final String previewWorkspacePath = previewConfigurationPath + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
         final Session session = pageComposerContextService.getRequestContext().getSession();
 
-        if (!session.nodeExists(previewWorkspacePath)) {
+        if (!session.nodeExists(previewConfigurationPath)) {
             // there is no preview workspace
             return Collections.emptyList();
         }
 
-        List<Node> lockedNodes = findChangedWorkspaceNodesForUsers(previewWorkspacePath, userIds);
+        List<Node> lockedNodes = findLockedNodesForUsers(previewConfigurationPath, userIds);
         if (lockedNodes.isEmpty()) {
             return Collections.emptyList();
         }
 
-        final Node previewWorkspaceNode = session.getNode(previewWorkspacePath);
+        final Node previewConfigurationNode = session.getNode(previewConfigurationPath);
         List<Node> lockedNodeRoots = new ArrayList<>();
 
         for (Node lockedNode : lockedNodes) {
-
-            // in principle, locked items should not contain descendant/ascendant locked items by *someone else*, however, in a clustered or highly
-            // concurrent environment, this is possible. Hence extra checks here
-            if (containsAncestorLock(lockedNode, previewWorkspaceNode)) {
-                log.info("Removing double lock of '{}' since an ancestor already has a lock", lockedNode.getPath());
-                if (lockedNode.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)) {
-                    lockedNode.removeMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
-                } else {
-                    lockedNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).remove();
-                    if(lockedNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
-                        lockedNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON).remove();
-                    }
-                }
-
-                break;
+            if (!lockedNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
+                // already processed for this session but not yet persisted (hence still in search result)
+                continue;
             }
-
-            if (lockedNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
-                // the mixin is not removed above
-                lockedNodeRoots.add(lockedNode);
-            }
-        }
-
-        // now for all lockedNodeRoots we need to check that there are no descendant locks contained by other users than
-        // for userIds. Again, normally does not happen, but because of clustered setups / concurrency this state might happen
-        for (Node lockedNodeRoot : lockedNodeRoots) {
-            for (Node child : new NodeIterable(lockedNodeRoot.getNodes())) {
-                // unlock is recursive
-                lockHelper.unlock(child);
+            if (!containsAncestorLock(lockedNode, previewConfigurationNode)) {
+               lockedNodeRoots.add(lockedNode);
+            } else {
+                // possibly incorrect lock because ancestor locked by someone else.
+                // to be sure, unlock 'lockedNode'. If the ancestor is locked by current user, the ancestor
+                // will be published
+                lockHelper.unlock(lockedNode);
             }
         }
         return lockedNodeRoots;
     }
 
 
-    protected boolean containsAncestorLock(final Node lockedNode, final Node previewWorkspaceNode) throws RepositoryException {
+    protected boolean containsAncestorLock(final Node lockedNode, final Node previewConfigurationNode) throws RepositoryException {
         Node ancestor = lockedNode.getParent();
-        while (!ancestor.isSame(previewWorkspaceNode)) {
+        while (!ancestor.isSame(previewConfigurationNode)) {
             if (ancestor.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
                 log.info("Ancestor '{}' already contains a lock.", ancestor.getPath());
                 return true;
@@ -259,13 +240,13 @@ public abstract class AbstractHelper {
         return session.nodeExists(liveLocation);
     }
 
-    protected List<Node> findChangedWorkspaceNodesForUsers(final String previewWorkspacePath, final List<String> userIds)
+    protected List<Node> findLockedNodesForUsers(final String previewConfigurationPath, final List<String> userIds)
             throws RepositoryException {
         if (userIds.isEmpty()) {
             return Collections.emptyList();
         }
         final Session session = pageComposerContextService.getRequestContext().getSession();
-        final String xpath = buildXPathQueryLockedWorkspaceNodesForUsers(previewWorkspacePath, userIds);
+        final String xpath = buildXPathQueryLockedNodesForUsers(previewConfigurationPath, userIds);
         final QueryResult result = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH).execute();
 
         List<Node> lockedNodesForUsers = new ArrayList<>();
@@ -276,9 +257,9 @@ public abstract class AbstractHelper {
     }
 
     // to override for helpers that need to be able to publish/discard
-    protected String buildXPathQueryLockedWorkspaceNodesForUsers(final String previewWorkspacePath,
-                                                                 final List<String> userIds) {
-        throw new UnsupportedOperationException("buildXPathQueryLockedWorkspaceNodesForUsers not supported for: " +
+    protected String buildXPathQueryLockedNodesForUsers(final String previewConfigurationPath,
+                                                        final List<String> userIds) {
+        throw new UnsupportedOperationException("buildXPathQueryLockedNodesForUsers not supported for: " +
                 this.getClass().getName());
     }
 

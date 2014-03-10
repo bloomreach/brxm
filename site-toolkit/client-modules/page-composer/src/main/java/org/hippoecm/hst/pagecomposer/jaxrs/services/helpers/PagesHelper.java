@@ -166,17 +166,16 @@ public class PagesHelper extends AbstractHelper {
 
 
     @Override
-    protected String buildXPathQueryLockedWorkspaceNodesForUsers(final String previewWorkspacePath,
-                                                                 final List<String> userIds) {
+    protected String buildXPathQueryLockedNodesForUsers(final String previewConfigurationPath,
+                                                        final List<String> userIds) {
         if (userIds.isEmpty()) {
             throw new IllegalArgumentException("List of user IDs cannot be empty");
         }
 
         StringBuilder xpath = new StringBuilder("/jcr:root");
-        xpath.append(ISO9075.encodePath(previewWorkspacePath + "/" + HstNodeTypes.NODENAME_HST_PAGES));
-        // /element to get direct children below pages and *not* //element
-        xpath.append("/element(*,");
-        xpath.append(HstNodeTypes.NODETYPE_HST_COMPONENT);
+        xpath.append(ISO9075.encodePath(previewConfigurationPath));
+        xpath.append("//element(*,");
+        xpath.append("hst:abstractcomponent");
         xpath.append(")[");
 
         String concat = "";

@@ -16,11 +16,8 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -39,19 +36,19 @@ public class LockHelper {
     private static final Logger log = LoggerFactory.getLogger(LockHelper.class);
 
     /**
-     * recursively unlocks <code>workspaceNode</code> and/or any descendant
+     * recursively unlocks <code>configNode</code> and/or any descendant
      */
-    void unlock(final Node workspaceNode) throws RepositoryException {
-        if (workspaceNode.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)) {
-            log.warn("Removing lock for '{}' since ancestor gets published", workspaceNode.getPath());
-            workspaceNode.removeMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
-        } else if(workspaceNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)){
-            workspaceNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).remove();
-            if(workspaceNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)){
-                workspaceNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON).remove();
+    public void unlock(final Node configNode) throws RepositoryException {
+        if (configNode.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)) {
+            log.warn("Removing lock for '{}' since ancestor gets published", configNode.getPath());
+            configNode.removeMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
+        } else if(configNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)){
+            configNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).remove();
+            if(configNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)){
+                configNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON).remove();
             }
         }
-        for (Node child : new NodeIterable(workspaceNode.getNodes())) {
+        for (Node child : new NodeIterable(configNode.getNodes())) {
             unlock(child);
         }
     }
@@ -113,7 +110,7 @@ public class LockHelper {
                 String msg = String.format("Node '%s' has been modified wrt versionStamp. Cannot acquire lock now for user '%s'.",
                         node.getPath() , session.getUserID());
                 log.info(msg);
-                throw new ClientException(msg, ClientError.ITEM_NOT_IN_PREVIEW);
+                throw new ClientException(msg, ClientError.ITEM_CHANGED);
             }
         }
         log.info("Node '{}' gets a lock for user '{}'.", node.getPath(), session.getUserID());
@@ -121,7 +118,6 @@ public class LockHelper {
         if (!node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
             node.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON, Calendar.getInstance());
         }
-        node.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
     }
 
     private Map<?, ?> getParameterMap(final Node node) throws RepositoryException {
