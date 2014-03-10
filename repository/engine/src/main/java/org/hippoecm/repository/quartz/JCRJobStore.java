@@ -201,22 +201,20 @@ public class JCRJobStore implements JobStore {
 
     @Override
     public void storeJob(final JobDetail newJob, final boolean replaceExisting) throws ObjectAlreadyExistsException, JobPersistenceException {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
     public void storeJobsAndTriggers(final Map<JobDetail, Set<? extends Trigger>> triggersAndJobs, final boolean replace) throws ObjectAlreadyExistsException, JobPersistenceException {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
     public boolean removeJob(final JobKey jobKey) throws JobPersistenceException {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return false;
     }
 
     @Override
     public boolean removeJobs(final List<JobKey> jobKeys) throws JobPersistenceException {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return false;
     }
 
     @Override
@@ -240,97 +238,94 @@ public class JCRJobStore implements JobStore {
 
     @Override
     public void storeTrigger(final OperableTrigger newTrigger, final boolean replaceExisting) throws ObjectAlreadyExistsException, JobPersistenceException {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
     public boolean removeTrigger(final TriggerKey triggerKey) throws JobPersistenceException {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return false;
     }
 
     @Override
     public boolean removeTriggers(final List<TriggerKey> triggerKeys) throws JobPersistenceException {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return false;
     }
 
     @Override
     public boolean replaceTrigger(final TriggerKey triggerKey, final OperableTrigger newTrigger) throws JobPersistenceException {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return false;
     }
 
     @Override
     public OperableTrigger retrieveTrigger(final TriggerKey triggerKey) throws JobPersistenceException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     @Override
     public boolean checkExists(final JobKey jobKey) throws JobPersistenceException {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return false;
     }
 
     @Override
     public boolean checkExists(final TriggerKey triggerKey) throws JobPersistenceException {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return false;
     }
 
     @Override
     public void clearAllSchedulingData() throws JobPersistenceException {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
     public void storeCalendar(final String name, final Calendar calendar, final boolean replaceExisting, final boolean updateTriggers) throws ObjectAlreadyExistsException, JobPersistenceException {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
     public boolean removeCalendar(final String calName) throws JobPersistenceException {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return false;
     }
 
     @Override
     public Calendar retrieveCalendar(final String calName) throws JobPersistenceException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     @Override
     public int getNumberOfJobs() throws JobPersistenceException {
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+        return 0;
     }
 
     @Override
     public int getNumberOfTriggers() throws JobPersistenceException {
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+        return 0;
     }
 
     @Override
     public int getNumberOfCalendars() throws JobPersistenceException {
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+        return 0;
     }
 
     @Override
     public Set<JobKey> getJobKeys(final GroupMatcher<JobKey> matcher) throws JobPersistenceException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     @Override
     public Set<TriggerKey> getTriggerKeys(final GroupMatcher<TriggerKey> matcher) throws JobPersistenceException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     @Override
     public List<String> getJobGroupNames() throws JobPersistenceException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     @Override
     public List<String> getTriggerGroupNames() throws JobPersistenceException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     @Override
     public List<String> getCalendarNames() throws JobPersistenceException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     @Override
@@ -369,62 +364,56 @@ public class JCRJobStore implements JobStore {
 
     @Override
     public Trigger.TriggerState getTriggerState(final TriggerKey triggerKey) throws JobPersistenceException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     @Override
     public void pauseTrigger(final TriggerKey triggerKey) throws JobPersistenceException {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
     public Collection<String> pauseTriggers(final GroupMatcher<TriggerKey> matcher) throws JobPersistenceException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     @Override
     public void pauseJob(final JobKey jobKey) throws JobPersistenceException {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
     public Collection<String> pauseJobs(final GroupMatcher<JobKey> groupMatcher) throws JobPersistenceException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     @Override
     public void resumeTrigger(final TriggerKey triggerKey) throws JobPersistenceException {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
     public Collection<String> resumeTriggers(final GroupMatcher<TriggerKey> matcher) throws JobPersistenceException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     @Override
     public Set<String> getPausedTriggerGroups() throws JobPersistenceException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     @Override
     public void resumeJob(final JobKey jobKey) throws JobPersistenceException {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
     public Collection<String> resumeJobs(final GroupMatcher<JobKey> matcher) throws JobPersistenceException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     @Override
     public void pauseAll() throws JobPersistenceException {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
     public void resumeAll() throws JobPersistenceException {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
@@ -533,17 +522,14 @@ public class JCRJobStore implements JobStore {
 
     @Override
     public void setInstanceId(final String schedInstId) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
     public void setInstanceName(final String schedName) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
     public void setThreadPoolSize(final int poolSize) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     private OperableTrigger createTriggerFromNode(final Node triggerNode) throws RepositoryException {
