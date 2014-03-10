@@ -182,10 +182,34 @@ public class CRUDPageAndModifyContainerTest extends AbstractSiteMapResourceTest 
     }
 
     @Test
-    public void test_create_page_and_modify_container_multiple_users() throws Exception {
+    public void test_after_create_page_other_users_cannot_modify_container() throws Exception {
+        // add catalog item first
+        Node catalogItem = addDefaultCatalogItem();
+        initContext();
+        final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getPrototypePageUUID());
+        final SiteMapResource siteMapResource = createResource();
+        siteMapResource.create(newFoo);
+
+        String newPageNodeName = "foo-" + session.getNodeByIdentifier(getPrototypePageUUID()).getName();
+        final Node newPage = session.getNode(getPreviewConfigurationWorkspacePagesPath() + "/" + newPageNodeName);
+        String newPageID = newPage.getIdentifier();
 
         // ASSERT NEW PAGE LOCKED FOR BOB
         final Session bob = createSession("bob", "bob");
+        // set context on bob's session
+        getSiteMapItemRepresentation(bob, "foo");
+        final Node newPageByBob = bob.getNodeByIdentifier(newPageID);
+        final Node containerByBob = newPageByBob.getNode("main/container1");
+        // override the config identifier to now set the container from the prototype as REQUEST_CONFIG_NODE_IDENTIFIER
+        final HstRequestContext ctx = mountResource.getPageComposerContextService().getRequestContext();
+        ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, containerByBob.getIdentifier());
+
+        // add a container item
+        final ContainerComponentResource containerResource = createContainerResource();
+        final Response response = containerResource.createContainerItem(catalogItem.getIdentifier(), 0);
+        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+                Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+        assertTrue(((ExtResponseRepresentation) response.getEntity()).getMessage().contains("cannot be locked"));
 
         bob.logout();
     }
