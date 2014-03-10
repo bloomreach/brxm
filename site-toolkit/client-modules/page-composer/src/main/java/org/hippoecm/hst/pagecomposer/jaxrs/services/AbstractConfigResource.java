@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.Callable;
 
 import javax.jcr.Node;
@@ -42,6 +40,13 @@ import org.slf4j.LoggerFactory;
 public class AbstractConfigResource {
 
     private static Logger log = LoggerFactory.getLogger(AbstractConfigResource.class);
+
+    private static final Validator VOID_VALIDATOR = new Validator() {
+        @Override
+        public void validate(HstRequestContext requestContext) throws RuntimeException {
+            // intentionally left blank
+        }
+    };
 
     private PageComposerContextService pageComposerContextService;
 
@@ -94,18 +99,18 @@ public class AbstractConfigResource {
     }
 
     protected Response tryExecute(final Callable<Response> callable) {
-        return tryExecute(callable, Collections.<Validator>emptyList());
+        return tryExecute(callable, VOID_VALIDATOR);
     }
 
     protected Response tryExecute(final Callable<Response> callable,
-                                  final List<Validator> preValidators) {
-        return tryExecute(callable, preValidators, Collections.<Validator>emptyList());
+                                  final Validator preValidator) {
+        return tryExecute(callable, preValidator, VOID_VALIDATOR);
     }
 
 
     protected Response tryExecute(final Callable<Response> callable,
-                                  final List<Validator> preValidators,
-                                  final List<Validator> postValidators) {
+                                  final Validator preValidator,
+                                  final Validator postValidator) {
         try {
             if (RequestContextProvider.get() == null) {
                 // unit test use case. Skip all the jcr based validators and persisting of changes
@@ -116,15 +121,11 @@ public class AbstractConfigResource {
             createMandatoryWorkspaceNodesIfMissing();
 
             final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
-            for (Validator validator : preValidators) {
-                validator.validate(requestContext);
-            }
+            preValidator.validate(requestContext);
 
             final Response response = callable.call();
 
-            for (Validator validator : postValidators) {
-                validator.validate(requestContext);
-            }
+            postValidator.validate(requestContext);
             final Session session = requestContext.getSession();
             if (session.hasPendingChanges()) {
                 HstConfigurationUtils.persistChanges(session);
