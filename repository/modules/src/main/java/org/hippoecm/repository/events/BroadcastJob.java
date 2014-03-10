@@ -15,9 +15,11 @@
  */
 package org.hippoecm.repository.events;
 
-import org.onehippo.repository.events.HippoWorkflowEvent;
+import org.onehippo.cms7.event.HippoEvent;
 
 public interface BroadcastJob {
+
+    String getEventCategory();
 
     String getChannelName();
 
@@ -25,5 +27,5 @@ public interface BroadcastJob {
 
     void setLastProcessed(long time);
 
-    void publish(HippoWorkflowEvent event);
+    void publish(HippoEvent event);
 }

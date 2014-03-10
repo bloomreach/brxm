@@ -21,10 +21,10 @@ import org.onehippo.cms7.services.WhiteboardService;
 
 /**
  * Marker interface for the {@link SingletonService singleton} {@link WhiteboardService} service to which
- * {@link PersistedWorkflowEventListener PersistedWorkflowEventListeners}
+ * {@link PersistedHippoEventListener PersistedWorkflowEventListeners}
  * can register themselves through the {@link org.onehippo.cms7.services.HippoServiceRegistry}.
  */
 @SingletonService
 @WhiteboardService
-public interface PersistedWorkflowEventsService {
+public interface PersistedHippoEventsService {
 }

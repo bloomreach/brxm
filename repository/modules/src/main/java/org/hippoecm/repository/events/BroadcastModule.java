@@ -25,33 +25,37 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.services.HippoServiceRegistration;
 import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.repository.events.HippoWorkflowEvent;
-import org.onehippo.repository.events.PersistedWorkflowEventListener;
-import org.onehippo.repository.events.PersistedWorkflowEventsService;
+import org.onehippo.repository.events.PersistedHippoEventListener;
+import org.onehippo.repository.events.PersistedHippoEventsService;
 import org.onehippo.repository.modules.ConfigurableDaemonModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BroadcastModule implements ConfigurableDaemonModule, BroadcastService, PersistedWorkflowEventsService {
+public class BroadcastModule implements ConfigurableDaemonModule, BroadcastService, PersistedHippoEventsService {
 
     private static final Logger log = LoggerFactory.getLogger(BroadcastModule.class);
 
     private static final String JACKRABBIT_CLUSTER_ID_SYSTEM_PROPERTY = "org.apache.jackrabbit.core.cluster.node_id";
     private static final String JACKRABBIT_CLUSTER_ID_DESCRIPTOR_KEY = "jackrabbit.cluster.id";
 
+    public static final String QUERY_LIMIT = "queryLimit";
+    public static final String POLLING_TIME = "pollingTime";
+    public static final String MAX_EVENT_AGE = "maxEventAge";
+
     private Session session;
     private String clusterId;
     private BroadcastThread broadcastThread;
-    private String moduleConfigPath;
+    private String moduleConfigIdentifier;
 
     public BroadcastModule() {
     }
 
     @Override
     public void configure(final Node moduleConfig) throws RepositoryException {
-        this.moduleConfigPath = moduleConfig.getPath();
+        this.moduleConfigIdentifier = moduleConfig.getIdentifier();
     }
 
     public void initialize(Session session) throws RepositoryException {
@@ -80,21 +84,17 @@ public class BroadcastModule implements ConfigurableDaemonModule, BroadcastServi
 
     protected void configure(final BroadcastThread broadcastThread) throws RepositoryException {
         try {
-            if (session.nodeExists(moduleConfigPath)) {
-                final Node moduleConfigNode = session.getNode(moduleConfigPath);
-                if (moduleConfigNode != null) {
-                    if (moduleConfigNode.hasProperty("queryLimit")) {
-                        broadcastThread.setQueryLimit(moduleConfigNode.getProperty("queryLimit").getLong());
-                    }
-                    if (moduleConfigNode.hasProperty("pollingTime")) {
-                        broadcastThread.setPollingTime(moduleConfigNode.getProperty("pollingTime").getLong());
-                    }
-                    if (moduleConfigNode.hasProperty("maxEventAge")) {
-                        broadcastThread.setMaxEventAge(moduleConfigNode.getProperty("maxEventAge").getLong());
-                    }
-                }
+            final Node moduleConfigNode = session.getNodeByIdentifier(moduleConfigIdentifier);
+            if (moduleConfigNode.hasProperty(QUERY_LIMIT)) {
+                broadcastThread.setQueryLimit(moduleConfigNode.getProperty(QUERY_LIMIT).getLong());
             }
-        } catch (PathNotFoundException e) {
+            if (moduleConfigNode.hasProperty(POLLING_TIME)) {
+                broadcastThread.setPollingTime(moduleConfigNode.getProperty(POLLING_TIME).getLong());
+            }
+            if (moduleConfigNode.hasProperty(MAX_EVENT_AGE)) {
+                broadcastThread.setMaxEventAge(moduleConfigNode.getProperty(MAX_EVENT_AGE).getLong());
+            }
+        } catch (PathNotFoundException | ItemNotFoundException e) {
             session.refresh(false);
             log.warn("Exception while reading configuration", e);
         } catch (Exception e) {
@@ -103,23 +103,20 @@ public class BroadcastModule implements ConfigurableDaemonModule, BroadcastServi
         }
     }
 
-    public synchronized long getLastProcessed(String channelName, boolean onlyNewEvents) throws RepositoryException {
+    private synchronized long getLastProcessed(String channelName, boolean onlyNewEvents) throws RepositoryException {
         long lastItem = -1L;
 
         try {
-            if (session.nodeExists(moduleConfigPath)) {
-                Node moduleConfigNode = session.getNode(moduleConfigPath);
-
-                if (moduleConfigNode.hasNode(clusterId)) {
-                    Node clusterNode = moduleConfigNode.getNode(clusterId);
-                    if (clusterNode.hasNode(channelName)) {
-                        Node channelNode = clusterNode.getNode(channelName);
-                        lastItem = channelNode.getProperty(BroadcastConstants.LAST_PROCESSED).getLong();
-                    }
-                    else if (onlyNewEvents) {
-                        lastItem = System.currentTimeMillis();
-                        writeLastProcessed(channelName, lastItem);
-                    }
+            final Node moduleConfigNode = session.getNodeByIdentifier(moduleConfigIdentifier);
+            if (moduleConfigNode.hasNode(clusterId)) {
+                Node clusterNode = moduleConfigNode.getNode(clusterId);
+                if (clusterNode.hasNode(channelName)) {
+                    Node channelNode = clusterNode.getNode(channelName);
+                    lastItem = channelNode.getProperty(BroadcastConstants.LAST_PROCESSED).getLong();
+                }
+                else if (onlyNewEvents) {
+                    lastItem = System.currentTimeMillis();
+                    writeLastProcessed(channelName, lastItem);
                 }
             }
         } catch (ItemNotFoundException infExp) {
@@ -132,37 +129,34 @@ public class BroadcastModule implements ConfigurableDaemonModule, BroadcastServi
         return lastItem;
     }
 
-    public synchronized void writeLastProcessed(String channelName, final long timeStamp)
-            throws RepositoryException {
+    public synchronized void writeLastProcessed(String channelName, final long timeStamp) throws RepositoryException {
         log.debug("processed item: {}", timeStamp);
 
         try {
 
-            if (session.nodeExists(moduleConfigPath)) {
-                Node moduleConfigNode = session.getNode(moduleConfigPath);
+            Node moduleConfigNode = session.getNodeByIdentifier(moduleConfigIdentifier);
 
-                Node clusterNode;
-                if (moduleConfigNode.hasNode(clusterId)) {
-                    clusterNode = moduleConfigNode.getNode(clusterId);
-                } else {
-                    clusterNode = moduleConfigNode.addNode(clusterId, BroadcastConstants.NT_CLUSTERNODE);
-                }
-                if (!clusterNode.isNodeType(HippoNodeType.NT_SKIPINDEX)) {
-                    // make sure the frequently updated clusterNode is not indexed as we do not need to search
-                    // for it but it would otherwise pollute the search index
-                    clusterNode.addMixin(HippoNodeType.NT_SKIPINDEX);
-                }
-
-                Node channelNode;
-                if (!clusterNode.hasNode(channelName)) {
-                    channelNode = clusterNode.addNode(channelName, BroadcastConstants.NT_SUBSCRIBER);
-                } else {
-                    channelNode = clusterNode.getNode(channelName);
-                }
-
-                channelNode.setProperty(BroadcastConstants.LAST_PROCESSED, timeStamp);
-                session.save();
+            Node clusterNode;
+            if (moduleConfigNode.hasNode(clusterId)) {
+                clusterNode = moduleConfigNode.getNode(clusterId);
+            } else {
+                clusterNode = moduleConfigNode.addNode(clusterId, BroadcastConstants.NT_CLUSTERNODE);
             }
+            if (!clusterNode.isNodeType(HippoNodeType.NT_SKIPINDEX)) {
+                // make sure the frequently updated clusterNode is not indexed as we do not need to search
+                // for it but it would otherwise pollute the search index
+                clusterNode.addMixin(HippoNodeType.NT_SKIPINDEX);
+            }
+
+            Node channelNode;
+            if (!clusterNode.hasNode(channelName)) {
+                channelNode = clusterNode.addNode(channelName, BroadcastConstants.NT_SUBSCRIBER);
+            } else {
+                channelNode = clusterNode.getNode(channelName);
+            }
+
+            channelNode.setProperty(BroadcastConstants.LAST_PROCESSED, timeStamp);
+            session.save();
         } catch (ItemNotFoundException infExp) {
             log.error("Error in saving last node value ", infExp);
         } catch (Exception e) {
@@ -174,9 +168,9 @@ public class BroadcastModule implements ConfigurableDaemonModule, BroadcastServi
     @Override
     public BroadcastJob getNextJob() {
         Map<String, HippoServiceRegistration> registrationMap = new HashMap<>();
-        for (HippoServiceRegistration registration : HippoServiceRegistry.getRegistrations(PersistedWorkflowEventsService.class)) {
-            if (registration.getService() instanceof PersistedWorkflowEventListener) {
-                PersistedWorkflowEventListener listener = (PersistedWorkflowEventListener)registration.getService();
+        for (HippoServiceRegistration registration : HippoServiceRegistry.getRegistrations(PersistedHippoEventsService.class)) {
+            if (registration.getService() instanceof PersistedHippoEventListener) {
+                PersistedHippoEventListener listener = (PersistedHippoEventListener)registration.getService();
                 HippoServiceRegistration earlierRegistration = registrationMap.get(listener.getChannelName());
                 if (earlierRegistration != null) {
                     log.error("Invalid PersistedWorkflowEventsService registration: listener "+
@@ -194,12 +188,12 @@ public class BroadcastModule implements ConfigurableDaemonModule, BroadcastServi
                         " does not implement the PersistedWorkflowEventListener interface");
             }
         }
-        PersistedWorkflowEventListener listener = null;
+        PersistedHippoEventListener listener = null;
         ClassLoader listenerClassLoader = null;
         long oldestProcessingStamp = -1;
         for (HippoServiceRegistration registration : registrationMap.values()) {
             try {
-                PersistedWorkflowEventListener aListener = (PersistedWorkflowEventListener)registration.getService();
+                PersistedHippoEventListener aListener = (PersistedHippoEventListener)registration.getService();
                 long lastProcessed = getLastProcessed(aListener.getChannelName(), aListener.onlyNewEvents());
                 if (listener == null || lastProcessed <= oldestProcessingStamp) {
                     listener = aListener;
@@ -220,13 +214,18 @@ public class BroadcastModule implements ConfigurableDaemonModule, BroadcastServi
     private class BroadcastJobImpl implements BroadcastJob {
 
         private final long lastProcessed;
-        private final PersistedWorkflowEventListener listener;
+        private final PersistedHippoEventListener listener;
         private final ClassLoader listenerClassLoader;
 
-        BroadcastJobImpl(PersistedWorkflowEventListener listener, ClassLoader listenerClassLoader, final long lastProcessed) {
+        BroadcastJobImpl(PersistedHippoEventListener listener, ClassLoader listenerClassLoader, final long lastProcessed) {
             this.lastProcessed = lastProcessed;
             this.listener = listener;
             this.listenerClassLoader = listenerClassLoader;
+        }
+
+        @Override
+        public String getEventCategory() {
+            return listener.getEventCategory();
         }
 
         @Override
@@ -249,11 +248,11 @@ public class BroadcastModule implements ConfigurableDaemonModule, BroadcastServi
         }
 
         @Override
-        public void publish(final HippoWorkflowEvent event) {
+        public void publish(final HippoEvent event) {
             ClassLoader ccl = Thread.currentThread().getContextClassLoader();
             try {
                 Thread.currentThread().setContextClassLoader(listenerClassLoader);
-                listener.onWorkflowEvent(event);
+                listener.onHippoEvent(event);
             }
             catch (Exception e) {
                 log.error("Failed to dispatch workflow event", e);

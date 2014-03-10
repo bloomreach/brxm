@@ -19,24 +19,24 @@ package org.onehippo.repository.events;
 import org.onehippo.cms7.event.HippoEvent;
 
 /**
- * Developers can implement this PersistedWorkflowEventListener interface to asynchronously receive
- * {@link HippoWorkflowEvent HippoWorkflowEvents} after they occurred in the repository, across a repository cluster.
+ * Developers can implement this interface to asynchronously receive
+ * {@link HippoEvent HippoEvents} after they occurred in the repository, across a repository cluster.
  * <p>
- *   Such a listener must be registered as listener on the {@link PersistedWorkflowEventsService} through the
+ *   Such a listener must be registered as listener on the {@link PersistedHippoEventsService} through the
  *   {@link }HippoServicesRegistry}, like for example:
  *   <pre>
  *   <code>
- *       HippoServicesRegistry.registerService(myPersistedWorkflowEventListener, PersistedWorkflowEventsService.class);
+ *       HippoServicesRegistry.registerService(myPersistedHippoEventListener, PersistedWorkflowEventsService.class);
  *   </code>
  *   </pre>
  * </p>
  * <p>
- *   A PersistedWorkflowEventListener must provide a (cluster node instance unique) channel name which will be used to
+ *   A PersistedHippoEventListener must provide a (cluster node instance unique) channel name which will be used to
  *   track which persisted events already have been delivered to the listener.
  * </p>
  * <p>
  *   A listener will get a consistent and ordered delivery of all workflow events through that channel, but such events
- *   will only be delivered <em>once</em> (within one cluster) through that channel.<br/>
+ *   will only be delivered <em>once</em> (within one cluster node) through that channel.<br/>
  *   <em>Therefore there should only be one listener (registered) per channel per cluster node.</em><br/>
  *   If more than one listener is registered on one channel, only one will get the events delivered!
  * </p>
@@ -46,7 +46,12 @@ import org.onehippo.cms7.event.HippoEvent;
  *   depending on the service configuration), or only events after the first time channel registration will be delivered.
  * </p>
  */
-public interface PersistedWorkflowEventListener {
+public interface PersistedHippoEventListener {
+
+    /**
+     * @return which category of events this listener is interested in, or <code>null</code> to indicate all events.
+     */
+    String getEventCategory();
 
     /**
      * @return The cluster node unique channel name to listen on for events. Note: must conform to JCR node name restrictions.
@@ -60,8 +65,8 @@ public interface PersistedWorkflowEventListener {
     boolean onlyNewEvents();
 
     /**
-     * Persisted HippoWorkflowEvents will be delivered through this method.
+     * Persisted HippoEvents will be delivered through this method.
      * @param event the event
      */
-    void onWorkflowEvent(HippoWorkflowEvent event);
+    void onHippoEvent(HippoEvent event);
 }
