@@ -26,6 +26,7 @@
     "TECHNICAL_ERROR": "Er is een technische fout opgetreden",
 
     "INVALID_CHARACTERS": "De volgende karakters zijn niet toegestaan in het label: {{ invalidCharacters }}",
+    "INVALID_URL": "Ongeldige url",
 
     "UNTITLED": "Naamloos",
     "MENU_ITEM": "menu-item"

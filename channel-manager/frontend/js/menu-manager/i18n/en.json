@@ -26,6 +26,7 @@
     "TECHNICAL_ERROR": "A technical error has occurred",
 
     "INVALID_CHARACTERS": "The following characters are not allowed in the label: {{ invalidCharacters }}",
+    "INVALID_URL": "Not a valid url",
 
     "UNTITLED": "Untitled",
     "MENU_ITEM": "menu item"

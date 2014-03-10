@@ -103,7 +103,7 @@
             'has-error': form.url.$dirty && form.url.$invalid
          }">
             <label for="hippo.channelManager.menuManager.menuItem.add.url">{{ 'EXTERNAL_LINK' | translate }}</label>
-            <input type="url" name="url" class="form-control" id="hippo.channelManager.menuManager.menuItem.add.url"
+            <input type="text" name="url" class="form-control" id="hippo.channelManager.menuManager.menuItem.add.url"
                    placeholder="{{ 'EXAMPLE_DOMAIN' | translate }}"
                    data-ng-model="selectedMenuItem.link"
                    data-ng-required="true">
