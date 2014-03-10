@@ -1,44 +1,28 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.hippoecm.repository.quartz;
 
-import javax.jcr.Session;
-
 import org.quartz.Scheduler;
-import org.quartz.SchedulerContext;
-import org.quartz.SchedulerException;
 import org.quartz.core.QuartzScheduler;
 import org.quartz.impl.StdScheduler;
 
 public class JCRScheduler extends StdScheduler implements Scheduler {
 
-    private QuartzScheduler qs;
-    private JCRSchedulingContext ctx;
-
-    public JCRScheduler(QuartzScheduler qs, JCRSchedulingContext schedCtxt) {
-        super(qs, schedCtxt);
-        this.qs = qs;
-        this.ctx = schedCtxt;
+    public JCRScheduler(QuartzScheduler qs) {
+        super(qs);
     }
 
-    public JCRScheduler(JCRScheduler sched, Session session) {
-        this(sched.qs, new JCRSchedulingContext(sched.ctx, session));
-    }
-
-    public JCRSchedulingContext getJCRSchedulingContext() {
-        return ctx;
-    }
 }

@@ -18,18 +18,17 @@ package org.hippoecm.repository.quartz;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.quartz.JobDetail;
+import org.quartz.Job;
+import org.quartz.impl.JobDetailImpl;
 
-public class JCRJobDetail extends JobDetail {
+public class JCRJobDetail extends JobDetailImpl {
 
-    protected JCRJobDetail(Node jobNode, Class jobClass) throws RepositoryException {
+    protected JCRJobDetail(Node jobNode, Class<? extends Job> jobClass) throws RepositoryException {
         super(jobNode.getIdentifier(), jobClass);
     }
 
     public String getIdentifier() {
         return getName();
     }
-
-    public void persist(Node node) throws RepositoryException {}
 
 }

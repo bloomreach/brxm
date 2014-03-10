@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,15 +15,15 @@
  */
 package org.hippoecm.repository.quartz;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
@@ -44,16 +44,26 @@ import org.apache.jackrabbit.util.ISO8601;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.repository.util.JcrConstants;
+import org.quartz.Calendar;
 import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.quartz.JobPersistenceException;
+import org.quartz.ObjectAlreadyExistsException;
 import org.quartz.SchedulerConfigException;
+import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
-import org.quartz.core.SchedulingContext;
+import org.quartz.TriggerKey;
+import org.quartz.impl.matchers.GroupMatcher;
+import org.quartz.impl.triggers.CronTriggerImpl;
+import org.quartz.impl.triggers.SimpleTriggerImpl;
 import org.quartz.spi.ClassLoadHelper;
+import org.quartz.spi.JobStore;
+import org.quartz.spi.OperableTrigger;
 import org.quartz.spi.SchedulerSignaler;
 import org.quartz.spi.TriggerFiredBundle;
+import org.quartz.spi.TriggerFiredResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,28 +78,61 @@ import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_S
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_STARTTIME;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_TRIGGERS;
 
-public class JCRJobStore extends AbstractJobStore {
 
-    private static final Logger log = LoggerFactory.getLogger(SchedulerModule.class);
+public class JCRJobStore implements JobStore {
 
+    private static final Logger log = LoggerFactory.getLogger(JCRJobStore.class);
     private static final long TWO_MINUTES = 60 * 2;
 
     private final long lockTimeout;
+    private final Session session;
 
     private ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
     private Map<String, Future<?>> keepAlives = Collections.synchronizedMap(new HashMap<String, Future<?>>());
 
     public JCRJobStore() {
-        this(TWO_MINUTES);
+        this(TWO_MINUTES, null);
     }
 
-    JCRJobStore(long lockTimeout) {
+    JCRJobStore(final Session session) {
+        this(TWO_MINUTES, session);
+    }
+
+    JCRJobStore(final long lockTimeout, final Session session) {
         this.lockTimeout = lockTimeout;
+        this.session = session;
     }
 
     @Override
-    public void initialize(ClassLoadHelper loadHelper, SchedulerSignaler signaler) throws SchedulerConfigException {
+    public void initialize(final ClassLoadHelper loadHelper, final SchedulerSignaler signaler)
+            throws SchedulerConfigException {
         signaler.signalSchedulingChange(1000);
+    }
+
+    @Override
+    public void schedulerStarted() throws SchedulerException {
+    }
+
+    @Override
+    public void schedulerPaused() {
+    }
+
+    @Override
+    public void schedulerResumed() {
+    }
+
+    @Override
+    public void shutdown() {
+    }
+
+    @Override
+    public boolean supportsPersistence() {
+        return true;
+    }
+
+    @Override
+    public long getEstimatedTimeToReleaseAndAcquireTrigger() {
+        return 0;
     }
 
     @Override
@@ -98,7 +141,8 @@ public class JCRJobStore extends AbstractJobStore {
     }
 
     @Override
-    public void storeJobAndTrigger(SchedulingContext ctxt, JobDetail newJob, Trigger newTrigger) throws JobPersistenceException {
+    public void storeJobAndTrigger(final JobDetail newJob, final OperableTrigger newTrigger)
+            throws ObjectAlreadyExistsException, JobPersistenceException {
         if (!(newJob instanceof JCRJobDetail)) {
             throw new JobPersistenceException("JobDetail must be of type JCRJobDetail");
         }
@@ -106,11 +150,10 @@ public class JCRJobStore extends AbstractJobStore {
             throw new JobPersistenceException("Cannot store trigger of type " + newTrigger.getClass().getName());
         }
         final JCRJobDetail jobDetail = (JCRJobDetail) newJob;
-        final Session session = getSession(ctxt);
+        Session session = getSession();
         synchronized(session) {
             try {
                 final Node jobNode = session.getNodeByIdentifier(jobDetail.getIdentifier());
-                jobDetail.persist(jobNode);
 
                 final Node triggersNode;
                 if(jobNode.hasNode(HIPPOSCHED_TRIGGERS)) {
@@ -123,12 +166,12 @@ public class JCRJobStore extends AbstractJobStore {
 
                 if (newTrigger instanceof SimpleTrigger) {
                     final SimpleTrigger trigger = (SimpleTrigger) newTrigger;
-                    triggerNode = triggersNode.addNode(newTrigger.getName(), HIPPOSCHED_SIMPLE_TRIGGER);
-                    final Calendar startTime = Calendar.getInstance();
+                    triggerNode = triggersNode.addNode(newTrigger.getKey().getName(), HIPPOSCHED_SIMPLE_TRIGGER);
+                    final java.util.Calendar startTime = java.util.Calendar.getInstance();
                     startTime.setTime(trigger.getStartTime());
                     triggerNode.setProperty(HIPPOSCHED_STARTTIME, startTime);
                     if (trigger.getEndTime() != null) {
-                        final Calendar endTime = Calendar.getInstance();
+                        final java.util.Calendar endTime = java.util.Calendar.getInstance();
                         endTime.setTime(trigger.getEndTime());
                         triggerNode.setProperty(HIPPOSCHED_ENDTIME, endTime);
                     }
@@ -140,12 +183,12 @@ public class JCRJobStore extends AbstractJobStore {
                     }
                 } else {
                     final CronTrigger trigger = (CronTrigger) newTrigger;
-                    triggerNode = triggersNode.addNode(newTrigger.getName(), HIPPOSCHED_CRON_TRIGGER);
+                    triggerNode = triggersNode.addNode(newTrigger.getKey().getName(), HIPPOSCHED_CRON_TRIGGER);
                     triggerNode.setProperty(HIPPOSCHED_CRONEXPRESSION, trigger.getCronExpression());
                 }
 
                 triggerNode.addMixin(JcrConstants.MIX_LOCKABLE);
-                final Calendar fireTime = dateToCalendar(newTrigger.getNextFireTime());
+                final java.util.Calendar fireTime = dateToCalendar(newTrigger.getNextFireTime());
                 triggerNode.setProperty(HIPPOSCHED_NEXTFIRETIME, fireTime);
 
                 session.save();
@@ -157,49 +200,162 @@ public class JCRJobStore extends AbstractJobStore {
     }
 
     @Override
-    public JobDetail retrieveJob(SchedulingContext ctxt, String jobIdentifier, String groupName) throws JobPersistenceException {
-        final Session session = getSession(ctxt);
+    public void storeJob(final JobDetail newJob, final boolean replaceExisting) throws ObjectAlreadyExistsException, JobPersistenceException {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void storeJobsAndTriggers(final Map<JobDetail, Set<? extends Trigger>> triggersAndJobs, final boolean replace) throws ObjectAlreadyExistsException, JobPersistenceException {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public boolean removeJob(final JobKey jobKey) throws JobPersistenceException {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public boolean removeJobs(final List<JobKey> jobKeys) throws JobPersistenceException {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public JobDetail retrieveJob(final JobKey jobKey) throws JobPersistenceException {
+        final Session session = getSession();
         synchronized (session) {
             String jobPath = null;
             try {
-                final Node jobNode = session.getNodeByIdentifier(jobIdentifier);
+                final Node jobNode = session.getNodeByIdentifier(jobKey.getName());
                 jobPath = jobNode.getPath();
                 return new RepositoryJobDetail(jobNode);
             } catch (ItemNotFoundException e) {
-                throw new JobPersistenceException("No such job: " + jobIdentifier);
+                throw new JobPersistenceException("No such job: " + jobKey.getName());
             } catch (RepositoryException e) {
                 refreshSession(session);
                 throw new JobPersistenceException("Failed to retrieve job at " + jobPath, e);
             }
         }
+
     }
 
     @Override
-    public Trigger[] getTriggersForJob(final SchedulingContext ctxt, final String jobIdentifier, final String groupName) throws JobPersistenceException {
-        final Session session = getSession(ctxt);
+    public void storeTrigger(final OperableTrigger newTrigger, final boolean replaceExisting) throws ObjectAlreadyExistsException, JobPersistenceException {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public boolean removeTrigger(final TriggerKey triggerKey) throws JobPersistenceException {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public boolean removeTriggers(final List<TriggerKey> triggerKeys) throws JobPersistenceException {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public boolean replaceTrigger(final TriggerKey triggerKey, final OperableTrigger newTrigger) throws JobPersistenceException {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public OperableTrigger retrieveTrigger(final TriggerKey triggerKey) throws JobPersistenceException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public boolean checkExists(final JobKey jobKey) throws JobPersistenceException {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public boolean checkExists(final TriggerKey triggerKey) throws JobPersistenceException {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void clearAllSchedulingData() throws JobPersistenceException {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void storeCalendar(final String name, final Calendar calendar, final boolean replaceExisting, final boolean updateTriggers) throws ObjectAlreadyExistsException, JobPersistenceException {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public boolean removeCalendar(final String calName) throws JobPersistenceException {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public Calendar retrieveCalendar(final String calName) throws JobPersistenceException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public int getNumberOfJobs() throws JobPersistenceException {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public int getNumberOfTriggers() throws JobPersistenceException {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public int getNumberOfCalendars() throws JobPersistenceException {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public Set<JobKey> getJobKeys(final GroupMatcher<JobKey> matcher) throws JobPersistenceException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public Set<TriggerKey> getTriggerKeys(final GroupMatcher<TriggerKey> matcher) throws JobPersistenceException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public List<String> getJobGroupNames() throws JobPersistenceException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public List<String> getTriggerGroupNames() throws JobPersistenceException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public List<String> getCalendarNames() throws JobPersistenceException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public List<OperableTrigger> getTriggersForJob(final JobKey jobKey) throws JobPersistenceException {
+        final String jobIdentifier = jobKey.getName();
+        final Session session = getSession();
         synchronized (session) {
             try {
                 final Node jobNode = session.getNodeByIdentifier(jobIdentifier);
                 final Node triggersNode = JcrUtils.getNodeIfExists(jobNode, HIPPOSCHED_TRIGGERS);
                 if (triggersNode != null) {
-                    final List<Trigger> triggers = new ArrayList<Trigger>();
+                    final List<OperableTrigger> triggers = new ArrayList<>();
                     for (Node triggerNode : new NodeIterable(triggersNode.getNodes())) {
                         if (triggerNode != null) {
                             try {
-                                final Trigger trigger = createTriggerFromNode(triggerNode);
+                                final OperableTrigger trigger = createTriggerFromNode(triggerNode);
                                 if (trigger != null) {
                                     triggers.add(trigger);
                                 }
                             } catch (RepositoryException e) {
                                 throw new JobPersistenceException("Failed to create trigger", e);
-                            } catch (ClassNotFoundException e) {
-                                throw new JobPersistenceException("Failed to create trigger", e);
-                            } catch (IOException e) {
-                                throw new JobPersistenceException("Failed to create trigger", e);
                             }
                         }
                     }
-                    return triggers.toArray(new Trigger[triggers.size()]);
+                    return triggers;
                 }
             } catch (ItemNotFoundException e) {
                 throw new JobPersistenceException("No such job " + jobIdentifier);
@@ -207,30 +363,92 @@ public class JCRJobStore extends AbstractJobStore {
                 throw new JobPersistenceException("Failed to get triggers for job", e);
             }
         }
-        return new Trigger[0];
+        return Collections.emptyList();
+
     }
 
     @Override
-    public Trigger acquireNextTrigger(SchedulingContext ctxt, long noLaterThan) throws JobPersistenceException {
-        final Session session = getSession(ctxt);
+    public Trigger.TriggerState getTriggerState(final TriggerKey triggerKey) throws JobPersistenceException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void pauseTrigger(final TriggerKey triggerKey) throws JobPersistenceException {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public Collection<String> pauseTriggers(final GroupMatcher<TriggerKey> matcher) throws JobPersistenceException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void pauseJob(final JobKey jobKey) throws JobPersistenceException {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public Collection<String> pauseJobs(final GroupMatcher<JobKey> groupMatcher) throws JobPersistenceException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void resumeTrigger(final TriggerKey triggerKey) throws JobPersistenceException {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public Collection<String> resumeTriggers(final GroupMatcher<TriggerKey> matcher) throws JobPersistenceException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public Set<String> getPausedTriggerGroups() throws JobPersistenceException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void resumeJob(final JobKey jobKey) throws JobPersistenceException {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public Collection<String> resumeJobs(final GroupMatcher<JobKey> matcher) throws JobPersistenceException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void pauseAll() throws JobPersistenceException {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void resumeAll() throws JobPersistenceException {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public List<OperableTrigger> acquireNextTriggers(final long noLaterThan, int maxCount, final long timeWindow) throws JobPersistenceException {
+        final Session session = getSession();
+        List<OperableTrigger> triggers = null;
         synchronized (session) {
             try {
                 for (Node triggerNode : getPendingTriggers(session, noLaterThan)) {
-                    if(triggerNode != null) {
-                        final Node jobNode = triggerNode.getParent().getParent();
-                        if (lock(session, triggerNode.getPath())) {
-                            try {
-                                startLockKeepAlive(session, triggerNode.getIdentifier());
-                                return createTriggerFromNode(triggerNode);
-                            } catch (IOException e) {
-                                log.error("Failed to read trigger for job " + jobNode.getPath(), e);
-                                stopLockKeepAlive(triggerNode.getIdentifier());
-                                unlock(session, triggerNode.getPath());
-                            } catch (ClassNotFoundException e) {
-                                log.error("Failed to recreate trigger for job " + jobNode.getPath(), e);
-                                stopLockKeepAlive(triggerNode.getIdentifier());
-                                unlock(session, triggerNode.getPath());
+                    if (maxCount-- <= 0) {
+                        break;
+                    }
+                    final Node jobNode = triggerNode.getParent().getParent();
+                    if (lock(session, triggerNode.getPath())) {
+                        try {
+                            startLockKeepAlive(session, triggerNode.getIdentifier());
+                            if (triggers == null) {
+                                triggers = new ArrayList<>();
                             }
+                            triggers.add(createTriggerFromNode(triggerNode));
+                        } catch (RepositoryException e) {
+                            log.error("Failed to recreate trigger for job " + jobNode.getPath(), e);
+                            stopLockKeepAlive(triggerNode.getIdentifier());
+                            unlock(session, triggerNode.getPath());
                         }
                     }
                 }
@@ -239,112 +457,60 @@ public class JCRJobStore extends AbstractJobStore {
                 log.error("Failed to acquire next trigger", e);
             }
         }
-        return null;
-    }
+        return triggers == null ? Collections.<OperableTrigger>emptyList() : triggers;
 
-    private Trigger createTriggerFromNode(final Node triggerNode) throws RepositoryException, ClassNotFoundException, IOException {
-        Trigger trigger = null;
-        if (triggerNode.hasProperty(HIPPOSCHED_DATA)) {
-            log.warn("Cannot deserialize obsolete trigger definition at " + triggerNode.getPath());
-        } else {
-            final String triggerType = triggerNode.getPrimaryNodeType().getName();
-            final Calendar nextFireTime = JcrUtils.getDateProperty(triggerNode, HIPPOSCHED_NEXTFIRETIME, Calendar.getInstance());
-            if (HIPPOSCHED_SIMPLE_TRIGGER.equals(triggerType)) {
-                final Calendar startTime = JcrUtils.getDateProperty(triggerNode, HIPPOSCHED_STARTTIME, null);
-                final Calendar endTime = JcrUtils.getDateProperty(triggerNode, HIPPOSCHED_ENDTIME, null);
-                final long repeatCount = JcrUtils.getLongProperty(triggerNode, HIPPOSCHED_REPEATCOUNT, 0);
-                final long repeatInterval = JcrUtils.getLongProperty(triggerNode, HIPPOSCHED_REPEATINTERVAL, 0);
-                if (startTime == null) {
-                    log.warn("Cannot create simple trigger from node {}: mandatory property {} is missing",
-                            triggerNode.getPath(), HIPPOSCHED_STARTTIME);
-                } else {
-                    final SimpleTrigger simpleTrigger = new SimpleTrigger(triggerNode.getIdentifier(), startTime.getTime());
-                    if (endTime != null) {
-                        simpleTrigger.setEndTime(endTime.getTime());
-                    }
-                    if (repeatCount != 0) {
-                        simpleTrigger.setRepeatCount((int) repeatCount);
-                    }
-                    if (repeatInterval != 0) {
-                        simpleTrigger.setRepeatInterval(repeatInterval);
-                    }
-
-
-                    simpleTrigger.setNextFireTime(nextFireTime.getTime());
-                    trigger = simpleTrigger;
-                }
-            } else if (HIPPOSCHED_CRON_TRIGGER.equals(triggerType)) {
-                final String cronExpression = JcrUtils.getStringProperty(triggerNode, HIPPOSCHED_CRONEXPRESSION, null);
-                if (cronExpression == null) {
-                    log.warn("Cannot create cron trigger from node {}: mandatory property {} is missing",
-                            triggerNode.getPath(), HIPPOSCHED_CRONEXPRESSION);
-                } else {
-                    try {
-                        CronTrigger cronTrigger = new CronTrigger(triggerNode.getIdentifier(), null, cronExpression);
-                        cronTrigger.setNextFireTime(nextFireTime.getTime());
-                        trigger = cronTrigger;
-                    } catch (ParseException e) {
-                        log.warn("Failed to create cron trigger from node {}: invalid cron expression {}",
-                                triggerNode.getPath(), cronExpression);
-                    }
-                }
-            } else {
-                log.warn("Cannot create trigger of unknown type {}", triggerType);
-            }
-        }
-        if (trigger != null) {
-            trigger.setJobName(triggerNode.getParent().getParent().getIdentifier());
-        }
-        return trigger;
     }
 
     @Override
-    public void releaseAcquiredTrigger(SchedulingContext ctxt, Trigger trigger) throws JobPersistenceException {
-        final Session session = getSession(ctxt);
+    public void releaseAcquiredTrigger(final OperableTrigger trigger) {
+        final Session session = getSession();
         synchronized (session) {
             try {
-                final String triggerIdentifier = trigger.getName();
+                final String triggerIdentifier = trigger.getKey().getName();
                 stopLockKeepAlive(triggerIdentifier);
                 final Node triggerNode = session.getNodeByIdentifier(triggerIdentifier);
                 unlock(session, triggerNode.getPath());
             } catch (ItemNotFoundException e) {
-                log.info("Trigger no longer exists: " + trigger.getName());
+                log.info("Trigger no longer exists: " + trigger.getKey().getName());
             } catch (RepositoryException e) {
                 refreshSession(session);
-                final String message = "Failed to release acquired trigger";
-                log.error(message, e);
-                throw new JobPersistenceException(message, e);
+                log.error("Failed to release acquired trigger", e);
             }
         }
     }
 
     @Override
-    public TriggerFiredBundle triggerFired(SchedulingContext ctxt, Trigger trigger) {
-        try {
-            return new TriggerFiredBundle(retrieveJob(ctxt, trigger.getJobName(), trigger.getJobGroup()),
-                    trigger, null, false,
-                    trigger.getPreviousFireTime(), trigger.getPreviousFireTime(),
-                    trigger.getPreviousFireTime(), trigger.getNextFireTime());
-        } catch (JobPersistenceException e) {
-            log.error("Failed to verify job", e);
-            return null;
+    public List<TriggerFiredResult> triggersFired(final List<OperableTrigger> triggers) throws JobPersistenceException {
+        final List<TriggerFiredResult> results = new ArrayList<>(triggers.size());
+        for (OperableTrigger trigger : triggers) {
+            try {
+                results.add(new TriggerFiredResult(
+                        new TriggerFiredBundle(retrieveJob(trigger.getJobKey()),
+                                trigger, null, false,
+                                trigger.getPreviousFireTime(), trigger.getPreviousFireTime(),
+                                trigger.getPreviousFireTime(), trigger.getNextFireTime())));
+            } catch (JobPersistenceException e) {
+                log.error("Failed to verify job", e);
+                results.add(new TriggerFiredResult(e));
+            }
         }
+        return results;
     }
 
     @Override
-    public void triggeredJobComplete(SchedulingContext ctxt, Trigger trigger, JobDetail jobDetail, int triggerInstCode) throws JobPersistenceException {
+    public void triggeredJobComplete(final OperableTrigger trigger, final JobDetail jobDetail, final Trigger.CompletedExecutionInstruction triggerInstCode) {
         if (!(jobDetail instanceof JCRJobDetail)) {
-            throw new JobPersistenceException("JobDetail must be of type JCRJobDetail");
+            log.warn("JobDetail must be of type JCRJobDetail");
         }
-        final Session session = getSession(ctxt);
+        final Session session = getSession();
         synchronized (session) {
             try {
-                final String triggerIdentifier = trigger.getName();
+                final String triggerIdentifier = trigger.getKey().getName();
                 stopLockKeepAlive(triggerIdentifier);
                 final Node triggerNode = session.getNodeByIdentifier(triggerIdentifier);
                 final Date nextFire = trigger.getFireTimeAfter(new Date());
                 if(nextFire != null) {
-                    final Calendar nextFireTime = dateToCalendar(nextFire);
+                    final java.util.Calendar nextFireTime = dateToCalendar(nextFire);
                     triggerNode.setProperty(HIPPOSCHED_NEXTFIRETIME, nextFireTime);
                     session.save();
                     unlock(session, triggerNode.getPath());
@@ -356,39 +522,86 @@ public class JCRJobStore extends AbstractJobStore {
                     session.save();
                 }
             } catch (ItemNotFoundException e) {
-                log.info("Trigger no longer exists: " + trigger.getName());
+                log.info("Trigger no longer exists: " + trigger.getKey().getName());
             } catch (RepositoryException e) {
                 refreshSession(session);
-                final String message = "Failed to finalize job: " + ((JCRJobDetail) jobDetail).getIdentifier();
-                log.error(message, e);
+                log.error("Failed to finalize job: " + ((JCRJobDetail) jobDetail).getIdentifier(), e);
             }
         }
+
     }
 
-    private static Session getSession(SchedulingContext ctxt) {
-        if (ctxt instanceof JCRSchedulingContext) {
-            return ((JCRSchedulingContext) ctxt).getSession();
+    @Override
+    public void setInstanceId(final String schedInstId) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void setInstanceName(final String schedName) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void setThreadPoolSize(final int poolSize) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    private OperableTrigger createTriggerFromNode(final Node triggerNode) throws RepositoryException {
+        OperableTrigger trigger = null;
+        if (triggerNode.hasProperty(HIPPOSCHED_DATA)) {
+            log.warn("Cannot deserialize obsolete trigger definition at " + triggerNode.getPath());
+        } else {
+            final String triggerType = triggerNode.getPrimaryNodeType().getName();
+            final java.util.Calendar nextFireTime = JcrUtils.getDateProperty(triggerNode, HIPPOSCHED_NEXTFIRETIME, java.util.Calendar.getInstance());
+            if (HIPPOSCHED_SIMPLE_TRIGGER.equals(triggerType)) {
+                final java.util.Calendar startTime = JcrUtils.getDateProperty(triggerNode, HIPPOSCHED_STARTTIME, null);
+                final java.util.Calendar endTime = JcrUtils.getDateProperty(triggerNode, HIPPOSCHED_ENDTIME, null);
+                final long repeatCount = JcrUtils.getLongProperty(triggerNode, HIPPOSCHED_REPEATCOUNT, 0);
+                final long repeatInterval = JcrUtils.getLongProperty(triggerNode, HIPPOSCHED_REPEATINTERVAL, 0);
+                if (startTime == null) {
+                    log.warn("Cannot create simple trigger from node {}: mandatory property {} is missing",
+                            triggerNode.getPath(), HIPPOSCHED_STARTTIME);
+                } else {
+                    final SimpleTriggerImpl simpleTrigger = new SimpleTriggerImpl(triggerNode.getIdentifier(), startTime.getTime());
+                    if (endTime != null) {
+                        simpleTrigger.setEndTime(endTime.getTime());
+                    }
+                    if (repeatCount != 0) {
+                        simpleTrigger.setRepeatCount((int) repeatCount);
+                    }
+                    if (repeatInterval != 0) {
+                        simpleTrigger.setRepeatInterval(repeatInterval);
+                    }
+                    simpleTrigger.setNextFireTime(nextFireTime.getTime());
+                    simpleTrigger.setJobName(triggerNode.getParent().getParent().getIdentifier());
+                    trigger = simpleTrigger;
+                }
+            } else if (HIPPOSCHED_CRON_TRIGGER.equals(triggerType)) {
+                final String cronExpression = JcrUtils.getStringProperty(triggerNode, HIPPOSCHED_CRONEXPRESSION, null);
+                if (cronExpression == null) {
+                    log.warn("Cannot create cron trigger from node {}: mandatory property {} is missing",
+                            triggerNode.getPath(), HIPPOSCHED_CRONEXPRESSION);
+                } else {
+                    try {
+                        CronTriggerImpl cronTrigger = new CronTriggerImpl(triggerNode.getIdentifier(), null, cronExpression);
+                        cronTrigger.setNextFireTime(nextFireTime.getTime());
+                        cronTrigger.setJobName(triggerNode.getParent().getParent().getIdentifier());
+                        trigger = cronTrigger;
+                    } catch (ParseException e) {
+                        log.warn("Failed to create cron trigger from node {}: invalid cron expression {}",
+                                triggerNode.getPath(), cronExpression);
+                    }
+                }
+            } else {
+                log.warn("Cannot create trigger of unknown type {}", triggerType);
+            }
         }
-        return SchedulerModule.getSession();
-    }
-
-    private static void refreshSession(Session session) {
-        try {
-            session.refresh(false);
-        } catch (RepositoryException e) {
-            log.error("Failed to refresh session", e);
-        }
-    }
-
-    private static Calendar dateToCalendar(Date date) {
-        final Calendar result = Calendar.getInstance();
-        result.setTime(date);
-        return result;
+        return trigger;
     }
 
     private static NodeIterable getPendingTriggers(Session session, long noLaterThan) {
         try {
-            final Calendar cal = dateToCalendar(new Date(noLaterThan));
+            final java.util.Calendar cal = dateToCalendar(new Date(noLaterThan));
             final QueryManager qMgr = session.getWorkspace().getQueryManager();
             final Query query = qMgr.createQuery(
                     "SELECT * FROM hipposched:trigger WHERE hipposched:nextFireTime <= TIMESTAMP '"
@@ -488,4 +701,25 @@ public class JCRJobStore extends AbstractJobStore {
         return clusteNodeId;
     }
 
+
+    private static java.util.Calendar dateToCalendar(Date date) {
+        final java.util.Calendar result = java.util.Calendar.getInstance();
+        result.setTime(date);
+        return result;
+    }
+
+    private static void refreshSession(Session session) {
+        try {
+            session.refresh(false);
+        } catch (RepositoryException e) {
+            log.error("Failed to refresh session", e);
+        }
+    }
+
+    private Session getSession() {
+        if (session != null) {
+            return session;
+        }
+        return SchedulerModule.getSession();
+    }
 }

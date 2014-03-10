@@ -159,9 +159,9 @@ engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/NamespaceContext.jav
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/PhysicalSysViewSAXEventGenerator.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/PropInfo.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/Reference.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/repository/quartz/AbstractJobStore.java -text
 engine/src/main/java/org/hippoecm/repository/quartz/HippoSchedJcrConstants.java -text
 engine/src/main/java/org/hippoecm/repository/quartz/JCRJobDetail.java -text
+engine/src/main/java/org/hippoecm/repository/quartz/JobExecutionContextImpl.java -text
 engine/src/main/java/org/hippoecm/repository/quartz/RepositoryJobDetail.java -text
 engine/src/main/java/org/hippoecm/repository/quartz/RepositoryJobJob.java -text
 engine/src/main/java/org/hippoecm/repository/quartz/RepositorySchedulerImpl.java -text

@@ -15,29 +15,27 @@
  */
 package org.hippoecm.repository.quartz;
 
-import java.io.IOException;
-import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
-import javax.jcr.Binary;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.quartz.Job;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.quartz.JobPersistenceException;
-import org.quartz.SimpleTrigger;
-import org.quartz.Trigger;
-import org.quartz.core.SchedulingContext;
+import org.quartz.impl.triggers.SimpleTriggerImpl;
+import org.quartz.spi.OperableTrigger;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
+import static org.junit.Assume.assumeNotNull;
+import static org.junit.Assume.assumeTrue;
 
 public class JCRJobStoreTest extends RepositoryTestCase {
 
@@ -50,9 +48,8 @@ public class JCRJobStoreTest extends RepositoryTestCase {
 
     @Test
     public void testStoreJobAndTrigger() throws Exception {
-        final JCRJobStore store = new JCRJobStore();
-        final SchedulingContext context = new JCRSchedulingContext(session);
-        final Node jobNode = createAndStoreJobAndSimpleTrigger(store, context);
+        final JCRJobStore store = new JCRJobStore(session);
+        final Node jobNode = createAndStoreJobAndSimpleTrigger(store);
 
         assertTrue(jobNode.hasNode("hipposched:triggers"));
         assertTrue(jobNode.hasNode("hipposched:triggers/trigger"));
@@ -61,55 +58,50 @@ public class JCRJobStoreTest extends RepositoryTestCase {
 
     @Test
     public void testAcquireNextTrigger() throws Exception {
-        final JCRJobStore store = new JCRJobStore();
-        final SchedulingContext context = new JCRSchedulingContext(session);
-        final Node jobNode = createAndStoreJobAndSimpleTrigger(store, context);
-        final Trigger trigger = store.acquireNextTrigger(context, System.currentTimeMillis());
-        assertNotNull(trigger);
+        final JCRJobStore store = new JCRJobStore(session);
+        final Node jobNode = createAndStoreJobAndSimpleTrigger(store);
+        final List<OperableTrigger> triggers = store.acquireNextTriggers(System.currentTimeMillis(), 1, -1l);
+        assertNotNull(triggers);
+        assertFalse(triggers.isEmpty());
+        assertEquals(1, triggers.size());
         assertTrue(jobNode.getNode("hipposched:triggers/trigger").isLocked());
     }
 
     @Test
     public void testAcquireNextTriggerAndRelease() throws Exception {
-        final JCRJobStore store = new JCRJobStore();
-        final SchedulingContext context = new JCRSchedulingContext(session);
-        final Node jobNode = createAndStoreJobAndSimpleTrigger(store, context);
-        final Trigger trigger = store.acquireNextTrigger(context, System.currentTimeMillis());
-        store.releaseAcquiredTrigger(context, trigger);
+        final JCRJobStore store = new JCRJobStore(session);
+        final Node jobNode = createAndStoreJobAndSimpleTrigger(store);
+        final List<OperableTrigger> triggers = store.acquireNextTriggers(System.currentTimeMillis(), 1, -1l);
+        assumeNotNull(triggers);
+        assumeTrue(!triggers.isEmpty());
+        store.releaseAcquiredTrigger(triggers.get(0));
         assertFalse(jobNode.getNode("hipposched:triggers/trigger").isLocked());
     }
 
     @Test
-    public void testAcquireNextTriggerForInvalidJob() throws Exception {
-        createAndStoreInvalidJobAndTrigger();
-        final JCRJobStore store = new JCRJobStore();
-        final SchedulingContext context = new JCRSchedulingContext(session);
-        final Trigger trigger = store.acquireNextTrigger(context, System.currentTimeMillis());
-        assertNull(trigger);
-    }
-
-    @Test
     public void testTriggeredJobCompleteSimple() throws Exception {
-        final JCRJobStore store = new JCRJobStore();
-        final SchedulingContext context = new JCRSchedulingContext(session);
-        final Node jobNode = createAndStoreJobAndSimpleTrigger(store, context);
+        final JCRJobStore store = new JCRJobStore(session);
+        final Node jobNode = createAndStoreJobAndSimpleTrigger(store);
         final String jobNodePath = jobNode.getPath();
-        final JobDetail jobDetail = store.retrieveJob(context, jobNode.getIdentifier(), null);
-        final Trigger trigger = store.acquireNextTrigger(context, System.currentTimeMillis());
-        store.triggeredJobComplete(context, trigger, jobDetail, 0);
+        final JobDetail jobDetail = store.retrieveJob(new JobKey(jobNode.getIdentifier()));
+        final List<OperableTrigger> triggers = store.acquireNextTriggers(System.currentTimeMillis(), 1, -1l);
+        assumeNotNull(triggers);
+        assumeTrue(!triggers.isEmpty());
+        store.triggeredJobComplete(triggers.get(0), jobDetail, null);
         // when the job was completed and the trigger doesn't have a next fire time, the job should be deleted
         assertFalse(session.nodeExists(jobNodePath));
     }
 
     @Test
     public void testTriggeredJobCompleteRepeated() throws Exception {
-        final JCRJobStore store = new JCRJobStore();
-        final SchedulingContext context = new JCRSchedulingContext(session);
-        final Node jobNode = createAndStoreJobAndRepeatedTrigger(store, context);
+        final JCRJobStore store = new JCRJobStore(session);
+        final Node jobNode = createAndStoreJobAndRepeatedTrigger(store);
         final String jobNodePath = jobNode.getPath();
-        final JobDetail jobDetail = store.retrieveJob(context, jobNode.getIdentifier(), null);
-        final Trigger trigger = store.acquireNextTrigger(context, System.currentTimeMillis());
-        store.triggeredJobComplete(context, trigger, jobDetail, 0);
+        final JobDetail jobDetail = store.retrieveJob(new JobKey(jobNode.getIdentifier()));
+        final List<OperableTrigger> triggers = store.acquireNextTriggers(System.currentTimeMillis(), 1, -1l);
+        assumeNotNull(triggers);
+        assumeTrue(!triggers.isEmpty());
+        store.triggeredJobComplete(triggers.get(0), jobDetail, null);
         // when the job was completed and the trigger has a next fire time, the job should not be deleted
         assertTrue(session.nodeExists(jobNodePath));
         assertTrue(jobNode.hasProperty("hipposched:triggers/trigger/hipposched:nextFireTime"));
@@ -117,60 +109,42 @@ public class JCRJobStoreTest extends RepositoryTestCase {
 
     @Test
     public void testGetTriggersForJob() throws Exception {
-        final JCRJobStore store = new JCRJobStore();
-        final SchedulingContext context = new JCRSchedulingContext(session);
-        final Node jobNode = createAndStoreJobAndSimpleTrigger(store, context);
-        final Trigger[] triggersForJob = store.getTriggersForJob(context, jobNode.getIdentifier(), null);
+        final JCRJobStore store = new JCRJobStore(session);
+        final Node jobNode = createAndStoreJobAndSimpleTrigger(store);
+        final List<OperableTrigger> triggersForJob = store.getTriggersForJob(new JobKey(jobNode.getIdentifier()));
         assertNotNull(triggersForJob);
-        assertEquals(1, triggersForJob.length);
+        assertEquals(1, triggersForJob.size());
     }
 
     @Test
     public void testTriggerLockKeepAlive() throws Exception {
-        final JCRJobStore store = new JCRJobStore(10);
-        final SchedulingContext context = new JCRSchedulingContext(session);
-        final Node jobNode = createAndStoreJobAndSimpleTrigger(store, context);
-        final Trigger trigger = store.acquireNextTrigger(context, System.currentTimeMillis());
+        final JCRJobStore store = new JCRJobStore(10, session);
+        final Node jobNode = createAndStoreJobAndSimpleTrigger(store);
+        final List<OperableTrigger> triggers = store.acquireNextTriggers(System.currentTimeMillis(), 1, -1l);
         Thread.sleep(1000*12); // sleep longer than lock timeout
         assertTrue(jobNode.getNode("hipposched:triggers/trigger").isLocked());
-        store.releaseAcquiredTrigger(context, trigger);
+        store.releaseAcquiredTrigger(triggers.get(0));
         assertFalse(jobNode.getNode("hipposched:triggers/trigger").isLocked());
     }
 
-    private Node createAndStoreJobAndRepeatedTrigger(final JCRJobStore store, final SchedulingContext context) throws RepositoryException, JobPersistenceException {
+    private Node createAndStoreJobAndRepeatedTrigger(final JCRJobStore store) throws RepositoryException, JobPersistenceException {
         final Node jobNode = session.getNode("/test").addNode("job", HippoSchedJcrConstants.HIPPOSCHED_REPOSITORY_JOB);
         jobNode.setProperty(HippoSchedJcrConstants.HIPPOSCHED_REPOSITORY_JOB_CLASS, Job.class.getName());
         final JobDetail jobDetail = new RepositoryJobDetail(jobNode);
-        final SimpleTrigger trigger = new SimpleTrigger("trigger", 2, 1000);
+        final SimpleTriggerImpl trigger = new SimpleTriggerImpl("trigger", 2, 1000);
         trigger.setNextFireTime(new Date());
-        store.storeJobAndTrigger(context, jobDetail, trigger);
+        store.storeJobAndTrigger(jobDetail, trigger);
         return jobNode;
     }
 
-    private Node createAndStoreJobAndSimpleTrigger(final JCRJobStore store, final SchedulingContext context) throws RepositoryException, JobPersistenceException {
+    private Node createAndStoreJobAndSimpleTrigger(final JCRJobStore store) throws RepositoryException, JobPersistenceException {
         final Node jobNode = session.getNode("/test").addNode("job", HippoSchedJcrConstants.HIPPOSCHED_REPOSITORY_JOB);
         jobNode.setProperty(HippoSchedJcrConstants.HIPPOSCHED_REPOSITORY_JOB_CLASS, Job.class.getName());
         final JobDetail jobDetail = new RepositoryJobDetail(jobNode);
-        final SimpleTrigger trigger = new SimpleTrigger("trigger");
+        final SimpleTriggerImpl trigger = new SimpleTriggerImpl("trigger");
         trigger.setNextFireTime(new Date());
-        store.storeJobAndTrigger(context, jobDetail, trigger);
+        store.storeJobAndTrigger(jobDetail, trigger);
         return jobNode;
-    }
-
-    private void createAndStoreInvalidJobAndTrigger() throws RepositoryException, IOException {
-        final Node jobNode = session.getNode("/test").addNode("job", "hipposched:job");
-        final Binary invalidJobDetail = session.getValueFactory().createBinary(getClass().getResource("/InvalidJobDetail.ser").openStream());
-        jobNode.setProperty("hipposched:data", invalidJobDetail);
-        final Node triggersNode = jobNode.addNode("hipposched:triggers", "hipposched:triggers");
-        final Node triggerNode = triggersNode.addNode("trigger", "hipposched:trigger");
-        final SimpleTrigger trigger = new SimpleTrigger("test", new Date());
-        trigger.setNextFireTime(new Date());
-        final Calendar nextFireTime = Calendar.getInstance();
-        nextFireTime.setTime(new Date());
-        triggerNode.setProperty("hipposched:nextFireTime", nextFireTime);
-        triggerNode.setProperty("hipposched:fireTime", nextFireTime);
-        triggerNode.setProperty("hipposched:data", JcrUtils.createBinaryValueFromObject(session, trigger));
-        session.save();
     }
 
 }

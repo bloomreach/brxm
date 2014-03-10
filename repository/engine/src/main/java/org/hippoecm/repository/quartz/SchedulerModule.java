@@ -80,11 +80,6 @@ public class SchedulerModule implements DaemonModule {
         HippoServiceRegistry.registerService(service, RepositoryScheduler.class);
     }
 
-    public static Scheduler getScheduler(Session session) {
-        return new JCRScheduler(instance.scheduler, session);
-    }
-
-    // FIXME: can we get rid of this static with quartz upgrade?
     static Session getSession() {
         return instance.session;
     }
@@ -111,9 +106,12 @@ public class SchedulerModule implements DaemonModule {
 
         @Override
         protected Scheduler instantiate(QuartzSchedulerResources rcs, QuartzScheduler qs) {
-            JCRSchedulingContext schedCtxt = new JCRSchedulingContext(session);
-            schedCtxt.setInstanceId(rcs.getInstanceId());
-            return new JCRScheduler(qs, schedCtxt);
+            try {
+                qs.getSchedulerContext().put(Session.class.getName(), session);
+                return new JCRScheduler(qs);
+            } catch (SchedulerException e) {
+                throw new RuntimeException("Unexpected exception creating scheduler", e);
+            }
         }
     }
 

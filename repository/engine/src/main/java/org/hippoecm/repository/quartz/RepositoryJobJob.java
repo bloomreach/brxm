@@ -25,6 +25,8 @@ import org.onehippo.repository.scheduling.RepositoryJobExecutionContext;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 
 /**
  * Quartz {@link Job} that calls a scheduled {@link RepositoryJob}.
@@ -43,10 +45,10 @@ public class RepositoryJobJob implements Job {
                     (Class<? extends RepositoryJob>) Class.forName(repositoryJobClassName);
             final RepositoryJob repositoryJob = repositoryJobClass.newInstance();
 
-            final JCRScheduler scheduler = (JCRScheduler) context.getScheduler();
-            final Session session = scheduler.getJCRSchedulingContext().getSession();
+            final Scheduler scheduler = context.getScheduler();
+            final Session session = (Session) scheduler.getContext().get(Session.class.getName());
             repositoryJob.execute(new RepositoryJobExecutionContext(session, attributes));
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | RepositoryException e) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | SchedulerException | RepositoryException e) {
             throw new JobExecutionException(e);
         }
     }

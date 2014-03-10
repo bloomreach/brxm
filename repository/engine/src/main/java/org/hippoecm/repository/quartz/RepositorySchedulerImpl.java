@@ -30,15 +30,13 @@ import org.onehippo.repository.scheduling.RepositoryJobInfo;
 import org.onehippo.repository.scheduling.RepositoryJobSimpleTrigger;
 import org.onehippo.repository.scheduling.RepositoryJobTrigger;
 import org.onehippo.repository.scheduling.RepositoryScheduler;
-import org.quartz.CronTrigger;
 import org.quartz.Job;
 import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.Scheduler;
+import org.quartz.JobKey;
 import org.quartz.SchedulerException;
-import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
-import org.quartz.spi.TriggerFiredBundle;
+import org.quartz.impl.triggers.CronTriggerImpl;
+import org.quartz.impl.triggers.SimpleTriggerImpl;
 
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_ATTRIBUTE_NAMES;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_ATTRIBUTE_VALUES;
@@ -55,9 +53,9 @@ public class RepositorySchedulerImpl implements RepositoryScheduler {
     private static final String CONFIG_NODE_PATH = "/hippo:configuration/hippo:modules/scheduler/hippo:moduleconfig";
 
     private final Session session;
-    private final Scheduler scheduler;
+    private final JCRScheduler scheduler;
 
-    RepositorySchedulerImpl(Session session, Scheduler scheduler) {
+    RepositorySchedulerImpl(Session session, JCRScheduler scheduler) {
         this.session = session;
         this.scheduler = scheduler;
     }
@@ -110,12 +108,9 @@ public class RepositorySchedulerImpl implements RepositoryScheduler {
     @Override
     public void executeJob(final String jobIdentifier) throws RepositoryException {
         try {
-            final JobDetail jobDetail = scheduler.getJobDetail(jobIdentifier, null);
-            final Job job = (Job) jobDetail.getJobClass().newInstance();
-            final Date now = new Date();
-            final TriggerFiredBundle bundle = new TriggerFiredBundle(jobDetail, new SimpleTrigger("foo"), null,
-                    false, now, now, now, now);
-            job.execute(new JobExecutionContext(scheduler, bundle, job));
+            final RepositoryJobDetail jobDetail = (RepositoryJobDetail) scheduler.getJobDetail(new JobKey(jobIdentifier));
+            final Job job = jobDetail.getJobClass().newInstance();
+            job.execute(new JobExecutionContextImpl(scheduler, jobDetail));
         } catch (SchedulerException | InstantiationException | IllegalAccessException e) {
             throw new RepositoryException(e);
         }
@@ -126,7 +121,7 @@ public class RepositorySchedulerImpl implements RepositoryScheduler {
         if (trigger instanceof RepositoryJobCronTrigger) {
             final String cronExpression = ((RepositoryJobCronTrigger) trigger).getCronExpression();
             try {
-                return new CronTrigger(trigger.getName(), null, cronExpression);
+                return new CronTriggerImpl(trigger.getName(), null, cronExpression);
             } catch (ParseException e) {
                 throw new RepositoryException(e);
             }
@@ -136,9 +131,9 @@ public class RepositorySchedulerImpl implements RepositoryScheduler {
             final int repeatCount = ((RepositoryJobSimpleTrigger) trigger).getRepeatCount();
             final long repeatInterval = ((RepositoryJobSimpleTrigger) trigger).getRepeatInterval();
             if (repeatCount != 0) {
-                return new SimpleTrigger(trigger.getName(), startTime, null, repeatCount, repeatInterval);
+                return new SimpleTriggerImpl(trigger.getName(), startTime, null, repeatCount, repeatInterval);
             } else {
-                return new SimpleTrigger(trigger.getName(), startTime);
+                return new SimpleTriggerImpl(trigger.getName(), startTime);
             }
         }
         throw new RepositoryException("Unknown trigger type " + trigger.getClass().getName());
