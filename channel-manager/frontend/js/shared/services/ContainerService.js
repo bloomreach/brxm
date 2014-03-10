@@ -22,10 +22,11 @@
         .service('hippo.channelManager.Container', [
             '$log',
             '$rootScope',
+            '$state',
             '_hippo.channelManager.IFrameService',
             '_hippo.channelManager.OutstandingHttpRequests',
             'hippo.channelManager.menuManager.FormValidationService',
-            function($log, $rootScope, IFrameService, OutstandingHttpRequests, FormValidationService) {
+            function($log, $rootScope, $state, IFrameService, OutstandingHttpRequests, FormValidationService) {
 
                 function handleClose() {
                     if (IFrameService.isActive) {
@@ -33,8 +34,15 @@
 
                         iframePanel.hostToIFrame.subscribe('close-request', function() {
                             if (OutstandingHttpRequests.isEmpty() && FormValidationService.getValidity()) {
+                                $log.debug('close-reply-ok');
                                 iframePanel.iframeToHost.publish('close-reply-ok');
+                            } else if ($state.current.name == 'menu-item.add') {
+                                $log.debug('show close confirmation dialog');
+
+                                // show close confirmation dialog
+                                $rootScope.$broadcast('close-confirmation:show');
                             } else {
+                                $log.debug('close-reply-not-ok');
                                 iframePanel.iframeToHost.publish('close-reply-not-ok');
 
                                 // show close confirmation dialog
