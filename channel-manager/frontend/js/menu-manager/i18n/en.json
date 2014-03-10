@@ -29,5 +29,9 @@
     "INVALID_URL": "Not a valid url",
 
     "UNTITLED": "Untitled",
-    "MENU_ITEM": "menu item"
+    "MENU_ITEM": "menu item",
+
+    "CLOSE_PANEL_TITLE": "Are you sure you want to close the panel?",
+    "CLOSE_PANEL_CONFIRMATION": "The latest changes will be discarded.",
+    "CLOSE": "Close"
 }

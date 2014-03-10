@@ -29,5 +29,9 @@
     "INVALID_URL": "Ongeldige url",
 
     "UNTITLED": "Naamloos",
-    "MENU_ITEM": "menu-item"
+    "MENU_ITEM": "menu-item",
+
+    "CLOSE_PANEL_TITLE": "Weet u zeker dat u dit venster wil sluiten?",
+    "CLOSE_PANEL_CONFIRMATION": "De laatste wijzigingen zullen niet worden opgeslaan.",
+    "CLOSE": "Sluit"
 }
