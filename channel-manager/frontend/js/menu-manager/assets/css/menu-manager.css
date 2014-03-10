@@ -162,6 +162,7 @@ h3.lead.item-title {
 
 #close-confirmation {
     left: 0;
+    top: 0;
     position: absolute;
 }
 
