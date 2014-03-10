@@ -61,7 +61,7 @@ import org.slf4j.LoggerFactory;
  *   registered.
  * </p>
  * <p>
- *   Such a proxy class is only generated ones for each listener class and reused if more than one listener (class)
+ *   Such a proxy class is only generated once for each listener class and reused if more than one listener (class)
  *   instance is registered on the {@link GuavaHippoEventBus}, in which case an existing proxy instance is
  *   {@link org.onehippo.cms7.services.eventbus.GuavaEventBusListenerProxy#clone(Object) cloned}
  *   with the new listener instance injected.

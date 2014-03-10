@@ -56,7 +56,6 @@ public abstract class GuavaEventBusListenerProxy implements Cloneable {
             } catch (IllegalAccessException e) {
                 throw new Error("Method became inaccessible: " + event, e);
             } catch (InvocationTargetException e) {
-                e.printStackTrace();
                 if (e.getCause() instanceof Error) {
                     throw (Error) e.getCause();
                 }
