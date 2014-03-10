@@ -21,16 +21,28 @@
 
         .controller('CloseConfirmationCtrl', [
             '$scope',
+            '$rootScope',
             'hippo.channelManager.Container',
-            function ($scope, ContainerService) {
+            function ($scope, $rootScope, ContainerService) {
+                // default visibility of the dialog
                 $scope.dialog = {
-                    visible: true
+                    visible: false
                 };
 
+                // the message is supposed to come from the ContainerService, that handles
+                // the communication with the iFrame
+                $rootScope.$on('close-confirmation:show', function () {
+                    $scope.$apply(function () {
+                        $scope.dialog.visible = true;
+                    });
+                });
+
+                // confirm - close the panel
                 $scope.confirm = function () {
                     ContainerService.performClose();
                 };
 
+                // cancel - hide the dialog
                 $scope.cancel = function () {
                     $scope.dialog.visible = false;
                 };

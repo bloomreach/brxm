@@ -21,10 +21,11 @@
 
         .service('hippo.channelManager.Container', [
             '$log',
+            '$rootScope',
             '_hippo.channelManager.IFrameService',
             '_hippo.channelManager.OutstandingHttpRequests',
             'hippo.channelManager.menuManager.FormValidationService',
-            function($log, IFrameService, OutstandingHttpRequests, FormValidationService) {
+            function($log, $rootScope, IFrameService, OutstandingHttpRequests, FormValidationService) {
 
                 function handleClose() {
                     if (IFrameService.isActive) {
@@ -36,7 +37,8 @@
                             } else {
                                 iframePanel.iframeToHost.publish('close-reply-not-ok');
 
-                                // TODO: implement general confirmation service
+                                // show close confirmation dialog
+                                $rootScope.$broadcast('close-confirmation:show');
                             }
                         });
                     }
