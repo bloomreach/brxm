@@ -729,7 +729,7 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
     }
 
     public void setKeyToPropertyPlaceHolderMap(Map<String, String> keyToPropertyPlaceHolderMap) {
-       keyToPropertyPlaceHolderMap = keyToPropertyPlaceHolderMap;
+       this.keyToPropertyPlaceHolderMap = keyToPropertyPlaceHolderMap;
     }
 
     public Map<String, String> getKeyToPropertyPlaceHolderMap() {
