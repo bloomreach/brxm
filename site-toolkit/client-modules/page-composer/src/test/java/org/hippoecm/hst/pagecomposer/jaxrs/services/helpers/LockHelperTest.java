@@ -85,6 +85,9 @@ public class LockHelperTest {
         expect(child.getNodes()).andReturn(nodeIterator);
         expect(nodeIterator.hasNext()).andReturn(false);
 
+        expect(node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)).andReturn(false).anyTimes();
+        expect(child.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)).andReturn(false).anyTimes();
+
         replay(mocks);
 
         lockHelper.unlock(node);

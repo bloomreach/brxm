@@ -89,9 +89,15 @@ public class LockHelper {
     }
 
     private void doLock(final Node node, final long versionStamp) throws RepositoryException {
-        if (!node.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)
-                && !node.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT)) {
-            node.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
+        if (node.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT)) {
+            // due historical reasons, the HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT does not need
+            // editable mixin
+            log.debug("node '{}' is of type '{}' so not editable mixin needed.",
+                    node.getPath(), HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
+        } else if(!node.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)) {
+            log.debug("Adding mixin '{}' to '{}'.",
+                    HstNodeTypes.MIXINTYPE_HST_EDITABLE, node.getPath());
+             node.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
         }
         if (node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
             // user already has the lock

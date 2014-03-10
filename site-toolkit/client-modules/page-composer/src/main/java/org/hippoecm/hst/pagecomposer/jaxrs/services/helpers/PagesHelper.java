@@ -58,7 +58,19 @@ public class PagesHelper extends AbstractHelper {
         }
         Node newPage = JcrUtils.copy(session, prototypePage.getPath(), previewWorkspacePagesPath + "/" + validTargetPageNodeName);
         lockHelper.acquireLock(newPage, 0);
+        // lock all available containers below newPage
+        doLockContainers(newPage);
+
         return newPage;
+    }
+
+    private void doLockContainers(final Node node) throws RepositoryException {
+        if (node.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT)) {
+            lockHelper.acquireSimpleLock(node, 0);
+        }
+        for (Node child : new NodeIterable(node.getNodes())) {
+            doLockContainers(child);
+        }
     }
 
 
