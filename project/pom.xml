@@ -77,32 +77,32 @@
     <!-- END properties versions with dependency management -->
 
     <maven.plugin.antrun.version>1.7</maven.plugin.antrun.version>
-    <maven.plugin.assembly.version>2.2.1</maven.plugin.assembly.version>
+    <maven.plugin.assembly.version>2.4</maven.plugin.assembly.version>
     <maven.plugin.buildnumber.version>1.2</maven.plugin.buildnumber.version>
     <maven.plugin.cargo.version>1.1.3</maven.plugin.cargo.version>
-    <maven.plugin.changes.version>2.6</maven.plugin.changes.version>
+    <maven.plugin.changes.version>2.9</maven.plugin.changes.version>
     <maven.plugin.changelog.version>2.2</maven.plugin.changelog.version>
     <maven.plugin.clean.version>2.5</maven.plugin.clean.version>
-    <maven.plugin.compiler.version>2.5.1</maven.plugin.compiler.version>
+    <maven.plugin.compiler.version>3.1</maven.plugin.compiler.version>
     <maven.plugin.dependency.version>2.8</maven.plugin.dependency.version>
-    <maven.plugin.deploy.version>2.7</maven.plugin.deploy.version>
-    <maven.plugin.eclipse.version>2.8</maven.plugin.eclipse.version>
-    <maven.plugin.install.version>2.3.1</maven.plugin.install.version>
+    <maven.plugin.deploy.version>2.8.1</maven.plugin.deploy.version>
+    <maven.plugin.eclipse.version>2.9</maven.plugin.eclipse.version>
+    <maven.plugin.install.version>2.5.1</maven.plugin.install.version>
     <maven.plugin.jar.version>2.4</maven.plugin.jar.version>
     <maven.plugin.javadoc.version>2.9.1</maven.plugin.javadoc.version>
-    <maven.plugin.jrebel.version>1.1.3</maven.plugin.jrebel.version>
-    <maven.plugin.project-info.version>2.6</maven.plugin.project-info.version>
-    <maven.plugin.release.version>2.3.2</maven.plugin.release.version>
-    <maven.plugin.rat.version>0.9.RAT125</maven.plugin.rat.version>
-    <maven.plugin.remote-resources.version>1.4</maven.plugin.remote-resources.version>
+    <maven.plugin.jrebel.version>1.1.5</maven.plugin.jrebel.version>
+    <maven.plugin.project-info.version>2.7</maven.plugin.project-info.version>
+    <maven.plugin.release.version>2.4.2</maven.plugin.release.version>
+    <maven.plugin.rat.version>0.10</maven.plugin.rat.version>
+    <maven.plugin.remote-resources.version>1.5</maven.plugin.remote-resources.version>
     <maven.plugin.resources.version>2.6</maven.plugin.resources.version>
     <maven.plugin.source.version>2.2.1</maven.plugin.source.version>
-    <maven.plugin.surefire.version>2.12.4</maven.plugin.surefire.version>
-    <maven.plugin.surefire-report.version>2.12.4</maven.plugin.surefire-report.version>
+    <maven.plugin.surefire.version>2.16</maven.plugin.surefire.version>
+    <maven.plugin.surefire-report.version>2.16</maven.plugin.surefire-report.version>
     <maven.plugin.taglib.version>2.4</maven.plugin.taglib.version>
     <maven.plugin.war.version>2.3</maven.plugin.war.version>
 
-    <maven.extension.wagon-http.version>1.0-beta-7</maven.extension.wagon-http.version>
+    <maven.extension.wagon-http.version>2.6</maven.extension.wagon-http.version>
 
     <!-- if you want a remote debugging on a different a address
          override on command line with -Dcargo.debug.addres=xxxx -->
