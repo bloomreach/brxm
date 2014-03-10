@@ -26,7 +26,8 @@
             '$log',
             'hippo.channelManager.FeedbackService',
             'hippo.channelManager.menuManager.MenuService',
-            function ($scope, $stateParams, $state, $log, FeedbackService, MenuService) {
+            'hippo.channelManager.menuManager.FormValidationService',
+            function ($scope, $stateParams, $state, $log, FeedbackService, MenuService, FormValidationService) {
                 var savedMenuItem;
 
                 $scope.isSaving = {
@@ -60,9 +61,9 @@
                 }
 
                 function saveSelectedMenuItemProperty(propertyName) {
-                    $log.info('Save!');
                     savedMenuItem = angular.copy($scope.selectedMenuItem);
-                    // Child properties haven't changed, so don't send them
+
+                    // child properties haven't changed, so don't send them
                     delete savedMenuItem.items;
 
                     $scope.isSaving[propertyName] = true;
@@ -71,11 +72,13 @@
                             $scope.feedback.message = '';
                             $scope.isSaving[propertyName] = false;
                             $scope.isSaved[propertyName] = true;
+                            FormValidationService.setValidity(true);
                         },
                         function (errorResponse) {
                             $scope.feedback = FeedbackService.getFeedback(errorResponse);
                             $scope.isSaving[propertyName] = false;
                             $scope.isSaved[propertyName] = false;
+                            FormValidationService.setValidity(false);
                         }
                     );
                 }
@@ -113,6 +116,10 @@
 
                 $scope.dismissFeedback = function () {
                     $scope.feedback.message = '';
+                };
+
+                $scope.cancel = function () {
+                    $scope.confirmation.isVisible = false;
                 };
             }
         ]);

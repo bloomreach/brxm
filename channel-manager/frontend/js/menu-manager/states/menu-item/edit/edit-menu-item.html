@@ -17,19 +17,18 @@
 <div class="edit-menu-item-container">
     <!-- START confirmation dialog -->
     <div class="overlay" data-ng-show="confirmation.isVisible">&#160;</div>
-    <div class="feedback alert alert-warning clearfix" data-ng-class="{'feedback-show': confirmation.isVisible}">
+    <div hippo.theme.confirmation-dialog
+         confirm-icon="trash-o"
+         data-show="confirmation.isVisible"
+         data-perform-confirmation="remove()"
+         data-perform-cancel="cancel()"
+         data-confirm-label="{{ 'DELETE_MENU_ITEM' | translate }}"
+         data-cancel-label="{{ 'CANCEL' | translate }}">
         <p>
             <strong>{{ 'REMOVE_CONFIRMATION_TITLE' | translate }}</strong>
         </p>
         <p>
             {{ 'REMOVE_CONFIRMATION' | translate:selectedMenuItem }}
-        </p>
-        <p class="text-right buttons">
-            <button class="btn btn-default" data-ng-click="remove()">
-                <i class="fa fa-trash-o"></i> {{ 'DELETE_MENU_ITEM' | translate }}
-            </button>
-            &nbsp;&nbsp;
-            <button class="btn btn-link" data-ng-click="confirmation.isVisible = false">{{ 'CANCEL' | translate }}</button>
         </p>
     </div>
     <!-- END confirmation dialog -->
