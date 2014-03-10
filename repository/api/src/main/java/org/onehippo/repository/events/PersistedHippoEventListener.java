@@ -26,7 +26,7 @@ import org.onehippo.cms7.event.HippoEvent;
  *   {@link }HippoServicesRegistry}, like for example:
  *   <pre>
  *   <code>
- *       HippoServicesRegistry.registerService(myPersistedHippoEventListener, PersistedWorkflowEventsService.class);
+ *       HippoServicesRegistry.registerService(myPersistedHippoEventListener, PersistedHippoEventsService.class);
  *   </code>
  *   </pre>
  * </p>
@@ -35,7 +35,8 @@ import org.onehippo.cms7.event.HippoEvent;
  *   track which persisted events already have been delivered to the listener.
  * </p>
  * <p>
- *   A listener will get a consistent and ordered delivery of all workflow events through that channel, but such events
+ *   A listener will get a consistent and ordered delivery of all events within a specific {@link #getEventCategory()}
+ *   (or all if unspecified) through that channel, but such events
  *   will only be delivered <em>once</em> (within one cluster node) through that channel.<br/>
  *   <em>Therefore there should only be one listener (registered) per channel per cluster node.</em><br/>
  *   If more than one listener is registered on one channel, only one will get the events delivered!
