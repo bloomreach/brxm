@@ -22,7 +22,6 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMenuResource;
-import org.hippoecm.hst.util.JcrSessionUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
