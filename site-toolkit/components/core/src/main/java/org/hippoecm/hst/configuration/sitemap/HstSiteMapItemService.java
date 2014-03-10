@@ -721,7 +721,7 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
     }
 
     public void setUseableInRightContextOnly(boolean useableInRightContextOnly) {
-        useableInRightContextOnly = useableInRightContextOnly;
+        this.useableInRightContextOnly = useableInRightContextOnly;
     }
 
     public boolean isUseableInRightContextOnly() {
