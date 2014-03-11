@@ -15,20 +15,23 @@
  */
 
 /* --- Pages --- */
-
-#pages .panel {
+.panel {
     border-top-width: 0;
     border-left-width: 0;
     border-right-width: 0;
     border-radius: 0;
 }
 
-#pages .l-fixed-height-list {
+.panel > .panel-heading {
+    line-height: 34px;
+}
+
+.l-fixed-height {
     height: 485px;
     overflow-x: hidden;
     overflow-y: auto;
 }
 
-.panel > .panel-heading {
-    line-height: 34px;
+.list-group-item {
+    cursor: pointer;
 }
