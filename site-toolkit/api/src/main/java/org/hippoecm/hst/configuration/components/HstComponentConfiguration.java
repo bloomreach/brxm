@@ -91,7 +91,7 @@ import org.hippoecm.hst.core.container.PageErrorHandler;
  * able to modify them, implementations must make sure that through the api a <code>HstComponentConfiguration</code>
  * instance cannot be changed. Returned List and Map should be therefore unmodifiable.
  */
-public interface HstComponentConfiguration extends HstComponentInfo, ConfigurationLockInfo {
+public interface HstComponentConfiguration extends HstComponentInfo {
 
     /**
      * The delimiter that is used between the parametername and the parameterprefix when there is a prefix value

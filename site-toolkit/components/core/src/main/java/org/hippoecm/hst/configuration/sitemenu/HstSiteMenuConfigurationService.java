@@ -20,13 +20,14 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
+import org.hippoecm.hst.configuration.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.internal.StringPool;
 
-public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration, CanonicalInfo {
+public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration, CanonicalInfo, ConfigurationLockInfo {
 
     private String name;
     private final String canonicalIdentifier;

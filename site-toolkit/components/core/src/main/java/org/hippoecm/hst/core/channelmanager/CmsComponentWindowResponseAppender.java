@@ -19,6 +19,7 @@ import java.util.HashMap;
 
 import javax.servlet.http.HttpSession;
 
+import org.hippoecm.hst.configuration.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.MutableMount;
@@ -86,16 +87,19 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             attributes.put("url", url.toString());
             attributes.put("refNS", window.getReferenceNamespace());
             if (mount instanceof MutableMount) {
-                if (compConfig.getLockedBy() != null) {
-                    String cmsUserId = (String)session.getAttribute(ContainerConstants.CMS_USER_ID_ATTR);
-                    attributes.put(ChannelManagerConstants.HST_LOCKED_BY, compConfig.getLockedBy());
-                    if (compConfig.getLockedBy().equals(cmsUserId)) {
-                        attributes.put(ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER, "true");
-                    } else {
-                        attributes.put(ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER, "false");
-                    }
-                    if (compConfig.getLockedOn() != null) {
-                        attributes.put(ChannelManagerConstants.HST_LOCKED_ON, String.valueOf(compConfig.getLockedOn().getTimeInMillis()));
+                if (compConfig instanceof ConfigurationLockInfo) {
+                    ConfigurationLockInfo lockInfo = (ConfigurationLockInfo)compConfig;
+                    if (lockInfo.getLockedBy() != null) {
+                        String cmsUserId = (String)session.getAttribute(ContainerConstants.CMS_USER_ID_ATTR);
+                        attributes.put(ChannelManagerConstants.HST_LOCKED_BY, lockInfo.getLockedBy());
+                        if (lockInfo.getLockedBy().equals(cmsUserId)) {
+                            attributes.put(ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER, "true");
+                        } else {
+                            attributes.put(ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER, "false");
+                        }
+                        if (lockInfo.getLockedOn() != null) {
+                            attributes.put(ChannelManagerConstants.HST_LOCKED_ON, String.valueOf(lockInfo.getLockedOn().getTimeInMillis()));
+                        }
                     }
                 }
                 if (compConfig.getLastModified() != null) {

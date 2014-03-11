@@ -17,6 +17,7 @@ package org.hippoecm.hst.configuration.sitemap;
 
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,6 +31,7 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -45,7 +47,8 @@ import org.hippoecm.hst.core.util.PropertyParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
+public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, ConfigurationLockInfo
+{
 
     private static final Logger log = LoggerFactory.getLogger(HstSiteMapItemService.class);
 
@@ -59,6 +62,8 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
 
     private final String canonicalIdentifier;
     private final String canonicalPath;
+    private String lockedBy;
+    private Calendar lockedOn;
 
     private final boolean workspaceConfiguration;
 
@@ -157,6 +162,9 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
         canonicalIdentifier = node.getValueProvider().getIdentifier();
         canonicalPath = node.getValueProvider().getPath();
         workspaceConfiguration = ConfigurationUtils.isWorkspaceConfig(node);
+        lockedBy = node.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY);
+        lockedOn = node.getValueProvider().getDate(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON);
+
 
         qualifiedId = nodePath;
 
@@ -492,6 +500,15 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
         return workspaceConfiguration;
     }
 
+    @Override
+    public String getLockedBy() {
+        return lockedBy;
+    }
+
+    @Override
+    public Calendar getLockedOn() {
+        return lockedOn;
+    }
 
     public String getRefId() {
         return refId;

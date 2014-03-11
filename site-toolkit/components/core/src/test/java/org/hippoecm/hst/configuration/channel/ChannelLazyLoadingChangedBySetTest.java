@@ -16,17 +16,25 @@
 
 package org.hippoecm.hst.configuration.channel;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfiguration;
+import org.hippoecm.hst.mock.configuration.MockSiteMapItem;
+import org.hippoecm.hst.mock.configuration.MockSiteMenuConfiguration;
+import org.hippoecm.hst.mock.configuration.components.MockHstComponentConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -45,9 +53,11 @@ public class ChannelLazyLoadingChangedBySetTest {
     private HstSite previewSite;
     private Channel channel;
     private HstComponentsConfiguration componentsConfig;
-    private HstComponentConfiguration componentConfig;
+    private MockHstComponentConfiguration componentConfig;
+    private HstSiteMap siteMap;
+    private MockSiteMapItem siteMapItem;
     private HstSiteMenusConfiguration menusConfig;
-    private HstSiteMenuConfiguration menuConfig;
+    private MockSiteMenuConfiguration menuConfig;
     private Object[] mocks;
 
     @Before
@@ -58,17 +68,24 @@ public class ChannelLazyLoadingChangedBySetTest {
         channel = createMock(Channel.class);
 
         componentsConfig = createMock(HstComponentsConfiguration.class);
-        componentConfig = createMock(HstComponentConfiguration.class);
+        componentConfig = createMock(MockHstComponentConfiguration.class);
+        siteMap = createMock(HstSiteMap.class);
+        siteMapItem = createMock(MockSiteMapItem.class);
 
         menusConfig = createMock(HstSiteMenusConfiguration.class);
-        menuConfig = createMock(HstSiteMenuConfiguration.class);
+        menuConfig = createMock(MockSiteMenuConfiguration.class);
 
-        mocks = new Object[]{rootConfigNode, previewSite, channel, componentsConfig, componentConfig, menusConfig, menuConfig};
+        mocks = new Object[]{rootConfigNode, previewSite, channel, componentsConfig, componentConfig,
+                siteMap, siteMapItem, menusConfig, menuConfig};
         reset(mocks);
     }
 
     @Test
     public void test_unlocked() {
+
+        expect(previewSite.getSiteMap()).andReturn(siteMap);
+        final List<HstSiteMapItem> siteMapItems = Collections.emptyList();
+        expect(siteMap.getSiteMapItems()).andReturn(siteMapItems);
 
         expect(previewSite.getComponentsConfiguration()).andReturn(componentsConfig);
         final Map<String, HstComponentConfiguration> configurationMap = Collections.emptyMap();
@@ -91,6 +108,10 @@ public class ChannelLazyLoadingChangedBySetTest {
 
     @Test
     public void test_locked_on_menu_level() {
+
+        expect(previewSite.getSiteMap()).andReturn(siteMap);
+        final List<HstSiteMapItem> siteMapItems = Collections.emptyList();
+        expect(siteMap.getSiteMapItems()).andReturn(siteMapItems);
 
         expect(previewSite.getComponentsConfiguration()).andReturn(componentsConfig);
         final Map<String, HstComponentConfiguration> configurationMap = Collections.emptyMap();
@@ -115,12 +136,16 @@ public class ChannelLazyLoadingChangedBySetTest {
     @Test
     public void test_locked_on_component_level() {
 
+        expect(previewSite.getSiteMap()).andReturn(siteMap);
+        final List<HstSiteMapItem> siteMapItems = Collections.emptyList();
+        expect(siteMap.getSiteMapItems()).andReturn(siteMapItems);
+
         expect(previewSite.getComponentsConfiguration()).andReturn(componentsConfig);
         final Map<String, HstComponentConfiguration> configurationMap = new HashMap<>();
         expect(componentConfig.getLockedBy()).andReturn("john").atLeastOnce();
         expect(componentConfig.isInherited()).andReturn(false);
 
-        final Map<String, HstComponentConfiguration> empty = Collections.emptyMap();
+        final SortedMap<String, HstComponentConfiguration> empty = new TreeMap<>();
         expect(componentConfig.getChildren()).andReturn(empty);
         configurationMap.put("config-1", componentConfig);
         expect(componentsConfig.getComponentConfigurations()).andReturn(configurationMap);
@@ -142,6 +167,10 @@ public class ChannelLazyLoadingChangedBySetTest {
 
     @Test
     public void test_locked_on_channel_level() {
+
+        expect(previewSite.getSiteMap()).andReturn(siteMap);
+        final List<HstSiteMapItem> siteMapItems = Collections.emptyList();
+        expect(siteMap.getSiteMapItems()).andReturn(siteMapItems);
         expect(previewSite.getComponentsConfiguration()).andReturn(componentsConfig);
         final Map<String, HstComponentConfiguration> configurationMap = Collections.emptyMap();
         expect(componentsConfig.getComponentConfigurations()).andReturn(configurationMap);
@@ -159,6 +188,41 @@ public class ChannelLazyLoadingChangedBySetTest {
         set = new ChannelLazyLoadingChangedBySet(rootConfigNode, previewSite, channel);
         assertThat(set.contains("john"), is(true));
 
+    }
+
+
+    @Test
+    public void test_locked_on_sitemap_level() {
+
+        expect(previewSite.getConfigurationPath()).andReturn("/hst:hst/hst:configurations/myproject").anyTimes();
+
+        expect(previewSite.getSiteMap()).andReturn(siteMap);
+        final List<HstSiteMapItem> siteMapItems = new ArrayList<>();
+        siteMapItems.add(siteMapItem);
+        expect(siteMapItem.getCanonicalPath()).andReturn("/hst:hst/hst:configurations/myproject/hst:sitemap/home").anyTimes();
+        expect(siteMapItem.getLockedBy()).andReturn("john").atLeastOnce();
+        List<HstSiteMapItem> empty = Collections.emptyList();
+        expect(siteMapItem.getChildren()).andReturn(empty).anyTimes();
+
+        expect(siteMap.getSiteMapItems()).andReturn(siteMapItems);
+
+        expect(previewSite.getComponentsConfiguration()).andReturn(componentsConfig);
+        final Map<String, HstComponentConfiguration> configurationMap = Collections.emptyMap();
+        expect(componentsConfig.getComponentConfigurations()).andReturn(configurationMap);
+
+        expect(previewSite.getSiteMenusConfiguration()).andReturn(menusConfig);
+        final Map<String, HstSiteMenuConfiguration> menuMap = Collections.emptyMap();
+        expect(menusConfig.getSiteMenuConfigurations()).andReturn(menuMap);
+
+        final List<HstNode> childNodes = Collections.emptyList();
+        expect(rootConfigNode.getNodes()).andReturn(childNodes);
+
+        expect(channel.getChannelNodeLockedBy()).andReturn(null);
+
+        replay(mocks);
+
+        set = new ChannelLazyLoadingChangedBySet(rootConfigNode, previewSite, channel);
+        assertThat(set.contains("john"), is(true));
     }
 
 }

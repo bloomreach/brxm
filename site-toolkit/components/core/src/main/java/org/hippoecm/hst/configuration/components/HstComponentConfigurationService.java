@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
@@ -35,7 +36,7 @@ import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.provider.ValueProvider;
 import org.slf4j.LoggerFactory;
 
-public class HstComponentConfigurationService implements HstComponentConfiguration {
+public class HstComponentConfigurationService implements HstComponentConfiguration, ConfigurationLockInfo {
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstComponentConfigurationService.class);
 
@@ -329,8 +330,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         // regardless merging/referencing of components, we directly inherit lock props: They are normally
         // only stored on hst container items and those don't support merging any way
         if (parent != null) {
-            lockedBy = (lockedBy == null) ?  parent.getLockedBy() : lockedBy;
-            lockedOn = (lockedOn == null) ?  parent.getLockedOn() : lockedOn;
+            lockedBy = (lockedBy == null) ?  ((ConfigurationLockInfo)parent).getLockedBy() : lockedBy;
+            lockedOn = (lockedOn == null) ?  ((ConfigurationLockInfo)parent).getLockedOn() : lockedOn;
             lastModified = (lastModified == null) ?  parent.getLastModified() : lastModified;
         }
 

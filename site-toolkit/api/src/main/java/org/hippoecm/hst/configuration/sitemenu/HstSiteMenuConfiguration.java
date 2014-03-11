@@ -19,7 +19,7 @@ import java.util.List;
 
 import org.hippoecm.hst.configuration.ConfigurationLockInfo;
 
-public interface HstSiteMenuConfiguration extends ConfigurationLockInfo {
+public interface HstSiteMenuConfiguration {
     /**
      * Returns the name of this SiteMenuConfiguration. For example, you could have a "topmenu", "leftmenu" and "footermenu" on your site,
      * where these names might be appropriate . It must be unique within a <code>{@link HstSiteMenusConfiguration}</code> container.

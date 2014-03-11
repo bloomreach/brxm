@@ -27,6 +27,7 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
+import org.hippoecm.hst.configuration.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
@@ -100,6 +101,11 @@ public class HstCmsEditMenuTag extends TagSupport {
                         "for matched mount '{}'.", requestContext.getResolvedMount().getMount().toString());
                 return EVAL_PAGE;
             }
+            if (!(siteMenuConfiguration instanceof ConfigurationLockInfo)) {
+                log.debug("Skipping cms edit menu because siteMenuConfiguration found not instanceof ConfigurationLockInfo " +
+                        "for matched mount '{}'.", requestContext.getResolvedMount().getMount().toString());
+                return EVAL_PAGE;
+            }
             CanonicalInfo canonicalInfo = (CanonicalInfo) siteMenuConfiguration;
             if (!canonicalInfo.isWorkspaceConfiguration()) {
                 log.debug("Skipping cms edit menu because siteMenuConfiguration found not part of workspace " +
@@ -107,7 +113,7 @@ public class HstCmsEditMenuTag extends TagSupport {
                 return EVAL_PAGE;
             }
             try {
-                write(siteMenuConfiguration);
+               write(siteMenuConfiguration);
             } catch (IOException ioe) {
                 throw new JspException("ResourceURL-Tag Exception: cannot write to the output writer.");
             }
@@ -132,11 +138,11 @@ public class HstCmsEditMenuTag extends TagSupport {
         final Map<String, Object> result = new HashMap<>();
         result.put("type", "menu");
         result.put("uuid", canonicalIdentifier);
-        final String lockedBy = siteMenuConfiguration.getLockedBy();
+        final String lockedBy = ((ConfigurationLockInfo)siteMenuConfiguration).getLockedBy();
         if (lockedBy != null) {
             result.put(HST_LOCKED_BY, lockedBy);
             result.put(HST_LOCKED_BY_CURRENT_USER, lockedBy.equals(getCurrentCmsUser()));
-            result.put(HST_LOCKED_ON, siteMenuConfiguration.getLockedOn().getTimeInMillis());
+            result.put(HST_LOCKED_ON, ((ConfigurationLockInfo)siteMenuConfiguration).getLockedOn().getTimeInMillis());
         }
         return result;
     }

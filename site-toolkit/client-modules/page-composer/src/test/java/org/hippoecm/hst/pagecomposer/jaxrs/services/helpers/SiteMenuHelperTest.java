@@ -25,6 +25,8 @@ import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfiguration;
+import org.hippoecm.hst.mock.configuration.MockSiteMenuConfiguration;
+import org.hippoecm.hst.mock.configuration.MockSiteMenuItemConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 

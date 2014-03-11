@@ -16,10 +16,12 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.hippoecm.hst.configuration.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 
@@ -34,6 +36,9 @@ public class SiteMapItemRepresentation {
     private boolean cacheable;
     private boolean workspaceConfiguration;
     private boolean inherited;
+    private String lockedBy;
+    private Calendar lockedOn;
+    private long versionStamp;
     private String relativeContentPath;
     private String scheme;
     private boolean wildCard;
@@ -49,13 +54,21 @@ public class SiteMapItemRepresentation {
         if (!(item instanceof CanonicalInfo)) {
             throw new IllegalArgumentException("Expected object of type CanonicalInfo");
         }
+        if (!(item instanceof ConfigurationLockInfo)) {
+            throw new IllegalArgumentException("Expected object of type ConfigurationLockInfo");
+        }
         name = item.getValue();
         id = ((CanonicalInfo) item).getCanonicalIdentifier();
         pageTitle = item.getPageTitle();
         componentConfigurationId = item.getComponentConfigurationId();
         cacheable = item.isCacheable();
         workspaceConfiguration = ((CanonicalInfo) item).isWorkspaceConfiguration();
-        inherited = !((CanonicalInfo) item).getCanonicalPath().startsWith(previewConfigurationPath);
+        inherited = !((CanonicalInfo) item).getCanonicalPath().startsWith(previewConfigurationPath + "/");
+        lockedBy = ((ConfigurationLockInfo) item).getLockedBy();
+        lockedOn = ((ConfigurationLockInfo) item).getLockedOn();
+        if (lockedOn != null) {
+            versionStamp = lockedOn.getTimeInMillis();
+        }
         relativeContentPath = item.getRelativeContentPath();
         scheme = item.getScheme();
         wildCard = item.isWildCard();
@@ -128,6 +141,30 @@ public class SiteMapItemRepresentation {
 
     public void setInherited(final boolean inherited) {
         this.inherited = inherited;
+    }
+
+    public String getLockedBy() {
+        return lockedBy;
+    }
+
+    public void setLockedBy(final String lockedBy) {
+        this.lockedBy = lockedBy;
+    }
+
+    public Calendar getLockedOn() {
+        return lockedOn;
+    }
+
+    public void setLockedOn(final Calendar lockedOn) {
+        this.lockedOn = lockedOn;
+    }
+
+    public long getVersionStamp() {
+        return versionStamp;
+    }
+
+    public void setVersionStamp(final long versionStamp) {
+        this.versionStamp = versionStamp;
     }
 
     public String getRelativeContentPath() {

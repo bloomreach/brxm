@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.hippoecm.hst.configuration.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 
 
@@ -31,7 +32,7 @@ import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
  * Mock implementation of {@link org.hippoecm.hst.configuration.components.HstComponentConfiguration}.
  *
  */
-public class MockHstComponentConfiguration implements HstComponentConfiguration {
+public class MockHstComponentConfiguration implements HstComponentConfiguration, ConfigurationLockInfo {
 
     private String id;
     private String name;

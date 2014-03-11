@@ -1066,6 +1066,7 @@ integration/war/src/main/java/org/hippoecm/hst/servlets/H2ServerServlet.java -te
 integration/war/src/main/webapp/WEB-INF/web.xml -text
 mock/pom.xml -text
 mock/src/main/java/org/hippoecm/hst/container/ModifiableRequestContextProvider.java -text
+mock/src/main/java/org/hippoecm/hst/mock/configuration/MockSiteMapItem.java -text
 mock/src/main/java/org/hippoecm/hst/mock/configuration/components/MockHstComponentConfiguration.java -text
 mock/src/main/java/org/hippoecm/hst/mock/content/beans/manager/MockObjectBeanPersistenceManager.java -text
 mock/src/main/java/org/hippoecm/hst/mock/content/beans/standard/MockHippoBean.java -text

@@ -25,8 +25,11 @@ import org.hippoecm.hst.configuration.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
+import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 
 public class ChannelLazyLoadingChangedBySet implements Set<String> {
 
@@ -58,10 +61,8 @@ public class ChannelLazyLoadingChangedBySet implements Set<String> {
             delegatee.addAll(usersWithMainConfigNodeChanges);
         }
         delegatee.addAll(getAllUsersWithComponentLock(previewHstSite));
-        delegatee.addAll(getAllUsersWithSitemapItemLock(previewHstSite));
+        delegatee.addAll(getAllUsersWithSiteMapItemLock(previewHstSite));
         delegatee.addAll(getAllUsersWithSiteMenuLock(previewHstSite));
-
-        // TODO sitemap locks
 
         // check preview channel node itself
         if (channel.getChannelNodeLockedBy() != null) {
@@ -69,10 +70,33 @@ public class ChannelLazyLoadingChangedBySet implements Set<String> {
         }
     }
 
-    private Set<String> getAllUsersWithSitemapItemLock(final HstSite previewHstSite) {
+    private static Set<String> getAllUsersWithSiteMapItemLock(final HstSite previewHstSite) {
         Set<String> usersWithLock = new HashSet<>();
-        // TODO
+        for (HstSiteMapItem siteMapItem : previewHstSite.getSiteMap().getSiteMapItems()) {
+            addUsersWithSiteMapItemLock(siteMapItem, usersWithLock, previewHstSite.getConfigurationPath());
+        }
         return usersWithLock;
+    }
+
+    private static void addUsersWithSiteMapItemLock(final HstSiteMapItem item,
+                                                    final Set<String> usersWithLock,
+                                                    final String previewConfigurationPath) {
+
+        final boolean inherited = !((CanonicalInfo) item).getCanonicalPath().startsWith(previewConfigurationPath + "/");
+        if (inherited) {
+            // skip inherited sitemap item changes as that is not supported currently
+            return;
+        }
+        if (!(item instanceof ConfigurationLockInfo)) {
+            return;
+        }
+        String lockedBy = ((ConfigurationLockInfo)item).getLockedBy();
+        if (StringUtils.isNotBlank(lockedBy)) {
+            usersWithLock.add(lockedBy);
+        }
+        for (HstSiteMapItem child : item.getChildren()) {
+            addUsersWithSiteMapItemLock(child, usersWithLock, previewConfigurationPath);
+        }
     }
 
     private static Set<String> getAllUsersWithComponentLock(final HstSite previewHstSite) {
@@ -89,8 +113,12 @@ public class ChannelLazyLoadingChangedBySet implements Set<String> {
             // skip inherited configuration changes as that is not supported currently
             return;
         }
-        if (StringUtils.isNotBlank(config.getLockedBy())) {
-            usersWithLock.add(config.getLockedBy());
+        if (!(config instanceof ConfigurationLockInfo)) {
+            return;
+        }
+        String lockedBy = ((ConfigurationLockInfo)config).getLockedBy();
+        if (StringUtils.isNotBlank(lockedBy)) {
+            usersWithLock.add(lockedBy);
         }
         for (HstComponentConfiguration hstComponentConfiguration : config.getChildren().values()) {
             addUsersWithComponentLock(hstComponentConfiguration, usersWithLock);
@@ -100,8 +128,12 @@ public class ChannelLazyLoadingChangedBySet implements Set<String> {
 
     private static Set<String> getAllUsersWithSiteMenuLock(final HstSite previewHstSite) {
         Set<String> usersWithLock = new HashSet<>();
-        for (ConfigurationLockInfo lockInfo : previewHstSite.getSiteMenusConfiguration().getSiteMenuConfigurations().values()) {
-            addUserWithSiteMenuLock(lockInfo.getLockedBy(), usersWithLock);
+        for (HstSiteMenuConfiguration config : previewHstSite.getSiteMenusConfiguration().getSiteMenuConfigurations().values()) {
+            if (!(config instanceof ConfigurationLockInfo)) {
+                continue;
+            }
+            String lockedBy = ((ConfigurationLockInfo)config).getLockedBy();
+            addUserWithSiteMenuLock(lockedBy, usersWithLock);
         }
         return usersWithLock;
     }
