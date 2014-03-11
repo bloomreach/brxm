@@ -62,12 +62,15 @@ public class JcrPersistenceWriter {
             return null;
         }
         //save changes
+        Session session = null;
         try {
-            context.createSession().save();
+
+            session = rootNode.getSession();
+            session.save();
             return rootNode;
         } catch (RepositoryException e) {
             log.error("Error saving model", e);
-            GlobalUtils.refreshSession(context, false);
+            GlobalUtils.refreshSession(session, false);
         }
         return null;
     }

@@ -182,9 +182,6 @@ dashboard-plugins/components-plugin/components-cms/src/main/resources/blog-impor
 dashboard-plugins/components-plugin/components-cms/src/main/resources/event-bus-listener.xml -text
 dashboard-plugins/components-plugin/components-cms/src/main/resources/hippoecm-extension.xml -text
 dashboard-plugins/components-plugin/components-cms/src/main/resources/project.properties -text
-dashboard-plugins/components-plugin/components-gui/pom.xml -text
-dashboard-plugins/components-plugin/components-gui/src/test/java/InstallationTest.java -text
-dashboard-plugins/components-plugin/components-gui/src/test/resources/log4j.xml -text
 dashboard-plugins/components-plugin/components-library/pom.xml -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/CommonComponent.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/EssentialsBlogAuthorPostsComponent.java -text

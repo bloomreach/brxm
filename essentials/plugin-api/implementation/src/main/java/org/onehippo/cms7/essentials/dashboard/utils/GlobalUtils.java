@@ -168,10 +168,6 @@ public final class GlobalUtils {
         return capitalize(parts[1]);
     }
 
-    public static void refreshSession(final PluginContext context, final boolean keepChanges) {
-        final Session session = context.createSession();
-        refreshSession(session, keepChanges);
-    }
 
     @SuppressWarnings("HippoHstCallNodeRefreshInspection")
     public static void refreshSession(final Session session, final boolean keepChanges) {

@@ -20,7 +20,6 @@
   <modules>
     <module>components-cms</module>
     <module>components-library</module>
-    <module>components-gui</module>
   </modules>
 
 </project>

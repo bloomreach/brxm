@@ -120,11 +120,6 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-components-plugin-gui</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
       <artifactId>hippo-essentials-basic-powerpack</artifactId>
       <version>${project.version}</version>
     </dependency>

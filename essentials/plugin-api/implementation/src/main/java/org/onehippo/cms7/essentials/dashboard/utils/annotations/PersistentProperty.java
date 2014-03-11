@@ -105,6 +105,7 @@ public @interface PersistentProperty {
                         throw new NotImplementedException("Property writer not implemented for: " + value.getClass());
                     }
 
+                    return node.getProperty(name);
                 } else {
                     log.error("Parent couldn't be found for path: {}", parentPath);
                 }
