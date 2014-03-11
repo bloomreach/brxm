@@ -394,22 +394,14 @@ public class AuthorizationQuery {
         // optimize the single-user principal case
         if (userIds.size() == 1) {
             String userId = userIds.iterator().next();
-            if (facetRule.isEqual()) {
-                return new TermQuery(new Term(field, userId));
-            } else {
-                return QueryHelper.negateQuery(new TermQuery(new Term(field, userId)));
-            }
+            return new TermQuery(new Term(field, userId));
         } else {
             BooleanQuery b = new BooleanQuery(true);
             for (String userId : userIds) {
                 Term term = new Term(field, userId);
                 b.add(new TermQuery(term), Occur.SHOULD);
             }
-            if (facetRule.isEqual()) {
-                return b;
-            } else {
-                return QueryHelper.negateQuery(b);
-            }
+            return b;
         }
     }
 
@@ -423,11 +415,7 @@ public class AuthorizationQuery {
             Term term = new Term(field, groupName);
             b.add(new TermQuery(term), Occur.SHOULD);
         }
-        if (facetRule.isEqual()) {
-            return b;
-        } else {
-            return QueryHelper.negateQuery(b);
-        }
+        return b;
     }
 
     private Query expandRole(final String field, final QFacetRule facetRule, final Set<String> roles) {
@@ -440,11 +428,7 @@ public class AuthorizationQuery {
             Term term = new Term(field, role);
             b.add(new TermQuery(term), Occur.SHOULD);
         }
-        if (facetRule.isEqual()) {
-            return b;
-        } else {
-            return QueryHelper.negateQuery(b);
-        }
+        return b;
     }
 
     @Override
