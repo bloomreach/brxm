@@ -31,12 +31,20 @@ import org.hippoecm.hst.configuration.site.HstSite;
 public class ChannelLazyLoadingChangedBySet implements Set<String> {
 
     private transient Set<String> delegatee;
-    private transient final HstNode channelRootConfigNode;
+    private transient Set<String> usersWithMainConfigNodeChanges;
     private transient final HstSite previewHstSite;
     private transient final Channel channel;
 
     public ChannelLazyLoadingChangedBySet(final HstNode channelRootConfigNode, final HstSite previewHstSite, final Channel channel) {
-        this.channelRootConfigNode = channelRootConfigNode;
+        for (HstNode mainConfigNode : channelRootConfigNode.getNodes()) {
+            if (usersWithMainConfigNodeChanges == null) {
+                usersWithMainConfigNodeChanges = new HashSet<>();
+            }
+            final String lockedBy = mainConfigNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY);
+            if (lockedBy != null) {
+                usersWithMainConfigNodeChanges.add(lockedBy);
+            }
+        }
         this.previewHstSite = previewHstSite;
         this.channel = channel;
     }
@@ -45,18 +53,16 @@ public class ChannelLazyLoadingChangedBySet implements Set<String> {
         if (delegatee != null) {
             return;
         }
-        delegatee = getAllUsersWithComponentLock(previewHstSite);
+        delegatee =  new HashSet<>();
+        if (usersWithMainConfigNodeChanges != null) {
+            delegatee.addAll(usersWithMainConfigNodeChanges);
+        }
+        delegatee.addAll(getAllUsersWithComponentLock(previewHstSite));
         delegatee.addAll(getAllUsersWithSitemapItemLock(previewHstSite));
         delegatee.addAll(getAllUsersWithSiteMenuLock(previewHstSite));
 
         // TODO sitemap locks
 
-        for (HstNode mainConfigNode : channelRootConfigNode.getNodes()) {
-            final String lockedBy = mainConfigNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY);
-            if (lockedBy != null) {
-                delegatee.add(lockedBy);
-            }
-        }
         // check preview channel node itself
         if (channel.getChannelNodeLockedBy() != null) {
             delegatee.add(channel.getChannelNodeLockedBy());

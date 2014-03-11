@@ -65,8 +65,6 @@ public class ChannelLazyLoadingChangedBySetTest {
 
         mocks = new Object[]{rootConfigNode, previewSite, channel, componentsConfig, componentConfig, menusConfig, menuConfig};
         reset(mocks);
-
-        set = new ChannelLazyLoadingChangedBySet(rootConfigNode, previewSite, channel);
     }
 
     @Test
@@ -86,6 +84,7 @@ public class ChannelLazyLoadingChangedBySetTest {
         expect(channel.getChannelNodeLockedBy()).andReturn(null);
         replay(mocks);
 
+        set = new ChannelLazyLoadingChangedBySet(rootConfigNode, previewSite, channel);
         assertThat(set.isEmpty(), is(true));
     }
 
@@ -108,7 +107,7 @@ public class ChannelLazyLoadingChangedBySetTest {
 
         expect(channel.getChannelNodeLockedBy()).andReturn(null);
         replay(mocks);
-
+        set = new ChannelLazyLoadingChangedBySet(rootConfigNode, previewSite, channel);
         assertThat(set.contains("joe"), is(true));
 
     }
@@ -118,7 +117,6 @@ public class ChannelLazyLoadingChangedBySetTest {
 
         expect(previewSite.getComponentsConfiguration()).andReturn(componentsConfig);
         final Map<String, HstComponentConfiguration> configurationMap = new HashMap<>();
-        expect(componentConfig.getComponentType()).andReturn(HstComponentConfiguration.Type.CONTAINER_COMPONENT);
         expect(componentConfig.getLockedBy()).andReturn("john").atLeastOnce();
         expect(componentConfig.isInherited()).andReturn(false);
 
@@ -137,6 +135,7 @@ public class ChannelLazyLoadingChangedBySetTest {
         expect(channel.getChannelNodeLockedBy()).andReturn(null);
         replay(mocks);
 
+        set = new ChannelLazyLoadingChangedBySet(rootConfigNode, previewSite, channel);
         assertThat(set.contains("john"), is(true));
 
     }
@@ -157,6 +156,7 @@ public class ChannelLazyLoadingChangedBySetTest {
         expect(channel.getChannelNodeLockedBy()).andReturn("john").atLeastOnce();
         replay(mocks);
 
+        set = new ChannelLazyLoadingChangedBySet(rootConfigNode, previewSite, channel);
         assertThat(set.contains("john"), is(true));
 
     }
