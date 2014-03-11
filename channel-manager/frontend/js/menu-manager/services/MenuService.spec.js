@@ -27,6 +27,7 @@ describe('Menu Service', function () {
                 apiUrlPrefix: 'api',
                 menuId: 'menuId'
             });
+            $provide.value('hippo.channelManager.HstApiRequests', jasmine.createSpy());
         });
     });
 

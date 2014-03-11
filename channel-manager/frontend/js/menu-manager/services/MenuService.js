@@ -198,9 +198,7 @@
                 };
 
                 menuService.deleteMenuItem = function (menuItemId) {
-                    console.info('delete ', menuItemId);
                     var selectedItemId = getSelectedItemIdBeforeDeletion(menuItemId);
-                    console.info('selected after delete ', selectedItemId);
                     var deferred = $q.defer();
                     post(menuServiceUrl('delete/' + menuItemId))
                         .success(function() {

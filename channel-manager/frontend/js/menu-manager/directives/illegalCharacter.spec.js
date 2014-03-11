@@ -19,6 +19,11 @@ describe('illegal character directive', function () {
     var $scope, form, element;
 
     beforeEach(module('hippo.channelManager.menuManager'));
+    beforeEach(function() {
+        module(function($provide) {
+            $provide.value('hippo.channelManager.HstApiRequests', jasmine.createSpy());
+        });
+    });
     beforeEach(inject(function ($compile, $rootScope) {
         $scope = $rootScope;
         $scope.validation = {

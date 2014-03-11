@@ -27,6 +27,7 @@ describe('Page Service', function () {
                 apiUrlPrefix: 'api',
                 sitemapId: 'sitemapId'
             });
+            $provide.value('hippo.channelManager.HstApiRequests', jasmine.createSpy());
         });
     });
 
