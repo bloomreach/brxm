@@ -102,8 +102,6 @@
     <maven.plugin.taglib.version>2.4</maven.plugin.taglib.version>
     <maven.plugin.war.version>2.4</maven.plugin.war.version>
 
-    <maven.extension.wagon-http.version>2.6</maven.extension.wagon-http.version>
-
     <!-- if you want a remote debugging on a different a address
          override on command line with -Dcargo.debug.addres=xxxx -->
     <cargo.debug.address>8000</cargo.debug.address>
@@ -421,13 +419,6 @@
   </dependencies>
 
   <build>
-    <extensions>
-      <extension>
-        <groupId>org.apache.maven.wagon</groupId>
-        <artifactId>wagon-http</artifactId>
-        <version>${maven.extension.wagon-http.version}</version>
-      </extension>
-    </extensions>
     <pluginManagement>
       <plugins>
         <plugin>
