@@ -25,7 +25,7 @@
             '$state',
             '_hippo.channelManager.IFrameService',
             '_hippo.channelManager.OutstandingHttpRequests',
-            'hippo.channelManager.menuManager.FormValidationService',
+            'hippo.channelManager.FormValidationService',
             function($log, $rootScope, $state, IFrameService, OutstandingHttpRequests, FormValidationService) {
 
                 function handleClose() {

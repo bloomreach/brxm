@@ -17,9 +17,9 @@
 (function () {
     'use strict';
 
-    angular.module('hippo.channelManager.menuManager')
+    angular.module('hippo.channelManager')
 
-        .factory('hippo.channelManager.menuManager.FormValidationService', [function () {
+        .factory('hippo.channelManager.FormValidationService', [function () {
             var isValid = true;
 
             function setValidity(value) {

@@ -22,7 +22,7 @@
         .controller('hippo.channelManager.menuManager.EditMenuItemFormCtrl', [
             '$scope',
             '$translate',
-            'hippo.channelManager.menuManager.FormValidationService',
+            'hippo.channelManager.FormValidationService',
             'hippo.channelManager.menuManager.FocusService',
             function ($scope, $translate, FormValidationService, FocusService) {
                 $scope.focus = FocusService.focusElementWithId;

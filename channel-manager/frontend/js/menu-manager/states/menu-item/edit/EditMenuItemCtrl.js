@@ -26,7 +26,7 @@
             '$log',
             'hippo.channelManager.FeedbackService',
             'hippo.channelManager.menuManager.MenuService',
-            'hippo.channelManager.menuManager.FormValidationService',
+            'hippo.channelManager.FormValidationService',
             function ($scope, $stateParams, $state, $log, FeedbackService, MenuService, FormValidationService) {
                 var savedMenuItem;
 

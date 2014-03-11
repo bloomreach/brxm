@@ -24,9 +24,9 @@
             '$state',
             '$stateParams',
             'hippo.channelManager.FeedbackService',
+            'hippo.channelManager.FormValidationService',
             'hippo.channelManager.menuManager.MenuService',
-            'hippo.channelManager.menuManager.FormValidationService',
-            function ($scope, $state, $stateParams, FeedbackService, MenuService, FormValidationService) {
+            function ($scope, $state, $stateParams, FeedbackService, FormValidationService, MenuService) {
                 var parentItemId = $stateParams.menuItemId;
 
                 // the user should submit or cancel before closing the menu

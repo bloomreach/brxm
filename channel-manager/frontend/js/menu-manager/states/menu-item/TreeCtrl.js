@@ -27,9 +27,9 @@
             '$log',
             'hippo.channelManager.ConfigService',
             'hippo.channelManager.FeedbackService',
+            'hippo.channelManager.FormValidationService',
             'hippo.channelManager.menuManager.MenuService',
-            'hippo.channelManager.menuManager.FormValidationService',
-            function ($scope, $state, $stateParams, $rootScope, $log, ConfigService, FeedbackService, MenuService, FormValidationService) {
+            function ($scope, $state, $stateParams, $rootScope, $log, ConfigService, FeedbackService, FormValidationService, MenuService) {
 
                 function onSuccess() {
                 }
