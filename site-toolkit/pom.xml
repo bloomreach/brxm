@@ -96,7 +96,7 @@
     <geronimo-stax-api_1.2_spec.version>1.1</geronimo-stax-api_1.2_spec.version>
     <stax.version>1.2.0</stax.version>
     <stax2-api.version>3.1.1</stax2-api.version>
-    <woodstox.version>4.1.1</woodstox.version>
+    <woodstox.version>4.2.0</woodstox.version>
 
     <mime4j.version>0.6</mime4j.version>
     <maven.plugin.site.version>3.0-beta-3</maven.plugin.site.version>
