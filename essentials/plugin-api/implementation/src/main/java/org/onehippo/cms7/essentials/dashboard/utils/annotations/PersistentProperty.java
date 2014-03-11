@@ -54,7 +54,7 @@ public @interface PersistentProperty {
     enum ProcessAnnotation implements PersistentHandler<PersistentProperty, Property> {
         PROPERTY {
             @Override
-            public Property read(final PluginContext context, final Node parent, final String path, final PersistentProperty annotation) {
+            public Property read(final Session session, final Node parent, final String path, final PersistentProperty annotation) {
                 try {
                     if (parent == null) {
                         log.error("Parent node was null for path: {}", path);
@@ -80,12 +80,12 @@ public @interface PersistentProperty {
         private static final Logger log = LoggerFactory.getLogger(ProcessAnnotation.class);
 
         @Override
-        public Property execute(final PluginContext context, final Document model, final PersistentProperty annotation) {
+        public Property execute(final Session session, final Document model, final PersistentProperty annotation) {
 
             final SimplePropertyModel ourModel = (SimplePropertyModel) model;
             final Object value = ourModel.getValue();
             final String name = ourModel.getName();
-            final Session session = context.createSession();
+
             try {
                 final String parentPath = ourModel.getParentPath();
                 if (session.itemExists(parentPath)) {
@@ -112,8 +112,7 @@ public @interface PersistentProperty {
                 }
             } catch (RepositoryException e) {
                 log.error("Error writing property", e);
-            }finally {
-                GlobalUtils.cleanupSession(session);
+                GlobalUtils.refreshSession(session, false);
             }
 
             return null;

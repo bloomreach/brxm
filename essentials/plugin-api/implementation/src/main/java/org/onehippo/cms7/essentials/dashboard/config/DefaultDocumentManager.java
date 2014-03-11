@@ -16,6 +16,8 @@
 
 package org.onehippo.cms7.essentials.dashboard.config;
 
+import javax.jcr.Session;
+
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.JcrPersistenceReader;
@@ -33,12 +35,19 @@ public class DefaultDocumentManager implements DocumentManager {
 
     private final JcrPersistenceWriter writer;
     private final JcrPersistenceReader reader;
+    private final Session session;
 
     public DefaultDocumentManager(final PluginContext context) {
-        this.writer = new JcrPersistenceWriter(context);
-        this.reader = new JcrPersistenceReader(context);
+        this.session = context.createSession();
+        this.writer = new JcrPersistenceWriter(session, context);
+        this.reader = new JcrPersistenceReader(session, context);
     }
 
+
+    @Override
+    public Session getSession() {
+        return session;
+    }
 
     @Override
     public <T extends Document> T fetchDocument(final String path, final Class<T> clazz) {

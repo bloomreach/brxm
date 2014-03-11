@@ -18,6 +18,7 @@ package org.onehippo.cms7.essentials.dashboard.model;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
+import javax.jcr.Session;
 
 import org.onehippo.cms7.essentials.dashboard.config.Document;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
@@ -30,7 +31,7 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
  */
 public interface PersistentHandler<T, E extends Item> {
 
-    E execute(PluginContext context, Document model, T annotation);
+    E execute(Session session, Document model, T annotation);
 
-    E read(PluginContext context, Node parent, String path, T annotation);
+    E read(Session session, Node parent, String path, T annotation);
 }

@@ -27,6 +27,7 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.Value;
 
 import org.onehippo.cms7.essentials.dashboard.config.Document;
@@ -47,16 +48,17 @@ public class JcrPersistenceReader {
 
     private static Logger log = LoggerFactory.getLogger(JcrPersistenceReader.class);
     private final PluginContext context;
-
-    public JcrPersistenceReader(final PluginContext context) {
+    private final Session session;
+    public JcrPersistenceReader(final Session session, final PluginContext context) {
         this.context = context;
+        this.session = session;
     }
 
     public <T extends Document> T read(final String path, final Class<T> clazz) {
 
         final PersistentHandler<PersistentNode, Node> nodeWriter = PersistentNode.ProcessAnnotation.NODE;
         final PersistentNode annotationNode = AnnotationUtils.getClassAnnotation(clazz, PersistentNode.class);
-        final Node node = nodeWriter.read(context, null, path, annotationNode);
+        final Node node = nodeWriter.read(session, null, path, annotationNode);
         if (node == null) {
             return null;
         }
@@ -78,7 +80,7 @@ public class JcrPersistenceReader {
         for (Field field : fields) {
             final PersistentProperty property = field.getAnnotation(PersistentProperty.class);
             try {
-                final Property myProperty = propreader.read(context, node, property.name(), property);
+                final Property myProperty = propreader.read(session, node, property.name(), property);
                 if (myProperty == null) {
                     field.set(document, null);
                     continue;
@@ -115,7 +117,7 @@ public class JcrPersistenceReader {
         for (Field field : multiFields) {
             final PersistentMultiProperty property = field.getAnnotation(PersistentMultiProperty.class);
             try {
-                final Property myProperty = multiReader.read(context, node, property.name(), property);
+                final Property myProperty = multiReader.read(session, node, property.name(), property);
                 if (myProperty == null) {
                     field.set(document, null);
                     continue;

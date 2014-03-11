@@ -39,7 +39,7 @@ public class HstConfigurationServiceTest extends BaseRepositoryTest {
     @Test
     public void testBuild() throws Exception {
         HstConfigurationService service = new HstConfigurationService("test", getContext());
-        final HstConfiguration configuration = service.build();
+        final HstConfiguration configuration = service.build(getContext());
         assertTrue(configuration != null);
         assertEquals("test", configuration.getName());
 

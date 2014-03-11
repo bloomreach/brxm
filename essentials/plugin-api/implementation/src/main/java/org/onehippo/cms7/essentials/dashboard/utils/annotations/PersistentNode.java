@@ -57,12 +57,12 @@ public @interface PersistentNode {
     enum ProcessAnnotation implements PersistentHandler<PersistentNode, Node> {
         NODE {
             @Override
-            public Node read(final PluginContext context, final Node parent, final String path, final PersistentNode annotation) {
+            public Node read(final Session session, final Node parent, final String path, final PersistentNode annotation) {
                 if (Strings.isNullOrEmpty(path)) {
                     log.error("Cannot read node for empty path");
                     return null;
                 }
-                final Session session = context.createSession();
+
                 try {
                     if (parent != null && !parent.hasNode(path)) {
                         if (log.isDebugEnabled()) {
@@ -79,6 +79,7 @@ public @interface PersistentNode {
 
                 } catch (RepositoryException e) {
                     log.error("Error fetching node {}", e);
+                    GlobalUtils.refreshSession(session, false);
                 }
                 return null;
             }
@@ -86,13 +87,13 @@ public @interface PersistentNode {
         private static final Logger log = LoggerFactory.getLogger(ProcessAnnotation.class);
 
         @Override
-        public Node execute(final PluginContext context, final Document model, final PersistentNode annotation) {
+        public Node execute(final Session session, final Document model, final PersistentNode annotation) {
             final String parentPath = model.getParentPath();
             if (Strings.isNullOrEmpty(parentPath)) {
                 log.error("Parent path was null for model: {}", model);
                 return null;
             }
-            final Session session = context.createSession();
+
             try {
                 if (session.itemExists(parentPath)) {
                     final Node parent = session.getNode(parentPath);
@@ -115,9 +116,7 @@ public @interface PersistentNode {
 
             } catch (RepositoryException e) {
                 log.error("Error saving model: " + model.getClass(), e);
-
-            } finally {
-                GlobalUtils.cleanupSession(session);
+                GlobalUtils.refreshSession(session, false);
             }
             return null;
         }

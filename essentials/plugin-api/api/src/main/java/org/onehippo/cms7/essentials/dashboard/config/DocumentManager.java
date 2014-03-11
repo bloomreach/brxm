@@ -16,12 +16,15 @@
 
 package org.onehippo.cms7.essentials.dashboard.config;
 
+import javax.jcr.Session;
+
 /**
  * @version "$Id$"
  */
 public interface DocumentManager {
 
 
+    Session getSession();
     /**
      * Fetches a JCR repository item for specific content type (provided by clazz)
      *

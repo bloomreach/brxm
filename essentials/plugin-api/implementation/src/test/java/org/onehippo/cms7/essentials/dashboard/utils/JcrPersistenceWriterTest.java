@@ -25,7 +25,6 @@ import javax.jcr.Session;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.onehippo.cms7.essentials.TestPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.hst.HstConfiguration;
 import org.onehippo.cms7.essentials.dashboard.model.hst.HstSiteMenu;
@@ -56,7 +55,7 @@ public class JcrPersistenceWriterTest extends BaseRepositoryTest {
         final PluginContext context = getContext();
 
 
-        JcrPersistenceWriter writer = new JcrPersistenceWriter(context);
+        JcrPersistenceWriter writer = new JcrPersistenceWriter(session, context);
         //############################################
         // POPULATE TREE:
         //############################################

@@ -34,8 +34,8 @@ public class HstConfigurationService {
     }
 
 
-    public HstConfiguration build() {
-        JcrPersistenceWriter writer = new JcrPersistenceWriter(context);
+    public HstConfiguration build(final PluginContext context) {
+        JcrPersistenceWriter writer = new JcrPersistenceWriter(context.createSession(), this.context);
         writer.write(config);
         return config;
     }

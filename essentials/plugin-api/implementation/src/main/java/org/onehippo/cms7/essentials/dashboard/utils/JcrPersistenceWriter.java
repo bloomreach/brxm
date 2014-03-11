@@ -49,9 +49,10 @@ public class JcrPersistenceWriter {
     public static final char PATH_SEPARATOR = '/';
     private static Logger log = LoggerFactory.getLogger(JcrPersistenceWriter.class);
     private final PluginContext context;
-
-    public JcrPersistenceWriter(final PluginContext context) {
+    private final Session session;
+    public JcrPersistenceWriter(final Session session, final PluginContext context) {
         this.context = context;
+        this.session = session;
 
     }
 
@@ -83,7 +84,7 @@ public class JcrPersistenceWriter {
         }
 
         final PersistentHandler<PersistentNode, Node> nodeWriter = PersistentNode.ProcessAnnotation.NODE;
-        final Node jcrNode = nodeWriter.execute(context, model, node);
+        final Node jcrNode = nodeWriter.execute(session, model, node);
         if (jcrNode == null) {
             return null;
         }
@@ -100,7 +101,7 @@ public class JcrPersistenceWriter {
                     myModel.setParentPath(jcrNode.getPath());
                     myModel.setName(name);
                     // write single property:
-                    propWriter.execute(context, myModel, property);
+                    propWriter.execute(session, myModel, property);
                 }
             } catch (IllegalAccessException e) {
                 log.error("Error processing value", e);
@@ -121,7 +122,7 @@ public class JcrPersistenceWriter {
                     myModel.setParentPath(jcrNode.getPath());
                     myModel.setName(name);
                     // write single property:
-                    multiWriter.execute(context, myModel, p);
+                    multiWriter.execute(session, myModel, p);
                 }
             } catch (IllegalAccessException e) {
                 log.error("Error processing value", e);
