@@ -72,7 +72,9 @@
                 });
 
                 $scope.$watch('form.url.$error.required', function () {
-                    $scope.$parent.fieldFeedbackMessage.link = $translate('EXTERNAL_LINK_REQUIRED');
+                    if (!$scope.form.url.$pristine) {
+                        $scope.$parent.fieldFeedbackMessage.link = $translate('EXTERNAL_LINK_REQUIRED');
+                    }
                 });
 
                 $scope.$watch('form.url.$valid', function (value) {

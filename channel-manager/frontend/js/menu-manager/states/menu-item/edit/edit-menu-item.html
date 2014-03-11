@@ -117,7 +117,7 @@
              data-ng-show="selectedMenuItem.linkType === 'EXTERNAL'"
              data-ng-class="{
             'has-success': form.url.$dirty && !isSaving.link && form.url.$valid && isSaved.link,
-            'has-error': !isSaving.link && (form.url.$invalid || !isSaved.link)
+            'has-error': (!form.url.$pristine) && (!isSaving.link && (form.url.$invalid || !isSaved.link))
         }">
             <label for="hippo.channelManager.menuManager.menuItem.edit.url">{{ 'EXTERNAL_LINK' | translate }}</label>
             <input type="text" name="url" class="form-control" id="hippo.channelManager.menuManager.menuItem.edit.url"
