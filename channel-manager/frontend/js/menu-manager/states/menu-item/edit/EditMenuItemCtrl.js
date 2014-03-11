@@ -46,13 +46,13 @@
                     isVisible: false
                 };
 
-                $scope.validation = {
-                    invalidCharacters: '/ *'
+                $scope.fieldFeedbackMessage = {
                 };
 
                 savedMenuItem = angular.copy($scope.selectedMenuItem);
 
                 function shouldSaveSelectedMenuItemProperty() {
+                    $scope.dismissFeedback();
                     if (!angular.isDefined($scope.selectedMenuItem)) {
                         return false;
                     }
@@ -69,13 +69,12 @@
                     $scope.isSaving[propertyName] = true;
 
                     MenuService.saveMenuItem(savedMenuItem).then(function () {
-                            $scope.feedback.message = '';
                             $scope.isSaving[propertyName] = false;
                             $scope.isSaved[propertyName] = true;
                             FormValidationService.setValidity(true);
                         },
                         function (errorResponse) {
-                            $scope.feedback = FeedbackService.getFeedback(errorResponse);
+                            $scope.fieldFeedbackMessage[propertyName] = FeedbackService.getFeedback(errorResponse).message;
                             $scope.isSaving[propertyName] = false;
                             $scope.isSaved[propertyName] = false;
                             FormValidationService.setValidity(false);
@@ -116,6 +115,7 @@
 
                 $scope.dismissFeedback = function () {
                     $scope.feedback.message = '';
+                    $scope.fieldFeedbackMessage = {};
                 };
 
                 $scope.cancel = function () {

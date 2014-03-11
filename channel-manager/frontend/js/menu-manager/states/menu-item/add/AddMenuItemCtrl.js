@@ -38,10 +38,6 @@
                     link: ''
                 };
 
-                $scope.validation = {
-                    invalidCharacters: '/ *'
-                };
-
                 $scope.submit = function() {
                     if ($stateParams.menuItemId) {
                         MenuService.getPathToMenuItem($stateParams.menuItemId).then(addMenuItemToPath);

@@ -22,11 +22,16 @@
         .directive('tooltip', [function() {
             return {
                 restrict: 'A',
+                scope: {title: '@'},
                 link: function (scope, element, attrs) {
-                    element.tooltip ({
-                        trigger: 'focus',
-                        title: attrs.title
-                    }).tooltip('show');
+
+                    scope.$watch('title', function (newTitle) {
+                        element.tooltip('destroy');
+                        element.tooltip ({
+                            trigger: 'focus',
+                            title: newTitle
+                        }).tooltip('show');
+                    });
                 }
             };
         }]);

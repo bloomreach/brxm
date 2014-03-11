@@ -51,17 +51,16 @@
                    data-hippo.channel-manager.menu-manager.auto-focus
                    data-ng-model="selectedMenuItem.title"
                    data-ng-required="true"
-                   data-ng-blur="form.title.$valid ? saveSelectedMenuItem('title') : '';"
-                   data-illegal-characters="validation.invalidCharacters">
+                   data-ng-blur="form.title.$valid ? saveSelectedMenuItem('title') : '';">
             <div class="tooltip-container" data-ng-show="form.title.$error.required">
                 <div data-tooltip
                      data-placement="top"
                      data-title="{{ 'LABEL_REQUIRED' | translate }}"></div>
             </div>
-            <div class="tooltip-container" data-ng-show="form.title.$error.illegalCharacters">
+            <div class="tooltip-container" data-ng-show="fieldFeedbackMessage.title">
                 <div data-tooltip
                      data-placement="top"
-                     data-title="{{ 'INVALID_CHARACTERS' | translate:validation }}"></div>
+                     data-title="{{fieldFeedbackMessage.title}}"></div>
             </div>
             <i class="fa form-control-feedback"
                data-ng-show="form.title.$dirty"
@@ -131,10 +130,15 @@
                    data-ng-model="selectedMenuItem.link"
                    data-ng-required="true"
                    data-ng-blur="form.url.$valid ? saveSelectedMenuItem('link') : '';">
-            <div class="tooltip-container" data-ng-show="form.url.$invalid">
+            <div class="tooltip-container" data-ng-show="form.url.$error.required">
                 <div data-tooltip
                      data-placement="top"
-                     data-title="{{ 'EXTERNAL_LINK_INVALID' | translate }}"></div>
+                     data-title="{{ 'EXTERNAL_LINK_REQUIRED' | translate }}"></div>
+            </div>
+            <div class="tooltip-container" data-ng-show="fieldFeedbackMessage.link">
+                <div data-tooltip
+                     data-placement="top"
+                     data-title="{{fieldFeedbackMessage.link}}"></div>
             </div>
             <i class="fa form-control-feedback"
                data-ng-show="form.url.$dirty"

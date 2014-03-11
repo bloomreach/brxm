@@ -7,6 +7,7 @@
     "DESTINATION": "Destination",
     "EXAMPLE_DOMAIN": "http://www.example.com",
     "EXTERNAL_LINK": "External link",
+    "EXTERNAL_LINK_REQUIRED": "External link is required",
     "EXTERNAL_LINK_INVALID": "External link is invalid",
     "INTERNAL_LINK": "Internal link",
     "LABEL": "Label",
@@ -26,7 +27,7 @@
     "TECHNICAL_ERROR": "A technical error has occurred",
 
     "INVALID_CHARACTERS": "The following characters are not allowed in the label: {{ invalidCharacters }}",
-    "INVALID_URL": "Not a valid url",
+    "INVALID_URL": "External link is invalid",
 
     "UNTITLED": "Untitled",
     "MENU_ITEM": "menu item",
