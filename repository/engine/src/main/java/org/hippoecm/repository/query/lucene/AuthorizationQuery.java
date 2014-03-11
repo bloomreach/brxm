@@ -192,22 +192,47 @@ public class AuthorizationQuery {
                     if (indexingConfig.isFacet(facetName)) {
                         String fieldName = ServicingNameFormat.getInternalFacetName(facetName, nsMappings);
                         String internalNameTerm = nsMappings.translateName(facetName);
+                        Query tq;
                         if (FacetAuthConstants.WILDCARD.equals(value)) {
                             if (facetRule.isEqual()) {
-                                return new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalNameTerm));
+                                tq = new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalNameTerm));
                             } else {
                                 // When the rule is : facet != * , the authorization is allowed on all nodes not having the property
-                                return QueryHelper.negateQuery(
+                                tq = QueryHelper.negateQuery(
                                         new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalNameTerm)));
                             }
                         } else if (FacetAuthConstants.EXPANDER_USER.equals(value)) {
-                            return expandUser(fieldName, facetRule, userIds);
+                            tq = expandUser(fieldName, facetRule, userIds);
                         } else if (FacetAuthConstants.EXPANDER_ROLE.equals(value)) {
-                            return expandRole(fieldName, facetRule, roles);
+                            tq = expandRole(fieldName, facetRule, roles);
                         } else if (FacetAuthConstants.EXPANDER_GROUP.equals(value)) {
-                            return expandGroup(fieldName, facetRule, memberships);
+                            tq = expandGroup(fieldName, facetRule, memberships);
                         } else {
-                            return getPropertyQuery(facetRule, value, fieldName, internalNameTerm);
+                            tq = new TermQuery(new Term(fieldName, value));
+                        }
+                        if (facetRule.isFacetOptional()) {
+                            BooleanQuery bq = new BooleanQuery(true);
+                            // all the docs that do *not* have the property:
+                            Query docsThatMissPropertyQuery = QueryHelper.negateQuery(
+                                    new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalNameTerm)));
+                            bq.add(docsThatMissPropertyQuery, Occur.SHOULD);
+                            // and OR that one with the equals
+                            if (facetRule.isEqual()) {
+                                bq.add(tq, Occur.SHOULD);
+                                return bq;
+                            } else {
+                                Query not =  QueryHelper.negateQuery(tq);
+                                bq.add(not, Occur.SHOULD);
+                                return bq;
+                            }
+                        } else {
+                            // Property MUST exist and it MUST (or MUST NOT) equal the value,
+                            // depending on QFacetRule#isEqual.
+                            if (facetRule.isEqual()) {
+                                return tq;
+                            } else {
+                                return QueryHelper.negateQuery(tq);
+                            }
                         }
                     } else {
                         log.warn("Property " + facetName.getNamespaceURI() + ":" + facetName.getLocalName() + " not allowed for faceted search. " +
@@ -249,36 +274,6 @@ public class AuthorizationQuery {
         }
         log.error("Incorrect FacetRule: returning a match zero nodes query");
         return QueryHelper.getNoHitsQuery();
-    }
-
-    private Query getPropertyQuery(final QFacetRule facetRule, final String value, final String fieldName, final String internalNameTerm) {
-        Query tq = new TermQuery(new Term(fieldName, value));
-        if (facetRule.isFacetOptional()) {
-            // If the property exists, it must be equal. Else, it is also ok
-            BooleanQuery bq = new BooleanQuery(true);
-
-            // all the docs that do *not* have the property:
-            Query docsThatMissPropertyQuery = QueryHelper.negateQuery(
-                    new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalNameTerm)));
-            bq.add(docsThatMissPropertyQuery, Occur.SHOULD);
-            // and OR that one with the equals
-            if (facetRule.isEqual()) {
-                bq.add(tq, Occur.SHOULD);
-                return bq;
-            } else {
-                Query not =  QueryHelper.negateQuery(tq);
-                bq.add(not, Occur.SHOULD);
-                return bq;
-            }
-        } else {
-            // Property MUST exist and it MUST (or MUST NOT) equal the value,
-            // depending on QFacetRule#isEqual.
-            if (facetRule.isEqual()) {
-                return tq;
-            } else {
-                return QueryHelper.negateQuery(tq);
-            }
-        }
     }
 
     private Query getNodeTypeDescendantQuery(final QFacetRule facetRule,
