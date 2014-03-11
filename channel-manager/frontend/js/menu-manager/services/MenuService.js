@@ -29,8 +29,7 @@
                     menuData = {
                         items: null
                     },
-                    menuDataLoading = false,
-                    menuLoaded = null;
+                    menuLoader = null;
 
                 function menuServiceUrl(suffix) {
                     var url = ConfigService.apiUrlPrefix + '/' + ConfigService.menuId;
@@ -41,29 +40,19 @@
                 }
 
                 function loadMenu() {
-                    if (!menuDataLoading) {
-                        menuDataLoading = true;
-                        menuLoaded = $q.defer();
+                    if (menuLoader === null) {
+                        menuLoader = $q.defer();
                         $http.get(menuServiceUrl())
                             .success(function (response) {
                                 menuData.items = response.data.items;
                                 menuData.id = response.data.id;
-                                menuLoaded.resolve(menuData);
+                                menuLoader.resolve(menuData);
                             })
                             .error(function (error) {
-                                menuLoaded.reject(error);
-                            })
-                            .then(function () {
-                                menuDataLoading = false;
+                                menuLoader.reject(error);
                             });
                     }
-                    return menuLoaded.promise;
-                }
-
-                function loadMenuOnce() {
-                    if (menuData.items === null) {
-                        loadMenu();
-                    }
+                    return menuLoader.promise;
                 }
 
                 function findMenuItem(items, id) {
@@ -76,19 +65,19 @@
                     return found;
                 }
 
-                function findPathToMenuItem(items, id) {
+                function findPathToMenuItem(parent, id) {
                     var found;
-                    _.every(items, function (item) {
+                    _.every(parent.items, function (item) {
                         if (item.id == id) {
                             found = [item];
                         } else if (item.items) {
-                            found = findPathToMenuItem(item.items, id);
-                            if (found) {
-                                found.unshift(item);
-                            }
+                            found = findPathToMenuItem(item, id);
                         }
                         return found === undefined;
                     });
+                    if (found) {
+                        found.unshift(parent);
+                    }
                     return found;
                 }
 
@@ -98,7 +87,7 @@
 
                 function whenMenuLoaded(getResolved) {
                     var deferred = $q.defer();
-                    menuService.getMenu().then(
+                    loadMenu().then(
                         function() {
                             var resolved = angular.isFunction(getResolved) ? getResolved() : undefined;
                             deferred.resolve(resolved);
@@ -110,31 +99,21 @@
                     return deferred.promise;
                 }
 
-                function findItemAndItsParent(itemId, parent) {
-                    var items = parent.items;
-                    var item = _.findWhere (items, {id: itemId});
-                    if (item) {
-                        return {item: item, parent: parent};
-                    } else if (items) {
-                        var found;
-                        for (var i = 0, length = items.length; i < length && !found; i++) {
-                            found = findItemAndItsParent(itemId, items[i]);
-                        }
-                        return found;
-                    } else {
-                        return null;
-                    }
-                }
-
                 function getSelectedItemIdBeforeDeletion(toBeDeletedItemId) {
-                    var itemWithParent = findItemAndItsParent(toBeDeletedItemId, menuData);
-                    var parent = itemWithParent.parent;
-                    var items = parent.items;
+                    var path = findPathToMenuItem(menuData, toBeDeletedItemId),
+                        item, parent, items;
+                    if (!path || path.length < 2) {
+                        return undefined;
+                    }
+
+                    item = path.pop();
+                    parent = path.pop();
+                    items = parent.items;
                     if (items.length == 1) {
                         // item to delete has no siblings, so parent will be selected
                         return parent.id;
                     }
-                    var itemIndex = _.indexOf(items, itemWithParent.item);
+                    var itemIndex = _.indexOf(items, item);
                     if (itemIndex === 0) {
                         // Item to delete is first child, so select next child
                         return items[itemIndex + 1].id;
@@ -144,9 +123,18 @@
                     }
                 }
 
+                function post(url, body) {
+                    return $http.post(url, body).success(function() {
+                        menuLoader = null;
+                        loadMenu();
+                    }).error(function() {
+                        menuLoader = null;
+                        loadMenu();
+                    });
+                }
+
                 menuService.getMenu = function () {
-                    loadMenuOnce();
-                    return menuLoaded.promise;
+                    return loadMenu();
                 };
 
                 menuService.getFirstMenuItemId = function () {
@@ -157,7 +145,7 @@
 
                 menuService.getPathToMenuItem = function(menuItemId) {
                     return whenMenuLoaded(function () {
-                        return findPathToMenuItem(menuData.items, menuItemId);
+                        return findPathToMenuItem(menuData, menuItemId);
                     });
                 };
 
@@ -169,7 +157,7 @@
 
                 menuService.saveMenuItem = function (menuItem) {
                     var deferred = $q.defer();
-                    $http.post(menuServiceUrl(), menuItem)
+                    post(menuServiceUrl(), menuItem)
                         .success(function() {
                                 deferred.resolve();
                             })
@@ -193,23 +181,15 @@
                     if (parentId === undefined) {
                         parentId = ConfigService.menuId;
                     }
-                    $http.post(menuServiceUrl('create/' + parentId + (first ? '?position=first' : '')), menuItem)
+                    post(menuServiceUrl('create/' + parentId + (first ? '?position=first' : '')), menuItem)
                         .success(function(response) {
                                 var siblings, parentItem = parentItemId ? getMenuItem(parentId) : undefined;
                                 menuItem.id = response.data;
-                                if (parentItem) {
-                                    siblings = parentItem.items;
-                                } else if (!parentItemId) {
-                                    siblings = menuData.items;
-                                }
-                                if (siblings) {
-                                    if (first) {
-                                        siblings.unshift(menuItem);
-                                    } else {
-                                        siblings.push(menuItem);
-                                    }
-                                }
-                                deferred.resolve(response.data);
+                                loadMenu().then(function() {
+                                    deferred.resolve(response.data);
+                                }, function () {
+                                    deferred.resolve(response.data);
+                                });
                             })
                         .error(function (errorResponse) {
                                 deferred.reject(errorResponse);
@@ -222,9 +202,8 @@
                     var selectedItemId = getSelectedItemIdBeforeDeletion(menuItemId);
                     console.info('selected after delete ', selectedItemId);
                     var deferred = $q.defer();
-                    $http.post(menuServiceUrl('delete/' + menuItemId))
+                    post(menuServiceUrl('delete/' + menuItemId))
                         .success(function() {
-                            loadMenu();
                             deferred.resolve(selectedItemId);
                         })
                         .error(function (errorResponse) {
@@ -238,7 +217,7 @@
                     var url = menuServiceUrl('move/' + menuItemId + '/' + newParentId + '/' + newPosition );
 
                     var deferred = $q.defer();
-                    $http.post(url, {})
+                    post(url, {})
                         .success(function (data) {
                             deferred.resolve(data);
                         })
@@ -246,10 +225,6 @@
                             deferred.reject(errorResponse);
                         });
                     return deferred.promise;
-                };
-
-                menuService.loadMenu = function () {
-                    loadMenu();
                 };
 
                 return menuService;

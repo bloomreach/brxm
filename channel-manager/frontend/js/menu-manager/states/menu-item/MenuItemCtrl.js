@@ -17,53 +17,6 @@
 (function () {
     "use strict";
 
-    function findParentByItemId(sourceItem, itemId) {
-        var result;
-
-        if (sourceItem.items) {
-            angular.forEach(sourceItem.items, function (item) {
-                if (item.id === itemId) {
-                    result = sourceItem;
-                }
-            });
-        }
-
-        if (!result && sourceItem.items) {
-            angular.forEach(sourceItem.items, function (item) {
-                var newRes = findParentByItemId(item, itemId);
-                if (newRes) {
-                    result = item;
-                }
-            });
-        }
-
-        return result;
-    }
-
-    function findScopeByItemId(sourceItem, itemId) {
-        var result;
-
-        if (sourceItem) {
-            angular.forEach(sourceItem, function (item) {
-                if (item.id === itemId) {
-                    result = item;
-                }
-            });
-        }
-
-        if (!result) {
-            angular.forEach(sourceItem, function (item) {
-                var newRes = findScopeByItemId(item.items, itemId);
-
-                if (newRes) {
-                    result = newRes;
-                }
-            });
-        }
-
-        return result;
-    }
-
     angular.module('hippo.channelManager.menuManager')
 
         .controller('hippo.channelManager.menuManager.MenuItemCtrl', [
@@ -79,18 +32,23 @@
                 MenuService.getMenu().then(function (menuData) {
                     $scope.list = menuData.items;
                     $scope.selectedMenuItem = $scope.list[0];
+
+                    $scope.$watch(function() {
+                        return menuData.items;
+                    }, function() {
+                        $scope.list = menuData.items;
+                    }, false);
                 });
 
                 // if we redirect to a url without DOM-interaction, we need to set the selected menu item manually
                 $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
                     if (toState.name == 'menu-item.edit' && toParams.menuItemId != $scope.selectedMenuItem.id) {
-                        $scope.selectedMenuItem = findScopeByItemId($scope.list, toParams.menuItemId);
+                        MenuService.getMenuItem(toParams.menuItemId).then(function (item) {
+                            $scope.selectedMenuItem = item;
+                        });
                     }
                 });
 
-                $scope.findParent = function (itemId) {
-                    return findParentByItemId({items: $scope.list}, itemId);
-                };
             }
         ]);
 }());

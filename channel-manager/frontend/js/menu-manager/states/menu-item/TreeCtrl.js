@@ -30,11 +30,20 @@
             'hippo.channelManager.menuManager.MenuService',
             'hippo.channelManager.menuManager.FormValidationService',
             function ($scope, $state, $stateParams, $rootScope, $log, ConfigService, FeedbackService, MenuService, FormValidationService) {
+
+                function onSuccess() {
+                }
+
+                function onError(errorResponse) {
+                    $scope.$parent.feedback = FeedbackService.getFeedback(errorResponse);
+                }
+
                 $scope.callbacks = {
                     itemClicked: function (itemScope) {
                         MenuService.saveMenuItem($scope.$parent.selectedMenuItem).then(function () {
-                                $state.go('menu-item.edit', {menuItemId: itemScope.id});
-                                $scope.$parent.selectedMenuItem = itemScope;
+                                $state.go('menu-item.edit', {
+                                    menuItemId: itemScope.id
+                                });
                             },
                             function () {
                                 FormValidationService.setValidity(false);
@@ -44,43 +53,18 @@
                     itemMoved: function (sourceScope, modelData, sourceIndex, destScope, destIndex) {
                         var parentData = destScope.parentItemScope();
                         var destId = (!parentData) ? ConfigService.menuId : parentData.itemData().id;
-                        MenuService.moveMenuItem(modelData.id, destId, destIndex).then(
-                            function (message) {},
-                            function (errorResponse) {
-                                $scope.$parent.feedback = FeedbackService.getFeedback(errorResponse);
-
-                                // move the item back at it's original place in the DOM
-                                var removedItem = destScope.sortableModelValue.splice(destIndex, 1)[0];
-                                sourceScope.sortableModelValue.splice(sourceIndex, 0, removedItem);
-                            }
-                        );
+                        MenuService.moveMenuItem(modelData.id, destId, destIndex).then(onSuccess, onError);
 
                         // prevent move action when the edit menu item form is invalid
-                        MenuService.saveMenuItem($scope.$parent.selectedMenuItem).then(function () {},
-                            function () {
-                                var removedItem = destScope.sortableModelValue.splice(destIndex, 1)[0];
-                                sourceScope.sortableModelValue.splice(sourceIndex, 0, removedItem);
-                            }
-                        );
+                        MenuService.saveMenuItem($scope.$parent.selectedMenuItem);
                     },
                     orderChanged: function (scope, modelData, sourceIndex, destIndex) {
                         var parentData = scope.parentItemScope();
                         var destId = (!parentData) ? ConfigService.menuId : parentData.itemData().id;
-                        MenuService.moveMenuItem(modelData.id, destId, destIndex).then(
-                            function (message) {},
-                            function (errorResponse) {
-                            $scope.$parent.feedback = FeedbackService.getFeedback(errorResponse);
-                            var removedItem = scope.sortableModelValue.splice(destIndex, 1)[0];
-                            scope.sortableModelValue.splice(sourceIndex, 0, removedItem);
-                        });
+                        MenuService.moveMenuItem(modelData.id, destId, destIndex).then(onSuccess, onError);
 
                         // prevent order change when the edit menu item form is invalid
-                        MenuService.saveMenuItem($scope.$parent.selectedMenuItem).then(function () {},
-                            function () {
-                                var removedItem = scope.sortableModelValue.splice(destIndex, 1)[0];
-                                scope.sortableModelValue.splice(sourceIndex, 0, removedItem);
-                            }
-                        );
+                        MenuService.saveMenuItem($scope.$parent.selectedMenuItem);
                     }
                 };
             }
