@@ -37,7 +37,7 @@
                         // Apparently there is no translation
                         return {message: $translate(technicalErrorTranslationId)};
                     } else {
-                        return {message: $translate(translationId, interpolateParams)};
+                        return {message: clientErrorMessage};
                     }
                 } else {
                     return {message: $translate(technicalErrorTranslationId)};
