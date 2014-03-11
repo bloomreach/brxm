@@ -9,22 +9,21 @@ import java.util.List;
 
 import org.apache.maven.model.Dependency;
 import org.junit.Test;
-import org.onehippo.cms7.essentials.BaseTest;
+import org.onehippo.cms7.essentials.BaseResourceTest;
 import org.onehippo.cms7.essentials.dashboard.model.DependencyType;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * @version "$Id: ProjectUtilsTest.java 164012 2013-05-11 14:05:23Z mmilicevic $"
+ * @version "$Id$"
  */
-public class ProjectUtilsTest extends BaseTest {
+public class ProjectUtilsTest extends BaseResourceTest {
 
 
     @Test
     public void testSitePackages() throws Exception {
         final List<String> sitePackages = ProjectUtils.getSitePackages(getContext());
-        assertEquals(9, sitePackages.size());
+        assertTrue(sitePackages.size() > 8);
         assertTrue(sitePackages.contains("org"));
         assertTrue(sitePackages.contains("org.dummy"));
 

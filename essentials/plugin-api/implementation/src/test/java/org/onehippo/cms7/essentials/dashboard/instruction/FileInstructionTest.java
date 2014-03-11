@@ -21,6 +21,7 @@ import java.io.File;
 import javax.inject.Inject;
 
 import org.junit.Test;
+import org.onehippo.cms7.essentials.BaseResourceTest;
 import org.onehippo.cms7.essentials.BaseTest;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
@@ -34,7 +35,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @version "$Id$"
  */
-public class FileInstructionTest extends BaseTest {
+public class FileInstructionTest extends BaseResourceTest {
 
 
     public static final String SOURCE = createPlaceHolder(EssentialConst.PLACEHOLDER_PROJECT_ROOT) + "/instruction_file.txt";

@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.essentials.BaseResourceTest;
 import org.onehippo.cms7.essentials.BaseTest;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.HippoEssentialsGeneratedObject;
@@ -20,9 +21,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * @version "$Id: BeanWriterUtilsTest.java 174288 2013-08-19 16:21:19Z mmilicevic $"
+ * @version "$Id$"
  */
-public class BeanWriterUtilsTest extends BaseTest {
+public class BeanWriterUtilsTest extends BaseResourceTest {
 
 
     private static Logger log = LoggerFactory.getLogger(BeanWriterUtilsTest.class);

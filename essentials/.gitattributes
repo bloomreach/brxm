@@ -651,6 +651,7 @@ plugin-api/implementation/src/main/resources/META-INF/essentialsSpringSdk.xml -t
 plugin-api/implementation/src/main/resources/enwiki-20081008-pages-articles.xml.100.top.xml -text
 plugin-api/implementation/src/main/resources/essentials_messages.properties -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/BaseRepositoryTest.java -text
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/BaseResourceTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/BaseTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/MemoryRepository.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/TestPluginContext.java -text

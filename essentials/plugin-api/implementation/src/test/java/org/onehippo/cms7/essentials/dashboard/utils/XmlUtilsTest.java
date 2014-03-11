@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
+import org.onehippo.cms7.essentials.BaseResourceTest;
 import org.onehippo.cms7.essentials.BaseTest;
 import org.onehippo.cms7.essentials.dashboard.utils.xml.XmlNode;
 import org.onehippo.cms7.essentials.dashboard.utils.xml.XmlProperty;
@@ -17,9 +18,9 @@ import static org.junit.Assert.assertTrue;
 
 
 /**
- * @version "$Id: XmlUtilsTest.java 174288 2013-08-19 16:21:19Z mmilicevic $"
+ * @version "$Id$"
  */
-public class XmlUtilsTest extends BaseTest {
+public class XmlUtilsTest extends BaseResourceTest {
 
     private static Logger log = LoggerFactory.getLogger(XmlUtilsTest.class);
 
