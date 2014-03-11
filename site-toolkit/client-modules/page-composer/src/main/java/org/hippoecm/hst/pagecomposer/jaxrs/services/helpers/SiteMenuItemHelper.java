@@ -227,7 +227,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
         final String path = toPath(parent);
         final Map<?, ?> params = ImmutableMap.builder()
                 .put("item", decode(itemName))
-                .put("parentPath", path)
+                .put("parentPath", decode(path))
                 .build();
         if (path.isEmpty()) {
             return new ClientException(message, ClientError.ITEM_NAME_NOT_UNIQUE_IN_ROOT, params);
