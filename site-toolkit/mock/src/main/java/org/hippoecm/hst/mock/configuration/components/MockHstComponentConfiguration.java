@@ -24,7 +24,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.hippoecm.hst.configuration.ConfigurationLockInfo;
+import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 
 

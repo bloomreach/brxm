@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.hippoecm.hst.configuration.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.component.HstComponent;
@@ -210,7 +209,7 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      * including the current component
      *
      * @return the List of all unique variants for this  {@link HstComponentConfiguration} <b>plus</b> all the variants
-     * of all its descendant {@Link HstComponentConfiguration}s. If no variants are present, and EMPTY List is
+     * of all its descendant {@link HstComponentConfiguration}s. If no variants are present, and EMPTY List is
      * returned.
      */
     List<String> getVariants();

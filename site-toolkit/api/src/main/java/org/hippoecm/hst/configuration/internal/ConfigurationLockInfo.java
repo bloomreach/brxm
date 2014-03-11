@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.hippoecm.hst.configuration;
+package org.hippoecm.hst.configuration.internal;
 
 import java.util.Calendar;
 

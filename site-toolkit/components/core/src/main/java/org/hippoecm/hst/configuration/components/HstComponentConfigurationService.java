@@ -27,7 +27,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.ConfigurationLockInfo;
+import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;

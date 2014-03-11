@@ -19,7 +19,7 @@ import java.util.HashMap;
 
 import javax.servlet.http.HttpSession;
 
-import org.hippoecm.hst.configuration.ConfigurationLockInfo;
+import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.MutableMount;

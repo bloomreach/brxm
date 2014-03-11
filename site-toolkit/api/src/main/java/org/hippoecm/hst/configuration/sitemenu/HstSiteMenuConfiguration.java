@@ -17,24 +17,24 @@ package org.hippoecm.hst.configuration.sitemenu;
 
 import java.util.List;
 
-import org.hippoecm.hst.configuration.ConfigurationLockInfo;
-
 public interface HstSiteMenuConfiguration {
     /**
-     * Returns the name of this SiteMenuConfiguration. For example, you could have a "topmenu", "leftmenu" and "footermenu" on your site,
-     * where these names might be appropriate . It must be unique within a <code>{@link HstSiteMenusConfiguration}</code> container.
+     * Returns the name of this SiteMenuConfiguration. For example, you could have a "topmenu", "leftmenu" and
+     * "footermenu" on your site, where these names might be appropriate . It must be unique within a <code>{@link
+     * HstSiteMenusConfiguration}</code> container.
+     *
      * @return the name of this SiteMenuConfiguration
      */
     String getName();
-    
+
     /**
      * @return returns all direct child {@link HstSiteMenuItemConfiguration}'s of this SiteMenuConfiguration
      */
     List<HstSiteMenuItemConfiguration> getSiteMenuConfigurationItems();
-    
+
     /**
-     * 
-     * @return the <code>{@link HstSiteMenusConfiguration}</code> which is the container for this <code>HstSiteMenuConfiguration</code>
+     * @return the <code>{@link HstSiteMenusConfiguration}</code> which is the container for this
+     * <code>HstSiteMenuConfiguration</code>
      */
     HstSiteMenusConfiguration getSiteMenusConfiguration();
 

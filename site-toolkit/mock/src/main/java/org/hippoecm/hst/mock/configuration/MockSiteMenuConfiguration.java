@@ -16,7 +16,7 @@
 
 package org.hippoecm.hst.mock.configuration;
 
-import org.hippoecm.hst.configuration.ConfigurationLockInfo;
+import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 
