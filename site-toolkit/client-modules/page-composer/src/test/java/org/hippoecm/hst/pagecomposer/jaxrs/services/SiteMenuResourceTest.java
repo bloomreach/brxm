@@ -176,7 +176,7 @@ public class SiteMenuResourceTest {
         // Mock creating the site menu item
         final SiteMenuItemRepresentation newMenuItem = new SiteMenuItemRepresentation();
         newMenuItem.setName(name);
-        expect(siteMenuItemHelper.create(parentNode, newMenuItem, Position.LAST)).andReturn(node);
+        expect(siteMenuItemHelper.create(parentNode, newMenuItem, Position.LAST, null)).andReturn(node);
 
         final String menuItemId = "menuItemId";
         expect(node.getIdentifier()).andReturn(menuItemId);
@@ -184,7 +184,7 @@ public class SiteMenuResourceTest {
         expect(session.hasPendingChanges()).andReturn(false);
         replay(mocks);
 
-        final Response response = siteMenuResource.create(menuId, "last", newMenuItem);
+        final Response response = siteMenuResource.create(menuId, "last", "", newMenuItem);
 
         assertThat(response.getStatus(), is(OK));
         assertThat(response.getEntity(), is(ExtResponseRepresentation.class));

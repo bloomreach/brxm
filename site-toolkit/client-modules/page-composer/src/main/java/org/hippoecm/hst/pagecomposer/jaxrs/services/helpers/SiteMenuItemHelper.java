@@ -25,8 +25,10 @@ import java.util.Set;
 
 import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
@@ -37,6 +39,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
+import org.hippoecm.repository.util.NodeIterable;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM;
@@ -53,20 +56,42 @@ public class SiteMenuItemHelper extends AbstractHelper {
         throw new UnsupportedOperationException("Cannot fetch site menu item without menu id");
     }
 
-    public Node create(Node parent, SiteMenuItemRepresentation newItem, Position position) throws RepositoryException {
+    public Node create(Node parent, SiteMenuItemRepresentation newItem, Position position, String sibling) throws RepositoryException {
         lockHelper.acquireSimpleLock(getMenuAncestor(parent), 0);
         final String newItemName = newItem.getName();
         try {
             final Node newChild = parent.addNode(encode(newItemName, true), HstNodeTypes.NODETYPE_HST_SITEMENUITEM);
-            if (position == Position.FIRST && parent.getNodes().getSize() > 1) {
-                Node firstChild = parent.getNodes().nextNode();
-                parent.orderBefore(newChild.getName() + '[' + newChild.getIndex() + ']',
-                        firstChild.getName() + '[' + firstChild.getIndex() + ']');
-            }
+            repositionChildIfNecessary(newChild, position, sibling);
             update(newChild, newItem);
             return newChild;
         } catch (ItemExistsException e) {
             throw createClientException(parent, newItemName, e.getMessage());
+        }
+    }
+
+    private void repositionChildIfNecessary(final Node newChild, final Position position, final String sibling) throws RepositoryException {
+        final Node parent = newChild.getParent();
+        final NodeIterator siblingIterator = parent.getNodes();
+        if (siblingIterator.getSize() > 1) {
+            switch (position) {
+                case FIRST:
+                    Node firstChild = siblingIterator.nextNode();
+                    parent.orderBefore(newChild.getName(), firstChild.getName());
+                    break;
+                case AFTER:
+                    if (!Strings.isNullOrEmpty(sibling)) {
+                        boolean found = false;
+                        for (Node siblingNode : new NodeIterable(siblingIterator)) {
+                            if (found) {
+                                parent.orderBefore(newChild.getName(), siblingNode.getName());
+                                break;
+                            } else if (siblingNode.getIdentifier().equals(sibling)) {
+                                found = true;
+                            }
+                        }
+                    }
+                    break;
+            }
         }
     }
 

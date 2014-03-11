@@ -103,6 +103,7 @@ public class SiteMenuResource extends AbstractConfigResource {
     @Path("/create/{parentId}")
     public Response create(final @PathParam("parentId") String parentId,
                            final @DefaultValue(Position.LAST_AS_STRING) @QueryParam("position") String position,
+                           final @DefaultValue("") @QueryParam("sibling") String after,
                            final SiteMenuItemRepresentation newMenuItem) {
         final Validator preValidator = ValidatorBuilder.builder()
                 .add(getDefaultMenuModificationValidator())
@@ -116,7 +117,7 @@ public class SiteMenuResource extends AbstractConfigResource {
                 final Session session = getPageComposerContextService().getRequestContext().getSession();
                 final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration();
                 final Node parentNode = getParentNode(parentId, session, menu);
-                Node menuItemNode = siteMenuItemHelper.create(parentNode, newMenuItem, Position.fromString(position));
+                Node menuItemNode = siteMenuItemHelper.create(parentNode, newMenuItem, Position.fromString(position), after);
                 return ok("Item created successfully", menuItemNode.getIdentifier());
             }
         }, preValidator, validatorFactory.getVoidValidator());

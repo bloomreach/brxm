@@ -18,10 +18,12 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 public enum Position {
 
     FIRST("first"),
+    AFTER("after"),
     LAST("last"),
     ANY("any");
 
     public static final String FIRST_AS_STRING = "first";
+    public static final String AFTER_AS_STRING = "after";
     public static final String LAST_AS_STRING = "last";
     public static final String ANY_AS_STRING = "any";
 

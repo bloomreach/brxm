@@ -99,7 +99,7 @@ public class SiteMenuItemHelperTest {
         expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
         replay(mocks);
 
-        final Node result = siteMenuItemHelper.create(node, newItem, Position.ANY);
+        final Node result = siteMenuItemHelper.create(node, newItem, Position.ANY, null);
         assertThat(result, is(node));
     }
 
@@ -330,7 +330,7 @@ public class SiteMenuItemHelperTest {
         try {
             final SiteMenuItemRepresentation newItem = new SiteMenuItemRepresentation();
             newItem.setName(name);
-            siteMenuItemHelper.create(node, newItem, Position.ANY);
+            siteMenuItemHelper.create(node, newItem, Position.ANY, null);
         } catch (ClientException e) {
             assertThat(e.getParameterMap().get("item").toString(), is(name));
             assertThat(e.getParameterMap().get("parentPath").toString(), is(""));
@@ -367,7 +367,7 @@ public class SiteMenuItemHelperTest {
 
         final SiteMenuItemRepresentation newItem = new SiteMenuItemRepresentation();
         newItem.setName(name);
-        siteMenuItemHelper.create(parent, newItem, Position.FIRST);
+        siteMenuItemHelper.create(parent, newItem, Position.FIRST, null);
 
         verify(mocks);
     }
