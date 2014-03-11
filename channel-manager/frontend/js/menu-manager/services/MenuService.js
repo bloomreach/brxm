@@ -25,8 +25,7 @@
             '$q',
             '$log',
             function (ConfigService, $http, $q) {
-                var menuService = {},
-                    menuData = {
+                var menuData = {
                         items: null
                     },
                     menuLoader = null;
@@ -133,99 +132,108 @@
                     });
                 }
 
-                menuService.getMenu = function () {
-                    return loadMenu();
-                };
+                return {
 
-                menuService.getFirstMenuItemId = function () {
-                    return whenMenuLoaded(function () {
-                        return menuData.items[0].id;
-                    });
-                };
+                    FIRST : 'first',
+                    AFTER : 'after',
 
-                menuService.getPathToMenuItem = function(menuItemId) {
-                    return whenMenuLoaded(function () {
-                        return findPathToMenuItem(menuData, menuItemId);
-                    });
-                };
+                    getMenu : function () {
+                        return loadMenu();
+                    },
 
-                menuService.getMenuItem = function (menuItemId) {
-                    return whenMenuLoaded(function () {
-                        return getMenuItem(menuItemId);
-                    });
-                };
-
-                menuService.saveMenuItem = function (menuItem) {
-                    var deferred = $q.defer();
-                    post(menuServiceUrl(), menuItem)
-                        .success(function() {
-                                deferred.resolve();
-                            })
-                        .error(function (errorResponse) {
-                                deferred.reject(errorResponse);
-                            });
-                    return deferred.promise;
-                };
-
-                /**
-                 * Create a new menu item.
-
-                 * @param parentItemId When specified, the item will be created under the parent.
-                 *                     Otherwise, the item will be created as a root item.
-                 * @param menuItem The item to be created
-                 * @param first Whether the item should be positioned as the first child.
-                 * @returns {promise|Promise.promise|Q.promise}
-                 */
-                menuService.createMenuItem = function (parentItemId, menuItem, first) {
-                    var deferred = $q.defer(), parentId = parentItemId;
-                    if (parentId === undefined) {
-                        parentId = ConfigService.menuId;
-                    }
-                    post(menuServiceUrl('create/' + parentId + (first ? '?position=first' : '')), menuItem)
-                        .success(function(response) {
-                                var siblings, parentItem = parentItemId ? getMenuItem(parentId) : undefined;
-                                menuItem.id = response.data;
-                                loadMenu().then(function() {
-                                    deferred.resolve(response.data);
-                                }, function () {
-                                    deferred.resolve(response.data);
-                                });
-                            })
-                        .error(function (errorResponse) {
-                                deferred.reject(errorResponse);
-                            });
-                    return deferred.promise;
-                };
-
-                menuService.deleteMenuItem = function (menuItemId) {
-                    var selectedItemId = getSelectedItemIdBeforeDeletion(menuItemId);
-                    var deferred = $q.defer();
-                    post(menuServiceUrl('delete/' + menuItemId))
-                        .success(function() {
-                            deferred.resolve(selectedItemId);
-                        })
-                        .error(function (errorResponse) {
-                                deferred.reject(errorResponse);
-                            });
-                    return deferred.promise;
-                };
-
-                menuService.moveMenuItem = function (menuItemId, newParentId, newPosition) {
-                    newParentId = (newParentId === '#') ? ConfigService.menuId : newParentId;
-                    var url = menuServiceUrl('move/' + menuItemId + '/' + newParentId + '/' + newPosition );
-
-                    var deferred = $q.defer();
-                    post(url, {})
-                        .success(function (data) {
-                            deferred.resolve(data);
-                        })
-                        .error(function (errorResponse) {
-                            deferred.reject(errorResponse);
+                    getFirstMenuItemId : function () {
+                        return whenMenuLoaded(function () {
+                            return menuData.items[0].id;
                         });
-                    return deferred.promise;
-                };
+                    },
 
-                return menuService;
+                    getPathToMenuItem : function(menuItemId) {
+                        return whenMenuLoaded(function () {
+                            return findPathToMenuItem(menuData, menuItemId);
+                        });
+                    },
+
+                    getMenuItem : function (menuItemId) {
+                        return whenMenuLoaded(function () {
+                            return getMenuItem(menuItemId);
+                        });
+                    },
+
+                    saveMenuItem : function (menuItem) {
+                        var deferred = $q.defer();
+                        post(menuServiceUrl(), menuItem)
+                            .success(function() {
+                                    deferred.resolve();
+                                })
+                            .error(function (errorResponse) {
+                                    deferred.reject(errorResponse);
+                                });
+                        return deferred.promise;
+                    },
+
+                    /**
+                     * Create a new menu item.
+
+                     * @param parentItemId When specified, the item will be created under the parent.
+                     *                     Otherwise, the item will be created as a root item.
+                     * @param menuItem The item to be created
+                     * @param options item positioning details;
+                     *      { position: <position> , siblingId: <sibling> }
+                     *      with position either MenuService.FIRST or MenuService.AFTER.  The siblingId
+                     *      is taken into account when the position is AFTER.
+                     * @returns {promise|Promise.promise|Q.promise}
+                     */
+                    createMenuItem : function (parentItemId, menuItem, options) {
+                        var deferred = $q.defer(), parentId = parentItemId;
+                        if (parentId === undefined) {
+                            parentId = ConfigService.menuId;
+                        }
+                        post(menuServiceUrl('create/' + parentId
+                                                + (options ? '?position=' + options.position
+                                                + (options.siblingId ? ('&sibling=' + options.siblingId) : '') : '')), menuItem)
+                            .success(function(response) {
+                                        menuItem.id = response.data;
+                                        loadMenu().then(function() {
+                                            deferred.resolve(response.data);
+                                        }, function () {
+                                            deferred.resolve(response.data);
+                                        });
+                                    })
+                            .error(function (errorResponse) {
+                                        deferred.reject(errorResponse);
+                                    });
+                        return deferred.promise;
+                    },
+
+                    deleteMenuItem : function (menuItemId) {
+                        var selectedItemId = getSelectedItemIdBeforeDeletion(menuItemId);
+                        var deferred = $q.defer();
+                        post(menuServiceUrl('delete/' + menuItemId))
+                            .success(function() {
+                                deferred.resolve(selectedItemId);
+                            })
+                            .error(function (errorResponse) {
+                                    deferred.reject(errorResponse);
+                                });
+                        return deferred.promise;
+                    },
+
+                    moveMenuItem : function (menuItemId, newParentId, newPosition) {
+                        newParentId = (newParentId === '#') ? ConfigService.menuId : newParentId;
+                        var url = menuServiceUrl('move/' + menuItemId + '/' + newParentId + '/' + newPosition );
+
+                        var deferred = $q.defer();
+                        post(url, {})
+                            .success(function (data) {
+                                deferred.resolve(data);
+                            })
+                            .error(function (errorResponse) {
+                                deferred.reject(errorResponse);
+                            });
+                        return deferred.promise;
+                    }
+                };
             }
+
         ]);
 }());

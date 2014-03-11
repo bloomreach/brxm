@@ -46,7 +46,7 @@
                     }
 
                     function addMenuItemToPath(path) {
-                        var currentItem, parentItemId, first = false;
+                        var currentItem, parentItemId, first = false, siblingId;
 
                         // create child if currently selected item already has children.
                         // otherwise, create sibling.
@@ -56,12 +56,16 @@
                                 parentItemId = currentItem.id;
                                 first = true;
                             } else if (path.length >= 1) {
+                                siblingId = currentItem.id;
                                 currentItem = path.pop();
                                 parentItemId = currentItem.id;
                             }
                         }
 
-                        MenuService.createMenuItem(parentItemId, $scope.selectedMenuItem, first).then(
+                        MenuService.createMenuItem(parentItemId, $scope.selectedMenuItem, {
+                            position: first ? MenuService.FIRST : MenuService.AFTER,
+                            siblingId: siblingId
+                        }).then(
                             function (menuItemId) {
                                 FormValidationService.setValidity(true);
 
