@@ -28,7 +28,8 @@
                 var menuData = {
                         items: null
                     },
-                    menuLoader = null;
+                    menuLoader = null,
+                    writeQueue = [];
 
                 function menuServiceUrl(suffix) {
                     var url = ConfigService.apiUrlPrefix + '/' + ConfigService.menuId;
@@ -123,13 +124,47 @@
                 }
 
                 function post(url, body) {
-                    return $http.post(url, body).success(function() {
-                        menuLoader = null;
-                        loadMenu();
-                    }).error(function() {
-                        menuLoader = null;
-                        loadMenu();
+                    var deferred = $q.defer();
+
+                    writeQueue.push({
+                        url: url,
+                        body: body,
+                        deferred : deferred
                     });
+
+                    function onSuccess(response) {
+                        var head = writeQueue.shift();
+                        head.deferred.resolve(response);
+
+                        complete();
+                    }
+
+                    function onError(response) {
+                        var head = writeQueue.shift();
+                        head.deferred.reject(response);
+
+                        complete();
+                    }
+
+                    function complete() {
+                        if (writeQueue.length === 0) {
+                            menuLoader = null;
+                            loadMenu();
+                        } else {
+                            scheduleNext();
+                        }
+                    }
+
+                    function scheduleNext() {
+                        var head = writeQueue[0];
+                        $http.post(head.url, head.body).success(onSuccess).error(onError);
+                    }
+
+                    if (writeQueue.length == 1) {
+                        scheduleNext();
+                    }
+
+                    return deferred.promise;
                 }
 
                 return {
@@ -161,11 +196,9 @@
 
                     saveMenuItem : function (menuItem) {
                         var deferred = $q.defer();
-                        post(menuServiceUrl(), menuItem)
-                            .success(function() {
+                        post(menuServiceUrl(), menuItem).then(function() {
                                     deferred.resolve();
-                                })
-                            .error(function (errorResponse) {
+                                }, function (errorResponse) {
                                     deferred.reject(errorResponse);
                                 });
                         return deferred.promise;
@@ -191,15 +224,14 @@
                         post(menuServiceUrl('create/' + parentId
                                                 + (options ? '?position=' + options.position
                                                 + (options.siblingId ? ('&sibling=' + options.siblingId) : '') : '')), menuItem)
-                            .success(function(response) {
+                            .then(function(response) {
                                         menuItem.id = response.data;
                                         loadMenu().then(function() {
                                             deferred.resolve(response.data);
                                         }, function () {
                                             deferred.resolve(response.data);
                                         });
-                                    })
-                            .error(function (errorResponse) {
+                                    }, function (errorResponse) {
                                         deferred.reject(errorResponse);
                                     });
                         return deferred.promise;
@@ -209,10 +241,9 @@
                         var selectedItemId = getSelectedItemIdBeforeDeletion(menuItemId);
                         var deferred = $q.defer();
                         post(menuServiceUrl('delete/' + menuItemId))
-                            .success(function() {
+                            .then(function() {
                                 deferred.resolve(selectedItemId);
-                            })
-                            .error(function (errorResponse) {
+                            }, function (errorResponse) {
                                     deferred.reject(errorResponse);
                                 });
                         return deferred.promise;
@@ -224,10 +255,9 @@
 
                         var deferred = $q.defer();
                         post(url, {})
-                            .success(function (data) {
+                            .then(function (data) {
                                 deferred.resolve(data);
-                            })
-                            .error(function (errorResponse) {
+                            }, function (errorResponse) {
                                 deferred.reject(errorResponse);
                             });
                         return deferred.promise;
