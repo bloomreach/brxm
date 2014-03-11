@@ -161,7 +161,6 @@ public class LockHelperTest {
         expect(root.isSame(root)).andReturn(true);
         expect(session.getUserID()).andReturn("userID").atLeastOnce();
         expect(node.setProperty(GENERAL_PROPERTY_LOCKED_BY, "userID")).andReturn(null);
-        expect(node.setProperty(GENERAL_PROPERTY_LAST_MODIFIED_BY, "userID")).andReturn(null);
         expect(node.getParent()).andReturn(root).anyTimes();
 
         replay(mocks);
@@ -178,7 +177,6 @@ public class LockHelperTest {
 
         expect(session.getUserID()).andReturn("userID").atLeastOnce();
         expect(node.setProperty(GENERAL_PROPERTY_LOCKED_BY, "userID")).andReturn(null);
-        expect(node.setProperty(GENERAL_PROPERTY_LAST_MODIFIED_BY, "userID")).andReturn(null);
         replay(mocks);
 
         lockHelper.acquireSimpleLock(node, 0);
