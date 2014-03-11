@@ -27,7 +27,7 @@
 
                     scope.$watch('title', function (newTitle) {
                         element.tooltip('destroy');
-                        element.tooltip ({
+                        element.tooltip({
                             trigger: 'focus',
                             title: newTitle
                         }).tooltip('show');

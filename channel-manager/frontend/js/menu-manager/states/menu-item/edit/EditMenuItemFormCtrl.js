@@ -21,13 +21,15 @@
 
         .controller('hippo.channelManager.menuManager.EditMenuItemFormCtrl', [
             '$scope',
+            '$translate',
             'hippo.channelManager.menuManager.FormValidationService',
             'hippo.channelManager.menuManager.FocusService',
-            function ($scope, FormValidationService, FocusService) {
-                // focus fields
+            function ($scope, $translate, FormValidationService, FocusService) {
                 $scope.focus = FocusService.focusElementWithId;
 
-                // form validation service
+                // The following logic will check the client-side validation of the
+                // edit menu item form. When a field is invalid, the FormValidationService
+                // will be updated, so the window can't be closed.
                 $scope.$watch('form.title.$valid', function () {
                     checkFormValidity();
                 });
@@ -56,6 +58,28 @@
 
                     FormValidationService.setValidity(isValid);
                 }
+
+                // The following logic will set the correct error messages when the
+                // client-side validation status updates.
+                $scope.$watch('form.title.$error.required', function () {
+                    $scope.$parent.fieldFeedbackMessage.title = $translate('LABEL_REQUIRED');
+                });
+
+                $scope.$watch('form.title.$valid', function (value) {
+                    if (value) {
+                        $scope.$parent.fieldFeedbackMessage.title = '';
+                    }
+                });
+
+                $scope.$watch('form.url.$error.required', function () {
+                    $scope.$parent.fieldFeedbackMessage.link = $translate('EXTERNAL_LINK_REQUIRED');
+                });
+
+                $scope.$watch('form.url.$valid', function (value) {
+                    if (value) {
+                        $scope.$parent.fieldFeedbackMessage.link = '';
+                    }
+                });
             }
         ]);
 }());
