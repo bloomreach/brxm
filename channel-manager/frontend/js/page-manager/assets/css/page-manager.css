@@ -28,3 +28,7 @@
     overflow-x: hidden;
     overflow-y: auto;
 }
+
+.panel > .panel-heading {
+    line-height: 34px;
+}
