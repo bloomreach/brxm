@@ -21,6 +21,7 @@ import javax.jcr.Node;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.NodeTypeTemplate;
 
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.hippoecm.frontend.PluginTest;
 import org.junit.After;
@@ -150,9 +151,9 @@ public class HippoContentTypeServiceTest extends PluginTest {
             assertNotNull(t);
 
             String json = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(t);
-            // Note: when updating the nt-file.json file, make sure not to (re)format it and that it doesn't have any trailing (empty) lines.
-            String jsonFromFile = new java.util.Scanner(getClass().getResourceAsStream("nt-file.json")).useDelimiter("\\A").next();
-            if (!json.equals(jsonFromFile)) {
+            final JsonNode jsonNode = new ObjectMapper().readTree(json);
+            final JsonNode jsonNodeFromFile = new ObjectMapper().readTree(getClass().getResourceAsStream("nt-file.json"));
+            if (!jsonNode.equals(jsonNodeFromFile)) {
                 boolean showJson = true;
                 if (showJson) {
                     fail("JSON serialization for nt:file doesn't match content for nt-file.json. JSON output: \n"+json+"\n");
@@ -297,10 +298,10 @@ public class HippoContentTypeServiceTest extends PluginTest {
             assertTrue(ct.getSuperTypes().contains("hippostd:container"));
 
             String json = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(ct);
+            final JsonNode jsonNode = new ObjectMapper().readTree(json);
+            final JsonNode jsonNodeFromFile = new ObjectMapper().readTree(getClass().getResourceAsStream("testNode.json"));
 
-            // Note: when updating the testNode.json file, make sure not to (re)format it and that it doesn't have any trailing (empty) lines.
-            String jsonFromFile = new java.util.Scanner(getClass().getResourceAsStream("testNode.json")).useDelimiter("\\A").next();
-            if (!json.equals(jsonFromFile)) {
+            if (!jsonNode.equals(jsonNodeFromFile)) {
                 boolean showJson = true;
                 if (showJson) {
                     fail("JSON serialization for testNode doesn't match content for testNode.json. JSON output: \n"+json+"\n");
