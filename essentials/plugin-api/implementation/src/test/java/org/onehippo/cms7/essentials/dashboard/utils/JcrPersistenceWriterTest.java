@@ -55,7 +55,7 @@ public class JcrPersistenceWriterTest extends BaseRepositoryTest {
         final PluginContext context = getContext();
 
 
-        JcrPersistenceWriter writer = new JcrPersistenceWriter(session, context);
+        JcrPersistenceWriter writer = new JcrPersistenceWriter(getContext().createSession(), context);
         //############################################
         // POPULATE TREE:
         //############################################
