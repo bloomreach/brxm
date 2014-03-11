@@ -25,8 +25,7 @@
       "multiTyped" : false,
       "multiTypes" : [ ],
       "validators" : [ ],
-      "itemProperties" : {
-      },
+      "itemProperties" : { },
       "effectiveNodeTypeItem" : {
         "name" : "test:title",
         "definingType" : "test:test",
@@ -58,8 +57,7 @@
       "multiTyped" : false,
       "multiTypes" : [ ],
       "validators" : [ ],
-      "itemProperties" : {
-      },
+      "itemProperties" : { },
       "effectiveNodeTypeItem" : {
         "name" : "*",
         "definingType" : "hippostd:relaxed",
@@ -91,8 +89,7 @@
       "multiTyped" : false,
       "multiTypes" : [ ],
       "validators" : [ ],
-      "itemProperties" : {
-      },
+      "itemProperties" : { },
       "effectiveNodeTypeItem" : {
         "name" : "jcr:mixinTypes",
         "definingType" : "nt:base",
@@ -124,8 +121,7 @@
       "multiTyped" : false,
       "multiTypes" : [ ],
       "validators" : [ ],
-      "itemProperties" : {
-      },
+      "itemProperties" : { },
       "effectiveNodeTypeItem" : {
         "name" : "jcr:primaryType",
         "definingType" : "nt:base",
@@ -159,8 +155,7 @@
       "multiTyped" : false,
       "multiTypes" : [ ],
       "validators" : [ ],
-      "itemProperties" : {
-      },
+      "itemProperties" : { },
       "effectiveNodeTypeItem" : {
         "name" : "test:child",
         "definingType" : "test:test",
