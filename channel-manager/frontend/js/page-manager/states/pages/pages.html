@@ -18,8 +18,8 @@
 
     <div class="panel panel-default l-stretch" ng-show="pages">
         <div class="panel-heading clearfix">
-            <i class="fa fa-sitemap"></i> Landing pages
-            <button class="btn btn-default btn-md pull-right"><i class="fa fa-plus"></i> Add new page</button>
+            <i class="fa fa-sitemap"></i> {{ 'LANDING_PAGES' | translate }}
+            <button class="btn btn-default btn-md pull-right"><i class="fa fa-plus"></i> {{ 'ADD_NEW_PAGE' | translate }}</button>
         </div>
         <div class="list-group l-stretch l-fixed-height">
             <div class="list-group-item" ng-repeat="page in pages">
