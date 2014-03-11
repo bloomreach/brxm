@@ -33,6 +33,7 @@ import org.onehippo.cms7.essentials.dashboard.config.Document;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.PersistentHandler;
 import org.onehippo.cms7.essentials.dashboard.model.hst.SimplePropertyModel;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,13 +105,15 @@ public @interface PersistentProperty {
                     } else {
                         throw new NotImplementedException("Property writer not implemented for: " + value.getClass());
                     }
-
+                    session.save();
                     return node.getProperty(name);
                 } else {
                     log.error("Parent couldn't be found for path: {}", parentPath);
                 }
             } catch (RepositoryException e) {
                 log.error("Error writing property", e);
+            }finally {
+                GlobalUtils.cleanupSession(session);
             }
 
             return null;

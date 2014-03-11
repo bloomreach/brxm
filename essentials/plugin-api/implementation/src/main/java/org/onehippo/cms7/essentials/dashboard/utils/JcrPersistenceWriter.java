@@ -57,22 +57,7 @@ public class JcrPersistenceWriter {
 
 
     public Item write(final Document model) {
-        final Node rootNode = writeNode(model);
-        if (rootNode == null) {
-            return null;
-        }
-        //save changes
-        Session session = null;
-        try {
-
-            session = rootNode.getSession();
-            session.save();
-            return rootNode;
-        } catch (RepositoryException e) {
-            log.error("Error saving model", e);
-            GlobalUtils.refreshSession(session, false);
-        }
-        return null;
+        return writeNode(model);
     }
 
     private Node writeNode(final Document model) {
@@ -188,6 +173,7 @@ public class JcrPersistenceWriter {
 
 
         return jcrNode;
+
     }
 
     private Node createSubfolders(final String path) throws RepositoryException {

@@ -106,6 +106,7 @@ public @interface PersistentNode {
                     for (String mixin : mixins) {
                         node.addMixin(mixin);
                     }
+                    session.save();
                     return node;
                 } else {
                     log.error("Parent doesn't exist: {}", parentPath);
@@ -114,7 +115,9 @@ public @interface PersistentNode {
 
             } catch (RepositoryException e) {
                 log.error("Error saving model: " + model.getClass(), e);
-                GlobalUtils.refreshSession(session, false);
+
+            } finally {
+                GlobalUtils.cleanupSession(session);
             }
             return null;
         }
