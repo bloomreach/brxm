@@ -113,7 +113,7 @@ public class BlogDaemonModuleInstruction implements Instruction {
             }
             final String[] myUrls = urls.toArray(new String[urls.size()]);
             dataNode.setProperty("urls", myUrls);
-            final String[] myAuthors = urls.toArray(new String[authors.size()]);
+            final String[] myAuthors = authors.toArray(new String[authors.size()]);
             dataNode.setProperty("authors", myAuthors);
 
             session.save();

@@ -143,6 +143,8 @@ public class BlogImporterJob implements InterruptableJob {
             }
             final Node blogNode = session.getRootNode().getNode(blogsBasePath);
 
+            final String prefixedNamespace = projectNamespace + ':';
+            final String fullNameProperty = prefixedNamespace + "fullname";
             for (int i = 0; i < blogUrls.length; i++) {
                 Node authorNode = null;
                 if (authorsBasePath != null && authors != null) {
@@ -151,8 +153,23 @@ public class BlogImporterJob implements InterruptableJob {
                     }
                     final String author = authors[i];
                     try {
-                        Node authorsNode = session.getRootNode().getNode(authorsBasePath);
-                        authorNode = authorsNode.getNode(author);
+
+                        final Node rootNode = session.getRootNode();
+                        if(rootNode.hasNode(authorsBasePath)) {
+                            Node authorsNode = rootNode.getNode(authorsBasePath);
+                            // check if author node exists otherwise create one:
+                            if(authorsNode.hasNode(author)){
+
+                                authorNode = authorsNode.getNode(author);
+                            }else{
+                                // create author node;
+                                log.info("Creating new Author document for name: {}", author);
+                                final Node documentNode = createHandle(prefixedNamespace, "author", authorsNode, author);
+                                setDefaultDocumentPorperties(prefixedNamespace, documentNode, Calendar.getInstance());
+                                documentNode.setProperty(fullNameProperty, author);
+                                session.save();
+                            }
+                        }
                     } catch (RepositoryException e) {
                         log.error(MessageFormat.format("Error finding author document for {0}", author), e);
                         cleanupSession(session);
@@ -225,11 +242,7 @@ public class BlogImporterJob implements InterruptableJob {
         final String prefixedNamespace = namespace + ':';
         Node blogFolder = getBlogFolder(baseNode, syndEntry);
         String documentName = NodeNameCodec.encode(syndEntry.getTitle(), true).replace("?", "");
-        Node handleNode = blogFolder.addNode(documentName, "hippo:handle");
-        handleNode.addMixin("hippo:hardhandle");
-        Node documentNode = handleNode.addNode(documentName, prefixedNamespace + "blogpost");
-        documentNode.addMixin("hippo:harddocument");
-        documentNode.setProperty("hippo:availability", new String[]{"live", "preview"});
+        Node documentNode = createHandle(prefixedNamespace, "blogpost", blogFolder, documentName);
         documentNode.setProperty(prefixedNamespace + "title", syndEntry.getTitle());
         documentNode.setProperty(prefixedNamespace + "introduction", processDescription(syndEntry, maxDescriptionLength));
         if (authorHandleNode != null) {
@@ -245,18 +258,7 @@ public class BlogImporterJob implements InterruptableJob {
         documentNode.setProperty(prefixedNamespace + "link", syndEntry.getLink());
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(syndEntry.getPublishedDate());
-        documentNode.setProperty(prefixedNamespace + "publicationdate", calendar);
-        documentNode.setProperty("hippostdpubwf:lastModifiedBy", "admin");
-        documentNode.setProperty("hippostdpubwf:createdBy", "admin");
-        calendar.setTime(new Date());
-        documentNode.setProperty("hippostdpubwf:lastModificationDate", calendar);
-        documentNode.setProperty("hippostdpubwf:creationDate", calendar);
-        documentNode.setProperty("hippostd:stateSummary", "preview");
-        documentNode.setProperty("hippostd:state", "published");
-        documentNode.setProperty("hippostd:holder", "admin");
-        // TODO make locale dynamic
-        documentNode.setProperty("hippotranslation:locale", "en");
-        documentNode.setProperty("hippotranslation:id", UUID.randomUUID().toString());
+        setDefaultDocumentPorperties(prefixedNamespace, documentNode, calendar);
         documentNode.addNode(prefixedNamespace + "content", "hippostd:html");
         documentNode.getNode(prefixedNamespace + "content").setProperty("hippostd:content", processContent(syndEntry));
         documentNode.addNode(prefixedNamespace + "image", "hippostd:html");
@@ -269,6 +271,30 @@ public class BlogImporterJob implements InterruptableJob {
 
 */
         return true;
+    }
+
+    private void setDefaultDocumentPorperties(final String prefixedNamespace, final Node documentNode, final Calendar calendar) throws RepositoryException {
+        documentNode.setProperty(prefixedNamespace + "publicationdate", calendar);
+        documentNode.setProperty("hippostdpubwf:lastModifiedBy", "admin");
+        documentNode.setProperty("hippostdpubwf:createdBy", "admin");
+        calendar.setTime(new Date());
+        documentNode.setProperty("hippostdpubwf:lastModificationDate", calendar);
+        documentNode.setProperty("hippostdpubwf:creationDate", calendar);
+        documentNode.setProperty("hippostd:stateSummary", "preview");
+        documentNode.setProperty("hippostd:state", "published");
+        documentNode.setProperty("hippostd:holder", "admin");
+        // TODO make locale dynamic
+        documentNode.setProperty("hippotranslation:locale", "en");
+        documentNode.setProperty("hippotranslation:id", UUID.randomUUID().toString());
+    }
+
+    private Node createHandle(final String prefixedNamespace, final String docType, final Node rootNode, final String documentName) throws RepositoryException {
+        Node handleNode = rootNode.addNode(documentName, "hippo:handle");
+        handleNode.addMixin("hippo:hardhandle");
+        Node documentNode = handleNode.addNode(documentName, prefixedNamespace + docType);
+        documentNode.addMixin("hippo:harddocument");
+        documentNode.setProperty("hippo:availability", new String[]{"live", "preview"});
+        return documentNode;
     }
 
     private void link(final Node source, final String name, final Node target) throws RepositoryException {
