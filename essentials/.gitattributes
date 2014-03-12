@@ -178,6 +178,7 @@ dashboard-plugins/components-plugin/components-cms/pom.xml -text
 dashboard-plugins/components-plugin/components-cms/src/main/java/org/onehippo/cms7/essentials/components/cms/blog/BlogImporterJob.java -text
 dashboard-plugins/components-plugin/components-cms/src/main/java/org/onehippo/cms7/essentials/components/cms/blog/BlogUpdater.java -text
 dashboard-plugins/components-plugin/components-cms/src/main/java/org/onehippo/cms7/essentials/components/cms/modules/EventBusListenerModule.java -text
+dashboard-plugins/components-plugin/components-cms/src/main/resources/META-INF/MANIFEST.MF -text
 dashboard-plugins/components-plugin/components-cms/src/main/resources/blog-importer-config.xml -text
 dashboard-plugins/components-plugin/components-cms/src/main/resources/event-bus-listener.xml -text
 dashboard-plugins/components-plugin/components-cms/src/main/resources/hippoecm-extension.xml -text

@@ -916,6 +916,12 @@ dashboard-plugins/components-plugin/components-cms/src/main/java/target
 dashboard-plugins/components-plugin/components-cms/src/main/resources/*.iml
 dashboard-plugins/components-plugin/components-cms/src/main/resources/.DS_Store
 dashboard-plugins/components-plugin/components-cms/src/main/resources/.idea
+dashboard-plugins/components-plugin/components-cms/src/main/resources/META-INF/*.iml
+dashboard-plugins/components-plugin/components-cms/src/main/resources/META-INF/.DS_Store
+dashboard-plugins/components-plugin/components-cms/src/main/resources/META-INF/.idea
+dashboard-plugins/components-plugin/components-cms/src/main/resources/META-INF/atlassian-ide-plugin.xml
+dashboard-plugins/components-plugin/components-cms/src/main/resources/META-INF/hippo-plugins.iws
+dashboard-plugins/components-plugin/components-cms/src/main/resources/META-INF/target
 dashboard-plugins/components-plugin/components-cms/src/main/resources/atlassian-ide-plugin.xml
 dashboard-plugins/components-plugin/components-cms/src/main/resources/hippo-plugins.iws
 dashboard-plugins/components-plugin/components-cms/src/main/resources/target

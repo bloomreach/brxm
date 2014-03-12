@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Implementation-Title: Hippo Essentials CMS components
+Implementation-Version: 1.01.02-SNAPSHOT
+Built-By: machak
+Specification-Vendor: Hippo B.V. (http://www.onehippo.com)
+Created-By: Apache Maven 3.1.0
+Hippo-Modules: org.onehippo.forge.utilities.repository.scheduler.Sched
+ ulerDaemon
+Implementation-Vendor: Hippo B.V. (http://www.onehippo.com)
+Implementation-Vendor-Id: org.onehippo.cms7.essentials
+Build-Jdk: 1.7.0_40
+Specification-Title: Hippo Essentials CMS components
+Specification-Version: 1.01.02-SNAPSHOT
+Implementation-Build: 150100
+Archiver-Version: Plexus Archiver
+
