@@ -46,7 +46,7 @@
                     }
 
                     function addMenuItemToPath(path) {
-                        var currentItem, parentItemId, first = false, siblingId;
+                        var currentItem, parentItemId, position = MenuService.AFTER, siblingId;
 
                         // create child if currently selected item already has children.
                         // otherwise, create sibling.
@@ -54,7 +54,7 @@
                             currentItem = path.pop();
                             if (currentItem.items && currentItem.items.length > 0) {
                                 parentItemId = currentItem.id;
-                                first = true;
+                                position = MenuService.FIRST;
                             } else if (path.length >= 1) {
                                 siblingId = currentItem.id;
                                 currentItem = path.pop();
@@ -63,7 +63,7 @@
                         }
 
                         MenuService.createMenuItem(parentItemId, $scope.selectedMenuItem, {
-                            position: first ? MenuService.FIRST : MenuService.AFTER,
+                            position: position,
                             siblingId: siblingId
                         }).then(
                             function (menuItemId) {
