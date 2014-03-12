@@ -13,29 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function() {
-    "use strict";
+(function () {
+    'use strict';
 
     angular.module('hippo.channelManager.pageManager')
 
-        .run([
-            '$translate',
+        .controller('hippo.channelManager.pageManager.AddPageCtrl', [
+            '$scope',
             '$state',
-            'hippo.channelManager.ConfigService',
-            'hippo.channelManager.Container',
-            '_hippo.channelManager.IFrameService',
-            function ($translate, $state, Config, Container, IFrame) {
-                // go to default state
-                $state.go('overview-pages');
-
-                // set language
-                $translate.uses(Config.locale);
-
-                // close the app when the container is closed
-                Container.handleClose();
-
-                // enable live reload
-                IFrame.enableLiveReload();
+            function ($scope, $state) {
+                console.log('AddPageCtrl init');
+                $scope.page = {
+                    title: '',
+                    url: '',
+                    template: ''
+                };
+                $scope.templates = [{
+                    id: 0,
+                    name: 'template1'
+                }, {
+                    id: 1,
+                    name: 'template2'
+                }, {
+                    id: 2,
+                    name: 'template3'
+                }];
             }
         ]);
-}());
+})();

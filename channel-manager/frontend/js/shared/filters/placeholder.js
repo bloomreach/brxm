@@ -17,11 +17,11 @@
 (function () {
     'use strict';
 
-    angular.module('hippo.channelManager.menuManager')
+    angular.module('hippo.channelManager')
 
         /**
          * @ngdoc filter
-         * @name hippo.channelManager.menuManager.filter:placeholder
+         * @name hippo.channelManager.filter:placeholder
          *
          * @description
          * Returns the translated value of the placeholder when the input is empty

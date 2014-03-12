@@ -1,0 +1,66 @@
+<div class="l-stretch">
+
+    <div class="panel panel-default l-stretch">
+        <div class="panel-heading">
+            <i class="fa fa-file"></i> {{ 'CREATE_NEW_PAGE' | translate }}
+        </div>
+        <div class="list-group l-stretch l-fixed-height">
+            <form name="form" role="form" novalidate>
+                <div class="form-group has-feedback"
+                     data-ng-class="{
+                        'has-success': form.title.$dirty && form.title.$valid,
+                        'has-error': form.title.$dirty && form.title.$invalid
+                    }">
+                    <label for="page-title">{{ 'PAGE_TITLE' | translate }}</label>
+                    <input type="text" name="title" class="form-control" id="page-title"
+                           placeholder="{{ 'PAGE_TITLE' | translate }}"
+                           data-ng-model="page.title"
+                           data-ng-focus="form.title.$setPristine();"
+                           data-ng-required="true">
+                    <div class="tooltip-container" data-ng-show="form.title.$dirty && form.title.$error.required">
+                        <div data-tooltip
+                             data-placement="top"
+                             data-title="{{ 'TITLE_REQUIRED' | translate }}"></div>
+                    </div>
+                    <i class="fa form-control-feedback"
+                       data-ng-class="{
+                        'fa-check': form.title.$dirty && form.title.$valid,
+                        'fa-times': form.title.$dirty && form.title.$invalid
+                       }"></i>
+                </div>
+
+                <div class="form-group has-feedback" id="url">
+                    <label for="page-url">{{ 'URL' | translate }}</label>
+                    <div class="input-group">
+                        <span class="input-group-addon">www.gogreen.com/</span>
+                        <input type="text" id="page-url" class="form-control" placeholder="" value="" data-tooltip="" data-original-title="" title="">
+                        <span class="fa fa-times form-control-feedback"></span>
+                    </div>
+                </div>
+
+                <div class="form-group" id="template">
+                    <label for="page-template">{{ 'PAGE_TEMPLATE' | translate }}</label>
+                    <div class="input-group">
+                        <select hippo.theme.select-box
+                                ng-model="page.template"
+                                ng-options="template.name for template in templates"
+                                data-placeholder="{{ 'CHOOSE_AN_OPTION' | translate }}" id="page-template">
+                        </select>
+                    </div>
+                </div>
+
+                <hr>
+
+                <button type="submit" class="btn btn-default" ng-click="submit()">{{ 'CREATE_PAGE' | translate }}</button>
+                <button type="submit" class="btn btn-link" ng-click="cancel()">{{ 'CANCEL' | translate }}</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="l-center-container" ng-show="errorFeedback">
+        <div class="alert alert-danger l-center-block">
+            {{ errorFeedback.message }}
+        </div>
+    </div>
+
+</div>

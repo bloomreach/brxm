@@ -18,16 +18,21 @@
 
     angular.module('hippo.channelManager.pageManager')
 
-        .controller('hippo.channelManager.pageManager.PagesCtrl', [
+        .controller('hippo.channelManager.pageManager.OverviewPagesCtrl', [
             '$scope',
+            '$state',
             'hippo.channelManager.FeedbackService',
             'hippo.channelManager.pageManager.PageService',
-            function ($scope, FeedbackService, PageService) {
+            function ($scope, $state, FeedbackService, PageService) {
                 PageService.getPages().then(function (pages) {
                     $scope.pages = pages;
                 }, function (errorResponse) {
                     $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
                 });
+
+                $scope.navigateTo = function (stateName) {
+                    $state.go(stateName);
+                };
             }
         ]);
 }());

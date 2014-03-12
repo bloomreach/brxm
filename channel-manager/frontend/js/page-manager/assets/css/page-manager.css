@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* --- Pages --- */
+/* --- Overview Pages --- */
 .panel {
     border-top-width: 0;
     border-left-width: 0;
@@ -34,4 +34,29 @@
 
 .list-group-item {
     cursor: pointer;
+}
+
+/* --- Add Page --- */
+form {
+    padding: 15px;
+}
+
+#url input {
+    border-radius: 0 4px 4px 0;
+}
+
+#url .form-control-feedback {
+    top: 0;
+}
+
+#url .input-group-addon {
+    padding-right: 5px;
+}
+
+#url .form-control {
+    padding-left: 3px;
+}
+
+#template .input-group {
+    display: block;
 }

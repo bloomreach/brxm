@@ -22,10 +22,16 @@
 
             // routing
             $stateProvider
-                .state('pages', {
-                    url: '/pages',
-                    controller: 'hippo.channelManager.pageManager.PagesCtrl',
-                    templateUrl: 'states/pages/pages.html'
+                .state('overview-pages', {
+                    url: '/overview-pages',
+                    controller: 'hippo.channelManager.pageManager.OverviewPagesCtrl',
+                    templateUrl: 'states/overview-pages/overview-pages.html'
+                })
+
+                .state('add-page', {
+                    url: '/add-page',
+                    controller: 'hippo.channelManager.pageManager.AddPageCtrl',
+                    templateUrl: 'states/add-page/add-page.html'
                 });
 
             // translations

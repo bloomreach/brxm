@@ -14,12 +14,12 @@
   limitations under the License.
   -->
 
-<div id="pages" class="l-stretch">
+<div class="l-stretch">
 
-    <div class="panel panel-default l-stretch" ng-show="pages">
+    <div class="panel panel-default l-stretch" data-ng-show="pages">
         <div class="panel-heading clearfix">
             <i class="fa fa-sitemap"></i> {{ 'LANDING_PAGES' | translate }}
-            <button class="btn btn-default btn-md pull-right"><i class="fa fa-plus"></i> {{ 'ADD_NEW_PAGE' | translate }}</button>
+            <button class="btn btn-default btn-md pull-right" data-ng-click="navigateTo('add-page')"><i class="fa fa-plus"></i> {{ 'ADD_NEW_PAGE' | translate }}</button>
         </div>
         <div class="list-group l-stretch l-fixed-height">
             <div class="list-group-item" ng-repeat="page in pages">
