@@ -252,9 +252,11 @@ public class BlogImporterJob implements InterruptableJob {
             final Property nameProperty = authorNode.getProperty(prefixedNamespace + "fullname");
             final String name = nameProperty.getString();
             documentNode.setProperty(prefixedNamespace + "author", name);
-            documentNode.setProperty(prefixedNamespace + "authornames", name);
+            documentNode.setProperty(prefixedNamespace + "authornames", new String[]{name});
         } else {
-            documentNode.setProperty(prefixedNamespace + "author", syndEntry.getAuthor());
+            final String author = syndEntry.getAuthor();
+            documentNode.setProperty(prefixedNamespace + "author", author);
+            documentNode.setProperty(prefixedNamespace + "authornames", new String[]{author});
         }
         documentNode.setProperty(prefixedNamespace + "link", syndEntry.getLink());
         Calendar calendar = Calendar.getInstance();

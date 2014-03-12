@@ -60,9 +60,8 @@ public class EssentialsBlogAuthorPostsComponent extends EssentialsListComponent 
                 request.setAttribute("authors", authors);
                 final Class<? extends HippoBean> clazz = getPrimaryType(document);
                 final EssentialsBlogAuthorPostsComponentInfo componentInfo = getComponentParametersInfo(request);
-                final int pageSize = componentInfo.getPageSize();
+                final int limit = componentInfo.getPageSize();
                 final String sortField = componentInfo.getSortField();
-                final int limit = pageSize + 1;
                 final List<HippoBean> beans = new ArrayList<>(limit);
                 final HippoBean scopeBean = getScopeBean(request, componentInfo.getScope());
                 try {
