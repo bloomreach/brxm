@@ -16,14 +16,14 @@
 (function() {
     "use strict";
 
-    angular.module('hippo.channelManager.pageManager')
+    angular.module('hippo.channel.page')
 
         .run([
             '$translate',
             '$state',
-            'hippo.channelManager.ConfigService',
-            'hippo.channelManager.Container',
-            '_hippo.channelManager.IFrameService',
+            'hippo.channel.ConfigService',
+            'hippo.channel.Container',
+            '_hippo.channel.IFrameService',
             function ($translate, $state, Config, Container, IFrame) {
                 // go to default state
                 $state.go('overview-pages');

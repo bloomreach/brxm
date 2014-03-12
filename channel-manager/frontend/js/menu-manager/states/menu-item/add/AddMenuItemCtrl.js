@@ -17,15 +17,15 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.channelManager.menuManager')
+    angular.module('hippo.channel.menu')
 
-        .controller('hippo.channelManager.menuManager.AddMenuItemCtrl', [
+        .controller('hippo.channel.menu.AddMenuItemCtrl', [
             '$scope',
             '$state',
             '$stateParams',
-            'hippo.channelManager.FeedbackService',
-            'hippo.channelManager.FormValidationService',
-            'hippo.channelManager.menuManager.MenuService',
+            'hippo.channel.FeedbackService',
+            'hippo.channel.FormValidationService',
+            'hippo.channel.menu.MenuService',
             function ($scope, $state, $stateParams, FeedbackService, FormValidationService, MenuService) {
                 var parentItemId = $stateParams.menuItemId;
 

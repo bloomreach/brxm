@@ -32,11 +32,11 @@ describe('Feedback Service', function () {
         translateMock.storageKey = jasmine.createSpy('storageKey');
         translateMock.preferredLanguage = jasmine.createSpy('preferredLanguage');
 
-        module('hippo.channelManager', function($provide) {
+        module('hippo.channel', function($provide) {
             $provide.value('$translate', translateMock);
         });
 
-        inject(['hippo.channelManager.FeedbackService', function(FeedbackService) {
+        inject(['hippo.channel.FeedbackService', function(FeedbackService) {
             feedbackService = FeedbackService;
         }]);
     });

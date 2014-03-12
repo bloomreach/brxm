@@ -19,9 +19,9 @@
 
     var LIVE_RELOAD_URL = '//localhost:35729/livereload.js';
 
-    angular.module('hippo.channelManager')
+    angular.module('hippo.channel')
 
-        .service('_hippo.channelManager.IFrameService', ['$window', '$log', function ($window, $log) {
+        .service('_hippo.channel.IFrameService', ['$window', '$log', function ($window, $log) {
 
             function getParentIFramePanelId() {
                 var idParam = 'parentExtIFramePanelId',

@@ -17,9 +17,9 @@
 (function() {
     "use strict";
 
-    angular.module('hippo.channelManager.menuManager')
+    angular.module('hippo.channel.menu')
 
-        .directive('hippo.channelManager.menuManager.autoFocus', function() {
+        .directive('hippo.channel.menu.autoFocus', function() {
             return {
                 restrict: 'A',
                 link: function(scope, element) {

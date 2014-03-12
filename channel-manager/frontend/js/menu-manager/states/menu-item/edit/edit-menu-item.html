@@ -34,7 +34,7 @@
     <!-- END confirmation dialog -->
 
     <!-- START edit form -->
-    <form name="form" data-role="form" novalidate class="l-fixed-height" data-ng-controller="hippo.channelManager.menuManager.EditMenuItemFormCtrl">
+    <form name="form" data-role="form" novalidate class="l-fixed-height" data-ng-controller="hippo.channel.menu.EditMenuItemFormCtrl">
         <p class="alert alert-danger alert-dismissable" data-ng-show="feedback.message">
             <button type="button" class="close" data-ng-click="dismissFeedback()" aria-hidden="true">&times;</button>
             {{feedback.message}}
@@ -45,8 +45,8 @@
             'has-success': form.title.$dirty && !isSaving.title && form.title.$valid && isSaved.title,
             'has-error': form.title.$dirty && !isSaving.title && (form.title.$invalid || !isSaved.title)
         }">
-            <label for="hippo.channelManager.menuManager.menuItem.edit.title">{{ 'LABEL' | translate }}</label>
-            <input type="text" name="title" class="form-control" id="hippo.channelManager.menuManager.menuItem.edit.title"
+            <label for="hippo.channel.menu.menuItem.edit.title">{{ 'LABEL' | translate }}</label>
+            <input type="text" name="title" class="form-control" id="hippo.channel.menu.menuItem.edit.title"
                    placeholder="{{ 'LABEL' | translate }}"
                    data-hippo.channel-manager.menu-manager.auto-focus
                    data-ng-model="selectedMenuItem.title"
@@ -65,14 +65,14 @@
             'fa-times': form.title.$invalid || !isSaved.title
            }"></i>
         </div>
-        <label for="hippo.channelManager.menuManager.menuItem.edit.linkType">{{ 'DESTINATION' | translate }}</label>
-        <div class="form-group has-feedback" id="hippo.channelManager.menuManager.menuItem.edit.linkType">
+        <label for="hippo.channel.menu.menuItem.edit.linkType">{{ 'DESTINATION' | translate }}</label>
+        <div class="form-group has-feedback" id="hippo.channel.menu.menuItem.edit.linkType">
             <div class="radio first">
                 <label>
                     <input type="radio" name="destination"
                            data-ng-model="selectedMenuItem.linkType"
                            value="SITEMAPITEM"
-                           data-ng-click="selectedMenuItem.link = ''; focus('hippo.channelManager.menuManager.menuItem.edit.sitemapItem')">
+                           data-ng-click="selectedMenuItem.link = ''; focus('hippo.channel.menu.menuItem.edit.sitemapItem')">
                     {{ 'INTERNAL_LINK' | translate }}
                 </label>
             </div>
@@ -81,7 +81,7 @@
                     <input type="radio" name="destination"
                            data-ng-model="selectedMenuItem.linkType"
                            value="EXTERNAL"
-                           data-ng-click="selectedMenuItem.link = ''; focus('hippo.channelManager.menuManager.menuItem.edit.url')">
+                           data-ng-click="selectedMenuItem.link = ''; focus('hippo.channel.menu.menuItem.edit.url')">
                     {{ 'EXTERNAL_LINK' | translate }}
                 </label>
             </div>
@@ -101,8 +101,8 @@
             'has-success': form.sitemapItem.$dirty && !isSaving.link && form.sitemapItem.$valid && isSaved.link,
             'has-error': !isSaving.link && (form.sitemapItem.$invalid || !isSaved.link)
          }">
-            <label for="hippo.channelManager.menuManager.menuItem.edit.sitemapItem">{{ 'INTERNAL_LINK' | translate }}</label>
-            <input type="text" name="sitemapItem" class="form-control" id="hippo.channelManager.menuManager.menuItem.edit.sitemapItem"
+            <label for="hippo.channel.menu.menuItem.edit.sitemapItem">{{ 'INTERNAL_LINK' | translate }}</label>
+            <input type="text" name="sitemapItem" class="form-control" id="hippo.channel.menu.menuItem.edit.sitemapItem"
                    data-ng-model="selectedMenuItem.link"
                    data-ng-blur="form.sitemapItem.$valid ? saveSelectedMenuItem('link') : '';">
             <i class="fa form-control-feedback"
@@ -119,8 +119,8 @@
             'has-success': form.url.$dirty && !isSaving.link && form.url.$valid && isSaved.link,
             'has-error': (!form.url.$pristine) && (!isSaving.link && (form.url.$invalid || !isSaved.link))
         }">
-            <label for="hippo.channelManager.menuManager.menuItem.edit.url">{{ 'EXTERNAL_LINK' | translate }}</label>
-            <input type="text" name="url" class="form-control" id="hippo.channelManager.menuManager.menuItem.edit.url"
+            <label for="hippo.channel.menu.menuItem.edit.url">{{ 'EXTERNAL_LINK' | translate }}</label>
+            <input type="text" name="url" class="form-control" id="hippo.channel.menu.menuItem.edit.url"
                    placeholder="{{ 'EXAMPLE_DOMAIN' | translate }}"
                    data-ng-model="selectedMenuItem.link"
                    data-ng-required="true"

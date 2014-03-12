@@ -26,8 +26,8 @@
             'has-success': form.title.$dirty && form.title.$valid,
             'has-error': form.title.$dirty && form.title.$invalid
         }">
-            <label for="hippo.channelManager.menuManager.menuItem.add.title">{{ 'LABEL' | translate }}</label>
-            <input type="text" name="title" class="form-control" id="hippo.channelManager.menuManager.menuItem.add.title"
+            <label for="hippo.channel.menu.menuItem.add.title">{{ 'LABEL' | translate }}</label>
+            <input type="text" name="title" class="form-control" id="hippo.channel.menu.menuItem.add.title"
                    placeholder="{{ 'LABEL' | translate }}"
                    hippo.channel-manager.menu-manager.auto-focus
                    data-ng-model="selectedMenuItem.title"
@@ -44,14 +44,14 @@
             'fa-times': form.title.$dirty && form.title.$invalid
            }"></i>
         </div>
-        <label for="hippo.channelManager.menuManager.menuItem.add.linkType">{{ 'DESTINATION' | translate }}</label>
-        <div class="form-group has-feedback" id="hippo.channelManager.menuManager.menuItem.add.linkType">
+        <label for="hippo.channel.menu.menuItem.add.linkType">{{ 'DESTINATION' | translate }}</label>
+        <div class="form-group has-feedback" id="hippo.channel.menu.menuItem.add.linkType">
             <div class="radio first">
                 <label>
                     <input type="radio" name="destination"
                            data-ng-model="selectedMenuItem.linkType"
                            value="SITEMAPITEM"
-                           data-ng-click="selectedMenuItem.link = ''; focus('hippo.channelManager.menuManager.menuItem.add.sitemapItem')">
+                           data-ng-click="selectedMenuItem.link = ''; focus('hippo.channel.menu.menuItem.add.sitemapItem')">
                     {{ 'INTERNAL_LINK' | translate }}
                 </label>
             </div>
@@ -60,7 +60,7 @@
                     <input type="radio" name="destination"
                            data-ng-model="selectedMenuItem.linkType"
                            value="EXTERNAL"
-                           data-ng-click="selectedMenuItem.link = ''; focus('hippo.channelManager.menuManager.menuItem.add.url')">
+                           data-ng-click="selectedMenuItem.link = ''; focus('hippo.channel.menu.menuItem.add.url')">
                     {{ 'EXTERNAL_LINK' | translate }}
                 </label>
             </div>
@@ -80,8 +80,8 @@
             'has-success': form.sitemapItem.$dirty && form.sitemapItem.$valid,
             'has-error': form.sitemapItem.$dirty && form.sitemapItem.$invalid
          }">
-            <label for="hippo.channelManager.menuManager.menuItem.add.sitemapItem">{{ 'INTERNAL_LINK' | translate }}</label>
-                <input type="text" name="sitemapItem" class="form-control" id="hippo.channelManager.menuManager.menuItem.add.sitemapItem"
+            <label for="hippo.channel.menu.menuItem.add.sitemapItem">{{ 'INTERNAL_LINK' | translate }}</label>
+                <input type="text" name="sitemapItem" class="form-control" id="hippo.channel.menu.menuItem.add.sitemapItem"
                        data-ng-model="selectedMenuItem.link">
                 <i class="fa form-control-feedback"
                    data-ng-show="form.sitemapItem.$dirty"
@@ -96,8 +96,8 @@
             'has-success': form.url.$dirty && form.url.$valid,
             'has-error': form.url.$dirty && form.url.$invalid
          }">
-            <label for="hippo.channelManager.menuManager.menuItem.add.url">{{ 'EXTERNAL_LINK' | translate }}</label>
-            <input type="text" name="url" class="form-control" id="hippo.channelManager.menuManager.menuItem.add.url"
+            <label for="hippo.channel.menu.menuItem.add.url">{{ 'EXTERNAL_LINK' | translate }}</label>
+            <input type="text" name="url" class="form-control" id="hippo.channel.menu.menuItem.add.url"
                    placeholder="{{ 'EXAMPLE_DOMAIN' | translate }}"
                    data-ng-model="selectedMenuItem.link"
                    data-ng-required="true">

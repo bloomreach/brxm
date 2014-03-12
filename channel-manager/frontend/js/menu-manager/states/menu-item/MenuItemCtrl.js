@@ -17,13 +17,13 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.channelManager.menuManager')
+    angular.module('hippo.channel.menu')
 
-        .controller('hippo.channelManager.menuManager.MenuItemCtrl', [
+        .controller('hippo.channel.menu.MenuItemCtrl', [
             '$scope',
             '$rootScope',
             '$state',
-            'hippo.channelManager.menuManager.MenuService',
+            'hippo.channel.menu.MenuService',
             function ($scope, $rootScope, $state, MenuService) {
                 $scope.list = [];
                 $scope.selectedMenuItem = {};

@@ -19,15 +19,15 @@ describe('Page Service', function () {
 
     var pageService, $httpBackend;
 
-    beforeEach(module('hippo.channelManager.pageManager'));
+    beforeEach(module('hippo.channel.page'));
 
     beforeEach(function () {
         module(function ($provide) {
-            $provide.value('hippo.channelManager.ConfigService', {
+            $provide.value('hippo.channel.ConfigService', {
                 apiUrlPrefix: 'api',
                 sitemapId: 'sitemapId'
             });
-            $provide.value('hippo.channelManager.HstApiRequests', jasmine.createSpy());
+            $provide.value('hippo.channel.HstApiRequests', jasmine.createSpy());
         });
     });
 
@@ -86,7 +86,7 @@ describe('Page Service', function () {
         });
     }));
 
-    beforeEach(inject(['hippo.channelManager.pageManager.PageService', function (PageService) {
+    beforeEach(inject(['hippo.channel.page.PageService', function (PageService) {
         pageService = PageService;
     }]));
 

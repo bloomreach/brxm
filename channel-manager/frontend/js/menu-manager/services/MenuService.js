@@ -17,10 +17,10 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.channelManager.menuManager')
+    angular.module('hippo.channel.menu')
 
-        .service('hippo.channelManager.menuManager.MenuService', [
-            'hippo.channelManager.ConfigService',
+        .service('hippo.channel.menu.MenuService', [
+            'hippo.channel.ConfigService',
             '$http',
             '$q',
             '$log',

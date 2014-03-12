@@ -17,9 +17,9 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.channelManager.menuManager')
+    angular.module('hippo.channel.menu')
 
-        .factory('hippo.channelManager.menuManager.FocusService', [
+        .factory('hippo.channel.menu.FocusService', [
             '$window',
             function($window) {
                 return {

@@ -16,9 +16,9 @@
 (function () {
     'use strict';
 
-    angular.module('hippo.channelManager.pageManager')
+    angular.module('hippo.channel.page')
 
-        .controller('hippo.channelManager.pageManager.AddPageCtrl', [
+        .controller('hippo.channel.page.AddPageCtrl', [
             '$scope',
             '$state',
             function ($scope, $state) {

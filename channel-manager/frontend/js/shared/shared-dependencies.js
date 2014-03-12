@@ -16,7 +16,7 @@
 (function() {
     "use strict";
 
-    angular.module('hippo.channelManager', [
+    angular.module('hippo.channel', [
     ]);
 
 }());

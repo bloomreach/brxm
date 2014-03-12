@@ -34,12 +34,12 @@ describe('HstApiRequests', function () {
         };
         spyOn(qMock, 'when');
 
-        module('hippo.channelManager', function($provide) {
-            $provide.value('hippo.channelManager.ConfigService', configServiceMock);
+        module('hippo.channel', function($provide) {
+            $provide.value('hippo.channel.ConfigService', configServiceMock);
             $provide.value('$q', qMock);
         });
 
-        inject(['hippo.channelManager.HstApiRequests', function(HstApiRequests) {
+        inject(['hippo.channel.HstApiRequests', function(HstApiRequests) {
             hstApiRequests = HstApiRequests;
         }]);
 

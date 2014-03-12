@@ -16,10 +16,10 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.channelManager')
+    angular.module('hippo.channel')
 
-        .service('hippo.channelManager.ConfigService', [
-            '_hippo.channelManager.IFrameService',
+        .service('hippo.channel.ConfigService', [
+            '_hippo.channel.IFrameService',
             function(IFrame) {
                 var config = {
                     apiUrlPrefix: 'http://localhost:8080/site/_rp',

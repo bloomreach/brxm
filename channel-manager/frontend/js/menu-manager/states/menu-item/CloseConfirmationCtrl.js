@@ -17,12 +17,12 @@
 (function () {
     'use strict';
 
-    angular.module('hippo.channelManager.menuManager')
+    angular.module('hippo.channel.menu')
 
         .controller('CloseConfirmationCtrl', [
             '$scope',
             '$rootScope',
-            'hippo.channelManager.Container',
+            'hippo.channel.Container',
             function ($scope, $rootScope, ContainerService) {
                 // default visibility of the dialog
                 $scope.dialog = {

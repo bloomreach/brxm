@@ -17,14 +17,14 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.channelManager')
+    angular.module('hippo.channel')
 
-        .service('hippo.channelManager.Container', [
+        .service('hippo.channel.Container', [
             '$log',
             '$rootScope',
-            '_hippo.channelManager.IFrameService',
-            '_hippo.channelManager.OutstandingHttpRequests',
-            'hippo.channelManager.FormValidationService',
+            '_hippo.channel.IFrameService',
+            '_hippo.channel.OutstandingHttpRequests',
+            'hippo.channel.FormValidationService',
             function($log, $rootScope, IFrameService, OutstandingHttpRequests, FormValidationService) {
 
                 function handleClose() {

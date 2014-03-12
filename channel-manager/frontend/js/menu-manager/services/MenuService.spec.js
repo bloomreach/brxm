@@ -19,15 +19,15 @@ describe('Menu Service', function () {
 
     var menuService, $httpBackend;
 
-    beforeEach(module('hippo.channelManager.menuManager'));
+    beforeEach(module('hippo.channel.menu'));
 
     beforeEach(function() {
         module(function($provide) {
-            $provide.value('hippo.channelManager.ConfigService', {
+            $provide.value('hippo.channel.ConfigService', {
                 apiUrlPrefix: 'api',
                 menuId: 'menuId'
             });
-            $provide.value('hippo.channelManager.HstApiRequests', jasmine.createSpy());
+            $provide.value('hippo.channel.HstApiRequests', jasmine.createSpy());
         });
     });
 
@@ -59,7 +59,7 @@ describe('Menu Service', function () {
         });
     }));
 
-    beforeEach(inject(['hippo.channelManager.menuManager.MenuService', function (MenuService) {
+    beforeEach(inject(['hippo.channel.menu.MenuService', function (MenuService) {
         menuService = MenuService;
     }]));
 

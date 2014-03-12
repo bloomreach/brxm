@@ -17,13 +17,13 @@
 (function () {
     'use strict';
 
-    angular.module('hippo.channelManager.menuManager')
+    angular.module('hippo.channel.menu')
 
-        .controller('hippo.channelManager.menuManager.EditMenuItemFormCtrl', [
+        .controller('hippo.channel.menu.EditMenuItemFormCtrl', [
             '$scope',
             '$translate',
-            'hippo.channelManager.FormValidationService',
-            'hippo.channelManager.menuManager.FocusService',
+            'hippo.channel.FormValidationService',
+            'hippo.channel.menu.FocusService',
             function ($scope, $translate, FormValidationService, FocusService) {
                 $scope.focus = FocusService.focusElementWithId;
 

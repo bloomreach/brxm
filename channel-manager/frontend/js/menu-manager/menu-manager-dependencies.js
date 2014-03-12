@@ -16,8 +16,8 @@
 (function() {
     "use strict";
 
-    angular.module('hippo.channelManager.menuManager', [
-        'hippo.channelManager',
+    angular.module('hippo.channel.menu', [
+        'hippo.channel',
         'hippo.theme',
         'ngRoute',
         'pascalprecht.translate',

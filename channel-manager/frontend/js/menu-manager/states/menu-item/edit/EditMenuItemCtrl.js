@@ -17,16 +17,16 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.channelManager.menuManager')
+    angular.module('hippo.channel.menu')
 
-        .controller('hippo.channelManager.menuManager.EditMenuItemCtrl', [
+        .controller('hippo.channel.menu.EditMenuItemCtrl', [
             '$scope',
             '$stateParams',
             '$state',
             '$log',
-            'hippo.channelManager.FeedbackService',
-            'hippo.channelManager.menuManager.MenuService',
-            'hippo.channelManager.FormValidationService',
+            'hippo.channel.FeedbackService',
+            'hippo.channel.menu.MenuService',
+            'hippo.channel.FormValidationService',
             function ($scope, $stateParams, $state, $log, FeedbackService, MenuService, FormValidationService) {
                 var savedMenuItem;
 

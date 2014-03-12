@@ -16,14 +16,14 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.channelManager.pageManager')
+    angular.module('hippo.channel.page')
 
-        .controller('hippo.channelManager.pageManager.OverviewPagesCtrl', [
+        .controller('hippo.channel.page.OverviewPagesCtrl', [
             '$scope',
             '$state',
-            'hippo.channelManager.FeedbackService',
-            'hippo.channelManager.pageManager.PageService',
-            '_hippo.channelManager.IFrameService',
+            'hippo.channel.FeedbackService',
+            'hippo.channel.page.PageService',
+            '_hippo.channel.IFrameService',
             function ($scope, $state, FeedbackService, PageService, IFrameService) {
                 PageService.getPages().then(function (pages) {
                     $scope.pages = pages;

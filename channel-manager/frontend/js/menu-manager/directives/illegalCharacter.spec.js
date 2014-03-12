@@ -18,10 +18,10 @@ describe('illegal character directive', function () {
     'use strict';
     var $scope, form, element;
 
-    beforeEach(module('hippo.channelManager.menuManager'));
+    beforeEach(module('hippo.channel.menu'));
     beforeEach(function() {
         module(function($provide) {
-            $provide.value('hippo.channelManager.HstApiRequests', jasmine.createSpy());
+            $provide.value('hippo.channel.HstApiRequests', jasmine.createSpy());
         });
     });
     beforeEach(inject(function ($compile, $rootScope) {

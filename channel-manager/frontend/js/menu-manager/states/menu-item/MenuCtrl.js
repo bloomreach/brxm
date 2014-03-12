@@ -16,13 +16,13 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.channelManager.menuManager')
+    angular.module('hippo.channel.menu')
 
-        .controller('hippo.channelManager.menuManager.MenuCtrl', [
+        .controller('hippo.channel.menu.MenuCtrl', [
             '$scope',
             '$state',
             '$stateParams',
-            'hippo.channelManager.menuManager.MenuService',
+            'hippo.channel.menu.MenuService',
             function ($scope, $state, $stateParams, MenuService) {
                 $scope.addItem = function () {
                     // only navigate to the add menu item form when there are no

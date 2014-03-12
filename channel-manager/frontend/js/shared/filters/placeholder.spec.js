@@ -19,7 +19,7 @@ describe('filter', function () {
 
     var placeholderFilter;
 
-    beforeEach(module('hippo.channelManager.menuManager'));
+    beforeEach(module('hippo.channel.menu'));
     beforeEach(inject(function (_placeholderFilter_) {
         placeholderFilter = _placeholderFilter_;
     }));

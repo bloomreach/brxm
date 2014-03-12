@@ -16,9 +16,9 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.channelManager')
-        .factory('hippo.channelManager.HstApiRequests', [
-            'hippo.channelManager.ConfigService',
+    angular.module('hippo.channel')
+        .factory('hippo.channel.HstApiRequests', [
+            'hippo.channel.ConfigService',
             '$q', function (ConfigService, $q) {
                 return {
                     'request': function(config) {
@@ -34,7 +34,7 @@
         ])
 
         .config(['$httpProvider', function($httpProvider) {
-            $httpProvider.interceptors.push('hippo.channelManager.HstApiRequests');
+            $httpProvider.interceptors.push('hippo.channel.HstApiRequests');
         }]);
 
 }());

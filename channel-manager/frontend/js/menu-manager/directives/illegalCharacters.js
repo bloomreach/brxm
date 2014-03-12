@@ -18,20 +18,20 @@
     'use strict';
 
     // the directive is not namespaced, because the special notation causes an error with the isolated scope definition.
-    // Error: [$compile:iscp] Invalid isolate scope definition for directive 'hippo.channelManager.menuManager.illegalCharacters'.
+    // Error: [$compile:iscp] Invalid isolate scope definition for directive 'hippo.channel.menu.illegalCharacters'.
 
-    angular.module('hippo.channelManager.menuManager')
+    angular.module('hippo.channel.menu')
 
         /**
          * @ngdoc directive
-         * @name hippo.channelManager.menuManager.directive:illegalCharacters
+         * @name hippo.channel.menu.directive:illegalCharacters
          * @restrict A
          *
          * @description
          * Custom validator for elements that use ng-model.
          * Modified version of: http://ericpanorel.net/2013/10/05/angularjs-password-match-form-validation/
          *
-         * @param {string} hippo.channelManager.menuManager.illegalCharacters A string containing the space-separated invalid characters
+         * @param {string} hippo.channel.menu.illegalCharacters A string containing the space-separated invalid characters
          */
         .directive('illegalCharacters', [function () {
             return {

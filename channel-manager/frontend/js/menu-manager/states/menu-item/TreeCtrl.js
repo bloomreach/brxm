@@ -17,18 +17,18 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.channelManager.menuManager')
+    angular.module('hippo.channel.menu')
 
-        .controller('hippo.channelManager.menuManager.TreeCtrl', [
+        .controller('hippo.channel.menu.TreeCtrl', [
             '$scope',
             '$state',
             '$stateParams',
             '$rootScope',
             '$log',
-            'hippo.channelManager.ConfigService',
-            'hippo.channelManager.FeedbackService',
-            'hippo.channelManager.FormValidationService',
-            'hippo.channelManager.menuManager.MenuService',
+            'hippo.channel.ConfigService',
+            'hippo.channel.FeedbackService',
+            'hippo.channel.FormValidationService',
+            'hippo.channel.menu.MenuService',
             function ($scope, $state, $stateParams, $rootScope, $log, ConfigService, FeedbackService, FormValidationService, MenuService) {
 
                 function onSuccess() {

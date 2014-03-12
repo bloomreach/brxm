@@ -16,7 +16,7 @@
 (function() {
     "use strict";
 
-    angular.module('hippo.channelManager.menuManager')
+    angular.module('hippo.channel.menu')
 
         .config(['$stateProvider', '$translateProvider', function($stateProvider, $translateProvider) {
 
@@ -24,31 +24,31 @@
             $stateProvider
                 .state('loader', {
                     url: '/loader',
-                    controller: 'hippo.channelManager.menuManager.LoaderCtrl',
+                    controller: 'hippo.channel.menu.LoaderCtrl',
                     templateUrl: 'states/loader/loader.html'
                 })
 
                 .state('menu-item', {
                     abstract: true,
-                    controller: 'hippo.channelManager.menuManager.MenuItemCtrl',
+                    controller: 'hippo.channel.menu.MenuItemCtrl',
                     templateUrl: 'states/menu-item/menu-item.html'
                 })
 
                 .state('menu-item.add', {
                     url: '/:menuItemId/add',
-                    controller: 'hippo.channelManager.menuManager.AddMenuItemCtrl',
+                    controller: 'hippo.channel.menu.AddMenuItemCtrl',
                     templateUrl: 'states/menu-item/add/add-menu-item.html'
                 })
 
                 .state('menu-item.add-page', {
                     url: '/:menuItemId/add',
-                    controller: 'hippo.channelManager.menuManager.AddPageCtrl',
+                    controller: 'hippo.channel.menu.AddPageCtrl',
                     templateUrl: 'states/menu-item/add-page/add-page.html'
                 })
 
                 .state('menu-item.edit', {
                     url: '/:menuItemId/edit',
-                    controller: 'hippo.channelManager.menuManager.EditMenuItemCtrl',
+                    controller: 'hippo.channel.menu.EditMenuItemCtrl',
                     templateUrl: 'states/menu-item/edit/edit-menu-item.html'
                 });
 
