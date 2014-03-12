@@ -39,8 +39,6 @@ public class NodePickerControllerSettings implements IClusterable {
     private static final String DEFAULT_CLUSTER = "cms-pickers/documents";
     private static final String DEFAULT_LAST_VISITED_KEY = "node-picker-controller";
     private static final boolean DEFAULT_LAST_VISITED_ENABLED = true;
-    public static final String LANGUAGE_CONTEXT_AWARE = "language.context.aware";
-    public static final boolean DEFAULT_LANGUAGE_CONTEXT_AWARE = true;
 
     private String clusterName;
     private IPluginConfig clusterOptions;
@@ -55,7 +53,6 @@ public class NodePickerControllerSettings implements IClusterable {
     private boolean lastVisitedEnabled;
 
     private String defaultModelUUID;
-    private boolean languageContextWare;
 
     public NodePickerControllerSettings() {
         selectionServiceKey = SELECTION_SERVICE_KEY;
@@ -87,7 +84,6 @@ public class NodePickerControllerSettings implements IClusterable {
         settings.setLastVisitedEnabled(config.getAsBoolean(LAST_VISITED_ENABLED, DEFAULT_LAST_VISITED_ENABLED));
 
         settings.setDefaultModelUUID(config.getString(BASE_UUID, null));
-        settings.setLanguageContextAware(config.getAsBoolean(LANGUAGE_CONTEXT_AWARE, DEFAULT_LANGUAGE_CONTEXT_AWARE));
         return settings;
     }
 
@@ -173,13 +169,5 @@ public class NodePickerControllerSettings implements IClusterable {
 
     public boolean hasBaseUUID() {
         return !Strings.isEmpty(defaultModelUUID);
-    }
-
-    public boolean isLanguageContextWare() {
-        return languageContextWare;
-    }
-
-    public void setLanguageContextAware(final boolean languageContextAware) {
-        this.languageContextWare = languageContextAware;
     }
 }

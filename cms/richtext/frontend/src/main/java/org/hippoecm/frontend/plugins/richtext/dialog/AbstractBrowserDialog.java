@@ -50,12 +50,6 @@ public abstract class AbstractBrowserDialog<T extends RichTextEditorDocumentLink
             }
 
             @Override
-            protected IModel<Node> getPropertyNodeModel() {
-                // Not yet implemented
-                return null;
-            }
-
-            @Override
             protected void onSelect(boolean isValid) {
                 IModel<Node> selectedModel = getSelectedModel();
                 if(isValid && selectedModel != null) {
