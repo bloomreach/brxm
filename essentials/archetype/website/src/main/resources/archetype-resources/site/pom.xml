@@ -19,17 +19,14 @@
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
       <artifactId>hippo-essentials-plugin-api-implementation</artifactId>
-      <version>${dollar}{essentials.version}</version>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
       <artifactId>hippo-essentials-plugin-api</artifactId>
-      <version>${dollar}{essentials.version}</version>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
       <artifactId>hippo-components-plugin-library</artifactId>
-      <version>${dollar}{essentials.version}</version>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
