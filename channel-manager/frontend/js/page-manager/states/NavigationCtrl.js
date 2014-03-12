@@ -17,31 +17,15 @@
     'use strict';
 
     angular.module('hippo.channel.page')
+        .controller('hippo.channel.page.NavigationCtrl', [
+        '$scope',
+        '$state',
+        function ($scope, $state) {
+            // navigation
+            $scope.navigateTo = function (stateName) {
+                $state.go(stateName);
+            };
+        }
+    ]);
 
-        .controller('hippo.channel.page.AddPageCtrl', [
-            '$scope',
-            function ($scope) {
-
-                $scope.templates = [{
-                    id: 0,
-                    name: 'template1'
-                }, {
-                    id: 1,
-                    name: 'template2'
-                }, {
-                    id: 2,
-                    name: 'template3'
-                }];
-
-                $scope.page = {
-                    title: '',
-                    url: '',
-                    template: $scope.templates[0]
-                };
-
-                $scope.submit = function () {
-
-                };
-            }
-        ]);
 })();

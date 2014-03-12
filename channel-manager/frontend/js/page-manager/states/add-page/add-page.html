@@ -84,7 +84,7 @@
                 <hr>
 
                 <button type="submit" class="btn btn-default" ng-click="submit()">{{ 'CREATE_PAGE' | translate }}</button>
-                <button type="submit" class="btn btn-link" ng-click="cancel()">{{ 'CANCEL' | translate }}</button>
+                <button type="submit" class="btn btn-link" ng-click="navigateTo('overview-pages')" data-ng-controller="hippo.channel.page.NavigationCtrl">{{ 'CANCEL' | translate }}</button>
             </form>
         </div>
     </div>

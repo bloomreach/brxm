@@ -29,6 +29,7 @@ frontend/js/menu-manager/states/menu-item/menu-item.html -text
 frontend/js/page-manager/i18n/en.json -text
 frontend/js/page-manager/i18n/nl.json -text
 frontend/js/page-manager/services/PageService.js -text
+frontend/js/page-manager/states/NavigationCtrl.js -text
 frontend/js/page-manager/states/add-page/AddPageCtrl.js -text
 frontend/js/page-manager/states/add-page/add-page.html -text
 frontend/js/shared/assets/images/loader.gif -text

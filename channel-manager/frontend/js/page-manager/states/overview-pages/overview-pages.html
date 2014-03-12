@@ -17,7 +17,7 @@
 <div class="l-stretch">
 
     <div class="panel panel-default l-stretch" data-ng-show="pages">
-        <div class="panel-heading clearfix">
+        <div class="panel-heading clearfix" data-ng-controller="hippo.channel.page.NavigationCtrl">
             <i class="fa fa-sitemap"></i> {{ 'LANDING_PAGES' | translate }}
             <button class="btn btn-default btn-md pull-right" data-ng-click="navigateTo('add-page')"><i class="fa fa-plus"></i> {{ 'ADD_NEW_PAGE' | translate }}</button>
         </div>
