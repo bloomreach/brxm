@@ -26,7 +26,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.repository.util.NodeIterable;
 
-public class PrototypePageValidator implements Validator {
+public class PrototypePageValidator extends AbstractValidator {
 
     private final String prototypePageUuid;
 
@@ -37,7 +37,13 @@ public class PrototypePageValidator implements Validator {
     @Override
     public void validate(HstRequestContext requestContext) throws RuntimeException {
         try {
-            validatePrototypePage(requestContext.getSession().getNodeByIdentifier(prototypePageUuid));
+            final Node prototypePageNode = getNodeByIdentifier(prototypePageUuid, requestContext.getSession());
+            if (!prototypePageNode.getPath().contains("/" + HstNodeTypes.NODENAME_HST_PROTOTYPEPAGES + "/")) {
+                final String message = String.format("Not a prototype page since '%s' is not configured below .",
+                        prototypePageNode.getPath(), HstNodeTypes.NODENAME_HST_PROTOTYPEPAGES);
+                throw new ClientException(message, ClientError.ITEM_NOT_CORRECT_LOCATION);
+            }
+            validatePrototypePage(prototypePageNode);
         } catch (RepositoryException e) {
             throw new RuntimeRepositoryException(e);
         }
@@ -45,7 +51,6 @@ public class PrototypePageValidator implements Validator {
 
 
     private static void validatePrototypePage(Node component) throws RepositoryException {
-        // TODO when implementing re-applying a prototype to a page, ensure the page is from the workspace!
         if (!component.isNodeType(HstNodeTypes.NODETYPE_HST_ABSTRACT_COMPONENT)) {
             throw new ClientException("Expected node of subtype 'hst:abstractcomponent'", ClientError.INVALID_NODE_TYPE);
         }

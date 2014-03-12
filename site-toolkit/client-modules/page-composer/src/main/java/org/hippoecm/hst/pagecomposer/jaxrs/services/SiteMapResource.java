@@ -139,8 +139,6 @@ public class SiteMapResource extends AbstractConfigResource {
                            final @PathParam("parentId") String parentId) {
         final ValidatorBuilder preValidators = ValidatorBuilder.builder()
                 .add(validatorFactory.getNotNullValidator(siteMapItem.getName(), ClientError.ITEM_NO_NAME))
-                .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPrototypePath(),
-                        siteMapItem.getComponentConfigurationId(), HstNodeTypes.NODETYPE_HST_ABSTRACT_COMPONENT))
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPath(), getPageComposerContextService().getRequestConfigIdentifier(),
                         HstNodeTypes.NODETYPE_HST_SITEMAP))
                 .add(validatorFactory.getPrototypePageValidator(siteMapItem.getComponentConfigurationId()));

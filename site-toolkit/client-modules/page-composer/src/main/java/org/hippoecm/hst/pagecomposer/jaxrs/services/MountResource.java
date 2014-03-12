@@ -122,7 +122,7 @@ public class MountResource extends AbstractConfigResource {
     public Response getPrototypePages() {
         final HstSite editingPreviewSite = getPageComposerContextService().getEditingPreviewSite();
         PrototypePagesRepresentation prototypePagesRepresentation = new PrototypePagesRepresentation().represent(editingPreviewSite,
-                 false, getPageComposerContextService().getEditingMount());
+                 true, getPageComposerContextService().getEditingMount());
         log.info("Prototype pages loaded successfully");
         return ok("Prototype pages loaded successfully", prototypePagesRepresentation);
     }

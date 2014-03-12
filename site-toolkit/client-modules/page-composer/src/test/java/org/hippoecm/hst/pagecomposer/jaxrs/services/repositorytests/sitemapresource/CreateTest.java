@@ -192,7 +192,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
 
 
     @Test
-    public void test_create_fails_if_component_id_is_prototype_page_of_inherited_config() throws Exception {
+    public void test_create_succeeds_if_component_id_is_prototype_page_of_inherited_config() throws Exception {
         String prototypePath = "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/prototype-page";
         String commonConfigPrototypePath = "/hst:hst/hst:configurations/unittestcommon/hst:prototypepages/prototype-page";
         session.move(prototypePath, commonConfigPrototypePath);
@@ -203,7 +203,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newFoo);
         assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
-                Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+                Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
 

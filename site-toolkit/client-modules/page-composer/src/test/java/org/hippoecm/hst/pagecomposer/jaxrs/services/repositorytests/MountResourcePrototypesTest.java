@@ -53,16 +53,16 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
     }
 
     @Test
-    public void test_prototype_pages_not_from_inherited_config() throws Exception {
+    public void test_prototype_pages_included_from_inherited_config() throws Exception {
         // make a common config page prototype : inherited config pages should not be available as prototype
-        session.move("/hst:hst/hst:configurations/unittestproject/hst:prototypepages/prototype-page",
-                "/hst:hst/hst:configurations/unittestcommon/hst:prototypepages/prototype-page");
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/prototype-page",
+                "/hst:hst/hst:configurations/unittestcommon/hst:prototypepages/common-prototype-page");
         session.save();
         // give time for jcr events to evict model
         Thread.sleep(200);
         mockNewRequest(session, "localhost", "/home");
         PrototypePagesRepresentation representation = (PrototypePagesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
-        assertEquals(0, representation.getPages().size());
+        assertEquals(2, representation.getPages().size());
     }
 
     @Test

@@ -16,13 +16,6 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.validators;
 
-import java.util.UUID;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
-import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
