@@ -36,17 +36,13 @@
     cursor: pointer;
 }
 
-/* --- Add Page --- */
+/* --- Add Page Form --- */
 form {
     padding: 15px;
 }
 
 #url input {
     border-radius: 0 4px 4px 0;
-}
-
-#url .form-control-feedback {
-    top: 0;
 }
 
 #url .input-group-addon {

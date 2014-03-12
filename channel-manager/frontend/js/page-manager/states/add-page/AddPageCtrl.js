@@ -20,14 +20,8 @@
 
         .controller('hippo.channel.page.AddPageCtrl', [
             '$scope',
-            '$state',
-            function ($scope, $state) {
-                console.log('AddPageCtrl init');
-                $scope.page = {
-                    title: '',
-                    url: '',
-                    template: ''
-                };
+            function ($scope) {
+
                 $scope.templates = [{
                     id: 0,
                     name: 'template1'
@@ -38,6 +32,12 @@
                     id: 2,
                     name: 'template3'
                 }];
+
+                $scope.page = {
+                    title: '',
+                    url: '',
+                    template: $scope.templates[0]
+                };
             }
         ]);
 })();

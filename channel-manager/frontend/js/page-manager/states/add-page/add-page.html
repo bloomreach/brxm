@@ -44,22 +44,39 @@
                        }"></i>
                 </div>
 
-                <div class="form-group has-feedback" id="url">
+                <div class="form-group has-feedback" id="url" data-ng-class="{
+                        'has-success': form.url.$dirty && form.url.$valid,
+                        'has-error': form.url.$dirty && form.url.$invalid
+                    }">
                     <label for="page-url">{{ 'URL' | translate }}</label>
                     <div class="input-group">
                         <span class="input-group-addon">www.gogreen.com/</span>
-                        <input type="text" id="page-url" class="form-control" placeholder="" value="" data-tooltip="" data-original-title="" title="">
-                        <span class="fa fa-times form-control-feedback"></span>
+                        <input type="text" name="url" class="form-control" id="page-url"
+                               placeholder=""
+                               data-ng-model="page.url"
+                               data-ng-focus="form.url.$setPristine();"
+                               data-ng-required="true">
+                        <div class="tooltip-container" data-ng-show="form.url.$dirty && form.url.$error.required">
+                            <div data-tooltip
+                                 data-placement="top"
+                                 data-title="{{ 'URL_REQUIRED' | translate }}"></div>
+                        </div>
                     </div>
+
+                    <i class="fa form-control-feedback"
+                       data-ng-class="{
+                        'fa-check': form.url.$dirty && form.url.$valid,
+                        'fa-times': form.url.$dirty && form.url.$invalid
+                       }"></i>
                 </div>
 
-                <div class="form-group" id="template">
-                    <label for="page-template">{{ 'PAGE_TEMPLATE' | translate }}</label>
+                <div class="form-group has-feedback" id="template">
+                    <label>{{ 'PAGE_TEMPLATE' | translate }}</label>
                     <div class="input-group">
                         <select hippo.theme.select-box
                                 ng-model="page.template"
                                 ng-options="template.name for template in templates"
-                                data-placeholder="{{ 'CHOOSE_AN_OPTION' | translate }}" id="page-template">
+                                data-placeholder="{{ 'CHOOSE_AN_OPTION' | translate }}">
                         </select>
                     </div>
                 </div>
