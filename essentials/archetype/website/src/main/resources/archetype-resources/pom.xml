@@ -42,17 +42,14 @@
   </scm>
   -->
 
-  <dependencies>
-    <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>plugin-dashboard</artifactId>
-      <version>${dollar}{essentials.version}</version>
-      <type>war</type>
-    </dependency>
-  </dependencies>
   <dependencyManagement>
     <dependencies>
-
+      <dependency>
+        <groupId>org.onehippo.cms7.essentials</groupId>
+        <artifactId>plugin-dashboard</artifactId>
+        <version>${dollar}{essentials.version}</version>
+        <type>war</type>
+      </dependency>
       <dependency>
         <groupId>org.onehippo.cms7.essentials</groupId>
         <artifactId>hippo-essentials-plugin-api-implementation</artifactId>
