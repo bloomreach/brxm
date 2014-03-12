@@ -27,7 +27,8 @@
             'hippo.channel.FeedbackService',
             'hippo.channel.menu.MenuService',
             'hippo.channel.FormValidationService',
-            function ($scope, $stateParams, $state, $log, FeedbackService, MenuService, FormValidationService) {
+            '_hippo.channel.IFrameService',
+            function ($scope, $stateParams, $state, $log, FeedbackService, MenuService, FormValidationService, IFrameService) {
                 var savedMenuItem;
 
                 $scope.isSaving = {
@@ -92,6 +93,11 @@
                     $state.go('menu-item.add-page', {
                         menuItemId: $stateParams.menuItemId
                     });
+                };
+
+                $scope.showPage = function(link) {
+                    var iframePanel = IFrameService.getContainer();
+                    iframePanel.iframeToHost.publish('browseTo', (link.charAt(0) == '/' ? '' : '/') + link);
                 };
 
                 $scope.remove = function () {

@@ -100,18 +100,23 @@
              data-ng-class="{
             'has-success': form.sitemapItem.$dirty && !isSaving.link && form.sitemapItem.$valid && isSaved.link,
             'has-error': !isSaving.link && (form.sitemapItem.$invalid || !isSaved.link)
-         }">
+        }">
             <label for="hippo.channel.menu.menuItem.edit.sitemapItem">{{ 'INTERNAL_LINK' | translate }}</label>
-            <input type="text" name="sitemapItem" class="form-control" id="hippo.channel.menu.menuItem.edit.sitemapItem"
-                   data-ng-model="selectedMenuItem.link"
-                   data-ng-blur="form.sitemapItem.$valid ? saveSelectedMenuItem('link') : '';">
-            <i class="fa form-control-feedback"
-               data-ng-show="form.sitemapItem.$dirty"
-               data-ng-class="{
-            'fa-spinner fa-spin': isSaving.link,
-            'fa-check': form.sitemapItem.$valid && isSaved.link,
-            'fa-times': form.sitemapItem.$invalid || !isSaved.link
-           }"></i>
+            <div class="input-group">
+                <input type="text" name="sitemapItem" class="form-control" id="hippo.channel.menu.menuItem.edit.sitemapItem"
+                       data-ng-model="selectedMenuItem.link"
+                       data-ng-blur="form.sitemapItem.$valid ? saveSelectedMenuItem('link') : '';">
+                <i class="fa form-control-feedback"
+                   data-ng-show="form.sitemapItem.$dirty"
+                   data-ng-class="{
+                'fa-spinner fa-spin': isSaving.link,
+                'fa-check': form.sitemapItem.$valid && isSaved.link,
+                'fa-times': form.sitemapItem.$invalid || !isSaved.link
+               }"></i>
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" ng-click="showPage(selectedMenuItem.link)"><i class="fa fa-external-link"></i></button>
+                </span>
+            </div>
         </div>
         <div class="form-group has-feedback"
              data-ng-show="selectedMenuItem.linkType === 'EXTERNAL'"
