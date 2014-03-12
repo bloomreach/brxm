@@ -767,6 +767,27 @@
       <rtexprvalue>false</rtexprvalue>
       <type>java.lang.String</type>
     </attribute>
+    <attribute>
+      <description>If there is a page title available through the resolved sitemap item, then if this attribute is
+        set to true and there is not yet a title element contribution, the page title from the resolved sitemap item
+        will be set as title element. If there is already a title element contribution, the page title from the
+        resolved sitemap item will be prepended, followed by a delimiter (default "-"), and then the title element
+        contribution.
+      </description>
+      <name>includePageTitle</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>boolean</type>
+    </attribute>
+    <attribute>
+      <description>If includePageTitle is true and there is both a resolved sitemap item page title and a page title
+        head contribution, then the default delimiter "-" can be overridden with this value.
+      </description>
+      <name>pageTitleDelimiter</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
   </tag>
 
   <tag>
