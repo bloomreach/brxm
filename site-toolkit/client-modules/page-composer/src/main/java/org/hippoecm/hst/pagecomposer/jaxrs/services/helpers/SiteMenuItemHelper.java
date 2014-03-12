@@ -28,7 +28,6 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
@@ -79,7 +78,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
                     parent.orderBefore(newChild.getName(), firstChild.getName());
                     break;
                 case AFTER:
-                    if (!Strings.isNullOrEmpty(sibling)) {
+                    if (StringUtils.isNotBlank(sibling)) {
                         boolean found = false;
                         for (Node siblingNode : new NodeIterable(siblingIterator)) {
                             if (found) {

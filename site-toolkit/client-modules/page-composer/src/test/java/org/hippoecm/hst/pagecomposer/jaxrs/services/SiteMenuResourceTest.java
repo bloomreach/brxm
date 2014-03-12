@@ -37,13 +37,13 @@ import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.mock.configuration.MockSiteMenuConfiguration;
+import org.hippoecm.hst.mock.configuration.MockSiteMenuItemConfiguration;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
-import org.hippoecm.hst.mock.configuration.MockSiteMenuConfiguration;
-import org.hippoecm.hst.mock.configuration.MockSiteMenuItemConfiguration;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.Position;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
@@ -176,7 +176,7 @@ public class SiteMenuResourceTest {
         // Mock creating the site menu item
         final SiteMenuItemRepresentation newMenuItem = new SiteMenuItemRepresentation();
         newMenuItem.setName(name);
-        expect(siteMenuItemHelper.create(parentNode, newMenuItem, Position.LAST, null)).andReturn(node);
+        expect(siteMenuItemHelper.create(parentNode, newMenuItem, Position.LAST, "'")).andReturn(node);
 
         final String menuItemId = "menuItemId";
         expect(node.getIdentifier()).andReturn(menuItemId);
@@ -184,7 +184,7 @@ public class SiteMenuResourceTest {
         expect(session.hasPendingChanges()).andReturn(false);
         replay(mocks);
 
-        final Response response = siteMenuResource.create(menuId, "last", "", newMenuItem);
+        final Response response = siteMenuResource.create(menuId, "last", "'", newMenuItem);
 
         assertThat(response.getStatus(), is(OK));
         assertThat(response.getEntity(), is(ExtResponseRepresentation.class));

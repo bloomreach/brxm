@@ -28,6 +28,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.easymock.Capture;
+import org.easymock.EasyMock;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
@@ -97,6 +98,9 @@ public class SiteMenuItemHelperTest {
         expect(node.addNode(newItem.getName(), HstNodeTypes.NODETYPE_HST_SITEMENUITEM)).andReturn(node);
         expect(node.getName()).andReturn(newItem.getName());
         expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
+        expect(node.getParent()).andReturn(parent);
+        expect(parent.getNodes()).andReturn(childIterator);
+        expect(childIterator.getSize()).andReturn(0L);
         replay(mocks);
 
         final Node result = siteMenuItemHelper.create(node, newItem, Position.ANY, null);
@@ -354,14 +358,13 @@ public class SiteMenuItemHelperTest {
         expect(childIterator.getSize()).andReturn(2L);
         expect(childIterator.nextNode()).andReturn(sibling);
         expect(node.getName()).andReturn(name).anyTimes();
-        expect(node.getIndex()).andReturn(1);
         expect(sibling.getName()).andReturn("sibling").anyTimes();
-        expect(sibling.getIndex()).andReturn(1);
-        parent.orderBefore("name[1]", "sibling[1]");
+        parent.orderBefore("name", "sibling");
 
         mockGetAncestor();
 
-        expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(property);
+        expect(node.getParent()).andReturn(parent);
+        expect(node.setProperty(EasyMock.anyObject(String.class), EasyMock.eq(false))).andReturn(null);
 
         replay(mocks);
 
