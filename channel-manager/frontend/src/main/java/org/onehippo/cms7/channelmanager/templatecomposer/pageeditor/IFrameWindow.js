@@ -51,8 +51,6 @@
                         messageBus.subscribe('close-reply-ok', function() {
                             isClosing = true;
                             self.close();
-                        });
-                        messageBus.subscribe('close-reply-not-ok', function() {
                             isClosing = false;
                         });
                         messageBus.subscribe('browseTo', function (pathInfo) {

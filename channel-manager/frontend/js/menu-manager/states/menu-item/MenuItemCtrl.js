@@ -22,8 +22,9 @@
         .controller('hippo.channelManager.menuManager.MenuItemCtrl', [
             '$scope',
             '$rootScope',
+            '$state',
             'hippo.channelManager.menuManager.MenuService',
-            function ($scope, $rootScope, MenuService) {
+            function ($scope, $rootScope, $state, MenuService) {
                 $scope.list = [];
                 $scope.selectedMenuItem = {};
                 $scope.feedback = {};
@@ -49,6 +50,11 @@
                     }
                 });
 
+                $rootScope.$on('before-close', function(event) {
+                    if ($state.current.name == 'menu-item.add') {
+                        event.preventDefault();
+                    }
+                });
             }
         ]);
 }());
