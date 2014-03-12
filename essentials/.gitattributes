@@ -114,6 +114,7 @@ dashboard-plugins/blog-plugin/src/main/resources/freemarker/essentials-author.ft
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/essentials-blog-author-post.ftl -text
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/essentials-blog-detail.ftl -text
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/essentials-blog-list.ftl -text
+dashboard-plugins/blog-plugin/src/main/resources/freemarker/essentials-blog-main.ftl -text
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/essentials-facet.ftl -text
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/imports.ftl -text
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/pagination.ftl -text

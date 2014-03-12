@@ -78,6 +78,7 @@
     <file action="copy"  source="freemarker/essentials-facet.ftl" target="{{freemarkerRoot}}/essentials/facet/essentials-facet.ftl"/>
     <file action="copy" source="freemarker/essentials-blog-author-post.ftl" target="{{freemarkerRoot}}/essentials/blog/essentials-blog-author-post.ftl"/>
     <file action="copy"  source="freemarker/essentials-blog-detail.ftl" target="{{freemarkerRoot}}/essentials/blog/essentials-blog-detail.ftl"/>
+    <file action="copy"  source="freemarker/essentials-blog-main.ftl" target="{{freemarkerRoot}}/essentials/blog/essentials-blog-main.ftl"/>
     <file action="copy"  source="freemarker/essentials-blog-list.ftl" target="{{freemarkerRoot}}/essentials/blog/essentials-blog-list.ftl"/>
     <file action="copy" source="freemarker/pagination.ftl" target="{{freemarkerRoot}}/essentials/common/pagination.ftl"/>
     <file action="copy" source="freemarker/imports.ftl" target="{{freemarkerRoot}}/essentials/common/imports.ftl"/>
