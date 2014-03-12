@@ -103,6 +103,8 @@ public class BlogDaemonModuleInstruction implements Instruction {
                     schedulerNode.setProperty(schedulerPropName, value);
                 } else if (key.startsWith("url")) {
                     urls.add(value);
+                } else if (key.startsWith("authorsBasePath")) {
+                    dataNode.setProperty(key, value);
                 } else if (key.startsWith("author")) {
                     authors.add(value);
                 } else {
