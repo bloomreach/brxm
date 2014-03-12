@@ -160,7 +160,7 @@
                         $http.post(head.url, head.body).success(onSuccess).error(onError);
                     }
 
-                    if (writeQueue.length == 1) {
+                    if (writeQueue.length === 1) {
                         scheduleNext();
                     }
 
