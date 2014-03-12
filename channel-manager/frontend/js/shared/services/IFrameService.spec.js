@@ -77,7 +77,7 @@ describe('IFrame Service', function () {
         iframeConfig.debug = true;
 
         var head = jasmine.createSpyObj('head', ['appendChild']);
-        $window.document.getElementsByTagName.andReturn([head]);
+        $window.document.getElementsByTagName.and.returnValue([head]);
 
         spyOn($log, 'info');
 
@@ -99,7 +99,7 @@ describe('IFrame Service', function () {
     });
 
     it("should throw an error when the parent does not contain an IFramePanel with the given ID", function() {
-        spyOn($window.parent.Ext, 'getCmp').andReturn(undefined);
+        spyOn($window.parent.Ext, 'getCmp').and.returnValue(undefined);
         expect(iframeService.getConfig).toThrow(new Error("Unknown iframe panel id: 'ext-42'"));
     });
 

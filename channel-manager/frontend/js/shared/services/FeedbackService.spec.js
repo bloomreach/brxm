@@ -21,7 +21,7 @@ describe('Feedback Service', function () {
 
     beforeEach(function () {
 
-        translateMock = jasmine.createSpy('translateSpy').andCallFake(function (id) {
+        translateMock = jasmine.createSpy('translateSpy').and.callFake(function (id) {
             if (id === 'NO_TRANSLATION') {
                 return id;
             } else {
