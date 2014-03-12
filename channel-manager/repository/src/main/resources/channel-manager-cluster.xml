@@ -19,6 +19,9 @@
     <sv:property sv:name="rest.proxy.service.id" sv:type="String">
       <sv:value>hst.rest.proxy.service</sv:value>
     </sv:property>
+    <sv:property sv:name="hst.config.editor.disabled" sv:type="Boolean">
+      <sv:value>false</sv:value>
+    </sv:property>
     <sv:node sv:name="channel-list">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>

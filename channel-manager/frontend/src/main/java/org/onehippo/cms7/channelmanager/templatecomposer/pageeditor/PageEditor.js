@@ -170,7 +170,7 @@
             this.variantsUuid = config.variantsUuid;
             this.pageContainer = new Hippo.ChannelManager.TemplateComposer.PageContainer(config);
             this.locale = config.locale;
-
+            this.hideHstConfigEditor = config.hideHstConfigEditor;
             this.canManageChanges = config.canManageChanges;
             this.toolbarPlugins = config.toolbarPlugins;
 
@@ -551,6 +551,7 @@
                         cls: 'toolbarMenuIcon',
                         iconCls: 'channel-gear',
                         allowDepress: false,
+                        hidden: this.hideHstConfigEditor,
                         menu: {
                             items: {
                                 text: this.initialConfig.resources['edit-hst-configuration'],
