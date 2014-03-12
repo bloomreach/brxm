@@ -167,6 +167,7 @@ public class BlogImporterJob implements InterruptableJob {
                                 final Node documentNode = createHandle(prefixedNamespace, "author", authorsNode, author);
                                 setDefaultDocumentPorperties(prefixedNamespace, documentNode, Calendar.getInstance());
                                 documentNode.setProperty(fullNameProperty, author);
+                                authorNode = authorsNode.getNode(author);
                                 session.save();
                             }
                         }
