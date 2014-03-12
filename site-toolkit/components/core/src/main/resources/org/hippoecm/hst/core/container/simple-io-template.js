@@ -22,33 +22,42 @@ Hippo.Hst.AsyncPage = {
             }
         }
 
+        // Fail safe node retrieval
+        function findNodes(node, name) {
+            if (window.addEventListener) {
+                return node.querySelectorAll(name);
+            } else { // IE8 or less
+                return node.getElementsByTagName(name.toUpperCase());
+            }
+        }
+
         // Find all script elements, extract them from the fragment and store
         // them into a new array. Cloning the nodes does not work as the script
-        // will not be executed that way so we have to clone them manually.
+        // will not be executed that way, so we have to clone them manually.
         function extractScriptNodes(fragment) {
             var i, j, length, node, nodes, script, scripts, atts;
-            atts = ['async', 'charset', 'defer', 'src', 'type'];
-            nodes = [];
-            if (fragment.querySelectorAll) {
 
-                scripts = fragment.querySelectorAll('script');
-                for (i = 0, length = scripts.length; i < length; i++) {
-                    script = scripts[i];
-                    node = document.createElement('script');
-                    if (window.addEventListener) {
-                        node.appendChild(document.createTextNode(script.innerHTML));
-                    } else { // IE8 or less
-                        node.text = script.innerHTML;
-                    }
-                    for (j = 0; j < atts.length; j++) {
-                        if (script.hasAttribute(atts[j])) {
-                            node.setAttribute(atts[j], script.getAttribute(atts[j]));
-                        }
-                    }
-                    script.parentNode.removeChild(script);
-                    nodes.push(node);
+            atts = ['async', 'charset', 'defer', 'src', 'type'];
+            scripts = findNodes(fragment, 'script');
+            nodes = [];
+
+            for (i = 0, length = scripts.length; i < length; i++) {
+                script = scripts[i];
+                node = document.createElement('script');
+                if (window.addEventListener) {
+                    node.appendChild(document.createTextNode(script.innerHTML));
+                } else { // IE8 or less
+                    node.text = script.innerHTML;
                 }
+                for (j = 0; j < atts.length; j++) {
+                    if (script.hasAttribute(atts[j])) {
+                        node.setAttribute(atts[j], script.getAttribute(atts[j]));
+                    }
+                }
+                script.parentNode.removeChild(script);
+                nodes.push(node);
             }
+
             return nodes;
         }
 
