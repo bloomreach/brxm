@@ -23,7 +23,6 @@ import javax.jcr.Session;
 
 import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
@@ -41,7 +40,6 @@ public class PagesHelper extends AbstractHelper {
     }
 
     public Node create(final Node prototypePage, final Node siteMapNode) throws RepositoryException {
-        validatePrototypePage(prototypePage);
         String previewWorkspacePagesPath = getPreviewWorkspacePagesPath();
         final String targetPageNodeName = getSitemapPathPrefixPart(siteMapNode) + "-" + prototypePage.getName();
         final Session session = pageComposerContextService.getRequestContext().getSession();
@@ -76,7 +74,7 @@ public class PagesHelper extends AbstractHelper {
 
     public void delete(final Node sitemapItemNodeToDelete) throws RepositoryException {
         final String componentConfigId = JcrUtils.getStringProperty(sitemapItemNodeToDelete, HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID, null);
-        if (componentConfigId == null){
+        if (componentConfigId == null) {
             log.debug("No component id configured for '{}'. No page to delete.", sitemapItemNodeToDelete.getPath());
             return;
         }
@@ -92,43 +90,27 @@ public class PagesHelper extends AbstractHelper {
         deleteOrMarkDeletedIfLiveExists(pageNode);
     }
 
-    // TODO when implementing re-applying a prototype to a page, ensure the page is from the workspace!
-
-    private void validatePrototypePage(final Node component) throws RepositoryException {
-        if (!component.isNodeType("hst:abstractcomponent")) {
-            throw new ClientException("Expected node of subtype 'hst:abstractcomponent'", ClientError.INVALID_NODE_TYPE);
-        }
-        if (component.isNodeType(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT)) {
-            String message = String.format("Prototype page is not allowed to contain nodes of type '%s' but there is one " +
-                    "at '%s'. Prototype page cannot be used", HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT, component.getPath());
-            throw new ClientException(message, ClientError.INVALID_NODE_TYPE);
-        }
-        for (Node child : new NodeIterable(component.getNodes())) {
-            validatePrototypePage(child);
-        }
-    }
-
     private String getSitemapPathPrefixPart(final Node siteMapNode) throws RepositoryException {
         Node crNode = siteMapNode;
         StringBuilder sitemapPathPrefixBuilder = new StringBuilder();
         while (crNode.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMAPITEM)) {
-            if (sitemapPathPrefixBuilder.length() > 0 ) {
-                sitemapPathPrefixBuilder.insert(0,"-");
+            if (sitemapPathPrefixBuilder.length() > 0) {
+                sitemapPathPrefixBuilder.insert(0, "-");
             }
-            sitemapPathPrefixBuilder.insert(0,crNode.getName());
+            sitemapPathPrefixBuilder.insert(0, crNode.getName());
             crNode = crNode.getParent();
         }
         return sitemapPathPrefixBuilder.toString();
     }
 
     private boolean isValidateTarget(final Session session,
-                                final String targetNodeName,
-                                final int counter,
-                                final String previewWorkspacePagesPath,
-                                final String previewPagesPath) throws RepositoryException {
+                                     final String targetNodeName,
+                                     final int counter,
+                                     final String previewWorkspacePagesPath,
+                                     final String previewPagesPath) throws RepositoryException {
         String testTargetNodeName = targetNodeName;
         if (counter > 0) {
-            testTargetNodeName = testTargetNodeName +"-" + counter;
+            testTargetNodeName = testTargetNodeName + "-" + counter;
         }
 
         String testWorkspaceTargetNodePath = previewWorkspacePagesPath + "/" + testTargetNodeName;
@@ -143,7 +125,7 @@ public class PagesHelper extends AbstractHelper {
                 }
                 targetNode.remove();
             } else {
-               return false;
+                return false;
             }
         }
 
@@ -175,7 +157,7 @@ public class PagesHelper extends AbstractHelper {
         StringBuilder xpath = new StringBuilder("/jcr:root");
         xpath.append(ISO9075.encodePath(previewConfigurationPath));
         xpath.append("//element(*,");
-        xpath.append("hst:abstractcomponent");
+        xpath.append(HstNodeTypes.NODETYPE_HST_ABSTRACT_COMPONENT);
         xpath.append(")[");
 
         String concat = "";

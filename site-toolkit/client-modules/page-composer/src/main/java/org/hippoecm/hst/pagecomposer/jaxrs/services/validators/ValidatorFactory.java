@@ -55,4 +55,8 @@ public class ValidatorFactory {
     public Validator getCurrentPreviewConfigurationValidator(String id, SiteMapHelper siteMapHelper) {
         return new CurrentPreviewConfigurationValidator(id, siteMapHelper);
     }
+
+    public Validator getPrototypePageValidator(String prototypeUuid) {
+        return new PrototypePageValidator(prototypeUuid);
+    }
 }

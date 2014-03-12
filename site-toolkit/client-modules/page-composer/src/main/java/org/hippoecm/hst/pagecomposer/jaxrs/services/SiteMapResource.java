@@ -111,7 +111,7 @@ public class SiteMapResource extends AbstractConfigResource {
                 UUID.fromString(siteMapItem.getComponentConfigurationId());
                 // new page id (re-prototype)
                 preValidatorBuilder.add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPrototypePath(),
-                        siteMapItem.getComponentConfigurationId(), "hst:abstractcomponent"));
+                        siteMapItem.getComponentConfigurationId(), HstNodeTypes.NODETYPE_HST_ABSTRACT_COMPONENT));
             } catch (IllegalArgumentException e) {
                 // no problem: no new page id has been set
             }
@@ -140,9 +140,10 @@ public class SiteMapResource extends AbstractConfigResource {
         final ValidatorBuilder preValidators = ValidatorBuilder.builder()
                 .add(validatorFactory.getNotNullValidator(siteMapItem.getName(), ClientError.ITEM_NO_NAME))
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPrototypePath(),
-                        siteMapItem.getComponentConfigurationId(), "hst:abstractcomponent"))
+                        siteMapItem.getComponentConfigurationId(), HstNodeTypes.NODETYPE_HST_ABSTRACT_COMPONENT))
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPath(), getPageComposerContextService().getRequestConfigIdentifier(),
-                        HstNodeTypes.NODETYPE_HST_SITEMAP));
+                        HstNodeTypes.NODETYPE_HST_SITEMAP))
+                .add(validatorFactory.getPrototypePageValidator(siteMapItem.getComponentConfigurationId()));
 
         if (parentId != null) {
             preValidators.add(validatorFactory.getCurrentPreviewConfigurationValidator(parentId, siteMapHelper));

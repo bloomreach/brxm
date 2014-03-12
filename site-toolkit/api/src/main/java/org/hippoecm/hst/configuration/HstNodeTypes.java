@@ -26,6 +26,7 @@ public interface HstNodeTypes {
     static final String NODETYPE_HST_CONFIGURATION = "hst:configuration";
     static final String NODETYPE_HST_SITEMAP = "hst:sitemap";
     static final String NODETYPE_HST_SITEMAPITEM = "hst:sitemapitem";
+    static final String NODETYPE_HST_ABSTRACT_COMPONENT = "hst:abstractcomponent";
     static final String NODETYPE_HST_COMPONENT = "hst:component";
     static final String NODETYPE_HST_CONTAINERCOMPONENTREFERENCE = "hst:containercomponentreference";
     static final String NODETYPE_HST_CONTAINERCOMPONENT = "hst:containercomponent";
