@@ -23,9 +23,7 @@
                 return {
                     'request': function(config) {
                         if (config.url.indexOf(ConfigService.apiUrlPrefix) === 0) {
-                            if (!config.params) {
-                                config.params = {};
-                            }
+                            config.params = config.params || {};
                             // Calling HST endpoints requires this GET parameter to be set
                             config.params.FORCE_CLIENT_HOST = true;
                         }
