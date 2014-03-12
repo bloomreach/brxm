@@ -20,7 +20,7 @@
             .controller('blogPluginCtrl', function ($scope, $sce, $log, $rootScope, $http) {
                 $scope.endpoint = $rootScope.REST.dynamic + 'blog/';
                 $scope.templateName = 'jsp';
-                $scope.setupImport = true;
+                $scope.setupImport = false;
                 $scope.importConfig = {
                     'active': true,
                     'cronExpression': '0 0 6 ? * SUN',
