@@ -3,12 +3,17 @@
 <#-- @ftlvariable name="facetLimit" type="java.lang.Integer" -->
 <#-- @ftlvariable name="query" type="java.lang.String" -->
 <#if facets??>
-    <@c.set var="facetLimit" value=50/>
+    <#assign facetLimit = 50>
 
 <form action="<@hst.actionURL />" method="get">
     <div class="form-group">
         <div class="col-xs-8">
-            <input type="search" value="${query}" name="query" class="form-control" placeholder="Search blog posts">
+            <#if query??>
+                <input type="search" value="${query}" name="query" class="form-control" placeholder="Search blog posts">
+            <#else>
+                <input type="search" value="" name="query" class="form-control" placeholder="Search blog posts">
+            </#if>
+
         </div>
         <div class="col-xs-4">
             <button type="submit" class="btn btn-primary pull-right">Search</button>
@@ -22,7 +27,7 @@
                 <ul class="nav nav-list">
                     <#list  facetvalue.folders as item>
 
-                        <#if index.count <= facetLimit>
+                        <#if (item_index > facetLimit)>
                             <#if item.leaf?? && item.count > 0>
                                 <@hst.facetnavigationlink remove="${item}" current="${facets}" var="removeLink"/>
                                 <li class="active">
@@ -33,7 +38,7 @@
                                 <li><a href="${link}">${item.name}&nbsp;<span>(${item.count})</span></a></li>
                             </#if>
                         </#if>
-                        <#if index.count > facetLimit>
+                        <#if (item_index > facetLimit)>
                             <#if item.leaf && item.count > 0>
                                 <@hst.facetnavigationlink remove=item current=facets var="removeLink"/>
                                 <li class="active"><a href="${removeLink}"><${item.name}</a></li>

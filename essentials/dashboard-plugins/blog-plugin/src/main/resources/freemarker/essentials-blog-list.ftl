@@ -5,10 +5,8 @@
         <@hst.link var="link" hippobean=item />
     <article>
         <h3><a href="${link}">${item.title}</a></h3>
-        <#if item.publicationDate?? item.publicationDate.time??>
-            <p>
-                <@fmt.formatDate value=item.publicationDate.time type="both" dateStyle="medium" timeStyle="short"/>
-            </p>
+        <#if item.publicationDate?? && item.publicationDate.time??>
+            <p><@fmt.formatDate value=item.publicationDate.time type="both" dateStyle="medium" timeStyle="short"/></p>
         </#if>
         <p>${item.introduction}</p>
     </article>
