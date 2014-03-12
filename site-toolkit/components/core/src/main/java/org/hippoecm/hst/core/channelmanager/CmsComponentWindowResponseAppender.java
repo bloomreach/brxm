@@ -19,6 +19,7 @@ import java.util.HashMap;
 
 import javax.servlet.http.HttpSession;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -38,6 +39,8 @@ import org.w3c.dom.Comment;
 public class CmsComponentWindowResponseAppender extends AbstractComponentWindowResponseAppender implements ComponentWindowResponseAppender {
 
     private static final Logger log = LoggerFactory.getLogger(CmsComponentWindowResponseAppender.class);
+
+    private static final String WORKSPACE_PATH_ELEMENT = "/" + HstNodeTypes.NODENAME_HST_WORKSPACE + "/";
 
     @Override
     public void process(final HstComponentWindow rootWindow, final HstComponentWindow rootRenderingWindow, final HstComponentWindow window, final HstRequest request, final HstResponse response) {
@@ -71,6 +74,11 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             response.addHeader(ChannelManagerConstants.HST_RENDER_VARIANT, variant.toString());
             response.addHeader(ChannelManagerConstants.HST_SITE_HAS_PREVIEW_CONFIG, String.valueOf(mount.getHstSite().hasPreviewConfiguration()));
         } else if (isComposerMode(request)) {
+            if (!compConfig.getCanonicalStoredLocation().contains(WORKSPACE_PATH_ELEMENT)) {
+                log.debug("Component '{}' not editable as not part of hst:workspace configuration", compConfig.toString());
+                return;
+            }
+
             HashMap<String, String> attributes = new HashMap<String, String>();
             attributes.put("uuid", compConfig.getCanonicalIdentifier());
             if(compConfig.getXType() != null) {
