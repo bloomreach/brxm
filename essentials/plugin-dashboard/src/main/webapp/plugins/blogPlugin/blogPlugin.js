@@ -26,6 +26,7 @@
                     'cronExpression': '0 0 6 ? * SUN',
                     'cronExpressionDescription': 'Fires @ 6am on every sunday, More info @ http://www.quartz-scheduler.org/',
                     'maxDescriptionLength': 300,
+                    'authorsBasePath': '/',
                     urls: [
                         {'value': 'http://blog.jeroenreijn.com/feeds/posts/default', 'author':'Jeroen Rijn'}
                     ]
