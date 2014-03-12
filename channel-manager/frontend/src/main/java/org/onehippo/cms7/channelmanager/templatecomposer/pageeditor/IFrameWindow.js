@@ -47,12 +47,17 @@
                 ],
                 listeners: {
                     'afterrender': function(self) {
-                        self.getIFramePanel().iframeToHost.subscribe('close-reply-ok', function() {
+                        var messageBus = self.getIFramePanel().iframeToHost;
+                        messageBus.subscribe('close-reply-ok', function() {
                             isClosing = true;
                             self.close();
                         });
-                        self.getIFramePanel().iframeToHost.subscribe('close-reply-not-ok', function() {
+                        messageBus.subscribe('close-reply-not-ok', function() {
                             isClosing = false;
+                        });
+                        messageBus.subscribe('browseTo', function (pathInfo) {
+                            Hippo.ChannelManager.TemplateComposer.Instance.browseTo({ renderPathInfo: pathInfo });
+                            self.close();
                         });
                     },
                     'beforeclose': function(self) {

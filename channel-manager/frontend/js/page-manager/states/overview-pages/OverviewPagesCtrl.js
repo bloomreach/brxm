@@ -23,7 +23,8 @@
             '$state',
             'hippo.channelManager.FeedbackService',
             'hippo.channelManager.pageManager.PageService',
-            function ($scope, $state, FeedbackService, PageService) {
+            '_hippo.channelManager.IFrameService',
+            function ($scope, $state, FeedbackService, PageService, IFrameService) {
                 PageService.getPages().then(function (pages) {
                     $scope.pages = pages;
                 }, function (errorResponse) {
@@ -32,6 +33,11 @@
 
                 $scope.navigateTo = function (stateName) {
                     $state.go(stateName);
+                };
+
+                $scope.showPage = function(page) {
+                    var iframePanel = IFrameService.getContainer();
+                    iframePanel.iframeToHost.publish('browseTo', (page.pathInfo.charAt(0) == '/' ? '' : '/') + page.pathInfo);
                 };
             }
         ]);

@@ -38,7 +38,7 @@
                 }
             });
 
-            Hippo.ChannelManager.TemplateComposer.PagesWindow.superclass.constructor.call(this, config);
+            Hippo.ChannelManager.TemplateComposer.EditMenuWindow.superclass.constructor.call(this, config);
         }
 
     });

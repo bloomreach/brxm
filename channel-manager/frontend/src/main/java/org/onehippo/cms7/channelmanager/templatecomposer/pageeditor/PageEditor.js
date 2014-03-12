@@ -1003,8 +1003,17 @@
 
         browseTo: function(data) {
             this.channelStoreFuture.when(function(config) {
+                var isEditMode, record;
+                if (Ext.isDefined(data.isEditMode)) {
+                    isEditMode = data.isEditMode;
+                } else if (Ext.isDefined(data.channelId) && data.channelId !== this.channelId) {
+                    isEditMode = false;
+                } else {
+                    isEditMode = this.pageContainer ? !this.pageContainer.previewMode : false;
+                }
+
                 this.channelId = data.channelId || this.channelId;
-                var record = config.store.getById(this.channelId);
+                record = config.store.getById(this.channelId);
                 this.title = record.get('name');
                 this.channel = record.data;
                 this.hstMountPoint = record.get('hstMountPoint');
@@ -1013,7 +1022,7 @@
                 this.pageContainer.renderPathInfo = data.renderPathInfo || this.renderPathInfo || record.get('mountPath');
                 this.pageContainer.renderHost = record.get('hostname');
                 Ext.getCmp('pageEditorIFrame').hide();
-                this.initComposer(data.isEditMode);
+                this.initComposer(isEditMode);
             }.createDelegate(this));
         },
 
