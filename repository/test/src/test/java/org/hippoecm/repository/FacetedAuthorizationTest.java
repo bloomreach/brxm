@@ -252,16 +252,17 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     }
 
     private void createExpanderData(final Node testData) throws RepositoryException {
-        testData.addNode("expanders", "hippo:authtestdocument").setProperty("authtest", "canread");
+        final Node expanders = testData.addNode("expanders", "hippo:authtestdocument");
+        expanders.setProperty("authtest", "canread");
 
-        testData.getNode("expanders").addNode("usertest",  "hippo:authtestdocument").setProperty("user", TEST_USER_ID);
-        testData.getNode("expanders").addNode("useradmin", "hippo:authtestdocument").setProperty("user", "admin");
+        expanders.addNode("usertest", "hippo:authtestdocument").setProperty("user", TEST_USER_ID);
+        expanders.addNode("useradmin", "hippo:authtestdocument").setProperty("user", "admin");
 
-        testData.getNode("expanders").addNode("grouptest",  "hippo:authtestdocument").setProperty("group", TEST_GROUP_ID);
-        testData.getNode("expanders").addNode("groupadmin", "hippo:authtestdocument").setProperty("group", "admin");
+        expanders.addNode("grouptest", "hippo:authtestdocument").setProperty("group", TEST_GROUP_ID);
+        expanders.addNode("groupadmin", "hippo:authtestdocument").setProperty("group", "admin");
 
-        testData.getNode("expanders").addNode("roletest",  "hippo:authtestdocument").setProperty("role", "readonly");
-        testData.getNode("expanders").addNode("roleadmin", "hippo:authtestdocument").setProperty("group", "admin");
+        expanders.addNode("roletest", "hippo:authtestdocument").setProperty("role", "readonly");
+        expanders.addNode("roleadmin", "hippo:authtestdocument").setProperty("group", "admin");
     }
 
     private void createTestNavigation(final Node testData) throws RepositoryException {
@@ -1010,10 +1011,18 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testOptionalFacet() throws RepositoryException {
-        Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
+    public void testOptionalFacetPlain() throws RepositoryException {
+        testOptionalFacet("optionalvalue", "optionalvalue");
+    }
 
-        testData.getNode("readdoc0").getNode("subread").setProperty("optionalfacet", "optionalvalue");
+    @Test
+    public void testOptionalFacetWithExpander() throws RepositoryException {
+        testOptionalFacet("__group__", TEST_GROUP_ID);
+    }
+
+    private void testOptionalFacet(final String optionalFacetValue, final String optionalPropertyValue) throws RepositoryException {
+        Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
+        testData.getNode("readdoc0").getNode("subread").setProperty("optionalfacet", optionalPropertyValue);
 
         final Node otherDoc = testData.getNode("readdoc0").addNode("subhidden", "hippo:authtestdocument");
         otherDoc.setProperty("optionalfacet", "incorrectvalue");
@@ -1022,7 +1031,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         Node dr = readDomain.getNode("hippo:domainrule");
         Node fr = dr.addNode("hippo:facetrule", HippoNodeType.NT_FACETRULE);
         fr.setProperty(HippoNodeType.HIPPO_FACET, "optionalfacet");
-        fr.setProperty(HippoNodeType.HIPPOSYS_VALUE, "optionalvalue");
+        fr.setProperty(HippoNodeType.HIPPOSYS_VALUE, optionalFacetValue);
         fr.setProperty(HippoNodeType.HIPPOSYS_TYPE, "String");
         fr.setProperty(HippoNodeType.HIPPOSYS_FILTER, true);
 
