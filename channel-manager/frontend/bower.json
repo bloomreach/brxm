@@ -14,11 +14,12 @@
   },
   "devDependencies": {
     "angular-mocks": "1.2.0-rc.2",
-    "jasmine-jquery": "1.5.9"
+    "jasmine-jquery": "2.0.3"
   },
   "resolutions": {
     "angular": "1.2.14-build.2302+sha.f827d64",
     "angular-mocks": "1.2.14-build.2302+sha.f827d64",
-    "Angular-NestedSortable": "1706ed72b28c3e913253cb7bd1df196fa463b04c"
+    "Angular-NestedSortable": "1706ed72b28c3e913253cb7bd1df196fa463b04c",
+    "jasmine-jquery": "2.0.3"
   }
 }

@@ -47,13 +47,13 @@ module.exports = function(config) {
             // shared sources
             'shared/shared-dependencies.js',
             'shared/services/*.js',
+            'shared/filters/**/*.js',
 
             // apps sources
             'menu-manager/menu-manager-dependencies.js',
             'menu-manager/directives/*.js',
             'menu-manager/services/*.js',
             'menu-manager/states/**/*.js',
-            'menu-manager/filters/**/*.js',
             'page-manager/page-manager-dependencies.js',
             'page-manager/services/*.js',
 
