@@ -595,7 +595,7 @@
   </sv:node>
 
   <!-- channel manager fine grained locking -->
-  <sv:node sv:name="gogreen-channelmanager-fine-grained-locking">
+  <sv:node sv:name="${rootArtifactId.replace($hyphen,$empty)}-channelmanager-fine-grained-locking">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
