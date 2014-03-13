@@ -37,6 +37,7 @@
 
             Ext.apply(config, {
                 layout: 'fit',
+                headerStyle: 'text-align: left; padding-left: 3px;',
                 items: [
                     {
                         xtype: 'Hippo.ChannelManager.TemplateComposer.IFramePanel',

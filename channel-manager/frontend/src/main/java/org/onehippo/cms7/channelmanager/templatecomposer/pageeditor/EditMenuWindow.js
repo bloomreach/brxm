@@ -23,7 +23,6 @@
         constructor: function(config) {
             Ext.apply(config, {
                 title: config.resources['edit-menu'],
-                headerStyle: 'text-align: left;padding-left: 3px;',
                 width: 860,
                 minWidth: 790,
                 height: 517,
