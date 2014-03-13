@@ -128,7 +128,10 @@ dependencies/target
 /hst.iml
 /hst.ipr
 /hst.iws
+integration/target
+integration/tests/target
 integration/toolkit-integration.iml
+integration/war/target
 integration/war/toolkit-integration-repository-war.iml
 mock/.classpath
 mock/.project

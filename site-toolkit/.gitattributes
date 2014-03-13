@@ -735,6 +735,7 @@ components/core/src/test/java/org/hippoecm/hst/test/sitemapitemhandler/NoopExamp
 components/core/src/test/java/org/hippoecm/hst/test/sitemapitemhandler/NoopExampleHandlerItem2.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/test/sitemapitemhandler/NoopHandlerItem.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/test/sitemapitemhandler/SiteMapItemRedirectHandler.java -text
+components/core/src/test/resources/META-INF/assembly/example-resource-factory-beans.xml -text
 components/core/src/test/resources/META-INF/assembly/simple-beans-1.xml svneol=native#text/plain
 components/core/src/test/resources/META-INF/assembly/simple-beans-2.xml svneol=native#text/plain
 components/core/src/test/resources/META-INF/assembly/simple-beans-3.xml svneol=native#text/plain
@@ -744,6 +745,7 @@ components/core/src/test/resources/META-INF/assembly/simple-config.properties sv
 components/core/src/test/resources/META-INF/assembly/simple-servlet-context-aware-beans.xml -text
 components/core/src/test/resources/META-INF/assembly/with-addon-modules-config.properties -text
 components/core/src/test/resources/META-INF/assembly/with-addon-modules.xml -text
+components/core/src/test/resources/META-INF/example-login.conf -text
 components/core/src/test/resources/META-INF/hst-assembly/addon/failing-module.xml -text
 components/core/src/test/resources/META-INF/hst-assembly/addon/module.xml -text
 components/core/src/test/resources/META-INF/hst-assembly/addon/module2.xml -text
