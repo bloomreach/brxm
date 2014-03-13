@@ -513,10 +513,10 @@ gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/ColorQu
        liability.
 
 ------------------------------------------------------------------------------------------------------------------------
-jquery/src/main/resources/org/onehippo/cms7/jquery/core/jquery-1.8.3.js
-jquery/src/main/resources/org/onehippo/cms7/jquery/ui/jquery-ui-1.11.0.js
+jquery/src/main/resources/org/onehippo/cms7/jquery/core/jquery-1.11.0.js
+jquery/src/main/resources/org/onehippo/cms7/jquery/ui/jquery-ui-1.9.2.js
 
-    Copyright 2011 jQuery Foundation and other contributors
+    Copyright 2012-2014 jQuery Foundation and other contributors
     http://jquery.com/
 
     Permission is hereby granted, free of charge, to any person obtaining

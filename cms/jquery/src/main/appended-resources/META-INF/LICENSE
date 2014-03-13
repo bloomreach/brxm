@@ -5,10 +5,10 @@ and license terms. Your use of the code for the these sub-components is subject
 to the terms and conditions of the following licenses.
 
 ------------------------------------------------------------------------------------------------------------------------
-org/onehippo/cms7/jquery/core/jquery-1.8.3.js
-org/onehippo/cms7/jquery/ui/jquery-ui-1.11.0.js
+org/onehippo/cms7/jquery/core/jquery-1.11.0.js
+org/onehippo/cms7/jquery/ui/jquery-ui-1.9.2.js
 
-    Copyright 2013 jQuery Foundation and other contributors
+    Copyright 2012-2014 jQuery Foundation and other contributors
     http://jquery.com/
 
     Permission is hereby granted, free of charge, to any person obtaining
