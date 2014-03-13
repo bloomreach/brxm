@@ -400,7 +400,7 @@
                     );
                 }
                 toolbar.add(
-                    toolbarButtons.pages
+                    this.createPagesButton()
                 );
                 if (this.pageContainer.canEdit) {
                     toolbar.add(
@@ -485,6 +485,8 @@
                             }
                         }
                     },
+                    ' ',
+                    this.createPagesButton(),
                     ' ',
                     variantsComboBoxLabel,
                     variantsComboBox,
@@ -1065,8 +1067,23 @@
             pagesWindow.show();
         },
 
+        createPagesButton: function() {
+            return new Ext.Toolbar.Button({
+                id: 'template-composer-toolbar-pages-button',
+                text: this.initialConfig.resources['pages-button'],
+                iconCls: 'edit-channel',
+                width: 80,
+                listeners: {
+                    click: {
+                        fn: this.showPages,
+                        scope: this
+                    }
+                }
+            });
+        },
+
         getToolbarButtons: function() {
-            var editButton, publishButton, discardButton, manageChangesButton, pagesButton;
+            var editButton, publishButton, discardButton, manageChangesButton;
             editButton = new Ext.Toolbar.Button({
                 id: 'template-composer-toolbar-edit-button',
                 text: this.initialConfig.resources['edit-button'],
@@ -1130,19 +1147,6 @@
                     }
                 }
             });
-            pagesButton = new Ext.Toolbar.Button({
-                id: 'template-composer-toolbar-pages-button',
-                text: this.initialConfig.resources['pages-button'],
-                iconCls: 'edit-channel',
-                width: 80,
-                listeners: {
-                    click: {
-                        fn: this.showPages,
-                        scope: this
-                    }
-                }
-            });
-
             this.showOrHideButtons(Ext.getCmp('template-composer-toolbar-publish-button'),
                     Ext.getCmp('template-composer-toolbar-discard-button'));
 
@@ -1150,10 +1154,9 @@
                 edit: editButton,
                 publish: publishButton,
                 discard: discardButton,
-                manageChanges: manageChangesButton,
-                pages: pagesButton
+                manageChanges: manageChangesButton
             };
-        }
+        },
 
     });
 
