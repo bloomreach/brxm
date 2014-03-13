@@ -25,6 +25,7 @@ import javax.jcr.Session;
 
 import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
@@ -33,6 +34,9 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
+import org.hippoecm.hst.util.HstSiteMapUtils;
+import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,6 +117,50 @@ public class SiteMapHelper extends AbstractHelper {
         return newSitemapNode;
     }
 
+    public Node duplicate(final String workspaceSiteMapId, final String siteMapItemId) throws RepositoryException {
+        HstRequestContext requestContext = pageComposerContextService.getRequestContext();
+        final Session session = requestContext.getSession();
+        Node toShallowCopy = session.getNodeByIdentifier(siteMapItemId);
+        HstSiteMapItem hstSiteMapItem = getConfigObject(siteMapItemId);
+        String pathInfo = HstSiteMapUtils.getPath(hstSiteMapItem);
+        if (pathInfo.contains(HstNodeTypes.WILDCARD) || pathInfo.contains(HstNodeTypes.ANY)) {
+            String message = String.format("Cannot copy/duplicate a page from siteMapItem '%s' because it contains " +
+                    "wildcards and this is not supported.", ((CanonicalInfo)hstSiteMapItem).getCanonicalPath());
+            throw new ClientException(message, ClientError.ITEM_CANNOT_BE_CLONED);
+        }
+        String newSiteMapItemName = pathInfo.replace("/", "-");
+        Node workspaceSiteMapNode = session.getNodeByIdentifier(workspaceSiteMapId);
+
+        String target = workspaceSiteMapNode.getPath() + "/" + newSiteMapItemName + "/" + "-duplicate";
+
+        String finalTarget = target;
+        String nonWorkspaceLocation = finalTarget.replace(HstNodeTypes.NODENAME_HST_WORKSPACE + "/", "/");
+        int counter = 0;
+        while (session.nodeExists(target) || session.nodeExists(nonWorkspaceLocation)) {
+            counter++;
+            finalTarget = target + "-" + counter;
+            nonWorkspaceLocation = finalTarget.replace(HstNodeTypes.NODENAME_HST_WORKSPACE + "/", "/");
+        }
+
+        validateTarget(session, finalTarget);
+        final Node newSitemapNode = JcrUtils.copy(session, toShallowCopy.getPath(), target);
+        for (Node child : new NodeIterable(newSitemapNode.getNodes())) {
+            // we need shallow copy so remove children again
+            child.remove();
+        }
+        lockHelper.acquireLock(newSitemapNode, 0);
+
+        // copy the page definition
+        final HstComponentConfiguration pageToCopy = requestContext.getResolvedMount().getMount().getHstSite().
+                getComponentsConfiguration().getComponentConfiguration(hstSiteMapItem.getComponentConfigurationId());
+
+        Node clonedPage = pagesHelper.create(session.getNodeByIdentifier(pageToCopy.getCanonicalIdentifier()),
+                pageToCopy, newSitemapNode);
+        newSitemapNode.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID,
+                HstNodeTypes.NODENAME_HST_PAGES + "/" + clonedPage.getName());
+        return newSitemapNode;
+    }
+
     public void move(final String id, final String parentId) throws RepositoryException {
         if (id.equals(parentId)) {
             final String message = "Cannot move node to become child of itself";
@@ -129,8 +177,9 @@ public class SiteMapHelper extends AbstractHelper {
         }
         final Node unLockableNode = lockHelper.getUnLockableNode(newParent, true, false);
         if (unLockableNode != null) {
-            throw new IllegalStateException("Cannot move node to '" + newParent.getPath() + "' because that node is locked " +
-                    "by node '" + unLockableNode.getPath() + "' by '" + unLockableNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString() + "'");
+            String message = String.format("Cannot move node to '%s' because that node is locked through node '%s' by '%s'",
+                    newParent.getPath(), unLockableNode.getPath(), unLockableNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString());
+            throw new ClientException(message, ClientError.ITEM_ALREADY_LOCKED);
         }
 
         lockHelper.acquireLock(nodeToMove, 0);
@@ -196,10 +245,12 @@ public class SiteMapHelper extends AbstractHelper {
         // check non workspace sitemap for collisions
         final HstSiteMap siteMap = pageComposerContextService.getEditingPreviewSite().getSiteMap();
         if (!(siteMap instanceof CanonicalInfo)) {
-            throw new IllegalStateException("Unexpected sitemap for site '" + siteMap.getSite().getName() + "' because not an instanceof CanonicalInfo");
+            String msg = String.format("Unexpected sitemap for site '%s' because not an instanceof CanonicalInfo", siteMap.getSite().getName());
+            throw new ClientException(msg, ClientError.UNKNOWN);
         }
         if (!target.contains(WORKSPACE_PATH_ELEMENT)) {
-            throw new IllegalArgumentException("Target '" + target + "' expected to at least contain ");
+            String msg = String.format("Target '%s' does not contain '%s'.", target, WORKSPACE_PATH_ELEMENT);
+            throw new ClientException(msg, ClientError.ITEM_NOT_CORRECT_LOCATION);
         }
         if (session.nodeExists(target)) {
             Node targetNode = session.getNode(target);
@@ -223,12 +274,14 @@ public class SiteMapHelper extends AbstractHelper {
             final Node siteMapNode = session.getNodeByIdentifier(canonical.getCanonicalIdentifier());
             final Node siteNode = siteMapNode.getParent();
             if (!siteNode.isNodeType(HstNodeTypes.NODETYPE_HST_CONFIGURATION)) {
-                throw new IllegalStateException("Expected node type '" + HstNodeTypes.NODETYPE_HST_CONFIGURATION + "' for " +
-                        "'" + siteNode.getPath() + "' but was '" + siteNode.getPrimaryNodeType().getName() + "'.");
+                String msg = String.format("Expected node type '%s' for '%s' but was '%s'.",
+                        HstNodeTypes.NODETYPE_HST_CONFIGURATION, siteNode.getPath(), siteNode.getPrimaryNodeType().getName());
+                throw new ClientException(msg, ClientError.UNKNOWN);
             }
             if (!target.startsWith(siteNode.getPath() + "/")) {
-                throw new IllegalArgumentException("Target '" + target + "' does not start with the path of the " +
-                        "targeted hst site '" + siteMapNode.getPath() + "'.");
+                String msg = String.format("Target '%s' does not start with the path of the targeted hst site '%s'.",
+                        target, siteMapNode.getPath());
+                throw new ClientException(msg, ClientError.UNKNOWN);
             }
             // check whether non workspace sitemap does not already contain the target without /hst:workspace/ part
             String nonWorkspaceTarget = target.replace(WORKSPACE_PATH_ELEMENT, "/");

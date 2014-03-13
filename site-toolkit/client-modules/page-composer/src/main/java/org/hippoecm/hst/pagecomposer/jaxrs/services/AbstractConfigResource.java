@@ -118,7 +118,7 @@ public class AbstractConfigResource {
     }
 
 
-    private void createMandatoryWorkspaceNodesIfMissing() throws RepositoryException {
+    protected void createMandatoryWorkspaceNodesIfMissing() throws RepositoryException {
         final String liveConfigPath = getPageComposerContextService().getEditingLiveSite().getConfigurationPath();
         final String previewConfigPath = getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
         createMandatoryWorkspaceNodesIfMissing(liveConfigPath);

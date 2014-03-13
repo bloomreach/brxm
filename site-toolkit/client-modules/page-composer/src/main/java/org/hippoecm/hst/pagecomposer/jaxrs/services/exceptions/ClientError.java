@@ -52,6 +52,8 @@ public enum ClientError {
 
     INVALID_URL,
 
+    ITEM_CANNOT_BE_CLONED,
+
     ITEM_NOT_IN_PREVIEW,
 
     ITEM_NOT_CORRECT_LOCATION,
@@ -70,6 +72,8 @@ public enum ClientError {
      * When trying to lock a node that has in the mean time been locked, changed and published by someone else,
      * this error can be used to return.
      */
-    INVALID_VERSION_STAMP
+    INVALID_VERSION_STAMP,
+
+    UNKNOWN
 
 }

@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -23,6 +24,7 @@ import javax.jcr.Session;
 
 import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
@@ -39,9 +41,16 @@ public class PagesHelper extends AbstractHelper {
         throw new UnsupportedOperationException("not supported");
     }
 
-    public Node create(final Node prototypePage, final Node siteMapNode) throws RepositoryException {
+    public Node create(final Node prototype, final Node siteMapNode) throws RepositoryException {
+        return create(prototype, null, siteMapNode);
+    }
+
+
+    public Node create(final Node nodePageToCopy,
+                       final HstComponentConfiguration pageConfigToCopy,
+                       final Node siteMapNode) throws RepositoryException {
         String previewWorkspacePagesPath = getPreviewWorkspacePagesPath();
-        final String targetPageNodeName = getSitemapPathPrefixPart(siteMapNode) + "-" + prototypePage.getName();
+        final String targetPageNodeName = getSiteMapPathPrefixPart(siteMapNode) + "-" + nodePageToCopy.getName();
         final Session session = pageComposerContextService.getRequestContext().getSession();
         int counter = 0;
         while (!isValidTarget(session, targetPageNodeName, counter, previewWorkspacePagesPath, getPreviewPagesPath())) {
@@ -54,12 +63,68 @@ public class PagesHelper extends AbstractHelper {
         } else {
             validTargetPageNodeName = targetPageNodeName + "-" + counter;
         }
-        Node newPage = JcrUtils.copy(session, prototypePage.getPath(), previewWorkspacePagesPath + "/" + validTargetPageNodeName);
+        Node newPage = JcrUtils.copy(session, nodePageToCopy.getPath(), previewWorkspacePagesPath + "/" + validTargetPageNodeName);
+        if (pageConfigToCopy != null) {
+            // copy has been done from a page, not from a prototype. We need to check whether there
+            // are no hst:containercomponentreference used. If so, we need to denormalize them. For that, we need the
+            // pageConfigToCopy
+            denormalizeContainerComponentReferences(newPage, pageConfigToCopy);
+        }
+
         lockHelper.acquireLock(newPage, 0);
         // lock all available containers below newPage
         doLockContainers(newPage);
 
         return newPage;
+    }
+
+    private void denormalizeContainerComponentReferences(final Node newPage,
+                                                         final HstComponentConfiguration pageConfig) throws RepositoryException {
+
+        final List<Node> containerComponentReferenceNodes = new ArrayList<>();
+        populateComponentReferenceNodes(newPage, containerComponentReferenceNodes);
+
+        if (containerComponentReferenceNodes.size() > 0) {
+            String pagePath = newPage.getPath();
+            // start denormalization
+            for (Node containerComponentReferenceNode : containerComponentReferenceNodes) {
+                // at the location of containerComponentReferenceNode, in the pageConfig the HST has
+                // used the referenced node: Hence, we can use the canonical identifier from that to
+                // denormalize. The canonical identifier can even belong to inherited configurations
+                final String absPath = containerComponentReferenceNode.getPath();
+                final String relPath = absPath.substring(pagePath.length() + 1);
+                containerComponentReferenceNode.remove();
+                String[] elems = relPath.split("/");
+                HstComponentConfiguration current = pageConfig;
+                for (String elem : elems) {
+                    if (current == null) {
+                        log.warn("Could not find hst component configuration for component reference node '{}', hence we " +
+                                "cannot denormalize the reference. Instead, replace the reference with a empty container node.");
+                        Node container = newPage.addNode(relPath, HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
+                        container.setProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.vBox");
+                        break;
+                    }
+                    current = current.getChildByName(elem);
+                }
+
+                if (current != null) {
+                    // current now contains the component that we need to denormalize
+                    JcrUtils.copy(newPage.getSession(), current.getCanonicalStoredLocation(), absPath);
+                    log.info("Succesfully denormalized '{}'", absPath);
+                }
+            }
+        }
+
+    }
+
+    private void populateComponentReferenceNodes(final Node node,
+                                                 final List<Node> containerComponentReferenceNodes) throws RepositoryException {
+        if (node.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTREFERENCE)) {
+            containerComponentReferenceNodes.add(node);
+        }
+        for (Node child : new NodeIterable(node.getNodes())) {
+            populateComponentReferenceNodes(child, containerComponentReferenceNodes);
+        }
     }
 
     private void doLockContainers(final Node node) throws RepositoryException {
@@ -90,17 +155,17 @@ public class PagesHelper extends AbstractHelper {
         deleteOrMarkDeletedIfLiveExists(pageNode);
     }
 
-    private String getSitemapPathPrefixPart(final Node siteMapNode) throws RepositoryException {
+    private String getSiteMapPathPrefixPart(final Node siteMapNode) throws RepositoryException {
         Node crNode = siteMapNode;
-        StringBuilder sitemapPathPrefixBuilder = new StringBuilder();
+        StringBuilder siteMapPathPrefixBuilder = new StringBuilder();
         while (crNode.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMAPITEM)) {
-            if (sitemapPathPrefixBuilder.length() > 0) {
-                sitemapPathPrefixBuilder.insert(0, "-");
+            if (siteMapPathPrefixBuilder.length() > 0) {
+                siteMapPathPrefixBuilder.insert(0, "-");
             }
-            sitemapPathPrefixBuilder.insert(0, crNode.getName());
+            siteMapPathPrefixBuilder.insert(0, crNode.getName());
             crNode = crNode.getParent();
         }
-        return sitemapPathPrefixBuilder.toString();
+        return siteMapPathPrefixBuilder.toString();
     }
 
     private boolean isValidTarget(final Session session,

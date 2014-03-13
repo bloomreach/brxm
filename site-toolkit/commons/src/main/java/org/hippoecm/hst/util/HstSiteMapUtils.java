@@ -28,7 +28,7 @@ public class HstSiteMapUtils {
     /**
      * Returns string representation of the sitemap item path
      * @param siteMapItem
-     * @return String representation of the path
+     * @return String representation of the path (without leading /)
      */
     public static String getPath(HstSiteMapItem siteMapItem) {
         StringBuilder path = new StringBuilder(siteMapItem.getValue());
@@ -42,10 +42,10 @@ public class HstSiteMapUtils {
     }
 
     /**
-     * Returns string representation of the child sitemap item specified by the relPath from the specified sitemap item
+     * Returns string representation of the pathInfo of the child sitemap item appended with relPath
      * @param siteMapItem
      * @param relPath
-     * @return String representation of the path
+     * @return string representation of the pathInfo of the child sitemap item appended with relPath
      */
     public static String getPath(HstSiteMapItem siteMapItem, String relPath) {
         StringBuilder path = new StringBuilder(siteMapItem.getValue());

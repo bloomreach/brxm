@@ -164,6 +164,24 @@ public class SiteMapResource extends AbstractConfigResource {
         }, preValidators.build(), validatorFactory.getVoidValidator());
     }
 
+    @POST
+    @Path("/duplicate/{siteMapItemId}")
+    public Response copy(final @PathParam("siteMapItemId") String siteMapItemId) {
+        final ValidatorBuilder preValidators = ValidatorBuilder.builder()
+                .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPath(), getPageComposerContextService().getRequestConfigIdentifier(),
+                        HstNodeTypes.NODETYPE_HST_SITEMAP));
+                 preValidators.add(validatorFactory.getCurrentPreviewConfigurationValidator(siteMapItemId, siteMapHelper));
+
+        return tryExecute(new Callable<Response>() {
+            @Override
+            public Response call() throws Exception {
+                Node copy = siteMapHelper.duplicate(getWorkspaceSiteMapId(), siteMapItemId);
+                return ok("Item created successfully", copy.getIdentifier());
+            }
+        }, preValidators.build(), validatorFactory.getVoidValidator());
+    }
+
+
     /**
      * if <code>parentId</code> is <code>null</code> the move will be done to the root sitemap
      */
@@ -232,8 +250,7 @@ public class SiteMapResource extends AbstractConfigResource {
             final String relSiteMapPath = HstNodeTypes.NODENAME_HST_WORKSPACE + "/" + HstNodeTypes.NODENAME_HST_SITEMAP;
             final Node configNode = siteMapNode.getParent();
             if (!configNode.hasNode(relSiteMapPath)) {
-                throw new IllegalStateException("Cannot add new sitemap items because there is no workspace sitemap at " +
-                        "'" + configNode.getPath() + "/" + relSiteMapPath + "'.");
+                createMandatoryWorkspaceNodesIfMissing();
             }
             workspaceSiteMapId = configNode.getNode(relSiteMapPath).getIdentifier();
         }
