@@ -16,6 +16,13 @@
 (function () {
     "use strict";
 
+    function prefixWithSlash(str) {
+        if (str === '' || str.charAt(0) !== '/') {
+            return '/' + str;
+        }
+        return str;
+    }
+
     angular.module('hippo.channel.page')
 
         .controller('hippo.channel.page.OverviewPagesCtrl', [
@@ -42,7 +49,7 @@
 
                 $scope.showPage = function(page) {
                     var iframePanel = IFrameService.getContainer();
-                    iframePanel.iframeToHost.publish('browseTo', (page.pathInfo.charAt(0) == '/' ? '' : '/') + page.pathInfo);
+                    iframePanel.iframeToHost.publish('browseTo', prefixWithSlash(page.pathInfo));
                 };
             }
         ]);
