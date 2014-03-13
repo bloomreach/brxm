@@ -21,7 +21,7 @@
             <i class="fa fa-sitemap"></i> {{ 'LANDING_PAGES' | translate }}
             <button class="btn btn-default btn-md pull-right" data-ng-click="navigateTo('add-page')"><i class="fa fa-plus"></i> {{ 'ADD_NEW_PAGE' | translate }}</button>
         </div>
-        <div class="panel-body">
+        <div class="panel-body l-fixed-height">
             <div class="list-group">
                 <a class="list-group-item" ng-repeat="page in pages" ng-click="showPage(page)" href="#">
                     <h4 class="list-group-item-heading">{{ page.pathInfo }}</h4>

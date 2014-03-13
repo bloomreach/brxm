@@ -29,6 +29,7 @@ frontend/js/menu/states/menu-item/menu-item.html -text
 frontend/js/page/i18n/en.json -text
 frontend/js/page/i18n/nl.json -text
 frontend/js/page/services/PageService.js -text
+frontend/js/page/services/PrototypeService.js -text
 frontend/js/page/states/NavigationCtrl.js -text
 frontend/js/page/states/add-page/AddPageCtrl.js -text
 frontend/js/page/states/add-page/add-page.html -text
