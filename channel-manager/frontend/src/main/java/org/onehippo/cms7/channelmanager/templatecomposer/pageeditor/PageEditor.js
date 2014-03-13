@@ -1156,7 +1156,7 @@
                 discard: discardButton,
                 manageChanges: manageChangesButton
             };
-        },
+        }
 
     });
 
