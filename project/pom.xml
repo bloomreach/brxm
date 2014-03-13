@@ -79,7 +79,7 @@
     <maven.plugin.antrun.version>1.7</maven.plugin.antrun.version>
     <maven.plugin.assembly.version>2.4</maven.plugin.assembly.version>
     <maven.plugin.buildnumber.version>1.2</maven.plugin.buildnumber.version>
-    <maven.plugin.cargo.version>1.1.3</maven.plugin.cargo.version>
+    <maven.plugin.cargo.version>1.4.7</maven.plugin.cargo.version>
     <maven.plugin.changes.version>2.9</maven.plugin.changes.version>
     <maven.plugin.changelog.version>2.2</maven.plugin.changelog.version>
     <maven.plugin.clean.version>2.5</maven.plugin.clean.version>
@@ -111,7 +111,7 @@
     <!-- Cargo Tomcat container version used for Tomcat tarball distribution url -->
     <cargo.tomcat.major.version>7</cargo.tomcat.major.version>
     <!-- Cargo Tomcat full version used for Tomcat tarball distribution url -->
-    <cargo.tomcat.full.version>7.0.42</cargo.tomcat.full.version>
+    <cargo.tomcat.full.version>7.0.52</cargo.tomcat.full.version>
     <!-- Cargo Tomcat distribution prefix URL used for Tomcat tarball distribution url -->
     <cargo.tomcat.distribution.url.prefix>http://archive.apache.org/dist/tomcat/</cargo.tomcat.distribution.url.prefix>
     <!-- Cargo Tomcat distribution archive path used for Tomcat tarball distribution url -->
