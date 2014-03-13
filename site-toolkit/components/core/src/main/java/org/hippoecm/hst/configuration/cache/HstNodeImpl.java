@@ -30,6 +30,7 @@ import javax.jcr.Session;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
+import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.provider.ValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
@@ -71,7 +72,7 @@ public class HstNodeImpl implements HstNode {
     public HstNodeImpl(Node jcrNode, HstNode parent) throws RepositoryException {
         this.parent = parent;
         provider = new JCRValueProviderImpl(jcrNode, false, true, false);
-        nodeTypeName = jcrNode.getPrimaryNodeType().getName();
+        nodeTypeName = StringPool.get(jcrNode.getPrimaryNodeType().getName());
         loadChildren(jcrNode);
         // detach the backing jcr node now we are done.       
         stale = false;
@@ -274,7 +275,8 @@ public class HstNodeImpl implements HstNode {
         log.debug("Reload provider for : "  + getValueProvider().getPath());
         Node jcrNode = session.getNode(getValueProvider().getPath());
         setJCRValueProvider(new JCRValueProviderImpl(jcrNode, false, true, false));
-
+        // node type might have changed, just reset
+        nodeTypeName = StringPool.get(jcrNode.getPrimaryNodeType().getName());
         if (staleChildren) {
             log.debug("Children reload for '{}'", getValueProvider().getPath());
             childrenReload(jcrNode);
@@ -327,7 +329,7 @@ public class HstNodeImpl implements HstNode {
         provider.detach();
         stale = false;
     }
-    
+
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "[path=" + getValueProvider().getPath()
