@@ -26,8 +26,32 @@
     line-height: 34px;
 }
 
+.panel > .panel-body {
+    padding: 0;
+    border-top-width: 0;
+    border-radius: 0;
+}
+
+.list-group {
+    margin-bottom: 0;
+}
+
+.list-group-item {
+    border-left-width: 0;
+    border-right-width: 0;
+}
+
+.list-group-item:first-child {
+    border-top-width: 0;
+    border-radius: 0;
+}
+
+.list-group-item:last-child {
+    border-radius: 0;
+}
+
 .l-fixed-height {
-    height: 485px;
+    height: 430px;
     overflow-x: hidden;
     overflow-y: auto;
 }
