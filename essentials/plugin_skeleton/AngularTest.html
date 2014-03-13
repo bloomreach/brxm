@@ -2,49 +2,49 @@
 <html ng-app="hippo.essentials">
 <head>
     <title>Hippo Essentials</title>
-    <link rel="stylesheet" href="/essentials/theme/hippo-theme/main.css"/>
-    <link rel="stylesheet" href="/essentials/css/hippo-essentials.css"/>
+    <link rel="stylesheet" href="../plugin-dashboard/src/main/webapp/theme/hippo-theme/main.css"/>
+    <link rel="stylesheet" href="../plugin-dashboard/src/main/webapp/css/hippo-essentials.css"/>
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="../plugin-dashboard/src/main/webapp/js/lib/jquery.ui.min.js"></script>
 
-    <script src="/essentials/js/lib/angular.js"></script>
-    <script src="/essentials/js/lib/angular-route.min.js"></script>
-    <script src="/essentials/js/lib/angular-ui-router.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/js/lib/angular.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/js/lib/angular-route.min.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/js/lib/angular-ui-router.js"></script>
 
-    <script src="/essentials/js/lib/chosen.jquery.js"></script>
-    <script src="/essentials/js/lib/chosen.js"></script>
-    <script src="/essentials/js/lib/ui-sortable.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/js/lib/chosen.jquery.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/js/lib/chosen.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/js/lib/ui-sortable.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="/essentials/css/chosen.css"/>
-    <link rel="stylesheet" type="text/css" href="/essentials/css/chosen-spinner.css"/>
+    <link rel="stylesheet" type="text/css" href="../plugin-dashboard/src/main/webapp/css/chosen.css"/>
+    <link rel="stylesheet" type="text/css" href="../plugin-dashboard/src/main/webapp/css/chosen-spinner.css"/>
 
 
     <!--<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.3/angular.min.js"></script>-->
 
-    <script src="/essentials/js/lib/ui-bootstrap-0.10.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/js/lib/ui-bootstrap-0.10.js"></script>
 
-    <script src="/essentials/js/Essentials.js"></script>
-    <script src="/essentials/js/app.js"></script>
-    <script src="/essentials/js/routes.js"></script>
-    <script src="/essentials/js/controllers.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/js/Essentials.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/js/app.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/js/routes.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/js/controllers.js"></script>
 
-    <script src="/essentials/plugins/contentBlocks/contentBlocks.js"></script>
-    <script src="/essentials/plugins/galleryPlugin/galleryPlugin.js"></script>
-    <script src="/essentials/powerpacks/newsEventsPowerpack/newsEventsPowerpack.js"></script>
-    <script src="/essentials/plugins/xinhaPlugin/xinhaPlugin.js"></script>
-    <script src="/essentials/plugins/blogPlugin/blogPlugin.js"></script>
-    <script src="/essentials/plugins/carouselPlugin/carouselPlugin.js"></script>
-    <script src="/essentials/tools/beanwriter/beanwriter.js"></script>
-    <script src="/essentials/tools/freemarkersync/freemarkersync.js"></script>
-    <script src="/essentials/tools/restServices/restServices.js"></script>
-    <link rel="icon" href="/essentials/images/favicon.ico" type="image/x-icon"/>
-    <link rel="shortcut icon" href="/essentials/images/favicon.ico" type="image/x-icon"/>
+    <script src="../plugin-dashboard/src/main/webapp/plugins/contentBlocks/contentBlocks.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/plugins/galleryPlugin/galleryPlugin.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/powerpacks/newsEventsPowerpack/newsEventsPowerpack.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/plugins/xinhaPlugin/xinhaPlugin.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/plugins/blogPlugin/blogPlugin.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/plugins/carouselPlugin/carouselPlugin.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/tools/beanwriter/beanwriter.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/tools/freemarkersync/freemarkersync.js"></script>
+    <script src="../plugin-dashboard/src/main/webapp/tools/restServices/restServices.js"></script>
+    <link rel="icon" href="../plugin-dashboard/src/main/webapp/images/favicon.ico" type="image/x-icon"/>
+    <link rel="shortcut icon" href="../plugin-dashboard/src/main/webapp/images/favicon.ico" type="image/x-icon"/>
 </head>
 <body>
 <!-- LOADER ON HTTP REQUESTS -->
 <div class="busy-loader" ng-show="busyLoading">
-    <img src="/essentials/images/loader.gif"/>
+    <img src="../plugin-dashboard/src/main/webapp/images/loader.gif"/>
 </div>
 <!-- ERROR MESSAGES -->
 <div class="alert-danger messages" ng-show="globalError.length > 0">
@@ -63,7 +63,7 @@
 <div class="container-full">
     <div class="hippo-header">
         <div class="hippo-header-logo">
-            <a href="/essentials"><img src="/essentials/images/hippo-logo.png"></a>
+            <a href="/essentials"><img src="../plugin-dashboard/src/main/webapp/images/hippo-logo.png"></a>
         </div>
         <div class="hippo-header-text">
             {{headerMessage}}
@@ -76,7 +76,7 @@
                 <a href="{{item.link}}" ng-click="onMenuClick(item)">{{item.name}}</a>
             </li>
             <li>
-                <a target="API" href="/essentials/docs/rest-api/index.html">REST API</a>
+                <a target="API" href="../plugin-dashboard/src/main/webapp/docs/rest-api/index.html">REST API</a>
 
             </li>
         </ul>

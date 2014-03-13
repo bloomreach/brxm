@@ -36,6 +36,7 @@ public class ExceptionInterceptor extends AbstractPhaseInterceptor<Message> {
 
     }
 
+    @Override
     public void handleMessage(Message message) throws Fault {
         handleMessageCalled = true;
     }

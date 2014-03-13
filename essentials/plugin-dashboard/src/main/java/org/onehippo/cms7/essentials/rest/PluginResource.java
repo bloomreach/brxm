@@ -40,6 +40,7 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
+import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.onehippo.cms7.essentials.dashboard.config.DefaultDocumentManager;
 import org.onehippo.cms7.essentials.dashboard.config.DocumentManager;
 import org.onehippo.cms7.essentials.dashboard.config.InstallerDocument;
@@ -68,7 +69,6 @@ import org.onehippo.cms7.essentials.rest.model.StatusRestful;
 import org.onehippo.cms7.essentials.servlet.DynamicRestPointsApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ContextLoader;
 
@@ -83,6 +83,11 @@ import com.wordnik.swagger.annotations.ApiParam;
  * @version "$Id$"
  */
 
+@CrossOriginResourceSharing(
+        allowOrigins = {
+                "*"
+        }
+)
 @Api(value = "/plugins", description = "Rest resource which provides information about plugins: e.g. installed or available plugins")
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
@@ -92,7 +97,6 @@ public class PluginResource extends BaseResource {
     public static final int WEEK_OLD = -7;
     @Inject
     private EventBus eventBus;
-
 
 
     @Inject

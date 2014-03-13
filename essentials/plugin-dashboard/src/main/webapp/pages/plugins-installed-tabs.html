@@ -2,6 +2,6 @@
 
     <div class="list-group">
         <a href="#/plugins/{{plugin.pluginId}}" ng-class="{true:'active', false:''}[isMenuSelected('{{plugin.pluginId}}')]" class="list-group-item"
-           ng-repeat="plugin in plugins | filter:{needsInstallation:false} | filter:{type:'plugins'}">{{plugin.name}}</a>
+           ng-repeat="plugin in plugins | filter:{needsInstallation:false} | filter:{type:'plugins'} | orderBy:'name'">{{plugin.name}}</a>
     </div>
 </div>
