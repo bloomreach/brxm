@@ -2127,7 +2127,8 @@ plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/servlet/JarResourceS
 plugin-dashboard/src/test/resources/contentblocks-compare.json -text
 plugin-dashboard/src/test/resources/contentblocks.json -text
 plugin-dashboard/src/test/resources/log4j.xml -text
-plugin_skeleton/AngularTest.html -text
-plugin_skeleton/js/testRoutes.js -text
+pluginTestSkeleton/AngularTest.html -text
+pluginTestSkeleton/js/testRoutes.js -text
+pluginTestSkeleton/readme.txt -text
 /pom.xml -text
 src/main/assembly/distribution.xml -text
