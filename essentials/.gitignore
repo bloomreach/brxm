@@ -14883,6 +14883,12 @@ plugin_skeleton/.DS_Store
 plugin_skeleton/.idea
 plugin_skeleton/atlassian-ide-plugin.xml
 plugin_skeleton/hippo-plugins.iws
+plugin_skeleton/js/*.iml
+plugin_skeleton/js/.DS_Store
+plugin_skeleton/js/.idea
+plugin_skeleton/js/atlassian-ide-plugin.xml
+plugin_skeleton/js/hippo-plugins.iws
+plugin_skeleton/js/target
 plugin_skeleton/target
 src/*.iml
 src/.DS_Store

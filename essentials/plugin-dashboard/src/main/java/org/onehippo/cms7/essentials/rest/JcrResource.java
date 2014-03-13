@@ -52,11 +52,7 @@ import com.wordnik.swagger.annotations.ApiParam;
  * @version "$Id$"
  */
 
-@CrossOriginResourceSharing(
-        allowOrigins = {
-                "*"
-        }
-)
+@CrossOriginResourceSharing(allowAllOrigins = true)
 @Api(value = "/jcr", description = "Generic API for accessing Hippo repository")
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})

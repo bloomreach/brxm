@@ -83,11 +83,7 @@ import com.wordnik.swagger.annotations.ApiParam;
  * @version "$Id$"
  */
 
-@CrossOriginResourceSharing(
-        allowOrigins = {
-                "*"
-        }
-)
+@CrossOriginResourceSharing(allowAllOrigins = true)
 @Api(value = "/plugins", description = "Rest resource which provides information about plugins: e.g. installed or available plugins")
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})

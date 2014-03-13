@@ -37,11 +37,10 @@
 
   <bean id="nodeResource" class="org.onehippo.cms7.essentials.rest.NodeResource"/>
   <bean id="pluginResource" class="org.onehippo.cms7.essentials.rest.PluginResource"/>
-  <bean id="cors-filter" class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter"/>
-
-
-
-
+  <bean id="corsFilter" class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter">
+    <property name="allowCredentials" value="true"/>
+    <property name="allowOrigins" value="*"/>
+  </bean>
 
 
   <jaxrs:server id="restServer" address="/">
@@ -59,7 +58,7 @@
 
 
     <jaxrs:providers>
-      <ref bean="cors-filter"/>
+      <ref bean="corsFilter"/>
 
       <ref bean="jsonProvider"/>
       <!-- API -->

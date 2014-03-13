@@ -68,11 +68,7 @@ import com.google.common.base.Strings;
  * @version "$Id$"
  */
 // TODO mm: move this to own directory (as part of the plugin)
-@CrossOriginResourceSharing(
-        allowOrigins = {
-                "*"
-        }
-)
+@CrossOriginResourceSharing(allowAllOrigins = true)
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/documenttypes/")
