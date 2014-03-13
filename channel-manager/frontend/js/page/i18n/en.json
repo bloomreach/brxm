@@ -12,5 +12,7 @@
     "PAGE_TEMPLATE": "Page template",
     "CHOOSE_A_TEMPLATE": "Choose a template",
     "CREATE_PAGE": "Create page",
-    "CANCEL": "Cancel"
+    "CANCEL": "Cancel",
+
+    "ITEM_NAME_NOT_UNIQUE": "The item URL already exists"
 }

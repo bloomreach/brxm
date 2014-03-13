@@ -23,8 +23,8 @@
             'hippo.channel.ConfigService',
             '$http',
             '$q',
-            '$log',
-            function (ConfigService, $http, $q, $log) {
+            function (ConfigService, $http, $q) {
+                // TODO: create tests for the PrototypeService
                 return {
                     getPrototypes: function () {
                         var url = ConfigService.apiUrlPrefix + '/' + ConfigService.mountId + './prototypepages';

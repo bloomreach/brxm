@@ -12,5 +12,7 @@
     "PAGE_TEMPLATE": "Pagina template",
     "CHOOSE_A_TEMPLATE": "Kies een template",
     "CREATE_PAGE": "Maak pagina",
-    "CANCEL": "Annuleer"
+    "CANCEL": "Annuleer",
+
+    "ITEM_NAME_NOT_UNIQUE": "De URL van het item bestaat reeds"
 }

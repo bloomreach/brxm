@@ -22,14 +22,29 @@
             '$scope',
             'hippo.channel.FeedbackService',
             'hippo.channel.page.PrototypeService',
-            function ($scope, FeedbackService, PrototypeService) {
+            'hippo.channel.page.PageService',
+            '_hippo.channel.IFrameService',
+            function ($scope, FeedbackService, PrototypeService, PageService, IFrameService) {
                 $scope.page = {
                     title: '',
                     url: '',
                     prototype: {}
                 };
 
-                $scope.submit = function () {};
+                $scope.submit = function () {
+                    var pageModel = {
+                        pageTitle: $scope.page.title,
+                        name: $scope.page.url,
+                        componentConfigurationId: $scope.page.prototype.id
+                    };
+
+                    PageService.savePage(pageModel).then(function (response) {
+                        var iFramePanel = IFrameService.getContainer();
+                        iFramePanel.iframeToHost.publish('browseTo', '/' + pageModel.name);
+                    }, function (errorResponse) {
+                        $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
+                    });
+                };
 
                 // fetch prototypes
                 PrototypeService.getPrototypes().then(function (response) {

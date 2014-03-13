@@ -21,6 +21,10 @@
         </div>
         <div class="list-group l-stretch l-fixed-height">
             <form name="form" role="form" novalidate>
+                <div class="alert alert-danger" data-ng-show="errorFeedback.message">
+                    {{ errorFeedback.message }}
+                </div>
+
                 <div class="form-group has-feedback"
                      data-ng-class="{
                         'has-success': form.title.$dirty && form.title.$valid,

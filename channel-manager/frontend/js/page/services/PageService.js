@@ -20,16 +20,16 @@
     angular.module('hippo.channel.page')
 
         .service('hippo.channel.page.PageService', [
-            'hippo.channel.ConfigService',
             '$http',
             '$q',
-            function (ConfigService, $http, $q) {
+            'hippo.channel.ConfigService',
+            function ($http, $q, ConfigService) {
                 var pageService = {};
 
                 function pageServiceUrl(suffix) {
-                    var url = ConfigService.apiUrlPrefix + '/' + ConfigService.sitemapId;
+                    var url = ConfigService.apiUrlPrefix;
                     if (angular.isString(suffix)) {
-                        url += './' + suffix;
+                        url += suffix;
                     }
                     return url;
                 }
@@ -37,9 +37,25 @@
                 pageService.getPages = function () {
                     var deferred = $q.defer();
 
-                    $http.get(pageServiceUrl('pages'))
+                    $http.get(pageServiceUrl('/' + ConfigService.sitemapId + './pages'))
                         .success(function (response) {
                             deferred.resolve(response.data.pages);
+                        })
+                        .error(function (error) {
+                            deferred.reject(error);
+                        });
+
+                    return deferred.promise;
+                };
+
+                pageService.savePage = function (page) {
+                    var deferred = $q.defer();
+
+                    console.log(page);
+
+                    $http.post(pageServiceUrl('/' + ConfigService.sitemapId + './create'), page)
+                        .success(function (response) {
+                            deferred.resolve(response);
                         })
                         .error(function (error) {
                             deferred.reject(error);
