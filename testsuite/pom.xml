@@ -153,22 +153,6 @@
     </dependencies>
   </dependencyManagement>
 
-  <modules>
-    <!-- Added api,random-numbers and linear-algebra for test case of Add-on component context from jar
-    modules, also see HSTTWO-2038 -->
-    <module>api</module>
-    <module>random-numbers</module>
-    <module>linear-algebra</module>
-    <!-- End Add-on component context -->
-    <module>content</module>
-    <module>components</module>
-    <module>dependencies</module>
-    <module>resources</module>
-    <module>cms</module>
-    <module>site</module>
-    <module>solr</module>
-  </modules>
-
   <build>
     <defaultGoal>package</defaultGoal>
     <pluginManagement>
@@ -194,6 +178,30 @@
 
   <profiles>
     <profile>
+      <id>default</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+        <property>
+          <name>jrebel</name>
+        </property>
+      </activation>
+      <modules>
+        <!-- Added api,random-numbers and linear-algebra for test case of Add-on component context from jar
+        modules, also see HSTTWO-2038 -->
+        <module>api</module>
+        <module>random-numbers</module>
+        <module>linear-algebra</module>
+        <!-- End Add-on component context -->
+        <module>content</module>
+        <module>components</module>
+        <module>dependencies</module>
+        <module>resources</module>
+        <module>cms</module>
+        <module>site</module>
+        <module>solr</module>
+      </modules>
+    </profile>
+    <profile>
       <id>cargo.run</id>
       <properties>
         <solr.data.dir>${repo.path}/solr</solr.data.dir>
@@ -205,29 +213,6 @@
             <artifactId>cargo-maven2-plugin</artifactId>
             <configuration>
               <configuration>
-                <deployables>
-                  <deployable>
-                    <type>war</type>
-                    <properties>
-                      <context>/cms</context>
-                    </properties>
-                    <location>${project.basedir}/cms/target/cms.war</location>
-                  </deployable>
-                  <deployable>
-                    <location>${project.basedir}/site/target/site.war</location>
-                    <type>war</type>
-                    <properties>
-                      <context>/site</context>
-                    </properties>
-                  </deployable>
-                  <deployable>
-                    <location>${project.basedir}/solr/target/solr.war</location>
-                    <type>war</type>
-                    <properties>
-                      <context>/solr</context>
-                    </properties>
-                  </deployable>
-                </deployables>
                 <configfiles>
                   <configfile>
                     <file>${project.basedir}/conf/hst.properties</file>
@@ -244,6 +229,29 @@
                   <project.basedir>${project.basedir}</project.basedir>
                 </systemProperties>
               </container>
+              <deployables>
+                <deployable>
+                  <type>war</type>
+                  <properties>
+                    <context>/cms</context>
+                  </properties>
+                  <location>${project.basedir}/cms/target/cms.war</location>
+                </deployable>
+                <deployable>
+                  <location>${project.basedir}/site/target/site.war</location>
+                  <type>war</type>
+                  <properties>
+                    <context>/site</context>
+                  </properties>
+                </deployable>
+                <deployable>
+                  <location>${project.basedir}/solr/target/solr.war</location>
+                  <type>war</type>
+                  <properties>
+                    <context>/solr</context>
+                  </properties>
+                </deployable>
+              </deployables>
             </configuration>
           </plugin>
         </plugins>
