@@ -20,6 +20,7 @@ import com.google.common.base.Predicate;
 
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 
@@ -58,5 +59,9 @@ public class ValidatorFactory {
 
     public Validator getPrototypePageValidator(String prototypeUuid) {
         return new PrototypePageValidator(prototypeUuid);
+    }
+
+    public Validator getHasPreviewConfigurationValidator(PageComposerContextService pageComposerContextService) {
+        return new HasPreviewConfigurationValidator(pageComposerContextService);
     }
 }

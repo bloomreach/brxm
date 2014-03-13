@@ -130,6 +130,7 @@ public class SiteMenuResource extends AbstractConfigResource {
 
         final Validator preValidator = ValidatorBuilder.builder()
                 .add(getDefaultMenuModificationValidator())
+                .add(validatorFactory.getHasPreviewConfigurationValidator(getPageComposerContextService()))
                 .add(validatorFactory.getNotNullValidator(modifiedItem.getName(), ClientError.ITEM_NO_NAME))
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(), modifiedItem.getId(), null))
                 .add(validatorFactory.getSiteMenuItemRepresentationValidator(uriValidator, modifiedItem))
@@ -153,6 +154,7 @@ public class SiteMenuResource extends AbstractConfigResource {
 
         final Validator preValidator = ValidatorBuilder.builder()
                 .add(getDefaultMenuModificationValidator())
+                .add(validatorFactory.getHasPreviewConfigurationValidator(getPageComposerContextService()))
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(), sourceId, null))
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(), parentId, null))
                 .build();
@@ -173,6 +175,7 @@ public class SiteMenuResource extends AbstractConfigResource {
     public Response delete(final @PathParam("menuItemId") String menuItemId) {
         final Validator preValidator = ValidatorBuilder.builder()
                 .add(getDefaultMenuModificationValidator())
+                .add(validatorFactory.getHasPreviewConfigurationValidator(getPageComposerContextService()))
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(), menuItemId, null))
                 .build();
         return tryExecute(new Callable<Response>() {
