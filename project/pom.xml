@@ -655,7 +655,7 @@
             <configuration>
               <properties>
                 <cargo.remote.username>admin</cargo.remote.username>
-                <cargo.remote.password />
+                <cargo.remote.password>admin</cargo.remote.password>
               </properties>
             </configuration>
             <container>
@@ -685,21 +685,6 @@
   </build>
 
   <profiles>
-    <profile>
-      <id>netbeans</id>
-      <build>
-        <plugins>
-          <plugin>
-            <inherited>true</inherited>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <skipTests>true</skipTests>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
     <profile>
       <id>clean</id>
       <activation>
