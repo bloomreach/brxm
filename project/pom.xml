@@ -746,7 +746,7 @@
                 <id>cargo-run</id>
                 <phase>validate</phase>
                 <goals>
-                  <goal>run</goal>
+                  <goal>start</goal>
                 </goals>
               </execution>
             </executions>
@@ -810,6 +810,24 @@
                 </dependencies>
               </container>
             </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>ant-wait</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <target>
+                    <input>Press enter to stop cargo ...</input>
+                  </target>
+                </configuration>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>
