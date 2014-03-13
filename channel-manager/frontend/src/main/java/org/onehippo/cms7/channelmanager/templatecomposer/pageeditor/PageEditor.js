@@ -649,6 +649,7 @@
 
             this.renderedVariant = pageContext.renderedVariant;
             this.currentSitemapId = pageContext.ids.sitemapId;
+            this.currentMountId = pageContext.ids.mountId;
 
             if (!this.pageContainer.previewMode) {
                 this.createEditToolbar();
@@ -1058,6 +1059,7 @@
                 composerRestMountUrl: this.composerRestMountUrl,
                 debug: this.debug,
                 locale: this.locale,
+                mountId: this.currentMountId,
                 sitemapId: this.currentSitemapId
             });
             pagesWindow.show();

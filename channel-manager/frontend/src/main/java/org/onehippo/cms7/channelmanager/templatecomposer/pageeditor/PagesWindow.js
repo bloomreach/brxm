@@ -32,6 +32,7 @@
                     apiUrlPrefix: config.composerRestMountUrl,
                     debug: config.debug,
                     locale: config.locale,
+                    mountId: config.mountId,
                     sitemapId: config.sitemapId
                 }
             });
