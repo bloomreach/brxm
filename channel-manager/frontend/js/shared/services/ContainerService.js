@@ -34,12 +34,8 @@
                         iframePanel.hostToIFrame.subscribe('close-request', function() {
                             var event = $rootScope.$broadcast('before-close');
                             if (!event.defaultPrevented) {
-                                $log.debug('close-reply-ok');
-
                                 iframePanel.iframeToHost.publish('close-reply-ok');
                             } else {
-                                $log.debug('show close confirmation dialog');
-
                                 // show close confirmation dialog
                                 $rootScope.$broadcast('close-confirmation:show');
                             }
