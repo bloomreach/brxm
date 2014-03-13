@@ -173,15 +173,6 @@
         <configuration>
           <configuration>
             <home>${project.build.directory}/tomcat${cargo.tomcat.major.version}x</home>
-            <deployables>
-              <deployable>
-                <type>war</type>
-                <properties>
-                  <context>/repository</context>
-                </properties>
-                <location>${project.basedir}/../war/target/repository.war</location>
-              </deployable>
-            </deployables>
             <properties>
               <catalina.servlet.uriencoding>UTF-8</catalina.servlet.uriencoding>
               <cargo.tomcat.connector.emptySessionPath>false</cargo.tomcat.connector.emptySessionPath>
@@ -269,6 +260,15 @@
               </dependency>
             </dependencies>
           </container>
+          <deployables>
+            <deployable>
+              <type>war</type>
+              <properties>
+                <context>/repository</context>
+              </properties>
+              <location>${project.basedir}/../war/target/repository.war</location>
+            </deployable>
+          </deployables>
         </configuration>
       </plugin>
       <plugin>
