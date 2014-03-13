@@ -26,12 +26,15 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.MutableMount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Comment;
@@ -55,18 +58,33 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
 
         // we are in render host mode. Add the wrapper elements that are needed for the composer around all components
         HstComponentConfiguration compConfig  = ((HstComponentConfiguration)window.getComponentInfo());
-        Mount mount = request.getRequestContext().getResolvedMount().getMount();
+        final HstRequestContext requestContext = request.getRequestContext();
+        Mount mount = requestContext.getResolvedMount().getMount();
         if (isTopHstResponse(rootWindow, rootRenderingWindow, window)) {
             response.addHeader(ChannelManagerConstants.HST_MOUNT_ID, mount.getIdentifier());
             response.addHeader(ChannelManagerConstants.HST_SITE_ID, mount.getHstSite().getCanonicalIdentifier());
             response.addHeader(ChannelManagerConstants.HST_PAGE_ID, compConfig.getCanonicalIdentifier());
 
-            final HstSiteMap siteMap = mount.getHstSite().getSiteMap();
-            if (siteMap instanceof CanonicalInfo) {
-                response.addHeader(ChannelManagerConstants.HST_SITEMAP_ID, ((CanonicalInfo)siteMap).getCanonicalIdentifier());
-            } else {
-                log.warn("Expected sitemap of subtype {}. Cannot set sitemap id.", CanonicalInfo.class.getName());
+            final ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
+            if (resolvedSiteMapItem != null) {
+                final HstSiteMapItem hstSiteMapItem = resolvedSiteMapItem.getHstSiteMapItem();
+                response.addHeader(ChannelManagerConstants.HST_SITEMAPITEM_ID, ((CanonicalInfo)hstSiteMapItem).getCanonicalIdentifier());
+                final HstSiteMap siteMap = hstSiteMapItem.getHstSiteMap();
+                if (siteMap instanceof CanonicalInfo) {
+                    final CanonicalInfo canonicalInfo = (CanonicalInfo) siteMap;
+                    response.addHeader(ChannelManagerConstants.HST_SITEMAP_ID, canonicalInfo.getCanonicalIdentifier());
+                    if (canonicalInfo.getCanonicalPath().contains(WORKSPACE_PATH_ELEMENT) &&
+                            canonicalInfo.getCanonicalPath().startsWith(mount.getHstSite().getConfigurationPath())) {
+                        // sitemap item is part of workspace && of current site configuration (thus not inherited)
+                        response.addHeader(ChannelManagerConstants.HST_PAGE_EDITABLE, "true");
+                    } else {
+                        response.addHeader(ChannelManagerConstants.HST_PAGE_EDITABLE, "false");
+                    }
+                } else {
+                    log.warn("Expected sitemap of subtype {}. Cannot set sitemap id.", CanonicalInfo.class.getName());
+                }
             }
+
             Object variant = session.getAttribute(ContainerConstants.RENDER_VARIANT);
             if (variant == null) {
                 variant = ContainerConstants.DEFAULT_PARAMETER_PREFIX;
@@ -91,10 +109,10 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
                 attributes.put("inherited", "true");
             }
             attributes.put("type", compConfig.getComponentType().toString());
-            HstURLFactory urlFactory = request.getRequestContext().getURLFactory();
+            HstURLFactory urlFactory = requestContext.getURLFactory();
             HstURL url = urlFactory.createURL(HstURL.COMPONENT_RENDERING_TYPE,
                     window.getReferenceNamespace(), null,
-                    request.getRequestContext());
+                    requestContext);
             attributes.put("url", url.toString());
             attributes.put("refNS", window.getReferenceNamespace());
             if (mount instanceof MutableMount) {
