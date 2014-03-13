@@ -56,6 +56,7 @@ module.exports = function(config) {
             'menu/states/**/*.js',
             'page/page-dependencies.js',
             'page/services/*.js',
+            'page/states/**/*.js',
 
             // tests
             {
