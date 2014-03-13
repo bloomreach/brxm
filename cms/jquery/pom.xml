@@ -76,7 +76,7 @@
             <aggregation>
               <insertNewLine>true</insertNewLine>
               <includes>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/core/jquery-1.8.3-min.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/core/jquery-1.11.0-min.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/plugins/jquery.class-min.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/plugins/jquery.head-1.0.3b-min.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/plugins/jquery.namespace-min.js</include>
@@ -87,7 +87,7 @@
             <aggregation>
               <insertNewLine>true</insertNewLine>
               <includes>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/core/jquery-1.8.3.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/core/jquery-1.11.0.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/plugins/jquery.class.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/plugins/jquery.head-1.0.3b.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/plugins/jquery.namespace.js</include>

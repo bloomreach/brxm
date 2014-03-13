@@ -97,7 +97,7 @@
     <dependency>
       <groupId>org.wicketstuff</groupId>
       <artifactId>wicketstuff-input-events</artifactId>
-      <version>6.5.0</version>
+      <version>${wicket.version}</version>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>

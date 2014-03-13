@@ -109,13 +109,13 @@
     <jetty.version>6.1.22</jetty.version>
 
     <xerces.version>2.8.1</xerces.version>
-    <wicket.version>6.8.0</wicket.version>
+    <wicket.version>6.14.0</wicket.version>
     <wicket-extjs.version>0.24</wicket-extjs.version>
     <nekohtml.version>1.9.13</nekohtml.version>
     <dom4j.version>1.6.1</dom4j.version>
     <httpclient.version>4.2.2</httpclient.version>
 
-    <joda-time.version>1.6</joda-time.version>
+    <joda-time.version>2.0</joda-time.version>
     <json-lib.version>2.2.2</json-lib.version>
 
     <jackrabbit.version>2.6.5</jackrabbit.version>
@@ -481,7 +481,7 @@
                 <!-- covered by 3rd-party licenses in the LICENSE file -->
                 <exclude>api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/ajax/res/skin.css</exclude>
                 <exclude>api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/ExtHippoTheme.css</exclude>
-                <exclude>jquery/src/main/resources/org/onehippo/cms7/jquery/core/jquery-1.8.3.js</exclude>
+                <exclude>jquery/src/main/resources/org/onehippo/cms7/jquery/core/jquery-1.11.0.js</exclude>
                 <exclude>jquery/src/main/resources/org/onehippo/cms7/jquery/plugins/jquery.class.js</exclude>
                 <exclude>jquery/src/main/resources/org/onehippo/cms7/jquery/ui/jquery-ui-1.9.2.js</exclude>
                 <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/ColorQuantizer.java</exclude>
