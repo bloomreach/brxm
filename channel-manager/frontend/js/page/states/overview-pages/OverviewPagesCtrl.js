@@ -30,19 +30,14 @@
             '$state',
             'hippo.channel.FeedbackService',
             'hippo.channel.page.PageService',
-            'hippo.channel.page.PrototypeService',
             '_hippo.channel.IFrameService',
-            function ($scope, $state, FeedbackService, PageService, PrototypeService, IFrameService) {
+            function ($scope, $state, FeedbackService, PageService, IFrameService) {
+                // scope variables
+                $scope.pages = [];
+
+                // fetch pages
                 PageService.getPages().then(function (pages) {
                     $scope.pages = pages;
-                }, function (errorResponse) {
-                    $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
-                });
-
-                PrototypeService.getPrototypes().then(function (response) {
-                    $scope.prototypes = response.data;
-
-                    console.log(response.data);
                 }, function (errorResponse) {
                     $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
                 });

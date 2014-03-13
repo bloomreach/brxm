@@ -22,6 +22,10 @@
     border-radius: 0;
 }
 
+.panel > .panel-heading {
+    line-height: 34px;
+}
+
 .panel > .panel-body {
     padding: 0;
     border-top-width: 0;

@@ -24,15 +24,15 @@
             '$http',
             '$q',
             '$log',
-            function (ConfigService, $http, $q) {
+            function (ConfigService, $http, $q, $log) {
                 return {
                     getPrototypes: function () {
-                        var url = ConfigService.apiUrlPrefix + '/' + ConfigService.sitemapId + './prototypes';
+                        var url = ConfigService.apiUrlPrefix + '/' + ConfigService.mountId + './prototypepages';
                         var deferred = $q.defer();
 
                         $http.get(url, {})
                             .then(function (response) {
-                                deferred.resolve(response.data);
+                                deferred.resolve(response.data.data.pages);
                             }, function (errorResponse) {
                                 deferred.reject(errorResponse);
                             });

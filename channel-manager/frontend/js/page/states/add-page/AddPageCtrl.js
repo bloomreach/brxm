@@ -20,28 +20,24 @@
 
         .controller('hippo.channel.page.AddPageCtrl', [
             '$scope',
-            function ($scope) {
-
-                $scope.templates = [{
-                    id: 0,
-                    name: 'template1'
-                }, {
-                    id: 1,
-                    name: 'template2'
-                }, {
-                    id: 2,
-                    name: 'template3'
-                }];
-
+            'hippo.channel.FeedbackService',
+            'hippo.channel.page.PrototypeService',
+            function ($scope, FeedbackService, PrototypeService) {
                 $scope.page = {
                     title: '',
                     url: '',
-                    template: $scope.templates[0]
+                    prototype: {}
                 };
 
-                $scope.submit = function () {
+                $scope.submit = function () {};
 
-                };
+                // fetch prototypes
+                PrototypeService.getPrototypes().then(function (response) {
+                    $scope.prototypes = response;
+                    $scope.page.prototype = response[0];
+                }, function (errorResponse) {
+                    $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
+                });
             }
         ]);
 })();

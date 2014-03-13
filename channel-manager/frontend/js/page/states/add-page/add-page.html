@@ -71,14 +71,8 @@
                 </div>
 
                 <div class="form-group has-feedback" id="template">
-                    <label>{{ 'PAGE_TEMPLATE' | translate }}</label>
-                    <div class="input-group">
-                        <select hippo.theme.select-box
-                                ng-model="page.template"
-                                ng-options="template.name for template in templates"
-                                data-placeholder="{{ 'CHOOSE_A_TEMPLATE' | translate }}">
-                        </select>
-                    </div>
+                    <label for="page-prototype">{{ 'PAGE_TEMPLATE' | translate }}</label>
+                    <select class="form-control" id="page-prototype" ng-options="p.name for p in prototypes" data-ng-model="page.prototype"></select>
                 </div>
 
                 <hr>
@@ -94,5 +88,4 @@
             {{ errorFeedback.message }}
         </div>
     </div>
-
 </div>

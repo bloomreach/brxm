@@ -20,11 +20,20 @@
         .controller('hippo.channel.page.NavigationCtrl', [
         '$scope',
         '$state',
-        function ($scope, $state) {
+        'hippo.channel.FeedbackService',
+        'hippo.channel.page.PrototypeService',
+        function ($scope, $state, FeedbackService, PrototypeService) {
             // navigation
             $scope.navigateTo = function (stateName) {
                 $state.go(stateName);
             };
+
+            // fetch prototypes
+            PrototypeService.getPrototypes().then(function (response) {
+                $scope.prototypes = response;
+            }, function (errorResponse) {
+                $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
+            });
         }
     ]);
 
