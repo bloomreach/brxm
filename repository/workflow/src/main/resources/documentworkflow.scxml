@@ -22,21 +22,38 @@
 
   <script>
     def getScxmlId() { workflowContext.scxmlId }
+    // draft variant property method
     def getDraft() { workflowData.documents['draft'] }
+    // unpublished variant property method
     def getUnpublished() { workflowData.documents['unpublished'] }
+    // published variant property method
     def getPublished() { workflowData.documents['published'] }
+    // current user property method
     def getUser() { workflowContext.user }
+    // current requests map property method
     def getRequests() { workflowData.requests }
+    // returns the variant for copying and checking copy access privileges
     def getCopySource() { published ?: unpublished ?: null }
+    // returns the variant for deleting and checking delete privileges
     def getDeleteSource() { unpublished ?: published ?: draft }
+    // returns the current draft holder (editor) if defined (and draft exists)
     def getHolder() { draft?.holder }
-    def boolean isEditable() { !draft?.holder or draft?.holder == user }
-    def boolean isEditing() { !!draft?.holder }
-    def boolean isEditor() { draft?.holder == user }
+    // true if draft exists and currently being edited
+    def boolean isEditing() { !!holder }
+    // true if draft exists and edited by current user
+    def boolean isEditor() { holder == user }
+    // true if draft exists and not currently editor or edited by current user
+    def boolean isEditable() { !holder or editor }
+    // true if published variant exists with availability 'live'
     def boolean isLive() { published?.isAvailable('live') }
+    // true if unpublished variant exists with availability 'preview'
     def boolean isPreview() { unpublished?.isAvailable('preview') }
+    // true if either unpublished or published variant exits with availability 'preview'
     def boolean isPreviewAvailable() { unpublished?.isAvailable('preview') or published?.isAvailable('preview') }
+    // true if unpublished variant exists and no published variant exists with availability 'live'
+    //                                        or they have a different lastModified
     def boolean isModified() { unpublished and (!live or unpublished.lastModified!=published.lastModified) }
+    // true if there is an outstanding workflow request
     def boolean isRequestPending() { workflowData.requestPending }
   </script>
 
@@ -64,7 +81,10 @@
           <hippo:action action="obtainEditableInstance" enabledExpr="false"/>
           <hippo:action action="commitEditableInstance" enabledExpr="false"/>
         </onentry>
+        <!-- transition to state "editing" when there is no pending request and the draft variant is being edited -->
         <transition target="editing"  cond="!requestPending and editing"/>
+        <!-- else transition to state "editable" when there is no pending request and the draft variant doesn't exist
+             yet or isn't being edited -->
         <transition target="editable" cond="!requestPending"/>
       </state>
 
@@ -75,9 +95,12 @@
             <hippo:action action="obtainEditableInstance" enabledExpr="true"/>
             <hippo:action action="commitEditableInstance" enabledExpr="true"/>
           <else/>
+            <!-- provide the current draft document holder as "inUseBy" feedback -->
             <hippo:feedback key="inUseBy" value="holder"/>
           </if>
+          <!-- if not draft document holder AND granted hippo:admin -->
           <if cond="!editor and workflowContext.isGranted(draft,'hippo:admin')">
+            <!-- then "unlock" action" is enabled -->
             <hippo:action action="unlock" enabledExpr="true"/>
           </if>
         </onentry>
@@ -93,17 +116,22 @@
       </state>
 
       <transition event="disposeEditableInstance">
+        <!-- remove holder from the draft document -->
         <hippo:setHolder holder="null"/>
         <hippo:result value="preview ? unpublished : published"/>
       </transition>
 
       <transition event="obtainEditableInstance">
         <if cond="!!unpublished">
+          <!-- unpublished document exists: copy it to draft first -->
           <hippo:copyVariant sourceState="unpublished" targetState="draft"/>
         <elseif cond="!!published"/>
+          <!-- else if published document exists: copy it to draft first -->
           <hippo:copyVariant sourceState="published" targetState="draft"/>
         </if>
+        <!-- mark the draft document as modified, set the user as editor and remove possibly copied availabilities -->
         <hippo:configVariant variant="draft" applyModified="true" setHolder="true" availabilities=""/>
+        <!-- store the newly created or updated draft document as result -->
         <hippo:result value="draft"/>
       </transition>
 
@@ -127,6 +155,7 @@
       </transition>
 
       <transition event="unlock">
+        <!-- unlock the current draft document by setting the holder to the current (hippo:admin) user -->
         <hippo:setHolder holder="user"/>
       </transition>
 
@@ -135,6 +164,7 @@
     <state id="request" initial="no-request">
 
       <state id="no-request">
+        <!-- transition to state "requested" when requests exists -->
         <transition target="requested" cond="!empty(requests)"/>
       </state>
 
@@ -170,15 +200,24 @@
 
         <transition event="acceptRequest">
 
+          <!-- define temporary request variable for the event payload request parameter -->
           <cs:var name="request" expr="_eventdatamap.acceptRequest?.request"/>
+          <!-- store the request workflow type as temporary variable -->
           <cs:var name="workflowType" expr="request.workflowType"/>
+          <!-- store the request targetDate as temporary variable -->
           <cs:var name="targetDate" expr="request.scheduledDate"/>
 
+          <!-- First delete the request itself.
+               Note: after this the request object no longer can be accessed...
+                     which is why we had to create the temporary variables workflowType and targetDate above first!
+          -->
           <hippo:deleteRequest requestExpr="request"/>
 
           <if cond="!targetDate">
+            <!-- the request didn't have a targetDate defined, simply trigger the "workflowType" value as event -->
             <send event="workflowType"/>
           <else/>
+            <!-- the request did have a targetDate: trigger a 'scheduled' workflow action event -->
             <send event="workflowType" namelist="targetDate"/>
           </if>
 
@@ -290,6 +329,7 @@
     <state id="versioning" initial="no-versioning">
 
       <state id="no-versioning">
+        <!-- a document only becomes versionable once an unpublished document variant exists -->
         <transition target="versionable" cond="!!unpublished"/>
       </state>
 

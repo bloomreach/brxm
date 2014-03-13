@@ -173,21 +173,11 @@ public class SCXMLWorkflowExecutor<T extends SCXMLWorkflowContext, V extends SCX
     }
 
     /**
-     * Invokes {@link SCXMLExecutor#triggerEvent(TriggerEvent)} with a {@link TriggerEvent#SIGNAL_EVENT} and the provided action as event name
-     * <p>If the triggering of the action is allowed will first be validated against the provided actionsMap}</p>
-     * @return {@link SCXMLWorkflowContext#getResult()} if there's no exception.
-     */
-    @SuppressWarnings("unused")
-    public Object triggerAction(String action, Map<String, Boolean> actionsMap) throws WorkflowException {
-        return triggerAction(action, actionsMap, null);
-    }
-
-    /**
      * Invokes {@link SCXMLExecutor#triggerEvent(TriggerEvent)} with a {@link TriggerEvent#SIGNAL_EVENT}, the provided action as event name and payload as event payload
      * <p>If the triggering of the action is allowed will first be validated against the {@link SCXMLWorkflowContext#getActions()}</p>
      * @return {@link SCXMLWorkflowContext#getResult()} if there's no exception.
      */
-    public Object triggerAction(String action, Object payload) throws WorkflowException {
+    public Object triggerAction(String action, Map<String, Object> payload) throws WorkflowException {
         return triggerAction(action, context.getActions(), payload);
     }
 
@@ -196,7 +186,7 @@ public class SCXMLWorkflowExecutor<T extends SCXMLWorkflowContext, V extends SCX
      * <p>If the triggering of the action is allowed will first be validated against the provided actionsMap}</p>
      * @return {@link SCXMLWorkflowContext#getResult()} if there's no exception.
      */
-    public Object triggerAction(String action, Map<String, Boolean> actionsMap, Object payload) throws WorkflowException {
+    public Object triggerAction(String action, Map<String, Boolean> actionsMap, Map<String, Object> payload) throws WorkflowException {
         if (!started) {
             throw new WorkflowException("Workflow "+scxmlId+" not started");
         }
@@ -213,7 +203,7 @@ public class SCXMLWorkflowExecutor<T extends SCXMLWorkflowContext, V extends SCX
                 log.info("Invoking workflow {} action {}", scxmlId, action);
             }
             else {
-                log.info("Invoking workflow {} action {} with payload {}", new Object[]{scxmlId, action, payload.toString()});
+                log.info("Invoking workflow {} action {} with payload {}", scxmlId, action, payload.toString());
             }
             // reset result
             context.setResult(null);

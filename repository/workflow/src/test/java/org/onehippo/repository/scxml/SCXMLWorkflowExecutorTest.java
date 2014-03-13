@@ -16,6 +16,8 @@
 
 package org.onehippo.repository.scxml;
 
+import java.util.HashMap;
+
 import org.hippoecm.repository.api.WorkflowException;
 import org.junit.After;
 import org.junit.Before;
@@ -62,7 +64,7 @@ public class SCXMLWorkflowExecutorTest {
                     "      <hippo:action action=\"terminate\" enabledExpr=\"true\"/>\n" +
                     "    </onentry>\n" +
                     "    <transition event=\"hello\">\n" +
-                    "      <hippo:result value=\"_eventdata\"/>\n" +
+                    "      <hippo:result value=\"_eventdatamap.hello?.message\"/>\n" +
                     "    </transition>\n" +
                     "    <transition event=\"terminate\" target=\"terminated\"/>\n" +
                     "  </state>\n" +
@@ -170,19 +172,21 @@ public class SCXMLWorkflowExecutorTest {
         assertFalse(workflowExecutor.isTerminated());
         assertTrue(workflowExecutor.getContext().getActions().get("hello"));
         assertTrue(workflowExecutor.getContext().getActions().get("terminate"));
+        HashMap<String, Object> payload = new HashMap<>();
+        payload.put("message", "Hello world!");
 
-        Object message = workflowExecutor.triggerAction("hello", "Hello world!");
+        Object message = workflowExecutor.triggerAction("hello", payload);
         assertEquals("Hello world!", message);
         assertTrue(workflowExecutor.isStarted());
         assertFalse(workflowExecutor.isTerminated());
-        message = workflowExecutor.triggerAction("hello", "Hello world!");
+        message = workflowExecutor.triggerAction("hello", payload);
         assertEquals("Hello world!", message);
         assertTrue(workflowExecutor.isStarted());
         assertFalse(workflowExecutor.isTerminated());
         workflowExecutor.triggerAction("terminate");
         assertTrue(workflowExecutor.isTerminated());
         try {
-            workflowExecutor.triggerAction("hello", "Hello world!");
+            workflowExecutor.triggerAction("hello", payload);
             fail("triggerAction on a terminated workflow should have failed");
         }
         catch (WorkflowException e) {
@@ -199,7 +203,7 @@ public class SCXMLWorkflowExecutorTest {
         // force reset
         workflowExecutor.reset();
         workflowExecutor.start();
-        message = workflowExecutor.triggerAction("hello", "Hello world!");
+        message = workflowExecutor.triggerAction("hello", payload);
         assertEquals("Hello world!", message);
     }
 }

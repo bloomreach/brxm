@@ -88,11 +88,14 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
         try {
             final RepositoryMap workflowConfiguration = getWorkflowContext().getWorkflowConfiguration();
+            // check if a custom scxml-definition identifier is configured for this workflow instance
             if (workflowConfiguration != null && workflowConfiguration.exists() &&
                     workflowConfiguration.get(SCXML_DEFINITION_KEY) instanceof String) {
+                // use custom scxml-definition identifier
                 scxmlId = (String) workflowConfiguration.get(SCXML_DEFINITION_KEY);
             }
 
+            // instantiate SCXMLWorkflowExecutor using default SCXMLWorkflowContext and DocumentHandle implementing SCXMLWorkflowData
             workflowExecutor = new SCXMLWorkflowExecutor<>(new SCXMLWorkflowContext(scxmlId, getWorkflowContext()), new DocumentHandle(node));
         }
         catch (WorkflowException wfe) {
