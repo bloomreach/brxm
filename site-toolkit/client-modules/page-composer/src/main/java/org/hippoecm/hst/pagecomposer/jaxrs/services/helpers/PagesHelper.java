@@ -44,7 +44,7 @@ public class PagesHelper extends AbstractHelper {
         final String targetPageNodeName = getSitemapPathPrefixPart(siteMapNode) + "-" + prototypePage.getName();
         final Session session = pageComposerContextService.getRequestContext().getSession();
         int counter = 0;
-        while (!isValidateTarget(session, targetPageNodeName, counter, previewWorkspacePagesPath, getPreviewPagesPath())) {
+        while (!isValidTarget(session, targetPageNodeName, counter, previewWorkspacePagesPath, getPreviewPagesPath())) {
             log.info("targetPageNodeName '{}' not valid. Trying next one.", targetPageNodeName);
             counter++;
         }
@@ -103,11 +103,11 @@ public class PagesHelper extends AbstractHelper {
         return sitemapPathPrefixBuilder.toString();
     }
 
-    private boolean isValidateTarget(final Session session,
-                                     final String targetNodeName,
-                                     final int counter,
-                                     final String previewWorkspacePagesPath,
-                                     final String previewPagesPath) throws RepositoryException {
+    private boolean isValidTarget(final Session session,
+                                  final String targetNodeName,
+                                  final int counter,
+                                  final String previewWorkspacePagesPath,
+                                  final String previewPagesPath) throws RepositoryException {
         String testTargetNodeName = targetNodeName;
         if (counter > 0) {
             testTargetNodeName = testTargetNodeName + "-" + counter;
