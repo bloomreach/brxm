@@ -27,7 +27,7 @@
                 height: 517,
                 modal: true,
                 resizable: false,
-                iframeUrl: './angular/page-manager/index.html',
+                iframeUrl: './angular/page/index.html',
                 iframeConfig: {
                     apiUrlPrefix: config.composerRestMountUrl,
                     debug: config.debug,

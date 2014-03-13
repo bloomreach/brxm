@@ -29,7 +29,7 @@
                 height: 517,
                 modal: true,
                 resizeHandles: 'e w',
-                iframeUrl: './angular/menu-manager/index.html',
+                iframeUrl: './angular/menu/index.html',
                 iframeConfig: {
                     apiUrlPrefix: config.composerRestMountUrl,
                     debug: config.debug,

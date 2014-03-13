@@ -69,13 +69,13 @@ module.exports = function (grunt) {
 
         // copy files
         copy: {
-            menuManager: {
+            menu: {
                 files: [
                     {
                         expand: true,
                         dot: true,
-                        cwd: '<%= build.source %>/menu-manager',
-                        dest: '<%= build.target %>/menu-manager',
+                        cwd: '<%= build.source %>/menu',
+                        dest: '<%= build.target %>/menu',
                         src: [
                             '**/*.html',
                             '**/*.js',
@@ -87,13 +87,13 @@ module.exports = function (grunt) {
                 ]
             },
 
-            pageManager: {
+            page: {
                 files: [
                     {
                         expand: true,
                         dot: true,
-                        cwd: '<%= build.source %>/page-manager',
-                        dest: '<%= build.target %>/page-manager',
+                        cwd: '<%= build.source %>/page',
+                        dest: '<%= build.target %>/page',
                         src: [
                             '**/*.html',
                             '**/*.js',
@@ -136,18 +136,18 @@ module.exports = function (grunt) {
 
         // watch
         watch: {
-            menuManager: {
+            menu: {
                 files: [
-                    '<%= build.source %>/menu-manager/**/*'
+                    '<%= build.source %>/menu/**/*'
                 ],
-                tasks: ['jshint', 'copy:menuManager']
+                tasks: ['jshint', 'copy:menu']
             },
 
-            pageManager: {
+            page: {
                 files: [
-                    '<%= build.source %>/page-manager/**/*'
+                    '<%= build.source %>/page/**/*'
                 ],
-                tasks: ['jshint', 'copy:pageManager']
+                tasks: ['jshint', 'copy:page']
             },
 
             shared: {
@@ -169,8 +169,8 @@ module.exports = function (grunt) {
                     livereload: true
                 },
                 files: [
-                    '<%= build.source %>/menu-manager/**/*',
-                    '<%= build.source %>/page-manager/**/*',
+                    '<%= build.source %>/menu/**/*',
+                    '<%= build.source %>/page/**/*',
                     '<%= build.source %>/shared/**/*'
                 ]
             }
@@ -194,14 +194,14 @@ module.exports = function (grunt) {
             },
             app: [
                 '<%= build.source %>/shared/**/*.js',
-                '<%= build.source %>/menu-manager/**/*.js',
-                '<%= build.source %>/page-manager/**/*.js',
+                '<%= build.source %>/menu/**/*.js',
+                '<%= build.source %>/page/**/*.js',
                 '!<%= build.source %>/**/*.spec.js'
             ],
             tests: [
                 '<%= build.source %>/shared/**/*.spec.js',
-                '<%= build.source %>/menu-manager/**/*.spec.js',
-                '<%= build.source %>/page-manager/**/*.spec.js'
+                '<%= build.source %>/menu/**/*.spec.js',
+                '<%= build.source %>/page/**/*.spec.js'
             ]
         },
 
@@ -230,8 +230,8 @@ module.exports = function (grunt) {
             'test:unit',
             'declutter',
             'clean:target',
-            'copy:menuManager',
-            'copy:pageManager',
+            'copy:menu',
+            'copy:page',
             'copy:shared',
             'copy:components'
         ]);

@@ -50,12 +50,12 @@ module.exports = function(config) {
             'shared/filters/**/*.js',
 
             // apps sources
-            'menu-manager/menu-manager-dependencies.js',
-            'menu-manager/directives/*.js',
-            'menu-manager/services/*.js',
-            'menu-manager/states/**/*.js',
-            'page-manager/page-manager-dependencies.js',
-            'page-manager/services/*.js',
+            'menu/menu-dependencies.js',
+            'menu/directives/*.js',
+            'menu/services/*.js',
+            'menu/states/**/*.js',
+            'page/page-dependencies.js',
+            'page/services/*.js',
 
             // tests
             {
