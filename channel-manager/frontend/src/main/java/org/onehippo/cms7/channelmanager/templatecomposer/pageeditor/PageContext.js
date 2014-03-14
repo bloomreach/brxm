@@ -142,7 +142,7 @@
             }.createDelegate(this));
         },
 
-        _initPageModelStore: function(mountId, pageId, sitemapId) {
+        _initPageModelStore: function(mountId, pageId) {
             if (this.ids.pageId === pageId) {
                 return new Hippo.Future(function(onSuccess) {
                     onSuccess(this.stores.pageModel);
@@ -150,7 +150,6 @@
             }
 
             this.ids.pageId = pageId;
-            this.ids.sitemapId = sitemapId;
 
             this.stores.pageModel = this._createPageModelStore(mountId, pageId);
             this.stores.pageModel.on('exception', function(dataProxy, type, action, options, response) {
@@ -199,6 +198,7 @@
                     if (!self.hasPreviewHstConfig || !canEdit) {
                         self.previewMode = true;
                     }
+                    self.ids.sitemapId = sitemapId;
 
                     pageRequestVariantsHeader = response.getResponseHeader('HST-Page-Request-Variants');
                     if (Ext.isString(pageRequestVariantsHeader)) {
@@ -210,7 +210,7 @@
                     if (canEdit) {
                         futures = [
                             self._initToolkitStore.call(self, mountId),
-                            self._initPageModelStore.apply(self, [mountId, pageId, sitemapId])
+                            self._initPageModelStore.apply(self, [mountId, pageId])
                         ];
                         Hippo.Future.join(futures).when(function() {
                             onSuccess();
@@ -218,6 +218,7 @@
                                 onFail("Failed to initialize page model for url '" + encodedUrl + "'");
                             });
                     } else {
+                        self.ids.mountId = mountId;
                         onSuccess();
                     }
                 }
