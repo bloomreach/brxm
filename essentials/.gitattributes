@@ -2129,6 +2129,8 @@ plugin-dashboard/src/test/resources/contentblocks.json -text
 plugin-dashboard/src/test/resources/log4j.xml -text
 pluginTestSkeleton/AngularTest.html -text
 pluginTestSkeleton/js/testRoutes.js -text
+pluginTestSkeleton/js/wizard-controller.js -text
+pluginTestSkeleton/js/wizard.js -text
 pluginTestSkeleton/readme.txt -text
 /pom.xml -text
 src/main/assembly/distribution.xml -text

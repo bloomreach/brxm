@@ -38,6 +38,8 @@
     <script src="../plugin-dashboard/src/main/webapp/tools/beanwriter/beanwriter.js"></script>
     <script src="../plugin-dashboard/src/main/webapp/tools/freemarkersync/freemarkersync.js"></script>
     <script src="../plugin-dashboard/src/main/webapp/tools/restServices/restServices.js"></script>
+    <script src="js/wizard.js"></script>
+    <script src="js/wizard-controller.js"></script>
     <link rel="icon" href="../plugin-dashboard/src/main/webapp/images/favicon.ico" type="image/x-icon"/>
     <link rel="shortcut icon" href="../plugin-dashboard/src/main/webapp/images/favicon.ico" type="image/x-icon"/>
 </head>
@@ -61,33 +63,12 @@
 
 
 <div class="container-full">
-    <div class="hippo-header">
-        <div class="hippo-header-logo">
-            <a href="/essentials"><img src="../plugin-dashboard/src/main/webapp/images/hippo-logo.png"></a>
-        </div>
-        <div class="hippo-header-text">
-            {{headerMessage}}
-        </div>
-
-    </div>
     <div class="col-sm-2" style="margin-right: 20px;" ng-controller="mainMenuCtrl">
-        <ul class="nav nav-stacked nav-pills" ng-show="packsInstalled">
-            <li ng-repeat="item in menu" ng-class="{true:'active', false:''}[isPageSelected('{{item.link}}')]">
-                <a href="{{item.link}}" ng-click="onMenuClick(item)">{{item.name}}</a>
-            </li>
-            <li>
-                <a target="API" href="../plugin-dashboard/src/main/webapp/docs/rest-api/index.html">REST API</a>
-
-            </li>
-        </ul>
 
     </div>
-    <div class="col-sm-9" ng-controller="homeCtrl">
-        <div ui-view="submenu" autoscroll="false"></div>
-        <div ui-view="plugintabs" autoscroll="false"></div>
-        <div style="margin-left: 220px;" ui-view="plugininstance" autoscroll="false"></div>
-        <div ui-view autoscroll="false"></div>
-
+    <div class="col-sm-9"  ng-controller="wizardCtrl">
+        <h1>{{message}}</h1>
+        <wizard></wizard>
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-12 footer">&copy; Hippo B.V., All Rights Reserved</div>
