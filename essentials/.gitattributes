@@ -524,8 +524,8 @@ plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/InstructionSet.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/InstructionStatus.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/Instructions.java -text
-plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/Dependency.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/DependencyType.java -text
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/EssentialsDependency.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/EssentialsPlugin.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/PersistentHandler.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/Plugin.java -text
@@ -601,6 +601,7 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/r
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/setup/ProjectSetupPlugin.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/BeanWriterUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/CndUtils.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/DependencyUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/EssentialConst.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/GalleryUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/GlobalUtils.java -text
@@ -675,6 +676,7 @@ plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/r
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/BeanWriterUtilsTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/CndUtilsTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/ComponentsUtilsTest.java -text
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/DependencyUtilsTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/GalleryUtilsTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/GlobalUtilsTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/HippoNodeUtilsTest.java -text

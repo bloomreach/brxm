@@ -64,9 +64,9 @@ public interface Plugin extends Serializable {
     void setType(String type);
 
 
-    List<Dependency> getDependencies();
+    List<EssentialsDependency> getDependencies();
 
-    void setDependencies(List<Dependency> dependencies);
+    void setDependencies(List<EssentialsDependency> dependencies);
 
     String getTitle();
 

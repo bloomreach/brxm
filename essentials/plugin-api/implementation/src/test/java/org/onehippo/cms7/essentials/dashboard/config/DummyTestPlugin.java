@@ -2,7 +2,8 @@ package org.onehippo.cms7.essentials.dashboard.config;
 
 import java.util.List;
 
-import org.onehippo.cms7.essentials.dashboard.model.Dependency;
+
+import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.model.Vendor;
 import org.onehippo.cms7.essentials.dashboard.model.VendorRestful;
@@ -132,12 +133,12 @@ public class DummyTestPlugin implements Plugin {
     }
 
     @Override
-    public List<Dependency> getDependencies() {
+    public List<EssentialsDependency> getDependencies() {
         return null;
     }
 
     @Override
-    public void setDependencies(final List<Dependency> dependencies) {
+    public void setDependencies(final List<EssentialsDependency> dependencies) {
 
     }
 

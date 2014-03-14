@@ -20,7 +20,7 @@ public class PluginRestful implements Plugin, Restful {
 
     private List<String> restClasses;
     private Vendor vendor;
-    private List<Dependency> dependencies;
+    private List<EssentialsDependency> dependencies;
     private String title;
     private String name;
     private String introduction;
@@ -138,7 +138,7 @@ public class PluginRestful implements Plugin, Restful {
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
     @JsonSubTypes({@JsonSubTypes.Type(value = DependencyRestful.class, name = "dependency")})
     @Override
-    public List<Dependency> getDependencies() {
+    public List<EssentialsDependency> getDependencies() {
         if (dependencies == null) {
             return new ArrayList<>();
         }
@@ -146,11 +146,11 @@ public class PluginRestful implements Plugin, Restful {
     }
 
     @Override
-    public void setDependencies(final List<Dependency> dependencies) {
+    public void setDependencies(final List<EssentialsDependency> dependencies) {
         this.dependencies = dependencies;
     }
 
-    public void addDependency(final Dependency dependency) {
+    public void addDependency(final EssentialsDependency dependency) {
         if (dependencies == null) {
             dependencies = new ArrayList<>();
         }

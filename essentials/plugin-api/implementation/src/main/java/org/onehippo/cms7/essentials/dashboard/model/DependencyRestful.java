@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @version "$Id: DependencyRestful.java 174870 2013-08-23 13:56:24Z mmilicevic $"
  */
 @XmlRootElement(name = "dependency")
-public class DependencyRestful implements Dependency, Restful {
+public class DependencyRestful implements EssentialsDependency, Restful {
 
     private static final long serialVersionUID = 1L;
     private String groupId;
@@ -86,6 +86,12 @@ public class DependencyRestful implements Dependency, Restful {
     @Override
     public void setScope(final String scope) {
         this.scope = scope;
+    }
+
+    @Override
+    public DependencyType getDependencyType() {
+        return DependencyType.typeForName(type);
+
     }
 
     @Override
