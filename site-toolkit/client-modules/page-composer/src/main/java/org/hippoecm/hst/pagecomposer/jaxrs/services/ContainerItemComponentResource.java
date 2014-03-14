@@ -89,8 +89,8 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getVariants() {
-        final Node containerItem = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
         try {
+            final Node containerItem = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
             Set<String> variants = doGetVariants(containerItem);
             log.info("Available variants: {}", variants);
             return ok("Available variants: ", variants);
@@ -117,8 +117,8 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response retainVariants(final String[] variants,
                                    final @HeaderParam("versionStamp") long versionStamp) {
-        Node containerItem = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
         try {
+            Node containerItem = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
             Set<String> removedVariants = doRetainVariants(containerItem, variants, versionStamp);
             log.info("Removed variants: {}", removedVariants.toString());
             return ok("Removed variants:", removedVariants);
@@ -354,8 +354,9 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createVariant(final @PathParam("variant") String variant,
                                   final @HeaderParam("versionStamp") long versionStamp) {
-        Node containerItem = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
+
         try {
+            Node containerItem = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
             HstComponentParameters componentParameters = new HstComponentParameters(containerItem, containerItemHelper);
             if (componentParameters.hasPrefix(variant)) {
                 return conflict("Cannot create variant '" + variant + "' because it already exists");
@@ -404,8 +405,8 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteVariant(final @PathParam("variant") String variant,
                                   final @HeaderParam("versionStamp") long versionStamp) {
-        Node containerItem = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
         try {
+            Node containerItem = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
             HstComponentParameters componentParameters = new HstComponentParameters(containerItem, containerItemHelper);
             if (!componentParameters.hasPrefix(variant)) {
                 return conflict("Cannot delete variant '" + variant + "' because it does not exist");

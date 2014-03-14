@@ -16,6 +16,7 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -42,7 +43,7 @@ public class PageComposerContextService {
         return (String) getRequestContext().getAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER);
     }
 
-    public Node getRequestConfigNode(final String expectedNodeType) {
+    public Node getRequestConfigNode(final String expectedNodeType) throws RepositoryException {
         String id = getRequestConfigIdentifier();
         if(id == null) {
             log.warn("Cannot get requestConfigNode because no attr '{}' on request. Return null", CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER);
@@ -55,11 +56,11 @@ public class PageComposerContextService {
                 log.warn("Expected node was of type '' but actual node is of type '{}'. Return null.", expectedNodeType, configNode.getPrimaryNodeType().getName());
                 return null;
             }
-        } catch (RepositoryException e) {
-            log.warn("Cannot find requestConfigNode because could not get node with id '{}' : {}", id, e.toString());
-            return null;
+        } catch (ItemNotFoundException e) {
+            log.warn("Cannot find requestConfigNode because session for user '{}' most likely has no read-access for '{}'",
+                    getRequestContext().getSession().getUserID(), id);
+            throw e;
         }
-
     }
 
 

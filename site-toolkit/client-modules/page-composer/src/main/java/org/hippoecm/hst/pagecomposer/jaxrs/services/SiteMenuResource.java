@@ -75,20 +75,20 @@ public class SiteMenuResource extends AbstractConfigResource {
     @GET
     @Path("/")
     public Response getMenu() {
-        return tryExecute(new Callable<Response>() {
+        return tryGet(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
                 final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration();
                 final SiteMenuRepresentation representation = new SiteMenuRepresentation(menu);
                 return ok("Menu item loaded successfully", representation);
             }
-        }, validatorFactory.getVoidValidator(), validatorFactory.getVoidValidator());
+        });
     }
 
     @GET
     @Path("/{menuItemId}")
     public Response getMenuItem(final @PathParam("menuItemId") String menuItemId) {
-        return tryExecute(new Callable<Response>() {
+        return tryGet(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
                 final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration();
@@ -96,7 +96,7 @@ public class SiteMenuResource extends AbstractConfigResource {
                 final SiteMenuItemRepresentation representation = new SiteMenuItemRepresentation(menuItem);
                 return ok("Menu item loaded successfully", representation);
             }
-        }, validatorFactory.getVoidValidator(), validatorFactory.getVoidValidator());
+        });
     }
 
     @POST
@@ -120,7 +120,7 @@ public class SiteMenuResource extends AbstractConfigResource {
                 Node menuItemNode = siteMenuItemHelper.create(parentNode, newMenuItem, Position.fromString(position), after);
                 return ok("Item created successfully", menuItemNode.getIdentifier());
             }
-        }, preValidator, validatorFactory.getVoidValidator());
+        }, preValidator);
     }
 
 
@@ -143,7 +143,7 @@ public class SiteMenuResource extends AbstractConfigResource {
                 siteMenuItemHelper.update(menuItemNode, modifiedItem);
                 return ok("Item updated successfully", modifiedItem.getId());
             }
-        }, preValidator, validatorFactory.getVoidValidator());
+        }, preValidator);
     }
 
     @POST
@@ -167,7 +167,7 @@ public class SiteMenuResource extends AbstractConfigResource {
                 siteMenuItemHelper.move(parent, source, childIndex);
                 return ok("Item moved successfully", sourceId);
             }
-        }, preValidator, validatorFactory.getVoidValidator());
+        }, preValidator);
     }
 
     @POST
@@ -185,7 +185,7 @@ public class SiteMenuResource extends AbstractConfigResource {
                 siteMenuItemHelper.delete(session.getNodeByIdentifier(menuItemId));
                 return ok("Item deleted successfully", menuItemId);
             }
-        }, preValidator, validatorFactory.getVoidValidator());
+        }, preValidator);
     }
 
 

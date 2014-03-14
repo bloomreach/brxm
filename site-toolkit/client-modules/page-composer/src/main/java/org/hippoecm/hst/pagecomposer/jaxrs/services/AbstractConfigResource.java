@@ -90,9 +90,21 @@ public class AbstractConfigResource {
         return requestContext.getContentBeansTool().getObjectConverter();
     }
 
+
+    protected Response tryGet(final Callable<Response> callable) {
+        try {
+            return callable.call();
+        } catch (ClientException e) {
+            resetSession();
+            return logAndReturnClientError(e);
+        } catch (Exception e) {
+            resetSession();
+            return logAndReturnServerError(e);
+        }
+    }
+
     protected Response tryExecute(final Callable<Response> callable,
-                                  final Validator preValidator,
-                                  final Validator postValidator) {
+                                  final Validator preValidator) {
         try {
 
             createMandatoryWorkspaceNodesIfMissing();
@@ -102,7 +114,6 @@ public class AbstractConfigResource {
 
             final Response response = callable.call();
 
-            postValidator.validate(requestContext);
             final Session session = requestContext.getSession();
             if (session.hasPendingChanges()) {
                 HstConfigurationUtils.persistChanges(session);

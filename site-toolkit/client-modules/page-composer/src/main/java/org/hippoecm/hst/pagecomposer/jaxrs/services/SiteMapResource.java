@@ -61,28 +61,20 @@ public class SiteMapResource extends AbstractConfigResource {
     @GET
     @Path("/")
     public Response getSiteMap() {
-        final Validator preValidator = ValidatorBuilder.builder()
-                .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPath(), getPageComposerContextService().getRequestConfigIdentifier(),
-                        HstNodeTypes.NODETYPE_HST_SITEMAP))
-                .build();
-        return tryExecute(new Callable<Response>() {
+        return tryGet(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
                 final HstSiteMap siteMap = getPageComposerContextService().getEditingPreviewSite().getSiteMap();
                 final SiteMapRepresentation representation = new SiteMapRepresentation().represent(siteMap, getPreviewConfigurationPath());
                 return ok("Sitemap loaded successfully", representation);
             }
-        }, preValidator, validatorFactory.getVoidValidator());
+        });
     }
 
     @GET
     @Path("/pages")
     public Response getSiteMapPages() {
-        final Validator preValidator = ValidatorBuilder.builder()
-                .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPath(), getPageComposerContextService().getRequestConfigIdentifier(),
-                        HstNodeTypes.NODETYPE_HST_SITEMAP))
-                .build();
-        return tryExecute(new Callable<Response>() {
+        return tryGet(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
                 final HstSiteMap siteMap = getPageComposerContextService().getEditingPreviewSite().getSiteMap();
@@ -91,7 +83,7 @@ public class SiteMapResource extends AbstractConfigResource {
                 final SiteMapPagesRepresentation pages = new SiteMapPagesRepresentation().represent(sitemap, mount);
                 return ok("Sitemap loaded successfully", pages);
             }
-        }, preValidator, validatorFactory.getVoidValidator());
+        });
     }
 
     @POST
@@ -125,7 +117,7 @@ public class SiteMapResource extends AbstractConfigResource {
                 siteMapHelper.update(siteMapItem);
                 return ok("Item updated successfully", siteMapItem.getId());
             }
-        }, preValidatorBuilder.build(), validatorFactory.getVoidValidator());
+        }, preValidatorBuilder.build());
     }
 
     @POST
@@ -163,7 +155,7 @@ public class SiteMapResource extends AbstractConfigResource {
                 Node newSiteMapItem = siteMapHelper.create(siteMapItem, finalParentId);
                 return ok("Item created successfully", newSiteMapItem.getIdentifier());
             }
-        }, preValidators.build(), validatorFactory.getVoidValidator());
+        }, preValidators.build());
     }
 
     @POST
@@ -181,7 +173,7 @@ public class SiteMapResource extends AbstractConfigResource {
                 Node copy = siteMapHelper.duplicate(getWorkspaceSiteMapId(), siteMapItemId);
                 return ok("Item created successfully", copy.getIdentifier());
             }
-        }, preValidators.build(), validatorFactory.getVoidValidator());
+        }, preValidators.build());
     }
 
 
@@ -217,7 +209,7 @@ public class SiteMapResource extends AbstractConfigResource {
                 siteMapHelper.move(id, finalParentId);
                 return ok("Item moved successfully", id);
             }
-        }, preValidators.build(), validatorFactory.getVoidValidator());
+        }, preValidators.build());
     }
 
     @POST
@@ -238,7 +230,7 @@ public class SiteMapResource extends AbstractConfigResource {
                 siteMapHelper.delete(id);
                 return ok("Item deleted successfully", id);
             }
-        }, preValidator, validatorFactory.getVoidValidator());
+        }, preValidator);
     }
 
     private String getWorkspaceSiteMapId() throws RepositoryException {

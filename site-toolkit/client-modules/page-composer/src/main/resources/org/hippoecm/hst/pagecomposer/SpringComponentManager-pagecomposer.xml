@@ -22,6 +22,8 @@
     <constructor-arg value="jaxrsHstConfigService"/>
     <property name="servletPath" value=""/>
     <property name="jaxrsServerFactoryBean" ref="jaxrsHstConfigCxfServerFactoryBean"/>
+    <property name="repository" ref="javax.jcr.Repository" />
+    <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader" />
   </bean>
 
 
