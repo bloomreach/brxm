@@ -23,6 +23,8 @@ frontend/js/menu/states/menu-item/add/AddMenuItemCtrl.js -text
 frontend/js/menu/states/menu-item/edit/EditMenuItemCtrl.js -text
 frontend/js/menu/states/menu-item/edit/EditMenuItemFormCtrl.js -text
 frontend/js/menu/states/menu-item/menu-item.html -text
+frontend/js/page/filters/startWithSlash.js -text
+frontend/js/page/filters/startWithSlash.spec.js -text
 frontend/js/page/i18n/en.json -text
 frontend/js/page/i18n/nl.json -text
 frontend/js/page/services/PageService.js -text
