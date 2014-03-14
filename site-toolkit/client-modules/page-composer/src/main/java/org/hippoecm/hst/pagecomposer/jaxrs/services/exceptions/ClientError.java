@@ -76,6 +76,8 @@ public enum ClientError {
      */
     INVALID_VERSION_STAMP,
 
+    DOCUMENT_CREATION_FAILED,
+
     UNKNOWN
 
 }

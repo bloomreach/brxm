@@ -30,6 +30,8 @@ import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
+import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
@@ -105,6 +107,25 @@ public class SiteMapHelper extends AbstractHelper {
 
         final Node prototypePage = session.getNodeByIdentifier(siteMapItem.getComponentConfigurationId());
         Node newPage = pagesHelper.create(prototypePage, newSitemapNode);
+
+        if (false) {
+            // TODO make this not hard coded. For now disable it
+            final WorkflowPersistenceManagerImpl workflowMngr = new WorkflowPersistenceManagerImpl(session, requestContext.getContentBeansTool().getObjectConverter());
+            final String channelContentPath = pageComposerContextService.getEditingMount().getContentPath();
+            String absFolderPath = channelContentPath + "/" + "landingpages";
+            try {
+                String createdDocumentPath = workflowMngr.createAndReturn(absFolderPath,
+                        "myhippoproject:newsdocument", siteMapItem.getName(),
+                        true);
+                log.info("Created document at '{}'", createdDocumentPath);
+                newSitemapNode.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH,
+                        "landingpages" + "/" + siteMapItem.getName());
+            } catch (ObjectBeanPersistenceException e) {
+                log.warn("Could not create document", e);
+                throw new ClientException("Could not create document", ClientError.DOCUMENT_CREATION_FAILED);
+            }
+        }
+
 
         newSitemapNode.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID,
                 HstNodeTypes.NODENAME_HST_PAGES + "/" + newPage.getName());
