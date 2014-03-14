@@ -210,10 +210,15 @@
           }
         },
 
-        template: '<div><div class="form-group"><select class="form-control" ng-required="true" ng-selected="onPowerpackSelect()" ng-model="ngModel">' +
-          ' <option ng-repeat="option in options" value="{{option.pluginId}}" ng-disabled="!option.enabled">{{option.name}}</option>' +
-          '</select></div>' +
-          '<div class="alert alert-info">{{selectedDescription}}</div></div>'
+        template: '' +
+          '<div>' +
+          ' <div class="form-group">' +
+          '   <select class="form-control" ng-required="true" ng-selected="onPowerpackSelect()" ng-model="ngModel">' +
+          '     <option ng-repeat="option in options" value="{{option.pluginId}}" ng-disabled="!option.enabled">{{option.name}}</option>' +
+          '   </select>' +
+          ' </div>' +
+          ' <div class="panel panel-info"><div class="panel-body">{{selectedDescription}}</div></div>' +
+          '</div>'
       };
     })
 

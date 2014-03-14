@@ -44,10 +44,6 @@
   <link rel="shortcut icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
 </head>
 <body>
-<!-- LOADER ON HTTP REQUESTS -->
-<div class="busy-loader" ng-show="busyLoading">
-  <img src="${pageContext.request.contextPath}/images/loader.gif"/>
-</div>
 <!-- ERROR MESSAGES -->
 <div class="alert-danger messages" ng-show="globalError.length > 0">
   <strong>An error occurred:</strong>
@@ -66,39 +62,45 @@
 
 <div class="container">
   <div class="row">
-    <h1 class="page-header">Hippo CMS <small>Essentials</small></h1>
+    <h1 class="page-header">
+      <%--<div class="pull-left"><img src="${pageContext.request.contextPath}/images/hippo-logo-2x.png" height="30"/></div>--%>
+        <!-- LOADER ON HTTP REQUESTS -->
+        <div class="pull-right" ng-show="busyLoading">
+          <span class="fa fa-spin fa-refresh"></span>&nbsp;
+        </div>
+        Hippo CMS <small>Essentials</small></h1>
     </div>
 
   <div class="row">
     <div class="col-sm-2" style="margin-right: 20px;" ng-controller="mainMenuCtrl">
-    <ul class="nav nav-stacked nav-pills" ng-show="packsInstalled">
-      <li ng-repeat="item in menu" ng-class="{true:'active', false:''}[isPageSelected('{{item.link}}')]">
-        <a href="{{item.link}}" ng-click="onMenuClick(item)">{{item.name}}</a>
-      </li>
-      <li>
-        <a target="API" href="${pageContext.request.contextPath}/docs/rest-api/index.html">REST API</a>
+      <ul class="nav nav-stacked nav-pills" ng-show="packsInstalled">
+        <li ng-repeat="item in menu" ng-class="{true:'active', false:''}[isPageSelected('{{item.link}}')]">
+          <a href="{{item.link}}" ng-click="onMenuClick(item)">{{item.name}}</a>
+        </li>
+        <li>
+          <a target="API" href="${pageContext.request.contextPath}/docs/rest-api/index.html">REST API</a>
 
-      </li>
-    </ul>
-
-  </div>
+        </li>
+      </ul>
+    </div>
   </div>
 
   <div ng-controller="homeCtrl">
     <div ui-view="submenu" autoscroll="false"></div>
     <div ui-view="plugintabs" autoscroll="false"></div>
     <div ui-view="plugininstance" autoscroll="false"></div>
+
+    <%--Main view--%>
     <div ui-view autoscroll="false"></div>
-    <%--<div ng-view></div>--%>
+    <%--/ Main view--%>
+
   </div>
 
-    <div class="row">
-      <div class="col-md-12">
-        <p class="text-center">
-          (C) 2013-2014 <a href="http://www.onehippo.com">Hippo B.V.</a>, All Rights Reserved
-        </p>
-      </div>
-    </div>
+  <div class="row">
+    <p class="text-center">
+      (C) 2013-2014 <a href="http://www.onehippo.com">Hippo B.V.</a>, All Rights Reserved
+    </p>
+  </div>
 </div>
 
 

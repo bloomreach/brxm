@@ -4,86 +4,80 @@
     // STEP INDICATOR
     //############################################
  -->
-    <div class="row" ng-hide="hideAll">
-        <ul class="wizard-steps">
-            <li ng-class="{true:'active', false:''}[stepVisible[$index]]" ng-repeat="step in packs.steps">
-                <span class="step" id="no">{{$index +1}}</span>
-                <span class="title" id="title">{{step.name}}</span>
-            </li>
-        </ul>
-    </div>
+    <!--<div class="row">-->
+        <!--<ul>-->
+            <!--<li ng-class="{true:'active', false:''}[stepVisible[$index]]" ng-repeat="step in packs.steps">-->
+                <!--<span class="step" id="no">{{$index +1}}</span>-->
+                <!--<span class="title" id="title">{{step.name}}</span>-->
+            <!--</li>-->
+        <!--</ul>-->
+    <!--</div>-->
     <!--
        //############################################
        // CONTENT
        //############################################
     -->
 
-    <form name="selectionForm">
-        <div class="row" ng-show="stepVisible[0]">
-            <div class="alert alert-success"><i class="fa-thumbs-o-up fa-4x fa pull-left"></i>Congratulations - you've successfully created
+    <div class="row">
+        <form name="selectionForm">
+            <div class="alert alert-success alert-dismissable">
+                <i class="fa-thumbs-o-up fa-4x fa pull-left"></i>Congratulations - you've successfully created
                 <strong>{{packs.project.namespace}}</strong> and are almost ready to get coding!
                 We just need some more information to finalize the setup. Please select from the following list of Power packs what kind of
-                project
-                <strong>{{packs.project.namespace}}</strong> will be. We'll then add the relevant components and configuration to get you started.
+                project <strong>{{packs.project.namespace}}</strong> will be. We'll then add the relevant components and configuration to get you started.
             </div>
 
             <div class="panel panel-default">
-                <div class="panel-body">
-                    <fieldset>
-                        <legend>Select a power pack to install</legend>
-                        <powerpacks on-select="onPowerpackSelect()" selected-description="selectedDescription" options="packs" ng-model="selectedValue">
-                        </powerpacks>
-                    </fieldset>
-                    <div class="panel panel-default">
+                <div class="panel-body" ng-show="stepVisible[0]">
+                    <h3 class="page-header">Select a power pack to install</h3>
+                    <powerpacks on-select="onPowerpackSelect()" selected-description="selectedDescription" options="packs" ng-model="selectedValue">
+                    </powerpacks>
+                    <div class="panel panel-default" ng-show="selectedPlugin">
+                        <div class="panel-heading">Options</div>
                         <div class="panel-body" ng-include="includeTemplate">
                         </div>
                     </div>
                 </div>
-            </div>
 
-        </div>
-        <!--
-        resultMessages
-        -->
+                <div class="panel-body"  ng-show="stepVisible[1]">
+                    <h3 class="page-header">Installation overview</h3>
+                    <div class="panel panel-info" ng-hide="resultMessages.items.length > 0"><div class="panel-body">{{selectedDescription}}</div></div>
+                    <div class="alert alert-info" ng-show="resultMessages.items.length > 0">
 
-        <div class="row" ng-show="stepVisible[1]">
-            <h3>Installation overview:</h3>
-            <div class="alert alert-info" ng-hide="resultMessages.items.length > 0">{{selectedDescription}}</div>
-            <div class="alert alert-info" ng-show="resultMessages.items.length > 0">
-
-                <div ng-repeat="message in resultMessages.items" ng-switch="message.displayType">
-                    <div ng-switch-when="PRE">
-                        <pre>{{message.value}}</pre>
+                        <div ng-repeat="message in resultMessages.items" ng-switch="message.displayType">
+                            <div ng-switch-when="PRE">
+                                <pre>{{message.value}}</pre>
+                            </div>
+                            <div ng-switch-when="A">
+                                <a href="{{message.value}}">{{message.value}}</a>
+                            </div>
+                            <div ng-switch-when="H3">
+                                <h3>{{message.value}}</h3>
+                            </div>
+                            <div ng-switch-when="H4">
+                                <h3>{{message.value}}</h3>
+                            </div>
+                            <div ng-switch-when="STRONG">
+                                <strong>{{message.value}}</strong>
+                            </div>
+                            <div ng-switch-when="BR">
+                                <br/>
+                            </div>
+                            <div ng-switch-default>{{message.value}}</div>
+                        </div>
                     </div>
-                    <div ng-switch-when="A">
-                        <a href="{{message.value}}">{{message.value}}</a>
-                    </div>
-                    <div ng-switch-when="H3">
-                        <h3>{{message.value}}</h3>
-                    </div>
-                    <div ng-switch-when="H4">
-                        <h3>{{message.value}}</h3>
-                    </div>
-                    <div ng-switch-when="STRONG">
-                        <strong>{{message.value}}</strong>
-                    </div>
-                    <div ng-switch-when="BR">
-                        <br/>
-                    </div>
-                    <div ng-switch-default>{{message.value}}</div>
                 </div>
+
+                <div class="panel-footer clearfix">
+                    <div class="btn-group pull-right" ng-hide="hideAll">
+                        <button ng-disabled="!selectionForm.$valid" ng-class="{true:'btn btn-success btn-next', false:'btn btn-prev'}[stepVisible[$index]]"
+                                ng-repeat="btn in buttons"
+                                ng-click="onWizardButton({true:btn.nextIndex, false:btn.previousIndex}[stepVisible[$index]])">
+                            {{btn.buttonText}}
+                        </button>
+                    </div>
+                </div>
+
             </div>
-        </div>
-        <!--
-            //############################################
-            // BUTTONS
-            //############################################
-        -->
-        <div class="btn-group pull-right" ng-hide="hideAll">
-            <button ng-disabled="!selectionForm.$valid" ng-class="{true:'btn btn-success btn-next', false:'btn btn-prev'}[stepVisible[$index]]"
-                    ng-repeat="btn in buttons"
-                    ng-click="onWizardButton({true:btn.nextIndex, false:btn.previousIndex}[stepVisible[$index]])">
-                {{btn.buttonText}} <i class="fa-arrow-right fa"></i>
-            </button>
-        </div>
-    </form>
+        </form>
+    </div>
