@@ -51,7 +51,7 @@
 
                 <div class="form-group has-feedback" id="url" data-ng-class="{
                         'has-success': form.url.$valid,
-                        'has-error': !form.url.$pristine && form.url.$invalid
+                        'has-error': form.url.$dirty && form.url.$invalid
                     }">
                     <label for="page-url">{{ 'URL' | translate }}</label>
                     <div class="input-group">
@@ -59,16 +59,20 @@
                         <input type="text" name="url" class="form-control" id="page-url"
                                placeholder=""
                                data-ng-model="page.url"
-                               illegal-characters="'/'"
+                               illegal-characters="validation.illegalCharacters"
                                data-ng-focus="form.url.$setPristine();"
                                data-ng-required="true" data-ng-keyup="disableAutomaticUrlUpdate()">
-                        <div class="tooltip-container" data-ng-show="form.url.$dirty && form.url.$error.required">
-                            <div data-tooltip
-                                 data-placement="top"
-                                 data-title="{{ 'URL_REQUIRED' | translate }}"></div>
-                        </div>
                     </div>
-
+                    <div class="tooltip-container" data-ng-show="form.url.$dirty && form.url.$error.required">
+                        <div data-tooltip
+                             data-placement="top"
+                             data-title="{{ 'URL_REQUIRED' | translate }}"></div>
+                    </div>
+                    <div class="tooltip-container" data-ng-show="form.url.$dirty && form.url.$error.illegalCharacters">
+                        <div data-tooltip
+                             data-placement="top"
+                             data-title="{{ 'ILLEGAL_CHARACTERS' | translate:validation }}"></div>
+                    </div>
                     <i class="fa form-control-feedback"
                        data-ng-class="{
                         'fa-check': form.url.$dirty && form.url.$valid,

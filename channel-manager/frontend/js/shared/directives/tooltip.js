@@ -17,7 +17,7 @@
 (function () {
     'use strict';
 
-    angular.module('hippo.channel.menu')
+    angular.module('hippo.channel')
 
         .directive('tooltip', [function() {
             return {

@@ -14,5 +14,6 @@
     "CREATE_PAGE": "Create page",
     "CANCEL": "Cancel",
 
-    "ITEM_NAME_NOT_UNIQUE": "The item URL already exists"
+    "ITEM_NAME_NOT_UNIQUE": "The item URL already exists",
+    "ILLEGAL_CHARACTERS": "These characters are not allowed: {{ illegalCharacters }}"
 }

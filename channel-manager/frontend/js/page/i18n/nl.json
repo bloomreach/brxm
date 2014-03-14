@@ -14,5 +14,6 @@
     "CREATE_PAGE": "Maak pagina",
     "CANCEL": "Annuleer",
 
-    "ITEM_NAME_NOT_UNIQUE": "De URL van het item bestaat reeds"
+    "ITEM_NAME_NOT_UNIQUE": "De URL van het item bestaat reeds",
+    "ILLEGAL_CHARACTERS": "Deze karakters zijn niet toegestaan: {{ illegalCharacters }}"
 }

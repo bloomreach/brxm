@@ -39,6 +39,10 @@
                     focus: true
                 };
 
+                $scope.validation = {
+                    illegalCharacters: '/'
+                };
+
                 $scope.prototypes = [];
 
                 $scope.submit = function () {

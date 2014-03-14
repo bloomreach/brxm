@@ -64,3 +64,8 @@ html, body, .l-stretch, .l-center-container {
     display: inline-block;
     vertical-align: middle;
 }
+
+
+.tooltip-inner {
+    max-width: 500px;
+}
