@@ -18,8 +18,14 @@
 
     angular.module('hippo.channel')
 
-        // TODO: add documentation
         // TODO: add tests
+        /**
+         * @ngdoc filter
+         * @name hippo.channel.filter:alphanumeric
+         *
+         * @description
+         * Converts all non-alphanumeric characters to the `-` character. Spaces will also be converted.
+         */
         .filter('alphanumeric', function () {
             return function (value) {
                 return (value) ? value.replace(/[^a-zA-Z0-9]/g, '-') : '';
