@@ -85,13 +85,6 @@ describe('Menu Service', function () {
         expectGetMenu();
     });
 
-    it('should return the id of the first menu item', function () {
-        menuService.getFirstMenuItemId().then(function (firstMenuItemId) {
-            expect(firstMenuItemId).toEqual('1');
-        });
-        expectGetMenu();
-    });
-
     function testGetMenuItem(id) {
         menuService.getMenuItem(id).then(function(menuItem) {
             expect(menuItem).toBeDefined();
@@ -140,24 +133,7 @@ describe('Menu Service', function () {
         $httpBackend.expectPOST('api/menuId./delete/3').respond('OK');
 
         menuService.getMenu().then(function (menu) {
-            var deletePromise = menuService.deleteMenuItem('3');
-            deletePromise.then(function (itemId) {
-                expect(itemId).toBe('2');
-            });
-        });
-        expectGetMenu();
-    });
-
-    it('should select parent after delete if deleted item has no siblings left', function () {
-
-        var response = {data: {items: [{id: 1, title: 'One'}]}};
-        $httpBackend.expectPOST('api/menuId./delete/child1').respond('OK');
-
-        menuService.getMenu().then(function (menu) {
-            var deletePromise = menuService.deleteMenuItem('child1');
-            deletePromise.then(function (itemId) {
-                expect(itemId).toBe('2');
-            });
+            menuService.deleteMenuItem('3');
         });
         expectGetMenu();
     });
