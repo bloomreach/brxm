@@ -31,6 +31,13 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_PAGES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_ABSTRACT_COMPONENT;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID;
+
 public class PagesHelper extends AbstractHelper {
 
     private static final Logger log = LoggerFactory.getLogger(PagesHelper.class);
@@ -52,17 +59,7 @@ public class PagesHelper extends AbstractHelper {
         String previewWorkspacePagesPath = getPreviewWorkspacePagesPath();
         final String targetPageNodeName = getSiteMapPathPrefixPart(siteMapNode) + "-" + nodePageToCopy.getName();
         final Session session = pageComposerContextService.getRequestContext().getSession();
-        int counter = 0;
-        while (!isValidTarget(session, targetPageNodeName, counter, previewWorkspacePagesPath, getPreviewPagesPath())) {
-            log.info("targetPageNodeName '{}' not valid. Trying next one.", targetPageNodeName);
-            counter++;
-        }
-        final String validTargetPageNodeName;
-        if (counter == 0) {
-            validTargetPageNodeName = targetPageNodeName;
-        } else {
-            validTargetPageNodeName = targetPageNodeName + "-" + counter;
-        }
+        final String validTargetPageNodeName = getValidTargetPageNodeName(previewWorkspacePagesPath, targetPageNodeName, session);
         Node newPage = JcrUtils.copy(session, nodePageToCopy.getPath(), previewWorkspacePagesPath + "/" + validTargetPageNodeName);
         if (pageConfigToCopy != null) {
             // copy has been done from a page, not from a prototype. We need to check whether there
@@ -128,7 +125,7 @@ public class PagesHelper extends AbstractHelper {
     }
 
     private void doLockContainers(final Node node) throws RepositoryException {
-        if (node.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT)) {
+        if (node.isNodeType(NODETYPE_HST_CONTAINERCOMPONENT)) {
             lockHelper.acquireSimpleLock(node, 0);
         }
         for (Node child : new NodeIterable(node.getNodes())) {
@@ -136,9 +133,8 @@ public class PagesHelper extends AbstractHelper {
         }
     }
 
-
     public void delete(final Node sitemapItemNodeToDelete) throws RepositoryException {
-        final String componentConfigId = JcrUtils.getStringProperty(sitemapItemNodeToDelete, HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID, null);
+        final String componentConfigId = JcrUtils.getStringProperty(sitemapItemNodeToDelete, SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID, null);
         if (componentConfigId == null) {
             log.debug("No component id configured for '{}'. No page to delete.", sitemapItemNodeToDelete.getPath());
             return;
@@ -168,17 +164,20 @@ public class PagesHelper extends AbstractHelper {
         return siteMapPathPrefixBuilder.toString();
     }
 
+    private String getValidTargetPageNodeName(final String previewWorkspacePagesPath, final String targetPageNodeName, final Session session) throws RepositoryException {
+        String testTargetNodeName = targetPageNodeName;
+        for (int counter = 1; !isValidTarget(session, testTargetNodeName, previewWorkspacePagesPath, getPreviewPagesPath()); counter++) {
+            log.info("targetPageNodeName '{}' not valid. Trying next one.", targetPageNodeName);
+            testTargetNodeName = targetPageNodeName + "-" + counter;
+        }
+        return testTargetNodeName;
+    }
+
     private boolean isValidTarget(final Session session,
-                                  final String targetNodeName,
-                                  final int counter,
+                                  final String testTargetNodeName,
                                   final String previewWorkspacePagesPath,
                                   final String previewPagesPath) throws RepositoryException {
-        String testTargetNodeName = targetNodeName;
-        if (counter > 0) {
-            testTargetNodeName = testTargetNodeName + "-" + counter;
-        }
-
-        String testWorkspaceTargetNodePath = previewWorkspacePagesPath + "/" + testTargetNodeName;
+        final String testWorkspaceTargetNodePath = previewWorkspacePagesPath + "/" + testTargetNodeName;
         if (session.nodeExists(testWorkspaceTargetNodePath)) {
             Node targetNode = session.getNode(testWorkspaceTargetNodePath);
             if (isMarkedDeleted(targetNode)) {
@@ -193,22 +192,21 @@ public class PagesHelper extends AbstractHelper {
                 return false;
             }
         }
-
         // the targetNodeName does not yet exist in workspace pages. Confirm it does not exist non workspace pages
         return !session.nodeExists(previewPagesPath + "/" + testTargetNodeName);
     }
 
     protected String getPreviewWorkspacePath() {
-        return pageComposerContextService.getEditingPreviewSite().getConfigurationPath() + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
+        return pageComposerContextService.getEditingPreviewSite().getConfigurationPath() + "/" + NODENAME_HST_WORKSPACE;
     }
 
     private String getPreviewWorkspacePagesPath() {
-        return getPreviewWorkspacePath() + "/" + HstNodeTypes.NODENAME_HST_PAGES;
+        return getPreviewWorkspacePath() + "/" + NODENAME_HST_PAGES;
     }
 
     private String getPreviewPagesPath() {
         return pageComposerContextService.getEditingPreviewSite().getConfigurationPath()
-                + "/" + HstNodeTypes.NODENAME_HST_PAGES;
+                + "/" + NODENAME_HST_PAGES;
     }
 
 
@@ -222,14 +220,14 @@ public class PagesHelper extends AbstractHelper {
         StringBuilder xpath = new StringBuilder("/jcr:root");
         xpath.append(ISO9075.encodePath(previewConfigurationPath));
         xpath.append("//element(*,");
-        xpath.append(HstNodeTypes.NODETYPE_HST_ABSTRACT_COMPONENT);
+        xpath.append(NODETYPE_HST_ABSTRACT_COMPONENT);
         xpath.append(")[");
 
         String concat = "";
         for (String userId : userIds) {
             xpath.append(concat);
             xpath.append('@');
-            xpath.append(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY);
+            xpath.append(GENERAL_PROPERTY_LOCKED_BY);
             xpath.append(" = '");
             xpath.append(userId);
             xpath.append("'");

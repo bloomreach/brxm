@@ -28,11 +28,10 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.jackrabbit.commons.JcrUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
@@ -40,6 +39,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.repository.util.NodeIterable;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMENU;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_REPOBASED;
@@ -217,15 +217,15 @@ public class SiteMenuItemHelper extends AbstractHelper {
         while (current.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMENUITEM)) {
             current = current.getParent();
         }
-        if (current.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMENU)) {
+        if (current.isNodeType(NODETYPE_HST_SITEMENU)) {
             return current;
         }
-        throw new IllegalStateException("No ancestor of type '" + HstNodeTypes.NODETYPE_HST_SITEMENU + "' " +
+        throw new IllegalStateException("No ancestor of type '" + NODETYPE_HST_SITEMENU + "' " +
                 "found for '" + node.getPath() + "'");
     }
 
     private String getSuccessorOfSourceNodeName(Node parent, String sourceName, Integer newIndex) throws RepositoryException {
-        final List<Node> childNodes = Lists.newArrayList(JcrUtils.getChildNodes(parent));
+        final List<Node> childNodes = ImmutableList.copyOf(parent.getNodes());
         if (newIndex == 0) {
             // move to start
             return childNodes.isEmpty() ? null : childNodes.get(0).getName();

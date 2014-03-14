@@ -158,7 +158,7 @@ public class LockHelper {
     }
 
     /**
-     * returns <code>true</code> if the {@link Session} tight to <code>node</code> can lock or already contains a lock
+     * returns <code>true</code> if the {@link Session} tied to <code>node</code> can lock or already contains a lock
      * on <code>node</code>
      */
     private boolean canLock(final Node node) throws RepositoryException {
