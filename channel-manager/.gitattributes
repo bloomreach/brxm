@@ -10,7 +10,6 @@ frontend/declutter.config.json -text
 frontend/js/menu/assets/css/menu.css -text
 frontend/js/menu/i18n/en.json -text
 frontend/js/menu/i18n/nl.json -text
-frontend/js/menu/services/MenuService.js -text
 frontend/js/menu/states/loader/LoaderCtrl.js -text
 frontend/js/menu/states/loader/loader.html -text
 frontend/js/menu/states/menu-item/CloseConfirmationCtrl.js -text
@@ -33,6 +32,7 @@ frontend/js/page/states/NavigationCtrl.js -text
 frontend/js/page/states/add-page/AddPageCtrl.js -text
 frontend/js/page/states/add-page/add-page.html -text
 frontend/js/shared/assets/images/loader.gif -text
+frontend/js/shared/directives/autofocus.spec.js -text
 frontend/js/shared/directives/illegalCharacter.spec.js -text
 frontend/js/shared/directives/illegalCharacters.js -text
 frontend/js/shared/directives/tooltip.js -text
