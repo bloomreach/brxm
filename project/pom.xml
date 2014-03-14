@@ -122,6 +122,8 @@
     <cargo.tomcat.distribution.url>${cargo.tomcat.distribution.url.prefix}${cargo.tomcat.distribution.url.archive}${cargo.tomcat.distribution.url.postfix}</cargo.tomcat.distribution.url>
     <!-- Extra JVM arguments to pass to Cargo -->
     <cargo.jvm.args>-XX:PermSize=128m -XX:MaxPermSize=256m</cargo.jvm.args>
+    <!-- Default message displayed in the console after the cargo container has started -->
+    <cargo.started.message>Press Ctrl-C to stop the Cargo container...</cargo.started.message>
 
     <!-- default empty javaagent, see also "jrebel" profile below -->
     <javaagent />
@@ -816,15 +818,11 @@
             <artifactId>maven-antrun-plugin</artifactId>
             <executions>
               <execution>
-                <id>ant-wait</id>
+                <id>cargo-started</id>
                 <phase>initialize</phase>
-                <goals>
-                  <goal>run</goal>
-                </goals>
+                <goals><goal>run</goal></goals>
                 <configuration>
-                  <target>
-                    <input>Press enter to stop cargo ...</input>
-                  </target>
+                  <target><echo>${cargo.started.message}</echo><sleep hours="2147483647"/></target>
                 </configuration>
               </execution>
             </executions>
