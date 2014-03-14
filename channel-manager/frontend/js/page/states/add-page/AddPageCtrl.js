@@ -31,6 +31,8 @@
                     prototype: {}
                 };
 
+                $scope.prototypes = [];
+
                 $scope.submit = function () {
                     var pageModel = {
                         pageTitle: $scope.page.title,

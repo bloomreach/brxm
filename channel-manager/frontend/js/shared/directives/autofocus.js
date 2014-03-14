@@ -17,20 +17,20 @@
 (function() {
     "use strict";
 
-    angular.module('hippo.channel.menu')
+    angular.module('hippo.channel')
 
-        .directive('hippo.channel.menu.autoFocus', function() {
-            return {
-                restrict: 'A',
-                link: function(scope, element) {
-                    // TODO: bugfix. The code below produces
-                    // Error: [$rootScope:inprog] $digest already in progress
-                    // when using AngularJS 1.2.14
+        .directive('hippo.channel.autoFocus', [
+            '$timeout',
+            function ($timeout) {
+                return {
+                    restrict: 'A',
+                    link: function(scope, element) {
+                        $timeout(function () {
+                            element.focus();
+                        }, 0);
 
-                    //$(element).focus();
-
-                }
-            };
-        });
-
+                    }
+                };
+            }
+        ]);
 }());
