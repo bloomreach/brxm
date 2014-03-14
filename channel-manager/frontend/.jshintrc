@@ -19,6 +19,7 @@
         "afterEach": true,
         "describe": true,
         "beforeEach": true,
+        "dump": true,
         "expect": true,
         "jasmine": true,
         "inject": true,
