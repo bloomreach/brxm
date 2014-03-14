@@ -67,16 +67,14 @@
         _onFrameLoad: function() {
             var newLocation = this._getFrameLocation();
 
-            if (newLocation !== this.currentLocation) {
-                this.previousLocation = this.currentLocation;
+            this.previousLocation = this.currentLocation;
 
-                if (this.currentLocation !== null) {
-                    this._detachFrame();
-                }
-
-                this.currentLocation = newLocation;
-                this.fireEvent('locationchanged');
+            if (this.currentLocation !== null) {
+                this._detachFrame();
             }
+
+            this.currentLocation = newLocation;
+            this.fireEvent('locationchanged');
         },
 
         _getFrameLocation: function() {
