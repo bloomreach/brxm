@@ -348,6 +348,7 @@ public class SiteMenuResourceTest {
     private void mockGetPreValidators() {
         expect(validatorFactory.getChildExistsValidator(anyObject(String.class), anyObject(String.class))).andReturn(validator).anyTimes();
         expect(validatorFactory.getCurrentPreviewConfigurationValidator(anyObject(String.class), anyObject(SiteMapHelper.class))).andReturn(validator).anyTimes();
+        expect(validatorFactory.getHasPreviewConfigurationValidator(pageComposerContextService)).andReturn(validator).anyTimes();
         expect(validatorFactory.getNodePathPrefixValidator(anyObject(String.class), anyObject(String.class), anyObject(String.class))).andReturn(validator).anyTimes();
         expect(validatorFactory.getNotNullValidator(anyObject(), anyObject(ClientError.class))).andReturn(validator).anyTimes();
         expect(validatorFactory.getSiteMenuItemRepresentationValidator(anyObject(Predicate.class), anyObject(SiteMenuItemRepresentation.class))).andReturn(validator).anyTimes();
