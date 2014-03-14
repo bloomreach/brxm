@@ -92,7 +92,7 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             response.addHeader(ChannelManagerConstants.HST_RENDER_VARIANT, variant.toString());
             response.addHeader(ChannelManagerConstants.HST_SITE_HAS_PREVIEW_CONFIG, String.valueOf(mount.getHstSite().hasPreviewConfiguration()));
         } else if (isComposerMode(request)) {
-            if (isNotContainerOrContainerItem(compConfig)) {
+            if (!isContainerOrContainerItem(compConfig)) {
                 return;
             }
             if (!compConfig.getCanonicalStoredLocation().contains(WORKSPACE_PATH_ELEMENT)) {
@@ -141,7 +141,7 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
 
     }
 
-    private boolean isNotContainerOrContainerItem(final HstComponentConfiguration compConfig) {
+    private boolean isContainerOrContainerItem(final HstComponentConfiguration compConfig) {
         if (HstComponentConfiguration.Type.CONTAINER_ITEM_COMPONENT.equals(compConfig.getComponentType())) {
             return true;
         }
