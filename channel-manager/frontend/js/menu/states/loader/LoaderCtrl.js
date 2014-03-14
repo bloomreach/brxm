@@ -23,12 +23,18 @@
             '$state',
             'hippo.channel.menu.MenuService',
             function ($log, $state, MenuService) {
-                MenuService.getFirstMenuItemId().then(
-                    function (firstMenuItemId) {
-                        // go to default state
-                        $state.go('menu-item.edit', {
-                            menuItemId: firstMenuItemId
-                        });
+                MenuService.getMenu().then(
+                    function (menuData) {
+                        if (menuData.items && menuData.items.length > 0) {
+                            // go to default state
+                            $state.go('menu-item.edit', {
+                                menuItemId: menuData.items[0].id
+                            });
+                        } else {
+                            $state.go('menu-item.add', {
+                                menuItemId: menuData.id
+                            });
+                        }
                     },
                     function (error) {
                         // TODO: show error in UI

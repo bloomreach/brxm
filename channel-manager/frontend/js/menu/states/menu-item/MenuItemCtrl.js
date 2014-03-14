@@ -32,7 +32,7 @@
                 // initial load of menu tree structure
                 MenuService.getMenu().then(function (menuData) {
                     $scope.list = menuData.items;
-                    $scope.selectedMenuItem = $scope.list[0];
+                    $scope.selectedMenuItem = $scope.list.length > 0 ? $scope.list[0] : undefined;
 
                     $scope.$watch(function() {
                         return menuData.items;
@@ -43,7 +43,8 @@
 
                 // if we redirect to a url without DOM-interaction, we need to set the selected menu item manually
                 $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
-                    if (toState.name == 'menu-item.edit' && toParams.menuItemId != $scope.selectedMenuItem.id) {
+                    if (toState.name == 'menu-item.edit' &&
+                            (!$scope.selectedMenuItem || toParams.menuItemId != $scope.selectedMenuItem.id)) {
                         MenuService.getMenuItem(toParams.menuItemId).then(function (item) {
                             $scope.selectedMenuItem = item;
                         });

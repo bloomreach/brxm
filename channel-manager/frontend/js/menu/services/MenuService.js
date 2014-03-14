@@ -99,30 +99,6 @@
                     return deferred.promise;
                 }
 
-                function getSelectedItemIdBeforeDeletion(toBeDeletedItemId) {
-                    var path = findPathToMenuItem(menuData, toBeDeletedItemId),
-                        item, parent, items;
-                    if (!path || path.length < 2) {
-                        return undefined;
-                    }
-
-                    item = path.pop();
-                    parent = path.pop();
-                    items = parent.items;
-                    if (items.length == 1) {
-                        // item to delete has no siblings, so parent will be selected
-                        return parent.id;
-                    }
-                    var itemIndex = _.indexOf(items, item);
-                    if (itemIndex === 0) {
-                        // Item to delete is first child, so select next child
-                        return items[itemIndex + 1].id;
-                    } else {
-                        // Item to delete is not first child, so select previous child
-                        return items[itemIndex - 1].id;
-                    }
-                }
-
                 function post(url, body) {
                     var deferred = $q.defer();
 
@@ -174,12 +150,6 @@
 
                     getMenu : function () {
                         return loadMenu();
-                    },
-
-                    getFirstMenuItemId : function () {
-                        return whenMenuLoaded(function () {
-                            return menuData.items[0].id;
-                        });
                     },
 
                     getPathToMenuItem : function(menuItemId) {
@@ -238,11 +208,10 @@
                     },
 
                     deleteMenuItem : function (menuItemId) {
-                        var selectedItemId = getSelectedItemIdBeforeDeletion(menuItemId);
                         var deferred = $q.defer();
                         post(menuServiceUrl('delete/' + menuItemId))
                             .then(function() {
-                                deferred.resolve(selectedItemId);
+                                deferred.resolve();
                             }, function (errorResponse) {
                                     deferred.reject(errorResponse);
                                 });
