@@ -44,17 +44,17 @@
                     link: true
                 };
 
-                $scope.delete = {
+                $scope.remove = {
                     isVisible: false,
                     show: function() {
-                        $scope.delete.isVisible = true;
+                        $scope.remove.isVisible = true;
                     },
                     execute: function() {
-                        $scope.delete.isVisible = false;
+                        $scope.remove.isVisible = false;
                         remove();
                     },
                     cancel: function() {
-                        $scope.delete.isVisible = false;
+                        $scope.remove.isVisible = false;
                     }
                 };
 

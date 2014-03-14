@@ -16,12 +16,12 @@
 
 <div class="edit-menu-item-container">
     <!-- START confirmation dialogs -->
-    <div class="overlay" data-ng-show="delete.isVisible || external.isVisible">&#160;</div>
+    <div class="overlay" data-ng-show="remove.isVisible || external.isVisible">&#160;</div>
     <div hippo.theme.confirmation-dialog
          confirm-icon="trash-o"
-         data-show="delete.isVisible"
-         data-perform-confirmation="delete.execute()"
-         data-perform-cancel="delete.cancel()"
+         data-show="remove.isVisible"
+         data-perform-confirmation="remove.execute()"
+         data-perform-cancel="remove.cancel()"
          data-confirm-label="{{ 'DELETE_MENU_ITEM' | translate }}"
          data-cancel-label="{{ 'CANCEL' | translate }}">
         <p>
@@ -165,7 +165,7 @@
 
         <hr>
 
-        <button type="button" class="btn btn-default" data-ng-click="delete.show()"><i class="fa fa-trash-o"></i> {{ 'DELETE_MENU_ITEM' | translate }}</button>
+        <button type="button" class="btn btn-default" data-ng-click="remove.show()"><i class="fa fa-trash-o"></i> {{ 'DELETE_MENU_ITEM' | translate }}</button>
     </form>
     <!-- END edit form -->
 
