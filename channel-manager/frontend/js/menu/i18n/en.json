@@ -19,7 +19,10 @@
     "SEARCH_FOR_TEMPLATE": "Search for template",
     "REMOVE_CONFIRMATION_TITLE": "Delete menu item",
     "REMOVE_CONFIRMATION": "Are you sure you want to delete the menu item '{{ title }}'?",
-    "DELETE_ITEM": "Delete item",
+
+    "OPEN_CONFIRMATION_TITLE": "Open external link",
+    "OPEN_CONFIRMATION": "Are you sure you want to open '{{ title }}' in a new tab?",
+    "OPEN_LINK": "Open external link",
 
     "ITEM_ALREADY_LOCKED": "You cannot edit this menu because '{{ lockedBy }}' is already editing it",
     "ITEM_NAME_NOT_UNIQUE": "The menu item '{{ item }}' already exists in the sub menu '{{ parentPath }}'",

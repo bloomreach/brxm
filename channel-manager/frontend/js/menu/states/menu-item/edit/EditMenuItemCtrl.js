@@ -24,11 +24,12 @@
             '$stateParams',
             '$state',
             '$log',
+            '$window',
             'hippo.channel.FeedbackService',
             'hippo.channel.menu.MenuService',
             'hippo.channel.FormValidationService',
             '_hippo.channel.IFrameService',
-            function ($scope, $stateParams, $state, $log, FeedbackService, MenuService, FormValidationService, IFrameService) {
+            function ($scope, $stateParams, $state, $log, $window, FeedbackService, MenuService, FormValidationService, IFrameService) {
                 var savedMenuItem;
 
                 $scope.isSaving = {
@@ -43,11 +44,57 @@
                     link: true
                 };
 
-                $scope.confirmation = {
-                    isVisible: false
+                $scope.delete = {
+                    isVisible: false,
+                    show: function() {
+                        $scope.delete.isVisible = true;
+                    },
+                    execute: function() {
+                        $scope.delete.isVisible = false;
+                        remove();
+                    },
+                    cancel: function() {
+                        $scope.delete.isVisible = false;
+                    }
+                };
+
+                $scope.external = {
+                    isVisible: false,
+                    show: function() {
+                        $scope.external.isVisible = true;
+                    },
+                    execute: function() {
+                        $scope.external.isVisible = false;
+                        $window.open($scope.selectedMenuItem.link);
+                    },
+                    cancel: function() {
+                        $scope.external.isVisible = false;
+                    }
                 };
 
                 $scope.fieldFeedbackMessage = {
+                };
+
+                $scope.saveSelectedMenuItem = function(propertyName) {
+                    if (shouldSaveSelectedMenuItemProperty(propertyName)) {
+                        saveSelectedMenuItemProperty(propertyName);
+                    }
+                };
+                
+                $scope.createNewPage = function () {
+                    $state.go('menu-item.add-page', {
+                        menuItemId: $stateParams.menuItemId
+                    });
+                };
+
+                $scope.showPage = function(link) {
+                    var iframePanel = IFrameService.getContainer();
+                    iframePanel.iframeToHost.publish('browseTo', (link.charAt(0) == '/' ? '' : '/') + link);
+                };
+
+                $scope.dismissFeedback = function () {
+                    $scope.feedback.message = '';
+                    $scope.fieldFeedbackMessage = {};
                 };
 
                 savedMenuItem = angular.copy($scope.selectedMenuItem);
@@ -70,40 +117,20 @@
                     $scope.isSaving[propertyName] = true;
 
                     MenuService.saveMenuItem(savedMenuItem).then(function () {
-                            $scope.isSaving[propertyName] = false;
-                            $scope.isSaved[propertyName] = true;
-                            FormValidationService.setValidity(true);
-                        },
-                        function (errorResponse) {
-                            $scope.fieldFeedbackMessage[propertyName] = FeedbackService.getFeedback(errorResponse).message;
-                            $scope.isSaving[propertyName] = false;
-                            $scope.isSaved[propertyName] = false;
-                            FormValidationService.setValidity(false);
-                        }
+                                $scope.isSaving[propertyName] = false;
+                                $scope.isSaved[propertyName] = true;
+                                FormValidationService.setValidity(true);
+                            },
+                            function (errorResponse) {
+                                $scope.fieldFeedbackMessage[propertyName] = FeedbackService.getFeedback(errorResponse).message;
+                                $scope.isSaving[propertyName] = false;
+                                $scope.isSaved[propertyName] = false;
+                                FormValidationService.setValidity(false);
+                            }
                     );
                 }
 
-                $scope.saveSelectedMenuItem = function(propertyName) {
-                    if (shouldSaveSelectedMenuItemProperty(propertyName)) {
-                        saveSelectedMenuItemProperty(propertyName);
-                    }
-                };
-                
-                $scope.createNewPage = function () {
-                    $state.go('menu-item.add-page', {
-                        menuItemId: $stateParams.menuItemId
-                    });
-                };
-
-                $scope.showPage = function(link) {
-                    var iframePanel = IFrameService.getContainer();
-                    iframePanel.iframeToHost.publish('browseTo', (link.charAt(0) == '/' ? '' : '/') + link);
-                };
-
-                $scope.remove = function () {
-                    // hide confirmation dialog
-                    $scope.confirmation.isVisible = false;
-
+                function remove() {
                     // HTTP-request to delete the menu item
                     MenuService.deleteMenuItem($scope.selectedMenuItem.id).then(function (selectedMenuItemId) {
                         $state.go('menu-item.edit', {
@@ -112,16 +139,8 @@
                     }, function (errorResponse) {
                         $scope.feedback = FeedbackService.getFeedback(errorResponse);
                     });
-                };
+                }
 
-                $scope.dismissFeedback = function () {
-                    $scope.feedback.message = '';
-                    $scope.fieldFeedbackMessage = {};
-                };
-
-                $scope.cancel = function () {
-                    $scope.confirmation.isVisible = false;
-                };
             }
         ]);
 }());

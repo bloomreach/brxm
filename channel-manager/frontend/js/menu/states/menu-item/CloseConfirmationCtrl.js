@@ -19,7 +19,7 @@
 
     angular.module('hippo.channel.menu')
 
-        .controller('CloseConfirmationCtrl', [
+        .controller('hippo.channel.menu.CloseConfirmationCtrl', [
             '$scope',
             '$rootScope',
             'hippo.channel.Container',
