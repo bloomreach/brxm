@@ -26,10 +26,9 @@
             <li><label class="nav-header">${facetvalue.name}</label>
                 <ul class="nav nav-list">
                     <#list  facetvalue.folders as item>
-
-                        <#if (item_index > facetLimit)>
-                            <#if item.leaf?? && item.count > 0>
-                                <@hst.facetnavigationlink remove="${item}" current="${facets}" var="removeLink"/>
+                        <#if (item_index <= facetLimit)>
+                            <#if (item.leaf?? && item.leaf && (item.count > 0))>
+                                <@hst.facetnavigationlink  current=facets remove=item var="removeLink"/>
                                 <li class="active">
                                     <a href="${removeLink}">${item.name}&nbsp;<span class="alert-danger">remove</span></a>
                                 </li>
@@ -57,6 +56,3 @@
     </#list>
 </ul>
 </#if>
-
-
-
