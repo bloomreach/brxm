@@ -40,7 +40,7 @@ public class LockHelper {
      */
     public void unlock(final Node configNode) throws RepositoryException {
         if (configNode.isNodeType(HstNodeTypes.MIXINTYPE_HST_EDITABLE)) {
-            log.warn("Removing lock for '{}' since ancestor gets published", configNode.getPath());
+            log.info("Removing lock for '{}' since node or ancestor gets published", configNode.getPath());
             configNode.removeMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
         } else if(configNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)){
             configNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).remove();
