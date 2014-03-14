@@ -33,7 +33,9 @@
                     debug: config.debug,
                     locale: config.locale,
                     mountId: config.mountId,
-                    sitemapId: config.sitemapId
+                    sitemapId: config.sitemapId,
+                    userCanEdit: config.userCanEdit,
+                    userIsEditing: config.userIsEditing
                 }
             });
 

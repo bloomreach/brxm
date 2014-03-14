@@ -1062,7 +1062,9 @@
                 debug: this.debug,
                 locale: this.locale,
                 mountId: this.currentMountId,
-                sitemapId: this.currentSitemapId
+                sitemapId: this.currentSitemapId,
+                userCanEdit: this.pageContainer.canEdit,
+                userIsEditing: !this.pageContainer.previewMode,
             });
             pagesWindow.show();
         },

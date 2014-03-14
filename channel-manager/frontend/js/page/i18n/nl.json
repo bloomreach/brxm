@@ -3,6 +3,7 @@
     "ITEM_NOT_CORRECT_LOCATION": "Er is een interne fout opgetreden: er zijn pagina's van de verkeerde sitemap opgevraagd.",
     "LANDING_PAGES": "Landings pagina's",
     "ADD_NEW_PAGE": "Voeg nieuwe pagina toe",
+    "ADD_NEW_PAGE_DISABLED_TOOLTIP": "Om een pagina toe te voegen,\nklik eerst op 'Wijzig channel'",
 
     "CREATE_NEW_PAGE": "Maak nieuwe pagina aan",
     "PAGE_TITLE": "Pagina title",

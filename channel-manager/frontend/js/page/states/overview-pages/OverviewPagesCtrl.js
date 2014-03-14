@@ -28,12 +28,17 @@
         .controller('hippo.channel.page.OverviewPagesCtrl', [
             '$scope',
             '$state',
+            '$translate',
             'hippo.channel.FeedbackService',
+            'hippo.channel.ConfigService',
             'hippo.channel.page.PageService',
             '_hippo.channel.IFrameService',
-            function ($scope, $state, FeedbackService, PageService, IFrameService) {
+            function ($scope, $state, $translate, FeedbackService, ConfigService, PageService, IFrameService) {
                 // scope variables
                 $scope.pages = [];
+                $scope.tooltip = '';
+                $scope.userCanEdit = ConfigService.userCanEdit;
+                $scope.userIsEditing = ConfigService.userIsEditing;
 
                 // fetch pages
                 PageService.getPages().then(function (pages) {
@@ -41,6 +46,16 @@
                 }, function (errorResponse) {
                     $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
                 });
+
+                $scope.showTooltip = function() {
+                    if (!$scope.userIsEditing) {
+                        $scope.tooltip = $translate('ADD_NEW_PAGE_DISABLED_TOOLTIP');
+                    }
+                };
+
+                $scope.hideTooltip = function() {
+                    $scope.tooltip = '';
+                };
 
                 $scope.showPage = function(page) {
                     var iframePanel = IFrameService.getContainer();

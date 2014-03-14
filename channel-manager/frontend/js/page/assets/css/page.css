@@ -60,6 +60,10 @@
     cursor: pointer;
 }
 
+.tooltip-newlines + .tooltip > .tooltip-inner {
+    white-space: pre-wrap;
+}
+
 /* --- Add Page Form --- */
 form {
     padding: 15px;
