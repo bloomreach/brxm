@@ -91,7 +91,6 @@
 
 
             .run(function ($rootScope, $location, $log, $http, $state) {
-                $rootScope.headerMessage = "Welcome on the Hippo Trail";
                 // routing listener
                 $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
 
