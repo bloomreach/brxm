@@ -106,7 +106,8 @@ public class SiteMapHelper extends AbstractHelper {
         // clone page definition
 
         final Node prototypePage = session.getNodeByIdentifier(siteMapItem.getComponentConfigurationId());
-        Node newPage = pagesHelper.create(prototypePage, newSitemapNode);
+        final String targetPageNodeName = getSiteMapPathPrefixPart(newSitemapNode) + "-" + prototypePage.getName();
+        Node newPage = pagesHelper.create(prototypePage, targetPageNodeName);
 
         if (false) {
             // TODO make this not hard coded. For now disable it
@@ -143,24 +144,28 @@ public class SiteMapHelper extends AbstractHelper {
         final Session session = requestContext.getSession();
         Node toShallowCopy = session.getNodeByIdentifier(siteMapItemId);
         HstSiteMapItem hstSiteMapItem = getConfigObject(siteMapItemId);
+        if (hstSiteMapItem == null) {
+            String message = String.format("Cannot duplicate because no siteMapItem '%s' for id '%s'.", siteMapItemId);
+            throw new ClientException(message, ClientError.ITEM_CANNOT_BE_CLONED);
+        }
         String pathInfo = HstSiteMapUtils.getPath(hstSiteMapItem);
         if (pathInfo.contains(HstNodeTypes.WILDCARD) || pathInfo.contains(HstNodeTypes.ANY)) {
-            String message = String.format("Cannot copy/duplicate a page from siteMapItem '%s' because it contains " +
+            String message = String.format("Cannot duplicate a page from siteMapItem '%s' because it contains " +
                     "wildcards and this is not supported.", ((CanonicalInfo)hstSiteMapItem).getCanonicalPath());
             throw new ClientException(message, ClientError.ITEM_CANNOT_BE_CLONED);
         }
         String newSiteMapItemName = pathInfo.replace("/", "-");
         Node workspaceSiteMapNode = session.getNodeByIdentifier(workspaceSiteMapId);
 
-        String target = workspaceSiteMapNode.getPath() + "/" + newSiteMapItemName + "/" + "-duplicate";
-
+        String target = workspaceSiteMapNode.getPath() + "/" + newSiteMapItemName;
+        final String postfix = "-duplicate";
         String finalTarget = target;
-        String nonWorkspaceLocation = finalTarget.replace(HstNodeTypes.NODENAME_HST_WORKSPACE + "/", "/");
+        String nonWorkspaceLocation = finalTarget.replace("/" + HstNodeTypes.NODENAME_HST_WORKSPACE + "/", "/");
         int counter = 0;
-        while (session.nodeExists(target) || session.nodeExists(nonWorkspaceLocation)) {
+        while (session.nodeExists(finalTarget+postfix) || session.nodeExists(nonWorkspaceLocation+postfix)) {
             counter++;
             finalTarget = target + "-" + counter;
-            nonWorkspaceLocation = finalTarget.replace(HstNodeTypes.NODENAME_HST_WORKSPACE + "/", "/");
+            nonWorkspaceLocation = nonWorkspaceLocation + "-" + counter;
         }
 
         validateTarget(session, finalTarget);
@@ -171,12 +176,20 @@ public class SiteMapHelper extends AbstractHelper {
         }
         lockHelper.acquireLock(newSitemapNode, 0);
 
-        // copy the page definition
-        final HstComponentConfiguration pageToCopy = requestContext.getResolvedMount().getMount().getHstSite().
-                getComponentsConfiguration().getComponentConfiguration(hstSiteMapItem.getComponentConfigurationId());
 
+        // copy the page definition
+        // we need to find the page node uuid to copy through hstSiteMapItem.getComponentConfigurationId() which is NOT
+        // the page UUID
+        final HstComponentConfiguration pageToCopy = pageComposerContextService.getEditingPreviewSite().getComponentsConfiguration()
+                .getComponentConfiguration(hstSiteMapItem.getComponentConfigurationId());
+
+        if (pageToCopy == null) {
+            throw new ClientException("Cannot duplicate page since backing hst component configuration object not found",
+                    ClientError.UNKNOWN);
+        }
+        final String targetPageNodeName = finalTarget + "-" + pageToCopy.getName() + postfix;
         Node clonedPage = pagesHelper.create(session.getNodeByIdentifier(pageToCopy.getCanonicalIdentifier()),
-                pageToCopy, newSitemapNode);
+                targetPageNodeName, pageToCopy);
         newSitemapNode.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID,
                 HstNodeTypes.NODENAME_HST_PAGES + "/" + clonedPage.getName());
         return newSitemapNode;
@@ -345,6 +358,19 @@ public class SiteMapHelper extends AbstractHelper {
         xpath.append("]");
 
         return xpath.toString();
+    }
+
+    private String getSiteMapPathPrefixPart(final Node siteMapNode) throws RepositoryException {
+        Node crNode = siteMapNode;
+        StringBuilder siteMapPathPrefixBuilder = new StringBuilder();
+        while (crNode.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMAPITEM)) {
+            if (siteMapPathPrefixBuilder.length() > 0) {
+                siteMapPathPrefixBuilder.insert(0, "-");
+            }
+            siteMapPathPrefixBuilder.insert(0, crNode.getName());
+            crNode = crNode.getParent();
+        }
+        return siteMapPathPrefixBuilder.toString();
     }
 
 }

@@ -48,16 +48,16 @@ public class PagesHelper extends AbstractHelper {
         throw new UnsupportedOperationException("not supported");
     }
 
-    public Node create(final Node prototype, final Node siteMapNode) throws RepositoryException {
-        return create(prototype, null, siteMapNode);
+    public Node create(final Node prototype, final String targetPageNodeName) throws RepositoryException {
+        return create(prototype, targetPageNodeName, null);
     }
 
 
     public Node create(final Node nodePageToCopy,
-                       final HstComponentConfiguration pageConfigToCopy,
-                       final Node siteMapNode) throws RepositoryException {
+                       final String targetPageNodeName,
+                       final HstComponentConfiguration pageConfigToCopy) throws RepositoryException {
         String previewWorkspacePagesPath = getPreviewWorkspacePagesPath();
-        final String targetPageNodeName = getSiteMapPathPrefixPart(siteMapNode) + "-" + nodePageToCopy.getName();
+
         final Session session = pageComposerContextService.getRequestContext().getSession();
         final String validTargetPageNodeName = getValidTargetPageNodeName(previewWorkspacePagesPath, targetPageNodeName, session);
         Node newPage = JcrUtils.copy(session, nodePageToCopy.getPath(), previewWorkspacePagesPath + "/" + validTargetPageNodeName);
@@ -149,19 +149,6 @@ public class PagesHelper extends AbstractHelper {
         Node pageNode = session.getNode(pageNodePath);
         lockHelper.acquireLock(pageNode, 0);
         deleteOrMarkDeletedIfLiveExists(pageNode);
-    }
-
-    private String getSiteMapPathPrefixPart(final Node siteMapNode) throws RepositoryException {
-        Node crNode = siteMapNode;
-        StringBuilder siteMapPathPrefixBuilder = new StringBuilder();
-        while (crNode.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMAPITEM)) {
-            if (siteMapPathPrefixBuilder.length() > 0) {
-                siteMapPathPrefixBuilder.insert(0, "-");
-            }
-            siteMapPathPrefixBuilder.insert(0, crNode.getName());
-            crNode = crNode.getParent();
-        }
-        return siteMapPathPrefixBuilder.toString();
     }
 
     private String getValidTargetPageNodeName(final String previewWorkspacePagesPath, final String targetPageNodeName, final Session session) throws RepositoryException {
