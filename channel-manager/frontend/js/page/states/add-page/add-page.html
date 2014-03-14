@@ -60,7 +60,7 @@
                                placeholder=""
                                data-ng-model="page.url"
                                data-ng-focus="form.url.$setPristine();"
-                               data-ng-required="true">
+                               data-ng-required="true" data-ng-keyup="disableAutomaticUrlUpdate()">
                         <div class="tooltip-container" data-ng-show="form.url.$dirty && form.url.$error.required">
                             <div data-tooltip
                                  data-placement="top"

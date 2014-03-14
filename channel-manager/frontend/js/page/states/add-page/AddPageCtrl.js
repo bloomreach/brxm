@@ -24,7 +24,11 @@
             'hippo.channel.page.PrototypeService',
             'hippo.channel.page.PageService',
             '_hippo.channel.IFrameService',
-            function ($scope, FeedbackService, PrototypeService, PageService, IFrameService) {
+            'lowercaseFilter',
+            'alphanumericFilter',
+            function ($scope, FeedbackService, PrototypeService, PageService, IFrameService, lowercaseFilter, alphanumericFilter) {
+                var updateURLAutomatically = true;
+
                 $scope.page = {
                     title: '',
                     url: '',
@@ -55,6 +59,17 @@
                 }, function (errorResponse) {
                     $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
                 });
+
+                // update url according to page title
+                $scope.$watch('page.title', function (value) {
+                    if (updateURLAutomatically) {
+                        $scope.page.url = alphanumericFilter(lowercaseFilter(value));
+                    }
+                });
+
+                $scope.disableAutomaticUrlUpdate = function () {
+                    updateURLAutomatically = false;
+                };
             }
         ]);
 })();
