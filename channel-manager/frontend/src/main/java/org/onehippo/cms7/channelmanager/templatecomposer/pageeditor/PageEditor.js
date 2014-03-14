@@ -1064,7 +1064,7 @@
                 mountId: this.currentMountId,
                 sitemapId: this.currentSitemapId,
                 userCanEdit: this.pageContainer.canEdit,
-                userIsEditing: !this.pageContainer.previewMode,
+                userIsEditing: !this.pageContainer.previewMode
             });
             pagesWindow.show();
         },
