@@ -75,7 +75,7 @@ public class SiteMapItemRepresentation {
         any = item.isAny();
         containsWildCard = item.containsWildCard();
         containsAny = item.containsAny();
-        isExplicitElement = !(wildCard || any || containsAny || containsAny);
+        isExplicitElement = !(wildCard || any || containsWildCard || containsAny);
         localParameters = item.getLocalParameters();
         roles = item.getRoles();
         for (HstSiteMapItem childItem : item.getChildren()) {
