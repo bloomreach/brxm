@@ -66,9 +66,8 @@
 
 <div class="container">
   <div class="row">
-    <%--<a href="${pageContext.request.contextPath}"><img src="${pageContext.request.contextPath}/images/hippo-logo.png" class="img-responsive pull-left"></a>--%>
     <h1 class="page-header">Hippo CMS <small>Essentials</small></h1>
-  </div>
+    </div>
 
   <div class="row">
     <div class="col-sm-2" style="margin-right: 20px;" ng-controller="mainMenuCtrl">
