@@ -35,6 +35,10 @@
                     prototype: {}
                 };
 
+                $scope.title = {
+                    focus: true
+                };
+
                 $scope.prototypes = [];
 
                 $scope.submit = function () {
@@ -49,6 +53,7 @@
                         iFramePanel.iframeToHost.publish('browseTo', '/' + pageModel.name);
                     }, function (errorResponse) {
                         $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
+                        $scope.title.focus = true;
                     });
                 };
 
