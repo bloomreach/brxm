@@ -227,7 +227,6 @@ module.exports = function (grunt) {
     grunt.registerTask('build', function (target) {
         grunt.task.run([
             'jshint:app',
-            'test:unit',
             'declutter',
             'clean:target',
             'copy:menu',
