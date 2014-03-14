@@ -20,7 +20,7 @@
     // the directive is not namespaced, because the special notation causes an error with the isolated scope definition.
     // Error: [$compile:iscp] Invalid isolate scope definition for directive 'hippo.channel.menu.illegalCharacters'.
 
-    angular.module('hippo.channel.menu')
+    angular.module('hippo.channel')
 
         /**
          * @ngdoc directive

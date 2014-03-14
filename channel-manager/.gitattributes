@@ -8,8 +8,6 @@ frontend/.jshintrc -text
 frontend/bower.json -text
 frontend/declutter.config.json -text
 frontend/js/menu/assets/css/menu.css -text
-frontend/js/menu/directives/illegalCharacter.spec.js -text
-frontend/js/menu/directives/illegalCharacters.js -text
 frontend/js/menu/directives/tooltip.js -text
 frontend/js/menu/i18n/en.json -text
 frontend/js/menu/i18n/nl.json -text
@@ -34,6 +32,8 @@ frontend/js/page/states/NavigationCtrl.js -text
 frontend/js/page/states/add-page/AddPageCtrl.js -text
 frontend/js/page/states/add-page/add-page.html -text
 frontend/js/shared/assets/images/loader.gif -text
+frontend/js/shared/directives/illegalCharacter.spec.js -text
+frontend/js/shared/directives/illegalCharacters.js -text
 frontend/js/shared/filters/alphanumeric.js -text
 frontend/js/shared/filters/placeholder.js -text
 frontend/js/shared/filters/placeholder.spec.js -text
