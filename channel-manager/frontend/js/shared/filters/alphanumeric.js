@@ -18,7 +18,6 @@
 
     angular.module('hippo.channel')
 
-        // TODO: add tests
         /**
          * @ngdoc filter
          * @name hippo.channel.filter:alphanumeric
