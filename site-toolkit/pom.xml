@@ -532,19 +532,6 @@
         </exclusions>
       </dependency>
 
-      <!-- SpringFramework WebFlow SpringFramework JS -->
-      <dependency>
-        <groupId>org.springframework.webflow</groupId>
-        <artifactId>org.springframework.js</artifactId>
-        <version>${spring.js.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-
       <!-- STAX API -->
 
       <dependency>
