@@ -86,12 +86,23 @@
   </div>
 
   <div ng-controller="homeCtrl">
-    <div ui-view="submenu" autoscroll="false"></div>
-    <div ui-view="plugintabs" autoscroll="false"></div>
-    <div ui-view="plugininstance" autoscroll="false"></div>
+
+    <div class="row" ui-view="submenu" autoscroll="false"></div>
+
+    <p>&nbsp;</p>
+
+    <div class="row">
+      <div class="col-md-3" style="padding-left: 0;">
+        <div ui-view="plugintabs" autoscroll="false"></div>
+      </div>
+
+      <div class="col-md-9">
+        <div ui-view="plugininstance" autoscroll="false"></div>
+      </div>
+    </div>
 
     <%--Main view--%>
-    <div ui-view autoscroll="false"></div>
+    <div class="row" ui-view autoscroll="false"></div>
     <%--/ Main view--%>
 
   </div>
