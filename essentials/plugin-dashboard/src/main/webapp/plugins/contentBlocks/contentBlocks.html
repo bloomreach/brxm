@@ -1,8 +1,6 @@
-<div ng-controller="contentBlocksCtrl">
+<div class="panel panel-default" ng-controller="contentBlocksCtrl">
     <div ng-show="pluginInstalled">
-        <div class="col-md-11">
-            <div class="panel">
-                <div class="panel-heading"><h2>Content Blocks</h2></div>
+                <div class="panel-heading">Content Blocks</div>
                 <div class="panel-body">
                     <p>{{introMessage}}</p>
                     <p ng-bind-html="deliberatelyTrustDangerousSnippet()"></p>
@@ -66,16 +64,6 @@
                     </table>
                 </div>
             </div>
-        </div>
-        <p></p>
-        <p></p>
-        <div class="col-md-4">
-
-        </div>
-        <div class="col-md-4">
-
-        </div>
-        <div class="col-md-4"></div>
     </div>
     <div ng-show="!pluginInstalled">
         <button class="btn btn-primary" ng-click="installPlugin()">Install Content blocks plugin</button>
@@ -83,5 +71,4 @@
         <p></p>
         <div class="alert-info">{{installMessage}}</div>
     </div>
-</div>
 

@@ -2005,7 +2005,6 @@ plugin-dashboard/src/main/webapp/css/hippo-essentials.css -text
 plugin-dashboard/src/main/webapp/css/media.css -text
 plugin-dashboard/src/main/webapp/css/normalize.css -text
 plugin-dashboard/src/main/webapp/css/print.css -text
-plugin-dashboard/src/main/webapp/css/spinner.gif -text
 plugin-dashboard/src/main/webapp/css/theme.css -text
 plugin-dashboard/src/main/webapp/docs/rest-api/css/highlight.default.css -text
 plugin-dashboard/src/main/webapp/docs/rest-api/css/screen.css -text

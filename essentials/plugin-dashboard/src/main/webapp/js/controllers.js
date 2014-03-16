@@ -121,7 +121,7 @@
                 $scope.selectedPlugin = null;
                 $scope.tabs = [
                     {name: "Installed Plugins", link: "/plugins"},
-                    {name: "Find additional", link: "/find-plugins"}
+                    {name: "Find", link: "/find-plugins"}
                 ];
                 $scope.isPageSelected = function (path) {
                     return $location.path() == path;
