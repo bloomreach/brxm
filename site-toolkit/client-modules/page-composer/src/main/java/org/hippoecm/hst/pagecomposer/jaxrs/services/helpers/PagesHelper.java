@@ -111,7 +111,6 @@ public class PagesHelper extends AbstractHelper {
                 }
             }
         }
-
     }
 
     private void populateComponentReferenceNodes(final Node node,
