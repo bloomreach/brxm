@@ -2,11 +2,13 @@ package org.onehippo.cms7.essentials.dashboard.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.maven.model.Dependency;
+
 /**
  * @version "$Id: DependencyRestful.java 174870 2013-08-23 13:56:24Z mmilicevic $"
  */
 @XmlRootElement(name = "dependency")
-public class DependencyRestful implements Dependency, Restful {
+public class DependencyRestful implements EssentialsDependency, Restful {
 
     private static final long serialVersionUID = 1L;
     private String groupId;
@@ -86,6 +88,22 @@ public class DependencyRestful implements Dependency, Restful {
     @Override
     public void setScope(final String scope) {
         this.scope = scope;
+    }
+
+    @Override
+    public DependencyType getDependencyType() {
+        return DependencyType.typeForName(type);
+
+    }
+
+    @Override
+    public Dependency createMavenDependency() {
+        final Dependency mavenDependency = new Dependency();
+        mavenDependency.setArtifactId(getArtifactId());
+        mavenDependency.setGroupId(getGroupId());
+        mavenDependency.setVersion(getVersion());
+        mavenDependency.setScope(getScope());
+        return mavenDependency;
     }
 
     @Override

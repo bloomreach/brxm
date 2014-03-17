@@ -16,10 +16,12 @@
 
 package org.onehippo.cms7.essentials.dashboard.model;
 
+import org.apache.maven.model.Dependency;
+
 /**
  * @version "$Id$"
  */
-public interface Dependency {
+public interface EssentialsDependency {
 
     String getGroupId();
 
@@ -48,4 +50,10 @@ public interface Dependency {
     void setType(String type);
 
     void setScope(String scope);
+
+
+    DependencyType getDependencyType();
+
+
+    Dependency createMavenDependency();
 }

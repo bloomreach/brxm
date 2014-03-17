@@ -16,7 +16,6 @@
 
 package org.onehippo.cms7.essentials.rest;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -50,9 +49,8 @@ import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
-import org.onehippo.cms7.essentials.dashboard.installer.InstallState;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.model.EssentialsPlugin;
+import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
 import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
@@ -62,6 +60,7 @@ import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
+import org.onehippo.cms7.essentials.dashboard.utils.DependencyUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.rest.model.ControllerRestful;
 import org.onehippo.cms7.essentials.rest.model.RestList;
@@ -119,21 +118,15 @@ public class PluginResource extends BaseResource {
         final DocumentManager manager = new DefaultDocumentManager(getContext(servletContext));
         for (PluginRestful item : items) {
             plugins.add(item);
-            final String pluginClass = item.getPluginClass();
-            final boolean hasClass = !Strings.isNullOrEmpty(pluginClass);
-            if (!hasClass) {
-                continue;
-            }
+            final String pluginName = item.getName();
             if (item.isNeedsInstallation()) {
                 try {
-                    @SuppressWarnings("unchecked")
-                    final Class<EssentialsPlugin> clazz = (Class<EssentialsPlugin>) Class.forName(pluginClass);
-                    final Constructor<EssentialsPlugin> constructor = clazz.getConstructor(Plugin.class, PluginContext.class);
-                    final Plugin dummy = new PluginRestful();
-                    final EssentialsPlugin instance = constructor.newInstance(dummy, new DefaultPluginContext(dummy));
-                    final InstallState installState = instance.getInstallState();
-                    if (installState == InstallState.INSTALLED_AND_RESTARTED) {
-                        item.setNeedsInstallation(false);
+                    final List<EssentialsDependency> dependencies = item.getDependencies();
+                    for (EssentialsDependency dependency : dependencies) {
+                        if (DependencyUtils.hasDependency(dependency)) {
+                            continue;
+                        }
+                        item.setNeedsInstallation(true);
                     }
                 } catch (Exception e) {
                     log.error("Error checking install state", e);
@@ -153,7 +146,7 @@ public class PluginResource extends BaseResource {
 
             // check if recently installed:
             // TODO: move to client?
-            final InstallerDocument document = manager.fetchDocument(GlobalUtils.getFullConfigPath(pluginClass), InstallerDocument.class);
+            final InstallerDocument document = manager.fetchDocument(GlobalUtils.getFullConfigPath(pluginName), InstallerDocument.class);
             if (document != null && document.getDateInstalled() != null) {
                 final Calendar dateInstalled = document.getDateInstalled();
                 final Calendar lastWeek = Calendar.getInstance();
@@ -198,21 +191,25 @@ public class PluginResource extends BaseResource {
 
     @ApiOperation(
             value = "Installs selected powerpack package",
-            notes = "Use PostPayloadRestful and set powerpackClass property",
+            notes = "Use PostPayloadRestful and set powerpack name property (pluginName)",
             response = RestfulList.class)
     @POST
     @Path("/install/powerpack")
     public RestfulList<MessageRestful> installPowerpack(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
         final RestfulList<MessageRestful> messageRestfulRestfulList = new RestList<>();
         final Map<String, String> values = payloadRestful.getValues();
-        final String pluginClass = String.valueOf(values.get("pluginClass"));
-        if (Strings.isNullOrEmpty(pluginClass)) {
+        final String pluginId = String.valueOf(values.get("pluginId"));
+        Plugin myPlugin = getPluginById(pluginId, servletContext);
+
+        if (Strings.isNullOrEmpty(pluginId) || myPlugin==null) {
             final MessageRestful resource = new MessageRestful("No valid powerpack was selected");
             resource.setSuccessMessage(false);
             messageRestfulRestfulList.add(resource);
             return messageRestfulRestfulList;
         }
-        final PowerpackPackage powerpackPackage = GlobalUtils.newInstance(pluginClass);
+
+
+        final PowerpackPackage powerpackPackage = GlobalUtils.newInstance(myPlugin.getPowerpackClass());
         powerpackPackage.setProperties(new HashMap<String, Object>(values));
         getInjector().autowireBean(powerpackPackage);
         final String className = ProjectSetupPlugin.class.getName();
@@ -322,15 +319,15 @@ public static List<PluginRestful> parseGist() {
             value = "Checks if certain plugin is installed",
             notes = "Sets PluginRestful installed flag to true or false",
             response = PluginRestful.class)
-    @ApiParam(name = "className", value = "Plugin class name", required = true)
+    @ApiParam(name = "pluginName", value = "Plugin name", required = true)
     @GET
-    @Path("/installstate/{className}")
-    public PluginRestful getPluginList(@Context ServletContext servletContext, @PathParam("className") String className) {
+    @Path("/installstate/{pluginName}")
+    public PluginRestful getPluginList(@Context ServletContext servletContext, @PathParam("pluginName") String pluginName) {
 
         final PluginRestful resource = new PluginRestful();
         final List<PluginRestful> pluginList = getPlugins(servletContext);
         for (Plugin plugin : pluginList) {
-            if (plugin.getPluginClass().equals(className)) {
+            if (plugin.getName().equals(pluginName)) {
                 if (Strings.isNullOrEmpty(plugin.getPluginId())) {
                     continue;
                 }
@@ -348,36 +345,36 @@ public static List<PluginRestful> parseGist() {
     @ApiOperation(
             value = "Installs a plugin",
             response = MessageRestful.class)
-    @ApiParam(name = "className", value = "Plugin class name", required = true)
+    @ApiParam(name = "pluginName", value = "Plugin class name", required = true)
     @POST
-    @Path("/install/{className}")
-    public MessageRestful installPlugin(@Context ServletContext servletContext, @PathParam("className") String className) {
+    @Path("/install/{pluginName}")
+    public MessageRestful installPlugin(@Context ServletContext servletContext, @PathParam("pluginName") CharSequence pluginName) {
 
         final MessageRestful message = new MessageRestful();
         final RestfulList<PluginRestful> pluginList = getPluginList(servletContext);
         for (PluginRestful plugin : pluginList.getItems()) {
-            final String pluginClass = plugin.getPluginClass();
-            if (Strings.isNullOrEmpty(pluginClass)) {
+            final String name = plugin.getName();
+            if (Strings.isNullOrEmpty(name)) {
                 continue;
             }
-            if (pluginClass.equals(className)) {
+            if (pluginName.equals(name)) {
                 final Plugin p = new PluginRestful();
                 p.setDescription(plugin.getIntroduction());
-                p.setPluginClass(pluginClass);
                 if (checkInstalled(p)) {
                     message.setValue("Plugin was already installed. Please rebuild and restart your application");
                     return message;
                 }
 
 
-                final boolean installed = installPlugin(p);
+
+                // TODO mm install plugin
+                final boolean installed = false;
                 if (installed) {
                     final DocumentManager manager = new DefaultDocumentManager(getContext(servletContext));
                     final InstallerDocument document = new InstallerDocument();
-                    document.setParentPath(GlobalUtils.getParentConfigPath(pluginClass));
-                    document.setName(GlobalUtils.getClassName(pluginClass));
+                    document.setParentPath(GlobalUtils.getParentConfigPath(pluginName));
                     document.setDateInstalled(Calendar.getInstance());
-                    document.setPluginClass(pluginClass);
+
                     manager.saveDocument(document);
                     message.setValue("Plugin successfully installed. Please rebuild and restart your application");
                     return message;
@@ -441,7 +438,7 @@ public static List<PluginRestful> parseGist() {
     public StatusRestful getMenu(@Context ServletContext servletContext) {
         final StatusRestful status = new StatusRestful();
         try {
-            final Plugin plugin = getPluginByClassName(ProjectSetupPlugin.class.getName(), servletContext);
+            final Plugin plugin = getPluginById(ProjectSetupPlugin.class.getName(), servletContext);
             final PluginContext context = new DefaultPluginContext(plugin);
             final ProjectSettingsBean document = context.getConfigService().read(ProjectSetupPlugin.class.getName(), ProjectSettingsBean.class);
 

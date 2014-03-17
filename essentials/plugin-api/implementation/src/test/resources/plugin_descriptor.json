@@ -6,7 +6,6 @@
         "@type": "plugin",
         "introduction": "Content Blocks plugin provides the content/document editors an ability to add multiple pre-configured compound type blocks to a document. The CMS administrator can configure the available content blocks on per document type basis.",
         "name": "Content Blocks",
-        "pluginClass": "org.onehippo.cms7.essentials.dashboard.contentblocks.ContentBlocksPlugin",
         "pluginId": "contentBlocks",
         "type": "plugins",
         "vendor": {
@@ -31,7 +30,6 @@
         "@type": "plugin",
         "introduction": "Xinha configuration plugin",
         "name": "Xinha configuration",
-        "pluginClass": "org.onehippo.cms7.essentials.xinha.gui.XinhaPlugin",
         "pluginId": "xinhaPlugin",
 
         "type": "plugins",
@@ -47,7 +45,6 @@
         "@type": "plugin",
         "introduction": "Configuration of Hippo image sets",
         "name": "Gallery plugin",
-        "pluginClass": "org.onehippo.cms7.essentials.dashboard.gallery.GalleryPlugin",
         "pluginId": "galleryPlugin",
 
         "type": "plugins",
@@ -63,7 +60,6 @@
         "@type": "plugin",
         "introduction": "Creates (re-generates) HST beans",
         "name": "Beanwriter plugin",
-        "pluginClass": "org.onehippo.cms7.essentials.beanwriter.gui.BeanwriterPlugin",
         "pluginId": "beanwriter",
 
         "restClasses": ["org.onehippo.cms7.essentials.beanwriter.rest.BeanWriterResource"],
@@ -80,7 +76,6 @@
         "@type": "plugin",
         "introduction": "Freemarker synchronizing tool",
         "name": "Freemarker synchronizing",
-        "pluginClass": "org.onehippo.cms7.essentials.tools.gui.FreemarkerSyncPlugin",
         "pluginId": "freemarkersync",
 
         "restClasses": ["org.onehippo.cms7.essentials.tools.rest.FreemarkerSyncResource"],
@@ -98,8 +93,8 @@
         "description": "A basic News and Events site that contains a homepage template, News and Agenda components and detail pages to render both News and Event articles. It comes with a standard navigational menu and URL structure. This is the most basic Power Pack to start with. You can easily extend with more components later on.",
         "introduction": "Basic News and Events site",
         "name": "Basic News and Events site",
-        "pluginClass": "org.onehippo.cms7.essentials.powerpack.BasicPowerpack",
         "pluginId": "newsEventsPowerpack",
+        "powerpackClass": "org.onehippo.cms7.essentials.powerpack.BasicPowerpack",
 
         "restClasses": [],
         "type": "powerpack",
@@ -116,7 +111,6 @@
         "description": "A REST only site that contains only REST services and no pages.",
         "introduction": "Headless REST based content repository",
         "name": "Headless REST based content repository",
-        "pluginClass": "",
         "pluginId": "notImplementedYet",
 
         "restClasses": [],

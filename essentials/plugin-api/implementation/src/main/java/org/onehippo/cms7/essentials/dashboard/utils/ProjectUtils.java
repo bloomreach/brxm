@@ -121,12 +121,60 @@ public final class ProjectUtils {
         }
     }
 
+    public static Model getPomModel(DependencyType type) {
+        final String pomPath = getPomPath(type);
+        if (Strings.isNullOrEmpty(pomPath)) {
+            return null;
+        }
+        return getPomModel(pomPath);
+
+    }
+
+    /**
+     * Return full pom.xml file path for given dependency type
+     *
+     * @param type type of dependency
+     * @return null if type is invalid
+     */
+    public static String getPomPath(DependencyType type) {
+        if (type == null) {
+            return null;
+        }
+        switch (type) {
+
+            case INVALID:
+                return null;
+            case SITE:
+                if (ProjectUtils.getSite() != null) {
+                    return ProjectUtils.getSite().getPath() + File.separatorChar + EssentialConst.POM_XML;
+                }
+                break;
+            case CMS:
+                if (ProjectUtils.getCms() != null) {
+                    return ProjectUtils.getCms().getPath() + File.separatorChar + EssentialConst.POM_XML;
+                }
+                break;
+            case BOOTSTRAP:
+                break;
+            case BOOTSTRAP_CONFIG:
+                break;
+            case BOOTSTRAP_CONTENT:
+                break;
+            case ESSENTIALS:
+                break;
+
+        }
+
+        return null;
+
+    }
+
     private static Model getPomModel(String path) {
         Reader fileReader = null;
         Model model = null;
         try {
             final MavenXpp3Reader reader = new MavenXpp3Reader();
-            fileReader = new FileReader(path + File.separatorChar + EssentialConst.POM_XML);
+            fileReader = new FileReader(path);
             model = reader.read(fileReader);
         } catch (XmlPullParserException | IOException e) {
             log.error("Error parsing pom", e);
@@ -136,24 +184,9 @@ public final class ProjectUtils {
         return model;
     }
 
-    public static Model getSitePomModel() {
-        if (ProjectUtils.getSite() != null) {
-            return getPomModel(ProjectUtils.getSite().getPath());
-        } else {
-            return null;
-        }
-    }
-
-    public static Model getCMSPomModel() {
-        if (ProjectUtils.getCms() != null) {
-            return getPomModel(ProjectUtils.getCms().getPath());
-        } else {
-            return null;
-        }
-    }
 
     public static boolean isInstalled(final DependencyType type, final Dependency dependency) {
-        final Model model = type == DependencyType.SITE ? getSitePomModel() : getCMSPomModel();
+        final Model model = getPomModel(type);
         final List<Dependency> dependencies = model.getDependencies();
         for (Dependency dep : dependencies) {
             if (dep.getArtifactId().equals(dependency.getArtifactId()) && dep.getGroupId().equals(dependency.getGroupId())) {
@@ -174,5 +207,6 @@ public final class ProjectUtils {
                 + "java" + File.separatorChar;
         return new File(javaFolder);
     }
+
 
 }

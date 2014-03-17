@@ -20,13 +20,13 @@ public class PluginRestful implements Plugin, Restful {
 
     private List<String> restClasses;
     private Vendor vendor;
-    private List<Dependency> dependencies;
+    private List<EssentialsDependency> dependencies;
     private String title;
     private String name;
     private String introduction;
     private String description;
     private String pluginLink;
-    private String pluginClass;
+    private String powerpackClass;
     private String type;
     private boolean installed;
     private boolean needsInstallation;
@@ -34,8 +34,9 @@ public class PluginRestful implements Plugin, Restful {
     private Calendar dateInstalled;
     private String documentationLink;
 
-    public PluginRestful(final String pluginClass) {
-        this.pluginClass = pluginClass;
+
+    public PluginRestful(final String name) {
+        this.name = name;
     }
 
     public PluginRestful() {
@@ -97,6 +98,15 @@ public class PluginRestful implements Plugin, Restful {
     public Vendor getVendor() {
         return vendor;
     }
+    @Override
+    public String getPowerpackClass() {
+        return powerpackClass;
+    }
+
+    @Override
+    public void setPowerpackClass(final String powerpackClass) {
+        this.powerpackClass = powerpackClass;
+    }
 
     @Override
     public void setVendor(final Vendor vendor) {
@@ -138,7 +148,7 @@ public class PluginRestful implements Plugin, Restful {
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
     @JsonSubTypes({@JsonSubTypes.Type(value = DependencyRestful.class, name = "dependency")})
     @Override
-    public List<Dependency> getDependencies() {
+    public List<EssentialsDependency> getDependencies() {
         if (dependencies == null) {
             return new ArrayList<>();
         }
@@ -146,11 +156,11 @@ public class PluginRestful implements Plugin, Restful {
     }
 
     @Override
-    public void setDependencies(final List<Dependency> dependencies) {
+    public void setDependencies(final List<EssentialsDependency> dependencies) {
         this.dependencies = dependencies;
     }
 
-    public void addDependency(final Dependency dependency) {
+    public void addDependency(final EssentialsDependency dependency) {
         if (dependencies == null) {
             dependencies = new ArrayList<>();
         }
@@ -178,16 +188,6 @@ public class PluginRestful implements Plugin, Restful {
         this.introduction = introduction;
     }
 
-
-    @Override
-    public String getPluginClass() {
-        return pluginClass;
-    }
-
-    @Override
-    public void setPluginClass(final String pluginClass) {
-        this.pluginClass = pluginClass;
-    }
 
 
     public void addRestCLass(final String restClass) {
@@ -239,7 +239,6 @@ public class PluginRestful implements Plugin, Restful {
         sb.append(", name='").append(name).append('\'');
         sb.append(", introduction='").append(introduction).append('\'');
         sb.append(", pluginId='").append(pluginLink).append('\'');
-        sb.append(", pluginClass='").append(pluginClass).append('\'');
         sb.append(", type='").append(type).append('\'');
         sb.append(", installed=").append(installed);
         sb.append(", needsInstallation=").append(needsInstallation);

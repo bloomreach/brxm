@@ -12,7 +12,7 @@
                     return $sce.trustAsHtml('<a target="_blank" href="http://content-blocks.forge.onehippo.org">Detailed documentation</a>');
                 };
                 $scope.introMessage = "Content Blocks plugin provides the content/document editor an ability to add multiple pre-configured compound type blocks to a document. You can configure the available content blocks on per document type basis.";
-                $scope.pluginClass = "org.onehippo.cms7.essentials.dashboard.contentblocks.ContentBlocksPlugin";
+                $scope.pluginName = "contentBlocksPlugin";
                 $scope.pluginInstalled = true;
                 $scope.payload = {"cbpayload": {"items": {"items": []}}};
                 $scope.selection = [];
@@ -72,7 +72,7 @@
                     $scope.documentTypes[index].providers.items.splice(providerIndex, 1);
                 };
                 $scope.installPlugin = function () {
-                    $http.get($rootScope.REST.pluginInstall + $scope.pluginClass).success(function (data) {
+                    $http.get($rootScope.REST.pluginInstall + $scope.pluginId).success(function (data) {
                         $scope.installMessage = data.value;
                     });
                 };
@@ -143,7 +143,7 @@
                 };
                 $scope.init = function () {
                     // check if plugin is installed
-                    $http.get($rootScope.REST.pluginInstallState + $scope.pluginClass).success(function (data) {
+                    $http.get($rootScope.REST.pluginInstallState + $scope.pluginId).success(function (data) {
                         //{"installed":false,"pluginId":"contentBlocks","title":"Content Blocks Plugin"}
                         // TODO enable check:
                         $scope.pluginInstalled = true;

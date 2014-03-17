@@ -42,10 +42,9 @@ public class PluginRestfulTest {
     @Test
     public void testJaxb() throws Exception {
         final PluginRestful value = new PluginRestful();
-        value.setName("name");
+        value.setName("com.foo.name");
         final Calendar today = Calendar.getInstance();
         value.setDateInstalled(today);
-        value.setPluginClass("com.foo");
         value.addRestCLass("com.foo.Foo");
         value.addRestCLass("com.foo.Bar");
         final VendorRestful vendor = new VendorRestful();

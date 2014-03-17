@@ -52,9 +52,6 @@ public class BaseResourceTest {
         log.error("json {}", json);
 
         plugins = mapper.readValue(json, RestfulList.class);
-
-
-
         final BaseResource resource = new BaseResource();
         final List<PluginRestful> myPlugins = resource.getPlugins(null);
         assertTrue(myPlugins.size() > 0);

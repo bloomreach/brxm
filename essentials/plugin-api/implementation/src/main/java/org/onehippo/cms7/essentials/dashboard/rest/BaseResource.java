@@ -33,8 +33,6 @@ import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
-import org.onehippo.cms7.essentials.dashboard.installer.InstallState;
-import org.onehippo.cms7.essentials.dashboard.model.EssentialsPlugin;
 import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
@@ -62,54 +60,11 @@ public class BaseResource {
     private  ApplicationContext applicationContext;
 
 
-
-
-    @SuppressWarnings("InstanceofInterfaces")
-    protected boolean installPlugin(final Plugin plugin) {
-
-        final String pluginClass = plugin.getPluginClass();
-        final EssentialsPlugin essentialsPlugin = instantiatePlugin(plugin, new DefaultPluginContext(plugin), pluginClass);
-        if (essentialsPlugin != null) {
-            essentialsPlugin.install();
-            return true;
-        }
-        return false;
-    }
-
-
     protected boolean checkInstalled(final Plugin plugin) {
-
-        final String pluginClass = plugin.getPluginClass();
-        final EssentialsPlugin essentialsPlugin = instantiatePlugin(plugin, new DefaultPluginContext(plugin), pluginClass);
-        if (essentialsPlugin != null) {
-
-            final InstallState installState = essentialsPlugin.getInstallState();
-            if (installState == InstallState.INSTALLED_AND_RESTARTED) {
-                return true;
-            }
-        }
-        return false;
+        // TODO implement
+        return true;
     }
 
-    public static EssentialsPlugin instantiatePlugin(final Plugin plugin, final PluginContext context, final String pluginClass) {
-        try {
-            @SuppressWarnings("unchecked")
-            final Class<EssentialsPlugin> clazz = (Class<EssentialsPlugin>) Class.forName(pluginClass);
-            final Constructor<EssentialsPlugin> constructor = clazz.getConstructor(Plugin.class, PluginContext.class);
-            return constructor.newInstance(plugin, context);
-        } catch (ClassNotFoundException e) {
-            log.error("Couldn't find plugin class", e);
-        } catch (InstantiationException e) {
-            log.error("Error instantiating plugin", e);
-        } catch (IllegalAccessException e) {
-            log.error("Error instantiating plugin/access", e);
-        } catch (NoSuchMethodException e) {
-            log.error("Invalid constructor called", e);
-        } catch (InvocationTargetException e) {
-            log.error("Error constructing plugin", e);
-        }
-        return null;
-    }
 
     protected ProjectRestful getProjectRestful() {
         final PluginContext context = new DefaultPluginContext(null);
@@ -185,20 +140,23 @@ public class BaseResource {
         eventBus.post(new DisplayEvent("The installation of the Power Pack was successfully completed. To view the changes reflected in the CMS and site, first stop Tomcat and then rebuild and restart your project using following command:", DisplayEvent.DisplayType.P, true));
     }
 
-    protected Plugin getPluginByClassName(final String name, final ServletContext context) {
+
+    protected Plugin getPluginById(final String id, final ServletContext context) {
+        if(Strings.isNullOrEmpty(id)){
+            return null;
+        }
         final List<PluginRestful> plugins = getPlugins(context);
         for (final Plugin next : plugins) {
-            final String pluginClass = next.getPluginClass();
-            if (Strings.isNullOrEmpty(pluginClass)) {
+            final String pluginId = next.getPluginId();
+            if (Strings.isNullOrEmpty(pluginId)) {
                 continue;
             }
-            if (pluginClass.equals(name)) {
+            if (pluginId.equals(id)) {
                 return next;
             }
         }
         return null;
     }
-
 
     public AutowireCapableBeanFactory getInjector() {
         if (injector == null) {
