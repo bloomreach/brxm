@@ -49,7 +49,6 @@
     <module>dashboard-relateddocs-plugin</module>
     <module>dashboard-restservices-plugin</module>
     <module>dashboard-contentblocks-plugin</module>
-    <module>dashboard-easyforms-plugin</module>
     <module>components-plugin</module>
     <module>beanwriter-plugin</module>
     <module>freemarker-synchronizer</module>
