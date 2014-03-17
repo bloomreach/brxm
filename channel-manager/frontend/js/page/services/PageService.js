@@ -51,8 +51,6 @@
                 pageService.savePage = function (page) {
                     var deferred = $q.defer();
 
-                    console.log(page);
-
                     $http.post(pageServiceUrl('/' + ConfigService.sitemapId + './create'), page)
                         .success(function (response) {
                             deferred.resolve(response);
