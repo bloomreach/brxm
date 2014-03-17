@@ -1,7 +1,7 @@
 package org.onehippo.cms7.essentials.dashboard.config;
 
 /**
- * @version "$Id: PluginConfigService.java 171587 2013-07-24 17:22:33Z mmilicevic $"
+ * @version "$Id$"
  */
 public interface PluginConfigService {
 
@@ -12,7 +12,7 @@ public interface PluginConfigService {
      */
     boolean write(Document document);
 
-    boolean write(Document document, String pluginClass);
+    boolean write(Document document, String pluginId);
 
     <T extends Document> T read(String pluginClass, Class<T> clazz);
 

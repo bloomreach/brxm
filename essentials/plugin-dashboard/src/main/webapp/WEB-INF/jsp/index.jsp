@@ -69,11 +69,10 @@
 <div class="container">
   <div class="row">
     <h1 class="page-header">
-      <div class="pull-left">
+      <div class="pull-left hippo-header-logo">
         <a href="${pageContext.request.contextPath}"><img src="${pageContext.request.contextPath}/images/hippo-logo.png"></a>
       </div>
-      <div class="text-center">Hippo CMS
-      <small>Essentials</small></div>
+      <div class="text-center">Hippo CMS<small>Essentials</small></div>
     </h1>
   </div>
 

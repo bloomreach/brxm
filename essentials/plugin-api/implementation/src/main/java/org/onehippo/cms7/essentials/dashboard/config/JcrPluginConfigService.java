@@ -50,14 +50,14 @@ public class JcrPluginConfigService implements PluginConfigService {
     }
 
     @Override
-    public boolean write(final Document document, final String pluginName) {
+    public boolean write(final Document document, final String pluginId) {
         return manager.saveDocument(document);
     }
 
 
     @Override
-    public <T extends Document> T read(final String pluginName, final Class<T> clazz) {
-        final String path = GlobalUtils.getFullConfigPath(pluginName);
+    public <T extends Document> T read(final String pluginId, final Class<T> clazz) {
+        final String path = GlobalUtils.getFullConfigPath(pluginId);
         return getConfigDocument(path, clazz);
 
     }

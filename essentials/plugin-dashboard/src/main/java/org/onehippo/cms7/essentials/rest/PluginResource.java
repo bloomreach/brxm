@@ -118,7 +118,7 @@ public class PluginResource extends BaseResource {
         final DocumentManager manager = new DefaultDocumentManager(getContext(servletContext));
         for (PluginRestful item : items) {
             plugins.add(item);
-            final String pluginName = item.getName();
+            final String pluginId = item.getPluginId();
             if (item.isNeedsInstallation()) {
                 try {
                     final List<EssentialsDependency> dependencies = item.getDependencies();
@@ -146,7 +146,7 @@ public class PluginResource extends BaseResource {
 
             // check if recently installed:
             // TODO: move to client?
-            final InstallerDocument document = manager.fetchDocument(GlobalUtils.getFullConfigPath(pluginName), InstallerDocument.class);
+            final InstallerDocument document = manager.fetchDocument(GlobalUtils.getFullConfigPath(pluginId), InstallerDocument.class);
             if (document != null && document.getDateInstalled() != null) {
                 final Calendar dateInstalled = document.getDateInstalled();
                 final Calendar lastWeek = Calendar.getInstance();
@@ -191,7 +191,7 @@ public class PluginResource extends BaseResource {
 
     @ApiOperation(
             value = "Installs selected powerpack package",
-            notes = "Use PostPayloadRestful and set powerpack name property (pluginName)",
+            notes = "Use PostPayloadRestful and set powerpack id property (pluginId)",
             response = RestfulList.class)
     @POST
     @Path("/install/powerpack")
@@ -232,7 +232,7 @@ public class PluginResource extends BaseResource {
         // save status:
         if (document != null) {
             document.setSetupDone(true);
-            final boolean written = service.write(document, className);
+            final boolean written = service.write(document);
             log.info("Config saved: {}", written);
         }
         addRestartInformation(eventBus);
@@ -319,15 +319,15 @@ public static List<PluginRestful> parseGist() {
             value = "Checks if certain plugin is installed",
             notes = "Sets PluginRestful installed flag to true or false",
             response = PluginRestful.class)
-    @ApiParam(name = "pluginName", value = "Plugin name", required = true)
+    @ApiParam(name = "pluginId", value = "Plugin id", required = true)
     @GET
-    @Path("/installstate/{pluginName}")
-    public PluginRestful getPluginList(@Context ServletContext servletContext, @PathParam("pluginName") String pluginName) {
+    @Path("/installstate/{pluginId}")
+    public PluginRestful getPluginList(@Context ServletContext servletContext, @PathParam("pluginId") String pluginId) {
 
         final PluginRestful resource = new PluginRestful();
         final List<PluginRestful> pluginList = getPlugins(servletContext);
         for (Plugin plugin : pluginList) {
-            if (plugin.getName().equals(pluginName)) {
+            if (plugin.getPluginId().equals(pluginId)) {
                 if (Strings.isNullOrEmpty(plugin.getPluginId())) {
                     continue;
                 }
