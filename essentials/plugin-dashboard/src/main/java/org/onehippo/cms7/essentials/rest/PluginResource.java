@@ -348,7 +348,7 @@ public static List<PluginRestful> parseGist() {
     @ApiParam(name = "pluginId", value = "Plugin  id", required = true)
     @POST
     @Path("/install/{pluginId}")
-    public MessageRestful installPlugin(@Context ServletContext servletContext, @PathParam("pluginName") String pluginId) {
+    public MessageRestful installPlugin(@Context ServletContext servletContext, @PathParam("pluginId") String pluginId) {
 
         final MessageRestful message = new MessageRestful();
         final RestfulList<PluginRestful> pluginList = getPluginList(servletContext);
