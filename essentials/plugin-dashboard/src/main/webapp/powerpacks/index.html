@@ -23,10 +23,10 @@
     <form name="selectionForm">
         <div class="row" ng-show="stepVisible[0]">
             <div class="alert alert-success">Congratulations - you've successfully created
-                <strong>{{projectSettings.namespace}}</strong> and are almost ready to get coding!
+                <strong>{{packs.project.namespace}}</strong> and are almost ready to get coding!
                 We just need some more information to finalize the setup. Please select from the following list of Power packs what kind of
                 project
-                <strong>{{projectSettings.namespace}}</strong> will be. We'll then add the relevant components and configuration to get you started.
+                <strong>{{packs.project.namespace}}</strong> will be. We'll then add the relevant components and configuration to get you started.
             </div>
 
             <powerpacks on-select="onPowerpackSelect()" selected-description="selectedDescription" options="packs" ng-model="selectedValue">
