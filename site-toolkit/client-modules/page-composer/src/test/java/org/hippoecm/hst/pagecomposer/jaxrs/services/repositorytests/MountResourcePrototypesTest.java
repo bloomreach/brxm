@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests;
 
+import javax.jcr.Node;
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentRepresentation;
@@ -24,6 +25,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class MountResourcePrototypesTest extends AbstractMountResourceTest {
@@ -44,13 +46,25 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
 
     @Test
     public void test_prototype_pages() throws Exception {
-        // "/hst:hst/hst:configurations/unittestproject/hst:prototypepages" contains 1 prototype 'prototype-page'
-
         mockNewRequest(session, "localhost", "/home");
         PrototypePagesRepresentation representation = (PrototypePagesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
         assertEquals(1, representation.getPages().size());
         assertEquals("prototype-page", representation.getPages().get(0).getName());
+        assertTrue(representation.getPages().get(0).hasContainerInPageDefinition());
     }
+
+
+    @Test
+    public void test_prototype_no_containers() throws Exception {
+        final Node prototypeNode = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:prototypepages/prototype-page");
+        prototypeNode.getNode("main/container1").remove();
+        prototypeNode.getNode("main/container2").remove();
+        session.save();
+        mockNewRequest(session, "localhost", "/home");
+        PrototypePagesRepresentation representation = (PrototypePagesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
+        assertFalse(representation.getPages().get(0).hasContainerInPageDefinition());
+    }
+
 
     @Test
     public void test_prototype_pages_included_from_inherited_config() throws Exception {
