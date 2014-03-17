@@ -26,7 +26,7 @@ public class PluginRestful implements Plugin, Restful {
     private String introduction;
     private String description;
     private String pluginLink;
-    private String pluginClass;
+    private String powerpackClass;
     private String type;
     private boolean installed;
     private boolean needsInstallation;
@@ -34,8 +34,9 @@ public class PluginRestful implements Plugin, Restful {
     private Calendar dateInstalled;
     private String documentationLink;
 
-    public PluginRestful(final String pluginClass) {
-        this.pluginClass = pluginClass;
+
+    public PluginRestful(final String name) {
+        this.name = name;
     }
 
     public PluginRestful() {
@@ -96,6 +97,15 @@ public class PluginRestful implements Plugin, Restful {
     @JsonSubTypes({@JsonSubTypes.Type(value = VendorRestful.class, name = "vendor")})
     public Vendor getVendor() {
         return vendor;
+    }
+    @Override
+    public String getPowerpackClass() {
+        return powerpackClass;
+    }
+
+    @Override
+    public void setPowerpackClass(final String powerpackClass) {
+        this.powerpackClass = powerpackClass;
     }
 
     @Override
@@ -179,16 +189,6 @@ public class PluginRestful implements Plugin, Restful {
     }
 
 
-    @Override
-    public String getPluginClass() {
-        return pluginClass;
-    }
-
-    @Override
-    public void setPluginClass(final String pluginClass) {
-        this.pluginClass = pluginClass;
-    }
-
 
     public void addRestCLass(final String restClass) {
 
@@ -239,7 +239,6 @@ public class PluginRestful implements Plugin, Restful {
         sb.append(", name='").append(name).append('\'');
         sb.append(", introduction='").append(introduction).append('\'');
         sb.append(", pluginId='").append(pluginLink).append('\'');
-        sb.append(", pluginClass='").append(pluginClass).append('\'');
         sb.append(", type='").append(type).append('\'');
         sb.append(", installed=").append(installed);
         sb.append(", needsInstallation=").append(needsInstallation);

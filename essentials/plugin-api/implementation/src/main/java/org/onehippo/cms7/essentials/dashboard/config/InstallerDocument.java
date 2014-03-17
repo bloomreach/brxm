@@ -30,19 +30,19 @@ import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentProper
 public class InstallerDocument extends BaseDocument {
 
 
-    @PersistentProperty(name = "pluginClass")
-    private String pluginClass;
+    @PersistentProperty(name = "pluginId")
+    private String pluginId;
 
     @PersistentProperty(name = "dateInstalled")
     private Calendar dateInstalled;
 
 
-    public String getPluginClass() {
-        return pluginClass;
+    public String getPluginId() {
+        return pluginId;
     }
 
-    public void setPluginClass(final String pluginClass) {
-        this.pluginClass = pluginClass;
+    public void setPluginId(final String pluginId) {
+        this.pluginId = pluginId;
     }
 
     public Calendar getDateInstalled() {
@@ -56,7 +56,7 @@ public class InstallerDocument extends BaseDocument {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("InstallerDocument{");
-        sb.append("pluginClass='").append(pluginClass).append('\'');
+        sb.append("pluginId='").append(pluginId).append('\'');
         sb.append(", dateInstalled=").append(dateInstalled);
         sb.append('}');
         return sb.toString();

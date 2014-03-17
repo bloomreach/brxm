@@ -22,52 +22,113 @@
   <!-- ====================================================================== -->
   <!-- L O G G E R S                                                          -->
   <!-- ====================================================================== -->
-  <category name="DataNucleus">
+
+  <!-- CMS logging -->
+  <logger name="org.apache.jackrabbit.core">
+    <level value="warn"/>
+  </logger>
+  <logger name="org.apache.jackrabbit.extractor">
+    <level value="warn"/>
+  </logger>
+  <logger name="org.apache.jackrabbit">
+    <level value="warn"/>
+  </logger>
+  <logger name="org.hippoecm.repository">
+    <level value="warn"/>
+  </logger>
+  <logger name="org.hippoecm.frontend">
+    <level value="warn"/>
+  </logger>
+  <logger name="org.apache.wicket">
+    <level value="warn"/>
+  </logger>
+
+  <!-- audit logging -->
+  <logger additivity="false" name="org.hippoecm.repository.api.Workflow">
+    <level value="info"/>
+  </logger>
+  <logger additivity="false" name="org.onehippo.audit">
+    <level value="info"/>
+  </logger>
+
+  <!-- Site logging -->
+  <logger name="org.hippoecm.hst">
+    <level value="warn"/>
+  </logger>
+
+  <!-- DiagnosticReportingValve only logs when diagnostics enabled in hst:hosts config in repo hence
+       can be here on level 'info' -->
+  <logger name="org.hippoecm.hst.core.container.DiagnosticReportingValve">
+    <level value="info"/>
+  </logger>
+
+  <logger name="freemarker">
+    <level value="warn"/>
+  </logger>
+
+  <logger name="org.apache.cxf">
+    <level value="warn"/>
+  </logger>
+
+  <logger name="javax.ws.rs.core">
+    <level value="warn"/>
+  </logger>
+
+  <logger name="org.apache.commons.pool">
+    <level value="warn"/>
+  </logger>
+
+  <logger name="org.apache.commons.beanutils">
+    <level value="warn"/>
+  </logger>
+
+  <!-- too many caching warnings -->
+  <logger name="org.apache.jackrabbit.core.state">
+    <level value="error"/>
+  </logger>
+  <logger name="org.apache.jackrabbit.core.ItemManager">
+    <level value="error"/>
+  </logger>
+  <logger name="org.apache.jackrabbit.core.persistence.bundle.util.LRUNodeIdCache">
+    <level value="error"/>
+  </logger>
+
+  <!-- ignore wicket localizer warnings -->
+  <logger name="org.apache.wicket.Localizer">
+    <level value="error"/>
+  </logger>
+
+  <!-- ignore DataNucleus errors -->
+  <logger name="DataNucleus.Plugin">
     <level value="fatal"/>
-  </category>
-  <category name="org.quartz">
-    <level value="warn"/>
-  </category>
+  </logger>
+  <logger name="DataNucleus.ClassLoading">
+    <level value="fatal"/>
+  </logger>
+  <logger name="DataNucleus.Enhancer">
+    <level value="fatal"/>
+  </logger>
 
-  <category additivity="false" name="net.sf">
+  <!-- more info wanted -->
+  <logger name="org.apache.jackrabbit.core.persistence.bundle">
     <level value="warn"/>
-    <appender-ref ref="console"/>
-  </category>
-  <category additivity="false" name="org.hippoecm">
+  </logger>
+  <logger name="org.hippoecm.repository.jackrabbit.persistence">
+    <level value="info"/>
+  </logger>
+  <logger name="org.hippoecm.repository.updater">
+    <level value="info"/>
+  </logger>
+  <logger name="org.onehippo.cms7.autoexport">
+    <level value="info"/>
+  </logger>
+  <logger name="org.springframework">
     <level value="warn"/>
-    <appender-ref ref="console"/>
-  </category>
+  </logger>
+  <logger name="org.onehippo.cms7.essentials">
+    <level value="debug"/>
+  </logger>
 
-  <category name="org.springframework">
-    <level value="warn"/>
-  </category>
-  <category name="org.datanucleus">
-    <level value="error"/>
-  </category>
-  <category name="org.onehippo">
-    <level value="error"/>
-  </category>
-  <category name="freemarker">
-    <level value="warn"/>
-  </category>
-
-  <category name="org.apache">
-    <level value="warn"/>
-  </category>
-  <category name="httpclient.wire">
-    <level value="warn"/>
-  </category>
-  <category name="org.onehippo.cms7">
-    <level value="warn"/>
-  </category>
-
-  <category name="org.apache.wicket">
-    <level value="error"/>
-  </category>
-
-  <category name="org.onehippo.cms7.essentials">
-    <level value="warn"/>
-  </category>
 
   <root>
     <level value="info"/>

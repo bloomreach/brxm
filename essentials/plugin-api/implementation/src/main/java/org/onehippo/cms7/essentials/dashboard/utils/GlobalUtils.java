@@ -239,9 +239,7 @@ public final class GlobalUtils {
         return '/' + Joiner.on('/').join(configList);
     }
 
-    public static String getClassName(final String fullPluginClassName) {
-        return fullPluginClassName.substring(fullPluginClassName.lastIndexOf('.') + 1, fullPluginClassName.length());
-    }
+
 
 
 }

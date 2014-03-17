@@ -81,11 +81,11 @@
                     if (idx == 2) {
 
                         // execute installation:
-                        var payload = Essentials.addPayloadData("pluginClass", $scope.selectedPlugin.pluginClass, null);
+                        var payload = Essentials.addPayloadData("pluginId", $scope.selectedPlugin.pluginId, null);
                         angular.forEach($scope.powerpackProperties, function (value) {
                             Essentials.addPayloadData(value.key, value.value, payload);
                         });
-                        Essentials.addPayloadData("powerpackClass", $scope.selectedPlugin.pluginClass, null);
+                        Essentials.addPayloadData("pluginId", $scope.selectedPlugin.pluginId, null);
                         $http.post($rootScope.REST.powerpacks_install, payload)
                                 .success(function (data) {
                                     $scope.resultMessages = data;
@@ -136,14 +136,14 @@
                 };
 
 
-                $scope.showPluginDetail = function (pluginClass) {
-                    $scope.selectedPlugin = extracted(pluginClass);
+                $scope.showPluginDetail = function (pluginId) {
+                    $scope.selectedPlugin = extracted(pluginId);
                 };
-                $scope.installPlugin = function (pluginClass) {
+                $scope.installPlugin = function (pluginId) {
                     $rootScope.pluginsCache = null;
-                    $scope.selectedPlugin = extracted(pluginClass);
+                    $scope.selectedPlugin = extracted(pluginId);
                     if ($scope.selectedPlugin) {
-                        $http.post($rootScope.REST.pluginInstall + pluginClass).success(function (data) {
+                        $http.post($rootScope.REST.pluginInstall + pluginId).success(function (data) {
                             // we'll get error message or
                             $scope.init();
                         });
@@ -174,10 +174,10 @@
                     }
                 };
                 $scope.init();
-                function extracted(pluginClass) {
+                function extracted(pluginId) {
                     var sel = null;
                     angular.forEach($scope.plugins, function (selected) {
-                        if (selected.pluginClass == pluginClass) {
+                        if (selected.pluginId == pluginId) {
                             sel =  selected;
                         }
                     });

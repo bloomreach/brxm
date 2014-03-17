@@ -19,23 +19,52 @@ package org.onehippo.cms7.essentials.dashboard.utils;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseResourceTest;
 import org.onehippo.cms7.essentials.dashboard.model.DependencyRestful;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.onehippo.cms7.essentials.dashboard.model.DependencyType;
+import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @version "$Id$"
  */
-public class DependencyUtilsTest extends BaseResourceTest{
+public class DependencyUtilsTest extends BaseResourceTest {
 
-    private static Logger log = LoggerFactory.getLogger(DependencyUtilsTest.class);
 
     @Test
     public void testHasDependency() throws Exception {
 
-        final boolean hasDep = DependencyUtils.hasDependency(getContext(), new DependencyRestful());
-        assertFalse(hasDep);
+        final EssentialsDependency dependency = new DependencyRestful();
+        dependency.setType("cms");
+        dependency.setArtifactId("hippo-plugins-shared");
+        dependency.setVersion("1.01.00-SNAPSHOT");
+        dependency.setGroupId("org.onehippo.cms7.essentials");
+        assertEquals(DependencyType.CMS, dependency.getDependencyType());
+        final boolean hasDep = DependencyUtils.hasDependency(dependency);
+        assertTrue("Expected hippo-plugins-shared version", hasDep);
+
+    }
+
+    @Test
+    public void testAddRemoveDependency() throws Exception {
+        final EssentialsDependency dependency = new DependencyRestful();
+        dependency.setType("cms");
+        dependency.setArtifactId("hippo-plugins-non-existing");
+        dependency.setVersion("1.01.00-SNAPSHOT");
+        dependency.setGroupId("org.onehippo.cms7.essentials");
+        assertEquals(DependencyType.CMS, dependency.getDependencyType());
+        boolean hasDep = DependencyUtils.hasDependency(dependency);
+        assertFalse("Expected no dependency", hasDep);
+        // add
+        DependencyUtils.addDependency(dependency);
+        hasDep = DependencyUtils.hasDependency(dependency);
+        assertTrue("Expected hippo-plugins-non-existing", hasDep);
+        // remove
+        DependencyUtils.removeDependency(dependency);
+        hasDep = DependencyUtils.hasDependency(dependency);
+        assertFalse("Expected hippo-plugins-non-existing to be removed", hasDep);
+
 
     }
 }

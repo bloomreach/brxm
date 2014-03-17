@@ -85,6 +85,16 @@ public class DummyTestPlugin implements Plugin {
     }
 
     @Override
+    public String getPowerpackClass() {
+        return null;
+    }
+
+    @Override
+    public void setPowerpackClass(final String powerpackClass) {
+
+    }
+
+    @Override
     public void setVendor(final Vendor vendor) {
 
     }
@@ -162,13 +172,5 @@ public class DummyTestPlugin implements Plugin {
 
     }
 
-    @Override
-    public String getPluginClass() {
-        return getClass().getName();
-    }
 
-    @Override
-    public void setPluginClass(final String pluginClass) {
-
-    }
 }

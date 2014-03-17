@@ -16,6 +16,8 @@
 
 package org.onehippo.cms7.essentials.dashboard.model;
 
+import org.apache.maven.model.Dependency;
+
 /**
  * @version "$Id$"
  */
@@ -53,4 +55,5 @@ public interface EssentialsDependency {
     DependencyType getDependencyType();
 
 
+    Dependency createMavenDependency();
 }

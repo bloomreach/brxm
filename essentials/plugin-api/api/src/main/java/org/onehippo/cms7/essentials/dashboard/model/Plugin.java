@@ -45,6 +45,10 @@ public interface Plugin extends Serializable {
 
     Vendor getVendor();
 
+    String getPowerpackClass();
+
+    void setPowerpackClass(String powerpackClass);
+
     void setVendor(Vendor vendor);
 
     String getName();
@@ -76,7 +80,4 @@ public interface Plugin extends Serializable {
 
     void setIntroduction(String introduction);
 
-    String getPluginClass();
-
-    void setPluginClass(String pluginClass);
 }

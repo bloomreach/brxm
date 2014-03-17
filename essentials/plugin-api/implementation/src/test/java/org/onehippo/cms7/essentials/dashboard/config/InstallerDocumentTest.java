@@ -35,14 +35,14 @@ public class InstallerDocumentTest extends BaseRepositoryTest {
     private static Logger log = LoggerFactory.getLogger(InstallerDocumentTest.class);
 
     @Test
-    public void testGetPluginClass() throws Exception {
+    public void testGetPluginId() throws Exception {
 
         final InstallerDocument document = new InstallerDocument();
-        final String pluginClass = "foo.bar.zar.MyBean";
-        document.setParentPath(GlobalUtils.getParentConfigPath(pluginClass));
-        document.setName(GlobalUtils.getClassName(pluginClass));
+        final String pluginId = "foo.bar.zar.MyBean";
+        document.setParentPath(GlobalUtils.getParentConfigPath(pluginId));
+        document.setName(pluginId);
         log.info("document {}", document);
-        document.setPluginClass("test.foo");
+        document.setPluginId("test.foo");
         final Calendar today = Calendar.getInstance();
         document.setDateInstalled(today);
         final DocumentManager manager = new DefaultDocumentManager(getContext());
@@ -50,6 +50,6 @@ public class InstallerDocumentTest extends BaseRepositoryTest {
         final InstallerDocument fetched = manager.fetchDocument(document.getPath(), InstallerDocument.class);
         assertNotNull(fetched.getDateInstalled());
         assertEquals(fetched.getDateInstalled().getTime(), today.getTime());
-        assertNotNull(fetched.getPluginClass());
+        assertNotNull(fetched.getPluginId());
     }
 }
