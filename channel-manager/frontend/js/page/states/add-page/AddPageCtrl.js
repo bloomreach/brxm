@@ -43,6 +43,7 @@
                     illegalCharacters: '/'
                 };
 
+                $scope.host = '';
                 $scope.prototypes = [];
 
                 $scope.submit = function () {
@@ -64,6 +65,13 @@
                 PrototypeService.getPrototypes().then(function (response) {
                     $scope.prototypes = response;
                     $scope.page.prototype = response[0];
+                }, function (errorResponse) {
+                    $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
+                });
+
+                // fetch host
+                PageService.getHost().then(function (response) {
+                    $scope.host = response;
                 }, function (errorResponse) {
                     $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
                 });

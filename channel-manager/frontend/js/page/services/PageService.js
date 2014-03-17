@@ -48,6 +48,20 @@
                     return deferred.promise;
                 };
 
+                pageService.getHost = function () {
+                    var deferred = $q.defer();
+
+                    $http.get(pageServiceUrl('/' + ConfigService.sitemapId + './pages'))
+                        .success(function (response) {
+                            deferred.resolve(response.data.host);
+                        })
+                        .error(function (error) {
+                            deferred.reject(error);
+                        });
+
+                    return deferred.promise;
+                };
+
                 pageService.savePage = function (page) {
                     var deferred = $q.defer();
 
