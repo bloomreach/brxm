@@ -34,7 +34,20 @@
     
   </bean>
   
-  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <!--
+    HST JAAS Configuration System Property (java.security.auth.login.config) Setting Bean.
+    If it fails to load the configuration from the (system) property, then
+    it fallbacks to classpath:/org/hippoecm/hst/security/impl/login.conf by default.
+    You can customize this behavior by overriding the following beans in your hst-assembly XML.
+  -->
+
+  <bean id="defaultHstJaasLoginModuleConfigUrlString" class="org.hippoecm.hst.site.container.ResourceFactoryBean">
+    <constructor-arg value="classpath:/org/hippoecm/hst/security/impl/login.conf" />
+    <constructor-arg value="java.lang.String" />
+  </bean>
+
+  <bean id="hstJaasLoginModuleConfigPropertySetter"
+        class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
     <meta key="org.hippoecm.hst.site.container.SpringComponentManager.registerCondition"
           value="config.containsKey('java.security.auth.login.config')" /> 
     <property name="targetClass"><value>java.lang.System</value></property>
@@ -43,11 +56,23 @@
       <list>
         <value>java.security.auth.login.config</value>
         <bean class="org.hippoecm.hst.site.container.ResourceFactoryBean">
-          <constructor-arg value="${java.security.auth.login.config}" />
+          <constructor-arg>
+            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+              <property name="targetObject" ref="containerConfiguration" />
+              <property name="targetMethod" value="getString" />
+              <property name="arguments">
+                <list>
+                  <value>java.security.auth.login.config</value>
+                </list>
+              </property>
+            </bean>
+          </constructor-arg>
           <constructor-arg value="java.lang.String" />
+          <constructor-arg ref="defaultHstJaasLoginModuleConfigUrlString" />
+          <property name="ignoreCreationError" value="true" />
         </bean>
       </list>
     </property>
   </bean>
-  
+
 </beans>
