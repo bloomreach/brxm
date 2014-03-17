@@ -1,0 +1,72 @@
+The channel manager allows a webmaster to manage multiple channels inside the CMS
+
+-------------
+Prerequisites
+-------------
+
+ - Java 7
+ - Maven 3.x
+ - Node Package Manager (http://npmjs.org)
+ - Grunt (http://gruntjs.org)
+ - Bower (http://bower.io)
+
+Grunt and Bower can be installed with Node Package Manager:
+
+ $ sudo npm install -g grunt-cli bower
+
+If Bower fails to download zipped dependencies, make sure it uses decompress-zip >= 0.0.4.
+(e.g. check the file /usr/lib/node_modules/bower/node_modules/decompress-zip/package.json,
+and reinstall Bower if decompress-zip is too old).
+
+-----
+Build
+-----
+
+Build with testing:
+
+ $ mvn clean install
+
+Build without testing:
+
+ $ mvn clean install -DskipTests
+
+Build with snapshot dependencies:
+
+ $ mvn clean install -Dhippo.snapshots
+
+ Note: only needed when the project refers to SNAPSHOT dependencies!
+
+ Note: only effective when your Maven settings.xml file contains a profile
+       with this property for the Hippo snapshot repository. For details, see
+       http://www.onehippo.org/7_8/library/development/build-hippo-cms-from-scratch.html
+
+-------------------------------------
+Develop AngularJS UI with live reload
+-------------------------------------
+
+Some UI parts in the 'frontend' module are build with AngularJS. The client-side
+dependencies are fetched with Bower. Grunt takes care of building the AnguluarJS
+sources, and copies files from frontend/js into the Maven target folder.
+
+Grunt can also watch the AngularJS sources for changes, and reload the AngularJS
+application automatically while the CMS is running. To make this happen:
+
+ 1. Build the channel manager with JRebel:
+
+    $ mvn clean install -Djrebel
+
+ 2. Let Grunt watch the sources
+
+    $ cd frontend
+    $ grunt watch
+
+ 3. In a second shell, start the CMS in Wicket development mode with JRebel enabled:
+
+    $ cd <your project>
+    $ mvn -Pcargo.run -Dcargo.jvm.args='-Dwicket.configuration=development' -Djrebel
+
+Changes to AngularJS sources are then automatically picked up by Grunt, which rebuilds
+the sources and copies them to the Maven target folder. Grunt will then signal the
+livereload task in your browser to reload the AngularJS-based UI. Since your project
+runs with JRebel, Tomcat will load the new sources in the target folder and changes
+are visible directly.

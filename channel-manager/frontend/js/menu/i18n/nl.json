@@ -1,0 +1,41 @@
+{
+    "ADD_MENU_ITEM": "Voeg menu-item toe",
+    "CANCEL": "Annuleer",
+    "CREATE_MENU_ITEM": "Maak menu-item",
+    "CREATE_PAGE": "Maak pagina",
+    "DELETE_MENU_ITEM": "Verwijder menu-item",
+    "DESTINATION": "Doel",
+    "EXAMPLE_DOMAIN": "http://www.voorbeeld.nl",
+    "EXTERNAL_LINK": "Externe link",
+    "EXTERNAL_LINK_REQUIRED": "Externe link is verplicht",
+    "EXTERNAL_LINK_INVALID": "Externe link is niet geldig",
+    "INTERNAL_LINK": "Interne link",
+    "LABEL": "Label",
+    "LABEL_REQUIRED": "Label is verplicht",
+    "NONE": "Geen",
+    "PAGE_TITLE": "Pagina titel",
+    "PAGE_URL": "Pagina URL",
+    "SITEMAP_ITEM": "Sitemap onderdeel",
+    "SEARCH_FOR_TEMPLATE": "Zoek naar template",
+    "REMOVE_CONFIRMATION_TITLE": "Verwijder menu item",
+    "REMOVE_CONFIRMATION": "Weet je zeker dat je het menu item '{{ title }}' wilt verwijderen?",
+
+    "OPEN_CONFIRMATION_TITLE": "Open externe link",
+    "OPEN_CONFIRMATION": "Weet u zeker dat u '{{ title }}' wilt openen in een nieuwe tab?",
+    "OPEN_LINK": "Open externe link",
+
+    "ITEM_ALREADY_LOCKED": "U kunt dit menu niet bewerken omdat '{{ lockedBy }}' het menu al bewerkt",
+    "ITEM_NAME_NOT_UNIQUE": "Het menu item '{{item}}' bestaat al in het sub menu '{{parentPath}}'",
+    "ITEM_NAME_NOT_UNIQUE_IN_ROOT": "Het item '{{item}}' bestaat al als hoofd menu item",
+    "TECHNICAL_ERROR": "Er is een technische fout opgetreden",
+
+    "INVALID_CHARACTERS": "De volgende karakters zijn niet toegestaan in het label: {{ invalidCharacters }}",
+    "INVALID_URL": "Externe link is niet geldig",
+
+    "UNTITLED": "Naamloos",
+    "MENU_ITEM": "menu-item",
+
+    "CLOSE_PANEL_TITLE": "Weet u zeker dat u dit venster wil sluiten?",
+    "CLOSE_PANEL_CONFIRMATION": "De laatste wijzigingen zullen niet worden opgeslaan.",
+    "CLOSE": "Sluit"
+}

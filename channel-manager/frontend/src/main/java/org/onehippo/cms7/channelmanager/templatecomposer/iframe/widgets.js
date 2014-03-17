@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@
 
     var hostToIFrame, iframeToHost;
 
-    hostToIFrame = window.parent.Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame;
-    iframeToHost = window.parent.Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.iframeToHost;
+    hostToIFrame = window.parent.Ext.getCmp('pageEditorIFrame').hostToIFrame;
+    iframeToHost = window.parent.Ext.getCmp('pageEditorIFrame').iframeToHost;
 
     $(window).unload(function() {
         hostToIFrame = null;
@@ -84,7 +84,7 @@
         },
 
         render : function(parent) {
-            var parentOverlay, overlay, self = this, formattedDate;
+            var parentOverlay, overlay, self = this, lockedOnDate, lockedOnDateString;
             if (this.rendered) {
                 return;
             }
@@ -101,16 +101,17 @@
             if (this.el.attr(HST.ATTR.HST_CONTAINER_DISABLED) === "true") {
                  overlay.addClass(this.cls.overlay.disabled);
                 if (this.el.attr(HST.ATTR.TYPE) === HST.CONTAINER) {
-                    if (this.el.attr(HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_BY) &&
-                           (this.el.attr(HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_BY_CURRENT_USER) === "false")) {
+                    if (this.el.attr(HST.ATTR.HST_LOCKED_BY) &&
+                           (this.el.attr(HST.ATTR.HST_LOCKED_BY_CURRENT_USER) === "false")) {
                        overlay.addClass(this.cls.overlay.locked);
-                        if (this.el.attr(HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_ON)) {
-                            formattedDate = new Date(parseInt(this.el.attr(HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_ON), 10));
+                        if (this.el.attr(HST.ATTR.HST_LOCKED_ON)) {
+                            lockedOnDate = new Date(parseInt(this.el.attr(HST.ATTR.HST_LOCKED_ON), 10));
                         }
-                        if (formattedDate) {
-                            overlay.attr("title", "Locked by  '" + this.el.attr(HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_BY) + "' on " + formattedDate);
+                        if (lockedOnDate) {
+                            lockedOnDateString = lockedOnDate.toLocaleString();
+                            overlay.attr("title", this.resources['container-component-locked-by-on'].format(this.el.attr(HST.ATTR.HST_LOCKED_BY), lockedOnDateString));
                         } else {
-                            overlay.attr("title", "Locked by  '" + this.el.attr(HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_BY));
+                            overlay.attr("title", this.resources['container-component-locked-by'].format(this.el.attr(HST.ATTR.HST_LOCKED_BY)));
                         }
                     }
                 }

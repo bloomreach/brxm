@@ -1,0 +1,175 @@
+<!--
+  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<div class="edit-menu-item-container">
+    <!-- START confirmation dialogs -->
+    <div class="overlay" data-ng-show="remove.isVisible || external.isVisible">&#160;</div>
+    <div hippo.theme.confirmation-dialog
+         confirm-icon="trash-o"
+         data-show="remove.isVisible"
+         data-perform-confirmation="remove.execute()"
+         data-perform-cancel="remove.cancel()"
+         data-confirm-label="{{ 'DELETE_MENU_ITEM' | translate }}"
+         data-cancel-label="{{ 'CANCEL' | translate }}">
+        <p>
+            <strong>{{ 'REMOVE_CONFIRMATION_TITLE' | translate }}</strong>
+        </p>
+        <p>
+            {{ 'REMOVE_CONFIRMATION' | translate:selectedMenuItem }}
+        </p>
+    </div>
+    <div hippo.theme.confirmation-dialog
+         confirm-icon="external-link"
+         data-show="external.isVisible"
+         data-perform-confirmation="external.execute()"
+         data-perform-cancel="external.cancel()"
+         data-confirm-label="{{ 'OPEN_LINK' | translate }}"
+         data-cancel-label="{{ 'CANCEL' | translate }}">
+        <p>
+            <strong>{{ 'OPEN_CONFIRMATION_TITLE' | translate }}</strong>
+        </p>
+        <p>
+            {{ 'OPEN_CONFIRMATION' | translate:selectedMenuItem }}
+        </p>
+    </div>
+    <!-- END confirmation dialog -->
+
+    <!-- START edit form -->
+    <form name="form" data-role="form" novalidate class="l-fixed-height" data-ng-controller="hippo.channel.menu.EditMenuItemFormCtrl">
+        <p class="alert alert-danger alert-dismissable" data-ng-show="feedback.message">
+            <button type="button" class="close" data-ng-click="dismissFeedback()" aria-hidden="true">&times;</button>
+            {{feedback.message}}
+        </p>
+        <h3 class="lead item-title"><strong>{{ selectedMenuItem.title }}</strong> {{ 'MENU_ITEM' | translate }}</h3>
+        <div class="form-group has-feedback"
+             data-ng-class="{
+            'has-success': form.title.$dirty && !isSaving.title && form.title.$valid && isSaved.title,
+            'has-error': form.title.$dirty && !isSaving.title && (form.title.$invalid || !isSaved.title)
+        }">
+            <label for="hippo.channel.menu.menuItem.edit.title">{{ 'LABEL' | translate }}</label>
+            <input type="text" name="title" class="form-control" id="hippo.channel.menu.menuItem.edit.title"
+                   placeholder="{{ 'LABEL' | translate }}"
+                   data-hippo.channel.menu.auto-focus
+                   data-ng-model="selectedMenuItem.title"
+                   data-ng-required="true"
+                   data-ng-blur="form.title.$valid ? saveSelectedMenuItem('title') : '';">
+
+            <div class="tooltip-container" data-ng-show="fieldFeedbackMessage.title">
+                <div data-tooltip
+                     data-placement="top"
+                     data-title="{{ fieldFeedbackMessage.title }}"></div>
+            </div>
+
+            <i class="fa form-control-feedback"
+               data-ng-show="form.title.$dirty"
+               data-ng-class="{
+            'fa-spinner fa-spin': isSaving.title,
+            'fa-check': form.title.$valid && isSaved.title,
+            'fa-times': form.title.$invalid || !isSaved.title
+           }"></i>
+        </div>
+
+        <label for="hippo.channel.menu.menuItem.edit.linkType">{{ 'DESTINATION' | translate }}</label>
+        <div class="form-group has-feedback" id="hippo.channel.menu.menuItem.edit.linkType">
+            <div class="radio first">
+                <label>
+                    <input type="radio" name="destination"
+                           data-ng-model="selectedMenuItem.linkType"
+                           value="SITEMAPITEM"
+                           data-ng-click="selectedMenuItem.link = ''; focus('hippo.channel.menu.menuItem.edit.sitemapItem')">
+                    {{ 'INTERNAL_LINK' | translate }}
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="destination"
+                           data-ng-model="selectedMenuItem.linkType"
+                           value="EXTERNAL"
+                           data-ng-click="selectedMenuItem.link = ''; focus('hippo.channel.menu.menuItem.edit.url')">
+                    {{ 'EXTERNAL_LINK' | translate }}
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="destination"
+                           data-ng-model="selectedMenuItem.linkType"
+                           value="NONE"
+                           data-ng-click="selectedMenuItem.link = ''; saveSelectedMenuItem('linkType')">
+                    {{ 'NONE' | translate }}
+                </label>
+            </div>
+        </div>
+        <div class="form-group has-feedback"
+             data-ng-show="selectedMenuItem.linkType === 'SITEMAPITEM'"
+             data-ng-class="{
+            'has-success': form.sitemapItem.$dirty && !isSaving.link && form.sitemapItem.$valid && isSaved.link,
+            'has-error': !isSaving.link && (form.sitemapItem.$invalid || !isSaved.link)
+        }">
+            <label for="hippo.channel.menu.menuItem.edit.sitemapItem">{{ 'INTERNAL_LINK' | translate }}</label>
+            <div class="input-group">
+                <input type="text" name="sitemapItem" class="form-control" id="hippo.channel.menu.menuItem.edit.sitemapItem"
+                       data-ng-model="selectedMenuItem.link"
+                       data-ng-blur="form.sitemapItem.$valid ? saveSelectedMenuItem('link') : '';">
+                <i class="fa form-control-feedback"
+                   data-ng-show="form.sitemapItem.$dirty"
+                   data-ng-class="{
+                'fa-spinner fa-spin': isSaving.link,
+                'fa-check': form.sitemapItem.$valid && isSaved.link,
+                'fa-times': form.sitemapItem.$invalid || !isSaved.link
+               }"></i>
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" ng-click="showPage(selectedMenuItem.link)"><i class="fa fa-external-link"></i></button>
+                </span>
+            </div>
+        </div>
+        <div class="form-group has-feedback"
+             data-ng-show="selectedMenuItem.linkType === 'EXTERNAL'"
+             data-ng-class="{
+            'has-success': form.url.$dirty && !isSaving.link && form.url.$valid && isSaved.link,
+            'has-error': (!form.url.$pristine) && (!isSaving.link && (form.url.$invalid || !isSaved.link))
+        }">
+            <label for="hippo.channel.menu.menuItem.edit.url">{{ 'EXTERNAL_LINK' | translate }}</label>
+            <div class="input-group">
+                <input type="text" name="url" class="form-control" id="hippo.channel.menu.menuItem.edit.url"
+                       placeholder="{{ 'EXAMPLE_DOMAIN' | translate }}"
+                       data-ng-model="selectedMenuItem.link"
+                       data-ng-required="true"
+                       data-ng-blur="form.url.$valid ? saveSelectedMenuItem('link') : '';">
+                <div class="tooltip-container" data-ng-show="fieldFeedbackMessage.link">
+                    <div data-tooltip
+                         data-placement="top"
+                         data-title="{{ fieldFeedbackMessage.link }}"></div>
+                </div>
+                <i class="fa form-control-feedback"
+                   data-ng-show="form.url.$dirty"
+                   data-ng-class="{
+                    'fa-spinner fa-spin': isSaving.link,
+                    'fa-check': form.url.$valid && isSaved.link,
+                    'fa-times': form.url.$invalid || !isSaved.link
+                   }"></i>
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" ng-click="external.show()"><i class="fa fa-external-link"></i></button>
+                </span>
+            </div>
+        </div>
+
+        <hr>
+
+        <button type="button" class="btn btn-default" data-ng-click="remove.show()"><i class="fa fa-trash-o"></i> {{ 'DELETE_MENU_ITEM' | translate }}</button>
+    </form>
+    <!-- END edit form -->
+
+</div>

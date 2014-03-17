@@ -42,6 +42,7 @@ import org.wicketstuff.js.ext.util.ExtProperty;
 import org.wicketstuff.js.ext.util.JSONIdentifier;
 
 import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.CONFIG_REST_PROXY_SERVICE_ID;
+import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.HST_CONFIG_EDITOR_DISABLED;
 
 @ExtClass("Hippo.ChannelManager.RootPanel")
 public class RootPanel extends ExtPanel {
@@ -111,7 +112,12 @@ public class RootPanel extends ExtPanel {
         channelOverview.setRegion(BorderLayout.Region.CENTER);
         channelManagerCard.add(channelOverview);
 
-        final HstConfigEditor hstConfigEditor = new HstConfigEditor(context);
+        final HstConfigEditor hstConfigEditor;
+        if (config.getAsBoolean(HST_CONFIG_EDITOR_DISABLED, false)) {
+            hstConfigEditor = null;
+        } else {
+            hstConfigEditor = new HstConfigEditor(context);
+        }
 
         channelManagerCard.add(this.blueprintStore);
 
@@ -123,7 +129,9 @@ public class RootPanel extends ExtPanel {
         add(pageEditor);
 
         // card 2: HST config editor
-        add(hstConfigEditor);
+        if (hstConfigEditor != null) {
+            add(hstConfigEditor);
+        }
 
         // card 3: folder picker
         add(new ExtLinkPicker(context));

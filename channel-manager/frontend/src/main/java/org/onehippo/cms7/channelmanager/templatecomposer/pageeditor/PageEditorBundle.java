@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,16 @@ public final class PageEditorBundle {
 
     public static final String MANAGE_CHANGES_WINDOW = "ManageChangesWindow.js";
 
+    public static final String MESSAGE_BUS = "MessageBus.js";
+
+    public static final String IFRAME_PANEL = "IFramePanel.js";
+
+    public static final String IFRAME_WINDOW = "IFrameWindow.js";
+
+    public static final String PAGES_WINDOW = "PagesWindow.js";
+
+    public static final String EDIT_MENU_WINDOW = "EditMenuWindow.js";
+
     public static final String DRAG_DROP_ONE = "DragDropOne.js";
 
     public static final String NOTIFICATION = "Notification.js";
@@ -48,10 +58,6 @@ public final class PageEditorBundle {
     public static final String PROPERTIES_PANEL = "PropertiesPanel.js";
 
     public static final String PAGE_EDITOR = "PageEditor.js";
-
-    public static final String MESSAGE_BUS = "MessageBus.js";
-
-    public static final String IFRAME_PANEL = "IFramePanel.js";
 
     public static final String ALL = "page-editor-all.js";
 

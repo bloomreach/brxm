@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import org.onehippo.cms7.channelmanager.templatecomposer.pageeditor.PageEditorBu
 import org.onehippo.cms7.jquery.JQueryBundle;
 import org.wicketstuff.js.ext.ExtBundle;
 
+import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.javascript.host.Node;
@@ -67,7 +68,7 @@ abstract public class AbstractTemplateComposerTest extends AbstractJavascriptTes
         initializeIFrameHead();
     }
 
-    protected boolean isMetaDataConsumed(final HtmlElement containerDiv) {
+    protected boolean isMetaDataConsumed(final DomElement containerDiv) {
         boolean metaDataConsumed = true;
         DomNode tmp = containerDiv;
         while ((tmp = tmp.getPreviousSibling()) != null) {
@@ -80,11 +81,13 @@ abstract public class AbstractTemplateComposerTest extends AbstractJavascriptTes
 
     protected void initializeIFrameHead() throws IOException {
         injectJavascript(ExtBundle.class, ExtBundle.EXT_BASE_DEBUG);
+        injectJavascript(ExtBundle.class, ExtBundle.EXT_ALL_DEBUG);
         injectJavascript(PageEditorBundle.class, PageEditorBundle.MESSAGE_BUS);
+        injectJavascript(PageEditorBundle.class, PageEditorBundle.IFRAME_PANEL);
         injectJavascript(InitializationTest.class, "mockIFramePanel.js");
 
         Window window = (Window) page.getWebClient().getCurrentWindow().getScriptObject();
-        ScriptableObject instance = getScriptableObject(window, "Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance");
+        ScriptableObject instance = getScriptableObject(window, "Hippo.MockedPageEditorIFramePanel");
         ScriptableObject hostToIFrame = (ScriptableObject)instance.get("hostToIFrame");
         ScriptableObject iframeToHost = (ScriptableObject)instance.get("iframeToHost");
         interceptMessages(hostToIFrame, hostToIFrameMessages);
@@ -141,7 +144,7 @@ abstract public class AbstractTemplateComposerTest extends AbstractJavascriptTes
         Gson gson = new Gson();
         String message = gson.toJson(argument);
 
-        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('init', " + message + ");");
+        page.executeJavaScript("Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('init', " + message + ");");
     }
 
     protected static boolean isPublished(List<Message> messages, String message) {

@@ -1,0 +1,41 @@
+{
+    "ADD_MENU_ITEM": "Add menu item",
+    "CANCEL": "Cancel",
+    "CREATE_MENU_ITEM": "Create menu item",
+    "CREATE_PAGE": "Create page",
+    "DELETE_MENU_ITEM": "Delete menu item",
+    "DESTINATION": "Destination",
+    "EXAMPLE_DOMAIN": "http://www.example.com",
+    "EXTERNAL_LINK": "External link",
+    "EXTERNAL_LINK_REQUIRED": "External link is required",
+    "EXTERNAL_LINK_INVALID": "External link is invalid",
+    "INTERNAL_LINK": "Internal link",
+    "LABEL": "Label",
+    "LABEL_REQUIRED": "Label is required",
+    "NONE": "None",
+    "PAGE_TITLE": "Page title",
+    "PAGE_URL": "Page URL",
+    "SITEMAP_ITEM": "Sitemap item",
+    "SEARCH_FOR_TEMPLATE": "Search for template",
+    "REMOVE_CONFIRMATION_TITLE": "Delete menu item",
+    "REMOVE_CONFIRMATION": "Are you sure you want to delete the menu item '{{ title }}'?",
+
+    "OPEN_CONFIRMATION_TITLE": "Open external link",
+    "OPEN_CONFIRMATION": "Are you sure you want to open '{{ title }}' in a new tab?",
+    "OPEN_LINK": "Open external link",
+
+    "ITEM_ALREADY_LOCKED": "You cannot edit this menu because '{{ lockedBy }}' is already editing it",
+    "ITEM_NAME_NOT_UNIQUE": "The menu item '{{ item }}' already exists in the sub menu '{{ parentPath }}'",
+    "ITEM_NAME_NOT_UNIQUE_IN_ROOT": "The menu item '{{ item }}' already exists as a top menu item",
+    "TECHNICAL_ERROR": "A technical error has occurred",
+
+    "INVALID_CHARACTERS": "The following characters are not allowed in the label: {{ invalidCharacters }}",
+    "INVALID_URL": "External link is invalid",
+
+    "UNTITLED": "Untitled",
+    "MENU_ITEM": "menu item",
+
+    "CLOSE_PANEL_TITLE": "Are you sure you want to close this panel?",
+    "CLOSE_PANEL_CONFIRMATION": "The latest changes will be discarded.",
+    "CLOSE": "Close"
+}

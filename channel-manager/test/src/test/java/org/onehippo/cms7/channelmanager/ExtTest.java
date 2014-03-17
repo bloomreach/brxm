@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 
 public class ExtTest extends AbstractJavascriptTest {
@@ -33,7 +34,7 @@ public class ExtTest extends AbstractJavascriptTest {
 
 //        System.out.print(page.asXml());
 
-        final HtmlElement result = page.getElementById("result");
+        final DomElement result = page.getElementById("result");
         assertNotNull(result);
         assertTrue(result.getTextContent().contains("pass"));
     }
@@ -47,12 +48,12 @@ public class ExtTest extends AbstractJavascriptTest {
 
         // System.out.print(page.asXml());
 
-        final HtmlElement result = page.getElementById("result");
+        final DomElement result = page.getElementById("result");
         assertNotNull(result);
 
         assertTrue(result.getTextContent().contains("pass"));
 
-        final HtmlElement instance = page.getElementById("Hippo.ChannelManager.TemplateComposer.Instance");
+        final DomElement instance = page.getElementById("Hippo.ChannelManager.TemplateComposer.Instance");
         assertNotNull(instance);
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package org.onehippo.cms7.channelmanager.templatecomposer.iframe;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import com.gargoylesoftware.htmlunit.html.DomElement;
+import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 
 import org.junit.Before;
@@ -26,7 +28,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class CmsEditTest extends AbstractTemplateComposerTest {
+public class CmsEditContentTest extends AbstractTemplateComposerTest {
 
     @Before
     public void startPage() throws Exception {
@@ -46,10 +48,10 @@ public class CmsEditTest extends AbstractTemplateComposerTest {
     }
 
     private HtmlElement getLink() {
-        final List<HtmlElement> divs = page.getElementsByTagName("a");
-        for (HtmlElement div : divs) {
+        final List<DomElement> divs = page.getElementsByTagName("a");
+        for (DomElement div : divs) {
             if (eval("HST.CLASS.EDITLINK").equals(div.getAttribute("class"))) {
-                return div;
+                return (HtmlElement)div;
             }
         }
         throw new NoSuchElementException();
@@ -59,6 +61,8 @@ public class CmsEditTest extends AbstractTemplateComposerTest {
     public void clickLinkSendsMessage() throws Exception {
         HtmlElement link = getLink();
         link.click();
+
+        page.getWebClient().waitForBackgroundJavaScript(100);
 
         assertTrue(isPublished(hostToIFrameMessages, "init"));
         assertTrue(isPublished(iframeToHostMessages, "iframeloaded"));

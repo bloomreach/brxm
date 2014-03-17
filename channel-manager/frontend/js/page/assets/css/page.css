@@ -1,0 +1,86 @@
+/*
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* --- Overview Pages --- */
+.panel {
+    border-top-width: 0;
+    border-left-width: 0;
+    border-right-width: 0;
+    border-radius: 0;
+}
+
+.panel > .panel-heading {
+    line-height: 34px;
+}
+
+.panel > .panel-body {
+    padding: 0;
+    border-top-width: 0;
+    border-radius: 0;
+}
+
+.list-group {
+    margin-bottom: 0;
+}
+
+.list-group-item {
+    border-left-width: 0;
+    border-right-width: 0;
+}
+
+.list-group-item:first-child {
+    border-top-width: 0;
+    border-radius: 0;
+}
+
+.list-group-item:last-child {
+    border-radius: 0;
+}
+
+.l-fixed-height {
+    height: 430px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.list-group-item {
+    cursor: pointer;
+}
+
+.tooltip-newlines + .tooltip > .tooltip-inner {
+    white-space: pre-wrap;
+}
+
+/* --- Add Page Form --- */
+form {
+    padding: 15px;
+}
+
+#url input {
+    border-radius: 0 4px 4px 0;
+}
+
+#url .input-group-addon {
+    padding-right: 5px;
+}
+
+#url .form-control {
+    padding-left: 3px;
+}
+
+#template .input-group {
+    display: block;
+}

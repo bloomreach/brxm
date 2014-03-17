@@ -1,0 +1,23 @@
+{
+  "private": true,
+  "dependencies": {},
+  "devDependencies": {
+    "console-browserify": "1.0.3",
+    "grunt-contrib-clean": "0.5.0",
+    "grunt-contrib-copy": "0.4.1",
+    "grunt-contrib-jshint": "0.8.0",
+    "grunt-contrib-watch": "0.5.3",
+    "grunt-declutter-task": "https://github.com/Voles/grunt-declutter-task/tarball/v0.1.0",
+    "grunt-jslint": "1.1.2",
+    "grunt-karma": "0.7.2",
+    "jshint-stylish": "0.1.5",
+    "karma": "0.11.14",
+    "karma-jasmine": "0.2.1",
+    "karma-phantomjs-launcher": "0.1.2",
+    "load-grunt-tasks": "0.2.0",
+    "time-grunt": "0.1.1"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  }
+}

@@ -1,0 +1,51 @@
+<!--
+  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<div class="container" id="container">
+    <div class="row">
+        <div class="col-sm-4" id="menu-tree" data-ng-controller="hippo.channel.menu.TreeCtrl">
+            <div class="l-sidebar">
+                <div data-hippo.theme.tree data-items="list" data-callbacks="callbacks" data-selected-item-id="selectedMenuItem.id">{{ item.title }}</div>
+            </div>
+            <div id="add" class="col-sm-4" data-ng-controller="hippo.channel.menu.MenuCtrl">
+                <button type="button" class="btn btn-default btn-block" data-ng-click="addItem()">
+                    <i class="fa fa-plus"></i> {{ 'ADD_MENU_ITEM' | translate }}
+                </button>
+            </div>
+        </div>
+
+        <div data-ui-view class="col-sm-8" id="form-panel"></div>
+
+        <!-- START general confirmation dialog -->
+        <div data-ng-controller="hippo.channel.menu.CloseConfirmationCtrl" id="close-confirmation">
+            <div class="overlay" data-ng-show="dialog.visible">&#160;</div>
+            <div hippo.theme.confirmation-dialog
+                 data-show="dialog.visible"
+                 data-perform-confirmation="confirm()"
+                 data-perform-cancel="cancel()"
+                 data-confirm-label="{{ 'CLOSE' | translate }}"
+                 data-cancel-label="{{ 'CANCEL' | translate }}">
+                <p>
+                    <strong>{{ 'CLOSE_PANEL_TITLE' | translate }}</strong>
+                </p>
+                <p>
+                    {{ 'CLOSE_PANEL_CONFIRMATION' | translate }}
+                </p>
+            </div>
+        </div>
+        <!-- END confirmation dialog -->
+    </div>
+</div>

@@ -171,6 +171,10 @@ public class PageEditor extends ExtPanel {
     @SuppressWarnings("unused")
     private String variantsUuid;
 
+    @ExtProperty
+    @SuppressWarnings("unused")
+    private Boolean hideHstConfigEditor;
+
     private IPluginContext context;
     private ExtStoreFuture<Object> channelStoreFuture;
     private ChannelPropertiesWindow channelPropertiesWindow;
@@ -202,6 +206,7 @@ public class PageEditor extends ExtPanel {
             this.canManageChanges = canManageChanges(this.cmsUser, config);
         }
         this.variantsUuid = getVariantsUuidOrNull(variantsPath);
+        this.hideHstConfigEditor = (hstConfigEditor == null);
 
         this.channelPropertiesWindow = new ChannelPropertiesWindow(context, (ChannelStore) channelStoreFuture.getStore());
         add(this.channelPropertiesWindow);
@@ -253,6 +258,9 @@ public class PageEditor extends ExtPanel {
 
             @Override
             public void onEvent(final AjaxRequestTarget target, final Map<String, JSONArray> parameters) {
+                if (hstConfigEditor == null) {
+                    return;
+                }
                 try {
                     final String paramChannelId = (String) getValue(parameters, "channelId");
                     final String paramHstMountPoint = (String) getValue(parameters, "hstMountPoint");

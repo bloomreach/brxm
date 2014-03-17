@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -74,10 +74,10 @@
                 return this.channelId !== null;
             }, this);
             this.on('show', function() {
-                Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('enablemouseevents');
+                Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('enablemouseevents');
             });
             this.on('hide', function() {
-                Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('disablemouseevents');
+                Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('disablemouseevents');
             });
             this.addEvents('selectchannel', 'savechannel');
             Hippo.ChannelManager.ChannelPropertiesWindow.superclass.initComponent.apply(this, arguments);
@@ -98,7 +98,7 @@
                 this.saveButton.setTooltip('');
             }
 
-            this.render(Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.getEl());
+            this.render(Ext.getCmp('pageEditorIFrame').getEl());
             this.expand();
             this.fireEvent('selectchannel', data.channelId);
             Hippo.ChannelManager.ChannelPropertiesWindow.superclass.show.apply(this, arguments);

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,7 +35,8 @@
                 this.ids = {
                     pageUrl: oldContext.ids.pageUrl,
                     pageId: oldContext.ids.pageId,
-                    mountId: oldContext.ids.mountId
+                    mountId: oldContext.ids.mountId,
+                    sitemapId: oldContext.ids.sitemapId
                 };
 
                 this.stores = {
@@ -48,7 +49,8 @@
                 this.ids = {
                     pageUrl: null,
                     pageId: null,
-                    mountId: null
+                    mountId: null,
+                    sitemapId: null
                 };
 
                 this.stores = {
@@ -78,7 +80,7 @@
         },
 
         initialize: function(canEdit) {
-            var iframeLocation = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.getLocation();
+            var iframeLocation = Ext.getCmp('pageEditorIFrame').getLocation();
 
             this._requestHstMetaData(iframeLocation, canEdit).when(function() {
                 this._initializeIFrameHead(this.previewMode).when(function() {
@@ -98,7 +100,7 @@
         },
 
         selectVariant: function(id, variant) {
-            Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('selectVariant', id, variant);
+            Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('selectVariant', id, variant);
         },
 
         _initToolkitStore: function(mountId) {
@@ -148,6 +150,7 @@
             }
 
             this.ids.pageId = pageId;
+
             this.stores.pageModel = this._createPageModelStore(mountId, pageId);
             this.stores.pageModel.on('exception', function(dataProxy, type, action, options, response) {
                 if (type === 'response') {
@@ -180,12 +183,13 @@
                 var self = this;
 
                 function handleResponse(response) {
-                    var pageId, mountId, pageRequestVariantsHeader, futures;
+                    var pageId, mountId, sitemapId, pageRequestVariantsHeader, futures;
                     pageId = response.getResponseHeader('HST-Page-Id');
                     mountId = response.getResponseHeader('HST-Mount-Id');
+                    sitemapId = response.getResponseHeader('HST-Sitemap-Id');
 
-                    if (pageId === undefined || mountId === undefined) {
-                        onFail('No page and/or mount information found');
+                    if (pageId === undefined || mountId === undefined || sitemapId === undefined) {
+                        onFail('No page, mount and/or sitemap information found');
                         return;
                     }
 
@@ -194,6 +198,7 @@
                     if (!self.hasPreviewHstConfig || !canEdit) {
                         self.previewMode = true;
                     }
+                    self.ids.sitemapId = sitemapId;
 
                     pageRequestVariantsHeader = response.getResponseHeader('HST-Page-Request-Variants');
                     if (Ext.isString(pageRequestVariantsHeader)) {
@@ -213,6 +218,7 @@
                                 onFail("Failed to initialize page model for url '" + encodedUrl + "'");
                             });
                     } else {
+                        self.ids.mountId = mountId;
                         onSuccess();
                     }
                 }
@@ -251,7 +257,7 @@
         },
 
         _initializeIFrameHead: function(previewMode) {
-            var iframe = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance;
+            var iframe = Ext.getCmp('pageEditorIFrame');
 
             return new Hippo.Future(function(success, fail) {
                 this.iframeResourceCache.when(function(iframeResources) {
@@ -302,7 +308,7 @@
         },
 
         _buildOverlay: function() {
-            Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('buildoverlay');
+            Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('buildoverlay');
         }
 
     });

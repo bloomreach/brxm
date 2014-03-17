@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.onehippo.cms7.channelmanager.templatecomposer.iframe;
 
 import java.util.List;
 
+import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.javascript.host.Window;
 
@@ -33,14 +34,14 @@ public class InitializationTest extends AbstractTemplateComposerTest {
         setUp("test.html");
 
         page.executeJavaScript("var testListener = function(msg) { initTestOK=msg.initTest; };");
-        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.subscribe('test', testListener, window);");
-        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('test', {initTest: true})");
+        page.executeJavaScript("Ext.getCmp('pageEditorIFrame').hostToIFrame.subscribe('test', testListener, window);");
+        page.executeJavaScript("Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('test', {initTest: true})");
 
         Window window = (Window) page.getWebClient().getCurrentWindow().getScriptObject();
         assertTrue(Boolean.TRUE.equals(window.get("initTestOK")));
 
-        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.unsubscribe('test', testListener, window);");
-        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('test', {initTest: false})");
+        page.executeJavaScript("Ext.getCmp('pageEditorIFrame').hostToIFrame.unsubscribe('test', testListener, window);");
+        page.executeJavaScript("Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('test', {initTest: false})");
 
         assertTrue(Boolean.TRUE.equals(window.get("initTestOK")));
     }
@@ -58,9 +59,9 @@ public class InitializationTest extends AbstractTemplateComposerTest {
         initializeTemplateComposer(false, false);
 
         // test if container is present
-        final List<HtmlElement> divs = page.getElementsByTagName("div");
-        HtmlElement containerDiv = null;
-        for (HtmlElement div : divs) {
+        final List<DomElement> divs = page.getElementsByTagName("div");
+        DomElement containerDiv = null;
+        for (DomElement div : divs) {
             if (eval("HST.CLASS.CONTAINER").equals(div.getAttribute("class"))) {
                 containerDiv = div;
             }
@@ -68,7 +69,7 @@ public class InitializationTest extends AbstractTemplateComposerTest {
         assertNotNull(containerDiv);
         assertFalse(isMetaDataConsumed(containerDiv));
 
-        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('buildoverlay');");
+        page.executeJavaScript("Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('buildoverlay');");
         assertFalse(isPublished(hostToIFrameMessages, "exception"));
 
         // test if hst meta data is consumed

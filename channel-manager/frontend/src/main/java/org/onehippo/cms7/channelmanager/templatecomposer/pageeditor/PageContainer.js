@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@
             this.pageContext = null;
 
             this.on('fatalIFrameException', function(data) {
-                var iframe = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance;
+                var iframe = Ext.getCmp('pageEditorIFrame');
 
                 if (data.msg) {
                     this.on('afterIFrameDOMReady', function() {
@@ -69,7 +69,7 @@
             }, this);
 
             this.ping = window.setInterval(function() {
-                if (this.sessionId && this._hasFocus() && Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.isValidSession(this.sessionId)) {
+                if (this.sessionId && this._hasFocus() && Ext.getCmp('pageEditorIFrame').isValidSession(this.sessionId)) {
                     Ext.Ajax.request({
                         url: this.composerRestMountUrl + '/cafebabe-cafe-babe-cafe-babecafebabe./keepalive/?FORCE_CLIENT_HOST=true',
                         failure: function() {
@@ -168,7 +168,7 @@
                         // The iframe url should therefore end with '/'.
                         iFrameUrl += '/';
                     }
-                    Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.setLocation(iFrameUrl);
+                    Ext.getCmp('pageEditorIFrame').setLocation(iFrameUrl);
 
                     success();
                 }.createDelegate(this));
@@ -223,7 +223,7 @@
         refreshIframe: function() {
             var iframe, scrollSave;
 
-            iframe = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance;
+            iframe = Ext.getCmp('pageEditorIFrame');
             scrollSave = iframe.getScrollPosition();
 
             this._lock(function() {
@@ -300,10 +300,10 @@
         },
 
         toggleMode: function() {
-            var self, hostToIFrame, mountId, hasPreviewHstConfig, doneCallback;
+            var self, hostToIFrame, mountId, hasPreviewHstConfig;
 
             self = this;
-            hostToIFrame = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame;
+            hostToIFrame = Ext.getCmp('pageEditorIFrame').hostToIFrame;
             this._lock();
 
             this.previewMode = !this.previewMode;
@@ -313,52 +313,44 @@
 
             if (this.previewMode) {
                 hostToIFrame.publish('hideoverlay');
-                hostToIFrame.publish('showlinks');
+                hostToIFrame.publish('hide-edit-menu-buttons');
+                hostToIFrame.publish('show-edit-content-buttons');
                 self._complete();
+            } else if (hasPreviewHstConfig) {
+                // reset pageContext, the page and toolkit stores must be reloaded
+                self.pageContext = null;
+                // refresh iframe to get new hst config uuids or new lastModifiedTimestamsp.
+                self.refreshIframe.call(self, null);
             } else {
-
-                if (hasPreviewHstConfig) {
-                    doneCallback = function() {
-                        hostToIFrame.publish('showoverlay');
-                        hostToIFrame.publish('hidelinks');
-                        self._complete();
-                    }.createDelegate(this);
-                    // reset pageContext, the page and toolkit stores must be reloaded
-                    self.pageContext = null;
-                    // refresh iframe to get new hst config uuids or new lastModifiedTimestamsp.
-                    self.refreshIframe.call(self, null);
-
-                } else {
-                    // create new preview hst configuration
-                    Ext.Ajax.request({
-                        method: 'POST',
-                        headers: {
-                            'FORCE_CLIENT_HOST': 'true'
-                        },
-                        url: this.composerRestMountUrl + '/' + mountId + './edit?FORCE_CLIENT_HOST=true',
-                        success: function() {
-                            // reset pageContext, the page and toolkit stores must be reloaded
-                            self.pageContext = null;
-                            // refresh iframe to get new hst config uuids.
-                            self.fireEvent('previewCreated');
-                        },
-                        failure: function(result) {
-                            if (result.isTimeout) {
-                                console.error(self.resources['preview-hst-config-creation-timeout-title']);
-                                Hippo.Msg.alert(self.resources['preview-hst-config-creation-timeout-title'],
-                                        self.resources['preview-hst-config-creation-timeout'] + self.resources['increase-timeout-location-helper-message'],function() {
-                                            self.initComposer.call(self);
-                                        });
-                            } else {
-                                var jsonData = Ext.util.JSON.decode(result.responseText);
-                                console.error(self.resources['preview-hst-config-creation-failed'] + ' ' + jsonData.message);
-                                Hippo.Msg.alert(self.resources['preview-hst-config-creation-failed-title'], self.resources['preview-hst-config-creation-failed'], function() {
-                                    self.initComposer.call(self);
-                                });
-                            }
+                // create new preview hst configuration
+                Ext.Ajax.request({
+                    method: 'POST',
+                    headers: {
+                        'FORCE_CLIENT_HOST': 'true'
+                    },
+                    url: this.composerRestMountUrl + '/' + mountId + './edit?FORCE_CLIENT_HOST=true',
+                    success: function() {
+                        // reset pageContext, the page and toolkit stores must be reloaded
+                        self.pageContext = null;
+                        // refresh iframe to get new hst config uuids.
+                        self.fireEvent('previewCreated');
+                    },
+                    failure: function(result) {
+                        if (result.isTimeout) {
+                            console.error(self.resources['preview-hst-config-creation-timeout-title']);
+                            Hippo.Msg.alert(self.resources['preview-hst-config-creation-timeout-title'],
+                                    self.resources['preview-hst-config-creation-timeout'] + self.resources['increase-timeout-location-helper-message'],function() {
+                                        self.initComposer.call(self);
+                                    });
+                        } else {
+                            var jsonData = Ext.util.JSON.decode(result.responseText);
+                            console.error(self.resources['preview-hst-config-creation-failed'] + ' ' + jsonData.message);
+                            Hippo.Msg.alert(self.resources['preview-hst-config-creation-failed-title'], self.resources['preview-hst-config-creation-failed'], function() {
+                                self.initComposer.call(self);
+                            });
                         }
-                    });
-                }
+                    }
+                });
             }
         },
 
@@ -398,7 +390,7 @@
         },
 
         deselectComponents: function() {
-            Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('deselect');
+            Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('deselect');
         },
 
         // END PUBLIC METHODS THAT CHANGE THE iFrame
@@ -444,7 +436,7 @@
         },
 
         _initIFrameListeners: function() {
-            var iframe = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance;
+            var iframe = Ext.getCmp('pageEditorIFrame');
 
             iframe.iframeToHost.unsubscribeAll();
             iframe.un('locationchanged', this._onIframeDOMReady, this);
@@ -482,7 +474,7 @@
                 this._complete();
             }, this);
             this.pageContext.on('pageContextInitializationFailed', function(error) {
-                var iframe = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance;
+                var iframe = Ext.getCmp('pageEditorIFrame');
 
                 this.previewMode = this.pageContext.previewMode;
 
@@ -544,12 +536,16 @@
             }.createDelegate(this));
         },
 
-        _handleEdit: function(uuid) {
+        _handleEditDocument: function(uuid) {
             this.fireEvent('edit-document', uuid);
         },
 
         _handleDocuments: function(documents) {
             this.fireEvent('documents', documents);
+        },
+
+        _handleEditMenu: function(uuid) {
+            this.fireEvent('edit-menu', uuid);
         },
 
         _onClick: function(data) {
@@ -565,7 +561,7 @@
             }
 
             if (this.selectedRecord !== record) {
-                Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('select', record.data.id);
+                Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('select', record.data.id);
                 this.selectedRecord = record;
                 this.fireEvent('selectItem', record, forcedVariant, containerDisabled);
             }
@@ -595,7 +591,7 @@
         },
 
         _hasFocus: function() {
-            var node = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.el.dom;
+            var node = Ext.getCmp('pageEditorIFrame').el.dom;
             while (node && node.style) {
                 if (node.style.visibility === 'hidden' || node.style.display === 'none') {
                     return false;
@@ -623,7 +619,7 @@
             var self, iframeToHost, tryOrReinitialize;
 
             self = this;
-            iframeToHost = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.iframeToHost;
+            iframeToHost = Ext.getCmp('pageEditorIFrame').iframeToHost;
 
             tryOrReinitialize = function(callback, scope) {
                 return function() {
@@ -645,7 +641,8 @@
             iframeToHost.subscribe('remove', tryOrReinitialize(this._removeByElement, this));
             iframeToHost.subscribe('refresh', tryOrReinitialize(this.refreshIframe, this));
             iframeToHost.subscribe('exception', tryOrReinitialize(this._showError, this));
-            iframeToHost.subscribe('edit-document', tryOrReinitialize(this._handleEdit, this));
+            iframeToHost.subscribe('edit-document', tryOrReinitialize(this._handleEditDocument, this));
+            iframeToHost.subscribe('edit-menu', tryOrReinitialize(this._handleEditMenu, this));
             iframeToHost.subscribe('documents', tryOrReinitialize(this._handleDocuments, this));
         }
 
