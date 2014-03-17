@@ -34,6 +34,7 @@ import org.onehippo.cms7.channelmanager.templatecomposer.pageeditor.PageEditorBu
 import org.onehippo.cms7.jquery.JQueryBundle;
 import org.wicketstuff.js.ext.ExtBundle;
 
+import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.javascript.host.Node;
@@ -67,7 +68,7 @@ abstract public class AbstractTemplateComposerTest extends AbstractJavascriptTes
         initializeIFrameHead();
     }
 
-    protected boolean isMetaDataConsumed(final HtmlElement containerDiv) {
+    protected boolean isMetaDataConsumed(final DomElement containerDiv) {
         boolean metaDataConsumed = true;
         DomNode tmp = containerDiv;
         while ((tmp = tmp.getPreviousSibling()) != null) {

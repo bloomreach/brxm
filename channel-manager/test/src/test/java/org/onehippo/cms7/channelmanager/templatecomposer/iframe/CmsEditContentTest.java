@@ -18,6 +18,8 @@ package org.onehippo.cms7.channelmanager.templatecomposer.iframe;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import com.gargoylesoftware.htmlunit.html.DomElement;
+import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 
 import org.junit.Before;
@@ -46,10 +48,10 @@ public class CmsEditContentTest extends AbstractTemplateComposerTest {
     }
 
     private HtmlElement getLink() {
-        final List<HtmlElement> divs = page.getElementsByTagName("a");
-        for (HtmlElement div : divs) {
+        final List<DomElement> divs = page.getElementsByTagName("a");
+        for (DomElement div : divs) {
             if (eval("HST.CLASS.EDITLINK").equals(div.getAttribute("class"))) {
-                return div;
+                return (HtmlElement)div;
             }
         }
         throw new NoSuchElementException();

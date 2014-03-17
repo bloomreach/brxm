@@ -17,6 +17,7 @@ package org.onehippo.cms7.channelmanager.templatecomposer.iframe;
 
 import java.util.List;
 
+import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.javascript.host.Window;
 
@@ -58,9 +59,9 @@ public class InitializationTest extends AbstractTemplateComposerTest {
         initializeTemplateComposer(false, false);
 
         // test if container is present
-        final List<HtmlElement> divs = page.getElementsByTagName("div");
-        HtmlElement containerDiv = null;
-        for (HtmlElement div : divs) {
+        final List<DomElement> divs = page.getElementsByTagName("div");
+        DomElement containerDiv = null;
+        for (DomElement div : divs) {
             if (eval("HST.CLASS.CONTAINER").equals(div.getAttribute("class"))) {
                 containerDiv = div;
             }

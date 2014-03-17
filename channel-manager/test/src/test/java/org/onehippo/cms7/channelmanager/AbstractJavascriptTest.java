@@ -27,6 +27,8 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.WebWindow;
+import com.gargoylesoftware.htmlunit.html.DomElement;
+import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.javascript.HtmlUnitContextFactory;
@@ -110,7 +112,7 @@ abstract public class AbstractJavascriptTest {
 
         server.start();
 
-        WebClient client = new WebClient(BrowserVersion.FIREFOX_3_6);
+        WebClient client = new WebClient(BrowserVersion.FIREFOX_24);
         client.setJavaScriptEngine(new ExtJavascriptEngine(client));
         client.setAjaxController(new AjaxController() {
             private static final long serialVersionUID = 1L;
@@ -208,8 +210,8 @@ abstract public class AbstractJavascriptTest {
     }
 
     public void evalWithScriptElement(final String javascript) {
-        final List<HtmlElement> head = page.getElementsByTagName("head");
-        final HtmlElement script = page.createElement("script");
+        final List<DomElement> head = page.getElementsByTagName("head");
+        final DomElement script = page.createElement("script");
         script.setAttribute("type", "text/javascript");
         final Text textNode = page.createTextNode(javascript);
         script.appendChild(textNode);
