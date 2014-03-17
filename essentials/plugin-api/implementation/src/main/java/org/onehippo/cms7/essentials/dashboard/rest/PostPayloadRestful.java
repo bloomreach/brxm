@@ -36,6 +36,15 @@ public class PostPayloadRestful implements Restful {
     private static final long serialVersionUID = 1L;
 
 
+    public PostPayloadRestful() {
+    }
+    public PostPayloadRestful(final String key, final String value) {
+
+        add(key, value);
+    }
+
+
+
     private LinkedHashMap<String, String> values = new LinkedHashMap<>();
 
     public void add(final String key, final String value) {

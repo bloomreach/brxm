@@ -43,8 +43,7 @@ public class BasicPowerpackTest extends BaseRepositoryTest {
 
     public static final int TOTAL_INSTRUCTIONS = 14;
     public static final int TOTAL_FILES = 10;
-    @Inject
-    private AutowireCapableBeanFactory injector;
+
 
     private File jspDirectory;
 

@@ -34,6 +34,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Strings;
+
 
 /**
  * @version "$Id$"
@@ -48,6 +50,10 @@ public class DefaultInstructionParser implements InstructionParser{
 
     @Override
     public Instructions parseInstructions(final String content) {
+        if(Strings.isNullOrEmpty(content)){
+            log.warn("Instructions content was null");
+            return null;
+        }
         try {
             final JAXBContext context = JAXBContext.newInstance(PluginInstructions.class);
             final Unmarshaller unmarshaller = context.createUnmarshaller();

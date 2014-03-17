@@ -17,7 +17,6 @@ import org.apache.commons.io.IOUtils;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.onehippo.cms7.essentials.dashboard.config.JcrPluginConfigService;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,6 +67,9 @@ public final class GlobalUtils {
 
     public static String readStreamAsText(final InputStream stream) {
         try {
+            if (stream == null) {
+                return null;
+            }
             return IOUtils.toString(stream);
         } catch (IOException e) {
             log.error("Error reading files", e);
@@ -238,8 +240,6 @@ public final class GlobalUtils {
         configList.addAll(Lists.newLinkedList(Splitter.on('.').split(pluginClass)));
         return '/' + Joiner.on('/').join(configList);
     }
-
-
 
 
 }

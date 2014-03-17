@@ -34,6 +34,13 @@ public class ProjectRestful implements Restful {
     // TODO add more data
     private String namespace;
 
+    public ProjectRestful() {
+    }
+
+    public ProjectRestful(final String namespace) {
+        this.namespace = namespace;
+    }
+
     public String getNamespace() {
         return namespace;
     }

@@ -9,6 +9,8 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -17,6 +19,7 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.PropertiesModule;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
@@ -30,6 +33,9 @@ import com.google.common.collect.ImmutableSet;
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {ApplicationModule.class, PropertiesModule.class})
 public abstract class BaseTest {
 
+
+    @Inject
+    protected AutowireCapableBeanFactory injector;
 
     public static final String HIPPOPLUGINS_NAMESPACE = "hippoplugins";
     public static final String PROJECT_NAMESPACE_TEST = "testnamespace";

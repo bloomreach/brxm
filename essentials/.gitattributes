@@ -647,8 +647,10 @@ plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/i
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/XmlInstructionTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/parser/DefaultInstructionParserTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/model/hst/HstConfigurationServiceTest.java -text
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/packaging/DefaultPowerpackTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/rest/BaseResourceTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/rest/QueryRestfulTest.java -text
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/rest/RestfulListTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/BeanWriterUtilsTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/CndUtilsTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/ComponentsUtilsTest.java -text

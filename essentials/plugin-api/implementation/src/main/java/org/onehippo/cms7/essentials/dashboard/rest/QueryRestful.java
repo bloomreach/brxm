@@ -35,6 +35,14 @@ public class QueryRestful implements Restful {
     private int page;
     private int pageSize;
 
+    public QueryRestful(final String query) {
+        this.query = query;
+    }
+
+    public QueryRestful() {
+
+    }
+
     public String getQuery() {
         return query;
     }

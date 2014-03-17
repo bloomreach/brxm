@@ -47,6 +47,7 @@ public class DefaultPowerpack implements PowerpackPackage {
 
 
     public static final ImmutableSet<String> DEFAULT_GROUPS = new ImmutableSet.Builder<String>().add(EssentialConst.INSTRUCTION_GROUP_DEFAULT).build();
+    public static final String DEFAULT_INSTRUCTIONS_PATH = "/META-INF/instructions.xml";
     private static Logger log = LoggerFactory.getLogger(DefaultPowerpack.class);
 
     @Inject
@@ -80,7 +81,7 @@ public class DefaultPowerpack implements PowerpackPackage {
 
     @Override
     public String getInstructionPath() {
-        return "/META-INF/instructions.xml";
+        return DEFAULT_INSTRUCTIONS_PATH;
     }
 
     @Override
