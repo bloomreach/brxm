@@ -231,8 +231,13 @@
             return imageParameters.hasOwnProperty('f_uuid') && imageParameters.f_uuid !== '';
         }
 
-        function getSelectedImage() {
-            return editor.getSelection().getStartElement();
+        function getSelectedImageOrNull() {
+            var element = editor.getSelection().getStartElement();
+
+            if (element.getName() === 'img') {
+                return element;
+            }
+            return null;
         }
 
         function isInternalImage(element) {
@@ -243,11 +248,11 @@
                     && element.hasAttribute('data-uuid');
         }
 
-        function openImagePickerDialog(element) {
+        function openImagePickerDialog(imgElement) {
             var callbackParameters = {};
 
-            if (element.getName() === 'img') {
-                callbackParameters = getElementParameters(element, IMAGE_ATTRIBUTE_PARAMETER_MAP);
+            if (imgElement !== null) {
+                callbackParameters = getElementParameters(imgElement, IMAGE_ATTRIBUTE_PARAMETER_MAP);
             }
 
             Wicket.Ajax.post({
@@ -266,7 +271,7 @@
 
         editor.addCommand('pickImage', {
             exec: function(editor) {
-                openImagePickerDialog(getSelectedImage());
+                openImagePickerDialog(getSelectedImageOrNull());
             }
         });
 
@@ -276,8 +281,6 @@
                     var img = editor.document.createElement('img');
                     setElementAttributes(img, IMAGE_ATTRIBUTE_PARAMETER_MAP, parameters);
                     editor.insertElement(img);
-                } else {
-                    getSelectedImage().remove();
                 }
             }
         });
