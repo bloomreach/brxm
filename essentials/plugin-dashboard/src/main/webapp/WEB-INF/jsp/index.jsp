@@ -44,10 +44,6 @@
   <link rel="shortcut icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
 </head>
 <body>
-<!-- LOADER ON HTTP REQUESTS -->
-<div class="busy-loader" ng-show="busyLoading">
-  <img src="${pageContext.request.contextPath}/images/loader.gif"/>
-</div>
 <!-- ERROR MESSAGES -->
 <div class="alert-danger messages" ng-show="globalError.length > 0">
   <strong>An error occurred:</strong>
@@ -64,37 +60,58 @@
   CONTENT
 --%>
 
-<div class="container-full">
-  <div class="hippo-header">
-    <div class="hippo-header-logo">
-      <a href="${pageContext.request.contextPath}"><img src="${pageContext.request.contextPath}/images/hippo-logo.png"></a>
+<div class="container">
+  <div class="row">
+    <h1 class="page-header">
+      <%--<div class="pull-left"><img src="${pageContext.request.contextPath}/images/hippo-logo-2x.png" height="30"/></div>--%>
+        <!-- LOADER ON HTTP REQUESTS -->
+        <div class="pull-right" ng-show="busyLoading">
+          <span class="fa fa-spin fa-refresh"></span>&nbsp;
+        </div>
+        Hippo CMS <small>Essentials</small></h1>
     </div>
-    <div class="hippo-header-text">
-      {{headerMessage}}
+
+  <div class="row">
+    <div class="col-sm-2" style="margin-right: 20px;" ng-controller="mainMenuCtrl">
+      <ul class="nav nav-stacked nav-pills" ng-show="packsInstalled">
+        <li ng-repeat="item in menu" ng-class="{true:'active', false:''}[isPageSelected('{{item.link}}')]">
+          <a href="{{item.link}}" ng-click="onMenuClick(item)">{{item.name}}</a>
+        </li>
+        <li>
+          <a target="API" href="${pageContext.request.contextPath}/docs/rest-api/index.html">REST API</a>
+
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div ng-controller="homeCtrl">
+
+    <div class="row" ui-view="submenu" autoscroll="false"></div>
+
+    <p>&nbsp;</p>
+
+    <div class="row">
+      <div class="col-md-3" style="padding-left: 0;">
+        <div ui-view="plugintabs" autoscroll="false"></div>
+      </div>
+
+      <div class="col-md-9">
+        <div ui-view="plugininstance" autoscroll="false"></div>
+      </div>
     </div>
 
-  </div>
-  <div class="col-sm-2" style="margin-right: 20px;" ng-controller="mainMenuCtrl">
-    <ul class="nav nav-stacked nav-pills" ng-show="packsInstalled">
-      <li ng-repeat="item in menu" ng-class="{true:'active', false:''}[isPageSelected('{{item.link}}')]">
-        <a href="{{item.link}}" ng-click="onMenuClick(item)">{{item.name}}</a>
-      </li>
-      <li>
-        <a target="API" href="${pageContext.request.contextPath}/docs/rest-api/index.html">REST API</a>
-
-      </li>
-    </ul>
+    <%--Main view--%>
+    <div class="row" ui-view autoscroll="false"></div>
+    <%--/ Main view--%>
 
   </div>
-  <div class="col-sm-9" ng-controller="homeCtrl">
-    <div ui-view="submenu" autoscroll="false"></div>
-    <div ui-view="plugintabs" autoscroll="false"></div>
-    <div style="margin-left: 220px;" ui-view="plugininstance" autoscroll="false"></div>
-    <div ui-view autoscroll="false"></div>
-    <%--<div ng-view></div>--%>
+
+  <div class="row">
+    <p class="text-center">
+      (C) 2013-2014 <a href="http://www.onehippo.com">Hippo B.V.</a>, All Rights Reserved
+    </p>
   </div>
-  <div class="clearfix"></div>
-  <div class="col-sm-12 footer">&copy; Hippo B.V., All Rights Reserved</div>
 </div>
 
 

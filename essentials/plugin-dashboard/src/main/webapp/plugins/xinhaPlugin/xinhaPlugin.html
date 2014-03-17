@@ -14,26 +14,23 @@
   limitations under the License.
   -->
 
-<div ng-controller="xinhaPluginCtrl">
-
-    <div class="col-md-11">
-        <div class="panel">
-            <div class="panel-heading"><h2>Xinha configuration</h2></div>
-            <div class="panel-body">
-                <p>{{introMessage}}</p>
-                <div>
-                    <a class="btn btn-success navbar-btn" ng-click="select()">Select all</a>
-                    <a class="btn btn-warning navbar-btn" ng-click="deselect()">Deselect all</a>
-                    <a class="btn btn-primary navbar-btn pull-right" ng-click="save()">Save</a>
-                </div>
-                <ul ui-sortable="sortableOptions" ng-model="options" class="list-group">
-                    <li ng-repeat="option in options" style="cursor: move; height: 28px; padding-top: 2px" class="list-group-item">
-                        <span style="padding-right: 20px; cursor: default"><input type="checkbox" checked="{{options.checked}}" ng-model="option.checked"/></span>
-                        {{option.name}}
-                    </li>
-                </ul>
-                <a class="btn btn-primary navbar-btn pull-right" ng-click="save()">Save</a>
-            </div>
+<div class="panel panel-default" ng-controller="xinhaPluginCtrl">
+    <div class="panel-heading">Xinha configuration</div>
+    <div class="panel-body">
+        <p>{{introMessage}}</p>
+        <div>
+            <a class="btn btn-success navbar-btn" ng-click="select()">Select all</a>
+            <a class="btn btn-warning navbar-btn" ng-click="deselect()">Deselect all</a>
+            <a class="btn btn-primary navbar-btn pull-right" ng-click="save()">Save</a>
         </div>
+        <ul ui-sortable="sortableOptions" ng-model="options" class="list-group">
+            <li ng-repeat="option in options" style="cursor: move; height: 28px; padding-top: 2px" class="list-group-item">
+                <span style="padding-right: 20px; cursor: default"><input type="checkbox" checked="{{options.checked}}" ng-model="option.checked"/></span>
+                {{option.name}}
+            </li>
+        </ul>
+    </div>
+    <div class="panel-footer clearfix">
+        <a class="btn btn-primary pull-right" ng-click="save()">Save</a>
     </div>
 </div>
