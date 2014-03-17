@@ -159,17 +159,17 @@ public class SiteMapHelper extends AbstractHelper {
 
         String target = workspaceSiteMapNode.getPath() + "/" + newSiteMapItemName;
         final String postfix = "-duplicate";
-        String finalTarget = target;
+        String finalTarget = target + postfix;
         String nonWorkspaceLocation = finalTarget.replace("/" + HstNodeTypes.NODENAME_HST_WORKSPACE + "/", "/");
         int counter = 0;
-        while (session.nodeExists(finalTarget+postfix) || session.nodeExists(nonWorkspaceLocation+postfix)) {
+        while (session.nodeExists(finalTarget) || session.nodeExists(nonWorkspaceLocation)) {
             counter++;
-            finalTarget = target + "-" + counter;
-            nonWorkspaceLocation = nonWorkspaceLocation + "-" + counter;
+            finalTarget = target + "-" + counter + postfix;
+            nonWorkspaceLocation = finalTarget.replace("/" + HstNodeTypes.NODENAME_HST_WORKSPACE + "/", "/");
         }
 
         validateTarget(session, finalTarget);
-        final Node newSitemapNode = JcrUtils.copy(session, toShallowCopy.getPath(), target);
+        final Node newSitemapNode = JcrUtils.copy(session, toShallowCopy.getPath(), finalTarget);
         for (Node child : new NodeIterable(newSitemapNode.getNodes())) {
             // we need shallow copy so remove children again
             child.remove();
@@ -187,7 +187,12 @@ public class SiteMapHelper extends AbstractHelper {
             throw new ClientException("Cannot duplicate page since backing hst component configuration object not found",
                     ClientError.UNKNOWN);
         }
-        final String targetPageNodeName = finalTarget + "-" + pageToCopy.getName() + postfix;
+        final String targetPageNodeName;
+        if (counter > 0) {
+            targetPageNodeName = pageToCopy.getName() + "-" + counter + postfix;
+        } else {
+            targetPageNodeName = pageToCopy.getName() + postfix;
+        }
         Node clonedPage = pagesHelper.create(session.getNodeByIdentifier(pageToCopy.getCanonicalIdentifier()),
                 targetPageNodeName, pageToCopy);
         newSitemapNode.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID,
