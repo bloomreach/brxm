@@ -77,6 +77,7 @@ public class PagesTest extends AbstractSiteMapResourceTest{
         final Node home = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home");
         home.setProperty(HstNodeTypes.SITEMAPITEM_PAGE_TITLE, "foo");
         session.save();
+        Thread.sleep(200);
         initContext();
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.getSiteMapPages();
@@ -107,6 +108,7 @@ public class PagesTest extends AbstractSiteMapResourceTest{
         final Node containerItem = container.addNode("item", HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
         containerItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.Item");
         session.save();
+        Thread.sleep(200);
 
         final SiteMapPageRepresentation homePage = getHomePage();
         assertTrue(homePage.isHasContainerItemInPageDefinition());
@@ -125,6 +127,7 @@ public class PagesTest extends AbstractSiteMapResourceTest{
         homePageContainer.setProperty("hst:referencecomponent", "testcontainer");
 
         session.save();
+        Thread.sleep(200);
 
         final SiteMapPageRepresentation homePage = getHomePage();
         // REFERENCED items do not count!
@@ -151,6 +154,7 @@ public class PagesTest extends AbstractSiteMapResourceTest{
         JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:abstractpages",
                 "/hst:hst/hst:configurations/unittestproject-preview/hst:abstractpages");
         session.save();
+        Thread.sleep(200);
         final SiteMapPageRepresentation homePage = getHomePage();
         // REFERENCED items do not count!
         assertFalse(homePage.isHasContainerItemInPageDefinition());
@@ -164,13 +168,16 @@ public class PagesTest extends AbstractSiteMapResourceTest{
     }
 
     @Test
-    public void page_contains_container_item_in_inherited_page_definition()  throws Exception {
+    public void page_contains_container_item_in_inherited_page_definition() throws Exception {
         Node basepage = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage");
+
         final Node container = basepage.addNode("basecontainer", HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
         container.setProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.vBox");
         final Node containerItem = container.addNode("item", HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
         containerItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.Item");
         session.save();
+
+        Thread.sleep(200);
         final SiteMapPageRepresentation homePage = getHomePage();
         // INHERITED CONFIGURATION items do not count!
         assertFalse(homePage.isHasContainerItemInPageDefinition());
