@@ -44,6 +44,12 @@
   <link rel="shortcut icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
 </head>
 <body>
+
+<!-- LOADER ON HTTP REQUESTS -->
+<div class="busy-loader" ng-show="busyLoading">
+  <%--<span class="fa fa-spin fa-refresh"></span>&nbsp;--%>
+  <img src="${pageContext.request.contextPath}/images/loader.gif"/>
+</div>
 <!-- ERROR MESSAGES -->
 <div class="alert-danger messages" ng-show="globalError.length > 0">
   <strong>An error occurred:</strong>
@@ -65,10 +71,6 @@
     <h1 class="page-header">
       <div class="pull-left">
         <a href="${pageContext.request.contextPath}"><img src="${pageContext.request.contextPath}/images/hippo-logo.png"></a>
-      </div>
-      <!-- LOADER ON HTTP REQUESTS -->
-      <div class="pull-right" ng-show="busyLoading">
-        <span class="fa fa-spin fa-refresh"></span>&nbsp;
       </div>
       <div class="text-center">Hippo CMS
       <small>Essentials</small></div>
