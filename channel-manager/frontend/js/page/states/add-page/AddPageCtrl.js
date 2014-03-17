@@ -23,10 +23,10 @@
             'hippo.channel.FeedbackService',
             'hippo.channel.page.PrototypeService',
             'hippo.channel.page.PageService',
-            '_hippo.channel.IFrameService',
+            'hippo.channel.Container',
             'lowercaseFilter',
             'alphanumericFilter',
-            function ($scope, FeedbackService, PrototypeService, PageService, IFrameService, lowercaseFilter, alphanumericFilter) {
+            function ($scope, FeedbackService, PrototypeService, PageService, ContainerService, lowercaseFilter, alphanumericFilter) {
                 var updateURLAutomatically = true;
 
                 $scope.page = {
@@ -53,8 +53,7 @@
                     };
 
                     PageService.savePage(pageModel).then(function (response) {
-                        var iFramePanel = IFrameService.getContainer();
-                        iFramePanel.iframeToHost.publish('browseTo', '/' + pageModel.name);
+                        ContainerService.showPage(pageModel.name);
                     }, function (errorResponse) {
                         $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
                         $scope.title.focus = true;

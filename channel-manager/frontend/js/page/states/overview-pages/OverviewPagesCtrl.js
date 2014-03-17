@@ -32,8 +32,8 @@
             'hippo.channel.FeedbackService',
             'hippo.channel.ConfigService',
             'hippo.channel.page.PageService',
-            '_hippo.channel.IFrameService',
-            function ($scope, $state, $translate, FeedbackService, ConfigService, PageService, IFrameService) {
+            'hippo.channel.Container',
+            function ($scope, $state, $translate, FeedbackService, ConfigService, PageService, ContainerService) {
                 // scope variables
                 $scope.pages = [];
                 $scope.tooltip = '';
@@ -58,8 +58,7 @@
                 };
 
                 $scope.showPage = function(page) {
-                    var iframePanel = IFrameService.getContainer();
-                    iframePanel.iframeToHost.publish('browseTo', prefixWithSlash(page.pathInfo));
+                    ContainerService.showPage(page.pathInfo);
                 };
             }
         ]);

@@ -28,8 +28,8 @@
             'hippo.channel.FeedbackService',
             'hippo.channel.menu.MenuService',
             'hippo.channel.FormValidationService',
-            '_hippo.channel.IFrameService',
-            function ($scope, $stateParams, $state, $log, $window, FeedbackService, MenuService, FormValidationService, IFrameService) {
+            'hippo.channel.Container',
+            function ($scope, $stateParams, $state, $log, $window, FeedbackService, MenuService, FormValidationService, ContainerService) {
                 var savedMenuItem;
 
                 $scope.isSaving = {
@@ -88,8 +88,7 @@
                 };
 
                 $scope.showPage = function(link) {
-                    var iframePanel = IFrameService.getContainer();
-                    iframePanel.iframeToHost.publish('browseTo', (link.charAt(0) == '/' ? '' : '/') + link);
+                    ContainerService.showPage(link);
                 };
 
                 $scope.dismissFeedback = function () {
