@@ -75,6 +75,46 @@
     </property>
   </bean>
 
+
+
+  <bean id="channelFilter" class="org.hippoecm.hst.cmsrest.filter.ChannelFilter">
+    <property name="filters" ref="allChannelFilters"/>
+  </bean>
+
+  <bean id="allChannelFilters" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetClass" value="org.apache.commons.collections.ListUtils" />
+    <property name="targetMethod" value="union" />
+    <property name="arguments">
+      <list>
+        <ref bean="defaultChannelFilters" />
+        <ref bean="customChannelFilters" />
+      </list>
+    </property>
+  </bean>
+
+  <!-- Default system channel filters be added here. -->
+  <bean id="defaultChannelFilters" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+        <bean id="contentBasedChannelFilter" class="org.hippoecm.hst.cmsrest.filter.ContentBasedChannelFilter"/>
+      </list>
+    </property>
+  </bean>
+
+  <!-- Custom channel filters may be overriden in their project specific assembly. -->
+  <bean id="customChannelFilters" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+      </list>
+    </property>
+  </bean>
+
+
+  <bean id="baseResource" abstract="true">
+    <property name="channelManager" ref="org.hippoecm.hst.configuration.channel.ChannelManager"/>
+    <property name="channelFilter" ref="channelFilter"/>
+  </bean>
+
   <bean id="jaxrsCmsRestCxfServerFactoryBean" class="org.apache.cxf.jaxrs.JAXRSServerFactoryBean">
     <property name="address" value="/" />
     <property name="providers">
@@ -87,29 +127,24 @@
       <list>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.cmsrest.services.DocumentsResource">
-              <property name="channelManager" ref="org.hippoecm.hst.configuration.channel.ChannelManager"/>
+            <bean class="org.hippoecm.hst.cmsrest.services.DocumentsResource" parent="baseResource">
               <property name="hstLinkCreator" ref="org.hippoecm.hst.core.linking.HstLinkCreator"/>
             </bean>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.cmsrest.services.ChannelsResource">
-              <property name="channelManager" ref="org.hippoecm.hst.configuration.channel.ChannelManager"/>
-            </bean>
+            <bean class="org.hippoecm.hst.cmsrest.services.ChannelsResource" parent="baseResource"/>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.cmsrest.services.BlueprintsResource">
-              <property name="channelManager" ref="org.hippoecm.hst.configuration.channel.ChannelManager"/>
-            </bean>
+            <bean class="org.hippoecm.hst.cmsrest.services.BlueprintsResource"  parent="baseResource"/>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.cmsrest.services.SitesResource" />
+            <bean class="org.hippoecm.hst.cmsrest.services.SitesResource" parent="baseResource"/>
           </constructor-arg>
         </bean>
       </list>

@@ -75,7 +75,12 @@ public class DocumentsResource extends BaseResource  implements DocumentService 
                 continue;
             }
 
-            ChannelDocument document = new ChannelDocument();
+            if (!channelFilter.apply(previewChannel)) {
+                log.info("Skipping channel '{}' because filtered out by channel filters", previewChannel.toString());
+                continue;
+            }
+
+                ChannelDocument document = new ChannelDocument();
             document.setChannelId(previewChannel.getId());
             document.setChannelName(previewChannel.getName());
             if (StringUtils.isNotEmpty(link.getPath())) {

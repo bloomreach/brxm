@@ -44,7 +44,7 @@ import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerExcepti
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.core.container.CmsJcrSessionThreadLocal;
+import org.hippoecm.hst.core.internal.CmsJcrSessionThreadLocal;
 import org.hippoecm.hst.util.JcrSessionUtils;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;

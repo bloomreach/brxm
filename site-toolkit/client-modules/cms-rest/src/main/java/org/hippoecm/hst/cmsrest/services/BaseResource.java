@@ -16,6 +16,7 @@
 
 package org.hippoecm.hst.cmsrest.services;
 
+import org.hippoecm.hst.cmsrest.filter.ChannelFilter;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.RequestContextProvider;
@@ -28,6 +29,7 @@ import org.slf4j.LoggerFactory;
 public abstract class BaseResource {
 
 	protected ChannelManager channelManager;
+    protected ChannelFilter channelFilter;
 
     protected static VirtualHosts getVirtualHosts() {
         return RequestContextProvider.get().getVirtualHost().getVirtualHosts();
@@ -40,6 +42,11 @@ public abstract class BaseResource {
     public void setChannelManager(final ChannelManager channelManager) {
         this.channelManager = channelManager;
     }
+
+    public void setChannelFilter(final ChannelFilter channelFilter) {
+        this.channelFilter = channelFilter;
+    }
+
 
 
 }

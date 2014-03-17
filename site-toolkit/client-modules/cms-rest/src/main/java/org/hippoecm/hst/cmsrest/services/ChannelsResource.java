@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
+import org.hippoecm.hst.cmsrest.filter.ChannelFilter;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
@@ -43,7 +44,7 @@ public class ChannelsResource extends BaseResource implements ChannelService {
 
     private static final Logger log = LoggerFactory.getLogger(ChannelsResource.class);
 
-	@Override
+    @Override
 	public List<Channel> getChannels() {
         final List<Channel> channels = new ArrayList<>();
         // do not use HstServices.getComponentManager().getComponent(HstManager.class.getName()) to get to
@@ -59,10 +60,14 @@ public class ChannelsResource extends BaseResource implements ChannelService {
             }
             final Channel previewChannel = ((ContextualizableMount)mount).getPreviewChannel();
             if (previewChannel == null) {
+
                 log.debug("Skipping link for mount '{}' since it does not have a channel", mount.getName());
                 continue;
             }
-            channels.add(previewChannel);
+            if (channelFilter.apply(previewChannel)) {
+                log.info("Skipping channel '{}' because filtered out by channel filters", previewChannel.toString());
+                channels.add(previewChannel);
+            }
         }
 
         return channels;

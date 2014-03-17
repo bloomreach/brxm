@@ -34,7 +34,7 @@ import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
-import org.hippoecm.hst.core.container.CmsJcrSessionThreadLocal;
+import org.hippoecm.hst.core.internal.CmsJcrSessionThreadLocal;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;

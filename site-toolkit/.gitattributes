@@ -264,6 +264,9 @@ api/src/main/java/org/hippoecm/hst/util/package-info.java svneol=native#text/pla
 api/src/site/site.xml -text
 api/src/test/java/org/hippoecm/hst/core/component/TestGenericHstComponent.java -text
 client-modules/cms-rest/pom.xml -text
+client-modules/cms-rest/src/main/java/org/hippoecm/hst/cmsrest/filter/AbstractChannelFilter.java -text
+client-modules/cms-rest/src/main/java/org/hippoecm/hst/cmsrest/filter/ChannelFilter.java -text
+client-modules/cms-rest/src/main/java/org/hippoecm/hst/cmsrest/filter/ContentBasedChannelFilter.java -text
 client-modules/cms-rest/src/main/java/org/hippoecm/hst/cmsrest/services/DocumentsResource.java -text
 client-modules/cms-rest/src/main/java/org/hippoecm/hst/cmsrest/services/ResourceUtil.java -text
 client-modules/cms-rest/src/main/resources/org/hippoecm/hst/cmsrest/SpringComponentManager-cmsrest.xml -text

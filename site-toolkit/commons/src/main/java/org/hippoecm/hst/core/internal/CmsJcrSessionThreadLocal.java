@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.hippoecm.hst.core.container;
+package org.hippoecm.hst.core.internal;
 
 import javax.jcr.Session;
 
