@@ -17,8 +17,6 @@ frontend/js/menu/states/menu-item/CloseConfirmationCtrl.js -text
 frontend/js/menu/states/menu-item/MenuCtrl.js -text
 frontend/js/menu/states/menu-item/MenuItemCtrl.js -text
 frontend/js/menu/states/menu-item/TreeCtrl.js -text
-frontend/js/menu/states/menu-item/add-page/AddPageCtrl.js -text
-frontend/js/menu/states/menu-item/add-page/add-page.html -text
 frontend/js/menu/states/menu-item/add/AddMenuItemCtrl.js -text
 frontend/js/menu/states/menu-item/edit/EditMenuItemCtrl.js -text
 frontend/js/menu/states/menu-item/edit/EditMenuItemFormCtrl.js -text

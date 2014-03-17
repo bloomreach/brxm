@@ -40,12 +40,6 @@
                     templateUrl: 'states/menu-item/add/add-menu-item.html'
                 })
 
-                .state('menu-item.add-page', {
-                    url: '/:menuItemId/add',
-                    controller: 'hippo.channel.menu.AddPageCtrl',
-                    templateUrl: 'states/menu-item/add-page/add-page.html'
-                })
-
                 .state('menu-item.edit', {
                     url: '/:menuItemId/edit',
                     controller: 'hippo.channel.menu.EditMenuItemCtrl',
