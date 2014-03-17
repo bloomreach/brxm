@@ -137,7 +137,7 @@ public class BaseResource {
         ));
         //eventBus.post(new DisplayEvent("Please rebuild and restart your application:", DisplayEvent.DisplayType.STRONG, true));
 
-        eventBus.post(new DisplayEvent("The installation of the powerpack was successfully completed. To view the changes reflected in the CMS and site, rebuild and restart your project by using following command:", DisplayEvent.DisplayType.P, true));
+        eventBus.post(new DisplayEvent("The installation of the Power Pack was successfully completed. To view the changes reflected in the CMS and site, first stop Tomcat and then rebuild and restart your project using following command:", DisplayEvent.DisplayType.P, true));
     }
 
 
