@@ -25,13 +25,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfiguration {
+public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfiguration, CanonicalInfo {
 
     private static final Logger log = LoggerFactory.getLogger(HstSiteMenuItemConfigurationService.class);
     
@@ -41,6 +42,7 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
     private HstSiteMenuItemConfiguration parent;
     private String name;
     private String canonicalIdentifier;
+    private String canonicalPath;
     private List<HstSiteMenuItemConfiguration> childItems = new ArrayList<HstSiteMenuItemConfiguration>();
     private String siteMapItemPath;
     private String externalLink;
@@ -58,6 +60,7 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
         this.parent = parent;
         this.hstSiteMenuConfiguration = hstSiteMenuConfiguration;
         this.canonicalIdentifier = siteMenuItem.getValueProvider().getIdentifier();
+        this.canonicalPath =  siteMenuItem.getValueProvider().getPath();
         this.name = StringPool.get(siteMenuItem.getValueProvider().getName());
         
         if (siteMenuItem.getValueProvider().hasProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK)) {
@@ -141,6 +144,11 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
         
     }
 
+    @Override
+    public boolean isWorkspaceConfiguration() {
+        return false;
+    }
+
     public List<HstSiteMenuItemConfiguration> getChildItemConfigurations() {
         return Collections.unmodifiableList(childItems);
     }
@@ -149,8 +157,14 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
         return this.name;
     }
 
+    @Override
     public String getCanonicalIdentifier() {
         return canonicalIdentifier;
+    }
+
+    @Override
+    public String getCanonicalPath() {
+        return canonicalPath;
     }
 
     public HstSiteMenuItemConfiguration getParentItemConfiguration() {

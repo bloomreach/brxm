@@ -50,6 +50,7 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
     private String relativeContentPath;
     private HstComponentConfiguration hstComponentConfiguration;
     private String pathInfo;
+    private String pageTitle;
     private PropertyParser pp;
     private boolean isComponentResolved;
 
@@ -62,8 +63,8 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
         * We take the properties form the hstSiteMapItem getParameters and replace params (like ${1}) with the params[] array 
         */
 
-        this.resolvedParameters = new Properties();
-        this.localResolvedParameters = new Properties();
+        resolvedParameters = new Properties();
+        localResolvedParameters = new Properties();
 
         resolvedParameters.putAll(params);
         localResolvedParameters.putAll(params);
@@ -94,19 +95,19 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
         }
 
         relativeContentPath = (String)pp.resolveProperty("relativeContentPath", hstSiteMapItem.getRelativeContentPath());
-
+        pageTitle = (String)pp.resolveProperty("pageTitle", hstSiteMapItem.getPageTitle());
     }
 
     public int getStatusCode(){
-        return this.hstSiteMapItem.getStatusCode();
+        return hstSiteMapItem.getStatusCode();
     }
 
     public int getErrorCode(){
-        return this.hstSiteMapItem.getErrorCode();
+        return hstSiteMapItem.getErrorCode();
     }
 
     public HstSiteMapItem getHstSiteMapItem() {
-        return this.hstSiteMapItem;
+        return hstSiteMapItem;
     }
 
 
@@ -116,7 +117,7 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
         }
         resolveComponentConfiguration();
 
-        return this.hstComponentConfiguration;
+        return hstComponentConfiguration;
     }
 
     public String getParameter(String name) {
@@ -124,7 +125,7 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
     }
 
     public Properties getParameters(){
-        return this.resolvedParameters;
+        return resolvedParameters;
     }
 
     public String getLocalParameter(String name) {
@@ -132,7 +133,7 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
     }
 
     public Properties getLocalParameters() {
-        return this.localResolvedParameters;
+        return localResolvedParameters;
     }
 
     public String getRelativeContentPath() {
@@ -140,7 +141,12 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
     }
 
     public String getPathInfo() {
-        return this.pathInfo;
+        return pathInfo;
+    }
+
+    @Override
+    public String getPageTitle() {
+        return pageTitle;
     }
 
     public ResolvedMount getResolvedMount() {

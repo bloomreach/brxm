@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -22,18 +22,57 @@
     <constructor-arg value="jaxrsHstConfigService"/>
     <property name="servletPath" value=""/>
     <property name="jaxrsServerFactoryBean" ref="jaxrsHstConfigCxfServerFactoryBean"/>
+    <property name="repository" ref="javax.jcr.Repository" />
+    <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader" />
   </bean>
 
-  <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerItemComponentResource" id="containerItemComponentResource">
-    <property name="processor">
-      <bean class="org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor" />
-    </property>
+
+  <bean id="abstractConfigResource" abstract="true">
+    <property name="pageComposerContextService" ref="pageComposerContextService"/>
   </bean>
+
+  <bean id="pageComposerContextService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService"/>
+
+  <bean id="abstractHelper" abstract="true">
+    <property name="pageComposerContextService" ref="pageComposerContextService"/>
+  </bean>
+
+  <bean id="containerHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerHelper" parent="abstractHelper"/>
+  <bean id="containerItemHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper" parent="abstractHelper"/>
+
+  <bean id="siteMenuHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper" parent="abstractHelper"/>
+
+  <bean id="pagesHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper" parent="abstractHelper"/>
+
+  <bean id="siteMapHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper" parent="abstractHelper">
+    <property name="pagesHelper" ref="pagesHelper"/>
+  </bean>
+
+
+
+  <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerItemComponentResource" id="containerItemComponentResource"
+        parent="abstractConfigResource">
+    <property name="processor">
+      <bean class="org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor"/>
+    </property>
+    <property name="containerItemHelper" ref="containerItemHelper"/>
+  </bean>
+
+  <!--
+    Predicate for validating uri's, used for the site menu item validator.
+    If you want other behaviour than the default please add a bean with the
+    same name to your application context and set the class to a class that
+    implements google guava's Predicate interface.
+  -->
+  <bean id="uriValidator" class="org.hippoecm.hst.pagecomposer.jaxrs.services.validators.UriValidator"/>
 
   <!--
     The internal server factory. 
     Each JAX-RS service component is registered by "resourceProvider" property. 
   -->
+
+  <bean id="validatiorFactory" class="org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory"/>
+
   <bean id="jaxrsHstConfigCxfServerFactoryBean" class="org.apache.cxf.jaxrs.JAXRSServerFactoryBean">
     <property name="address" value="/"/>
     <property name="providers">
@@ -45,29 +84,55 @@
       <list>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource"/>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource"  parent="abstractConfigResource">
+              <property name="containerHelper" ref="containerHelper"/>
+            </bean>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <ref bean="containerItemComponentResource" />
+            <ref bean="containerItemComponentResource"/>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource"/>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMenuResource" parent="abstractConfigResource">
+              <property name="siteMenuHelper" ref="siteMenuHelper"/>
+              <property name="siteMenuItemHelper">
+                <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper" parent="abstractHelper"/>
+              </property>
+              <property name="uriValidator" ref="uriValidator"/>
+              <property name="validatorFactory" ref="validatiorFactory"/>
+            </bean>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.RootResource">
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource" parent="abstractConfigResource">
+              <property name="siteMapHelper" ref="siteMapHelper"/>
+              <property name="validatorFactory" ref="validatiorFactory"/>
+            </bean>
+          </constructor-arg>
+        </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource" parent="abstractConfigResource">
+              <property name="siteMapHelper" ref="siteMapHelper"/>
+              <property name="siteMenuHelper" ref="siteMenuHelper"/>
+              <property name="pagesHelper" ref="pagesHelper"/>
+            </bean>
+          </constructor-arg>
+        </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.RootResource" parent="abstractConfigResource">
               <property name="rootPath" value="${hst.configuration.rootPath}"/>
             </bean>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ExceptionResource"/>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ExceptionResource" parent="abstractConfigResource"/>
           </constructor-arg>
         </bean>
       </list>
@@ -77,7 +142,7 @@
   <!-- Pipelining -->
 
   <bean id="jaxrsHstConfigServiceValve" class="org.hippoecm.hst.core.container.JaxrsRestServiceValve">
-    <property name="valveName" value="jaxrsHstConfigServiceValve" />
+    <property name="valveName" value="jaxrsHstConfigServiceValve"/>
     <constructor-arg ref="jaxrsHstConfigService"/>
   </bean>
 
@@ -109,7 +174,7 @@
           <property name="cleanupValves">
             <list>
               <ref bean="cleanupValve"/>
-              <ref bean="diagnosticReportingValve" />
+              <ref bean="diagnosticReportingValve"/>
             </list>
           </property>
         </bean>
@@ -130,6 +195,6 @@
       </bean>
     </property>
   </bean>
- 
+
 </beans>
 

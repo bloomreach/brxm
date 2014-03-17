@@ -23,8 +23,6 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -32,7 +30,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -46,8 +43,12 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.PostRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerHelper;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,13 +56,18 @@ import org.slf4j.LoggerFactory;
 public class ContainerComponentResource extends AbstractConfigResource {
     private static Logger log = LoggerFactory.getLogger(ContainerComponentResource.class);
 
+    private ContainerHelper containerHelper;
+
+    public void setContainerHelper(final ContainerHelper containerHelper) {
+        this.containerHelper = containerHelper;
+    }
+
     @POST
     @Path("/create/{itemUUID}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createContainerItem(@Context HttpServletRequest servletRequest,
-                                        @PathParam("itemUUID") String itemUUID,
-                                        @QueryParam("lastModifiedTimestamp") long lastModifiedTimestamp) throws ContainerException {
+    public Response createContainerItem(final @PathParam("itemUUID") String itemUUID,
+                                        final @QueryParam("versionStamp") long versionStamp) throws ContainerException {
 
         if (itemUUID == null) {
             throw new ContainerException("There must be a uuid of the containeritem to copy from ");
@@ -72,7 +78,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
             throw new ContainerException("There must be a valid uuid of the containeritem to copy from");
         }
 
-        HstRequestContext requestContext = getRequestContext(servletRequest);
+        HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
         try {
             HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
             Node containerItem;
@@ -87,16 +93,17 @@ public class ContainerComponentResource extends AbstractConfigResource {
                 return error("The container component where the item should be created in is not of the correct type. Cannot create item '"+itemUUID+"'");
             }
 
-            Node containerNode = getRequestConfigNode(requestContext, HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
+            Node containerNode = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
             if (containerNode == null) {
                 log.warn("Exception during creating new container item : Could not find container node to add item to.");
                 return error("Exception during creating new container item : Could not find container node to add item to.");
             }
 
             try {
-                HstConfigurationUtils.tryLockIfNeeded(containerNode, lastModifiedTimestamp);
-            } catch (IllegalStateException e) {
-                log.warn("HstConfigurationUtils tryLockIfNeeded on '"+containerNode.getPath()+"' failed: ", e);
+                // the acquireLock also checks all ancestors whether they are not locked by someone else
+                containerHelper.acquireLock(containerNode, versionStamp);
+            } catch (ClientException e) {
+                log.info("Exception while trying to lock '" + containerNode.getPath() + "': ", e);
                 return error(e.getMessage());
             }
 
@@ -104,12 +111,16 @@ public class ContainerComponentResource extends AbstractConfigResource {
             // containerNode. Find a correct newName and create a new node.
             String newItemNodeName = findNewName(containerItem.getName(), containerNode);
 
-            session.copy(containerItem, containerNode.getPath() + "/" + newItemNodeName);
+            JcrUtils.copy(session, containerItem.getPath(), containerNode.getPath() + "/" + newItemNodeName);
             Node newItem = containerNode.getNode(newItemNodeName);
-            long newLastModifiedTimestamp = HstConfigurationUtils.setLastModifiedTimestampForContainer(containerNode);
             HstConfigurationUtils.persistChanges(session);
-
-            ContainerItemRepresentation item = new ContainerItemRepresentation().represent(newItem, newLastModifiedTimestamp);
+            final long newVersionStamp;
+            if (containerNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED)) {
+                newVersionStamp = containerNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED).getDate().getTimeInMillis();
+            } else {
+                newVersionStamp = 0;
+            }
+            ContainerItemRepresentation item = new ContainerItemRepresentation().represent(newItem, newVersionStamp);
             log.info("Successfully created item '{}' with path '{}'" , newItem.getName(), newItem.getPath());
             return ok("Successfully created item " + newItem.getName() + " with path " + newItem.getPath(), item);
         } catch (RepositoryException e) {
@@ -123,11 +134,9 @@ public class ContainerComponentResource extends AbstractConfigResource {
     @Path("/update/{itemUUID}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateContainer(@Context HttpServletRequest servletRequest,
-                                    @Context HttpServletResponse servletResponse,
-                                    @PathParam("itemUUID") String itemUUID,
-                                    @QueryParam("lastModifiedTimestamp") long lastModifiedTimestamp,
-                                    String json) {
+    public Response updateContainer(final @PathParam("itemUUID") String itemUUID,
+                                    final @QueryParam("versionStamp") long versionStamp,
+                                    final String json) {
 
         // TODO Instead of 'String json' in the argument it should be possible to have: ContainerRepresentation presentation
         // It should be possible to automatically bind to ContainerRepresentation. Also, I don't think we need a Gson dependency here
@@ -137,14 +146,15 @@ public class ContainerComponentResource extends AbstractConfigResource {
         PostRepresentation<ContainerRepresentation> pr = new Gson().fromJson(json, type);
         ContainerRepresentation container = pr.getData();
 
-        HstRequestContext requestContext = getRequestContext(servletRequest);
+        HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
         try {
             HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
-            Node containerNode = getRequestConfigNode(requestContext, HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
+            Node containerNode = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
             try {
-                HstConfigurationUtils.tryLockIfNeeded(containerNode, lastModifiedTimestamp);
-            } catch (IllegalStateException e) {
-                log.warn("HstConfigurationUtils tryLockIfNeeded on '"+containerNode.getPath()+"' failed: ", e);
+                // the acquireLock also checks all ancestors whether they are not locked by someone else
+                containerHelper.acquireLock(containerNode, versionStamp);
+            } catch (ClientException e) {
+                log.info("Exception while trying to lock '" + containerNode.getPath() + "': ", e);
                 return error(e.getMessage());
             }
             List<String> children = container.getChildren();
@@ -175,7 +185,6 @@ public class ContainerComponentResource extends AbstractConfigResource {
                     return error("ItemNotFoundException: Cannot update item '"+itemUUID+"'");
                 }
             }
-            HstConfigurationUtils.setLastModifiedTimestampForContainer(containerNode);
             HstConfigurationUtils.persistChanges(session);
             log.info("Item order for container[{}] has been updated.", container.getId());
             return ok("Item order for container[" + container.getId() + "] has been updated.", container);
@@ -189,11 +198,9 @@ public class ContainerComponentResource extends AbstractConfigResource {
     @GET
     @Path("/delete/{itemUUID}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteContainerItem(@Context HttpServletRequest servletRequest,
-                                        @Context HttpServletResponse servletResponse,
-                                        @PathParam("itemUUID") String itemUUID,
-                                        @QueryParam("lastModifiedTimestamp") long lastModifiedTimestamp) {
-        HstRequestContext requestContext = getRequestContext(servletRequest);
+    public Response deleteContainerItem(final @PathParam("itemUUID") String itemUUID,
+                                        final @QueryParam("versionStamp") long versionStamp) {
+        HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
         try {
             Session session = requestContext.getSession();
             Node containerItem;
@@ -213,12 +220,12 @@ public class ContainerComponentResource extends AbstractConfigResource {
                 return error("The item to be deleted is not a child of a container component. Cannot delete item '"+itemUUID+"'");
             }
             try {
-                HstConfigurationUtils.tryLockIfNeeded(containerNode, lastModifiedTimestamp);
-            } catch (IllegalStateException e) {
-                log.warn("HstConfigurationUtils tryLockIfNeeded on '"+containerNode.getPath()+"' failed: ", e);
+                // the acquireLock also checks all ancestors whether they are not locked by someone else
+                containerHelper.acquireLock(containerNode, versionStamp);
+            } catch (ClientException e) {
+                log.info("Exception while trying to lock '" + containerNode.getPath() + "': ", e);
                 return error(e.getMessage());
             }
-            HstConfigurationUtils.setLastModifiedTimestampForContainer(containerItem);
             containerItem.remove();
             HstConfigurationUtils.persistChanges(session);
         } catch (RepositoryException e) {
@@ -244,7 +251,9 @@ public class ContainerComponentResource extends AbstractConfigResource {
     /**
      * @return <code>true</code> is node got moved
      */
-    private void moveIfNeeded(Node parent, String childId, Session session) throws RepositoryException, NotFoundException {
+    private void moveIfNeeded(final Node parent,
+                              final String childId,
+                              final Session session) throws RepositoryException, NotFoundException {
         String parentPath = parent.getPath();
         Node childNode = session.getNodeByIdentifier(childId);
         String childPath = childNode.getPath();

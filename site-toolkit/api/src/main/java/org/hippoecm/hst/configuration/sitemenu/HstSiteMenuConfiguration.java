@@ -19,33 +19,22 @@ import java.util.List;
 
 public interface HstSiteMenuConfiguration {
     /**
-     * Returns the name of this SiteMenuConfiguration. For example, you could have a "topmenu", "leftmenu" and "footermenu" on your site,
-     * where these names might be appropriate . It must be unique within a <code>{@link HstSiteMenusConfiguration}</code> container.
+     * Returns the name of this SiteMenuConfiguration. For example, you could have a "topmenu", "leftmenu" and
+     * "footermenu" on your site, where these names might be appropriate . It must be unique within a <code>{@link
+     * HstSiteMenusConfiguration}</code> container.
+     *
      * @return the name of this SiteMenuConfiguration
      */
     String getName();
 
     /**
-     * Returns the identifier of the backing stored menu configuration. Note that multiple <code>HstSiteMenuConfiguration</code>'s can share the same
-     * canonical identifier due to inheritance. Also, multiple subsites can share the same backing configuration, and thus share the same canonical identifiers
-     *
-     * @return the identifier of the backing stored menu configuration
-     */
-    String getCanonicalIdentifier();
-
-    /**
-     * @return <code>true</code> when the backing provider ({@link org.hippoecm.hst.configuration.model.HstNode}) of this {@link HstSiteMenuConfiguration} is inherited
-     */
-    boolean isInherited();
-    
-    /**
      * @return returns all direct child {@link HstSiteMenuItemConfiguration}'s of this SiteMenuConfiguration
      */
     List<HstSiteMenuItemConfiguration> getSiteMenuConfigurationItems();
-    
+
     /**
-     * 
-     * @return the <code>{@link HstSiteMenusConfiguration}</code> which is the container for this <code>HstSiteMenuConfiguration</code>
+     * @return the <code>{@link HstSiteMenusConfiguration}</code> which is the container for this
+     * <code>HstSiteMenuConfiguration</code>
      */
     HstSiteMenusConfiguration getSiteMenusConfiguration();
 

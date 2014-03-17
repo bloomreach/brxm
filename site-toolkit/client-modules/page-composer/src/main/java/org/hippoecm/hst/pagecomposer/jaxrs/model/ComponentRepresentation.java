@@ -37,6 +37,13 @@ public class ComponentRepresentation {
     private String iconURL;
     private String parentId;
 
+    private boolean inherited;
+    private boolean prototype;
+    // whether the component has a container in its page definition. Note that although the {@link HstComponentConfiguration}
+    // might have containers, this does not mean the component has it in its page definition: The page definition
+    // is the canonical configuration, without inheritance (and thus the container might be present in inherited config only)
+    private boolean hasContainerInPageDefinition;
+
     private String componentClassName;
     private String template;
 
@@ -54,6 +61,10 @@ public class ComponentRepresentation {
         if (parent != null) {
             parentId = parent.getCanonicalIdentifier();
         }
+
+        this.inherited = componentConfiguration.isInherited();
+        this.prototype = componentConfiguration.isPrototype();
+        hasContainerInPageDefinition = hasContainerInPageDefinition(componentConfiguration, path);
 
         componentClassName = componentConfiguration.getComponentClassName();
         template = componentConfiguration.getRenderPath();
@@ -143,6 +154,22 @@ public class ComponentRepresentation {
         this.parentId = parentId;
     }
 
+    public boolean isInherited() {
+        return inherited;
+    }
+
+    public void setInherited(final boolean inherited) {
+        this.inherited = inherited;
+    }
+
+    public boolean isPrototype() {
+        return prototype;
+    }
+
+    public void setPrototype(final boolean prototype) {
+        this.prototype = prototype;
+    }
+
     public String getLabel() {
         return label;
     }
@@ -174,6 +201,29 @@ public class ComponentRepresentation {
     public void setLastModifiedTimestamp(final long lastModifiedTimestamp) {
         this.lastModifiedTimestamp = lastModifiedTimestamp;
     }
-    
+
+    public boolean hasContainerInPageDefinition() {
+        return hasContainerInPageDefinition;
+    }
+
+    public void setHasContainerInPageDefinition(final boolean hasContainerInPageDefinition) {
+        this.hasContainerInPageDefinition = hasContainerInPageDefinition;
+    }
+
+
+    private boolean hasContainerInPageDefinition(final HstComponentConfiguration config,
+                                                 final String canonicalPageDefinitionPath) {
+        if (HstComponentConfiguration.Type.CONTAINER_COMPONENT.equals(config.getComponentType())) {
+            if (config.getCanonicalStoredLocation().startsWith(canonicalPageDefinitionPath)) {
+                return true;
+            }
+        }
+        for (HstComponentConfiguration child : config.getChildren().values()) {
+            if (hasContainerInPageDefinition(child, canonicalPageDefinitionPath)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

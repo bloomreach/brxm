@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.configuration.sitemenu;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,11 +22,6 @@ import java.util.Set;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
-/**
- * Implementations should return an unmodifiable map for {@link #getSiteMenuItemConfigurations()} because clients should not
- * be able to modify the configuration
- *
- */
 public interface HstSiteMenuItemConfiguration {
     /**
      * 

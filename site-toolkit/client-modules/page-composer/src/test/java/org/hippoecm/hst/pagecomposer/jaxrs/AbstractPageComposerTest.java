@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,15 +15,16 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs;
 
+import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.observation.Event;
-import javax.jcr.observation.EventListener;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.cache.HstEventsCollector;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstConfigurationEventListener;
@@ -40,14 +41,17 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockHttpSession;
 
 public class AbstractPageComposerTest {
 
@@ -56,7 +60,10 @@ public class AbstractPageComposerTest {
     protected HstURLFactory hstURLFactory;
     protected HstSiteMapMatcher siteMapMatcher;
     protected HstEventsCollector hstEventsCollector;
+    protected HippoSession session;
     protected Object hstModelMutex;
+    private HstConfigurationEventListener listener;
+
 
     @Before
     public void setUp() throws Exception {
@@ -71,14 +78,38 @@ public class AbstractPageComposerTest {
         this.hstURLFactory = HstServices.getComponentManager().getComponent(HstURLFactory.class.getName());
         this.hstEventsCollector = HstServices.getComponentManager().getComponent("hstEventsCollector");
         this.hstModelMutex = HstServices.getComponentManager().getComponent("hstModelMutex");
+
+        session = (HippoSession)createSession();
+
+        createHstConfigBackup(session);
+        listener = new HstConfigurationEventListener();
+        listener.setHstEventsCollector(hstEventsCollector);
+        listener.setHstManager(hstManager);
+        listener.setHstModelMutex(hstModelMutex);
+        session.getWorkspace().getObservationManager().addEventListener(listener,
+                Event.NODE_ADDED | Event.NODE_MOVED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED,
+                "/hst:hst",
+                true,
+                null,
+                null,
+                false);
+
     }
 
     @After
     public void tearDown() throws Exception {
+
+        // to avoid jr problems with current session with shared depth kind of issues, use a refresh
+        session.refresh(false);
+        session.getWorkspace().getObservationManager().removeEventListener(listener);
+        restoreHstConfigBackup(session);
+
+        session.logout();
         this.componentManager.stop();
         this.componentManager.close();
         HstServices.setComponentManager(null);
         ModifiableRequestContextProvider.clear();
+
     }
 
     protected String[] getConfigurations() {
@@ -91,7 +122,6 @@ public class AbstractPageComposerTest {
         return this.componentManager;
     }
 
-
     protected Session createSession() throws RepositoryException {
         Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
         return repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
@@ -102,6 +132,11 @@ public class AbstractPageComposerTest {
         return propConf;
     }
 
+    protected void setMountIdOnHttpSession(final MockHttpServletRequest request, final String mountId) {
+        final MockHttpSession httpSession = new MockHttpSession();
+        httpSession.setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
+        request.setSession(httpSession);
+    }
 
 
     protected HstRequestContext getRequestContextWithResolvedSiteMapItemAndContainerURL(final MockHttpServletRequest request, String hostAndPort, String requestURI) throws Exception {
@@ -122,6 +157,10 @@ public class AbstractPageComposerTest {
 
         request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
         ModifiableRequestContextProvider.set(requestContext);
+        final String mountId = requestContext.getResolvedMount().getMount().getIdentifier();
+        requestContext.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, mountId);
+        setMountIdOnHttpSession(request, mountId);
+
         return requestContext;
     }
 
@@ -159,56 +198,54 @@ public class AbstractPageComposerTest {
         return vhosts.matchSiteMapItem(url);
     }
 
-    public class CommonHstConfigSetup implements AutoCloseable {
-        public Session session;
-        public EventListener listener;
-
-        public CommonHstConfigSetup() throws RepositoryException {
-            session = createSession();
-            listener = registerConfigListener();
-            createHstConfigBackup();
-        }
-
-        @Override
-        public void close() throws Exception {
-            removeListener();
-            restoreHstConfigBackup();
-            session.logout();
-        }
-
-        protected void createHstConfigBackup() throws RepositoryException {
-            if (!session.nodeExists("/hst-backup")) {
-                JcrUtils.copy(session, "/hst:hst", "/hst-backup");
-                session.save();
-            }
-        }
-
-        protected void restoreHstConfigBackup() throws RepositoryException {
-            if (session.nodeExists("/hst-backup")) {
-                session.removeItem("/hst:hst");
-                JcrUtils.copy(session, "/hst-backup", "/hst:hst");
-                session.removeItem("/hst-backup");
-                session.save();
-            }
-        }
-
-        private void removeListener() throws RepositoryException {
-            session.getWorkspace().getObservationManager().removeEventListener(listener);
-        }
-
-        private EventListener registerConfigListener() throws RepositoryException {
-            HstConfigurationEventListener configurationEventListener = new HstConfigurationEventListener();
-            configurationEventListener.setHstEventsCollector(hstEventsCollector);
-            configurationEventListener.setHstManager(hstManager);
-            configurationEventListener.setHstModelMutex(hstModelMutex);
-            session.getWorkspace().getObservationManager().addEventListener(configurationEventListener,
-                    Event.NODE_ADDED | Event.NODE_MOVED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED,
-                    "/hst:hst",
-                    true,
-                    null,
-                    null,
-                    false);
-            return configurationEventListener;
+    protected void createHstConfigBackup(Session session) throws RepositoryException {
+        if (!session.nodeExists("/hst-backup")) {
+            JcrUtils.copy(session, "/hst:hst", "/hst-backup");
+            session.save();
         }
     }
+
+    protected void restoreHstConfigBackup(Session session) throws RepositoryException {
+        if (session.nodeExists("/hst-backup")) {
+            if (session.nodeExists("/hst:hst")) {
+                session.removeItem("/hst:hst");
+            }
+            JcrUtils.copy(session, "/hst-backup", "/hst:hst");
+            session.removeItem("/hst-backup");
+            session.save();
+        }
+    }
+
+
+    protected void createWorkspaceWithTestContainer() throws RepositoryException {
+        final Node unitTestConfigNode = session.getNode("/hst:hst/hst:configurations/unittestproject");
+        final Node workspace = unitTestConfigNode.addNode("hst:workspace", "hst:workspace");
+        final Node containers = workspace.addNode("hst:containers", "hst:containercomponentfolder");
+
+        final Node containerNode = containers.addNode("testcontainer", "hst:containercomponent");
+        containerNode.setProperty("hst:xtype", "HST.vBox");
+    }
+
+    protected void movePagesFromCommonToUnitTestProject() throws RepositoryException {
+        session.move("/hst:hst/hst:configurations/unittestcommon/hst:pages", "/hst:hst/hst:configurations/unittestproject/hst:pages");
+    }
+
+    protected void addReferencedContainerForHomePage() throws RepositoryException {
+        final Node container = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:pages/homepage")
+                .addNode("container", "hst:containercomponentreference");
+        container.setProperty("hst:referencecomponent", "testcontainer");
+    }
+
+    protected String addCatalogItem() throws RepositoryException {
+        Node unitTestConfigNode = session.getNode("/hst:hst/hst:configurations/unittestproject");
+        final Node catalog = unitTestConfigNode.addNode("hst:catalog", "hst:catalog");
+        final Node catalogPackage = catalog.addNode("testpackage", "hst:containeritempackage");
+        final Node catalogItem = catalogPackage.addNode("testitem", "hst:containeritemcomponent");
+        catalogItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE, "thankyou");
+        catalogItem.setProperty("hst:xtype", "HST.Item");
+        return catalogItem.getIdentifier();
+    }
+
+
+
 }

@@ -54,6 +54,12 @@ public interface ResolvedSiteMapItem {
      * @return the matched path to this <code>ResolvedSiteMapItem</code>, relative to the mount path
      */
     String getPathInfo();
+
+    /**
+     * @return the page title for this {@link ResolvedSiteMapItem} or <code>null</code> if not configured or configured incorrect:
+     * An incorrect configuration is the case when there are property placeholders used for wildcards that cannot be resolved.
+     */
+    String getPageTitle();
     
     /**
      * Returns a property from the HstSiteMapItem configuration but should have replaced possible property placeholders. If a property 

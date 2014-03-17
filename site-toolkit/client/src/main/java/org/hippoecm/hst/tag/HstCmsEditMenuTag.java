@@ -16,7 +16,10 @@
 package org.hippoecm.hst.tag;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagData;
@@ -24,16 +27,27 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
+import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
+import org.hippoecm.hst.configuration.internal.CanonicalInfo;
+import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenu;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HstCmsEditMenuTag extends TagSupport  {
-    
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_LOCKED_BY;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_LOCKED_ON;
+import static org.hippoecm.hst.core.container.ContainerConstants.CMS_USER_ID_ATTR;
+import static org.hippoecm.hst.utils.TagUtils.encloseInHTMLComment;
+import static org.hippoecm.hst.utils.TagUtils.toJSONMap;
+
+public class HstCmsEditMenuTag extends TagSupport {
+
     private final static Logger log = LoggerFactory.getLogger(HstCmsEditMenuTag.class);
-    
+
     private final static long serialVersionUID = 1L;
 
     private final static String MENU_ATTR_NAME = "menu";
@@ -41,12 +55,12 @@ public class HstCmsEditMenuTag extends TagSupport  {
     protected HstSiteMenu menu;
 
     @Override
-    public int doStartTag() throws JspException{
+    public int doStartTag() throws JspException {
         return EVAL_BODY_INCLUDE;
     }
 
     @Override
-    public int doEndTag() throws JspException{
+    public int doEndTag() throws JspException {
         try {
 
             if (menu == null) {
@@ -65,8 +79,41 @@ public class HstCmsEditMenuTag extends TagSupport  {
                 log.debug("Skipping cms edit menu because not cms preview.");
                 return EVAL_PAGE;
             }
+
+
+            final HstSite hstSite = requestContext.getResolvedMount().getMount().getHstSite();
+            if (hstSite == null) {
+                log.debug("Skipping cms edit menu because no hst site for matched mount '{}'.",
+                        requestContext.getResolvedMount().getMount().toString());
+                return EVAL_PAGE;
+            }
+
+            final HstSiteMenuConfiguration siteMenuConfiguration = hstSite.getSiteMenusConfiguration().getSiteMenuConfiguration(menu.getName());
+
+            if (siteMenuConfiguration == null) {
+                log.debug("Skipping cms edit menu because no siteMenuConfiguration '{}' found for matched mount '{}'.",
+                        menu.getName(), requestContext.getResolvedMount().getMount().toString());
+                return EVAL_PAGE;
+            }
+
+            if (!(siteMenuConfiguration instanceof CanonicalInfo)) {
+                log.debug("Skipping cms edit menu because siteMenuConfiguration found not instanceof CanonicalInfo " +
+                        "for matched mount '{}'.", requestContext.getResolvedMount().getMount().toString());
+                return EVAL_PAGE;
+            }
+            if (!(siteMenuConfiguration instanceof ConfigurationLockInfo)) {
+                log.debug("Skipping cms edit menu because siteMenuConfiguration found not instanceof ConfigurationLockInfo " +
+                        "for matched mount '{}'.", requestContext.getResolvedMount().getMount().toString());
+                return EVAL_PAGE;
+            }
+            CanonicalInfo canonicalInfo = (CanonicalInfo) siteMenuConfiguration;
+            if (!canonicalInfo.isWorkspaceConfiguration()) {
+                log.debug("Skipping cms edit menu because siteMenuConfiguration found not part of workspace " +
+                        "for matched mount '{}'.", requestContext.getResolvedMount().getMount().toString());
+                return EVAL_PAGE;
+            }
             try {
-                write(menu.getCanonicalIdentifier(), menu.isInherited());
+               write(siteMenuConfiguration);
             } catch (IOException ioe) {
                 throw new JspException("ResourceURL-Tag Exception: cannot write to the output writer.");
             }
@@ -80,26 +127,39 @@ public class HstCmsEditMenuTag extends TagSupport  {
         menu = null;
     }
 
-    protected void write(String menuId, boolean inherited) throws IOException {
+    private void write(final HstSiteMenuConfiguration siteMenuConfiguration) throws IOException {
         JspWriter writer = pageContext.getOut();
-        StringBuilder htmlComment = new StringBuilder(); 
-        htmlComment.append("<!-- ");
-        htmlComment.append(" {\"type\":\"menu\"");
-        // add uuid
-        htmlComment.append(", \"uuid\":\"");
-        htmlComment.append(menuId);
-        if (inherited) {
-            htmlComment.append(", \"inherited\":\"true\"");
+        final String comment = encloseInHTMLComment(toJSONMap(getAttributeMap(siteMenuConfiguration)));
+        writer.print(comment);
+    }
+
+    private Map<?, ?> getAttributeMap(final HstSiteMenuConfiguration siteMenuConfiguration) {
+        final String canonicalIdentifier = ((CanonicalInfo) siteMenuConfiguration).getCanonicalIdentifier();
+        final Map<String, Object> result = new HashMap<>();
+        result.put("type", "menu");
+        result.put("uuid", canonicalIdentifier);
+        final String lockedBy = ((ConfigurationLockInfo)siteMenuConfiguration).getLockedBy();
+        if (lockedBy != null) {
+            result.put(HST_LOCKED_BY, lockedBy);
+            result.put(HST_LOCKED_BY_CURRENT_USER, lockedBy.equals(getCurrentCmsUser()));
+            result.put(HST_LOCKED_ON, ((ConfigurationLockInfo)siteMenuConfiguration).getLockedOn().getTimeInMillis());
         }
-        htmlComment.append("\" } -->");
-        writer.print(htmlComment.toString());
+        return result;
     }
 
 
-    public HstSiteMenu getMenu(){
+    private static String getCurrentCmsUser() {
+        final HttpSession httpSession = RequestContextProvider.get().getServletRequest().getSession(false);
+        if (httpSession == null) {
+            return null;
+        }
+        return (String) httpSession.getAttribute(CMS_USER_ID_ATTR);
+    }
+
+    public HstSiteMenu getMenu() {
         return menu;
     }
-     
+
     public void setMenu(HstSiteMenu menu) {
         this.menu = menu;
     }
@@ -111,7 +171,7 @@ public class HstCmsEditMenuTag extends TagSupport  {
         public VariableInfo[] getVariableInfo(TagData tagData) {
             VariableInfo vi[] = new VariableInfo[1];
             vi[0] = new VariableInfo(MENU_ATTR_NAME, "org.hippoecm.hst.core.sitemenu.HstSiteMenu", true,
-                            VariableInfo.AT_BEGIN);
+                    VariableInfo.AT_BEGIN);
 
             return vi;
         }

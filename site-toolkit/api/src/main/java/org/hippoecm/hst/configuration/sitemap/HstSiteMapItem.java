@@ -68,16 +68,33 @@ public interface HstSiteMapItem {
     String getValue();
 
     /**
+     * @return the page title for this {@link HstSiteMapItem} or <code>null</code> if not configured
+     */
+    String getPageTitle();
+
+    /**
      * Returns a boolean indicating whether this <code>HstSiteMapItem</code> represents a path with a <code>wildcard</code> value <code>*</code>
      * @return <code>true</code> if this <code>HstSiteMapItem</code> represents <code>*</code>
      */
     boolean isWildCard();
 
     /**
+     * @return <code>true</code> when this <code>HstSiteMapItem</code> represents a path that contains a <code>*</code> but
+     * is not equals to a <code>*</code> (for example *.html)
+     */
+    boolean containsWildCard();
+
+    /**
      * Returns a boolean indicating whether this <code>HstSiteMapItem</code> represents a path with a <code>any</code> value <code>**</code>
      * @return <code>true</code> if this <code>HstSiteMapItem</code> represents <code>**</code>
      */
     boolean isAny();
+
+    /**
+     * @return <code>true</code> when this <code>HstSiteMapItem</code> represents a path that contains <code>**</code> but
+     * is not equals to <code>**</code> (for example **.html)
+     */
+    boolean containsAny();
 
     /**
      * This method returns a content path, relative to the {@link Mount#getContentPath()}. This value can
@@ -320,7 +337,7 @@ public interface HstSiteMapItem {
     int getSchemeNotMatchingResponseCode();
 
     /**
-     * @deprecated Use {@link #getDefaultResourceBundleIds()} instead.
+     * @deprecated Use {@link #getResourceBundleIds()} instead.
      * @return the first item of default resource bundle IDs or null if not configured or empty.
      */
     String getResourceBundleId();

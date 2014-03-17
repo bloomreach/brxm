@@ -18,10 +18,12 @@ package org.hippoecm.hst.pagecomposer.jaxrs.cxf;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.jcr.Credentials;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
@@ -44,7 +46,10 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
  
     public final static String REQUEST_CONFIG_NODE_IDENTIFIER = "org.hippoecm.hst.pagecomposer.jaxrs.cxf.contentNode.identifier";
     public final static String REQUEST_ERROR_MESSAGE_ATTRIBUTE = "org.hippoecm.hst.pagecomposer.jaxrs.cxf.exception.message";
-    
+
+    private Repository repository;
+    private Credentials credentials;
+
 	public CXFJaxrsHstConfigService(String serviceName) {
 		super(serviceName);
 	}
@@ -52,8 +57,16 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
 	public CXFJaxrsHstConfigService(String serviceName, Map<String, String> jaxrsConfigParameters) {
 		super(serviceName, jaxrsConfigParameters);
 	}
-	
-	@Override
+
+    public void setRepository(final Repository repository) {
+        this.repository = repository;
+    }
+
+    public void setCredentials(final Credentials credentials) {
+        this.credentials = credentials;
+    }
+
+    @Override
 	/*
 	 * temporarily splitting off and saving suffix from pathInfo until this is generally handled with HSTTWO-1189
 	 */
@@ -72,51 +85,34 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
 		} catch(IllegalArgumentException e) {
 		    throw new ContainerException("CXFJaxrsHstConfigService expects a 'uuid' as pathInfo but was '"+uuid+"'. Cannot process REST call");
 		}
-		
-		Node node = null;
+
 		String resourceType = "";
-		
+
         try {
-        	Session jcrSession = requestContext.getSession(false);
-            if (jcrSession == null) {
-                throw new RepositoryException("No jcr session available on hst request context.");
-            }
-        	// we explicitly call a refresh here. Normally, the sessionstateful jcr session is already refreshed. However, due to asychronous
-        	// jcr event dispatching, there might be changes in the repository, but not yet a jcr event was sent that triggers a jcr session refresh. Hence, here
-        	// we explicitly refresh the jcr session again. 
-        	jcrSession.refresh(false);
-        	node = jcrSession.getNodeByIdentifier(uuid);
+            refreshRequestJcrSession(requestContext);
+        } catch (RepositoryException e) {
+            log.warn("RepositoryException ", e);
+            return setErrorMessageAndReturn(requestContext, request, e.toString());
+        }
+
+        Session session = null;
+        try {
+            // we need the HST configuration user jcr session since some CMS user sessions (for example authors) typically
+            // don't have read access on the hst configuration nodes. So we cannot use the session from the request context here
+            // session below will be pooled hst config reader session
+            session = repository.login(credentials);
+            Node node = session.getNodeByIdentifier(uuid);
         	resourceType = node.getPrimaryNodeType().getName();
-          
-        } catch (PathNotFoundException e) {
-           if(log.isDebugEnabled()) { 
-               log.warn("PathNotFoundException ", e);
-           } else {
-              log.warn("PathNotFoundException {}", e.toString());
-           }
-           return setErrorMessageAndReturn(requestContext, request, e.toString());
-        }  catch (ItemNotFoundException e) {
-            if(log.isDebugEnabled()) { 
-                log.warn("ItemNotFoundException ", e);
-            } else {
-               log.warn("ItemNotFoundException {}", e.toString());
-            }
-            return  setErrorMessageAndReturn(requestContext, request, e.toString());
-        } catch (LoginException e) {
-            if(log.isDebugEnabled()) { 
-                log.warn("LoginException ", e);
-            } else {
-               log.warn("LoginException {}", e.toString());
-            }
-            return  setErrorMessageAndReturn(requestContext, request, e.toString());
-		} catch (RepositoryException e) {
-		    if(log.isDebugEnabled()) { 
-	           log.warn("RepositoryException ", e);
-	        } else {
-	          log.warn("RepositoryException {}", e.toString());
-	        }
+
+        } catch (RepositoryException e) {
+            log.warn("RepositoryException ", e);
 		    return setErrorMessageAndReturn(requestContext, request, e.toString());
-		} 
+		} finally {
+            if (session != null) {
+                // logout in this case means return to pool
+                session.logout();
+            }
+        }
 
         requestContext.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, uuid);
 
@@ -129,8 +125,19 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
     	log.debug("Invoking JAX-RS endpoint {}: {} for uuid {}", new Object[]{request.getMethod(), jaxrsEndpointRequestPath.toString(), uuid});
     	return new PathsAdjustedHttpServletRequestWrapper(request, getJaxrsServletPath(requestContext), jaxrsEndpointRequestPath.toString());
 	}
-	
-	private HttpServletRequest setErrorMessageAndReturn(HstRequestContext requestContext, HttpServletRequest request, String message) throws ContainerException {
+
+    private void refreshRequestJcrSession(final HstRequestContext requestContext) throws RepositoryException {
+        Session jcrSession = requestContext.getSession(false);
+        if (jcrSession == null) {
+            throw new RepositoryException("No jcr session available on hst request context.");
+        }
+        // we explicitly call a refresh here. Normally, the sessionstateful jcr session is already refreshed. However, due to asychronous
+        // jcr event dispatching, there might be changes in the repository, but not yet a jcr event was sent that triggers a jcr session refresh. Hence, here
+        // we explicitly refresh the jcr session again.
+        jcrSession.refresh(false);
+    }
+
+    private HttpServletRequest setErrorMessageAndReturn(HstRequestContext requestContext, HttpServletRequest request, String message) throws ContainerException {
 	    request.setAttribute(REQUEST_ERROR_MESSAGE_ATTRIBUTE, message);
 	    String jaxrsEndpointRequestPath = "/hst:exception/";
 	    return new PathsAdjustedHttpServletRequestWrapper(request, getJaxrsServletPath(requestContext), jaxrsEndpointRequestPath);

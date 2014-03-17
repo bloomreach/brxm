@@ -32,6 +32,7 @@ public class MockResolvedSiteMapItem implements ResolvedSiteMapItem {
 
     private String relativeContentPath;
     private String pathInfo;
+    private String pageTitle;
     private Map<String, String> parameters = new HashMap<String, String>();
     private Map<String, String> localParameters = new HashMap<String, String>();
     private HstSiteMapItem hstSiteMapItem;
@@ -58,6 +59,14 @@ public class MockResolvedSiteMapItem implements ResolvedSiteMapItem {
 
     public void setPathInfo(String pathInfo) {
         this.pathInfo = pathInfo;
+    }
+
+    public String getPageTitle() {
+        return pageTitle;
+    }
+
+    public void setPageTitle(final String pageTitle) {
+        this.pageTitle = pageTitle;
     }
 
     public String getParameter(String name) {

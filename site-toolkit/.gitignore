@@ -129,6 +129,7 @@ dependencies/target
 /hst.ipr
 /hst.iws
 integration/target
+integration/tests/*.iml
 integration/tests/target
 integration/toolkit-integration.iml
 integration/war/target

@@ -25,10 +25,12 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.component.HeadElement;
 import org.hippoecm.hst.core.component.HeadElementImpl;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.util.HeadElementUtils;
 import org.w3c.dom.Element;
 
@@ -36,6 +38,7 @@ public class HeadContributionsTag extends TagSupport {
 
     private static final long serialVersionUID = 1L;
 
+    private static final String DEFAULT_PAGE_TITLE_DELIMITER = "-";
     private boolean xhtml;
 
     /**
@@ -47,6 +50,10 @@ public class HeadContributionsTag extends TagSupport {
      * Comma separated category excludes list
      */
     private Set<String> categoryExcludes;
+
+    private boolean includePageTitle;
+
+    private String pageTitleDelimiter = DEFAULT_PAGE_TITLE_DELIMITER;
 
     public HeadContributionsTag() {
     }
@@ -60,7 +67,7 @@ public class HeadContributionsTag extends TagSupport {
     }
 
     public void setCategoryIncludes(String categoryIncludes) {
-        this.categoryIncludes = new LinkedHashSet<String>(Arrays.asList(StringUtils.split(categoryIncludes, ", \t")));
+        this.categoryIncludes = new LinkedHashSet<>(Arrays.asList(StringUtils.split(categoryIncludes, ", \t")));
     }
 
     public String getCategoryIncludes() {
@@ -68,11 +75,27 @@ public class HeadContributionsTag extends TagSupport {
     }
 
     public void setCategoryExcludes(String categoryExcludes) {
-        this.categoryExcludes = new LinkedHashSet<String>(Arrays.asList(StringUtils.split(categoryExcludes, ", \t")));
+        this.categoryExcludes = new LinkedHashSet<>(Arrays.asList(StringUtils.split(categoryExcludes, ", \t")));
     }
 
     public String getCategoryExcludes() {
         return categoryExcludes != null ? StringUtils.join(categoryExcludes, ", ") : null;
+    }
+
+    public boolean isIncludePageTitle() {
+        return includePageTitle;
+    }
+
+    public void setIncludePageTitle(final boolean includePageTitle) {
+        this.includePageTitle = includePageTitle;
+    }
+
+    public String getPageTitleDelimiter() {
+        return pageTitleDelimiter;
+    }
+
+    public void setPageTitleDelimiter(final String pageTitleDelimiter) {
+        this.pageTitleDelimiter = pageTitleDelimiter;
     }
 
     public int doEndTag() throws JspException {
@@ -90,10 +113,29 @@ public class HeadContributionsTag extends TagSupport {
                 return SKIP_BODY;
             }
 
+            boolean isTitleElementWritten = false;
             for (Element headElement : headElements) {
                 if (shouldBeIncludedInOutput(headElement)) {
+                    if (includePageTitle && "title".equalsIgnoreCase(headElement.getTagName())) {
+                        isTitleElementWritten = true;
+                        final String pageTitle = getPageTitle();
+                        if (StringUtils.isNotBlank(pageTitle)) {
+                            StringBuilder titleBuilder = new StringBuilder(pageTitle);
+                            if (StringUtils.isNotBlank(headElement.getTextContent())) {
+                                titleBuilder.append(" ").append(pageTitleDelimiter).append(" ")
+                                        .append(headElement.getTextContent());
+                            }
+                            headElement.setTextContent(titleBuilder.toString());
+                        }
+                    }
                     outputHeadElement(headElement);
                 }
+            }
+            final String pageTitle;
+            if (!isTitleElementWritten && includePageTitle && StringUtils.isNotBlank(pageTitle = getPageTitle())) {
+                final Element titleElement = hstResponse.createElement("title");
+                titleElement.appendChild(titleElement.getOwnerDocument().createTextNode(pageTitle));
+                outputHeadElement(titleElement);
             }
 
             try {
@@ -108,11 +150,20 @@ public class HeadContributionsTag extends TagSupport {
         }
     }
 
+    private String getPageTitle() {
+        final ResolvedSiteMapItem resolvedSiteMapItem = RequestContextProvider.get().getResolvedSiteMapItem();
+        if (resolvedSiteMapItem == null) {
+            return null;
+        }
+        return resolvedSiteMapItem.getPageTitle();
+    }
+
     protected void cleanup() {
         xhtml = false;
         categoryIncludes = null;
         categoryExcludes = null;
-
+        includePageTitle = false;
+        pageTitleDelimiter = DEFAULT_PAGE_TITLE_DELIMITER;
     }
 
     private boolean shouldBeIncludedInOutput(Element headElement) {
@@ -154,4 +205,5 @@ public class HeadContributionsTag extends TagSupport {
         String responseContentType = pageContext.getResponse().getContentType();
         return (responseContentType != null && responseContentType.startsWith("text/html"));
     }
+
 }

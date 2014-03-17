@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
@@ -35,7 +36,7 @@ import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.provider.ValueProvider;
 import org.slf4j.LoggerFactory;
 
-public class HstComponentConfigurationService implements HstComponentConfiguration {
+public class HstComponentConfigurationService implements HstComponentConfiguration, ConfigurationLockInfo {
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstComponentConfigurationService.class);
 
@@ -101,7 +102,12 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
      * <code>true</code> when the backing {@link HstNode} of this {@link HstComponentConfiguration} is inherited
      */
     private boolean inherited;
-    
+
+    /**
+     * whether this {@link HstComponentConfigurationService} can serve as prototype.
+     */
+    private boolean prototype;
+
     /**
      * <code>true</code> when this {@link HstComponentConfiguration} is configured to render standalone in case of {@link HstURL#COMPONENT_RENDERING_TYPE}
      * The default value is <code>true</code> when the property {@link HstNodeTypes#COMPONENT_PROPERTY_STANDALONE} is not configured.
@@ -181,7 +187,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     public HstComponentConfigurationService(final HstNode node,
                                             final HstComponentConfiguration parent,
                                             final String rootNodeName,
-                                            final HstNode referenceableContainers,
+                                            final Map<String, HstNode> referenceableContainers,
                                             final boolean inherited) {
         this(node, parent, rootNodeName, true, referenceableContainers, inherited, null);
     }
@@ -194,7 +200,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                                             final HstComponentConfiguration parent,
                                             final String rootNodeName,
                                             final boolean traverseDescendants,
-                                            final HstNode referenceableContainers,
+                                            final Map<String, HstNode> referenceableContainers,
                                             final boolean inherited,
                                             final String explicitName) {
 
@@ -204,7 +210,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
         this.inherited =  inherited;
         this.parent = parent;
-
+        this.prototype = HstNodeTypes.NODENAME_HST_PROTOTYPEPAGES.equals(rootNodeName);
 
         if (explicitName == null) {
             this.name = StringPool.get(node.getValueProvider().getName());
@@ -324,8 +330,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         // regardless merging/referencing of components, we directly inherit lock props: They are normally
         // only stored on hst container items and those don't support merging any way
         if (parent != null) {
-            lockedBy = (lockedBy == null) ?  parent.getLockedBy() : lockedBy;
-            lockedOn = (lockedOn == null) ?  parent.getLockedOn() : lockedOn;
+            lockedBy = (lockedBy == null) ?  ((ConfigurationLockInfo)parent).getLockedBy() : lockedBy;
+            lockedOn = (lockedOn == null) ?  ((ConfigurationLockInfo)parent).getLockedOn() : lockedOn;
             lastModified = (lastModified == null) ?  parent.getLastModified() : lastModified;
         }
 
@@ -334,6 +340,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             return;
         }
         for (HstNode child : node.getNodes()) {
+            if ("deleted".equals(child.getValueProvider().getString(HstNodeTypes.EDITABLE_PROPERTY_STATE))) {
+                log.debug("SKipping marked deleted node {}", child.getValueProvider().getPath());
+                continue;
+            }
             HstComponentConfigurationService childComponent = loadChildComponent(child, rootNodeName, referenceableContainers);
             if (childComponent == null) {
                 continue;
@@ -347,8 +357,13 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     private HstComponentConfigurationService loadChildComponent(final HstNode child,
                                                                 final String rootNodeName,
-                                                                final HstNode referenceableContainers) {
+                                                                final Map<String, HstNode> referenceableContainers) {
         if (isHstComponentOrReferenceType(child)) {
+            if (isPrototype() && isNotAllowedInPrototype(child)) {
+                log.warn("Component child of type '{}' are not allowed in a prototype page. Skipping component '{}'.",
+                        child.getNodeTypeName(), child.getValueProvider().getPath());
+                return null;
+            }
             if (child.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)) {
                 usedChildReferenceNames.add(StringPool.get(child.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)));
             }
@@ -388,8 +403,13 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 || HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTREFERENCE.equals(node.getNodeTypeName());
     }
 
-    private HstNode getReferencedContainer(final HstNode child, final HstNode referenceableContainers) {
-        if (referenceableContainers == null) {
+    private boolean isNotAllowedInPrototype(final HstNode node) {
+        return HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTREFERENCE.equals(node.getNodeTypeName());
+    }
+
+
+    private HstNode getReferencedContainer(final HstNode child, final Map<String, HstNode> referenceableContainers) {
+        if (referenceableContainers == null || referenceableContainers.isEmpty()) {
             log.warn("Component '{}' is of type '{}' but there are no referenceable containers at '{}'. Component '{}' will be ignored.",
                     new String[]{child.getValueProvider().getPath(), HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTREFERENCE,
                             HstNodeTypes.RELPATH_HST_WORKSPACE_CONTAINERS, child.getValueProvider().getPath()});
@@ -403,7 +423,17 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             reference = reference.substring(1);
         }
         try {
-            final HstNode refNode = referenceableContainers.getNode(reference);
+            final String[] elements = reference.split("/");
+            HstNode refNode = null;
+            final HstNode hstNode = referenceableContainers.get(elements[0]);
+            if (hstNode != null) {
+                if (elements.length == 1) {
+                    refNode = hstNode;
+                } else {
+                    String subPath = reference.substring(elements[0].length() + 1);
+                    refNode = hstNode.getNode(subPath);
+                }
+            }
             if (refNode == null) {
                 log.warn("Component '{}' contains an unresolvable reference '{}'. It should be a location relative to '{}'. " +
                         "Component '{}' will be ignored.",
@@ -563,10 +593,15 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     public String getCanonicalIdentifier() {
         return canonicalIdentifier;
     }
-     
+
     @Override
     public boolean isInherited() {
         return inherited;
+    }
+
+    @Override
+    public boolean isPrototype() {
+        return prototype;
     }
 
     @Override
@@ -762,6 +797,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 }
 
                 // inherited variable flag not needed to take from the referencedComp so no check here for that variable!
+                // prototype variable flag not needed to take from the referencedComp so no check here for that variable!
                 
                 if (!referencedComp.parameters.isEmpty()) {
                     // as we already have parameters, add only the once we do not yet have
@@ -1164,7 +1200,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder("HstCompoonentConfiguration [id=");
+        StringBuilder builder = new StringBuilder("HstComponentConfiguration [id=");
         builder.append(id).append(", stored jcr location=").append(canonicalStoredLocation)
                 .append(", className=").append(this.componentClassName)
                 .append(", template=").append(this.hstTemplate).append("]");

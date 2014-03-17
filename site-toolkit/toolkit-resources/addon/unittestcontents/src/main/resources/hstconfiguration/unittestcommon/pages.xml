@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -15,230 +15,206 @@
   limitations under the License.
 -->
 <sv:node sv:name="hst:pages" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hst:pages</sv:value>
+  </sv:property>
+
+  <sv:node sv:name="homepage">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:pages</sv:value>
+      <sv:value>hst:component</sv:value>
     </sv:property>
-    <sv:node sv:name="basepage">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:template" sv:type="String">
-            <sv:value>webpage</sv:value>
-        </sv:property>
-        <sv:node sv:name="header">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:component</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencecomponent" sv:type="String">
-                <sv:value>hst:components/header</sv:value>
-            </sv:property>
-        </sv:node>
-        <sv:node sv:name="leftmenu">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:component</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencecomponent" sv:type="String">
-                <sv:value>hst:components/leftmenu</sv:value>
-            </sv:property>
-        </sv:node>
+    <sv:property sv:name="hst:referencecomponent" sv:type="String">
+      <sv:value>hst:abstractpages/basepage</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="pagenotfound">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:referencecomponent" sv:type="String">
+      <sv:value>hst:abstractpages/basepage</sv:value>
+    </sv:property>
+  </sv:node>
+
+
+  <sv:node sv:name="standardoverview">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:referencecomponent" sv:type="String">
+      <sv:value>hst:abstractpages/basepage</sv:value>
+    </sv:property>
+    <sv:node sv:name="body">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:component</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencecomponent" sv:type="String">
+        <sv:value>hst:components/overview</sv:value>
+      </sv:property>
     </sv:node>
-    
-     <sv:node sv:name="homepage">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/basepage</sv:value>
-        </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="standarddetail">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:referencecomponent" sv:type="String">
+      <sv:value>hst:abstractpages/basepage</sv:value>
+    </sv:property>
+    <sv:node sv:name="body">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:component</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencecomponent" sv:type="String">
+        <sv:value>hst:components/detail</sv:value>
+      </sv:property>
     </sv:node>
-    
-     <sv:node sv:name="pagenotfound">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/basepage</sv:value>
-        </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="newsoverview">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:referencecomponent" sv:type="String">
+      <sv:value>hst:pages/standardoverview</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="productsview">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:referencecomponent" sv:type="String">
+      <sv:value>hst:pages/standardoverview</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="contactpage">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:referencecomponent" sv:type="String">
+      <sv:value>hst:abstractpages/basepage</sv:value>
+    </sv:property>
+    <sv:node sv:name="body">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:component</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencecomponent" sv:type="String">
+        <sv:value>hst:components/contactform</sv:value>
+      </sv:property>
     </sv:node>
-    
-    
-    <sv:node sv:name="standardoverview">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/basepage</sv:value>
-        </sv:property>
-        <sv:node sv:name="body">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:component</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencecomponent" sv:type="String">
-                <sv:value>hst:components/overview</sv:value>
-            </sv:property>
-        </sv:node>
+  </sv:node>
+
+  <sv:node sv:name="searchpage">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:referencecomponent" sv:type="String">
+      <sv:value>hst:abstractpages/basepage</sv:value>
+    </sv:property>
+    <sv:node sv:name="body">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:component</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencecomponent" sv:type="String">
+        <sv:value>hst:components/simplesearch</sv:value>
+      </sv:property>
     </sv:node>
-    
-    <sv:node sv:name="standarddetail">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/basepage</sv:value>
-        </sv:property>
-        <sv:node sv:name="body">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:component</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencecomponent" sv:type="String">
-                <sv:value>hst:components/detail</sv:value>
-            </sv:property>
-        </sv:node>
+  </sv:node>
+  <sv:node sv:name="uniquelinkspage">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:referencecomponent" sv:type="String">
+      <sv:value>hst:abstractpages/basepage</sv:value>
+    </sv:property>
+    <sv:node sv:name="body">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:component</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:template" sv:type="String">
+        <sv:value>uniquelinks</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentclassname" sv:type="String">
+        <sv:value>org.hippoecm.hst.components.UniqueLinks</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:parameternames" sv:type="String">
+        <sv:value>uniquelinkpart</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:parametervalues" sv:type="String">
+        <sv:value>${1}</sv:value>
+      </sv:property>
     </sv:node>
-    
-    <sv:node sv:name="newsoverview">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/standardoverview</sv:value>
-        </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="contactspringpage">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:referencecomponent" sv:type="String">
+      <sv:value>hst:abstractpages/basepage</sv:value>
+    </sv:property>
+    <sv:node sv:name="body">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:component</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencecomponent" sv:type="String">
+        <sv:value>hst:components/contactspringform</sv:value>
+      </sv:property>
     </sv:node>
-    
-    <sv:node sv:name="productsview">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/standardoverview</sv:value>
-        </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="contactdispatchpage">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:referencecomponent" sv:type="String">
+      <sv:value>hst:abstractpages/basepage</sv:value>
+    </sv:property>
+    <sv:node sv:name="body">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:component</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencecomponent" sv:type="String">
+        <sv:value>hst:components/contactdispatchform</sv:value>
+      </sv:property>
     </sv:node>
-  
-    <sv:node sv:name="contactpage">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/basepage</sv:value>
-        </sv:property>
-        <sv:node sv:name="body">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:component</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencecomponent" sv:type="String">
-                <sv:value>hst:components/contactform</sv:value>
-            </sv:property>
-        </sv:node>
+  </sv:node>
+
+  <sv:node sv:name="contactspringmvcpage">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:referencecomponent" sv:type="String">
+      <sv:value>hst:abstractpages/basepage</sv:value>
+    </sv:property>
+    <sv:node sv:name="body">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:component</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencecomponent" sv:type="String">
+        <sv:value>hst:components/contactspringmvcform</sv:value>
+      </sv:property>
     </sv:node>
-    
-    <sv:node sv:name="searchpage">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/basepage</sv:value>
-        </sv:property>
-        <sv:node sv:name="body">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:component</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencecomponent" sv:type="String">
-                <sv:value>hst:components/simplesearch</sv:value>
-            </sv:property>
-        </sv:node>
+  </sv:node>
+
+  <sv:node sv:name="thankyou">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:referencecomponent" sv:type="String">
+      <sv:value>hst:abstractpages/basepage</sv:value>
+    </sv:property>
+    <sv:node sv:name="body">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:component</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:template" sv:type="String">
+        <sv:value>thankyou</sv:value>
+      </sv:property>
     </sv:node>
-    <sv:node sv:name="uniquelinkspage">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/basepage</sv:value>
-        </sv:property>
-        <sv:node sv:name="body">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:component</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:template" sv:type="String">
-                <sv:value>uniquelinks</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:componentclassname" sv:type="String">
-                <sv:value>org.hippoecm.hst.components.UniqueLinks</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:parameternames" sv:type="String">
-                <sv:value>uniquelinkpart</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:parametervalues" sv:type="String">
-                <sv:value>${1}</sv:value>
-            </sv:property>
-        </sv:node>
-    </sv:node>
-    
-    <sv:node sv:name="contactspringpage">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/basepage</sv:value>
-        </sv:property>
-        <sv:node sv:name="body">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:component</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencecomponent" sv:type="String">
-                <sv:value>hst:components/contactspringform</sv:value>
-            </sv:property>
-        </sv:node>
-    </sv:node>
-    
-    <sv:node sv:name="contactdispatchpage">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/basepage</sv:value>
-        </sv:property>
-        <sv:node sv:name="body">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:component</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencecomponent" sv:type="String">
-                <sv:value>hst:components/contactdispatchform</sv:value>
-            </sv:property>
-        </sv:node>
-    </sv:node>
-    
-    <sv:node sv:name="contactspringmvcpage">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/basepage</sv:value>
-        </sv:property>
-        <sv:node sv:name="body">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:component</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencecomponent" sv:type="String">
-                <sv:value>hst:components/contactspringmvcform</sv:value>
-            </sv:property>
-        </sv:node>
-    </sv:node>
-    
-    <sv:node sv:name="thankyou">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/basepage</sv:value>
-        </sv:property>
-        <sv:node sv:name="body">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:component</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:template" sv:type="String">
-                <sv:value>thankyou</sv:value>
-            </sv:property>
-        </sv:node>
-    </sv:node>
+  </sv:node>
 
 </sv:node>

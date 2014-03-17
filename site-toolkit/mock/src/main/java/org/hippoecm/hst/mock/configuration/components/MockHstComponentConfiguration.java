@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 
 
@@ -31,7 +32,7 @@ import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
  * Mock implementation of {@link org.hippoecm.hst.configuration.components.HstComponentConfiguration}.
  *
  */
-public class MockHstComponentConfiguration implements HstComponentConfiguration {
+public class MockHstComponentConfiguration implements HstComponentConfiguration, ConfigurationLockInfo {
 
     private String id;
     private String name;
@@ -54,6 +55,7 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration 
     private String label;
     private String iconPath;
     private boolean inherited;
+    private boolean prototype;
     private boolean standalone;
     private boolean async;
     private String asyncMode;
@@ -232,6 +234,11 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration 
     @Override
     public boolean isInherited() {
         return inherited;
+    }
+
+    @Override
+    public boolean isPrototype() {
+        return prototype;
     }
     
     public void setInherited(boolean inherited) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,12 @@
 [hst:descriptive] mixin
 - hst:description (string)
 + hst:icon (hippo:resource) = hippo:resource
+
+[hst:editable] mixin
+- hst:lockedby (string)
+- hst:lockedon (date)
+- hst:lastmodifiedby (string)
+- hst:state (string)
 
 [hst:template] > nt:base, mix:referenceable, hst:descriptive
 - hst:renderpath (string)
@@ -62,6 +68,8 @@
 
 [hst:component] > hst:abstractcomponent orderable
 - hst:referencecomponent (string)
+- hst:lastmodified (date)
+- hst:iconpath (string)
 + * (hst:containercomponentreference)
 + * (hst:abstractcomponent)
 
@@ -127,6 +135,7 @@
 - hst:value
 - hst:relativecontentpath (string)
 - hst:componentconfigurationid (string)
+- hst:pagetitle (string)
 // deprecated and unused: do not use
 - hst:portletcomponentconfigurationid (string)
 - hst:sitemapitemhandlerids (string) multiple
@@ -149,6 +158,7 @@
 - hst:componentconfigurationmappingvalues (string) multiple
 - hst:cacheable (boolean)
 - hst:resourcebundleid (string)
+- hst:lastmodified (date)
 
 + * (hst:sitemapitem)
 
@@ -176,6 +186,7 @@
 + * (hst:sitemenuitem)
 
 [hst:sitemenu] > nt:base, mix:referenceable orderable
+- hst:lastmodified (date)
 + * (hst:sitemenuitem)
 
 [hst:sitemenus] > nt:base, mix:referenceable
@@ -187,6 +198,9 @@
 
 [hst:workspace] > nt:base orderable
 + hst:containers (hst:containercomponentfolder) = hst:containercomponentfolder
++ hst:sitemenus (hst:sitemenus) = hst:sitemenus
++ hst:pages (hst:pages) = hst:pages
++ hst:sitemap (hst:sitemap) = hst:sitemap
 
 [hst:configuration] > nt:base, mix:referenceable, mix:versionable
 - hst:inheritsfrom (string) multiple
@@ -195,7 +209,9 @@
 // deprecated : not used any more as only fine grained locking
 - hst:lockedon (date)
 + hst:components (hst:components) = hst:components
++ hst:abstractpages (hst:pages) = hst:pages
 + hst:pages (hst:pages) = hst:pages
++ hst:prototypepages (hst:pages) = hst:pages
 + hst:sitemap (hst:sitemap) = hst:sitemap
 + hst:templates (hst:templates) = hst:templates
 + hst:sitemenus (hst:sitemenus) = hst:sitemenus

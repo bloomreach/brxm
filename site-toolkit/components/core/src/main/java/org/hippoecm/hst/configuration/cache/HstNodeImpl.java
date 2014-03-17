@@ -30,6 +30,7 @@ import javax.jcr.Session;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
+import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.provider.ValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
@@ -67,12 +68,11 @@ public class HstNodeImpl implements HstNode {
      */
     private boolean stale = false;
     private boolean staleChildren = false;
-    private boolean childOrderedReload = false;
 
     public HstNodeImpl(Node jcrNode, HstNode parent) throws RepositoryException {
         this.parent = parent;
         provider = new JCRValueProviderImpl(jcrNode, false, true, false);
-        nodeTypeName = jcrNode.getPrimaryNodeType().getName();
+        nodeTypeName = StringPool.get(jcrNode.getPrimaryNodeType().getName());
         loadChildren(jcrNode);
         // detach the backing jcr node now we are done.       
         stale = false;
@@ -239,10 +239,9 @@ public class HstNodeImpl implements HstNode {
     }
 
     @Override
-    public void markStaleByNodeEvent(boolean childOrderedReload) {
+    public void markStaleByNodeEvent() {
         stale = true;
         staleChildren = true;
-        this.childOrderedReload = childOrderedReload;
     }
 
     @Override
@@ -276,15 +275,11 @@ public class HstNodeImpl implements HstNode {
         log.debug("Reload provider for : "  + getValueProvider().getPath());
         Node jcrNode = session.getNode(getValueProvider().getPath());
         setJCRValueProvider(new JCRValueProviderImpl(jcrNode, false, true, false));
-
+        // node type might have changed, just reset
+        nodeTypeName = StringPool.get(jcrNode.getPrimaryNodeType().getName());
         if (staleChildren) {
-            if (childOrderedReload) {
-                log.debug("Ordered children reload for '{}'", getValueProvider().getPath());
-                orderedChildrenReload(jcrNode);
-            } else {
-                log.debug("Unordered children reload for '{}'", getValueProvider().getPath());
-                unorderedChildrenReload(jcrNode);
-            }
+            log.debug("Children reload for '{}'", getValueProvider().getPath());
+            childrenReload(jcrNode);
         } else {
             if (children != null) {
                 for (HstNode hstNode : children.values()) {
@@ -297,8 +292,8 @@ public class HstNodeImpl implements HstNode {
         staleChildren = false;
     }
 
-    private void unorderedChildrenReload(final Node jcrNode) throws RepositoryException {
-        Map<String, HstNode> newChildren = new HashMap<>();
+    private void childrenReload(final Node jcrNode) throws RepositoryException {
+        LinkedHashMap<String, HstNode> newChildren = new LinkedHashMap<>();
         for (Node jcrChildNode : new NodeIterable(jcrNode.getNodes())) {
             String childName = jcrChildNode.getName();
             final HstNode existing = getChild(childName);
@@ -310,11 +305,10 @@ public class HstNodeImpl implements HstNode {
                 existing.update(jcrNode.getSession());
             }
         }
-        if (children == null ) {
-            children = new LinkedHashMap<>(newChildren);
+        if (newChildren.isEmpty()) {
+            children = null;
         } else {
-            children.clear();
-            children.putAll(newChildren);
+            children = newChildren;
         }
     }
 
@@ -329,38 +323,17 @@ public class HstNodeImpl implements HstNode {
         return children.get(name);
     }
 
-    private void orderedChildrenReload(Node jcrNode) throws RepositoryException {
-        if (children != null ) {
-            children.clear();
-        }
-        log.debug("Reloading all children for '{}'.", getValueProvider().getPath());
-        for (Node jcrChildNode : new NodeIterable(jcrNode.getNodes())) {
-            HstNode hstChildNode = new HstNodeImpl(jcrChildNode, this);
-            addNode(hstChildNode.getName(), hstChildNode);
-        }
-
-    }
-
     @Override
     public void setJCRValueProvider(JCRValueProvider valueProvider) {
         this.provider = valueProvider;
         provider.detach();
         stale = false;
     }
-    
+
     @Override
     public String toString() {
-        // the path of the HstNode's can be different than the backing JcrValueProvider due to inheritance: Multiple HstNode's 
-        // can reuse the same JcrValueProvider instance
-        HstNode cr = this;
-        StringBuilder pathBuilder = new StringBuilder("/").append(cr.getName());
-        while(cr.getParent() != null ) {
-            cr = cr.getParent();
-            pathBuilder.insert(0, cr.getName()).insert(0, "/");
-        }
-        return this.getClass().getSimpleName() + "[path=" + pathBuilder.toString() + ", nodeTypeName=" + nodeTypeName +
-                ", JcrValueProvider path=" + getValueProvider().getPath() +"]";
+        return this.getClass().getSimpleName() + "[path=" + getValueProvider().getPath()
+                + ", nodeTypeName=" + nodeTypeName +"]";
     }
-
     
 }

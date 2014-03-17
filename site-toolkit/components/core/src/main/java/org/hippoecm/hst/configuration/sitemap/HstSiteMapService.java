@@ -22,6 +22,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hippoecm.hst.configuration.ConfigurationUtils;
+import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.cache.CompositeConfigurationNodes;
 import org.hippoecm.hst.configuration.model.HstNode;
@@ -33,13 +35,17 @@ import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.util.DuplicateKeyNotAllowedHashMap;
 import org.slf4j.LoggerFactory;
 
-public class HstSiteMapService implements HstSiteMap {
+public class HstSiteMapService implements HstSiteMap, CanonicalInfo {
     
     private static final long serialVersionUID = 1L;
 
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstSiteMapService.class);
-    
+
+    private final String canonicalIdentifier;
+    private final String canonicalPath;
+
+    private final boolean workspaceConfiguration;
     
     private HstSite hstSite;
     
@@ -62,8 +68,17 @@ public class HstSiteMapService implements HstSiteMap {
                              final HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration) throws ModelLoadingException {
         this.hstSite = hstSite;
 
+        canonicalIdentifier = siteMapNode.getMainConfigNode().getValueProvider().getIdentifier();
+        canonicalPath = siteMapNode.getMainConfigNode().getValueProvider().getPath();
+
+        workspaceConfiguration = ConfigurationUtils.isWorkspaceConfig(siteMapNode.getMainConfigNode());
+
         // initialize all sitemap items
         for(HstNode child : siteMapNode.getCompositeChildren().values()) {
+            if ("deleted".equals(child.getValueProvider().getString(HstNodeTypes.EDITABLE_PROPERTY_STATE))) {
+                log.debug("SKipping marked deleted node {}", child.getValueProvider().getPath());
+                continue;
+            }
             if(HstNodeTypes.NODETYPE_HST_SITEMAPITEM.equals(child.getNodeTypeName())) {
                 try {
                     HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, mountSiteMapConfiguration, siteMapItemHandlersConfiguration , null, this, 1);
@@ -91,7 +106,6 @@ public class HstSiteMapService implements HstSiteMap {
         
     }
 
-
     private void populateDescendants(HstSiteMapItem hstSiteMapItem)  throws ModelLoadingException {
         try {
             siteMapDescendants.put(hstSiteMapItem.getId(), hstSiteMapItem);
@@ -108,7 +122,22 @@ public class HstSiteMapService implements HstSiteMap {
             populateDescendants(child);
         }
     }
-    
+
+    @Override
+    public String getCanonicalIdentifier() {
+        return canonicalIdentifier;
+    }
+
+    @Override
+    public String getCanonicalPath() {
+        return canonicalPath;
+    }
+
+    @Override
+    public boolean isWorkspaceConfiguration() {
+        return workspaceConfiguration;
+    }
+
     public Service[] getChildServices() {
         return rootSiteMapItems.values().toArray(new Service[rootSiteMapItems.size()]);
     }
@@ -134,6 +163,5 @@ public class HstSiteMapService implements HstSiteMap {
     public HstSite getSite() {
         return this.hstSite;
     }
-
 
 }

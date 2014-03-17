@@ -34,25 +34,25 @@ public class CompositeConfigurationNodes {
 
     private HstNode configurationRootNode;
     private Map<String, CompositeConfigurationNode> compositeConfigurationNodes = new HashMap<>();
-    private List<String> compositeConfigurationNodeNames;
+    private List<String> compositeConfigurationNodeRelPaths;
     private boolean compositeConfigurationNodesLoaded;
     private List<HstNode> orderedRootConfigurationNodeInheritanceList = new ArrayList<>();
     private List<UUID> cacheKey;
 
 
-    public CompositeConfigurationNodes(HstNode configurationRootNode, String... nodeNames) {
+    public CompositeConfigurationNodes(HstNode configurationRootNode, String... relPaths) {
 
         this.configurationRootNode = configurationRootNode;
-        compositeConfigurationNodeNames = Arrays.asList(nodeNames);
+        compositeConfigurationNodeRelPaths = Arrays.asList(relPaths);
         compositeConfigurationDependenyPaths.add(configurationRootNode.getValueProvider().getPath());
-        compositeConfigurationDependenyPaths.addAll(createDependencyPaths(configurationRootNode.getValueProvider().getPath(), nodeNames));
+        compositeConfigurationDependenyPaths.addAll(createDependencyPaths(configurationRootNode.getValueProvider().getPath(), relPaths, true));
 
         final HstNode configurationsNode = configurationRootNode.getParent();
         final String defaultConfigurationRootPath = configurationsNode.getValueProvider().getPath() + "/"+HstNodeTypes.NODENAME_HST_HSTDEFAULT;
         // hst:default is the implicit inherited configuration
 
         compositeConfigurationDependenyPaths.add(defaultConfigurationRootPath);
-        compositeConfigurationDependenyPaths.addAll(createDependencyPaths(defaultConfigurationRootPath, nodeNames));
+        compositeConfigurationDependenyPaths.addAll(createDependencyPaths(defaultConfigurationRootPath, relPaths, false));
 
         // Add all the explicitly inherited hst:configuration nodes.
         if (configurationRootNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM)) {
@@ -69,7 +69,7 @@ public class CompositeConfigurationNodes {
                 // regardless whether absHstConfigsInheritedPath exists or not, add it to the compositeConfigurationDependenyPaths : If it gets
                 // added later on, it does impact this CompositeConfigurationNodes
                 compositeConfigurationDependenyPaths.add(absHstConfigsInheritedPath);
-                compositeConfigurationDependenyPaths.addAll(createDependencyPaths(absHstConfigsInheritedPath, nodeNames));
+                compositeConfigurationDependenyPaths.addAll(createDependencyPaths(absHstConfigsInheritedPath, relPaths, false));
                 HstNode inheritConfig = configurationsNode.getNode(hstConfigsInheritedRelPath);
                 if (inheritConfig != null && HstNodeTypes.NODETYPE_HST_CONFIGURATION.equals(inheritConfig.getNodeTypeName())) {
                     orderedRootConfigurationNodeInheritanceList.add(inheritConfig);
@@ -100,17 +100,23 @@ public class CompositeConfigurationNodes {
             return compositeConfigurationNodes;
         }
         compositeConfigurationNodesLoaded = true;
-        for (String compositeConfigurationNodeName : compositeConfigurationNodeNames) {
+        for (String compositeConfigurationNodeRelPath : compositeConfigurationNodeRelPaths) {
 
             // a mainConfigNode is a node like hst:sitemap or hst:pages for example
-            HstNode mainConfigNode =  configurationRootNode.getNode(compositeConfigurationNodeName);
+            HstNode mainConfigNode =  configurationRootNode.getNode(compositeConfigurationNodeRelPath);
+
+            if (mainConfigNode == null) {
+                // check whether there is a mainConfigNode in the workspace. Take that one if present
+                mainConfigNode = configurationRootNode.getNode(HstNodeTypes.NODENAME_HST_WORKSPACE + "/" + compositeConfigurationNodeRelPath);
+            }
+
             List<HstNode> fallbackMainConfigNodes = new ArrayList<>();
             // see if there is an inherited main config node
             for (HstNode inherited : orderedRootConfigurationNodeInheritanceList) {
                 if (mainConfigNode == null) {
-                    mainConfigNode =  inherited.getNode(compositeConfigurationNodeName);
+                    mainConfigNode =  inherited.getNode(compositeConfigurationNodeRelPath);
                 } else {
-                    HstNode inheritedMainConfigNode = inherited.getNode(compositeConfigurationNodeName);
+                    HstNode inheritedMainConfigNode = inherited.getNode(compositeConfigurationNodeRelPath);
                     if (inheritedMainConfigNode != null) {
                         fallbackMainConfigNodes.add(inheritedMainConfigNode);
                     }
@@ -121,7 +127,7 @@ public class CompositeConfigurationNodes {
             }
             // do the actual composite: start with 'mainConfigNode' and then merge in the nodes from inheritanceListForMainConfigNode
             CompositeConfigurationNode compositeConfigurationNode = new CompositeConfigurationNode(mainConfigNode, fallbackMainConfigNodes);
-            compositeConfigurationNodes.put(compositeConfigurationNodeName, compositeConfigurationNode);
+            compositeConfigurationNodes.put(compositeConfigurationNodeRelPath, compositeConfigurationNode);
 
         }
         return compositeConfigurationNodes;
@@ -151,10 +157,15 @@ public class CompositeConfigurationNodes {
         return cacheKey;
     }
 
-    private List<String> createDependencyPaths(final String rootPath, final String[] nodeNames) {
+    private List<String> createDependencyPaths(final String rootPath, final String[] relPaths, boolean includeWorkspacePath) {
         List<String> paths = new ArrayList<>();
-        for (String nodeName : nodeNames) {
-            paths.add(rootPath + "/" + nodeName);
+        for (String relPath : relPaths) {
+            paths.add(rootPath + "/" + relPath);
+            if (includeWorkspacePath && !relPath.startsWith(HstNodeTypes.NODENAME_HST_WORKSPACE)) {
+                // also include the workspace variant as below workspace nodes like hst:sitemenus or hst:sitemap can also be found
+                // if relPath already starts with hst:workspace it doesn't really matter. No bother to check
+                paths.add(rootPath + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE + "/" + relPath);
+            }
         }
         return paths;
     }
@@ -170,8 +181,29 @@ public class CompositeConfigurationNodes {
 
         public CompositeConfigurationNode(final HstNode mainConfigNode, final List<HstNode> fallbackMainConfigNodes) {
             this.mainConfigNode = mainConfigNode;
+
+            HstNode mainConfigNodeInWorkspace = null;
+            final HstNode parent = mainConfigNode.getParent();
+            if (!parent.getName().equals(HstNodeTypes.NODENAME_HST_WORKSPACE)) {
+                 // mainConfigNode is not already a node in workspace
+                mainConfigNodeInWorkspace = parent.getNode(HstNodeTypes.NODENAME_HST_WORKSPACE + "/" + mainConfigNode.getName());
+            }
+
             for (HstNode child : mainConfigNode.getNodes()) {
                 compositeChildren.put(child.getName(), child);
+            }
+            if (mainConfigNodeInWorkspace != null) {
+                // MERGE now the workspace nodes as well
+                for (HstNode child : mainConfigNodeInWorkspace.getNodes()) {
+                    if (compositeChildren.containsKey(child.getName())) {
+                        HstNode present = compositeChildren.get(child.getName());
+                        log.warn("Please correct the configuration because duplicate configuration nodes found. Not allowed to have same node names" +
+                                " in hst:workspace below main config nodes (like hst:sitemap, hst:sitemenu, etc). Duplicates" +
+                                " are '{}' and '{}'. Node from workspace won't be used.", present.toString(), child.toString());
+                    } else {
+                        compositeChildren.put(child.getName(), child);
+                    }
+                }
             }
             for (HstNode fallbackMainConfigNode : fallbackMainConfigNodes) {
                 for (HstNode fallBackChild : fallbackMainConfigNode.getNodes()) {

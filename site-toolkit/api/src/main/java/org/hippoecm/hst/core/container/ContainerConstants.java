@@ -145,11 +145,15 @@ public interface ContainerConstants {
     String CMS_SSO_AUTHENTICATED = "org.hippoecm.hst.container.sso_cms_authenticated";
 
     /**
+     * If there is a correct cms sso authentication, then on the HttpSession we store the user id with this attribute name
+     */
+    String CMS_USER_ID_ATTR = "org.hippoecm.hst.container.cms_user_id";
+
+    /**
      * The attribute used on the request to indicate that the request is from a CMS context and is a REST call and
      * that also might need to use the credentials from the cms (jcr session) user, for example a REST call that needs to modify the HST config
      */
     String CMS_HOST_REST_REQUEST_CONTEXT = "org.hippoecm.hst.container.sso_cms_rest_request_context";
-
 
     /**
      * The attribute used on the request or http session to indicate that the page should be rendered as some specific

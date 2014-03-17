@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.JcrUtils;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -32,92 +34,91 @@ import static org.junit.Assert.fail;
  */
 public class TestPendingChangesHippoSession extends AbstractHstLoadingCacheTestCase {
 
+    private Session session;
+
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
+        session = createSession();
+        createHstConfigBackup(session);
     }
+
+    @Override
+    @After
+    public void tearDown() throws Exception {
+        createHstConfigBackup(session);
+        session.logout();
+        super.tearDown();
+    }
+
 
     @Test
     public void assertPendingChangesCorrectForMovesWithinSameParent() throws RepositoryException {
-
-        Session session = createSession();
 
         session.move("/hst:hst/hst:configurations/unittestcommon/hst:components/header",
                 "/hst:hst/hst:configurations/unittestcommon/hst:components/header2");
 
         final NodeIterator nodeIterator = ((HippoSession) session).pendingChanges();
-        while(nodeIterator.hasNext()) {
+        while (nodeIterator.hasNext()) {
             if (nodeIterator.nextNode().getPath().equals("/hst:hst")) {
                 fail("Should be no pending change for /hst:hst");
             }
         }
-
-        session.logout();
 
     }
 
     @Test
     public void assertPendingChangesCorrectForMovesBetweenDifferentParents() throws RepositoryException {
-        Session session = createSession();
-        session.move("/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header",
+        session.move("/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header",
                 "/hst:hst/hst:configurations/unittestcommon/hst:pages/homepage/header");
 
         final NodeIterator nodeIterator = ((HippoSession) session).pendingChanges();
-        boolean expectedWrongPendingChangeFound = false;
-        while(nodeIterator.hasNext()) {
+        while (nodeIterator.hasNext()) {
             if (nodeIterator.nextNode().getPath().equals("/hst:hst")) {
                 fail("Should be no pending change for /hst:hst");
             }
         }
-
-        session.logout();
 
     }
 
     @Test
     public void assertPendingChangesCorrectForCopyDelete() throws RepositoryException {
         // instead of move, use copy / delete and assert pending changes are then correct
-        Session session = createSession();
-        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header",
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header",
                 "/hst:hst/hst:configurations/unittestcommon/hst:pages/homepage/header");
 
-        session.removeItem("/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header");
+        session.removeItem("/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header");
 
         final NodeIterator nodeIterator = ((HippoSession) session).pendingChanges();
 
-        while(nodeIterator.hasNext()) {
+        while (nodeIterator.hasNext()) {
             if (nodeIterator.nextNode().getPath().equals("/hst:hst")) {
                 fail("Should be no pending change for /hst:hst");
             }
         }
-        session.logout();
     }
 
     @Test
-    public void assertPendingChangesCorrectForReordering()  throws RepositoryException {
-        Session session = createSession();
-        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header",
-                "/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header1");
-        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header",
-                "/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header2");
-        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header",
-                "/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header3");
+    public void assertPendingChangesCorrectForReordering() throws RepositoryException {
+
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header",
+                "/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header1");
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header",
+                "/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header2");
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header",
+                "/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header3");
 
         session.save();
 
-        session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage").orderBefore("header2", "header1");
+        session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage").orderBefore("header2", "header1");
 
         final NodeIterator nodeIterator = ((HippoSession) session).pendingChanges();
 
-        while(nodeIterator.hasNext()) {
+        while (nodeIterator.hasNext()) {
             // should be just one pending change for basepage
-            assertEquals("/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage", nodeIterator.nextNode().getPath());
+            assertEquals("/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage", nodeIterator.nextNode().getPath());
         }
 
-        session.removeItem("/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header1");
-        session.removeItem("/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header2");
-        session.removeItem("/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header3");
-        session.save();
-        session.logout();
     }
 }

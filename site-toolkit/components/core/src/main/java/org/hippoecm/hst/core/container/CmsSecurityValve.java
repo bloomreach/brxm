@@ -35,6 +35,8 @@ import org.hippoecm.hst.core.jcr.SessionSecurityDelegation;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.onehippo.sso.CredentialCipher;
 
+import static org.hippoecm.hst.core.container.ContainerConstants.CMS_USER_ID_ATTR;
+
 /**
  * CmsSecurityValve responsible for authenticating the user using CMS. 
  * 
@@ -50,7 +52,6 @@ import org.onehippo.sso.CredentialCipher;
  */
 public class CmsSecurityValve extends AbstractBaseOrderableValve {
 
-    public final static String CMS_USER_ID_ATTR = CmsSecurityValve.class.getName() + ".cms_user_id";
     private static final String HSTSESSIONID_COOKIE_NAME = "HSTSESSIONID";
 
     private SessionSecurityDelegation sessionSecurityDelegation;

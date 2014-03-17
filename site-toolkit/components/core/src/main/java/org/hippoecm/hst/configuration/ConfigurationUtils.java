@@ -17,6 +17,8 @@ package org.hippoecm.hst.configuration;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.configuration.model.HstNode;
+
 public class ConfigurationUtils {
 
     private static int[] suppertedSchemeNotMatchingResponseCodes = {HttpServletResponse.SC_OK,
@@ -39,5 +41,15 @@ public class ConfigurationUtils {
             builder.append(code).append(", ");
         }
         return builder.substring(0, builder.length() -2).toString();
+    }
+
+    public static boolean isWorkspaceConfig(final HstNode node) {
+        if (node == null) {
+            return false;
+        }
+        if (HstNodeTypes.NODENAME_HST_WORKSPACE.equals(node.getName()) && HstNodeTypes.NODETYPE_HST_WORKSPACE.equals(node.getNodeTypeName())) {
+            return true;
+        }
+        return isWorkspaceConfig(node.getParent());
     }
 }

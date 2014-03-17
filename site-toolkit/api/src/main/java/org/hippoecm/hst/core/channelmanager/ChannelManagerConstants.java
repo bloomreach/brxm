@@ -20,15 +20,17 @@ public interface ChannelManagerConstants {
     static final String HST_MOUNT_ID = "HST-Mount-Id";
     static final String HST_SITE_ID = "HST-Site-Id";
     static final String HST_PAGE_ID = "HST-Page-Id";
+    static final String HST_SITEMAP_ID = "HST-Sitemap-Id";
+    static final String HST_SITEMAPITEM_ID = "HST-SitemapItem-Id";
+    static final String HST_PAGE_EDITABLE = "HST-Page-Editable";
     static final String HST_RENDER_VARIANT = "HST-Render-Variant";
     static final String HST_SITE_HAS_PREVIEW_CONFIG = "HST-Site-HasPreviewConfig";
-    static final String HST_SITE_CHANGED_BY_SET = "HST-Changed-By-Set";
     // below used outside HST
     static final String HST_PAGE_REQUEST_VARIANTS = "HST-Page-Request-Variants";
 
-    static final String HST_CONTAINER_COMPONENT_LOCKED_BY = "HST-Container-LockedBy";
-    static final String HST_CONTAINER_COMPONENT_LOCKED_BY_CURRENT_USER = "HST-Container-LockedBy-Current-User";
-    static final String HST_CONTAINER_COMPONENT_LOCKED_ON = "HST-Container-LockedOn";
-    static final String HST_CONTAINER_COMPONENT_LAST_MODIFIED = "HST-Container-LastModified";
+    static final String HST_LOCKED_BY = "HST-LockedBy";
+    static final String HST_LOCKED_BY_CURRENT_USER = "HST-LockedBy-Current-User";
+    static final String HST_LOCKED_ON = "HST-LockedOn";
+    static final String HST_LAST_MODIFIED = "HST-LastModified";
 
 }

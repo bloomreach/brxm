@@ -15,13 +15,11 @@
  */
 package org.hippoecm.hst.tag;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.mock.core.component.MockHstRequest;
 import org.hippoecm.hst.mock.core.component.MockHstResponse;
 import org.junit.Before;
@@ -29,6 +27,15 @@ import org.junit.Test;
 import org.springframework.mock.web.MockPageContext;
 import org.springframework.mock.web.MockServletContext;
 import org.w3c.dom.Element;
+
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * TestHeadContributionTag
@@ -195,5 +202,113 @@ public class TestHeadContributionsTag {
         assertTrue(content.contains("src=\"cat2.js\""));
         assertFalse(content.contains("src=\"cat3.js\""));
         assertFalse(content.contains("src=\"cat4.js\""));
+    }
+
+    @Test
+    public void test_response_head_elements_are_cloned_on_access() {
+        final int before = hstResponse.getHeadElements().size();
+        assertTrue(before > 0);
+        hstResponse.getHeadElements().clear();
+        final int after = hstResponse.getHeadElements().size();
+        assertEquals(before, after);
+    }
+
+    @Test
+    public void testNoAutomaticIncludePageTitle() throws Exception {
+
+        tag.setCategoryExcludes("cat1, cat2, cat3, cat4");
+
+        final Element titleElement = hstResponse.createElement("title");
+        titleElement.appendChild(titleElement.getOwnerDocument().createTextNode("Some title"));
+
+        hstResponse.addHeadElement(titleElement, "title");
+
+        tag.doStartTag();
+        tag.doEndTag();
+        tag.release();
+        String content = hstResponse.getContentAsString();
+        assertEquals("<title>Some title</title>\n", content);
+    }
+
+    @Test
+    public void testWithAutomaticIncludePageTitle() throws Exception {
+        HstRequestContext context = createMock(HstRequestContext.class);
+        ResolvedSiteMapItem resolvedSiteMapItem = createMock(ResolvedSiteMapItem.class);
+        expect(resolvedSiteMapItem.getPageTitle()).andReturn("sitemapitem page title").anyTimes();
+        expect(context.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem).anyTimes();
+        replay(context, resolvedSiteMapItem);
+
+        ModifiableRequestContextProvider.set(context);
+        tag.setCategoryExcludes("cat1, cat2, cat3, cat4");
+
+        tag.setIncludePageTitle(true);
+        final Element titleElement = hstResponse.createElement("title");
+        titleElement.appendChild(titleElement.getOwnerDocument().createTextNode("Some title"));
+
+        hstResponse.addHeadElement(titleElement, "title");
+
+        tag.doStartTag();
+        tag.doEndTag();
+        tag.release();
+        String content = hstResponse.getContentAsString();
+        assertEquals("<title>sitemapitem page title - Some title</title>\n", content);
+
+        ModifiableRequestContextProvider.clear();
+    }
+
+    @Test
+    public void testWithAutomaticIncludePageTitleWithDifferentDelim() throws Exception {
+        HstRequestContext context = createMock(HstRequestContext.class);
+        ResolvedSiteMapItem resolvedSiteMapItem = createMock(ResolvedSiteMapItem.class);
+        expect(resolvedSiteMapItem.getPageTitle()).andReturn("sitemapitem page title").anyTimes();
+        expect(context.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem).anyTimes();
+        replay(context, resolvedSiteMapItem);
+
+        ModifiableRequestContextProvider.set(context);
+        tag.setCategoryExcludes("cat1, cat2, cat3, cat4");
+
+        tag.setIncludePageTitle(true);
+        tag.setPageTitleDelimiter("|");
+
+        final Element titleElement = hstResponse.createElement("title");
+        titleElement.appendChild(titleElement.getOwnerDocument().createTextNode("Some title"));
+
+        hstResponse.addHeadElement(titleElement, "title");
+
+        tag.doStartTag();
+        tag.doEndTag();
+        tag.release();
+        String content = hstResponse.getContentAsString();
+        assertEquals("<title>sitemapitem page title | Some title</title>\n", content);
+
+        ModifiableRequestContextProvider.clear();
+    }
+
+    @Test
+    public void testDelimiterGetsEncoded() throws Exception {
+        HstRequestContext context = createMock(HstRequestContext.class);
+        ResolvedSiteMapItem resolvedSiteMapItem = createMock(ResolvedSiteMapItem.class);
+        expect(resolvedSiteMapItem.getPageTitle()).andReturn("sitemapitem page title").anyTimes();
+        expect(context.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem).anyTimes();
+        replay(context, resolvedSiteMapItem);
+
+        ModifiableRequestContextProvider.set(context);
+        tag.setCategoryExcludes("cat1, cat2, cat3, cat4");
+
+        tag.setIncludePageTitle(true);
+        tag.setPageTitleDelimiter("<>");
+
+        final Element titleElement = hstResponse.createElement("title");
+        titleElement.appendChild(titleElement.getOwnerDocument().createTextNode("Some title"));
+
+        hstResponse.addHeadElement(titleElement, "title");
+
+        tag.doStartTag();
+        tag.doEndTag();
+        tag.release();
+        String content = hstResponse.getContentAsString();
+        assertEquals("<title>sitemapitem page title &lt;&gt; Some title</title>\n", content);
+
+        ModifiableRequestContextProvider.clear();
     }
 }

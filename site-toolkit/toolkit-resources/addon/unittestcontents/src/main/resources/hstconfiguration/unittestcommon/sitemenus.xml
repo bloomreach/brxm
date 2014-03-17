@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+    Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
     
     Licensed under the Apache License, Version 2.0 (the  "License");
     you may not use this file except in compliance with the License.
@@ -14,27 +14,27 @@
     See the License for the specific language governing permissions and
     limitations under the License. -->
 <sv:node sv:name="hst:sitemenus" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenus</sv:value>
-    </sv:property>
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hst:sitemenus</sv:value>
+  </sv:property>
 
-    <sv:node sv:name="main">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemenu</sv:value>
-        </sv:property>
-        <sv:node sv:name="News">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemenuitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:depth" sv:type="Long">
-                <sv:value>3</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-                <sv:value>news</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:repobased" sv:type="Boolean">
-                <sv:value>true</sv:value>
-            </sv:property>
-        </sv:node> 
+  <sv:node sv:name="main">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemenu</sv:value>
+    </sv:property>
+    <sv:node sv:name="News">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemenuitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:depth" sv:type="Long">
+        <sv:value>3</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+        <sv:value>news</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:repobased" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
     </sv:node>
+  </sv:node>
 </sv:node>

@@ -26,11 +26,13 @@ public interface HstNodeTypes {
     static final String NODETYPE_HST_CONFIGURATION = "hst:configuration";
     static final String NODETYPE_HST_SITEMAP = "hst:sitemap";
     static final String NODETYPE_HST_SITEMAPITEM = "hst:sitemapitem";
+    static final String NODETYPE_HST_ABSTRACT_COMPONENT = "hst:abstractcomponent";
     static final String NODETYPE_HST_COMPONENT = "hst:component";
     static final String NODETYPE_HST_CONTAINERCOMPONENTREFERENCE = "hst:containercomponentreference";
     static final String NODETYPE_HST_CONTAINERCOMPONENT = "hst:containercomponent";
     static final String NODETYPE_HST_CONTAINERITEMCOMPONENT = "hst:containeritemcomponent";
     static final String NODETYPE_HST_CATALOG = "hst:catalog";
+    static final String NODETYPE_HST_WORKSPACE = "hst:workspace";
     static final String NODETYPE_HST_CONTAINERITEM_PACKAGE = "hst:containeritempackage";
     static final String NODETYPE_HST_SITEMENUS = "hst:sitemenus";
     static final String NODETYPE_HST_SITEMENU = "hst:sitemenu";
@@ -50,6 +52,9 @@ public interface HstNodeTypes {
     static final String NODETYPE_HST_BLUEPRINT = "hst:blueprint";
     static final String NODETYPE_HST_BLUEPRINTS = "hst:blueprints";
     static final String NODETYPE_HST_CONTAINERCOMPONENTSFOLDER = "hst:containercomponentfolder";
+
+    static final String MIXINTYPE_HST_EDITABLE = "hst:editable";
+    static final String EDITABLE_PROPERTY_STATE = "hst:state";
 
     static final String GENERAL_PROPERTY_INHERITS_FROM = "hst:inheritsfrom";
     static final String GENERAL_PROPERTY_LOCKED_BY = "hst:lockedby";
@@ -85,7 +90,6 @@ public interface HstNodeTypes {
     static final String COMPONENT_PROPERTY_LABEL = "hst:label";
     static final String COMPONENT_PROPERTY_COMPONENT_FILTER_TAG = "hst:componentfiltertag";
 
-
     static final String TEMPLATE_PROPERTY_RENDERPATH =  "hst:renderpath";
     static final String TEMPLATE_PROPERTY_IS_NAMED =  "hst:isnamed";
     static final String TEMPLATE_PROPERTY_SCRIPT = "hst:script";
@@ -107,6 +111,7 @@ public interface HstNodeTypes {
     static final String SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING = "hst:excludedforlinkrewriting";
     static final String SITEMAPITEM_PROPERTY_SCHEME = "hst:scheme";
     static final String SITEMAPITEM_PROPERTY_RESOURCE_BUNDLE_ID = "hst:resourcebundleid";
+    static final String SITEMAPITEM_PAGE_TITLE = "hst:pagetitle";
 
     static final String SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM =  "hst:referencesitemapitem";
     static final String SITEMENUITEM_PROPERTY_EXTERNALLINK =  "hst:externallink";
@@ -186,6 +191,8 @@ public interface HstNodeTypes {
     static final String NODENAME_HST_COMPONENTS = "hst:components";
     static final String NODENAME_HST_CATALOG = "hst:catalog";
     static final String NODENAME_HST_PAGES = "hst:pages";
+    static final String NODENAME_HST_ABSTRACTPAGES = "hst:abstractpages";
+    static final String NODENAME_HST_PROTOTYPEPAGES = "hst:prototypepages";
     static final String NODENAME_HST_TEMPLATES = "hst:templates";
     static final String NODENAME_HST_SITEMAPITEMHANDLERS = "hst:sitemapitemhandlers";
     static final String NODENAME_HST_HSTDEFAULT = "hst:default";

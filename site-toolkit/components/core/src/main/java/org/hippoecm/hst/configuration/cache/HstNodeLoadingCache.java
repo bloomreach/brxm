@@ -112,7 +112,7 @@ public class HstNodeLoadingCache implements HstEventConsumer {
                                     "'"+rootPath+"' missing");
                         }
                     }
-                    boolean orderedReload;
+
                     if (event.isPropertyEvent() && nodeForEvent != null) {
                         // if already marked stale due to 'node event' we should not mark it now stale
                         // due to property event.
@@ -120,17 +120,11 @@ public class HstNodeLoadingCache implements HstEventConsumer {
                         nodeForEvent.markStaleByPropertyEvent();
                     } else {
                         if (nodeForEvent != null) {
-                            orderedReload = orderMatters(nodeForEvent);
-                            if (orderedReload) {
-                                // since the order might be changed, reload the parent
-                                nodeForEvent = getFirstNonNullAncestor(event.getNodePath());
-                            }
-                            nodeForEvent.markStaleByNodeEvent(orderedReload);
+                            nodeForEvent.markStaleByNodeEvent();
                         } else {
                             // find first non null ancestor
                             HstNode ancestorNodeForEvent = getFirstNonNullAncestor(event.getNodePath());
-                            orderedReload = orderMatters(ancestorNodeForEvent);
-                            ancestorNodeForEvent.markStaleByNodeEvent(orderedReload);
+                            ancestorNodeForEvent.markStaleByNodeEvent();
                         }
                     }
                 }
@@ -154,19 +148,6 @@ public class HstNodeLoadingCache implements HstEventConsumer {
         log.info("Getting HstNode '{}' took '{}' ms.",absPath,  (System.currentTimeMillis() - getNodeStartTime));
         return result;
     }
-
-    private boolean orderMatters(final HstNode node) {
-        if (node.getValueProvider().getPath().startsWith(rootConfigurationsPrefix)) {
-            // nodes directly below hst:configurations are not important to reload their
-            // children in order, as that can be very expensive to reload them all. Hence extra check
-            // whether it is not a direct child
-            if (node.getValueProvider().getPath().substring(rootConfigurationsPrefix.length()).contains("/")) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 
     /**
      * @return the <code>HstNode</code> for <code>absPath</code> and <code>null</code> if non existing

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -15,121 +15,119 @@
   limitations under the License.
 -->
 <sv:node sv:name="hst:sitemapitemhandlers" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-  
+
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hst:sitemapitemhandlers</sv:value>
+  </sv:property>
+
+  <sv:node sv:name="noophandler">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemapitemhandlers</sv:value>
+      <sv:value>hst:sitemapitemhandler</sv:value>
     </sv:property>
-   
-    <sv:node sv:name="noophandler">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemapitemhandler</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:sitemapitemhandlerclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.test.sitemapitemhandler.NoopHandlerItem</sv:value>
-        </sv:property>
-        <sv:property sv:name="unittestproject:redirectto" sv:type="String">
-            <!--  take the value from the resolved sitemap item -->
-            <sv:value>${redirectto}</sv:value>
-        </sv:property>
-        <sv:property sv:name="unittestproject:somestring" sv:type="String">
-            <sv:value>${myparam}</sv:value>
-        </sv:property>
-        <sv:property sv:name="unittestproject:somestrings" sv:type="String">
-            <sv:value>val1</sv:value>
-            <sv:value>val2</sv:value>
-            <sv:value>${1}</sv:value>
-        </sv:property>
-        <sv:property sv:name="unittestproject:someboolean" sv:type="Boolean">
-            <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="unittestproject:somebooleans" sv:type="Boolean">
-            <sv:value>true</sv:value>
-            <sv:value>false</sv:value>
-        </sv:property>
-        <sv:property sv:name="unittestproject:somedate" sv:type="Date">
-            <sv:value>2010-01-22T12:34:11.055+02:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="unittestproject:somedates" sv:type="Date">
-            <sv:value>2010-01-22T12:34:11.055+02:00</sv:value>
-            <sv:value>2010-02-22T12:34:11.055+02:00</sv:value>
-       </sv:property>
-       <sv:property sv:name="unittestproject:somelong" sv:type="Long">
-           <sv:value>10</sv:value>
-       </sv:property>
-       <sv:property sv:name="unittestproject:somelongs" sv:type="Long">
-           <sv:value>10</sv:value>
-           <sv:value>11</sv:value>
-       </sv:property>
-       <sv:property sv:name="unittestproject:somedouble" sv:type="Double">
-           <sv:value>10.1</sv:value>
-       </sv:property>
-       <sv:property sv:name="unittestproject:somedoubles" sv:type="Double">
-           <sv:value>10.1</sv:value>
-           <sv:value>11.1</sv:value>
-       </sv:property>
-    </sv:node>
-    
-    <sv:node sv:name="examplehandler1">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemapitemhandler</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:sitemapitemhandlerclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.test.sitemapitemhandler.NoopExampleHandlerItem1</sv:value>
-        </sv:property>
-        <sv:property sv:name="unittestproject:wildcard1" sv:type="String">
-            <!-- the first wildcard value from the resolved sitemap item -->
-            <sv:value>${1}</sv:value>
-        </sv:property>
-        <sv:property sv:name="unittestproject:wildcard2" sv:type="String">
-            <!-- the second wildcard value from the resolved sitemap item -->
-            <sv:value>${2}</sv:value>
-        </sv:property>
-    </sv:node>
-    
-    <sv:node sv:name="examplehandler2">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemapitemhandler</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:sitemapitemhandlerclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.test.sitemapitemhandler.NoopExampleHandlerItem2</sv:value>
-        </sv:property>
-        <sv:property sv:name="unittestproject:wildcard1" sv:type="String">
-            <!-- the first wildcard value from the resolved sitemap item -->
-            <sv:value>${1}</sv:value>
-        </sv:property>
-        <sv:property sv:name="unittestproject:wildcard2" sv:type="String">
-            <!-- the second wildcard value from the resolved sitemap item -->
-            <sv:value>${2}</sv:value>
-        </sv:property>
-    </sv:node>
-    
-    <sv:node sv:name="sitemapitem_redirecthandler">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemapitemhandler</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:sitemapitemhandlerclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.test.sitemapitemhandler.SiteMapItemRedirectHandler</sv:value>
-        </sv:property>
-        <sv:property sv:name="unittestproject:redirecttopath" sv:type="String">
-            <!--  take the value from the resolved sitemap item -->
-            <sv:value>${redirectto}</sv:value>
-        </sv:property>
-    </sv:node>
-    
-    <sv:node sv:name="browser_redirecthandler">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemapitemhandler</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:sitemapitemhandlerclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.test.sitemapitemhandler.BrowserRedirectHandlerItem</sv:value>
-        </sv:property>
-        <sv:property sv:name="unittestproject:redirectto" sv:type="String">
-            <!--  take the value from the resolved sitemap item -->
-            <sv:value>${redirectto}</sv:value>
-        </sv:property>
-    </sv:node>
-    
-    
-    
-    
+    <sv:property sv:name="hst:sitemapitemhandlerclassname" sv:type="String">
+      <sv:value>org.hippoecm.hst.test.sitemapitemhandler.NoopHandlerItem</sv:value>
+    </sv:property>
+    <sv:property sv:name="unittestproject:redirectto" sv:type="String">
+      <!--  take the value from the resolved sitemap item -->
+      <sv:value>${redirectto}</sv:value>
+    </sv:property>
+    <sv:property sv:name="unittestproject:somestring" sv:type="String">
+      <sv:value>${myparam}</sv:value>
+    </sv:property>
+    <sv:property sv:name="unittestproject:somestrings" sv:type="String">
+      <sv:value>val1</sv:value>
+      <sv:value>val2</sv:value>
+      <sv:value>${1}</sv:value>
+    </sv:property>
+    <sv:property sv:name="unittestproject:someboolean" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="unittestproject:somebooleans" sv:type="Boolean">
+      <sv:value>true</sv:value>
+      <sv:value>false</sv:value>
+    </sv:property>
+    <sv:property sv:name="unittestproject:somedate" sv:type="Date">
+      <sv:value>2010-01-22T12:34:11.055+02:00</sv:value>
+    </sv:property>
+    <sv:property sv:name="unittestproject:somedates" sv:type="Date">
+      <sv:value>2010-01-22T12:34:11.055+02:00</sv:value>
+      <sv:value>2010-02-22T12:34:11.055+02:00</sv:value>
+    </sv:property>
+    <sv:property sv:name="unittestproject:somelong" sv:type="Long">
+      <sv:value>10</sv:value>
+    </sv:property>
+    <sv:property sv:name="unittestproject:somelongs" sv:type="Long">
+      <sv:value>10</sv:value>
+      <sv:value>11</sv:value>
+    </sv:property>
+    <sv:property sv:name="unittestproject:somedouble" sv:type="Double">
+      <sv:value>10.1</sv:value>
+    </sv:property>
+    <sv:property sv:name="unittestproject:somedoubles" sv:type="Double">
+      <sv:value>10.1</sv:value>
+      <sv:value>11.1</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="examplehandler1">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitemhandler</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:sitemapitemhandlerclassname" sv:type="String">
+      <sv:value>org.hippoecm.hst.test.sitemapitemhandler.NoopExampleHandlerItem1</sv:value>
+    </sv:property>
+    <sv:property sv:name="unittestproject:wildcard1" sv:type="String">
+      <!-- the first wildcard value from the resolved sitemap item -->
+      <sv:value>${1}</sv:value>
+    </sv:property>
+    <sv:property sv:name="unittestproject:wildcard2" sv:type="String">
+      <!-- the second wildcard value from the resolved sitemap item -->
+      <sv:value>${2}</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="examplehandler2">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitemhandler</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:sitemapitemhandlerclassname" sv:type="String">
+      <sv:value>org.hippoecm.hst.test.sitemapitemhandler.NoopExampleHandlerItem2</sv:value>
+    </sv:property>
+    <sv:property sv:name="unittestproject:wildcard1" sv:type="String">
+      <!-- the first wildcard value from the resolved sitemap item -->
+      <sv:value>${1}</sv:value>
+    </sv:property>
+    <sv:property sv:name="unittestproject:wildcard2" sv:type="String">
+      <!-- the second wildcard value from the resolved sitemap item -->
+      <sv:value>${2}</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="sitemapitem_redirecthandler">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitemhandler</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:sitemapitemhandlerclassname" sv:type="String">
+      <sv:value>org.hippoecm.hst.test.sitemapitemhandler.SiteMapItemRedirectHandler</sv:value>
+    </sv:property>
+    <sv:property sv:name="unittestproject:redirecttopath" sv:type="String">
+      <!--  take the value from the resolved sitemap item -->
+      <sv:value>${redirectto}</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="browser_redirecthandler">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitemhandler</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:sitemapitemhandlerclassname" sv:type="String">
+      <sv:value>org.hippoecm.hst.test.sitemapitemhandler.BrowserRedirectHandlerItem</sv:value>
+    </sv:property>
+    <sv:property sv:name="unittestproject:redirectto" sv:type="String">
+      <!--  take the value from the resolved sitemap item -->
+      <sv:value>${redirectto}</sv:value>
+    </sv:property>
+  </sv:node>
+
+
 </sv:node>

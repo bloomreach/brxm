@@ -16,7 +16,6 @@
 package org.hippoecm.hst.configuration.model;
 
 
-import java.util.Arrays;
 import java.util.Map;
 
 import javax.jcr.NodeIterator;
@@ -25,12 +24,9 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
-import junit.framework.Assert;
-
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentConfigurationService;
-import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.MountService;
 import org.hippoecm.hst.configuration.hosting.VirtualHostService;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
@@ -82,6 +78,7 @@ public class TestBrokenModelConfigurations extends AbstractTestConfigurations {
     @After
     public void tearDown() throws Exception {
         restoreHstConfigBackup(session);
+        session.logout();
         super.tearDown();
     }
 
@@ -456,6 +453,7 @@ public class TestBrokenModelConfigurations extends AbstractTestConfigurations {
     public void testProjectMissingHstPageAndComponents() throws Exception {
         session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:components").remove();
         session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:pages").remove();
+        session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:abstractpages").remove();
 
         session.save();
         final VirtualHosts firstModel = hstManager.getVirtualHosts();
@@ -468,6 +466,7 @@ public class TestBrokenModelConfigurations extends AbstractTestConfigurations {
     public void testProjectAndDefaultMissingHstPageAndComponents() throws Exception {
         session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:components").remove();
         session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:pages").remove();
+        session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:abstractpages").remove();
         session.getNode("/hst:hst/hst:configurations/hst:default/hst:components").remove();
         session.getNode("/hst:hst/hst:configurations/hst:default/hst:pages").remove();
         session.save();
@@ -817,23 +816,6 @@ public class TestBrokenModelConfigurations extends AbstractTestConfigurations {
         return repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
     }
 
-    protected void createHstConfigBackup(Session session) throws RepositoryException {
-        if (!session.nodeExists("/hst-backup")) {
-            JcrUtils.copy(session, "/hst:hst", "/hst-backup");
-            session.save();
-        }
-    }
-
-    protected void restoreHstConfigBackup(Session session) throws RepositoryException {
-        if (session.nodeExists("/hst-backup")) {
-            if (session.nodeExists("/hst:hst")) {
-                session.removeItem("/hst:hst");
-            }
-            JcrUtils.copy(session, "/hst-backup", "/hst:hst");
-            session.removeItem("/hst-backup");
-            session.save();
-        }
-    }
 
 
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+    Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
     
     Licensed under the Apache License, Version 2.0 (the  "License");
     you may not use this file except in compliance with the License.
@@ -14,505 +14,505 @@
     See the License for the specific language governing permissions and
     limitations under the License. -->
 <sv:node sv:name="hst:sitemap" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hst:sitemap</sv:value>
+  </sv:property>
+
+  <sv:node sv:name="_default_">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemap</sv:value>
+      <sv:value>hst:sitemapitem</sv:value>
     </sv:property>
+    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+      <sv:value>hst:pages/homepage</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:parameternames" sv:type="String">
+      <sv:value>testparam</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:parametervalues" sv:type="String">
+      <sv:value>${1}</sv:value>
+    </sv:property>
+  </sv:node>
 
+  <sv:node sv:name="home">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:refId" sv:type="String">
+      <sv:value>homeRefId</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+      <sv:value>hst:pages/homepage</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+      <sv:value>common/homepage</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="about-us">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+      <sv:value>hst:pages/standarddetail</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+      <sv:value>common/aboutfolder/about-us</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="handler_nooptest">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:sitemapitemhandlerids" sv:type="String">
+      <sv:value>noophandler</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:parameternames" sv:type="String">
+      <sv:value>myparam</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:parametervalues" sv:type="String">
+      <sv:value>/home</sv:value>
+    </sv:property>
     <sv:node sv:name="_default_">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemapitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>hst:pages/homepage</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:parameternames" sv:type="String">
-            <sv:value>testparam</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:parametervalues" sv:type="String">
-            <sv:value>${1}</sv:value>
-        </sv:property>
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemapitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:sitemapitemhandlerids" sv:type="String">
+        <sv:value>noophandler</sv:value>
+      </sv:property>
+      <!-- myparam inherited from parent sitemap item  -->
     </sv:node>
+  </sv:node>
 
-    <sv:node sv:name="home">
+  <sv:node sv:name="handler_sitemapitem_redirecttest">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:sitemapitemhandlerids" sv:type="String">
+      <sv:value>sitemapitem_redirecthandler</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:parameternames" sv:type="String">
+      <sv:value>redirectto</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:parametervalues" sv:type="String">
+      <sv:value>/home</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="handler_browser_redirecttest">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:sitemapitemhandlerids" sv:type="String">
+      <sv:value>browser_redirecthandler</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:parameternames" sv:type="String">
+      <sv:value>redirectto</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:parametervalues" sv:type="String">
+      <sv:value>/home</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="multiplehandler_example">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:node sv:name="_default_">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemapitem</sv:value>
+      </sv:property>
+      <sv:node sv:name="_default_">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemapitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:refId" sv:type="String">
-            <sv:value>homeRefId</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>hst:pages/homepage</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-            <sv:value>common/homepage</sv:value>
-        </sv:property>
-    </sv:node>
-    
-    <sv:node sv:name="about-us">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemapitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>hst:pages/standarddetail</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-            <sv:value>common/aboutfolder/about-us</sv:value>
-        </sv:property>
-    </sv:node>
-    
-    <sv:node sv:name="handler_nooptest">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemapitem</sv:value>
+          <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
         <sv:property sv:name="hst:sitemapitemhandlerids" sv:type="String">
-            <sv:value>noophandler</sv:value>
+          <sv:value>examplehandler1</sv:value>
+          <sv:value>examplehandler2</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:parameternames" sv:type="String">
-            <sv:value>myparam</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:parametervalues" sv:type="String">
-            <sv:value>/home</sv:value>
-        </sv:property>
-        <sv:node sv:name="_default_">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hst:sitemapitem</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:sitemapitemhandlerids" sv:type="String">
-              <sv:value>noophandler</sv:value>
-          </sv:property>
-          <!-- myparam inherited from parent sitemap item  -->
-       </sv:node>
+      </sv:node>
     </sv:node>
-    
-    <sv:node sv:name="handler_sitemapitem_redirecttest">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemapitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:sitemapitemhandlerids" sv:type="String">
-            <sv:value>sitemapitem_redirecthandler</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:parameternames" sv:type="String">
-            <sv:value>redirectto</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:parametervalues" sv:type="String">
-            <sv:value>/home</sv:value>
-        </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="pagenotfound">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+      <sv:value>hst:pages/pagenotfound</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="news">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:refId" sv:type="String">
+      <sv:value>newsRefId</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+      <sv:value>News</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+      <sv:value>hst:pages/newsoverview</sv:value>
+    </sv:property>
+    <sv:node sv:name="_default_.html">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemapitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:refId" sv:type="String">
+        <sv:value>wildcardNewsRefId</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+        <sv:value>News/${1}</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+        <sv:value>hst:pages/standarddetail</sv:value>
+      </sv:property>
     </sv:node>
-    
-    <sv:node sv:name="handler_browser_redirecttest">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemapitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:sitemapitemhandlerids" sv:type="String">
-            <sv:value>browser_redirecthandler</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:parameternames" sv:type="String">
-            <sv:value>redirectto</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:parametervalues" sv:type="String">
-            <sv:value>/home</sv:value>
-        </sv:property>
+    <sv:node sv:name="_default_">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemapitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+        <sv:value>News/${1}</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+        <sv:value>hst:pages/newsoverview</sv:value>
+      </sv:property>
     </sv:node>
-    
-    <sv:node sv:name="multiplehandler_example">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemapitem</sv:value>
-        </sv:property>
-        <sv:node sv:name="_default_">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hst:sitemapitem</sv:value>
-          </sv:property>
-          <sv:node sv:name="_default_">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hst:sitemapitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:sitemapitemhandlerids" sv:type="String">
-                <sv:value>examplehandler1</sv:value>
-                <sv:value>examplehandler2</sv:value>
-            </sv:property>
-           </sv:node>
-        </sv:node>
+    <sv:node sv:name="_any_">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemapitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+        <sv:value>News/${1}</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+        <sv:value>hst:pages/newsoverview</sv:value>
+      </sv:property>
     </sv:node>
-    
-    <sv:node sv:name="pagenotfound">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemapitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>hst:pages/pagenotfound</sv:value>
-        </sv:property>
+    <sv:node sv:name="_any_.html">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemapitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+        <sv:value>News/${1}</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+        <sv:value>hst:pages/standarddetail</sv:value>
+      </sv:property>
     </sv:node>
-    
-    <sv:node sv:name="news">
+  </sv:node>
+  <sv:node sv:name="alsonews">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:node sv:name="news2">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemapitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+        <sv:value>News</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+        <sv:value>hst:pages/newsoverview</sv:value>
+      </sv:property>
+      <sv:node sv:name="_default_.html">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemapitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:refId" sv:type="String">
-            <sv:value>newsRefId</sv:value>
+          <sv:value>hst:sitemapitem</sv:value>
         </sv:property>
         <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-            <sv:value>News</sv:value>
+          <sv:value>News/${1}</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>hst:pages/newsoverview</sv:value>
+          <sv:value>hst:pages/standarddetail</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="_default_">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:sitemapitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+          <sv:value>News/${1}</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+          <sv:value>hst:pages/newsoverview</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="_any_">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:sitemapitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+          <sv:value>News/${1}</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+          <sv:value>hst:pages/newsoverview</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="_any_.html">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:sitemapitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+          <sv:value>News/${1}</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+          <sv:value>hst:pages/standarddetail</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="newswith_linkrwriting_excluded">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+      <sv:value>News</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:excludedforlinkrewriting" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+      <sv:value>hst:pages/newsoverview</sv:value>
+    </sv:property>
+    <sv:node sv:name="_default_.html">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemapitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:excludedforlinkrewriting" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+        <sv:value>News/${1}</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+        <sv:value>hst:pages/standarddetail</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="_default_">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemapitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:excludedforlinkrewriting" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+        <sv:value>News/${1}</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+        <sv:value>hst:pages/newsoverview</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="_any_">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemapitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:excludedforlinkrewriting" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+        <sv:value>News/${1}</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+        <sv:value>hst:pages/newsoverview</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="_any_.html">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemapitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:excludedforlinkrewriting" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+        <sv:value>News/${1}</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+        <sv:value>hst:pages/standarddetail</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="newsCtxOnly">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:node sv:name="_default_">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemapitem</sv:value>
+      </sv:property>
+      <sv:node sv:name="news">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:sitemapitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+          <sv:value>News</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+          <sv:value>hst:pages/newsoverview</sv:value>
         </sv:property>
         <sv:node sv:name="_default_.html">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemapitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:refId" sv:type="String">
-                <sv:value>wildcardNewsRefId</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-                <sv:value>News/${1}</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>hst:pages/standarddetail</sv:value>
-            </sv:property>
-        </sv:node>
-        <sv:node sv:name="_default_">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemapitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-                <sv:value>News/${1}</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>hst:pages/newsoverview</sv:value>
-            </sv:property>
-       </sv:node>
-       <sv:node sv:name="_any_">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemapitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-                <sv:value>News/${1}</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>hst:pages/newsoverview</sv:value>
-            </sv:property>
-        </sv:node>
-        <sv:node sv:name="_any_.html">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemapitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-                <sv:value>News/${1}</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>hst:pages/standarddetail</sv:value>
-            </sv:property>
-        </sv:node>
-    </sv:node>
-    <sv:node sv:name="alsonews">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemapitem</sv:value>
-        </sv:property>
-        <sv:node sv:name="news2">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hst:sitemapitem</sv:value>
+            <sv:value>hst:sitemapitem</sv:value>
           </sv:property>
           <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-              <sv:value>News</sv:value>
+            <sv:value>News/${2}</sv:value>
           </sv:property>
           <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-              <sv:value>hst:pages/newsoverview</sv:value>
+            <sv:value>hst:pages/standarddetail</sv:value>
           </sv:property>
-          <sv:node sv:name="_default_.html">
-              <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hst:sitemapitem</sv:value>
-              </sv:property>
-              <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-                  <sv:value>News/${1}</sv:value>
-              </sv:property>
-              <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                  <sv:value>hst:pages/standarddetail</sv:value>
-              </sv:property>
-          </sv:node>
-          <sv:node sv:name="_default_">
-              <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hst:sitemapitem</sv:value>
-              </sv:property>
-              <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-                  <sv:value>News/${1}</sv:value>
-              </sv:property>
-              <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                  <sv:value>hst:pages/newsoverview</sv:value>
-              </sv:property>
-         </sv:node>
-         <sv:node sv:name="_any_">
-              <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hst:sitemapitem</sv:value>
-              </sv:property>
-              <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-                  <sv:value>News/${1}</sv:value>
-              </sv:property>
-              <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                  <sv:value>hst:pages/newsoverview</sv:value>
-              </sv:property>
-          </sv:node>
-          <sv:node sv:name="_any_.html">
-              <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hst:sitemapitem</sv:value>
-              </sv:property>
-              <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-                  <sv:value>News/${1}</sv:value>
-              </sv:property>
-              <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                  <sv:value>hst:pages/standarddetail</sv:value>
-              </sv:property>
-          </sv:node>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="newswith_linkrwriting_excluded">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemapitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-            <sv:value>News</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:excludedforlinkrewriting" sv:type="Boolean">
-           <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>hst:pages/newsoverview</sv:value>
-        </sv:property>
-        <sv:node sv:name="_default_.html">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemapitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:excludedforlinkrewriting" sv:type="Boolean">
-               <sv:value>true</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-                <sv:value>News/${1}</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>hst:pages/standarddetail</sv:value>
-            </sv:property>
         </sv:node>
         <sv:node sv:name="_default_">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemapitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:excludedforlinkrewriting" sv:type="Boolean">
-               <sv:value>true</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-                <sv:value>News/${1}</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>hst:pages/newsoverview</sv:value>
-            </sv:property>
-       </sv:node>
-       <sv:node sv:name="_any_">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemapitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:excludedforlinkrewriting" sv:type="Boolean">
-               <sv:value>true</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-                <sv:value>News/${1}</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>hst:pages/newsoverview</sv:value>
-            </sv:property>
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:sitemapitem</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+            <sv:value>News/${2}</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+            <sv:value>hst:pages/newsoverview</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="_any_">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:sitemapitem</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+            <sv:value>News/${2}</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+            <sv:value>hst:pages/newsoverview</sv:value>
+          </sv:property>
         </sv:node>
         <sv:node sv:name="_any_.html">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemapitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:excludedforlinkrewriting" sv:type="Boolean">
-               <sv:value>true</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-                <sv:value>News/${1}</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>hst:pages/standarddetail</sv:value>
-            </sv:property>
-        </sv:node>
-    </sv:node>
-     <sv:node sv:name="newsCtxOnly">
-       <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:sitemapitem</sv:value>
-       </sv:property>
-      <sv:node sv:name="_default_">
-         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hst:sitemapitem</sv:value>
-         </sv:property>
-         <sv:node sv:name="news">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemapitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-                <sv:value>News</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>hst:pages/newsoverview</sv:value>
-            </sv:property>
-            <sv:node sv:name="_default_.html">
-                <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                    <sv:value>hst:sitemapitem</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-                    <sv:value>News/${2}</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                    <sv:value>hst:pages/standarddetail</sv:value>
-                </sv:property>
-            </sv:node>
-            <sv:node sv:name="_default_">
-                <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                    <sv:value>hst:sitemapitem</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-                    <sv:value>News/${2}</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                    <sv:value>hst:pages/newsoverview</sv:value>
-                </sv:property>
-           </sv:node>
-           <sv:node sv:name="_any_">
-                <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                    <sv:value>hst:sitemapitem</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-                    <sv:value>News/${2}</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                    <sv:value>hst:pages/newsoverview</sv:value>
-                </sv:property>
-            </sv:node>
-            <sv:node sv:name="_any_.html">
-                <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                    <sv:value>hst:sitemapitem</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-                    <sv:value>News/${2}</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                    <sv:value>hst:pages/standarddetail</sv:value>
-                </sv:property>
-            </sv:node>
+          </sv:property>
+          <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+            <sv:value>News/${2}</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+            <sv:value>hst:pages/standarddetail</sv:value>
+          </sv:property>
         </sv:node>
       </sv:node>
-     </sv:node>
-     
-    <sv:node sv:name="contact">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemapitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>hst:pages/contactpage</sv:value>
-        </sv:property>
-        <sv:node sv:name="thankyou">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemapitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>hst:pages/thankyou</sv:value>
-            </sv:property>
-        </sv:node>
     </sv:node>
-    
-    <sv:node sv:name="pipelines">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemapitem</sv:value>
-        </sv:property>
-        <sv:node sv:name="custom">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemapitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:namedpipeline" sv:type="String">
-                <sv:value>MyCustomPipeline</sv:value>
-            </sv:property>
-       </sv:node>
-       <sv:node sv:name="_default_">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemapitem</sv:value>
-            </sv:property>
-            <!-- default pipeline, possibly inherited from SiteMount -->
-       </sv:node>
+  </sv:node>
+
+  <sv:node sv:name="contact">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+      <sv:value>hst:pages/contactpage</sv:value>
+    </sv:property>
+    <sv:node sv:name="thankyou">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemapitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+        <sv:value>hst:pages/thankyou</sv:value>
+      </sv:property>
     </sv:node>
-    
-    <sv:node sv:name="contact-spring">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemapitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>hst:pages/contactspringpage</sv:value>
-        </sv:property>
-        <sv:node sv:name="thankyou">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemapitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>hst:pages/thankyou</sv:value>
-            </sv:property>
-        </sv:node>
+  </sv:node>
+
+  <sv:node sv:name="pipelines">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:node sv:name="custom">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemapitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:namedpipeline" sv:type="String">
+        <sv:value>MyCustomPipeline</sv:value>
+      </sv:property>
     </sv:node>
-    
-    <sv:node sv:name="contact-dispatch">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemapitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>hst:pages/contactdispatchpage</sv:value>
-        </sv:property>
-        <sv:node sv:name="thankyou">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemapitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>hst:pages/thankyou</sv:value>
-            </sv:property>
-        </sv:node>
+    <sv:node sv:name="_default_">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemapitem</sv:value>
+      </sv:property>
+      <!-- default pipeline, possibly inherited from SiteMount -->
     </sv:node>
-    
-    <sv:node sv:name="contact-springmvc">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemapitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>hst:pages/contactspringmvcpage</sv:value>
-        </sv:property>
-        <sv:node sv:name="thankyou">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemapitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>hst:pages/thankyou</sv:value>
-            </sv:property>
-        </sv:node>
+  </sv:node>
+
+  <sv:node sv:name="contact-spring">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+      <sv:value>hst:pages/contactspringpage</sv:value>
+    </sv:property>
+    <sv:node sv:name="thankyou">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemapitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+        <sv:value>hst:pages/thankyou</sv:value>
+      </sv:property>
     </sv:node>
-    
-    <sv:node sv:name="search">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemapitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>hst:pages/searchpage</sv:value>
-        </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="contact-dispatch">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+      <sv:value>hst:pages/contactdispatchpage</sv:value>
+    </sv:property>
+    <sv:node sv:name="thankyou">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemapitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+        <sv:value>hst:pages/thankyou</sv:value>
+      </sv:property>
     </sv:node>
-    
-    <sv:node sv:name="uniquelinks">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemapitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>hst:pages/uniquelinkspage</sv:value>
-        </sv:property>
-        <sv:node sv:name="_any_">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemapitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>hst:pages/uniquelinkspage</sv:value>
-            </sv:property>
-        </sv:node>
+  </sv:node>
+
+  <sv:node sv:name="contact-springmvc">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+      <sv:value>hst:pages/contactspringmvcpage</sv:value>
+    </sv:property>
+    <sv:node sv:name="thankyou">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemapitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+        <sv:value>hst:pages/thankyou</sv:value>
+      </sv:property>
     </sv:node>
-    
-    
+  </sv:node>
+
+  <sv:node sv:name="search">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+      <sv:value>hst:pages/searchpage</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="uniquelinks">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+      <sv:value>hst:pages/uniquelinkspage</sv:value>
+    </sv:property>
+    <sv:node sv:name="_any_">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemapitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+        <sv:value>hst:pages/uniquelinkspage</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+
+
 </sv:node>

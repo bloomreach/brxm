@@ -265,8 +265,7 @@ public class HstSiteService implements HstSite {
                 siteMenusConfigurations = Optional.absent();
                 return null;
             }
-            final String rootConfigurationPathPrefix = ccn.getConfigurationRootNode().getValueProvider().getPath() + "/";
-            HstSiteMenusConfiguration sc = new HstSiteMenusConfigurationService(this, siteMenusNode, rootConfigurationPathPrefix);
+            HstSiteMenusConfiguration sc = new HstSiteMenusConfigurationService(this, siteMenusNode);
             siteMenusConfigurations = Optional.of(sc);
             return sc;
         }

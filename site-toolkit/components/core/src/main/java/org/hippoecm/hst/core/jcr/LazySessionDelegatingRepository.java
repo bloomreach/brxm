@@ -267,6 +267,7 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
                 session = null;
                 log.debug("LazySession's session is logged out.");
             } catch (Throwable th) {
+
                 if (log.isDebugEnabled()) {
                     log.warn("Failed to logout stateful session.", th);
                 } else {

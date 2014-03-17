@@ -29,7 +29,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
@@ -412,4 +411,5 @@ public interface HstRequestContext {
      * @throws IllegalStateException if the application is unable to provide a HstQueryManager
      */
     public HstQueryManager getQueryManager(Session session) throws IllegalStateException;
+
 }
