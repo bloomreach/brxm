@@ -140,19 +140,19 @@
 
                             item = path.pop();
                             parent = path.pop();
-                            state = path.length > 0 ? 'edit' : 'add';
                             items = parent.items;
                             if (items.length == 1) {
                                 // item to delete has no siblings, so parent will be selected
+                                state = path.length > 0 ? 'edit' : 'add';
                                 return {state: state, id: parent.id};
                             }
                             var itemIndex = _.indexOf(items, item);
                             if (itemIndex === 0) {
                                 // Item to delete is first child, so select next child
-                                return {state: state, id:items[itemIndex + 1].id};
+                                return {state: 'edit', id:items[itemIndex + 1].id};
                             } else {
                                 // Item to delete is not first child, so select previous child
-                                return {state: state, id:items[itemIndex - 1].id};
+                                return {state: 'edit', id:items[itemIndex - 1].id};
                             }
                         }());
 
