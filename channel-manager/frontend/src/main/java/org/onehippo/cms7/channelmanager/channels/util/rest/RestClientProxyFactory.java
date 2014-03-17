@@ -59,10 +59,10 @@ public class RestClientProxyFactory implements IRestProxyService, Serializable {
         // For now we only need the additional providers when {@link ChannelService} is used
         // These rules are hardcoded yes, but that is for now only
         if (restServiceApiClass.equals(ChannelService.class)) {
-            return this.restProxyService.createRestProxy(restServiceApiClass, this.additionalProviders);
+            return this.restProxyService.createSecureRestProxy(restServiceApiClass, this.additionalProviders);
         }
 
-        return this.restProxyService.createRestProxy(restServiceApiClass);
+        return this.restProxyService.createSecureRestProxy(restServiceApiClass);
     }
 
     /**

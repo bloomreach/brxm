@@ -114,7 +114,7 @@ public class BlueprintStore extends ExtJsonStore<Object> {
     private List<Blueprint> getBlueprints() {
     	if (blueprints == null) {
             if (restProxyService != null) {
-                BlueprintService blueprintService = restProxyService.createRestProxy(BlueprintService.class);
+                BlueprintService blueprintService = restProxyService.createSecureRestProxy(BlueprintService.class);
                 blueprints = blueprintService.getBlueprints();
             } else {
                 blueprints = Collections.emptyList();

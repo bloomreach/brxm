@@ -46,7 +46,7 @@ public class ChannelStoreTest {
     public void initMocks() {
         mockedProxyService = createNiceMock(IRestProxyService.class);
         mockedChannelService = createNiceMock(ChannelService.class);
-        expect(mockedProxyService.createRestProxy(ChannelService.class)).andReturn(mockedChannelService);
+        expect(mockedProxyService.createSecureRestProxy(ChannelService.class)).andReturn(mockedChannelService);
         replay(mockedProxyService);
     }
 

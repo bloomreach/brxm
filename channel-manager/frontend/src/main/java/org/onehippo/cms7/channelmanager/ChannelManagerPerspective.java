@@ -60,7 +60,7 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
 
         // Check whether the site is up and running
         final IRestProxyService restProxyService = context.getService(config.getString(CONFIG_REST_PROXY_SERVICE_ID, IRestProxyService.class.getName()), IRestProxyService.class);
-        final SiteService siteService = restProxyService.createRestProxy(SiteService.class);
+        final SiteService siteService = restProxyService.createSecureRestProxy(SiteService.class);
 
         // When site service is null most probably the site is down
         siteIsUp = (siteService != null);

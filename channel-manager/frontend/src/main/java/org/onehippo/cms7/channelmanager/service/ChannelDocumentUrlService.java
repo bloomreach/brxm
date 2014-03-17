@@ -79,7 +79,7 @@ public class ChannelDocumentUrlService extends Plugin implements IDocumentUrlSer
             return null;
         }
 
-        final DocumentService documentService = restProxyService.createRestProxy(DocumentService.class);
+        final DocumentService documentService = restProxyService.createSecureRestProxy(DocumentService.class);
         if (documentService == null) {
             log.warn("The REST proxy service does provide a proxy for class '{}'. The document URL service can therefore not generate a URL for the document with UUID '{}'",
                     DocumentService.class.getCanonicalName(), uuid);

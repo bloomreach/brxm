@@ -144,7 +144,7 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
             return new EmptyPanel("channels");
         }
 
-        final DocumentService documentService = restProxyService.createRestProxy(DocumentService.class);
+        final DocumentService documentService = restProxyService.createSecureRestProxy(DocumentService.class);
         if (documentService == null) {
             log.warn("The REST proxy service does not provide a proxy for class '{}'. As a result, the 'View' menu cannot be populated with the channels for the document with UUID '{}'",
                     DocumentService.class.getCanonicalName(), documentUuid);

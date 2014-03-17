@@ -368,7 +368,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         }
 
         // No translation found, is the site down?
-        SiteService siteService = restProxyService.createRestProxy(SiteService.class);
+        SiteService siteService = restProxyService.createSecureRestProxy(SiteService.class);
         if (!siteService.isAlive()) {
             log.info(
                     "Field '{}' is not a known Channel field, and no custom ChannelInfo class contains a translation of it for locale '{}'. It looks like the site is down. Falling back to the field name itself as the column header.",
@@ -432,7 +432,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     }
 
     public List<HstPropertyDefinitionInfo> getChannelPropertyDefinitions(Channel channel) {
-        ChannelService channelService = restProxyService.createRestProxy(ChannelService.class);
+        ChannelService channelService = restProxyService.createSecureRestProxy(ChannelService.class);
         return channelService.getChannelPropertyDefinitions(channel.getId());
     }
 
@@ -455,7 +455,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
     private Properties fetchChannelResources(final String channelId) throws ChannelException {
         log.info("Fetching i18n resources for channel '{}'", channelId);
-        final ChannelService channelService = restProxyService.createRestProxy(ChannelService.class);
+        final ChannelService channelService = restProxyService.createSecureRestProxy(ChannelService.class);
         final String locale = Session.get().getLocale().toString();
         return channelService.getChannelResourceValues(channelId, locale);
     }
@@ -476,7 +476,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
      *         ChannelInfo class or the channel manager could not be loaded (e.g. because the site is down).
      */
     public ChannelInfoClassInfo getChannelInfoClassInfo(Channel channel) throws ChannelException {
-        ChannelService channelService = restProxyService.createRestProxy(ChannelService.class);
+        ChannelService channelService = restProxyService.createSecureRestProxy(ChannelService.class);
         return channelService.getChannelInfoClassInfo(channel.getId());
     }
 
@@ -499,7 +499,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     }
 
     protected void loadChannels() {
-        ChannelService channelService = restProxyService.createRestProxy(ChannelService.class);
+        ChannelService channelService = restProxyService.createSecureRestProxy(ChannelService.class);
 
         if (channelService == null) {
             log.error("Could not get channelservice REST service!");
@@ -523,7 +523,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         // Create new channel
         final String blueprintId = record.getString("blueprintId");
         final Channel newChannel;
-        BlueprintService blueprintService = restProxyService.createRestProxy(BlueprintService.class);
+        BlueprintService blueprintService = restProxyService.createSecureRestProxy(BlueprintService.class);
 
         if (blueprintService == null) {
             throw new ActionFailedException("Could not get blueprint REST service!");
