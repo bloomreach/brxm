@@ -6,13 +6,13 @@
     "ADD_NEW_PAGE_DISABLED_TOOLTIP": "Om een pagina toe te voegen,\nklik eerst op 'Wijzig channel'",
 
     "CREATE_NEW_PAGE": "Maak nieuwe pagina aan",
-    "PAGE_TITLE": "Pagina title",
+    "PAGE_TITLE": "Paginatitel",
     "TITLE_REQUIRED": "Titel is een verplicht veld",
     "URL": "URL",
     "URL_REQUIRED": "URL is een verplicht veld",
     "PAGE_TEMPLATE": "Pagina template",
     "CHOOSE_A_TEMPLATE": "Kies een template",
-    "CREATE_PAGE": "Maak pagina",
+    "CREATE_PAGE": "Maak pagina aan",
     "CANCEL": "Annuleer",
 
     "ITEM_NAME_NOT_UNIQUE": "De URL van het item bestaat reeds",
