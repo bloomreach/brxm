@@ -16,6 +16,8 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 
 public class SiteMapPageRepresentation {
 
@@ -31,8 +33,14 @@ public class SiteMapPageRepresentation {
     private boolean inherited;
     private String relativeContentPath;
 
+    // whether the page has at least one container item in its page definition.
+    // Note that although the backing {@link HstComponentConfiguration} might have containers,
+    // this does not mean the component has it in its page definition: The page definition
+    // is the canonical configuration, without inheritance (and thus the container might be present in inherited config only)
+    private boolean hasContainerItemInPageDefinition;
+
     public SiteMapPageRepresentation represent(final SiteMapItemRepresentation siteMapItemRepresentation,
-                                               final String parentId,
+                                               final HstComponentsConfiguration hstComponentsConfiguration, final String parentId,
                                                final String parentPathInfo,
                                                final String homePagePathInfo) throws IllegalArgumentException {
 
@@ -49,10 +57,34 @@ public class SiteMapPageRepresentation {
             pathInfo = "/";
         }
         componentConfigurationId = siteMapItemRepresentation.getComponentConfigurationId();
+
+        hasContainerItemInPageDefinition = hasContainerItemInPageDefinition(
+                hstComponentsConfiguration.getComponentConfiguration(componentConfigurationId));
+
         workspaceConfiguration = siteMapItemRepresentation.isWorkspaceConfiguration();
         inherited = siteMapItemRepresentation.isInherited();
         relativeContentPath = siteMapItemRepresentation.getRelativeContentPath();
         return this;
+    }
+
+    private boolean hasContainerItemInPageDefinition(final HstComponentConfiguration root) {
+        if (root == null) {
+            return false;
+        }
+        return hasContainerItemInPageDefinition(root, root.getCanonicalStoredLocation());
+    }
+
+    private boolean hasContainerItemInPageDefinition(final HstComponentConfiguration config, final String pageDefinitionRootPath) {
+        if (HstComponentConfiguration.Type.CONTAINER_ITEM_COMPONENT.equals(config.getComponentType())
+                && config.getCanonicalStoredLocation().startsWith(pageDefinitionRootPath)) {
+            return true;
+        }
+        for (HstComponentConfiguration child : config.getChildren().values()) {
+            if (hasContainerItemInPageDefinition(child, pageDefinitionRootPath)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getId() {
@@ -125,5 +157,13 @@ public class SiteMapPageRepresentation {
 
     public void setRelativeContentPath(final String relativeContentPath) {
         this.relativeContentPath = relativeContentPath;
+    }
+
+    public boolean isHasContainerItemInPageDefinition() {
+        return hasContainerItemInPageDefinition;
+    }
+
+    public void setHasContainerItemInPageDefinition(final boolean hasContainerItemInPageDefinition) {
+        this.hasContainerItemInPageDefinition = hasContainerItemInPageDefinition;
     }
 }

@@ -227,14 +227,10 @@ public class AbstractPageComposerTest {
     }
 
     protected void movePagesFromCommonToUnitTestProject() throws RepositoryException {
-
-        // use the 'testcontainer' component from workspace otherwise it won't be part of the hst model, hence, no changes
-        // in it will be 'seen'
-        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestcommon/hst:pages",
-                "/hst:hst/hst:configurations/unittestproject/hst:pages");
+        session.move("/hst:hst/hst:configurations/unittestcommon/hst:pages", "/hst:hst/hst:configurations/unittestproject/hst:pages");
     }
 
-    protected void addReferencedContainerToHomePage() throws RepositoryException {
+    protected void addReferencedContainerForHomePage() throws RepositoryException {
         final Node container = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:pages/homepage")
                 .addNode("container", "hst:containercomponentreference");
         container.setProperty("hst:referencecomponent", "testcontainer");

@@ -79,8 +79,10 @@ public class SiteMapResource extends AbstractConfigResource {
             public Response call() throws Exception {
                 final HstSiteMap siteMap = getPageComposerContextService().getEditingPreviewSite().getSiteMap();
                 final Mount mount = getPageComposerContextService().getEditingMount();
+                final HstSite site = getPageComposerContextService().getEditingPreviewSite();
                 final SiteMapRepresentation sitemap = new SiteMapRepresentation().represent(siteMap, getPreviewConfigurationPath());
-                final SiteMapPagesRepresentation pages = new SiteMapPagesRepresentation().represent(sitemap, mount);
+                final SiteMapPagesRepresentation pages = new SiteMapPagesRepresentation().represent(sitemap,
+                        mount, site.getComponentsConfiguration());
                 return ok("Sitemap loaded successfully", pages);
             }
         });

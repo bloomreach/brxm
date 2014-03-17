@@ -21,17 +21,14 @@ import java.util.Set;
 import javax.jcr.Node;
 import javax.ws.rs.core.Response;
 
-import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResourceAccessor;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerHelper;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -44,7 +41,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
 
         movePagesFromCommonToUnitTestProject();
         createWorkspaceWithTestContainer();
-        addReferencedContainerToHomePage();
+        addReferencedContainerForHomePage();
         String catalogItemUUID = addCatalogItem();
         session.save();
         // give time for jcr events to evict model
@@ -149,7 +146,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
 
         movePagesFromCommonToUnitTestProject();
         createWorkspaceWithTestContainer();
-        addReferencedContainerToHomePage();
+        addReferencedContainerForHomePage();
         String catalogItemUUID = addCatalogItem();
 
         session.move("/hst:hst/hst:configurations/unittestproject", "/hst:hst/hst:configurations/7_8");
