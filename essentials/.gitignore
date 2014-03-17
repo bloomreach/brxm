@@ -823,6 +823,12 @@ dashboard-plugins/carousel-plugin/src/main/resources/webapp/*.iml
 dashboard-plugins/carousel-plugin/src/main/resources/webapp/.DS_Store
 dashboard-plugins/carousel-plugin/src/main/resources/webapp/.idea
 dashboard-plugins/carousel-plugin/src/main/resources/webapp/atlassian-ide-plugin.xml
+dashboard-plugins/carousel-plugin/src/main/resources/webapp/css/*.iml
+dashboard-plugins/carousel-plugin/src/main/resources/webapp/css/.DS_Store
+dashboard-plugins/carousel-plugin/src/main/resources/webapp/css/.idea
+dashboard-plugins/carousel-plugin/src/main/resources/webapp/css/atlassian-ide-plugin.xml
+dashboard-plugins/carousel-plugin/src/main/resources/webapp/css/hippo-plugins.iws
+dashboard-plugins/carousel-plugin/src/main/resources/webapp/css/target
 dashboard-plugins/carousel-plugin/src/main/resources/webapp/hippo-plugins.iws
 dashboard-plugins/carousel-plugin/src/main/resources/webapp/js/*.iml
 dashboard-plugins/carousel-plugin/src/main/resources/webapp/js/.DS_Store
