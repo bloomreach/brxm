@@ -64,6 +64,7 @@ public class BlogImporterJob implements InterruptableJob {
     private static final String AUTHORS = "authors";
     private static final String PROJECT_NAMESPACE = "projectNamespace";
     private static final String MAX_DESCRIPTION_LENGTH = "maxDescriptionLength";
+    private static final int DEFAULT_MAX_DESCRIPTION_LENGTH = 200;
     private static final Pattern PATH_PATTERN = Pattern.compile("/");
 
 
@@ -102,10 +103,12 @@ public class BlogImporterJob implements InterruptableJob {
             maxDescriptionLength = Integer.parseInt(jobConfiguration.getString(MAX_DESCRIPTION_LENGTH));
 
         } catch (NumberFormatException e) {
-            maxDescriptionLength = -1;
+            maxDescriptionLength = DEFAULT_MAX_DESCRIPTION_LENGTH;
         }
-        if (urls != null && urls.length > 0 && blogBasePath != null && maxDescriptionLength > -1) {
+        if (blogBasePath != null) {
             importBlogs(jcrSession, projectNamespace, blogBasePath, urls, authorsBasePath, authors, maxDescriptionLength);
+        }else{
+            log.warn("Import path variable not defined (base path for importing blogs): {}", BLOGS_BASE_PATH);
         }
 
         log.info("+----------------------------------------------------+");
