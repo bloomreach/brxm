@@ -49,6 +49,7 @@ public class JcrPersistenceReader {
     private static Logger log = LoggerFactory.getLogger(JcrPersistenceReader.class);
     private final PluginContext context;
     private final Session session;
+
     public JcrPersistenceReader(final Session session, final PluginContext context) {
         this.context = context;
         this.session = session;

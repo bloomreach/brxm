@@ -20,7 +20,6 @@ import java.io.File;
 import java.net.URL;
 import java.nio.file.Path;
 
-import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

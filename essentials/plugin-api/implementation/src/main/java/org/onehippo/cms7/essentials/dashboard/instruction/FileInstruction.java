@@ -162,9 +162,9 @@ public class FileInstruction extends PluginInstruction {
         // try to read file first:
         final File file = new File(source);
         if (file.exists()) {
-           return new FileInputStream(file);
+            return new FileInputStream(file);
         } else {
-           return getClass().getClassLoader().getResourceAsStream(source);
+            return getClass().getClassLoader().getResourceAsStream(source);
         }
     }
 

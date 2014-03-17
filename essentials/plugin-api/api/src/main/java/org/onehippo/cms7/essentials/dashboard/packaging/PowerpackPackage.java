@@ -55,9 +55,10 @@ public interface PowerpackPackage {
 
     /**
      * Path to instruction XML file
-     * @return  by default {@code /META-INF/instrucitons.xml}
+     *
+     * @return by default {@code /META-INF/instrucitons.xml}
      */
-    String  getInstructionPath();
+    String getInstructionPath();
 
     /**
      * Executes instructions

@@ -9,7 +9,6 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseResourceTest;
-import org.onehippo.cms7.essentials.BaseTest;
 
 import static org.junit.Assert.assertTrue;
 

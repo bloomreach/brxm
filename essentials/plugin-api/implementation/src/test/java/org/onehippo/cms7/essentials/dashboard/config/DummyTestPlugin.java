@@ -2,7 +2,6 @@ package org.onehippo.cms7.essentials.dashboard.config;
 
 import java.util.List;
 
-
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.model.Vendor;
@@ -118,8 +117,6 @@ public class DummyTestPlugin implements Plugin {
     public void setIssuesLink(final String issuesLink) {
 
     }
-
-
 
 
     @Override

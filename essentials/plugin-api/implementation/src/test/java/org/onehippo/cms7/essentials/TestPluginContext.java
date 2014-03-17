@@ -73,7 +73,7 @@ public class TestPluginContext extends DefaultPluginContext {
     @Override
     public String getProjectNamespacePrefix() {
         final String projectNamespacePrefix = super.getProjectNamespacePrefix();
-        if(Strings.isNullOrEmpty(projectNamespacePrefix)){
+        if (Strings.isNullOrEmpty(projectNamespacePrefix)) {
             return BaseTest.PROJECT_NAMESPACE_TEST;
         }
         return projectNamespacePrefix;

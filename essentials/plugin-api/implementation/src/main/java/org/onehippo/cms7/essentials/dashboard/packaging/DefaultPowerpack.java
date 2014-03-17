@@ -41,6 +41,7 @@ import com.google.common.eventbus.EventBus;
 
 /**
  * Default implementation of a powerpack. Reads instruction XML from {@code /META-INF/instructions.xml}
+ *
  * @version "$Id$"
  */
 public class DefaultPowerpack implements PowerpackPackage {

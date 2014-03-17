@@ -43,6 +43,7 @@ public final class BeanWriterUtils {
     public static final Set<String> EXPOSABLE_BUILT_IN_PROPERTIES = new ImmutableSet.Builder<String>()
             .add("hippostd:tags")
             .build();
+
     private BeanWriterUtils() {
     }
 

@@ -21,7 +21,6 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 
 import org.onehippo.cms7.essentials.dashboard.config.Document;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 
 /**
  * Persists JcrModel objects

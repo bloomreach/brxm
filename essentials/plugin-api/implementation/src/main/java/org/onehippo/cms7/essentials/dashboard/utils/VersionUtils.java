@@ -14,12 +14,13 @@ public final class VersionUtils {
     private VersionUtils() {
     }
 
-    public static boolean isHigherOrSame(final CharSequence version1, final CharSequence version2){
-        return compareVersionNumbers(version1, version2) >=0;
+    public static boolean isHigherOrSame(final CharSequence version1, final CharSequence version2) {
+        return compareVersionNumbers(version1, version2) >= 0;
     }
 
     /**
      * Compare maven versions
+     *
      * @param version1
      * @param version2
      * @return 1 if version 1 is higher, zero if same, -1 otherwise

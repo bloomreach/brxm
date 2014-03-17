@@ -13,7 +13,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseResourceTest;
-import org.onehippo.cms7.essentials.BaseTest;
 import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
 import org.onehippo.cms7.essentials.dashboard.utils.code.ComponentInformation;
 import org.onehippo.cms7.essentials.dashboard.utils.code.ExistingMethodsVisitor;

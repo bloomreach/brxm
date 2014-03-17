@@ -44,6 +44,7 @@ public final class DependencyUtils {
 
     /**
      * Remove dependency from pom (if exists)
+     *
      * @param dependency instance of EssentialsDependency dependency
      * @return true if removed or did not exist, false if dependency was invalid or on IO error
      */
@@ -57,16 +58,16 @@ public final class DependencyUtils {
             log.warn("Pom model was null for type: {}", type);
             return false;
         }
-        if(!hasDependency(dependency)){
+        if (!hasDependency(dependency)) {
             return true;
         }
         FileWriter fileWriter = null;
         try {
             final List<Dependency> dependencies = model.getDependencies();
             final Iterator<Dependency> iterator = dependencies.iterator();
-            while(iterator.hasNext()){
+            while (iterator.hasNext()) {
                 final Dependency next = iterator.next();
-                if(isSameDependency(dependency, next)){
+                if (isSameDependency(dependency, next)) {
                     iterator.remove();
                     log.info("Removed dependency {}", dependency);
                     break;

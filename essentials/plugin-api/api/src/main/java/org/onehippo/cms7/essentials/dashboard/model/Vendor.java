@@ -22,9 +22,9 @@ package org.onehippo.cms7.essentials.dashboard.model;
 
 public interface Vendor {
 
-    String getUrl() ;
+    String getUrl();
 
-    void setUrl( String url);
+    void setUrl(String url);
 
     String getName();
 
@@ -32,13 +32,14 @@ public interface Vendor {
 
     String getLogo();
 
-    void setLogo( String logo);
+    void setLogo(String logo);
 
     String getIntroduction();
-    void setIntroduction( String introduction);
+
+    void setIntroduction(String introduction);
 
     String getContent();
 
-    void setContent( String content);
+    void setContent(String content);
 
 }

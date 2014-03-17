@@ -20,7 +20,6 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 public abstract class BaseRepositoryTest extends BaseTest {
 
 
-
     protected MemoryRepository repository;
     protected Session session;
     protected Session hippoSession;

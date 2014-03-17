@@ -38,11 +38,11 @@ public class PostPayloadRestful implements Restful {
 
     public PostPayloadRestful() {
     }
+
     public PostPayloadRestful(final String key, final String value) {
 
         add(key, value);
     }
-
 
 
     private LinkedHashMap<String, String> values = new LinkedHashMap<>();

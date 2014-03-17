@@ -38,7 +38,6 @@ import org.apache.jackrabbit.value.DateValue;
 import org.apache.jackrabbit.value.DoubleValue;
 import org.apache.jackrabbit.value.LongValue;
 import org.onehippo.cms7.essentials.dashboard.config.Document;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.PersistentHandler;
 import org.onehippo.cms7.essentials.dashboard.model.hst.SimplePropertyModel;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;

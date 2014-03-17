@@ -98,6 +98,7 @@ public class PluginRestful implements Plugin, Restful {
     public Vendor getVendor() {
         return vendor;
     }
+
     @Override
     public String getPowerpackClass() {
         return powerpackClass;
@@ -187,7 +188,6 @@ public class PluginRestful implements Plugin, Restful {
     public void setIntroduction(final String introduction) {
         this.introduction = introduction;
     }
-
 
 
     public void addRestCLass(final String restClass) {

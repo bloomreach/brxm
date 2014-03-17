@@ -38,7 +38,7 @@ public class BaseResourceTest {
     @Test
     public void testPluginParsing() throws Exception {
 
-         RestfulList<PluginRestful> plugins = new RestfulList<>();
+        RestfulList<PluginRestful> plugins = new RestfulList<>();
         final PluginRestful plugin = new PluginRestful();
         plugin.setDescription("test");
         final Vendor vendor = new VendorRestful();

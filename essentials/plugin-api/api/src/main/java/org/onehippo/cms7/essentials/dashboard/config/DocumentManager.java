@@ -25,6 +25,7 @@ public interface DocumentManager {
 
 
     Session getSession();
+
     /**
      * Fetches a JCR repository item for specific content type (provided by clazz)
      *

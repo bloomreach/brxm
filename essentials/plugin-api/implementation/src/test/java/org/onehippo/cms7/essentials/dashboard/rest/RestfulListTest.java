@@ -68,7 +68,7 @@ public class RestfulListTest {
             log.info("item {}", item);
             classList.add(item.getClass());
         }
-        assertEquals("Expected all list items to be of  different class",listSize, classList.size());
+        assertEquals("Expected all list items to be of  different class", listSize, classList.size());
 
 
     }

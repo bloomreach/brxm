@@ -19,8 +19,6 @@ package org.onehippo.cms7.essentials.dashboard.rest;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
 
@@ -57,7 +55,7 @@ public class BaseResource {
     @Inject
     private AutowireCapableBeanFactory injector;
 
-    private  ApplicationContext applicationContext;
+    private ApplicationContext applicationContext;
 
 
     protected boolean checkInstalled(final Plugin plugin) {
@@ -142,7 +140,7 @@ public class BaseResource {
 
 
     protected Plugin getPluginById(final String id, final ServletContext context) {
-        if(Strings.isNullOrEmpty(id)){
+        if (Strings.isNullOrEmpty(id)) {
             return null;
         }
         final List<PluginRestful> plugins = getPlugins(context);
@@ -160,7 +158,7 @@ public class BaseResource {
 
     public AutowireCapableBeanFactory getInjector() {
         if (injector == null) {
-            if(applicationContext==null){
+            if (applicationContext == null) {
                 applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
             }
             injector = applicationContext.getAutowireCapableBeanFactory();

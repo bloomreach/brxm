@@ -5,7 +5,6 @@
 package org.onehippo.cms7.essentials;
 
 import java.io.File;
-import java.net.URL;
 import java.nio.file.Path;
 import java.util.Set;
 

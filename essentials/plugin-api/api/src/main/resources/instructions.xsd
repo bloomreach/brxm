@@ -75,7 +75,7 @@
     <xs:attribute use="optional" name="message" type="xs:string" default="false"/>
     <xs:attribute use="optional" name="binary" type="xs:boolean" default="false">
       <xs:annotation>
-        <xs:documentation>NOTE: directory cannot have mixed content when executing copy, so either it must contain binaries or text files (because of placeholders) </xs:documentation>
+        <xs:documentation>NOTE: directory cannot have mixed content when executing copy, so either it must contain binaries or text files (because of placeholders)</xs:documentation>
       </xs:annotation>
     </xs:attribute>
   </xs:complexType>
@@ -85,7 +85,7 @@
   </xs:complexType>
   <!-- PLACEHOLDER  -->
   <xs:complexType name="placeHolderType" mixed="true">
-    <xs:attribute use="required" name="key" type="xs:string" />
+    <xs:attribute use="required" name="key" type="xs:string"/>
     <xs:attribute use="required" name="value" type="xs:string"/>
   </xs:complexType>
 

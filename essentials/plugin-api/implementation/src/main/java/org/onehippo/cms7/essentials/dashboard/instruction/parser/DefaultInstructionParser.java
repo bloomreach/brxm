@@ -41,7 +41,7 @@ import com.google.common.base.Strings;
  * @version "$Id$"
  */
 @Component
-public class DefaultInstructionParser implements InstructionParser{
+public class DefaultInstructionParser implements InstructionParser {
 
     private static Logger log = LoggerFactory.getLogger(InstructionParser.class);
 
@@ -50,7 +50,7 @@ public class DefaultInstructionParser implements InstructionParser{
 
     @Override
     public Instructions parseInstructions(final String content) {
-        if(Strings.isNullOrEmpty(content)){
+        if (Strings.isNullOrEmpty(content)) {
             log.warn("Instructions content was null");
             return null;
         }

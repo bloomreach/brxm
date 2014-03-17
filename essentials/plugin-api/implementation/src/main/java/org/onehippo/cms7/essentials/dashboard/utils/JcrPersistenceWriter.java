@@ -50,6 +50,7 @@ public class JcrPersistenceWriter {
     private static Logger log = LoggerFactory.getLogger(JcrPersistenceWriter.class);
     private final PluginContext context;
     private final Session session;
+
     public JcrPersistenceWriter(final Session session, final PluginContext context) {
         this.context = context;
         this.session = session;
