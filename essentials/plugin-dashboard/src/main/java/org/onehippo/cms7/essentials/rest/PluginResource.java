@@ -345,19 +345,19 @@ public static List<PluginRestful> parseGist() {
     @ApiOperation(
             value = "Installs a plugin",
             response = MessageRestful.class)
-    @ApiParam(name = "pluginName", value = "Plugin class name", required = true)
+    @ApiParam(name = "pluginId", value = "Plugin  id", required = true)
     @POST
-    @Path("/install/{pluginName}")
-    public MessageRestful installPlugin(@Context ServletContext servletContext, @PathParam("pluginName") CharSequence pluginName) {
+    @Path("/install/{pluginId}")
+    public MessageRestful installPlugin(@Context ServletContext servletContext, @PathParam("pluginName") String pluginId) {
 
         final MessageRestful message = new MessageRestful();
         final RestfulList<PluginRestful> pluginList = getPluginList(servletContext);
         for (PluginRestful plugin : pluginList.getItems()) {
-            final String name = plugin.getName();
-            if (Strings.isNullOrEmpty(name)) {
+            final String id = plugin.getPluginId();
+            if (Strings.isNullOrEmpty(id)) {
                 continue;
             }
-            if (pluginName.equals(name)) {
+            if (pluginId.equals(id)) {
                 final Plugin p = new PluginRestful();
                 p.setDescription(plugin.getIntroduction());
                 if (checkInstalled(p)) {
@@ -372,7 +372,7 @@ public static List<PluginRestful> parseGist() {
                 if (installed) {
                     final DocumentManager manager = new DefaultDocumentManager(getContext(servletContext));
                     final InstallerDocument document = new InstallerDocument();
-                    document.setParentPath(GlobalUtils.getParentConfigPath(pluginName));
+                    document.setParentPath(GlobalUtils.getParentConfigPath(id));
                     document.setDateInstalled(Calendar.getInstance());
 
                     manager.saveDocument(document);

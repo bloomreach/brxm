@@ -8,9 +8,8 @@
   margin-top: 400px;
   padding-top: 10px;
   padding-bottom: 10px;
-  background-color: #35363a;
   text-align: center;
-  color: #c6c6c6;
+  color: #4f5e67;
   font-size: 13px;
   min-height: 600px;
 }
@@ -31,20 +30,20 @@
   margin-left: auto;
   margin-right: auto;
 }
-/*@font-face {*/
-  /*font-family: 'ralewaymedium';*/
-  /*src: url('../theme/fonts/raleway-medium-webfont.eot');*/
-  /*src: url('../theme/fonts/raleway-medium-webfont.eot?#iefix') format('embedded-opentype'), url('../theme/fonts/raleway-medium-webfont.woff') format('woff'), url('../theme/fonts/raleway-medium-webfont.ttf') format('truetype'), url('../theme/fonts/raleway-medium-webfont.svg#ralewaymedium') format('svg');*/
-  /*font-weight: normal;*/
-  /*font-style: normal;*/
-/*}*/
-/*@font-face {*/
-  /*font-family: 'ralewayregular';*/
-  /*src: url('../theme/fonts/raleway-regular-webfont.eot');*/
-  /*src: url('../theme/fonts/raleway-regular-webfont.eot?#iefix') format('embedded-opentype'), url('../theme/fonts/raleway-regular-webfont.woff') format('woff'), url('../theme/fonts/raleway-regular-webfont.ttf') format('truetype'), url('../theme/fonts/raleway-regular-webfont.svg#ralewayregular') format('svg');*/
-  /*font-weight: normal;*/
-  /*font-style: normal;*/
-/*}*/
+@font-face {
+  font-family: 'ralewaymedium';
+  src: url('../theme/fonts/raleway-medium-webfont.eot');
+  src: url('../theme/fonts/raleway-medium-webfont.eot?#iefix') format('embedded-opentype'), url('../theme/fonts/raleway-medium-webfont.woff') format('woff'), url('../theme/fonts/raleway-medium-webfont.ttf') format('truetype'), url('../theme/fonts/raleway-medium-webfont.svg#ralewaymedium') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'ralewayregular';
+  src: url('../theme/fonts/raleway-regular-webfont.eot');
+  src: url('../theme/fonts/raleway-regular-webfont.eot?#iefix') format('embedded-opentype'), url('../theme/fonts/raleway-regular-webfont.woff') format('woff'), url('../theme/fonts/raleway-regular-webfont.ttf') format('truetype'), url('../theme/fonts/raleway-regular-webfont.svg#ralewayregular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
 /*
 //############################################
 // WIZARD STEPS
@@ -147,40 +146,40 @@
 .wizard-actions {
   text-align: right;
 }
-/*.hippo-header {*/
-  /*width: 100%;*/
-  /*height: 80px;*/
+.hippo-header {
+  width: 100%;
+  height: 80px;
   /*background-color: #C84A4B;*/
-  /*text-align: center;*/
-  /*vertical-align: middle;*/
-  /*table-layout: fixed;*/
-  /*font-size: 20px;*/
-  /*font-weight: bold;*/
+  text-align: center;
+  vertical-align: middle;
+  table-layout: fixed;
+  font-size: 20px;
+  font-weight: bold;
   /*background: url("../images/top-back.png") repeat;*/
-  /*color: #4f5e67;*/
-/*}*/
-/*.hippo-header-logo,*/
-/*.hippo-header-text {*/
-  /*display: inline;*/
-  /*text-align: center;*/
-  /*vertical-align: middle;*/
-  /*height: 80px;*/
-/*}*/
-/*.hippo-header-logo {*/
-  /*float: left;*/
-  /*padding: 5px;*/
-  /*padding-left: 20px;*/
-/*}*/
-/*.hippo-header-text {*/
-  /*padding-top: 30px;*/
-/*}*/
-/*body {*/
-  /*padding-top: 0px;*/
-  /*padding-bottom: 0px;*/
-  /*background-color: #ffffff;*/
-  /*font-size: 14px;*/
-  /*font-family: 'ralewaymedium', sans-serif;*/
-/*}*/
+  color: #4f5e67;
+}
+.hippo-header-logo,
+.hippo-header-text {
+  display: inline;
+  text-align: center;
+  vertical-align: middle;
+  height: 80px;
+}
+.hippo-header-logo {
+  float: left;
+  padding: 5px;
+  padding-left: 20px;
+}
+.hippo-header-text {
+  padding-top: 30px;
+}
+body {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  background-color: #ffffff;
+  font-size: 14px;
+  font-family: 'ralewaymedium', sans-serif;
+}
 form {
   width: 100%;
   max-width: 100%;

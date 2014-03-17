@@ -63,13 +63,17 @@
 <div class="container">
   <div class="row">
     <h1 class="page-header">
-      <%--<div class="pull-left"><img src="${pageContext.request.contextPath}/images/hippo-logo-2x.png" height="30"/></div>--%>
-        <!-- LOADER ON HTTP REQUESTS -->
-        <div class="pull-right" ng-show="busyLoading">
-          <span class="fa fa-spin fa-refresh"></span>&nbsp;
-        </div>
-        Hippo CMS <small>Essentials</small></h1>
-    </div>
+      <div class="pull-left">
+        <a href="${pageContext.request.contextPath}"><img src="${pageContext.request.contextPath}/images/hippo-logo.png"></a>
+      </div>
+      <!-- LOADER ON HTTP REQUESTS -->
+      <div class="pull-right" ng-show="busyLoading">
+        <span class="fa fa-spin fa-refresh"></span>&nbsp;
+      </div>
+      <div class="text-center">Hippo CMS
+      <small>Essentials</small></div>
+    </h1>
+  </div>
 
   <div class="row">
     <div class="col-sm-2" style="margin-right: 20px;" ng-controller="mainMenuCtrl">
@@ -83,35 +87,21 @@
         </li>
       </ul>
     </div>
-  </div>
 
-  <div ng-controller="homeCtrl">
-
-    <div class="row" ui-view="submenu" autoscroll="false"></div>
-
-    <p>&nbsp;</p>
-
-    <div class="row">
-      <div class="col-md-3" style="padding-left: 0;">
-        <div ui-view="plugintabs" autoscroll="false"></div>
-      </div>
-
-      <div class="col-md-9">
-        <div ui-view="plugininstance" autoscroll="false"></div>
-      </div>
+    <div class="col-sm-9" ng-controller="homeCtrl">
+      <div ui-view="submenu" autoscroll="false"></div>
+      <div ui-view="plugintabs" autoscroll="false"></div>
+      <div style="margin-left: 220px;" ui-view="plugininstance" autoscroll="false"></div>
+      <div ui-view autoscroll="false"></div>
+      <%--<div ng-view></div>--%>
     </div>
-
-    <%--Main view--%>
-    <div class="row" ui-view autoscroll="false"></div>
-    <%--/ Main view--%>
-
   </div>
-
-  <div class="row">
+  <div class="row footer">
     <p class="text-center">
       (C) 2013-2014 <a href="http://www.onehippo.com">Hippo B.V.</a>, All Rights Reserved
     </p>
   </div>
+
 </div>
 
 

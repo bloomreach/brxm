@@ -228,8 +228,8 @@ public final class GlobalUtils {
         return null;
     }
 
-    public static String getParentConfigPath(final CharSequence pluginClass) {
-        final String fullConfigPath = getFullConfigPath(pluginClass);
+    public static String getParentConfigPath(final CharSequence pluginId) {
+        final String fullConfigPath = getFullConfigPath(pluginId);
         return fullConfigPath.substring(0, fullConfigPath.lastIndexOf('/'));
     }
 
