@@ -254,6 +254,8 @@ public class DefaultPluginContext implements PluginContext {
                 + File.separator + EssentialConst.PATH_REL_OVERRIDE);
         placeholderData.put(EssentialConst.PLACEHOLDER_SITE_FREEMARKER_ROOT, ProjectUtils.getSite().getAbsolutePath() + File.separator + EssentialConst.FREEMARKER_RELATIVE_FOLDER);
         placeholderData.put(EssentialConst.PLACEHOLDER_JSP_ROOT, ProjectUtils.getSiteJspFolder());
+        placeholderData.put(EssentialConst.PLACEHOLDER_JAVASCRIPT_ROOT, siteWebRoot + File.separator + "js");
+        placeholderData.put(EssentialConst.PLACEHOLDER_CSS_ROOT, siteWebRoot + File.separator + "css");
         placeholderData.put(EssentialConst.PLACEHOLDER_CMS_ROOT, ProjectUtils.getCms().getAbsolutePath());
         // packages
         placeholderData.put(EssentialConst.PLACEHOLDER_BEANS_PACKAGE, beansPackage);
