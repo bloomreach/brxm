@@ -31,9 +31,11 @@ import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
+import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
+import org.onehippo.cms7.essentials.dashboard.utils.DependencyUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.slf4j.Logger;
@@ -58,8 +60,13 @@ public class BaseResource {
     private ApplicationContext applicationContext;
 
 
-    protected boolean checkInstalled(final Plugin plugin) {
-        // TODO implement
+    protected boolean isInstalled(final Plugin plugin) {
+        final List<EssentialsDependency> dependencies = plugin.getDependencies();
+        for (EssentialsDependency dependency : dependencies) {
+            if(!DependencyUtils.hasDependency(dependency)){
+                return false;
+            }
+        }
         return true;
     }
 

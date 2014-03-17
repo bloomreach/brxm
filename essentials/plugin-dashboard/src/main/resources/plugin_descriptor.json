@@ -17,7 +17,7 @@
             {
                 "@type": "dependency",
                 "groupId": "org.onehippo.forge",
-                "artifactId": "relateddocs",
+                "artifactId": "content-blocks",
                 "scope": "compile",
                 "type": "cms"
             }

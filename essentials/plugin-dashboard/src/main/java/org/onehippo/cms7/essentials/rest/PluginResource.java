@@ -120,18 +120,9 @@ public class PluginResource extends BaseResource {
             plugins.add(item);
             final String pluginId = item.getPluginId();
             if (item.isNeedsInstallation()) {
-                try {
-                    final List<EssentialsDependency> dependencies = item.getDependencies();
-                    for (EssentialsDependency dependency : dependencies) {
-                        if (DependencyUtils.hasDependency(dependency)) {
-                            continue;
-                        }
-                        item.setNeedsInstallation(true);
-                    }
-                } catch (Exception e) {
-                    log.error("Error checking install state", e);
+                if(isInstalled(item)){
+                    item.setNeedsInstallation(false);
                 }
-
             }
             //############################################
             // collect endpoints
@@ -201,7 +192,7 @@ public class PluginResource extends BaseResource {
         final String pluginId = String.valueOf(values.get("pluginId"));
         Plugin myPlugin = getPluginById(pluginId, servletContext);
 
-        if (Strings.isNullOrEmpty(pluginId) || myPlugin==null) {
+        if (Strings.isNullOrEmpty(pluginId) || myPlugin == null) {
             final MessageRestful resource = new MessageRestful("No valid powerpack was selected");
             resource.setSuccessMessage(false);
             messageRestfulRestfulList.add(resource);
@@ -286,7 +277,7 @@ public static List<PluginRestful> parseGist() {
             final PluginRestful resource = new PluginRestful();
 
             resource.setTitle(p.getName());
-            resource.setInstalled(checkInstalled(p));
+            resource.setInstalled(isInstalled(p));
             // TODO save this list
             plugins.add(resource);
         }
@@ -308,7 +299,7 @@ public static List<PluginRestful> parseGist() {
             final PluginRestful resource = new PluginRestful();
             resource.setTitle(plugin.getName());
             resource.setPluginId(plugin.getPluginId());
-            resource.setInstalled(checkInstalled(plugin));
+            resource.setInstalled(isInstalled(plugin));
             plugins.add(resource);
         }
         return plugins;
@@ -333,7 +324,7 @@ public static List<PluginRestful> parseGist() {
                 }
                 resource.setTitle(plugin.getName());
                 resource.setPluginId(plugin.getPluginId());
-                resource.setInstalled(checkInstalled(plugin));
+                resource.setInstalled(isInstalled(plugin));
                 return resource;
             }
 
@@ -358,18 +349,22 @@ public static List<PluginRestful> parseGist() {
                 continue;
             }
             if (pluginId.equals(id)) {
-                final Plugin p = new PluginRestful();
-                p.setDescription(plugin.getIntroduction());
-                if (checkInstalled(p)) {
+                if (isInstalled(plugin)) {
                     message.setValue("Plugin was already installed. Please rebuild and restart your application");
                     return message;
                 }
 
+                final List<EssentialsDependency> dependencies = plugin.getDependencies();
+                final Collection<EssentialsDependency> notInstalled = new ArrayList<>();
+                for (EssentialsDependency dependency : dependencies) {
 
+                    final boolean installed = DependencyUtils.addDependency(dependency);
+                    if (!installed) {
+                        notInstalled.add(dependency);
+                    }
+                }
 
-                // TODO mm install plugin
-                final boolean installed = false;
-                if (installed) {
+                if (notInstalled.size() == 0) {
                     final DocumentManager manager = new DefaultDocumentManager(getContext(servletContext));
                     final InstallerDocument document = new InstallerDocument();
                     document.setParentPath(GlobalUtils.getParentConfigPath(id));
@@ -378,7 +373,18 @@ public static List<PluginRestful> parseGist() {
                     manager.saveDocument(document);
                     message.setValue("Plugin successfully installed. Please rebuild and restart your application");
                     return message;
+                } else {
+                    final StringBuilder builder = new StringBuilder("Not all dependencies were successfully installed: ");
+                    for (EssentialsDependency essentialsDependency : notInstalled) {
+                        builder.append(essentialsDependency.getGroupId()).append(':').append(essentialsDependency.getArtifactId());
+                        builder.append(", ");
+                    }
+                    message.setValue(builder.toString());
+                    message.setSuccessMessage(false);
+                    return message;
+
                 }
+
             }
         }
 
