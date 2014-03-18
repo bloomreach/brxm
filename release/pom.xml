@@ -20,11 +20,11 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>24.1-SNAPSHOT</version>
+    <version>24.1-iteration-13</version>
   </parent>
 
   <artifactId>hippo-cms7-release</artifactId>
-  <version>7.9.0-SNAPSHOT</version>
+  <version>7.9.0-iteration-13</version>
 
   <name>Hippo CMS7 Release POM</name>
   <description>Hippo CMS7 Release POM</description>
@@ -33,38 +33,38 @@
   <inceptionYear>2011</inceptionYear>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/release/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/release/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/release/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/release/sprints/hippo-cms7-release-7.9.0-iteration-13</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/release/sprints/hippo-cms7-release-7.9.0-iteration-13</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/release/sprints/hippo-cms7-release-7.9.0-iteration-13</url>
   </scm>
 
   <properties>
-    <hippo.addon-hst-configuration-editor.version>1.12.03-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
-    <hippo.addon-channel-manager.version>2.25.03-SNAPSHOT</hippo.addon-channel-manager.version>
-    <hippo.addon-search-service.version>1.02.01-SNAPSHOT</hippo.addon-search-service.version>
-    <hippo.commons.version>1.03.01-SNAPSHOT</hippo.commons.version>
-    <hippo.cms.version>2.25.04-SNAPSHOT</hippo.cms.version>
-    <hippo.hst.version>2.27.03-SNAPSHOT</hippo.hst.version>
-    <hippo.packages.version>2.25.02-SNAPSHOT</hippo.packages.version>
-    <hippo.release.version>7.9.0-SNAPSHOT</hippo.release.version>
-    <hippo.repository.version>2.25.05-SNAPSHOT</hippo.repository.version>
-    <hippo.services.version>1.03.04-SNAPSHOT</hippo.services.version>
-    <hippo.services.eventbus.version>1.03.04-SNAPSHOT</hippo.services.eventbus.version>
-    <hippo.services.contenttype.version>1.03.02-SNAPSHOT</hippo.services.contenttype.version>
-    <hippo.utilities.version>1.02.01-SNAPSHOT</hippo.utilities.version>
+    <hippo.addon-hst-configuration-editor.version>1.12.03-iteration-13</hippo.addon-hst-configuration-editor.version>
+    <hippo.addon-channel-manager.version>2.25.03-iteration-13</hippo.addon-channel-manager.version>
+    <hippo.addon-search-service.version>1.02.01-iteration-13</hippo.addon-search-service.version>
+    <hippo.commons.version>1.03.01-iteration-13</hippo.commons.version>
+    <hippo.cms.version>2.25.04-iteration-13</hippo.cms.version>
+    <hippo.hst.version>2.27.03-iteration-13</hippo.hst.version>
+    <hippo.packages.version>2.25.02-iteration-13</hippo.packages.version>
+    <hippo.release.version>7.9.0-iteration-13</hippo.release.version>
+    <hippo.repository.version>2.25.05-iteration-13</hippo.repository.version>
+    <hippo.services.version>1.03.04-iteration-13</hippo.services.version>
+    <hippo.services.eventbus.version>1.03.04-iteration-13</hippo.services.eventbus.version>
+    <hippo.services.contenttype.version>1.03.02-iteration-13</hippo.services.contenttype.version>
+    <hippo.utilities.version>1.02.01-iteration-13</hippo.utilities.version>
 
-    <forge.content-blocks.version>1.10.01-SNAPSHOT</forge.content-blocks.version>
-    <forge.dashboard-document-wizard.version>1.04.01-SNAPSHOT</forge.dashboard-document-wizard.version>
-    <forge.easy-forms.version>2.13.01-SNAPSHOT</forge.easy-forms.version>
-    <forge.ecm-tagging.version>4.06.01-SNAPSHOT</forge.ecm-tagging.version>
-    <forge.gallerypicker.version>1.12.01-SNAPSHOT</forge.gallerypicker.version>
-    <forge.poll.version>1.07.01-SNAPSHOT</forge.poll.version>
-    <forge.relateddocs.version>2.09.01-SNAPSHOT</forge.relateddocs.version>
-    <forge.robotstxt.version>1.07.01-SNAPSHOT</forge.robotstxt.version>
-    <forge.selection.version>2.07.01-SNAPSHOT</forge.selection.version>
-    <forge.sitemap.version>1.05.01-SNAPSHOT</forge.sitemap.version>
-    <forge.taxonomy.version>1.10.01-SNAPSHOT</forge.taxonomy.version>
-    <forge.tcmp.version>1.08.01-SNAPSHOT</forge.tcmp.version>
+    <forge.content-blocks.version>1.10.01-iteration-13</forge.content-blocks.version>
+    <forge.dashboard-document-wizard.version>1.04.01-iteration-13</forge.dashboard-document-wizard.version>
+    <forge.easy-forms.version>2.13.01-iteration-13</forge.easy-forms.version>
+    <forge.ecm-tagging.version>4.06.01-iteration-13</forge.ecm-tagging.version>
+    <forge.gallerypicker.version>1.12.01-iteration-13</forge.gallerypicker.version>
+    <forge.poll.version>1.07.01-iteration-13</forge.poll.version>
+    <forge.relateddocs.version>2.09.01-iteration-13</forge.relateddocs.version>
+    <forge.robotstxt.version>1.07.01-iteration-13</forge.robotstxt.version>
+    <forge.selection.version>2.07.01-iteration-13</forge.selection.version>
+    <forge.sitemap.version>1.05.01-iteration-13</forge.sitemap.version>
+    <forge.taxonomy.version>1.10.01-iteration-13</forge.taxonomy.version>
+    <forge.tcmp.version>1.08.01-iteration-13</forge.tcmp.version>
 
   </properties>
 
