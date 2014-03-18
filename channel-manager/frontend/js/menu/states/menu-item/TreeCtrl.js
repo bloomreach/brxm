@@ -41,6 +41,8 @@
                 $scope.callbacks = {
                     itemClicked: function (itemScope) {
                         MenuService.saveMenuItem($scope.$parent.selectedMenuItem).then(function () {
+                                $scope.$parent.feedback = '';
+
                                 $state.go('menu-item.edit', {
                                     menuItemId: itemScope.id
                                 });
@@ -54,14 +56,19 @@
                         // created an issue for the Tree component, to add a disabled state
                         // link: https://github.com/JimLiu/angular-ui-tree/issues/63
                         if (!FormValidationService.getValidity()) {
-                            // revert tree
                             // move the item back at it's original place in the DOM
                             var removedItem = destScope.sortableModelValue.splice(destIndex, 1)[0];
                             sourceScope.sortableModelValue.splice(sourceIndex, 0, removedItem);
                         } else {
                             var parentData = destScope.parentItemScope();
                             var destId = (!parentData) ? ConfigService.menuId : parentData.itemData().id;
-                            MenuService.moveMenuItem(modelData.id, destId, destIndex).then(onSuccess, onError);
+                            MenuService.moveMenuItem(modelData.id, destId, destIndex).then(onSuccess, function (errorResponse) {
+                                $scope.$parent.feedback = FeedbackService.getFeedback(errorResponse);
+
+                                // move the item back at it's original place in the DOM
+                                var removedItem = destScope.sortableModelValue.splice(destIndex, 1)[0];
+                                sourceScope.sortableModelValue.splice(sourceIndex, 0, removedItem);
+                            });
                         }
 
                         // prevent move action when the edit menu item form is invalid
