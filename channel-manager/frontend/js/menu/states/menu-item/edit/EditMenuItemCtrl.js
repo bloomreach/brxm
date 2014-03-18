@@ -100,11 +100,7 @@
 
                 function shouldSaveSelectedMenuItemProperty() {
                     $scope.dismissFeedback();
-                    if (!angular.isDefined($scope.selectedMenuItem)) {
-                        return false;
-                    }
-
-                    return true;
+                    return angular.isDefined($scope.selectedMenuItem);
                 }
 
                 function saveSelectedMenuItemProperty(propertyName) {
