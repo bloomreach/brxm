@@ -57,6 +57,7 @@ import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.PluginModuleRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
@@ -457,4 +458,29 @@ public static List<PluginRestful> parseGist() {
         }
         return status;
     }
+
+    @ApiOperation(
+            value = "Returns list of plugin Javascript modules",
+            notes = "Modules are prefixed with tool, plugin or powerpack dependent on their plugin type",
+            response = PluginModuleRestful.class)
+    @GET
+    @Path("/modules")
+    public PluginModuleRestful getModule(@Context ServletContext servletContext) {
+        final PluginModuleRestful modules = new PluginModuleRestful();
+        final List<PluginRestful> plugins = getPlugins(servletContext);
+        for (PluginRestful plugin : plugins) {
+            final List<PluginModuleRestful.PrefixedLibrary> libraries = plugin.getLibraries();
+
+            if (libraries != null) {
+                for (PluginModuleRestful.PrefixedLibrary library : libraries) {
+                    // prefix libraries by plugin id:
+                    library.setPrefix(plugin.getPluginId());
+                }
+                plugin.addAll(libraries);
+            }
+        }
+        return modules;
+    }
+
+
 }

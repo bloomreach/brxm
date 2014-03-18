@@ -21,6 +21,15 @@
                 "scope": "compile",
                 "type": "cms"
             }
+        ],
+        "libraries": [
+            {
+                "items": [{
+                        "component": "content-blocks",
+                        "library": "contentBlocks.js"
+                    }
+                ]
+            }
         ]
     },
     {

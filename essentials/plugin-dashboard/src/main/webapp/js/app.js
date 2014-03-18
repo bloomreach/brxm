@@ -145,6 +145,10 @@
          *  * /install/{className}
          */
         pluginInstall: plugins + '/install/',
+        /**
+         * Returns a list of plugin modules (javascript includes)
+         */
+        pluginModules: plugins + '/modules/',
 
 
         documentTypes: root + '/documenttypes/',

@@ -66,7 +66,7 @@
   CONTENT
 --%>
 
-<div class="container">
+<div id="container" class="container">
   <div class="row">
     <h1 class="page-header">
       <div class="pull-left hippo-header-logo">
@@ -105,6 +105,8 @@
 
 </div>
 
+<!-- Include the loader.js script -->
+<script src="${pageContext.request.contextPath}/js/plugin-loader.js" data-modules="modules.json"></script>
 
 </body>
 </html>

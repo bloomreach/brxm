@@ -19,14 +19,18 @@ package org.onehippo.cms7.essentials.rest.model;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Calendar;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
+import org.onehippo.cms7.essentials.dashboard.model.Vendor;
 import org.onehippo.cms7.essentials.dashboard.model.VendorRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.PluginModuleRestful;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,27 +45,33 @@ public class PluginRestfulTest {
 
     @Test
     public void testJaxb() throws Exception {
-        final PluginRestful value = new PluginRestful();
+        PluginRestful value = new PluginRestful();
         value.setName("com.foo.name");
         final Calendar today = Calendar.getInstance();
         value.setDateInstalled(today);
         value.addRestCLass("com.foo.Foo");
         value.addRestCLass("com.foo.Bar");
-        final VendorRestful vendor = new VendorRestful();
+        // add libraries:
+        final PluginModuleRestful.PrefixedLibrary library = new PluginModuleRestful.PrefixedLibrary();
+        value.addLibrary(library);
+        library.addLibrary(new PluginModuleRestful.Library("myPlugin", "foo.js"));
+        library.addLibrary(new PluginModuleRestful.Library("myPlugin1", "foo1.js"));
+
+        final Vendor vendor = new VendorRestful();
         vendor.setName("hippo");
         value.setVendor(vendor);
-        final JAXBContext context = JAXBContext.newInstance(PluginRestful.class);
-        final Marshaller m = context.createMarshaller();
-        final Unmarshaller unmarshaller = context.createUnmarshaller();
-        m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        final StringWriter writer = new StringWriter();
-        m.marshal(value, writer);
-        log.info("{}", writer.toString());
-        final PluginRestful fromXml = (PluginRestful) unmarshaller.unmarshal(new StringReader(writer.toString()));
-        log.info("fromXml {}", fromXml);
-        assertEquals(2, fromXml.getRestClasses().size());
-        assertEquals(today.getTime(), fromXml.getDateInstalled().getTime());
-        assertEquals(vendor.getName(), fromXml.getVendor().getName());
+        // test json:
+        final ObjectMapper mapper = new ObjectMapper();
+        final String json = mapper.writeValueAsString(value);
+        log.info("value {}", value);
+        log.info("json {}", json);
+        final PluginRestful fromJson = value = mapper.readValue(json, PluginRestful.class);
+        log.info("fromJson {}", fromJson);
+        assertEquals(2, fromJson.getRestClasses().size());
+        assertEquals(today.getTime(), fromJson.getDateInstalled().getTime());
+        assertEquals(vendor.getName(), fromJson.getVendor().getName());
+        assertEquals("Expected 1 prefixed library", 1, value.getLibraries().size());
+        assertEquals("Expected 2 js libraries", 2, value.getLibraries().get(0).getItems().size());
 
 
     }

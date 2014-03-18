@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonSubTypes;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
+import org.onehippo.cms7.essentials.dashboard.rest.PluginModuleRestful;
 
 /**
  * @version "$Id$"
@@ -33,7 +34,23 @@ public class PluginRestful implements Plugin, Restful {
     private boolean enabled;
     private Calendar dateInstalled;
     private String documentationLink;
+    private List<PluginModuleRestful.PrefixedLibrary> libraries = new ArrayList<>();
 
+
+    public void addLibrary(final PluginModuleRestful.PrefixedLibrary library){
+        libraries.add(library);
+    }
+    public void addAll(final List<PluginModuleRestful.PrefixedLibrary> libraries){
+        libraries.addAll(libraries);
+    }
+
+    public List<PluginModuleRestful.PrefixedLibrary> getLibraries() {
+        return libraries;
+    }
+
+    public void setLibraries(final List<PluginModuleRestful.PrefixedLibrary> libraries) {
+        this.libraries = libraries;
+    }
 
     public PluginRestful(final String name) {
         this.name = name;

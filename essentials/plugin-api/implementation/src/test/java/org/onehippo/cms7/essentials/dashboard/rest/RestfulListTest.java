@@ -56,6 +56,7 @@ public class RestfulListTest {
         myList.add(new PropertyRestful("test", "value"));
         myList.add(new NodeRestful("test", "value"));
         myList.add(new QueryRestful("mypath"));
+        myList.add(new PluginModuleRestful());
 
         ObjectMapper mapper = new ObjectMapper();
         final String json = mapper.writeValueAsString(myList);
