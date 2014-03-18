@@ -23,8 +23,10 @@
             '$scope',
             '$translate',
             'hippo.channel.FormValidationService',
+            'hippo.channel.Container',
             'hippo.channel.menu.FocusService',
-            function ($scope, $translate, FormValidationService, FocusService) {
+            'hippo.channel.menu.MenuService',
+            function ($scope, $translate, FormValidationService, ContainerService, FocusService, MenuService) {
                 $scope.focus = FocusService.focusElementWithId;
 
                 // The following logic will check the client-side validation of the
@@ -81,6 +83,28 @@
                     if (value) {
                         $scope.$parent.fieldFeedbackMessage.link = '';
                     }
+                });
+
+                function saveFieldIfDirty(fieldName, propertyName) {
+                    if ($scope.form[fieldName].$dirty) {
+                        $scope.$parent.saveSelectedMenuItem(propertyName);
+                    }
+                }
+
+                $scope.$on('container:before-close', function (event) {
+                    if ($scope.form.$dirty) {
+                        saveFieldIfDirty('title', 'title');
+                        saveFieldIfDirty('sitemapItem', 'link');
+                        saveFieldIfDirty('url', 'link');
+                    }
+                });
+
+                $scope.$on('container:close', function (event) {
+                    // prevent close, process all menu changes first and then trigger the close ourselves
+                    event.preventDefault();
+                    MenuService.processAllChanges().then(function() {
+                        ContainerService.performClose();
+                    });
                 });
             }
         ]);

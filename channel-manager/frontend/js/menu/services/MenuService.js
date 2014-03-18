@@ -230,7 +230,22 @@
                                 deferred.reject(errorResponse);
                             });
                         return deferred.promise;
+                    },
+
+                    processAllChanges: function() {
+                        var deferred = $q.defer();
+
+                        if (writeQueue.length === 0) {
+                            deferred.resolve();
+                        } else {
+                            _.last(writeQueue).deferred.promise.then(function() {
+                                deferred.resolve();
+                            });
+                        }
+
+                        return deferred.promise;
                     }
+
                 };
             }
 

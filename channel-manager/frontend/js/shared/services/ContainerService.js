@@ -30,26 +30,27 @@
             '$log',
             '$rootScope',
             '_hippo.channel.IFrameService',
-            '_hippo.channel.OutstandingHttpRequests',
             'hippo.channel.FormValidationService',
-            function($log, $rootScope, IFrameService, OutstandingHttpRequests, FormValidationService) {
+            function($log, $rootScope, IFrameService, FormValidationService) {
 
                 function handleClose() {
                     if (IFrameService.isActive) {
                         var iframePanel = IFrameService.getContainer();
 
                         iframePanel.hostToIFrame.subscribe('close-request', function() {
-                            var event = $rootScope.$broadcast('before-close');
-                            if (!event.defaultPrevented) {
+
+                            $rootScope.$broadcast('container:before-close');
+
+                            var closeEvent = $rootScope.$broadcast('container:close');
+                            if (!closeEvent.defaultPrevented) {
                                 iframePanel.iframeToHost.publish('close-reply-ok');
-                            } else {
-                                // show close confirmation dialog
-                                $rootScope.$broadcast('close-confirmation:show');
                             }
                         });
-                        $rootScope.$on('before-close', function(event) {
-                            if (!OutstandingHttpRequests.isEmpty() || !FormValidationService.getValidity()) {
+
+                        $rootScope.$on('container:close', function(event) {
+                            if (!FormValidationService.getValidity()) {
                                 event.preventDefault();
+                                $rootScope.$broadcast('close-confirmation:show');
                             }
                         });
                     }

@@ -159,9 +159,45 @@ describe('Menu Service', function () {
     it('should create a menu item', function () {
         var newMenuItem = { id: 'child1', title: 'New title' };
         $httpBackend.expectPOST('api/menuId./create/parentId', newMenuItem).respond('OK');
-        menuService.createMenuItem('parentId', newMenuItem);
+        var promise = menuService.createMenuItem('parentId', newMenuItem);
         $httpBackend.flush();
     });
 
+    it('should process all pending changes', inject(function($rootScope) {
+        var savedMenuItem = { id: 'child1', title: 'New title' };
+        $httpBackend.expectPOST('api/menuId', savedMenuItem).respond('OK');
+        menuService.saveMenuItem(savedMenuItem);
 
+        var promise = menuService.processAllChanges(),
+            allChangesProcessed = false;
+
+        promise.then(function() {
+            allChangesProcessed = true;
+        });
+
+        expect(allChangesProcessed).toEqual(false);
+
+        $httpBackend.flush();
+
+        // let Angular resolve all promises
+        $rootScope.$apply();
+
+        expect(allChangesProcessed).toEqual(true);
+    }));
+
+    it('should process no changes by returning directly', inject(function($rootScope) {
+        var promise = menuService.processAllChanges(),
+            allChangesProcessed = false;
+
+        promise.then(function() {
+            allChangesProcessed = true;
+        });
+
+        expect(allChangesProcessed).toEqual(false);
+
+        // let Angular resolve all promises
+        $rootScope.$apply();
+
+        expect(allChangesProcessed).toEqual(true);
+    }));
 });
