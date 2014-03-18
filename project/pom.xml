@@ -715,6 +715,7 @@
     <profile>
       <id>cargo.run</id>
       <properties>
+        <repo.base.path>${project.basedir}</repo.base.path>
         <repo.path>${project.build.directory}/storage</repo.path>
         <repo.config />
         <repo.bootstrap />
@@ -763,6 +764,7 @@
               </configuration>
               <container>
                 <systemProperties>
+                  <repo.base.path>${repo.base.path}</repo.base.path>
                   <repo.path>${repo.path}</repo.path>
                   <repo.config>${repo.config}</repo.config>
                   <repo.bootstrap>${repo.bootstrap}</repo.bootstrap>
