@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7.hst</groupId>
     <artifactId>hst</artifactId>
-    <version>2.27.03-SNAPSHOT</version>
+    <version>2.27.03-iteration-13</version>
   </parent>
 
   <name>Hippo Site Toolkit Mock</name>
