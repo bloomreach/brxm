@@ -345,6 +345,7 @@ dashboard-plugins/components-plugin/components-library/src/main/java/org/onehipp
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsBlogAuthorPostsComponentInfo.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsBlogComponentInfo.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsCarouselComponentInfo.java -text
+dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsCarouselComponentInfo.properties -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsDocumentComponentInfo.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsDocumentComponentInfo.properties -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsDocumentListComponentInfo.java -text
