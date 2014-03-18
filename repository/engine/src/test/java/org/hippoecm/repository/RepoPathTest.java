@@ -34,6 +34,7 @@ public class RepoPathTest {
     @Test
     public void testBaseRepoPath() throws Exception  {
         final String userDir = new File(System.getProperty("user.dir")).getAbsolutePath();
+        final String homeDir = new File(System.getProperty("user.home")).getAbsolutePath();
         final String tmpDir = new File(System.getProperty("java.io.tmpdir")).getAbsolutePath();
         final String fileSeparator = System.getProperty("file.separator");
         assertNotSame(tmpDir,userDir);
@@ -62,6 +63,10 @@ public class RepoPathTest {
         System.setProperty(LocalHippoRepository.SYSTEM_PATH_PROPERTY, "./subPath");
         assertEquals(tmpDir+fileSeparator+"./subPath", new RepoPathTestLocalHippoRepository().getRepositoryPath());
 
+        // A repo.path starting with a '~/' is first expanded to a user.home relative path (thus becoming absolute
+        System.setProperty(LocalHippoRepository.SYSTEM_PATH_PROPERTY, "~/subPath");
+        assertEquals(homeDir+"/subPath", new RepoPathTestLocalHippoRepository().getRepositoryPath());
+
         // Tests with no repo.base.path set (or empty)
         System.setProperty(LocalHippoRepository.SYSTEM_BASE_PATH_PROPERTY, "");
 
@@ -76,5 +81,9 @@ public class RepoPathTest {
         // A repo.path starting with a '.' also is relative but without repo.base.path be treated as if absolute
         System.setProperty(LocalHippoRepository.SYSTEM_PATH_PROPERTY, "./subPath");
         assertEquals("./subPath", new RepoPathTestLocalHippoRepository().getRepositoryPath());
+
+        // A repo.path starting with a '~/' is first expanded to a user.home relative path (thus becoming absolute
+        System.setProperty(LocalHippoRepository.SYSTEM_PATH_PROPERTY, "~/subPath");
+        assertEquals(homeDir+"/subPath", new RepoPathTestLocalHippoRepository().getRepositoryPath());
     }
 }

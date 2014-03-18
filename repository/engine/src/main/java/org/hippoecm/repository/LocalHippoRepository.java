@@ -151,12 +151,12 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
      * is assumed to be an absolute path and returned as such
      * </p>
      * <p>
-     * Else, when repo.path is not an abolute path and system property repo.base.path also defined, the repo.path
-     * is taken relative to the repo.base.path.
-     * <p>
-     * If the resulting repository path starts with "~/" the '~' (user.home alias) is replaced with the
-     * "user.home" system property.
+     * If repo.path starts with '~/' the '~' is expanded to the user.home location, thereby becoming an absolute
+     * path and returns as repository path.
      * </p>
+     * <p>
+     * Else, when repo.path is not an abolute path and system property repo.base.path also is defined,
+     * the repo.path is taken relative to the repo.base.path.
      *
      * @return The absolute path to the file repository
      */
@@ -165,17 +165,20 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             return repoPath;
         }
 
-        String pathProp = System.getProperty(SYSTEM_PATH_PROPERTY);
-        if (pathProp != null) {
-            if (pathProp.isEmpty()) {
-                pathProp = null;
+        String path = System.getProperty(SYSTEM_PATH_PROPERTY);
+        if (path != null) {
+            if (path.isEmpty()) {
+                path = null;
             }
             else {
-                pathProp = RepoUtils.stripFileProtocol(pathProp);
+                path = RepoUtils.stripFileProtocol(path);
+                if (path.startsWith("~" + File.separator)) {
+                    path = System.getProperty("user.home") + path.substring(1);
+                }
             }
         }
 
-        String basePath = pathProp != null ? System.getProperty(SYSTEM_BASE_PATH_PROPERTY) : null;
+        String basePath = path != null ? System.getProperty(SYSTEM_BASE_PATH_PROPERTY) : null;
 
         if (basePath != null ) {
             if (basePath.isEmpty()) {
@@ -186,18 +189,14 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             }
         }
 
-        if (pathProp == null) {
+        if (path == null) {
             repoPath = getWorkingDirectory();
         }
-        else if (new File(pathProp).isAbsolute() || basePath == null) {
-                repoPath = pathProp;
+        else if (new File(path).isAbsolute() || basePath == null) {
+                repoPath = path;
         }
         else {
-            repoPath = basePath + System.getProperty("file.separator") + pathProp;
-        }
-
-        if (repoPath.startsWith("~" + File.separator)) {
-            repoPath = System.getProperty("user.home") + repoPath.substring(1);
+            repoPath = basePath + System.getProperty("file.separator") + path;
         }
 
         log.info("Using repository path: " + repoPath);
