@@ -27,7 +27,7 @@ import org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentI
 import org.onehippo.cms7.essentials.components.paging.DefaultPagination;
 
 /**
- * HST component used for HST menus.
+ * HST component used for rendering of Carousel items
  *
  * @version "$Id$"
  */
@@ -39,10 +39,29 @@ public class EssentialsCarouselComponent extends CommonComponent {
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
         final EssentialsCarouselComponentInfo componentInfo = getComponentParametersInfo(request);
         final List<HippoDocument> items = getCarouselItems(request, componentInfo);
-
         request.setAttribute(REQUEST_PARAM_PAGEABLE, new DefaultPagination<>(items));
+        setCarouselOptions(request, componentInfo);
     }
 
+    /**
+     * Sets options like effects, speed, etc. of selected carousel component
+     *
+     * @param request       HstRequest instance
+     * @param componentInfo Carousel component annotation
+     */
+    public void setCarouselOptions(final HstRequest request, final EssentialsCarouselComponentInfo componentInfo) {
+        request.setAttribute("displayTime", componentInfo.displayTime());
+        request.setAttribute("fx", componentInfo.fx());
+        request.setAttribute("showNavigation", componentInfo.showNavigation());
+    }
+
+    /**
+     * Populates a list of carousel documents
+     *
+     * @param request       HstRequest instance
+     * @param componentInfo Carousel component annotation
+     * @return list of documents to be populated
+     */
     public List<HippoDocument> getCarouselItems(final HstRequest request, final EssentialsCarouselComponentInfo componentInfo) {
         final List<HippoDocument> beans = new ArrayList<>();
         addBeanForPath(request, componentInfo.getCarouselItem1(), beans);
