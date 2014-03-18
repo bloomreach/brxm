@@ -135,18 +135,18 @@ public class PluginModuleRestful implements Restful {
     public static class Library {
         private String browser;
         private String component;
-        private String library;
+        private String file;
 
 
-        public Library(final String component, final String library, final String browser) {
+        public Library(final String component, final String file, final String browser) {
             this.component = component;
-            this.library = library;
+            this.file = file;
             this.browser = browser;
         }
 
-        public Library(final String component, final String library) {
+        public Library(final String component, final String file) {
             this.component = component;
-            this.library = library;
+            this.file = file;
         }
 
         public Library() {
@@ -168,12 +168,12 @@ public class PluginModuleRestful implements Restful {
             this.component = component;
         }
 
-        public String getLibrary() {
-            return library;
+        public String getFile() {
+            return file;
         }
 
-        public void setLibrary(final String library) {
-            this.library = library;
+        public void setFile(final String file) {
+            this.file = file;
         }
     }
 

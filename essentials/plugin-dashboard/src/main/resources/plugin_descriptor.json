@@ -25,8 +25,8 @@
         "libraries": [
             {
                 "items": [{
-                        "component": "content-blocks",
-                        "library": "contentBlocks.js"
+                        "component": "contentBlocks",
+                        "file": "contentBlocks.js"
                     }
                 ]
             }

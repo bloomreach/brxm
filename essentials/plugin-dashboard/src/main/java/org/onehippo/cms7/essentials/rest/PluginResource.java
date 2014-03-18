@@ -471,12 +471,14 @@ public static List<PluginRestful> parseGist() {
         for (PluginRestful plugin : plugins) {
             final List<PluginModuleRestful.PrefixedLibrary> libraries = plugin.getLibraries();
 
+            final String prefix = plugin.getType();
+            final String pluginId = plugin.getPluginId();
             if (libraries != null) {
                 for (PluginModuleRestful.PrefixedLibrary library : libraries) {
                     // prefix libraries by plugin id:
-                    library.setPrefix(plugin.getPluginId());
+                    library.setPrefix(prefix);
+                    modules.addLibrary(pluginId, library);
                 }
-                plugin.addAll(libraries);
             }
         }
         return modules;

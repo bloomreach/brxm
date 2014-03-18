@@ -49,7 +49,9 @@
     };
 
     hippoLoader.loadModules = function (items, prefix) {
+
         $.each(items, function (index, component) {
+            console.log(component);
             var folder, files;
 
             if (typeof component !== 'string') {
@@ -102,6 +104,7 @@
 
     hippoLoader.loadScripts = function (items) {
         $.each(items, function (index, url) {
+            console.log("XXXXXX"+url);
             hippoLoader.getScript(url);
         });
     };
@@ -112,13 +115,16 @@
 
     hippoLoader.load = function (config) {
         config = config || {};
-
+        console.log(">>>>>>>>>>>>>>>>>...");
+        console.log(config.modulesFileSrc);
         $.ajax({
             url: config.modulesFileSrc,
             dataType: 'json'
         }).done(function (data) {
             var includes = data.includes;
             var app = data.application;
+            console.log("====================================");
+            console.log(app);
 
             $.each(includes, function (name, include) {
                 if ($.isArray(include)) {
@@ -130,7 +136,7 @@
 
             $('head').append('<script>angular.bootstrap(document.getElementById(\'container\'), [\'' + app + '\']);</' + 'script>');
         }).fail(function (jqXHR, textStatus, errorThrown) {
-            errorThrown.message = '[Loader error (' + textStatus + ')]: ' + errorThrown.message;
+            errorThrown.message = '[Loader error s(' + textStatus + ')]: ' + errorThrown;
             console.warn(errorThrown.message);
         });
     };

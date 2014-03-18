@@ -1,5 +1,5 @@
 <!doctype html>
-<html ng-app="hippo.essentials">
+<html>
 <head>
   <title>Hippo Essentials</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/theme/hippo-theme/main.css"/>
@@ -31,7 +31,6 @@
   <script src="${pageContext.request.contextPath}/js/routes.js"></script>
   <script src="${pageContext.request.contextPath}/js/controllers.js"></script>
   <%--  TODO make dynamic--%>
-  <script src="${pageContext.request.contextPath}/plugins/contentBlocks/contentBlocks.js"></script>
   <script src="${pageContext.request.contextPath}/plugins/galleryPlugin/galleryPlugin.js"></script>
   <script src="${pageContext.request.contextPath}/powerpacks/newsEventsPowerpack/newsEventsPowerpack.js"></script>
   <script src="${pageContext.request.contextPath}/plugins/xinhaPlugin/xinhaPlugin.js"></script>
@@ -43,7 +42,7 @@
   <link rel="icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
   <link rel="shortcut icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
 </head>
-<body>
+<body id="container">
 
 <!-- LOADER ON HTTP REQUESTS -->
 <div class="busy-loader" ng-show="busyLoading">
@@ -66,7 +65,7 @@
   CONTENT
 --%>
 
-<div id="container" class="container">
+<div  class="container">
   <div class="row">
     <h1 class="page-header">
       <div class="pull-left hippo-header-logo">
@@ -106,7 +105,7 @@
 </div>
 
 <!-- Include the loader.js script -->
-<script src="${pageContext.request.contextPath}/js/plugin-loader.js" data-modules="modules.json"></script>
+<script src="${pageContext.request.contextPath}/js/loader.js" data-modules="http://localhost:8080/essentials/rest/plugins/modules"></script>
 
 </body>
 </html>

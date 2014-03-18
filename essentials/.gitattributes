@@ -2028,7 +2028,7 @@ plugin-dashboard/src/main/webapp/js/lib/require.js -text
 plugin-dashboard/src/main/webapp/js/lib/ui-bootstrap-0.10.js -text
 plugin-dashboard/src/main/webapp/js/lib/ui-bootstrap-tpls-0.7.0.min.js -text
 plugin-dashboard/src/main/webapp/js/lib/ui-sortable.js -text
-plugin-dashboard/src/main/webapp/js/plugin-loader.js -text
+plugin-dashboard/src/main/webapp/js/loader.js -text
 plugin-dashboard/src/main/webapp/js/routes.js -text
 plugin-dashboard/src/main/webapp/pages/find-plugins.html -text
 plugin-dashboard/src/main/webapp/pages/home.html -text
