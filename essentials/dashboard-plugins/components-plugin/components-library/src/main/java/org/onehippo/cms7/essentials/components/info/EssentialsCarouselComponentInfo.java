@@ -17,12 +17,51 @@
 package org.onehippo.cms7.essentials.components.info;
 
 import org.hippoecm.hst.core.parameters.DocumentLink;
+import org.hippoecm.hst.core.parameters.DropDownList;
+import org.hippoecm.hst.core.parameters.FieldGroup;
+import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.core.parameters.Parameter;
 
 /**
  * @version "$Id$"
  */
+@FieldGroupList({
+        @FieldGroup(
+                titleKey = "carousel.documents",
+                value = {"document1", "document2", "document3", "document4", "document5",
+                        "document6", "document7", "document8", "document9",  "document10"}
+        ),
+        @FieldGroup(
+                titleKey = "carousel.settings",
+                value = {"fx", "displayTime", "showNavigation"}
+        )
+})
+
 public interface EssentialsCarouselComponentInfo {
+
+
+    //############################################
+    // CAROUSEL SETTINGS
+    //############################################
+    @Parameter(name = "fx", required = true, displayName = "Animation type")
+    @DropDownList(value = {"scrollHorz", "carousel","flipHorz", "shuffle","tileSlide"})
+    String fx();
+
+    @Parameter(name = "displayTime", defaultValue = "2000", required = true, displayName = "Display time (milli seconds)")
+    Integer displayTime();
+
+    @Parameter(name = "showNavigation", defaultValue = "false", displayName = "Show navigation")
+    Boolean showNavigation();
+
+
+
+
+
+
+
+    //############################################
+    // DOCUMENTS
+    //############################################
 
 
     @Parameter(name = "document1", required = false, displayName = "Carousel item 1")
