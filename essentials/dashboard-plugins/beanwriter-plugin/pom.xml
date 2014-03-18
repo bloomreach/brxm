@@ -87,6 +87,9 @@
         <includes>
           <include>**/*.cnd</include>
           <include>**/*.xml</include>
+          <include>**/*.js</include>
+          <include>**/*.html</include>
+          <include>**/*.css</include>
           <include>**/*.MF</include>
           <include>**/*.properties</include>
         </includes>

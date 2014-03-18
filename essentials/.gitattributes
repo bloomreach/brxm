@@ -101,6 +101,9 @@ archetype/website/src/main/resources/archetype-resources/src/main/assembly/distr
 dashboard-plugins/beanwriter-plugin/pom.xml -text
 dashboard-plugins/beanwriter-plugin/src/main/java/org/onehippo/cms7/essentials/beanwriter/rest/BeanWriterResource.java -text
 dashboard-plugins/beanwriter-plugin/src/main/java/org/onehippo/cms7/essentials/beanwriter/rest/MyRestList.java -text
+dashboard-plugins/beanwriter-plugin/src/main/resources/META-INF/resources/tools/beanwriter/beanwriter.html -text
+dashboard-plugins/beanwriter-plugin/src/main/resources/META-INF/resources/tools/beanwriter/beanwriter.js -text
+dashboard-plugins/beanwriter-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/beanwriter-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/blog-plugin/pom.xml -text
 dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/blog/BlogDaemonModuleInstruction.java -text
@@ -2075,8 +2078,6 @@ plugin-dashboard/src/main/webapp/theme/hippo-theme/_font-awesome.css -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/main.css -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/theme.html -text
 plugin-dashboard/src/main/webapp/theme/styles.css -text
-plugin-dashboard/src/main/webapp/tools/beanwriter/beanwriter.html -text
-plugin-dashboard/src/main/webapp/tools/beanwriter/beanwriter.js -text
 plugin-dashboard/src/main/webapp/tools/freemarkersync/freemarkersync.html -text
 plugin-dashboard/src/main/webapp/tools/freemarkersync/freemarkersync.js -text
 plugin-dashboard/src/main/webapp/tools/restServices/restServices.html -text
