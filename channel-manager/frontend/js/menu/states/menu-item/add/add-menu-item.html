@@ -17,7 +17,7 @@
 <div>
     <form name="form" role="form" novalidate class="l-fixed-height">
         <p class="alert alert-danger alert-dismissable" ng-show="feedback.message">
-            <button type="button" class="close" data-ng-click="dismissFeedback()" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <button type="button" class="close" data-ng-click="dismissFeedback()">&times;</button>
             {{feedback.message}}
         </p>
         <h3 class="lead item-title"><strong>{{ selectedMenuItem.title | placeholder:'UNTITLED' }}</strong> {{ 'MENU_ITEM' | translate }}</h3>

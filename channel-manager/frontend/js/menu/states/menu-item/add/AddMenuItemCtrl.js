@@ -80,6 +80,10 @@
                     }
                 };
 
+                $scope.dismissFeedback = function () {
+                    $scope.feedback.message = '';
+                };
+                
                 $scope.cancel = function () {
                     FormValidationService.setValidity(true);
 
