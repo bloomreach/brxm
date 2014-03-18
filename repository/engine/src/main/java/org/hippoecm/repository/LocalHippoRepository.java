@@ -67,6 +67,9 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     /** System property for overriding the repository path */
     public static final String SYSTEM_PATH_PROPERTY = "repo.path";
 
+    /** System property for defining the base path for a non-absolute repo.path property */
+    public static final String SYSTEM_BASE_PATH_PROPERTY = "repo.base.path";
+
     /** System property for overriding the repository config file */
     public static final String SYSTEM_CONFIG_PROPERTY = "repo.config";
 
@@ -141,25 +144,56 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
     /**
      * Construct the repository path, default getWorkingDirectory() is used.
-     * If the system property repo.path can be used to override the default.
-     * If repo.path starts with a '.' then the path is taken relative to the
-     * getWorkingDirectory().
+     * <p>
+     * The system property repo.path can be used to override the default.
+     * </p>
+     * If repo.path has an absolute path, or system property repo.base.path is undefined/empty, the repo.path
+     * is assumed to be an absolute path and returned as such
+     * </p>
+     * <p>
+     * Else, when repo.path is not an abolute path and system property repo.base.path also defined, the repo.path
+     * is taken relative to the repo.base.path.
+     * <p>
+     * If the resulting repository path starts with "~/" the '~' (user.home alias) is replaced with the
+     * "user.home" system property.
+     * </p>
+     *
      * @return The absolute path to the file repository
      */
-    private String getRepositoryPath() {
+    protected String getRepositoryPath() {
         if (repoPath != null) {
             return repoPath;
         }
 
-        final String pathProp = System.getProperty(SYSTEM_PATH_PROPERTY);
+        String pathProp = System.getProperty(SYSTEM_PATH_PROPERTY);
+        if (pathProp != null) {
+            if (pathProp.isEmpty()) {
+                pathProp = null;
+            }
+            else {
+                pathProp = RepoUtils.stripFileProtocol(pathProp);
+            }
+        }
 
-        if (pathProp == null || pathProp.isEmpty()) {
+        String basePath = pathProp != null ? System.getProperty(SYSTEM_BASE_PATH_PROPERTY) : null;
+
+        if (basePath != null ) {
+            if (basePath.isEmpty()) {
+                basePath = null;
+            }
+            else {
+                basePath = RepoUtils.stripFileProtocol(basePath);
+            }
+        }
+
+        if (pathProp == null) {
             repoPath = getWorkingDirectory();
-        } else if (pathProp.charAt(0) == '.') {
-            // relative path
-            repoPath = getWorkingDirectory() + System.getProperty("file.separator") + pathProp;
-        } else {
-            repoPath = RepoUtils.stripFileProtocol(pathProp);
+        }
+        else if (new File(pathProp).isAbsolute() || basePath == null) {
+                repoPath = pathProp;
+        }
+        else {
+            repoPath = basePath + System.getProperty("file.separator") + pathProp;
         }
 
         if (repoPath.startsWith("~" + File.separator)) {
@@ -413,11 +447,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             migrateSession.logout();
         } catch (ClassNotFoundException ignore) {
             log.debug("UpdaterEngine not found");
-        } catch (NoSuchMethodException e) {
-            log.error("Unexpected error while trying to invoke UpdaterEngine", e);
-        } catch (InvocationTargetException e) {
-            log.error("Unexpected error while trying to invoke UpdaterEngine", e);
-        } catch (IllegalAccessException e) {
+        } catch (NoSuchMethodException|InvocationTargetException|IllegalAccessException e) {
             log.error("Unexpected error while trying to invoke UpdaterEngine", e);
         }
     }
@@ -457,26 +487,10 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 } else {
                     log.info("No need to reload " + cndName + ": no changes");
                 }
-            } catch (ConstraintViolationException ex) {
+            } catch (ConstraintViolationException|InvalidItemStateException|ItemExistsException|LockException|
+                    NoSuchNodeTypeException|ParseException|VersionException|AccessDeniedException|
+                    NoSuchAlgorithmException|IOException ex) {
                 throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-            } catch (InvalidItemStateException ex) {
-                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-            } catch (ItemExistsException ex) {
-                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-            } catch (LockException ex) {
-                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-            } catch (NoSuchNodeTypeException ex) {
-                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-            } catch (ParseException ex) {
-                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-            } catch (VersionException ex) {
-                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-            } catch (AccessDeniedException ex) {
-                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-            } catch (NoSuchAlgorithmException e) {
-                throw new RepositoryException("Could not initialize repository with hippo node types", e);
-            } catch (IOException e) {
-                throw new RepositoryException("Could not initialize repository with hippo node types", e);
             } finally {
                 if (cndStream != null) { try { cndStream.close(); } catch (IOException ignore) {} }
             }
@@ -487,9 +501,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         try {
             out = fileSystem.getOutputStream("/cnd-checksums");
             checksumProperties.store(out, null);
-        } catch (IOException e) {
-            log.error("Failed to store cnd checksum file.", e);
-        } catch (FileSystemException e) {
+        } catch (IOException|FileSystemException e) {
             log.error("Failed to store cnd checksum file.", e);
         } finally {
             IOUtils.closeQuietly(out);
@@ -532,9 +544,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 session = login();
                 java.io.OutputStream out = new java.io.FileOutputStream("dump.xml");
                 session.exportSystemView("/hippo:configuration", out, false, false);
-            } catch (IOException ex) {
-                log.error("Error while dumping configuration: " + ex.getMessage(), ex);
-            } catch (RepositoryException ex) {
+            } catch (IOException|RepositoryException ex) {
                 log.error("Error while dumping configuration: " + ex.getMessage(), ex);
             } finally {
                 if (session != null) {
