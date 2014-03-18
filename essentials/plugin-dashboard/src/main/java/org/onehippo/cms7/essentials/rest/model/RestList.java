@@ -20,7 +20,7 @@ import org.onehippo.cms7.essentials.rest.model.gallery.ImageSetRestful;
 import org.onehippo.cms7.essentials.rest.model.gallery.ImageVariantRestful;
 
 /**
- * @version "$Id: RestfulList.java 174870 2013-08-23 13:56:24Z mmilicevic $"
+ * @version "$Id$"
  */
 @XmlRootElement(name = "collection")
 public class RestList<T extends Restful> extends RestfulList<T> {
@@ -47,7 +47,7 @@ public class RestList<T extends Restful> extends RestfulList<T> {
     })
     @Override
     public List<T> getItems() {
-        return items;
+        return super.getItems();
     }
 
 

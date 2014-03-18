@@ -617,15 +617,6 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/u
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/xml/XmlNode.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/xml/XmlProperty.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/xml/package-info.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wiki/DefaultStrategy.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wiki/ForcedStopException.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wiki/Importer.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wiki/JcrWikiNode.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wiki/NewsWikiStrategy.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wiki/NonWorkflowWikiImporter.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wiki/WikiNodeType.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wiki/WikiPediaToJCRHandler.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wiki/WikiStrategy.java -text
 plugin-api/implementation/src/main/resources/META-INF/essentialsSpringSdk.xml -text
 plugin-api/implementation/src/main/resources/enwiki-20081008-pages-articles.xml.100.top.xml -text
 plugin-api/implementation/src/main/resources/essentials_messages.properties -text
@@ -678,7 +669,6 @@ plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/u
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/inject/TestEventsApplication.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/inject/TestEventsListener.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/update/UpdateConfigTest.java -text
-plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/wiki/NonWorkflowWikiImporterTest.java -text
 plugin-api/implementation/src/test/resources/TestMockBean.java -text
 plugin-api/implementation/src/test/resources/cms-pom.xml -text
 plugin-api/implementation/src/test/resources/custom_nodetypes.xml -text
@@ -767,12 +757,6 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/gallery/I
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/gallery/ImageSetsRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/gallery/ImageVariantRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/jaxb.properties -text
-plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/tmp/Gist.java -text
-plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/tmp/GistChangeStatus.java -text
-plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/tmp/GistFile.java -text
-plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/tmp/GistRevision.java -text
-plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/tmp/User.java -text
-plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/tmp/UserPlan.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/utils/RestWorkflow.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/DynamicRestPointsApplication.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/EndPointList.java -text

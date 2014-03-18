@@ -14,18 +14,20 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * @version "$Id: RestClient.java 174875 2013-08-23 13:57:46Z mmilicevic $"
+ * @version "$Id$"
  */
 public class RestClient {
 
+    public static final int DEFAULT_CONNECTION_TIMEOUT = 2500;
+    public static final int DEFAULT_RECEIVE_TIMEOUT = 2000;
     private static Logger log = LoggerFactory.getLogger(RestClient.class);
 
     /**
      * e.g. http://localhost:8080/site/restapi
      */
     private final String baseResourceUri;
-    private long receiveTimeout = 2000;
-    private long connectionTimeout = 2500;
+    private long receiveTimeout = DEFAULT_RECEIVE_TIMEOUT;
+    private long connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
 
     public RestClient(String baseResourceUri) {
         this.baseResourceUri = baseResourceUri;

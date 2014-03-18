@@ -11,6 +11,8 @@ import org.onehippo.cms7.essentials.dashboard.utils.JcrMatcher;
  */
 public class HasRelatedDocMatcher implements JcrMatcher {
 
+    public static final String PLUGIN_CLASS = "plugin.class";
+
     @Override
     public boolean matches(final Node typeNode) throws RepositoryException {
         if (typeNode.getName().equals("hipposysedit:prototype")) {
@@ -21,13 +23,13 @@ public class HasRelatedDocMatcher implements JcrMatcher {
                 final NodeIterator it = template.getNodes();
                 while (it.hasNext()) {
                     final Node node = it.nextNode();
-                    if (node.hasProperty("plugin.class")) {
-                        if (node.getProperty("plugin.class").getString().equals("org.onehippo.forge.relateddocs.editor.RelatedDocsPlugin")
+                    if (node.hasProperty(PLUGIN_CLASS)
+                        && (node.getProperty(PLUGIN_CLASS).getString().equals("org.onehippo.forge.relateddocs.editor.RelatedDocsPlugin")
                                 ||
-                                node.getProperty("plugin.class").getString().equals("org.onehippo.forge.relateddocs.editor.RelatedDocsSuggestPlugin")
-                                ) {
+                                node.getProperty(PLUGIN_CLASS).getString().equals("org.onehippo.forge.relateddocs.editor.RelatedDocsSuggestPlugin")
+                                )) {
                             i++;
-                        }
+
                     }
                 }
             }

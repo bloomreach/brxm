@@ -12,7 +12,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.Vector;
 import java.util.regex.Pattern;
 
 import javax.jcr.Binary;
@@ -78,19 +77,19 @@ public final class HippoNodeUtils {
     private static final Predicate<String> INTERNAL_TYPES_PREDICATE = new Predicate<String>() {
         @Override
         public boolean apply(String documentType) {
-
-            if (documentType != null
-                    && !documentType.startsWith(HIPPO_NAMESPACE_PREFIX)
-                    && !documentType.startsWith(HIPPOSYS_NAMESPACE_PREFIX)
-                    && !documentType.startsWith(HIPPOSYSEDIT_NAMESAPCE_PREFIX)
-                    && !documentType.startsWith(REPORTING_NAMESPACE_PREFIX)
-                    && !documentType.equals("nt:unstructured")
-                    && !documentType.startsWith("hippogallery:")) {
-                return true;
-            }
-            return false;
+            return documentType != null && notInternalType(documentType);
         }
     };
+
+    private static boolean notInternalType(final String documentType) {
+        return !documentType.startsWith(HIPPO_NAMESPACE_PREFIX)
+                && !documentType.startsWith(HIPPOSYS_NAMESPACE_PREFIX)
+                && !documentType.startsWith(HIPPOSYSEDIT_NAMESAPCE_PREFIX)
+                && !documentType.startsWith(REPORTING_NAMESPACE_PREFIX)
+                && !documentType.equals("nt:unstructured")
+                && !documentType.startsWith("hippogallery:");
+    }
+
     private static final Predicate<String> NAMESPACE_PREDICATE = new Predicate<String>() {
         @Override
         public boolean apply(String namespace) {
@@ -343,7 +342,7 @@ public final class HippoNodeUtils {
     }
 
     private static List<Node> getQueryTemplateNodes(Session session, String[] templates) throws RepositoryException {
-        List<Node> queryTemplates = new Vector<>();
+        List<Node> queryTemplates = new ArrayList<>();
         Node hippoTemplates = session.getRootNode().getNode("hippo:configuration/hippo:queries/hippo:templates");
         for (String template : templates) {
             if (hippoTemplates.hasNode(template)) {

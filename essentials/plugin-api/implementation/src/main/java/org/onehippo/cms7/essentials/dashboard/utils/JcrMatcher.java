@@ -17,5 +17,5 @@ public interface JcrMatcher {
      * @return
      * @throws RepositoryException
      */
-    public boolean matches(final Node node) throws RepositoryException;
+    boolean matches(final Node node) throws RepositoryException;
 }

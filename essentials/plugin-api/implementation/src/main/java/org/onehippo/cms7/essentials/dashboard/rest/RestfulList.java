@@ -41,7 +41,7 @@ import com.wordnik.swagger.annotations.ApiModel;
 public class RestfulList<T extends Restful> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    protected List<T> items = Lists.newArrayList();
+    private List<T> items = Lists.newArrayList();
 
     public void add(T resource) {
         items.add(resource);

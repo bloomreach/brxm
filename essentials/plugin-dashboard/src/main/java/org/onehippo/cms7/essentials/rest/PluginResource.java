@@ -119,10 +119,8 @@ public class PluginResource extends BaseResource {
         for (PluginRestful item : items) {
             plugins.add(item);
             final String pluginId = item.getPluginId();
-            if (item.isNeedsInstallation()) {
-                if(isInstalled(item)){
-                    item.setNeedsInstallation(false);
-                }
+            if (item.isNeedsInstallation() && isInstalled(item)) {
+                item.setNeedsInstallation(false);
             }
             //############################################
             // collect endpoints

@@ -148,16 +148,14 @@ public class XmlInstruction extends PluginInstruction {
         try {
             final XmlNode xmlNode = XmlUtils.parseXml(stream);
             final String name = xmlNode.getName();
-            if (!Strings.isNullOrEmpty(name)) {
-                if (session.itemExists(parentPath)) {
-                    final String absPath = parentPath.endsWith("/") ? parentPath + name : parentPath + '/' + name;
-                    if (session.itemExists(absPath)) {
-                        log.debug("Node already exists: {}", absPath);
-                        return true;
-                    }
+            if (!Strings.isNullOrEmpty(name) && session.itemExists(parentPath)) {
+
+                final String absPath = parentPath.endsWith("/") ? parentPath + name : parentPath + '/' + name;
+                if (session.itemExists(absPath)) {
+                    log.debug("Node already exists: {}", absPath);
+                    return true;
                 }
             }
-
         } finally {
             IOUtils.closeQuietly(stream);
         }

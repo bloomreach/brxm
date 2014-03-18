@@ -162,28 +162,31 @@ public final class UpdateUtils {
      */
     public static class UpdateConfig {
 
+        public static final int DEFAULT_BATCH_SIZE = 10;
+        public static final int DEFAULT_THROTTLE_TIME = 1000;
+        public static final boolean DEFAULT_DRY_RUN = true;
         private String name;
         private String script = "package org.hippoecm.frontend.plugins.cms.dev.updater\n" +
-                "\n" +
+                '\n' +
                 "import org.onehippo.repository.update.BaseNodeUpdateVisitor\n" +
                 "import javax.jcr.Node\n" +
-                "\n" +
+                '\n' +
                 "class UpdaterTemplate extends BaseNodeUpdateVisitor {\n" +
-                "\n" +
+                '\n' +
                 "  boolean doUpdate(Node node) {\n" +
                 "    log.debug \"Updating node ${node.path}\"\n" +
                 "    return false\n" +
                 "  }\n" +
-                "\n" +
+                '\n' +
                 "  boolean undoUpdate(Node node) {\n" +
                 "    throw new UnsupportedOperationException('Updater does not implement undoUpdate method')\n" +
                 "  }\n" +
-                "\n" +
-                "}";
+                '\n' +
+                '}';
         private String query;
-        private long batchSize = 10;
-        private long throttle = 1000;
-        private boolean dryRun = true;
+        private long batchSize = DEFAULT_BATCH_SIZE;
+        private long throttle = DEFAULT_THROTTLE_TIME;
+        private boolean dryRun = DEFAULT_DRY_RUN;
 
         public UpdateConfig() {
         }

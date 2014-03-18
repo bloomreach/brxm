@@ -107,13 +107,14 @@ public final class AnnotationUtils {
      */
     public static Collection<Field> getClassFields(Class<?> clazz) {
         Map<String, Field> fields = new HashMap<>();
-        for (; clazz != null; ) {
-            for (Field field : clazz.getDeclaredFields()) {
+        Class<?> myClass = clazz;
+        for (; myClass != null; ) {
+            for (Field field : myClass.getDeclaredFields()) {
                 if (!fields.containsKey(field.getName())) {
                     fields.put(field.getName(), field);
                 }
             }
-            clazz = clazz.getSuperclass();
+            myClass = myClass.getSuperclass();
         }
 
         return fields.values();
@@ -127,8 +128,9 @@ public final class AnnotationUtils {
      */
     public static Collection<Method> getMethods(Class<?> clazz) {
         Map<String, Method> returnValue = new HashMap<>();
-        for (; clazz != null; ) {
-            for (Method method : clazz.getDeclaredMethods()) {
+        Class<?> myClass = clazz;
+        for (; myClass != null; ) {
+            for (Method method : myClass.getDeclaredMethods()) {
                 boolean isOverridden = false;
                 for (Method overriddenMethod : returnValue.values()) {
                     if (overriddenMethod.getName().equals(method.getName()) && Arrays.deepEquals(method.getParameterTypes(), overriddenMethod.getParameterTypes())) {
@@ -140,7 +142,7 @@ public final class AnnotationUtils {
                     returnValue.put(method.getName(), method);
                 }
             }
-            clazz = clazz.getSuperclass();
+            myClass = myClass.getSuperclass();
         }
         return returnValue.values();
     }

@@ -30,7 +30,7 @@ import javax.ws.rs.core.Application;
 public class DynamicRestPointsApplication extends Application {
 
 
-    final Set<Class<?>> classes = new HashSet<>();
+    private final Set<Class<?>> classes = new HashSet<>();
 
     @Override
     public Set<Class<?>> getClasses() {

@@ -28,7 +28,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 /**
- * @version "$Id: GlobalUtils.java 174806 2013-08-23 09:22:46Z mmilicevic $"
+ * @version "$Id$"
  */
 public final class GlobalUtils {
 
@@ -134,17 +134,18 @@ public final class GlobalUtils {
      * @param name
      * @return
      */
-    public static String createMethodName(String name) {
-        if (Strings.isNullOrEmpty(name) || name.trim().equals(":")) {
+    public static String createMethodName(final String name) {
+        String myName = name;
+        if (Strings.isNullOrEmpty(myName) || myName.trim().equals(":")) {
             return EssentialConst.INVALID_METHOD_NAME;
         }
-        name = CharMatcher.WHITESPACE.removeFrom(name);
+        myName = CharMatcher.WHITESPACE.removeFrom(myName);
         // replace all whitespaces:
-        final int index = name.indexOf(':');
-        if (index == -1 || index == name.length() - 1) {
-            return PREFIX_GET + capitalize(name.replace(':', ' ').trim());
+        final int index = myName.indexOf(':');
+        if (index == -1 || index == myName.length() - 1) {
+            return PREFIX_GET + capitalize(myName.replace(':', ' ').trim());
         }
-        final String[] parts = NAMESPACE_PATTERN.split(name);
+        final String[] parts = NAMESPACE_PATTERN.split(myName);
         if (parts.length < 1) {
             return EssentialConst.INVALID_METHOD_NAME;
         }
@@ -235,9 +236,9 @@ public final class GlobalUtils {
         return fullConfigPath.substring(0, fullConfigPath.lastIndexOf('/'));
     }
 
-    public static String getFullConfigPath(final CharSequence pluginClass) {
+    public static String getFullConfigPath(final CharSequence pluginId) {
         final List<String> configList = Lists.newLinkedList(Splitter.on('/').split(JcrPluginConfigService.CONFIG_PATH));
-        configList.addAll(Lists.newLinkedList(Splitter.on('.').split(pluginClass)));
+        configList.addAll(Lists.newLinkedList(Splitter.on('.').split(pluginId)));
         return '/' + Joiner.on('/').join(configList);
     }
 

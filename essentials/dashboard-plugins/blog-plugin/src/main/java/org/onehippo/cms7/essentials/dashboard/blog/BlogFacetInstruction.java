@@ -47,6 +47,7 @@ public class BlogFacetInstruction implements Instruction {
             "                {name:'Last 6 months',resolution:'day', begin:-182, end:1},\n" +
             "                {name:'Last year',resolution:'day', begin:-365, end:1}\n" +
             "                ]";
+    public static final long DEFAULT_FACET_LIMIT = 100L;
     private static Logger log = LoggerFactory.getLogger(BlogFacetInstruction.class);
 
 
@@ -99,7 +100,7 @@ public class BlogFacetInstruction implements Instruction {
             blogFacets.setProperty("hippofacnav:filters", new String[]{"jcr:primaryType = " + namespace + ":blogpost"});
             blogFacets.setProperty("hippofacnav:sortby", new String[]{namespace + ":publicationdate"});
             blogFacets.setProperty("hippofacnav:sortorder", new String[]{"descending"});
-            blogFacets.setProperty("hippofacnav:limit", 100L);
+            blogFacets.setProperty("hippofacnav:limit", DEFAULT_FACET_LIMIT);
             session.save();
 
         } catch (RepositoryException e) {

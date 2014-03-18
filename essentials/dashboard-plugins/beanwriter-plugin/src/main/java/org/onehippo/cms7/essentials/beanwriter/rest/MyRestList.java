@@ -40,7 +40,7 @@ public class MyRestList extends RestfulList<MessageRestful> {
 
     })
     public List<MessageRestful> getItems() {
-        return items;
+        return super.getItems();
     }
 
 

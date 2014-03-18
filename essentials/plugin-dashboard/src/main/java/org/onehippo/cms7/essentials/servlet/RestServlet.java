@@ -24,8 +24,6 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.transport.servlet.CXFServlet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Bootstrapping servlet for dynamic rest end points.
@@ -35,7 +33,6 @@ import org.slf4j.LoggerFactory;
 public class RestServlet extends CXFServlet {
 
     private static final long serialVersionUID = 1L;
-    private static Logger log = LoggerFactory.getLogger(RestServlet.class);
 
     @Override
     public void init(final ServletConfig sc) throws ServletException {

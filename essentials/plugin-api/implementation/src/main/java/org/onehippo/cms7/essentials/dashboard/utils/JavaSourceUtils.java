@@ -68,14 +68,15 @@ public final class JavaSourceUtils {
      * @return Path object of the file created or null if failed to create a class
      */
     @SuppressWarnings("unchecked")
-    public static Path createJavaClass(final String sourceRootPath, final String className, final String packageName, String fileExtension) {
-        if (Strings.isNullOrEmpty(fileExtension)) {
-            fileExtension = EssentialConst.FILE_EXTENSION_JAVA;
+    public static Path createJavaClass(final String sourceRootPath, final String className, final String packageName, final String fileExtension) {
+        String myFileExtension = fileExtension;
+        if (Strings.isNullOrEmpty(myFileExtension)) {
+            myFileExtension = EssentialConst.FILE_EXTENSION_JAVA;
         }
         FileOutputStream outputStream = null;
         try {
 
-            final Path clazzPath = createJavaSourcePath(sourceRootPath, className, packageName, fileExtension);
+            final Path clazzPath = createJavaSourcePath(sourceRootPath, className, packageName, myFileExtension);
             if (clazzPath.toFile().exists()) {
                 log.info("File already exists: {}", clazzPath);
                 return clazzPath;

@@ -185,5 +185,7 @@ public class JcrPersistenceReader {
 
     }
 
-
+    public PluginContext getContext() {
+        return context;
+    }
 }
