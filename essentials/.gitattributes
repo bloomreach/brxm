@@ -2051,9 +2051,9 @@ plugin-dashboard/src/main/webapp/plugins/galleryPlugin/testimageprocessor.json -
 plugin-dashboard/src/main/webapp/plugins/galleryPlugin/testimagesets.json -text
 plugin-dashboard/src/main/webapp/plugins/xinhaPlugin/xinhaPlugin.html -text
 plugin-dashboard/src/main/webapp/plugins/xinhaPlugin/xinhaPlugin.js -text
-plugin-dashboard/src/main/webapp/powerpacks/index.html -text
-plugin-dashboard/src/main/webapp/powerpacks/newsEventsPowerpack/newsEventsPowerpack.html -text
-plugin-dashboard/src/main/webapp/powerpacks/newsEventsPowerpack/newsEventsPowerpack.js -text
+plugin-dashboard/src/main/webapp/powerpack/index.html -text
+plugin-dashboard/src/main/webapp/powerpack/newsEventsPowerpack/newsEventsPowerpack.html -text
+plugin-dashboard/src/main/webapp/powerpack/newsEventsPowerpack/newsEventsPowerpack.js -text
 plugin-dashboard/src/main/webapp/theme/fonts/glyphicons-halflings-regular.eot -text
 plugin-dashboard/src/main/webapp/theme/fonts/glyphicons-halflings-regular.svg -text
 plugin-dashboard/src/main/webapp/theme/fonts/glyphicons-halflings-regular.ttf -text
