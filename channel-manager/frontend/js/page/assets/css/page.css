@@ -32,6 +32,10 @@
     border-radius: 0;
 }
 
+.panel > .panel-footer {
+    text-align: center;
+}
+
 .list-group {
     margin-bottom: 0;
 }
