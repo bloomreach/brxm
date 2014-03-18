@@ -25,8 +25,6 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo;
 import org.onehippo.cms7.essentials.components.paging.DefaultPagination;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * HST component used for HST menus.
@@ -36,8 +34,6 @@ import org.slf4j.LoggerFactory;
 @ParametersInfo(type = EssentialsCarouselComponentInfo.class)
 public class EssentialsCarouselComponent extends CommonComponent {
 
-
-    private static Logger log = LoggerFactory.getLogger(EssentialsCarouselComponent.class);
 
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {

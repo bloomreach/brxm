@@ -57,7 +57,7 @@ import com.sun.syndication.io.XmlReader;
  */
 public class BlogImporterJob implements InterruptableJob {
 
-    private final static Logger log = LoggerFactory.getLogger(BlogImporterJob.class);
+    private static final Logger log = LoggerFactory.getLogger(BlogImporterJob.class);
     private static final String BLOGS_BASE_PATH = "blogsBasePath";
     private static final String URLS = "urls";
     private static final String AUTHORS_BASE_PATH = "authorsBasePath";
@@ -107,7 +107,7 @@ public class BlogImporterJob implements InterruptableJob {
         }
         if (blogBasePath != null) {
             importBlogs(jcrSession, projectNamespace, blogBasePath, urls, authorsBasePath, authors, maxDescriptionLength);
-        }else{
+        } else {
             log.warn("Import path variable not defined (base path for importing blogs): {}", BLOGS_BASE_PATH);
         }
 
@@ -158,13 +158,13 @@ public class BlogImporterJob implements InterruptableJob {
                     try {
 
                         final Node rootNode = session.getRootNode();
-                        if(rootNode.hasNode(authorsBasePath)) {
+                        if (rootNode.hasNode(authorsBasePath)) {
                             Node authorsNode = rootNode.getNode(authorsBasePath);
                             // check if author node exists otherwise create one:
-                            if(authorsNode.hasNode(author)){
+                            if (authorsNode.hasNode(author)) {
 
                                 authorNode = authorsNode.getNode(author);
-                            }else{
+                            } else {
                                 // create author node;
                                 log.info("Creating new Author document for name: {}", author);
                                 final Node documentNode = createHandle(prefixedNamespace, "author", authorsNode, author);
@@ -218,7 +218,7 @@ public class BlogImporterJob implements InterruptableJob {
                             createBlogDocument(projectNamespace, blogNode, authorNode, syndEntry, maxDescriptionLength);
                             BlogUpdater.handleSaved(blogNode, projectNamespace);
                             session.save();
-                        }else{
+                        } else {
                             log.info("Blogpost already exists for node: {}", blogNode.getPath());
                         }
                     } catch (RepositoryException rExp) {
@@ -236,7 +236,7 @@ public class BlogImporterJob implements InterruptableJob {
         Node blogFolder = getBlogFolder(baseNode, syndEntry);
         String documentName = NodeNameCodec.encode(syndEntry.getTitle().replace("?", ""), true);
         final boolean exist = blogFolder.hasNode(documentName);
-        if(exist){
+        if (exist) {
             log.info("Blog folder {} already has document with name: {}", blogFolder.getPath(), documentName);
         }
         return exist;

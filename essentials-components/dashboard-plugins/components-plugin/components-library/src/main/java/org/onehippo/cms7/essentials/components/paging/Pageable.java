@@ -218,13 +218,13 @@ public abstract class Pageable<T extends HippoBean> {
      */
     public long getEndPage() {
         final long startPage = getStartPage();
-        long total_pages = getTotalPages();
+        long totalPages = getTotalPages();
         // boundary check
-        if (pageNumber > total_pages) {
-            return total_pages;
+        if (pageNumber > totalPages) {
+            return totalPages;
         }
         long end = startPage + visiblePages - 1;
-        return end > total_pages ? total_pages : end;
+        return end > totalPages ? totalPages : end;
     }
 
     /**
@@ -303,7 +303,7 @@ public abstract class Pageable<T extends HippoBean> {
      */
     public void setTotal(int total) {
         if (total < 0) {
-            total = 0;
+            this.total = 0;
         }
         this.total = total;
     }
@@ -356,22 +356,23 @@ public abstract class Pageable<T extends HippoBean> {
      * @param fillIn selected page
      * @return page range for given page
      */
-    public List<Long> getPageRangeWithFill(long page, final int fillIn) {
+    public List<Long> getPageRangeWithFill(final long page, final int fillIn) {
         final List<Long> pages = new ArrayList<>();
         // do bound checking
-        if (page < 0) {
-            page = 1;
+        long myPage = page;
+        if (myPage < 0) {
+            myPage = 1;
         }
-        if (page > getTotalPages()) {
-            page = getTotalPages();
+        if (myPage > getTotalPages()) {
+            myPage = getTotalPages();
         }
         // fill in lower range: e.g. for 2 it will  be 1
-        long start = page - fillIn;
+        long start = myPage - fillIn;
         if (start <= 0) {
             start = 1;
         }
         // end part:
-        long end = page + fillIn + 1;
+        long end = myPage + fillIn + 1;
         if (end > getTotalPages()) {
             end = getTotalPages();
         }
