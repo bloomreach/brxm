@@ -492,7 +492,6 @@ dashboard-plugins/freemarker-synchronizer/src/main/java/org/onehippo/cms7/essent
 dashboard-plugins/freemarker-synchronizer/src/test/java/org/onehippo/cms7/essentials/tools/rest/FSUtilsTest.java -text
 dashboard-plugins/freemarker-synchronizer/src/test/resources/log4j.xml -text
 dashboard-plugins/pom.xml -text
-logs/hippo-setup.log -text
 plugin-api/api/pom.xml -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/annotations/HippoEssentialsGenerated.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/config/Document.java -text
@@ -2097,4 +2096,3 @@ pluginTestSkeleton/js/wizard-controller.js -text
 pluginTestSkeleton/js/wizard.js -text
 pluginTestSkeleton/readme.txt -text
 /pom.xml -text
-src/main/assembly/distribution.xml -text
