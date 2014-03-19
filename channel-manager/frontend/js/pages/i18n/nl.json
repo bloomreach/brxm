@@ -16,6 +16,6 @@
     "CANCEL": "Annuleer",
 
     "ITEM_NAME_NOT_UNIQUE": "Deze URL wordt al gebruikt",
-    "INVALID_PATH": "De URL is niet geldig",
+    "INVALID_NAME": "De URL is niet geldig",
     "ILLEGAL_CHARACTERS": "Deze karakters zijn niet toegestaan: {{ illegalCharacters }}"
 }
