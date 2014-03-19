@@ -52,7 +52,7 @@ public class DocumentViewExportTest extends RepositoryTestCase {
     
     @Test
     public void testDocumentViewExportDoesNotRecurseInVirtualLayers() throws Exception {
-        build(session, content);
+        build(content, session);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         session.exportDocumentView("/test", out, false, false);
     }

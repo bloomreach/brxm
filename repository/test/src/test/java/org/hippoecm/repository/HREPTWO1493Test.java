@@ -47,7 +47,7 @@ public class HREPTWO1493Test extends RepositoryTestCase {
     public void testParentOfProperty() throws RepositoryException {
         Property property;
         Node node;
-        build(session, content1);
+        build(content1, session);
         session.save();
 
         node = session.getRootNode().getNode("test").addNode("virtual", "hippo:facetselect");
@@ -67,7 +67,7 @@ public class HREPTWO1493Test extends RepositoryTestCase {
     public void testModifyVirtualProperty() throws RepositoryException {
         Property property;
         Node node;
-        build(session, content1);
+        build(content1, session);
         session.save();
 
         node = session.getRootNode().getNode("test").addNode("virtual", "hippo:facetselect");
@@ -98,7 +98,7 @@ public class HREPTWO1493Test extends RepositoryTestCase {
     public void testModifyPropertyAfterBrowsingVirtual() throws RepositoryException {
         Session session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         Node node;
-        build(session, content1);
+        build(content1, session);
         session.save();
         session.refresh(false);
 

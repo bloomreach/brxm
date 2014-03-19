@@ -232,7 +232,7 @@ public abstract class RepositoryTestCase {
      * that a subclass extended this method
      */
     @Deprecated
-    protected void build(Session session, String[] contents) throws RepositoryException {
+    protected void build(Session session,String[] contents) throws RepositoryException {
          build(contents, session);
     }
 

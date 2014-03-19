@@ -54,7 +54,7 @@ public class TranslationVirtualProviderTest extends RepositoryTestCase {
         session.getRootNode().addNode("test");
         session.save();
 
-        build(session, content);
+        build(content, session);
         session.save();
         session.refresh(false);
     }

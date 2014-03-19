@@ -87,9 +87,9 @@ public class SingledViewFacetSelectTest extends RepositoryTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        build(session, content1);
+        build(content1, session);
         session.save();
-        build(session, content2);
+        build(content2, session);
         session.save();
     }
 

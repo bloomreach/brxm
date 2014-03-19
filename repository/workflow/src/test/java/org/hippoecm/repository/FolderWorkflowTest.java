@@ -94,7 +94,7 @@ public class FolderWorkflowTest extends RepositoryTestCase {
         root = session.getRootNode().addNode("test");
         session.save();
 
-        build(session, content);
+        build(content, session);
         session.save();
         node = root.getNode("f");
         manager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();

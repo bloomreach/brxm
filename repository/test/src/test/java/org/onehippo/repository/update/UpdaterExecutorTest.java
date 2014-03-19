@@ -39,7 +39,7 @@ public class UpdaterExecutorTest extends RepositoryTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        build(session, content);
+        build(content, session);
         session.save();
     }
 
@@ -85,7 +85,7 @@ public class UpdaterExecutorTest extends RepositoryTestCase {
                 "hipposys:class", "org.onehippo.repository.update.UpdaterExecutorTest$TestUpdater",
                 "hipposys:path", "/test"
         };
-        build(session, content);
+        build(content, session);
         final Node updaterNode = session.getNode("/hippo:configuration/hippo:update/hippo:registry/pathtest");
         updaterNode.setProperty("hipposys:revert", revert);
         updaterNode.setProperty("hipposys:dryrun", dryRun);
@@ -111,7 +111,7 @@ public class UpdaterExecutorTest extends RepositoryTestCase {
                 "hipposys:class", "org.onehippo.repository.update.UpdaterExecutorTest$TestUpdater",
                 "hipposys:query", "/jcr:root/test//element(*, nt:unstructured)"
         };
-        build(session, content);
+        build(content, session);
         final Node updaterNode = session.getNode("/hippo:configuration/hippo:update/hippo:registry/querytest");
         updaterNode.setProperty("hipposys:revert", revert);
         updaterNode.setProperty("hipposys:dryrun", dryRun);

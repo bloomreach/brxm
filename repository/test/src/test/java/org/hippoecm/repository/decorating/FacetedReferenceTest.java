@@ -108,9 +108,9 @@ public class FacetedReferenceTest extends RepositoryTestCase {
             session.getRootNode().getNode("test").remove();
             session.save();
         }
-        build(session, content1);
+        build(content1, session);
         session.save();
-        build(session, content2);
+        build(content2, session);
         session.save();
     }
 

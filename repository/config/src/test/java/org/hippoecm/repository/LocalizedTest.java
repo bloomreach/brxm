@@ -111,7 +111,7 @@ public class LocalizedTest extends RepositoryTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        build(session, content);
+        build(content, session);
     }
 
     @Override

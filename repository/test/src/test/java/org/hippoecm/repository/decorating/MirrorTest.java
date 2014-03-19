@@ -116,9 +116,9 @@ public class MirrorTest extends RepositoryTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        build(session, contents1);
+        build(contents1, session);
         session.save();
-        build(session, contents2);;
+        build(contents2, session);;
         session.save();
     }
 

@@ -57,7 +57,7 @@ public class RepositoryMapTest extends RepositoryTestCase {
             session.getNode("/content").remove();
             session.save();
         }
-        build(session, content);
+        build(content, session);
         root = session.getNode("/content");
         session.save();
     }

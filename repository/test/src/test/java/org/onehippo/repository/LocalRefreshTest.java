@@ -48,7 +48,7 @@ public class LocalRefreshTest extends RepositoryTestCase {
                 "/test/foo", "nt:unstructured",
                 "/test/foo/bar", "nt:unstructured"
         };
-        build(session, contents);
+        build(contents, session);
         final Node test = session.getNode("/test");
         final Node foo = session.getNode("/test/foo");
         final Node mirror = test.addNode("mirror", "hippo:mirror");

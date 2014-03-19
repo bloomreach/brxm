@@ -69,7 +69,7 @@ public class FacetedSearchFreeTextTest extends RepositoryTestCase {
         if (session.getRootNode().hasNode("test")) {
             session.getRootNode().getNode("test").remove();
         }
-        build(session, content);
+        build(content, session);
         session.save();
     }
 

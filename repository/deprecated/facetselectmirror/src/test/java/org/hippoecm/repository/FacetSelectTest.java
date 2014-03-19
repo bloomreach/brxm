@@ -206,7 +206,7 @@ public class FacetSelectTest extends RepositoryTestCase {
             "/test/testf", "hippo:mirror",
             "hippo:docbase", "/test/docs/doc"
         };
-        build(session, data);
+        build(data, session);
         session.save();
         session.refresh(false);
         assertEquals("doc",traverse(session, "/test/test1/doc").getNodes().nextNode().getName());
@@ -261,7 +261,7 @@ public class FacetSelectTest extends RepositoryTestCase {
             "hippo:values", "xxx",
             "hippo:modes", "single",
         };
-        build(session, data);
+        build(data, session);
         session.save();
         session.refresh(false);
         
@@ -312,7 +312,7 @@ public class FacetSelectTest extends RepositoryTestCase {
 
     @Test
     public void testBasics() throws Exception {
-        build(session, content);
+        build(content, session);
         session.save();
         session.refresh(false);
         assertNotNull(traverse(session, "/test/mirror/doc/doc"));
@@ -320,7 +320,7 @@ public class FacetSelectTest extends RepositoryTestCase {
 
     @Test
     public void testSubtyped() throws Exception {
-        build(session, content);
+        build(content, session);
         session.save();
         session.refresh(false);
         assertNotNull(traverse(session, "/test/spiegel/doc/doc"));
@@ -328,7 +328,7 @@ public class FacetSelectTest extends RepositoryTestCase {
 
     @Test
     public void testNoRoot() throws Exception {
-        build(session, content);
+        build(content, session);
         session.save();
         session.refresh(false);
         Node mirror = traverse(session, "/test/notallowed");
@@ -347,11 +347,11 @@ public class FacetSelectTest extends RepositoryTestCase {
      */
     @Test
     public void testNotAllowedCombineDirect() throws Exception {
-        build(session, combineContent1);
+        build(combineContent1, session);
         session.save();
-        build(session, combineContent2);
+        build(combineContent2, session);
         session.save();
-        build(session, combineContentFilterPointsToFilter);
+        build(combineContentFilterPointsToFilter, session);
         session.save();
         session.refresh(true);
 
@@ -362,11 +362,11 @@ public class FacetSelectTest extends RepositoryTestCase {
 
     @Test
     public void testCombineIndirect() throws Exception {
-        build(session, combineContent1);
+        build(combineContent1, session);
         session.save();
-        build(session, combineContent2);
+        build(combineContent2, session);
         session.save();
-        build(session, combineContentFilterPointsToParentOfFilter);
+        build(combineContentFilterPointsToParentOfFilter, session);
         session.save();
         session.refresh(false);
         
@@ -413,7 +413,7 @@ public class FacetSelectTest extends RepositoryTestCase {
                 "hippo:modes", null,
                 "hippo:values", null
         };
-        build(session, content);
+        build(content, session);
         session.save();
         session.refresh(false);
 
@@ -465,7 +465,7 @@ public class FacetSelectTest extends RepositoryTestCase {
                 "hippo:modes", null,
                 "hippo:values", null
         };
-        build(session, content);
+        build(content, session);
         session.save();
         session.refresh(false);
 
@@ -500,7 +500,7 @@ public class FacetSelectTest extends RepositoryTestCase {
             "hippo:modes", null,
             "hippo:values", null
         };
-        build(session, content);
+        build(content, session);
         session.save();
         session.refresh(false);
 
@@ -531,7 +531,7 @@ public class FacetSelectTest extends RepositoryTestCase {
                 "hippo:values", null,
             "/test/folder", "nt:unstructured"
         };
-        build(session, content);
+        build(content, session);
         session.save();
         session.refresh(false);
 
@@ -563,7 +563,7 @@ public class FacetSelectTest extends RepositoryTestCase {
                 "hippo:values", "xxx",
                 "hippo:modes", "single",
         };
-        build(session, data);
+        build(data, session);
         Node document = session.getNode("/test/docs/doc/doc");
         document.setProperty("state", new String[] {});
         session.save();

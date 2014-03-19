@@ -145,7 +145,7 @@ public class WorkflowAuthorizationTest extends RepositoryTestCase {
 
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put("name", "myarticle");
-        build(session, mount("/test", instantiate(DOCUMENT_TEMPLATE, parameters)));
+        build(mount("/test", instantiate(DOCUMENT_TEMPLATE, parameters)), session);
     }
 
     protected static String[] instantiate(String[] content, Map<String, String> parameters) {
@@ -250,7 +250,7 @@ public class WorkflowAuthorizationTest extends RepositoryTestCase {
 
                     Map<String, String> parameters = new HashMap<String, String>();
                     parameters.put("name", name);
-                    build(session, mount("/test", instantiate(DOCUMENT_TEMPLATE, parameters)));
+                    build(mount("/test", instantiate(DOCUMENT_TEMPLATE, parameters)), session);
                     session.save();
 
                     Node node = getNode("test/" + name + "/" + name);

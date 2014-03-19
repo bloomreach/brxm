@@ -102,7 +102,7 @@ public class NodeIndexerTest extends RepositoryTestCase {
 
     @Test
     public void absentMultiValuedPropertyDoesNotMatchPropertyExistsClause() throws RepositoryException {
-        build(session, content);
+        build(content, session);
 
         session.save();
 
@@ -116,7 +116,7 @@ public class NodeIndexerTest extends RepositoryTestCase {
 
     @Test
     public void emptyMultiValuedPropertyMatchesPropertyExistsClause() throws RepositoryException {
-        build(session, content);
+        build(content, session);
         session.getNode("/test/doc/doc").setProperty("authtest", new String[]{});
 
         session.save();

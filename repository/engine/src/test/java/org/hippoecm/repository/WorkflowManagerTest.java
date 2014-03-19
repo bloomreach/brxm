@@ -61,7 +61,7 @@ public class WorkflowManagerTest extends RepositoryTestCase {
 
     @Before
     public void createWorkflowConfig() throws RepositoryException {
-        build(session, mount("/hippo:configuration/hippo:workflows", new String[] {
+        build(mount("/hippo:configuration/hippo:workflows", new String[] {
                 "/testworkflow", "hipposys:workflowcategory",
                     "/testworkflow/handle", "hipposys:workflow",
                         "hipposys:nodetype", "hippo:handle",
@@ -70,13 +70,13 @@ public class WorkflowManagerTest extends RepositoryTestCase {
                     "/testworkflow/doc", "hipposys:workflow",
                         "hipposys:nodetype", "hippo:testdocument",
                         "hipposys:classname", TestDocumentWorkflow.class.getName()
-        }));
+        }), session);
         session.getRootNode().addNode("test");
-        build(session, mount("/test", new String[]{
+        build(mount("/test", new String[]{
                 "/doc", "hippo:handle",
                     "jcr:mixinTypes", "mix:referenceable",
                     "/doc/doc", "hippo:testdocument",
-        }));
+        }), session);
         session.save();
     }
 

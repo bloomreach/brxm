@@ -75,7 +75,7 @@ public class TranslationWorkflowTest extends RepositoryTestCase {
         Node root = session.getRootNode();
         root.addNode("test");
 
-        build(session, content);
+        build(content, session);
 
         privileges = new HashMap<String, Value[]>();
         for (String category : new String[] { "translation", "embedded", "translation-copy", "translation-internal" }) {

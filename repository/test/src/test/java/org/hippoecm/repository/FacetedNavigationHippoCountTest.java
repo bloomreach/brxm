@@ -42,9 +42,9 @@ public class FacetedNavigationHippoCountTest extends RepositoryTestCase
 
     @Test
     public void testHippoCount() throws Exception {
-        build(session, contents1);
+        build(contents1, session);
         session.save();
-        build(session, contents2);
+        build(contents2, session);
         session.save();
         assertTrue(traverse(session, "/test/docsearch/byType/hippo:resultset").hasProperty("hippo:count"));
     }

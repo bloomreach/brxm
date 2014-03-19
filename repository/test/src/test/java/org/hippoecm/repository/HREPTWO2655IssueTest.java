@@ -60,8 +60,8 @@ public class HREPTWO2655IssueTest extends RepositoryTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        build(session, content1);
-        build(session, content3);
+        build(content1, session);
+        build(content3, session);
         session.save();
     }
 
@@ -90,7 +90,7 @@ public class HREPTWO2655IssueTest extends RepositoryTestCase {
         thread.start();
         Thread.sleep(100);
         
-        build(session, content2);
+        build(content2, session);
         session.save();
         //build(session, content3);
         session.save();

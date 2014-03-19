@@ -26,7 +26,6 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
@@ -101,7 +100,7 @@ public class WorkflowEventTest extends RepositoryTestCase {
         }
         root = session.getRootNode().addNode("test");
         session.save();
-        build(session, content);
+        build(content, session);
         session.save();
         manager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
         session.save();

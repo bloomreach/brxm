@@ -40,9 +40,9 @@ public class FacetedSelectVersioningTest extends RepositoryTestCase {
 
     @Test
     public void testIssue() throws Exception {
-        build(session, content1);
+        build(content1, session);
         session.save();
-        build(session, content2);
+        build(content2, session);
         session.save();
         traverse(session, "/test/doc/doc").checkin();
         session.save();

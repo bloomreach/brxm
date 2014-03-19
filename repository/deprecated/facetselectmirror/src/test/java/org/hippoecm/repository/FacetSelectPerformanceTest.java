@@ -43,7 +43,7 @@ public class FacetSelectPerformanceTest extends RepositoryTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        build(session, content);
+        build(content, session);
         String docbase = session.getRootNode().getNode("test").getNode("docs").getIdentifier();
         Node test = session.getRootNode().getNode("test");
         for (int i = 0; i < 5000; i++) {

@@ -71,9 +71,9 @@ public class HREPTWO548Test extends RepositoryTestCase {
     @Test
     public void testIssue() throws RepositoryException {
         Node result;
-        build(session, content1);
+        build(content1, session);
         session.save();
-        build(session, content2);
+        build(content2, session);
         session.save();
         session.refresh(false);
         //Utilities.dump(session.getRootNode());
@@ -98,7 +98,7 @@ public class HREPTWO548Test extends RepositoryTestCase {
         { // intermezzo: other session adds node
             Session session2 = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
             session2.getRootNode().getNode("test/docs");
-            build(session2, content3);
+            build(content3, session2);
             session2.save();
             session2.logout();
         }

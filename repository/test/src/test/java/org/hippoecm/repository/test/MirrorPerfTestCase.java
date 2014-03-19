@@ -43,7 +43,7 @@ public class MirrorPerfTestCase extends RepositoryTestCase {
             root.getNode("test").remove();
         }
         session.save();
-        build(session, content);
+        build(content, session);
         // for a proper test use at least the following settings:
         // build(session.getRootNode().getNode("test/root"), 3, 4, 5, 15);
         build(session.getRootNode().getNode("test/root"), 3, 1, 1, 1);

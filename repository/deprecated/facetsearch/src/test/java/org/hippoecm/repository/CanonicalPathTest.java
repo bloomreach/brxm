@@ -52,10 +52,10 @@ public class CanonicalPathTest extends RepositoryTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        build(session, content1);
+        build(content1, session);
         session.save();
         session.refresh(false);
-        build(session, content2);
+        build(content2, session);
         session.save();
         session.refresh(false);
     }

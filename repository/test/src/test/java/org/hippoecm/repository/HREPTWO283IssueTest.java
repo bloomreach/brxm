@@ -60,10 +60,10 @@ public class HREPTWO283IssueTest extends RepositoryTestCase {
     @Test
     public void testIssue() throws RepositoryException {
         Node result;
-        build(session, content1);
+        build(content1, session);
         session.save();
         session.refresh(false);
-        build(session, content2);
+        build(content2, session);
         session.save();
         session.refresh(false);
 
@@ -82,10 +82,10 @@ public class HREPTWO283IssueTest extends RepositoryTestCase {
 
     @Test
     public void testNoBadRemove() throws RepositoryException {
-        build(session, content1);
+        build(content1, session);
         session.save();
         session.refresh(false);
-        build(session, content2);
+        build(content2, session);
         session.save();
         session.refresh(false);
 

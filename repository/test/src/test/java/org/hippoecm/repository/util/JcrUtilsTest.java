@@ -19,9 +19,7 @@ import javax.jcr.Node;
 import javax.jcr.PropertyType;
 import javax.jcr.Value;
 
-import org.hippoecm.repository.api.HippoSession;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
@@ -36,7 +34,7 @@ public class JcrUtilsTest extends RepositoryTestCase {
                 "/test", "nt:unstructured",
                 "/test/node", "nt:unstructured"
         };
-        build(session, content);
+        build(content, session);
         final Node node = session.getNode("/test/node");
         JcrUtils.copy(session, "/test/node", "/test/node/foo");
     }
@@ -47,7 +45,7 @@ public class JcrUtilsTest extends RepositoryTestCase {
                 "/test", "nt:unstructured",
                 "/test/node", "nt:unstructured"
         };
-        build(session, content);
+        build(content, session);
         final Node node = session.getNode("/test/node");
         JcrUtils.copy(session, "/test/node", "/test/foo");
         assertTrue(session.nodeExists("/test/foo"));
@@ -59,7 +57,7 @@ public class JcrUtilsTest extends RepositoryTestCase {
                 "/test", "nt:unstructured",
                 "/test/node", "nt:unstructured"
         };
-        build(session, content);
+        build(content, session);
         final Node node = session.getNode("/test/node");
         JcrUtils.copy(session, "/test/node", "/test/node-foo");
         assertTrue(session.nodeExists("/test/node-foo"));
@@ -71,7 +69,7 @@ public class JcrUtilsTest extends RepositoryTestCase {
                 "/test", "nt:unstructured",
                 "/test/node", "nt:unstructured"
         };
-        build(session, content);
+        build(content, session);
         final Node node = session.getNode("/test/node");
         node.addMixin("hippotranslation:translated");
         node.setProperty("hippotranslation:locale", "nl");
@@ -91,7 +89,7 @@ public class JcrUtilsTest extends RepositoryTestCase {
                 "/test", "nt:unstructured",
                 "/test/node", "nt:unstructured"
         };
-        build(session, content);
+        build(content, session);
         final Node node = session.getNode("/test/node");
         node.addMixin("mix:referenceable");
         session.save();
@@ -104,10 +102,10 @@ public class JcrUtilsTest extends RepositoryTestCase {
 
     @Test
     public void testMultiValuedPropertyCopied() throws Exception {
-        build(session, new String[] {
+        build(new String[] {
                 "/test", "nt:unstructured",
                 "/test/node", "hippo:testrelaxed",
-        });
+        }, session);
         Node node = session.getNode("/test/node");
         node.setProperty("string", new Value[0], PropertyType.STRING);
         node.setProperty("double", new Value[0], PropertyType.DOUBLE);

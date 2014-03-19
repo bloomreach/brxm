@@ -48,7 +48,7 @@ public class PathsTest extends RepositoryTestCase {
 
     @Test
     public void testPathProperty() throws Exception {
-        build(session, new String[] {
+        build(new String[] {
                 "/test", "nt:unstructured",
                 "jcr:mixinTypes", "mix:referenceable",
                 "/test/sub", "nt:unstructured",
@@ -56,7 +56,7 @@ public class PathsTest extends RepositoryTestCase {
                 "/test/sub/node", "hippo:testdocument",
                 "jcr:mixinTypes", "mix:versionable",
 
-            });
+            }, session);
         session.save();
         session.refresh(false);
         Node node = session.getRootNode().getNode("test/sub/node");
@@ -76,7 +76,7 @@ public class PathsTest extends RepositoryTestCase {
 
     @Test
     public void testIssue() throws RepositoryException {
-        build(session, new String[] {
+        build(new String[] {
                 "/test", "nt:unstructured",
                 "/test/d", "nt:unstructured",
                 "jcr:mixinTypes", "mix:referenceable",
@@ -84,7 +84,7 @@ public class PathsTest extends RepositoryTestCase {
                 "jcr:mixinTypes", "mix:referenceable",
                 "/test/d/x", "hippo:document",
                 "jcr:mixinTypes", "mix:versionable"
-            });
+            }, session);
 
         Node source = session.getRootNode().getNode("test/d/x");
         Node target = session.getRootNode().getNode("test/f");

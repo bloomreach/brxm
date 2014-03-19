@@ -17,7 +17,6 @@ package org.hippoecm.repository;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
@@ -39,7 +38,7 @@ public class ChildAxisQueryTest extends RepositoryTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        build(session, content);
+        build(content, session);
         session.save();
     }
 

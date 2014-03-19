@@ -89,7 +89,7 @@ public class CndUpdateTest extends RepositoryTestCase {
     public void testMoveAggregate() throws Exception {
         createNamespace("testUpdateModel", "http://localhost/testUpdateModel/nt/1.0");
         updateModel("testUpdateModel", "cnd4");
-        build(session, new String[]{
+        build(new String[]{
                 "/test/doc", "hippo:handle",
                 "jcr:mixinTypes", "hippo:hardhandle",
                 "/test/doc/doc", "testUpdateModel:document",
@@ -103,7 +103,7 @@ public class CndUpdateTest extends RepositoryTestCase {
                 "hippo:modes", null,
                 "/test/doc/doc/testUpdateModel:link", "hippo:mirror",
                 "hippo:docbase", "cafebabe-cafe-babe-cafe-babecafebabe"
-        });
+        }, session);
         session.save();
         server.close();
         server = HippoRepositoryFactory.getHippoRepository();

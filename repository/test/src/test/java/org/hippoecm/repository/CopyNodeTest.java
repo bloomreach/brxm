@@ -81,10 +81,10 @@ public class CopyNodeTest extends RepositoryTestCase {
 
     @Test
     public void testMultiValuedPropertyCopied() throws Exception {
-        build(session, new String[] {
+        build(new String[] {
                 "/test", "nt:unstructured",
                 "/test/node", "hippo:testrelaxed",
-        });
+        }, session);
         session.save();
         session.refresh(false);
         Node node = session.getRootNode().getNode("test/node");

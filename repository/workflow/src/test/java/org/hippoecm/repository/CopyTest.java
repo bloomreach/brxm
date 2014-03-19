@@ -56,7 +56,7 @@ public class CopyTest extends RepositoryTestCase {
             root.refresh(false);
         }
         root.addNode("test");
-        build(session, content);
+        build(content, session);
         session.save();
 
         workflowManager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();

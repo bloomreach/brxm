@@ -79,7 +79,7 @@ public class FreeTextSearchTest extends RepositoryTestCase {
         }
 
         for (String[] content : contents) {
-            build(session, content);
+            build(content, session);
         }
 
         // extra set a binary property

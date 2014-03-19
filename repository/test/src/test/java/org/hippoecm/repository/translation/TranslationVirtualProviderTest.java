@@ -70,7 +70,7 @@ public class TranslationVirtualProviderTest extends RepositoryTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        build(session, content);
+        build(content, session);
 
         origDoc = session.getRootNode().getNode("test/docs/orig/orig");
         origDoc.addMixin(HippoTranslationNodeType.NT_TRANSLATED);

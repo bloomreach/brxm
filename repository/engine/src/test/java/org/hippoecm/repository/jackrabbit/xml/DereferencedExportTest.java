@@ -34,7 +34,7 @@ public class DereferencedExportTest extends RepositoryTestCase {
 
     @Test
     public void testSimpleDereferencedExport() throws Exception {
-        build(session, content);
+        build(content, session);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ((HippoSession) session).exportDereferencedView("/test", out, false, false);
         String actual = normalize(new String(out.toByteArray()));

@@ -86,7 +86,7 @@ public class TraversePerfTestCase extends RepositoryTestCase {
 
     @Test
     public void testLocal() throws Exception {
-        build(session, content);
+        build(content, session);
         session.save();
         long duration = test(session, 100);
         System.out.println("traversal " + Double.toString(duration / 100.0) + "ms");
