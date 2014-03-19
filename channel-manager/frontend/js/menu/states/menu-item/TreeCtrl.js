@@ -17,6 +17,11 @@
 (function () {
     "use strict";
 
+    function moveItemModel(sourceScope, sourceIndex, destScope, destIndex) {
+        var removedItem = destScope.sortableModelValue.splice(destIndex, 1)[0];
+        sourceScope.sortableModelValue.splice(sourceIndex, 0, removedItem);
+    }
+
     angular.module('hippo.channel.menu')
 
         .controller('hippo.channel.menu.TreeCtrl', [
@@ -56,18 +61,14 @@
                         // created an issue for the Tree component, to add a disabled state
                         // link: https://github.com/JimLiu/angular-ui-tree/issues/63
                         if (!FormValidationService.getValidity()) {
-                            // move the item back at it's original place in the DOM
-                            var removedItem = destScope.sortableModelValue.splice(destIndex, 1)[0];
-                            sourceScope.sortableModelValue.splice(sourceIndex, 0, removedItem);
+                            moveItemModel(sourceScope, sourceIndex, destScope, destIndex);
                         } else {
-                            var parentData = destScope.parentItemScope();
-                            var destId = (!parentData) ? ConfigService.menuId : parentData.itemData().id;
+                            var parentData = destScope.parentItemScope(),
+                                destId = (!parentData) ? ConfigService.menuId : parentData.itemData().id;
                             MenuService.moveMenuItem(modelData.id, destId, destIndex).then(onSuccess, function (errorResponse) {
                                 $scope.$parent.feedback = FeedbackService.getFeedback(errorResponse);
 
-                                // move the item back at it's original place in the DOM
-                                var removedItem = destScope.sortableModelValue.splice(destIndex, 1)[0];
-                                sourceScope.sortableModelValue.splice(sourceIndex, 0, removedItem);
+                                moveItemModel(sourceScope, sourceIndex, destScope, destIndex);
                             });
                         }
 
@@ -77,8 +78,7 @@
                     orderChanged: function (scope, modelData, sourceIndex, destIndex) {
                         if (!FormValidationService.getValidity()) {
                             // revert tree, move the item back at it's original place in the DOM
-                            var removedItem = scope.sortableModelValue.splice(destIndex, 1)[0];
-                            scope.sortableModelValue.splice(sourceIndex, 0, removedItem);
+                            moveItemModel(scope, sourceIndex, scope, destIndex);
                         } else {
                             var parentData = scope.parentItemScope();
                             var destId = (!parentData) ? ConfigService.menuId : parentData.itemData().id;
