@@ -78,23 +78,28 @@ public abstract class AbstractHelper {
     }
 
     protected void setLocalParameters(final Node node, final Map<String, String> modifiedLocalParameters) throws RepositoryException {
-        if (modifiedLocalParameters != null && !modifiedLocalParameters.isEmpty()) {
+        if (modifiedLocalParameters == null) {
+            return;
+        }
+        if (modifiedLocalParameters.isEmpty()) {
+            removeProperty(node, GENERAL_PROPERTY_PARAMETER_NAMES);
+            removeProperty(node, GENERAL_PROPERTY_PARAMETER_VALUES);
+        } else {
             final String[][] namesAndValues = mapToNameValueArrays(modifiedLocalParameters);
             node.setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, namesAndValues[0], PropertyType.STRING);
             node.setProperty(GENERAL_PROPERTY_PARAMETER_VALUES, namesAndValues[1], PropertyType.STRING);
-        } else if (modifiedLocalParameters != null && modifiedLocalParameters.isEmpty()) {
-            removeProperty(node, GENERAL_PROPERTY_PARAMETER_NAMES);
-            removeProperty(node, GENERAL_PROPERTY_PARAMETER_VALUES);
         }
-
     }
 
     protected void setRoles(final Node node, final Set<String> modifiedRoles) throws RepositoryException {
-        if (modifiedRoles != null && !modifiedRoles.isEmpty()) {
+        if (modifiedRoles == null) {
+            return;
+        }
+        if (modifiedRoles.isEmpty()) {
+            removeProperty(node, SITEMENUITEM_PROPERTY_ROLES);
+        } else {
             final String[] roles = Iterables.toArray(modifiedRoles, String.class);
             node.setProperty(SITEMENUITEM_PROPERTY_ROLES, roles, PropertyType.STRING);
-        } else if (modifiedRoles != null && modifiedRoles.isEmpty()) {
-            removeProperty(node, SITEMENUITEM_PROPERTY_ROLES);
         }
     }
 
