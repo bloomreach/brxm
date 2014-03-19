@@ -227,7 +227,16 @@ public abstract class RepositoryTestCase {
 
     }
 
+    /**
+     * @deprecated since 2.26.00 : use {@link #build(String[], javax.jcr.Session)} instead. Kept for now for the use case
+     * that a subclass extended this method
+     */
+    @Deprecated
     protected void build(Session session, String[] contents) throws RepositoryException {
+         build(contents, session);
+    }
+
+    public static void build(String[] contents, Session session) throws RepositoryException {
         Node node = null;
         for (int i = 0; i < contents.length; i += 2) {
             if (contents[i].startsWith("/")) {
@@ -307,7 +316,7 @@ public abstract class RepositoryTestCase {
         }
     }
 
-    protected static String[] mount(String path, String[] content) {
+    public static String[] mount(String path, String[] content) {
         String[] result = new String[content.length];
         for (int i = 0; i < content.length; i++) {
             String value = content[i];
@@ -320,7 +329,7 @@ public abstract class RepositoryTestCase {
         return result;
     }
 
-    protected static String[] instantiate(String[] content, Map<String, String> parameters) {
+    public static String[] instantiate(String[] content, Map<String, String> parameters) {
         String[] result = new String[content.length];
         for (int i = 0; i < content.length; i++) {
             String value = content[i];
