@@ -37,8 +37,10 @@ import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.AbstractMountResourceTest;
@@ -261,5 +263,22 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         return newFoo;
     }
 
+
+    protected Node addDefaultCatalogItem() throws RepositoryException {
+        Node defaultCatalog = session.getNode("/hst:hst/hst:configurations/hst:default/hst:catalog");
+        final Node catalogPackage = defaultCatalog.addNode("package", "hst:containeritempackage");
+        final Node catalogItem = catalogPackage.addNode("catalog-item", HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
+        catalogItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.Item");
+        return catalogItem;
+    }
+
+    protected ContainerComponentResource createContainerResource() {
+        final ContainerComponentResource containerComponentResource = new ContainerComponentResource();
+        containerComponentResource.setPageComposerContextService(mountResource.getPageComposerContextService());
+        ContainerHelper helper = new ContainerHelper();
+        helper.setPageComposerContextService(mountResource.getPageComposerContextService());
+        containerComponentResource.setContainerHelper(helper);
+        return containerComponentResource;
+    }
 
 }

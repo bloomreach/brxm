@@ -56,6 +56,10 @@ public interface HstNodeTypes {
     static final String MIXINTYPE_HST_EDITABLE = "hst:editable";
     static final String EDITABLE_PROPERTY_STATE = "hst:state";
 
+    static final String MIXINTYPE_HST_PROTOTYPE_META = "hst:prototypemeta";
+    static final String PROTOTYPE_META_PRIMARY_CONTAINER = "hst:primarycontainer";
+
+
     static final String GENERAL_PROPERTY_INHERITS_FROM = "hst:inheritsfrom";
     static final String GENERAL_PROPERTY_LOCKED_BY = "hst:lockedby";
     static final String GENERAL_PROPERTY_LOCKED_ON = "hst:lockedon";
@@ -209,4 +213,5 @@ public interface HstNodeTypes {
     static final String NODENAME_HST_CONTAINERS = "hst:containers";
 
     static final String RELPATH_HST_WORKSPACE_CONTAINERS = "hst:workspace/hst:containers";
+
 }

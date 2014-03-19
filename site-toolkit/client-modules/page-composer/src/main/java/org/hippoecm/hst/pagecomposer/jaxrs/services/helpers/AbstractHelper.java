@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_ROLES;
 
 public abstract class AbstractHelper {
@@ -256,6 +257,11 @@ public abstract class AbstractHelper {
         return lockedNodesForUsers;
     }
 
+    protected String getPreviewWorkspacePath() {
+        return pageComposerContextService.getEditingPreviewSite().getConfigurationPath() + "/" + NODENAME_HST_WORKSPACE;
+    }
+
+
     // to override for helpers that need to be able to publish/discard
     protected String buildXPathQueryLockedNodesForUsers(final String previewConfigurationPath,
                                                         final List<String> userIds) {
@@ -266,6 +272,10 @@ public abstract class AbstractHelper {
     protected void markDeleted(final Node deleted) throws RepositoryException {
         lockHelper.acquireLock(deleted, 0);
         deleted.setProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE, "deleted");
+        // and remove directly descendants
+        for (Node child : new NodeIterable(deleted.getNodes())) {
+            child.remove();
+        }
     }
 
     protected boolean isMarkedDeleted(final Node node) throws RepositoryException {

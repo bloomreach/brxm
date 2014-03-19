@@ -53,14 +53,17 @@ public class PagesHelper extends AbstractHelper {
     }
 
 
-    public Node create(final Node nodePageToCopy,
+    public Node create(final Node pageOrPrototype,
                        final String targetPageNodeName,
                        final HstComponentConfiguration pageConfigToCopy) throws RepositoryException {
         String previewWorkspacePagesPath = getPreviewWorkspacePagesPath();
 
         final Session session = pageComposerContextService.getRequestContext().getSession();
         final String validTargetPageNodeName = getValidTargetPageNodeName(previewWorkspacePagesPath, targetPageNodeName, session);
-        Node newPage = JcrUtils.copy(session, nodePageToCopy.getPath(), previewWorkspacePagesPath + "/" + validTargetPageNodeName);
+        Node newPage = JcrUtils.copy(session, pageOrPrototype.getPath(), previewWorkspacePagesPath + "/" + validTargetPageNodeName);
+        if (newPage.isNodeType(HstNodeTypes.MIXINTYPE_HST_PROTOTYPE_META)) {
+            newPage.removeMixin(HstNodeTypes.MIXINTYPE_HST_PROTOTYPE_META);
+        }
         if (pageConfigToCopy != null) {
             // copy has been done from a page, not from a prototype. We need to check whether there
             // are no hst:containercomponentreference used. If so, we need to denormalize them. For that, we need the
@@ -74,6 +77,125 @@ public class PagesHelper extends AbstractHelper {
 
         return newPage;
     }
+
+    public Node reapply(final Node newPrototypePage,
+                        final Node oldPage,
+                        final String targetPageNodeName) throws RepositoryException {
+
+        // check if not locked
+        lockHelper.acquireLock(oldPage, 0);
+        Node newPage = create(newPrototypePage, targetPageNodeName, null);
+
+        Node defaultContainer = findPrimaryContainer(newPage,
+                JcrUtils.getStringProperty(newPrototypePage, HstNodeTypes.PROTOTYPE_META_PRIMARY_CONTAINER, null));
+
+        if (defaultContainer == null) {
+            noContainerLeftInfoLog(newPrototypePage, oldPage);
+            deleteOrMarkDeletedIfLiveExists(oldPage);
+            return newPage;
+        }
+
+        String newPagePathPrefix = "/" + HstNodeTypes.NODENAME_HST_PAGES + "/" + newPage.getName() +"/";
+        String oldPagePathPrefix = "/" + HstNodeTypes.NODENAME_HST_PAGES + "/" + oldPage.getName() +"/";
+
+        List<Node> existingContainers = findContainers(oldPage);
+        Session session = oldPage.getSession();
+        List<Node> nonRelocatedContainers = new ArrayList<>();
+        for (Node existingContainer : existingContainers) {
+            String targetContainerPath = existingContainer.getPath().replace(oldPagePathPrefix, newPagePathPrefix);
+            if (session.nodeExists(targetContainerPath)) {
+                Node targetContainer = session.getNode(targetContainerPath);
+                moveContainerItems(existingContainer, targetContainer);
+            } else {
+                nonRelocatedContainers.add(existingContainer);
+            }
+        }
+
+        if (!nonRelocatedContainers.isEmpty()) {
+            log.info("Re-applying prototype results in moving container items that could not be" +
+                    " relocated to the same containers:");
+            for (Node container : nonRelocatedContainers) {
+                log.info("Moving container items from '{}' to '{}'", container.getPath(),
+                        defaultContainer.getPath());
+                moveContainerItems(container, defaultContainer);
+            }
+        }
+
+        deleteOrMarkDeletedIfLiveExists(oldPage);
+        return newPage;
+    }
+
+    private void moveContainerItems(final Node from, final Node to) throws RepositoryException {
+        Session session = from.getSession();
+        for (Node fromChild : new NodeIterable(from.getNodes())) {
+            String newName = fromChild.getName();
+            int counter = 0;
+            while(to.hasNode(newName)) {
+                newName = fromChild.getName() + ++counter;
+            }
+            session.move(fromChild.getPath(), to.getPath() + "/" + newName);
+        }
+    }
+
+    /**
+     * @return the container that is marked to be the primary one or if none marked or found for the primary,
+     * return the first container. If <code>newPage</code> does not contain any container, <code>null</code>
+     * is returned
+     */
+    private Node findPrimaryContainer(final Node page, final String primaryContainerRelPath) throws RepositoryException {
+        List<Node> pageContainers = findContainers(page);
+        if (pageContainers.isEmpty()) {
+            log.debug("No containers available on page '{}'", page.getPath());
+            return null;
+        }
+        if (primaryContainerRelPath == null) {
+            log.debug("No primary container configured on prototype. Return first container for page '{}' " +
+                    "as primary container.", page.getPath());
+            return pageContainers.get(0);
+        }
+        int pageNodePathPrefixLength = page.getPath().length() + 1;
+        for (Node pageContainer : pageContainers) {
+            String relContainerPath = pageContainer.getPath().substring(pageNodePathPrefixLength);
+            if (primaryContainerRelPath.equals(relContainerPath)) {
+                return pageContainer;
+            }
+        }
+        log.warn("Could not find primary container '{}' for page '{}'. Return first container instead.",
+                primaryContainerRelPath, page.getPath());
+        return pageContainers.get(0);
+    }
+
+    private List<Node> findContainers(final Node node) throws RepositoryException {
+        List<Node> existingContainers = new ArrayList<>();
+        findContainers(node, existingContainers);
+        return existingContainers;
+    }
+
+    private void findContainers(final Node node, List<Node> existingContainers) throws RepositoryException {
+        if (node.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT)) {
+            existingContainers.add(node);
+            return;
+        }
+        for (Node child : new NodeIterable(node.getNodes())) {
+            findContainers(child, existingContainers);
+        }
+    }
+
+
+    private void noContainerLeftInfoLog(final Node newPrototypePage, final Node oldPage) throws RepositoryException {
+        log.info("Re-applying prototype '{}' that does not have container components. Container items " +
+                "in the previous page definition will be deleted.", newPrototypePage.getPath());
+        if (log.isInfoEnabled()) {
+            List<Node> existingContainers = findContainers(oldPage);
+            for (Node existingContainer : existingContainers) {
+                for (Node containerItem : new NodeIterable(existingContainer.getNodes())) {
+                    log.info("Container item '{}' will be removed since the new prototype does not " +
+                            "have any containers.", containerItem.getPath());
+                }
+            }
+        }
+    }
+
 
     private void denormalizeContainerComponentReferences(final Node newPage,
                                                          final HstComponentConfiguration pageConfig) throws RepositoryException {
@@ -180,10 +302,6 @@ public class PagesHelper extends AbstractHelper {
         }
         // the targetNodeName does not yet exist in workspace pages. Confirm it does not exist non workspace pages
         return !session.nodeExists(previewPagesPath + "/" + testTargetNodeName);
-    }
-
-    protected String getPreviewWorkspacePath() {
-        return pageComposerContextService.getEditingPreviewSite().getConfigurationPath() + "/" + NODENAME_HST_WORKSPACE;
     }
 
     private String getPreviewWorkspacePagesPath() {

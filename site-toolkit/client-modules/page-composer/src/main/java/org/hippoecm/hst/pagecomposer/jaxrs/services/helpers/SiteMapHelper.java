@@ -64,31 +64,75 @@ public class SiteMapHelper extends AbstractHelper {
         return getSiteMapItem(editingPreviewSite.getSiteMap(), itemId);
     }
 
-    public void update(final SiteMapItemRepresentation siteMapItem) throws RepositoryException {
+    public void update(final SiteMapItemRepresentation siteMapItem, final boolean reApplyPrototype) throws RepositoryException {
         HstRequestContext requestContext = pageComposerContextService.getRequestContext();
         final Session session = requestContext.getSession();
         final String itemId = siteMapItem.getId();
-        Node jcrNode = session.getNodeByIdentifier(itemId);
+        Node siteMapItemNode = session.getNodeByIdentifier(itemId);
 
-        lockHelper.acquireLock(jcrNode, 0);
+        lockHelper.acquireLock(siteMapItemNode, 0);
 
         final String modifiedName = NodeNameCodec.encode(siteMapItem.getName());
-        if (modifiedName != null && !modifiedName.equals(jcrNode.getName())) {
+        if (modifiedName != null && !modifiedName.equals(siteMapItemNode.getName())) {
             // we do not need to check lock for parent as this is a rename within same parent
-            String oldLocation = jcrNode.getPath();
-            String target = jcrNode.getParent().getPath() + "/" + modifiedName;
+            String oldLocation = siteMapItemNode.getPath();
+            String target = siteMapItemNode.getParent().getPath() + "/" + modifiedName;
             validateTarget(session, target);
-            session.move(jcrNode.getPath(), jcrNode.getParent().getPath() + "/" + modifiedName);
+            session.move(siteMapItemNode.getPath(), siteMapItemNode.getParent().getPath() + "/" + modifiedName);
             createMarkedDeletedIfLiveExists(session, oldLocation);
         }
 
-        setSitemapItemProperties(siteMapItem, jcrNode);
+        if (reApplyPrototype) {
+            final Node newPrototypePage = session.getNodeByIdentifier(siteMapItem.getComponentConfigurationId());
+            final String targetPageNodeName = getSiteMapPathPrefixPart(siteMapItemNode) + "-" + newPrototypePage.getName();
+
+            // old comp id is not uuid but in general something like hst:pages/myPageNodeName
+            final String oldComponentId =
+                    JcrUtils.getStringProperty(siteMapItemNode, HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID, null);
+
+            final HstComponentConfiguration existingPageConfig;
+            if (oldComponentId == null) {
+                existingPageConfig = null;
+            } else {
+                existingPageConfig = pageComposerContextService.getEditingPreviewSite()
+                        .getComponentsConfiguration().getComponentConfiguration(oldComponentId);
+            }
+
+            Node updatedPage;
+            if (existingPageConfig == null) {
+                log.warn("Unexpected update with re-apply prototype of sitemap item '{}' because there is no" +
+                        " existing page in workspace for sitemap item. Instead of re-apply prototype, just create page" +
+                        " from prototype", siteMapItemNode.getPath());
+
+                updatedPage = pagesHelper.create(newPrototypePage, targetPageNodeName);
+            } else {
+                Node existingPage = session.getNodeByIdentifier(existingPageConfig.getCanonicalIdentifier());
+                if (existingPage.getPath().startsWith(getPreviewWorkspacePath())) {
+                    // Really re-apply a prototype now
+                    updatedPage = pagesHelper.reapply(newPrototypePage,existingPage, targetPageNodeName);
+                } else {
+                    log.warn("Unexpected update with re-apply prototype of sitemap item '{}' because existing page '{}'" +
+                            " is not stored in workspace. Instead of re-apply prototype, just create page" +
+                            " from prototype", siteMapItemNode.getPath(), existingPage.getPath());
+                    updatedPage = pagesHelper.create(newPrototypePage, targetPageNodeName);
+                }
+            }
+
+            if (updatedPage == null) {
+                throw new ClientException("Failed to re-apply prototype", ClientError.UNKNOWN);
+            }
+            siteMapItemNode.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID,
+                    HstNodeTypes.NODENAME_HST_PAGES + "/" + updatedPage.getName());
+
+        }
+
+        setSitemapItemProperties(siteMapItem, siteMapItemNode);
 
         final Map<String, String> modifiedLocalParameters = siteMapItem.getLocalParameters();
-        setLocalParameters(jcrNode, modifiedLocalParameters);
+        setLocalParameters(siteMapItemNode, modifiedLocalParameters);
 
         final Set<String> modifiedRoles = siteMapItem.getRoles();
-        setRoles(jcrNode, modifiedRoles);
+        setRoles(siteMapItemNode, modifiedRoles);
     }
 
 

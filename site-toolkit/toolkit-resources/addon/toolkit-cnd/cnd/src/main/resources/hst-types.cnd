@@ -29,6 +29,10 @@
 - hst:lastmodifiedby (string)
 - hst:state (string)
 
+[hst:prototypemeta] mixin
+// the relative path to primary container
+- hst:primarycontainer (string)
+
 [hst:template] > nt:base, mix:referenceable, hst:descriptive
 - hst:renderpath (string)
 - hst:isnamed (boolean)
@@ -42,6 +46,8 @@
 - hst:lastmodified (date)
 - hst:lastmodifiedby (string)
 + * (hst:template)
+
+
 
 [hst:abstractcomponent] > nt:base, mix:referenceable, hst:descriptive orderable 
 - hst:template (string)

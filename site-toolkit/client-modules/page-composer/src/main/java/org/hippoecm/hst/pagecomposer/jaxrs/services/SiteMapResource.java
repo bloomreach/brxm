@@ -119,22 +119,24 @@ public class SiteMapResource extends AbstractConfigResource {
 
         // if the update has a uuid for componenent id, we need to re-apply a prototype. In that case we also need to
         // validate the prototype page
+        boolean isCompIdUUID =false;
         if (siteMapItem.getComponentConfigurationId() != null) {
             try {
                 UUID.fromString(siteMapItem.getComponentConfigurationId());
-                // new page id (re-prototype)
-                preValidatorBuilder.add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPrototypePath(),
-                        siteMapItem.getComponentConfigurationId(), HstNodeTypes.NODETYPE_HST_ABSTRACT_COMPONENT));
+                // new page id: reapply prototype
+                preValidatorBuilder.add(validatorFactory.getPrototypePageValidator(siteMapItem.getComponentConfigurationId()));
+                isCompIdUUID = true;
             } catch (IllegalArgumentException e) {
                 // no problem: no new page id has been set
             }
         }
 
+        final boolean reapplyPrototype = isCompIdUUID;
         preValidatorBuilder.add(new NotNullValidator(siteMapItem.getName(), ClientError.ITEM_NO_NAME));
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                siteMapHelper.update(siteMapItem);
+                siteMapHelper.update(siteMapItem, reapplyPrototype);
                 return ok("Item updated successfully", siteMapItem.getId());
             }
         }, preValidatorBuilder.build());

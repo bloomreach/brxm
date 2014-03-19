@@ -49,6 +49,7 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
@@ -245,7 +246,6 @@ public class AbstractPageComposerTest {
         catalogItem.setProperty("hst:xtype", "HST.Item");
         return catalogItem.getIdentifier();
     }
-
 
 
 }

@@ -48,8 +48,6 @@ import static org.junit.Assert.fail;
  */
 public class CRUDPageAndModifyContainerTest extends AbstractSiteMapResourceTest {
 
-    private final LockHelper helper = new LockHelper();
-
     private void initContext() throws Exception {
         // call below will init request context
         getSiteMapItemRepresentation(session, "home");
@@ -59,6 +57,7 @@ public class CRUDPageAndModifyContainerTest extends AbstractSiteMapResourceTest 
     public void test_create_page_and_modify_container() throws Exception {
         // add catalog item first
         Node catalogItem = addDefaultCatalogItem();
+        session.save();
         initContext();
         final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
@@ -129,6 +128,7 @@ public class CRUDPageAndModifyContainerTest extends AbstractSiteMapResourceTest 
     public void test_create_page_and_modify_container_succeeds_incorrect_versionStamp_when_user_contains_lock_already() throws Exception {
         // add catalog item first
         Node catalogItem = addDefaultCatalogItem();
+        session.save();
         initContext();
         final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
@@ -154,6 +154,7 @@ public class CRUDPageAndModifyContainerTest extends AbstractSiteMapResourceTest 
     public void test_create_page_and_modify_container_fails_incorrect_versionStamp_when_user_no_lock_yet() throws Exception {
         // add catalog item first
         Node catalogItem = addDefaultCatalogItem();
+        session.save();
         initContext();
         final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
@@ -185,6 +186,7 @@ public class CRUDPageAndModifyContainerTest extends AbstractSiteMapResourceTest 
     public void test_after_create_page_other_users_cannot_modify_container() throws Exception {
         // add catalog item first
         Node catalogItem = addDefaultCatalogItem();
+        session.save();
         initContext();
         final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
@@ -214,22 +216,4 @@ public class CRUDPageAndModifyContainerTest extends AbstractSiteMapResourceTest 
         bob.logout();
     }
 
-
-    private Node addDefaultCatalogItem() throws RepositoryException {
-        Node defaultCatalog = session.getNode("/hst:hst/hst:configurations/hst:default/hst:catalog");
-        final Node catalogPackage = defaultCatalog.addNode("package", "hst:containeritempackage");
-        final Node catalogItem = catalogPackage.addNode("catalog-item", HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
-        catalogItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.Item");
-        session.save();
-        return catalogItem;
-    }
-
-    protected ContainerComponentResource createContainerResource() {
-        final ContainerComponentResource containerComponentResource = new ContainerComponentResource();
-        containerComponentResource.setPageComposerContextService(mountResource.getPageComposerContextService());
-        ContainerHelper helper = new ContainerHelper();
-        helper.setPageComposerContextService(mountResource.getPageComposerContextService());
-        containerComponentResource.setContainerHelper(helper);
-        return containerComponentResource;
-    }
 }

@@ -107,10 +107,34 @@ public class CreateTest extends AbstractSiteMapResourceTest {
     }
 
     @Test
+    public void test_create_with_prototype_meta() throws Exception {
+        final Node prototype = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:prototypepages/prototype-page");
+        prototype.addMixin(HstNodeTypes.MIXINTYPE_HST_PROTOTYPE_META);
+        prototype.setProperty(HstNodeTypes.PROTOTYPE_META_PRIMARY_CONTAINER, "path/to/contanier");
+        session.save();
+        Thread.sleep(200);
+        initContext();
+        final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getPrototypePageUUID());
+        final SiteMapResource siteMapResource = createResource();
+        final Response response = siteMapResource.create(newFoo);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        String newId = (String) ((ExtResponseRepresentation) response.getEntity()).getData();
+
+        final Node newSitemapItemNode = session.getNodeByIdentifier(newId);
+        assertEquals("foo", newSitemapItemNode.getName());
+
+        String newPageNodeName = "foo-" + session.getNodeByIdentifier(getPrototypePageUUID()).getName();
+        Node newPageNode = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/"+newPageNodeName);
+        assertFalse("Newly created page should not have 'hst:prototypemeta' mixin from prototype.",
+                newPageNode.isNodeType(HstNodeTypes.MIXINTYPE_HST_PROTOTYPE_META));
+    }
+
+    @Test
     public void test_create_succeeds_when_workspace_missing() throws Exception {
         session.removeItem("/hst:hst/hst:configurations/unittestproject/hst:workspace");
         session.removeItem("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace");
         session.save();
+        Thread.sleep(200);
         initContext();
         final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
@@ -124,6 +148,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         session.removeItem("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages");
         session.removeItem("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages");
         session.save();
+        Thread.sleep(200);
         initContext();
         final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
@@ -137,6 +162,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         session.removeItem("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap");
         session.removeItem("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap");
         session.save();
+        Thread.sleep(200);
         initContext();
         final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();

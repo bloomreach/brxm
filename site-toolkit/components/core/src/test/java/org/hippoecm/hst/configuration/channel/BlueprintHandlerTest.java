@@ -35,10 +35,10 @@ public class BlueprintHandlerTest extends RepositoryTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        build(session, new String[] {
+        RepositoryTestCase.build(new String[]{
                 "/test", "nt:unstructured",
-                    "/test/hst:blueprints", HstNodeTypes.NODENAME_HST_BLUEPRINTS
-        });
+                "/test/hst:blueprints", HstNodeTypes.NODENAME_HST_BLUEPRINTS
+        }, session);
 
         hstNodeLoadingCache = new HstNodeLoadingCache();
         hstNodeLoadingCache.setRepository(server.getRepository());
@@ -52,12 +52,12 @@ public class BlueprintHandlerTest extends RepositoryTestCase {
      */
     @Test
     public void getters() throws RepositoryException {
-        build(session, new String[] {
+        RepositoryTestCase.build(new String[]{
                 "/test/hst:blueprints/test", HstNodeTypes.NODETYPE_HST_BLUEPRINT,
-                    HstNodeTypes.BLUEPRINT_PROPERTY_NAME, "Test Blueprint",
-                    HstNodeTypes.BLUEPRINT_PROPERTY_DESCRIPTION, "Description of Test Blueprint",
-                    "/test/hst:blueprints/test/hst:configuration", HstNodeTypes.NODETYPE_HST_CONFIGURATION
-        });
+                HstNodeTypes.BLUEPRINT_PROPERTY_NAME, "Test Blueprint",
+                HstNodeTypes.BLUEPRINT_PROPERTY_DESCRIPTION, "Description of Test Blueprint",
+                "/test/hst:blueprints/test/hst:configuration", HstNodeTypes.NODETYPE_HST_CONFIGURATION
+        }, session);
         session.save();
 
         HstNode blueprintNode = hstNodeLoadingCache.getNode("/test/hst:blueprints/test");
@@ -75,14 +75,14 @@ public class BlueprintHandlerTest extends RepositoryTestCase {
     @Test
     public void createChannelWithFixedMountPoint() throws RepositoryException {
 
-        build(session, new String[] {
+        RepositoryTestCase.build(new String[]{
                 "/test/hst:blueprints/test", HstNodeTypes.NODETYPE_HST_BLUEPRINT,
-                    "/test/hst:blueprints/test/hst:configuration", HstNodeTypes.NODETYPE_HST_CONFIGURATION,
-                    "/test/hst:blueprints/test/hst:channel", HstNodeTypes.NODETYPE_HST_CHANNEL,
-                        "/test/hst:blueprints/test/hst:channel/hst:channelinfo", HstNodeTypes.NODETYPE_HST_CHANNELINFO,
-                    "/test/hst:blueprints/test/hst:mount", HstNodeTypes.NODETYPE_HST_MOUNT,
-                        "hst:mountpoint", "/hst:hst/hst:sites/blueprint-site"
-        });
+                "/test/hst:blueprints/test/hst:configuration", HstNodeTypes.NODETYPE_HST_CONFIGURATION,
+                "/test/hst:blueprints/test/hst:channel", HstNodeTypes.NODETYPE_HST_CHANNEL,
+                "/test/hst:blueprints/test/hst:channel/hst:channelinfo", HstNodeTypes.NODETYPE_HST_CHANNELINFO,
+                "/test/hst:blueprints/test/hst:mount", HstNodeTypes.NODETYPE_HST_MOUNT,
+                "hst:mountpoint", "/hst:hst/hst:sites/blueprint-site"
+        }, session);
         session.save();
 
         HstNode blueprintNode = hstNodeLoadingCache.getNode("/test/hst:blueprints/test");
