@@ -31,7 +31,7 @@
             '$translate',
             'hippo.channel.FeedbackService',
             'hippo.channel.ConfigService',
-            'hippo.channel.pages.PageService',
+            'hippo.channel.PageService',
             'hippo.channel.Container',
             function ($scope, $state, $translate, FeedbackService, ConfigService, PageService, ContainerService) {
                 // scope variables

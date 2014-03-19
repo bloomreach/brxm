@@ -22,7 +22,7 @@
             '$scope',
             'hippo.channel.FeedbackService',
             'hippo.channel.pages.PrototypeService',
-            'hippo.channel.pages.PageService',
+            'hippo.channel.PageService',
             'hippo.channel.Container',
             'lowercaseFilter',
             'alphanumericFilter',
@@ -53,7 +53,7 @@
                         componentConfigurationId: $scope.page.prototype.id
                     };
 
-                    PageService.savePage(pageModel).then(function (response) {
+                    PageService.createPage(pageModel).then(function (response) {
                         ContainerService.showPage(pageModel.name);
                     }, function (errorResponse) {
                         $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);

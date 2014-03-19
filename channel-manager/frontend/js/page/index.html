@@ -26,7 +26,7 @@
 
     <link rel="stylesheet" href="../components/hippo-theme/dist/css/main.min.css">
     <link rel="stylesheet" href="../shared/assets/css/shared.css">
-    <link rel="stylesheet" href="assets/css/pages.css">
+    <link rel="stylesheet" href="assets/css/page.css">
 
     <!--[if lte IE 8]>
     <script type="text/javascript" src="../components/es5-shim/es5-shim.min.js"></script>
@@ -34,7 +34,7 @@
 </head>
 
 <body>
-    <div data-ng-app="hippo.channel.pages" id="application" class="loading-icon l-stretch">
+    <div data-ng-app="hippo.channel.page" id="application" class="loading-icon l-stretch">
         <div class="l-stretch" ui-view></div>
     </div>
     
@@ -59,25 +59,18 @@
     <script src="../shared/services/ContainerService.js"></script>
     <script src="../shared/services/FeedbackService.js"></script>
     <script src="../shared/services/FormValidationService.js"></script>
-    <script src="../shared/services/PageService.js"></script>
-    <script src="../shared/filters/placeholder.js"></script>
-    <script src="../shared/filters/alphanumeric.js"></script>
     <script src="../shared/services/HstApiRequests.js"></script>
+    <script src="../shared/services/PageService.js"></script>
+    <script src="../shared/filters/alphanumeric.js"></script>
     <script src="../shared/directives/autofocus.js"></script>
     <script src="../shared/directives/illegalCharacters.js"></script>
     <script src="../shared/directives/tooltip.js"></script>
 
     <!-- App -->
-    <script src="pages-dependencies.js"></script>
-    <script src="pages-config.js"></script>
-    <script src="pages-run.js"></script>
+    <script src="page-dependencies.js"></script>
+    <script src="page-config.js"></script>
+    <script src="page-run.js"></script>
 
-    <script src="services/PrototypeService.js"></script>
-
-    <script src="filters/startWithSlash.js"></script>
-
-    <script src="states/overview-pages/OverviewPagesCtrl.js"></script>
-    <script src="states/add-page/AddPageCtrl.js"></script>
-    <script src="states/NavigationCtrl.js"></script>
+    <script src="states/settings/SettingsCtrl.js"></script>
 </body>
 </html>

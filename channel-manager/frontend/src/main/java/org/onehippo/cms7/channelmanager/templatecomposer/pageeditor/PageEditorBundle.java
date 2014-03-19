@@ -35,6 +35,8 @@ public final class PageEditorBundle {
 
     public static final String IFRAME_WINDOW = "IFrameWindow.js";
 
+    public static final String PAGE_SETTINGS_WINDOW = "PageSettingsWindow.js";
+
     public static final String PAGES_WINDOW = "PagesWindow.js";
 
     public static final String EDIT_MENU_WINDOW = "EditMenuWindow.js";

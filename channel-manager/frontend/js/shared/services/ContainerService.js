@@ -43,7 +43,7 @@
 
                             var closeEvent = $rootScope.$broadcast('container:close');
                             if (!closeEvent.defaultPrevented) {
-                                iframePanel.iframeToHost.publish('close-reply-ok');
+                                iframePanel.iframeToHost.publish('close-reply');
                             }
                         });
 
@@ -58,7 +58,7 @@
 
                 function performClose() {
                     var iFramePanel = IFrameService.getContainer();
-                    iFramePanel.iframeToHost.publish('close-reply-ok');
+                    iFramePanel.iframeToHost.publish('close-reply');
                 }
 
                 function showPage(path) {

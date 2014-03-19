@@ -30,6 +30,8 @@
      */
     Hippo.ChannelManager.TemplateComposer.IFrameWindow = Ext.extend(Ext.Window, {
 
+        performCloseHandshake: true,
+
         constructor: function(config) {
             var isClosing = false;
 
@@ -49,18 +51,20 @@
                 listeners: {
                     'afterrender': function(self) {
                         var messageBus = self.getIFramePanel().iframeToHost;
-                        messageBus.subscribe('close-reply-ok', function() {
+
+                        messageBus.subscribe('close-reply', function() {
                             isClosing = true;
                             self.close();
                             isClosing = false;
                         });
+
                         messageBus.subscribe('browseTo', function (pathInfo) {
                             Hippo.ChannelManager.TemplateComposer.Instance.browseTo({ renderPathInfo: pathInfo });
                             self.close();
                         });
                     },
                     'beforeclose': function(self) {
-                        if (!isClosing) {
+                        if (self.performCloseHandshake && !isClosing) {
                             self.getIFramePanel().hostToIFrame.publish('close-request');
                             return false;
                         }

@@ -87,6 +87,23 @@ module.exports = function (grunt) {
                 ]
             },
 
+            page: {
+                files: [
+                    {
+                        expand: true,
+                        dot: true,
+                        cwd: '<%= build.source %>/page',
+                        dest: '<%= build.target %>/page',
+                        src: [
+                            '**/*.html',
+                            '**/*.js',
+                            '**/assets/css/*',
+                            '**/i18n/*.json'
+                        ]
+                    }
+                ]
+            },
+
             pages: {
                 files: [
                     {
@@ -98,7 +115,6 @@ module.exports = function (grunt) {
                             '**/*.html',
                             '**/*.js',
                             '**/assets/css/*',
-                            '**/assets/images/*',
                             '**/i18n/*.json'
                         ]
                     }
@@ -143,6 +159,13 @@ module.exports = function (grunt) {
                 tasks: ['jshint', 'copy:menu']
             },
 
+            page: {
+                files: [
+                    '<%= build.source %>/page/**/*'
+                ],
+                tasks: ['jshint', 'copy:page']
+            },
+
             pages: {
                 files: [
                     '<%= build.source %>/pages/**/*'
@@ -170,6 +193,7 @@ module.exports = function (grunt) {
                 },
                 files: [
                     '<%= build.source %>/menu/**/*',
+                    '<%= build.source %>/page/**/*',
                     '<%= build.source %>/pages/**/*',
                     '<%= build.source %>/shared/**/*'
                 ]
@@ -195,12 +219,14 @@ module.exports = function (grunt) {
             app: [
                 '<%= build.source %>/shared/**/*.js',
                 '<%= build.source %>/menu/**/*.js',
+                '<%= build.source %>/page/**/*.js',
                 '<%= build.source %>/pages/**/*.js',
                 '!<%= build.source %>/**/*.spec.js'
             ],
             tests: [
                 '<%= build.source %>/shared/**/*.spec.js',
                 '<%= build.source %>/menu/**/*.spec.js',
+                '<%= build.source %>/page/**/*.spec.js',
                 '<%= build.source %>/pages/**/*.spec.js'
             ]
         },
@@ -230,6 +256,7 @@ module.exports = function (grunt) {
             'declutter',
             'clean:target',
             'copy:menu',
+            'copy:page',
             'copy:pages',
             'copy:shared',
             'copy:components'

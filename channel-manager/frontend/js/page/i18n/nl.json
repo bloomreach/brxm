@@ -1,0 +1,15 @@
+{
+    "SETTINGS": "Instellingen",
+
+    "PAGE_TITLE": "Paginatitel",
+    "PAGE_TITLE_REQUIRED": "De paginatitel kan niet leeg zijn",
+
+    "URL": "URL",
+    "URL_REQUIRED": "De URL kan niet leeg zijn",
+    "URL_ILLEGAL_CHARACTERS": "Deze karakters zijn niet toegestaan: {{ illegalCharacters }}",
+
+    "SAVE": "Sla op",
+    "CANCEL": "Annuleer",
+
+    "TECHNICAL_ERROR": "Er is een technische fout opgetreden"
+}

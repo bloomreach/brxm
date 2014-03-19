@@ -492,6 +492,17 @@
                     variantsComboBox,
                     '->',
                     {
+                        id: 'template-composer-toolbar-page-settings-button',
+                        text: this.initialConfig.resources['page-settings-button'],
+                        mode: 'show',
+                        listeners: {
+                            click: {
+                                fn: this.showPageSettings,
+                                scope: this
+                            }
+                        }
+                    },
+                    {
                         id: 'template-composer-toolbar-channel-properties-button',
                         text: this.initialConfig.resources['show-channel-properties-button'],
                         mode: 'show',
@@ -650,8 +661,9 @@
             }
 
             this.renderedVariant = pageContext.renderedVariant;
-            this.currentSitemapId = pageContext.ids.sitemapId;
             this.currentMountId = pageContext.ids.mountId;
+            this.currentSitemapId = pageContext.ids.sitemapId;
+            this.currentSitemapItemId = pageContext.ids.sitemapItemId;
 
             if (!this.pageContainer.previewMode) {
                 this.createEditToolbar();
@@ -1067,6 +1079,18 @@
                 userIsEditing: !this.pageContainer.previewMode
             });
             pagesWindow.show();
+        },
+
+        showPageSettings: function() {
+            var pageSettingsWindow = new Hippo.ChannelManager.TemplateComposer.PageSettingsWindow({
+                resources: this.resources,
+                composerRestMountUrl: this.composerRestMountUrl,
+                debug: this.debug,
+                locale: this.locale,
+                sitemapId: this.currentSitemapId,
+                sitemapItemId: this.currentSitemapItemId
+            });
+            pageSettingsWindow.show();
         },
 
         createPagesButton: function() {

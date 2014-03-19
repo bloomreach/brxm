@@ -17,9 +17,9 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.channel.pages')
+    angular.module('hippo.channel')
 
-        .service('hippo.channel.pages.PageService', [
+        .service('hippo.channel.PageService', [
             '$http',
             '$q',
             'hippo.channel.ConfigService',
@@ -48,6 +48,20 @@
                     return deferred.promise;
                 };
 
+                pageService.getCurrentPage = function () {
+                    var deferred = $q.defer();
+
+                    $http.get(pageServiceUrl('/' + ConfigService.sitemapId + './item/' + ConfigService.sitemapItemId))
+                        .success(function (response) {
+                            deferred.resolve(response.data);
+                        })
+                        .error(function (error) {
+                            deferred.reject(error);
+                        });
+
+                    return deferred.promise;
+                };
+
                 pageService.getHost = function () {
                     var deferred = $q.defer();
 
@@ -62,10 +76,24 @@
                     return deferred.promise;
                 };
 
-                pageService.savePage = function (page) {
+                pageService.createPage = function (page) {
                     var deferred = $q.defer();
 
                     $http.post(pageServiceUrl('/' + ConfigService.sitemapId + './create'), page)
+                        .success(function (response) {
+                            deferred.resolve(response);
+                        })
+                        .error(function (error) {
+                            deferred.reject(error);
+                        });
+
+                    return deferred.promise;
+                };
+
+                pageService.updatePage = function (page) {
+                    var deferred = $q.defer();
+
+                    $http.post(pageServiceUrl('/' + ConfigService.sitemapId + './update'), page)
                         .success(function (response) {
                             deferred.resolve(response);
                         })

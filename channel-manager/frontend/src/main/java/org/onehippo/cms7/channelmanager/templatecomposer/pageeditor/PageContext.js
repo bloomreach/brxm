@@ -36,7 +36,8 @@
                     pageUrl: oldContext.ids.pageUrl,
                     pageId: oldContext.ids.pageId,
                     mountId: oldContext.ids.mountId,
-                    sitemapId: oldContext.ids.sitemapId
+                    sitemapId: oldContext.ids.sitemapId,
+                    sitemapItemId: oldContext.ids.sitemapItemId
                 };
 
                 this.stores = {
@@ -50,7 +51,8 @@
                     pageUrl: null,
                     pageId: null,
                     mountId: null,
-                    sitemapId: null
+                    sitemapId: null,
+                    sitemapItemId: null
                 };
 
                 this.stores = {
@@ -183,13 +185,14 @@
                 var self = this;
 
                 function handleResponse(response) {
-                    var pageId, mountId, sitemapId, pageRequestVariantsHeader, futures;
+                    var pageId, mountId, sitemapId, sitemapItemId, pageRequestVariantsHeader, futures;
                     pageId = response.getResponseHeader('HST-Page-Id');
                     mountId = response.getResponseHeader('HST-Mount-Id');
                     sitemapId = response.getResponseHeader('HST-Sitemap-Id');
+                    sitemapItemId = response.getResponseHeader('HST-SitemapItem-Id');
 
-                    if (pageId === undefined || mountId === undefined || sitemapId === undefined) {
-                        onFail('No page, mount and/or sitemap information found');
+                    if (pageId === undefined || mountId === undefined || sitemapId === undefined || sitemapItemId === undefined) {
+                        onFail('No page, mount, sitemap, and/or sitemap item information found');
                         return;
                     }
 
@@ -199,6 +202,7 @@
                         self.previewMode = true;
                     }
                     self.ids.sitemapId = sitemapId;
+                    self.ids.sitemapItemId = sitemapItemId;
 
                     pageRequestVariantsHeader = response.getResponseHeader('HST-Page-Request-Variants');
                     if (Ext.isString(pageRequestVariantsHeader)) {

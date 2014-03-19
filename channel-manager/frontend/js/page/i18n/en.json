@@ -1,0 +1,15 @@
+{
+    "SETTINGS": "Settings",
+
+    "PAGE_TITLE": "Page title",
+    "PAGE_TITLE_REQUIRED": "The page title cannot be empty",
+
+    "URL": "URL",
+    "URL_REQUIRED": "The URL cannot be empty",
+    "URL_ILLEGAL_CHARACTERS": "These characters are not allowed: {{ illegalCharacters }}",
+
+    "SAVE": "Save",
+    "CANCEL": "Cancel",
+
+    "TECHNICAL_ERROR": "A technical error has occurred"
+}
