@@ -25,11 +25,11 @@
             'hippo.channel.Container',
             '_hippo.channel.IFrameService',
             function ($translate, $state, Config, Container, IFrame) {
-                // set language
-                $translate.uses(Config.locale);
-
                 // go to default state
                 $state.go('loader');
+
+                // set language
+                $translate.uses(Config.locale);
 
                 // close the app when the container is closed
                 Container.handleClose();
