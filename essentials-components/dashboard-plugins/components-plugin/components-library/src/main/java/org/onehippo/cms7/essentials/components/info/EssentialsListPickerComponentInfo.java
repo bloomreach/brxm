@@ -44,48 +44,52 @@ import org.hippoecm.hst.core.parameters.Parameter;
 public interface EssentialsListPickerComponentInfo extends EssentialsPageable {
 
 
+    String DEFAULT_PICKER_PATH = "/content/documents";
+    String HIPPO_DOCUMENT = "hippo:document";
+    String CMS_PICKERS_DOCUMENTS = "cms-pickers/documents";
+
     @Parameter(name = "document1", required = false, displayName = "Document item 1")
     @JcrPath(
-            pickerConfiguration = "cms-pickers/documents",
-            pickerSelectableNodeTypes = {"hippo:document"},
-            pickerInitialPath = "/content/documents"
+            pickerConfiguration = CMS_PICKERS_DOCUMENTS,
+            pickerSelectableNodeTypes = {HIPPO_DOCUMENT},
+            pickerInitialPath = DEFAULT_PICKER_PATH
     )
     String getDocumentItem1();
 
     @Parameter(name = "document2", required = false, displayName = "Document item 2")
-    @JcrPath(pickerConfiguration = "cms-pickers/documents", pickerSelectableNodeTypes = {"hippo:document"}, pickerInitialPath = "/content/documents")
+    @JcrPath(pickerConfiguration = CMS_PICKERS_DOCUMENTS, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerInitialPath = DEFAULT_PICKER_PATH)
     String getDocumentItem2();
 
     @Parameter(name = "document3", required = false, displayName = "Document item 3")
-    @JcrPath(pickerConfiguration = "cms-pickers/documents", pickerSelectableNodeTypes = {"hippo:document"}, pickerInitialPath = "/content/documents")
+    @JcrPath(pickerConfiguration = CMS_PICKERS_DOCUMENTS, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerInitialPath = DEFAULT_PICKER_PATH)
     String getDocumentItem3();
 
     @Parameter(name = "document4", required = false, displayName = "Document item 4")
-    @JcrPath(pickerConfiguration = "cms-pickers/documents", pickerSelectableNodeTypes = {"hippo:document"}, pickerInitialPath = "/content/documents")
+    @JcrPath(pickerConfiguration = CMS_PICKERS_DOCUMENTS, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerInitialPath = DEFAULT_PICKER_PATH)
     String getDocumentItem4();
 
     @Parameter(name = "document5", required = false, displayName = "Document item 5")
-    @JcrPath(pickerConfiguration = "cms-pickers/documents", pickerSelectableNodeTypes = {"hippo:document"}, pickerInitialPath = "/content/documents")
+    @JcrPath(pickerConfiguration = CMS_PICKERS_DOCUMENTS, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerInitialPath = DEFAULT_PICKER_PATH)
     String getDocumentItem5();
 
     @Parameter(name = "document6", required = false, displayName = "Document item 6")
-    @JcrPath(pickerConfiguration = "cms-pickers/documents", pickerSelectableNodeTypes = {"hippo:document"}, pickerInitialPath = "/content/documents")
+    @JcrPath(pickerConfiguration = CMS_PICKERS_DOCUMENTS, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerInitialPath = DEFAULT_PICKER_PATH)
     String getDocumentItem6();
 
     @Parameter(name = "document7", required = false, displayName = "Document item 7")
-    @JcrPath(pickerConfiguration = "cms-pickers/documents", pickerSelectableNodeTypes = {"hippo:document"}, pickerInitialPath = "/content/documents")
+    @JcrPath(pickerConfiguration = CMS_PICKERS_DOCUMENTS, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerInitialPath = DEFAULT_PICKER_PATH)
     String getDocumentItem7();
 
     @Parameter(name = "document8", required = false, displayName = "Document item 8")
-    @JcrPath(pickerConfiguration = "cms-pickers/documents", pickerSelectableNodeTypes = {"hippo:document"}, pickerInitialPath = "/content/documents")
+    @JcrPath(pickerConfiguration = CMS_PICKERS_DOCUMENTS, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerInitialPath = DEFAULT_PICKER_PATH)
     String getDocumentItem8();
 
     @Parameter(name = "document9", required = false, displayName = "Document item 9")
-    @JcrPath(pickerConfiguration = "cms-pickers/documents", pickerSelectableNodeTypes = {"hippo:document"}, pickerInitialPath = "/content/documents")
+    @JcrPath(pickerConfiguration = CMS_PICKERS_DOCUMENTS, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerInitialPath = DEFAULT_PICKER_PATH)
     String getDocumentItem9();
 
     @Parameter(name = "document10", required = false, displayName = "Document item 10")
-    @JcrPath(pickerConfiguration = "cms-pickers/documents", pickerSelectableNodeTypes = {"hippo:document"}, pickerInitialPath = "/content/documents")
+    @JcrPath(pickerConfiguration = CMS_PICKERS_DOCUMENTS, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerInitialPath = DEFAULT_PICKER_PATH)
     String getDocumentItem10();
 
 

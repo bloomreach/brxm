@@ -265,11 +265,11 @@ public abstract class Pageable<T extends HippoBean> {
     //================================
 
     public void setPageSize(int pageSize) {
-        this.pageSize = pageSize <= 0 ? 10 : pageSize;
+        this.pageSize = pageSize <= 0 ? DEFAULT_PAGE_SIZE : pageSize;
     }
 
     public final void processPageSize() {
-        pageSize = pageSize <= 0 ? 10 : pageSize;
+        pageSize = pageSize <= 0 ? DEFAULT_PAGE_SIZE : pageSize;
     }
 
     public final void processPageNumber() {

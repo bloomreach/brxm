@@ -128,38 +128,31 @@ public class BlogImporterJob implements InterruptableJob {
         return urlList.toArray(new String[urlList.size()]);
     }
 
-    private void importBlogs(Session session, String projectNamespace, String blogsBasePath, String[] blogUrls, String authorsBasePath, String[] authors, int maxDescriptionLength) {
+    private void importBlogs(Session session, String projectNamespace, final String blogsBasePath,
+                             final String[] blogUrls, final String authorsBasePath, final String[] authors, int maxDescriptionLength) {
+        String myBlogsBasePath = blogsBasePath;
+        String myAuthorsBasePath = authorsBasePath;
         try {
-            if (blogsBasePath.startsWith("/")) {
-                blogsBasePath = blogsBasePath.substring(1);
+            if (myBlogsBasePath.startsWith("/")) {
+                myBlogsBasePath = myBlogsBasePath.substring(1);
             }
-            if (!session.getRootNode().hasNode(blogsBasePath)) {
-                log.warn("Blog base path ({}) is missing, attempting to create it", blogsBasePath);
-                Node node = session.getRootNode();
-                for (String path : PATH_PATTERN.split(blogsBasePath)) {
-                    if (!node.hasNode(path)) {
-                        createBlogFolder(node, path);
-                        session.save();
-                    }
-                    node = node.getNode(path);
-                }
-            }
-            final Node blogNode = session.getRootNode().getNode(blogsBasePath);
+            createBasePath(session, myBlogsBasePath);
+            final Node blogNode = session.getRootNode().getNode(myBlogsBasePath);
 
             final String prefixedNamespace = projectNamespace + ':';
             final String fullNameProperty = prefixedNamespace + "fullname";
             for (int i = 0; i < blogUrls.length; i++) {
                 Node authorNode = null;
-                if (authorsBasePath != null && authors != null) {
-                    if (authorsBasePath.startsWith("/")) {
-                        authorsBasePath = authorsBasePath.substring(1);
+                if (myAuthorsBasePath != null && authors != null) {
+                    if (myAuthorsBasePath.startsWith("/")) {
+                        myAuthorsBasePath = myAuthorsBasePath.substring(1);
                     }
                     final String author = authors[i];
                     try {
 
                         final Node rootNode = session.getRootNode();
-                        if (rootNode.hasNode(authorsBasePath)) {
-                            Node authorsNode = rootNode.getNode(authorsBasePath);
+                        if (rootNode.hasNode(myAuthorsBasePath)) {
+                            Node authorsNode = rootNode.getNode(myAuthorsBasePath);
                             // check if author node exists otherwise create one:
                             if (authorsNode.hasNode(author)) {
 
@@ -196,6 +189,20 @@ public class BlogImporterJob implements InterruptableJob {
         } catch (RepositoryException rExp) {
             log.error("Error in getting base folder for blogs", rExp);
             cleanupSession(session);
+        }
+    }
+
+    private void createBasePath(final Session session, final String myBlogsBasePath) throws RepositoryException {
+        if (!session.getRootNode().hasNode(myBlogsBasePath)) {
+            log.warn("Blog base path ({}) is missing, attempting to create it", myBlogsBasePath);
+            Node node = session.getRootNode();
+            for (String path : PATH_PATTERN.split(myBlogsBasePath)) {
+                if (!node.hasNode(path)) {
+                    createBlogFolder(node, path);
+                    session.save();
+                }
+                node = node.getNode(path);
+            }
         }
     }
 
@@ -308,6 +315,7 @@ public class BlogImporterJob implements InterruptableJob {
         link.setProperty("hippo:docbase", target.getIdentifier());
     }
 
+    /*
     private void setEmptyLinkProperty(Node documentNode, String propertyName) throws RepositoryException {
         documentNode.addNode(propertyName, propertyName);
         documentNode.getNode(propertyName).setProperty("hippo:docbase", "cafebabe-cafe-babe-cafe-babecafebabe");
@@ -315,6 +323,7 @@ public class BlogImporterJob implements InterruptableJob {
         documentNode.getNode(propertyName).setProperty("hippo:modes", ArrayUtils.EMPTY_STRING_ARRAY);
         documentNode.getNode(propertyName).setProperty("hippo:values", ArrayUtils.EMPTY_STRING_ARRAY);
     }
+    */
 
     private String processContent(SyndEntry entry) {
         List<?> contents = entry.getContents();
