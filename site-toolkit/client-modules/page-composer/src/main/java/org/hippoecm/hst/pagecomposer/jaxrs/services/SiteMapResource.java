@@ -97,7 +97,8 @@ public class SiteMapResource extends AbstractConfigResource {
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
                         siteMapItem.getId(), HstNodeTypes.NODETYPE_HST_SITEMAPITEM))
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPath(), getPageComposerContextService().getRequestConfigIdentifier(),
-                        HstNodeTypes.NODETYPE_HST_SITEMAP));
+                        HstNodeTypes.NODETYPE_HST_SITEMAP))
+                .add(validatorFactory.getNameValidator(siteMapItem.getName()));
 
         // if the update has a uuid for componenent id, we need to re-apply a prototype. In that case we also need to
         // validate the prototype page
@@ -137,7 +138,8 @@ public class SiteMapResource extends AbstractConfigResource {
                 .add(validatorFactory.getNotNullValidator(siteMapItem.getName(), ClientError.ITEM_NO_NAME))
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPath(), getPageComposerContextService().getRequestConfigIdentifier(),
                         HstNodeTypes.NODETYPE_HST_SITEMAP))
-                .add(validatorFactory.getPrototypePageValidator(siteMapItem.getComponentConfigurationId()));
+                .add(validatorFactory.getPrototypePageValidator(siteMapItem.getComponentConfigurationId()))
+                .add(validatorFactory.getNameValidator(siteMapItem.getName()));
 
         if (parentId != null) {
             preValidators.add(validatorFactory.getCurrentPreviewConfigurationValidator(parentId, siteMapHelper));
@@ -167,7 +169,7 @@ public class SiteMapResource extends AbstractConfigResource {
                 .add(validatorFactory.getHasPreviewConfigurationValidator(getPageComposerContextService()))
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPath(), getPageComposerContextService().getRequestConfigIdentifier(),
                         HstNodeTypes.NODETYPE_HST_SITEMAP));
-                 preValidators.add(validatorFactory.getCurrentPreviewConfigurationValidator(siteMapItemId, siteMapHelper));
+        preValidators.add(validatorFactory.getCurrentPreviewConfigurationValidator(siteMapItemId, siteMapHelper));
 
         return tryExecute(new Callable<Response>() {
             @Override

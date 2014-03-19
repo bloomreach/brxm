@@ -49,7 +49,6 @@ public class SiteMenuItemLink {
             linkType = LinkType.NONE;
             pathInfo = null;
         }
-        // TODO (meggermont): what should happen if externalLink and siteMapItem are both not null?
     }
 
     public LinkType getLinkType() {

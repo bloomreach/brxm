@@ -21,9 +21,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
+import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.repository.api.NodeNameCodec;
 
 public class SiteMapItemRepresentation {
 
@@ -57,7 +58,7 @@ public class SiteMapItemRepresentation {
         if (!(item instanceof ConfigurationLockInfo)) {
             throw new IllegalArgumentException("Expected object of type ConfigurationLockInfo");
         }
-        name = item.getValue();
+        name = NodeNameCodec.decode(item.getValue());
         id = ((CanonicalInfo) item).getCanonicalIdentifier();
         pageTitle = item.getPageTitle();
         componentConfigurationId = item.getComponentConfigurationId();

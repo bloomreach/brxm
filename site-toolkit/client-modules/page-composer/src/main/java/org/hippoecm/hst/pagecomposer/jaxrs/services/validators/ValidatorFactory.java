@@ -64,4 +64,8 @@ public class ValidatorFactory {
     public Validator getHasPreviewConfigurationValidator(PageComposerContextService pageComposerContextService) {
         return new HasPreviewConfigurationValidator(pageComposerContextService);
     }
+
+    public Validator getNameValidator(String name) {
+        return new NameValidator(name);
+    }
 }

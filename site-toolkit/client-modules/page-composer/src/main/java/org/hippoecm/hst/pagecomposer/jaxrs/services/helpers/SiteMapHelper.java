@@ -37,6 +37,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.util.HstSiteMapUtils;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
@@ -71,7 +72,7 @@ public class SiteMapHelper extends AbstractHelper {
 
         lockHelper.acquireLock(jcrNode, 0);
 
-        final String modifiedName = siteMapItem.getName();
+        final String modifiedName = NodeNameCodec.encode(siteMapItem.getName());
         if (modifiedName != null && !modifiedName.equals(jcrNode.getName())) {
             // we do not need to check lock for parent as this is a rename within same parent
             String oldLocation = jcrNode.getPath();
@@ -97,9 +98,10 @@ public class SiteMapHelper extends AbstractHelper {
         final Session session = requestContext.getSession();
         Node parent = session.getNodeByIdentifier(parentId);
 
-        validateTarget(session, parent.getPath() + "/" + siteMapItem.getName());
+        final String encodedName = NodeNameCodec.encode(siteMapItem.getName());
+        validateTarget(session, parent.getPath() + "/" + encodedName);
 
-        final Node newSitemapNode = parent.addNode(siteMapItem.getName(), HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
+        final Node newSitemapNode = parent.addNode(encodedName, HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
         lockHelper.acquireLock(newSitemapNode, 0);
 
         setSitemapItemProperties(siteMapItem, newSitemapNode);
@@ -116,11 +118,11 @@ public class SiteMapHelper extends AbstractHelper {
             String absFolderPath = channelContentPath + "/" + "landingpages";
             try {
                 String createdDocumentPath = workflowMngr.createAndReturn(absFolderPath,
-                        "myhippoproject:newsdocument", siteMapItem.getName(),
+                        "myhippoproject:newsdocument", encodedName,
                         true);
                 log.info("Created document at '{}'", createdDocumentPath);
                 newSitemapNode.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH,
-                        "landingpages" + "/" + siteMapItem.getName());
+                        "landingpages" + "/" + encodedName);
             } catch (ObjectBeanPersistenceException e) {
                 log.warn("Could not create document", e);
                 throw new ClientException("Could not create document", ClientError.DOCUMENT_CREATION_FAILED);
@@ -145,13 +147,13 @@ public class SiteMapHelper extends AbstractHelper {
         Node toShallowCopy = session.getNodeByIdentifier(siteMapItemId);
         HstSiteMapItem hstSiteMapItem = getConfigObject(siteMapItemId);
         if (hstSiteMapItem == null) {
-            String message = String.format("Cannot duplicate because no siteMapItem '%s' for id '%s'.", siteMapItemId);
+            String message = String.format("Cannot duplicate because there is no siteMapItem for id '%s'.", siteMapItemId);
             throw new ClientException(message, ClientError.ITEM_CANNOT_BE_CLONED);
         }
         String pathInfo = HstSiteMapUtils.getPath(hstSiteMapItem);
         if (pathInfo.contains(HstNodeTypes.WILDCARD) || pathInfo.contains(HstNodeTypes.ANY)) {
             String message = String.format("Cannot duplicate a page from siteMapItem '%s' because it contains " +
-                    "wildcards and this is not supported.", ((CanonicalInfo)hstSiteMapItem).getCanonicalPath());
+                    "wildcards and this is not supported.", ((CanonicalInfo) hstSiteMapItem).getCanonicalPath());
             throw new ClientException(message, ClientError.ITEM_CANNOT_BE_CLONED);
         }
         String newSiteMapItemName = pathInfo.replace("/", "-");
@@ -276,8 +278,6 @@ public class SiteMapHelper extends AbstractHelper {
         setProperty(jcrNode, HstNodeTypes.SITEMAPITEM_PROPERTY_SCHEME, siteMapItem.getScheme());
         setProperty(jcrNode, HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, siteMapItem.getRelativeContentPath());
     }
-
-
 
 
     private void validateTarget(final Session session, final String target) throws RepositoryException {
