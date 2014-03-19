@@ -78,7 +78,7 @@ public enum ClientError {
 
     DOCUMENT_CREATION_FAILED,
 
-    INVALID_PATH,
+    INVALID_NAME,
 
     UNKNOWN
 

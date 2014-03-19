@@ -32,7 +32,7 @@ public class NameValidator implements Validator {
     @Override
     public void validate(final HstRequestContext requestContext) throws RuntimeException {
         if (decodedName.contains("/") || decodedName.contains(":")) {
-            throw new ClientException(decodedName + " is invalid", ClientError.INVALID_PATH);
+            throw new ClientException(decodedName + " is invalid", ClientError.INVALID_NAME);
         }
     }
 }
