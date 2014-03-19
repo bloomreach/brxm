@@ -22,6 +22,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
@@ -40,7 +41,7 @@ public class SiteMenuRepresentation {
         super();
     }
 
-    public SiteMenuRepresentation(HstSiteMenuConfiguration siteMenuConfiguration) throws IllegalArgumentException {
+    public SiteMenuRepresentation(HstSiteMenuConfiguration siteMenuConfiguration, Mount mount) throws IllegalArgumentException {
         if (!(siteMenuConfiguration instanceof CanonicalInfo)) {
             throw new IllegalArgumentException("Expected object of type CanonicalInfo");
         }
@@ -51,7 +52,7 @@ public class SiteMenuRepresentation {
         lastModifiedTimestamp = Calendar.getInstance().getTimeInMillis();
 
         for (HstSiteMenuItemConfiguration item : siteMenuConfiguration.getSiteMenuConfigurationItems()) {
-            children.add(new SiteMenuItemRepresentation(item));
+            children.add(new SiteMenuItemRepresentation(item, mount));
         }
     }
 

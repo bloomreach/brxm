@@ -25,6 +25,7 @@ import javax.jcr.Value;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
@@ -139,6 +140,7 @@ public abstract class AbstractMenuResourceTest extends AbstractPageComposerTest 
                                                                     final String relPathMenuItem) throws Exception {
 
         final HstSiteMenuConfiguration hstSiteMenuConfiguration = getHstSiteMenuConfiguration(requestSession, menuName);
+        final Mount mount = mountResource.getPageComposerContextService().getEditingMount();
         mountResource.getPageComposerContextService().getRequestContext().setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER,
                 ((CanonicalInfo) hstSiteMenuConfiguration).getCanonicalIdentifier());
         String[] segments = relPathMenuItem.split("/");
@@ -155,7 +157,7 @@ public abstract class AbstractMenuResourceTest extends AbstractPageComposerTest 
         }
         if (segments.length == 1) {
 
-            return new SiteMenuItemRepresentation(found);
+            return new SiteMenuItemRepresentation(found, mount);
         }
 
         for (int i = 1; i < segments.length; i++) {
@@ -176,7 +178,7 @@ public abstract class AbstractMenuResourceTest extends AbstractPageComposerTest 
         if (found == null) {
             return null;
         }
-        return new SiteMenuItemRepresentation(found);
+        return new SiteMenuItemRepresentation(found, mount);
     }
 
     private HstSiteMenuConfiguration getHstSiteMenuConfiguration(final Session requestSession, final String menuName) throws Exception {

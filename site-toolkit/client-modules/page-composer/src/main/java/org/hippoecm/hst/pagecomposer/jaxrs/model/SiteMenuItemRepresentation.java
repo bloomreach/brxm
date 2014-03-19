@@ -23,6 +23,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 import org.hippoecm.repository.api.NodeNameCodec;
@@ -36,7 +37,7 @@ public class SiteMenuItemRepresentation {
     private boolean repositoryBased;
     private Map<String, String> localParameters;
     private Set<String> roles;
-    private SiteMenuItemLink siteMenuItemLink = new SiteMenuItemLink(null, null);
+    private SiteMenuItemLink siteMenuItemLink = new SiteMenuItemLink(null, null, null);
 
     private List<SiteMenuItemRepresentation> children = new ArrayList<>();
 
@@ -44,7 +45,7 @@ public class SiteMenuItemRepresentation {
         super();
     }
 
-    public SiteMenuItemRepresentation(HstSiteMenuItemConfiguration item)
+    public SiteMenuItemRepresentation(HstSiteMenuItemConfiguration item, Mount mount)
             throws IllegalArgumentException {
         if (!(item instanceof CanonicalInfo)) {
             throw new IllegalArgumentException("Expected object of type CanonicalInfo");
@@ -56,9 +57,9 @@ public class SiteMenuItemRepresentation {
         localParameters = item.getLocalParameters();
         roles = item.getRoles();
         for (HstSiteMenuItemConfiguration childItem : item.getChildItemConfigurations()) {
-            children.add(new SiteMenuItemRepresentation(childItem));
+            children.add(new SiteMenuItemRepresentation(childItem, mount));
         }
-        this.siteMenuItemLink = new SiteMenuItemLink(item);
+        this.siteMenuItemLink = new SiteMenuItemLink(item, mount);
     }
 
     public String getId() {
@@ -116,7 +117,7 @@ public class SiteMenuItemRepresentation {
     }
 
     public void setLinkType(LinkType linkType) {
-        this.siteMenuItemLink = new SiteMenuItemLink(linkType, siteMenuItemLink.getLink());
+        this.siteMenuItemLink = new SiteMenuItemLink(linkType, siteMenuItemLink.getLink(), siteMenuItemLink.getPathInfo());
     }
 
     public String getLink() {
@@ -124,7 +125,15 @@ public class SiteMenuItemRepresentation {
     }
 
     public void setLink(String link) {
-        this.siteMenuItemLink = new SiteMenuItemLink(siteMenuItemLink.getLinkType(), link);
+        this.siteMenuItemLink = new SiteMenuItemLink(siteMenuItemLink.getLinkType(), link, siteMenuItemLink.getPathInfo());
+    }
+
+    public String getPathInfo() {
+        return siteMenuItemLink.getPathInfo();
+    }
+
+    public void setPathInfo(String pathInfo) {
+        this.siteMenuItemLink = new SiteMenuItemLink(siteMenuItemLink.getLinkType(), siteMenuItemLink.getLink(), pathInfo);
     }
 
 }

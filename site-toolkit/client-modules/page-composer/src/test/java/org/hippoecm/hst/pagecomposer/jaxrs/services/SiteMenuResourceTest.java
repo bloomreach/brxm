@@ -131,6 +131,7 @@ public class SiteMenuResourceTest {
         final List<HstSiteMenuItemConfiguration> children = Collections.emptyList();
         expect(menuConfig.getSiteMenuConfigurationItems()).andReturn(children);
         expect(session.hasPendingChanges()).andReturn(false);
+        expect(pageComposerContextService.getEditingMount()).andReturn(mount);
         replay(mocks);
 
         final Response response = siteMenuResource.getMenu();
@@ -146,6 +147,7 @@ public class SiteMenuResourceTest {
         mockGetPreviewSite();
         mockGetPreValidators();
         mockGetSiteMenu("menuId");
+        expect(pageComposerContextService.getEditingMount()).andReturn(mount);
         final String id = "uuid-of-menu-item";
         mockGetMenuItem(node, id);
         expect(session.hasPendingChanges()).andReturn(false);

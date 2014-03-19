@@ -16,30 +16,38 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
+import org.hippoecm.hst.util.HstSiteMapUtils;
 
 public class SiteMenuItemLink {
 
     private final LinkType linkType;
     private final String link;
+    private final String pathInfo;
 
-    public SiteMenuItemLink(final LinkType linkType, final String link) {
+    public SiteMenuItemLink(final LinkType linkType, final String link, String pathInfo) {
         this.linkType = linkType;
         this.link = link;
+        this.pathInfo = pathInfo;
     }
 
-    public SiteMenuItemLink(HstSiteMenuItemConfiguration item) {
+    public SiteMenuItemLink(HstSiteMenuItemConfiguration item, Mount mount) {
         final String externalLink = item.getExternalLink();
         final String siteMapItemPath = item.getSiteMapItemPath();
         if (externalLink != null && siteMapItemPath == null) {
             link = externalLink;
             linkType = LinkType.EXTERNAL;
+            pathInfo = link;
         } else if (siteMapItemPath != null && externalLink == null) {
+            final String path = HstSiteMapUtils.getPath(mount, siteMapItemPath);
             link = siteMapItemPath;
             linkType = LinkType.SITEMAPITEM;
+            pathInfo = path;
         } else {
             link = null;
             linkType = LinkType.NONE;
+            pathInfo = null;
         }
         // TODO (meggermont): what should happen if externalLink and siteMapItem are both not null?
     }
@@ -50,5 +58,9 @@ public class SiteMenuItemLink {
 
     public String getLink() {
         return link;
+    }
+
+    public String getPathInfo() {
+        return pathInfo;
     }
 }

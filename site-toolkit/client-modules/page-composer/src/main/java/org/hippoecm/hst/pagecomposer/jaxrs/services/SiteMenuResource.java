@@ -33,6 +33,7 @@ import javax.ws.rs.core.Response;
 import com.google.common.base.Predicate;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
@@ -79,7 +80,8 @@ public class SiteMenuResource extends AbstractConfigResource {
             @Override
             public Response call() throws Exception {
                 final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration();
-                final SiteMenuRepresentation representation = new SiteMenuRepresentation(menu);
+                final Mount mount = getPageComposerContextService().getEditingMount();
+                final SiteMenuRepresentation representation = new SiteMenuRepresentation(menu, mount);
                 return ok("Menu item loaded successfully", representation);
             }
         });
@@ -92,8 +94,9 @@ public class SiteMenuResource extends AbstractConfigResource {
             @Override
             public Response call() throws Exception {
                 final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration();
+                final Mount mount = getPageComposerContextService().getEditingMount();
                 final HstSiteMenuItemConfiguration menuItem = siteMenuHelper.getMenuItem(menu, menuItemId);
-                final SiteMenuItemRepresentation representation = new SiteMenuItemRepresentation(menuItem);
+                final SiteMenuItemRepresentation representation = new SiteMenuItemRepresentation(menuItem, mount);
                 return ok("Menu item loaded successfully", representation);
             }
         });
