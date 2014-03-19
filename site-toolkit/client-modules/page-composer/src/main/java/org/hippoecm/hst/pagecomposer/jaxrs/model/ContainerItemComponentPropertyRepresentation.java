@@ -229,11 +229,8 @@ public class ContainerItemComponentPropertyRepresentation {
 
         final ContainerItemComponentPropertyRepresentation that = (ContainerItemComponentPropertyRepresentation) o;
 
-        if (!name.equals(that.name)) {
-            return false;
-        }
+        return name.equals(that.name);
 
-        return true;
     }
 
     @Override

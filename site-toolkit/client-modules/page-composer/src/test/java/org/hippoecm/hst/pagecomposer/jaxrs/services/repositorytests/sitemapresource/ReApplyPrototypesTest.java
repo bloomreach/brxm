@@ -48,8 +48,6 @@ import static org.junit.Assert.fail;
 
 public class ReApplyPrototypesTest  extends AbstractSiteMapResourceTest {
 
-    private long versionStamp = 0;
-
     private class TestContext {
         Node catalogItem;
         String prototypeUUID;
@@ -110,6 +108,7 @@ public class ReApplyPrototypesTest  extends AbstractSiteMapResourceTest {
             assertEquals(HstComponentConfiguration.Type.CONTAINER_COMPONENT, container.getComponentType());
             // override the config identifier to now set the container from the prototype as REQUEST_CONFIG_NODE_IDENTIFIER
             ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, container.getCanonicalIdentifier());
+            final long versionStamp = 0;
             final Response addedItem = containerResource.createContainerItem(testContext.catalogItem.getIdentifier(),
                     versionStamp);
             assertEquals(Response.Status.OK.getStatusCode(), addedItem.getStatus());

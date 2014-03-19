@@ -38,8 +38,6 @@ public class CreateAndPublicationTest extends AbstractSiteMapResourceTest {
 
     private final LockHelper helper = new LockHelper();
 
-    private long versionStamp = 0;
-
     private void initContext() throws Exception {
         // call below will init request context
         getSiteMapItemRepresentation(session, "home");
@@ -71,6 +69,7 @@ public class CreateAndPublicationTest extends AbstractSiteMapResourceTest {
             Node newPageNodeByBob = bob.getNodeByIdentifier(newPageNode.getIdentifier());
             //  acquiring should fail now
             try {
+                final long versionStamp = 0;
                 helper.acquireLock(newPageNodeByBob, versionStamp);
             } catch (ClientException e) {
                 fail("Should not be locked");

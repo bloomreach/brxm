@@ -18,6 +18,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 public enum LinkType {
 
-    SITEMAPITEM, EXTERNAL, NONE;
+    SITEMAPITEM, EXTERNAL, NONE
 
 }

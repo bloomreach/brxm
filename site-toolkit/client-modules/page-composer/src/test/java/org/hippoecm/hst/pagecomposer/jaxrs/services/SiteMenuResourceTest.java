@@ -87,8 +87,8 @@ public class SiteMenuResourceTest {
     private MockSiteMenuConfiguration menuConfig;
     private MockSiteMenuItemConfiguration itemConfig;
     private PageComposerContextService pageComposerContextService;
-    private Node node, parentNode, childNode;
-    private NodeIterator nodeIterator;
+    private Node node;
+    private Node parentNode;
 
     @Before
     public void setUp() {
@@ -108,9 +108,9 @@ public class SiteMenuResourceTest {
         this.itemConfig = createNiceMock(MockSiteMenuItemConfiguration.class);
         this.node = createMock(Node.class);
         this.parentNode = createMock(Node.class);
-        this.childNode = createMock(Node.class);
+        final Node childNode = createMock(Node.class);
         this.pageComposerContextService = createMock(PageComposerContextService.class);
-        this.nodeIterator = createMock(NodeIterator.class);
+        final NodeIterator nodeIterator = createMock(NodeIterator.class);
         this.mocks = new Object[]{validator, validatorFactory, siteMenuHelper, siteMenuItemHelper, request, context, session, httpSession, virtualHost, virtualHosts, mount, site, menuConfig, itemConfig, node, parentNode, childNode, pageComposerContextService, nodeIterator};
 
         this.siteMenuResource = new SiteMenuResource();

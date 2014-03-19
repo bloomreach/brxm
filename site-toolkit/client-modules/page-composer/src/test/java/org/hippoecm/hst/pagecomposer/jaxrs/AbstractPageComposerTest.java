@@ -129,8 +129,7 @@ public class AbstractPageComposerTest {
     }
 
     protected Configuration getContainerConfiguration() {
-        PropertiesConfiguration propConf = new PropertiesConfiguration();
-        return propConf;
+        return new PropertiesConfiguration();
     }
 
     protected void setMountIdOnHttpSession(final MockHttpServletRequest request, final String mountId) {

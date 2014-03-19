@@ -41,7 +41,6 @@ import static org.junit.Assert.assertThat;
 public class PrototypePageValidatorTest {
 
     private HstRequestContext hstRequestContext;
-    private Session session;
     private Node node;
     private Object[] mocks;
     private NodeIterator nodeIterator;
@@ -54,7 +53,7 @@ public class PrototypePageValidatorTest {
 
         // mocks
         this.hstRequestContext = createNiceMock(HstRequestContext.class);
-        this.session = createNiceMock(Session.class);
+        final Session session = createNiceMock(Session.class);
         this.node = createNiceMock(Node.class);
         this.nodeIterator = createNiceMock(NodeIterator.class);
         this.mocks = new Object[]{hstRequestContext, session, node, nodeIterator};
