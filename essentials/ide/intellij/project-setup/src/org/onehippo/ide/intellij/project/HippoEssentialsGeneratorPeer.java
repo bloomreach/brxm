@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.onehippo.ide.intellij.gui.SettingsData;
 
+import com.google.common.base.Strings;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.util.projectWizard.SettingsStep;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -74,6 +75,12 @@ public class HippoEssentialsGeneratorPeer implements WebProjectGenerator.Generat
     @Override
     public void buildUI(@NotNull final SettingsStep settingsStep) {
         settingsStep.addSettingsField("Vendor", vendorName);
+        settingsStep.addSettingsField("Plugin id", pluginName);
+        settingsStep.addSettingsField("Group id", groupId);
+        settingsStep.addSettingsField("Artifact id", artifactId);
+        settingsStep.addSettingsField("Version", version);
+        settingsStep.addSettingsField("Create REST skeleton", createRESTClassCheckBox);
+        settingsStep.addSettingsField("REST package", packageName);
     }
 
     @NotNull
@@ -85,7 +92,25 @@ public class HippoEssentialsGeneratorPeer implements WebProjectGenerator.Generat
     @Nullable
     @Override
     public ValidationInfo validate() {
+        if(createRESTClassCheckBox.isSelected() && Strings.isNullOrEmpty(packageName.getText())) {
+            return new ValidationInfo("Rest package name not provided");
+        }
+
+        if(isEmpty(version)
+                || isEmpty(artifactId)
+                || isEmpty(groupId)
+                || isEmpty(vendorName)
+                )
+        {
+            return new ValidationInfo("All fields needs to be filled in");
+        }
+
+
         return null;
+    }
+
+    private boolean isEmpty(final JTextField field) {
+        return Strings.isNullOrEmpty(field.getText());
     }
 
     @Override

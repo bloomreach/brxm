@@ -22,6 +22,7 @@ import javax.swing.ImageIcon;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.onehippo.ide.intellij.gui.SettingsData;
 
 import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.ide.util.projectWizard.WebProjectTemplate;
@@ -52,6 +53,7 @@ public class HippoEmptyProject extends WebProjectTemplate {
     }
 
 
+
     @Nls
     @NotNull
     @Override
@@ -71,8 +73,16 @@ public class HippoEmptyProject extends WebProjectTemplate {
         return 390;
     }
 
+    @SuppressWarnings("InstanceofInterfaces")
     @Override
-    public void generateProject(@NotNull final Project project, @NotNull final VirtualFile virtualFile, @NotNull final Object o, @NotNull final Module module) {
+    public void generateProject(@NotNull final Project project, @NotNull final VirtualFile virtualFile, @NotNull final Object settings, @NotNull final Module module) {
+
+        if (!(settings instanceof SettingsData)) {
+            return;
+        }
+
+
+
 
     }
 
