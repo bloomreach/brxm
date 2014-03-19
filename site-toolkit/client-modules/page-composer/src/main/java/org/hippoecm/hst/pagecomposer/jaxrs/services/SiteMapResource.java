@@ -32,6 +32,7 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPagesRepresentation;
@@ -84,6 +85,26 @@ public class SiteMapResource extends AbstractConfigResource {
                 final SiteMapPagesRepresentation pages = new SiteMapPagesRepresentation().represent(sitemap,
                         mount, site.getComponentsConfiguration());
                 return ok("Sitemap loaded successfully", pages);
+            }
+        });
+    }
+
+    @GET
+    @Path("/item/{siteMapItemUuid}")
+    public Response getSiteMapItem(@PathParam("siteMapItemUuid") final String siteMapItemUuid) {
+        return tryGet(new Callable<Response>() {
+            @Override
+            public Response call() throws Exception {
+                final HstSiteMap siteMap = getPageComposerContextService().getEditingPreviewSite().getSiteMap();
+                final Mount mount = getPageComposerContextService().getEditingMount();
+                final HstSite site = getPageComposerContextService().getEditingPreviewSite();
+
+                final HstSiteMapItem siteMapItem = siteMapHelper.getConfigObject(siteMapItemUuid);
+
+                final String previewConfigPath = getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
+                final SiteMapItemRepresentation siteMapItemRepresentation = new SiteMapItemRepresentation().representShallow(siteMapItem, previewConfigPath);
+
+                return ok("Sitemap item loaded successfully", siteMapItemRepresentation);
             }
         });
     }

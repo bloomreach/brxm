@@ -50,7 +50,7 @@ public class SiteMapItemRepresentation {
 
     private List<SiteMapItemRepresentation> children = new ArrayList<>();
 
-    public SiteMapItemRepresentation represent(HstSiteMapItem item, String previewConfigurationPath)
+    public SiteMapItemRepresentation representShallow(HstSiteMapItem item, String previewConfigurationPath)
             throws IllegalArgumentException {
         if (!(item instanceof CanonicalInfo)) {
             throw new IllegalArgumentException("Expected object of type CanonicalInfo");
@@ -79,6 +79,13 @@ public class SiteMapItemRepresentation {
         isExplicitElement = !(wildCard || any || containsWildCard || containsAny);
         localParameters = item.getLocalParameters();
         roles = item.getRoles();
+
+        return this;
+    }
+
+    public SiteMapItemRepresentation represent(HstSiteMapItem item, String previewConfigurationPath) {
+        representShallow(item, previewConfigurationPath);
+
         for (HstSiteMapItem childItem : item.getChildren()) {
             SiteMapItemRepresentation child = new SiteMapItemRepresentation();
             child.represent(childItem, previewConfigurationPath);
