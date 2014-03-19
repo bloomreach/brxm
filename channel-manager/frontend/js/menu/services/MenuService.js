@@ -112,22 +112,20 @@
                         var head = writeQueue.shift();
                         head.deferred.resolve(response);
 
-                        complete();
+                        if (writeQueue.length === 0) {
+                            menuLoader = null;
+                        } else {
+                            scheduleNext();
+                        }
                     }
 
                     function onError(response) {
                         var head = writeQueue.shift();
                         head.deferred.reject(response);
 
-                        complete();
-                    }
-
-                    function complete() {
-                        if (writeQueue.length === 0) {
-                            menuLoader = null;
-                            loadMenu();
-                        } else {
-                            scheduleNext();
+                        while (writeQueue.length > 0) {
+                            var entry = writeQueue.shift();
+                            entry.deferred.reject();
                         }
                     }
 

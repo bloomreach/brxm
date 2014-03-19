@@ -51,20 +51,32 @@
                         );
                     },
                     itemMoved: function (sourceScope, modelData, sourceIndex, destScope, destIndex) {
-                        var parentData = destScope.parentItemScope();
-                        var destId = (!parentData) ? ConfigService.menuId : parentData.itemData().id;
-                        MenuService.moveMenuItem(modelData.id, destId, destIndex).then(onSuccess, onError);
+                        // created an issue for the Tree component, to add a disabled state
+                        // link: https://github.com/JimLiu/angular-ui-tree/issues/63
+                        if (!FormValidationService.getValidity()) {
+                            // revert tree
+                            // move the item back at it's original place in the DOM
+                            var removedItem = destScope.sortableModelValue.splice(destIndex, 1)[0];
+                            sourceScope.sortableModelValue.splice(sourceIndex, 0, removedItem);
+                        } else {
+                            var parentData = destScope.parentItemScope();
+                            var destId = (!parentData) ? ConfigService.menuId : parentData.itemData().id;
+                            MenuService.moveMenuItem(modelData.id, destId, destIndex).then(onSuccess, onError);
+                        }
 
                         // prevent move action when the edit menu item form is invalid
                         MenuService.saveMenuItem($scope.$parent.selectedMenuItem);
                     },
                     orderChanged: function (scope, modelData, sourceIndex, destIndex) {
-                        var parentData = scope.parentItemScope();
-                        var destId = (!parentData) ? ConfigService.menuId : parentData.itemData().id;
-                        MenuService.moveMenuItem(modelData.id, destId, destIndex).then(onSuccess, onError);
-
-                        // prevent order change when the edit menu item form is invalid
-                        MenuService.saveMenuItem($scope.$parent.selectedMenuItem);
+                        if (!FormValidationService.getValidity()) {
+                            // revert tree, move the item back at it's original place in the DOM
+                            var removedItem = scope.sortableModelValue.splice(destIndex, 1)[0];
+                            scope.sortableModelValue.splice(sourceIndex, 0, removedItem);
+                        } else {
+                            var parentData = scope.parentItemScope();
+                            var destId = (!parentData) ? ConfigService.menuId : parentData.itemData().id;
+                            MenuService.moveMenuItem(modelData.id, destId, destIndex).then(onSuccess, onError);
+                        }
                     }
                 };
             }
