@@ -16,7 +16,7 @@
 (function() {
     "use strict";
 
-    angular.module('hippo.channel.page')
+    angular.module('hippo.channel.pages')
 
         .run([
             '$translate',

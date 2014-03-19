@@ -26,7 +26,7 @@
 
     <link rel="stylesheet" href="../components/hippo-theme/dist/css/main.min.css">
     <link rel="stylesheet" href="../shared/assets/css/shared.css">
-    <link rel="stylesheet" href="assets/css/page.css">
+    <link rel="stylesheet" href="assets/css/pages.css">
 
     <!--[if lte IE 8]>
     <script type="text/javascript" src="../components/es5-shim/es5-shim.min.js"></script>
@@ -34,7 +34,7 @@
 </head>
 
 <body>
-    <div data-ng-app="hippo.channel.page" id="application" class="loading-icon l-stretch">
+    <div data-ng-app="hippo.channel.pages" id="application" class="loading-icon l-stretch">
         <div class="l-stretch" ui-view></div>
     </div>
     
@@ -67,9 +67,9 @@
     <script src="../shared/directives/tooltip.js"></script>
 
     <!-- App -->
-    <script src="page-dependencies.js"></script>
-    <script src="page-config.js"></script>
-    <script src="page-run.js"></script>
+    <script src="pages-dependencies.js"></script>
+    <script src="pages-config.js"></script>
+    <script src="pages-run.js"></script>
 
     <script src="services/PageService.js"></script>
     <script src="services/PrototypeService.js"></script>

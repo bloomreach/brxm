@@ -17,9 +17,9 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.channel.page')
+    angular.module('hippo.channel.pages')
 
-        .service('hippo.channel.page.PrototypeService', [
+        .service('hippo.channel.pages.PrototypeService', [
             'hippo.channel.ConfigService',
             '$http',
             '$q',

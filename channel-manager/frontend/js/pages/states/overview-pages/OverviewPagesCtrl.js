@@ -23,15 +23,15 @@
         return str;
     }
 
-    angular.module('hippo.channel.page')
+    angular.module('hippo.channel.pages')
 
-        .controller('hippo.channel.page.OverviewPagesCtrl', [
+        .controller('hippo.channel.pages.OverviewPagesCtrl', [
             '$scope',
             '$state',
             '$translate',
             'hippo.channel.FeedbackService',
             'hippo.channel.ConfigService',
-            'hippo.channel.page.PageService',
+            'hippo.channel.pages.PageService',
             'hippo.channel.Container',
             function ($scope, $state, $translate, FeedbackService, ConfigService, PageService, ContainerService) {
                 // scope variables

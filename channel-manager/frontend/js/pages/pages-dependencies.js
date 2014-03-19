@@ -13,24 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function () {
-    'use strict';
+(function() {
+    "use strict";
 
-    /**
-     * @ngdoc filter
-     * @name hippo.channel.page.filter:startWithSlash
-     *
-     * @description
-     * Returns the input with an initial slash if it does not start with a slash already
-     */
-    angular.module('hippo.channel.page')
-        .filter('startWithSlash', function () {
-            return function (value) {
-                if (value === '' || value.charAt(0) !== '/') {
-                    return '/' + value;
-                } else {
-                    return value;
-                }
-            };
-        });
-})();
+    angular.module('hippo.channel.pages', [
+        'hippo.channel',
+        'hippo.theme',
+        'ngRoute',
+        'pascalprecht.translate',
+        'ui.router',
+        'ui.nestedSortable'
+    ]);
+
+}());

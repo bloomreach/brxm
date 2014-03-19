@@ -16,13 +16,13 @@
 (function () {
     'use strict';
 
-    angular.module('hippo.channel.page')
+    angular.module('hippo.channel.pages')
 
-        .controller('hippo.channel.page.AddPageCtrl', [
+        .controller('hippo.channel.pages.AddPageCtrl', [
             '$scope',
             'hippo.channel.FeedbackService',
-            'hippo.channel.page.PrototypeService',
-            'hippo.channel.page.PageService',
+            'hippo.channel.pages.PrototypeService',
+            'hippo.channel.pages.PageService',
             'hippo.channel.Container',
             'lowercaseFilter',
             'alphanumericFilter',

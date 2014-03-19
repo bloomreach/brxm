@@ -16,7 +16,7 @@
 (function() {
     "use strict";
 
-    angular.module('hippo.channel.page')
+    angular.module('hippo.channel.pages')
 
         .config(['$stateProvider', '$translateProvider', function($stateProvider, $translateProvider) {
 
@@ -24,13 +24,13 @@
             $stateProvider
                 .state('overview-pages', {
                     url: '/overview-pages',
-                    controller: 'hippo.channel.page.OverviewPagesCtrl',
+                    controller: 'hippo.channel.pages.OverviewPagesCtrl',
                     templateUrl: 'states/overview-pages/overview-pages.html'
                 })
 
                 .state('add-page', {
                     url: '/add-page',
-                    controller: 'hippo.channel.page.AddPageCtrl',
+                    controller: 'hippo.channel.pages.AddPageCtrl',
                     templateUrl: 'states/add-page/add-page.html'
                 });
 

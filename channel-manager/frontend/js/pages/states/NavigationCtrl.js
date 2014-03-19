@@ -16,12 +16,12 @@
 (function () {
     'use strict';
 
-    angular.module('hippo.channel.page')
-        .controller('hippo.channel.page.NavigationCtrl', [
+    angular.module('hippo.channel.pages')
+        .controller('hippo.channel.pages.NavigationCtrl', [
         '$scope',
         '$state',
         'hippo.channel.FeedbackService',
-        'hippo.channel.page.PrototypeService',
+        'hippo.channel.pages.PrototypeService',
         function ($scope, $state, FeedbackService, PrototypeService) {
             // navigation
             $scope.navigateTo = function (stateName) {

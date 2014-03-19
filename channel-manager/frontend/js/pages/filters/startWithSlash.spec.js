@@ -19,7 +19,7 @@ describe('filter', function () {
 
     var startWithSlash;
 
-    beforeEach(module('hippo.channel.page'));
+    beforeEach(module('hippo.channel.pages'));
     beforeEach(inject(function (_startWithSlashFilter_) {
         startWithSlash = _startWithSlashFilter_;
     }));

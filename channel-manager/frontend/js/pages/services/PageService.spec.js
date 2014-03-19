@@ -19,7 +19,7 @@ describe('Page Service', function () {
 
     var pageService, $httpBackend;
 
-    beforeEach(module('hippo.channel.page'));
+    beforeEach(module('hippo.channel.pages'));
 
     beforeEach(function () {
         module(function ($provide) {
@@ -86,7 +86,7 @@ describe('Page Service', function () {
         });
     }));
 
-    beforeEach(inject(['hippo.channel.page.PageService', function (PageService) {
+    beforeEach(inject(['hippo.channel.pages.PageService', function (PageService) {
         pageService = PageService;
     }]));
 
