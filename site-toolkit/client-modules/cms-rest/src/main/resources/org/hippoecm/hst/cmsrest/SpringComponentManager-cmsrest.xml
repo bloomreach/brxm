@@ -77,8 +77,8 @@
 
 
 
-  <bean id="channelFilter" class="org.hippoecm.hst.cmsrest.filter.ChannelFilter">
-    <property name="filters" ref="allChannelFilters"/>
+  <bean id="channelFilter" class="com.google.common.base.Predicates" factory-method="and">
+    <constructor-arg ref="allChannelFilters"/>
   </bean>
 
   <bean id="allChannelFilters" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">

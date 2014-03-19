@@ -16,37 +16,32 @@
 
 package org.hippoecm.hst.cmsrest.services;
 
-import org.hippoecm.hst.cmsrest.filter.ChannelFilter;
+import com.google.common.base.Predicate;
+
+import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An abstract base class represents functionality common among different RESTful resources
  */
 public abstract class BaseResource {
 
-	protected ChannelManager channelManager;
-    protected ChannelFilter channelFilter;
+    protected ChannelManager channelManager;
+    protected Predicate<Channel> channelFilter;
 
     protected static VirtualHosts getVirtualHosts() {
         return RequestContextProvider.get().getVirtualHost().getVirtualHosts();
     }
 
-    /**
-     * {@link ChannelManager} setter method
-     * @param channelManager
-     */
     public void setChannelManager(final ChannelManager channelManager) {
         this.channelManager = channelManager;
     }
 
-    public void setChannelFilter(final ChannelFilter channelFilter) {
+    public void setChannelFilter(final Predicate<Channel> channelFilter) {
         this.channelFilter = channelFilter;
     }
-
 
 
 }

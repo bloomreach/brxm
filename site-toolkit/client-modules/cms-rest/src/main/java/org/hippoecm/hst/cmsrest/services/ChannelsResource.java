@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
-import org.hippoecm.hst.cmsrest.filter.ChannelFilter;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
@@ -45,7 +44,7 @@ public class ChannelsResource extends BaseResource implements ChannelService {
     private static final Logger log = LoggerFactory.getLogger(ChannelsResource.class);
 
     @Override
-	public List<Channel> getChannels() {
+    public List<Channel> getChannels() {
         final List<Channel> channels = new ArrayList<>();
         // do not use HstServices.getComponentManager().getComponent(HstManager.class.getName()) to get to
         // virtualhosts object since we REALLY need the hst model instance for the current request!!
@@ -58,7 +57,7 @@ public class ChannelsResource extends BaseResource implements ChannelService {
                         "cms rest communication)", mount);
                 continue;
             }
-            final Channel previewChannel = ((ContextualizableMount)mount).getPreviewChannel();
+            final Channel previewChannel = ((ContextualizableMount) mount).getPreviewChannel();
             if (previewChannel == null) {
 
                 log.debug("Skipping link for mount '{}' since it does not have a channel", mount.getName());
@@ -71,18 +70,18 @@ public class ChannelsResource extends BaseResource implements ChannelService {
         }
 
         return channels;
-	}
+    }
 
     @Override
     public void save(Channel channel) throws ChannelException {
         try {
             if (!channel.isPreview()) {
                 log.warn("Error while trying to save channel {}: Can only save preview channels", channel);
-                throw new ChannelException("Error while trying to save channel + " +channel.getId()+" : Can only save preview channels ");
+                throw new ChannelException("Error while trying to save channel + " + channel.getId() + " : Can only save preview channels ");
             }
             channelManager.save(channel);
         } catch (ChannelException ce) {
-            log.warn("Error while saving a channel - Channel: {} - {} : {}", new Object[]{channel, ce.getClass().getName(), ce.toString()});
+            log.warn("Error while saving a channel - Channel: {} - {} : {}", channel, ce.getClass().getName(), ce.toString());
             throw ce;
         }
     }
@@ -92,7 +91,7 @@ public class ChannelsResource extends BaseResource implements ChannelService {
         try {
             return channelManager.persist(blueprintId, channel);
         } catch (ChannelException ce) {
-            log.warn("Error while persisting a new channel - Channel: {} - {} : {}", new Object[]{channel, ce.getClass().getName(), ce.toString()});
+            log.warn("Error while persisting a new channel - Channel: {} - {} : {}", channel, ce.getClass().getName(), ce.toString());
             throw ce;
         }
     }
@@ -106,7 +105,7 @@ public class ChannelsResource extends BaseResource implements ChannelService {
     public Channel getChannel(String id) throws ChannelException {
         final Channel channel = getVirtualHosts().getChannelById(id);
         if (channel == null) {
-            log.warn("Failed to retrieve a channel with id '{}'",id);
+            log.warn("Failed to retrieve a channel with id '{}'", id);
             throw new ChannelException("Failed to retrieve a channel with id '" + id + "'");
         }
         return channel;
@@ -137,7 +136,7 @@ public class ChannelsResource extends BaseResource implements ChannelService {
         Channel channel = getVirtualHosts().getChannelById(id);
         if (channel == null) {
             log.warn("Cannot find channel for id '{}'", id);
-            throw new ChannelException("Cannot find channel for id '"+id+"'");
+            throw new ChannelException("Cannot find channel for id '" + id + "'");
         }
         return InformationObjectsBuilder.buildResourceBundleProperties(getVirtualHosts().getResourceBundle(channel, new Locale(language)));
     }
