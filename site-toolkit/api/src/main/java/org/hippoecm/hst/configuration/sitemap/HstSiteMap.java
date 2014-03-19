@@ -49,7 +49,7 @@ public interface HstSiteMap {
     /**
      * Return the child <code>HstSiteMapItem</code> that has the corresponding <code>value</code> ({@link HstSiteMapItem#getValue()} ) 
      * and <code>null</code> otherwise
-     * @param value the value of the child <code>HstSiteMapItem</code> as it would be return by {@link HstSiteMapItem#getValue()} 
+     * @param value the value of the child <code>HstSiteMapItem</code> as it would be returned by {@link HstSiteMapItem#getValue()}
      * @return Returns the HstSiteMapItem object corresponding to the unique <code>value</code> and <code>null</code> if no <code>HstSiteMapItem</code>
      * exists with this <code>value</code> in this <code>HstSiteMapItem</code> object. 
      */
