@@ -223,6 +223,7 @@ public class ResourceServlet extends HttpServlet {
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.jpeg"));
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.json"));
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.eot"));
+        DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.map"));
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.otf"));
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.svg"));
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.swf"));
@@ -241,6 +242,7 @@ public class ResourceServlet extends HttpServlet {
         DEFAULT_MIME_TYPES.put(".jpeg", "image/jpeg");
         DEFAULT_MIME_TYPES.put(".json", "application/json");
         DEFAULT_MIME_TYPES.put(".eot", "application/vnd.ms-fontobject");
+        DEFAULT_MIME_TYPES.put(".map", "application/json");
         DEFAULT_MIME_TYPES.put(".otf", "application/vnd.ms-opentype");
         DEFAULT_MIME_TYPES.put(".svg", "image/svg+xml");
         DEFAULT_MIME_TYPES.put(".swf", "application/x-shockwave-flash");
