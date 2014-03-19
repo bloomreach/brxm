@@ -128,14 +128,13 @@ describe('Menu Service', function () {
     it('should delete a menu item by id', function () {
         // make sure the menu has been loaded
         menuService.getMenu().then(function (menu) {});
+        expectGetMenu();
+
+        menuService.deleteMenuItem('3');
 
         var response = {data: {items: [{id: 1, title: 'One'}]}};
         $httpBackend.expectPOST('api/menuId./delete/3').respond('OK');
-
-        menuService.getMenu().then(function (menu) {
-            menuService.deleteMenuItem('3');
-        });
-        expectGetMenu();
+        $httpBackend.flush();
     });
 
     it('should not delete a menu item by id on server error', function () {

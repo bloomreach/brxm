@@ -90,11 +90,10 @@ describe('Edit Menu Item Controller', function () {
 
         var controller = createController();
 
-        $httpBackend.expectPOST('api/menuId./delete/child1').respond('OK');
-
         $scope.remove.execute();
 
-        expectGetMenu();
+        $httpBackend.expectPOST('api/menuId./delete/child1').respond('OK');
+        $httpBackend.flush();
 
         expect($state.go).toHaveBeenCalledWith('menu-item.edit', { menuItemId: '2' });
     });
