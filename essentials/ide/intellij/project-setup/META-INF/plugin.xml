@@ -32,8 +32,12 @@
 
   <extensions defaultExtensionNs="com.intellij">
 
-    <projectTemplatesFactory implementation="org.onehippo.ide.intellij.factory.HippoTemplateFactory"/>
-    <directoryProjectGenerator  implementation="org.onehippo.ide.intellij.project.HippoEmptyProject"/>
+    <internalFileTemplate name="essentials_pom"/>
+    <internalFileTemplate name="essentials_rest_class"/>
+    <internalFileTemplate name="essentials_web_fragment"/>
+
+    <projectTemplatesFactory implementation="org.onehippo.ide.intellij.factory.HippoProjectFactory"/>
+    <directoryProjectGenerator implementation="org.onehippo.ide.intellij.project.HippoEssentialsProject"/>
   </extensions>
 
   <application-components>

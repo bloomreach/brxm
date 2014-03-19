@@ -19,7 +19,7 @@ package org.onehippo.ide.intellij.factory;
 
 import org.jetbrains.annotations.NotNull;
 
-import org.onehippo.ide.intellij.project.HippoEmptyProject;
+import org.onehippo.ide.intellij.project.HippoEssentialsProject;
 
 import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.platform.ProjectTemplate;
@@ -28,7 +28,7 @@ import com.intellij.platform.ProjectTemplatesFactory;
 /**
  * @version "$Id$"
  */
-public class HippoTemplateFactory extends ProjectTemplatesFactory {
+public class HippoProjectFactory extends ProjectTemplatesFactory {
 
 
     public static final String[] HIPPO_GROUP = new String[]{"Hippo"};
@@ -43,7 +43,7 @@ public class HippoTemplateFactory extends ProjectTemplatesFactory {
     @Override
     public ProjectTemplate[] createTemplates(final String s, final WizardContext wizardContext) {
         final ProjectTemplate[] projectTemplates = new ProjectTemplate[1];
-        projectTemplates[0] = new HippoEmptyProject();
+        projectTemplates[0] = new HippoEssentialsProject();
 
         return projectTemplates;
     }

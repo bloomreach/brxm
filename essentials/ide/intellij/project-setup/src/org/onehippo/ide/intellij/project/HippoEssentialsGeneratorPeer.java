@@ -29,7 +29,6 @@ import javax.swing.event.DocumentListener;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.onehippo.ide.intellij.gui.SettingsData;
 
 import com.google.common.base.Strings;
 import com.intellij.ide.DataManager;
@@ -52,6 +51,7 @@ import com.intellij.ui.TextAccessor;
  */
 public class HippoEssentialsGeneratorPeer implements WebProjectGenerator.GeneratorPeer<SettingsData> {
 
+    private final SettingsData data = new SettingsData();
 
     private JPanel myMainPanel;
     private JTextField pluginName;
@@ -86,22 +86,23 @@ public class HippoEssentialsGeneratorPeer implements WebProjectGenerator.Generat
     @NotNull
     @Override
     public SettingsData getSettings() {
-        return new SettingsData();
+
+        getData(data);
+        return data;
     }
 
     @Nullable
     @Override
     public ValidationInfo validate() {
-        if(createRESTClassCheckBox.isSelected() && Strings.isNullOrEmpty(packageName.getText())) {
+        if (createRESTClassCheckBox.isSelected() && Strings.isNullOrEmpty(packageName.getText())) {
             return new ValidationInfo("Rest package name not provided");
         }
 
-        if(isEmpty(version)
+        if (isEmpty(version)
                 || isEmpty(artifactId)
                 || isEmpty(groupId)
                 || isEmpty(vendorName)
-                )
-        {
+                ) {
             return new ValidationInfo("All fields needs to be filled in");
         }
 

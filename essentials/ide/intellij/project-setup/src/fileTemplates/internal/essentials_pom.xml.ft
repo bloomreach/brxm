@@ -1,0 +1,114 @@
+#set( $dollar = '$' )
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+
+  <name>${PLUGIN_NAME}</name>
+  <description>${PLUGIN_NAME}</description>
+  <groupId>${GROUP_ID}</groupId>
+  <artifactId>${ARTIFACT_ID}</artifactId>
+  <packaging>jar</packaging>
+  <properties>
+    <essentials.version>${ESSENTIALS_VERSION}</essentials.version>
+    <junit.version>4.11</junit.version>
+    <hst.version>2.26.09</hst.version>
+    <spring-test.version>3.2.6.RELEASE</spring-test.version>
+
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.onehippo.cms7.essentials</groupId>
+      <artifactId>hippo-essentials-plugin-api</artifactId>
+      <version>${dollar}{essentials.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.essentials</groupId>
+      <artifactId>hippo-essentials-plugin-api-implementation</artifactId>
+      <version>${dollar}{essentials.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7.essentials</groupId>
+      <artifactId>hippo-essentials-plugin-api-implementation</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+      <version>${dollar}{essentials.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+      <version>${dollar}{junit.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <scope>test</scope>
+      <version>${dollar}{spring-test.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-connector</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-client</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-api</artifactId>
+      <scope>provided</scope>
+      <version>${dollar}{hst.version}</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <defaultGoal>package</defaultGoal>
+    <resources>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/java</directory>
+        <includes>
+          <include>**/*.woff</include>
+          <include>**/*.xml</include>
+          <include>**/*.eot</include>
+          <include>**/*.ttf</include>
+          <include>**/*.svg</include>
+          <include>**/*.html</include>
+          <include>**/*.css</include>
+          <include>**/*.png</include>
+          <include>**/*.gif</include>
+          <include>**/*.js</include>
+          <include>**/*.properties</include>
+        </includes>
+      </resource>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/resources</directory>
+        <includes>
+          <include>**/*.cnd</include>
+          <include>**/*.xml</include>
+          <include>**/*.js</include>
+          <include>**/*.html</include>
+          <include>**/*.css</include>
+          <include>**/*.MF</include>
+          <include>**/*.properties</include>
+        </includes>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+      </plugin>
+    </plugins>
+
+  </build>
+</project>

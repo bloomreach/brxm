@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.ide.intellij.gui;
+package org.onehippo.ide.intellij.project;
 
 public class SettingsData {
     private String vendor;
