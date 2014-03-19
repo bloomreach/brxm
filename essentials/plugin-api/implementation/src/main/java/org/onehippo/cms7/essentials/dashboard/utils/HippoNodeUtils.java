@@ -80,13 +80,16 @@ public final class HippoNodeUtils {
             return documentType != null && notInternalType(documentType);
         }
     };
+    public static final String HIPPO_TRANSLATION = "hippo:translation";
+    public static final String NT_UNSTRUCTURED = "nt:unstructured";
+    public static final String HIPPOSYSEDIT_SUPERTYPE = "hipposysedit:supertype";
 
     private static boolean notInternalType(final String documentType) {
         return !documentType.startsWith(HIPPO_NAMESPACE_PREFIX)
                 && !documentType.startsWith(HIPPOSYS_NAMESPACE_PREFIX)
                 && !documentType.startsWith(HIPPOSYSEDIT_NAMESAPCE_PREFIX)
                 && !documentType.startsWith(REPORTING_NAMESPACE_PREFIX)
-                && !documentType.equals("nt:unstructured")
+                && !documentType.equals(NT_UNSTRUCTURED)
                 && !documentType.startsWith("hippogallery:");
     }
 
@@ -123,12 +126,12 @@ public final class HippoNodeUtils {
     public static void setSupertype(final Node namespaceNode, final Collection<String> values) throws RepositoryException {
         Node node = getSupertypeNode(namespaceNode);
         final String[] array = values.toArray(new String[values.size()]);
-        node.setProperty("hipposysedit:supertype", array);
+        node.setProperty(HIPPOSYSEDIT_SUPERTYPE, array);
     }
 
     public static void setSupertype(final Node namespaceNode, final String... values) throws RepositoryException {
         Node node = getSupertypeNode(namespaceNode);
-        node.setProperty("hipposysedit:supertype", values);
+        node.setProperty(HIPPOSYSEDIT_SUPERTYPE, values);
     }
 
     public static void setUri(final Node namespaceNode, final String uri) throws RepositoryException {
@@ -311,34 +314,38 @@ public final class HippoNodeUtils {
             QueryManager qmgr = session.getWorkspace().getQueryManager();
             List<Node> queryTemplateNodes = getQueryTemplateNodes(session, templates);
             for (Node queryTemplate : queryTemplateNodes) {
-                try {
-                    Set<String> prototypes = new TreeSet<>();
-                    if (queryTemplate.isNodeType("nt:query")) {
-                        Query query = qmgr.getQuery(queryTemplate);
-                        query = qmgr.createQuery(queryTemplate.getProperty("jcr:statement").getString(), query.getLanguage()); // HREPTWO-1266
-                        QueryResult rs = query.execute();
-                        for (NodeIterator iter = rs.getNodes(); iter.hasNext(); ) {
-                            Node typeNode = iter.nextNode();
-                            if (typeNode.getName().equals(EssentialConst.HIPPOSYSEDIT_PROTOTYPE)) {
-                                String documentType = typeNode.getPrimaryNodeType().getName();
-                                final boolean isTemplate = INTERNAL_TYPES_PREDICATE.apply(documentType);
-                                if (isTemplate && (matcher == null || matcher.matches(typeNode))) {
-                                    prototypes.add(documentType);
-                                }
-                            } else {
-                                prototypes.add(typeNode.getName());
-                            }
-                        }
-                    }
-                    types.put(queryTemplate.getName(), prototypes);
-                } catch (InvalidQueryException ex) {
-                    log.error(MessageFormat.format("{0}: {1}", ex.getClass().getName(), ex.getMessage()), ex);
-                }
+                extractPrototype(matcher, types, qmgr, queryTemplate);
             }
         } catch (RepositoryException ex) {
             log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
         }
         return types;
+    }
+
+    private static void extractPrototype(final JcrMatcher matcher, final Map<String, Set<String>> types, final QueryManager qmgr, final Node queryTemplate) throws RepositoryException {
+        try {
+            Set<String> prototypes = new TreeSet<>();
+            if (queryTemplate.isNodeType("nt:query")) {
+                Query query = qmgr.getQuery(queryTemplate);
+                query = qmgr.createQuery(queryTemplate.getProperty("jcr:statement").getString(), query.getLanguage()); // HREPTWO-1266
+                QueryResult rs = query.execute();
+                for (NodeIterator iter = rs.getNodes(); iter.hasNext(); ) {
+                    Node typeNode = iter.nextNode();
+                    if (typeNode.getName().equals(EssentialConst.HIPPOSYSEDIT_PROTOTYPE)) {
+                        String documentType = typeNode.getPrimaryNodeType().getName();
+                        final boolean isTemplate = INTERNAL_TYPES_PREDICATE.apply(documentType);
+                        if (isTemplate && (matcher == null || matcher.matches(typeNode))) {
+                            prototypes.add(documentType);
+                        }
+                    } else {
+                        prototypes.add(typeNode.getName());
+                    }
+                }
+            }
+            types.put(queryTemplate.getName(), prototypes);
+        } catch (InvalidQueryException ex) {
+            log.error(MessageFormat.format("{0}: {1}", ex.getClass().getName(), ex.getMessage()), ex);
+        }
     }
 
     private static List<Node> getQueryTemplateNodes(Session session, String[] templates) throws RepositoryException {
@@ -383,17 +390,19 @@ public final class HippoNodeUtils {
             Node typeNode = iter.nextNode();
             if (typeNode.getName().equals(EssentialConst.HIPPOSYSEDIT_PROTOTYPE)) {
                 String documentType = typeNode.getPrimaryNodeType().getName();
-                if (documentType != null) {
-                    if (!documentType.startsWith(HIPPO_NAMESPACE_PREFIX) && !documentType.startsWith(HIPPOSYS_NAMESPACE_PREFIX) && !documentType.startsWith(HIPPOSYSEDIT_NAMESAPCE_PREFIX) && !documentType.startsWith(REPORTING_NAMESPACE_PREFIX)
-                            && !documentType.equals("nt:unstructured") && !documentType.startsWith("hippogallery:") && (matcher != null && matcher.matches(typeNode))) {
-                        prototypes.add(documentType);
-                    }
+                if (documentType != null && notReservedType(documentType) && (matcher != null && matcher.matches(typeNode))) {
+                    prototypes.add(documentType);
                 }
             } else {
                 prototypes.add(typeNode.getName());
             }
         }
         return prototypes;
+    }
+
+    private static boolean notReservedType(final String documentType) {
+        return !documentType.startsWith(HIPPO_NAMESPACE_PREFIX) && !documentType.startsWith(HIPPOSYS_NAMESPACE_PREFIX) && !documentType.startsWith(HIPPOSYSEDIT_NAMESAPCE_PREFIX) && !documentType.startsWith(REPORTING_NAMESPACE_PREFIX)
+                && !documentType.equals(NT_UNSTRUCTURED) && !documentType.startsWith("hippogallery:");
     }
 
     /**
@@ -417,7 +426,7 @@ public final class HippoNodeUtils {
             if (!Strings.isNullOrEmpty(typeNode.getName()) && typeNode.getParent().getName().equals(EssentialConst.HIPPOSYSEDIT_PROTOTYPE)) {
                 String documentType = typeNode.getPrimaryNodeType().getName();
                 if (!documentType.startsWith("hippo:") && !documentType.startsWith("hipposys:") && !documentType.startsWith("hipposysedit:") && !documentType.startsWith("reporting:")
-                        && !documentType.equals("nt:unstructured") && !documentType.startsWith("hippogallery:") && (matcher != null && matcher.matches(typeNode))) {
+                        && !documentType.equals(NT_UNSTRUCTURED) && !documentType.startsWith("hippogallery:") && (matcher != null && matcher.matches(typeNode))) {
                     prototypes.add(documentType);
                 }
             } else {
@@ -437,6 +446,10 @@ public final class HippoNodeUtils {
      */
     public static List<String> getPrimaryTypes(final Session session, final String... templates) throws RepositoryException {
         final Map<String, Set<String>> prototypes = prototypes(session, null, templates);
+        return extractTypes(prototypes);
+    }
+
+    private static List<String> extractTypes(final Map<String, Set<String>> prototypes) {
         final List<String> set = new ArrayList<>();
         final Collection<Set<String>> values = prototypes.values();
         for (Set<String> collection : values) {
@@ -456,12 +469,7 @@ public final class HippoNodeUtils {
      */
     public static List<String> getPrimaryTypes(final Session session, final JcrMatcher matcher, final String... templates) throws RepositoryException {
         final Map<String, Set<String>> prototypes = prototypes(session, matcher, templates);
-        final List<String> set = new ArrayList<>();
-        final Collection<Set<String>> values = prototypes.values();
-        for (Set<String> collection : values) {
-            set.addAll(collection);
-        }
-        return set;
+        return extractTypes(prototypes);
     }
 
 
@@ -474,10 +482,10 @@ public final class HippoNodeUtils {
                 name = NodeNameCodec.decode(node.getName());
                 if (node.isNodeType("hippo:translated")) {
                     Locale locale = Locale.getDefault();
-                    NodeIterator nodes = node.getNodes("hippo:translation");
+                    NodeIterator nodes = node.getNodes(HIPPO_TRANSLATION);
                     while (nodes.hasNext()) {
                         Node child = nodes.nextNode();
-                        if (child.isNodeType("hippo:translation") && !child.hasProperty("hippo:property")) {
+                        if (child.isNodeType(HIPPO_TRANSLATION) && !child.hasProperty("hippo:property")) {
                             String language = child.getProperty("hippo:language").getString();
                             if (locale.getLanguage().equals(language)) {
                                 return child.getProperty("hippo:message").getString();
@@ -501,21 +509,21 @@ public final class HippoNodeUtils {
     }
 
 
-    public static void checkName(String name) throws Exception {
+    public static void checkName(String name) {
         if (Strings.isNullOrEmpty(name)) {
-            throw new Exception("No name specified");
+            throw new NullPointerException("No name specified");
         }
         if (!NAME_PATTERN.matcher(name).matches()) {
-            throw new Exception("Invalid name; only alphabetic characters allowed in lower- or uppercase");
+            throw new IllegalArgumentException("Invalid name; only alphabetic characters allowed in lower- or uppercase");
         }
     }
 
-    public static void checkURI(String name) throws Exception {
+    public static void checkURI(String name) {
         if (name == null) {
-            throw new Exception("No URI specified");
+            throw new NullPointerException("No URI specified");
         }
         if (!URL_PATTERN.matcher(name).matches()) {
-            throw new Exception("Invalid URL; ");
+            throw new IllegalArgumentException("Invalid URL; ");
         }
     }
 

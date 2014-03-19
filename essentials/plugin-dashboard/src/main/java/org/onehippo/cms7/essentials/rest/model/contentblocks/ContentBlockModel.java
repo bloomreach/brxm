@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @version "$Id$"
  */
-public class ContentBlockModel implements Serializable {
+public final class ContentBlockModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private static Logger log = LoggerFactory.getLogger(ContentBlockModel.class);
@@ -50,8 +50,8 @@ public class ContentBlockModel implements Serializable {
     public ContentBlockModel(Node node) {
         try {
             final String myProvider = getProperty(node, "cpItemsPath").getString();
-            final Node _default_ = node.getParent();
-            final Property myDocumentType = getProperty(_default_, "type");
+            final Node defaultNode = node.getParent();
+            final Property myDocumentType = getProperty(defaultNode, "type");
             final String myName = node.getName();
             setName(myName);
             setDocumentType(myDocumentType.getString());

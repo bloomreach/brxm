@@ -182,19 +182,19 @@ public class JcrPersistenceWriter {
 
         final String[] pathParts = StringUtils.split(path, PATH_SEPARATOR);
         final StringBuilder parent = new StringBuilder();
-        final Session session = context.createSession();
-        Node parentNode = session.getRootNode();
+        final Session mySession = context.createSession();
+        Node parentNode = mySession.getRootNode();
         for (final String pathPart : pathParts) {
             parent.append(PATH_SEPARATOR);
             String folderPath = parent.append(pathPart).toString();
-            if (session.itemExists(folderPath)) {
+            if (mySession.itemExists(folderPath)) {
                 log.info("folderPath {}", folderPath);
                 parentNode = parentNode.getNode(pathPart);
                 continue;
             }
             log.info("folderPath {}", folderPath);
             parentNode = parentNode.addNode(pathPart, "essentials:folder");
-            session.save();
+            mySession.save();
 
         }
 

@@ -611,7 +611,6 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/u
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/code/EssentialsGeneratedMethod.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/code/ExistingMethodsVisitor.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/code/NoAnnotationMethodVisitor.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/code/TypeRef.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/code/exc/EssentialsCodeCreationException.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/common/PackageVisitor.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/inject/ApplicationModule.java -text

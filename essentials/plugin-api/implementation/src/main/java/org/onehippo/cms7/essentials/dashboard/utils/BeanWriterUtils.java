@@ -440,11 +440,9 @@ public final class BeanWriterUtils {
         for (XmlNode node : subnodesByName) {
             final Collection<XmlProperty> properties = node.getProperties();
             for (XmlProperty xmlProperty : properties) {
-                if (xmlProperty.getName().equals("hipposysedit:path")) {
-                    if (name.equals(xmlProperty.getSingleValue())) {
+                if (xmlProperty.getName().equals("hipposysedit:path") && name.equals(xmlProperty.getSingleValue())) {
                         typeProperty = node.getXmlPropertyByName("hipposysedit:type");
                         break;
-                    }
                 }
             }
         }

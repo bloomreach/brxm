@@ -680,44 +680,47 @@ public final class JavaSourceUtils {
                         && !fullyQualifiedName.equals(HippoEssentialsGenerated.class.getCanonicalName())) {
                     continue;
                 }
-
-                final HippoEssentialsGeneratedObject o = new HippoEssentialsGeneratedObject();
-                o.setFilePath(path);
-                @SuppressWarnings("rawtypes")
-                final List values = annotation.values();
-                if (values != null) {
-                    for (Object value : values) {
-                        if (value instanceof MemberValuePair) {
-                            final MemberValuePair pair = (MemberValuePair) value;
-                            final SimpleName name = pair.getName();
-                            final String identifier = name.getIdentifier();
-                            switch (identifier) {
-                                case EssentialConst.ANNOTATION_ATTR_ALLOW_MODIFICATIONS: {
-                                    final BooleanLiteral ex = (BooleanLiteral) pair.getValue();
-                                    o.setAllowModifications(ex.booleanValue());
-                                    break;
-                                }
-                                case EssentialConst.ANNOTATION_ATTR_DATE: {
-                                    final StringLiteral ex = (StringLiteral) pair.getValue();
-                                    o.setDateGenerated(ex.getLiteralValue());
-                                    break;
-                                }
-                                case EssentialConst.ANNOTATION_ATTR_INTERNAL_NAME: {
-                                    final StringLiteral ex = (StringLiteral) pair.getValue();
-                                    o.setInternalName(ex.getLiteralValue());
-                                    break;
-                                }
-                                default:
-                                    log.error("Unknown identifier {}", identifier);
-                                    break;
-                            }
-                        }
-                    }
-                }
-                return o;
+                return populateGeneratedObject(path, annotation);
             }
         }
         return null;
+    }
+
+    private static HippoEssentialsGeneratedObject populateGeneratedObject(final Path path, final NormalAnnotation annotation) {
+        final HippoEssentialsGeneratedObject o = new HippoEssentialsGeneratedObject();
+        o.setFilePath(path);
+        @SuppressWarnings("rawtypes")
+        final List values = annotation.values();
+        if (values != null) {
+            for (Object value : values) {
+                if (value instanceof MemberValuePair) {
+                    final MemberValuePair pair = (MemberValuePair) value;
+                    final SimpleName name = pair.getName();
+                    final String identifier = name.getIdentifier();
+                    switch (identifier) {
+                        case EssentialConst.ANNOTATION_ATTR_ALLOW_MODIFICATIONS: {
+                            final BooleanLiteral ex = (BooleanLiteral) pair.getValue();
+                            o.setAllowModifications(ex.booleanValue());
+                            break;
+                        }
+                        case EssentialConst.ANNOTATION_ATTR_DATE: {
+                            final StringLiteral ex = (StringLiteral) pair.getValue();
+                            o.setDateGenerated(ex.getLiteralValue());
+                            break;
+                        }
+                        case EssentialConst.ANNOTATION_ATTR_INTERNAL_NAME: {
+                            final StringLiteral ex = (StringLiteral) pair.getValue();
+                            o.setInternalName(ex.getLiteralValue());
+                            break;
+                        }
+                        default:
+                            log.error("Unknown identifier {}", identifier);
+                            break;
+                    }
+                }
+            }
+        }
+        return o;
     }
 
     /**

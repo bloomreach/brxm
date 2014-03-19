@@ -16,7 +16,6 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
 import org.eclipse.jdt.core.dom.ReturnStatement;
-import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.StringLiteral;
 import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
 import org.slf4j.Logger;
@@ -69,19 +68,24 @@ public class NoAnnotationMethodVisitor extends ASTVisitor {
                                 // check if namespaces property
                                 if (value.indexOf(':') != -1) {
                                     modifiableMethods.add(new EssentialsGeneratedMethod(node, node.getName().getIdentifier(), value));
-
                                     modifiableMethodsInternalNames.add(value);
                                 }
-                            } else if (arg instanceof SimpleName) {
+                            } else {
+                                log.debug("#NOT IMPLEMENTED PARSING OF ARGUMENT: {}", arg.getClass());
+                                /*
+                                else if (arg instanceof SimpleName) {
                                 final SimpleName argument = (SimpleName) arg;
                                 final Object val = argument.resolveConstantExpressionValue();
                                 // TODO always null, upgrade to latest JDT and check if we can resolve this
                                 // @see org.onehippo.cms7.essentials.dashboard.utils.JavaSourceUtils.getAnnotateMethods()
                                 log.debug("identifier {}", val);
 
-                            } else {
+                                } else {
                                 log.warn("#NOT IMPLEMENTED PARSING OF ARGUMENT: {}", arg.getClass());
                                 log.debug("e {}", arg);
+                                }
+                            */
+
                             }
                         }
                     }
@@ -100,4 +104,6 @@ public class NoAnnotationMethodVisitor extends ASTVisitor {
     public List<EssentialsGeneratedMethod> getModifiableMethods() {
         return modifiableMethods;
     }
+
+
 }

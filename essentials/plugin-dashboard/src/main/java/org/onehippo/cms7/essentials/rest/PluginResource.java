@@ -91,6 +91,7 @@ import com.wordnik.swagger.annotations.ApiParam;
 public class PluginResource extends BaseResource {
 
     public static final int WEEK_OLD = -7;
+    public static final String PLUGIN_ID = "pluginId";
     @Inject
     private EventBus eventBus;
 
@@ -188,7 +189,7 @@ public class PluginResource extends BaseResource {
     public RestfulList<MessageRestful> installPowerpack(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
         final RestfulList<MessageRestful> messageRestfulRestfulList = new RestList<>();
         final Map<String, String> values = payloadRestful.getValues();
-        final String pluginId = String.valueOf(values.get("pluginId"));
+        final String pluginId = String.valueOf(values.get(PLUGIN_ID));
         Plugin myPlugin = getPluginById(pluginId, servletContext);
 
         if (Strings.isNullOrEmpty(pluginId) || myPlugin == null) {
@@ -309,10 +310,10 @@ public static List<PluginRestful> parseGist() {
             value = "Checks if certain plugin is installed",
             notes = "Sets PluginRestful installed flag to true or false",
             response = PluginRestful.class)
-    @ApiParam(name = "pluginId", value = "Plugin id", required = true)
+    @ApiParam(name = PLUGIN_ID, value = "Plugin id", required = true)
     @GET
     @Path("/installstate/{pluginId}")
-    public PluginRestful getPluginList(@Context ServletContext servletContext, @PathParam("pluginId") String pluginId) {
+    public PluginRestful getPluginList(@Context ServletContext servletContext, @PathParam(PLUGIN_ID) String pluginId) {
 
         final PluginRestful resource = new PluginRestful();
         final List<PluginRestful> pluginList = getPlugins(servletContext);
@@ -335,10 +336,10 @@ public static List<PluginRestful> parseGist() {
     @ApiOperation(
             value = "Installs a plugin",
             response = MessageRestful.class)
-    @ApiParam(name = "pluginId", value = "Plugin  id", required = true)
+    @ApiParam(name = PLUGIN_ID, value = "Plugin  id", required = true)
     @POST
     @Path("/install/{pluginId}")
-    public MessageRestful installPlugin(@Context ServletContext servletContext, @PathParam("pluginId") String pluginId) {
+    public MessageRestful installPlugin(@Context ServletContext servletContext, @PathParam(PLUGIN_ID) String pluginId) {
 
         final MessageRestful message = new MessageRestful();
         final RestfulList<PluginRestful> pluginList = getPluginList(servletContext);

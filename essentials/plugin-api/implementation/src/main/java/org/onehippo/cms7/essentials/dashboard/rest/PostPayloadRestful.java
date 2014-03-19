@@ -31,7 +31,7 @@ import com.wordnik.swagger.annotations.ApiModel;
  */
 @ApiModel
 @XmlRootElement(name = "payload")
-public class PostPayloadRestful implements Restful {
+public final class PostPayloadRestful implements Restful {
 
     private static final long serialVersionUID = 1L;
 
@@ -40,7 +40,6 @@ public class PostPayloadRestful implements Restful {
     }
 
     public PostPayloadRestful(final String key, final String value) {
-
         add(key, value);
     }
 
