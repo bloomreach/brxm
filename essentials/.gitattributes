@@ -492,6 +492,16 @@ dashboard-plugins/freemarker-synchronizer/src/main/java/org/onehippo/cms7/essent
 dashboard-plugins/freemarker-synchronizer/src/test/java/org/onehippo/cms7/essentials/tools/rest/FSUtilsTest.java -text
 dashboard-plugins/freemarker-synchronizer/src/test/resources/log4j.xml -text
 dashboard-plugins/pom.xml -text
+ide/intellij/project-setup/META-INF/plugin.xml -text
+ide/intellij/project-setup/README.txt -text
+ide/intellij/project-setup/src/icons/logo.png -text
+ide/intellij/project-setup/src/org/onehippo/ide/intellij/factory/HippoTemplateFactory.java -text
+ide/intellij/project-setup/src/org/onehippo/ide/intellij/gui/HippoModuleBuilder.java -text
+ide/intellij/project-setup/src/org/onehippo/ide/intellij/gui/SettingsData.java -text
+ide/intellij/project-setup/src/org/onehippo/ide/intellij/project/HippoEmptyProject.java -text
+ide/intellij/project-setup/src/org/onehippo/ide/intellij/project/HippoEssentialsGeneratorPeer.form -text
+ide/intellij/project-setup/src/org/onehippo/ide/intellij/project/HippoEssentialsGeneratorPeer.java -text
+ide/intellij/project-setup/src/org/onehippo/ide/intellij/project/ProjectUtils.java -text
 plugin-api/api/pom.xml -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/annotations/HippoEssentialsGenerated.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/config/Document.java -text
