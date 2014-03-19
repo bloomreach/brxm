@@ -95,10 +95,6 @@ public class SiteMapResource extends AbstractConfigResource {
         return tryGet(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                final HstSiteMap siteMap = getPageComposerContextService().getEditingPreviewSite().getSiteMap();
-                final Mount mount = getPageComposerContextService().getEditingMount();
-                final HstSite site = getPageComposerContextService().getEditingPreviewSite();
-
                 final HstSiteMapItem siteMapItem = siteMapHelper.getConfigObject(siteMapItemUuid);
 
                 final String previewConfigPath = getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
