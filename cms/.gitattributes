@@ -2453,7 +2453,6 @@ richtext/ckeditor/plugins/src/main/resources/ckeditor/plugins/hippopicker/icons/
 richtext/ckeditor/plugins/src/main/resources/ckeditor/plugins/hippopicker/icons/pickimage.png -text svneol=unset#image/png
 richtext/ckeditor/plugins/src/main/resources/ckeditor/plugins/hippopicker/icons/pickinternallink.png -text svneol=unset#image/png
 richtext/ckeditor/resources/create-toolbar-items-table.js -text
-richtext/ckeditor/resources/src/main/appended-resources/META-INF/LICENSE -text
 richtext/frontend/pom.xml -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/IHtmlCleanerService.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/IImageURLProvider.java svneol=native#text/plain
