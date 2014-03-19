@@ -129,7 +129,10 @@
                 'fa-times': form.sitemapItem.$invalid || !isSaved.link
                }"></i>
                 <span class="input-group-btn">
-                    <button class="btn btn-default" type="button" ng-click="showPage(selectedMenuItem.link)"><i class="fa fa-external-link"></i></button>
+                    <button class="btn btn-default" type="button"
+                            data-ng-click="showPage()">
+                        <i class="fa fa-external-link"></i>
+                    </button>
                 </span>
             </div>
         </div>

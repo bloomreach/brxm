@@ -87,7 +87,8 @@
                     });
                 };
 
-                $scope.showPage = function(link) {
+                $scope.showPage = function() {
+                    var link = $scope.selectedMenuItem.pathInfo || $scope.selectedMenuItem.link;
                     ContainerService.showPage(link);
                 };
 
