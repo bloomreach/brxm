@@ -16,35 +16,19 @@
 
 package org.onehippo.ide.intellij.project;
 
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Strings;
-import com.intellij.ide.DataManager;
 import com.intellij.ide.util.projectWizard.SettingsStep;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.ui.ValidationInfo;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.WebProjectGenerator;
-import com.intellij.ui.DocumentAdapter;
-import com.intellij.ui.TextAccessor;
 
 /**
  * @version "$Id$"
@@ -61,6 +45,7 @@ public class HippoEssentialsGeneratorPeer implements WebProjectGenerator.Generat
     private JTextField vendorName;
     private JCheckBox createRESTClassCheckBox;
     private JTextField packageName;
+    private JComboBox<String> pluginGroup;
 
 
     public HippoEssentialsGeneratorPeer() {
@@ -81,6 +66,7 @@ public class HippoEssentialsGeneratorPeer implements WebProjectGenerator.Generat
         settingsStep.addSettingsField("Version", version);
         settingsStep.addSettingsField("Create REST skeleton", createRESTClassCheckBox);
         settingsStep.addSettingsField("REST package", packageName);
+        settingsStep.addSettingsField("Plugin group", pluginGroup);
     }
 
     @NotNull
@@ -105,6 +91,9 @@ public class HippoEssentialsGeneratorPeer implements WebProjectGenerator.Generat
                 ) {
             return new ValidationInfo("All fields needs to be filled in");
         }
+        if (Strings.isNullOrEmpty((String) pluginGroup.getSelectedItem())) {
+            return new ValidationInfo("Please select plugin group");
+        }
 
 
         return null;
@@ -125,58 +114,11 @@ public class HippoEssentialsGeneratorPeer implements WebProjectGenerator.Generat
     }
 
     private void createUIComponents() {
-
     }
 
-    public Project getProject(final Component component) {
-        Project project = CommonDataKeys.PROJECT.getData(DataManager.getInstance().getDataContext(component));
-        if (project != null) {
-            return project;
-        }
-        return ProjectManager.getInstance().getDefaultProject();
-    }
-
-    private void createDirListener(final TextFieldWithBrowseButton button) {
-        final DocumentListener listener = new DocumentAdapter() {
-            @Override
-            protected void textChanged(DocumentEvent documentEvent) {
-                button.getText();
-            }
-        };
-        button.getChildComponent().getDocument().addDocumentListener(listener);
-        button.setTextFieldPreferredWidth(50);
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                chooseFolder(button, false);
-            }
-        });
-    }
-
-    private void chooseFolder(final TextAccessor field, final boolean chooseFiles) {
-        final FileChooserDescriptor descriptor = new FileChooserDescriptor(chooseFiles, !chooseFiles, false, false, false, false) {
-            @Override
-            public String getName(VirtualFile virtualFile) {
-                return virtualFile.getName();
-            }
-
-            @Override
-            @Nullable
-            public String getComment(VirtualFile virtualFile) {
-                return virtualFile.getPresentableUrl();
-            }
-        };
-        descriptor.setTitle("Select Project Destination Folder");
-
-        final String selectedPath = field.getText();
-        final VirtualFile preselectedFolder = LocalFileSystem.getInstance().findFileByPath(selectedPath);
-
-        final VirtualFile[] files = FileChooser.chooseFiles(descriptor, myMainPanel, getProject(myMainPanel), preselectedFolder);
-        if (files.length > 0) {
-            field.setText(files[0].getPath());
-        }
-    }
 
     public void setData(SettingsData data) {
+        pluginGroup.setSelectedItem(data.getPluginGroup());
         pluginName.setText(data.getProjectName());
         groupId.setText(data.getGroupId());
         version.setText(data.getVersion());
@@ -187,6 +129,7 @@ public class HippoEssentialsGeneratorPeer implements WebProjectGenerator.Generat
     }
 
     public void getData(SettingsData data) {
+        data.setPluginGroup((String) pluginGroup.getSelectedItem());
         data.setProjectName(pluginName.getText());
         data.setGroupId(groupId.getText());
         data.setVersion(version.getText());
@@ -221,7 +164,6 @@ public class HippoEssentialsGeneratorPeer implements WebProjectGenerator.Generat
         return false;
     }
 
-    /**/
 
 
 }

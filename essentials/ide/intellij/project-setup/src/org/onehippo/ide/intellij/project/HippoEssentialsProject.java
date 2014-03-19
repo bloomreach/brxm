@@ -17,6 +17,8 @@
 package org.onehippo.ide.intellij.project;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Iterator;
 
 import javax.swing.Icon;
 
@@ -25,16 +27,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.onehippo.ide.intellij.factory.HippoTemplatesFactory;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.intellij.ide.util.DirectoryUtil;
 import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.ide.util.projectWizard.WebProjectTemplate;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -102,7 +106,8 @@ public class HippoEssentialsProject extends WebProjectTemplate {
                     @Override
                     public void run() {
 
-                        final PsiDirectory rootDirectory = PsiManager.getInstance(project).findDirectory(getVirtualFile(baseDirectory.getCanonicalPath()));
+                        final String rootPath = baseDirectory.getCanonicalPath();
+                        final PsiDirectory rootDirectory = PsiManager.getInstance(project).findDirectory(getVirtualFile(rootPath));
 
                         if (rootDirectory == null) {
                             return;
@@ -111,11 +116,34 @@ public class HippoEssentialsProject extends WebProjectTemplate {
                         final SettingsData mySettings = (SettingsData) settings;
                         // create pom:
                         createFile(rootDirectory, mySettings, POM_XML, HippoTemplatesFactory.HippoTemplate.ESSENTIALS_POM_TEMPLATE);
-                        // create web-fragment:
-                        createFile(rootDirectory, mySettings, WEB_FRAGMENT_XML, HippoTemplatesFactory.HippoTemplate.ESSENTIALS_WEB_FRAGMENT_TEMPLATE);
+                        try {
+
+                            // rest resource
+                            final String pluginName = mySettings.getProjectName();
+                            if (mySettings.isCreateRestSkeleton()) {
+                                final String javaRoot = rootPath + "/src/main/java";
+                                VfsUtil.createDirectories(javaRoot);
+                                final String projectPackage = mySettings.getProjectPackage();
+                                final Iterator<String> packageNames = Splitter.on('.').split(projectPackage).iterator();
+                                final String packageDir = javaRoot + '/' + Joiner.on('/').join(packageNames);
+                                final PsiDirectory restDir = DirectoryUtil.mkdirs(rootDirectory.getManager(), packageDir);
+                                createFile(restDir, mySettings, pluginName +"Resource.java", HippoTemplatesFactory.HippoTemplate.ESSENTIALS_REST_TEMPLATE);
+                            }
+                            // create web-fragment:
+                            final String metaInfRoot = rootPath + "/src/main/resources/META-INF/";
+                            final PsiDirectory metaDir = DirectoryUtil.mkdirs(rootDirectory.getManager(), metaInfRoot);
+                            createFile(metaDir, mySettings, WEB_FRAGMENT_XML, HippoTemplatesFactory.HippoTemplate.ESSENTIALS_WEB_FRAGMENT_TEMPLATE);
+                            // create resources dir & html/js files:
+                            final String pluginRoot = metaInfRoot + "/resources/" + mySettings.getPluginGroup() + '/' + pluginName;
+                            final PsiDirectory pluginDir = DirectoryUtil.mkdirs(rootDirectory.getManager(), pluginRoot);
+                            createFile(pluginDir, mySettings, pluginName+".js", HippoTemplatesFactory.HippoTemplate.ESSENTIALS_PLUGIN_JS_TEMPLATE);
+                            createFile(pluginDir, mySettings, pluginName+".html", HippoTemplatesFactory.HippoTemplate.ESSENTIALS_PLUGIN_HTML_TEMPLATE);
+
+
+                        } catch (IOException e) {
+                            log.error("Error creating directories", e);
+                        }
                         VirtualFileManager.getInstance().syncRefresh();
-
-
                     }
 
                     private void createFile(final PsiDirectory directory, final SettingsData mySettings, final String fileName, final HippoTemplatesFactory.HippoTemplate template) {

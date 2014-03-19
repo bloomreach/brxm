@@ -1,0 +1,14 @@
+#set( $dollar = '$' )
+(function () {
+    "use strict";
+    angular.module('hippo.essentials')
+            .controller('${PLUGIN_NAME}Ctrl', function (${dollar}scope, ${dollar}sce, ${dollar}log, ${dollar}rootScope, ${dollar}http) {
+                ${dollar}scope.endpoint = ${dollar}rootScope.REST.dynamic + '${PLUGIN_NAME}/';
+                ${dollar}scope.message = {};
+                ${dollar}scope.run = function() {
+                    ${dollar}http.post(${dollar}scope.endpoint).success(function (data) {
+                        ${dollar}scope.message = data;
+                    });
+                };
+            })
+})();

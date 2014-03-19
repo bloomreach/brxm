@@ -1,10 +1,5 @@
 #set( $dollar = '$' )
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!--
-  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
-  -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
@@ -13,11 +8,12 @@
   <description>${PLUGIN_NAME}</description>
   <groupId>${GROUP_ID}</groupId>
   <artifactId>${ARTIFACT_ID}</artifactId>
+  <version>${VERSION}</version>
   <packaging>jar</packaging>
   <properties>
+    <servlet-api.version>2.5</servlet-api.version>
     <essentials.version>${ESSENTIALS_VERSION}</essentials.version>
     <junit.version>4.11</junit.version>
-    <hst.version>2.26.09</hst.version>
     <spring-test.version>3.2.6.RELEASE</spring-test.version>
 
   </properties>
@@ -33,6 +29,12 @@
       <groupId>org.onehippo.cms7.essentials</groupId>
       <artifactId>hippo-essentials-plugin-api-implementation</artifactId>
       <version>${dollar}{essentials.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+        <version>${dollar}{servlet-api.version}</version>
+        <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
@@ -53,28 +55,13 @@
       <scope>test</scope>
       <version>${dollar}{spring-test.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-connector</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst-client</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst-api</artifactId>
-      <scope>provided</scope>
-      <version>${dollar}{hst.version}</version>
-    </dependency>
   </dependencies>
   <build>
     <defaultGoal>package</defaultGoal>
     <resources>
       <resource>
         <filtering>false</filtering>
-        <directory>${basedir}/src/main/java</directory>
+        <directory>${dollar}{basedir}/src/main/java</directory>
         <includes>
           <include>**/*.woff</include>
           <include>**/*.xml</include>
@@ -91,7 +78,7 @@
       </resource>
       <resource>
         <filtering>false</filtering>
-        <directory>${basedir}/src/main/resources</directory>
+        <directory>${dollar}{basedir}/src/main/resources</directory>
         <includes>
           <include>**/*.cnd</include>
           <include>**/*.xml</include>

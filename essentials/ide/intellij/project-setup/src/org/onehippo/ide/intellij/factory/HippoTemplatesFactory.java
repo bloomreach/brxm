@@ -44,7 +44,9 @@ public class HippoTemplatesFactory implements FileTemplateGroupDescriptorFactory
     public enum HippoTemplate {
         ESSENTIALS_POM_TEMPLATE("essentials_pom"),
         ESSENTIALS_WEB_FRAGMENT_TEMPLATE("essentials_web_fragment"),
-        ESSENTIALS_REST_TEMPLATE("essentials_rest_class");
+        ESSENTIALS_REST_TEMPLATE("essentials_rest_class"),
+        ESSENTIALS_PLUGIN_HTML_TEMPLATE("essentials_html_template"),
+        ESSENTIALS_PLUGIN_JS_TEMPLATE("essentials_javascript_template");
 
         final String name;
 
@@ -90,7 +92,24 @@ public class HippoTemplatesFactory implements FileTemplateGroupDescriptorFactory
         if ((new File(fileName)).exists()) {
             throw new RuntimeException("File already exists");
         }
-        final PsiFile file = factory.createFileFromText(fileName, Language.ANY, text);
+        Language language = null;
+        if (fileName.endsWith("xml")) {
+            language = Language.findLanguageByID("XML");
+        } else if (fileName.endsWith("js")) {
+            language = Language.findLanguageByID("JavaScript");
+        } else if (fileName.endsWith("java")) {
+            language = Language.findLanguageByID("JAVA");
+        } else if (fileName.endsWith("html")) {
+            language = Language.findLanguageByID("HTML");
+        }
+
+        if (language == null) {
+            return null;
+        }
+        final PsiFile file = factory.createFileFromText(fileName, language, text);
+        if (file == null) {
+            return null;
+        }
 
         return directory.add(file);
     }

@@ -1,0 +1,16 @@
+<div ng-controller="${PLUGIN_NAME}Ctrl">
+    <div class="row">
+        <div class="panel panel-primary">
+            <div class="panel-heading">Bean re-generation</div>
+            <div class="list-group">
+                <p class="list-group-item">
+                        ${PLUGIN_NAME}: {{message}}
+                </p>
+                <p class="list-group-item">
+                    <button class="btn btn-primary" ng-click="run()">Run ${PLUGIN_NAME}</button>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+

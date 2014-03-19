@@ -25,10 +25,19 @@ public class SettingsData {
     private String groupId;
     private String projectPackage;
     private String artifactId;
+    private String pluginGroup;
     private boolean createRestSkeleton;
 
 
     public SettingsData() {
+    }
+
+    public String getPluginGroup() {
+        return pluginGroup;
+    }
+
+    public void setPluginGroup(final String pluginGroup) {
+        this.pluginGroup = pluginGroup;
     }
 
     public String getProjectName() {
