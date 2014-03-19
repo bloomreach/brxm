@@ -40,7 +40,7 @@
                 };
 
                 $scope.validation = {
-                    illegalCharacters: '/'
+                    illegalCharacters: '/ :'
                 };
 
                 $scope.host = '';

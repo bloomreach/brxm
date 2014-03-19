@@ -16,5 +16,6 @@
     "CANCEL": "Cancel",
 
     "ITEM_NAME_NOT_UNIQUE": "This URL is already in use",
+    "INVALID_PATH": "The URL is not valid",
     "ILLEGAL_CHARACTERS": "These characters are not allowed: {{ illegalCharacters }}"
 }
