@@ -37,10 +37,11 @@ public class PluginRestful implements Plugin, Restful {
     private List<PluginModuleRestful.PrefixedLibrary> libraries = new ArrayList<>();
 
 
-    public void addLibrary(final PluginModuleRestful.PrefixedLibrary library){
+    public void addLibrary(final PluginModuleRestful.PrefixedLibrary library) {
         libraries.add(library);
     }
-    public void addAll(final List<PluginModuleRestful.PrefixedLibrary> libraries){
+
+    public void addAll(final List<PluginModuleRestful.PrefixedLibrary> libraries) {
         libraries.addAll(libraries);
     }
 

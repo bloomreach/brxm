@@ -95,7 +95,6 @@ public class PluginModuleRestful implements Restful {
     //############################################
 
 
-
     public static class PrefixedLibrary {
 
         private String prefix;

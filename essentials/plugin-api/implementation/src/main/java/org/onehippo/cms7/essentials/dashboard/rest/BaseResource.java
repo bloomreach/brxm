@@ -63,7 +63,7 @@ public class BaseResource {
     protected boolean isInstalled(final Plugin plugin) {
         final List<EssentialsDependency> dependencies = plugin.getDependencies();
         for (EssentialsDependency dependency : dependencies) {
-            if(!DependencyUtils.hasDependency(dependency)){
+            if (!DependencyUtils.hasDependency(dependency)) {
                 return false;
             }
         }
