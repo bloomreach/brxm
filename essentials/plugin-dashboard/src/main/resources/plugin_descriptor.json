@@ -24,7 +24,8 @@
         ],
         "libraries": [
             {
-                "items": [{
+                "items": [
+                    {
                         "component": "contentBlocks",
                         "file": "contentBlocks.js"
                     }
@@ -67,7 +68,7 @@
         "name": "Carousel",
         "pluginId": "carouselPlugin",
         "restClasses": ["org.onehippo.cms7.essentials.dashboard.carousel.CarouselResource"],
-         "type": "plugins",
+        "type": "plugins",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -180,6 +181,31 @@
                     {
                         "component": "beanwriter",
                         "file": "beanwriter.js"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "needsInstallation": false,
+        "enabled": true,
+        "@type": "plugin",
+        "introduction": "Adds Banner document type to your project",
+        "name": "Banner plugin",
+        "pluginId": "beanwriter",
+        "restClasses": ["org.onehippo.cms7.essentials.dashboard.banner.BannerPluginResource"],
+        "type": "plugins",
+        "vendor": {
+            "@type": "vendor",
+            "name": "Hippo",
+            "url": "http://www.onehippo.com"
+        },
+        "libraries": [
+            {
+                "items": [
+                    {
+                        "component": "bannerPlugin",
+                        "file": "bannerPlugin.js"
                     }
                 ]
             }

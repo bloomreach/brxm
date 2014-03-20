@@ -1,0 +1,26 @@
+<div class="panel panel-default" ng-controller="bannerPluginCtrl">
+    <div class="panel-heading">Banner plugin</div>
+    <div class="panel-body">
+        <form novalidate name="bannerForm">
+            <div class="form-group">
+                <label>Content:</label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    Add sample content
+                    <input type="checkbox" ng-model="installSampleData"/>
+                </label>
+            </div>
+        </form>
+    </div>
+    <div class="panel-footer">
+
+        <div class="input-group">
+              <span class="input-group-btn">
+                <button class="btn btn-primary pull-right" type="submit" ng-click="run()">Add Banner support</button>
+              </span>
+        </div>
+    </div>
+</div>
+
+

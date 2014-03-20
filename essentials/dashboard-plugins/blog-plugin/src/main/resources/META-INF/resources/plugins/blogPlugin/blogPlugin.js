@@ -63,7 +63,6 @@
                             }
                         }
                     }
-                    console.log(payload);
                     $http.post($scope.endpoint, payload).success(function (data) {
 
                     });

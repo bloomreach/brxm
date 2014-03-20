@@ -1,0 +1,31 @@
+package {{beansPackage}}
+
+import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
+import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.standard.HippoHtml;
+import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean;
+import org.hippoecm.hst.content.beans.standard.HippoMirrorBean;
+
+@HippoEssentialsGenerated(internalName = "{{namespace}}:bannerdocument")
+@Node(jcrType = "{{namespace}}:bannerdocument")
+public class Banner extends BaseDocument {
+	@HippoEssentialsGenerated(internalName = "{{namespace}}:title")
+	public String getTitle() {
+		return getProperty("{{namespace}}:title");
+	}
+
+	@HippoEssentialsGenerated(internalName = "{{namespace}}:content")
+	public HippoHtml getContent() {
+		return getHippoHtml("{{namespace}}:content");
+	}
+
+	@HippoEssentialsGenerated(internalName = "{{namespace}}:image")
+	public HippoGalleryImageSetBean getImage() {
+		return getLinkedBean("{{namespace}}:image", HippoGalleryImageSetBean.class);
+	}
+
+	@HippoEssentialsGenerated(internalName = "{{namespace}}:link")
+	public HippoMirrorBean getLink() {
+		return getLinkedBean("{{namespace}}:link", HippoMirrorBean.class);
+	}
+}

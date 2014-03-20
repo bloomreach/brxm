@@ -52,6 +52,7 @@
     <module>components-plugin</module>
     <module>beanwriter-plugin</module>
     <module>freemarker-synchronizer</module>
+    <module>banner-plugin</module>
   </modules>
   <dependencyManagement>
 

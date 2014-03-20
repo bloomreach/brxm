@@ -1,16 +1,19 @@
-<div ng-controller="${PLUGIN_NAME}Ctrl">
-    <div class="row">
-        <div class="panel panel-primary">
-            <div class="panel-heading">Bean re-generation</div>
-            <div class="list-group">
-                <p class="list-group-item">
-                        ${PLUGIN_NAME}: {{message}}
-                </p>
-                <p class="list-group-item">
-                    <button class="btn btn-primary" ng-click="run()">Run ${PLUGIN_NAME}</button>
-                </p>
+<div class="panel panel-default" ng-controller="${PLUGIN_NAME}Ctrl">
+    <div class="panel-heading">${PLUGIN_NAME}</div>
+    <div class="panel-body">
+        <form novalidate name="${PLUGIN_NAME}Form">
+            <div class="form-group">
+                <label>${PLUGIN_NAME}</label>
             </div>
+        </form>
+    </div>
+    <div class="panel-footer">
+        <div class="input-group">
+              <span class="input-group-btn">
+                <button ng-disabled="!${PLUGIN_NAME}Form.$valid" class="btn btn-primary pull-right" type="submit" ng-click="run()">Run ${PLUGIN_NAME}</button>
+              </span>
         </div>
     </div>
 </div>
+
 
