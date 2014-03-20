@@ -53,7 +53,7 @@
             <button type="button" class="close" data-ng-click="dismissFeedback()" aria-hidden="true">&times;</button>
             {{feedback.message}}
         </p>
-        <h3 class="lead item-title"><strong>{{ selectedMenuItem.title }}</strong> {{ 'MENU_ITEM' | translate }}</h3>
+        <h1><strong>{{ selectedMenuItem.title }}</strong> {{ 'MENU_ITEM' | translate }}</h1>
         <div class="form-group has-feedback"
              data-ng-class="{
             'has-success': form.title.$dirty && !isSaving.title && form.title.$valid && isSaved.title,
