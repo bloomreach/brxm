@@ -33,10 +33,6 @@
 
                 $scope.isPageEditable = false;
 
-                $scope.title = {
-                    focus: true
-                };
-
                 $scope.validation = {
                     illegalCharacters: '/ :'
                 };
