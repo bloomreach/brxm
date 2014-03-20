@@ -93,6 +93,7 @@
 .l-sidebar {
     height: 434px;
     overflow-y: auto;
+    margin-right: 4px;
 }
 
 .panel-default {
@@ -101,7 +102,6 @@
     border-bottom: 0;
     border-top: 0;
 }
-
 .panel-footer {
     padding-top: 8px;
     padding-bottom: 8px;
@@ -171,11 +171,6 @@ h3.lead.item-title {
 
 #close-confirmation .confirmation-dialog {
     margin-left: 180px;
-}
-
-/* --- NestedSortable --- */
-.nestedSortable-handle {
-    border-right: none;
 }
 
 /* --- Top bar --- */
