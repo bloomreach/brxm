@@ -53,15 +53,12 @@
     border-right: none;
 }
 
-#menu-tree button {
-    margin: 10px auto;
-}
-
 #form-panel {
     padding-bottom: 10px;
     display: table-cell;
     float: none;
     position: relative;
+    background-color: #f4f4f4;
 }
 
 .l-fixed-height {
@@ -94,9 +91,20 @@
 
 /* --- Panel component --- */
 .l-sidebar {
-    height: 433px;
+    height: 434px;
     overflow-y: auto;
-    border-right: 1px solid #dddddd;
+}
+
+.panel-default {
+    border-radius: 0;
+    border-left: 0;
+    border-bottom: 0;
+    border-top: 0;
+}
+
+.panel-footer {
+    padding-top: 8px;
+    padding-bottom: 8px;
 }
 
 form h4.page-header {

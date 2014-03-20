@@ -17,13 +17,15 @@
 <div class="container" id="container">
     <div class="row">
         <div class="col-sm-4" id="menu-tree" data-ng-controller="hippo.channel.menu.TreeCtrl">
-            <div class="l-sidebar">
-                <div data-hippo.theme.tree data-items="list" data-callbacks="callbacks" data-selected-item-id="selectedMenuItem.id">{{ item.title }}</div>
-            </div>
-            <div id="add" class="col-sm-4" data-ng-controller="hippo.channel.menu.MenuCtrl">
-                <button type="button" class="btn btn-default btn-block" data-ng-click="addItem()">
-                    <i class="fa fa-plus"></i> {{ 'ADD_MENU_ITEM' | translate }}
-                </button>
+            <div class="panel panel-default">
+                <div class="panel-content l-sidebar">
+                    <div data-hippo.theme.tree data-items="list" data-callbacks="callbacks" data-selected-item-id="selectedMenuItem.id">{{ item.title }}</div>
+                </div>
+                <div class="panel-footer" data-ng-controller="hippo.channel.menu.MenuCtrl">
+                    <button type="button" class="btn btn-default btn-block" data-ng-click="addItem()">
+                        <i class="fa fa-plus"></i> {{ 'ADD_MENU_ITEM' | translate }}
+                    </button>
+                </div>
             </div>
         </div>
 
