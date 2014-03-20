@@ -16,13 +16,7 @@
 
 package org.onehippo.cms7.essentials.components;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.content.beans.standard.HippoDocumentIterator;
 import org.hippoecm.hst.content.beans.standard.HippoFacetNavigationBean;
-import org.hippoecm.hst.content.beans.standard.HippoResultSetBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
@@ -31,9 +25,6 @@ import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.hst.util.SearchInputParsingUtils;
 import org.hippoecm.hst.utils.BeanUtils;
 import org.onehippo.cms7.essentials.components.info.EssentialsFacetsComponentInfo;
-import org.onehippo.cms7.essentials.components.paging.DefaultPagination;
-import org.onehippo.cms7.essentials.components.paging.IterablePagination;
-import org.onehippo.cms7.essentials.components.paging.Pageable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

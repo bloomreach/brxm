@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
  */
 public class IterablePagination<T extends HippoBean> extends Pageable<T> {
 
+    public static final String UNCHECKED = "unchecked";
     private static Logger log = LoggerFactory.getLogger(IterablePagination.class);
 
 
@@ -62,7 +63,7 @@ public class IterablePagination<T extends HippoBean> extends Pageable<T> {
      * Constructor to be used when the paging is not done beforehand (for example in HST query), but has to be done by
      * this class, for instance paging on facet navigation results.
      */
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({UNCHECKED})
     public IterablePagination(final HippoBeanIterator beans, final int currentPage) {
         super(beans.getSize(), currentPage);
         processOffset(beans);
@@ -129,7 +130,7 @@ public class IterablePagination<T extends HippoBean> extends Pageable<T> {
         return items;
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({UNCHECKED})
     public void setItems(List<? extends HippoBean> items) {
         this.items = (List<T>) items;
     }
@@ -154,8 +155,8 @@ public class IterablePagination<T extends HippoBean> extends Pageable<T> {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    protected void processOffset(HippoBeanIterator beans) {
+    @SuppressWarnings(UNCHECKED)
+    protected final void processOffset(HippoBeanIterator beans) {
         items = new ArrayList<>();
         int startAt = getStartOffset();
         if (startAt < getTotal()) {
@@ -180,7 +181,7 @@ public class IterablePagination<T extends HippoBean> extends Pageable<T> {
     protected void processItems(HippoBeanIterator beans) {
         items = new ArrayList<>();
         while (beans.hasNext()) {
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings(UNCHECKED)
             T bean = (T) beans.nextHippoBean();
             if (bean != null) {
                 items.add(bean);

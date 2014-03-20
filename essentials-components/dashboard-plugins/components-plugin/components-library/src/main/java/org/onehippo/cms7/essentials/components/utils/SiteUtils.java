@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -67,7 +66,7 @@ public final class SiteUtils {
     }
 
 
-    public static  boolean getAnyBooleanParam(HstRequest request, String parameter, boolean defaultValue, final BaseHstComponent component) {
+    public static boolean getAnyBooleanParam(HstRequest request, String parameter, boolean defaultValue, final BaseHstComponent component) {
         final String p = getAnyParameter(parameter, request, component);
         if (p == null) {
             return defaultValue;
@@ -75,7 +74,7 @@ public final class SiteUtils {
         return Boolean.valueOf(p);
     }
 
-    
+
     public static int getAnyIntParameter(HstRequest request, String parameter, int defaultValue, final BaseHstComponent component) {
         final String p = getAnyParameter(parameter, request, component);
         if (p == null) {
