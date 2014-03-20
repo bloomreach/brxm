@@ -22,14 +22,18 @@
             '$scope',
             'hippo.channel.FeedbackService',
             'hippo.channel.PageService',
+            'hippo.channel.PrototypeService',
             'hippo.channel.Container',
             'lowercaseFilter',
             'alphanumericFilter',
-            function ($scope, FeedbackService, PageService, ContainerService, lowercaseFilter, alphanumericFilter) {
+            function ($scope, FeedbackService, PageService, PrototypeService, ContainerService, lowercaseFilter, alphanumericFilter) {
                 $scope.page = {
                     id: null,
                     title: '',
-                    url: ''
+                    url: '',
+                    prototype: {
+                        id: null
+                    }
                 };
 
                 $scope.isPageEditable = false;
@@ -40,12 +44,19 @@
 
                 $scope.host = '';
 
+                function setErrorFeedback(errorResponse) {
+                    $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
+                }
+
                 // fetch host
                 PageService.getHost().then(function (response) {
                     $scope.host = response;
-                }, function (errorResponse) {
-                    $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
-                });
+                }, setErrorFeedback);
+
+                // fetch prototypes
+                PrototypeService.getPrototypes().then(function (response) {
+                    $scope.prototypes = response;
+                }, setErrorFeedback);
 
                 // fetch page
                 PageService.getCurrentPage().then(function (currentPage) {
@@ -55,21 +66,20 @@
 
                     // only pages whose sitemap item is located in the HST workspace are editable
                     $scope.isPageEditable = currentPage.workspaceConfiguration;
-                }, function (errorResponse) {
-                    $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
-                });
+                }, setErrorFeedback);
 
                 $scope.submit = function () {
                     var pageModel = {
                         id: $scope.page.id,
                         pageTitle: $scope.page.title,
-                        name: $scope.page.url
+                        name: $scope.page.url,
+                        componentConfigurationId: $scope.page.prototype.id
                     };
 
                     PageService.updatePage(pageModel).then(function (response) {
                         ContainerService.showPage(pageModel.name);
                     }, function (errorResponse) {
-                        $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
+                        setErrorFeedback(errorResponse);
                         $scope.title.focus = true;
                     });
                 };

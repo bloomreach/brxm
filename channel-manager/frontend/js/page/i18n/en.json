@@ -6,6 +6,9 @@
     "URL_REQUIRED": "The URL cannot be empty",
     "URL_ILLEGAL_CHARACTERS": "These characters are not allowed: {{ illegalCharacters }}",
 
+    "ASSIGN_NEW_TEMPLATE": "Assign a new template",
+    "ASSIGN_NEW_TEMPLATE_WARNING": "Components on the page might be repositioned if a new template is assigned.",
+
     "SAVE": "Save",
     "CANCEL": "Cancel",
 

@@ -27,7 +27,6 @@ frontend/js/pages/filters/startWithSlash.js -text
 frontend/js/pages/filters/startWithSlash.spec.js -text
 frontend/js/pages/i18n/en.json -text
 frontend/js/pages/i18n/nl.json -text
-frontend/js/pages/services/PrototypeService.js -text
 frontend/js/pages/states/NavigationCtrl.js -text
 frontend/js/pages/states/add-page/AddPageCtrl.js -text
 frontend/js/pages/states/add-page/add-page.html -text
@@ -46,6 +45,7 @@ frontend/js/shared/services/FeedbackService.js -text
 frontend/js/shared/services/FormStateService.js -text
 frontend/js/shared/services/IFrameService.js -text
 frontend/js/shared/services/PageService.js -text
+frontend/js/shared/services/PrototypeService.js -text
 frontend/package.json -text
 frontend/pom.xml eol=lf
 frontend/src/main/appended-resources/META-INF/LICENSE -text

@@ -1087,6 +1087,7 @@
                 composerRestMountUrl: this.composerRestMountUrl,
                 debug: this.debug,
                 locale: this.locale,
+                mountId: this.currentMountId,
                 sitemapId: this.currentSitemapId,
                 sitemapItemId: this.currentSitemapItemId
             });

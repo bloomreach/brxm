@@ -6,6 +6,9 @@
     "URL_REQUIRED": "De URL kan niet leeg zijn",
     "URL_ILLEGAL_CHARACTERS": "Deze karakters zijn niet toegestaan: {{ illegalCharacters }}",
 
+    "ASSIGN_NEW_TEMPLATE": "Gebruik een nieuwe template",
+    "ASSIGN_NEW_TEMPLATE_WARNING": "Componenten op de pagina kunnen van positie veranderen als een nieuwe template wordt gebruikt.",
+
     "SAVE": "Sla op",
     "CANCEL": "Annuleer",
 

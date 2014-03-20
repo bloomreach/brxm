@@ -23,8 +23,8 @@
         constructor: function(config) {
             Ext.apply(config, {
                 title: config.resources['page-settings-window-title'],
-                width: 587,
-                height: 517,
+                width: 530,
+                height: 460,
                 modal: true,
                 resizable: false,
                 iframeUrl: './angular/page/index.html',

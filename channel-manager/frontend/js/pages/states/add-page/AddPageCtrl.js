@@ -21,7 +21,7 @@
         .controller('hippo.channel.pages.AddPageCtrl', [
             '$scope',
             'hippo.channel.FeedbackService',
-            'hippo.channel.pages.PrototypeService',
+            'hippo.channel.PrototypeService',
             'hippo.channel.PageService',
             'hippo.channel.Container',
             'lowercaseFilter',

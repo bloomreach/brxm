@@ -15,7 +15,7 @@
  */
 
 /* --- Settings Form --- */
-.panel-default {
+#settings.panel-default {
     border: none;
 }
 
@@ -33,4 +33,18 @@ form {
 
 #url .form-control {
     padding-left: 3px;
+}
+
+#template .toggle {
+    display: block;
+    margin-bottom: 5px;
+}
+
+#template .panel-body {
+    padding-bottom: 0;
+}
+
+#template .alert {
+    margin-top: 10px;
+    margin-bottom: 0;
 }

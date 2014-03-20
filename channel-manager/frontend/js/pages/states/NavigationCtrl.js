@@ -21,7 +21,7 @@
         '$scope',
         '$state',
         'hippo.channel.FeedbackService',
-        'hippo.channel.pages.PrototypeService',
+        'hippo.channel.PrototypeService',
         function ($scope, $state, FeedbackService, PrototypeService) {
             // navigation
             $scope.navigateTo = function (stateName) {
