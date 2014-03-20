@@ -24,13 +24,13 @@
             '$state',
             '$stateParams',
             'hippo.channel.FeedbackService',
-            'hippo.channel.FormValidationService',
+            'hippo.channel.FormStateService',
             'hippo.channel.menu.MenuService',
-            function ($scope, $state, $stateParams, FeedbackService, FormValidationService, MenuService) {
+            function ($scope, $state, $stateParams, FeedbackService, FormStateService, MenuService) {
                 var parentItemId = $stateParams.menuItemId;
 
                 // the user should submit or cancel before closing the menu
-                FormValidationService.setValidity(false);
+                FormStateService.setValid(false);
 
                 $scope.selectedMenuItem = {
                     linkType: 'SITEMAPITEM',
@@ -67,7 +67,7 @@
                             siblingId: siblingId
                         }).then(
                             function (menuItemId) {
-                                FormValidationService.setValidity(true);
+                                FormStateService.setValid(true);
 
                                 $state.go('menu-item.edit', {
                                     menuItemId: menuItemId
@@ -85,7 +85,7 @@
                 };
                 
                 $scope.cancel = function () {
-                    FormValidationService.setValidity(true);
+                    FormStateService.setValid(true);
 
                     $state.go('menu-item.edit', {
                         menuItemId: parentItemId

@@ -32,42 +32,54 @@
             '$log',
             'hippo.channel.ConfigService',
             'hippo.channel.FeedbackService',
-            'hippo.channel.FormValidationService',
+            'hippo.channel.FormStateService',
             'hippo.channel.menu.MenuService',
-            function ($scope, $state, $stateParams, $rootScope, $log, ConfigService, FeedbackService, FormValidationService, MenuService) {
+            function ($scope, $state, $stateParams, $rootScope, $log, ConfigService, FeedbackService, FormStateService, MenuService) {
 
                 function onSuccess() {
                 }
 
-                function onError(errorResponse) {
+                function setErrorFeedback(errorResponse) {
                     $scope.$parent.feedback = FeedbackService.getFeedback(errorResponse);
+                }
+
+                function editItem(itemId) {
+                    $scope.$parent.feedback = '';
+
+                    $state.go('menu-item.edit', {
+                        menuItemId: itemId
+                    });
                 }
 
                 $scope.callbacks = {
                     itemClicked: function (itemScope) {
-                        MenuService.saveMenuItem($scope.$parent.selectedMenuItem).then(function () {
-                                $scope.$parent.feedback = '';
+                        var clickedItemId = itemScope.id;
 
-                                $state.go('menu-item.edit', {
-                                    menuItemId: itemScope.id
-                                });
-                            },
-                            function () {
-                                FormValidationService.setValidity(false);
+                        if (FormStateService.isDirty()) {
+                            if (FormStateService.isValid()) {
+                                MenuService.saveMenuItem($scope.$parent.selectedMenuItem).then(function() {
+                                        editItem(clickedItemId);
+                                    },
+                                    function (error) {
+                                        setErrorFeedback(error);
+                                        FormStateService.setValid(false);
+                                    }
+                                );
                             }
-                        );
+                        } else {
+                            editItem(clickedItemId);
+                        }
                     },
                     itemMoved: function (sourceScope, modelData, sourceIndex, destScope, destIndex) {
                         // created an issue for the Tree component, to add a disabled state
                         // link: https://github.com/JimLiu/angular-ui-tree/issues/63
-                        if (!FormValidationService.getValidity()) {
+                        if (!FormStateService.isValid()) {
                             moveItemModel(sourceScope, sourceIndex, destScope, destIndex);
                         } else {
                             var parentData = destScope.parentItemScope(),
                                 destId = (!parentData) ? ConfigService.menuId : parentData.itemData().id;
                             MenuService.moveMenuItem(modelData.id, destId, destIndex).then(onSuccess, function (errorResponse) {
-                                $scope.$parent.feedback = FeedbackService.getFeedback(errorResponse);
-
+                                setErrorFeedback(errorResponse);
                                 moveItemModel(sourceScope, sourceIndex, destScope, destIndex);
                             });
                         }
@@ -76,13 +88,13 @@
                         MenuService.saveMenuItem($scope.$parent.selectedMenuItem);
                     },
                     orderChanged: function (scope, modelData, sourceIndex, destIndex) {
-                        if (!FormValidationService.getValidity()) {
+                        if (!FormStateService.isValid()) {
                             // revert tree, move the item back at it's original place in the DOM
                             moveItemModel(scope, sourceIndex, scope, destIndex);
                         } else {
-                            var parentData = scope.parentItemScope();
-                            var destId = (!parentData) ? ConfigService.menuId : parentData.itemData().id;
-                            MenuService.moveMenuItem(modelData.id, destId, destIndex).then(onSuccess, onError);
+                            var parentData = scope.parentItemScope(),
+                                destId = (!parentData) ? ConfigService.menuId : parentData.itemData().id;
+                            MenuService.moveMenuItem(modelData.id, destId, destIndex).then(onSuccess, setErrorFeedback);
                         }
                     }
                 };

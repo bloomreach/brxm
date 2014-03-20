@@ -19,20 +19,31 @@
 
     angular.module('hippo.channel')
 
-        .factory('hippo.channel.FormValidationService', [function () {
-            var isValid = true;
+        .factory('hippo.channel.FormStateService', [function () {
+            var valid = true,
+                dirty = false;
 
-            function setValidity(value) {
-                isValid = value;
+            function setValid(value) {
+                valid = value;
             }
 
-            function getValidity() {
-                return isValid;
+            function isValid() {
+                return valid;
+            }
+
+            function setDirty(value) {
+                dirty = value;
+            }
+
+            function isDirty() {
+                return dirty;
             }
 
             return {
-                setValidity: setValidity,
-                getValidity: getValidity
+                setValid: setValid,
+                isValid: isValid,
+                setDirty: setDirty,
+                isDirty: isDirty
             };
         }]);
 }());

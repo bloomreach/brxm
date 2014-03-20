@@ -22,15 +22,15 @@
         .controller('hippo.channel.menu.EditMenuItemFormCtrl', [
             '$scope',
             '$translate',
-            'hippo.channel.FormValidationService',
+            'hippo.channel.FormStateService',
             'hippo.channel.Container',
             'hippo.channel.menu.FocusService',
             'hippo.channel.menu.MenuService',
-            function ($scope, $translate, FormValidationService, ContainerService, FocusService, MenuService) {
+            function ($scope, $translate, FormStateService, ContainerService, FocusService, MenuService) {
                 $scope.focus = FocusService.focusElementWithId;
 
                 // The following logic will check the client-side validation of the
-                // edit menu item form. When a field is invalid, the FormValidationService
+                // edit menu item form. When a field is invalid, the FormStateService
                 // will be updated, so the window can't be closed.
                 $scope.$watch('form.title.$valid', function () {
                     checkFormValidity();
@@ -58,8 +58,12 @@
                         isValid = isValid && ($scope.form.sitemapItem.$valid);
                     }
 
-                    FormValidationService.setValidity(isValid);
+                    FormStateService.setValid(isValid);
                 }
+
+                $scope.$watch('form.$dirty', function () {
+                    FormStateService.setDirty($scope.form.$dirty);
+                });
 
                 // The following logic will set the correct error messages when the
                 // client-side validation status updates.

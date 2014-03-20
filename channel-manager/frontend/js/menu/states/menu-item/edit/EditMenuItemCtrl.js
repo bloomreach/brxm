@@ -27,9 +27,9 @@
             '$window',
             'hippo.channel.FeedbackService',
             'hippo.channel.menu.MenuService',
-            'hippo.channel.FormValidationService',
+            'hippo.channel.FormStateService',
             'hippo.channel.Container',
-            function ($scope, $stateParams, $state, $log, $window, FeedbackService, MenuService, FormValidationService, ContainerService) {
+            function ($scope, $stateParams, $state, $log, $window, FeedbackService, MenuService, FormStateService, ContainerService) {
                 var savedMenuItem;
 
                 $scope.isSaving = {
@@ -115,13 +115,13 @@
                     MenuService.saveMenuItem(savedMenuItem).then(function () {
                                 $scope.isSaving[propertyName] = false;
                                 $scope.isSaved[propertyName] = true;
-                                FormValidationService.setValidity(true);
+                                FormStateService.setValid(true);
                             },
                             function (errorResponse) {
                                 $scope.fieldFeedbackMessage[propertyName] = FeedbackService.getFeedback(errorResponse).message;
                                 $scope.isSaving[propertyName] = false;
                                 $scope.isSaved[propertyName] = false;
-                                FormValidationService.setValidity(false);
+                                FormStateService.setValid(false);
                             }
                     );
                 }

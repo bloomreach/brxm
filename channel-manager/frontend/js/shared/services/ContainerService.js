@@ -30,8 +30,8 @@
             '$log',
             '$rootScope',
             '_hippo.channel.IFrameService',
-            'hippo.channel.FormValidationService',
-            function($log, $rootScope, IFrameService, FormValidationService) {
+            'hippo.channel.FormStateService',
+            function($log, $rootScope, IFrameService, FormStateService) {
 
                 function handleClose() {
                     if (IFrameService.isActive) {
@@ -48,7 +48,7 @@
                         });
 
                         $rootScope.$on('container:close', function(event) {
-                            if (!FormValidationService.getValidity()) {
+                            if (!FormStateService.isValid()) {
                                 event.preventDefault();
                                 $rootScope.$broadcast('close-confirmation:show');
                             }
