@@ -16,14 +16,7 @@
 
 package org.onehippo.cms7.essentials.rest.model;
 
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.Calendar;
-import java.util.Map;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;

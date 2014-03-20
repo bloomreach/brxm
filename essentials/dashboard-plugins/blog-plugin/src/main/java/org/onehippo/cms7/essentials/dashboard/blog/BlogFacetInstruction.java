@@ -18,7 +18,6 @@ package org.onehippo.cms7.essentials.dashboard.blog;
 
 import java.util.Map;
 
-import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -33,7 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
-import com.google.common.eventbus.EventBus;
 
 /**
  * @version "$Id$"

@@ -17,7 +17,6 @@
 package org.onehippo.cms7.essentials.dashboard.restservices;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -38,7 +37,6 @@ import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
 import com.google.common.base.Strings;
 

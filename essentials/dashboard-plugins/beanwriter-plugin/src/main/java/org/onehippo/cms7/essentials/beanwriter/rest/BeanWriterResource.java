@@ -41,7 +41,6 @@ import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.MemoryBean;
 

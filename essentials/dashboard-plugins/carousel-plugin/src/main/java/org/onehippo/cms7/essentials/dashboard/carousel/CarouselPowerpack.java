@@ -16,14 +16,7 @@
 
 package org.onehippo.cms7.essentials.dashboard.carousel;
 
-import java.util.Set;
-
 import org.onehippo.cms7.essentials.dashboard.packaging.DefaultPowerpack;
-import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * @version "$Id$"

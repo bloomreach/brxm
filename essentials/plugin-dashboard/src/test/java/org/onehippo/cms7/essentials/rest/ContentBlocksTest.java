@@ -8,7 +8,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
-import org.onehippo.cms7.essentials.dashboard.model.Restful;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.onehippo.cms7.essentials.rest.model.RestList;

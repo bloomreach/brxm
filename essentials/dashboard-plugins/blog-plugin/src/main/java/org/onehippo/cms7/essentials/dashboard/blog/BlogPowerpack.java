@@ -18,7 +18,6 @@ package org.onehippo.cms7.essentials.dashboard.blog;
 
 import java.util.Set;
 
-import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.packaging.DefaultPowerpack;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 

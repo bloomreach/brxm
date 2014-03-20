@@ -18,7 +18,6 @@ package org.onehippo.ide.intellij.factory;
 
 
 import org.jetbrains.annotations.NotNull;
-
 import org.onehippo.ide.intellij.project.HippoEssentialsProject;
 
 import com.intellij.ide.util.projectWizard.WizardContext;

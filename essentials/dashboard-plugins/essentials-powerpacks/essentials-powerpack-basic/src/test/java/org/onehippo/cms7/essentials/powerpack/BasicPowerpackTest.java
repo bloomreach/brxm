@@ -19,8 +19,6 @@ package org.onehippo.cms7.essentials.powerpack;
 import java.io.File;
 import java.util.Set;
 
-import javax.inject.Inject;
-
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -31,7 +29,6 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 import static org.junit.Assert.assertEquals;
 
