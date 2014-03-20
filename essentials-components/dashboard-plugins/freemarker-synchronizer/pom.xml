@@ -116,6 +116,9 @@
           <include>**/*.cnd</include>
           <include>**/*.xml</include>
           <include>**/*.MF</include>
+          <include>**/*.html</include>
+          <include>**/*.js</include>
+          <include>**/*.MF</include>
           <include>**/*.properties</include>
         </includes>
       </resource>
