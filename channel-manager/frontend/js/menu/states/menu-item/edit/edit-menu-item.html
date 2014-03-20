@@ -66,20 +66,18 @@
                    data-ng-model="selectedMenuItem.title"
                    data-ng-required="true"
                    data-ng-blur="form.title.$valid ? saveSelectedMenuItem('title') : '';">
-
             <div class="tooltip-container" data-ng-show="fieldFeedbackMessage.title">
                 <div data-tooltip
                      data-placement="top"
                      data-title="{{ fieldFeedbackMessage.title }}"></div>
             </div>
-
             <i class="fa form-control-feedback"
                data-ng-show="form.title.$dirty"
                data-ng-class="{
-            'fa-spinner fa-spin': isSaving.title,
-            'fa-check': form.title.$valid && isSaved.title,
-            'fa-times': form.title.$invalid || !isSaved.title
-           }"></i>
+                'fa-spinner fa-spin': isSaving.title,
+                'fa-check': form.title.$valid && isSaved.title,
+                'fa-times': form.title.$invalid || !isSaved.title
+               }"></i>
         </div>
 
         <div class="form-group has-feedback" id="hippo.channel.menu.menuItem.edit.linkType">
