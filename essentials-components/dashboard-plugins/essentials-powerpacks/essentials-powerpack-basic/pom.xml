@@ -89,6 +89,7 @@
         <directory>${basedir}/src/main/java</directory>
         <includes>
           <include>**/*.woff</include>
+          <include>**/*.xml</include>
           <include>**/*.eot</include>
           <include>**/*.ttf</include>
           <include>**/*.svg</include>
@@ -97,8 +98,6 @@
           <include>**/*.png</include>
           <include>**/*.gif</include>
           <include>**/*.js</include>
-          <include>**/*.png</include>
-          <include>**/*.txt</include>
           <include>**/*.properties</include>
         </includes>
       </resource>
@@ -107,18 +106,12 @@
         <directory>${basedir}/src/main/resources</directory>
         <includes>
           <include>**/*.cnd</include>
-          <include>**/*.css</include>
-          <include>**/*.eot</include>
-          <include>**/*.svg</include>
-          <include>**/*.ttf</include>
-          <include>**/*.woff</include>
-          <include>**/*.jsp</include>
           <include>**/*.xml</include>
+          <include>**/*.js</include>
+          <include>**/*.html</include>
+          <include>**/*.css</include>
           <include>**/*.MF</include>
           <include>**/*.properties</include>
-          <include>**/*.java</include>
-          <include>**/*.png</include>
-          <include>**/*.txt</include>
         </includes>
       </resource>
     </resources>
