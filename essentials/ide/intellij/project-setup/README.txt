@@ -1,7 +1,7 @@
 //############################################
 // USING
 //############################################
-* add  /essentials/ide/intellij/project-setup/ide-integration.jar to ~/home/machak/.IntelliJIdea13/config/plugins folder
+* add  /essentials/ide/intellij/project-setup/ide-integration.jar to ~/.IntelliJIdea13/config/plugins folder
 * restart Intellij and use: File > New project > Hippo Essentials plugin
 
 
