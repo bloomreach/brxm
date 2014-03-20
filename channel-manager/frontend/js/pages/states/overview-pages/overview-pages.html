@@ -20,7 +20,7 @@
         <div class="panel-body l-fixed-height">
             <div class="list-group">
                 <a class="list-group-item" data-ng-repeat="page in pages" data-ng-click="showPage(page)" href="#">
-                    <h4 class="list-group-item-heading">{{ page.pathInfo | startWithSlash }}</h4>
+                    <p class="list-group-item-text">{{ page.pathInfo | startWithSlash }}</p>
                     <p class="list-group-item-text">{{ page.pageTitle || page.name }}</p>
                 </a>
             </div>
