@@ -9,5 +9,7 @@
     "SAVE": "Sla op",
     "CANCEL": "Annuleer",
 
-    "TECHNICAL_ERROR": "Er is een technische fout opgetreden"
+    "TECHNICAL_ERROR": "Er is een technische fout opgetreden",
+
+    "PAGE_SETTINGS": "Pagina-instellingen"
 }
