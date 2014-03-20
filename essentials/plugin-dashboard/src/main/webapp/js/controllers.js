@@ -56,11 +56,6 @@
                 $scope.$on('powerpackEvent', function () {
                     console.log(eventBroadcastService.event);
                     $scope.powerpackProperties = eventBroadcastService.event;
-                    angular.forEach($scope.powerpackProperties, function (value) {
-                        console.log("=================================");
-                        console.log(value.key);
-                        console.log(value.value);
-                    });
                 });
 
                 $scope.onWizardButton = function (idx) {
@@ -105,7 +100,7 @@
                     $scope.initCalled = true;
                     $http.get($rootScope.REST.plugins).success(function (data) {
                         $scope.packs = [];
-                        var powerpacks = $filter('pluginType')("powerpack", data.items);
+                        var powerpacks = $filter('pluginType')("powerpacks", data.items);
                         $scope.packs.push.apply($scope.packs, powerpacks);
                     });
 
