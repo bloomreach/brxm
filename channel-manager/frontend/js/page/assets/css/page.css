@@ -15,6 +15,10 @@
  */
 
 /* --- Settings Form --- */
+.panel-default {
+    border: none;
+}
+
 form {
     padding: 15px;
 }
