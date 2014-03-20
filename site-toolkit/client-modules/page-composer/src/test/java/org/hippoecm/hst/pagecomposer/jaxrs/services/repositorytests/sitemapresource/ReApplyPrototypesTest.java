@@ -32,9 +32,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper;
 import org.hippoecm.repository.util.JcrUtils;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
@@ -417,7 +415,7 @@ public class ReApplyPrototypesTest  extends AbstractSiteMapResourceTest {
                 "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx", HstNodeTypes.NODETYPE_HST_COMPONENT,
                     HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT, "hst:abstractpages/basepage",
                     "jcr:mixinTypes", HstNodeTypes.MIXINTYPE_HST_PROTOTYPE_META,
-                     HstNodeTypes.PROTOTYPE_META_PRIMARY_CONTAINER, "main/holder2",
+                     HstNodeTypes.PROTOTYPE_META_PROPERTY_PRIMARY_CONTAINER, "main/holder2",
                     "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main", HstNodeTypes.NODETYPE_HST_COMPONENT,
                         "hst:template", "prototype",
                          "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main/holder1", HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT,

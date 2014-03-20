@@ -110,7 +110,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
     public void test_create_with_prototype_meta() throws Exception {
         final Node prototype = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:prototypepages/prototype-page");
         prototype.addMixin(HstNodeTypes.MIXINTYPE_HST_PROTOTYPE_META);
-        prototype.setProperty(HstNodeTypes.PROTOTYPE_META_PRIMARY_CONTAINER, "path/to/contanier");
+        prototype.setProperty(HstNodeTypes.PROTOTYPE_META_PROPERTY_PRIMARY_CONTAINER, "path/to/contanier");
         session.save();
         Thread.sleep(200);
         initContext();

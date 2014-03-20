@@ -197,7 +197,7 @@ public abstract class AbstractHelper {
                 continue;
             }
             if (!containsAncestorLock(lockedNode, previewConfigurationNode)) {
-               lockedNodeRoots.add(lockedNode);
+                lockedNodeRoots.add(lockedNode);
             } else {
                 // possibly incorrect lock because ancestor locked by someone else.
                 // to be sure, unlock 'lockedNode'. If the ancestor is locked by current user, the ancestor
@@ -221,28 +221,28 @@ public abstract class AbstractHelper {
         return false;
     }
 
-    protected void createMarkedDeletedIfLiveExists(final Session session, final String oldLocation) throws RepositoryException {
-        boolean liveExists = liveExists(session, oldLocation);
-        if (liveExists) {
+    protected final void createMarkedDeletedIfLiveExists(final Session session, final String oldLocation) throws RepositoryException {
+        if (liveExists(session, oldLocation)) {
             Node deleted = session.getRootNode().addNode(oldLocation.substring(1), HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
             markDeleted(deleted);
         }
     }
 
-    protected void deleteOrMarkDeletedIfLiveExists(final Node toDelete) throws RepositoryException {
-        boolean liveExists = liveExists(toDelete.getSession(), toDelete.getPath());
-        if (liveExists) {
+    protected final void deleteOrMarkDeletedIfLiveExists(final Node toDelete) throws RepositoryException {
+        if (liveExists(toDelete.getSession(), toDelete.getPath())) {
             markDeleted(toDelete);
         } else {
             toDelete.remove();
         }
     }
 
-    protected boolean liveExists(final Session session, final String previewLocation) throws RepositoryException {
-        if (!previewLocation.contains("-preview/hst:workspace/")) {
+    protected final boolean liveExists(final Session session, final String previewLocation) throws RepositoryException {
+        final String workspace = "/hst:workspace/";
+        final String previewWorkspace = "-preview" + workspace;
+        if (!previewLocation.contains(previewWorkspace)) {
             throw new IllegalStateException("Unexpected location '" + previewLocation + "'");
         }
-        String liveLocation = previewLocation.replace("-preview/hst:workspace/", "/hst:workspace/");
+        final String liveLocation = previewLocation.replace(previewWorkspace, workspace);
         return session.nodeExists(liveLocation);
     }
 
@@ -265,7 +265,6 @@ public abstract class AbstractHelper {
     protected String getPreviewWorkspacePath() {
         return pageComposerContextService.getEditingPreviewSite().getConfigurationPath() + "/" + NODENAME_HST_WORKSPACE;
     }
-
 
     // to override for helpers that need to be able to publish/discard
     protected String buildXPathQueryLockedNodesForUsers(final String previewConfigurationPath,

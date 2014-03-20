@@ -34,7 +34,9 @@ import org.slf4j.LoggerFactory;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_PAGES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_ABSTRACT_COMPONENT;
+import static org.hippoecm.hst.configuration.HstNodeTypes.PROTOTYPE_META_PROPERTY_PRIMARY_CONTAINER;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID;
+import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
 
 public class PagesHelper extends AbstractHelper {
 
@@ -86,10 +88,8 @@ public class PagesHelper extends AbstractHelper {
         lockHelper.acquireLock(oldPage, 0);
         Node newPage = create(newPrototypePage, targetPageNodeName, null);
 
-        Node defaultContainer = findPrimaryContainer(newPage,
-                JcrUtils.getStringProperty(newPrototypePage, HstNodeTypes.PROTOTYPE_META_PRIMARY_CONTAINER, null));
-
-        if (defaultContainer == null) {
+        Node primaryContainer = findPrimaryContainer(newPage, getStringProperty(newPrototypePage, PROTOTYPE_META_PROPERTY_PRIMARY_CONTAINER, null));
+        if (primaryContainer == null) {
             noContainerLeftInfoLog(newPrototypePage, oldPage);
             deleteOrMarkDeletedIfLiveExists(oldPage);
             return newPage;
@@ -116,8 +116,8 @@ public class PagesHelper extends AbstractHelper {
                     " relocated to the same containers:");
             for (Node container : nonRelocatedContainers) {
                 log.info("Moving container items from '{}' to '{}'", container.getPath(),
-                        defaultContainer.getPath());
-                moveContainerItems(container, defaultContainer);
+                        primaryContainer.getPath());
+                moveContainerItems(container, primaryContainer);
             }
         }
 
@@ -142,26 +142,26 @@ public class PagesHelper extends AbstractHelper {
      * first container. If <code>newPage</code> does not contain any container, <code>null</code> is returned
      */
     private Node findPrimaryContainer(final Node page, final String primaryContainerRelPath) throws RepositoryException {
-        List<Node> pageContainers = findContainers(page);
+        final List<Node> pageContainers = findContainers(page);
         if (pageContainers.isEmpty()) {
             log.debug("No containers available on page '{}'", page.getPath());
             return null;
-        }
-        if (primaryContainerRelPath == null) {
+        } else if (primaryContainerRelPath != null) {
+            int pageNodePathPrefixLength = page.getPath().length() + 1;
+            for (Node pageContainer : pageContainers) {
+                String relContainerPath = pageContainer.getPath().substring(pageNodePathPrefixLength);
+                if (primaryContainerRelPath.equals(relContainerPath)) {
+                    return pageContainer;
+                }
+            }
+            log.warn("Could not find primary container '{}' for page '{}'. Return first container instead.",
+                    primaryContainerRelPath, page.getPath());
+            return pageContainers.get(0);
+        } else {
             log.debug("No primary container configured on prototype. Return first container for page '{}' " +
                     "as primary container.", page.getPath());
             return pageContainers.get(0);
         }
-        int pageNodePathPrefixLength = page.getPath().length() + 1;
-        for (Node pageContainer : pageContainers) {
-            String relContainerPath = pageContainer.getPath().substring(pageNodePathPrefixLength);
-            if (primaryContainerRelPath.equals(relContainerPath)) {
-                return pageContainer;
-            }
-        }
-        log.warn("Could not find primary container '{}' for page '{}'. Return first container instead.",
-                primaryContainerRelPath, page.getPath());
-        return pageContainers.get(0);
     }
 
     private List<Node> findContainers(final Node node) throws RepositoryException {
@@ -246,7 +246,7 @@ public class PagesHelper extends AbstractHelper {
     }
 
     public void delete(final Node sitemapItemNodeToDelete) throws RepositoryException {
-        final String componentConfigId = JcrUtils.getStringProperty(sitemapItemNodeToDelete, SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID, null);
+        final String componentConfigId = getStringProperty(sitemapItemNodeToDelete, SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID, null);
         if (componentConfigId == null) {
             log.debug("No component id configured for '{}'. No page to delete.", sitemapItemNodeToDelete.getPath());
             return;
