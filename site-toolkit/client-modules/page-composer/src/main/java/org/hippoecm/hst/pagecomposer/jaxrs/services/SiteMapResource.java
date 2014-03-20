@@ -19,7 +19,6 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -33,7 +32,6 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPagesRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapRepresentation;
@@ -169,13 +167,7 @@ public class SiteMapResource extends AbstractConfigResource {
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                final String finalParentId;
-                if (parentId == null) {
-                    finalParentId = getWorkspaceSiteMapId();
-                } else {
-                    finalParentId = parentId;
-                }
-                Node newSiteMapItem = siteMapHelper.create(siteMapItem, finalParentId);
+                Node newSiteMapItem = siteMapHelper.create(siteMapItem, parentId);
                 return ok("Item created successfully", newSiteMapItem.getIdentifier());
             }
         }, preValidators.build());
@@ -193,7 +185,7 @@ public class SiteMapResource extends AbstractConfigResource {
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                Node copy = siteMapHelper.duplicate(getWorkspaceSiteMapId(), siteMapItemId);
+                Node copy = siteMapHelper.duplicate(siteMapItemId);
                 return ok("Item created successfully", copy.getIdentifier());
             }
         }, preValidators.build());
@@ -223,13 +215,7 @@ public class SiteMapResource extends AbstractConfigResource {
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                final String finalParentId;
-                if (parentId == null) {
-                    finalParentId = getWorkspaceSiteMapId();
-                } else {
-                    finalParentId = parentId;
-                }
-                siteMapHelper.move(id, finalParentId);
+                siteMapHelper.move(id, parentId);
                 return ok("Item moved successfully", id);
             }
         }, preValidators.build());
@@ -254,27 +240,6 @@ public class SiteMapResource extends AbstractConfigResource {
                 return ok("Item deleted successfully", id);
             }
         }, preValidator);
-    }
-
-    private String getWorkspaceSiteMapId() throws RepositoryException {
-        final String workspaceSiteMapId;
-        final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
-        final HstSite editingPreviewSite = getPageComposerContextService().getEditingPreviewSite();
-        final HstSiteMap siteMap = editingPreviewSite.getSiteMap();
-        String siteMapId = getCanonicalInfo(siteMap).getCanonicalIdentifier();
-        Node siteMapNode = requestContext.getSession().getNodeByIdentifier(siteMapId);
-        if (siteMapNode.getParent().isNodeType(HstNodeTypes.NODETYPE_HST_WORKSPACE)) {
-            workspaceSiteMapId = siteMapId;
-        } else {
-            // not the workspace sitemap node. Take the workspace sitemap. If not existing, an exception is thrown
-            final String relSiteMapPath = HstNodeTypes.NODENAME_HST_WORKSPACE + "/" + HstNodeTypes.NODENAME_HST_SITEMAP;
-            final Node configNode = siteMapNode.getParent();
-            if (!configNode.hasNode(relSiteMapPath)) {
-                createMandatoryWorkspaceNodesIfMissing();
-            }
-            workspaceSiteMapId = configNode.getNode(relSiteMapPath).getIdentifier();
-        }
-        return workspaceSiteMapId;
     }
 
 }

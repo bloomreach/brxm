@@ -137,10 +137,15 @@ public class SiteMapHelper extends AbstractHelper {
 
 
     public Node create(final SiteMapItemRepresentation siteMapItem, final String parentId) throws RepositoryException {
-
+        final String finalParentId;
+        if (parentId == null) {
+            finalParentId = getWorkspaceSiteMapId();
+        } else {
+            finalParentId = parentId;
+        }
         HstRequestContext requestContext = pageComposerContextService.getRequestContext();
         final Session session = requestContext.getSession();
-        Node parent = session.getNodeByIdentifier(parentId);
+        Node parent = session.getNodeByIdentifier(finalParentId);
 
         final String encodedName = NodeNameCodec.encode(siteMapItem.getName());
         validateTarget(session, parent.getPath() + "/" + encodedName);
@@ -185,7 +190,7 @@ public class SiteMapHelper extends AbstractHelper {
         return newSitemapNode;
     }
 
-    public Node duplicate(final String workspaceSiteMapId, final String siteMapItemId) throws RepositoryException {
+    public Node duplicate(final String siteMapItemId) throws RepositoryException {
         HstRequestContext requestContext = pageComposerContextService.getRequestContext();
         final Session session = requestContext.getSession();
         Node toShallowCopy = session.getNodeByIdentifier(siteMapItemId);
@@ -201,7 +206,7 @@ public class SiteMapHelper extends AbstractHelper {
             throw new ClientException(message, ClientError.ITEM_CANNOT_BE_CLONED);
         }
         String newSiteMapItemName = pathInfo.replace("/", "-");
-        Node workspaceSiteMapNode = session.getNodeByIdentifier(workspaceSiteMapId);
+        Node workspaceSiteMapNode = session.getNodeByIdentifier(getWorkspaceSiteMapId());
 
         String target = workspaceSiteMapNode.getPath() + "/" + newSiteMapItemName;
         final String postfix = "-duplicate";
@@ -247,14 +252,20 @@ public class SiteMapHelper extends AbstractHelper {
     }
 
     public void move(final String id, final String parentId) throws RepositoryException {
-        if (id.equals(parentId)) {
+        final String finalParentId;
+        if (parentId == null) {
+            finalParentId = getWorkspaceSiteMapId();
+        } else {
+            finalParentId = parentId;
+        }
+        if (id.equals(finalParentId)) {
             final String message = "Cannot move node to become child of itself";
             throw new ClientException(message, ClientError.INVALID_MOVE_TO_SELF);
         }
         HstRequestContext requestContext = pageComposerContextService.getRequestContext();
         final Session session = requestContext.getSession();
         Node nodeToMove = session.getNodeByIdentifier(id);
-        Node newParent = session.getNodeByIdentifier(parentId);
+        Node newParent = session.getNodeByIdentifier(finalParentId);
         Node oldParent = nodeToMove.getParent();
         if (oldParent.isSame(newParent)) {
             log.info("Move to same parent for '" + nodeToMove.getPath() + "' does not result in a real move");
@@ -424,6 +435,24 @@ public class SiteMapHelper extends AbstractHelper {
             crNode = crNode.getParent();
         }
         return siteMapPathPrefixBuilder.toString();
+    }
+
+    private String getWorkspaceSiteMapId() throws RepositoryException {
+        final String workspaceSiteMapId;
+        final HstRequestContext requestContext = pageComposerContextService.getRequestContext();
+        final HstSite editingPreviewSite = pageComposerContextService.getEditingPreviewSite();
+        final HstSiteMap siteMap = editingPreviewSite.getSiteMap();
+        String siteMapId = ((CanonicalInfo)(siteMap)).getCanonicalIdentifier();
+        Node siteMapNode = requestContext.getSession().getNodeByIdentifier(siteMapId);
+        if (siteMapNode.getParent().isNodeType(HstNodeTypes.NODETYPE_HST_WORKSPACE)) {
+            workspaceSiteMapId = siteMapId;
+        } else {
+            // not the workspace sitemap node. Take the workspace sitemap. If not existing, an exception is thrown
+            final String relSiteMapPath = HstNodeTypes.NODENAME_HST_WORKSPACE + "/" + HstNodeTypes.NODENAME_HST_SITEMAP;
+            final Node configNode = siteMapNode.getParent();
+            workspaceSiteMapId = configNode.getNode(relSiteMapPath).getIdentifier();
+        }
+        return workspaceSiteMapId;
     }
 
 }
