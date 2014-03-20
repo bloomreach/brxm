@@ -336,6 +336,9 @@ public class SiteMapHelper extends AbstractHelper {
         if (siteMapItem.getRelativeContentPath() != null) {
             setProperty(jcrNode, HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, siteMapItem.getRelativeContentPath());
         }
+        if (siteMapItem.getPageTitle() != null) {
+            setProperty(jcrNode, HstNodeTypes.SITEMAPITEM_PAGE_TITLE, siteMapItem.getPageTitle());
+        }
     }
 
 
