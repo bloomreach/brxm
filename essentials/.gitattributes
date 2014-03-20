@@ -2121,11 +2121,6 @@ plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/utils/RestWorkf
 plugin-dashboard/src/test/resources/contentblocks-compare.json -text
 plugin-dashboard/src/test/resources/contentblocks.json -text
 plugin-dashboard/src/test/resources/log4j.xml -text
-pluginTestSkeleton/AngularTest.html -text
-pluginTestSkeleton/js/testRoutes.js -text
-pluginTestSkeleton/js/wizard-controller.js -text
-pluginTestSkeleton/js/wizard.js -text
-pluginTestSkeleton/readme.txt -text
 /pom.xml -text
 test-skeleton/.bowerrc -text
 test-skeleton/bower.json -text
