@@ -18,8 +18,6 @@
     <div class="panel panel-default l-stretch" data-ng-show="page.id">
         <div class="list-group l-stretch l-fixed-height">
             <form name="form" role="form" novalidate>
-                <h1>{{ 'PAGE_SETTINGS' | translate }}</h1>
-
                 <div class="alert alert-danger" data-ng-show="errorFeedback.message">
                     {{ errorFeedback.message }}
                 </div>
@@ -81,6 +79,8 @@
                 </div>
 
                 <div data-ng-show="isPageEditable">
+
+
                     <button type="submit" class="btn btn-default"
                             data-ng-click="submit()">{{ 'SAVE' | translate }}</button>
                     <button type="submit" class="btn btn-link"
