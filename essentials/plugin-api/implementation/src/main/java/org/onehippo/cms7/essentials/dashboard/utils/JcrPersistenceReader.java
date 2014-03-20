@@ -86,24 +86,7 @@ public class JcrPersistenceReader {
                     field.set(document, null);
                     continue;
                 }
-                final Class<?> type = field.getType();
-                if (type == String.class) {
-                    field.set(document, myProperty.getString());
-                } else if (type == Boolean.class || type == boolean.class) {
-                    field.set(document, myProperty.getBoolean());
-                } else if (type == Long.class || type == long.class) {
-                    final long myLong = myProperty.getLong();
-                    field.set(document, myLong);
-                } else if (type == Integer.class || type == int.class) {
-                    final Long myLong = myProperty.getLong();
-                    field.set(document, myLong.intValue());
-                } else if (type == Double.class || type == double.class) {
-                    field.set(document, myProperty.getDouble());
-                } else if (type == Calendar.class) {
-                    field.set(document, myProperty.getDate());
-                } else {
-                    log.error("@@@ PROPERTY READING NOT IMPLEMENTED FOR TYPE: {}", type);
-                }
+                setFieldValue(document, field, myProperty);
 
             } catch (IllegalAccessException e) {
                 log.error("Error setting field value:", e);
@@ -126,19 +109,7 @@ public class JcrPersistenceReader {
                 final ParameterizedType collectionType = (ParameterizedType) field.getGenericType();
                 final Class<?> type = (Class<?>) collectionType.getActualTypeArguments()[0];
                 final Value[] values = myProperty.getValues();
-                if (type == String.class) {
-                    field.set(document, covertValues(values, String.class));
-                } else if (type == Date.class || type == Calendar.class) {
-                    field.set(document, covertValues(values, Calendar.class));
-                } else if (type == boolean.class || type == Boolean.class) {
-                    field.set(document, covertValues(values, Boolean.class));
-                } else if (type == double.class || type == Double.class) {
-                    field.set(document, covertValues(values, Double.class));
-                } else if (type == int.class || type == long.class || type == Long.class || type == Integer.class) {
-                    field.set(document, covertValues(values, Long.class));
-                } else {
-                    log.error("@@@ PROPERTY READING NOT IMPLEMENTED FOR TYPE: {}", type);
-                }
+                setMultipleValue(document, field, type, values);
 
             } catch (IllegalAccessException e) {
                 log.error("Error setting field value:", e);
@@ -150,6 +121,43 @@ public class JcrPersistenceReader {
 
 
         return document;
+    }
+
+    private <T extends Document> void setMultipleValue(final T document, final Field field, final Class<?> type, final Value[] values) throws IllegalAccessException {
+        if (type == String.class) {
+            field.set(document, covertValues(values, String.class));
+        } else if (type == Date.class || type == Calendar.class) {
+            field.set(document, covertValues(values, Calendar.class));
+        } else if (type == boolean.class || type == Boolean.class) {
+            field.set(document, covertValues(values, Boolean.class));
+        } else if (type == double.class || type == Double.class) {
+            field.set(document, covertValues(values, Double.class));
+        } else if (type == int.class || type == long.class || type == Long.class || type == Integer.class) {
+            field.set(document, covertValues(values, Long.class));
+        } else {
+            log.error("@@@ PROPERTY READING NOT IMPLEMENTED FOR TYPE: {}", type);
+        }
+    }
+
+    private <T extends Document> void setFieldValue(final T document, final Field field, final Property myProperty) throws IllegalAccessException, RepositoryException {
+        final Class<?> type = field.getType();
+        if (type == String.class) {
+            field.set(document, myProperty.getString());
+        } else if (type == Boolean.class || type == boolean.class) {
+            field.set(document, myProperty.getBoolean());
+        } else if (type == Long.class || type == long.class) {
+            final long myLong = myProperty.getLong();
+            field.set(document, myLong);
+        } else if (type == Integer.class || type == int.class) {
+            final Long myLong = myProperty.getLong();
+            field.set(document, myLong.intValue());
+        } else if (type == Double.class || type == double.class) {
+            field.set(document, myProperty.getDouble());
+        } else if (type == Calendar.class) {
+            field.set(document, myProperty.getDate());
+        } else {
+            log.error("@@@ PROPERTY READING NOT IMPLEMENTED FOR TYPE: {}", type);
+        }
     }
 
     @SuppressWarnings("unchecked")

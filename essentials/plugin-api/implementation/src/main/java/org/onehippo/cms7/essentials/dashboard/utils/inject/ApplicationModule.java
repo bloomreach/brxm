@@ -44,7 +44,6 @@ public class ApplicationModule {
 
     @SuppressWarnings("StaticVariableOfConcreteClass")
 
-
     private final transient EventBus eventBus = new EventBus("Essentials Event Bus");
 
 
@@ -76,5 +75,7 @@ public class ApplicationModule {
         return eventBus;
     }
 
-
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
 }

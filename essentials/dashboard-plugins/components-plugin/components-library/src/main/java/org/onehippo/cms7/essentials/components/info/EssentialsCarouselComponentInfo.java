@@ -29,7 +29,7 @@ import org.hippoecm.hst.core.parameters.Parameter;
         @FieldGroup(
                 titleKey = "carousel.documents",
                 value = {"document1", "document2", "document3", "document4", "document5",
-                        "document6", "document7", "document8", "document9",  "document10"}
+                        "document6", "document7", "document8", "document9", "document10"}
         ),
         @FieldGroup(
                 titleKey = "carousel.settings",
@@ -47,7 +47,7 @@ public interface EssentialsCarouselComponentInfo {
     // CAROUSEL SETTINGS
     //############################################
     @Parameter(name = "fx", required = true, displayName = "Animation type")
-    @DropDownList(value = {"scrollHorz", "carousel","flipHorz", "shuffle","tileSlide"})
+    @DropDownList(value = {"scrollHorz", "carousel", "flipHorz", "shuffle", "tileSlide"})
     String fx();
 
     @Parameter(name = "displayTime", defaultValue = "2000", required = true, displayName = "Display time (milli seconds)")
@@ -55,11 +55,6 @@ public interface EssentialsCarouselComponentInfo {
 
     @Parameter(name = "showNavigation", defaultValue = "false", displayName = "Show navigation")
     Boolean showNavigation();
-
-
-
-
-
 
 
     //############################################

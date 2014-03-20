@@ -85,6 +85,7 @@ public @interface PersistentMultiProperty {
 
         };
         private static final Logger log = LoggerFactory.getLogger(ProcessAnnotation.class);
+        public static final String UNCHECKED = "unchecked";
 
         @Override
         public Property execute(final Session session, final Document model, final PersistentMultiProperty annotation) {
@@ -102,12 +103,12 @@ public @interface PersistentMultiProperty {
                     } else if (value instanceof List) {
                         final Class<?> type = annotation.type();
                         if (type.equals(String.class)) {
-                            @SuppressWarnings("unchecked")
+                            @SuppressWarnings(UNCHECKED)
                             final List<String> values = (List<String>) value;
                             final String[] stringValues = values.toArray(new String[values.size()]);
                             node.setProperty(name, stringValues);
                         } else if (type.equals(int.class) || type.equals(Integer.class)) {
-                            @SuppressWarnings("unchecked")
+                            @SuppressWarnings(UNCHECKED)
                             final Collection<Integer> values = (Collection<Integer>) value;
                             final List<Value> jcrValues = new ArrayList<>();
                             for (Integer integer : values) {
@@ -117,7 +118,7 @@ public @interface PersistentMultiProperty {
                             final Value[] valArray = jcrValues.toArray(new Value[values.size()]);
                             node.setProperty(name, valArray);
                         } else if (type.equals(long.class) || type.equals(Long.class)) {
-                            @SuppressWarnings("unchecked")
+                            @SuppressWarnings(UNCHECKED)
                             final Collection<Long> values = (Collection<Long>) value;
                             final List<Value> jcrValues = new ArrayList<>();
                             for (Long l : values) {
@@ -127,7 +128,7 @@ public @interface PersistentMultiProperty {
                             final Value[] valArray = jcrValues.toArray(new Value[values.size()]);
                             node.setProperty(name, valArray);
                         } else if (type.equals(boolean.class) || type.equals(Boolean.class)) {
-                            @SuppressWarnings("unchecked")
+                            @SuppressWarnings(UNCHECKED)
                             final Collection<Boolean> values = (Collection<Boolean>) value;
                             final List<Value> jcrValues = new ArrayList<>();
                             for (Boolean b : values) {
@@ -137,7 +138,7 @@ public @interface PersistentMultiProperty {
                             final Value[] valArray = jcrValues.toArray(new Value[values.size()]);
                             node.setProperty(name, valArray);
                         } else if (type.equals(double.class) || type.equals(Double.class)) {
-                            @SuppressWarnings("unchecked")
+                            @SuppressWarnings(UNCHECKED)
                             final Collection<Double> values = (Collection<Double>) value;
                             final List<Value> jcrValues = new ArrayList<>();
                             for (Double d : values) {
@@ -147,7 +148,7 @@ public @interface PersistentMultiProperty {
                             final Value[] valArray = jcrValues.toArray(new Value[values.size()]);
                             node.setProperty(name, valArray);
                         } else if (type.equals(Calendar.class)) {
-                            @SuppressWarnings("unchecked")
+                            @SuppressWarnings(UNCHECKED)
                             final Collection<Calendar> values = (Collection<Calendar>) value;
                             final List<Value> jcrValues = new ArrayList<>();
                             for (Calendar c : values) {

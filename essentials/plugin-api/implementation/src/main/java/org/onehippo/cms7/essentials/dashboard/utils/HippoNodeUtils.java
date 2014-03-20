@@ -511,7 +511,7 @@ public final class HippoNodeUtils {
 
     public static void checkName(String name) {
         if (Strings.isNullOrEmpty(name)) {
-            throw new NullPointerException("No name specified");
+            throw new IllegalArgumentException("No name specified");
         }
         if (!NAME_PATTERN.matcher(name).matches()) {
             throw new IllegalArgumentException("Invalid name; only alphabetic characters allowed in lower- or uppercase");
@@ -520,7 +520,7 @@ public final class HippoNodeUtils {
 
     public static void checkURI(String name) {
         if (name == null) {
-            throw new NullPointerException("No URI specified");
+            throw new IllegalArgumentException("No URI specified");
         }
         if (!URL_PATTERN.matcher(name).matches()) {
             throw new IllegalArgumentException("Invalid URL; ");

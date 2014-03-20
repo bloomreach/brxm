@@ -384,9 +384,9 @@ dashboard-plugins/components-plugin/components-library/src/main/java/org/onehipp
 dashboard-plugins/components-plugin/components-library/src/test/resources/log4j.xml -text
 dashboard-plugins/components-plugin/pom.xml -text
 dashboard-plugins/dashboard-contentblocks-plugin/pom.xml -text
-dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/META_INF/resources/plugins/contentBlocks/contentBlocks.html -text
-dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/META_INF/resources/plugins/contentBlocks/contentBlocks.js -text
-dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/META_INF/web-fragment.xml -text
+dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/META-INF/resources/plugins/contentBlocks/contentBlocks.html -text
+dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/META-INF/resources/plugins/contentBlocks/contentBlocks.js -text
+dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/content_blocks_nodetype.xml -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/content_blocks_template.xml -text
 dashboard-plugins/dashboard-easyforms-plugin/pom.xml -text
@@ -770,8 +770,6 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/NodeResource.ja
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/PluginResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/client/RestClient.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/config/RestServletListener.java -text
-plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/exc/EssentialsExceptionMapper.java -text
-plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/exc/ExceptionInterceptor.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/exc/RestException.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/ControllerRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/PropertyRestful.java -text

@@ -129,7 +129,7 @@ public class HstQueryBuilder implements QueryBuilder {
             }
 
         }
-        if(typeCounter != primaryNodeTypes.length){
+        if (typeCounter != primaryNodeTypes.length) {
             log.warn("Couldn't resolve all primary node types through object converter: {}", primaryNodeTypes);
         }
 

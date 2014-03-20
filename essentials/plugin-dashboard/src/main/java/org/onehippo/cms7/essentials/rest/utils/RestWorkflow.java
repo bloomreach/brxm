@@ -80,7 +80,7 @@ public class RestWorkflow {
 
     }
 
-    public boolean addContentBlockCompound(final String name) throws RestException {
+    public boolean addContentBlockCompound(final String name) {
 
         try {
             // register namespace:

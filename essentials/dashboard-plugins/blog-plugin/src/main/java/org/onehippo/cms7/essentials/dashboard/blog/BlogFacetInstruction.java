@@ -51,8 +51,6 @@ public class BlogFacetInstruction implements Instruction {
     private static Logger log = LoggerFactory.getLogger(BlogFacetInstruction.class);
 
 
-    @Inject
-    private EventBus eventBus;
 
     private String message = "Created blog facet at: {{facetMessage}}";
 

@@ -36,7 +36,7 @@ public class EssentialsRedirectComponent extends CommonComponent {
     public static final String TYPE_PARAM = "type";
 
     @Override
-    public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
+    public void doBeforeRender(HstRequest request, HstResponse response) {
 
         final String redirect = getComponentParameter(REDIRECT_PARAM);
 

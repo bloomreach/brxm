@@ -26,7 +26,7 @@ import com.google.common.collect.Collections2;
 
 
 @XmlRootElement(name = "node", namespace = EssentialConst.URI_JCR_NAMESPACE)
-public class XmlNode implements NodeOrProperty {
+public final class XmlNode implements NodeOrProperty {
 
     public static final String SV_TYPE_STRING = "String";
     public static final String HIPPOSYSEDIT_NODETYPE = "hipposysedit:nodetype";

@@ -53,6 +53,8 @@ public final class JavaSourceUtils {
      * Pattern for replacing return type in case of array, e.g. {@code String []} or {@code String [  ]}
      */
     private static final Pattern ARRAY_PATTERN = Pattern.compile("\\[\\s*\\]");
+    public static final String UNCHECKED = "unchecked";
+    public static final String RAWTYPES = "rawtypes";
     private static Logger log = LoggerFactory.getLogger(JavaSourceUtils.class);
 
     private JavaSourceUtils() {
@@ -67,7 +69,7 @@ public final class JavaSourceUtils {
      * @param fileExtension  name of file extension, if null {@code .java will be used}
      * @return Path object of the file created or null if failed to create a class
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public static Path createJavaClass(final String sourceRootPath, final String className, final String packageName, final String fileExtension) {
         String myFileExtension = fileExtension;
         if (Strings.isNullOrEmpty(myFileExtension)) {
@@ -118,7 +120,7 @@ public final class JavaSourceUtils {
      * @param internalBeanName  name of the bean, e.g. {@code MyNewsBean}
      * @return source code of annotated bean or null on fail
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public static String createHippoBean(final Path path, final String packageName, final String documentNamespace, final String internalBeanName) {
 
         if (path == null) {
@@ -255,7 +257,7 @@ public final class JavaSourceUtils {
         unit.recordModifications();
         final AST ast = unit.getAST();
         unit.accept(new ASTVisitor() {
-            @SuppressWarnings("rawtypes")
+            @SuppressWarnings(RAWTYPES)
             @Override
             public boolean visit(MethodDeclaration node) {
                 final List parameters = node.parameters();
@@ -289,7 +291,7 @@ public final class JavaSourceUtils {
      * @param node         node we are adding annotation to
      * @param ast          AST tree  of the source code we are manipulating
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public static void addHippoGeneratedAnnotation(final String internalName, final CompilationUnit unit, final ASTNode node, final AST ast) {
         //
         final NormalAnnotation generatedAnnotation = ast.newNormalAnnotation();
@@ -340,7 +342,7 @@ public final class JavaSourceUtils {
      * @param propertyName name of the property
      * @param multiple     indicates multiple property
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public static void addBeanMethodHippoHtml(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         final String returnType = multiple ? "List<HippoHtml>" : "HippoHtml";
         if (multiple) {
@@ -362,7 +364,7 @@ public final class JavaSourceUtils {
      * @param propertyName name of the property
      * @param multiple     is multiple property
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public static void addBeanMethodHippoMirror(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
             addTwoArgumentsMethod("getLinkedBeans", "List<HippoMirrorBean>", path, methodName, propertyName);
@@ -402,7 +404,7 @@ public final class JavaSourceUtils {
      * @param propertyName name of the property
      * @param multiple     indicates multiple property
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public static void addBeanMethodString(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         final String returnType = multiple ? "String[]" : "String";
         addBeanMethodProperty(path, methodName, propertyName, returnType);
@@ -416,7 +418,7 @@ public final class JavaSourceUtils {
      * @param propertyName name of the property
      * @param multiple     indicates multiple property
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public static void addBeanMethodBoolean(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         // TODO add null checks and return Boolean.FALSE
         final String returnType = multiple ? "Boolean[]" : "Boolean";
@@ -431,7 +433,7 @@ public final class JavaSourceUtils {
      * @param propertyName name of the property
      * @param multiple     indicates multiple property
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public static void addBeanMethodDouble(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         final String returnType = multiple ? "Double[]" : "Double";
         addBeanMethodProperty(path, methodName, propertyName, returnType);
@@ -445,7 +447,7 @@ public final class JavaSourceUtils {
      * @param propertyName name of the property
      * @param multiple     indicates multiple property
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public static void addBeanMethodLong(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         final String returnType = multiple ? "Long[]" : "Long";
         addBeanMethodProperty(path, methodName, propertyName, returnType);
@@ -472,7 +474,7 @@ public final class JavaSourceUtils {
      */
     public static List<String> getImportStatements(final Path path) {
         final CompilationUnit unit = getCompilationUnit(path);
-        @SuppressWarnings("rawtypes")
+        @SuppressWarnings(RAWTYPES)
         final List imports = unit.imports();
         final List<String> importList = new ArrayList<>();
         for (Object anImport : imports) {
@@ -544,7 +546,7 @@ public final class JavaSourceUtils {
      * @param source source to format
      * @return formatted source code or original on error
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({RAWTYPES, UNCHECKED})
     public static String formatCode(final String source) {
 
         final Map options = DefaultCodeFormatterConstants.getEclipseDefaultSettings();
@@ -578,7 +580,7 @@ public final class JavaSourceUtils {
     /**
      * @see #formatCode(String)
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({RAWTYPES, UNCHECKED})
     public static String formatCode(final IDocument document) {
         final String source = document.get();
         return formatCode(source);
@@ -593,7 +595,7 @@ public final class JavaSourceUtils {
      * @see EssentialConst#NODE_ANNOTATION_NAME
      */
     public static String getNodeJcrType(final Path path) {
-        @SuppressWarnings({"unchecked", "rawtypes"})
+        @SuppressWarnings({UNCHECKED, RAWTYPES})
         final List modifiers = getClassAnnotations(path);
         String jcrType = null;
         for (Object modifier : modifiers) {
@@ -611,7 +613,7 @@ public final class JavaSourceUtils {
                     log.debug("Skipping annotation: {}", fullyQualifiedName);
                     continue;
                 }
-                @SuppressWarnings("rawtypes")
+                @SuppressWarnings(RAWTYPES)
                 final List values = annotation.values();
                 if (values != null) {
                     for (Object value : values) {
@@ -651,7 +653,7 @@ public final class JavaSourceUtils {
     }
 
     public static boolean hasHippoEssentialsAnnotation(final Path path) {
-        @SuppressWarnings({"unchecked", "rawtypes"})
+        @SuppressWarnings({UNCHECKED, RAWTYPES})
         final List modifiers = getClassAnnotations(path);
         for (Object modifier : modifiers) {
             if (modifier instanceof NormalAnnotation) {
@@ -669,7 +671,7 @@ public final class JavaSourceUtils {
     }
 
     public static HippoEssentialsGeneratedObject getHippoGeneratedAnnotation(final Path path) {
-        @SuppressWarnings({"unchecked", "rawtypes"})
+        @SuppressWarnings({UNCHECKED, RAWTYPES})
         final List modifiers = getClassAnnotations(path);
         for (Object modifier : modifiers) {
             if (modifier instanceof NormalAnnotation) {
@@ -689,7 +691,7 @@ public final class JavaSourceUtils {
     private static HippoEssentialsGeneratedObject populateGeneratedObject(final Path path, final NormalAnnotation annotation) {
         final HippoEssentialsGeneratedObject o = new HippoEssentialsGeneratedObject();
         o.setFilePath(path);
-        @SuppressWarnings("rawtypes")
+        @SuppressWarnings(RAWTYPES)
         final List values = annotation.values();
         if (values != null) {
             for (Object value : values) {
@@ -729,7 +731,7 @@ public final class JavaSourceUtils {
      * @param path       path of the java source class
      * @param importName name of the import e.g {@code java.util.List}
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public static void addImport(final Path path, final String importName) {
         final CompilationUnit unit = getCompilationUnit(path);
         unit.recordModifications();
@@ -750,7 +752,7 @@ public final class JavaSourceUtils {
         GlobalUtils.writeToFile(rewrite, path);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     private static List<Object> getClassAnnotations(final Path path) {
         final CompilationUnit unit = getCompilationUnit(path);
         final TypeDeclaration classType = (TypeDeclaration) unit.types().get(0);
@@ -761,7 +763,7 @@ public final class JavaSourceUtils {
         return modifiers;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({UNCHECKED, RAWTYPES})
     private static void addImport(final CompilationUnit unit, final AST ast, final CharSequence importName) {
         final List imports = unit.imports();
         for (Object anImport : imports) {
@@ -777,12 +779,12 @@ public final class JavaSourceUtils {
         imports.add(essentialsImportDeclaration);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     private static void addBeanMethodProperty(final Path path, final String methodName, final String propertyName, final String returnType) {
         addSimpleMethod("getProperty", path, methodName, propertyName, returnType);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     private static void addSimpleMethod(final String hippoMethodName, final Path path, final String methodName, final String propertyName, final String returnType) {
         final CompilationUnit unit = getCompilationUnit(path);
         unit.recordModifications();
@@ -816,7 +818,7 @@ public final class JavaSourceUtils {
         replaceFile(path, unit, ast);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     private static void addAnnotation(ASTNode node, IExtendedModifier annotation) {
         // add annotation at first position:
         if (node instanceof TypeDeclaration) {
@@ -841,7 +843,7 @@ public final class JavaSourceUtils {
         }
     }
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings(RAWTYPES)
     private static boolean hasAnnotation(final List modifiers, final IExtendedModifier annotation) {
         for (Object modifier : modifiers) {
             if (modifier instanceof NormalAnnotation && annotation instanceof NormalAnnotation) {
@@ -896,7 +898,7 @@ public final class JavaSourceUtils {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public static void addTwoArgumentsMethod(final String returnMethodName, final String returnType, final Path path, final String methodName, final String propertyName) {
         final CompilationUnit unit = getCompilationUnit(path);
         unit.recordModifications();

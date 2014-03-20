@@ -61,6 +61,8 @@
         <includes>
           <include>**/*.cnd</include>
           <include>**/*.xml</include>
+          <include>**/*.html</include>
+          <include>**/*.js</include>
           <include>**/*.MF</include>
           <include>**/*.properties</include>
         </includes>

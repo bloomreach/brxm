@@ -23,6 +23,8 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 
 /**
+ * NOTE: method propertySourcesPlaceholderConfigurer must be static, however, Spring needs public constructor.
+ *
  * @version "$Id$"
  */
 @Configuration
@@ -34,5 +36,7 @@ public class PropertiesModule {
         return new PropertySourcesPlaceholderConfigurer();
     }
 
-
+    public String getDescription() {
+        return "loads property bundle: note do not add private constructor";
+    }
 }

@@ -16,8 +16,6 @@
 
 package org.onehippo.cms7.essentials.components.info;
 
-import org.hippoecm.hst.core.parameters.Parameter;
-
 /**
  * @version "$Id$"
  */

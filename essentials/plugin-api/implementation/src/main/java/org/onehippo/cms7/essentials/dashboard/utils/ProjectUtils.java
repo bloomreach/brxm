@@ -137,13 +137,10 @@ public final class ProjectUtils {
      * @return null if type is invalid
      */
     public static String getPomPath(DependencyType type) {
-        if (type == null) {
+        if (type == null || type== DependencyType.INVALID) {
             return null;
         }
         switch (type) {
-
-            case INVALID:
-                return null;
             case SITE:
                 if (ProjectUtils.getSite() != null) {
                     return ProjectUtils.getSite().getPath() + File.separatorChar + EssentialConst.POM_XML;

@@ -79,8 +79,7 @@ public class ImageGalleryResource extends BaseResource {
     private static final String PROPERTY_HEIGHT = "height";
     private static final String PROPERTY_WIDTH = "width";
     private static final String HIPPOSYSEDIT_NODETYPE = "hipposysedit:nodetype";
-    @Inject
-    private EventBus eventBus;
+
     private static Logger log = LoggerFactory.getLogger(ImageGalleryResource.class);
 
     private static final String GALLERY_PROCESSOR_SERVICE_PATH = "/hippo:configuration/hippo:frontend/cms/cms-services/galleryProcessorService";

@@ -17,7 +17,6 @@
 package org.onehippo.cms7.essentials.components.paging;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -61,7 +60,7 @@ public class DefaultPagination<T extends HippoBean> extends Pageable<T> {
 
     public DefaultPagination(List<T> items) {
         super(items.size());
-       this.items = items;
+        this.items = items;
     }
 
     public DefaultPagination(List<T> items, int total) {

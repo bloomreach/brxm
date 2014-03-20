@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  * Visits a java file and returns all methods we can annotate which are not annotated by
  * {@code HippoEssentialsGenerated} annotation,
  *
- * @version "$Id: NoAnnotationMethodVisitor.java 173889 2013-08-15 13:08:14Z mmilicevic $"
+ * @version "$Id$"
  * @see HippoEssentialsGenerated
  */
 public class NoAnnotationMethodVisitor extends ASTVisitor {
@@ -50,6 +50,11 @@ public class NoAnnotationMethodVisitor extends ASTVisitor {
         final Block body = node.getBody();
         @SuppressWarnings("rawtypes")
         final List statements = body.statements();
+        processStatements(node, statements);
+        return super.visit(node);
+    }
+
+    private void processStatements(final MethodDeclaration node, final Iterable<?> statements) {
         for (Object o : statements) {
             if (o instanceof ReturnStatement) {
                 final ReturnStatement statement = (ReturnStatement) o;
@@ -94,7 +99,6 @@ public class NoAnnotationMethodVisitor extends ASTVisitor {
                 }
             }
         }
-        return super.visit(node);
     }
 
     public Set<String> getModifiableMethodsInternalNames() {

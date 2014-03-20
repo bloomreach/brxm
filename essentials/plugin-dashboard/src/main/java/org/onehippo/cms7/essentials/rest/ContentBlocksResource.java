@@ -149,7 +149,7 @@ public class ContentBlocksResource extends BaseResource {
 
     @PUT
     @Path("/compounds/create/{name}")
-    public MessageRestful createCompound(@PathParam("name") String name, @Context ServletContext servletContext) throws RestException {
+    public MessageRestful createCompound(@PathParam("name") String name, @Context ServletContext servletContext) {
         if (Strings.isNullOrEmpty(name)) {
             throw new RestException("Content block name was empty", Response.Status.NOT_ACCEPTABLE);
         }
@@ -162,7 +162,7 @@ public class ContentBlocksResource extends BaseResource {
 
     @DELETE
     @Path("/compounds/delete/{name}")
-    public MessageRestful deleteCompound(@PathParam("name") String name, @Context ServletContext servletContext) throws RestException {
+    public MessageRestful deleteCompound(@PathParam("name") String name, @Context ServletContext servletContext) {
         final Session session = GlobalUtils.createSession();
         final PluginContext context = getContext(servletContext);
         final RestWorkflow workflow = new RestWorkflow(session, context);

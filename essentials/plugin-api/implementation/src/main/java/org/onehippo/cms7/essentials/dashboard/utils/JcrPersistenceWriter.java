@@ -47,6 +47,7 @@ import com.google.common.base.Strings;
 public class JcrPersistenceWriter {
 
     public static final char PATH_SEPARATOR = '/';
+    public static final String ERROR_PROCESSING_VALUE = "Error processing value";
     private static Logger log = LoggerFactory.getLogger(JcrPersistenceWriter.class);
     private final PluginContext context;
     private final Session session;
@@ -105,7 +106,7 @@ public class JcrPersistenceWriter {
                     propWriter.execute(session, myModel, property);
                 }
             } catch (IllegalAccessException e) {
-                log.error("Error processing value", e);
+                log.error(ERROR_PROCESSING_VALUE, e);
             } catch (RepositoryException e) {
                 log.error("Error fetching parent path", e);
             }
@@ -126,7 +127,7 @@ public class JcrPersistenceWriter {
                     multiWriter.execute(session, myModel, p);
                 }
             } catch (IllegalAccessException e) {
-                log.error("Error processing value", e);
+                log.error(ERROR_PROCESSING_VALUE, e);
             } catch (RepositoryException e) {
                 log.error("Error fetching parent path", e);
             }
@@ -145,7 +146,7 @@ public class JcrPersistenceWriter {
                     writeNode((Document) value);
                 }
             } catch (IllegalAccessException e) {
-                log.error("Error processing value", e);
+                log.error(ERROR_PROCESSING_VALUE, e);
             }
         }
         // process collections:
@@ -168,7 +169,7 @@ public class JcrPersistenceWriter {
                     log.error("Field is annotated by @PersistableCollection however it is not collection type {}", value.getClass());
                 }
             } catch (IllegalAccessException e) {
-                log.error("Error processing value", e);
+                log.error(ERROR_PROCESSING_VALUE, e);
             }
 
         }
