@@ -27,6 +27,7 @@
             'alphanumericFilter',
             function ($scope, FeedbackService, PageService, ContainerService, lowercaseFilter, alphanumericFilter) {
                 $scope.page = {
+                    id: null,
                     title: '',
                     url: ''
                 };
@@ -48,6 +49,7 @@
 
                 // fetch page
                 PageService.getCurrentPage().then(function (currentPage) {
+                    $scope.page.id = currentPage.id;
                     $scope.page.title = currentPage.pageTitle;
                     $scope.page.url = currentPage.name;
 
