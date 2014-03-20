@@ -1,0 +1,26 @@
+{
+  "name": "hippo-essentials-test",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "angular": "1.2.14-build.2302+sha.f827d64",
+    "angular-bootstrap": "0.6.0",
+    "angular-mocks": "1.2.14-build.2302+sha.f827d64",
+    "Angular-NestedSortable": "1.2.7",
+    "bootstrap": "3.1.0",
+    "bootstrap-chosen": "https://github.com/alxlit/bootstrap-chosen.git#972b807f0c39d06c07c5b8a44bd67a70091b1ea3",
+    "chosen": "https://github.com/onehippo/chosen.git#96249101dc2c0f15e8e6223ad18bbebbd30290fd",
+    "es5-shim": "2.3.0",
+    "ExplorerCanvas": "https://github.com/arv/ExplorerCanvas.git#1735174401034391aa632957b17ce4a167613a83",
+    "fastclick": "0.6.11",
+    "flot": "0.8.1",
+    "font-awesome": "4.0.3",
+    "hippo-essentials": "https://github.com/onehippo/essentials.git#ef26e1a7a2802522d4ced0544c0fad0b21b05618",
+    "html5shiv": "3.7.0",
+    "jasmine-jquery": "2.0.3",
+    "jquery": "1.10.2",
+    "js-detect-ie": "https://github.com/ianpgall/js-detect-ie.git#241cd48c867c6c296fa772874b04bdaa15b81cb1",
+    "respond": "1.4.2",
+    "underscore": "1.5.2"
+  }
+}

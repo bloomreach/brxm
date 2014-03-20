@@ -97,6 +97,8 @@
           <include>**/*.cnd</include>
           <include>**/*.txt</include>
           <include>**/*.xml</include>
+          <include>**/*.html</include>
+          <include>**/*.js</include>
           <include>**/*.MF</include>
           <include>**/*.jsp</include>
           <include>**/*.ftl</include>

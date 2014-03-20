@@ -111,6 +111,9 @@ dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboa
 dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/blog/BlogPluginResource.java -text
 dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/blog/BlogPowerpack.java -text
 dashboard-plugins/blog-plugin/src/main/resources/META-INF/blog_instructions.xml -text
+dashboard-plugins/blog-plugin/src/main/resources/META-INF/resources/plugins/blogPlugin/blogPlugin.html -text
+dashboard-plugins/blog-plugin/src/main/resources/META-INF/resources/plugins/blogPlugin/blogPlugin.js -text
+dashboard-plugins/blog-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/essentials-author.ftl -text
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/essentials-blog-author-post.ftl -text
 dashboard-plugins/blog-plugin/src/main/resources/freemarker/essentials-blog-detail.ftl -text
@@ -381,6 +384,9 @@ dashboard-plugins/components-plugin/components-library/src/main/java/org/onehipp
 dashboard-plugins/components-plugin/components-library/src/test/resources/log4j.xml -text
 dashboard-plugins/components-plugin/pom.xml -text
 dashboard-plugins/dashboard-contentblocks-plugin/pom.xml -text
+dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/META_INF/resources/plugins/contentBlocks/contentBlocks.html -text
+dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/META_INF/resources/plugins/contentBlocks/contentBlocks.js -text
+dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/META_INF/web-fragment.xml -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/content_blocks_nodetype.xml -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/content_blocks_template.xml -text
 dashboard-plugins/dashboard-easyforms-plugin/pom.xml -text
@@ -408,6 +414,9 @@ dashboard-plugins/dashboard-restservices-plugin/src/main/java/org/onehippo/cms7/
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/HelloWorldContentResource.txt -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/HelloWorldPlainResource.txt -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/META-INF/instructions.xml -text
+dashboard-plugins/dashboard-restservices-plugin/src/main/resources/META-INF/resources/tools/restServices/restServices.html -text
+dashboard-plugins/dashboard-restservices-plugin/src/main/resources/META-INF/resources/tools/restServices/restServices.js -text
+dashboard-plugins/dashboard-restservices-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/content_mount.xml -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/spring-content-rest-api.xml -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/spring-plain-rest-api.xml -text
@@ -492,6 +501,9 @@ dashboard-plugins/essentials-powerpacks/pom.xml -text
 dashboard-plugins/freemarker-synchronizer/pom.xml -text
 dashboard-plugins/freemarker-synchronizer/src/main/java/org/onehippo/cms7/essentials/tools/rest/FSUtils.java -text
 dashboard-plugins/freemarker-synchronizer/src/main/java/org/onehippo/cms7/essentials/tools/rest/FreemarkerSyncResource.java -text
+dashboard-plugins/freemarker-synchronizer/src/main/resources/META_INF/resources/tools/freemarkersync/freemarkersync.html -text
+dashboard-plugins/freemarker-synchronizer/src/main/resources/META_INF/resources/tools/freemarkersync/freemarkersync.js -text
+dashboard-plugins/freemarker-synchronizer/src/main/resources/META_INF/web-fragment.xml -text
 dashboard-plugins/freemarker-synchronizer/src/test/java/org/onehippo/cms7/essentials/tools/rest/FSUtilsTest.java -text
 dashboard-plugins/freemarker-synchronizer/src/test/resources/log4j.xml -text
 dashboard-plugins/pom.xml -text
@@ -2058,12 +2070,8 @@ plugin-dashboard/src/main/webapp/pages/plugins-menu.html -text
 plugin-dashboard/src/main/webapp/pages/plugins-new-tabs.html -text
 plugin-dashboard/src/main/webapp/pages/plugins.html -text
 plugin-dashboard/src/main/webapp/pages/tools.html -text
-plugin-dashboard/src/main/webapp/plugins/blogPlugin/blogPlugin.html -text
-plugin-dashboard/src/main/webapp/plugins/blogPlugin/blogPlugin.js -text
 plugin-dashboard/src/main/webapp/plugins/carouselPlugin/carouselPlugin.html -text
 plugin-dashboard/src/main/webapp/plugins/carouselPlugin/carouselPlugin.js -text
-plugin-dashboard/src/main/webapp/plugins/contentBlocks/contentBlocks.html -text
-plugin-dashboard/src/main/webapp/plugins/contentBlocks/contentBlocks.js -text
 plugin-dashboard/src/main/webapp/plugins/galleryPlugin/cmslanguages.json -text
 plugin-dashboard/src/main/webapp/plugins/galleryPlugin/galleryPlugin.html -text
 plugin-dashboard/src/main/webapp/plugins/galleryPlugin/galleryPlugin.js -text
@@ -2092,10 +2100,6 @@ plugin-dashboard/src/main/webapp/theme/hippo-theme/_font-awesome.css -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/main.css -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/theme.html -text
 plugin-dashboard/src/main/webapp/theme/styles.css -text
-plugin-dashboard/src/main/webapp/tools/freemarkersync/freemarkersync.html -text
-plugin-dashboard/src/main/webapp/tools/freemarkersync/freemarkersync.js -text
-plugin-dashboard/src/main/webapp/tools/restServices/restServices.html -text
-plugin-dashboard/src/main/webapp/tools/restServices/restServices.js -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/dashboard/contentblocks/ContentBlocksPluginTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/ContentBlocksTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/RestClientTest.java -text
@@ -2111,3 +2115,8 @@ pluginTestSkeleton/js/wizard-controller.js -text
 pluginTestSkeleton/js/wizard.js -text
 pluginTestSkeleton/readme.txt -text
 /pom.xml -text
+test-skeleton/.bowerrc -text
+test-skeleton/bower.json -text
+test-skeleton/index.html -text
+test-skeleton/package.json -text
+test-skeleton/readme.md -text
