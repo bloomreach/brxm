@@ -97,7 +97,7 @@
         "powerpackClass": "org.onehippo.cms7.essentials.powerpack.BasicPowerpack",
 
         "restClasses": [],
-        "type": "powerpack",
+        "type": "powerpacks",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -114,7 +114,7 @@
         "pluginId": "notImplementedYet",
 
         "restClasses": [],
-        "type": "powerpack",
+        "type": "powerpacks",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
