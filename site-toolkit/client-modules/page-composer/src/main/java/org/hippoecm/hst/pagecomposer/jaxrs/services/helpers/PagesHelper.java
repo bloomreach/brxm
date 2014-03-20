@@ -33,9 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_PAGES;
-import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_ABSTRACT_COMPONENT;
-import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID;
 
 public class PagesHelper extends AbstractHelper {
@@ -55,25 +53,27 @@ public class PagesHelper extends AbstractHelper {
 
     public Node create(final Node pageOrPrototype,
                        final String targetPageNodeName,
-                       final HstComponentConfiguration pageConfigToCopy) throws RepositoryException {
-        String previewWorkspacePagesPath = getPreviewWorkspacePagesPath();
+                       final HstComponentConfiguration pageInstance) throws RepositoryException {
+        final String previewWorkspacePagesPath = getPreviewWorkspacePagesPath();
 
         final Session session = pageComposerContextService.getRequestContext().getSession();
         final String validTargetPageNodeName = getValidTargetPageNodeName(previewWorkspacePagesPath, targetPageNodeName, session);
-        Node newPage = JcrUtils.copy(session, pageOrPrototype.getPath(), previewWorkspacePagesPath + "/" + validTargetPageNodeName);
+        final Node newPage = JcrUtils.copy(session, pageOrPrototype.getPath(), previewWorkspacePagesPath + "/" + validTargetPageNodeName);
         if (newPage.isNodeType(HstNodeTypes.MIXINTYPE_HST_PROTOTYPE_META)) {
             newPage.removeMixin(HstNodeTypes.MIXINTYPE_HST_PROTOTYPE_META);
         }
-        if (pageConfigToCopy != null) {
+        if (pageInstance != null) {
             // copy has been done from a page, not from a prototype. We need to check whether there
             // are no hst:containercomponentreference used. If so, we need to denormalize them. For that, we need the
-            // pageConfigToCopy
-            denormalizeContainerComponentReferences(newPage, pageConfigToCopy);
+            // pageInstance
+            denormalizeContainerComponentReferences(newPage, pageInstance);
         }
 
         lockHelper.acquireLock(newPage, 0);
         // lock all available containers below newPage
-        doLockContainers(newPage);
+        for (Node eachContainer : findContainers(newPage)) {
+            lockHelper.acquireSimpleLock(eachContainer, 0);
+        }
 
         return newPage;
     }
@@ -95,8 +95,8 @@ public class PagesHelper extends AbstractHelper {
             return newPage;
         }
 
-        String newPagePathPrefix = "/" + HstNodeTypes.NODENAME_HST_PAGES + "/" + newPage.getName() +"/";
-        String oldPagePathPrefix = "/" + HstNodeTypes.NODENAME_HST_PAGES + "/" + oldPage.getName() +"/";
+        String newPagePathPrefix = "/" + HstNodeTypes.NODENAME_HST_PAGES + "/" + newPage.getName() + "/";
+        String oldPagePathPrefix = "/" + HstNodeTypes.NODENAME_HST_PAGES + "/" + oldPage.getName() + "/";
 
         List<Node> existingContainers = findContainers(oldPage);
         Session session = oldPage.getSession();
@@ -130,7 +130,7 @@ public class PagesHelper extends AbstractHelper {
         for (Node fromChild : new NodeIterable(from.getNodes())) {
             String newName = fromChild.getName();
             int counter = 0;
-            while(to.hasNode(newName)) {
+            while (to.hasNode(newName)) {
                 newName = fromChild.getName() + ++counter;
             }
             session.move(fromChild.getPath(), to.getPath() + "/" + newName);
@@ -138,9 +138,8 @@ public class PagesHelper extends AbstractHelper {
     }
 
     /**
-     * @return the container that is marked to be the primary one or if none marked or found for the primary,
-     * return the first container. If <code>newPage</code> does not contain any container, <code>null</code>
-     * is returned
+     * @return the container that is marked to be the primary one or if none marked or found for the primary, return the
+     * first container. If <code>newPage</code> does not contain any container, <code>null</code> is returned
      */
     private Node findPrimaryContainer(final Node page, final String primaryContainerRelPath) throws RepositoryException {
         List<Node> pageContainers = findContainers(page);
@@ -171,13 +170,14 @@ public class PagesHelper extends AbstractHelper {
         return existingContainers;
     }
 
-    private void findContainers(final Node node, List<Node> existingContainers) throws RepositoryException {
+    private void findContainers(final Node node, List<Node> containers) throws RepositoryException {
         if (node.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT)) {
-            existingContainers.add(node);
+            containers.add(node);
+            // container component nodes never have container component children
             return;
         }
         for (Node child : new NodeIterable(node.getNodes())) {
-            findContainers(child, existingContainers);
+            findContainers(child, containers);
         }
     }
 
@@ -198,13 +198,13 @@ public class PagesHelper extends AbstractHelper {
 
 
     private void denormalizeContainerComponentReferences(final Node newPage,
-                                                         final HstComponentConfiguration pageConfig) throws RepositoryException {
+                                                         final HstComponentConfiguration pageInstance) throws RepositoryException {
 
         final List<Node> containerComponentReferenceNodes = new ArrayList<>();
         populateComponentReferenceNodes(newPage, containerComponentReferenceNodes);
 
         if (containerComponentReferenceNodes.size() > 0) {
-            String pagePath = newPage.getPath();
+            final String pagePath = newPage.getPath();
             // start denormalization
             for (Node containerComponentReferenceNode : containerComponentReferenceNodes) {
                 // at the location of containerComponentReferenceNode, in the pageConfig the HST has
@@ -214,19 +214,19 @@ public class PagesHelper extends AbstractHelper {
                 final String relPath = absPath.substring(pagePath.length() + 1);
                 containerComponentReferenceNode.remove();
                 String[] elems = relPath.split("/");
-                HstComponentConfiguration current = pageConfig;
+                HstComponentConfiguration current = pageInstance;
                 for (String elem : elems) {
                     if (current == null) {
-                        log.warn("Could not find hst component configuration for component reference node '{}', hence we " +
-                                "cannot denormalize the reference. Instead, replace the reference with a empty container node.");
-                        Node container = newPage.addNode(relPath, HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
-                        container.setProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.vBox");
                         break;
                     }
                     current = current.getChildByName(elem);
                 }
-
-                if (current != null) {
+                if (current == null) {
+                    log.warn("Could not find hst component configuration for component reference node '{}', hence we " +
+                            "cannot denormalize the reference. Instead, replace the reference with a empty container node.", absPath);
+                    Node container = newPage.addNode(relPath, HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
+                    container.setProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.vBox");
+                } else {
                     // current now contains the component that we need to denormalize
                     JcrUtils.copy(newPage.getSession(), current.getCanonicalStoredLocation(), absPath);
                     log.info("Succesfully denormalized '{}'", absPath);
@@ -242,15 +242,6 @@ public class PagesHelper extends AbstractHelper {
         }
         for (Node child : new NodeIterable(node.getNodes())) {
             populateComponentReferenceNodes(child, containerComponentReferenceNodes);
-        }
-    }
-
-    private void doLockContainers(final Node node) throws RepositoryException {
-        if (node.isNodeType(NODETYPE_HST_CONTAINERCOMPONENT)) {
-            lockHelper.acquireSimpleLock(node, 0);
-        }
-        for (Node child : new NodeIterable(node.getNodes())) {
-            doLockContainers(child);
         }
     }
 
