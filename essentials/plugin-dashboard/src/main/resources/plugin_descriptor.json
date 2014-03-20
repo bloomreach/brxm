@@ -192,7 +192,7 @@
         "@type": "plugin",
         "introduction": "Adds Banner document type to your project",
         "name": "Banner plugin",
-        "pluginId": "beanwriter",
+        "pluginId": "bannerPlugin",
         "restClasses": ["org.onehippo.cms7.essentials.dashboard.banner.BannerPluginResource"],
         "type": "plugins",
         "vendor": {
