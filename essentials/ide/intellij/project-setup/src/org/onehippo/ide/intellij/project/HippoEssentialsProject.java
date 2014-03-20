@@ -120,6 +120,11 @@ public class HippoEssentialsProject extends WebProjectTemplate {
 
                             // rest resource
                             final String pluginName = mySettings.getProjectName();
+                            // create web-fragment:
+                            final String metaInfRoot = rootPath + "/src/main/resources/META-INF/";
+                            final PsiDirectory metaDir = DirectoryUtil.mkdirs(rootDirectory.getManager(), metaInfRoot);
+                            createFile(metaDir, mySettings, WEB_FRAGMENT_XML, HippoTemplatesFactory.HippoTemplate.ESSENTIALS_WEB_FRAGMENT_TEMPLATE);
+
                             if (mySettings.isCreateRestSkeleton()) {
                                 final String javaRoot = rootPath + "/src/main/java";
                                 VfsUtil.createDirectories(javaRoot);
@@ -127,17 +132,21 @@ public class HippoEssentialsProject extends WebProjectTemplate {
                                 final Iterator<String> packageNames = Splitter.on('.').split(projectPackage).iterator();
                                 final String packageDir = javaRoot + '/' + Joiner.on('/').join(packageNames);
                                 final PsiDirectory restDir = DirectoryUtil.mkdirs(rootDirectory.getManager(), packageDir);
-                                createFile(restDir, mySettings, pluginName +"Resource.java", HippoTemplatesFactory.HippoTemplate.ESSENTIALS_REST_TEMPLATE);
+                                // check if plain rest or powerpack:
+                                if (mySettings.getPluginGroup().equals("powerpacks")) {
+                                    createFile(restDir, mySettings, pluginName + "Resource.java", HippoTemplatesFactory.HippoTemplate.ESSENTIALS_POWERPACK_REST_CLASS_TEMPLATE);
+                                    createFile(restDir, mySettings, pluginName + "Powerpack.java", HippoTemplatesFactory.HippoTemplate.ESSENTIALS_POWERPACK_CLASS_TEMPLATE);
+                                    createFile(metaDir, mySettings, pluginName + "_instructions.xml", HippoTemplatesFactory.HippoTemplate.ESSENTIALS_POWERPACK_INSTRUCTIONS_TEMPLATE);
+                                } else {
+                                    createFile(restDir, mySettings, pluginName + "Resource.java", HippoTemplatesFactory.HippoTemplate.ESSENTIALS_REST_CLASS_TEMPLATE);
+                                }
                             }
-                            // create web-fragment:
-                            final String metaInfRoot = rootPath + "/src/main/resources/META-INF/";
-                            final PsiDirectory metaDir = DirectoryUtil.mkdirs(rootDirectory.getManager(), metaInfRoot);
-                            createFile(metaDir, mySettings, WEB_FRAGMENT_XML, HippoTemplatesFactory.HippoTemplate.ESSENTIALS_WEB_FRAGMENT_TEMPLATE);
+
                             // create resources dir & html/js files:
                             final String pluginRoot = metaInfRoot + "/resources/" + mySettings.getPluginGroup() + '/' + pluginName;
                             final PsiDirectory pluginDir = DirectoryUtil.mkdirs(rootDirectory.getManager(), pluginRoot);
-                            createFile(pluginDir, mySettings, pluginName+".js", HippoTemplatesFactory.HippoTemplate.ESSENTIALS_PLUGIN_JS_TEMPLATE);
-                            createFile(pluginDir, mySettings, pluginName+".html", HippoTemplatesFactory.HippoTemplate.ESSENTIALS_PLUGIN_HTML_TEMPLATE);
+                            createFile(pluginDir, mySettings, pluginName + ".js", HippoTemplatesFactory.HippoTemplate.ESSENTIALS_PLUGIN_JS_TEMPLATE);
+                            createFile(pluginDir, mySettings, pluginName + ".html", HippoTemplatesFactory.HippoTemplate.ESSENTIALS_PLUGIN_HTML_TEMPLATE);
 
 
                         } catch (IOException e) {

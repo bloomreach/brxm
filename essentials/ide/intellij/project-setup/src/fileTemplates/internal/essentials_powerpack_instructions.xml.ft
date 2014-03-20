@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
+  <!--
+    TODO: add instructions sets here
+  -->
+  <instructionSet>
+    <!--
+        <cnd documentType=" ${PLUGIN_NAME}Document" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated,hippostd:taggable" />
+    -->
+  </instructionSet>
+</instructions>

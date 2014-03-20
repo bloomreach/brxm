@@ -1,0 +1,15 @@
+package ${PACKAGE};
+
+import org.onehippo.cms7.essentials.dashboard.packaging.DefaultPowerpack;
+
+/**
+ * @version "$Id$"
+ */
+public class ${PLUGIN_NAME}Powerpack extends DefaultPowerpack {
+
+
+    @Override
+    public String getInstructionPath() {
+        return "/META-INF/${PLUGIN_NAME}_instructions.xml";
+    }
+}

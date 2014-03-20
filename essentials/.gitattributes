@@ -524,6 +524,9 @@ ide/intellij/project-setup/ide-integration.jar -text
 ide/intellij/project-setup/src/fileTemplates/internal/essentials_html_template.html.ft -text
 ide/intellij/project-setup/src/fileTemplates/internal/essentials_javascript_template.js.ft -text
 ide/intellij/project-setup/src/fileTemplates/internal/essentials_pom.xml.ft -text
+ide/intellij/project-setup/src/fileTemplates/internal/essentials_powerpack_class.java.ft -text
+ide/intellij/project-setup/src/fileTemplates/internal/essentials_powerpack_instructions.xml.ft -text
+ide/intellij/project-setup/src/fileTemplates/internal/essentials_powerpack_rest_class.java.ft -text
 ide/intellij/project-setup/src/fileTemplates/internal/essentials_rest_class.java.ft -text
 ide/intellij/project-setup/src/fileTemplates/internal/essentials_web_fragment.xml.ft -text
 ide/intellij/project-setup/src/icons/logo.png -text

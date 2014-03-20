@@ -44,9 +44,13 @@ public class HippoTemplatesFactory implements FileTemplateGroupDescriptorFactory
     public enum HippoTemplate {
         ESSENTIALS_POM_TEMPLATE("essentials_pom"),
         ESSENTIALS_WEB_FRAGMENT_TEMPLATE("essentials_web_fragment"),
-        ESSENTIALS_REST_TEMPLATE("essentials_rest_class"),
+        ESSENTIALS_REST_CLASS_TEMPLATE("essentials_rest_class"),
         ESSENTIALS_PLUGIN_HTML_TEMPLATE("essentials_html_template"),
-        ESSENTIALS_PLUGIN_JS_TEMPLATE("essentials_javascript_template");
+        ESSENTIALS_PLUGIN_JS_TEMPLATE("essentials_javascript_template"),
+        // powerpack section
+        ESSENTIALS_POWERPACK_REST_CLASS_TEMPLATE("essentials_powerpack_rest_class"),
+        ESSENTIALS_POWERPACK_CLASS_TEMPLATE("essentials_powerpack_class"),
+        ESSENTIALS_POWERPACK_INSTRUCTIONS_TEMPLATE("essentials_powerpack_instructions");
 
         final String name;
 
@@ -76,6 +80,7 @@ public class HippoTemplatesFactory implements FileTemplateGroupDescriptorFactory
         final FileTemplate fileTemplate = FileTemplateManager.getInstance().getInternalTemplate(template.getName());
         final Properties properties = new Properties(FileTemplateManager.getInstance().getDefaultProperties());
         properties.setProperty("PLUGIN_NAME", data.getProjectName());
+        properties.setProperty("PLUGIN_GROUP", data.getPluginGroup());
         properties.setProperty("PACKAGE", data.getProjectPackage());
         properties.setProperty("GROUP_ID", data.getGroupId());
         properties.setProperty("ARTIFACT_ID", data.getArtifactId());

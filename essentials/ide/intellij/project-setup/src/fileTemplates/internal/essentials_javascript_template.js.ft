@@ -6,8 +6,13 @@
                 ${dollar}scope.endpoint = ${dollar}rootScope.REST.dynamic + '${PLUGIN_NAME}/';
                 ${dollar}scope.message = {};
                 ${dollar}scope.run = function() {
-                    ${dollar}http.post(${dollar}scope.endpoint).success(function (data) {
-                        ${dollar}scope.message = data;
+                        #if ($PLUGIN_GROUP == "powerpacks")
+                            ${dollar}http.post(${dollar}scope.endpoint).success(function (data) {
+                            ${dollar}scope.message = data;
+                        #else
+                             ${dollar}http.get(${dollar}scope.endpoint).success(function (data) {
+                             ${dollar}scope.message = data;
+                        #end
                     });
                 };
             })
