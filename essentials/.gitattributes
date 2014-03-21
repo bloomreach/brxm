@@ -196,8 +196,8 @@ dashboard-plugins/carousel-plugin/src/main/resources/hst/carousel-catalog.xml -t
 dashboard-plugins/carousel-plugin/src/main/resources/hst/carousel-template.xml -text
 dashboard-plugins/carousel-plugin/src/main/resources/jsp/essentials-carousel.jsp -text
 dashboard-plugins/carousel-plugin/src/main/resources/webapp/css/carousel.css -text
+dashboard-plugins/carousel-plugin/src/main/resources/webapp/js/bootstrap.min.js -text
 dashboard-plugins/carousel-plugin/src/main/resources/webapp/js/jquery-2.1.0.min.js -text
-dashboard-plugins/carousel-plugin/src/main/resources/webapp/js/jquery.cycle2.min.js -text
 dashboard-plugins/carousel-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/components-plugin/components-cms/pom.xml -text
 dashboard-plugins/components-plugin/components-cms/src/main/java/org/onehippo/cms7/essentials/components/cms/blog/BlogImporterJob.java -text

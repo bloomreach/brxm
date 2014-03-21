@@ -5,9 +5,9 @@
   <meta charset="utf-8"/>
 
   <link rel="stylesheet" href="<hst:link  path="/css/bootstrap.css"/>" type="text/css"/>
-  <hst:headContributions categoryExcludes="scripts" xhtml="true"/>
-  <hst:headContributions categoryIncludes="globalJavascripts" xhtml="true"/>
-  <hst:headContributions categoryIncludes="componentsJavascripts" xhtml="true"/>
+  <hst:headContributions categoryIncludes="componentsCss" xhtml="true"/>
+  <hst:headContributions categoryIncludes="globalJavascript" xhtml="true"/>
+  <hst:headContributions categoryIncludes="componentsJavascript" xhtml="true"/>
 </head>
 <body>
 <div class="container">
