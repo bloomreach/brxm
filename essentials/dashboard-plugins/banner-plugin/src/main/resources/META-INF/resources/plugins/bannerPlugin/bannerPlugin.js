@@ -19,10 +19,10 @@
     angular.module('hippo.essentials')
             .controller('bannerPluginCtrl', function ($scope, $sce, $log, $rootScope, $http) {
                 $scope.endpoint = $rootScope.REST.dynamic + 'banner/';
-                $scope.installSampleData = true;
+                $scope.sampleData = true;
                 $scope.message = {};
                 $scope.run = function() {
-                    var payload = Essentials.addPayloadData("sampledata", $scope.installSampleData, null);
+                    var payload = Essentials.addPayloadData("sampleData", $scope.sampleData, null);
                     $http.post($scope.endpoint, payload).success(function (data) {
                         // globally handled
                     });

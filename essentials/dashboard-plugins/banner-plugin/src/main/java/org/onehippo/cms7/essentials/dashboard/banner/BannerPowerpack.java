@@ -16,13 +16,27 @@
 
 package org.onehippo.cms7.essentials.dashboard.banner;
 
+import java.util.Set;
+
 import org.onehippo.cms7.essentials.dashboard.packaging.DefaultPowerpack;
+import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * @version "$Id$"
  */
 public class BannerPowerpack extends DefaultPowerpack {
 
+    private static final ImmutableSet<String> INSTRUCTION_GROUPS_SAMPLE = new ImmutableSet.Builder<String>().add(EssentialConst.INSTRUCTION_GROUP_DEFAULT).add("samples").build();
+
+    @Override
+    public Set<String> groupNames() {
+        if (Boolean.valueOf((String) getProperties().get("sampleData"))) {
+            return INSTRUCTION_GROUPS_SAMPLE;
+        }
+        return DEFAULT_GROUPS;
+    }
 
     @Override
     public String getInstructionPath() {
