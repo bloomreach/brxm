@@ -16,10 +16,10 @@
 
 package org.onehippo.cms7.essentials.components.info;
 
-import org.hippoecm.hst.core.parameters.DocumentLink;
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.FieldGroup;
 import org.hippoecm.hst.core.parameters.FieldGroupList;
+import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 
 /**
@@ -42,11 +42,14 @@ public interface EssentialsCarouselComponentInfo {
 
     String HIPPO_DOCUMENT = "hippo:document";
     String DEFAULT_PATH = "/content/documents";
+    boolean BOOLEANALLOW_CREATION = false;
+    String BANNERS_INITIAL_PATH = "banners";
+    String CMS_PICKERS_DOCUMENTS_ONLY = "cms-pickers/documents-only";
 
     //############################################
     // CAROUSEL SETTINGS
     //############################################
-    @Parameter(name = "fx", required = true, displayName = "Animation type")
+    @Parameter(name = "fx", required = true, displayName = "Animation type", defaultValue = "scrollHorz")
     @DropDownList(value = {"scrollHorz", "carousel", "flipHorz", "shuffle", "tileSlide"})
     String fx();
 
@@ -62,44 +65,44 @@ public interface EssentialsCarouselComponentInfo {
     //############################################
 
 
-    @Parameter(name = "document1", required = false, displayName = "Carousel item 1")
-    @DocumentLink(allowCreation = false, docLocation = DEFAULT_PATH, docType = HIPPO_DOCUMENT)
+    @Parameter(name = "document1", required = true, displayName = "Carousel item 1")
+    @JcrPath(isRelative = true, pickerInitialPath = BANNERS_INITIAL_PATH, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerConfiguration = CMS_PICKERS_DOCUMENTS_ONLY)
     String getCarouselItem1();
 
     @Parameter(name = "document2", required = false, displayName = "Carousel item 2")
-    @DocumentLink(allowCreation = false, docLocation = DEFAULT_PATH, docType = HIPPO_DOCUMENT)
+    @JcrPath(isRelative = true, pickerInitialPath = BANNERS_INITIAL_PATH, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerConfiguration = CMS_PICKERS_DOCUMENTS_ONLY)
     String getCarouselItem2();
 
     @Parameter(name = "document3", required = false, displayName = "Carousel item 3")
-    @DocumentLink(allowCreation = false, docLocation = DEFAULT_PATH, docType = HIPPO_DOCUMENT)
+    @JcrPath(isRelative = true, pickerInitialPath = BANNERS_INITIAL_PATH, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerConfiguration = CMS_PICKERS_DOCUMENTS_ONLY)
     String getCarouselItem3();
 
     @Parameter(name = "document4", required = false, displayName = "Carousel item 4")
-    @DocumentLink(allowCreation = false, docLocation = DEFAULT_PATH, docType = HIPPO_DOCUMENT)
+    @JcrPath(isRelative = true, pickerInitialPath = BANNERS_INITIAL_PATH, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerConfiguration = CMS_PICKERS_DOCUMENTS_ONLY)
     String getCarouselItem4();
 
     @Parameter(name = "document5", required = false, displayName = "Carousel item 5")
-    @DocumentLink(allowCreation = false, docLocation = DEFAULT_PATH, docType = HIPPO_DOCUMENT)
+    @JcrPath(isRelative = true, pickerInitialPath = BANNERS_INITIAL_PATH, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerConfiguration = CMS_PICKERS_DOCUMENTS_ONLY)
     String getCarouselItem5();
 
     @Parameter(name = "document6", required = false, displayName = "Carousel item 6")
-    @DocumentLink(allowCreation = false, docLocation = DEFAULT_PATH, docType = HIPPO_DOCUMENT)
+    @JcrPath(isRelative = true, pickerInitialPath = BANNERS_INITIAL_PATH, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerConfiguration = CMS_PICKERS_DOCUMENTS_ONLY)
     String getCarouselItem6();
 
     @Parameter(name = "document7", required = false, displayName = "Carousel item 7")
-    @DocumentLink(allowCreation = false, docLocation = DEFAULT_PATH, docType = HIPPO_DOCUMENT)
+    @JcrPath(isRelative = true, pickerInitialPath = BANNERS_INITIAL_PATH, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerConfiguration = CMS_PICKERS_DOCUMENTS_ONLY)
     String getCarouselItem7();
 
     @Parameter(name = "document8", required = false, displayName = "Carousel item 8")
-    @DocumentLink(allowCreation = false, docLocation = DEFAULT_PATH, docType = HIPPO_DOCUMENT)
+    @JcrPath(isRelative = true, pickerInitialPath = BANNERS_INITIAL_PATH, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerConfiguration = CMS_PICKERS_DOCUMENTS_ONLY)
     String getCarouselItem8();
 
     @Parameter(name = "document9", required = false, displayName = "Carousel item 9")
-    @DocumentLink(allowCreation = false, docLocation = DEFAULT_PATH, docType = HIPPO_DOCUMENT)
+    @JcrPath(isRelative = true, pickerInitialPath = BANNERS_INITIAL_PATH, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerConfiguration = CMS_PICKERS_DOCUMENTS_ONLY)
     String getCarouselItem9();
 
     @Parameter(name = "document10", required = false, displayName = "Carousel item 10")
-    @DocumentLink(allowCreation = false, docLocation = DEFAULT_PATH, docType = HIPPO_DOCUMENT)
+    @JcrPath(isRelative = true, pickerInitialPath = BANNERS_INITIAL_PATH, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerConfiguration = CMS_PICKERS_DOCUMENTS_ONLY)
     String getCarouselItem10();
 
 }
