@@ -150,7 +150,7 @@
 
             visit: function(commentElement, commentData) {
                 var hstMetaData = readEditMenuData(commentData),
-                        menuUuid, lockedBy, lockedByCurrentUser, lockedOn, lockedOnDate, lockedOnDateString, lockInfoTitle, lockInfoText;
+                        menuUuid, lockedBy, lockedByCurrentUser, lockedOn, lockedOnDate, lockedOnDateString, lockInfoTitle;
                 if (hstMetaData !== null) {
                     menuUuid = hstMetaData[HST.ATTR.ID];
                     lockedBy = hstMetaData[HST.ATTR.HST_LOCKED_BY];
