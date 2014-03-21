@@ -102,7 +102,7 @@ dashboard-plugins/banner-plugin/pom.xml -text
 dashboard-plugins/banner-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/banner/BannerPluginResource.java -text
 dashboard-plugins/banner-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/banner/BannerPowerpack.java -text
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/banner_instructions.xml -text
-dashboard-plugins/banner-plugin/src/main/resources/META-INF/resources/java/Banner.txt -text
+dashboard-plugins/banner-plugin/src/main/resources/META-INF/java/Banner.txt -text
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/resources/plugins/bannerPlugin/bannerPlugin.html -text
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/resources/plugins/bannerPlugin/bannerPlugin.js -text
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/web-fragment.xml -text

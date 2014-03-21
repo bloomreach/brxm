@@ -124,13 +124,13 @@ public class FileInstruction extends PluginInstruction {
         try {
             stream = extractStream();
             if (stream == null) {
-                log.error("Stream was null for source: ", source);
+                log.error("Stream was null for source: {}", source);
                 return InstructionStatus.FAILED;
             }
             if (destination.exists()) {
                 final boolean success = destination.delete();
                 if (!success) {
-                    log.error("Failed to delete destination file: ", destination);
+                    log.error("Failed to delete destination file: {}", destination);
                     return InstructionStatus.FAILED;
                 }
             }
