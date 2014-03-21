@@ -65,9 +65,9 @@
                 pageService.getHost = function () {
                     var deferred = $q.defer();
 
-                    $http.get(pageServiceUrl('/' + ConfigService.sitemapId + './pages'))
+                    $http.get(pageServiceUrl('/' + ConfigService.sitemapId + './hostname'))
                         .success(function (response) {
-                            deferred.resolve(response.data.host);
+                            deferred.resolve(response.data);
                         })
                         .error(function (error) {
                             deferred.reject(error);

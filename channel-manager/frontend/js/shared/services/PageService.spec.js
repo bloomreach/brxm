@@ -139,4 +139,13 @@ describe('Page Service', function () {
         expectGetCurrentPage();
     });
 
+    it('should get the hostname by sitemap id', function () {
+        $httpBackend.expectGET('api/7a66c027-9dd1-423e-8158-7c28144f47e2./hostname').respond({
+            data: 'hostname'
+        });
+        pageService.getHost().then(function (data) {
+            expect(data).toBe('hostname');
+        });
+        $httpBackend.flush();
+    });
 });
