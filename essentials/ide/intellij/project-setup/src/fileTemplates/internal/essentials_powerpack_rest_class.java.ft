@@ -17,12 +17,10 @@ import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 
-/**
- * @version "$Id$"
- */
+
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
-@Path("/banner")
+@Path("/${PLUGIN_NAME}")
 public class ${PLUGIN_NAME}Resource extends BaseResource {
 
 
