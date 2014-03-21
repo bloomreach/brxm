@@ -16,7 +16,6 @@
 
 package org.onehippo.cms7.essentials.components.info;
 
-import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.FieldGroup;
 import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.core.parameters.JcrPath;
@@ -41,22 +40,21 @@ public interface EssentialsCarouselComponentInfo {
 
 
     String HIPPO_DOCUMENT = "hippo:document";
-    String DEFAULT_PATH = "/content/documents";
-    boolean BOOLEANALLOW_CREATION = false;
     String BANNERS_INITIAL_PATH = "banners";
     String CMS_PICKERS_DOCUMENTS_ONLY = "cms-pickers/documents-only";
 
     //############################################
     // CAROUSEL SETTINGS
     //############################################
-    @Parameter(name = "fx", required = true, displayName = "Animation type", defaultValue = "scrollHorz")
-    @DropDownList(value = {"scrollHorz", "carousel", "flipHorz", "shuffle", "tileSlide"})
-    String fx();
+    @Parameter(name = "pause", required = false, displayName = "Pause carousel on mouse enter", defaultValue = "true")
+    Boolean pause();
+    @Parameter(name = "cycle", required = false, displayName = "Cycle carousel continuously", defaultValue = "true")
+    Boolean cycle();
 
-    @Parameter(name = "displayTime", defaultValue = "2000", required = true, displayName = "Display time (milli seconds)")
-    Integer displayTime();
+    @Parameter(name = "interval", defaultValue = "5000", required = true, displayName = "Carousel interval (milli seconds)")
+    Integer interval();
 
-    @Parameter(name = "showNavigation", defaultValue = "false", displayName = "Show navigation")
+    @Parameter(name = "showNavigation", defaultValue = "false", displayName = "Show carousel navigation")
     Boolean showNavigation();
 
 
