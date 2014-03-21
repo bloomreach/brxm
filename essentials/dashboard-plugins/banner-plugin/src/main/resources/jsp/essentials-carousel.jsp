@@ -25,11 +25,9 @@
       <c:set var="active" value="${counter.first ? ' active':''}"/>
       <div class="item${active}">
         <img src="<hst:link hippobean="${slide.image}" />" alt="${slide.title}"/>
-        <div class="container">
-          <div class="carousel-caption">
-            <h1>${slide.title}</h1>
-            <hst:html hippohtml="${slide.content}"/>
-          </div>
+        <div class="carousel-caption">
+          <h1>${slide.title}</h1>
+          <hst:html hippohtml="${slide.content}"/>
         </div>
       </div>
     </c:forEach>
@@ -41,8 +39,16 @@
   </c:if>
 </div>
 <hst:headContribution category="componentsJavascript">
-  <script type="text/javascript" src="<hst:link path="/js/jquery-1.11.0.min.js"/>"></script>
-</hst:headContribution>
-<hst:headContribution category="componentsJavascript">
-  <script type="text/javascript" src="<hst:link path="/js/bootstrap.min.js"/>"></script>
+  <script type="text/javascript" src="<hst:link path="
+  /js/jquery-1.11.0.min.js"/>"></script>
+  </
+  hst:headContribution >
+  < hst
+  :
+  headContribution
+  category = "componentsJavascript" >
+    < script
+  type = "text/javascript"
+  src = "<hst:link path=" / js / bootstrap.min.js
+  "/>" ></script>
 </hst:headContribution>
