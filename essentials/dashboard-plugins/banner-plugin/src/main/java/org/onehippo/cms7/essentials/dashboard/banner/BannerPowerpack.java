@@ -28,7 +28,7 @@ import com.google.common.collect.ImmutableSet;
  */
 public class BannerPowerpack extends DefaultPowerpack {
 
-    private static final ImmutableSet<String> INSTRUCTION_GROUPS_SAMPLE = new ImmutableSet.Builder<String>().add(EssentialConst.INSTRUCTION_GROUP_DEFAULT).add("samples").build();
+    private static final ImmutableSet<String> INSTRUCTION_GROUPS_SAMPLE = new ImmutableSet.Builder<String>().add(EssentialConst.INSTRUCTION_GROUP_DEFAULT).add("sampleData").build();
 
     @Override
     public Set<String> groupNames() {
