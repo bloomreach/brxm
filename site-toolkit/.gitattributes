@@ -292,10 +292,6 @@ client-modules/page-composer/pom.xml -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/builtin/components/StandardContainerComponent.java -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/api/VariantRepresentation.java -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/cxf/CXFJaxrsHstConfigService.java -text svneol=unset#text/plain
-client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/cxf/provider/AbstractJsonpOutInterceptor.java -text
-client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/cxf/provider/JsonpInInterceptor.java -text
-client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/cxf/provider/JsonpPostStreamInterceptor.java -text
-client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/cxf/provider/JsonpPreStreamInterceptor.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ComponentRepresentation.java -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ContainerItemComponentPropertyRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ContainerItemComponentRepresentation.java -text svneol=unset#text/plain
