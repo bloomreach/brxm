@@ -41,7 +41,7 @@
 
         if (publishedEvent === 'edit-menu' && lockInfoTitle) {
             $(link).append('<span class="' + btnClass + '-locked" title="' + lockInfoTitle + '">' +
-                                '<span  class="left"></span>' +
+                                '<span class="left"></span>' +
                                 '<span class="center">' + lockInfoMessage + '</span>' +
                                 '<span class="right"></span>' +
                             '</span>');
