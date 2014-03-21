@@ -27,16 +27,28 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class PagesTest extends AbstractSiteMapResourceTest{
+public class PagesTest extends AbstractSiteMapResourceTest {
 
     private void initContext() throws Exception {
         // call below will init request context
         getSiteMapItemRepresentation(session, "home");
+    }
+
+    @Test
+    public void test_get_hostname() throws Exception {
+        initContext();
+        final SiteMapResource siteMapResource = createResource();
+        final Response response = siteMapResource.getHostName();
+        final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
+        assertThat(Response.Status.OK.getStatusCode(), is(response.getStatus()));
+        assertThat(representation.getData().toString(), is("localhost"));
     }
 
     @Test
@@ -142,7 +154,7 @@ public class PagesTest extends AbstractSiteMapResourceTest{
 
 
     @Test
-    public void page_contains_container_item_in_referenced_page_definition()  throws Exception {
+    public void page_contains_container_item_in_referenced_page_definition() throws Exception {
         session.move("/hst:hst/hst:configurations/unittestcommon/hst:abstractpages",
                 "/hst:hst/hst:configurations/unittestproject/hst:abstractpages");
         Node basepage = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:abstractpages/basepage");

@@ -71,6 +71,18 @@ public class SiteMapResource extends AbstractConfigResource {
     }
 
     @GET
+    @Path("/hostname")
+    public Response getHostName() {
+        return tryGet(new Callable<Response>() {
+            @Override
+            public Response call() throws Exception {
+                final Mount mount = getPageComposerContextService().getEditingMount();
+                return ok("Hostname loaded successfully", mount.getVirtualHost().getHostName());
+            }
+        });
+    }
+
+    @GET
     @Path("/pages")
     public Response getSiteMapPages() {
         return tryGet(new Callable<Response>() {
@@ -117,7 +129,7 @@ public class SiteMapResource extends AbstractConfigResource {
 
         // if the update has a uuid for componenent id, we need to re-apply a prototype. In that case we also need to
         // validate the prototype page
-        boolean isCompIdUUID =false;
+        boolean isCompIdUUID = false;
         if (siteMapItem.getComponentConfigurationId() != null) {
             try {
                 UUID.fromString(siteMapItem.getComponentConfigurationId());
