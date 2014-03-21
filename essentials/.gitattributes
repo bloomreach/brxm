@@ -106,6 +106,9 @@ dashboard-plugins/banner-plugin/src/main/resources/META-INF/resources/java/Banne
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/resources/plugins/bannerPlugin/bannerPlugin.html -text
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/resources/plugins/bannerPlugin/bannerPlugin.js -text
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/web-fragment.xml -text
+dashboard-plugins/banner-plugin/src/main/resources/xml/configuration/new-banner-document.xml -text
+dashboard-plugins/banner-plugin/src/main/resources/xml/configuration/new-banner-folder.xml -text
+dashboard-plugins/banner-plugin/src/main/resources/xml/data/banner-folder-creator.xml -text
 dashboard-plugins/banner-plugin/src/main/resources/xml/data/banner_entry_1.xml -text
 dashboard-plugins/banner-plugin/src/main/resources/xml/data/banner_entry_2.xml -text
 dashboard-plugins/banner-plugin/src/main/resources/xml/data/banner_images.xml -text

@@ -565,6 +565,12 @@ dashboard-plugins/banner-plugin/src/main/resources/xml/*.iml
 dashboard-plugins/banner-plugin/src/main/resources/xml/.DS_Store
 dashboard-plugins/banner-plugin/src/main/resources/xml/.idea
 dashboard-plugins/banner-plugin/src/main/resources/xml/atlassian-ide-plugin.xml
+dashboard-plugins/banner-plugin/src/main/resources/xml/configuration/*.iml
+dashboard-plugins/banner-plugin/src/main/resources/xml/configuration/.DS_Store
+dashboard-plugins/banner-plugin/src/main/resources/xml/configuration/.idea
+dashboard-plugins/banner-plugin/src/main/resources/xml/configuration/atlassian-ide-plugin.xml
+dashboard-plugins/banner-plugin/src/main/resources/xml/configuration/hippo-plugins.iws
+dashboard-plugins/banner-plugin/src/main/resources/xml/configuration/target
 dashboard-plugins/banner-plugin/src/main/resources/xml/data/*.iml
 dashboard-plugins/banner-plugin/src/main/resources/xml/data/.DS_Store
 dashboard-plugins/banner-plugin/src/main/resources/xml/data/.idea

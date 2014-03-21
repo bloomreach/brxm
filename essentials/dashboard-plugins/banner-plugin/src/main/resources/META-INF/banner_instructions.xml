@@ -29,6 +29,10 @@
 
     <!-- beans-->
     <file action="copy" source="java/Banner.txt" target="{{beansFolder}}/Banner.java"/>
+    <!-- queries -->
+    <xml action="copy" source="xml/configuration/new-banner-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+    <xml action="copy" source="xml/configuration/new-banner-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+
 
   </instructionSet>
 
@@ -36,6 +40,7 @@
     SAMPLE DATA
   -->
   <instructionSet group="sampleData">
+    <folder template="data/banner-folder-creator.xml" path="/content/documents/{{namespace}}/banners"/>
     <xml action="copy" source="xml/data/banner_entry_1.xml" target="/content/documents/{{namespace}}/bannners"/>
     <xml action="copy" source="xml/data/banner_entry_2.xml" target="/content/documents/{{namespace}}/banners"/>
     <xml action="copy" source="xml/data/banner_images.xml" target="/content/gallery/{{namespace}}"/>
