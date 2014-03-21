@@ -60,33 +60,6 @@
         ]
     },
     {
-
-        "needsInstallation": false,
-        "enabled": true,
-        "@type": "plugin",
-        "introduction": "Carousel",
-        "name": "Carousel",
-        "pluginId": "carouselPlugin",
-        "restClasses": ["org.onehippo.cms7.essentials.dashboard.carousel.CarouselResource"],
-        "type": "plugins",
-        "vendor": {
-            "@type": "vendor",
-            "name": "Hippo",
-            "url": "http://www.onehippo.com"
-        },
-        "libraries": [
-            {
-                "items": [
-                    {
-                        "component": "carouselPlugin",
-                        "file": "carouselPlugin.js"
-                    }
-                ]
-            }
-        ]
-
-    },
-    {
         "needsInstallation": false,
         "enabled": true,
         "@type": "plugin",

@@ -90,11 +90,6 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-essentials-carousel-plugin</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
       <artifactId>hippo-freemarker-synchronizer-plugin</artifactId>
       <version>${project.version}</version>
     </dependency>
