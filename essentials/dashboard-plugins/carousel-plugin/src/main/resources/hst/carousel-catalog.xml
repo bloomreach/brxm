@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sv:node sv:name="blog-catalog" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<sv:node sv:name="carousel-catalog" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:containeritempackage</sv:value>
   </sv:property>
@@ -11,10 +11,10 @@
       <sv:value>org.onehippo.cms7.essentials.components.EssentialsCarouselComponent</sv:value>
     </sv:property>
     <sv:property sv:name="hst:label" sv:type="String">
-      <sv:value>Blog List</sv:value>
+      <sv:value>Carousel</sv:value>
     </sv:property>
     <sv:property sv:name="hst:template" sv:type="String">
-      <sv:value>blog.list.content</sv:value>
+      <sv:value>essentials.carousel</sv:value>
     </sv:property>
     <sv:property sv:name="hst:xtype" sv:type="String">
       <sv:value>HST.Item</sv:value>

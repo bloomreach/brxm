@@ -190,6 +190,9 @@ dashboard-plugins/carousel-plugin/src/main/java/org/onehippo/cms7/essentials/das
 dashboard-plugins/carousel-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/carousel/CarouselResource.java -text
 dashboard-plugins/carousel-plugin/src/main/resources/META-INF/carousel_instructions.xml -text
 dashboard-plugins/carousel-plugin/src/main/resources/hst/carousel-catalog.xml -text
+dashboard-plugins/carousel-plugin/src/main/resources/hst/carousel-template.xml -text
+dashboard-plugins/carousel-plugin/src/main/resources/hst/essentials-carousel.jsp -text
+dashboard-plugins/carousel-plugin/src/main/resources/jsp/essentials-carousel.jsp -text
 dashboard-plugins/carousel-plugin/src/main/resources/webapp/css/carousel.css -text
 dashboard-plugins/carousel-plugin/src/main/resources/webapp/js/jquery-2.1.0.min.js -text
 dashboard-plugins/carousel-plugin/src/main/resources/webapp/js/jquery.cycle2.min.js -text
@@ -455,6 +458,7 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/reso
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/icons/new-folder-16.png -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/java/EventsDocument.txt -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/java/NewsDocument.txt -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/js/jquery-2.1.0.min.js -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-component-document.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-component-event-detail.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-component-events.jsp -text

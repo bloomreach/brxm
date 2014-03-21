@@ -980,6 +980,12 @@ dashboard-plugins/carousel-plugin/src/main/resources/hst/.idea
 dashboard-plugins/carousel-plugin/src/main/resources/hst/atlassian-ide-plugin.xml
 dashboard-plugins/carousel-plugin/src/main/resources/hst/hippo-plugins.iws
 dashboard-plugins/carousel-plugin/src/main/resources/hst/target
+dashboard-plugins/carousel-plugin/src/main/resources/jsp/*.iml
+dashboard-plugins/carousel-plugin/src/main/resources/jsp/.DS_Store
+dashboard-plugins/carousel-plugin/src/main/resources/jsp/.idea
+dashboard-plugins/carousel-plugin/src/main/resources/jsp/atlassian-ide-plugin.xml
+dashboard-plugins/carousel-plugin/src/main/resources/jsp/hippo-plugins.iws
+dashboard-plugins/carousel-plugin/src/main/resources/jsp/target
 dashboard-plugins/carousel-plugin/src/main/resources/target
 dashboard-plugins/carousel-plugin/src/main/resources/webapp/*.iml
 dashboard-plugins/carousel-plugin/src/main/resources/webapp/.DS_Store
@@ -1734,6 +1740,12 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/reso
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/java/atlassian-ide-plugin.xml
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/java/hippo-plugins.iws
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/java/target
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/js/*.iml
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/js/.DS_Store
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/js/.idea
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/js/atlassian-ide-plugin.xml
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/js/hippo-plugins.iws
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/js/target
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/*.iml
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/.DS_Store
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/.idea
