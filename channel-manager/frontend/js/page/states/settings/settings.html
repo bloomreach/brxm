@@ -80,19 +80,18 @@
 
                 <div data-ng-show="isPageEditable">
                     <div id="template">
-                        <a class="toggle"
-                           data-ng-class="{true: 'toggle-open', false: 'toggle-closed'}[template.isVisible]"
-                           data-ng-click="template.isVisible = !template.isVisible"
-                           data-ng-click="showAssignNewTemplate">{{ 'ASSIGN_NEW_TEMPLATE' | translate }}</a>
+                        <label for="page-prototype">
+                            <a class="toggle"
+                               data-ng-class="{true: 'toggle-open', false: 'toggle-closed'}[template.isVisible]"
+                               data-ng-click="template.isVisible = true"
+                               data-ng-click="showAssignNewTemplate">{{ 'ASSIGN_NEW_TEMPLATE' | translate }}</a>
+                        </label>
 
-                        <div class="panel panel-default" data-ng-show="template.isVisible">
-                            <div class="form-group panel-body" id="template">
-                                <select class="form-control" id="page-prototype" ng-options="p.displayName for p in prototypes" data-ng-model="page.prototype"></select>
+                        <div class="form-group" id="template" data-ng-show="template.isVisible">
+                            <select class="form-control" id="page-prototype" ng-options="p.displayName for p in prototypes" data-ng-model="page.prototype"></select>
 
-                                <div class="alert alert-warning">
-                                    {{ 'ASSIGN_NEW_TEMPLATE_WARNING' | translate }}
-                                </div>
-
+                            <div class="alert alert-warning">
+                                {{ 'ASSIGN_NEW_TEMPLATE_WARNING' | translate }}
                             </div>
                         </div>
                     </div>

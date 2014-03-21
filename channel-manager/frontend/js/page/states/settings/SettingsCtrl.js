@@ -38,6 +38,10 @@
 
                 $scope.isPageEditable = false;
 
+                $scope.template = {
+                    isVisible: false
+                };
+
                 $scope.validation = {
                     illegalCharacters: '/ :'
                 };

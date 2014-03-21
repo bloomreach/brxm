@@ -35,9 +35,22 @@ form {
     padding-left: 3px;
 }
 
-#template .toggle {
+.toggle {
     display: block;
-    margin-bottom: 5px;
+}
+
+.toggle-closed {
+    cursor: pointer;
+}
+
+.toggle-open {
+    cursor: default;
+    color: #000;
+}
+
+.toggle-open:hover {
+    color: #000;
+    text-decoration: none;
 }
 
 #template .panel-body {
