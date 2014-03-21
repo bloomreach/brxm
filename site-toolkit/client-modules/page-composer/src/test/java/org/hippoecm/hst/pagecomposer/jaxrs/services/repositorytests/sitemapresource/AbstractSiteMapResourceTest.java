@@ -93,6 +93,11 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
 
         movePagesFromCommonToUnitTestProject();
 
+        session.move("/hst:hst/hst:configurations/unittestproject/hst:pages/homepage",
+                "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/homepage");
+        session.move("/hst:hst/hst:configurations/unittestproject/hst:pages/newsoverview",
+                "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/newsoverview");
+
         session.save();
         createPreviewWithSiteMapWorkspace();
     }
@@ -242,7 +247,7 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
 
     protected String getHomePageUUID() throws RepositoryException {
         String previewConfigurationPath = mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
-        return session.getNode(previewConfigurationPath).getNode("hst:pages/homepage").getIdentifier();
+        return session.getNode(previewConfigurationPath).getNode("hst:workspace/hst:pages/homepage").getIdentifier();
     }
 
     protected String getPrototypePageUUID() throws RepositoryException {

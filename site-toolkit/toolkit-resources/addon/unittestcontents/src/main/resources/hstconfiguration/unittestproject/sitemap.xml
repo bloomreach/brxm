@@ -23,7 +23,7 @@
       <sv:value>hst:sitemapitem</sv:value>
     </sv:property>
     <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-      <sv:value>hst:pages/homepage</sv:value>
+      <sv:value>hst:pages/pagenotfound</sv:value>
     </sv:property>
     <sv:property sv:name="hst:parameternames" sv:type="String">
       <sv:value>testparam</sv:value>

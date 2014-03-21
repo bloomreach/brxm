@@ -114,7 +114,7 @@ public class PagesTest extends AbstractSiteMapResourceTest {
 
     @Test
     public void page_contains_container_item_in_page_definition() throws Exception {
-        final Node container = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:pages/homepage")
+        final Node container = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/homepage")
                 .addNode("container", HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
         container.setProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.vBox");
         final Node containerItem = container.addNode("item", HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
@@ -134,7 +134,7 @@ public class PagesTest extends AbstractSiteMapResourceTest {
         containerNode.setProperty("hst:xtype", "HST.vBox");
         final Node containerItem = containerNode.addNode("item", HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
         containerItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.Item");
-        final Node homePageContainer = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:pages/homepage")
+        final Node homePageContainer = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/homepage")
                 .addNode("container", "hst:containercomponentreference");
         homePageContainer.setProperty("hst:referencecomponent", "testcontainer");
 

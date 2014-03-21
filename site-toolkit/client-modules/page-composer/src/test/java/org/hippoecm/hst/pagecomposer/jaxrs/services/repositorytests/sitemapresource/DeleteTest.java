@@ -22,16 +22,20 @@ import javax.jcr.Session;
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper;
+import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -47,13 +51,62 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
     }
 
     @Test
-    public void test_delete() throws Exception {
+    public void test_delete_with_page() throws Exception {
         final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
+
+        final HstComponentConfiguration componentConfiguration = mountResource.getPageComposerContextService().getEditingPreviewSite()
+                .getComponentsConfiguration().getComponentConfiguration(home.getComponentConfigurationId());
 
         final SiteMapResource siteMapResource = createResource();
         final Response delete = siteMapResource.delete(home.getId());
         assertEquals(Response.Status.OK.getStatusCode(), delete.getStatus());
         assertTrue(((ExtResponseRepresentation) delete.getEntity()).getMessage().contains("deleted"));
+
+        assertTrue(session.nodeExists(componentConfiguration.getCanonicalStoredLocation()));
+        assertEquals("deleted",
+                session.getNode(componentConfiguration.getCanonicalStoredLocation()).getProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE).getString());
+    }
+
+    @Test
+    public void test_delete_with_page_which_does_not_exist_live() throws Exception {
+        session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/homepage").remove();
+        session.save();
+        Thread.sleep(200);
+
+        final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
+
+        final HstComponentConfiguration componentConfiguration = mountResource.getPageComposerContextService().getEditingPreviewSite()
+                .getComponentsConfiguration().getComponentConfiguration(home.getComponentConfigurationId());
+
+        final SiteMapResource siteMapResource = createResource();
+        final Response delete = siteMapResource.delete(home.getId());
+        assertEquals(Response.Status.OK.getStatusCode(), delete.getStatus());
+        assertTrue(((ExtResponseRepresentation) delete.getEntity()).getMessage().contains("deleted"));
+
+        assertFalse(session.nodeExists(componentConfiguration.getCanonicalStoredLocation()));
+
+    }
+
+    @Test
+    public void test_delete_with_page_that_is_referenced_twice() throws Exception {
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home",
+                "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home2");
+
+        session.save();
+        Thread.sleep(200);
+        final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
+
+        final HstComponentConfiguration componentConfiguration = mountResource.getPageComposerContextService().getEditingPreviewSite()
+                .getComponentsConfiguration().getComponentConfiguration(home.getComponentConfigurationId());
+
+
+        final SiteMapResource siteMapResource = createResource();
+        final Response delete = siteMapResource.delete(home.getId());
+        assertEquals(Response.Status.OK.getStatusCode(), delete.getStatus());
+        assertTrue(((ExtResponseRepresentation) delete.getEntity()).getMessage().contains("deleted"));
+        assertTrue(session.nodeExists(componentConfiguration.getCanonicalStoredLocation()));
+        assertFalse(session.getNode(componentConfiguration.getCanonicalStoredLocation()).hasProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE));
+
     }
 
     @Test

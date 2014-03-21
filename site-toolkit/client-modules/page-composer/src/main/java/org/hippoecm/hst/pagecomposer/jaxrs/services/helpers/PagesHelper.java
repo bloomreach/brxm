@@ -17,6 +17,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -91,7 +92,7 @@ public class PagesHelper extends AbstractHelper {
         Node primaryContainer = findPrimaryContainer(newPage, getStringProperty(newPrototypePage, PROTOTYPE_META_PROPERTY_PRIMARY_CONTAINER, null));
         if (primaryContainer == null) {
             noContainerLeftInfoLog(newPrototypePage, oldPage);
-            deleteOrMarkDeletedIfLiveExists(oldPage);
+            deletePageNodeIfNotReferencedAnyMore(oldPage);
             return newPage;
         }
 
@@ -121,7 +122,7 @@ public class PagesHelper extends AbstractHelper {
             }
         }
 
-        deleteOrMarkDeletedIfLiveExists(oldPage);
+        deletePageNodeIfNotReferencedAnyMore(oldPage);
         return newPage;
     }
 
@@ -260,7 +261,49 @@ public class PagesHelper extends AbstractHelper {
         }
         Node pageNode = session.getNode(pageNodePath);
         lockHelper.acquireLock(pageNode, 0);
-        deleteOrMarkDeletedIfLiveExists(pageNode);
+        deletePageNodeIfNotReferencedAnyMore(pageNode);
+    }
+
+    private void deletePageNodeIfNotReferencedAnyMore(final Node pageNode) throws RepositoryException {
+        String componentConfigurationIdForPage = HstNodeTypes.NODENAME_HST_PAGES + "/" + pageNode.getName();
+        final Session session = pageNode.getSession();
+        Node workspaceSiteMapNode = session.getNode(getPreviewWorkspacePath()).getNode(HstNodeTypes.NODENAME_HST_SITEMAP);
+        Node nonWorkspaceSiteMapNode = null;
+        final String nonWorkspaceSiteMapPath = pageComposerContextService.getEditingPreviewSite().getConfigurationPath()
+                + "/" + HstNodeTypes.NODENAME_HST_SITEMAP;
+        if (session.nodeExists(nonWorkspaceSiteMapPath)) {
+            nonWorkspaceSiteMapNode = session.getNode(nonWorkspaceSiteMapPath);
+        }
+
+        final int inUseCounter = compIdReferencedByNumberOfSiteMapItems(workspaceSiteMapNode, nonWorkspaceSiteMapNode, componentConfigurationIdForPage);
+        if (inUseCounter < 2) {
+            deleteOrMarkDeletedIfLiveExists(pageNode);
+        } else {
+            log.info("Cannot delete page as it is in use by {} sitemap items.", inUseCounter);
+        }
+    }
+
+    private int compIdReferencedByNumberOfSiteMapItems(final Node workspaceSiteMapNode,
+                                                       final Node nonWorkspaceSiteMapNode,
+                                                       final String componentConfigurationIdForPage) throws RepositoryException {
+        AtomicInteger counter = new AtomicInteger();
+        traverseItems(new NodeIterable(workspaceSiteMapNode.getNodes()), componentConfigurationIdForPage, counter);
+        if (nonWorkspaceSiteMapNode != null) {
+            traverseItems(new NodeIterable(nonWorkspaceSiteMapNode.getNodes()), componentConfigurationIdForPage, counter);
+        }
+        return counter.get();
+    }
+
+    private void traverseItems(final NodeIterable nodes,
+                               final String componentConfigurationIdForPage,
+                               final AtomicInteger counter) throws RepositoryException {
+        for (Node node : nodes) {
+            final String compId = JcrUtils.getStringProperty(node, HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID, null);
+            if (componentConfigurationIdForPage.equals(compId)) {
+                counter.getAndIncrement();
+            }
+            traverseItems(new NodeIterable(node.getNodes()), componentConfigurationIdForPage, counter);
+        }
     }
 
     private String getValidTargetPageNodeName(final String previewWorkspacePagesPath, final String targetPageNodeName, final Session session) throws RepositoryException {
