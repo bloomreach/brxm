@@ -16,8 +16,9 @@
 
 <div class="l-stretch">
 
-    <div class="panel panel-default l-stretch" data-ng-show="pages">
-        <div class="panel-body l-fixed-height">
+    <div class="panel panel-default l-stretch" data-ng-show="pages" data-ng-controller="hippo.channel.pages.StateCtrl">
+        <div class="panel-body"
+             data-ng-class="{'l-fixed-height': isAddPageVisible, 'l-stretch': !isAddPageVisible}">
             <div class="list-group">
                 <a class="list-group-item" data-ng-repeat="page in pages" data-ng-click="showPage(page)" href="#">
                     <p class="list-group-item-text">{{ page.pathInfo | startWithSlash }}</p>
@@ -26,6 +27,7 @@
             </div>
         </div>
         <div class="panel-footer clearfix"
+             data-ng-show="isAddPageVisible"
              data-ng-controller="hippo.channel.pages.NavigationCtrl">
             <div class="tooltip-newlines"
                  data-tooltip
@@ -35,7 +37,6 @@
                  data-ng-mouseleave="hideTooltip()">
                 <button class="btn btn-default btn-md"
                         data-ng-click="navigateTo('add-page')"
-                        data-ng-show="userCanEdit && prototypes"
                         data-ng-disabled="!userIsEditing">
                     <i class="fa fa-plus"></i> {{ 'ADD_NEW_PAGE' | translate }}
                 </button>

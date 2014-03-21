@@ -17,15 +17,21 @@
     'use strict';
 
     angular.module('hippo.channel.pages')
-        .controller('hippo.channel.pages.NavigationCtrl', [
+        .controller('hippo.channel.pages.StateCtrl', [
         '$scope',
-        '$state',
         'hippo.channel.ConfigService',
-        function ($scope, $state, ConfigService) {
-            // navigation
-            $scope.navigateTo = function (stateName) {
-                $state.go(stateName);
-            };
+        'hippo.channel.PrototypeService',
+        'hippo.channel.FeedbackService',
+        function ($scope, ConfigService, PrototypeService, FeedbackService) {
+            // fetch prototypes
+            if (ConfigService.userCanEdit) {
+                PrototypeService.getPrototypes().then(function(response) {
+                    $scope.prototypes = response;
+                    $scope.isAddPageVisible = $scope.prototypes.length > 0;
+                }, function(errorResponse) {
+                    $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
+                });
+            }
         }
     ]);
 

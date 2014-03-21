@@ -37,7 +37,6 @@
                 // scope variables
                 $scope.pages = [];
                 $scope.tooltip = '';
-                $scope.userCanEdit = ConfigService.userCanEdit;
                 $scope.userIsEditing = ConfigService.userIsEditing;
 
                 // fetch pages
