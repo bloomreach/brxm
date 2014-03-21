@@ -34,6 +34,7 @@
 
 .panel > .panel-footer {
     text-align: center;
+    border-radius: 0;
 }
 
 .list-group {
