@@ -105,6 +105,10 @@ dashboard-plugins/banner-plugin/src/main/resources/META-INF/banner_instructions.
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/resources/plugins/bannerPlugin/bannerPlugin.html -text
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/resources/plugins/bannerPlugin/bannerPlugin.js -text
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/web-fragment.xml -text
+dashboard-plugins/banner-plugin/src/main/resources/bootstrap/fonts/glyphicons-halflings-regular.eot -text
+dashboard-plugins/banner-plugin/src/main/resources/bootstrap/fonts/glyphicons-halflings-regular.svg -text
+dashboard-plugins/banner-plugin/src/main/resources/bootstrap/fonts/glyphicons-halflings-regular.ttf -text
+dashboard-plugins/banner-plugin/src/main/resources/bootstrap/fonts/glyphicons-halflings-regular.woff -text
 dashboard-plugins/banner-plugin/src/main/resources/hst/carousel-catalog.xml -text
 dashboard-plugins/banner-plugin/src/main/resources/hst/carousel-template.xml -text
 dashboard-plugins/banner-plugin/src/main/resources/java/Banner.txt -text
