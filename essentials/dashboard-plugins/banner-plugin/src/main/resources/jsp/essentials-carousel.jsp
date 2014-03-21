@@ -9,7 +9,7 @@
 <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="${interval}" data-pause="${pauseCarousel}" data-wrap="${cycle}">
   <!-- Indicators -->
   <ol class="carousel-indicators">
-    <c:forEach begin="0" end="${pageable.total}" varStatus="index">
+    <c:forEach begin="1" end="${pageable.total}" varStatus="index">
       <c:choose>
         <c:when test="${index.first}">
           <li data-target="#myCarousel" data-slide-to="${index.index}" class="active"></li>
