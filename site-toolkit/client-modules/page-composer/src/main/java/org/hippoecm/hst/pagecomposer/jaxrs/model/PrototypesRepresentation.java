@@ -24,36 +24,44 @@ import java.util.List;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class PrototypePagesRepresentation {
+public class PrototypesRepresentation {
 
-    private List<ComponentRepresentation> pages = new ArrayList<>();
+    private static final Logger log = LoggerFactory.getLogger(PrototypesRepresentation.class);
+    private List<PrototypeRepresentation> prototypes = new ArrayList<>();
 
-    public PrototypePagesRepresentation represent(final HstSite editingPreviewSite,
+    public PrototypesRepresentation represent(final HstSite editingPreviewSite,
                                          final boolean includeInherited,
-                                         final Mount mount) {
+                                         final PageComposerContextService pageComposerContextService) {
         for (HstComponentConfiguration page : editingPreviewSite.getComponentsConfiguration().getPrototypePages().values()) {
             if (!includeInherited && page.isInherited()) {
                 // skipping inherited
                 continue;
             }
-            ComponentRepresentation pageRepresentation = new ComponentRepresentation().represent(page, mount);
-            pages.add(pageRepresentation);
+            try {
+                PrototypeRepresentation prototypeRepresentation = new PrototypeRepresentation().represent(page, pageComposerContextService);
+                prototypes.add(prototypeRepresentation);
+            } catch (IllegalArgumentException e) {
+                log.warn("Skip prototype for '{}'", page.getCanonicalStoredLocation(), e);
+            }
         }
-        Collections.sort(pages, new Comparator<ComponentRepresentation>() {
+        Collections.sort(prototypes, new Comparator<PrototypeRepresentation>() {
             @Override
-            public int compare(final ComponentRepresentation o1, final ComponentRepresentation o2) {
-                return o1.getName().compareTo(o2.getName());
+            public int compare(final PrototypeRepresentation o1, final PrototypeRepresentation o2) {
+                return o1.getDisplayName().compareTo(o2.getDisplayName());
             }
         });
         return this;
     }
 
-    public List<ComponentRepresentation> getPages() {
-        return pages;
+    public List<PrototypeRepresentation> getPrototypes() {
+        return prototypes;
     }
 
-    public void setPages(final List<ComponentRepresentation> pages) {
-        this.pages = pages;
+    public void setPrototypes(final List<PrototypeRepresentation> prototypes) {
+        this.prototypes = prototypes;
     }
 }

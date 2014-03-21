@@ -18,14 +18,17 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests;
 import javax.jcr.Node;
 import javax.ws.rs.core.Response;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.PrototypePagesRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.PrototypeRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.PrototypesRepresentation;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
 public class MountResourcePrototypesTest extends AbstractMountResourceTest {
@@ -40,17 +43,17 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
         mockNewRequest(session, "localhost", "/home");
         final Response response = mountResource.getPrototypePages();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        PrototypePagesRepresentation representation = (PrototypePagesRepresentation)((ExtResponseRepresentation) response.getEntity()).getData();
-        assertEquals(0, representation.getPages().size());
+        PrototypesRepresentation representation = (PrototypesRepresentation)((ExtResponseRepresentation) response.getEntity()).getData();
+        assertEquals(0, representation.getPrototypes().size());
     }
 
     @Test
     public void test_prototype_pages() throws Exception {
         mockNewRequest(session, "localhost", "/home");
-        PrototypePagesRepresentation representation = (PrototypePagesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
-        assertEquals(1, representation.getPages().size());
-        assertEquals("prototype-page", representation.getPages().get(0).getName());
-        assertTrue(representation.getPages().get(0).hasContainerInPageDefinition());
+        PrototypesRepresentation representation = (PrototypesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
+        assertEquals(1, representation.getPrototypes().size());
+        assertEquals("prototype-page", representation.getPrototypes().get(0).getName());
+        assertTrue(representation.getPrototypes().get(0).hasContainerInPageDefinition());
     }
 
 
@@ -61,8 +64,8 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
         prototypeNode.getNode("main/container2").remove();
         session.save();
         mockNewRequest(session, "localhost", "/home");
-        PrototypePagesRepresentation representation = (PrototypePagesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
-        assertFalse(representation.getPages().get(0).hasContainerInPageDefinition());
+        PrototypesRepresentation representation = (PrototypesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
+        assertFalse(representation.getPrototypes().get(0).hasContainerInPageDefinition());
     }
 
 
@@ -75,12 +78,56 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
         // give time for jcr events to evict model
         Thread.sleep(200);
         mockNewRequest(session, "localhost", "/home");
-        PrototypePagesRepresentation representation = (PrototypePagesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
-        assertEquals(2, representation.getPages().size());
+        PrototypesRepresentation representation = (PrototypesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
+        assertEquals(2, representation.getPrototypes().size());
     }
 
     @Test
-    public void test_prototype_pages_are_sorted() throws Exception {
+    public void test_prototype_pages_are_sorted_on_displayName() throws Exception {
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/prototype-page",
+                "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/aaa-page");
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/prototype-page",
+                "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/ccc-page");
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/prototype-page",
+                "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/bbb-page");
+
+        final Node aaa = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:prototypepages/aaa-page");
+        final Node bbb = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:prototypepages/bbb-page");
+        final Node ccc = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:prototypepages/ccc-page");
+
+        aaa.addMixin(HstNodeTypes.MIXINTYPE_HST_PROTOTYPE_META);
+        bbb.addMixin(HstNodeTypes.MIXINTYPE_HST_PROTOTYPE_META);
+        ccc.addMixin(HstNodeTypes.MIXINTYPE_HST_PROTOTYPE_META);
+
+        aaa.setProperty(HstNodeTypes.PROTOTYPE_META_PROPERTY_DISPLAY_NAME, "zzz");
+        bbb.setProperty(HstNodeTypes.PROTOTYPE_META_PROPERTY_DISPLAY_NAME, "yyy");
+        ccc.setProperty(HstNodeTypes.PROTOTYPE_META_PROPERTY_DISPLAY_NAME, "xxx");
+
+        session.removeItem("/hst:hst/hst:configurations/unittestproject/hst:prototypepages/prototype-page");
+        session.save();
+
+        // give time for jcr events to evict model
+        Thread.sleep(200);
+        mockNewRequest(session, "localhost", "/home");
+        PrototypesRepresentation representation = (PrototypesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
+
+        PrototypeRepresentation prev = null;
+        for (PrototypeRepresentation prototypeRepresentation : representation.getPrototypes()) {
+            if (prev == null) {
+                prev = prototypeRepresentation;
+                continue;
+            }
+
+            assertTrue(prototypeRepresentation.getName().compareTo(prev.getName()) <= 0);
+            assertTrue(prototypeRepresentation.getDisplayName().compareTo(prev.getDisplayName()) >= 0);
+
+            assertNotSame(prototypeRepresentation.getName(), prototypeRepresentation.getDisplayName());
+            prev = prototypeRepresentation;
+        }
+    }
+
+    @Test
+    public void test_prototype_pages_are_displayName_equals_name_when_missing() throws Exception {
 
         JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/prototype-page",
                 "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/aaa-page");
@@ -93,16 +140,18 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
         // give time for jcr events to evict model
         Thread.sleep(200);
         mockNewRequest(session, "localhost", "/home");
-        PrototypePagesRepresentation representation = (PrototypePagesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
+        PrototypesRepresentation representation = (PrototypesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
 
-        ComponentRepresentation prev = null;
-        for (ComponentRepresentation pageRepresentation : representation.getPages()) {
+        PrototypeRepresentation prev = null;
+        for (PrototypeRepresentation prototypeRepresentation : representation.getPrototypes()) {
             if (prev == null) {
-                prev = pageRepresentation;
+                prev = prototypeRepresentation;
                 continue;
             }
-            assertTrue(pageRepresentation.getName().compareTo(prev.getName()) >= 0);
-            prev = pageRepresentation;
+            assertTrue(prototypeRepresentation.getName().compareTo(prev.getName()) >= 0);
+            assertTrue(prototypeRepresentation.getDisplayName().compareTo(prev.getDisplayName()) >= 0);
+            assertEquals(prototypeRepresentation.getName(), prototypeRepresentation.getDisplayName());
+            prev = prototypeRepresentation;
         }
 
     }

@@ -30,6 +30,8 @@
 - hst:state (string)
 
 [hst:prototypemeta] mixin
+// the name to show for the prototype
+- hst:displayname (string)
 // the relative path to primary container
 - hst:primarycontainer (string)
 
