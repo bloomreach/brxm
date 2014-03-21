@@ -533,12 +533,6 @@ dashboard-plugins/banner-plugin/src/main/resources/META-INF/.DS_Store
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/.idea
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/atlassian-ide-plugin.xml
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/hippo-plugins.iws
-dashboard-plugins/banner-plugin/src/main/resources/META-INF/java/*.iml
-dashboard-plugins/banner-plugin/src/main/resources/META-INF/java/.DS_Store
-dashboard-plugins/banner-plugin/src/main/resources/META-INF/java/.idea
-dashboard-plugins/banner-plugin/src/main/resources/META-INF/java/atlassian-ide-plugin.xml
-dashboard-plugins/banner-plugin/src/main/resources/META-INF/java/hippo-plugins.iws
-dashboard-plugins/banner-plugin/src/main/resources/META-INF/java/target
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/resources/*.iml
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/resources/.DS_Store
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/resources/.idea
@@ -560,6 +554,12 @@ dashboard-plugins/banner-plugin/src/main/resources/META-INF/resources/target
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/target
 dashboard-plugins/banner-plugin/src/main/resources/atlassian-ide-plugin.xml
 dashboard-plugins/banner-plugin/src/main/resources/hippo-plugins.iws
+dashboard-plugins/banner-plugin/src/main/resources/java/*.iml
+dashboard-plugins/banner-plugin/src/main/resources/java/.DS_Store
+dashboard-plugins/banner-plugin/src/main/resources/java/.idea
+dashboard-plugins/banner-plugin/src/main/resources/java/atlassian-ide-plugin.xml
+dashboard-plugins/banner-plugin/src/main/resources/java/hippo-plugins.iws
+dashboard-plugins/banner-plugin/src/main/resources/java/target
 dashboard-plugins/banner-plugin/src/main/resources/target
 dashboard-plugins/banner-plugin/src/main/resources/xml/*.iml
 dashboard-plugins/banner-plugin/src/main/resources/xml/.DS_Store
