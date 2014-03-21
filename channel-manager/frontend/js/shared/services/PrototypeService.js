@@ -27,12 +27,12 @@
                 // TODO: create tests for the PrototypeService
                 return {
                     getPrototypes: function () {
-                        var url = ConfigService.apiUrlPrefix + '/' + ConfigService.mountId + './prototypepages';
-                        var deferred = $q.defer();
+                        var url = ConfigService.apiUrlPrefix + '/' + ConfigService.mountId + './prototypepages',
+                            deferred = $q.defer();
 
                         $http.get(url, {})
                             .then(function (response) {
-                                deferred.resolve(response.data.data.pages);
+                                deferred.resolve(response.data.data.prototypes);
                             }, function (errorResponse) {
                                 deferred.reject(errorResponse);
                             });
