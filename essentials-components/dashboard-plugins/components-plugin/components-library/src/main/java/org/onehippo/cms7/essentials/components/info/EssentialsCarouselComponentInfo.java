@@ -32,7 +32,7 @@ import org.hippoecm.hst.core.parameters.Parameter;
         ),
         @FieldGroup(
                 titleKey = "carousel.settings",
-                value = {"fx", "displayTime", "showNavigation"}
+                value = {"cycle", "interval", "showNavigation"}
         )
 })
 
@@ -46,9 +46,9 @@ public interface EssentialsCarouselComponentInfo {
     //############################################
     // CAROUSEL SETTINGS
     //############################################
-    @Parameter(name = "pause", displayName = "Pause carousel on mouse enter", defaultValue = "true")
+    @Parameter(name = "pause", displayName = "Pause carousel on mouse enter", defaultValue = "false")
     Boolean pause();
-    @Parameter(name = "cycle", displayName = "Cycle carousel continuously", defaultValue = "true")
+    @Parameter(name = "cycle", displayName = "Cycle carousel continuously", defaultValue = "false")
     Boolean cycle();
 
     @Parameter(name = "interval", defaultValue = "5000", required = true, displayName = "Carousel interval (milli seconds)")
