@@ -47,15 +47,15 @@ public interface EssentialsCarouselComponentInfo {
     // CAROUSEL SETTINGS
     //############################################
     @Parameter(name = "pause", displayName = "Pause carousel on mouse enter", defaultValue = "false")
-    Boolean pause();
+    Boolean getPause();
     @Parameter(name = "cycle", displayName = "Cycle carousel continuously", defaultValue = "false")
-    Boolean cycle();
+    Boolean getCycle();
 
     @Parameter(name = "interval", defaultValue = "5000", required = true, displayName = "Carousel interval (milli seconds)")
-    Integer interval();
+    Integer getInterval();
 
-    @Parameter(name = "showNavigation", defaultValue = "false", displayName = "Show carousel navigation")
-    Boolean showNavigation();
+    @Parameter(name = "showNavigation", defaultValue = "true", displayName = "Show carousel navigation")
+    Boolean getShowNavigation();
 
 
     //############################################

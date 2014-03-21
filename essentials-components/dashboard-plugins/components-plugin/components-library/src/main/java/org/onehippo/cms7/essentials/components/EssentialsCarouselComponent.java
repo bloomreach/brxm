@@ -50,10 +50,10 @@ public class EssentialsCarouselComponent extends CommonComponent {
      * @param componentInfo Carousel component annotation
      */
     public void setCarouselOptions(final HstRequest request, final EssentialsCarouselComponentInfo componentInfo) {
-        request.setAttribute("interval", componentInfo.interval());
-        request.setAttribute("cycle", componentInfo.cycle());
-        request.setAttribute("pause", componentInfo.pause());
-        request.setAttribute("showNavigation", componentInfo.showNavigation());
+        request.setAttribute("interval", componentInfo.getInterval());
+        request.setAttribute("cycle", componentInfo.getCycle());
+        request.setAttribute("pause", componentInfo.getPause());
+        request.setAttribute("showNavigation", componentInfo.getShowNavigation());
     }
 
     /**
