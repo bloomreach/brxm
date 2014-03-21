@@ -226,9 +226,31 @@ a.hst-cmseditmenu span.hst-cmseditmenu-left {
     padding-left: 25px;
 }
 a.hst-cmseditmenu span.hst-cmseditmenu-locked {
-    /* below is lock icon (copied from hst-overlay.hst-overlay-locked) */
-    background: transparent no-repeat left top url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAAK8AAACvABQqw0mAAAAAd0SU1FB90GBQokJW2REPQAAAQ/SURBVEjHnZZLbFZFFIC/mf/Zx98XtsW0lMjbaAgoMSgEjeKCxJ0J6tIYExOD6FITUxfKwpD42KgLNZqw90HEIAEUUjCCIgRK04JQ+i7/3/957/3n3pnj4m8JaYE2THJyz5zMnG/uzDlnBua1bDbL/bZ9+/YtsMXnG5RSt/SLF/tVKhXvFJEtpVKpp1AoNBWLxUQ+XwhKxeK4E/lXKXVlz5493t2g6l4rmpnJrc5mc89MTU3vLhaLm8vlcrvnVahUKjYIgoF4PPGT1urHvr6+Pw8cOCBLBvh+oMLQNAN7p6am3/rjxMnMtWvDiWKp5MRJlE6nkplMA60tzUYpvs9ms1865y709vaaRbcIIJVKprXmqcv9A9uGb9xoGxq66k1MTh00Yfi7QqmW5qamxsb6h62NXgpDs8MYMyTihoClAZRSaa30tuvDN9b8debv8Mp/14+MjU9+fuLYoeNzY/bv3/8YsMH3q2uDINghIt8BhSUBgLjWanmhWGobGZ0YjcJY74ljh87dPqCtfcWoVnLuZq7Ync+Xu5y4O/rSc4oIOFfTSyVsoRQmPd/h+VGxpWtweP7EM7ndhVQyacQ57VWj+OGhxz2A05/CqU/uAFAK9GwvV/ilfnx8LOUH1tbVJZKvPG+2i+jVN09tXJPt27BWztP1xoYXN6fUTI+1rs4Yo1/f+M1KgK1vw5Pv3GOLRKgfm/54/cTgmyt9v5BpXxZlVrTHvipf3mSsJIE4uXKPa60biDdWNrVVjasLq5WuTR39H4x8yxfdr/LrImfQuDVTyb9WHjn5UH40ShiTQ1xmeby+mUwyBtYjpjQJ4+gKz9PdaPAahhtd5D89muMILAaYbNuigurLGd2v2hIRgQTi/GYgrVL1GolCFHWgKrIscZZ1rRUV6/A1hM0Fn8yiUTTRP6Vj6Ub1xPZWHnnUozQ2DZUkU5dixGNgncFGVaJqgPECOlMRTSsFZwVxyKKAwAtIJzto6NhJw4PjPLD8uCqWJnC+QVc1EgiRZ4msVYm0kE5AQxqyM2AillDsYojEmonUTuLJQXTnBVo6r4MJIV9LJSmB8cAPIAggcrUQj6J75MFccxEi1gE+EAAWRNWKQAhEYF3NaWRrukhNkKUAHCLOOcQBc7NZIHKbMGt2LA2AE+SulVzd+ohSyNz1MQtTiwJQs2mNnu3M+2+ZB9K1CqAUqDv4W2AwFWwUhA5dmfVQB1pBmlsiCkKDchZlAvA9EIunhPKiUWRKjCYz5qwNxlYpPdlijY0LaALAAxVApQzlImItrlRGVcrMiOW0EgYXL9ean025MHDt6Ge7RAfPOsqbrQ2Xia1FkIQQVSEM8E1I3lqK4vhH4MPoBy7d9cq8erAVgFUvzABweC/r6rtZH2+M9VixDTgSCDiLOEsURZggwAd8rRnZ9T5HAY58VDuP596bRzr79ay8e9+vFn5b+GrhfxJEWJA8FH3MAAAAAElFTkSuQmCC);
-    padding-left: 25px;
+    vertical-align: top;
+}
+
+a.hst-cmseditmenu span.hst-cmseditmenu-locked .left {
+    background: transparent no-repeat left top url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAWCAYAAAAFMyaXAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB94DFQkmNscyJ7AAAAA+SURBVBjTzc/BEYAgEEPRh21A+9IHxeBJa8CD7MyWYE7/J6fwpaIH3FhwblgwQ0o0cEj5u1xZRl4bnvyrob+K0w3d2/f4FwAAAABJRU5ErkJggg==);
+    display: inline-block;
+    height: 22px;
+    width: 3px;
+}
+
+a.hst-cmseditmenu span.hst-cmseditmenu-locked .center {
+    background-color: #000000;
+    color: #ffffff;
+    display: inline-block;
+    height: 22px;
+    line-height: 22px;
+    padding-left: 5px;
+    vertical-align: top;
+}
+
+a.hst-cmseditmenu span.hst-cmseditmenu-locked .right {
+    background: transparent no-repeat left top url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAWCAYAAAA1vze2AAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB94DFQknM65D4n4AAAE0SURBVEjH3Za9SsNQFMd/aazRRYSO9Q1EUuiueYK+hU4FBzepCA7u0hahD6CrDk5x6BtY/IBOFoR2aJCKAW+iw3EwoIOX3KAJ4oGznI/7g/O/3HMBJAcfAyfACoCVBPOyR6CWNwTgtAjIJDvEXqN5sIVbdYjH1xy3OtwZnGAu6Ma+DIJIlFKfHlzJnpfaawgoe3J2nwCCofjnlzJMgNHDhazbvwFpdCVQSqLwVpqLHzFreVsGoRKlptJr6HtLxlqMXgGIhj4dlcz56Qj/5gWAONS3zpmK3dqpswBYlRq9dhschygGt2ID89Q3d1ntH2ovQfqovK7Mvor9rc+0IzMel0qteCPWZEoUYH8IsgRlgzLnR5DRlDClxCIkeNbl8n8g/4/wkyIg/SLWr5ttn2T/SFQB3gEayw/1/mr4+AAAAABJRU5ErkJggg==);
+    display: inline-block;
+    height: 22px;
+    width: 25px;
 }
 
 a.hst-cmseditlink span.hst-cmseditlink-center,

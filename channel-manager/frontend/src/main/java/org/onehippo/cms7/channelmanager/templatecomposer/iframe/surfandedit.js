@@ -26,7 +26,7 @@
         iframeToHost = null;
     });
 
-    function replaceCommentWithEditButton(commentElement, btnClass, btnText, publishedEvent, publishedUuid, lockInfoMessage) {
+    function replaceCommentWithEditButton(commentElement, btnClass, btnText, publishedEvent, publishedUuid, lockInfoTitle, lockInfoMessage) {
         var publish, link = document.createElement('a');
         if (commentElement.nextSibling) {
             commentElement.parentNode.insertBefore(link, commentElement.nextSibling);
@@ -39,10 +39,14 @@
         link.setAttribute('href', '');
         link.setAttribute('class', btnClass);
 
-        if (publishedEvent === 'edit-menu' && lockInfoMessage) {
-            $(link).append('<span class="' + btnClass + '-locked"' + ' title="' + lockInfoMessage + '"></span>');
-            publish = function() {
-            };
+        if (publishedEvent === 'edit-menu' && lockInfoTitle) {
+            $(link).append('<span class="' + btnClass + '-locked" title="' + lockInfoTitle + '">' +
+                                '<span  class="left"></span>' +
+                                '<span class="center">' + lockInfoMessage + '</span>' +
+                                '<span class="right"></span>' +
+                            '</span>');
+
+            publish = function() {};
         } else {
             $(link).append('<span class="' + btnClass + '-left"><span class="' + btnClass + '-right"><span class="' + btnClass + '-center">' + btnText + '</span></span></span>');
             publish = function() {
@@ -146,23 +150,25 @@
 
             visit: function(commentElement, commentData) {
                 var hstMetaData = readEditMenuData(commentData),
-                        menuUuid, lockedBy, lockedByCurrentUser, lockedOn, lockedOnDate, lockedOnDateString, lockInfoMessage ;
+                        menuUuid, lockedBy, lockedByCurrentUser, lockedOn, lockedOnDate, lockedOnDateString, lockInfoTitle, lockInfoText;
                 if (hstMetaData !== null) {
                     menuUuid = hstMetaData[HST.ATTR.ID];
                     lockedBy = hstMetaData[HST.ATTR.HST_LOCKED_BY];
                     lockedByCurrentUser = hstMetaData[HST.ATTR.HST_LOCKED_BY_CURRENT_USER];
                     lockedOn = hstMetaData[HST.ATTR.HST_LOCKED_ON];
+                    
                     if (lockedBy && lockedByCurrentUser === 'false') {
-                        lockInfoMessage = resources['menu-locked-by'].format(lockedBy);
+                        lockInfoTitle = resources['menu-locked-by'].format(lockedBy);
                         if (lockedOn) {
                             lockedOnDate = new Date(parseInt(lockedOn, 10));
-                            if(lockedOnDate) {
+                            if (lockedOnDate) {
                                 lockedOnDateString = lockedOnDate.toLocaleString();
-                                lockInfoMessage = resources['menu-locked-by-on'].format(lockedBy, lockedOnDateString);
+                                lockInfoTitle = resources['menu-locked-by-on'].format(lockedBy, lockedOnDateString);
                             }
                         }
                     }
-                    replaceCommentWithEditButton(commentElement, HST.CLASS.EDITMENU, resources['edit-menu'], 'edit-menu', menuUuid, lockInfoMessage);
+                    
+                    replaceCommentWithEditButton(commentElement, HST.CLASS.EDITMENU, resources['edit-menu'], 'edit-menu', menuUuid, lockInfoTitle, resources['menu-locked']);
                 }
             }
 
