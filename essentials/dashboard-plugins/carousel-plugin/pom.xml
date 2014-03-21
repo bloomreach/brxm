@@ -98,6 +98,7 @@
           <include>**/*.txt</include>
           <include>**/*.xml</include>
           <include>**/*.MF</include>
+          <include>**/*.js</include>
           <include>**/*.jsp</include>
           <include>**/*.ftl</include>
           <include>**/*.properties</include>
