@@ -41,7 +41,7 @@
   -->
   <instructionSet group="sampleData">
     <folder template="xml/data/banner-folder-creator.xml" path="/content/documents/{{namespace}}/banners"/>
-    <xml action="copy" source="xml/data/banner_entry_1.xml" target="/content/documents/{{namespace}}/bannners"/>
+    <xml action="copy" source="xml/data/banner_entry_1.xml" target="/content/documents/{{namespace}}/banners"/>
     <xml action="copy" source="xml/data/banner_entry_2.xml" target="/content/documents/{{namespace}}/banners"/>
     <xml action="copy" source="xml/data/banner_images.xml" target="/content/gallery/{{namespace}}"/>
   </instructionSet>
