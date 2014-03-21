@@ -5,7 +5,7 @@
     <xml action="copy" source="hst/carousel-catalog.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:catalog"/>
     <xml action="copy" source="hst/carousel-template.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <file action="copy" source="jsp/essentials-carousel.jsp" target="{{jspRoot}}/essentials/essentials-carousel.jsp"/>
-    <file binary="true" action="copy" source="webapp/js/jquery-2.1.0.min.js" target="{{javascriptRoot}}/jquery-2.1.0.min.js"/>
+    <file binary="true" action="copy" source="webapp/js/jquery-1.11.0.min.js" target="{{javascriptRoot}}/jquery-1.11.0.min.js"/>
     <file binary="true" action="copy" source="webapp/js/bootstrap.min.js" target="{{javascriptRoot}}/bootstrap.min.js"/>
   </instructionSet>
 </instructions>

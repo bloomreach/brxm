@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="<hst:link  path="/css/bootstrap.css"/>" type="text/css"/>
   <hst:headContributions categoryIncludes="componentsCss" xhtml="true"/>
   <hst:headContributions categoryIncludes="globalJavascript" xhtml="true"/>
-  <hst:headContributions categoryIncludes="componentsJavascript" xhtml="true"/>
 </head>
 <body>
 <div class="container">
@@ -18,5 +17,6 @@
     <hst:include ref="main"/>
   </div>
 </div>
+<hst:headContributions categoryIncludes="componentsJavascript" xhtml="true"/>
 </body>
 </html>
