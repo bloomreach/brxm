@@ -62,7 +62,7 @@ public class EssentialsEventsComponent extends EssentialsListComponent {
 
         builder.scope(scope).documents(types).includeSubtypes();
 
-        if (essentialsEventsComponentInfo.hidePastEvents()) {
+        if (essentialsEventsComponentInfo.getHidePastEvents()) {
             String dateField = null;
             try {
                 final Session session = request.getRequestContext().getSession();
@@ -77,3 +77,4 @@ public class EssentialsEventsComponent extends EssentialsListComponent {
         return builder.build();
     }
 }
+
