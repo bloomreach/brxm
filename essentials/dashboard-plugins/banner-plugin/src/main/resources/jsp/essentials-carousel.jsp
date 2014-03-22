@@ -6,6 +6,7 @@
 <%--@elvariable id="interval" type="java.lang.String"--%>
 <%--@elvariable id="showNavigation" type="java.lang.Boolean"--%>
 <c:set var="pauseCarousel" value="${pause ? 'hoover':''}"/>
+
 <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="${interval}" data-pause="${pauseCarousel}" data-wrap="${cycle}">
   <!-- Indicators -->
   <ol class="carousel-indicators">
@@ -25,10 +26,10 @@
       <c:set var="active" value="${counter.first ? ' active':''}"/>
       <div class="item${active}">
         <img src="<hst:link hippobean="${slide.image}" />" alt="${slide.title}"/>
-        <div class="carousel-caption">
-          <h1>${slide.title}</h1>
-          <hst:html hippohtml="${slide.content}"/>
-        </div>
+          <div class="carousel-caption">
+            <h3>${slide.title}</h3>
+            <hst:html hippohtml="${slide.content}"/>
+          </div>
       </div>
     </c:forEach>
 
@@ -39,16 +40,8 @@
   </c:if>
 </div>
 <hst:headContribution category="componentsJavascript">
-  <script type="text/javascript" src="<hst:link path="
-  /js/jquery-1.11.0.min.js"/>"></script>
-  </
-  hst:headContribution >
-  < hst
-  :
-  headContribution
-  category = "componentsJavascript" >
-    < script
-  type = "text/javascript"
-  src = "<hst:link path=" / js / bootstrap.min.js
-  "/>" ></script>
+  <script type="text/javascript" src="<hst:link path="/js/jquery-1.11.0.min.js"/>"></script>
+</hst:headContribution>
+<hst:headContribution category="componentsJavascript">
+  <script type="text/javascript" src="<hst:link path="/js/bootstrap.min.js"/>"></script>
 </hst:headContribution>
