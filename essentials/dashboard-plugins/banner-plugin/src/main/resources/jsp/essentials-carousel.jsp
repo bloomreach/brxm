@@ -6,7 +6,6 @@
 <%--@elvariable id="interval" type="java.lang.String"--%>
 <%--@elvariable id="showNavigation" type="java.lang.Boolean"--%>
 <c:set var="pauseCarousel" value="${pause ? 'hoover':''}"/>
-
 <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="${interval}" data-pause="${pauseCarousel}" data-wrap="${cycle}">
   <!-- Indicators -->
   <ol class="carousel-indicators">
