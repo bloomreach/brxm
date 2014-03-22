@@ -41,10 +41,15 @@
     //############################################
 
   -->
+  <instructionSet group="jsp">
+    <file action="copy" source="jsp/essentials-carousel.jsp" target="{{jspRoot}}/essentials/essentials-carousel.jsp"/>
+  </instructionSet>
+  <instructionSet group="freemarker">
+    <file action="copy" source="ftl/essentials-carousel.ftl" target="{{freemarkerRoot}}/essentials/essentials-carousel.jsp"/>
+  </instructionSet>
   <instructionSet>
     <xml action="copy" source="hst/carousel-catalog.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:catalog"/>
     <xml action="copy" source="hst/carousel-template.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <file action="copy" source="jsp/essentials-carousel.jsp" target="{{jspRoot}}/essentials/essentials-carousel.jsp"/>
     <file binary="true" action="copy" source="webapp/js/jquery-1.11.0.min.js" target="{{javascriptRoot}}/jquery-1.11.0.min.js"/>
     <file binary="true" action="copy" source="webapp/js/bootstrap.min.js" target="{{javascriptRoot}}/bootstrap.min.js"/>
     <file action="copy" binary="true" source="bootstrap/fonts/glyphicons-halflings-regular.eot" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.eot"/>

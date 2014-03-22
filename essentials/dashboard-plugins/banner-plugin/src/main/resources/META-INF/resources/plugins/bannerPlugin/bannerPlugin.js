@@ -17,15 +17,17 @@
 (function () {
     "use strict";
     angular.module('hippo.essentials')
-            .controller('bannerPluginCtrl', function ($scope, $sce, $log, $rootScope, $http) {
-                $scope.endpoint = $rootScope.REST.dynamic + 'banner/';
-                $scope.sampleData = true;
-                $scope.message = {};
-                $scope.run = function() {
-                    var payload = Essentials.addPayloadData("sampleData", $scope.sampleData, null);
-                    $http.post($scope.endpoint, payload).success(function (data) {
-                        // globally handled
-                    });
-                };
-            })
+        .controller('bannerPluginCtrl', function ($scope, $sce, $log, $rootScope, $http) {
+            $scope.endpoint = $rootScope.REST.dynamic + 'banner/';
+            $scope.sampleData = true;
+            $scope.templateName = 'jsp';
+            $scope.message = {};
+            $scope.run = function () {
+                var payload = Essentials.addPayloadData("sampleData", $scope.sampleData, null);
+                Essentials.addPayloadData("templateName", $scope.templateName, payload);
+                $http.post($scope.endpoint, payload).success(function (data) {
+                    // globally handled
+                });
+            };
+        })
 })();

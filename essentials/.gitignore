@@ -565,6 +565,12 @@ dashboard-plugins/banner-plugin/src/main/resources/bootstrap/fonts/hippo-plugins
 dashboard-plugins/banner-plugin/src/main/resources/bootstrap/fonts/target
 dashboard-plugins/banner-plugin/src/main/resources/bootstrap/hippo-plugins.iws
 dashboard-plugins/banner-plugin/src/main/resources/bootstrap/target
+dashboard-plugins/banner-plugin/src/main/resources/ftl/*.iml
+dashboard-plugins/banner-plugin/src/main/resources/ftl/.DS_Store
+dashboard-plugins/banner-plugin/src/main/resources/ftl/.idea
+dashboard-plugins/banner-plugin/src/main/resources/ftl/atlassian-ide-plugin.xml
+dashboard-plugins/banner-plugin/src/main/resources/ftl/hippo-plugins.iws
+dashboard-plugins/banner-plugin/src/main/resources/ftl/target
 dashboard-plugins/banner-plugin/src/main/resources/hippo-plugins.iws
 dashboard-plugins/banner-plugin/src/main/resources/hst/*.iml
 dashboard-plugins/banner-plugin/src/main/resources/hst/.DS_Store

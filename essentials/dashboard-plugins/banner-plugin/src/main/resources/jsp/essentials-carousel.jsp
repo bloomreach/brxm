@@ -7,12 +7,9 @@
 <%--@elvariable id="carouselHeight" type="java.lang.Integer"--%>
 <%--@elvariable id="carouselWidth" type="java.lang.Integer"--%>
 <%--@elvariable id="carouselBackgroundColor" type="java.lang.String"--%>
-
-
 <%--@elvariable id="showNavigation" type="java.lang.Boolean"--%>
 <c:set var="pauseCarousel" value="${pause ? 'hoover':''}"/>
 <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="${interval}" data-pause="${pauseCarousel}" data-wrap="${cycle}">
-  <!-- Indicators -->
   <ol class="carousel-indicators">
     <c:forEach begin="0" end="${pageable.total -1}" varStatus="index">
       <c:choose>
@@ -26,17 +23,16 @@
     </c:forEach>
   </ol>
   <div class="carousel-inner">
-    <c:forEach var="slide" items="${pageable.items}" varStatus="counter">
+    <c:forEach var="item" items="${pageable.items}" varStatus="counter">
       <c:set var="active" value="${counter.first ? ' active':''}"/>
       <div class="item${active}">
-        <img src="<hst:link hippobean="${slide.image}" />" alt="${slide.title}"/>
+        <img src="<hst:link hippobean="${item.image}" />" alt="${item.title}"/>
         <div class="carousel-caption">
-          <h3>${slide.title} ${active}</h3>
-          <hst:html hippohtml="${slide.content}"/>
+          <h3>${item.title}</h3>
+          <hst:html hippohtml="${item.content}"/>
         </div>
       </div>
     </c:forEach>
-
   </div>
   <c:if test="${showNavigation}">
     <a class="left carousel-control" href="#myCarousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>

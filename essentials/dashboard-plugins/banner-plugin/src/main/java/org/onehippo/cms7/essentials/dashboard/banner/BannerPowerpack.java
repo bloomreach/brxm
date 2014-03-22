@@ -21,6 +21,7 @@ import java.util.Set;
 import org.onehippo.cms7.essentials.dashboard.packaging.DefaultPowerpack;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -28,16 +29,21 @@ import com.google.common.collect.ImmutableSet;
  */
 public class BannerPowerpack extends DefaultPowerpack {
 
-    private static final ImmutableSet<String> INSTRUCTION_GROUPS_SAMPLE = new ImmutableSet.Builder<String>().add(EssentialConst.INSTRUCTION_GROUP_DEFAULT).add("sampleData").build();
-
     @Override
     public Set<String> groupNames() {
-        if (Boolean.valueOf((String) getProperties().get("sampleData"))) {
-            return INSTRUCTION_GROUPS_SAMPLE;
+        final Boolean sampleData = Boolean.valueOf((String) getProperties().get("sampleData"));
+        final String templateName = (String) getProperties().get("templateName");
+        final String templateGroup = Strings.isNullOrEmpty(templateName) ? "jsp" : templateName;
+        if (sampleData) {
+            return new ImmutableSet.Builder<String>()
+                    .add(EssentialConst.INSTRUCTION_GROUP_DEFAULT)
+                    .add("sampleData")
+                    .add(templateGroup).build();
         }
-        return DEFAULT_GROUPS;
+        return new ImmutableSet.Builder<String>()
+                .add(EssentialConst.INSTRUCTION_GROUP_DEFAULT)
+                .add(templateGroup).build();
     }
-
     @Override
     public String getInstructionPath() {
         return "/META-INF/banner_instructions.xml";
