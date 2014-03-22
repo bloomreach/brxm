@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.essentials.components.info;
 
+import org.hippoecm.hst.core.parameters.Color;
 import org.hippoecm.hst.core.parameters.FieldGroup;
 import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.core.parameters.JcrPath;
@@ -48,17 +49,22 @@ public interface EssentialsCarouselComponentInfo {
     //############################################
     @Parameter(name = "pause", displayName = "Pause carousel on mouse enter", defaultValue = "false")
     Boolean getPause();
+
     @Parameter(name = "cycle", displayName = "Cycle carousel continuously", defaultValue = "false")
     Boolean getCycle();
 
-    @Parameter(name = "carouselHeight", defaultValue = "500", required = true, displayName = "Carousel height (px)")
+    @Parameter(name = "carouselHeight", defaultValue = "250", required = true, displayName = "Carousel height")
     Integer getCarouselHeight();
+
+    @Parameter(name = "carouselWidth", defaultValue = "700", required = true, displayName = "Carousel width")
+    Integer getCarouselWidth();
 
     @Parameter(name = "interval", defaultValue = "5000", required = true, displayName = "Carousel interval (milli seconds)")
     Integer getInterval();
 
+    @Color
     @Parameter(name = "carouselBackgroundColor", defaultValue = "#FFF", required = true, displayName = "Carousel background color)")
-    Integer getCarouselBackgroundColor();
+    String getCarouselBackgroundColor();
 
     @Parameter(name = "showNavigation", defaultValue = "true", displayName = "Show carousel navigation")
     Boolean getShowNavigation();

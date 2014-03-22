@@ -38,6 +38,6 @@ public interface EssentialsMenuComponentInfo {
      * @return true by default
      */
     @Parameter(name = "selectedMenu", required = false, defaultValue = "true", displayName = "Only show selected menu level")
-    Boolean showOnlySelectedLevel();
+    Boolean getShowOnlySelectedLevel();
 
 }

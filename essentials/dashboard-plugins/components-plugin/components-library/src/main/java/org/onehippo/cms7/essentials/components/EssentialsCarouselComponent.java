@@ -55,6 +55,7 @@ public class EssentialsCarouselComponent extends CommonComponent {
         request.setAttribute("pause", componentInfo.getPause());
         request.setAttribute("showNavigation", componentInfo.getShowNavigation());
         request.setAttribute("carouselHeight", componentInfo.getCarouselHeight());
+        request.setAttribute("carouselWidth", componentInfo.getCarouselWidth());
         request.setAttribute("carouselBackgroundColor", componentInfo.getCarouselBackgroundColor());
     }
 
