@@ -51,8 +51,14 @@ public interface EssentialsCarouselComponentInfo {
     @Parameter(name = "cycle", displayName = "Cycle carousel continuously", defaultValue = "false")
     Boolean getCycle();
 
+    @Parameter(name = "carouselHeight", defaultValue = "500", required = true, displayName = "Carousel height (px)")
+    Integer getCarouselHeight();
+
     @Parameter(name = "interval", defaultValue = "5000", required = true, displayName = "Carousel interval (milli seconds)")
     Integer getInterval();
+
+    @Parameter(name = "carouselBackgroundColor", defaultValue = "#FFF", required = true, displayName = "Carousel background color)")
+    Integer getCarouselBackgroundColor();
 
     @Parameter(name = "showNavigation", defaultValue = "true", displayName = "Show carousel navigation")
     Boolean getShowNavigation();
