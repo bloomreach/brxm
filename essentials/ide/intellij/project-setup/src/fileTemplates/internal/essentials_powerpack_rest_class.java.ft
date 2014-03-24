@@ -21,7 +21,7 @@ import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/${PLUGIN_NAME}")
-public class ${PLUGIN_NAME}Resource extends BaseResource {
+public class ${PLUGIN_NAME_CAPITALIZED}Resource extends BaseResource {
 
 
     /**
@@ -33,7 +33,7 @@ public class ${PLUGIN_NAME}Resource extends BaseResource {
         final MessageRestful message = new MessageRestful();
         final Map<String, String> values = payloadRestful.getValues();
         final PluginContext context = getContext(servletContext);
-        final PowerpackPackage powerpack = new ${PLUGIN_NAME}Powerpack();
+        final PowerpackPackage powerpack = new ${PLUGIN_NAME_CAPITALIZED}Powerpack();
         getInjector().autowireBean(powerpack);
         powerpack.setProperties(new HashMap<String, Object>(values));
         powerpack.execute(context);

@@ -15,11 +15,11 @@ import javax.ws.rs.core.MediaType;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/${PLUGIN_NAME}/")
-public class ${PLUGIN_NAME}Resource extends BaseResource {
+public class ${PLUGIN_NAME_CAPITALIZED}Resource extends BaseResource {
 
 
     @GET
-    public MessageRestful run${PLUGIN_NAME}(@Context ServletContext servletContext) {
+    public MessageRestful run${PLUGIN_NAME_CAPITALIZED}(@Context ServletContext servletContext) {
        return new MessageRestful("Not implemented yet");
     }
 }

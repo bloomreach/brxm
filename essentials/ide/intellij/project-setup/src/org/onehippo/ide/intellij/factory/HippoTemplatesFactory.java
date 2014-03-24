@@ -79,7 +79,10 @@ public class HippoTemplatesFactory implements FileTemplateGroupDescriptorFactory
 
         final FileTemplate fileTemplate = FileTemplateManager.getInstance().getInternalTemplate(template.getName());
         final Properties properties = new Properties(FileTemplateManager.getInstance().getDefaultProperties());
-        properties.setProperty("PLUGIN_NAME", data.getProjectName());
+        final String projectName = data.getProjectName();
+        final String projectNameCapitalized = Character.toUpperCase(projectName.charAt(0)) + projectName.substring(1);
+        properties.setProperty("PLUGIN_NAME_CAPITALIZED", projectNameCapitalized);
+        properties.setProperty("PLUGIN_NAME", projectName);
         properties.setProperty("PLUGIN_GROUP", data.getPluginGroup());
         properties.setProperty("PACKAGE", data.getProjectPackage());
         properties.setProperty("GROUP_ID", data.getGroupId());
