@@ -64,26 +64,34 @@
                     $scope.host = response;
                 }, setErrorFeedback);
 
-                // fetch prototypes
-                PrototypeService.getPrototypes().then(function (response) {
-                    $scope.prototypes = response;
-                }, setErrorFeedback);
+                PrototypeService.getPrototypes()
 
-                // fetch page
-                PageService.getCurrentPage().then(function (currentPage) {
-                    $scope.page.id = currentPage.id;
-                    $scope.page.title = currentPage.pageTitle;
-                    $scope.page.url = currentPage.name;
+                    //prototypes
+                    .then(function (response) {
+                        $scope.prototypes = response;
 
-                    // only pages whose sitemap item is located in the HST workspace are editable,
-                    // unless they are locked by someone else
-                    $scope.state.isLocked = angular.isString(currentPage.lockedBy) && currentPage.lockedBy !== ConfigService.cmsUser;
-                    $scope.state.isEditable = !$scope.state.isLocked && currentPage.workspaceConfiguration;
+                        return PageService.getCurrentPage();
+                    }, setErrorFeedback)
 
-                    // lock information
-                    $scope.lock.owner = currentPage.lockedBy;
-                    $scope.lock.timestamp = currentPage.lockedOn;
-                }, setErrorFeedback);
+                    // page
+                    .then(function (currentPage) {
+                        $scope.page.id = currentPage.id;
+                        $scope.page.title = currentPage.pageTitle;
+                        $scope.page.url = currentPage.name;
+                        $scope.page.hasContainerItem = currentPage.hasContainerItemInPageDefinition;
+
+                        // only pages whose sitemap item is located in the HST workspace are editable,
+                        // unless they are locked by someone else
+                        $scope.state.isLocked = angular.isString(currentPage.lockedBy) && currentPage.lockedBy !== ConfigService.cmsUser;
+                        $scope.state.isEditable = !$scope.state.isLocked && currentPage.workspaceConfiguration;
+
+                        // lock information
+                        $scope.lock.owner = currentPage.lockedBy;
+                        $scope.lock.timestamp = currentPage.lockedOn;
+
+                        // only pages whose sitemap item is located in the HST workspace are editable
+                        $scope.isPageEditable = currentPage.workspaceConfiguration;
+                    }, setErrorFeedback);
 
                 $scope.submit = function () {
                     var pageModel = {

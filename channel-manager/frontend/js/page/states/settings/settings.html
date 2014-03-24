@@ -82,7 +82,7 @@
                        }"></i>
                 </div>
 
-                <div data-ng-show="state.isEditable">
+                <div data-ng-show="isPageEditable">
                     <div id="template">
                         <label for="page-prototype">
                             <a class="toggle"
@@ -91,15 +91,19 @@
                                data-ng-click="showAssignNewTemplate">{{ 'ASSIGN_NEW_TEMPLATE' | translate }}</a>
                         </label>
 
-                        <div class="form-group" id="template" data-ng-show="template.isVisible">
+                        <div class="form-group" data-ng-show="template.isVisible">
                             <select hippo.theme.select-box class="form-control" id="page-prototype"
                                     data-ng-options="p.displayName for p in prototypes"
                                     data-options="prototypes"
                                     data-ng-model="page.prototype"
                                     data-placeholder="{{ 'SELECT_TEMPLATE' | translate }}"></select>
 
-                            <div class="alert alert-warning">
-                                {{ 'ASSIGN_NEW_TEMPLATE_WARNING' | translate }}
+                            <div class="alert alert-warning" data-ng-show="page.hasContainerItem && page.prototype.hasContainerInPageDefinition">
+                                {{ 'ASSIGN_NEW_TEMPLATE_REPOSITION_WARNING' | translate }}
+                            </div>
+
+                            <div class="alert alert-danger" data-ng-show="page.hasContainerItem && !page.prototype.hasContainerInPageDefinition">
+                                {{ 'ASSIGN_NEW_TEMPLATE_REMOVED_WARNING' | translate }}
                             </div>
                         </div>
                     </div>
