@@ -35,7 +35,7 @@
                            data-ng-model="page.title"
                            data-ng-focus="form.title.$setPristine();"
                            data-ng-required="true"
-                           auto-focus="title.focus">
+                           data-auto-focus="title.focus">
                     <div class="tooltip-container" data-ng-show="form.title.$dirty && form.title.$error.required">
                         <div data-tooltip
                              data-placement="top"
@@ -58,7 +58,7 @@
                         <input type="text" name="url" class="form-control" id="page-url"
                                placeholder=""
                                data-ng-model="page.url"
-                               illegal-characters="validation.illegalCharacters"
+                               data-illegal-characters="validation.illegalCharacters"
                                data-ng-focus="form.url.$setPristine();"
                                data-ng-required="true" data-ng-keyup="disableAutomaticUrlUpdate()">
                     </div>
@@ -81,18 +81,25 @@
 
                 <div class="form-group" id="template">
                     <label for="page-prototype">{{ 'PAGE_TEMPLATE' | translate }}</label>
-                    <select class="form-control" id="page-prototype" ng-options="p.name for p in prototypes" data-ng-model="page.prototype"></select>
+                    <select hippo.theme.select-box
+                            class="form-control"
+                            id="page-prototype"
+                            data-ng-options="option.name for option in options"
+                            data-ng-model="page.prototype"
+                            data-no-results-text="{{ 'NO_RESULTS' | translate }}"
+                            data-placeholder="{{ 'SELECT_OPTION' | translate }}">
+                    </select>
                 </div>
 
                 <hr>
 
-                <button type="submit" class="btn btn-default" ng-click="submit()">{{ 'CREATE_PAGE' | translate }}</button>
-                <button type="submit" class="btn btn-link" ng-click="navigateTo('overview-pages')" data-ng-controller="hippo.channel.pages.NavigationCtrl">{{ 'CANCEL' | translate }}</button>
+                <button type="submit" class="btn btn-default" data-ng-click="submit()">{{ 'CREATE_PAGE' | translate }}</button>
+                <button type="submit" class="btn btn-link" data-ng-click="navigateTo('overview-pages')" data-ng-controller="hippo.channel.pages.NavigationCtrl">{{ 'CANCEL' | translate }}</button>
             </form>
         </div>
     </div>
 
-    <div class="l-center-container" ng-show="errorFeedback">
+    <div class="l-center-container" data-ng-show="errorFeedback">
         <div class="alert alert-danger l-center-block">
             {{ errorFeedback.message }}
         </div>

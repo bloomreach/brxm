@@ -44,7 +44,7 @@
                 };
 
                 $scope.host = '';
-                $scope.prototypes = [];
+                $scope.options = [];
 
                 $scope.submit = function () {
                     var pageModel = {
@@ -53,7 +53,7 @@
                         componentConfigurationId: $scope.page.prototype.id
                     };
 
-                    PageService.createPage(pageModel).then(function (response) {
+                    PageService.createPage(pageModel).then(function () {
                         ContainerService.showPage(pageModel.name);
                     }, function (errorResponse) {
                         $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
@@ -63,7 +63,7 @@
 
                 // fetch prototypes
                 PrototypeService.getPrototypes().then(function (response) {
-                    $scope.prototypes = response;
+                    $scope.options = response;
                     $scope.page.prototype = response[0];
                 }, function (errorResponse) {
                     $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);

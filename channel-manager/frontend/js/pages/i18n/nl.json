@@ -17,5 +17,8 @@
 
     "ITEM_NAME_NOT_UNIQUE": "Deze URL wordt al gebruikt",
     "INVALID_NAME": "De URL is niet geldig",
-    "ILLEGAL_CHARACTERS": "Deze karakters zijn niet toegestaan: {{ illegalCharacters }}"
+    "ILLEGAL_CHARACTERS": "Deze karakters zijn niet toegestaan: {{ illegalCharacters }}",
+
+    "NO_RESULTS": "Geen templates gevonden voor",
+    "SELECT_OPTION": "Gelieve een template te selecteren"
 }

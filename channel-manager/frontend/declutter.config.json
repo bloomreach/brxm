@@ -8,7 +8,7 @@
     "angular-translate-loader-static-files": ["angular-translate-loader-static-files.min.js"],
     "bootstrap": ["dist/js/bootstrap.js"],
     "bootstrap-chosen": [],
-    "chosen": ["dist/chosen.jquery.min.js"],
+    "chosen": ["public/chosen.jquery.min.js"],
     "es5-shim": ["es5-shim.min.js"],
     "ExplorerCanvas": [],
     "fastclick": [],
