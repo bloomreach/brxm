@@ -20,7 +20,6 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.index.Indexable;
-import org.hippoecm.hst.util.NodeUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,31 +46,43 @@ public class HippoMirror extends HippoFolder implements HippoMirrorBean {
      * </p>
      * @return the referenced <code>HippoBean</code> by this mirror or <code>null</code> when missing
      */
-    public HippoBean getReferencedBean(){
+    public HippoBean getReferencedBean() {
 
-        if(this.getNode() == null) {
+        if (node == null) {
             log.info("Can not dereference this HippoMirror because it is detached. Return null");
             return null;
         }
-        javax.jcr.Node deref = NodeUtils.getDeref(this.getNode());
-        if(deref == null) {
-            return null;
-        }
-        
         try {
+            if (!node.hasProperty(HippoNodeType.HIPPO_DOCBASE)) {
+                return null;
+            }
+
+            javax.jcr.Node deref = node.getSession().getNodeByIdentifier(node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
+            if (deref == null) {
+                return null;
+            }
+
+            if (deref.isSame(deref.getSession().getRootNode()) && objectConverter.getAnnotatedClassFor("rep:root") == null) {
+                // the root node is linked and the object converter does not have
+                // a annotated class for it --> return null directly. We do this separate check because many
+                // links initially point to the root node as a default. This is a performance optimalization to avoid
+                // needless objectConverter calls.
+                return null;
+            }
+
             if (deref.isNodeType(HippoNodeType.NT_HANDLE)) {
                 /*
                  * the link is to a hippo:handle. Only return the linked bean if a child node (document) with the same name is
                  * present, and return a bean for that one if there is. Otherwise return null
-                 */  
-                 if(deref.hasNode(deref.getName())) {
-                     javax.jcr.Node linked = deref.getNode(deref.getName());
-                     return (HippoBean)objectConverter.getObject(linked);
-                 } else {
-                     return null;
-                 }
+                 */
+                if (deref.hasNode(deref.getName())) {
+                    javax.jcr.Node linked = deref.getNode(deref.getName());
+                    return (HippoBean) objectConverter.getObject(linked);
+                } else {
+                    return null;
+                }
             }
-            return (HippoBean)objectConverter.getObject(deref);
+            return (HippoBean) objectConverter.getObject(deref);
         } catch (RepositoryException e) {
             log.warn("Cannot get a derefenced HippoBean: {}. Return null", e);
         } catch (ObjectBeanManagerException e) {
