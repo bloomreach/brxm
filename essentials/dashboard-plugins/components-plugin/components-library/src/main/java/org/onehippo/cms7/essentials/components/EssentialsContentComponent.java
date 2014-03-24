@@ -8,10 +8,11 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 
 /**
- * Hippo HST component for simple (document detail) request handling.
- * (fetches sitemap mapped bean.)
+ * Hippo HST component for simple (document detail) request handling, it just fetches sitemap mapped bean.
+ * Use {@code EssentialsDocumentComponent} for picked documents (e.g. banner and alike)
  *
  * @version "$Id$"
+ * @see org.onehippo.cms7.essentials.components.EssentialsDocumentComponent
  */
 
 public class EssentialsContentComponent extends CommonComponent {
