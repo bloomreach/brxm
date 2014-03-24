@@ -1,0 +1,19 @@
+<div class="panel panel-default" ng-controller="simpleContentCtrl">
+    <div class="panel-heading">simpleContent</div>
+    <div class="panel-body">
+        <form novalidate name="simpleContentForm">
+            <div class="form-group">
+                <label>simpleContent</label>
+            </div>
+        </form>
+    </div>
+    <div class="panel-footer">
+        <div class="input-group">
+              <span class="input-group-btn">
+                <button ng-disabled="!simpleContentForm.$valid" class="btn btn-primary pull-right" type="submit" ng-click="run()">Run simpleContent</button>
+              </span>
+        </div>
+    </div>
+</div>
+
+

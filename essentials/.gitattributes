@@ -528,6 +528,13 @@ dashboard-plugins/freemarker-synchronizer/src/main/resources/META_INF/web-fragme
 dashboard-plugins/freemarker-synchronizer/src/test/java/org/onehippo/cms7/essentials/tools/rest/FSUtilsTest.java -text
 dashboard-plugins/freemarker-synchronizer/src/test/resources/log4j.xml -text
 dashboard-plugins/pom.xml -text
+dashboard-plugins/simple-content/pom.xml -text
+dashboard-plugins/simple-content/src/main/java/org/onehippo/cms7/essentials/dashboard/simplecontent/SimpleContentPowerpack.java -text
+dashboard-plugins/simple-content/src/main/java/org/onehippo/cms7/essentials/dashboard/simplecontent/SimpleContentResource.java -text
+dashboard-plugins/simple-content/src/main/resources/META-INF/resources/powerpacks/simpleContent/simpleContent.html -text
+dashboard-plugins/simple-content/src/main/resources/META-INF/resources/powerpacks/simpleContent/simpleContent.js -text
+dashboard-plugins/simple-content/src/main/resources/META-INF/simpleContent_instructions.xml -text
+dashboard-plugins/simple-content/src/main/resources/META-INF/web-fragment.xml -text
 ide/intellij/project-setup/META-INF/plugin.xml -text
 ide/intellij/project-setup/README.txt -text
 ide/intellij/project-setup/ide-integration.jar -text

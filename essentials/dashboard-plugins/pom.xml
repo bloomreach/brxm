@@ -41,6 +41,7 @@
 
   <modules>
     <module>blog-plugin</module>
+    <module>simple-content</module>
     <module>dashboard-gallery-plugin</module>
     <module>dashboard-setup-plugin</module>
     <module>essentials-powerpacks</module>

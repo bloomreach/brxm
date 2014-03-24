@@ -76,7 +76,7 @@ public class HippoTemplatesFactory implements FileTemplateGroupDescriptorFactory
 
 
     public static PsiElement createFileFromTemplate(PsiElement directory, final SettingsData data, String fileName, HippoTemplate template) {
-
+        String myFileName = fileName;
         final FileTemplate fileTemplate = FileTemplateManager.getInstance().getInternalTemplate(template.getName());
         final Properties properties = new Properties(FileTemplateManager.getInstance().getDefaultProperties());
         final String projectName = data.getProjectName();
@@ -97,24 +97,26 @@ public class HippoTemplatesFactory implements FileTemplateGroupDescriptorFactory
             throw new RuntimeException("Unable to load template for " + template.getName(), e);
         }
         final PsiFileFactory factory = PsiFileFactory.getInstance(directory.getProject());
-        if ((new File(fileName)).exists()) {
+        if ((new File(myFileName)).exists()) {
             throw new RuntimeException("File already exists");
         }
         Language language = null;
-        if (fileName.endsWith("xml")) {
+        if (myFileName.endsWith("xml")) {
             language = Language.findLanguageByID("XML");
-        } else if (fileName.endsWith("js")) {
+        } else if (myFileName.endsWith("js")) {
             language = Language.findLanguageByID("JavaScript");
-        } else if (fileName.endsWith("java")) {
+        } else if (myFileName.endsWith("java")) {
+            myFileName = Character.toUpperCase(myFileName.charAt(0)) + myFileName.substring(1);
+
             language = Language.findLanguageByID("JAVA");
-        } else if (fileName.endsWith("html")) {
+        } else if (myFileName.endsWith("html")) {
             language = Language.findLanguageByID("HTML");
         }
 
         if (language == null) {
             return null;
         }
-        final PsiFile file = factory.createFileFromText(fileName, language, text);
+        final PsiFile file = factory.createFileFromText(myFileName, language, text);
         if (file == null) {
             return null;
         }

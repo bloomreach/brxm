@@ -188,6 +188,31 @@
         "needsInstallation": false,
         "enabled": true,
         "@type": "plugin",
+        "introduction": "Adds Simple content document to your project",
+        "name": "Banner plugin",
+        "pluginId": "simpleContent",
+        "restClasses": ["org.onehippo.cms7.essentials.dashboard.simplecontent.SimpleContentResource"],
+        "type": "plugins",
+        "vendor": {
+            "@type": "vendor",
+            "name": "Hippo",
+            "url": "http://www.onehippo.com"
+        },
+        "libraries": [
+            {
+                "items": [
+                    {
+                        "component": "simpleContent",
+                        "file": "simpleContent.js"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "needsInstallation": false,
+        "enabled": true,
+        "@type": "plugin",
         "introduction": "Creates REST services skeleton",
         "name": "Rest Services plugin",
         "pluginId": "restServices",
