@@ -17,7 +17,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -275,7 +274,7 @@ public class PagesHelper extends AbstractHelper {
             nonWorkspaceSiteMapNode = session.getNode(nonWorkspaceSiteMapPath);
         }
 
-        final int inUseCounter = compIdReferencedByNumberOfSiteMapItems(workspaceSiteMapNode, nonWorkspaceSiteMapNode, componentConfigurationIdForPage);
+        final int inUseCounter = countIdReferencedByNumberOfSiteMapItems(workspaceSiteMapNode, nonWorkspaceSiteMapNode, componentConfigurationIdForPage);
         if (inUseCounter < 2) {
             deleteOrMarkDeletedIfLiveExists(pageNode);
         } else {
@@ -283,27 +282,26 @@ public class PagesHelper extends AbstractHelper {
         }
     }
 
-    private int compIdReferencedByNumberOfSiteMapItems(final Node workspaceSiteMapNode,
-                                                       final Node nonWorkspaceSiteMapNode,
-                                                       final String componentConfigurationIdForPage) throws RepositoryException {
-        AtomicInteger counter = new AtomicInteger();
-        traverseItems(new NodeIterable(workspaceSiteMapNode.getNodes()), componentConfigurationIdForPage, counter);
+    private int countIdReferencedByNumberOfSiteMapItems(final Node workspaceSiteMapNode,
+                                                        final Node nonWorkspaceSiteMapNode,
+                                                        final String componentConfigurationIdForPage) throws RepositoryException {
+        int refCounter = countReferences(new NodeIterable(workspaceSiteMapNode.getNodes()), componentConfigurationIdForPage);
         if (nonWorkspaceSiteMapNode != null) {
-            traverseItems(new NodeIterable(nonWorkspaceSiteMapNode.getNodes()), componentConfigurationIdForPage, counter);
+            refCounter += countReferences(new NodeIterable(nonWorkspaceSiteMapNode.getNodes()), componentConfigurationIdForPage);
         }
-        return counter.get();
+        return refCounter;
     }
 
-    private void traverseItems(final NodeIterable nodes,
-                               final String componentConfigurationIdForPage,
-                               final AtomicInteger counter) throws RepositoryException {
+    private int countReferences(final NodeIterable nodes, final String componentConfigurationIdForPage) throws RepositoryException {
+        int refCounter = 0;
         for (Node node : nodes) {
             final String compId = JcrUtils.getStringProperty(node, HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID, null);
             if (componentConfigurationIdForPage.equals(compId)) {
-                counter.getAndIncrement();
+                refCounter++;
             }
-            traverseItems(new NodeIterable(node.getNodes()), componentConfigurationIdForPage, counter);
+            refCounter += countReferences(new NodeIterable(node.getNodes()), componentConfigurationIdForPage);
         }
+        return refCounter;
     }
 
     private String getValidTargetPageNodeName(final String previewWorkspacePagesPath, final String targetPageNodeName, final Session session) throws RepositoryException {
