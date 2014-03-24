@@ -71,7 +71,7 @@
         <sv:value>20c4be56-495c-4a9f-b6eb-c7a215220e91</sv:value>
       </sv:property>
       <sv:property sv:name="hst:componentclassname" sv:type="String">
-        <sv:value>org.onehippo.cms7.essentials.components.EssentialsDocumentComponent</sv:value>
+        <sv:value>org.onehippo.cms7.essentials.components.EssentialsContentComponent</sv:value>
       </sv:property>
       <sv:property sv:name="hst:template" sv:type="String">
         <sv:value>blog.main.content</sv:value>

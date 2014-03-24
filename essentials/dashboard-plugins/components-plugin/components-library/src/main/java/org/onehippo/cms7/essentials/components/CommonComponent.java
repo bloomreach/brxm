@@ -83,14 +83,24 @@ public class CommonComponent extends BaseHstComponent {
      */
     public void setContentBean(final String documentPath, HstRequest request, final HstResponse response) {
 
-        HippoBean bean;
         if (!Strings.isNullOrEmpty(documentPath)) {
             final HippoBean root = getSiteContentBaseBean(request);
-            bean = root.getBean(documentPath);
+            HippoBean bean = root.getBean(documentPath);
             request.setAttribute("document", bean);
             return;
         }
-        bean = getContentBean(request);
+        // try normal mapping:
+        setContentBean(request, response);
+    }
+
+    /**
+     * Sets content bean onto request. If no bean is found, 404 response will be set.
+     *
+     * @param request  HstRequest
+     * @param response HstResponse
+     */
+    public void setContentBean(final HstRequest request, final HstResponse response) {
+        final HippoBean bean = getContentBean(request);
         request.setAttribute("document", bean);
         if (bean == null) {
             pageNotFound(request, response);
