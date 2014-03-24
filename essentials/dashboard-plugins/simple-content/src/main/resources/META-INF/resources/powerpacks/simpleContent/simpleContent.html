@@ -1,16 +1,37 @@
 <div class="panel panel-default" ng-controller="simpleContentCtrl">
-    <div class="panel-heading">simpleContent</div>
+    <div class="panel-heading">Simple Content document type and component</div>
     <div class="panel-body">
         <form novalidate name="simpleContentForm">
             <div class="form-group">
-                <label>simpleContent</label>
+                <label>Please select templating language:</label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" ng-model="templateName" required value="jsp"/>
+                    JSP template
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" ng-model="templateName" required value="freemarker"/>
+                    Freemarker template
+                </label>
+            </div>
+            <div class="form-group">
+                <label>Content:</label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    Add sample content
+                    <input type="checkbox" ng-model="sampleData"/>
+                </label>
             </div>
         </form>
     </div>
     <div class="panel-footer">
         <div class="input-group">
               <span class="input-group-btn">
-                <button ng-disabled="!simpleContentForm.$valid" class="btn btn-primary pull-right" type="submit" ng-click="run()">Run simpleContent</button>
+                <button ng-disabled="!simpleContentForm.$valid" class="btn btn-primary pull-right" type="submit" ng-click="run()">Add simple document support</button>
               </span>
         </div>
     </div>
