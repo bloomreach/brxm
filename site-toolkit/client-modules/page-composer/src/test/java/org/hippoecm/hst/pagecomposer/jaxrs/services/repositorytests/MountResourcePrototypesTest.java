@@ -53,7 +53,6 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
         PrototypesRepresentation representation = (PrototypesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
         assertEquals(1, representation.getPrototypes().size());
         assertEquals("prototype-page", representation.getPrototypes().get(0).getName());
-        assertTrue(representation.getPrototypes().get(0).hasContainerInPageDefinition());
     }
 
 
@@ -64,9 +63,7 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
         prototypeNode.getNode("main/container2").remove();
         session.save();
         mockNewRequest(session, "localhost", "/home");
-        PrototypesRepresentation representation = (PrototypesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
-        assertFalse(representation.getPrototypes().get(0).hasContainerInPageDefinition());
-    }
+     }
 
 
     @Test

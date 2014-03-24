@@ -21,8 +21,10 @@ import javax.ws.rs.core.Response;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPageRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPagesRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
@@ -122,8 +124,8 @@ public class PagesTest extends AbstractSiteMapResourceTest {
         session.save();
         Thread.sleep(200);
 
-        final SiteMapPageRepresentation homePage = getHomePage();
-        assertTrue(homePage.isHasContainerItemInPageDefinition());
+        final SiteMapItemRepresentation homePage = getHomePage();
+        assertTrue(homePage.getHasContainerItemInPageDefinition());
     }
 
     @Test
@@ -141,9 +143,9 @@ public class PagesTest extends AbstractSiteMapResourceTest {
         session.save();
         Thread.sleep(200);
 
-        final SiteMapPageRepresentation homePage = getHomePage();
+        final SiteMapItemRepresentation homePage = getHomePage();
         // REFERENCED items do not count!
-        assertFalse(homePage.isHasContainerItemInPageDefinition());
+        assertFalse(homePage.getHasContainerItemInPageDefinition());
 
         final HstComponentConfiguration homePageConfig = mountResource.getPageComposerContextService().getEditingPreviewSite()
                 .getComponentsConfiguration().getComponentConfiguration(homePage.getComponentConfigurationId());
@@ -167,9 +169,9 @@ public class PagesTest extends AbstractSiteMapResourceTest {
                 "/hst:hst/hst:configurations/unittestproject-preview/hst:abstractpages");
         session.save();
         Thread.sleep(200);
-        final SiteMapPageRepresentation homePage = getHomePage();
+        final SiteMapItemRepresentation homePage = getHomePage();
         // REFERENCED items do not count!
-        assertFalse(homePage.isHasContainerItemInPageDefinition());
+        assertFalse(homePage.getHasContainerItemInPageDefinition());
 
         final HstComponentConfiguration homePageConfig = mountResource.getPageComposerContextService().getEditingPreviewSite()
                 .getComponentsConfiguration().getComponentConfiguration(homePage.getComponentConfigurationId());
@@ -190,9 +192,9 @@ public class PagesTest extends AbstractSiteMapResourceTest {
         session.save();
 
         Thread.sleep(200);
-        final SiteMapPageRepresentation homePage = getHomePage();
+        final SiteMapItemRepresentation homePage = getHomePage();
         // INHERITED CONFIGURATION items do not count!
-        assertFalse(homePage.isHasContainerItemInPageDefinition());
+        assertFalse(homePage.getHasContainerItemInPageDefinition());
 
         final HstComponentConfiguration homePageConfig = mountResource.getPageComposerContextService().getEditingPreviewSite()
                 .getComponentsConfiguration().getComponentConfiguration(homePage.getComponentConfigurationId());
@@ -202,12 +204,17 @@ public class PagesTest extends AbstractSiteMapResourceTest {
 
     }
 
-    public SiteMapPageRepresentation getHomePage() throws Exception {
+    public SiteMapItemRepresentation getHomePage() throws Exception {
         initContext();
         final SiteMapResource siteMapResource = createResource();
-        final Response response = siteMapResource.getSiteMapPages();
-        SiteMapPagesRepresentation siteMapPagesRepresentation =
-                (SiteMapPagesRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
-        return siteMapPagesRepresentation.getPages().get(0);
+
+        final Response response = siteMapResource.getSiteMap();
+        SiteMapRepresentation siteMap = (SiteMapRepresentation)((ExtResponseRepresentation) response.getEntity()).getData();
+        for (SiteMapItemRepresentation siteMapItemRepresentation : siteMap.getChildren()) {
+            if (siteMapItemRepresentation.getName().equals("home")) {
+                return siteMapItemRepresentation;
+            }
+        }
+        throw new AssertionError("Homepage sitemap item not found");
     }
 }

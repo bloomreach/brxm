@@ -63,8 +63,10 @@ public class SiteMapResource extends AbstractConfigResource {
         return tryGet(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                final HstSiteMap siteMap = getPageComposerContextService().getEditingPreviewSite().getSiteMap();
-                final SiteMapRepresentation representation = new SiteMapRepresentation().represent(siteMap, getPreviewConfigurationPath());
+                final HstSite site = getPageComposerContextService().getEditingPreviewSite();
+                final HstSiteMap siteMap = site.getSiteMap();
+                final SiteMapRepresentation representation = new SiteMapRepresentation().represent(siteMap, getPreviewConfigurationPath(),
+                        site.getComponentsConfiguration());
                 return ok("Sitemap loaded successfully", representation);
             }
         });
@@ -88,12 +90,12 @@ public class SiteMapResource extends AbstractConfigResource {
         return tryGet(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                final HstSiteMap siteMap = getPageComposerContextService().getEditingPreviewSite().getSiteMap();
-                final Mount mount = getPageComposerContextService().getEditingMount();
                 final HstSite site = getPageComposerContextService().getEditingPreviewSite();
-                final SiteMapRepresentation sitemap = new SiteMapRepresentation().represent(siteMap, getPreviewConfigurationPath());
+                final HstSiteMap siteMap = site.getSiteMap();
+                final Mount mount = getPageComposerContextService().getEditingMount();
+                final SiteMapRepresentation sitemap = new SiteMapRepresentation().represent(siteMap, getPreviewConfigurationPath(), site.getComponentsConfiguration());
                 final SiteMapPagesRepresentation pages = new SiteMapPagesRepresentation().represent(sitemap,
-                        mount, site.getComponentsConfiguration());
+                        mount);
                 return ok("Sitemap loaded successfully", pages);
             }
         });
@@ -106,9 +108,9 @@ public class SiteMapResource extends AbstractConfigResource {
             @Override
             public Response call() throws Exception {
                 final HstSiteMapItem siteMapItem = siteMapHelper.getConfigObject(siteMapItemUuid);
-
-                final String previewConfigPath = getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
-                final SiteMapItemRepresentation siteMapItemRepresentation = new SiteMapItemRepresentation().representShallow(siteMapItem, previewConfigPath);
+                final HstSite site = getPageComposerContextService().getEditingPreviewSite();
+                final SiteMapItemRepresentation siteMapItemRepresentation = new SiteMapItemRepresentation()
+                        .representShallow(siteMapItem, site.getConfigurationPath(), site.getComponentsConfiguration());
 
                 return ok("Sitemap item loaded successfully", siteMapItemRepresentation);
             }

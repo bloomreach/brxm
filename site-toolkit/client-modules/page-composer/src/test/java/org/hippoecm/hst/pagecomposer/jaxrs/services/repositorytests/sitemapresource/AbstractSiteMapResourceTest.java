@@ -29,6 +29,7 @@ import javax.jcr.Value;
 import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
+import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
@@ -191,10 +192,11 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL(request, "localhost", "/home");
         ((HstMutableRequestContext) ctx).setSession(requestSession);
-        final HstSiteMap siteMap = mountResource.getPageComposerContextService().getEditingPreviewSite().getSiteMap();
+        final HstSite site = mountResource.getPageComposerContextService().getEditingPreviewSite();
+        final HstSiteMap siteMap = site.getSiteMap();
         // override the config identifier to have sitemap id
         ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, ((CanonicalInfo) siteMap).getCanonicalIdentifier());
-        return new SiteMapRepresentation().represent(siteMap, getPreviewConfigurationPath());
+        return new SiteMapRepresentation().represent(siteMap, getPreviewConfigurationPath(), site.getComponentsConfiguration());
     }
 
     protected SiteMapResource createResource() {

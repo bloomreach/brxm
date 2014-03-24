@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
@@ -48,9 +50,17 @@ public class SiteMapItemRepresentation {
     private boolean containsAny;
     private boolean isExplicitElement;
 
+    // whether the page has at least one container item in its page definition.
+    // Note that although the backing {@link HstComponentConfiguration} might have containers,
+    // this does not mean the component has it in its page definition: The page definition
+    // is the canonical configuration, without inheritance (and thus the container might be present in inherited config only)
+    private boolean hasContainerItemInPageDefinition;
+
     private List<SiteMapItemRepresentation> children = new ArrayList<>();
 
-    public SiteMapItemRepresentation representShallow(HstSiteMapItem item, String previewConfigurationPath)
+    public SiteMapItemRepresentation representShallow(final HstSiteMapItem item,
+                                                      final String previewConfigurationPath,
+                                                      final HstComponentsConfiguration hstComponentsConfiguration)
             throws IllegalArgumentException {
         if (!(item instanceof CanonicalInfo)) {
             throw new IllegalArgumentException("Expected object of type CanonicalInfo");
@@ -62,6 +72,10 @@ public class SiteMapItemRepresentation {
         id = ((CanonicalInfo) item).getCanonicalIdentifier();
         pageTitle = item.getPageTitle();
         componentConfigurationId = item.getComponentConfigurationId();
+
+        hasContainerItemInPageDefinition = hasContainerItemInPageDefinition(
+                hstComponentsConfiguration.getComponentConfiguration(componentConfigurationId));
+
         cacheable = item.isCacheable();
         workspaceConfiguration = ((CanonicalInfo) item).isWorkspaceConfiguration();
         inherited = !((CanonicalInfo) item).getCanonicalPath().startsWith(previewConfigurationPath + "/");
@@ -83,16 +97,38 @@ public class SiteMapItemRepresentation {
         return this;
     }
 
-    public SiteMapItemRepresentation represent(HstSiteMapItem item, String previewConfigurationPath) {
-        representShallow(item, previewConfigurationPath);
+    public SiteMapItemRepresentation represent(final HstSiteMapItem item,
+                                               final String previewConfigurationPath,
+                                               final HstComponentsConfiguration hstComponentsConfiguration) {
+        representShallow(item, previewConfigurationPath, hstComponentsConfiguration);
 
         for (HstSiteMapItem childItem : item.getChildren()) {
             SiteMapItemRepresentation child = new SiteMapItemRepresentation();
-            child.represent(childItem, previewConfigurationPath);
+            child.represent(childItem, previewConfigurationPath, hstComponentsConfiguration);
             children.add(child);
         }
 
         return this;
+    }
+
+    private boolean hasContainerItemInPageDefinition(final HstComponentConfiguration root) {
+        if (root == null) {
+            return false;
+        }
+        return hasContainerItemInPageDefinition(root, root.getCanonicalStoredLocation());
+    }
+
+    private boolean hasContainerItemInPageDefinition(final HstComponentConfiguration config, final String pageDefinitionRootPath) {
+        if (HstComponentConfiguration.Type.CONTAINER_ITEM_COMPONENT.equals(config.getComponentType())
+                && config.getCanonicalStoredLocation().startsWith(pageDefinitionRootPath)) {
+            return true;
+        }
+        for (HstComponentConfiguration child : config.getChildren().values()) {
+            if (hasContainerItemInPageDefinition(child, pageDefinitionRootPath)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getId() {
@@ -253,5 +289,14 @@ public class SiteMapItemRepresentation {
 
     public void setChildren(final List<SiteMapItemRepresentation> children) {
         this.children = children;
+    }
+
+
+    public boolean getHasContainerItemInPageDefinition() {
+        return hasContainerItemInPageDefinition;
+    }
+
+    public void setHasContainerItemInPageDefinition(final boolean hasContainerItemInPageDefinition) {
+        this.hasContainerItemInPageDefinition = hasContainerItemInPageDefinition;
     }
 }

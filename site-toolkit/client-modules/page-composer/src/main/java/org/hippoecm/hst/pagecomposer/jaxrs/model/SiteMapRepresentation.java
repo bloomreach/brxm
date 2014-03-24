@@ -18,6 +18,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
@@ -27,7 +28,9 @@ public class SiteMapRepresentation {
     private String id;
     private List<SiteMapItemRepresentation> children = new ArrayList<>();
 
-    public SiteMapRepresentation represent(HstSiteMap siteMap, String previewConfigurationPath) throws IllegalArgumentException {
+    public SiteMapRepresentation represent(final HstSiteMap siteMap,
+                                           final String previewConfigurationPath,
+                                           final HstComponentsConfiguration componentsConfiguration) throws IllegalArgumentException {
         if (!(siteMap instanceof CanonicalInfo)) {
             throw new IllegalArgumentException("Expected object of type CanonicalInfo");
         }
@@ -35,7 +38,7 @@ public class SiteMapRepresentation {
 
         for (HstSiteMapItem childItem : siteMap.getSiteMapItems()) {
             SiteMapItemRepresentation child = new SiteMapItemRepresentation();
-            child.represent(childItem, previewConfigurationPath);
+            child.represent(childItem, previewConfigurationPath, componentsConfiguration);
             children.add(child);
         }
 

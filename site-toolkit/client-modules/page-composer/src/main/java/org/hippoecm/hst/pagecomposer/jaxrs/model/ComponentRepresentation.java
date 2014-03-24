@@ -202,14 +202,13 @@ public class ComponentRepresentation {
         this.lastModifiedTimestamp = lastModifiedTimestamp;
     }
 
-    public boolean hasContainerInPageDefinition() {
+    public boolean getHasContainerInPageDefinition() {
         return hasContainerInPageDefinition;
     }
 
     public void setHasContainerInPageDefinition(final boolean hasContainerInPageDefinition) {
         this.hasContainerInPageDefinition = hasContainerInPageDefinition;
     }
-
 
     private boolean hasContainerInPageDefinition(final HstComponentConfiguration config,
                                                  final String canonicalPageDefinitionPath) {
