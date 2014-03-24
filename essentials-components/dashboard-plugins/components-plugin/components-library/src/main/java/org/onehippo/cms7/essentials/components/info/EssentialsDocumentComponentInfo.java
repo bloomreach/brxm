@@ -4,7 +4,7 @@ import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 
 /**
- * @version "$Id: EssentialsDocumentComponentInfo.java 164011 2013-05-11 14:05:01Z mmilicevic $"
+ * @version "$Id$"
  */
 public interface EssentialsDocumentComponentInfo {
 
