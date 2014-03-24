@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp/essentials/common/imports.jsp" %>
 <%--@elvariable id="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable"--%>
-<%--@elvariable id="slide" type="{{beansPackage}}.Banner"--%>
+<%--@elvariable id="item" type="{{beansPackage}}.Banner"--%>
 <%--@elvariable id="pause" type="java.lang.Boolean"--%>
 <%--@elvariable id="cycle" type="java.lang.Boolean"--%>
 <%--@elvariable id="interval" type="java.lang.Integer"--%>
