@@ -116,32 +116,6 @@
         </sv:property>
       </sv:node>
     </sv:node>
-    <sv:node sv:name="hst:sitemenus">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenus</sv:value>
-      </sv:property>
-      <sv:node sv:name="main">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:sitemenu</sv:value>
-        </sv:property>
-        <sv:node sv:name="Home">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemenuitem</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-            <sv:value>home</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="About">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemenuitem</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-            <sv:value>about</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
     <sv:node sv:name="hst:workspace">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:workspace</sv:value>
@@ -168,6 +142,32 @@
             </sv:property>
             <sv:property sv:name="hst:xtype" sv:type="String">
               <sv:value>HST.vBox</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="hst:sitemenus">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:sitemenus</sv:value>
+        </sv:property>
+        <sv:node sv:name="main">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:sitemenu</sv:value>
+          </sv:property>
+          <sv:node sv:name="Home">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hst:sitemenuitem</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+              <sv:value>home</sv:value>
+            </sv:property>
+          </sv:node>
+          <sv:node sv:name="About">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hst:sitemenuitem</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+              <sv:value>about</sv:value>
             </sv:property>
           </sv:node>
         </sv:node>

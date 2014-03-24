@@ -22,8 +22,10 @@
 
 <div class="yui-u first">
 
+  <hst:cmseditmenu menu="${menu}"/>
+
   <ul class="sitenav">
-  <c:forEach var="item" items="${menu.menuItems}">
+  <c:forEach var="item" items="${fullMenu.menuItems}">
   <li>
       <c:choose >
           <c:when test="${item.selected}">
