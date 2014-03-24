@@ -1084,6 +1084,7 @@
         showPageSettings: function() {
             var pageSettingsWindow = new Hippo.ChannelManager.TemplateComposer.PageSettingsWindow({
                 resources: this.resources,
+                cmsUser: this.cmsUser,
                 composerRestMountUrl: this.composerRestMountUrl,
                 debug: this.debug,
                 locale: this.locale,

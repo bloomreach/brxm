@@ -30,6 +30,7 @@
                 iframeUrl: './angular/page/index.html',
                 iframeConfig: {
                     apiUrlPrefix: config.composerRestMountUrl,
+                    cmsUser: config.cmsUser,
                     debug: config.debug,
                     locale: config.locale,
                     mountId: config.mountId,

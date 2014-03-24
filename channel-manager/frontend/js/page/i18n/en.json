@@ -12,5 +12,7 @@
     "SAVE": "Save",
     "CANCEL": "Cancel",
 
+    "PAGE_LOCKED": "This page is locked by {{ owner }} at {{ timestamp | date:'M/d/yyyy h:mm a' }}",
+
     "TECHNICAL_ERROR": "A technical error has occurred"
 }

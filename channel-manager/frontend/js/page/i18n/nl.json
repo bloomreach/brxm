@@ -12,5 +12,7 @@
     "SAVE": "Sla op",
     "CANCEL": "Annuleer",
 
+    "PAGE_LOCKED": "Deze pagina is vergrendeld door {{ owner }} op {{ timestamp | date:'d-M-yyyy H:mm' }}",
+
     "TECHNICAL_ERROR": "Er is een technische fout opgetreden"
 }

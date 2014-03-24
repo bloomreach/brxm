@@ -23,10 +23,9 @@
             'hippo.channel.FeedbackService',
             'hippo.channel.PageService',
             'hippo.channel.PrototypeService',
+            'hippo.channel.ConfigService',
             'hippo.channel.Container',
-            'lowercaseFilter',
-            'alphanumericFilter',
-            function ($scope, FeedbackService, PageService, PrototypeService, ContainerService, lowercaseFilter, alphanumericFilter) {
+            function ($scope, FeedbackService, PageService, PrototypeService, ConfigService, ContainerService) {
                 $scope.page = {
                     id: null,
                     title: '',
@@ -36,7 +35,15 @@
                     }
                 };
 
-                $scope.isPageEditable = false;
+                $scope.state = {
+                    isEditable: false,
+                    isLocked: false
+                };
+
+                $scope.lock = {
+                    owner: null,
+                    timestamp: null
+                };
 
                 $scope.template = {
                     isVisible: false
@@ -68,8 +75,14 @@
                     $scope.page.title = currentPage.pageTitle;
                     $scope.page.url = currentPage.name;
 
-                    // only pages whose sitemap item is located in the HST workspace are editable
-                    $scope.isPageEditable = currentPage.workspaceConfiguration;
+                    // only pages whose sitemap item is located in the HST workspace are editable,
+                    // unless they are locked by someone else
+                    $scope.state.isLocked = angular.isString(currentPage.lockedBy) && currentPage.lockedBy !== ConfigService.cmsUser;
+                    $scope.state.isEditable = !$scope.state.isLocked && currentPage.workspaceConfiguration;
+
+                    // lock information
+                    $scope.lock.owner = currentPage.lockedBy;
+                    $scope.lock.timestamp = currentPage.lockedOn;
                 }, setErrorFeedback);
 
                 $scope.submit = function () {
@@ -84,7 +97,6 @@
                         ContainerService.showPage(pageModel.name);
                     }, function (errorResponse) {
                         setErrorFeedback(errorResponse);
-                        $scope.title.focus = true;
                     });
                 };
 
