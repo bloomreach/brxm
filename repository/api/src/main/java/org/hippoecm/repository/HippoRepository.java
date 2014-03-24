@@ -29,7 +29,6 @@ import javax.transaction.UserTransaction;
 import org.hippoecm.repository.api.InitializationProcessor;
 import org.hippoecm.repository.api.ReferenceWorkspace;
 import org.hippoecm.repository.api.RepositoryMap;
-import org.hippoecm.repository.api.ValueMap;
 
 /**
  * Instances of this class represent a connection to the Repository. This interface is mainly provided to add some
@@ -116,16 +115,6 @@ public interface HippoRepository {
      * @throws RepositoryException in case of a generic error occurs communicating with the repository
      */
     public RepositoryMap getRepositoryMap(Node node) throws RepositoryException;
-
-    /**
-     * <b>This call is not (yet) part of the API, but under evaluation.</b><p/>
-     * Returns a ValueMap (which is an enhanced java.util.Map interface) representation of the subtree starting
-     * with the indicated node in the repository.
-     * @param node the starting node of the subtree to map as a java.util.Map
-     * @return a map representation of the content in the repository
-     * @throws RepositoryException in case of a generic error occurs communicating with the repository
-     */
-    public ValueMap getValueMap(Node node) throws RepositoryException;
 
     /**
      * @return An {@link InitializationProcessor} for this repository for doing initialization tasks

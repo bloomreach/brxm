@@ -245,6 +245,7 @@ engine/src/test/resources/export/expected.xml -text
 engine/src/test/resources/group-everybody.xml svneol=native#text/plain
 engine/src/test/resources/hippoecm-extension.xml svneol=native#text/plain
 engine/src/test/resources/import/faulty-namespace.xml -text
+engine/src/test/resources/org/hippoecm/repository/RepositoryMapTest.xml -text
 engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/append-fixture.xml svneol=native#text/plain
 engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/append-merge.xml svneol=native#text/plain
 engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/append-result.xml svneol=native#text/plain

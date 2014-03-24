@@ -15,77 +15,75 @@
  */
 package org.hippoecm.repository;
 
+import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Node;
 
-import org.junit.After;
+import org.hippoecm.repository.api.RepositoryMap;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.repository.testutils.RepositoryTestCase;
+import org.onehippo.repository.mock.MockNodeFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-public class RepositoryMapTest extends RepositoryTestCase {
+public class RepositoryMapTest {
 
-    private Node root;
-
-    String[] content = new String[] {
-        "/content", "nt:unstructured",
-            "/content/articles", "hippo:testdocument",
-                "jcr:mixinTypes", "mix:versionable",
-                "/content/articles/myarticle1", "hippo:handle",
-                    "jcr:mixinTypes", "hippo:hardhandle",
-                    "/content/articles/myarticle1/myarticle1", "hippo:testdocument",
-                        "jcr:mixinTypes", "mix:versionable"
-    };
+    private Node test;
 
     @Before
-    @Override
     public void setUp() throws Exception {
-        super.setUp();
-        Node test;
-        if(session.nodeExists("/test"))
-            test = session.getNode("/test");
-        else
-            test = session.getRootNode().addNode("test");
-        test.setProperty("aap", "noot");
-        test.setProperty("mies", new String[] { "a", "b" });
-
-        if (session.nodeExists("/content")) {
-            session.getNode("/content").remove();
-            session.save();
-        }
-        build(content, session);
-        root = session.getNode("/content");
-        session.save();
-    }
-
-    @After
-    @Override
-    public void tearDown() throws Exception {
-        if (session.nodeExists("/content")) {
-            session.getNode("/content").remove();
-            session.save();
-        }
-        super.tearDown();
+        test = MockNodeFactory.fromXml(getClass().getResource("RepositoryMapTest.xml"));
     }
 
     @Test
-    public void testMap() throws Exception {
-        Map map = (Map) server.getRepositoryMap(root.getNode("articles/myarticle1"));
-        map = (Map) map.get("myarticle1");
-        assertNotNull(map);
+    public void testMapExists() {
+        assertTrue(new RepositoryMapImpl(test).exists());
     }
 
     @Test
-    public void testMapProperty() throws Exception {
-        Map map = server.getRepositoryMap(session.getNode("/test"));
-        assertNotNull(map);
-        assertEquals("noot", map.get("aap"));
-        String[] mies = (String[]) map.get("mies");
-        assertEquals(new String[] { "a", "b" }, mies);
+    public void testGetSubMap() {
+        final Object foo = new RepositoryMapImpl(test).get("subnode");
+        assertNotNull(foo);
+        assertTrue(foo instanceof RepositoryMap);
+    }
+
+    @Test
+    public void testGetSingleValuedProperty() {
+        final Object value = new RepositoryMapImpl(test).get("single_property");
+        assertNotNull(value);
+        assertTrue(value instanceof String);
+        assertEquals("value", value);
+    }
+
+    @Test
+    public void testGetMultiValuedProperty() {
+        final Object value = new RepositoryMapImpl(test).get("multi_property");
+        assertNotNull(value);
+        assertTrue(value instanceof Object[]);
+        final Object[] values = (Object[]) value;
+        assertEquals(3, values.length);
+        assertEquals("value3", values[2]);
+    }
+
+    @Test
+    public void testValues() {
+        final Collection<Object> values = new RepositoryMapImpl(test).values();
+        assertEquals(4, values.size());
+    }
+
+    @Test
+    public void testEntrySet() {
+        final Set<Map.Entry> entries = new RepositoryMapImpl(test).entrySet();
+        assertEquals(4, entries.size());
+    }
+
+    @Test
+    public void testSameNameItemPreferProperty() {
+        assertEquals("value", new RepositoryMapImpl(test).get("same_name_item"));
     }
 
 }

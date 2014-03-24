@@ -18,7 +18,18 @@ package org.hippoecm.repository.api;
 import java.util.Map;
 
 /**
- * This interface is not yet part of the public API.
+ * Map representation of a JCR Node.
+ * <p>
+ * Properties and sub-nodes of the node representing the map are available via the #get() method.
+ * This method returns three types of values depending on whether the requested object is a node,
+ * a single-valued property, or a multi-valued property: a {@code RepositoryMap}, a primitive {@code Object}
+ * representing the value of the property (a {@code String}, {@code Boolean}, {@code Calendar}, {@code Long},
+ * or a {@code RepositoryMap} in case of a reference property), or an {@code Object[]} containing such values.
+ * </p>
+ * <p>
+ * In the case of properties and sub-nodes with the same name, properties have precedence.
+ * In the case of same name sibling nodes, only the first node is returned in the form a {@code RepositoryMap}.
+ * </p>
  */
 public interface RepositoryMap extends Map {
 

@@ -38,7 +38,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.hippoecm.repository.api.RepositoryMap;
-import org.hippoecm.repository.api.ValueMap;
 
 public abstract class HippoRepositoryImpl implements HippoRepository {
 
@@ -166,10 +165,6 @@ public abstract class HippoRepositoryImpl implements HippoRepository {
 
     public RepositoryMap getRepositoryMap(Node node) throws RepositoryException {
         return new RepositoryMapImpl(node);
-    }
-
-    public ValueMap getValueMap(Node node) throws RepositoryException {
-        return new RepositoryValueMap(node);
     }
 
     @Override
