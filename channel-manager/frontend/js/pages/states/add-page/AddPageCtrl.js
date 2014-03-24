@@ -44,7 +44,7 @@
                 };
 
                 $scope.host = '';
-                $scope.options = [];
+                $scope.prototypes = [];
 
                 $scope.submit = function () {
                     var pageModel = {
@@ -63,7 +63,7 @@
 
                 // fetch prototypes
                 PrototypeService.getPrototypes().then(function (response) {
-                    $scope.options = response;
+                    $scope.prototypes = response;
                     $scope.page.prototype = response[0];
                 }, function (errorResponse) {
                     $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
