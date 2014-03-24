@@ -57,7 +57,6 @@ module.exports = function(config) {
 
             'pages/pages-dependencies.js',
             'pages/filters/*.js',
-            'pages/services/*.js',
             'pages/states/**/*.js',
 
             // tests
