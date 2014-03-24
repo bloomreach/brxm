@@ -19,6 +19,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -38,7 +40,6 @@ import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
-import javax.jcr.query.QueryResult;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.core.id.NodeId;
@@ -182,7 +183,7 @@ public class UpdaterExecutor implements EventListener {
                     }
                 }
             } catch (UnsupportedOperationException e) {
-                warn("Cannot run updater: doUpdate is not implemented");
+                warn("Cannot run updater: not implemented");
             } catch (RepositoryException e) {
                 error("Unexpected exception while running updater path visitor", e);
             }
@@ -203,44 +204,44 @@ public class UpdaterExecutor implements EventListener {
     }
 
     private void runQueryVisitor() throws RepositoryException {
-        final NodeIterator nodes = getQueryResultIterator();
-        if (nodes != null) {
-            while (nodes.hasNext()) {
-                if (cancelled) {
-                    info("Update cancelled");
-                    return;
-                }
-                final Node node = nodes.nextNode();
-                if (node != null) {
-                    try {
-                        executeUpdater(node);
-                    } catch (UnsupportedOperationException e) {
-                        warn("Cannot run updater: doUpdate is not implemented");
-                        break;
-                    }
-                    commitBatchIfNeeded();
-                }
+        for (String identifier : getQueryResult()) {
+            try {
+                final Node node = session.getNodeByIdentifier(identifier);
+                executeUpdater(node);
+                commitBatchIfNeeded();
+            } catch (ItemNotFoundException e) {
+                debug("Node no longer exists: " + identifier);
+            } catch (UnsupportedOperationException e) {
+                warn("Cannot run updater: not implemented");
+                break;
             }
         }
     }
 
-    private NodeIterator getQueryResultIterator() throws RepositoryException {
+    private Collection<String> getQueryResult() throws RepositoryException {
         final String query = updaterInfo.getQuery();
         if (query == null) {
             info("No query set. Skipping query visitor.");
-            return null;
+            return Collections.emptyList();
         }
-        QueryResult results;
         try {
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
             final Query jcrQuery = queryManager.createQuery(query, updaterInfo.getLanguage());
-            results = jcrQuery.execute();
+            final Collection<String> results = new ArrayList<String>();
+            info("Loading nodes to update");
+            int count = 0;
+            for (Node node : new NodeIterable(jcrQuery.execute().getNodes())) {
+                results.add(node.getIdentifier());
+                if (++count % PROGRESS_REPORT_INTERVAL == 0) {
+                    info("Loaded " + count + " nodes");
+                }
+            }
+            info("Finished loading nodes to update");
+            return results;
         } catch (RepositoryException e) {
             error("Executing query failed: " + e.getClass().getName() + " : " + e.getMessage());
-            return null;
+            return Collections.emptyList();
         }
-
-        return results.getNodes();
     }
 
     private void executeUpdater(final Node node) throws RepositoryException {
