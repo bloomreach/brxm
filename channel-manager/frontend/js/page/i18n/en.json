@@ -8,6 +8,7 @@
 
     "ASSIGN_NEW_TEMPLATE": "Assign a new template",
     "ASSIGN_NEW_TEMPLATE_WARNING": "Components on the page might be repositioned if a new template is assigned.",
+    "SELECT_TEMPLATE": "Select a template",
 
     "SAVE": "Save",
     "CANCEL": "Cancel",

@@ -95,7 +95,8 @@
                             <select hippo.theme.select-box class="form-control" id="page-prototype"
                                     data-ng-options="p.displayName for p in prototypes"
                                     data-options="prototypes"
-                                    data-ng-model="page.prototype"></select>
+                                    data-ng-model="page.prototype"
+                                    data-placeholder="{{ 'SELECT_TEMPLATE' | translate }}"></select>
 
                             <div class="alert alert-warning">
                                 {{ 'ASSIGN_NEW_TEMPLATE_WARNING' | translate }}
