@@ -107,7 +107,7 @@ body.hippo-root #doc3 {
 
 .hippo-global-clearer {
   clear: both;
-  height: 0px;
+  height: 0;
 }
 
 .hippo-global-hideme {
@@ -198,8 +198,8 @@ body.hippo-root #doc3 {
 /* ================================================ */
 .hippo-root .wicket-ajax-indicator {
   position: absolute;
-  top: 0px;
-  left: 0px;
+  top: 0;
+  left: 0;
   display: block;
   visibility: visible;
   background: url("images/ajaxback.png") repeat-x;
@@ -280,9 +280,9 @@ body.hippo-root #doc3 {
 
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs {
   position: absolute;
-  top: 0px;
+  top: 0;
   width: 62px;
-  left: 0px;
+  left: 0;
   padding-top: 30px;
 }
 
@@ -292,7 +292,7 @@ body.hippo-root #doc3 {
 
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li.selected {
   background: url("images/tab-active.png");
-  background-position: 0px 4px;
+  background-position: 0 4px;
 }
 
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li div a img {
@@ -312,7 +312,7 @@ body.hippo-root #doc3 {
   width: auto;
   position: absolute;
   text-align: left;
-  top: 0px;
+  top: 0;
   left: 446px;
   margin-right: 75px;
 }
@@ -337,11 +337,11 @@ body.hippo-root #doc3 {
   right: 5px;
   text-indent: -9999px;
   top: 4px;
-  background-position: -18px 0px;
+  background-position: -18px 0;
 }
 
 .hippo-tabs-documents-top .hippo-tabs-documents-close:hover {
-  background-position: 0px 0px;
+  background-position: 0 0;
 }
 
 .hippo-tabs-documents-top .selected .hippo-tabs-documents-tab {
@@ -365,30 +365,30 @@ body.hippo-root #doc3 {
 }
 
 .hippo-tabs-documents .selected .hippo-tabs-documents-tab {
-  background-position: 0px -22px;
+  background-position: 0 -22px;
   color: #666666
 }
 
 .hippo-tabs-documents .selected .hippo-tabs-documents-tab:hover {
-  background-position: 0px -22px;
+  background-position: 0 -22px;
   color: #666666
 }
 
 .hippo-tabs-documents .selected .hippo-tabs-documents-tab:active {
-  background-position: 0px -22px
+  background-position: 0 -22px;
 }
 
 .hippo-tabs-documents .hippo-tabs-documents-tab {
-  background-position: 0px 0px
+  background-position: 0 0;
 }
 
 .hippo-tabs-documents .hippo-tabs-documents-tab:hover {
-  background-position: 0px -66px;
+  background-position: 0 -66px;
   color: #666666
 }
 
 .hippo-tabs-documents .hippo-tabs-documents-tab:active {
-  background-position: 0px -66px
+  background-position: 0 -66px;
 }
 
 .hippo-tabs-documents .hippo-tabs-documents-tab img {
@@ -438,9 +438,9 @@ body.hippo-root #doc3 {
 .hippo-list-details tr td.icon-16 {
   height: 16px;
   width: 16px;
-  padding-left: 0px;
+  padding-left: 0;
   padding-right: 4px;
-  padding-top: 0px;
+  padding-top: 0;
 }
 
 .hippo-list-details tr td.icon-16 span {
@@ -510,7 +510,7 @@ body.hippo-root #doc3 {
 }
 
 .hippo-picker-list-details .hippo-typeslist, .hippo-picker-list-details .asset-gallery-plugin, .hippo-picker-list-details .hippo-list-search {
-  margin-top: 0px;
+  margin-top: 0;
 }
 
 /* images */
@@ -544,8 +544,8 @@ body.hippo-root #doc3 {
 /* ================================================ */
 .hippo-list-paging {
   position: absolute;
-  bottom: 0px;
-  left: 0px;
+  bottom: 0;
+  left: 0;
   background: url("images/hippo-paging-back.png") repeat-x left bottom;
   width: 100%;
   color: #afafaf
@@ -563,7 +563,7 @@ body.hippo-root #doc3 {
 .hippo-list-details .hippo-list-paging td {
   padding: 4px;
   text-align: center;
-  border-bottom: 0px;
+  border-bottom: 0;
   width: 190px;
 }
 
@@ -598,7 +598,7 @@ body.hippo-root #doc3 {
 .hippo-perspective-dashboard .hippo-perspective-dashboard-panel {
   background: #ffffff;
   border: 1px solid #afafaf;
-  border-right: 0px;
+  border-right: 0;
 }
 
 .hippo-perspective-dashboard .hippo-perspective-dashboard-panel h2 {
@@ -671,7 +671,7 @@ body.hippo-root #doc3 {
 .hippo-header-shortcuts {
   padding: 4px;
   position: absolute;
-  top: 0px;
+  top: 0;
   right: 300px
 }
 
@@ -693,21 +693,21 @@ body.hippo-root #doc3 {
 }
 
 .hippo-header-shortcuts div div a.icon-16 {
-  padding-left: 0px;
+  padding-left: 0;
 }
 
 /* Toolbar */
 /* ================================================ */
 .hippo-toolbar {
-  padding: 0px;
-  margin-left: 0px;
+  padding: 0;
+  margin-left: 0;
 }
 
 .hippo-toolbar .hippo-toolbar-section {
   display: block;
   float: left;
   color: #666666;
-  padding-top: 0px;
+  padding-top: 0;
   margin-right: 2px;
 }
 
@@ -720,7 +720,7 @@ body.hippo-root #doc3 {
   float: right;
   background: #32629b;
   color: white;
-  margin: 0px;
+  margin: 0;
   border: 1px solid white;
 }
 
@@ -732,7 +732,7 @@ body.hippo-root #doc3 {
 .hippo-toolbar .hippo-toolbar-section .hippo-toolbar-textitem-locked {
   height: 16px;
   width: 16px;
-  margin-right: 0px;
+  margin-right: 0;
 }
 
 .hippo-toolbar .hippo-toolbar-section .hippo-toolbar-textitem-caption {
@@ -766,7 +766,7 @@ body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-sin
   border: 1px solid #afafaf;
   position: absolute;
   top: 3px;
-  left: 0px;
+  left: 0;
   width: 156px;
 }
 
@@ -814,7 +814,7 @@ body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-sin
 .hippo-toolbar-menu-item li {
   display: block;
   clear: left;
-  margin-right: 0px;
+  margin-right: 0;
   padding-top: 1px;
   padding-bottom: 1px;
 }
@@ -836,7 +836,7 @@ body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-sin
 }
 
 .hippo-toolbar-section li.icon-16 {
-  padding-left: 0px;
+  padding-left: 0;
   background-position: 3px 4px;
 }
 
@@ -899,7 +899,7 @@ body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-sin
   padding-right: 8px;
   padding-top: 3px;
   background-image: none;
-  border: 0px solid #e3e3e3;
+  border: 0 solid #e3e3e3;
   display: block;
   min-width: 100px;
   height: 17px;
@@ -944,7 +944,7 @@ body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-sin
 }
 
 .hippo-window .hippo-root table.modal-contents {
-  margin: 10px 25px 0px 25px;
+  margin: 10px 25px 0 25px;
 }
 
 .hippo-window .hippo-root table.modal-contents td {
@@ -1001,7 +1001,7 @@ table.hippo-window-form {
 
 .hippo-window-form td.hippo-window-navigator,
 .hippo-window-form table.hippo-search-section td {
-  padding: 0px;
+  padding: 0;
 }
 
 .hippo-window .notification {
@@ -1075,8 +1075,8 @@ table.hippo-window-form {
   color: white;
   font-size: 11px;
   font-weight: bold;
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
   position: relative;
 }
 
@@ -1113,7 +1113,7 @@ table.hippo-window-form {
 }
 
 .hippo-root div.wicket-modal div.w_content_2 {
-  padding-top: 0px
+  padding-top: 0;
 }
 
 .hippo-root div.wicket-modal div.w_content_1 {
@@ -1148,7 +1148,7 @@ table.hippo-window-form {
 
 .hippo-picker-list-details {
   height: 331px;
-  margin-left: 0px;
+  margin-left: 0;
   background: #ffffff url('images/silverBack3.png') repeat-x;
   width: auto;
   position: relative;
@@ -1159,7 +1159,7 @@ table.hippo-window-form {
   clear: both;
   height: 35px;
   padding: 10px;
-  margin-top: 0px;
+  margin-top: 0;
   border-top: 1px solid #afafaf;
 }
 
@@ -1171,16 +1171,6 @@ table.hippo-window-form {
 .hippo-picker .hippo-window-form td input {
   width: 200px;
 }
-
-/*
-.hippo-list-paging{position: absolute; bottom: 0px; left: 0px; background: url("images/hippo-paging-back.png") repeat-x left bottom; width: 100%; color: #afafaf}
-.hippo-list-details .hippo-list-paging td{padding: 4px; text-align: center; border-bottom: 0px; width: 190px;}
-.hippo-list-paging td div{margin-top: 20px; margin-bottom: 2px; width: 100%;}
-.hippo-list-paging td a{padding: 3px; color: #909090; border: 1px solid #afafaf}
-.hippo-list-paging td span{padding: 3px;}
-.hippo-list-paging td a:hover{background: white; color: black; border: 1px solid #666666}
-.hippo-list-paging td span em, .hippo-list-paging td a em{font-style: normal}
-*/
 
 .hippo-picker-navigation {
   background: url("images/silver4.png") repeat-x;
@@ -1205,19 +1195,19 @@ table.hippo-window-form {
 
 .hippo-window-form td div.hippo-picker-navigation-buttons input, .hippo-picker-navigation-buttons input {
   float: left;
-  padding: 0px;
+  padding: 0;
   width: 24px;
   font-size: 11px;
   background: url("images/hippo-picker-navigation-buttons-back.png") no-repeat;
-  background-position: 0px -20px;
+  background-position: 0 -20px;
   border: none;
-  margin: 0px;
+  margin: 0;
   text-indent: -9999px;
 }
 
 .hippo-window-form td div.hippo-picker-navigation-buttons input.up {
   background: url("images/hippo-picker-navigation-buttons-back.png") no-repeat;
-  background-position: 0px -20px;
+  background-position: 0 -20px;
 }
 
 .hippo-picker-navigation-breadcrumbs {
@@ -1240,7 +1230,7 @@ table.hippo-window-form {
   height: 20px;
   background-image: url("images/hippo-picker-navigation-breadcrumb.png");
   background-repeat: no-repeat;
-  background-position: right 0px;
+  background-position: right 0;
   padding-right: 27px;
   line-height: 18px;
   color: #333333;
@@ -1281,8 +1271,6 @@ body .hippo-picker-properties div.text-input input {
   background: url("images/hippo-window-input-back.png") no-repeat;
   width: 535px
 }
-
-/*.hippo-picker-list-details table tr th{padding: 1px; padding-left: 4px; padding-bottom: 1px; border: 1px solid #afafaf; border-right: 0px; border-bottom: none;}*/
 
 /* Referring documents */
 
@@ -1367,8 +1355,8 @@ ents-small-folders h3 {
 .hippo-browser-documents-small .hippo-browser-documents-small-folders {
   background: #f4f4f4;
   border-left: 1px solid #afafaf;
-  border-bottom: 0px;
-  border-top: 0px
+  border-bottom: 0;
+  border-top: 0;
 }
 
 .hippo-browser-documents-small .hippo-browser-documents-small-files .hippo-list-details {
@@ -1404,14 +1392,14 @@ ents-small-folders h3 {
 
 /* remove margins */
 .hippo-tree div.wicket-tree {
-  margin: 0px;
+  margin: 0;
   border: none;
   width: auto;
 }
 
 /* make sure the first folder level in the tree doens't have a left padding */
 .hippo-tree div.wicket-tree div.a_ {
-  padding-left: 0px;
+  padding-left: 0;
 }
 
 .hippo-tree div.wicket-tree div.a_ div.a_ {
@@ -1456,8 +1444,6 @@ ents-small-folders h3 {
   background-image: url("images/controls/folder-background-selected.png");
 }
 
-/*background-position: 0px -20px;}*/
-
 .hippo-tree div.wicket-tree div.row a,
 .hippo-tree div.wicket-tree div.row-selected a {
   font-weight: normal;
@@ -1494,7 +1480,7 @@ ents-small-folders h3 {
 }
 
 .hippo-tree .icon-16 {
-  padding: 0px;
+  padding: 0;
   width: 16px;
   height: 16px;
   display: block;
@@ -1520,9 +1506,9 @@ table tr.selected span.folder-virtual-16, .folder-virtual-16{background-image:ur
 /* change the tree if he's inside an accordion */
 .hippo-accordion-unit .hippo-tree .wicket-tree {
 /*min-height: 100px;*/
-  margin-bottom: 0px;
-  padding-left: 0px;
-  padding-top: 0px;
+  margin-bottom: 0;
+  padding-left: 0;
+  padding-top: 0;
 }
 
 .hippo-accordion-unit h2 {
@@ -1538,8 +1524,8 @@ table tr.selected span.folder-virtual-16, .folder-virtual-16{background-image:ur
   height: 14px;
   width: 100%;
   padding: 5px;
-  padding-left: 0px;
-  padding-right: 0px;
+  padding-left: 0;
+  padding-right: 0;
   border-bottom: 1px solid #afafaf;
   font-weight: bold;
 }
@@ -1549,27 +1535,27 @@ table tr.selected span.folder-virtual-16, .folder-virtual-16{background-image:ur
 }
 
 .hippo-accordion-unit h2 a {
-  background-position: 0px 0px
+  background-position: 0 0;
 }
 
 .hippo-accordion-unit h2 a:hover {
-  background-position: 0px -96px
+  background-position: 0 -96px;
 }
 
 .hippo-accordion-unit h2 a:active {
-  background-position: 0px -120px
+  background-position: 0 -120px;
 }
 
 .hippo-accordion-unit h2 a.focus {
-  background-position: 0px -24px
+  background-position: 0 -24px;
 }
 
 .hippo-accordion-unit h2 a.focus:hover {
-  background-position: 0px -48px
+  background-position: 0 -48px;
 }
 
 .hippo-accordion-unit h2 a.focus:active {
-  background-position: 0px -72px
+  background-position: 0 -72px;
 }
 
 /* Show add-root button in tree*/
@@ -1577,7 +1563,7 @@ table tr.selected span.folder-virtual-16, .folder-virtual-16{background-image:ur
   display: block;
   background-image: url("images/list-add-16.png");
   background-repeat: no-repeat;
-  background-position: 0px 6px;
+  background-position: 0 6px;
   text-align: left;
   padding-left: 21px;
   padding-top: 6px;
@@ -1660,7 +1646,7 @@ ul.hippo-toolbar-section li.icon-16 {
 }
 
 div.wicket-modal div.wicket-tree {
-  border: 0px;
+  border: 0;
 }
 
 /* select layout wizard step */
@@ -2149,7 +2135,7 @@ body.hippo-root div.yui-log-container {
 }
 
 .hippo-root .yui-tt {
-  border-width: 0px;
+  border-width: 0;
 }
 
 .hippo-root .yui-tt.show-scrollbars .bd {
@@ -2221,5 +2207,5 @@ body.hippo-root div.yui-log-container {
 }
 
 .hippo-referring-documents-list .hippo-list-paging .paging-label {
-    margin-top: 0px;
+    margin-top: 0;
 }
