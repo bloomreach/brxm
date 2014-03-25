@@ -123,10 +123,20 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-hst-configuration-editor-frontend</artifactId>
     </dependency>
+
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
       <version>${commons-lang.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-theme</artifactId>
+      <version>${hippo.theme.version}</version>
+      <classifier>distribution</classifier>
+      <type>zip</type>
       <scope>provided</scope>
     </dependency>
 
@@ -280,17 +290,10 @@
           <execution>
             <id>fetch-bower-dependencies</id>
             <phase>initialize</phase>
-            <goals><goal>copy</goal></goals>
+            <goals><goal>copy-dependencies</goal></goals>
             <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.onehippo.cms7</groupId>
-                  <artifactId>hippo-theme</artifactId>
-                  <version>${hippo.theme.version}</version>
-                  <type>zip</type>
-                  <classifier>distribution</classifier>
-                </artifactItem>
-              </artifactItems>
+              <includeGroupIds>org.onehippo.cms7</includeGroupIds>
+              <includeArtifactIds>hippo-theme</includeArtifactIds>
               <stripClassifier>true</stripClassifier>
               <stripVersion>true</stripVersion>
             </configuration>
