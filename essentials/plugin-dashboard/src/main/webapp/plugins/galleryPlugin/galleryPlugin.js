@@ -61,10 +61,10 @@
         $scope.init = function () {
             $log.info(" **** gallery plugin called ***");
             $http.get($rootScope.REST.galleryProcessor).success(function (data) {
-                $scope.imageProcessorData = data;
-                if (data && data.imageProcessors) {
-                    $scope.imageProcessor = data.imageProcessors[0];
+                if(data && data.length > 0){
+                    $scope.imageProcessor = data[0];
                 }
+
             });
 
 
