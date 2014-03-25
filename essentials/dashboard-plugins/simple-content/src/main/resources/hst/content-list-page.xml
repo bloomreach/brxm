@@ -64,7 +64,7 @@
         <sv:value>pageSize</sv:value>
       </sv:property>
       <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
-        <sv:value>appstore:newsdocument</sv:value>
+        <sv:value>{{namespace}}:contentdocument</sv:value>
         <sv:value/>
         <sv:value>desc</sv:value>
         <sv:value>off</sv:value>
