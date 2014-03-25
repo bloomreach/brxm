@@ -18,6 +18,7 @@
     "ITEM_NAME_NOT_UNIQUE": "This URL is already in use",
     "INVALID_NAME": "The URL is not valid",
     "ILLEGAL_CHARACTERS": "These characters are not allowed: {{ illegalCharacters }}",
+    "ITEM_EXISTS_OUTSIDE_WORKSPACE": "A page with this URL already exists.",
 
     "NO_RESULTS": "No templates found for",
     "SELECT_OPTION": "Please select a template"
