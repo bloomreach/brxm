@@ -30,6 +30,7 @@ import java.util.TreeSet;
 import java.util.UUID;
 import java.util.Vector;
 
+import javax.jcr.AccessDeniedException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
@@ -750,6 +751,9 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     public Document copyTo(Document sourceFolder, Document offspring, String targetName, Map<String,String> arguments) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         String path = subject.getPath().substring(1);
         Node folder = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
+        if (!userSession.hasPermission(folder.getPath(), JcrConstants.JCR_WRITE)) {
+            throw new AccessDeniedException("User lacks permission to write in destination folder");
+        }
         if (targetName == null || targetName.equals("")) {
             throw new WorkflowException("No target name given");
         }
