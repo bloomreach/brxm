@@ -51,6 +51,7 @@
     <hippo.services.version>1.03.04-SNAPSHOT</hippo.services.version>
     <hippo.services.eventbus.version>1.03.04-SNAPSHOT</hippo.services.eventbus.version>
     <hippo.services.contenttype.version>1.03.02-SNAPSHOT</hippo.services.contenttype.version>
+    <hippo.theme.version>1.01.00-SNAPSHOT</hippo.theme.version>
     <hippo.utilities.version>1.02.01-SNAPSHOT</hippo.utilities.version>
 
     <forge.content-blocks.version>1.10.01-SNAPSHOT</forge.content-blocks.version>
@@ -792,6 +793,16 @@
         <artifactId>robotstxt-hst-client</artifactId>
         <version>${forge.robotstxt.version}</version>
       </dependency>
+
+      <!-- All Hippo Github artifacts -->
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-theme</artifactId>
+        <version>${hippo.theme.version}</version>
+        <classifier>distribution</classifier>
+        <type>zip</type>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 
