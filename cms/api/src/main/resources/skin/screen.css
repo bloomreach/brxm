@@ -804,6 +804,16 @@ body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-sin
   width: 150px;
 }
 
+/* enabled menu item */
+a.hippo-toolbar-menu-item-button {
+  color: #333;
+}
+
+/* disabled menu item */
+span.hippo-toolbar-menu-item-button {
+  color: #999;
+}
+
 /* override the default text-decoration: underline */
 .hippo-root .hippo-toolbar-menu-item-button:hover {
   background: #fff6e0;
