@@ -108,8 +108,7 @@ public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
         wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
         wpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
             public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
-                FullReviewedActionsWorkflow fraw = (FullReviewedActionsWorkflow) wf;
-                fraw.requestPublication();
+                wf.requestPublication();
             }
         });
 
