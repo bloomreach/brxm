@@ -88,178 +88,178 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
         add(new Label("new"));
 
-        add(new StdWorkflow("rename", new StringResourceModel("rename-title", this, null), context, getModel()) {
-
-            RenameDocumentArguments renameDocumentModel = new RenameDocumentArguments();
-
-            @Override
-            protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "rename-16.png");
-            }
-
-            @Override
-            protected Dialog createRequestDialog() {
-
-                try {
-                    HippoNode node = (HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode();
-                    renameDocumentModel.setUriName(node.getName());
-                    renameDocumentModel.setTargetName(getLocalizedNameForSession(node));
-                    renameDocumentModel.setNodeType(node.getPrimaryNodeType().getName());
-                    renameDocumentModel.setLocalizedNames(node.getLocalizedNames());
-                } catch (RepositoryException ex) {
-                    log.error("Could not retrieve workflow document", ex);
-                    renameDocumentModel.setUriName("");
-                    renameDocumentModel.setTargetName("");
-                    renameDocumentModel.setNodeType(null);
-                    renameDocumentModel.setLocalizedNames(null);
-                }
-
-                return newRenameDocumentDialog(renameDocumentModel, this);
-            }
-
-            private String getLocalizedNameForSession(final HippoNode node) throws RepositoryException {
-                final Locale cmsLocale = UserSession.get().getLocale();
-                final Localized cmsLocalized = Localized.getInstance(cmsLocale);
-                return node.getLocalizedName(cmsLocalized);
-            }
-
-            @Override
-            protected void execute(WorkflowDescriptorModel model) throws Exception {
-                // FIXME: this assumes that folders are always embedded in other folders
-                // and there is some logic here to look up the parent.  The real solution is
-                // in the visual component to merge two workflows.
-                HippoNode node = (HippoNode) model.getNode();
-                String nodeName = getNodeNameCodec().encode(renameDocumentModel.getUriName());
-                String localName = getLocalizeCodec().encode(renameDocumentModel.getTargetName());
-                WorkflowManager manager = UserSession.get().getWorkflowManager();
-                DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
-                FolderWorkflow folderWorkflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
-                if (!((WorkflowDescriptorModel) getDefaultModel()).getNode().getName().equals(nodeName)) {
-                    folderWorkflow.rename(node.getName() + (node.getIndex() > 1 ? "[" + node.getIndex() + "]" : ""), nodeName);
-                }
-                if (!getLocalizedNameForSession(node).equals(localName)) {
-                    defaultWorkflow.replaceAllLocalizedNames(localName);
-                }
-            }
-        });
-
-        final StdWorkflow reorderAction;
-        add(reorderAction = new StdWorkflow("reorder", new StringResourceModel("reorder-folder", this, null), context, getModel()) {
-            public List<String> order = new LinkedList<String>();
-
-            @Override
-            protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "reorder-16.png");
-            }
-
-            @Override
-            protected Dialog createRequestDialog() {
-                return new ReorderDialog(this, config, getModel(), order);
-            }
-
-            @Override
-            protected void execute(WorkflowDescriptorModel model) throws Exception {
-                WorkflowManager manager = UserSession.get().getWorkflowManager();
-                FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow((WorkflowDescriptor) model.getObject());
-                workflow.reorder(order);
-            }
-        });
-
-        add(new StdWorkflow("delete", new StringResourceModel("delete-title", this, null), context, getModel()) {
-
-            @Override
-            protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "delete-16.png");
-            }
-
-            @Override
-            protected Dialog createRequestDialog() {
-                Node folderNode = null;
-                try {
-                    folderNode = getModel().getNode();
-                } catch (RepositoryException e) {
-                    log.error("Unable to retrieve node from WorkflowDescriptorModel, folder delete cancelled", e);
-                }
-
-                if (folderNode != null) {
-                    final IModel folderName = new NodeTranslator(new JcrNodeModel(folderNode)).getNodeName();
-                    try {
-                        boolean deleteAllowed = true;
-                        for (NodeIterator iter = folderNode.getNodes(); iter.hasNext(); ) {
-                            Node child = iter.nextNode();
-                            NodeDefinition nd = child.getDefinition();
-                            if (nd.getDeclaringNodeType().isMixin()) {
-                                continue;
-                            }
-                            deleteAllowed = false;
-                            break;
-                        }
-                        StringResourceModel messageModel = new StringResourceModel(deleteAllowed ? "delete-message-extended" : "delete-message-denied",
-                                FolderWorkflowPlugin.this, null, folderName);
-                        return new DeleteDialog(messageModel, this, deleteAllowed);
-
-                    } catch (RepositoryException e) {
-                        log.error("Unable to retrieve number of child nodes from node, folder delete cancelled", e);
-                    }
-                }
-                return new DeleteDialog(new StringResourceModel("delete-message-error", FolderWorkflowPlugin.this, null), this, false);
-            }
-
-            class DeleteDialog extends AbstractWorkflowDialog {
-
-                public DeleteDialog(IModel messageModel, IWorkflowInvoker invoker, boolean deleteAllowed) {
-                    super(null, messageModel, invoker);
-
-                    if (deleteAllowed) {
-                        setFocusOnOk();
-                    } else {
-                        setOkEnabled(false);
-                        setFocusOnCancel();
-                    }
-                }
-
-                @Override
-                public IModel getTitle() {
-                    return new StringResourceModel("delete-title", FolderWorkflowPlugin.this, null);
-                }
-
-                @Override
-                public IValueMap getProperties() {
-                    return SMALL;
-                }
-            }
-
-            @Override
-            public void execute(WorkflowDescriptorModel model) throws Exception {
-                // FIXME: this assumes that folders are always embedded in other folders
-                // and there is some logic here to look up the parent.  The real solution is
-                // in the visual component to merge two workflows.
-                Node node = model.getNode();
-                WorkflowManager manager = UserSession.get().getWorkflowManager();
-                FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
-                workflow.delete(node.getName() + (node.getIndex() > 1 ? "[" + node.getIndex() + "]" : ""));
-            }
-        });
-
         try {
             WorkflowDescriptorModel model = getModel();
             List<StdWorkflow> list = new LinkedList<StdWorkflow>();
             WorkflowDescriptor descriptor = model.getObject();
             WorkflowManager manager = UserSession.get().getWorkflowManager();
             Workflow workflow = manager.getWorkflow(descriptor);
-            if (workflow instanceof FolderWorkflow) {
-                FolderWorkflow folderWorkflow = (FolderWorkflow) workflow;
-                Map<String, Serializable> hints = folderWorkflow.hints();
+            final Map<String, Serializable> hints = workflow.hints();
 
-                if (hints.containsKey("reorder") && hints.get("reorder") instanceof Boolean) {
-                    reorderAction.setVisible(((Boolean) hints.get("reorder")).booleanValue());
-                }
+            if (isActionAvailable("rename", hints)) {
+                add(new StdWorkflow("rename", new StringResourceModel("rename-title", this, null), context, getModel()) {
 
-                final Set<String> translated = new TreeSet<String>();
-                if (getPluginConfig().containsKey("workflow.translated")) {
-                    Collections.addAll(translated, getPluginConfig().getStringArray("workflow.translated"));
-                }
+                    RenameDocumentArguments renameDocumentModel = new RenameDocumentArguments();
 
+                    @Override
+                    protected ResourceReference getIcon() {
+                        return new PackageResourceReference(getClass(), "rename-16.png");
+                    }
+
+                    @Override
+                    protected Dialog createRequestDialog() {
+
+                        try {
+                            HippoNode node = (HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode();
+                            renameDocumentModel.setUriName(node.getName());
+                            renameDocumentModel.setTargetName(getLocalizedNameForSession(node));
+                            renameDocumentModel.setNodeType(node.getPrimaryNodeType().getName());
+                            renameDocumentModel.setLocalizedNames(node.getLocalizedNames());
+                        } catch (RepositoryException ex) {
+                            log.error("Could not retrieve workflow document", ex);
+                            renameDocumentModel.setUriName("");
+                            renameDocumentModel.setTargetName("");
+                            renameDocumentModel.setNodeType(null);
+                            renameDocumentModel.setLocalizedNames(null);
+                        }
+
+                        return newRenameDocumentDialog(renameDocumentModel, this);
+                    }
+
+                    private String getLocalizedNameForSession(final HippoNode node) throws RepositoryException {
+                        final Locale cmsLocale = UserSession.get().getLocale();
+                        final Localized cmsLocalized = Localized.getInstance(cmsLocale);
+                        return node.getLocalizedName(cmsLocalized);
+                    }
+
+                    @Override
+                    protected void execute(WorkflowDescriptorModel model) throws Exception {
+                        // FIXME: this assumes that folders are always embedded in other folders
+                        // and there is some logic here to look up the parent.  The real solution is
+                        // in the visual component to merge two workflows.
+                        HippoNode node = (HippoNode) model.getNode();
+                        String nodeName = getNodeNameCodec().encode(renameDocumentModel.getUriName());
+                        String localName = getLocalizeCodec().encode(renameDocumentModel.getTargetName());
+                        WorkflowManager manager = UserSession.get().getWorkflowManager();
+                        DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
+                        FolderWorkflow folderWorkflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
+                        if (!((WorkflowDescriptorModel) getDefaultModel()).getNode().getName().equals(nodeName)) {
+                            folderWorkflow.rename(node.getName() + (node.getIndex() > 1 ? "[" + node.getIndex() + "]" : ""), nodeName);
+                        }
+                        if (!getLocalizedNameForSession(node).equals(localName)) {
+                            defaultWorkflow.replaceAllLocalizedNames(localName);
+                        }
+                    }
+                });
+            }
+
+            if (isActionAvailable("reorder", hints)) {
+                add(new StdWorkflow("reorder", new StringResourceModel("reorder-folder", this, null), context, getModel()) {
+                    public List<String> order = new LinkedList<String>();
+
+                    @Override
+                    protected ResourceReference getIcon() {
+                        return new PackageResourceReference(getClass(), "reorder-16.png");
+                    }
+
+                    @Override
+                    protected Dialog createRequestDialog() {
+                        return new ReorderDialog(this, config, getModel(), order);
+                    }
+
+                    @Override
+                    protected void execute(WorkflowDescriptorModel model) throws Exception {
+                        WorkflowManager manager = UserSession.get().getWorkflowManager();
+                        FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow((WorkflowDescriptor) model.getObject());
+                        workflow.reorder(order);
+                    }
+                });
+            }
+
+            if (isActionAvailable("delete", hints)) {
+                add(new StdWorkflow("delete", new StringResourceModel("delete-title", this, null), context, getModel()) {
+
+                    @Override
+                    protected ResourceReference getIcon() {
+                        return new PackageResourceReference(getClass(), "delete-16.png");
+                    }
+
+                    @Override
+                    protected Dialog createRequestDialog() {
+                        Node folderNode = null;
+                        try {
+                            folderNode = getModel().getNode();
+                        } catch (RepositoryException e) {
+                            log.error("Unable to retrieve node from WorkflowDescriptorModel, folder delete cancelled", e);
+                        }
+
+                        if (folderNode != null) {
+                            final IModel folderName = new NodeTranslator(new JcrNodeModel(folderNode)).getNodeName();
+                            try {
+                                boolean deleteAllowed = true;
+                                for (NodeIterator iter = folderNode.getNodes(); iter.hasNext(); ) {
+                                    Node child = iter.nextNode();
+                                    NodeDefinition nd = child.getDefinition();
+                                    if (nd.getDeclaringNodeType().isMixin()) {
+                                        continue;
+                                    }
+                                    deleteAllowed = false;
+                                    break;
+                                }
+                                StringResourceModel messageModel = new StringResourceModel(deleteAllowed ? "delete-message-extended" : "delete-message-denied",
+                                        FolderWorkflowPlugin.this, null, folderName);
+                                return new DeleteDialog(messageModel, this, deleteAllowed);
+
+                            } catch (RepositoryException e) {
+                                log.error("Unable to retrieve number of child nodes from node, folder delete cancelled", e);
+                            }
+                        }
+                        return new DeleteDialog(new StringResourceModel("delete-message-error", FolderWorkflowPlugin.this, null), this, false);
+                    }
+
+                    class DeleteDialog extends AbstractWorkflowDialog {
+
+                        public DeleteDialog(IModel messageModel, IWorkflowInvoker invoker, boolean deleteAllowed) {
+                            super(null, messageModel, invoker);
+
+                            if (deleteAllowed) {
+                                setFocusOnOk();
+                            } else {
+                                setOkEnabled(false);
+                                setFocusOnCancel();
+                            }
+                        }
+
+                        @Override
+                        public IModel getTitle() {
+                            return new StringResourceModel("delete-title", FolderWorkflowPlugin.this, null);
+                        }
+
+                        @Override
+                        public IValueMap getProperties() {
+                            return SMALL;
+                        }
+                    }
+
+                    @Override
+                    public void execute(WorkflowDescriptorModel model) throws Exception {
+                        // FIXME: this assumes that folders are always embedded in other folders
+                        // and there is some logic here to look up the parent.  The real solution is
+                        // in the visual component to merge two workflows.
+                        Node node = model.getNode();
+                        WorkflowManager manager = UserSession.get().getWorkflowManager();
+                        FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
+                        workflow.delete(node.getName() + (node.getIndex() > 1 ? "[" + node.getIndex() + "]" : ""));
+                    }
+                });
+            }
+
+            final Set<String> translated = new TreeSet<String>();
+            if (getPluginConfig().containsKey("workflow.translated")) {
+                Collections.addAll(translated, getPluginConfig().getStringArray("workflow.translated"));
+            }
+
+            if (isActionAvailable("add", hints) && hints.containsKey("prototypes")) {
                 final Map<String, Set<String>> prototypes = (Map<String, Set<String>>) hints.get("prototypes");
                 for (final String category : prototypes.keySet()) {
                     IModel<String> categoryLabel = new StringResourceModel("add-category", this, null,
@@ -276,11 +276,11 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                         @Override
                         protected Dialog createRequestDialog() {
                             return newAddDocumentDialog(
-                                addDocumentModel,
-                                category,
-                                prototypes.get(category),
-                                translated.contains(category),
-                                this
+                                    addDocumentModel,
+                                    category,
+                                    prototypes.get(category),
+                                    translated.contains(category),
+                                    this
                             );
                         }
 
@@ -326,7 +326,6 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                     });
                 }
             }
-
             AbstractView add;
             replace(add = new AbstractView<StdWorkflow>("new", createListDataProvider(list)) {
 
@@ -339,6 +338,10 @@ public class FolderWorkflowPlugin extends RenderPlugin {
         } catch (RepositoryException | RemoteException | WorkflowException ex) {
             log.error(ex.getClass().getName() + ": " + ex.getMessage());
         }
+    }
+
+    private boolean isActionAvailable(final String action, final Map<String, Serializable> hints) {
+        return hints.containsKey(action) && hints.get(action) instanceof Boolean && (Boolean) hints.get(action);
     }
 
     @Override
