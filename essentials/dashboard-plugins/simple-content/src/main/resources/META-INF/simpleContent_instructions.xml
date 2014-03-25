@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
-  <!--
-    TODO: add instructions sets here
-  -->
   <instructionSet>
-    <!--
-        <cnd documentType=" simpleContentDocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated,hippostd:taggable" />
-    -->
+    <cnd documentType="contentdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated,hippostd:taggable"/>
+    <xml action="copy" source="xml/namespaces/contentdocument.xml" target="/hippo:namespaces/{{namespace}}"/>
+    <file action="copy" source="java/ContentDocument.txt" target="{{beansFolder}}/ContentDocument.java"/>
+  </instructionSet>
+
+  <!-- HST TEMPLATES -->
+  <instructionSet group="jsp">
+    <xml action="copy" source="hst/template-content-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <file action="copy" source="jsp/essentials-simplecontent.ftl" target="{{freemarkerRoot}}/essentials/essentials-simplecontent.jsp"/>
+  </instructionSet>
+  <instructionSet group="freemarker">
+    <xml action="copy" source="hst/template-content-ftl.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <file action="copy" source="freemarker/essentials-simplecontent.ftl" target="{{freemarkerRoot}}/essentials/essentials-simplecontent.ftl"/>
   </instructionSet>
 </instructions>

@@ -1,0 +1,31 @@
+package {{beansPackage}};
+
+import java.util.Calendar;
+
+import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.standard.HippoHtml;
+import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
+
+@HippoEssentialsGenerated(internalName = "{{namespace}}:contentdocument")
+@Node(jcrType = "{{namespace}}:contentdocument")
+public class ContentDocument extends BaseDocument {
+    @HippoEssentialsGenerated(internalName = "{{namespace}}:introduction")
+    public String getIntroduction() {
+        return getProperty("{{namespace}}:introduction");
+    }
+
+    @HippoEssentialsGenerated(internalName = "{{namespace}}:title")
+    public String getTitle() {
+        return getProperty("{{namespace}}:title");
+    }
+
+    @HippoEssentialsGenerated(internalName = "{{namespace}}:content")
+    public HippoHtml getContent() {
+        return getHippoHtml("{{namespace}}:content");
+    }
+
+    @HippoEssentialsGenerated(internalName = "{{namespace}}:mypublicationdate")
+    public Calendar getPublicationDate() {
+        return getProperty("{{namespace}}:mypublicationdate");
+    }
+}
