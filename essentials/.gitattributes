@@ -522,9 +522,9 @@ dashboard-plugins/essentials-powerpacks/pom.xml -text
 dashboard-plugins/freemarker-synchronizer/pom.xml -text
 dashboard-plugins/freemarker-synchronizer/src/main/java/org/onehippo/cms7/essentials/tools/rest/FSUtils.java -text
 dashboard-plugins/freemarker-synchronizer/src/main/java/org/onehippo/cms7/essentials/tools/rest/FreemarkerSyncResource.java -text
-dashboard-plugins/freemarker-synchronizer/src/main/resources/META_INF/resources/tools/freemarkersync/freemarkersync.html -text
-dashboard-plugins/freemarker-synchronizer/src/main/resources/META_INF/resources/tools/freemarkersync/freemarkersync.js -text
-dashboard-plugins/freemarker-synchronizer/src/main/resources/META_INF/web-fragment.xml -text
+dashboard-plugins/freemarker-synchronizer/src/main/resources/META-INF/resources/tools/freemarkersync/freemarkersync.html -text
+dashboard-plugins/freemarker-synchronizer/src/main/resources/META-INF/resources/tools/freemarkersync/freemarkersync.js -text
+dashboard-plugins/freemarker-synchronizer/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/freemarker-synchronizer/src/test/java/org/onehippo/cms7/essentials/tools/rest/FSUtilsTest.java -text
 dashboard-plugins/freemarker-synchronizer/src/test/resources/log4j.xml -text
 dashboard-plugins/pom.xml -text

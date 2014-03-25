@@ -36,12 +36,12 @@
         <sv:value>true</sv:value>
       </sv:property>
       <sv:property sv:multiple="true" sv:name="hipposysedit:supertype" sv:type="String">
-        <sv:value>appstore:basedocument</sv:value>
+        <sv:value>{{namespace}}:basedocument</sv:value>
         <sv:value>hippostd:relaxed</sv:value>
         <sv:value>hippotranslation:translated</sv:value>
       </sv:property>
       <sv:property sv:name="hipposysedit:uri" sv:type="String">
-        <sv:value>http://www.onehippo.org/appstore/nt/1.0</sv:value>
+        <sv:value>http://www.onehippo.org/{{namespace}}/nt/1.0</sv:value>
       </sv:property>
       <sv:node sv:name="text">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -57,7 +57,7 @@
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:path" sv:type="String">
-          <sv:value>appstore:introduction</sv:value>
+          <sv:value>{{namespace}}:introduction</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
           <sv:value>false</sv:value>
@@ -80,7 +80,7 @@
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:path" sv:type="String">
-          <sv:value>appstore:mypublicationdate</sv:value>
+          <sv:value>{{namespace}}:mypublicationdate</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
           <sv:value>false</sv:value>
@@ -103,7 +103,7 @@
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:path" sv:type="String">
-          <sv:value>appstore:title</sv:value>
+          <sv:value>{{namespace}}:title</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
           <sv:value>false</sv:value>
@@ -126,7 +126,7 @@
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:path" sv:type="String">
-          <sv:value>appstore:content</sv:value>
+          <sv:value>{{namespace}}:content</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
           <sv:value>false</sv:value>
@@ -143,7 +143,7 @@
     </sv:property>
     <sv:node sv:name="hipposysedit:prototype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>appstore:contentdocument</sv:value>
+        <sv:value>{{namespace}}:contentdocument</sv:value>
       </sv:property>
       <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
         <sv:value>hippo:harddocument</sv:value>
@@ -151,10 +151,10 @@
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>627ae5b1-16a1-4680-b146-91f4dc87f218</sv:value>
       </sv:property>
-      <sv:property sv:name="appstore:introduction" sv:type="String">
+      <sv:property sv:name="{{namespace}}:introduction" sv:type="String">
         <sv:value/>
       </sv:property>
-      <sv:property sv:name="appstore:title" sv:type="String">
+      <sv:property sv:name="{{namespace}}:title" sv:type="String">
         <sv:value/>
       </sv:property>
       <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
@@ -190,7 +190,7 @@
           <sv:value>hippotranslation:translations</sv:value>
         </sv:property>
       </sv:node>
-      <sv:node sv:name="appstore:content">
+      <sv:node sv:name="{{namespace}}:content">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippostd:html</sv:value>
         </sv:property>
@@ -222,7 +222,7 @@
         <sv:value>validator.id</sv:value>
       </sv:property>
       <sv:property sv:name="type" sv:type="String">
-        <sv:value>appstore:contentdocument</sv:value>
+        <sv:value>{{namespace}}:contentdocument</sv:value>
       </sv:property>
       <sv:node sv:name="root">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
