@@ -64,16 +64,14 @@
                     $scope.host = response;
                 }, setErrorFeedback);
 
+                // fetch prototypes
                 PrototypeService.getPrototypes()
-
-                    //prototypes
                     .then(function (response) {
                         $scope.prototypes = response;
+                    }, setErrorFeedback);
 
-                        return PageService.getCurrentPage();
-                    }, setErrorFeedback)
-
-                    // page
+                // fetch page
+                PageService.getCurrentPage()
                     .then(function (currentPage) {
                         $scope.page.id = currentPage.id;
                         $scope.page.title = currentPage.pageTitle;
