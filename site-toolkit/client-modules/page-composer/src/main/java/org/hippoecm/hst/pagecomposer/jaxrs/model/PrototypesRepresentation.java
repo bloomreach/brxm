@@ -22,7 +22,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.slf4j.Logger;

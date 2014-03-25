@@ -19,7 +19,6 @@ import javax.jcr.Node;
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.PrototypeRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.PrototypesRepresentation;
@@ -27,7 +26,6 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 

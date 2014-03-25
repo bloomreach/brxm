@@ -17,8 +17,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import java.util.List;
 
-import org.apache.commons.lang.ArrayUtils;
-
 /**
  * Represents a list of record IDs created by ExtJS.
  */

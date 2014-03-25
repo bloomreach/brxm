@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
-import com.google.gson.JsonElement;
-
 public class ContainerItemComponentPropertyRepresentation {
     private String name;
     private String value;

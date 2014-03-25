@@ -19,10 +19,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.jcr.Credentials;
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.LoginException;
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
