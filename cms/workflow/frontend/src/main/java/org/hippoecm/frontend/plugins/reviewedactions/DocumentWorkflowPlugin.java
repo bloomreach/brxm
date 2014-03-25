@@ -51,6 +51,7 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+import org.onehippo.repository.util.JcrConstants;
 
 public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
@@ -181,6 +182,11 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                     public void invokeWorkflow() throws Exception {
                         copyAction.invokeWorkflow();
                     }
+
+                    @Override
+                    protected boolean isOkEnabled(final NodeModelWrapper destination) {
+                        return isWritePermissionGranted(destination.getChainedModel());
+                    }
                 };
             }
 
@@ -245,6 +251,11 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                     @Override
                     public void invokeWorkflow() throws Exception {
                         moveAction.invokeWorkflow();
+                    }
+
+                    @Override
+                    protected boolean isOkEnabled(final NodeModelWrapper destination) {
+                        return isWritePermissionGranted(destination.getChainedModel());
                     }
                 };
             }
@@ -396,4 +407,14 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
         hideOrDisable(info, "copy", copyAction);
         hideOrDisable(info, "listVersions", historyAction);
     }
+
+    private boolean isWritePermissionGranted(IModel<Node> model) {
+        Node node = model.getObject();
+        try {
+            return UserSession.get().getJcrSession().hasPermission(node.getPath(), JcrConstants.JCR_WRITE);
+        } catch (RepositoryException e) {
+            return false;
+        }
+    }
+
 }

@@ -103,7 +103,7 @@ public abstract class DestinationDialog extends AbstractDialog implements IWorkf
                             if (model != null && model instanceof JcrNodeModel && ((JcrNodeModel) model).getNode() != null) {
                                 destination.setChainedModel(model);
                             }
-                            DestinationDialog.this.setOkEnabled(true);
+                            DestinationDialog.this.setOkEnabled(isOkEnabled(destination));
                         }
                     }, IObserver.class.getName());
                 }
@@ -168,5 +168,9 @@ public abstract class DestinationDialog extends AbstractDialog implements IWorkf
     @Override
     public IValueMap getProperties() {
         return DialogConstants.LARGE;
+    }
+
+    protected boolean isOkEnabled(final NodeModelWrapper destination) {
+        return true;
     }
 }
