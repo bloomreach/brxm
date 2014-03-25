@@ -1099,7 +1099,7 @@
             return new Ext.Toolbar.Button({
                 id: 'template-composer-toolbar-pages-button',
                 text: this.initialConfig.resources['pages-button'],
-                iconCls: 'edit-channel',
+                iconCls: 'btn-pages',
                 width: 80,
                 listeners: {
                     click: {

@@ -185,6 +185,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/Templat
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/TemplateComposerHeaderItem.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-discard.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-edit.png -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-pages.png -text svneol=unset#image/png
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-publish.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-remove-lock.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-save-close.png -text

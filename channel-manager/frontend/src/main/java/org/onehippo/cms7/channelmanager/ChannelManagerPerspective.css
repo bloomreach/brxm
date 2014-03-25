@@ -97,6 +97,10 @@
   background-image: url("templatecomposer/button-edit.png");
 }
 
+.channel-manager .x-btn-small .btn-pages {
+    background-image: url("templatecomposer/button-pages.png");
+}
+
 .channel-manager .x-btn-small .publish-channel {
   background-image: url("templatecomposer/button-publish.png");
 }
