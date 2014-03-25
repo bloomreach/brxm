@@ -76,6 +76,16 @@
           <include>**/*.css</include>
           <include>**/*.MF</include>
           <include>**/*.properties</include>
+          <include>**/*.txt</include>
+          <include>**/*.eot</include>
+          <include>**/*.svg</include>
+          <include>**/*.ttf</include>
+          <include>**/*.woff</include>
+          <include>**/*.jsp</include>
+          <include>**/*.MF</include>
+          <include>**/*.java</include>
+          <include>**/*.png</include>
+          <include>**/*.properties</include>
         </includes>
       </resource>
     </resources>

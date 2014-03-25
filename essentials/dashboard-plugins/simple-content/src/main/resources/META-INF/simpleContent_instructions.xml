@@ -10,7 +10,7 @@
   <!-- HST TEMPLATES -->
   <instructionSet group="jsp">
     <xml action="copy" source="hst/template-content-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <file action="copy" source="jsp/essentials-simplecontent.ftl" target="{{freemarkerRoot}}/essentials/essentials-simplecontent.jsp"/>
+    <file action="copy" source="jsp/essentials-simplecontent.jsp" target="{{jspRoot}}/essentials/essentials-simplecontent.jsp"/>
   </instructionSet>
   <instructionSet group="freemarker">
     <xml action="copy" source="hst/template-content-ftl.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>

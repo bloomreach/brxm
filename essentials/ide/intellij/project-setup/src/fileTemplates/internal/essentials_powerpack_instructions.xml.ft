@@ -6,7 +6,7 @@
   -->
   <instructionSet>
     <!--
-        <cnd documentType=" ${PLUGIN_NAME}Document" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated,hippostd:taggable" />
+        <cnd documentType="${PLUGIN_NAME}Document" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated,hippostd:taggable" />
     -->
   </instructionSet>
 </instructions>
