@@ -10,6 +10,7 @@
     "ASSIGN_NEW_TEMPLATE_REPOSITION_WARNING": "Components on the page might be repositioned if a new template is assigned.",
     "ASSIGN_NEW_TEMPLATE_REMOVED_WARNING": "The selected template does not have any containers. All container items on the current page will be deleted if this template is applied.",
     "SELECT_TEMPLATE": "Select a template",
+    "NO_TEMPLATE_FOUND_FOR": "No template found for",
 
     "SAVE": "Save",
     "CANCEL": "Cancel",

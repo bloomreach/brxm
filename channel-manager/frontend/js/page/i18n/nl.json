@@ -10,6 +10,7 @@
     "ASSIGN_NEW_TEMPLATE_REPOSITION_WARNING": "Componenten op de pagina kunnen van positie veranderen als een nieuwe template wordt gebruikt.",
     "ASSIGN_NEW_TEMPLATE_REMOVED_WARNING": "De geselecteerde template bevat geen containers. Alle onderdelen die op de huidige paigna in een container zitten, zullen worden verwijderd bij het gebruiken van deze template.",
     "SELECT_TEMPLATE": "Selecteer een template",
+    "NO_TEMPLATE_FOUND_FOR": "Geen template gevonden voor",
 
     "SAVE": "Sla op",
     "CANCEL": "Annuleer",

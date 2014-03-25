@@ -96,7 +96,8 @@
                                     data-ng-options="p.displayName for p in prototypes"
                                     data-options="prototypes"
                                     data-ng-model="page.prototype"
-                                    data-placeholder="{{ 'SELECT_TEMPLATE' | translate }}"></select>
+                                    data-placeholder="{{ 'SELECT_TEMPLATE' | translate }}"
+                                    data-no-results-text="{{ 'NO_TEMPLATE_FOUND_FOR' | translate }}"></select>
 
                             <div class="alert alert-warning" data-ng-show="page.hasContainerItem && page.prototype.hasContainerInPageDefinition">
                                 {{ 'ASSIGN_NEW_TEMPLATE_REPOSITION_WARNING' | translate }}
