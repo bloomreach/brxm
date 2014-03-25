@@ -1,5 +1,6 @@
 package org.onehippo.cms7.essentials.dashboard.utils;
 
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,6 +23,17 @@ import static org.junit.Assert.assertTrue;
 public class XmlUtilsTest extends BaseResourceTest {
 
     private static Logger log = LoggerFactory.getLogger(XmlUtilsTest.class);
+
+    @Test
+    public void testParsingProperties() throws Exception {
+
+        final InputStream resourceAsStream = getClass().getResourceAsStream("/test_document_type.xml");
+        final XmlNode documentNode = XmlUtils.parseXml(resourceAsStream);
+        assertNotNull(documentNode);
+        final Collection<XmlNode> templates = documentNode.getTemplates();
+        assertEquals(4, templates.size());
+
+    }
 
     @Test
     public void testFindingDocuments() throws Exception {

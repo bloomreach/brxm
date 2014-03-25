@@ -38,6 +38,7 @@ import com.google.common.collect.ImmutableSet;
 public final class BeanWriterUtils {
     public static final String CONTEXT_DATA_KEY = BeanWriterUtils.class.getName();
     public static final String MSG_ADDED_METHOD = "@@@ added [{}] method";
+    public static final String HIPPOSYSEDIT_PATH = "hipposysedit:path";
     private static Logger log = LoggerFactory.getLogger(BeanWriterUtils.class);
 
     public static final Set<String> EXPOSABLE_BUILT_IN_PROPERTIES = new ImmutableSet.Builder<String>()
@@ -87,10 +88,10 @@ public final class BeanWriterUtils {
                 final String name = property.getName();
                 if (!existing.contains(name)) {
                     // add new method:
-                    log.debug("processing missing property: {}", property);
+                    log.debug("processing missing property, BEAN: {}, PROPERTY: {}", bean.getName(), property.getName());
                     final String type = property.getType();
                     if (type == null) {
-                        log.error("Missing type for property, cannot create method {}", property);
+                        log.error("Missing type for property, cannot create method {}", property.getName());
                         continue;
                     }
                     final boolean multiple = property.isMultiple();
@@ -103,15 +104,21 @@ public final class BeanWriterUtils {
                         case "Docbase":
                         case "Text":
                             methodName = GlobalUtils.createMethodName(name);
-
                             JavaSourceUtils.addBeanMethodString(beanPath, methodName, name, multiple);
+                            existing.add(name);
+                            context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
+                            log.debug(MSG_ADDED_METHOD, methodName);
+                            break;
+                        case "Date":
+                            methodName = GlobalUtils.createMethodName(name);
+                            JavaSourceUtils.addBeanMethodBoolean(beanPath, methodName, name, multiple);
                             existing.add(name);
                             context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                             log.debug(MSG_ADDED_METHOD, methodName);
                             break;
                         case "Boolean":
                             methodName = GlobalUtils.createMethodName(name);
-                            JavaSourceUtils.addBeanMethodBoolean(beanPath, methodName, name, multiple);
+                            JavaSourceUtils.addBeanMethodCalendar(beanPath, methodName, name, multiple);
                             existing.add(name);
                             context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                             log.debug(MSG_ADDED_METHOD, methodName);
@@ -120,7 +127,6 @@ public final class BeanWriterUtils {
                             methodName = GlobalUtils.createMethodName(name);
                             JavaSourceUtils.addBeanMethodLong(beanPath, methodName, name, multiple);
                             existing.add(name);
-                            context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                             context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                             log.debug(MSG_ADDED_METHOD, methodName);
                             break;
@@ -245,8 +251,7 @@ public final class BeanWriterUtils {
         final String projectNamespacePrefix = context.getProjectNamespacePrefix();
         final List<MemoryBean> beans = new ArrayList<>();
         for (XmlNode templateDocument : templateDocuments) {
-            log.debug("templateDocument {}", templateDocument.getName());
-            MemoryBean bean = processTemplate(templateDocument, projectNamespacePrefix);
+            MemoryBean bean = processXmlTemplate(templateDocument, projectNamespacePrefix);
             beans.add(bean);
         }
         // we need to annotate existing beans before we start processing
@@ -409,6 +414,12 @@ public final class BeanWriterUtils {
         if (Strings.isNullOrEmpty(name)) {
             return;
         }
+        // check if we have hipposysedit:path
+        final XmlProperty pathProp = nodeOrProperty.getPropertyForName(HIPPOSYSEDIT_PATH);
+        if (pathProp != null) {
+            addBeanProperty(bean, templateDocument, nodeOrProperty, name);
+        }
+
 
         // add all project & built in types:
         if (canAddProperty(projectNamespacePrefix, name)) {
@@ -440,7 +451,7 @@ public final class BeanWriterUtils {
         for (XmlNode node : subnodesByName) {
             final Collection<XmlProperty> properties = node.getProperties();
             for (XmlProperty xmlProperty : properties) {
-                if (xmlProperty.getName().equals("hipposysedit:path") && name.equals(xmlProperty.getSingleValue())) {
+                if (xmlProperty.getName().equals(HIPPOSYSEDIT_PATH) && name.equals(xmlProperty.getSingleValue())) {
                     typeProperty = node.getXmlPropertyByName("hipposysedit:type");
                     break;
                 }
@@ -450,18 +461,27 @@ public final class BeanWriterUtils {
         if (typeProperty != null) {
             property.setType(typeProperty.getSingleValue());
         } else {
-            log.debug("Missing subnodesByName {}", subnodesByName);
+            log.debug("Missing typeProperty for bean: {}", name);
         }
+        // check if property is already there:
+        final List<MemoryProperty> properties = bean.getProperties();
+        for (MemoryProperty memoryProperty : properties) {
+            if (memoryProperty.getName().equals(property.getName())) {
+                log.debug("Property already exists: {}", memoryProperty.getName());
+                return;
+            }
+        }
+
 
         bean.addProperty(property);
     }
 
-    private static MemoryBean processTemplate(final XmlNode templateDocument, final String projectNamespacePrefix) {
+    public static MemoryBean processXmlTemplate(final XmlNode templateDocument, final String projectNamespacePrefix) {
         final String name = templateDocument.getName();
         final MemoryBean bean = new MemoryBean(name, projectNamespacePrefix);
         final Collection<String> values = templateDocument.getSupertypeProperty().getValues();
         bean.setSuperTypeValues(new HashSet<>(values));
-        final Collection<NodeOrProperty> xmlNodeOrXmlProperty = templateDocument.getXmlNodeOrXmlProperty();
+        final Collection<XmlNode> xmlNodeOrXmlProperty = templateDocument.getNodeTypes();
         for (NodeOrProperty nodeOrProperty : xmlNodeOrXmlProperty) {
             processKid(bean, templateDocument, nodeOrProperty, projectNamespacePrefix);
         }

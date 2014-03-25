@@ -775,6 +775,7 @@ plugin-api/implementation/src/test/resources/project/site/src/main/java/org/oneh
 plugin-api/implementation/src/test/resources/project/site/src/main/java/org/onehippo/cms7/essentials/dashboard/test/beans/compounds/DependencyCompound.txt -text
 plugin-api/implementation/src/test/resources/repository.xml -text
 plugin-api/implementation/src/test/resources/test_cnd.cnd -text
+plugin-api/implementation/src/test/resources/test_document_type.xml -text
 plugin-api/implementation/src/test/resources/test_editor.cnd -text
 plugin-api/implementation/src/test/resources/test_frontend.cnd -text
 plugin-api/implementation/src/test/resources/test_hippo.cnd -text

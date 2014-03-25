@@ -327,8 +327,12 @@ public final class JavaSourceUtils {
      * @param methodName   name of the method
      * @param propertyName name of the property
      */
-    public static void addBeanMethodCalendar(final Path path, final String methodName, final String propertyName) {
-        addBeanMethodProperty(path, methodName, propertyName, Calendar.class.getSimpleName());
+    public static void addBeanMethodCalendar(final Path path, final String methodName, final String propertyName, final boolean multiple) {
+        final String returnType = multiple ? "List<Calendar>" : Calendar.class.getSimpleName();
+        if (multiple) {
+            addImport(path, "java.util.List");
+        }
+        addBeanMethodProperty(path, methodName, propertyName, returnType);
         final String importName = Calendar.class.getPackage().getName();
         addImport(path, importName);
 

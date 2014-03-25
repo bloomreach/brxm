@@ -95,7 +95,7 @@ public class NoAnnotationMethodVisitor extends ASTVisitor {
                         }
                     }
                 } else {
-                    log.warn("#NOT IMPLEMENTED PARSING OF: {}", e.getClass());
+                    log.debug("#NOT IMPLEMENTED PARSING OF: {}", e.getClass());
                 }
             }
         }

@@ -33,6 +33,7 @@ public class JavaSourceUtilsTest extends BaseResourceTest {
     private Path path;
     private Path componentFile;
 
+    @Override
     @Before
     public void setUp() throws Exception {
 
@@ -100,7 +101,7 @@ public class JavaSourceUtilsTest extends BaseResourceTest {
         assertEquals(0, collection.getMethodsNames().size());
         // add method:
         JavaSourceUtils.addBeanMethodString(path, "testMethod", "my:property", false);
-        JavaSourceUtils.addBeanMethodCalendar(path, "calendarTestMethod", "my:property");
+        JavaSourceUtils.addBeanMethodCalendar(path, "calendarTestMethod", "my:property", false);
         JavaSourceUtils.addBeanMethodHippoHtml(path, "htmlTestMethod", "my:property", false);
         // reload:
         collection = JavaSourceUtils.getMethodCollection(path);

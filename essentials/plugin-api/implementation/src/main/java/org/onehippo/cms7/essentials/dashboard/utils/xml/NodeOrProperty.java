@@ -25,4 +25,6 @@ public interface NodeOrProperty extends Serializable {
 
     @XmlTransient
     Boolean getMultiple();
+
+    XmlProperty getPropertyForName(String propertyName);
 }

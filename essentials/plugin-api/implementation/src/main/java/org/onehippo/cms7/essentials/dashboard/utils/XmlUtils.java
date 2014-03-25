@@ -91,7 +91,7 @@ public final class XmlUtils {
             return (XmlNode) unmarshaller.unmarshal(path.toFile());
         } catch (JAXBException e) {
             if (log.isDebugEnabled()) {
-                log.error("Error parsing XmlNode document", e.getMessage());
+                log.error("Error parsing XmlNode document: " + path, e.getMessage());
             }
         }
 

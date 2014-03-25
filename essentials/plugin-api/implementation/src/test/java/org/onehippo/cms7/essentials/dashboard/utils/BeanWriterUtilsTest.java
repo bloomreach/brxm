@@ -1,5 +1,6 @@
 package org.onehippo.cms7.essentials.dashboard.utils;
 
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,10 +14,12 @@ import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.HippoEssentialsGe
 import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.MemoryBean;
 import org.onehippo.cms7.essentials.dashboard.utils.code.ExistingMethodsVisitor;
 import org.onehippo.cms7.essentials.dashboard.utils.code.NoAnnotationMethodVisitor;
+import org.onehippo.cms7.essentials.dashboard.utils.xml.XmlNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -25,25 +28,27 @@ import static org.junit.Assert.assertTrue;
 public class BeanWriterUtilsTest extends BaseResourceTest {
 
 
+    public static final String MY_TEST_NS = "mytestnamespace";
     private static Logger log = LoggerFactory.getLogger(BeanWriterUtilsTest.class);
 
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        buildExisting();
+       // buildExisting();
     }
 
-/*
+
     @Test
-    public void testAnnotationDuplicates() throws Exception {
-        final InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream("_test_annotation.txt");
-        final String myBean = GlobalUtils.readStreamAsText(resourceAsStream);
-        log.info("myBean {}", myBean);
-        BeanWriterUtils.annotateExistingBeans();
-
-
-    }*/
+    public void testGeneratingBean() throws Exception {
+        final InputStream resourceAsStream = getClass().getResourceAsStream("/test_document_type.xml");
+        final XmlNode documentNode = XmlUtils.parseXml(resourceAsStream);
+        assertNotNull(documentNode);
+        final MemoryBean memoryBean = BeanWriterUtils.processXmlTemplate(documentNode, MY_TEST_NS);
+        final int size = memoryBean.getProperties().size();
+        log.info("memoryBean {}", size);
+        assertEquals(4, size);
+    }
 
     @Test
     public void testMethodCreation() throws Exception {
