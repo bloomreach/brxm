@@ -35,7 +35,7 @@ public class BeanWriterUtilsTest extends BaseResourceTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-       // buildExisting();
+        buildExisting();
     }
 
 

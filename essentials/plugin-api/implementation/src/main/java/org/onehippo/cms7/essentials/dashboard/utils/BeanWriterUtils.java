@@ -39,6 +39,7 @@ public final class BeanWriterUtils {
     public static final String CONTEXT_DATA_KEY = BeanWriterUtils.class.getName();
     public static final String MSG_ADDED_METHOD = "@@@ added [{}] method";
     public static final String HIPPOSYSEDIT_PATH = "hipposysedit:path";
+    public static final String HIPPOSYSEDIT_TYPE = "hipposysedit:type";
     private static Logger log = LoggerFactory.getLogger(BeanWriterUtils.class);
 
     public static final Set<String> EXPOSABLE_BUILT_IN_PROPERTIES = new ImmutableSet.Builder<String>()
@@ -111,7 +112,7 @@ public final class BeanWriterUtils {
                             break;
                         case "Date":
                             methodName = GlobalUtils.createMethodName(name);
-                            JavaSourceUtils.addBeanMethodBoolean(beanPath, methodName, name, multiple);
+                            JavaSourceUtils.addBeanMethodCalendar(beanPath, methodName, name, multiple);
                             existing.add(name);
                             context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                             log.debug(MSG_ADDED_METHOD, methodName);
@@ -416,10 +417,17 @@ public final class BeanWriterUtils {
         }
         // check if we have hipposysedit:path
         final XmlProperty pathProp = nodeOrProperty.getPropertyForName(HIPPOSYSEDIT_PATH);
-        if (pathProp != null) {
-            addBeanProperty(bean, templateDocument, nodeOrProperty, name);
-        }
+        final XmlProperty typeProp = nodeOrProperty.getPropertyForName(HIPPOSYSEDIT_TYPE);
 
+        if (pathProp != null && typeProp != null) {
+            final String myType = typeProp.getSingleValue();
+            final String myName = pathProp.getSingleValue();
+            log.info("myName {}", myName);
+            log.info("myType {}", myType);
+            if (canAddProperty(projectNamespacePrefix, myName)) {
+                addBeanPropertyForType(bean, nodeOrProperty, myName, myType);
+            }
+        }
 
         // add all project & built in types:
         if (canAddProperty(projectNamespacePrefix, name)) {
@@ -437,7 +445,18 @@ public final class BeanWriterUtils {
     }
 
     private static boolean canAddProperty(final String projectNamespacePrefix, final String name) {
+        if (Strings.isNullOrEmpty(name)) {
+            return false;
+        }
         return name.startsWith(projectNamespacePrefix) || EXPOSABLE_BUILT_IN_PROPERTIES.contains(name);
+    }
+
+    private static void addBeanPropertyForType(final MemoryBean bean, final NodeOrProperty nodeOrProperty, final String name, final String type) {
+        final MemoryProperty property = new MemoryProperty(bean);
+        property.setName(name);
+        property.setType(type);
+        property.setMultiple(nodeOrProperty.getMultiple());
+        bean.addProperty(property);
     }
 
     private static void addBeanProperty(final MemoryBean bean, final XmlNode templateDocument, final NodeOrProperty nodeOrProperty, final String name) {
@@ -451,8 +470,8 @@ public final class BeanWriterUtils {
         for (XmlNode node : subnodesByName) {
             final Collection<XmlProperty> properties = node.getProperties();
             for (XmlProperty xmlProperty : properties) {
-                if (xmlProperty.getName().equals(HIPPOSYSEDIT_PATH) && name.equals(xmlProperty.getSingleValue())) {
-                    typeProperty = node.getXmlPropertyByName("hipposysedit:type");
+                if (xmlProperty.getName().equals(HIPPOSYSEDIT_TYPE) && name.equals(xmlProperty.getSingleValue())) {
+                    typeProperty = node.getXmlPropertyByName(HIPPOSYSEDIT_TYPE);
                     break;
                 }
             }

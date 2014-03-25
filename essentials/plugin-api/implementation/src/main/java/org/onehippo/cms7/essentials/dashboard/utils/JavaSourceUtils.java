@@ -332,6 +332,7 @@ public final class JavaSourceUtils {
         if (multiple) {
             addImport(path, "java.util.List");
         }
+        addImport(path, "java.util.Calendar");
         addBeanMethodProperty(path, methodName, propertyName, returnType);
         final String importName = Calendar.class.getPackage().getName();
         addImport(path, importName);
