@@ -7,7 +7,7 @@
     "angular-translate": "1.1.1",
     "angular-translate-loader-static-files": "0.1.6",
     "angular-ui-router": "0.2.7",
-    "hippo-theme": "https://maven.onehippo.com/service/local/artifact/maven/redirect?r=snapshots&g=org.onehippo.cms7&a=hippo-theme&c=distribution&e=zip&v=1.01.00-SNAPSHOT",
+    "hippo-theme": "./target/dependency/hippo-theme.zip",
     "respond": "1.4.2",
     "Angular-NestedSortable": "https://github.com/JimLiu/Angular-NestedSortable.git#1706ed72b28c3e913253cb7bd1df196fa463b04c"
   },

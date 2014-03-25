@@ -273,6 +273,30 @@
         </configuration>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>${maven.plugin.dependency.version}</version>
+        <executions>
+          <execution>
+            <id>fetch-bower-dependencies</id>
+            <phase>initialize</phase>
+            <goals><goal>copy</goal></goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.onehippo.cms7</groupId>
+                  <artifactId>hippo-theme</artifactId>
+                  <version>${hippo.theme.version}</version>
+                  <type>zip</type>
+                  <classifier>distribution</classifier>
+                  <destFileName>hippo-theme.zip</destFileName>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <version>${maven.plugin.exec.version}</version>
