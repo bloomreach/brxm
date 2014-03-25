@@ -9,7 +9,7 @@ import org.hippoecm.hst.core.parameters.Parameter;
 public interface EssentialsRepositoryMenuComponentInfo {
 
     @Parameter(name = "root", required = false, defaultValue = "", displayName = "Root Folder")
-    @JcrPath(isRelative = false, pickerSelectableNodeTypes = {"hippostd:folder"})
+    @JcrPath(isRelative = true, pickerSelectableNodeTypes = {"hippostd:folder"})
     String getRootFolder();
 
     @Parameter(name = "folderLinks", required = false, defaultValue = "false", displayName = "Folders are also links")

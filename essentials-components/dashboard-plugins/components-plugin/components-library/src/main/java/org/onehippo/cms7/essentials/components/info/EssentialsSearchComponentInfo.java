@@ -26,9 +26,11 @@ public interface EssentialsSearchComponentInfo extends EssentialsPageable {
 
     @Parameter(name = "searchScope", required = false, displayName = "Search scope (folder)")
     @JcrPath(
+            isRelative = true,
             pickerConfiguration = "cms-pickers/documents",
             pickerSelectableNodeTypes = {"hippostd:folder"},
             pickerInitialPath = "/content/documents"
+
     )
     String getScope();
 
