@@ -1,7 +1,7 @@
 <#include "/WEB-INF/ftl/essentials/common/imports.ftl">
-<#-- @ftlvariable name="banner" type="{{beansPackage}}.Banner" -->
+<#-- @ftlvariable name="document" type="{{beansPackage}}.Banner" -->
 <#if banner??>
 <div class="row">
-    <a href="<@hst.link hippobean=banner.link />"><img src="<@hst.link hippobean=banner.image />" alt="${banner.title}"/></a>
+    <a href="<@hst.link hippobean=document.link />"><img src="<@hst.link hippobean=document.image />" alt="${document.title}"/></a>
 </div>
 </#if>

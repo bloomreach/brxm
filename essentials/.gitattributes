@@ -111,8 +111,11 @@ dashboard-plugins/banner-plugin/src/main/resources/bootstrap/fonts/glyphicons-ha
 dashboard-plugins/banner-plugin/src/main/resources/bootstrap/fonts/glyphicons-halflings-regular.woff -text
 dashboard-plugins/banner-plugin/src/main/resources/ftl/essentials-banner.ftl -text
 dashboard-plugins/banner-plugin/src/main/resources/ftl/essentials-carousel.ftl -text
-dashboard-plugins/banner-plugin/src/main/resources/hst/banner-template.xml -text
+dashboard-plugins/banner-plugin/src/main/resources/hst/banner-template-ftl.xml -text
+dashboard-plugins/banner-plugin/src/main/resources/hst/banner-template-jsp.xml -text
 dashboard-plugins/banner-plugin/src/main/resources/hst/carousel-catalog.xml -text
+dashboard-plugins/banner-plugin/src/main/resources/hst/carousel-template-ftl.xml -text
+dashboard-plugins/banner-plugin/src/main/resources/hst/carousel-template-jsp.xml -text
 dashboard-plugins/banner-plugin/src/main/resources/hst/carousel-template.xml -text
 dashboard-plugins/banner-plugin/src/main/resources/java/Banner.txt -text
 dashboard-plugins/banner-plugin/src/main/resources/jsp/essentials-banner.jsp -text
