@@ -26,13 +26,21 @@
 
   <!-- HST TEMPLATES -->
   <instructionSet group="jsp">
+    <file action="copy" source="jsp/pagination.jsp" target="{{jspRoot}}/essentials/common/pagination.jsp"/>
+    <file action="copy" source="jsp/imports.jsp" target="{{jspRoot}}/essentials/common/imports.jsp"/>
+
     <xml action="copy" source="hst/template-content-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <file action="copy" source="jsp/essentials-simplecontent.jsp" target="{{jspRoot}}/essentials/essentials-simplecontent.jsp"/>
 
     <xml action="copy" source="hst/template-content-list-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <file action="copy" source="jsp/essentials-simplecontent-list.jsp" target="{{jspRoot}}/essentials/essentials-simplecontent-list.jsp"/>
   </instructionSet>
+
+
   <instructionSet group="freemarker">
+    <file action="copy" source="freemarker/pagination.ftl" target="{{freemarkerRoot}}/essentials/common/pagination.ftl"/>
+    <file action="copy" source="freemarker/imports.ftl" target="{{freemarkerRoot}}/essentials/common/imports.ftl"/>
+
     <xml action="copy" source="hst/template-content-ftl.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <file action="copy" source="freemarker/essentials-simplecontent.ftl" target="{{freemarkerRoot}}/essentials/essentials-simplecontent.ftl"/>
 

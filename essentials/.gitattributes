@@ -540,6 +540,8 @@ dashboard-plugins/simple-content/src/main/resources/config/new-content-folder.xm
 dashboard-plugins/simple-content/src/main/resources/data/sample-content_entry.xml -text
 dashboard-plugins/simple-content/src/main/resources/freemarker/essentials-simplecontent-list.ftl -text
 dashboard-plugins/simple-content/src/main/resources/freemarker/essentials-simplecontent.ftl -text
+dashboard-plugins/simple-content/src/main/resources/freemarker/imports.ftl -text
+dashboard-plugins/simple-content/src/main/resources/freemarker/pagination.ftl -text
 dashboard-plugins/simple-content/src/main/resources/hst/content-list-page.xml -text
 dashboard-plugins/simple-content/src/main/resources/hst/content-menu-item.xml -text
 dashboard-plugins/simple-content/src/main/resources/hst/content-menu-main.xml -text
@@ -553,6 +555,8 @@ dashboard-plugins/simple-content/src/main/resources/hst/template-content-list-js
 dashboard-plugins/simple-content/src/main/resources/java/ContentDocument.txt -text
 dashboard-plugins/simple-content/src/main/resources/jsp/essentials-simplecontent-list.jsp -text
 dashboard-plugins/simple-content/src/main/resources/jsp/essentials-simplecontent.jsp -text
+dashboard-plugins/simple-content/src/main/resources/jsp/imports.jsp -text
+dashboard-plugins/simple-content/src/main/resources/jsp/pagination.jsp -text
 dashboard-plugins/simple-content/src/main/resources/namespaces/contentdocument.xml -text
 ide/intellij/project-setup/META-INF/plugin.xml -text
 ide/intellij/project-setup/README.txt -text
