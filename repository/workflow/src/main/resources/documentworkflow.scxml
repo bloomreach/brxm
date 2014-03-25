@@ -55,6 +55,7 @@
     def boolean isModified() { unpublished and (!live or unpublished.lastModified!=published.lastModified) }
     // true if there is an outstanding workflow request
     def boolean isRequestPending() { workflowData.requestPending }
+    def getContainingFolder() { workflowData.handle.parent }
   </script>
 
   <parallel id="handle">
@@ -373,7 +374,7 @@
       <state id="no-terminate">
         <onentry>
           <hippo:action action="requestDelete" enabledExpr="false"/>
-          <if cond="workflowContext.isGranted(deleteSource, 'hippo:editor')">
+          <if cond="workflowContext.isGranted(deleteSource, 'hippo:editor') and workflowContext.isGranted(containingFolder, 'jcr:write')">
             <hippo:action action="delete" enabledExpr="false"/>
             <hippo:action action="move" enabledExpr="false"/>
             <hippo:action action="rename" enabledExpr="false"/>
@@ -386,7 +387,7 @@
         <onentry>
           <if cond="!requestPending">
             <hippo:action action="requestDelete" enabledExpr="true"/>
-            <if cond="workflowContext.isGranted(deleteSource, 'hippo:editor')">
+            <if cond="workflowContext.isGranted(deleteSource, 'hippo:editor') and workflowContext.isGranted(containingFolder, 'jcr:write')">
               <hippo:action action="delete" enabledExpr="true"/>
               <hippo:action action="move" enabledExpr="true"/>
               <hippo:action action="rename" enabledExpr="true"/>

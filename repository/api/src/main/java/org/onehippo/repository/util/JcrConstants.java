@@ -55,4 +55,9 @@ public final class JcrConstants {
     public static final String JCR_FROZEN_NODE = "jcr:frozenNode";
     public static final String JCR_FROZEN_UUID = "jcr:frozenUuid";
 
+    // ------------------------------------------ permissions
+
+    public static final String JCR_READ = "jcr:read";
+    public static final String JCR_WRITE = "jcr:write";
+
 }

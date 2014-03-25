@@ -39,7 +39,7 @@ public class SCXMLWorkflowContext {
     private final WorkflowContext workflowContext;
     private final Map<String, Boolean> actions = new HashMap<>();
     private final Map<String, Serializable> feedback = new HashMap<>();
-    private final Map<String, Map<String, Boolean>> pathPrivilegesMap = new HashMap<>();
+    private final Map<String, Map<String, Boolean>> identifierPrivilegesMap = new HashMap<>();
     private Object result;
     private boolean initialized;
 
@@ -51,7 +51,7 @@ public class SCXMLWorkflowContext {
     /**
      * Checks if specific privileges (e.g. hippo:editor) are granted to the current workflow subject (e.g. handle) its session for a specific
      * {@link org.hippoecm.repository.api.Document}.
-     * <p> Implementation note: previously evaluated privileges are cached against the Document node its path
+     * <p> Implementation note: previously evaluated privileges are cached against the Document node's identifier
      * within the DocumentHandle instance </p>
      *
      * @param document the document to check permission for
@@ -59,24 +59,55 @@ public class SCXMLWorkflowContext {
      * @return true if the current subject session has been granted all of the specified privileges for the document node
      */
     public final boolean isGranted(Document document, String privileges) {
-        if (privileges == null || document == null || document.getIdentity() == null) {
+        if (document == null) {
             return false;
         }
 
-        Collection<String> privs = Arrays.asList(privileges.split(","));
+        return isGranted(document.getIdentity(), privileges);
+
+    }
+
+    /**
+     * Checks if specific privileges (e.g. hippo:editor) are granted to the current workflow subject (e.g. handle) its session for a specific
+     * {@link javax.jcr.Node}.
+     * <p> Implementation note: previously evaluated privileges are cached against the node's identifier
+     * within the DocumentHandle instance </p>
+     *
+     * @param node the document to check permission for
+     * @param privileges the privileges (, separated) to check permission for
+     * @return true if the current subject session has been granted all of the specified privileges for the document node
+     */
+    public final boolean isGranted(Node node, String privileges) {
+        if (node == null) {
+            return false;
+        }
+
+        try {
+            return isGranted(node.getIdentifier(), privileges);
+        } catch (RepositoryException e) {
+            return false;
+        }
+    }
+
+    private boolean isGranted(String identifier, String privileges) {
+        if (identifier == null || privileges == null) {
+            return false;
+        }
+
+        final Collection<String> privs = Arrays.asList(privileges.split(","));
         if (privs.isEmpty()) {
             return false;
         }
 
         try {
             final Session subjectSession = workflowContext.getSubjectSession();
-            Node userDocumentNode = document.getNode(subjectSession);
+            Node userDocumentNode = subjectSession.getNodeByIdentifier(identifier);
             String userDocumentPath = userDocumentNode.getPath();
             for (String priv : privs) {
-                Map<String, Boolean> privilegesMap = pathPrivilegesMap.get(userDocumentPath);
+                Map<String, Boolean> privilegesMap = identifierPrivilegesMap.get(identifier);
                 if (privilegesMap == null) {
                     privilegesMap = new HashMap<>();
-                    pathPrivilegesMap.put(userDocumentPath, privilegesMap);
+                    identifierPrivilegesMap.put(identifier, privilegesMap);
                 }
                 Boolean hasPrivilege = privilegesMap.get(priv);
                 if (hasPrivilege == null) {
@@ -96,6 +127,7 @@ public class SCXMLWorkflowContext {
         catch (RepositoryException e) {
             return false;
         }
+
     }
 
     public final String getScxmlId() {
@@ -141,7 +173,7 @@ public class SCXMLWorkflowContext {
         if (initialized) {
             actions.clear();
             feedback.clear();
-            pathPrivilegesMap.clear();
+            identifierPrivilegesMap.clear();
             result = null;
             initialized = false;
         }

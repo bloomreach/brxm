@@ -47,7 +47,6 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 import javax.jcr.version.VersionManager;
 
-import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -58,7 +57,6 @@ import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
 import org.hippoecm.repository.util.DefaultCopyHandler;
-import org.hippoecm.repository.util.DefaultCopyHandler;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeInfo;
 import org.hippoecm.repository.util.NodeIterable;
@@ -67,6 +65,10 @@ import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.HippoStdNodeType.NT_FOLDER;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
+import static org.onehippo.repository.util.JcrConstants.JCR_WRITE;
 
 /**
  * Customizable implementation of the FolderWorkflow.  Uses foldertypes from the
@@ -106,28 +108,30 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
 
     public Map<String,Serializable> hints() throws WorkflowException, MappingException, RepositoryException, RemoteException {
         Map<String,Serializable> info = new TreeMap<String,Serializable>();
-        info.put("add", true);
+        final boolean hasSubjectWritePermission = userSession.hasPermission(subject.getPath(), JCR_WRITE);
+        if (hasSubjectWritePermission) {
+            info.put("add", true);
+            info.put("archive", true);
+            info.put("delete", true);
+            info.put("rename", true);
+            info.put("duplicate", true);
+            info.put("move", true);
+        }
         info.put("list", false);
-        info.put("archive", true);
-        info.put("delete", true);
-        info.put("rename", true);
         info.put("copy", true);
-        info.put("duplicate", true);
-        info.put("move", true);
         info.put("prototypes", (Serializable) prototypes());
 
         if (subject.getPrimaryNodeType().hasOrderableChildNodes()) {
-
-            NodeIterator nodes = subject.getNodes();
             boolean isEnabled = false;
-            while (nodes.hasNext()) {
-                Node node = nodes.nextNode();
-                if (node.isNodeType(HippoNodeType.NT_HANDLE) || node.isNodeType(HippoStdNodeType.NT_FOLDER)) {
+            for (Node node : new NodeIterable(subject.getNodes())) {
+                if (node.isNodeType(NT_HANDLE) || node.isNodeType(NT_FOLDER)) {
                     isEnabled = true;
                     break;
                 }
             }
-            info.put("reorder", isEnabled);
+            if (hasSubjectWritePermission) {
+                info.put("reorder", isEnabled);
+            }
         }
         return info;
     }
@@ -305,9 +309,9 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                     String documentType = prototypeNode.getPrimaryNodeType().getName();
                     if (documentType.equals(template)) {
                         // create handle ourselves, if not already exists
-                        if (!target.hasNode(name) || !target.getNode(name).isNodeType(HippoNodeType.NT_HANDLE)
+                        if (!target.hasNode(name) || !target.getNode(name).isNodeType(NT_HANDLE)
                                 || target.getNode(name).hasNode(name)) {
-                            result = target.addNode(name, HippoNodeType.NT_HANDLE);
+                            result = target.addNode(name, NT_HANDLE);
                             result.addMixin(JcrConstants.MIX_REFERENCEABLE);
                         } else {
                             result = target.getNode(name);
@@ -324,7 +328,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 } else if (prototypeNode.getName().equals(template)) {
                     final ExpandingCopyHandler handler = new ExpandingCopyHandler(target, renames, rootSession.getValueFactory());
                     result = JcrUtils.copyTo(prototypeNode, handler);
-                    if (result.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    if (result.isNodeType(NT_HANDLE)) {
                         handleNode = result;
                         if (!handleNode.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
                             handleNode.addMixin(JcrConstants.MIX_REFERENCEABLE);
@@ -364,7 +368,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         rootSession.move(handle.getPath(), atticPath + "/" + atticName(atticPath, handle));
         rootSession.save();
         try {
-            if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
+            if (handle.isNodeType(NT_HANDLE)) {
                 for (final Node child : new NodeIterable(handle.getNodes(handle.getName()))) {
                     if (child.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
                         final VersionManager versionManager = rootSession.getWorkspace().getVersionManager();
@@ -422,7 +426,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         Node folder = rootSession.getNode(path);
         if (folder.hasNode(name)) {
             Node offspring = folder.getNode(name);
-            if (offspring.isNodeType(HippoNodeType.NT_DOCUMENT) && offspring.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+            if (offspring.isNodeType(HippoNodeType.NT_DOCUMENT) && offspring.getParent().isNodeType(NT_HANDLE)) {
                 offspring = offspring.getParent();
             }
             if (subject.getPath().equals(atticPath)) {
@@ -447,7 +451,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         Node folderNode = rootSession.getNode(path);
         Node documentNode = document.getNode(rootSession);
         if (documentNode.getPath().startsWith(path + "/")) {
-            if (documentNode.isNodeType(HippoNodeType.NT_DOCUMENT) && documentNode.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+            if (documentNode.isNodeType(HippoNodeType.NT_DOCUMENT) && documentNode.getParent().isNodeType(NT_HANDLE)) {
                 documentNode = documentNode.getParent();
             }
             if (subject.getPath().equals(atticPath)) {
@@ -512,10 +516,10 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     }
 
     private void delete(Node folder, Node offspring) throws RepositoryException, WorkflowException {
-        if (offspring.isNodeType(HippoNodeType.NT_DOCUMENT) && offspring.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+        if (offspring.isNodeType(HippoNodeType.NT_DOCUMENT) && offspring.getParent().isNodeType(NT_HANDLE)) {
             offspring = offspring.getParent();
         }
-        if (!offspring.isNodeType(HippoNodeType.NT_HANDLE)) {
+        if (!offspring.isNodeType(NT_HANDLE)) {
             for (NodeIterator iter = offspring.getNodes(); iter.hasNext(); ) {
                 Node child = iter.nextNode();
                 NodeDefinition nd = child.getDefinition();
@@ -543,7 +547,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     }
 
     private void renameChildDocument(Node documentNode) throws RepositoryException {
-        if (documentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+        if (documentNode.isNodeType(NT_HANDLE)) {
             JcrUtils.ensureIsCheckedOut(documentNode);
             for (NodeIterator children = documentNode.getNodes(); children.hasNext(); ) {
                 Node child = children.nextNode();
@@ -567,7 +571,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 throw new WorkflowException("Cannot rename document to same name");
             }
             Node offspring = folder.getNode(name);
-            if(offspring.isNodeType(HippoNodeType.NT_DOCUMENT) && offspring.getParent().isNodeType(HippoNodeType.NT_HANDLE))  {
+            if(offspring.isNodeType(HippoNodeType.NT_DOCUMENT) && offspring.getParent().isNodeType(NT_HANDLE))  {
                 offspring = offspring.getParent();
             }
             offspring.checkout();
@@ -585,7 +589,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     public void rename(Document document, String newName) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         Node folderNode = rootSession.getNode(subject.getPath());
         Node documentNode = document.getNode(rootSession);
-        if(documentNode.isNodeType(HippoNodeType.NT_DOCUMENT) && documentNode.getParent().isNodeType(HippoNodeType.NT_HANDLE))  {
+        if(documentNode.isNodeType(HippoNodeType.NT_DOCUMENT) && documentNode.getParent().isNodeType(NT_HANDLE))  {
             documentNode = documentNode.getParent();
         }
         if (documentNode.getPath().startsWith(folderNode.getPath() + "/")) {
@@ -651,8 +655,8 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         if (subject.hasNode(targetName)) {
             throw new WorkflowException("Cannot duplicate document when duplicate already exists");
         }
-        if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-            Node handle = subject.addNode(targetName, HippoNodeType.NT_HANDLE);
+        if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(NT_HANDLE)) {
+            Node handle = subject.addNode(targetName, NT_HANDLE);
             handle.addMixin(HippoNodeType.NT_HARDHANDLE);
 
             Node document = copyDocument(targetName, Collections.EMPTY_MAP, source, handle);
@@ -685,7 +689,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     public Document copy(String relPath, String absPath, Map<String,String> arguments)
         throws WorkflowException, MappingException, RepositoryException, RemoteException {
         Node source = subject.getNode(relPath);
-        if(!source.isNodeType(HippoNodeType.NT_DOCUMENT) && !source.isNodeType(HippoNodeType.NT_HANDLE)) {
+        if(!source.isNodeType(HippoNodeType.NT_DOCUMENT) && !source.isNodeType(NT_HANDLE)) {
             throw new MappingException("copied item is not a document");
         }
         Node target = subject.getSession().getRootNode().getNode(absPath.substring(1, absPath.lastIndexOf("/")));
@@ -710,7 +714,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     public Document move(String relPath, String absPath, Map<String,String> arguments)
         throws WorkflowException, MappingException, RepositoryException, RemoteException {
         Node source = subject.getNode(relPath);
-        if(!source.isNodeType(HippoNodeType.NT_DOCUMENT) && !source.isNodeType(HippoNodeType.NT_HANDLE)) {
+        if(!source.isNodeType(HippoNodeType.NT_DOCUMENT) && !source.isNodeType(NT_HANDLE)) {
             throw new MappingException("copied item is not a document");
         }
         Node target = subject.getSession().getRootNode().getNode(absPath.substring(1, absPath.lastIndexOf("/")));
@@ -756,8 +760,8 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         if (!folder.isCheckedOut()) {
             folder.checkout();
         }
-        if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-            Node handle = folder.addNode(targetName, HippoNodeType.NT_HANDLE);
+        if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(NT_HANDLE)) {
+            Node handle = folder.addNode(targetName, NT_HANDLE);
             handle.addMixin(HippoNodeType.NT_HARDHANDLE);
 
             Node document = copyDocument(targetName, (arguments == null ? Collections.<String, String>emptyMap() : arguments), source, handle);
@@ -826,7 +830,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             throw new WorkflowException("Cannot move document when document with same name exists");
         }
         Node source = offspring.getNode(rootSession);
-        if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+        if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(NT_HANDLE)) {
             source = source.getParent();
         }
 
