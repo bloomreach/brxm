@@ -86,9 +86,6 @@
                         // lock information
                         $scope.lock.owner = currentPage.lockedBy;
                         $scope.lock.timestamp = currentPage.lockedOn;
-
-                        // only pages whose sitemap item is located in the HST workspace are editable
-                        $scope.isPageEditable = currentPage.workspaceConfiguration;
                     }, setErrorFeedback);
 
                 $scope.submit = function () {
