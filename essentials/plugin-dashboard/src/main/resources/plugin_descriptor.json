@@ -189,7 +189,7 @@
         "enabled": true,
         "@type": "plugin",
         "introduction": "Adds Simple content document to your project",
-        "name": "Banner plugin",
+        "name": "Simple content plugin",
         "pluginId": "simpleContent",
         "restClasses": ["org.onehippo.cms7.essentials.dashboard.simplecontent.SimpleContentResource"],
         "type": "plugins",
