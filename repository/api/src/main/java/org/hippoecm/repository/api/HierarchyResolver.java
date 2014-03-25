@@ -25,72 +25,20 @@ import javax.jcr.RepositoryException;
  * This interface is not yet part of the public API of the Hippo Repository.
  */
 public interface HierarchyResolver {
-    /**
-     * 
-     */
 
-    /**
-     * 
-     */
     public final class Entry {
-        /**
-         * 
-         */
         public Node node;
-        /**
-         * 
-         */
         public String relPath;
-    };
+    }
 
-    /**
-     * 
-     * @param ancestor
-     * @param path
-     * @param isProperty
-     * @param last
-     * @return
-     * @throws javax.jcr.InvalidItemStateException
-     * @throws javax.jcr.RepositoryException
-     */
     public Item getItem(Node ancestor, String path, boolean isProperty, Entry last) throws InvalidItemStateException, RepositoryException;
 
-    /**
-     * 
-     * @param ancestor
-     * @param path
-     * @return
-     * @throws javax.jcr.InvalidItemStateException
-     * @throws javax.jcr.RepositoryException
-     */
     public Item getItem(Node ancestor, String path) throws InvalidItemStateException, RepositoryException;
 
-    /**
-     * 
-     * @param node
-     * @param field
-     * @return
-     * @throws javax.jcr.RepositoryException
-     */
     public Property getProperty(Node node, String field) throws RepositoryException;
 
-    /**
-     * 
-     * @param node
-     * @param field
-     * @param last
-     * @return
-     * @throws javax.jcr.RepositoryException
-     */
     public Property getProperty(Node node, String field, Entry last) throws RepositoryException;
 
-    /**
-     * 
-     * @param node
-     * @param field
-     * @return
-     * @throws javax.jcr.InvalidItemStateException
-     * @throws javax.jcr.RepositoryException
-     */
     public Node getNode(Node node, String field) throws InvalidItemStateException, RepositoryException;
+
 }
