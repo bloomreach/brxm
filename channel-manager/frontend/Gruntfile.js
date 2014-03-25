@@ -248,9 +248,14 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('default', ['build']);
+    grunt.registerTask('default', 'Build and test', function () {
+        grunt.task.run([
+            'build',
+            'test'
+        ]);
+    });
 
-    grunt.registerTask('build', function (target) {
+    grunt.registerTask('build', 'Build everything', function () {
         grunt.task.run([
             'jshint:app',
             'declutter',
@@ -263,17 +268,15 @@ module.exports = function (grunt) {
         ]);
     });
 
-    grunt.registerTask('test', [
-        'jshint:tests',
-        'test:unit'
-    ]);
+    grunt.registerTask('test', 'Test the source code', function () {
+        grunt.task.run([
+            'jshint:tests',
+            'karma:single'
+        ]);
+    });
 
-    grunt.registerTask('test:unit', [
+    grunt.registerTask('test:continuous', [
         'jshint:tests',
-        'karma:single'
-    ]);
-
-    grunt.registerTask('test:unit:loop', [
         'karma:continuous'
     ]);
 

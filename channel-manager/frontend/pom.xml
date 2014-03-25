@@ -310,7 +310,7 @@
             <goals><goal>exec</goal></goals>
             <configuration>
               <executable>grunt</executable>
-              <commandlineArgs>test:unit</commandlineArgs>
+              <commandlineArgs>test</commandlineArgs>
               <skip>${skipTests}</skip>
             </configuration>
           </execution>
