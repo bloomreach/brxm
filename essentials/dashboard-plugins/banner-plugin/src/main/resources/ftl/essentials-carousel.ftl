@@ -17,7 +17,7 @@
     <#else>
         <#assign pauseCarousel = ''/>
     </#if>
-<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="${interval}" data-pause="${pauseCarousel}" data-wrap="${cycle}">
+<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="${interval}" data-pause="${pauseCarousel}" data-wrap="${cycle?string}">
     <ol class="carousel-indicators">
         <#list 0..(pageable.total-1) as index>
             <#if index==0>
