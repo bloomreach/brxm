@@ -55,38 +55,15 @@
 
                 $scope.host = '';
 
+                // error feedback
                 function setErrorFeedback(errorResponse) {
                     $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
                 }
 
-                // fetch host
-                PageService.getHost().then(function (response) {
-                    $scope.host = response;
-                }, setErrorFeedback);
-
-                // fetch prototypes
-                PrototypeService.getPrototypes()
-                    .then(function (response) {
-                        $scope.prototypes = response;
-                    }, setErrorFeedback);
-
-                // fetch page
-                PageService.getCurrentPage()
-                    .then(function (currentPage) {
-                        $scope.page.id = currentPage.id;
-                        $scope.page.title = currentPage.pageTitle;
-                        $scope.page.url = currentPage.name;
-                        $scope.page.hasContainerItem = currentPage.hasContainerItemInPageDefinition;
-
-                        // only pages whose sitemap item is located in the HST workspace are editable,
-                        // unless they are locked by someone else
-                        $scope.state.isLocked = angular.isString(currentPage.lockedBy) && currentPage.lockedBy !== ConfigService.cmsUser;
-                        $scope.state.isEditable = !$scope.state.isLocked && currentPage.workspaceConfiguration;
-
-                        // lock information
-                        $scope.lock.owner = currentPage.lockedBy;
-                        $scope.lock.timestamp = currentPage.lockedOn;
-                    }, setErrorFeedback);
+                // fetch data
+                loadHost()
+                    .then(loadPage)
+                    .then(loadPrototypes);
 
                 $scope.submit = function () {
                     var pageModel = {
@@ -96,16 +73,51 @@
                         componentConfigurationId: $scope.page.prototype.id
                     };
 
-                    PageService.updatePage(pageModel).then(function (response) {
+                    PageService.updatePage(pageModel).then(function () {
                         ContainerService.showPage(pageModel.name);
-                    }, function (errorResponse) {
-                        setErrorFeedback(errorResponse);
-                    });
+                    }, setErrorFeedback);
                 };
 
                 $scope.closeContainer = function() {
                     ContainerService.performClose();
                 };
+
+                function loadHost() {
+                    return PageService.getHost()
+                        .then(function (host) {
+                            $scope.host = host;
+                            return host;
+                        }, setErrorFeedback);
+                }
+
+                function loadPrototypes() {
+                    return PrototypeService.getPrototypes()
+                        .then(function (prototypes) {
+                            $scope.prototypes = prototypes;
+                            return prototypes;
+                        }, setErrorFeedback);
+                }
+
+                function loadPage() {
+                    return PageService.getCurrentPage()
+                        .then(function (currentPage) {
+                            $scope.page.id = currentPage.id;
+                            $scope.page.title = currentPage.pageTitle;
+                            $scope.page.url = currentPage.name;
+                            $scope.page.hasContainerItem = currentPage.hasContainerItemInPageDefinition;
+
+                            // only pages whose sitemap item is located in the HST workspace are editable,
+                            // unless they are locked by someone else
+                            $scope.state.isLocked = angular.isString(currentPage.lockedBy) && currentPage.lockedBy !== ConfigService.cmsUser;
+                            $scope.state.isEditable = !$scope.state.isLocked && currentPage.workspaceConfiguration;
+
+                            // lock information
+                            $scope.lock.owner = currentPage.lockedBy;
+                            $scope.lock.timestamp = currentPage.lockedOn;
+
+                            return currentPage;
+                        }, setErrorFeedback);
+                }
             }
         ]);
 }());

@@ -48,7 +48,6 @@ describe('Settings Controller', function () {
         function resolvedPromise(value) {
             var deferred = $q.defer();
             deferred.resolve(value);
-            resolvePromises();
             return deferred.promise;
         }
 
