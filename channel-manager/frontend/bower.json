@@ -4,8 +4,8 @@
   "dependencies": {
     "angular": "1.2.14-build.2302+sha.f827d64",
     "angular-route": "1.2.0-rc.2",
-    "angular-translate": "1.1.1",
-    "angular-translate-loader-static-files": "0.1.6",
+    "angular-translate": "2.0.1",
+    "angular-translate-loader-static-files": "2.0.0",
     "angular-ui-router": "0.2.7",
     "hippo-theme": "./target/dependency/hippo-theme.zip",
     "respond": "1.4.2",

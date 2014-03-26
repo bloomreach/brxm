@@ -17,7 +17,10 @@
 describe('Feedback Service', function () {
     'use strict';
 
-    var feedbackService, translateMock, translatedMessage = 'message';
+    var feedbackService,
+        translateMock,
+        filterMock,
+        translatedMessage = 'message';
 
     beforeEach(function () {
 
@@ -32,8 +35,13 @@ describe('Feedback Service', function () {
         translateMock.storageKey = jasmine.createSpy('storageKey');
         translateMock.preferredLanguage = jasmine.createSpy('preferredLanguage');
 
+        filterMock = jasmine.createSpy('filterSpy').and.callFake(function (name) {
+            return (name === 'translate') ? translateMock : null;
+        });
+
         module('hippo.channel', function($provide) {
             $provide.value('$translate', translateMock);
+            $provide.value('$filter', filterMock);
         });
 
         inject(['hippo.channel.FeedbackService', function(FeedbackService) {

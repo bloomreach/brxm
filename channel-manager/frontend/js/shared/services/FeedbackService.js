@@ -19,10 +19,10 @@
     angular.module('hippo.channel')
 
         .service('hippo.channel.FeedbackService', [
-        '$translate',
-        function ($translate) {
-
-            var feedbackService = {};
+        '$filter',
+        function ($filter) {
+            var feedbackService = {},
+                translate = $filter('translate');
 
             // Assumption: translation id's look like SOME_KIND_OF_ERROR_CODE
             var translationIdRegex = /^\w+_/;
@@ -32,15 +32,15 @@
                 var translationId = errorResponse.message;
                 var interpolateParams = errorResponse.data;
                 if (translationId && translationId.match(translationIdRegex)) {
-                    var clientErrorMessage = $translate(translationId, interpolateParams);
+                    var clientErrorMessage = translate(translationId, interpolateParams);
                     if (clientErrorMessage.match(translationIdRegex)) {
                         // Apparently there is no translation
-                        return {message: $translate(technicalErrorTranslationId)};
+                        return {message: translate(technicalErrorTranslationId)};
                     } else {
                         return {message: clientErrorMessage};
                     }
                 } else {
-                    return {message: $translate(technicalErrorTranslationId)};
+                    return {message: translate(technicalErrorTranslationId)};
                 }
             };
 

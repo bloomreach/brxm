@@ -22,11 +22,14 @@
         .controller('hippo.channel.menu.EditMenuItemFormCtrl', [
             '$scope',
             '$translate',
+            '$filter',
             'hippo.channel.FormStateService',
             'hippo.channel.Container',
             'hippo.channel.menu.FocusService',
             'hippo.channel.menu.MenuService',
-            function ($scope, $translate, FormStateService, ContainerService, FocusService, MenuService) {
+            function ($scope, $translate, $filter, FormStateService, ContainerService, FocusService, MenuService) {
+                var translate = $filter('translate');
+
                 $scope.focus = FocusService.focusElementWithId;
 
                 // The following logic will check the client-side validation of the
@@ -68,7 +71,7 @@
                 // The following logic will set the correct error messages when the
                 // client-side validation status updates.
                 $scope.$watch('form.title.$error.required', function () {
-                    $scope.$parent.fieldFeedbackMessage.title = $translate('LABEL_REQUIRED');
+                    $scope.$parent.fieldFeedbackMessage.title = translate('LABEL_REQUIRED');
                 });
 
                 $scope.$watch('form.title.$valid', function (value) {
@@ -79,7 +82,7 @@
 
                 $scope.$watch('form.url.$error.required', function () {
                     if (!$scope.form.url.$pristine) {
-                        $scope.$parent.fieldFeedbackMessage.link = $translate('EXTERNAL_LINK_REQUIRED');
+                        $scope.$parent.fieldFeedbackMessage.link = translate('EXTERNAL_LINK_REQUIRED');
                     }
                 });
 
@@ -95,7 +98,7 @@
                     }
                 }
 
-                $scope.$on('container:before-close', function (event) {
+                $scope.$on('container:before-close', function () {
                     if ($scope.form.$dirty) {
                         saveFieldIfDirty('title', 'title');
                         saveFieldIfDirty('sitemapItem', 'link');

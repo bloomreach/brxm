@@ -25,7 +25,7 @@
             '_hippo.channel.IFrameService',
             function ($translate, $state, Config, IFrame) {
                 // set language
-                $translate.uses(Config.locale);
+                $translate.use(Config.locale);
 
                 // go to default state
                 $state.go('settings');

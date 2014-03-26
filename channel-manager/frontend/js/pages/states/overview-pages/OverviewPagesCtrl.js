@@ -14,30 +14,28 @@
  * limitations under the License.
  */
 (function () {
-    "use strict";
-
-    function prefixWithSlash(str) {
-        if (str === '' || str.charAt(0) !== '/') {
-            return '/' + str;
-        }
-        return str;
-    }
+    'use strict';
 
     angular.module('hippo.channel.pages')
 
         .controller('hippo.channel.pages.OverviewPagesCtrl', [
             '$scope',
             '$state',
-            '$translate',
+            '$filter',
             'hippo.channel.FeedbackService',
             'hippo.channel.ConfigService',
             'hippo.channel.PageService',
             'hippo.channel.Container',
-            function ($scope, $state, $translate, FeedbackService, ConfigService, PageService, ContainerService) {
+            function ($scope, $state, $filter, FeedbackService, ConfigService, PageService, ContainerService) {
+                var translate;
+
                 // scope variables
                 $scope.pages = [];
                 $scope.tooltip = '';
                 $scope.userIsEditing = ConfigService.userIsEditing;
+
+                // translate filter
+                translate = $filter('translate');
 
                 // fetch pages
                 PageService.getPages().then(function (pages) {
@@ -48,7 +46,7 @@
 
                 $scope.showTooltip = function() {
                     if (!$scope.userIsEditing) {
-                        $scope.tooltip = $translate('ADD_NEW_PAGE_DISABLED_TOOLTIP');
+                        $scope.tooltip = translate('ADD_NEW_PAGE_DISABLED_TOOLTIP');
                     }
                 };
 
