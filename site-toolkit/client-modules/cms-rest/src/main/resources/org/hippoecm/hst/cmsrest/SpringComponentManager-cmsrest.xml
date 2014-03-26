@@ -164,6 +164,11 @@
     <constructor-arg ref="jaxrsCmsRestService"/>
   </bean>
 
+  <bean id="cmsRestSecurityValve" class="org.hippoecm.hst.cmsrest.container.CmsRestSecurityValve">
+    <property name="valveName" value="cmsRestSecurityValve" />
+    <property name="repository" ref="javax.jcr.Repository.delegating"/>
+  </bean>
+
   <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
     <property name="targetObject">
       <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
@@ -180,11 +185,7 @@
             <list>
               <ref bean="initializationValve" />
               <ref bean="cmsHostRestRequestContextValve"/>
-              <!--  Both cmsRestSecurityValve and cmsRestCredentialsToJcrSessionPropagatorValve
-                    must be applied in this order -->
-
               <ref bean="cmsRestSecurityValve"/>
-              <ref bean="cmsRestCredentialsToJcrSessionPropagatorValve"/>
             </list>
           </property>
           <property name="processingValves">

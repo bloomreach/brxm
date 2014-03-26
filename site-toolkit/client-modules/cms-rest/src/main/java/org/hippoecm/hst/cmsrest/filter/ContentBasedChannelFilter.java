@@ -23,20 +23,21 @@ import javax.jcr.Session;
 import com.google.common.base.Predicate;
 
 import org.hippoecm.hst.configuration.channel.Channel;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * only channels that the authenticated cms user is allowed to read the content from will pass the {@link Predicate}
  */
-public class ContentBasedChannelFilter extends AbstractChannelFilter implements Predicate<Channel> {
+public class ContentBasedChannelFilter implements Predicate<Channel> {
 
     private static final Logger log = LoggerFactory.getLogger(ContentBasedChannelFilter.class);
 
     @Override
     public boolean apply(final org.hippoecm.hst.configuration.channel.Channel channel) {
-        Session cmsSession = getCmsSession();
         try {
+            Session cmsSession = RequestContextProvider.get().getSession();
             if (cmsSession.nodeExists(channel.getContentRoot())) {
                 log.debug("Predicate passed for channel '{}' because user has read access on '{}'",
                         new String[]{channel.toString(), cmsSession.getUserID(), channel.getContentRoot()});

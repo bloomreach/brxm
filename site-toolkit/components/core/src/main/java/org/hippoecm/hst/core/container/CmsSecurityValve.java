@@ -100,15 +100,16 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
 
         updateHstSessionCookie(servletRequest, servletResponse, httpSession);
 
-        // we are in a request for the REST template composer
         // we need to synchronize on a http session as a jcr session which is tied to it is not thread safe. Also, virtual states will be lost
         // if another thread flushes this session.
         synchronized (httpSession) {
             Session jcrSession = null;
             try {
-                if (isCmsRestRequestContext(servletRequest)) {
-                    jcrSession = createCmsRestSession(httpSession);
+                if (isCmsRestOrPageComposerRequest(servletRequest)) {
+                    jcrSession = createCmsChannelManagerRestSession(httpSession);
                 } else {
+                    // request preview website, for example in channel manager. The request is not
+                    // a REST call
                     if (sessionSecurityDelegation.sessionSecurityDelegationEnabled()) {
                         jcrSession = createCmsPreviewSession(httpSession);
                     } else {
@@ -117,7 +118,6 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
                 }
 
                 if (jcrSession != null) {
-                    // only set the cms based lazySession on the request context when the context is the cms context
                     ((HstMutableRequestContext) requestContext).setSession(jcrSession);
                 }
                 context.invokeNext();
@@ -253,8 +253,8 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         servletResponse.addCookie(sessionIdCookie);
     }
 
-    private static boolean isCmsRestRequestContext(final HttpServletRequest servletRequest) {
-        return Boolean.TRUE.equals(servletRequest.getAttribute(ContainerConstants.CMS_HOST_REST_REQUEST_CONTEXT));
+    private static boolean isCmsRestOrPageComposerRequest(final HttpServletRequest servletRequest) {
+        return Boolean.TRUE.equals(servletRequest.getAttribute(ContainerConstants.CMS_REST_REQUEST_CONTEXT));
     }
 
     /**
@@ -276,10 +276,12 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         return url.substring(0, indexOfRequestURI);
     }
 
-    private Session createCmsRestSession(final HttpSession httpSession) throws LoginException, ContainerException {
+    private Session createCmsChannelManagerRestSession(final HttpSession httpSession) throws LoginException, ContainerException {
         long start = System.currentTimeMillis();
         try {
             final Credentials credentials = (Credentials) httpSession.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME);
+            // This returns a plain session for credentials where access is not merged with for example preview user session
+            // For cms rest calls to page composer or cms-rest we must *NEVER* combine the security with other sessions
             Session session = sessionSecurityDelegation.getDelegatedSession(credentials);
             log.debug("Acquiring cms rest session took '{}' ms.", (System.currentTimeMillis() - start));
             return session;

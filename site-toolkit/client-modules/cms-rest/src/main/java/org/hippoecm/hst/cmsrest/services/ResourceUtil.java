@@ -63,11 +63,6 @@ class ResourceUtil {
 
         try {
             final Session jcrSession = requestContext.getSession();
-            // We explicitly call a refresh here. Normally, the sessionstateful jcr session is already refreshed.
-            // However, due to asychronous JCR event dispatching, there might be changes in the repository, but not
-            // yet a JCR event was sent that triggers a JCR session refresh. Hence, here we explicitly refresh the
-            // JCR session again.
-            jcrSession.refresh(false);
             return jcrSession.getNodeByIdentifier(uuid);
         } catch (ItemNotFoundException e) {
             log.warn("Node not found: '{}', returning null", uuid);

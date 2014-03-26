@@ -35,7 +35,7 @@ import org.hippoecm.hst.rest.beans.ChannelDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DocumentsResource extends BaseResource  implements DocumentService {
+public class DocumentsResource extends BaseResource implements DocumentService {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentsResource.class);
 
@@ -68,7 +68,7 @@ public class DocumentsResource extends BaseResource  implements DocumentService 
                 continue;
             }
 
-            final Channel previewChannel = ((ContextualizableMount)linkMount).getPreviewChannel();
+            final Channel previewChannel = ((ContextualizableMount) linkMount).getPreviewChannel();
 
             if (previewChannel == null) {
                 log.debug("Skipping link for mount '{}' since it does not have a channel", linkMount.getName());
@@ -80,11 +80,11 @@ public class DocumentsResource extends BaseResource  implements DocumentService 
                 continue;
             }
 
-                ChannelDocument document = new ChannelDocument();
+            ChannelDocument document = new ChannelDocument();
             document.setChannelId(previewChannel.getId());
             document.setChannelName(previewChannel.getName());
             if (StringUtils.isNotEmpty(link.getPath())) {
-                document.setPathInfo("/"+link.getPath());
+                document.setPathInfo("/" + link.getPath());
             } else {
                 document.setPathInfo(StringUtils.EMPTY);
             }
@@ -103,7 +103,7 @@ public class DocumentsResource extends BaseResource  implements DocumentService 
             }
 
             // and set the contextpath through which the template composer is available
-            if(link.getMount().getVirtualHost().getVirtualHosts().getDefaultContextPath() != null) {
+            if (link.getMount().getVirtualHost().getVirtualHosts().getDefaultContextPath() != null) {
                 document.setTemplateComposerContextPath(link.getMount().getVirtualHost().getVirtualHosts().getDefaultContextPath());
             } else {
                 document.setTemplateComposerContextPath(requestContext.getServletRequest().getContextPath());
@@ -119,7 +119,7 @@ public class DocumentsResource extends BaseResource  implements DocumentService 
         return channelDocuments;
     }
 
-    public String getUrl(final String uuid,final String type) {
+    public String getUrl(final String uuid, final String type) {
         if (hstLinkCreator == null) {
             log.warn("Cannot generate URL of type '{}' for document with UUID '{}' because hstLinkCreator is null", type, uuid);
             return "";
@@ -136,11 +136,11 @@ public class DocumentsResource extends BaseResource  implements DocumentService 
             // 'twitter', 'facebook', 'linkedin' or for example the news letter manager. Hence, during url creation, we
             // temporarily switch off that the request is a cms request
             try {
-                ((HstMutableRequestContext)requestContext).setCmsRequest(false);
+                ((HstMutableRequestContext) requestContext).setCmsRequest(false);
                 return bestLink.toUrlForm(requestContext, true);
             } finally {
                 // switch it back
-                ((HstMutableRequestContext)requestContext).setCmsRequest(true);
+                ((HstMutableRequestContext) requestContext).setCmsRequest(true);
             }
         }
         return bestLink.toUrlForm(requestContext, true);

@@ -69,15 +69,6 @@
     <property name="sessionSecurityDelegation" ref="org.hippoecm.hst.core.jcr.SessionSecurityDelegation"/>
   </bean>
 
-  <bean id="cmsRestSecurityValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CmsRestSecurityValve">
-    <property name="valveName" value="cmsRestSecurityValve" />
-  </bean>
-
-  <bean id="cmsRestCredentialsToJcrSessionPropagatorValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CmsRestCredentialsToJcrSessionPropagatorValve">
-    <property name="valveName" value="cmsRestCredentialsToJcrSessionPropagatorValve" />
-    <property name="repository" ref="javax.jcr.Repository.delegating"/>
-  </bean>
-
   <bean id="cmsHostRestRequestContextValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CmsHostRestRequestContextValve">
     <property name="valveName" value="cmsHostRestRequestContextValve" />
   </bean>

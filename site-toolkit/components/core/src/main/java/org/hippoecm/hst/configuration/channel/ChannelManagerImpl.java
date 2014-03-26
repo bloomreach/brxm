@@ -44,7 +44,6 @@ import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerExcepti
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.core.internal.CmsJcrSessionThreadLocal;
 import org.hippoecm.hst.util.JcrSessionUtils;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -114,16 +113,6 @@ public class ChannelManagerImpl implements ChannelManager {
         for (ChannelManagerEventListener listener : listeners) {
             channelManagerEventListeners.remove(listener);
         }
-    }
-
-    protected Session getSession() throws RepositoryException {
-        final Session session = CmsJcrSessionThreadLocal.getJcrSession();
-        if (session == null) {
-            log.debug("Could not find a JCR session object instance when expected to have one already instantiated");
-            throw new IllegalStateException("Could not find a JCR session object instance when expected to have one already instantiated");
-        }
-
-        return session;
     }
 
     @Override
@@ -727,5 +716,10 @@ public class ChannelManagerImpl implements ChannelManager {
     private static VirtualHosts getVirtualHosts() {
         return RequestContextProvider.get().getVirtualHost().getVirtualHosts();
     }
+
+    protected Session getSession() throws RepositoryException {
+        return RequestContextProvider.get().getSession();
+    }
+
 
 }

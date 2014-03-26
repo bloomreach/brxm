@@ -44,8 +44,6 @@ import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
-import org.hippoecm.hst.core.internal.CmsJcrSessionThreadLocal;
-import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.hst.site.HstServices;
@@ -285,11 +283,14 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
 									// need to set the channel info to be able to store properties
 									existingChannel.setChannelInfoClassName(ConcurrentChannelManagerAndHstManagerLoadTest.class.getCanonicalName() + "$" + TestChannelInfo.class.getSimpleName());
 									existingChannel.getProperties().put(TEST_PROP, newTestValue);
-									CmsJcrSessionThreadLocal.setJcrSession(getSession2());
-                                    try (ClosableMockHstRequestContext cmrc = new ClosableMockHstRequestContext(hstManager)) {
-									    channelManager.save(existingChannel);
-                                    }
-									CmsJcrSessionThreadLocal.clearJcrSession();
+
+                                    MockHstRequestContext ctx = new MockHstRequestContext();
+                                    ctx.setSession(getSession2());
+                                    final VirtualHost dummyHost = hstManager.getVirtualHosts().getMountsByHostGroup("dev-localhost").get(0).getVirtualHost();
+                                    ctx.setVirtualHost(dummyHost);
+                                    ModifiableRequestContextProvider.set(ctx);
+                                    channelManager.save(existingChannel);
+                                    ModifiableRequestContextProvider.clear();
 									// get channel must always reflect LATEST version. Since this MODIFY_CHANNEL is
 									// called concurrently, we can only guarantee that the loaded value for TEST_PROP
 									// is AT LEAST AS big as newTestValue
@@ -368,11 +369,13 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
 			fail(e.toString());
 		} finally {
 			existingChannel.getProperties().remove(TEST_PROP);
-			CmsJcrSessionThreadLocal.setJcrSession(getSession1());
-            try (ClosableMockHstRequestContext cmrc = new ClosableMockHstRequestContext(hstManager)) {
-			    channelManager.save(existingChannel);
-            }
-			CmsJcrSessionThreadLocal.clearJcrSession();
+            MockHstRequestContext ctx = new MockHstRequestContext();
+            ctx.setSession(getSession1());
+            final VirtualHost dummyHost = hstManager.getVirtualHosts().getMountsByHostGroup("dev-localhost").get(0).getVirtualHost();
+            ctx.setVirtualHost(dummyHost);
+            ModifiableRequestContextProvider.set(ctx);
+            channelManager.save(existingChannel);
+            ModifiableRequestContextProvider.clear();
 			mountNode.getProperty(TEST_PROP).remove();
 			mountNode.getSession().save();
 			logoutSessions(sessionList);
@@ -407,7 +410,7 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
 		if (sessionList != null) {
 			return;
 		}
-		sessionList = new ArrayList<Session>(number);
+		sessionList = new ArrayList<>(number);
 		for (int i = 0; i < number; i++) {
 			try {
 				Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
@@ -429,22 +432,6 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
 			session.logout();
 		}
 	}
-
-    private static class ClosableMockHstRequestContext implements AutoCloseable {
-
-        ClosableMockHstRequestContext(HstManager manager) throws ContainerException {
-            MockHstRequestContext ctx = new MockHstRequestContext();
-            final VirtualHost dummyHost = manager.getVirtualHosts().getMountsByHostGroup("dev-localhost").get(0).getVirtualHost();
-            ctx.setVirtualHost(dummyHost);
-            ModifiableRequestContextProvider.set(ctx);
-        }
-
-        @Override
-        public void close() throws Exception {
-            ModifiableRequestContextProvider.clear();
-        }
-    }
-
 	private class JobResultWrapperModifyMount {
 		private String testPropAfterChange;
 		private String testPropOfAsyncLoadedHosts;

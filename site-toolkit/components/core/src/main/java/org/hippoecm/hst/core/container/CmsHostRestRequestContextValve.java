@@ -26,7 +26,7 @@ public class CmsHostRestRequestContextValve extends AbstractBaseOrderableValve {
     @Override
     public void invoke(ValveContext context) throws ContainerException {
 
-        context.getServletRequest().setAttribute(ContainerConstants.CMS_HOST_REST_REQUEST_CONTEXT, Boolean.TRUE);
+        context.getServletRequest().setAttribute(ContainerConstants.CMS_REST_REQUEST_CONTEXT, Boolean.TRUE);
         ((HstMutableRequestContext)context.getRequestContext()).setCmsRequest(true);
         context.invokeNext();
 

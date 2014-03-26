@@ -44,7 +44,8 @@ public interface SessionSecurityDelegation {
     boolean sessionSecurityDelegationEnabled();
 
     /**
-     * @return A non pooled jcr session which is <b>not</b> automatically logged out
+     * @return A non pooled jcr session which is <b>not</b> automatically logged out and is <b>NOT</b> combined with
+     * the credentials of any other session: This is a plane delegated repository login, not a security delegate.
      * @throws RepositoryException
      */
     Session getDelegatedSession(Credentials creds) throws RepositoryException;
