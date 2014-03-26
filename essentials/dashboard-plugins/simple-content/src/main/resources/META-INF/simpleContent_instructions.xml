@@ -19,6 +19,7 @@
     <xml action="copy" source="hst/content-menu-item.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemenus/main"/>
     <xml action="copy" source="hst/content-sitemap.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
     <xml action="copy" source="hst/content-page.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
+    <xml action="copy" source="hst/content-list-page.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
 
 
   </instructionSet>
