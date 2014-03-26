@@ -97,6 +97,10 @@ public @interface PersistentNode {
                 if (session.itemExists(parentPath)) {
                     final Node parent = session.getNode(parentPath);
                     final String name = model.getName();
+                    if (Strings.isNullOrEmpty(name)) {
+                        log.error("No name provided for bean, parent path is:  {}, model is: {}", parentPath, model);
+                        return null;
+                    }
                     if (parent.hasNode(name)) {
                         parent.getNode(name).remove();
                     }

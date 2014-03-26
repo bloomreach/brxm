@@ -367,6 +367,7 @@ public static List<PluginRestful> parseGist() {
                 if (notInstalled.size() == 0) {
                     final DocumentManager manager = new DefaultDocumentManager(getContext(servletContext));
                     final InstallerDocument document = new InstallerDocument();
+                    document.setName(id);
                     document.setParentPath(GlobalUtils.getParentConfigPath(id));
                     document.setDateInstalled(Calendar.getInstance());
 
