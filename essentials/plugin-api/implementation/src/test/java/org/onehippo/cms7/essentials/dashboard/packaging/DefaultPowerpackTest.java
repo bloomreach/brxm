@@ -35,6 +35,13 @@ import static org.junit.Assert.assertNotNull;
 public class DefaultPowerpackTest extends BaseTest {
 
 
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testPowerpackNoInjection() throws Exception {
+        PowerpackPackage powerpackPackage = new DefaultPowerpack();
+        powerpackPackage.execute(getContext());
+    }
+
     @Test
     public void testPowerpack() throws Exception {
         PowerpackPackage powerpackPackage = new DefaultPowerpack();

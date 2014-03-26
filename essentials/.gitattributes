@@ -129,6 +129,8 @@ dashboard-plugins/banner-plugin/src/main/resources/xml/data/banner_entry_1.xml -
 dashboard-plugins/banner-plugin/src/main/resources/xml/data/banner_entry_2.xml -text
 dashboard-plugins/banner-plugin/src/main/resources/xml/data/banner_images.xml -text
 dashboard-plugins/banner-plugin/src/main/resources/xml/namespaces/bannerdocument.xml -text
+dashboard-plugins/banner-plugin/src/test/java/org/onehippo/cms7/essentials/dashboard/banner/BannerPowerpackTest.java -text
+dashboard-plugins/banner-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/beanwriter-plugin/pom.xml -text
 dashboard-plugins/beanwriter-plugin/src/main/java/org/onehippo/cms7/essentials/beanwriter/rest/BeanWriterResource.java -text
 dashboard-plugins/beanwriter-plugin/src/main/java/org/onehippo/cms7/essentials/beanwriter/rest/MyRestList.java -text

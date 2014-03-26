@@ -47,6 +47,16 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-connector</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-modules</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
@@ -85,6 +95,12 @@
           <include>**/*.xml</include>
           <include>**/*.js</include>
           <include>**/*.html</include>
+          <include>**/*.jsp</include>
+          <include>**/*.ftl</include>
+          <include>**/*.ttf</include>
+          <include>**/*.svg</include>
+          <include>**/*.woff</include>
+          <include>**/*.eot</include>
           <include>**/*.txt</include>
           <include>**/*.css</include>
           <include>**/*.MF</include>

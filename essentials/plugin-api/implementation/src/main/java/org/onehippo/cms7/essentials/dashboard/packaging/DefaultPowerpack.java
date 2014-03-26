@@ -91,6 +91,23 @@ public class DefaultPowerpack implements PowerpackPackage {
 
             final InputStream resourceAsStream = getClass().getResourceAsStream(getInstructionPath());
             final String content = GlobalUtils.readStreamAsText(resourceAsStream);
+            if (instructionParser == null) {
+                final StringBuilder errorBuilder = new StringBuilder();
+                errorBuilder.append('\n')
+                        .append("=============================================================================")
+                        .append('\n')
+                        .append("InstructionParser was null. This can means it is not injected by Spring.")
+                        .append('\n')
+                        .append("If you are running a test case, make sure you autowire beans like:")
+                        .append('\n')
+                        .append("PowerpackPackage powerpackPackage = new MyPowerpack();injector.autowireBean(powerpackPackage);")
+                        .append('\n')
+                        .append("=============================================================================")
+                        .append('\n');
+
+                log.error("{}", errorBuilder);
+                throw new IllegalArgumentException("Instruction parser not injected");
+            }
             instructions = instructionParser.parseInstructions(content);
         }
         return instructions;
