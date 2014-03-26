@@ -35,7 +35,7 @@ public class ContentBasedChannelFilter implements Predicate<Channel> {
     private static final Logger log = LoggerFactory.getLogger(ContentBasedChannelFilter.class);
 
     @Override
-    public boolean apply(final org.hippoecm.hst.configuration.channel.Channel channel) {
+    public boolean apply(final Channel channel) {
         try {
             Session cmsSession = RequestContextProvider.get().getSession();
             if (cmsSession.nodeExists(channel.getContentRoot())) {
