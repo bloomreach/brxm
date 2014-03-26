@@ -93,26 +93,7 @@ public class CommonComponent extends BaseHstComponent {
         request.setAttribute(REQUEST_PARAM_DOCUMENT, bean);
     }
 
-    /**
-     * Sets content bean onto request. If no bean is found, 404 response will be set.
-     * NOTE: we first check if document is set through component interface,
-     * otherwise we try o fetch mapped (sitemap) bean
-     *
-     * @param documentPath
-     * @param request      HstRequest
-     * @param response     HstResponse
-     * @see #pageNotFound(org.hippoecm.hst.core.component.HstRequest, org.hippoecm.hst.core.component.HstResponse)
-     */
-    public void setContentBeanWith404(final String documentPath, HstRequest request, final HstResponse response) {
-        if (!Strings.isNullOrEmpty(documentPath)) {
-            final HippoBean root = getSiteContentBaseBean(request);
-            HippoBean bean = root.getBean(documentPath);
-            request.setAttribute(REQUEST_PARAM_DOCUMENT, bean);
-            return;
-        }
-        // try normal mapping NOTE: throws 404
-        setContentBean(request, response);
-    }
+
 
     /**
      * Sets content bean onto request. If no bean is found, 404 response will be set.
@@ -120,12 +101,14 @@ public class CommonComponent extends BaseHstComponent {
      * @param request  HstRequest
      * @param response HstResponse
      */
-    public void setContentBean(final HstRequest request, final HstResponse response) {
+    public void setContentBeanWith404(final HstRequest request, final HstResponse response) {
         final HippoBean bean = getContentBean(request);
-        request.setAttribute(REQUEST_PARAM_DOCUMENT, bean);
+
         if (bean == null) {
             pageNotFound(request, response);
+            return;
         }
+        request.setAttribute(REQUEST_PARAM_DOCUMENT, bean);
     }
 
     /**
