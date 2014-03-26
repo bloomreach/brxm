@@ -292,57 +292,26 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                 newValues.add(contentAddProperty.getString());
             }
         }
-        String root = StringUtils.trim(JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_CONTENTROOT, "/"));
-        getLogger().info("Initializing content set/add property " + root);
-        HierarchyResolver.Entry last = new HierarchyResolver.Entry();
-        final HierarchyResolver hierarchyResolver = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver();
-        Property property = hierarchyResolver.getProperty(session.getRootNode(), root.substring(1), last);
-        if (property == null) {
-            String propertyName = root.substring(root.lastIndexOf("/") + 1);
-            if (!root.substring(0, root.lastIndexOf("/")).equals(last.node.getPath())) {
-                throw new PathNotFoundException(root);
+        String contentRoot = StringUtils.trim(JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_CONTENTROOT, "/"));
+        getLogger().info("Initializing content set/add property " + contentRoot);
+
+        final Property property = session.getProperty(contentRoot);
+        if (contentSetProperty == null && property.isMultiple()) {
+            LinkedList<String> currentValues = new LinkedList<String>();
+            for (Value value : property.getValues()) {
+                currentValues.add(value.getString());
             }
-            boolean isMultiple = false;
-            boolean isSingle = false;
-            Set<NodeType> nodeTypes = new HashSet<NodeType>();
-            nodeTypes.add(last.node.getPrimaryNodeType());
-            Collections.addAll(nodeTypes, last.node.getMixinNodeTypes());
-            for (NodeType nodeType : nodeTypes) {
-                for (PropertyDefinition propertyDefinition : nodeType.getPropertyDefinitions()) {
-                    if (propertyDefinition.getName().equals("*") || propertyDefinition.getName().equals(propertyName)) {
-                        if (propertyDefinition.isMultiple()) {
-                            isMultiple = true;
-                        } else {
-                            isSingle = true;
-                        }
-                    }
-                }
-            }
-            if (newValues.size() == 1 && contentAddProperty == null && (isSingle || !isMultiple)) {
-                last.node.setProperty(last.relPath, newValues.get(0));
-            } else if (newValues.isEmpty() && (isSingle || !isMultiple)) {
-                // no-op, the property does not exist
-            } else {
-                last.node.setProperty(last.relPath, newValues.toArray(new String[newValues.size()]));
-            }
+            currentValues.addAll(newValues);
+            newValues = currentValues;
+        }
+        if (property.isMultiple()) {
+            property.setValue(newValues.toArray(new String[newValues.size()]));
+        } else if (newValues.size() == 1 && contentAddProperty == null) {
+            property.setValue(newValues.get(0));
+        } else if (newValues.isEmpty()) {
+            property.remove();
         } else {
-            if (contentSetProperty == null && property.isMultiple()) {
-                LinkedList<String> currentValues = new LinkedList<String>();
-                for (Value value : property.getValues()) {
-                    currentValues.add(value.getString());
-                }
-                currentValues.addAll(newValues);
-                newValues = currentValues;
-            }
-            if (property.isMultiple()) {
-                property.setValue(newValues.toArray(new String[newValues.size()]));
-            } else if (newValues.size() == 1 && contentAddProperty == null) {
-                property.setValue(newValues.get(0));
-            } else if (newValues.isEmpty()) {
-                property.remove();
-            } else {
-                property.setValue(newValues.toArray(new String[newValues.size()]));
-            }
+            property.setValue(newValues.toArray(new String[newValues.size()]));
         }
     }
 
