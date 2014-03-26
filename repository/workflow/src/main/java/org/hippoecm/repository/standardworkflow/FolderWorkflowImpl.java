@@ -109,7 +109,8 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
 
     public Map<String,Serializable> hints() throws WorkflowException, MappingException, RepositoryException, RemoteException {
         Map<String,Serializable> info = new TreeMap<String,Serializable>();
-        final boolean hasSubjectWritePermission = userSession.hasPermission(subject.getPath(), JCR_WRITE);
+        final Session subjectSession = workflowContext.getSubjectSession();
+        final boolean hasSubjectWritePermission = subjectSession.hasPermission(subject.getPath(), JCR_WRITE);
         if (hasSubjectWritePermission) {
             info.put("add", true);
             info.put("archive", true);
@@ -653,14 +654,17 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     }
 
     private Document duplicate(Node source, String targetName) throws WorkflowException, RepositoryException {
+        final Session subjectSession = workflowContext.getSubjectSession();
+        if (!subjectSession.hasPermission(subject.getPath(), JcrConstants.JCR_WRITE)) {
+            throw new AccessDeniedException("User lacks permission to write in destination folder");
+        }
         if (subject.hasNode(targetName)) {
             throw new WorkflowException("Cannot duplicate document when duplicate already exists");
         }
         if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(NT_HANDLE)) {
             Node handle = subject.addNode(targetName, NT_HANDLE);
-            handle.addMixin(HippoNodeType.NT_HARDHANDLE);
 
-            Node document = copyDocument(targetName, Collections.EMPTY_MAP, source, handle);
+            Node document = copyDocument(targetName, Collections.<String,String>emptyMap(), source, handle);
 
             renameChildDocument(handle);
             rootSession.save();
@@ -751,7 +755,8 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     public Document copyTo(Document sourceFolder, Document offspring, String targetName, Map<String,String> arguments) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         String path = subject.getPath().substring(1);
         Node folder = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
-        if (!userSession.hasPermission(folder.getPath(), JcrConstants.JCR_WRITE)) {
+        final Session subjectSession = workflowContext.getSubjectSession();
+        if (!subjectSession.hasPermission(folder.getPath(), JCR_WRITE)) {
             throw new AccessDeniedException("User lacks permission to write in destination folder");
         }
         if (targetName == null || targetName.equals("")) {
@@ -766,7 +771,6 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         }
         if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(NT_HANDLE)) {
             Node handle = folder.addNode(targetName, NT_HANDLE);
-            handle.addMixin(HippoNodeType.NT_HARDHANDLE);
 
             Node document = copyDocument(targetName, (arguments == null ? Collections.<String, String>emptyMap() : arguments), source, handle);
             renameChildDocument(handle);
@@ -830,6 +834,10 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     public Document moveTo(Document sourceFolder, Document offspring, String targetName, Map<String,String> arguments) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         String path = subject.getPath();
         Node folder = rootSession.getNode(path);
+        final Session subjectSession = workflowContext.getSubjectSession();
+        if (!subjectSession.hasPermission(folder.getPath(), JCR_WRITE)) {
+            throw new AccessDeniedException("User lacks permission to write in destination folder");
+        }
         if (folder.hasNode(targetName)) {
             throw new WorkflowException("Cannot move document when document with same name exists");
         }
