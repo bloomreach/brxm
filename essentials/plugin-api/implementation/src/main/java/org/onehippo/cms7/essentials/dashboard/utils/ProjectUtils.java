@@ -34,6 +34,7 @@ import com.google.common.base.Strings;
  */
 public final class ProjectUtils {
 
+    private static final String BOOTSTRAP = "bootstrap";
     private static Logger log = LoggerFactory.getLogger(ProjectUtils.class);
 
 
@@ -97,6 +98,41 @@ public final class ProjectUtils {
         return getFolder("cms");
     }
 
+    /**
+     * Returns Configuration root folder e.g. {@code /home/foo/myproject/bootstrap/configuration}
+     *
+     * @return Configuration project folder
+     */
+    public static File getBootstrapConfigFolder() {
+        return getFolder(BOOTSTRAP + File.separator + "configuration");
+    }
+    /**
+     * Returns Content root folder e.g. {@code /home/foo/myproject/bootstrap/content}
+     *
+     * @return Content project folder
+     */
+    public static File getBootstrapContentFolder() {
+        return getFolder(BOOTSTRAP + File.separator + "content");
+    }
+
+    /**
+     * Returns Essentials root folder e.g. {@code /home/foo/myproject/essentials}
+     *
+     * @return Essentials project folder
+     */
+    public static File getEssentialsFolder() {
+        //TODO:  NOTE we still need to decide about location
+        return getFolder("essentials");
+    }
+    /**
+     * Returns Bootstrap root folder e.g. {@code /home/foo/myproject/bootstrap}
+     *
+     * @return Bootstrap project folder
+     */
+    public static File getBootstrapFolder() {
+        return getFolder(BOOTSTRAP);
+    }
+
     private static File getFolder(final String name) {
         final String baseDir = getBaseProjectDirectory();
         if (Strings.isNullOrEmpty(baseDir)) {
@@ -106,9 +142,9 @@ public final class ProjectUtils {
         if (!baseFile.exists() || !baseFile.isDirectory()) {
             return null;
         }
-        File site = new File(baseDir + File.separatorChar + name);
-        if (site.isDirectory()) {
-            return site;
+        File folder = new File(baseDir + File.separatorChar + name);
+        if (folder.isDirectory()) {
+            return folder;
         }
         return null;
     }
@@ -142,28 +178,27 @@ public final class ProjectUtils {
         }
         switch (type) {
             case SITE:
-                if (ProjectUtils.getSite() != null) {
-                    return ProjectUtils.getSite().getPath() + File.separatorChar + EssentialConst.POM_XML;
-                }
-                break;
+                return getPomForDir(ProjectUtils.getSite());
             case CMS:
-                if (ProjectUtils.getCms() != null) {
-                    return ProjectUtils.getCms().getPath() + File.separatorChar + EssentialConst.POM_XML;
-                }
-                break;
+                return getPomForDir(ProjectUtils.getCms());
             case BOOTSTRAP:
-                break;
+                return getPomForDir(ProjectUtils.getBootstrapFolder());
             case BOOTSTRAP_CONFIG:
-                break;
+                return getPomForDir(ProjectUtils.getBootstrapConfigFolder());
             case BOOTSTRAP_CONTENT:
-                break;
+                return getPomForDir(ProjectUtils.getBootstrapContentFolder());
             case ESSENTIALS:
-                break;
-
+                return getPomForDir(ProjectUtils.getEssentialsFolder());
         }
-
         return null;
 
+    }
+
+    private static String getPomForDir(final File folder) {
+        if (folder != null) {
+            return folder.getPath() + File.separatorChar + EssentialConst.POM_XML;
+        }
+        return null;
     }
 
     private static Model getPomModel(String path) {
