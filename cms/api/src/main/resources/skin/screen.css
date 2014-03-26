@@ -815,7 +815,7 @@ span.hippo-toolbar-menu-item-button {
 }
 
 /* override the default text-decoration: underline */
-.hippo-root .hippo-toolbar-menu-item-button:hover {
+.hippo-root a.hippo-toolbar-menu-item-button:hover {
   background: #fff6e0;
   border: 1px solid #afafaf;
   text-decoration: none
