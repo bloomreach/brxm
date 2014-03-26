@@ -19,6 +19,7 @@ import java.util.Iterator;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.AbstractDialog;
@@ -103,7 +104,7 @@ public abstract class DestinationDialog extends AbstractDialog implements IWorkf
                             if (model != null && model instanceof JcrNodeModel && ((JcrNodeModel) model).getNode() != null) {
                                 destination.setChainedModel(model);
                             }
-                            DestinationDialog.this.setOkEnabled(isOkEnabled(destination));
+                            DestinationDialog.this.setOkEnabled(isOkEnabled());
                         }
                     }, IObserver.class.getName());
                 }
@@ -140,7 +141,11 @@ public abstract class DestinationDialog extends AbstractDialog implements IWorkf
     @Override
     protected void onOk() {
         try {
-            invokeWorkflow();
+            if (checkPermissions()) {
+                invokeWorkflow();
+            } else {
+                error(new StringResourceModel("permission.denied", this, null).getString());
+            }
         } catch (WorkflowException e) {
             log.info("Could not execute workflow.", e);
             error(e);
@@ -170,7 +175,11 @@ public abstract class DestinationDialog extends AbstractDialog implements IWorkf
         return DialogConstants.LARGE;
     }
 
-    protected boolean isOkEnabled(final NodeModelWrapper destination) {
+    protected boolean isOkEnabled() {
+        return true;
+    }
+
+    protected boolean checkPermissions() {
         return true;
     }
 }

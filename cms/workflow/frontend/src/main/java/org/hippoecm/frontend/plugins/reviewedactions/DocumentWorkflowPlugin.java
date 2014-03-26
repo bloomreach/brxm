@@ -184,7 +184,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                     }
 
                     @Override
-                    protected boolean isOkEnabled(final NodeModelWrapper destination) {
+                    protected boolean checkPermissions() {
                         return isWritePermissionGranted(destination.getChainedModel());
                     }
                 };
@@ -254,7 +254,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                     }
 
                     @Override
-                    protected boolean isOkEnabled(final NodeModelWrapper destination) {
+                    protected boolean checkPermissions() {
                         return isWritePermissionGranted(destination.getChainedModel());
                     }
                 };
@@ -408,13 +408,14 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
         hideOrDisable(info, "listVersions", historyAction);
     }
 
-    private boolean isWritePermissionGranted(IModel<Node> model) {
-        Node node = model.getObject();
-        try {
-            return UserSession.get().getJcrSession().hasPermission(node.getPath(), JcrConstants.JCR_WRITE);
-        } catch (RepositoryException e) {
-            return false;
+    private static boolean isWritePermissionGranted(IModel<Node> model) {
+        Node node = model != null ? model.getObject() : null;
+        if (node != null) {
+            try {
+                return UserSession.get().getJcrSession().hasPermission(node.getPath(), JcrConstants.JCR_WRITE);
+            } catch (RepositoryException ignore) {
+            }
         }
+        return false;
     }
-
 }
