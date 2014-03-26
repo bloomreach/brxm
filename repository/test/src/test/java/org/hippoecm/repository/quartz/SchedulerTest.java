@@ -19,6 +19,7 @@ import java.util.Date;
 
 import javax.jcr.RepositoryException;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -44,18 +45,28 @@ public class SchedulerTest extends RepositoryTestCase {
     private static boolean repositoryJobExecuted;
     private static String failureMessage;
 
+    private RepositoryScheduler scheduler;
+    private RepositoryJobInfo testJobInfo;
+
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
+        scheduler = HippoServiceRegistry.getService(RepositoryScheduler.class);
+        testJobInfo = new RepositoryJobInfo("test", TestRepositoryJob.class);
         repositoryJobExecuted = false;
         failureMessage = null;
     }
 
+    @Override
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
+        scheduler.deleteJob("test", "default");
+    }
+
     @Test
     public void testScheduleRepositoryJobWithSimpleTrigger() throws Exception {
-        final RepositoryScheduler scheduler = HippoServiceRegistry.getService(RepositoryScheduler.class);
-        final RepositoryJobInfo testJobInfo = new RepositoryJobInfo("test", TestRepositoryJob.class);
         testJobInfo.setAttribute("foo", "bar");
         final RepositoryJobTrigger testJobTrigger = new RepositoryJobSimpleTrigger("test", new Date());
         scheduler.scheduleJob(testJobInfo, testJobTrigger);
@@ -69,8 +80,6 @@ public class SchedulerTest extends RepositoryTestCase {
 
     @Test
     public void testScheduleRepositoryJobWithSimpleTriggerIndefinitely() throws Exception {
-        final RepositoryScheduler scheduler = HippoServiceRegistry.getService(RepositoryScheduler.class);
-        final RepositoryJobInfo testJobInfo = new RepositoryJobInfo("test", TestRepositoryJob.class);
         final RepositoryJobTrigger testJobTrigger = new RepositoryJobSimpleTrigger("test", new Date(), RepositoryJobSimpleTrigger.REPEAT_INDEFINITELY, 5000);
         scheduler.scheduleJob(testJobInfo, testJobTrigger);
         try {
@@ -84,8 +93,6 @@ public class SchedulerTest extends RepositoryTestCase {
 
     @Test
     public void testScheduleAndDeleteRepositoryJob() throws Exception {
-        final RepositoryScheduler scheduler = HippoServiceRegistry.getService(RepositoryScheduler.class);
-        final RepositoryJobInfo testJobInfo = new RepositoryJobInfo("test", TestRepositoryJob.class);
         final RepositoryJobTrigger testJobTrigger = new RepositoryJobSimpleTrigger("test", new Date(System.currentTimeMillis() + 2500));
         scheduler.scheduleJob(testJobInfo, testJobTrigger);
         scheduler.deleteJob(testJobInfo.getName(), testJobInfo.getGroup());
@@ -96,8 +103,6 @@ public class SchedulerTest extends RepositoryTestCase {
 
     @Test
     public void testTriggerRepositoryJobNow() throws Exception {
-        final RepositoryScheduler scheduler = HippoServiceRegistry.getService(RepositoryScheduler.class);
-        final RepositoryJobInfo testJobInfo = new RepositoryJobInfo("test", TestRepositoryJob.class);
         final RepositoryJobTrigger testJobTrigger = new RepositoryJobSimpleTrigger("test", new Date(System.currentTimeMillis()+60000));
         scheduler.scheduleJob(testJobInfo, testJobTrigger);
         scheduler.executeJob("test", "default");
@@ -115,6 +120,7 @@ public class SchedulerTest extends RepositoryTestCase {
      * fires repeating triggers every 30 seconds more or less
      */
     @Test
+    @Ignore
     public void testScheduleCronJob() throws Exception {
         final RepositoryScheduler scheduler = HippoServiceRegistry.getService(RepositoryScheduler.class);
         final RepositoryJobInfo testJobInfo = new RepositoryJobInfo("test", TestRepositoryJob.class);
