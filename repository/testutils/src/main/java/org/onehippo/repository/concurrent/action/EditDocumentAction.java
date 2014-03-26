@@ -20,6 +20,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 public class EditDocumentAction extends AbstractDocumentWorkflowAction {
 
@@ -35,15 +36,14 @@ public class EditDocumentAction extends AbstractDocumentWorkflowAction {
     @Override
     protected Node doExecute(Node node) throws Exception {
         Node handle = node.getParent();
-        Document document = getDocumentWorkflow(handle).obtainEditableInstance();
-        node.getSession().refresh(false);
+        final DocumentWorkflow documentWorkflow = getDocumentWorkflow(handle);
+        Document document = documentWorkflow.obtainEditableInstance();
         Node draft = document.getNode(node.getSession());
         String value = draft.getProperty("testcontent:introduction").getString();
         value += "x";
         draft.setProperty("testcontent:introduction", value);
         draft.getSession().save();
-        document = getDocumentWorkflow(handle).commitEditableInstance();
-        node.getSession().refresh(false);
+        document = documentWorkflow.commitEditableInstance();
         String variantValue = null;
         String variantUUID = "null";
         for(NodeIterator iter = handle.getNodes(handle.getName()); iter.hasNext(); ) {

@@ -46,14 +46,13 @@ public abstract class AbstractWorkflowAction extends Action {
         if (descriptor == null) {
             return false;
         }
-        Class<Workflow>[] interfaces = descriptor.getInterfaces();
-        for (Class<Workflow> c : interfaces) {
+        for (Class<Workflow> c : descriptor.getInterfaces()) {
             if (c.equals(getWorkflowClass())) {
                 Map<String, Serializable> hints = descriptor.hints();
                 if (hints == null) {
                     return true;
                 }
-                Serializable info = descriptor.hints().get(getWorkflowMethodName());
+                Serializable info = hints.get(getWorkflowMethodName());
                 if (info instanceof Boolean) {
                     return (Boolean) info;
                 } else {
