@@ -24,7 +24,7 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -46,8 +46,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.Workspace;
-import javax.jcr.nodetype.NodeType;
-import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
@@ -63,10 +61,8 @@ import org.apache.jackrabbit.spi.QNodeTypeDefinition;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceMapping;
 import org.apache.jackrabbit.spi.commons.nodetype.QDefinitionBuilderFactory;
 import org.hippoecm.repository.LocalHippoRepository;
-import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.api.InitializationProcessor;
@@ -236,8 +232,11 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                         processContentFromNode(initializeItem, session, dryRun);
                     }
 
-                    if (initializeItem.hasProperty(HippoNodeType.HIPPO_CONTENTPROPSET) || initializeItem.hasProperty(HippoNodeType.HIPPO_CONTENTPROPADD)) {
-                        processSetOrAddProperty(initializeItem, session, dryRun);
+                    if (initializeItem.hasProperty(HippoNodeType.HIPPO_CONTENTPROPSET)) {
+                        processContentPropSet(initializeItem, session, dryRun);
+                    }
+                    if (initializeItem.hasProperty(HippoNodeType.HIPPO_CONTENTPROPADD)) {
+                        processContentPropAdd(initializeItem, session, dryRun);
                     }
 
                     if (dryRun) {
@@ -265,53 +264,50 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         }
     }
 
-    private void processSetOrAddProperty(final Node node, final Session session, final boolean dryRun) throws RepositoryException {
-        if (getLogger().isDebugEnabled()) {
-            getLogger().debug("Found content property set/add configuration");
-        }
-        LinkedList<String> newValues = new LinkedList<String>();
-        Property contentSetProperty = (node.hasProperty(HippoNodeType.HIPPO_CONTENTPROPSET) ?
-                node.getProperty(HippoNodeType.HIPPO_CONTENTPROPSET) : null);
-        Property contentAddProperty = (node.hasProperty(HippoNodeType.HIPPO_CONTENTPROPADD) ?
-                node.getProperty(HippoNodeType.HIPPO_CONTENTPROPADD) : null);
-        if (contentSetProperty != null) {
-            if (contentSetProperty.isMultiple()) {
-                for (Value value : contentSetProperty.getValues()) {
-                    newValues.add(value.getString());
-                }
-            } else {
-                newValues.add(contentSetProperty.getString());
-            }
-        }
-        if (contentAddProperty != null) {
-            if (contentAddProperty.isMultiple()) {
-                for (Value value : contentAddProperty.getValues()) {
-                    newValues.add(value.getString());
-                }
-            } else {
-                newValues.add(contentAddProperty.getString());
-            }
-        }
+    private void processContentPropSet(final Node node, final Session session, final boolean dryRun) throws RepositoryException {
+        Property contentSetProperty = node.getProperty(HippoNodeType.HIPPO_CONTENTPROPSET);
         String contentRoot = StringUtils.trim(JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_CONTENTROOT, "/"));
-        getLogger().info("Initializing content set/add property " + contentRoot);
+        getLogger().info("Contentpropset property " + contentRoot);
+
+        if (session.propertyExists(contentRoot)) {
+            final Property property = session.getProperty(contentRoot);
+            if (property.isMultiple()) {
+                property.setValue(contentSetProperty.getValues());
+            } else {
+                final Value[] values = contentSetProperty.getValues();
+                if (values.length == 0) {
+                    property.remove();
+                } else if (values.length == 1) {
+                    property.setValue(values[0]);
+                } else {
+                    log.warn("Initialize item {} wants to set multiple values on single valued property", node.getName());
+                }
+            }
+        } else {
+            final int offset = contentRoot.lastIndexOf('/');
+            final String targetNodePath = offset == 0 ? "/" : contentRoot.substring(0, offset);
+            final String propertyName = contentRoot.substring(offset+1);
+            final Value[] values = contentSetProperty.getValues();
+            if (values.length == 1) {
+                session.getNode(targetNodePath).setProperty(propertyName, values[0]);
+            } else {
+                session.getNode(targetNodePath).setProperty(propertyName, values);
+            }
+        }
+    }
+
+    private void processContentPropAdd(final Node node, final Session session, final boolean dryRun) throws RepositoryException {
+        Property contentAddProperty = node.getProperty(HippoNodeType.HIPPO_CONTENTPROPADD);
+        String contentRoot = StringUtils.trim(JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_CONTENTROOT, "/"));
+        getLogger().info("Contentpropadd property " + contentRoot);
 
         final Property property = session.getProperty(contentRoot);
-        if (contentSetProperty == null && property.isMultiple()) {
-            LinkedList<String> currentValues = new LinkedList<String>();
-            for (Value value : property.getValues()) {
-                currentValues.add(value.getString());
-            }
-            currentValues.addAll(newValues);
-            newValues = currentValues;
-        }
         if (property.isMultiple()) {
-            property.setValue(newValues.toArray(new String[newValues.size()]));
-        } else if (newValues.size() == 1 && contentAddProperty == null) {
-            property.setValue(newValues.get(0));
-        } else if (newValues.isEmpty()) {
-            property.remove();
+            final List<Value> values = new ArrayList<>(Arrays.asList(property.getValues()));
+            values.addAll(Arrays.asList(contentAddProperty.getValues()));
+            property.setValue(values.toArray(new Value[values.size()]));
         } else {
-            property.setValue(newValues.toArray(new String[newValues.size()]));
+            log.warn("Cannot add values to a single valued property");
         }
     }
 
