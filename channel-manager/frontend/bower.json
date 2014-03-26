@@ -19,6 +19,7 @@
     "angular": "1.2.14-build.2302+sha.f827d64",
     "angular-mocks": "1.2.14-build.2302+sha.f827d64",
     "Angular-NestedSortable": "1706ed72b28c3e913253cb7bd1df196fa463b04c",
-    "jasmine-jquery": "2.0.3"
+    "jasmine-jquery": "2.0.3",
+    "es5-shim": "d24a08dfe81e0eda3d5e9f3b859d63c1da05aba7"
   }
 }
