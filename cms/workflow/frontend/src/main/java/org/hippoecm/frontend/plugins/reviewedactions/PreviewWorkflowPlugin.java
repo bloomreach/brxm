@@ -108,7 +108,11 @@ public class PreviewWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "img/edit-16.png");
+                if (isEnabled()) {
+                    return new PackageResourceReference(getClass(), "img/edit-16.png");
+                } else {
+                    return new PackageResourceReference(getClass(), "img/edit-disabled-16.png");
+                }
             }
 
             @Override

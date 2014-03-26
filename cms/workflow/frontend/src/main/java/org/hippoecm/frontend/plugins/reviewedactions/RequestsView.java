@@ -134,7 +134,11 @@ public class RequestsView extends RepeatingView {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "img/workflow-accept-16.png");
+                if (isEnabled()) {
+                    return new PackageResourceReference(getClass(), "img/workflow-accept-16.png");
+                } else {
+                    return new PackageResourceReference(getClass(), "img/workflow-accept-disabled-16.png");
+                }
             }
 
             @Override
@@ -161,7 +165,11 @@ public class RequestsView extends RepeatingView {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "img/workflow-requestunpublish-16.png");
+                if (isEnabled()) {
+                    return new PackageResourceReference(getClass(), "img/workflow-requestunpublish-16.png");
+                } else {
+                    return new PackageResourceReference(getClass(), "img/workflow-requestunpublish-disabled-16.png");
+                }
             }
 
             @Override
@@ -201,7 +209,11 @@ public class RequestsView extends RepeatingView {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "img/delete-16.png");
+                if (isEnabled()) {
+                    return new PackageResourceReference(getClass(), "img/delete-16.png");
+                } else {
+                    return new PackageResourceReference(getClass(), "img/delete-disabled-16.png");
+                }
             }
 
             @Override

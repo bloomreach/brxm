@@ -60,7 +60,11 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "img/unpublish-16.png");
+                if (isEnabled()) {
+                    return new PackageResourceReference(getClass(), "img/unpublish-16.png");
+                } else {
+                    return new PackageResourceReference(getClass(), "img/unpublish-disabled-16.png");
+                }
             }
 
             @Override
@@ -89,7 +93,11 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "img/workflow-requestunpublish-16.png");
+                if (isEnabled()) {
+                    return new PackageResourceReference(getClass(), "img/workflow-requestunpublish-16.png");
+                } else {
+                    return new PackageResourceReference(getClass(), "img/workflow-requestunpublish-disabled-16.png");
+                }
             }
 
             @Override
@@ -120,7 +128,11 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "img/unpublish-scheduled-16.png");
+                if (isEnabled()) {
+                    return new PackageResourceReference(getClass(), "img/unpublish-scheduled-16.png");
+                } else {
+                    return new PackageResourceReference(getClass(), "img/unpublish-scheduled-disabled-16.png");
+                }
             }
 
             @Override
@@ -157,7 +169,11 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "img/unpublish-scheduled-16.png");
+                if (isEnabled()) {
+                    return new PackageResourceReference(getClass(), "img/unpublish-scheduled-16.png");
+                } else {
+                    return new PackageResourceReference(getClass(), "img/unpublish-scheduled-disabled-16.png");
+                }
             }
 
             @Override
@@ -193,7 +209,11 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "img/publish-16.png");
+                if (isEnabled()) {
+                    return new PackageResourceReference(getClass(), "img/publish-16.png");
+                } else {
+                    return new PackageResourceReference(getClass(), "img/publish-disabled-16.png");
+                }
             }
 
             @Override
@@ -231,7 +251,11 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "img/workflow-requestpublish-16.png");
+                if (isEnabled()) {
+                    return new PackageResourceReference(getClass(), "img/workflow-requestpublish-16.png");
+                } else {
+                    return new PackageResourceReference(getClass(), "img/workflow-requestpublish-disabled-16.png");
+                }
             }
 
             @Override
@@ -270,7 +294,11 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "img/publish-schedule-16.png");
+                if (isEnabled()) {
+                    return new PackageResourceReference(getClass(), "img/publish-schedule-16.png");
+                } else {
+                    return new PackageResourceReference(getClass(), "img/publish-schedule-disabled-16.png");
+                }
             }
 
             @Override
@@ -308,7 +336,11 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "img/publish-schedule-16.png");
+                if (isEnabled()) {
+                    return new PackageResourceReference(getClass(), "img/publish-schedule-16.png");
+                } else {
+                    return new PackageResourceReference(getClass(), "img/publish-schedule-disabled-16.png");
+                }
             }
 
             @Override

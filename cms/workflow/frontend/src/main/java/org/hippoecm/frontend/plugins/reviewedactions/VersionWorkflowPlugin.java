@@ -101,7 +101,11 @@ public class VersionWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "img/restore-16.png");
+                if (isEnabled()) {
+                    return new PackageResourceReference(getClass(), "img/restore-16.png");
+                } else {
+                    return new PackageResourceReference(getClass(), "img/restore-disabled-16.png");
+                }
             }
 
             @Override
@@ -166,7 +170,11 @@ public class VersionWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "img/select-16.png");
+                if (isEnabled()) {
+                    return new PackageResourceReference(getClass(), "img/select-16.png");
+                } else {
+                    return new PackageResourceReference(getClass(), "img/select-disabled-16.png");
+                }
             }
 
             @Override

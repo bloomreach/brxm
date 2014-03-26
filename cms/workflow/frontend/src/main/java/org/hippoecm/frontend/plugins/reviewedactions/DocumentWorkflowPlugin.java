@@ -155,7 +155,11 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "img/copy-16.png");
+                if (isEnabled()) {
+                    return new PackageResourceReference(getClass(), "img/copy-16.png");
+                } else {
+                    return new PackageResourceReference(getClass(), "img/copy-disabled-16.png");
+                }
             }
 
             @Override
@@ -326,7 +330,11 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "img/workflow-requestdelete-16.png");
+                if (isEnabled()) {
+                    return new PackageResourceReference(getClass(), "img/workflow-requestdelete-16.png");
+                } else {
+                    return new PackageResourceReference(getClass(), "img/workflow-requestdelete-disabled-16.png");
+                }
             }
 
             @Override
@@ -355,7 +363,11 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "img/where-used-16.png");
+                if (isEnabled()) {
+                    return new PackageResourceReference(getClass(), "img/where-used-16.png");
+                } else {
+                    return new PackageResourceReference(getClass(), "img/where-used-disabled-16.png");
+                }
             }
 
             @Override
@@ -379,7 +391,11 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "img/revision-16.png");
+                if (isEnabled()) {
+                    return new PackageResourceReference(getClass(), "img/revision-16.png");
+                } else {
+                    return new PackageResourceReference(getClass(), "img/revision-disabled-16.png");
+                }
             }
 
             @Override

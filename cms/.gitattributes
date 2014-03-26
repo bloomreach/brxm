@@ -3018,32 +3018,47 @@ workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/di
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/docmetadata-16.png -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/but-small.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/copy-16.png -text
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/copy-disabled-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/delete-16.png -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/delete-disabled-16.png -text svneol=unset#image/png
-workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/depublish-16.png -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/depublish-all-16.png -text svneol=unset#image/png
-workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/document-done-16.png -text svneol=unset#image/png
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/depublish-all-disabled-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/document-save-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/document-saveclose-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/edit-16.png -text
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/edit-disabled-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/move-16.png -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/move-disabled-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/publish-16.png -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/publish-all-16.png -text svneol=unset#image/png
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/publish-all-disabled-16.png -text svneol=unset#image/png
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/publish-disabled-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/publish-schedule-16.png -text
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/publish-schedule-disabled-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/rename-16.png -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/rename-disabled-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/restore-16.png -text svneol=unset#image/png
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/restore-disabled-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/revision-16.png -text svneol=unset#image/png
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/revision-disabled-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/select-16.png -text svneol=unset#image/png
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/select-disabled-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/unlock-16.png -text svneol=unset#image/png
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/unlock-disabled-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/unpublish-16.png -text svneol=unset#image/png
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/unpublish-disabled-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/unpublish-scheduled-16.png -text
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/unpublish-scheduled-disabled-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/where-used-16.png -text svneol=unset#unset
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/where-used-disabled-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/workflow-accept-16.png -text
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/workflow-accept-disabled-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/workflow-requestdelete-16.png -text
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/workflow-requestdelete-disabled-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/workflow-requestpublish-16.png -text
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/workflow-requestpublish-disabled-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/workflow-requestunpublish-16.png -text
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/img/workflow-requestunpublish-disabled-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/list/ReviewedActionsListColumnProviderPlugin.java -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/list/ReviewedActionsListColumnProviderPlugin.properties -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/list/ReviewedActionsListColumnProviderPlugin_de.properties -text

@@ -42,7 +42,11 @@ public class AdminWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "img/unlock-16.png");
+                if (isEnabled()) {
+                    return new PackageResourceReference(getClass(), "img/unlock-16.png");
+                } else {
+                    return new PackageResourceReference(getClass(), "img/unlock-disabled-16.png");
+                }
             }
 
             @Override

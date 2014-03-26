@@ -96,7 +96,11 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "img/publish-all-16.png");
+                if (isEnabled()) {
+                    return new PackageResourceReference(getClass(), "img/publish-all-16.png");
+                } else {
+                    return new PackageResourceReference(getClass(), "img/publish-all-disabled-16.png");
+                }
             }
 
             @Override
@@ -157,7 +161,11 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "img/depublish-all-16.png");
+                if (isEnabled()) {
+                    return new PackageResourceReference(getClass(), "img/depublish-all-16.png");
+                } else {
+                    return new PackageResourceReference(getClass(), "img/depublish-all-disabled-16.png");
+                }
             }
 
             @Override
