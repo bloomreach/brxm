@@ -422,8 +422,6 @@ public final class BeanWriterUtils {
         if (pathProp != null && typeProp != null) {
             final String myType = typeProp.getSingleValue();
             final String myName = pathProp.getSingleValue();
-            log.info("myName {}", myName);
-            log.info("myType {}", myType);
             if (canAddProperty(projectNamespacePrefix, myName)) {
                 addBeanPropertyForType(bean, nodeOrProperty, myName, myType);
             }

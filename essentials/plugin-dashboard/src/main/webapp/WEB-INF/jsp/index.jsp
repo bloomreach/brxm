@@ -36,18 +36,18 @@
 <body id="container">
 
 <!-- LOADER ON HTTP REQUESTS -->
-<div class="busy-loader" ng-show="busyLoading">
+<div class="busy-loader ng-hide" ng-show="busyLoading">
   <%--<span class="fa fa-spin fa-refresh"></span>&nbsp;--%>
   <img src="${pageContext.request.contextPath}/images/loader.gif"/>
 </div>
 <!-- ERROR MESSAGES -->
-<div class="alert-danger messages" ng-show="globalError.length > 0">
+<div class="alert-danger messages ng-hide" ng-show="globalError.length > 0">
   <strong>An error occurred:</strong>
   <div ng-repeat="message in globalError">
     {{message}}
   </div>
 </div>
-<div class="alert-success messages" ng-show="feedbackMessages.length > 0">
+<div class="alert-success messages ng-hide" ng-show="feedbackMessages.length > 0">
   <div ng-repeat="message in feedbackMessages">
     <strong>{{message}}</strong>
   </div>
