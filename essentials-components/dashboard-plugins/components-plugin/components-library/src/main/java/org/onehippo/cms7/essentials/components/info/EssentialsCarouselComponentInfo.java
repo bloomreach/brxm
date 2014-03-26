@@ -63,7 +63,7 @@ public interface EssentialsCarouselComponentInfo {
     Integer getInterval();
 
     @Color
-    @Parameter(name = "carouselBackgroundColor", defaultValue = "#FFF", required = true, displayName = "Carousel background color)")
+    @Parameter(name = "carouselBackgroundColor", defaultValue = "#FFFFFF", required = true, displayName = "Carousel background color)")
     String getCarouselBackgroundColor();
 
     @Parameter(name = "showNavigation", defaultValue = "true", displayName = "Show carousel navigation")
