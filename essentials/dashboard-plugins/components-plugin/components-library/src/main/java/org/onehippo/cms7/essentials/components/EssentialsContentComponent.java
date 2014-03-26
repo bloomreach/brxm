@@ -19,6 +19,6 @@ public class EssentialsContentComponent extends CommonComponent {
 
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
-        setContentBean(request, response);
+        setContentBeanWith404(request, response);
     }
 }
