@@ -42,12 +42,14 @@
 
   -->
   <instructionSet group="jsp">
+    <file action="copy" source="jsp/imports.jsp" target="{{jspRoot}}/essentials/common/imports.jsp"/>
     <file action="copy" source="jsp/essentials-carousel.jsp" target="{{jspRoot}}/essentials/essentials-carousel.jsp"/>
     <file action="copy" source="jsp/essentials-banner.jsp" target="{{jspRoot}}/essentials/essentials-banner.jsp"/>
     <xml action="copy" source="hst/carousel-template-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="hst/banner-template-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
   <instructionSet group="freemarker">
+    <file action="copy" source="freemarker/imports.ftl" target="{{freemarkerRoot}}/essentials/common/imports.ftl"/>
     <file action="copy" source="ftl/essentials-carousel.ftl" target="{{freemarkerRoot}}/essentials/essentials-carousel.ftl"/>
     <file action="copy" source="ftl/essentials-banner.ftl" target="{{freemarkerRoot}}/essentials/essentials-banner.ftk"/>
     <xml action="copy" source="hst/carousel-template-ftl.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
