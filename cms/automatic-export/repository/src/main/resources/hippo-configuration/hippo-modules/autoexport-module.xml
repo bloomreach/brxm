@@ -33,6 +33,8 @@
       <sv:value>/hst:hst/hst:configurations/*-preview/**</sv:value>
       <sv:value>/hst:hst/hst:configurations/*-v*</sv:value>
       <sv:value>/hst:hst/hst:configurations/*-v*/**</sv:value>
+      <sv:value>/hst:hst/hst:configurations/*/hst:workspace</sv:value>
+      <sv:value>/hst:hst/hst:configurations/*/hst:workspace/**</sv:value>
       <sv:value>/hst:hst/hst:sites/*/hst:version</sv:value>
       <sv:value>/hst:hst/hst:channels/*-preview</sv:value>
       <sv:value>/hst:hst/hst:channels/*-preview/**</sv:value>
