@@ -38,6 +38,16 @@
                         return menuData.items;
                     }, function() {
                         $scope.list = menuData.items;
+
+                        // merge pending changes into newly loaded tree
+                        if ($scope.selectedMenuItem) {
+                            MenuService.getMenuItem($scope.selectedMenuItem.id).then(function(item) {
+                                if ($scope.selectedMenuItem != item) {
+                                    delete $scope.selectedMenuItem.items;
+                                    $scope.selectedMenuItem = angular.extend(item, $scope.selectedMenuItem);
+                                }
+                            });
+                        }
                     }, false);
                 });
 

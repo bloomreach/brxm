@@ -41,16 +41,19 @@
 
                 function loadMenu() {
                     if (menuLoader === null) {
-                        menuLoader = $q.defer();
+                        var loader = $q.defer();
                         $http.get(menuServiceUrl())
                             .success(function (response) {
-                                menuData.items = response.data.items;
+                                if (!angular.equals(menuData.items, response.data.items)) {
+                                    menuData.items = response.data.items;
+                                }
                                 menuData.id = response.data.id;
-                                menuLoader.resolve(menuData);
+                                loader.resolve(menuData);
                             })
                             .error(function (error) {
-                                menuLoader.reject(error);
+                                loader.reject(error);
                             });
+                        menuLoader = loader;
                     }
                     return menuLoader.promise;
                 }
@@ -112,10 +115,11 @@
                         var head = writeQueue.shift();
                         head.deferred.resolve(response);
 
-                        if (writeQueue.length === 0) {
-                            menuLoader = null;
-                        } else {
+                        if (writeQueue.length > 0) {
                             scheduleNext();
+                        } else {
+                            menuLoader = null;
+                            loadMenu();
                         }
                     }
 
@@ -127,6 +131,8 @@
                             var entry = writeQueue.shift();
                             entry.deferred.reject();
                         }
+                        menuLoader = null;
+                        loadMenu();
                     }
 
                     function scheduleNext() {

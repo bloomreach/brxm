@@ -52,6 +52,12 @@
                 }
 
                 $scope.callbacks = {
+                    accept: function(modelData, sourceItemScope, targetScope, destIndex) {
+                        // created an issue for the Tree component, to add a disabled state
+                        // link: https://github.com/JimLiu/angular-ui-tree/issues/63
+                        // for now, simply don't accept any moves when the form is invalid
+                        return FormStateService.isValid();
+                    },
                     itemClicked: function (itemScope) {
                         var clickedItemId = itemScope.id;
 
@@ -71,31 +77,14 @@
                         }
                     },
                     itemMoved: function (sourceScope, modelData, sourceIndex, destScope, destIndex) {
-                        // created an issue for the Tree component, to add a disabled state
-                        // link: https://github.com/JimLiu/angular-ui-tree/issues/63
-                        if (!FormStateService.isValid()) {
-                            moveItemModel(sourceScope, sourceIndex, destScope, destIndex);
-                        } else {
-                            var parentData = destScope.parentItemScope(),
-                                destId = (!parentData) ? ConfigService.menuId : parentData.itemData().id;
-                            MenuService.moveMenuItem(modelData.id, destId, destIndex).then(onSuccess, function (errorResponse) {
-                                setErrorFeedback(errorResponse);
-                                moveItemModel(sourceScope, sourceIndex, destScope, destIndex);
-                            });
-                        }
-
-                        // prevent move action when the edit menu item form is invalid
-                        MenuService.saveMenuItem($scope.$parent.selectedMenuItem);
+                        var parentData = destScope.parentItemScope(),
+                            destId = (!parentData) ? ConfigService.menuId : parentData.itemData().id;
+                        MenuService.moveMenuItem(modelData.id, destId, destIndex).then(onSuccess, setErrorFeedback);
                     },
                     orderChanged: function (scope, modelData, sourceIndex, destIndex) {
-                        if (!FormStateService.isValid()) {
-                            // revert tree, move the item back at it's original place in the DOM
-                            moveItemModel(scope, sourceIndex, scope, destIndex);
-                        } else {
-                            var parentData = scope.parentItemScope(),
-                                destId = (!parentData) ? ConfigService.menuId : parentData.itemData().id;
-                            MenuService.moveMenuItem(modelData.id, destId, destIndex).then(onSuccess, setErrorFeedback);
-                        }
+                        var parentData = scope.parentItemScope(),
+                            destId = (!parentData) ? ConfigService.menuId : parentData.itemData().id;
+                        MenuService.moveMenuItem(modelData.id, destId, destIndex).then(onSuccess, setErrorFeedback);
                     }
                 };
             }
