@@ -274,6 +274,7 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
                     .replaceAll("%2F", "/").replaceAll("%3A", ":");
 
             httpGet = new HttpGet(normalizedPingServiceUri);
+            httpGet.addHeader(CMSREST_CREDENTIALS_HEADER, getEncryptedCredentials(getSubject()));
             final HttpContext httpContext = new BasicHttpContext();
             final HttpResponse httpResponse = httpClient.execute(httpGet, httpContext);
             boolean ok = (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK);
