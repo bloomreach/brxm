@@ -165,6 +165,10 @@ test/*.tmp
 test/.classpath
 test/.project
 test/.settings
+test/checker-repository.xml
+test/checker-storage
+test/checker.jar
+test/checker.properties
 test/datanucleus.log
 test/derby.log
 test/hippo-repository-test.iml
