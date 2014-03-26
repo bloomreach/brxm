@@ -1150,6 +1150,7 @@ automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/Initializ
 automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/InitializeItemRegistry.java -text
 automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/LocationMapper.java -text
 automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/Module.java -text
+automatic-export/repository/src/main/resources/autoexport-domain.xml -text
 automatic-export/repository/src/main/resources/automatic-export-plugin.xml -text
 automatic-export/repository/src/main/resources/hippo-configuration/hippo-modules/autoexport-module.xml -text
 automatic-export/repository/src/main/resources/hippoecm-extension.xml -text
