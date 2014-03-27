@@ -4,7 +4,6 @@
 
 package org.onehippo.cms7.essentials.components.info;
 
-import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 
@@ -21,7 +20,7 @@ import org.hippoecm.hst.core.parameters.Parameter;
                 value = {"pageSize"}
         )
 })*/
-public interface EssentialsDocumentListComponentInfo extends EssentialsPageable {
+public interface EssentialsDocumentListComponentInfo extends EssentialsPageable, EssentialsSortable {
 
 
     @Parameter(name = "path", required = false, displayName = "Documents path")
@@ -41,18 +40,6 @@ public interface EssentialsDocumentListComponentInfo extends EssentialsPageable 
     @Parameter(name = "documentTypes", required = true, displayName = "Document types (comma separated)")
     String getDocumentTypes();
 
-    /*
-    @Parameter(name = "listType", required = false, defaultValue = "search", displayName = "List type", description = "Repository or search type of list")
-    @DropDownList(value = {"search", "repository"})
-    String getListType();
-    */
-
-    @Parameter(name = "sortField", required = false, displayName = "Sort field")
-    String getSortField();
-
-    @Parameter(name = "sortOrder", required = false, defaultValue = "desc", displayName = "Sort order", description = "Order results ascending or descending")
-    @DropDownList(value = {"asc", "desc"})
-    String getSortOrder();
 
 
 }
