@@ -112,11 +112,12 @@ public class EssentialsListComponent extends CommonComponent {
     /**
      * Apply ordering (if order field name is provided)
      *
+     * @param request       instance of  HstRequest
      * @param query         instance of  HstQuery
      * @param componentInfo instance of EssentialsDocumentListComponentInfo
      * @param <T>
      */
-    protected <T extends EssentialsDocumentListComponentInfo> void applyOrdering(final HstQuery query, final T componentInfo) {
+    protected <T extends EssentialsDocumentListComponentInfo> void applyOrdering(final HstRequest request, final HstQuery query, final T componentInfo) {
         final String sortField = componentInfo.getSortField();
         if (Strings.isNullOrEmpty(sortField)) {
             return;
@@ -184,8 +185,8 @@ public class EssentialsListComponent extends CommonComponent {
         query.setLimit(pageSize);
         query.setOffset((page - 1) * pageSize);
         applySearchFilter(request, query);
-        applyOrdering(query, paramInfo);
-
+        applyOrdering(request, query, paramInfo);
+        applyExcludeScopes(request, query, paramInfo);
 
         final HstQueryResult execute = query.execute();
         final Pageable<HippoBean> pageable = new IterablePagination<>(
@@ -195,6 +196,10 @@ public class EssentialsListComponent extends CommonComponent {
                 page);
         pageable.setShowPagination(isShowPagination(request, paramInfo));
         return pageable;
+    }
+
+    protected <T extends EssentialsDocumentListComponentInfo> void applyExcludeScopes(final HstRequest request, final HstQuery query, final T paramInfo) {
+        // just an extension point for time being
     }
 
     /**
