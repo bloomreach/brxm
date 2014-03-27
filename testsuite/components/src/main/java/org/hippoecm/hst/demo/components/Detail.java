@@ -19,13 +19,12 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.jcr.Session;
 import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.annotations.Persistable;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
-import org.hippoecm.hst.content.beans.manager.workflow.WorkflowCallbackHandler;
+import org.hippoecm.hst.content.beans.manager.workflow.BaseWorkflowCallbackHandler;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
@@ -41,7 +40,7 @@ import org.hippoecm.hst.demo.beans.BaseBean;
 import org.hippoecm.hst.demo.beans.CommentBean;
 import org.hippoecm.hst.util.ContentBeanUtils;
 import org.hippoecm.hst.utils.SimpleHtmlExtractor;
-import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,10 +131,9 @@ public void doAction(HstRequest request, HstResponse response) throws HstCompone
 
             try {
                 wpm = getWorkflowPersistenceManager(requestContext.getSession());
-                wpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
-                    public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
-                        FullReviewedActionsWorkflow fraw = (FullReviewedActionsWorkflow) wf;
-                        fraw.requestPublication();
+                wpm.setWorkflowCallbackHandler(new BaseWorkflowCallbackHandler<DocumentWorkflow>() {
+                    public void processWorkflow(DocumentWorkflow wf) throws Exception {
+                        wf.requestPublication();
                     }
                 });
 
@@ -208,11 +206,10 @@ public void doAction(HstRequest request, HstResponse response) throws HstCompone
 
             try {
                 cpm = getWorkflowPersistenceManager(requestContext.getSession());
-                cpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
-                    public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
+                cpm.setWorkflowCallbackHandler(new BaseWorkflowCallbackHandler<DocumentWorkflow>() {
+                    public void processWorkflow(DocumentWorkflow wf) throws Exception {
                         if (requestPublication) {
-                            FullReviewedActionsWorkflow fraw = (FullReviewedActionsWorkflow) wf;
-                            fraw.requestPublication();
+                            wf.requestPublication();
                         }
                     }
                 });
