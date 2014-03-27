@@ -99,12 +99,13 @@
                                     data-placeholder="{{ 'SELECT_TEMPLATE' | translate }}"
                                     data-no-results-text="{{ 'NO_TEMPLATE_FOUND_FOR' | translate }}"></select>
 
-                            <div class="alert alert-warning" data-ng-show="page.hasContainerItem && !page.prototype.hasContainerInPageDefinition">
-                                {{ 'ASSIGN_NEW_TEMPLATE_REPOSITION_WARNING' | translate }}
-                            </div>
-
-                            <div class="alert alert-danger" data-ng-show="page.hasContainerItem && page.prototype.hasContainerInPageDefinition">
-                                {{ 'ASSIGN_NEW_TEMPLATE_REMOVED_WARNING' | translate }}
+                            <div data-ng-show="page.hasContainerItem">
+                                <div class="alert alert-warning" data-ng-show="!page.prototype.id || page.prototype.hasContainerInPageDefinition">
+                                    {{ 'ASSIGN_NEW_TEMPLATE_REPOSITION_WARNING' | translate }}
+                                </div>
+                                <div class="alert alert-danger" data-ng-show="page.prototype.id && !page.prototype.hasContainerInPageDefinition">
+                                    {{ 'ASSIGN_NEW_TEMPLATE_REMOVED_WARNING' | translate }}
+                                </div>
                             </div>
                         </div>
                     </div>
