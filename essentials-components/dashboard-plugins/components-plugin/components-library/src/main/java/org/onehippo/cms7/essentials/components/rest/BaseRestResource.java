@@ -82,7 +82,6 @@ public abstract class BaseRestResource extends AbstractResource {
     }
 
     public Node getScope(final HttpServletRequest request) throws RepositoryException {
-        // HippoBean bena = getMountContentBaseBean(getRequestContext(request));
         HstRequestContext requestContext = getRequestContext(request);
         Mount siteMount = requestContext.getResolvedMount().getMount();
         if (siteMount == null) {
