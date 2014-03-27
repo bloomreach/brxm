@@ -38,7 +38,7 @@ import static org.junit.Assert.assertEquals;
 public class BasicPowerpackTest extends BaseRepositoryTest {
 
 
-    public static final int TOTAL_INSTRUCTIONS = 14;
+    public static final int TOTAL_INSTRUCTIONS = 13;
     public static final int TOTAL_FILES = 10;
 
 
