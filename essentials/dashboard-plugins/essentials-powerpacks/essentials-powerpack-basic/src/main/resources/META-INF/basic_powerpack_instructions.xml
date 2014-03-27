@@ -86,8 +86,8 @@
     MENU
   -->
   <instructionSet>
-    <xml action="copy" source="xml/menu/menu-item-news.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemenus/main"/>
-    <xml action="copy" source="xml/menu/menu-item-events.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemenus/main"/>
+    <xml action="copy" source="xml/hst/menu/menu-item-news.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemenus/main"/>
+    <xml action="copy" source="xml/hst/menu/menu-item-events.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemenus/main"/>
   </instructionSet>
 
 
