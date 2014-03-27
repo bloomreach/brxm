@@ -15,10 +15,9 @@
  */
 package org.onehippo.repository.documentworkflow;
 
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Calendar;
-import java.util.Map;
+import java.util.Date;
 import java.util.Set;
 import java.util.SortedMap;
 
@@ -28,21 +27,129 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
-import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
-import org.hippoecm.repository.reviewedactions.UnlockWorkflow;
 import org.hippoecm.repository.standardworkflow.CopyWorkflow;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.onehippo.repository.api.annotation.WorkflowAction;
 
 /**
  * Aggregate DocumentWorkflow, combining all Document handle based workflow operations into one generic interface.
- * <p> The -Request- and VersionWorkflows operations have been re-defined inline to be able to use different parameters
+ * <p>
+ * This workflow replaces now all deprecated org,hippoecm.repository.reviewedactions.* workflow, which operations
+ * have been inlined.
+ * </p>
+ * <p> The -Request- and VersionWorkflows operations have been re-defined to be able to use different parameters
  * (and methodNames) as needed to be functional on Document handle level </p>
  */
-public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkflow, BasicReviewedActionsWorkflow, FullReviewedActionsWorkflow, UnlockWorkflow {
+public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkflow {
 
-    // Request Workflow on Document handle level
+    // Operations previously provided through BasicReviewedActionsWorkflow, now provided on Document handle level
+
+    /**
+     * Request unpublication and deletion of document.
+     */
+    public void requestDeletion()
+            throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
+     * Request unpublication.
+     */
+    public void requestDepublication()
+            throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
+     * Request unpublication at given date.
+     */
+    public void requestDepublication(Date publicationDate)
+            throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
+     * Request for this instance of the document to be published.
+     */
+    public void requestPublication()
+            throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
+     * Request for this instance of the document to be published at the given
+     * date.
+     */
+    public void requestPublication(Date publicationDate)
+            throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
+     * Request for this instance of the document to be published at the given
+     * date and to be scheduled for unpublication.
+     */
+    public void requestPublication(Date publicationDate, Date unpublicationDate)
+            throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+
+    // Operations previously provided through FullReviewedActionsWorkflow, now provided on Document handle level
+
+    /**
+     * Immediate unpublication and deletion of document.
+     * The current user must have authorization for this.
+     */
+    public void delete()
+            throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
+     * Rename document.
+     * The current user must have authorization for this.
+     */
+    public void rename(String newName)
+            throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
+     * Immediate unpublication and rename document.
+     * The current user must have authorization for this.
+     */
+    public void copy(Document target, String newName)
+            throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
+     * Immediate unpublication and rename document.
+     * The current user must have authorization for this.
+     */
+    public void move(Document target, String newName)
+            throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
+     * Immediate unpublication.
+     * The current user must have authorization for this.
+     */
+    public void depublish()
+            throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
+     * Immediate unpublication.
+     * The current user must have authorization for this.
+     */
+    public void depublish(Date depublicationDate)
+            throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
+     * Immediate publication.
+     * The current user must have authorization for this.
+     */
+    public void publish()
+            throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
+     * Publish at the requested date.
+     * The current user must have authorization for this.
+     */
+    public void publish(Date publicationDate)
+            throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
+     * Publish at the requested date, and depublish at the requested second date
+     * The current user must have authorization for this.
+     */
+    public void publish(Date publicationDate, Date unpublicationDate)
+            throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+
+    // Operations previously provided through *RequestWorkflow, now provided on Document handle level
 
     /**
      * Cancels and/or disposes (!) a specific request.
@@ -63,7 +170,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
             throws WorkflowException, RepositoryException, RemoteException;
 
 
-    // Version Workflow on Document handle level
+    // Operations previously provided through VersionWorkflow, on provided on Document handle level
 
     /**
      * Creates a version of the current document state, such that the current state of the document may be re-retrieved
@@ -142,4 +249,14 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
     @WorkflowAction(loggable = false)
     Document retrieveVersion(Calendar historic)
             throws WorkflowException, RepositoryException, RemoteException;
+
+
+    // Operations previously provided through UnlockWorkflow, now provided on Document handle level
+
+    /**
+     * Unlock document, i.e. take ownership of draft
+     */
+    void unlock()
+            throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
 }
