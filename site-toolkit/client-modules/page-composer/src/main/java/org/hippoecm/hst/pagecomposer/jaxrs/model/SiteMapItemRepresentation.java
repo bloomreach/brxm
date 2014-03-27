@@ -160,11 +160,11 @@ public class SiteMapItemRepresentation {
         this.name = name;
     }
 
-    public boolean setIsHomePage() {
+    public boolean getIsHomePage() {
         return isHomePage;
     }
 
-    public void getIsHomePage(final boolean homePage) {
+    public void setIsHomePage(final boolean homePage) {
         isHomePage = homePage;
     }
 
