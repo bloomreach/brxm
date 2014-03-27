@@ -7,25 +7,47 @@
   // COMMONS POWERPACK ADDS SHARED FILES/CONFIGURATION
   //############################################
   -->
-  <instructionSet>
+  <instructionSet group="jsp">
     <file action="copy" source="powerpack/jsp/imports.jsp" target="{{jspRoot}}/essentials/common/imports.jsp"/>
     <file action="copy" source="powerpack/jsp/pagination.jsp" target="{{jspRoot}}/essentials/common/pagination.jsp"/>
+    <file action="copy" source="powerpack/jsp/essentials-home.jsp" target="{{jspRoot}}/essentials/essentials-home.jsp"/>
     <file action="copy" source="powerpack/jsp/essentials-layout-webpage.jsp" target="{{jspRoot}}/essentials/essentials-layout-webpage.jsp"/>
     <file action="copy" source="powerpack/jsp/essentials-standard-main.jsp" target="{{jspRoot}}/essentials/essentials-standard-main.jsp"/>
     <file action="copy" source="powerpack/jsp/essentials-standard-menu.jsp" target="{{jspRoot}}/essentials/essentials-standard-menu.jsp"/>
-
-
-    <file action="copy" source="powerpack/freemarker/pagination.ftl" target="{{freemarkerRoot}}/essentials/common/pagination.ftl"/>
-    <file action="copy" source="powerpack/freemarker/imports.ftl" target="{{freemarkerRoot}}/essentials/common/imports.ftl"/>
   </instructionSet>
-
-  <instructionSet>
+  <instructionSet group="jsp">
     <xml action="copy" source="powerpack/xml/hst/templates/layout-webpage-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="powerpack/xml/hst/templates/standard-main-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="powerpack/xml/hst/templates/standard-menu-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="powerpack/xml/hst/templates/homepage-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
 
+  <instructionSet group="freemarker">
+    <file action="copy" source="powerpack/freemarker/imports.ftl" target="{{freemarkerRoot}}/essentials/common/imports.ftl"/>
+    <file action="copy" source="powerpack/freemarker/pagination.ftl" target="{{freemarkerRoot}}/essentials/common/pagination.ftl"/>
+    <file action="copy" source="powerpack/freemarker/essentials-home.jsp" target="{{freemarkerRoot}}/essentials/essentials-home.jsp"/>
+    <file action="copy" source="powerpack/freemarker/essentials-layout-webpage.jsp" target="{{freemarkerRoot}}/essentials/essentials-layout-webpage.jsp"/>
+    <file action="copy" source="powerpack/freemarker/essentials-standard-main.jsp" target="{{freemarkerRoot}}/essentials/essentials-standard-main.jsp"/>
+    <file action="copy" source="powerpack/freemarker/essentials-standard-menu.jsp" target="{{freemarkerRoot}}/essentials/essentials-standard-menu.jsp"/>
+  </instructionSet>
+  <instructionSet group="freemarker">
+    <xml action="copy" source="powerpack/xml/hst/templates/layout-webpage-ftl.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="powerpack/xml/hst/templates/standard-main-ftl.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="powerpack/xml/hst/templates/standard-menu-ftl.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="powerpack/xml/hst/templates/homepage-ftl.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+  </instructionSet>
 
+  <!--
+    //############################################
+    // COMMON HST
+    //############################################
+
+  -->
+  <instructionSet>
+    <xml action="copy" source="powerpack/xml/menu/main.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemenus"/>
+    <xml action="copy" source="powerpack/xml/hst/sitemap/root.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
+    <xml action="copy" source="powerpack/xml/hst/pages/homepage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
+  </instructionSet>
 
   <!--
   //############################################

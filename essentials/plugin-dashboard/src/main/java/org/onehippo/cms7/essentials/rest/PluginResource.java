@@ -206,6 +206,7 @@ public class PluginResource extends BaseResource {
         //############################################
         final PowerpackPackage commonsPack = new CommonsPowerpack();
         getInjector().autowireBean(commonsPack);
+        commonsPack.setProperties(new HashMap<String, Object>(values));
         commonsPack.execute(context);
 
         final PowerpackPackage powerpackPackage = GlobalUtils.newInstance(myPlugin.getPowerpackClass());

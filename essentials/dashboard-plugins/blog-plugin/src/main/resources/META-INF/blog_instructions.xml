@@ -95,8 +95,6 @@
   //############################################
   -->
   <instructionSet>
-    <!-- NOTE: if menu already exists it'll fail so we add second instruction for sitemap item only-->
-    <xml action="copy" source="xml/menu/main.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemenus"/>
     <xml action="copy" source="xml/menu/blog-menu-item.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemenus/main"/>
   </instructionSet>
 

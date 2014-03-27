@@ -18,13 +18,12 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:sitemenu</sv:value>
   </sv:property>
-  <sv:node sv:name="blog">
+  <sv:node sv:name="home">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemenuitem</sv:value>
     </sv:property>
     <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-      <sv:value>blog</sv:value>
+      <sv:value>root</sv:value>
     </sv:property>
   </sv:node>
-
 </sv:node>

@@ -47,14 +47,11 @@
     <file action="copy"  source="jsp/essentials-component-news-detail.jsp" target="{{jspRoot}}/essentials/essentials-component-news-detail.jsp"/>
     <file action="copy"  source="jsp/essentials-component-events.jsp" target="{{jspRoot}}/essentials/essentials-component-events.jsp"/>
     <file action="copy"  source="jsp/essentials-component-event-detail.jsp" target="{{jspRoot}}/essentials/essentials-component-event-detail.jsp"/>
-    <!--todo temporary:-->
-    <file action="copy"  source="jsp/essentials-home.jsp" target="{{jspRoot}}/essentials/essentials-home.jsp"/>
+
   </instructionSet>
   <instructionSet>
     <xml action="copy" source="xml/hst/sitemap/news.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
     <xml action="copy" source="xml/hst/sitemap/events.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
-    <!--todo temporary:-->
-    <xml action="copy" source="xml/hst/sitemap/root.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
   </instructionSet>
   <instructionSet>
     <file action="copy"  source="java/NewsDocument.txt" target="{{beansFolder}}/NewsDocument.java"/>
@@ -70,8 +67,7 @@
     <xml action="copy" source="xml/hst/pages/newspage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="xml/hst/pages/eventsoverview.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="xml/hst/pages/eventspage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
-    <!--todo temporary:-->
-    <xml action="copy" source="xml/hst/pages/homepage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
+
   </instructionSet>
   <instructionSet>
 
@@ -81,8 +77,6 @@
     <xml action="copy" source="xml/hst/templates/news-main-content.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="xml/hst/templates/events-main-overview-content.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="xml/hst/templates/events-main-content.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <!--todo temporary:-->
-    <xml action="copy" source="xml/hst/templates/homepage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
   <instructionSet>
     <xml action="copy" source="xml/hst/catalog/basic-powerpack-catalog.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:catalog"/>
@@ -92,7 +86,8 @@
     MENU
   -->
   <instructionSet>
-    <xml action="copy"  source="xml/hst/menu/main.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemenus"/>
+    <xml action="copy" source="xml/menu/menu-item-news.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemenus/main"/>
+    <xml action="copy" source="xml/menu/menu-item-events.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemenus/main"/>
   </instructionSet>
 
 
