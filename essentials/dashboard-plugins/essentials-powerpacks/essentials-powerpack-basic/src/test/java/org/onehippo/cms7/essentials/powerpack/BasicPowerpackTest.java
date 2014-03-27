@@ -39,7 +39,7 @@ public class BasicPowerpackTest extends BaseRepositoryTest {
 
 
     public static final int TOTAL_INSTRUCTIONS = 13;
-    public static final int TOTAL_FILES = 10;
+    public static final int TOTAL_FILES = 6;
 
 
     private File jspDirectory;
