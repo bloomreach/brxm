@@ -10,19 +10,27 @@
   <instructionSet>
     <file action="copy" source="powerpack/jsp/imports.jsp" target="{{jspRoot}}/essentials/common/imports.jsp"/>
     <file action="copy" source="powerpack/jsp/pagination.jsp" target="{{jspRoot}}/essentials/common/pagination.jsp"/>
-    <file action="copy" source="jsp/essentials-layout-webpage.jsp" target="{{jspRoot}}/essentials/essentials-layout-webpage.jsp"/>
-    <file action="copy" source="jsp/essentials-standard-main.jsp" target="{{jspRoot}}/essentials/essentials-standard-main.jsp"/>
-    <file action="copy" source="jsp/essentials-standard-menu.jsp" target="{{jspRoot}}/essentials/essentials-standard-menu.jsp"/>
+    <file action="copy" source="powerpack/jsp/essentials-layout-webpage.jsp" target="{{jspRoot}}/essentials/essentials-layout-webpage.jsp"/>
+    <file action="copy" source="powerpack/jsp/essentials-standard-main.jsp" target="{{jspRoot}}/essentials/essentials-standard-main.jsp"/>
+    <file action="copy" source="powerpack/jsp/essentials-standard-menu.jsp" target="{{jspRoot}}/essentials/essentials-standard-menu.jsp"/>
 
 
     <file action="copy" source="powerpack/freemarker/pagination.ftl" target="{{freemarkerRoot}}/essentials/common/pagination.ftl"/>
     <file action="copy" source="powerpack/freemarker/imports.ftl" target="{{freemarkerRoot}}/essentials/common/imports.ftl"/>
   </instructionSet>
+
+  <instructionSet>
+    <xml action="copy" source="powerpack/xml/hst/templates/layout-webpage-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="powerpack/xml/hst/templates/standard-main-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="powerpack/xml/hst/templates/standard-menu-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+  </instructionSet>
+
+
+
   <!--
   //############################################
   // CSS/JS
   //############################################
-
 -->
   <instructionSet>
     <file binary="true" action="copy" source="js/jquery-2.1.0.min.js" target="{{javascriptRoot}}/jquery-2.1.0.min.js"/>

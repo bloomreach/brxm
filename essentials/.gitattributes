@@ -487,13 +487,10 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/reso
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/templates/events-main-content.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/templates/events-main-overview-content.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/templates/homepage.xml -text
-dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/templates/layout-webpage.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/templates/news-main-content.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/templates/news-main-overview-content.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/templates/standard-main-content.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/templates/standard-main-overview-content.xml -text
-dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/templates/standard-main.xml -text
-dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/templates/standard-menu.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/namespaces/eventsdocument.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/namespaces/newsdocument.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/samples/content/documents/events/sample_breakfast.xml -text
@@ -526,6 +523,9 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/r
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/jsp/essentials-standard-menu.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/jsp/imports.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/jsp/pagination.jsp -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/templates/layout-webpage-jsp.xml -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/templates/standard-main-jsp.xml -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/templates/standard-menu-jsp.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/test/resources/log4j.xml -text
 dashboard-plugins/essentials-powerpacks/pom.xml -text
 dashboard-plugins/freemarker-synchronizer/pom.xml -text

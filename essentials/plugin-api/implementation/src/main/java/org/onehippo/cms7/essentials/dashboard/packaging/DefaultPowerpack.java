@@ -49,6 +49,8 @@ public class DefaultPowerpack implements PowerpackPackage {
 
     public static final ImmutableSet<String> DEFAULT_GROUPS = new ImmutableSet.Builder<String>().add(EssentialConst.INSTRUCTION_GROUP_DEFAULT).build();
     public static final String DEFAULT_INSTRUCTIONS_PATH = "/META-INF/instructions.xml";
+    public static final String PROP_TEMPLATE_NAME = "templateName";
+    public static final String PROP_SAMPLE_DATA = "sampleData";
     private static Logger log = LoggerFactory.getLogger(DefaultPowerpack.class);
 
     @Inject

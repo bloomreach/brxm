@@ -16,11 +16,29 @@
 
 package org.onehippo.cms7.essentials.dashboard.packaging;
 
+import java.util.Set;
+
+import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableSet;
+
 /**
- * Adds all files that are shared between other powerpacks, like JSP/Freemarker includes, pagination etc.
+ * Adds all files that are shared between other powerpacks,
+ * like JSP/Freemarker includes, pagination, template skeleton etc.
+ *
  * @version "$Id$"
  */
 public class CommonsPowerpack extends DefaultPowerpack {
+
+    @Override
+    public Set<String> groupNames() {
+        final String templateName = (String) getProperties().get(PROP_TEMPLATE_NAME);
+        final String templateGroup = Strings.isNullOrEmpty(templateName) ? "jsp" : templateName;
+        return new ImmutableSet.Builder<String>()
+                .add(EssentialConst.INSTRUCTION_GROUP_DEFAULT)
+                .add(templateGroup).build();
+    }
 
     @Override
     public String getInstructionPath() {

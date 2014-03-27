@@ -1,4 +1,4 @@
-<%@ taglib prefix="hst" uri="http://www.hippoecm.org/jsp/hst/core" %>
+<%@ include file="/WEB-INF/jsp/essentials/common/imports.jsp" %>
 <div class="main">
   <hst:include ref="content"/>
 </div>

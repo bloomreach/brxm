@@ -1,5 +1,5 @@
 <!doctype html>
-<%@ taglib prefix="hst" uri="http://www.hippoecm.org/jsp/hst/core" %>
+<%@ include file="/WEB-INF/jsp/essentials/common/imports.jsp" %>
 <html lang="en">
 <head>
   <meta charset="utf-8"/>

@@ -34,9 +34,11 @@ public class BlogPowerpack extends DefaultPowerpack {
             .add(EssentialConst.INSTRUCTION_GROUP_DEFAULT)
             .add("jsp")
             .build();
+
+
     @Override
     public Set<String> groupNames() {
-        final String templateName = (String) getProperties().get("templateName");
+        final String templateName = (String) getProperties().get(PROP_TEMPLATE_NAME);
         if (templateName != null) {
             return new ImmutableSet.Builder<String>()
                     .add(EssentialConst.INSTRUCTION_GROUP_DEFAULT)

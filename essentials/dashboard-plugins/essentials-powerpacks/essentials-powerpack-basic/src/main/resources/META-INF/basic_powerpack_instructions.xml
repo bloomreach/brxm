@@ -74,9 +74,7 @@
     <xml action="copy" source="xml/hst/pages/homepage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
   </instructionSet>
   <instructionSet>
-    <xml action="copy" source="xml/hst/templates/layout-webpage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="xml/hst/templates/standard-main.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="xml/hst/templates/standard-menu.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+
     <xml action="copy" source="xml/hst/templates/standard-main-overview-content.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="xml/hst/templates/standard-main-content.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="xml/hst/templates/news-main-overview-content.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>

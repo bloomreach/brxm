@@ -11,15 +11,17 @@ import com.google.common.collect.ImmutableSet;
 
 public class SimpleContentPowerpack extends DefaultPowerpack {
 
+
+
     @Override
     public Set<String> groupNames() {
-        final Boolean sampleData = Boolean.valueOf((String) getProperties().get("sampleData"));
-        final String templateName = (String) getProperties().get("templateName");
+        final Boolean sampleData = Boolean.valueOf((String) getProperties().get(PROP_SAMPLE_DATA));
+        final String templateName = (String) getProperties().get(PROP_TEMPLATE_NAME);
         final String templateGroup = Strings.isNullOrEmpty(templateName) ? "jsp" : templateName;
         if (sampleData) {
             return new ImmutableSet.Builder<String>()
                     .add(EssentialConst.INSTRUCTION_GROUP_DEFAULT)
-                    .add("sampleData")
+                    .add(PROP_SAMPLE_DATA)
                     .add(templateGroup).build();
         }
         return new ImmutableSet.Builder<String>()
