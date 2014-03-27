@@ -28,6 +28,7 @@ import javax.jcr.Value;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
@@ -47,6 +48,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.AbstractMountResourceTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -196,7 +198,11 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         final HstSiteMap siteMap = site.getSiteMap();
         // override the config identifier to have sitemap id
         ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, ((CanonicalInfo) siteMap).getCanonicalIdentifier());
-        return new SiteMapRepresentation().represent(siteMap, getPreviewConfigurationPath(), site.getComponentsConfiguration());
+
+        final Mount mount = ctx.getResolvedMount().getMount();
+        String homePathPath =  HstSiteMapUtils.getPath(mount, mount.getHomePage());
+        return new SiteMapRepresentation().represent(siteMap, getPreviewConfigurationPath(), site.getComponentsConfiguration(),
+                homePathPath);
     }
 
     protected SiteMapResource createResource() {

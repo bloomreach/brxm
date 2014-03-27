@@ -26,12 +26,15 @@ import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
 
 public class SiteMapItemRepresentation {
 
     private String name;
     private String id;
+    private String pathInfo;
+    private boolean isHomePage;
     private String pageTitle;
     private Map<String, String> localParameters;
     private Set<String> roles;
@@ -60,7 +63,8 @@ public class SiteMapItemRepresentation {
 
     public SiteMapItemRepresentation representShallow(final HstSiteMapItem item,
                                                       final String previewConfigurationPath,
-                                                      final HstComponentsConfiguration hstComponentsConfiguration)
+                                                      final HstComponentsConfiguration hstComponentsConfiguration,
+                                                      final String homePagePathInfo)
             throws IllegalArgumentException {
         if (!(item instanceof CanonicalInfo)) {
             throw new IllegalArgumentException("Expected object of type CanonicalInfo");
@@ -70,6 +74,14 @@ public class SiteMapItemRepresentation {
         }
         name = NodeNameCodec.decode(item.getValue());
         id = ((CanonicalInfo) item).getCanonicalIdentifier();
+
+        this.pathInfo = HstSiteMapUtils.getPath(item, null);
+
+        if (this.pathInfo.equals(homePagePathInfo)) {
+            this.pathInfo = "/";
+            this.isHomePage = true;
+        }
+
         pageTitle = item.getPageTitle();
         componentConfigurationId = item.getComponentConfigurationId();
 
@@ -99,12 +111,13 @@ public class SiteMapItemRepresentation {
 
     public SiteMapItemRepresentation represent(final HstSiteMapItem item,
                                                final String previewConfigurationPath,
-                                               final HstComponentsConfiguration hstComponentsConfiguration) {
-        representShallow(item, previewConfigurationPath, hstComponentsConfiguration);
+                                               final HstComponentsConfiguration hstComponentsConfiguration,
+                                               final String homePagePathInfo) {
+        representShallow(item, previewConfigurationPath, hstComponentsConfiguration, homePagePathInfo);
 
         for (HstSiteMapItem childItem : item.getChildren()) {
             SiteMapItemRepresentation child = new SiteMapItemRepresentation();
-            child.represent(childItem, previewConfigurationPath, hstComponentsConfiguration);
+            child.represent(childItem, previewConfigurationPath, hstComponentsConfiguration, homePagePathInfo);
             children.add(child);
         }
 
@@ -145,6 +158,22 @@ public class SiteMapItemRepresentation {
 
     public void setName(final String name) {
         this.name = name;
+    }
+
+    public boolean setIsHomePage() {
+        return isHomePage;
+    }
+
+    public void getIsHomePage(final boolean homePage) {
+        isHomePage = homePage;
+    }
+
+    public String getPathInfo() {
+        return pathInfo;
+    }
+
+    public void setPathInfo(final String pathInfo) {
+        this.pathInfo = pathInfo;
     }
 
     public String getComponentConfigurationId() {

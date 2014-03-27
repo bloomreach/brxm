@@ -41,6 +41,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.NotNullValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorBuilder;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
+import org.hippoecm.hst.util.HstSiteMapUtils;
 
 @Path("/" + HstNodeTypes.NODETYPE_HST_SITEMAP + "/")
 @Produces(MediaType.APPLICATION_JSON)
@@ -66,7 +67,7 @@ public class SiteMapResource extends AbstractConfigResource {
                 final HstSite site = getPageComposerContextService().getEditingPreviewSite();
                 final HstSiteMap siteMap = site.getSiteMap();
                 final SiteMapRepresentation representation = new SiteMapRepresentation().represent(siteMap, getPreviewConfigurationPath(),
-                        site.getComponentsConfiguration());
+                        site.getComponentsConfiguration(), getHomePagePath());
                 return ok("Sitemap loaded successfully", representation);
             }
         });
@@ -93,7 +94,8 @@ public class SiteMapResource extends AbstractConfigResource {
                 final HstSite site = getPageComposerContextService().getEditingPreviewSite();
                 final HstSiteMap siteMap = site.getSiteMap();
                 final Mount mount = getPageComposerContextService().getEditingMount();
-                final SiteMapRepresentation sitemap = new SiteMapRepresentation().represent(siteMap, getPreviewConfigurationPath(), site.getComponentsConfiguration());
+                final SiteMapRepresentation sitemap = new SiteMapRepresentation().represent(siteMap, getPreviewConfigurationPath(),
+                        site.getComponentsConfiguration(), getHomePagePath());
                 final SiteMapPagesRepresentation pages = new SiteMapPagesRepresentation().represent(sitemap,
                         mount);
                 return ok("Sitemap loaded successfully", pages);
@@ -110,7 +112,8 @@ public class SiteMapResource extends AbstractConfigResource {
                 final HstSiteMapItem siteMapItem = siteMapHelper.getConfigObject(siteMapItemUuid);
                 final HstSite site = getPageComposerContextService().getEditingPreviewSite();
                 final SiteMapItemRepresentation siteMapItemRepresentation = new SiteMapItemRepresentation()
-                        .representShallow(siteMapItem, site.getConfigurationPath(), site.getComponentsConfiguration());
+                        .representShallow(siteMapItem, site.getConfigurationPath(), site.getComponentsConfiguration(),
+                                getHomePagePath());
 
                 return ok("Sitemap item loaded successfully", siteMapItemRepresentation);
             }
@@ -256,4 +259,8 @@ public class SiteMapResource extends AbstractConfigResource {
         }, preValidator);
     }
 
+    private String getHomePagePath() {
+        final Mount mount = getPageComposerContextService().getEditingMount();
+        return HstSiteMapUtils.getPath(mount, mount.getHomePage());
+    }
 }

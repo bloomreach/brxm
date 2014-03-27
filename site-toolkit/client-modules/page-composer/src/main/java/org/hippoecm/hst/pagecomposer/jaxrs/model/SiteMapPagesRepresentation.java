@@ -21,7 +21,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.util.HstSiteMapUtils;
 
 public class SiteMapPagesRepresentation {
 
@@ -36,7 +35,7 @@ public class SiteMapPagesRepresentation {
         host = mount.getVirtualHost().getHostName();
         this.mount = mount.getMountPath();
         for (SiteMapItemRepresentation siteMapItemRepresentation : siteMapRepresentation.getChildren()) {
-            addPages(siteMapItemRepresentation,  null, HstSiteMapUtils.getPath(mount, mount.getHomePage()));
+            addPages(siteMapItemRepresentation,  null);
         }
         Collections.sort(pages, new Comparator<SiteMapPageRepresentation>() {
             @Override
@@ -51,8 +50,7 @@ public class SiteMapPagesRepresentation {
     }
 
     private void addPages(final SiteMapItemRepresentation siteMapItemRepresentation,
-                          final SiteMapPageRepresentation parent,
-                          final String homePagePathInfo) {
+                          final SiteMapPageRepresentation parent) {
         if (!siteMapItemRepresentation.isExplicitElement()) {
             // wildcards are not the pages we want to expose
             return;
@@ -60,12 +58,12 @@ public class SiteMapPagesRepresentation {
         final SiteMapPageRepresentation siteMapPageRepresentation = new SiteMapPageRepresentation();
         pages.add(siteMapPageRepresentation);
         if (parent == null) {
-            siteMapPageRepresentation.represent(siteMapItemRepresentation, null, null, homePagePathInfo);
+            siteMapPageRepresentation.represent(siteMapItemRepresentation, null);
         } else {
-            siteMapPageRepresentation.represent(siteMapItemRepresentation, parent.getId(), parent.getPathInfo(), homePagePathInfo);
+            siteMapPageRepresentation.represent(siteMapItemRepresentation, parent.getId());
         }
         for (SiteMapItemRepresentation child : siteMapItemRepresentation.getChildren()) {
-            addPages(child, siteMapPageRepresentation, homePagePathInfo);
+            addPages(child, siteMapPageRepresentation);
         }
     }
 

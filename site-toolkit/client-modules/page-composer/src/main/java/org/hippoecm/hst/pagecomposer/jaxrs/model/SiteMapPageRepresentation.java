@@ -33,25 +33,14 @@ public class SiteMapPageRepresentation {
 
 
     public SiteMapPageRepresentation represent(final SiteMapItemRepresentation siteMapItemRepresentation,
-                                               final String parentId,
-                                               final String parentPathInfo,
-                                               final String homePagePathInfo) throws IllegalArgumentException {
+                                               final String parentId) throws IllegalArgumentException {
 
         id = siteMapItemRepresentation.getId();
         this.parentId = parentId;
         name = siteMapItemRepresentation.getName();
         pageTitle = siteMapItemRepresentation.getPageTitle();
-        if (StringUtils.isEmpty(parentPathInfo)) {
-            pathInfo = name;
-        } else {
-            pathInfo = parentPathInfo + "/" + name;
-        }
-        if (pathInfo.equals(homePagePathInfo)) {
-            pathInfo = "/";
-        }
+        pathInfo = siteMapItemRepresentation.getPathInfo();
         componentConfigurationId = siteMapItemRepresentation.getComponentConfigurationId();
-
-
         workspaceConfiguration = siteMapItemRepresentation.isWorkspaceConfiguration();
         inherited = siteMapItemRepresentation.isInherited();
         relativeContentPath = siteMapItemRepresentation.getRelativeContentPath();
