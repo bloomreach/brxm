@@ -535,6 +535,7 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/r
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/templates/standard-main-jsp.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/templates/standard-menu-ftl.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/templates/standard-menu-jsp.xml -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/test/java/org/onehippo/cms7/essentials/dashboard/packaging/CommonsPowerpackTest.java -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/test/resources/log4j.xml -text
 dashboard-plugins/essentials-powerpacks/pom.xml -text
 dashboard-plugins/freemarker-synchronizer/pom.xml -text
