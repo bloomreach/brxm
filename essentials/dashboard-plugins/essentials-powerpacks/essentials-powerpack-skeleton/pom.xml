@@ -102,13 +102,21 @@
         <directory>${basedir}/src/main/resources</directory>
         <includes>
           <include>**/*.cnd</include>
-          <include>**/*.jsp</include>
           <include>**/*.xml</include>
+          <include>**/*.js</include>
+          <include>**/*.html</include>
+          <include>**/*.css</include>
           <include>**/*.MF</include>
           <include>**/*.properties</include>
+          <include>**/*.txt</include>
+          <include>**/*.eot</include>
+          <include>**/*.svg</include>
+          <include>**/*.ttf</include>
+          <include>**/*.woff</include>
+          <include>**/*.jsp</include>
+          <include>**/*.MF</include>
           <include>**/*.java</include>
           <include>**/*.png</include>
-          <include>**/*.txt</include>
         </includes>
       </resource>
     </resources>

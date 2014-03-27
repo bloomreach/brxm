@@ -6,7 +6,7 @@
   -->
   <instructionSet>
     <!-- cnd-->
-    <cnd documentType="blogpost" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated,hippostd:taggable" />
+    <cnd documentType="blogpost" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated,hippostd:taggable"/>
     <cnd documentType="author" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
     <cnd documentType="account" superType="hippo:compound,hippostd:relaxed"/>
     <!-- templates-->
@@ -14,9 +14,9 @@
     <xml action="copy" source="xml/namespaces/author.xml" target="/hippo:namespaces/{{namespace}}"/>
     <xml action="copy" source="xml/namespaces/account.xml" target="/hippo:namespaces/{{namespace}}"/>
     <!-- beans-->
-    <file action="copy"  source="java/Author.txt" target="{{beansFolder}}/Author.java"/>
-    <file action="copy"  source="java/Blogpost.txt" target="{{beansFolder}}/Blogpost.java"/>
-    <file action="copy"  source="java/Account.txt" target="{{beansFolder}}/Account.java"/>
+    <file action="copy" source="java/Author.txt" target="{{beansFolder}}/Author.java"/>
+    <file action="copy" source="java/Blogpost.txt" target="{{beansFolder}}/Blogpost.java"/>
+    <file action="copy" source="java/Account.txt" target="{{beansFolder}}/Account.java"/>
   </instructionSet>
 
 
@@ -34,17 +34,17 @@
     CREATE DATA FOLDERS
   -->
   <instructionSet>
-    <folder template="xml/folder/administration-folder.xml" path="/content/documents/administration" />
-    <folder template="xml/folder/blog-author-folder.xml" path="/content/documents/{{namespace}}/blog/authors" />
-    <folder template="xml/folder/blog-folder.xml" path="/content/documents/{{namespace}}/blog/{{dateRepoYearMonth}}" />
+    <folder template="xml/folder/administration-folder.xml" path="/content/documents/administration"/>
+    <folder template="xml/folder/blog-author-folder.xml" path="/content/documents/{{namespace}}/blog/authors"/>
+    <folder template="xml/folder/blog-folder.xml" path="/content/documents/{{namespace}}/blog/{{dateRepoYearMonth}}"/>
   </instructionSet>
   <!--
     DATA
   -->
 
   <instructionSet>
-    <xml action="copy"  source="xml/data/account-types.xml" target="/content/documents/administration"/>
-    <xml action="copy"  source="xml/data/blog-categories.xml" target="/content/documents/administration"/>
+    <xml action="copy" source="xml/data/account-types.xml" target="/content/documents/administration"/>
+    <xml action="copy" source="xml/data/blog-categories.xml" target="/content/documents/administration"/>
 
   </instructionSet>
 
@@ -52,8 +52,8 @@
     SAMPLE DATA
   -->
   <instructionSet>
-    <xml action="copy"  source="xml/samples/author_1.xml" target="/content/documents/{{namespace}}/blog/authors"/>
-    <xml action="copy"  source="xml/samples/author_2.xml" target="/content/documents/{{namespace}}/blog/authors"/>
+    <xml action="copy" source="xml/samples/author_1.xml" target="/content/documents/{{namespace}}/blog/authors"/>
+    <xml action="copy" source="xml/samples/author_2.xml" target="/content/documents/{{namespace}}/blog/authors"/>
     <xml action="copy" source="xml/samples/blog_entry_1.xml" target="/content/documents/{{namespace}}/blog/{{dateRepoYearMonth}}"/>
     <xml action="copy" source="xml/samples/blog_entry_2.xml" target="/content/documents/{{namespace}}/blog/{{dateRepoYearMonth}}"/>
   </instructionSet>
@@ -62,26 +62,23 @@
     JSP TEMPLATES
   -->
   <instructionSet group="jsp">
-    <file action="copy"  source="jsp/imports.jsp" target="{{jspRoot}}/essentials/common/imports.jsp"/>
-    <file action="copy"  source="jsp/essentials-blog-main.jsp" target="{{jspRoot}}/essentials/blog/essentials-blog-main.jsp"/>
-    <file action="copy"  source="jsp/essentials-blog-author-post.jsp" target="{{jspRoot}}/essentials/blog/essentials-blog-author-post.jsp"/>
-    <file action="copy"  source="jsp/essentials-facet.jsp" target="{{jspRoot}}/essentials/facet/essentials-facet.jsp"/>
-    <file action="copy"  source="jsp/essentials-blog-detail.jsp" target="{{jspRoot}}/essentials/blog/essentials-blog-detail.jsp"/>
-    <file action="copy"  source="jsp/essentials-blog-list.jsp" target="{{jspRoot}}/essentials/blog/essentials-blog-list.jsp"/>
-    <file action="copy"  source="jsp/pagination.jsp" target="{{jspRoot}}/essentials/common/pagination.jsp"/>
-    <file action="copy"  source="jsp/essentials-author.jsp" target="{{jspRoot}}/essentials/author/essentials-author.jsp"/>
+    <file action="copy" source="jsp/essentials-blog-main.jsp" target="{{jspRoot}}/essentials/blog/essentials-blog-main.jsp"/>
+    <file action="copy" source="jsp/essentials-blog-author-post.jsp" target="{{jspRoot}}/essentials/blog/essentials-blog-author-post.jsp"/>
+    <file action="copy" source="jsp/essentials-facet.jsp" target="{{jspRoot}}/essentials/facet/essentials-facet.jsp"/>
+    <file action="copy" source="jsp/essentials-blog-detail.jsp" target="{{jspRoot}}/essentials/blog/essentials-blog-detail.jsp"/>
+    <file action="copy" source="jsp/essentials-blog-list.jsp" target="{{jspRoot}}/essentials/blog/essentials-blog-list.jsp"/>
+    <file action="copy" source="jsp/essentials-author.jsp" target="{{jspRoot}}/essentials/author/essentials-author.jsp"/>
   </instructionSet>
   <!--
     FREEMARKER TEMPLATES
   -->
   <instructionSet group="freemarker">
-    <file action="copy"  source="freemarker/essentials-facet.ftl" target="{{freemarkerRoot}}/essentials/facet/essentials-facet.ftl"/>
+    <file action="copy" source="freemarker/essentials-facet.ftl" target="{{freemarkerRoot}}/essentials/facet/essentials-facet.ftl"/>
     <file action="copy" source="freemarker/essentials-blog-author-post.ftl" target="{{freemarkerRoot}}/essentials/blog/essentials-blog-author-post.ftl"/>
-    <file action="copy"  source="freemarker/essentials-blog-detail.ftl" target="{{freemarkerRoot}}/essentials/blog/essentials-blog-detail.ftl"/>
-    <file action="copy"  source="freemarker/essentials-blog-main.ftl" target="{{freemarkerRoot}}/essentials/blog/essentials-blog-main.ftl"/>
-    <file action="copy"  source="freemarker/essentials-blog-list.ftl" target="{{freemarkerRoot}}/essentials/blog/essentials-blog-list.ftl"/>
-    <file action="copy" source="freemarker/pagination.ftl" target="{{freemarkerRoot}}/essentials/common/pagination.ftl"/>
-    <file action="copy" source="freemarker/imports.ftl" target="{{freemarkerRoot}}/essentials/common/imports.ftl"/>
+    <file action="copy" source="freemarker/essentials-blog-detail.ftl" target="{{freemarkerRoot}}/essentials/blog/essentials-blog-detail.ftl"/>
+    <file action="copy" source="freemarker/essentials-blog-main.ftl" target="{{freemarkerRoot}}/essentials/blog/essentials-blog-main.ftl"/>
+    <file action="copy" source="freemarker/essentials-blog-list.ftl" target="{{freemarkerRoot}}/essentials/blog/essentials-blog-list.ftl"/>
+
     <file action="copy" source="freemarker/essentials-author.ftl" target="{{freemarkerRoot}}/essentials/author/essentials-author.ftl"/>
   </instructionSet>
   <!--

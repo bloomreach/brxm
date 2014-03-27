@@ -53,6 +53,7 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
+import org.onehippo.cms7.essentials.dashboard.packaging.CommonsPowerpack;
 import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
@@ -198,13 +199,18 @@ public class PluginResource extends BaseResource {
             messageRestfulRestfulList.add(resource);
             return messageRestfulRestfulList;
         }
-
+        final String className = ProjectSetupPlugin.class.getName();
+        final PluginContext context = new DefaultPluginContext(new PluginRestful(className));
+        //############################################
+        // EXECUTE SKELETON:
+        //############################################
+        final PowerpackPackage commonsPack = new CommonsPowerpack();
+        getInjector().autowireBean(commonsPack);
+        commonsPack.execute(context);
 
         final PowerpackPackage powerpackPackage = GlobalUtils.newInstance(myPlugin.getPowerpackClass());
         powerpackPackage.setProperties(new HashMap<String, Object>(values));
         getInjector().autowireBean(powerpackPackage);
-        final String className = ProjectSetupPlugin.class.getName();
-        final PluginContext context = new DefaultPluginContext(new PluginRestful(className));
 
         // inject project settings:
         final PluginConfigService service = context.getConfigService();

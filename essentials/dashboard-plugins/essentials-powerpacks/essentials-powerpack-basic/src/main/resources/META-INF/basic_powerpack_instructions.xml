@@ -39,10 +39,9 @@
     <folder path="/content/documents/{{namespace}}/events/{{dateRepoYearMonth}}" template="xml/content/events.xml"/>
   </instructionSet>
   <instructionSet>
-    <file action="copy" source="jsp/essentials-layout-webpage.jsp" target="{{jspRoot}}/essentials/essentials-layout-webpage.jsp"/>
-    <file action="copy" source="jsp/essentials-standard-main.jsp" target="{{jspRoot}}/essentials/essentials-standard-main.jsp"/>
+
+
     <file action="copy" source="jsp/essentials-component-list.jsp" target="{{jspRoot}}/essentials/essentials-component-list.jsp"/>
-    <file action="copy" source="jsp/essentials-standard-menu.jsp" target="{{jspRoot}}/essentials/essentials-standard-menu.jsp"/>
     <file action="copy"  source="jsp/essentials-component-document.jsp" target="{{jspRoot}}/essentials/essentials-component-document.jsp"/>
     <file action="copy"  source="jsp/essentials-component-news.jsp" target="{{jspRoot}}/essentials/essentials-component-news.jsp"/>
     <file action="copy"  source="jsp/essentials-component-news-detail.jsp" target="{{jspRoot}}/essentials/essentials-component-news-detail.jsp"/>
@@ -97,18 +96,7 @@
   <instructionSet>
     <xml action="copy"  source="xml/hst/menu/main.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemenus"/>
   </instructionSet>
-  <!--
-    css
-  -->
-  <instructionSet>
-    <file binary="true" action="copy" source="js/jquery-2.1.0.min.js" target="{{javascriptRoot}}/jquery-2.1.0.min.js"/>
-    <file action="copy" binary="true" source="bootstrap/css/bootstrap.css" target="{{siteWebRoot}}/css/bootstrap.css"/>
-    <file action="copy" binary="true" source="bootstrap/css/bootstrap.min.css" target="{{siteWebRoot}}/css/bootstrap.min.css"/>
-    <file action="copy" binary="true" source="bootstrap/fonts/glyphicons-halflings-regular.eot" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.eot"/>
-    <file action="copy" binary="true" source="bootstrap/fonts/glyphicons-halflings-regular.svg" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.svg"/>
-    <file action="copy" binary="true" source="bootstrap/fonts/glyphicons-halflings-regular.ttf" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.ttf"/>
-    <file action="copy" binary="true" source="bootstrap/fonts/glyphicons-halflings-regular.woff" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.woff"/>
-  </instructionSet>
+
 
 
   <!-- SAMPLES GROUP-->
