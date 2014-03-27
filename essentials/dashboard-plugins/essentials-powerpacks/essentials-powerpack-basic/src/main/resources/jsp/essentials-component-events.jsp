@@ -5,6 +5,7 @@
 <%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
 <%--@elvariable id="document" type="{{beansPackage}}.EventsDocument"--%>
 <%--@elvariable id="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable"--%>
+<%--@elvariable id="showPagination" type="java.lang.Boolean"--%>
 
 <c:forEach var="item" items="${pageable.items}" varStatus="status">
   <hst:link var="link" hippobean="${item}"/>
@@ -24,3 +25,6 @@
     <p><c:out value="${item.location}"/></p>
   </article>
 </c:forEach>
+<c:if test="${showPagination}">
+  <%@ include file="/WEB-INF/jsp/essentials/common/pagination.jsp" %>
+</c:if>

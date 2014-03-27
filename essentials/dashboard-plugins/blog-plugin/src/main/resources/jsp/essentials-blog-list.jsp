@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/jsp/essentials/common/imports.jsp" %>
 <%--@elvariable id="item" type="{{beansPackage}}.Blogpost"--%>
 <%--@elvariable id="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable"--%>
+<%--@elvariable id="showPagination" type="java.lang.Boolean"--%>
 
 <c:forEach var="item" items="${pageable.items}" varStatus="status">
   <hst:link var="link" hippobean="${item}"/>
