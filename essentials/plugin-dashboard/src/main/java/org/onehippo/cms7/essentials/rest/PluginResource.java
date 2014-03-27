@@ -201,6 +201,16 @@ public class PluginResource extends BaseResource {
         }
         final String className = ProjectSetupPlugin.class.getName();
         final PluginContext context = new DefaultPluginContext(new PluginRestful(className));
+        // inject project settings:
+        final PluginConfigService service = context.getConfigService();
+
+        final ProjectSettingsBean document = service.read(className, ProjectSettingsBean.class);
+        if (document != null) {
+            context.setBeansPackageName(document.getSelectedBeansPackage());
+            context.setComponentsPackageName(document.getSelectedComponentsPackage());
+            context.setRestPackageName(document.getSelectedRestPackage());
+            context.setProjectNamespacePrefix(document.getProjectNamespace());
+        }
         //############################################
         // EXECUTE SKELETON:
         //############################################
@@ -213,16 +223,7 @@ public class PluginResource extends BaseResource {
         powerpackPackage.setProperties(new HashMap<String, Object>(values));
         getInjector().autowireBean(powerpackPackage);
 
-        // inject project settings:
-        final PluginConfigService service = context.getConfigService();
 
-        final ProjectSettingsBean document = service.read(className, ProjectSettingsBean.class);
-        if (document != null) {
-            context.setBeansPackageName(document.getSelectedBeansPackage());
-            context.setComponentsPackageName(document.getSelectedComponentsPackage());
-            context.setRestPackageName(document.getSelectedRestPackage());
-            context.setProjectNamespacePrefix(document.getProjectNamespace());
-        }
 
 
         final InstructionStatus status = powerpackPackage.execute(context);
