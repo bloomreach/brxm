@@ -32,7 +32,8 @@
 
     <filesync.override>false</filesync.override>
     <maven.plugins.filesync.version>1.0.0</maven.plugins.filesync.version>
-
+    <cargo.tomcat.major.version>7</cargo.tomcat.major.version>
+    <cargo.tomcat.full.version>7.0.42</cargo.tomcat.full.version>
   </properties>
   <!--
   <scm>
