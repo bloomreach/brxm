@@ -248,34 +248,28 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('default', 'Build and test', function () {
-        grunt.task.run([
-            'build',
-            'test'
-        ]);
-    });
+    grunt.registerTask('default', 'Build and test', [
+        'build',
+        'test'
+    ]);
 
-    grunt.registerTask('build', 'Build everything', function () {
-        grunt.task.run([
-            'jshint:app',
-            'declutter',
-            'clean:target',
-            'copy:menu',
-            'copy:page',
-            'copy:pages',
-            'copy:shared',
-            'copy:components'
-        ]);
-    });
+    grunt.registerTask('build', 'Build everything', [
+        'jshint:app',
+        'declutter',
+        'clean:target',
+        'copy:menu',
+        'copy:page',
+        'copy:pages',
+        'copy:shared',
+        'copy:components'
+    ]);
 
-    grunt.registerTask('test', 'Test the source code', function () {
-        grunt.task.run([
-            'jshint:tests',
-            'karma:single'
-        ]);
-    });
+    grunt.registerTask('test', 'Test the source code', [
+        'jshint:tests',
+        'karma:single'
+    ]);
 
-    grunt.registerTask('test:continuous', [
+    grunt.registerTask('test:continuous', 'Test the source code continuously', [
         'jshint:tests',
         'karma:continuous'
     ]);
