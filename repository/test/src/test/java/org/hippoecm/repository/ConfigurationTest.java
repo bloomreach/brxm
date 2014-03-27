@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository;
 
+import java.util.Arrays;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
@@ -127,16 +129,15 @@ public class ConfigurationTest extends RepositoryTestCase {
 
     @Test
     public void testPropertyInitializationNewSingleSetNone() throws Exception {
-        session.getRootNode().getNode("test").addNode("propnode", "hippo:testproplvlinit");
-        Node node = session.getRootNode().addNode("hippo:configuration/hippo:initialize/testnode", "hipposys:initializeitem");
+        Node target = session.getNode("/test").addNode("propnode", "hippo:testproplvlinit");
+        Node node = session.getNode("/hippo:configuration/hippo:initialize").addNode("testnode", "hipposys:initializeitem");
         node.setProperty("hippo:contentroot", "/test/propnode/hippo:single");
         node.setProperty("hippo:contentpropset", new String[] {});
         node.setProperty("hippo:status", "pending");
         session.save();
         InitializationProcessor processor = new InitializationProcessorImpl();
-        processor.processInitializeItems(session);
-        assertFalse(session.getRootNode().getNode("test/propnode").hasProperty("hippo:single"));
-        assertFalse(session.getRootNode().getNode("test/propnode").hasProperty("hippo:multi"));
+        processor.processInitializeItems(session, Arrays.asList(node));
+        assertFalse(target.hasProperty("hippo:single"));
     }
 
     @Test
@@ -182,7 +183,6 @@ public class ConfigurationTest extends RepositoryTestCase {
         assertEquals("pending", node.getProperty("hippo:status").getString());
     }
 
-    // Test for managing a non-existing multi value property
     @Test
     public void testPropertyInitializationNewMultiSetSingle() throws Exception {
         session.getRootNode().getNode("test").addNode("propnode", "hippo:testproplvlinit");
@@ -208,45 +208,6 @@ public class ConfigurationTest extends RepositoryTestCase {
         InitializationProcessor processor = new InitializationProcessorImpl();
         processor.processInitializeItems(session);
         check(new String[] {"m", "n"});
-    }
-
-    @Test
-    public void testPropertyInitializationNewMultiSetNone() throws Exception {
-        session.getRootNode().getNode("test").addNode("propnode", "hippo:testproplvlinit");
-        Node node = session.getRootNode().addNode("hippo:configuration/hippo:initialize/testnode", "hipposys:initializeitem");
-        node.setProperty("hippo:contentroot", "/test/propnode/hippo:multi");
-        node.setProperty("hippo:contentpropset", new String[] {});
-        node.setProperty("hippo:status", "pending");
-        session.save();
-        InitializationProcessor processor = new InitializationProcessorImpl();
-        processor.processInitializeItems(session);
-        check(new String[] {});
-    }
-
-    @Test
-    public void testPropertyInitializationNewMultiAddSingle() throws Exception {
-        session.getRootNode().getNode("test").addNode("propnode", "hippo:testproplvlinit");
-        Node node = session.getRootNode().addNode("hippo:configuration/hippo:initialize/testnode", "hipposys:initializeitem");
-        node.setProperty("hippo:contentroot", "/test/propnode/hippo:multi");
-        node.setProperty("hippo:contentpropadd", new String[] {"o"});
-        node.setProperty("hippo:status", "pending");
-        session.save();
-        InitializationProcessor processor = new InitializationProcessorImpl();
-        processor.processInitializeItems(session);
-        check(new String[] {"o"});
-    }
-
-    @Test
-    public void testPropertyInitializationNewMultiAddMulti() throws Exception {
-        session.getRootNode().getNode("test").addNode("propnode", "hippo:testproplvlinit");
-        Node node = session.getRootNode().addNode("hippo:configuration/hippo:initialize/testnode", "hipposys:initializeitem");
-        node.setProperty("hippo:contentroot", "/test/propnode/hippo:multi");
-        node.setProperty("hippo:contentpropadd", new String[] {"p", "q"});
-        node.setProperty("hippo:status", "pending");
-        session.save();
-        InitializationProcessor processor = new InitializationProcessorImpl();
-        processor.processInitializeItems(session);
-        check(new String[] {"p", "q"});
     }
 
     @Test

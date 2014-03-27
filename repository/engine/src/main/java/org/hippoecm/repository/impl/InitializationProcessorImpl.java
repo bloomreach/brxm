@@ -46,6 +46,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.Workspace;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
@@ -288,12 +290,32 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             final String targetNodePath = offset == 0 ? "/" : contentRoot.substring(0, offset);
             final String propertyName = contentRoot.substring(offset+1);
             final Value[] values = contentSetProperty.getValues();
-            if (values.length == 1) {
-                session.getNode(targetNodePath).setProperty(propertyName, values[0]);
+            if (values.length == 0) {
+                log.warn("No value specified for new property");
+            } else if (values.length == 1) {
+                final Node target = session.getNode(targetNodePath);
+                if (isMultiple(target, propertyName)) {
+                    target.setProperty(propertyName, values);
+                } else {
+                    target.setProperty(propertyName, values[0]);
+                }
             } else {
                 session.getNode(targetNodePath).setProperty(propertyName, values);
             }
         }
+    }
+
+    private boolean isMultiple(final Node target, final String propertyName) throws RepositoryException {
+        final List<NodeType> nodeTypes = new ArrayList<>(Arrays.asList(target.getMixinNodeTypes()));
+        nodeTypes.add(target.getPrimaryNodeType());
+        for (NodeType nodeType : nodeTypes) {
+            for (PropertyDefinition propertyDefinition : nodeType.getPropertyDefinitions()) {
+                if (propertyDefinition.getName().equals("*") || propertyDefinition.getName().equals(propertyName)) {
+                    return propertyDefinition.isMultiple();
+                }
+            }
+        }
+        return false;
     }
 
     private void processContentPropAdd(final Node node, final Session session, final boolean dryRun) throws RepositoryException {
