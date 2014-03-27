@@ -17,9 +17,13 @@ package org.hippoecm.hst.content.beans.manager.workflow;
 
 import org.hippoecm.repository.api.Workflow;
 
-
+/**
+ * @deprecated since 2.28.00 (CMS 7.9), use {@link QualifiedWorkflowCallbackHandler} instead.
+ *
+ * @param <T>
+ */
+@Deprecated
 public interface WorkflowCallbackHandler<T extends Workflow> {
-    
+
     void processWorkflow(T workflow) throws Exception;
-    
 }

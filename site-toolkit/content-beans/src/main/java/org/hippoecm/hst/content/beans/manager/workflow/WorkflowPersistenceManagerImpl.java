@@ -46,6 +46,7 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -103,9 +104,17 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
 
     /**
      * Workflow callback handler
+     * @deprecated since 2.28.00 (CMS 7.9), use {@link #workflowCallbackHandler} instead
      */
     @SuppressWarnings("rawtypes")
-    protected WorkflowCallbackHandler workflowCallbackHandler;
+    @Deprecated
+    protected WorkflowCallbackHandler deprecatedWorkflowCallbackHandler;
+
+    /**
+     * Qualified Workflow callback handler
+     */
+    @SuppressWarnings("rawtypes")
+    protected QualifiedWorkflowCallbackHandler workflowCallbackHandler;
 
     /**
      * The codec which is used for the node names
@@ -300,7 +309,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
     /**
      * Updates the content node which is mapped to the object.
      * <P>
-     * This will look up a propery custom content node binder from the internal map. ({@link #contentNodeBinders}).
+     * This will look up a proper custom content node binder from the internal map. ({@link #contentNodeBinders}).
      * If it is not found there, this implementation will check if the content object is an instance of {@link ContentNodeBinder} interface.
      * If so, the content object will be used as a custom binder.
      * </P>
@@ -359,9 +368,26 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                 path = contentBean.getPath();
                 Node contentNode = contentBean.getNode();
                 contentNode = getCanonicalNode(contentNode);
-                Workflow wf = getWorkflow(documentNodeWorkflowCategory, contentNode);
-                
+                Class<? extends Workflow> workflowType = workflowCallbackHandler != null ? workflowCallbackHandler.getWorkflowType() : null;
+                WorkflowCallbackHandler currentCallbackHandler = workflowCallbackHandler != null ? workflowCallbackHandler : deprecatedWorkflowCallbackHandler;
+                boolean documentWorkflowType = currentCallbackHandler == null || ((workflowType != null && DocumentWorkflow.class.isAssignableFrom(workflowType)));
+                Node workflowNode = documentWorkflowType ? getHandleForDocumentWorkflow(contentNode) : contentNode;
+                if (workflowNode == null) {
+                    // needed fallback if provided contentNode doesn't 'live'
+                    // within a hippo:handle Node with a hippostdpubwf:document child node
+                    workflowNode = contentNode;
+                    documentWorkflowType = false;
+                }
+                Workflow wf = getWorkflow(documentNodeWorkflowCategory, workflowNode);
+
                 if (wf != null) {
+                    // first check we retrieved a callback handler compatible workflow
+                    if (workflowType != null && !workflowType.isInstance(wf)) {
+                        throw new ObjectBeanPersistenceException("The provided workflow callback workflow type "
+                                + workflowType.getName()
+                                + " is not compatible with the retrieved workflow of type "
+                                + wf.getClass().getName());
+                    }
                     Document document;
                     if(customContentNodeBinder != null) {
                         if (wf instanceof EditableWorkflow) {
@@ -377,13 +403,18 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                             if (changed) {
                                 contentNode.getSession().save();
                                 // we need to recreate the EditableWorkflow because the node has changed
-                                ewf = (EditableWorkflow) getWorkflow(documentNodeWorkflowCategory, contentNode);
+                                ewf = (EditableWorkflow) getWorkflow(documentNodeWorkflowCategory, workflowNode);
                                 document = ewf.commitEditableInstance();
                                 if (workflowCallbackHandler != null) {
                                     // recreate the wf because now the is changed
-                                    wf = getWorkflow(documentNodeWorkflowCategory, document);
+                                    if (documentWorkflowType) {
+                                        wf = getWorkflow(documentNodeWorkflowCategory, workflowNode);
+                                    }
+                                    else {
+                                        wf = getWorkflow(documentNodeWorkflowCategory, document);
+                                    }
                                     if (wf != null) {
-                                        workflowCallbackHandler.processWorkflow(wf);
+                                        currentCallbackHandler.processWorkflow(wf);
                                     } else {
                                         throw new ObjectBeanPersistenceException("Workflow callback cannot be called because the workflow is null. ");
                                     }
@@ -394,9 +425,9 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                         } else {
                             throw new ObjectBeanPersistenceException("The workflow is not a EditableWorkflow for " + path + ": " + wf);
                         } 
-                    } else if (workflowCallbackHandler != null) {
+                    } else if (currentCallbackHandler != null) {
                         if (wf != null) {
-                            workflowCallbackHandler.processWorkflow(wf);
+                            currentCallbackHandler.processWorkflow(wf);
                         } 
                     }
                 } else {
@@ -567,11 +598,25 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
     public void setDocumentAdditionWorkflowCategory(String documentAdditionWorkflowCategory) {
         this.documentAdditionWorkflowCategory = documentAdditionWorkflowCategory;
     }
-    
+
+    /**
+     * @deprecated since 2.28.00 (CMS 7.9), use {@link #setWorkflowCallbackHandler(QualifiedWorkflowCallbackHandler)} instead
+     * @param workflowCallbackHandler
+     */
+    @Deprecated
     public void setWorkflowCallbackHandler(WorkflowCallbackHandler<? extends Workflow> workflowCallbackHandler) {
+        if (workflowCallbackHandler instanceof QualifiedWorkflowCallbackHandler) {
+            this.workflowCallbackHandler = (QualifiedWorkflowCallbackHandler)workflowCallbackHandler;
+        }
+        else {
+            this.deprecatedWorkflowCallbackHandler = workflowCallbackHandler;
+        }
+    }
+
+    public void setWorkflowCallbackHandler(QualifiedWorkflowCallbackHandler<? extends Workflow> workflowCallbackHandler) {
         this.workflowCallbackHandler = workflowCallbackHandler;
     }
-    
+
     public Workflow getWorkflow(String category, Node node) throws RepositoryException {
         Workspace workspace = session.getWorkspace();
         
@@ -698,6 +743,31 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
         }
         
         return canonicalFolderNode;
+    }
+
+    private Node getHandleForDocumentWorkflow(Node node) throws RepositoryException {
+        if (NodeUtils.isNodeType(node, "hippo:handle")) {
+            NodeIterator nodeIt = node.getNodes(node.getName());
+            if (nodeIt.hasNext()) {
+                Node child = nodeIt.nextNode();
+                if (NodeUtils.isNodeType(child,"hippostdpubwf:document")) {
+                    return node;
+                }
+            }
+        }
+        else  if (NodeUtils.isNodeType(node, "hippostdpubwf:document")) {
+            Node parent = session.getRootNode().isSame(node) ? null : node.getParent();
+            if (parent != null && NodeUtils.isNodeType(parent, "hippo:handle")) {
+                return parent;
+            }
+        }
+        else {
+            Node parent = session.getRootNode().isSame(node) ? null : node.getParent();
+            if (parent != null && NodeUtils.isNodeType(parent, "hippo:handle")) {
+                return getHandleForDocumentWorkflow(parent);
+            }
+        }
+        return null;
     }
     
     private boolean isDocument(Node node) throws RepositoryException  {

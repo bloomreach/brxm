@@ -23,9 +23,16 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.Workflow;
 
 public interface WorkflowPersistenceManager extends ObjectBeanPersistenceManager {
-    
+
+    /**
+     * @deprecated since 2.28.00 (CMS 7.9), use {@link #setWorkflowCallbackHandler(QualifiedWorkflowCallbackHandler)} instead
+     * @param workflowCallbackHandler
+     */
+    @Deprecated
     void setWorkflowCallbackHandler(WorkflowCallbackHandler<? extends Workflow> workflowCallbackHandler);
-    
+
+    void setWorkflowCallbackHandler(QualifiedWorkflowCallbackHandler<? extends Workflow> workflowCallbackHandler);
+
     Workflow getWorkflow(String category, Node node) throws RepositoryException;
     
     Workflow getWorkflow(String category, Document document) throws RepositoryException;

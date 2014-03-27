@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.content.beans.manager;
+package org.hippoecm.hst.content.beans.manager.workflow;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -23,20 +23,18 @@ import java.util.Map;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
-import javax.jcr.Session;
 
 import org.hippoecm.hst.AbstractBeanTestCase;
 import org.hippoecm.hst.content.beans.ContentNodeBinder;
 import org.hippoecm.hst.content.beans.ContentNodeBindingException;
 import org.hippoecm.hst.content.beans.PersistableTextPage;
-import org.hippoecm.hst.content.beans.manager.workflow.WorkflowCallbackHandler;
-import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
-import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
+import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
 
@@ -102,12 +100,114 @@ public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
     }
     
     @Test
-    public void testDocumentManipulation() throws Exception {
+    public void testDocumentManipulationWithDeprecatedWorkflowCallbackHandler() throws Exception {
         ObjectConverter objectConverter = getObjectConverter();
 
         wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
         wpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
             public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
+                wf.requestPublication();
+            }
+        });
+
+        // basic object retrieval from the content
+        PersistableTextPage page = (PersistableTextPage) wpm.getObject(TEST_EXISTING_DOCUMENT_NODE_PATH);
+        assertNotNull(page);
+
+        try {
+            // create a document with type and name
+            String absoluteCreatedDocumentPath = wpm.createAndReturn(TEST_FOLDER_NODE_PATH, TEST_DOCUMENT_NODE_TYPE, TEST_NEW_DOCUMENT_NODE_NAME, false);
+
+            // retrieves the document created just before
+            PersistableTextPage newPage = (PersistableTextPage) wpm.getObject(absoluteCreatedDocumentPath);
+            assertNotNull(newPage);
+
+            newPage.setTitle("Title of the about page");
+            newPage.setBodyContent("<h1>Welcome to the about page!</h1>");
+
+            // custom mapping binder is already provided during WPM instantiation.
+            // but you can also provide your custom binder as the second parameter.
+            // if any binder is not found and the first parameter (newPage) is instanceof ContentPersistenceBinder,
+            // then the POJO object in the first parameter will be used as a binder.
+            wpm.update(newPage);
+
+            // retrieves the document created just before
+            newPage = (PersistableTextPage) wpm.getObject(TEST_NEW_DOCUMENT_NODE_PATH);
+            assertEquals("Title of the about page", newPage.getTitle());
+            assertEquals("<h1>Welcome to the about page!</h1>", newPage.getBodyContent());
+
+        } finally {
+            PersistableTextPage newPage = null;
+
+            try {
+                newPage = (PersistableTextPage) wpm.getObject(TEST_NEW_DOCUMENT_NODE_PATH);
+            } catch (Exception e) {
+            }
+
+            if (newPage != null) {
+                wpm.remove(newPage);
+            }
+        }
+    }
+
+    @Test
+    public void testDocumentManipulationWithDeprecatedReviewedActionsWorkflow() throws Exception {
+        ObjectConverter objectConverter = getObjectConverter();
+
+        wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
+        wpm.setWorkflowCallbackHandler(new BaseWorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
+            public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
+                wf.requestPublication();
+            }
+        });
+
+        // basic object retrieval from the content
+        PersistableTextPage page = (PersistableTextPage) wpm.getObject(TEST_EXISTING_DOCUMENT_NODE_PATH);
+        assertNotNull(page);
+
+        try {
+            // create a document with type and name
+            String absoluteCreatedDocumentPath = wpm.createAndReturn(TEST_FOLDER_NODE_PATH, TEST_DOCUMENT_NODE_TYPE, TEST_NEW_DOCUMENT_NODE_NAME, false);
+
+            // retrieves the document created just before
+            PersistableTextPage newPage = (PersistableTextPage) wpm.getObject(absoluteCreatedDocumentPath);
+            assertNotNull(newPage);
+
+            newPage.setTitle("Title of the about page");
+            newPage.setBodyContent("<h1>Welcome to the about page!</h1>");
+
+            // custom mapping binder is already provided during WPM instantiation.
+            // but you can also provide your custom binder as the second parameter.
+            // if any binder is not found and the first parameter (newPage) is instanceof ContentPersistenceBinder,
+            // then the POJO object in the first parameter will be used as a binder.
+            wpm.update(newPage);
+
+            // retrieves the document created just before
+            newPage = (PersistableTextPage) wpm.getObject(TEST_NEW_DOCUMENT_NODE_PATH);
+            assertEquals("Title of the about page", newPage.getTitle());
+            assertEquals("<h1>Welcome to the about page!</h1>", newPage.getBodyContent());
+
+        } finally {
+            PersistableTextPage newPage = null;
+
+            try {
+                newPage = (PersistableTextPage) wpm.getObject(TEST_NEW_DOCUMENT_NODE_PATH);
+            } catch (Exception e) {
+            }
+
+            if (newPage != null) {
+                wpm.remove(newPage);
+            }
+        }
+    }
+
+    @Test
+    public void testDocumentManipulationWithDocumentWorkflow() throws Exception {
+        ObjectConverter objectConverter = getObjectConverter();
+
+        wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
+        wpm.setWorkflowCallbackHandler(new BaseWorkflowCallbackHandler<DocumentWorkflow>() {
+            public void processWorkflow(DocumentWorkflow wf) throws Exception {
                 wf.requestPublication();
             }
         });
