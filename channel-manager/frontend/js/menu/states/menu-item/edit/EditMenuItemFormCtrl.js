@@ -21,13 +21,12 @@
 
         .controller('hippo.channel.menu.EditMenuItemFormCtrl', [
             '$scope',
-            '$translate',
             '$filter',
             'hippo.channel.FormStateService',
             'hippo.channel.Container',
             'hippo.channel.menu.FocusService',
             'hippo.channel.menu.MenuService',
-            function ($scope, $translate, $filter, FormStateService, ContainerService, FocusService, MenuService) {
+            function ($scope, $filter, FormStateService, ContainerService, FocusService, MenuService) {
                 var translate = $filter('translate');
 
                 $scope.focus = FocusService.focusElementWithId;
