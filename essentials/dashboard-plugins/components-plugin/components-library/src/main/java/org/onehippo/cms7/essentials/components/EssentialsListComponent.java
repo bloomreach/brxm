@@ -21,6 +21,7 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.onehippo.cms7.essentials.components.info.EssentialsDocumentListComponentInfo;
 import org.onehippo.cms7.essentials.components.info.EssentialsPageable;
+import org.onehippo.cms7.essentials.components.info.EssentialsSortable;
 import org.onehippo.cms7.essentials.components.paging.IterablePagination;
 import org.onehippo.cms7.essentials.components.paging.Pageable;
 import org.onehippo.cms7.essentials.components.utils.SiteUtils;
@@ -108,6 +109,27 @@ public class EssentialsListComponent extends CommonComponent {
         return scope;
     }
 
+    /**
+     * Apply ordering (if order field name is provided)
+     *
+     * @param query         instance of  HstQuery
+     * @param componentInfo instance of EssentialsDocumentListComponentInfo
+     * @param <T>
+     */
+    protected <T extends EssentialsDocumentListComponentInfo> void applyOrdering(final HstQuery query, final T componentInfo) {
+        final String sortField = componentInfo.getSortField();
+        if (Strings.isNullOrEmpty(sortField)) {
+            return;
+        }
+        final String sortOrder = Strings.isNullOrEmpty(componentInfo.getSortOrder()) ? EssentialsSortable.DESC : componentInfo.getSortOrder();
+        if (sortOrder.equals(EssentialsSortable.DESC)) {
+            query.addOrderByDescending(sortField);
+        } else {
+            query.addOrderByAscending(sortField);
+        }
+    }
+
+
     protected <T extends EssentialsDocumentListComponentInfo> Pageable<HippoBean> doSearch(final HstRequest request, final T paramInfo, final HippoBean scope) {
         try {
             final HstQuery build = buildQuery(request, paramInfo, scope);
@@ -156,12 +178,13 @@ public class EssentialsListComponent extends CommonComponent {
      * @return the pageable result
      * @throws QueryException query exception when query fails
      */
-    protected <T extends EssentialsPageable> Pageable<HippoBean> executeQuery(final HstRequest request, final T paramInfo, final HstQuery query) throws QueryException {
+    protected <T extends EssentialsDocumentListComponentInfo> Pageable<HippoBean> executeQuery(final HstRequest request, final T paramInfo, final HstQuery query) throws QueryException {
         final int pageSize = getPageSize(request, paramInfo);
         final int page = getCurrentPage(request);
         query.setLimit(pageSize);
         query.setOffset((page - 1) * pageSize);
         applySearchFilter(request, query);
+        applyOrdering(query, paramInfo);
 
 
         final HstQueryResult execute = query.execute();

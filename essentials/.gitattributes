@@ -386,6 +386,7 @@ dashboard-plugins/components-plugin/components-library/src/main/java/org/onehipp
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsPageable.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsRepositoryMenuComponentInfo.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsSearchComponentInfo.java -text
+dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsSortable.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/model/AcceptAllFilter.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/model/AuthorEntry.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/model/Authors.java -text
