@@ -19,7 +19,7 @@ import org.hippoecm.repository.api.Workflow;
 
 /**
  * @deprecated since 2.28.00 (CMS 7.9), use {@link QualifiedWorkflowCallbackHandler}
- * or extend from {@BaseWorkflowCallbackHandler}
+ * or extend from {@link BaseWorkflowCallbackHandler}
  *
  * @param <T> The Workflow specific type which is expected to be provided during the callback
  */
