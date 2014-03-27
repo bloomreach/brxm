@@ -523,8 +523,14 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/java
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/jsp/essentials-component-news-detail.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/log4j.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/project/site/dummy.txt -text
-dashboard-plugins/essentials-powerpacks/essentials-powerpack-themes/pom.xml -text
-dashboard-plugins/essentials-powerpacks/essentials-powerpack-themes/src/test/resources/log4j.xml -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/pom.xml -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/java/org/onehippo/cms7/essentials/dashboard/packaging/CommonsPowerpack.java -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/META-INF/commons_instructions.xml -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/freemarker/imports.ftl -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/freemarker/pagination.ftl -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/jsp/imports.jsp -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/jsp/pagination.jsp -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/test/resources/log4j.xml -text
 dashboard-plugins/essentials-powerpacks/pom.xml -text
 dashboard-plugins/freemarker-synchronizer/pom.xml -text
 dashboard-plugins/freemarker-synchronizer/src/main/java/org/onehippo/cms7/essentials/tools/rest/FSUtils.java -text
@@ -712,7 +718,6 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/u
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/xml/XmlProperty.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/xml/package-info.java -text
 plugin-api/implementation/src/main/resources/META-INF/essentialsSpringSdk.xml -text
-plugin-api/implementation/src/main/resources/enwiki-20081008-pages-articles.xml.100.top.xml -text
 plugin-api/implementation/src/main/resources/essentials_messages.properties -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/BaseRepositoryTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/BaseResourceTest.java -text

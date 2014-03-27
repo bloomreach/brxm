@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
+<!--
+//############################################
+// COMMONS POWERPACK ADDS SHARED FILES/CONFIGURATION
+//############################################
+-->
+  <instructionSet>
+    <file action="copy" source="powerpack/jsp/imports.jsp" target="{{jspRoot}}/essentials/common/imports.jsp"/>
+    <file action="copy" source="powerpack/jsp/pagination.jsp" target="{{jspRoot}}/essentials/common/pagination.jsp"/>
+    <file action="copy" source="powerpack/freemarker/pagination.ftl" target="{{freemarkerRoot}}/essentials/common/pagination.ftl"/>
+    <file action="copy" source="powerpack/freemarker/imports.ftl" target="{{freemarkerRoot}}/essentials/common/imports.ftl"/>
+  </instructionSet>
+</instructions>
