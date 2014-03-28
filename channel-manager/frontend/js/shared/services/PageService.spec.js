@@ -94,6 +94,13 @@ describe('Page Service', function () {
         $httpBackend.when('GET', 'api/7a66c027-9dd1-423e-8158-7c28144f47e2./item/18b7b53e-d351-457e-99d7-d6f7398ec522').respond({
             "data": pages[1]
         });
+
+        // delete page by id
+        $httpBackend.when('POST', 'api/7a66c027-9dd1-423e-8158-7c28144f47e2./item/18b7b53e-d351-457e-99d7-d6f7398ec522').respond({
+            success: true,
+            message: "Item deleted successfully",
+            data: "18b7b53e-d351-457e-99d7-d6f7398ec522"
+        });
     }));
 
     beforeEach(inject(['hippo.channel.PageService', function (PageService) {
@@ -146,6 +153,17 @@ describe('Page Service', function () {
         pageService.getHost().then(function (data) {
             expect(data).toBe('hostname');
         });
+        $httpBackend.flush();
+    });
+
+    it('should remove a page', function () {
+        $httpBackend.expectPOST('api/7a66c027-9dd1-423e-8158-7c28144f47e2./delete/18b7b53e-d351-457e-99d7-d6f7398ec522').respond(200, {
+            success: true,
+            message: "Item deleted successfully",
+            data: "18b7b53e-d351-457e-99d7-d6f7398ec522"
+        });
+
+        pageService.deletePage('18b7b53e-d351-457e-99d7-d6f7398ec522');
         $httpBackend.flush();
     });
 });
