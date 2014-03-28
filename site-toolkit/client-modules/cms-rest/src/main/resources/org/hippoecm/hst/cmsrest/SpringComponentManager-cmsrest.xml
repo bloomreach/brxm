@@ -214,11 +214,11 @@
            <property name="customMountName" value="_cmsrest"/>
            <property name="customHostName" value="127.0.0.1"/>
            <property name="customMountNamedPipeline" value="CmsRestPipeline"/>
-           <!--
-             the type must be 'live' as the links that are created through the CMS rest mount need to be 'live' links.
-             The CMS will decorate these live links to preview.
-           -->
-           <property name="customMountType" value="live"/>
+          <!--
+            the type must be 'preview' as the links that are created through the CMS rest mount need to
+            be done against preview site map configurations
+          -->
+          <property name="customMountType" value="preview"/>
         </bean>
     </property>
   </bean>

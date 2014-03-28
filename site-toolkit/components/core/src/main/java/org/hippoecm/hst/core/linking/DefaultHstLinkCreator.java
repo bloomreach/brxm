@@ -26,10 +26,13 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.core.internal.MountDecorator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.hippoecm.hst.util.NodeUtils;
 import org.hippoecm.hst.util.PathUtils;
@@ -50,7 +53,8 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
     private HstLinkProcessor linkProcessor;
     
     private List<LocationResolver> locationResolvers;
-    
+    private MountDecorator mountDecorator;
+
     public void setBinariesPrefix(String binariesPrefix){
         this.binariesPrefix = binariesPrefix;
     }
@@ -79,7 +83,12 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
     public void setPageNotFoundPath(String pageNotFoundPath){
         this.pageNotFoundPath = PathUtils.normalizePath(pageNotFoundPath);
     }
-    
+
+    public void setMountDecorator(final MountDecorator mountDecorator) {
+        this.mountDecorator = mountDecorator;
+    }
+
+
     public void clear() {
         // nothing to clear for now
     }
@@ -280,6 +289,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
        
         Mount mount;
         ResolverProperties resolverProperties;
+        boolean isCmsRequest;
       
         /**
          * Create a HstLinkResolver instance with the current <code>requestContext</code>. The {@link Mount} is taken from this context. If
@@ -293,6 +303,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             resolverProperties = new ResolverProperties();
             resolverProperties.resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
             mount = requestContext.getResolvedMount().getMount();
+            isCmsRequest = requestContext.isCmsRequest();
         }
         
         
@@ -403,7 +414,10 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                          */
                         
                         List<Mount> mountsForHostGroup = mount.getVirtualHost().getVirtualHosts().getMountsByHostGroup(mount.getVirtualHost().getHostGroupName());
-                        
+
+                        if (Mount.PREVIEW_NAME.equals(mount.getType()) && isCmsRequest) {
+                            mountsForHostGroup = decorateMountsToPreview(mountsForHostGroup);
+                        }
                         /*
                          * There can be multiple suited Mount's (for example the Mount for preview and composermode can be the 'same' subsite). We
                          * choose the best suited Mount as follows:
@@ -435,24 +449,32 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                            if(nodePath.startsWith(candidateMount.getContentPath() + "/") || nodePath.equals(candidateMount.getContentPath())) {
                               // check whether one of the types of this Mount matches the types of the currentMount: if so, we have a possible hit.
                               // (b)
-                              if(!Collections.disjoint(candidateMount.getTypes(), mount.getTypes())) {
-                                  log.debug("Found a Mount ('name = {} and alias = {}') where the nodePath '"+nodePath+"' belongs to. Add this Mount to the list of possible suited mounts",  candidateMount.getName(), candidateMount.getAlias());
-                                  candidateMounts.add(candidateMount);
-                              } else {
-                                  // The Mount did not have a type in common with the current Mount. Try another one.
-                                  log.debug("Mount  ('name = {} and alias = {}') has the correct canonical content path to linkrewrite '"+nodePath+"', but it does not have at least one type in common with the current request Mount hence cannot be used. Try next one",  candidateMount.getName(), candidateMount.getAlias());
-                              }
+                               if (Collections.disjoint(candidateMount.getTypes(), mount.getTypes())) {
+                                   // The Mount did not have a type in common with the current Mount. Try another one.
+                                   log.debug("Mount  ('name = {} and alias = {}') has the correct canonical content path to link rewrite '{}', but it " +
+                                           "does not have at least one type in common with the current request Mount hence cannot be used. Try next one",
+                                           new String[]{candidateMount.getName(), candidateMount.getAlias(), nodePath});
+                               } else {
+                                   log.debug("Found a Mount ('name = {} and alias = {}') where the nodePath '{}' belongs to. Add this " +
+                                           "Mount to the list of possible suited mounts",
+                                           new String[]{candidateMount.getName(), candidateMount.getAlias(), nodePath});
+                                   candidateMounts.add(candidateMount);
+                               }
                            } // (a)
                            else if(nodePath.startsWith(candidateMount.getContentPath() + "/") || nodePath.equals(candidateMount.getContentPath())) {
                               // check whether one of the types of this Mount matches the types of the currentMount: if so, we have a possible hit.
                               // (b)
-                              if(!Collections.disjoint(candidateMount.getTypes(), mount.getTypes())) {
-                                  log.debug("Found a Mount ('name = {} and alias = {}') where the nodePath '"+nodePath+"' belongs to. Add this Mount to the list of possible suited mounts",  candidateMount.getName(), candidateMount.getAlias());
-                                  candidateMounts.add(candidateMount);
-                              } else {
-                                  // The Mount did not have a type in common with the current Mount. Try another one.
-                                  log.debug("Mount  ('name = {} and alias = {}') has the correct canonical content path to linkrewrite '"+nodePath+"', but it does not have at least one type in common with the current request Mount hence cannot be used. Try next one",  candidateMount.getName(), candidateMount.getAlias());
-                              }
+                               if (Collections.disjoint(candidateMount.getTypes(), mount.getTypes())) {
+                                   // The Mount did not have a type in common with the current Mount. Try another one.
+                                   log.debug("Mount  ('name = {} and alias = {}') has the correct canonical content path to link rewrite '{}', but it does " +
+                                           "not have at least one type in common with the current request Mount hence cannot be used. Try next one",
+                                           new String[]{candidateMount.getName(), candidateMount.getAlias(), nodePath});
+                               } else {
+                                   log.debug("Found a Mount ('name = {} and alias = {}') where the nodePath '{}' belongs to. Add this Mount to the list " +
+                                           "of possible suited mounts",
+                                           new String[]{candidateMount.getName(), candidateMount.getAlias(), nodePath});
+                                   candidateMounts.add(candidateMount);
+                               }
                            }
                         }
                         
@@ -524,9 +546,13 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 log.info("Cannot create link when the jcr node is null. Return empty list for canonicalLinks.");
                 return Collections.emptyList();
             }
+
+            if (type == null) {
+                type = mount.getType();
+            }
             
             boolean postProcess = true;
-            Node canonicalNode = null;
+            Node canonicalNode;
             canonicalNode = NodeUtils.getCanonicalNode(node);
            
             List<LinkInfo> linkInfoList = new ArrayList<LinkInfo>();
@@ -574,7 +600,11 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                         return Collections.emptyList();
                     }
                 }
-                
+
+                if (Mount.PREVIEW_NAME.equals(type) && isCmsRequest) {
+                    mountsForHostGroup = decorateMountsToPreview(mountsForHostGroup);
+                }
+
                 /*
                  * There can be multiple suited Mount's (for example the Mount for preview and composermode can be the 'same' subsite). We
                  * choose the candicate mounts as follows:
@@ -585,8 +615,8 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                  * The candidate Mount must have a #getCanonicalContentPath() or #getContentPath() that is a prefix of the nodePath
                  * 
                  */
+
                 List<Mount> candidateMounts = new ArrayList<Mount>();
-                
                 for(Mount candidateMount : mountsForHostGroup) {
                     
                    if(!candidateMount.isMapped()) {
@@ -602,32 +632,44 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                           if(candidateMount.getTypes().contains(type)) {
                               candidateMounts.add(candidateMount);
                           } else {
-                              log.debug("Mount  ('name = {} and alias = {}') has the correct canonical content path to linkrewrite '"+nodePath+"', but it does not have at least one type equal to '"+type+"' hence cannot be used. Try next one", candidateMount.getName(), candidateMount.getAlias());
+                              log.debug("Mount  ('name = {} and alias = {}') has the correct canonical content path to linkrewrite '{}', but " +
+                                      "it does not have at least one type equal to '"+type+"' hence cannot be used. Try next one",
+                                      new String[]{candidateMount.getName(), candidateMount.getAlias(), nodePath});
                           }
-                      } else if(!Collections.disjoint(candidateMount.getTypes(), mount.getTypes())) {
-                          log.debug("Found a Mount ('name = {} and alias = {}') where the nodePath '"+nodePath+"' belongs to. Add this Mount to the list of possible suited mounts",  candidateMount.getName(), candidateMount.getAlias());
-                          candidateMounts.add(candidateMount);
-                      } else {
+                      } else if (Collections.disjoint(candidateMount.getTypes(), mount.getTypes())) {
                           // The Mount did not have a type in common with the current Mount. Try another one.
-                          log.debug("Mount  ('name = {} and alias = {}') has the correct canonical content path to linkrewrite '"+nodePath+"', but it does not have at least one type in common with the current request Mount hence cannot be used. Try next one",  candidateMount.getName(), candidateMount.getAlias());
+                          log.debug("Mount  ('name = {} and alias = {}') has the correct canonical content path to linkrewrite '{}', but it " +
+                                  "does not have at least one type in common with the current request Mount hence cannot be used. Try next one",
+                                  new String[]{candidateMount.getName(), candidateMount.getAlias(), nodePath});
+                      } else {
+                          log.debug("Found a Mount ('name = {} and alias = {}') where the nodePath '{}' belongs to. Add this Mount to the " +
+                                  "list of possible suited mounts",
+                                  new String[]{candidateMount.getName(), candidateMount.getAlias(), nodePath});
+                          candidateMounts.add(candidateMount);
                       }
                    } // (a)
                    else if(nodePath.startsWith(candidateMount.getContentPath() + "/") || nodePath.equals(candidateMount.getContentPath())) {
                       // check whether one of the types of this Mount matches the types of the currentMount: if so, we have a possible hit.
                       // (b)
-                       if(type != null) {
-                           if(candidateMount.getTypes().contains(type)) {
+                       if (type != null) {
+                           if (candidateMount.getTypes().contains(type)) {
                                candidateMounts.add(candidateMount);
                            } else {
-                               log.debug("Mount  ('name = {} and alias = {}') has the correct canonical content path to linkrewrite '"+nodePath+"', but it does not have at least one type equal to '"+type+"' hence cannot be used. Try next one", candidateMount.getName(), candidateMount.getAlias());
+                               log.debug("Mount  ('name = {} and alias = {}') has the correct canonical content path to linkrewrite '{}', but it does " +
+                                       "not have at least one type equal to '" + type + "' hence cannot be used. Try next one",
+                                       new String[]{candidateMount.getName(), candidateMount.getAlias(), nodePath});
                            }
-                       } else if(!Collections.disjoint(candidateMount.getTypes(), mount.getTypes())) {
-                          log.debug("Found a Mount ('name = {} and alias = {}') where the nodePath '"+nodePath+"' belongs to. Add this Mount to the list of possible suited mounts",  candidateMount.getName(), candidateMount.getAlias());
-                          candidateMounts.add(candidateMount);
-                      } else {
-                          // The Mount did not have a type in common with the current Mount. Try another one.
-                          log.debug("Mount  ('name = {} and alias = {}') has the correct canonical content path to linkrewrite '"+nodePath+"', but it does not have at least one type in common with the current request Mount hence cannot be used. Try next one",  candidateMount.getName(), candidateMount.getAlias());
-                      }
+                       } else if (Collections.disjoint(candidateMount.getTypes(), mount.getTypes())) {
+                           // The Mount did not have a type in common with the current Mount. Try another one.
+                           log.debug("Mount  ('name = {} and alias = {}') has the correct canonical content path to linkrewrite '{}', but it " +
+                                   "does not have at least one type in common with the current request Mount hence cannot be used. Try next one",
+                                   new String[]{candidateMount.getName(), candidateMount.getAlias(), nodePath});
+                       } else {
+                           log.debug("Found a Mount ('name = {} and alias = {}') where the nodePath '{}' belongs to. " +
+                                   "Add this Mount to the list of possible suited mounts",
+                                   new String[]{candidateMount.getName(), candidateMount.getAlias(), nodePath});
+                           candidateMounts.add(candidateMount);
+                       }
                    }
                 }
                 
@@ -666,7 +708,25 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             
             return allLinks;
         }
-        
+
+        private List<Mount> decorateMountsToPreview(final List<Mount> mounts) {
+            List<Mount> previewMounts = new ArrayList<>();
+            for (Mount mount : mounts) {
+                if (Mount.PREVIEW_NAME.equals(mount.getType())) {
+                    previewMounts.add(mount);
+                } else {
+                    if (mount instanceof ContextualizableMount) {
+                        log.debug("decorating mount '{}' to preview mount", mount.toString());
+                        previewMounts.add(mountDecorator.decorateMountAsPreview((ContextualizableMount)mount));
+                    } else {
+                        log.info("Cannot decorate mount '{}' to preview since not an instanceof ContextualizableMount. Skipping" +
+                                "this mount.", mount.toString());
+                    }
+                }
+            }
+            return previewMounts;
+        }
+
 
         /**
          * @param nodePath jcr node path

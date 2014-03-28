@@ -58,7 +58,7 @@ public class DocumentsResource extends BaseResource implements DocumentService {
         // virtualhosts object since we REALLY need the hst model instance for the current request!!
         String hostGroupNameForChannelMngr = requestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().getChannelManagerHostGroupName();
         List<HstLink> canonicalLinks = hstLinkCreator.createAllAvailableCanonicals(handle, requestContext, null, hostGroupNameForChannelMngr);
-        List<ChannelDocument> channelDocuments = new ArrayList<ChannelDocument>(canonicalLinks.size());
+        List<ChannelDocument> channelDocuments = new ArrayList<>(canonicalLinks.size());
 
         for (HstLink link : canonicalLinks) {
             final Mount linkMount = link.getMount();
@@ -68,21 +68,21 @@ public class DocumentsResource extends BaseResource implements DocumentService {
                 continue;
             }
 
-            final Channel previewChannel = ((ContextualizableMount) linkMount).getPreviewChannel();
+            final Channel channel = linkMount.getChannel();
 
-            if (previewChannel == null) {
+            if (channel == null) {
                 log.debug("Skipping link for mount '{}' since it does not have a channel", linkMount.getName());
                 continue;
             }
 
-            if (!channelFilter.apply(previewChannel)) {
-                log.info("Skipping channel '{}' because filtered out by channel filters", previewChannel.toString());
+            if (!channelFilter.apply(channel)) {
+                log.info("Skipping channel '{}' because filtered out by channel filters", channel.toString());
                 continue;
             }
 
             ChannelDocument document = new ChannelDocument();
-            document.setChannelId(previewChannel.getId());
-            document.setChannelName(previewChannel.getName());
+            document.setChannelId(channel.getId());
+            document.setChannelName(channel.getName());
             if (StringUtils.isNotEmpty(link.getPath())) {
                 document.setPathInfo("/" + link.getPath());
             } else {

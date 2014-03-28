@@ -19,6 +19,7 @@ import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -45,8 +46,11 @@ public class TestMountDecoratorImpl {
         assertTrue("The decorated mount is expected to be a preview. ", decoratedMount.isPreview());
         assertEquals("The decorated mount should have a mountPoint '/hst:hst/hst:sites/myproject'. ","/hst:hst/hst:sites/myproject", decoratedMount.getMountPoint());
 
-        assertEquals("The decorated mount should should NEVER change the type, also not live to preview. ",decoratedMount.getType(), "live");
-        assertEquals("The decorated mount should should NEVER change the types ",decoratedMount.getTypes().get(0), "foo");
+        assertEquals("The decorated mount should change the type from live to preview. ",decoratedMount.getType(), "preview");
+        assertFalse("The decorated mount should not have live ", decoratedMount.getTypes().contains("live"));
+        assertTrue("The decorated mount should  have preview ", decoratedMount.getTypes().contains("preview"));
+        assertTrue("The decorated mount should  have foo, bar and lux ",
+                decoratedMount.getTypes().contains("foo") && decoratedMount.getTypes().contains("bar") && decoratedMount.getTypes().contains("lux"));
         
     }
     

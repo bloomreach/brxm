@@ -141,24 +141,26 @@ public class MountDecoratorImpl implements MountDecorator {
             return getHstSite();
         }
 
-        /*
-         * below delegate everything to original mount
-         */
-
-        /*
-         * NOTE For getType and getTypes the 'preview' version still returns the value the original mount had. So, for a live mount, it will still
-         * be live. This is because otherwise cross mount links will fail (you cannot link from preview to live and vice versa).
-         *
-         * This means, implementation should always check isPreview() to check whether the mount is preview, and not isOfType("preview")
-         */
         @Override
         public String getType() {
-            return delegatee.getType();
+            if (Mount.LIVE_NAME.equals(delegatee.getType())) {
+                return Mount.PREVIEW_NAME;
+            } else {
+                // not 'live' : just return same type
+                return delegatee.getType();
+            }
         }
 
         @Override
         public List<String> getTypes() {
-            return delegatee.getTypes();
+            // immutable list
+            List<String> types = delegatee.getTypes();
+            List<String> decoratedTypes = new ArrayList<>(types);
+            String decoratedType = getType();
+            String unDecoratedType = delegatee.getType();
+            decoratedTypes.remove(unDecoratedType);
+            decoratedTypes.add(decoratedType);
+            return Collections.unmodifiableList(decoratedTypes);
         }
 
         @SuppressWarnings("unchecked")
@@ -395,5 +397,14 @@ public class MountDecoratorImpl implements MountDecorator {
         public void addMount(MutableMount mount) throws IllegalArgumentException, ModelLoadingException {
             throw  new UnsupportedOperationException("addMount not allowed on decorated mounts");
         }
+
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder("MountAsPreviewDecorator for Mount [");
+            builder.append(delegatee.toString());
+            builder.append("]");
+            return  builder.toString();
+        }
+
     }
 }

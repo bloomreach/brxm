@@ -45,6 +45,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * <p>
@@ -202,6 +203,39 @@ public class TestHstLinkForCmsRequest extends AbstractBeanTestCase {
             // renderhost should be included
             assertEquals("wrong fully qualified url for homepage for CMS context", "/site/?"+ContainerConstants.RENDERING_HOST+"="+hostName, (homePageLinkForMobile.toUrlForm(requestContext, true)));
         }
+    }
+
+    /**
+     * @see {@link org.hippoecm.hst.core.linking.TestHstLinkRewriting#testCrossSiteAndDomainHstLinkForBean()} which *CANNOT*
+     * resolve cross links from the preview mount to other mounts because the other mounts only have a live. In CMS REQUEST
+     * CONTEXT though, this just works because the CMS should use DECORATED PREVIEW MOUNTS (decorated from live)
+     */
+    @Test
+    public void testLinksCMSRequestWITHRenderingHostResolvesLinkToPreviewDecoratedMounts() throws Exception {
+        // the rendering host is localhost:8081
+        // We now do a request that is for the preview site (PORT 8081). Because for the 'unittestsubproject' we have only
+        // configured LIVE mounts, then when we request a link, we expect to get a link from a 'live mount to preview mount
+        // decorated version' because we are in a cms request
+        HstRequestContext requestContext = getRequestFromCms("cms.example.com", "/home", null, "localhost:8081", false);
+        assertTrue(requestContext.isCmsRequest());
+        // assert that the match Mount is localhost
+        assertEquals("Matched mount should be the renderHost mount", "localhost", requestContext.getResolvedMount().getResolvedVirtualHost().getResolvedHostName());
+
+        ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
+
+        Object newsBean = obm.getObject("/unittestcontent/documents/unittestsubproject/News/2008/SubNews1");
+        HstLink crossSiteNewsLinkToPreviewDecoratedMount = linkCreator.create((HippoBean) newsBean, requestContext);
+
+        assertEquals("Expected a preview decorated mount", "preview",crossSiteNewsLinkToPreviewDecoratedMount.getMount().getType());
+
+        assertEquals("wrong link.getPath for News/2008/SubNews1 ", "news/2008/SubNews1.html", crossSiteNewsLinkToPreviewDecoratedMount.getPath());
+        assertEquals("Expected a render_host paramater in relative URL since host cms should be used + ?" +ContainerConstants.RENDERING_HOST+ "=....",
+                "/site/subsite/news/2008/SubNews1.html?"+ContainerConstants.RENDERING_HOST+"=localhost",
+                crossSiteNewsLinkToPreviewDecoratedMount.toUrlForm(requestContext, false));
+        // fully qualified links will still be relative!
+        assertEquals("Expected a render_host paramater in relative URL since host cms should be used + render_host ",
+                "/site/subsite/news/2008/SubNews1.html?"+ContainerConstants.RENDERING_HOST+"=localhost",
+                crossSiteNewsLinkToPreviewDecoratedMount.toUrlForm(requestContext, true));
     }
 
 

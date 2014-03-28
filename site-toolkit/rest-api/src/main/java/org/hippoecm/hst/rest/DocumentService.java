@@ -32,7 +32,7 @@ import org.hippoecm.hst.rest.beans.ChannelDocument;
 public interface DocumentService {
 
     /**
-     * Returns information about all channels a document is part of. A document is identified by its UUID.
+     * Returns information about all <b>preview</b> channels a document is part of. A document is identified by its UUID.
      * When a document is unknown or not part of any channel, an empty list is returned.
      *
      * @param uuid the identifier of the document
