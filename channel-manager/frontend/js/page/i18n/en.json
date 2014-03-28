@@ -14,6 +14,13 @@
 
     "SAVE": "Save",
     "CANCEL": "Cancel",
+    "DELETE_PAGE": "Delete page",
+
+    "CONFIRM_DELETE_TITLE": "Confirm delete",
+    "CONFIRM_DELETE_MESSAGE": "Are you sure you want to delete '{{ title }}'?",
+
+    "TOOLTIP_NOT_EDITABLE": "You can not delete the page because it is currently not editable",
+    "TOOLTIP_IS_HOMEPAGE": "The homepage can not be deleted",
 
     "PAGE_LOCKED": "This page is locked by {{ owner }} at {{ timestamp | date:'M/d/yyyy h:mm a' }}",
 

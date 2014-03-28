@@ -20,8 +20,7 @@
         .controller('hippo.channel.pages.NavigationCtrl', [
         '$scope',
         '$state',
-        'hippo.channel.ConfigService',
-        function ($scope, $state, ConfigService) {
+        function ($scope, $state) {
             // navigation
             $scope.navigateTo = function (stateName) {
                 $state.go(stateName);

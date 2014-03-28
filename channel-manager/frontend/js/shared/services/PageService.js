@@ -104,6 +104,20 @@
                     return deferred.promise;
                 };
 
+                pageService.deletePage = function (pageId) {
+                    var deferred = $q.defer();
+
+                    $http.post(pageServiceUrl('/' + ConfigService.sitemapId + './delete/' + pageId))
+                        .success(function (response) {
+                            deferred.resolve(response);
+                        })
+                        .error(function (error) {
+                            deferred.reject(error);
+                        });
+
+                    return deferred.promise;
+                };
+
                 return pageService;
             }
         ]);

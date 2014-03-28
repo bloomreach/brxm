@@ -14,6 +14,13 @@
 
     "SAVE": "Sla op",
     "CANCEL": "Annuleer",
+    "DELETE_PAGE": "Verwijder pagina",
+
+    "CONFIRM_DELETE_TITLE": "Bevestig verwijderen",
+    "CONFIRM_DELETE_MESSAGE": "Weet je zeker dat je '{{ title }}' wil verwijderen?",
+
+    "TOOLTIP_NOT_EDITABLE": "Je kan deze pagina niet verwijderen omdat het niet bewerkbaar is",
+    "TOOLTIP_IS_HOMEPAGE": "De homepage kan niet worden verwijderd",
 
     "PAGE_LOCKED": "Deze pagina is vergrendeld door {{ owner }} op {{ timestamp | date:'d-M-yyyy H:mm' }}",
 

@@ -15,8 +15,17 @@
  */
 
 /* --- Settings Form --- */
-#settings.panel-default {
+.panel-default {
     border: none;
+}
+
+.panel > .panel-footer {
+    text-align: center;
+    border-radius: 0;
+}
+
+.l-fixed-height {
+    height: 373px;
 }
 
 form {
@@ -60,4 +69,24 @@ form {
 #template .alert {
     margin-top: 10px;
     margin-bottom: 0;
+}
+
+/* --- Confirmation dialog --- */
+.confirmation {
+    position: absolute;
+    width: 80%;
+    left: 10%;
+    z-index: 999999999999;
+    top: 0;
+    border-top: none;
+    display: none;
+}
+
+.confirmation.s-visible, .confirmation.s-invisible { display: block }
+.confirmation.s-visible { top: 0 }
+.confirmation.s-invisible { top: -162px }
+
+/* --- Tooltip --- */
+.tooltip-newlines + .tooltip > .tooltip-inner {
+    white-space: pre-wrap;
 }

@@ -13,117 +13,136 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<div class="l-stretch">
 
-    <div id="settings" class="panel panel-default l-stretch" data-ng-show="page.id">
-        <div class="list-group l-stretch l-fixed-height">
-            <form name="form" role="form" novalidate>
-                <div class="alert alert-danger" data-ng-show="errorFeedback.message">
-                    {{ errorFeedback.message }}
+<div class="panel panel-default l-stretch">
+
+    <div hippo.theme.confirmation-dialog
+         data-confirm-icon="trash-o"
+         data-perform-confirmation="confirmDelete()"
+         data-perform-cancel="cancelDelete()"
+         data-confirm-label="{{ 'DELETE_PAGE' | translate }}"
+         data-cancel-label="{{ 'CANCEL' | translate }}"
+         data-show="isConfirmationVisible" class="confirmation">
+        <p><strong>{{ 'CONFIRM_DELETE_TITLE' | translate:page }}</strong></p>
+        <p>{{ 'CONFIRM_DELETE_MESSAGE' | translate:page }}</p>
+    </div>
+
+    <div class="panel-body l-fixed-height">
+        <form name="form" role="form" novalidate>
+            <div class="alert alert-danger" data-ng-show="errorFeedback.message">
+                {{ errorFeedback.message }}
+            </div>
+
+            <div class="alert alert-warning" data-ng-show="state.isLocked">
+                <i class="fa fa-lock"></i> {{ 'PAGE_LOCKED' | translate:lock }}
+            </div>
+
+            <div class="form-group has-feedback"
+                 data-ng-class="{
+                'has-success': form.title.$dirty && form.title.$valid,
+                'has-error': form.title.$dirty && form.title.$invalid
+            }">
+                <label for="page-title">{{ 'PAGE_TITLE' | translate }}</label>
+                <input type="text" name="title" class="form-control" id="page-title"
+                       placeholder="{{ 'PAGE_TITLE' | translate }}"
+                       data-ng-model="page.title"
+                       data-ng-readonly="!state.isEditable"
+                       data-ng-focus="form.title.$setPristine();"
+                       data-ng-required="true">
+                <div class="tooltip-container" data-ng-show="form.title.$dirty && form.title.$error.required">
+                    <div data-tooltip
+                         data-placement="top"
+                         data-title="{{ 'PAGE_TITLE_REQUIRED' | translate }}"></div>
                 </div>
+                <i class="fa form-control-feedback"
+                   data-ng-class="{
+                'fa-check': form.title.$dirty && form.title.$valid,
+                'fa-times': form.title.$dirty && form.title.$invalid
+               }"></i>
+            </div>
 
-                <div class="alert alert-warning" data-ng-show="state.isLocked">
-                    <i class="fa fa-lock"></i> {{ 'PAGE_LOCKED' | translate:lock }}
-                </div>
-
-                <div class="form-group has-feedback"
-                     data-ng-class="{
-                        'has-success': form.title.$dirty && form.title.$valid,
-                        'has-error': form.title.$dirty && form.title.$invalid
-                    }">
-                    <label for="page-title">{{ 'PAGE_TITLE' | translate }}</label>
-                    <input type="text" name="title" class="form-control" id="page-title"
-                           placeholder="{{ 'PAGE_TITLE' | translate }}"
-                           data-ng-model="page.title"
+            <div class="form-group has-feedback" id="url" data-ng-class="{
+                'has-success': form.url.$dirty && form.url.$valid,
+                'has-error': form.url.$dirty && form.url.$invalid
+            }">
+                <label for="page-url">{{ 'URL' | translate }}</label>
+                <div class="input-group">
+                    <span class="input-group-addon">{{ host }}/</span>
+                    <input type="text" name="url" class="form-control" id="page-url"
+                           placeholder=""
+                           data-ng-model="page.url"
                            data-ng-readonly="!state.isEditable"
-                           data-ng-focus="form.title.$setPristine();"
+                           data-illegal-characters="validation.illegalCharacters"
+                           data-ng-focus="form.url.$setPristine();"
                            data-ng-required="true">
-                    <div class="tooltip-container" data-ng-show="form.title.$dirty && form.title.$error.required">
-                        <div data-tooltip
-                             data-placement="top"
-                             data-title="{{ 'PAGE_TITLE_REQUIRED' | translate }}"></div>
-                    </div>
-                    <i class="fa form-control-feedback"
-                       data-ng-class="{
-                        'fa-check': form.title.$dirty && form.title.$valid,
-                        'fa-times': form.title.$dirty && form.title.$invalid
-                       }"></i>
                 </div>
-
-                <div class="form-group has-feedback" id="url" data-ng-class="{
-                        'has-success': form.url.$dirty && form.url.$valid,
-                        'has-error': form.url.$dirty && form.url.$invalid
-                    }">
-                    <label for="page-url">{{ 'URL' | translate }}</label>
-                    <div class="input-group">
-                        <span class="input-group-addon">{{ host }}/</span>
-                        <input type="text" name="url" class="form-control" id="page-url"
-                               placeholder=""
-                               data-ng-model="page.url"
-                               data-ng-readonly="!state.isEditable"
-                               data-illegal-characters="validation.illegalCharacters"
-                               data-ng-focus="form.url.$setPristine();"
-                               data-ng-required="true">
-                    </div>
-                    <div class="tooltip-container" data-ng-show="form.url.$dirty && form.url.$error.required">
-                        <div data-tooltip
-                             data-placement="top"
-                             data-title="{{ 'URL_REQUIRED' | translate }}"></div>
-                    </div>
-                    <div class="tooltip-container" data-ng-show="form.url.$dirty && form.url.$error.illegalCharacters">
-                        <div data-tooltip
-                             data-placement="top"
-                             data-title="{{ 'URL_ILLEGAL_CHARACTERS' | translate:validation }}"></div>
-                    </div>
-                    <i class="fa form-control-feedback"
-                       data-ng-class="{
-                        'fa-check': form.url.$dirty && form.url.$valid,
-                        'fa-times': form.url.$dirty && form.url.$invalid
-                       }"></i>
+                <div class="tooltip-container" data-ng-show="form.url.$dirty && form.url.$error.required">
+                    <div data-tooltip
+                         data-placement="top"
+                         data-title="{{ 'URL_REQUIRED' | translate }}"></div>
                 </div>
+                <div class="tooltip-container" data-ng-show="form.url.$dirty && form.url.$error.illegalCharacters">
+                    <div data-tooltip
+                         data-placement="top"
+                         data-title="{{ 'URL_ILLEGAL_CHARACTERS' | translate:validation }}"></div>
+                </div>
+                <i class="fa form-control-feedback"
+                   data-ng-class="{
+                'fa-check': form.url.$dirty && form.url.$valid,
+                'fa-times': form.url.$dirty && form.url.$invalid
+               }"></i>
+            </div>
 
-                <div data-ng-show="state.isEditable">
-                    <div id="template">
-                        <label for="page-prototype">
-                            <a class="toggle"
-                               data-ng-class="{true: 'toggle-open', false: 'toggle-closed'}[template.isVisible]"
-                               data-ng-click="template.isVisible = true"
-                               data-ng-click="showAssignNewTemplate">{{ 'ASSIGN_NEW_TEMPLATE' | translate }}</a>
-                        </label>
+            <div data-ng-show="state.isEditable">
+                <div id="template">
+                    <label for="page-prototype">
+                        <a class="toggle"
+                           data-ng-class="{true: 'toggle-open', false: 'toggle-closed'}[template.isVisible]"
+                           data-ng-click="template.isVisible = true"
+                           data-ng-click="showAssignNewTemplate">{{ 'ASSIGN_NEW_TEMPLATE' | translate }}</a>
+                    </label>
 
-                        <div class="form-group" data-ng-show="template.isVisible">
-                            <select hippo.theme.select-box class="form-control" id="page-prototype"
-                                    data-ng-options="p.displayName for p in prototypes"
-                                    data-options="prototypes"
-                                    data-ng-model="page.prototype"
-                                    data-placeholder="{{ 'SELECT_TEMPLATE' | translate }}"
-                                    data-no-results-text="{{ 'NO_TEMPLATE_FOUND_FOR' | translate }}"></select>
+                    <div class="form-group" data-ng-show="template.isVisible">
+                        <select hippo.theme.select-box class="form-control" id="page-prototype"
+                                data-ng-options="p.displayName for p in prototypes"
+                                data-options="prototypes"
+                                data-ng-model="page.prototype"
+                                data-placeholder="{{ 'SELECT_TEMPLATE' | translate }}"
+                                data-no-results-text="{{ 'NO_TEMPLATE_FOUND_FOR' | translate }}"></select>
 
-                            <div data-ng-show="page.hasContainerItem">
-                                <div class="alert alert-warning" data-ng-show="!page.prototype.id || page.prototype.hasContainerInPageDefinition">
-                                    {{ 'ASSIGN_NEW_TEMPLATE_REPOSITION_WARNING' | translate }}
-                                </div>
-                                <div class="alert alert-danger" data-ng-show="page.prototype.id && !page.prototype.hasContainerInPageDefinition">
-                                    {{ 'ASSIGN_NEW_TEMPLATE_REMOVED_WARNING' | translate }}
-                                </div>
+                        <div data-ng-show="page.hasContainerItem">
+                            <div class="alert alert-warning" data-ng-show="!page.prototype.id || page.prototype.hasContainerInPageDefinition">
+                                {{ 'ASSIGN_NEW_TEMPLATE_REPOSITION_WARNING' | translate }}
+                            </div>
+                            <div class="alert alert-danger" data-ng-show="page.prototype.id && !page.prototype.hasContainerInPageDefinition">
+                                {{ 'ASSIGN_NEW_TEMPLATE_REMOVED_WARNING' | translate }}
                             </div>
                         </div>
                     </div>
-
-                    <hr/>
-
-                    <button type="submit" class="btn btn-default"
-                            data-ng-click="submit()">{{ 'SAVE' | translate }}</button>
-                    <button type="submit" class="btn btn-link"
-                            data-ng-click="closeContainer()">{{ 'CANCEL' | translate }}</button>
                 </div>
-            </form>
-        </div>
+
+                <hr/>
+
+                <button type="submit" class="btn btn-default"
+                        data-ng-click="submit()">{{ 'SAVE' | translate }}</button>
+                <button type="submit" class="btn btn-link"
+                        data-ng-click="closeContainer()">{{ 'CANCEL' | translate }}</button>
+            </div>
+        </form>
     </div>
 
-    <div class="l-center-container" data-ng-show="errorFeedback">
-        <div class="alert alert-danger l-center-block">
-            {{ errorFeedback.message }}
+    <div class="panel-footer clearfix">
+         <div class="tooltip-newlines"
+             data-tooltip
+             data-placement="top"
+             data-title="{{ tooltip }}"
+             data-ng-mouseenter="showTooltip()"
+             data-ng-mouseleave="hideTooltip()">
+            <button class="btn btn-default btn-md"
+                    data-ng-click="delete(page)"
+                    data-ng-disabled="!state.isEditable || page.isHomepage">
+                <i class="fa fa-trash-o"></i> {{ 'DELETE_PAGE' | translate }}
+            </button>
         </div>
     </div>
 </div>

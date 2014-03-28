@@ -20,12 +20,15 @@
 
         .controller('hippo.channel.page.SettingsCtrl', [
             '$scope',
+            '$filter',
             'hippo.channel.FeedbackService',
             'hippo.channel.PageService',
             'hippo.channel.PrototypeService',
             'hippo.channel.ConfigService',
             'hippo.channel.Container',
-            function ($scope, FeedbackService, PageService, PrototypeService, ConfigService, ContainerService) {
+            function ($scope, $filter, FeedbackService, PageService, PrototypeService, ConfigService, ContainerService) {
+                var translate = $filter('translate');
+
                 $scope.page = {
                     id: null,
                     title: '',
@@ -54,6 +57,9 @@
                 };
 
                 $scope.host = '';
+                $scope.isConfirmationVisible = false;
+                $scope.isHomePage = false;
+                $scope.tooltip = '';
 
                 // error feedback
                 function setErrorFeedback(errorResponse) {
@@ -82,6 +88,36 @@
                     ContainerService.performClose();
                 };
 
+                $scope.showTooltip = function() {
+                    if (!$scope.state.isEditable) {
+                        $scope.tooltip = translate('TOOLTIP_NOT_EDITABLE');
+                    } else if ($scope.page.isHomePage) {
+                        $scope.tooltip = translate('TOOLTIP_IS_HOMEPAGE');
+                    } else {
+                        $scope.tooltip = '';
+                    }
+                };
+
+                $scope.hideTooltip = function() {
+                    $scope.tooltip = '';
+                };
+
+                $scope.delete = function () {
+                    $scope.isConfirmationVisible = true;
+                };
+
+                $scope.confirmDelete = function () {
+                    $scope.isConfirmationVisible = false;
+
+                    PageService.deletePage($scope.page.id).then(function () {
+                        ContainerService.showPage('/');
+                    }, setErrorFeedback);
+                };
+
+                $scope.cancelDelete = function () {
+                    $scope.isConfirmationVisible = false;
+                };
+
                 function loadHost() {
                     return PageService.getHost()
                         .then(function (host) {
@@ -105,6 +141,7 @@
                             $scope.page.title = currentPage.pageTitle;
                             $scope.page.url = currentPage.name;
                             $scope.page.hasContainerItem = currentPage.hasContainerItemInPageDefinition;
+                            $scope.page.isHomePage = currentPage.isHomePage;
 
                             // only pages whose sitemap item is located in the HST workspace are editable,
                             // unless they are locked by someone else
