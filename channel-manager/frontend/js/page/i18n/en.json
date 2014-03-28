@@ -24,5 +24,7 @@
 
     "PAGE_LOCKED": "This page is locked by {{ owner }} at {{ timestamp | date:'M/d/yyyy h:mm a' }}",
 
-    "TECHNICAL_ERROR": "A technical error has occurred"
+    "TECHNICAL_ERROR": "A technical error has occurred",
+    "ITEM_ALREADY_LOCKED": "You cannot edit this page because '{{ lockedBy }}' is already editing it"
+
 }

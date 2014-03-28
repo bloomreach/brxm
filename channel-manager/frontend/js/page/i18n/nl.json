@@ -19,10 +19,11 @@
     "CONFIRM_DELETE_TITLE": "Bevestig verwijderen",
     "CONFIRM_DELETE_MESSAGE": "Weet u zeker dat u '{{ title }}' wil verwijderen?",
 
-    "TOOLTIP_NOT_EDITABLE": "Deze pagina kan niet worden verwijderd, omdat hij niet bewerkbaar is",
+    "TOOLTIP_NOT_EDITABLE": "Deze pagina kan niet worden verwijderd omdat hij niet bewerkbaar is",
     "TOOLTIP_IS_HOMEPAGE": "De homepage kan niet worden verwijderd",
 
     "PAGE_LOCKED": "Deze pagina is vergrendeld door {{ owner }} op {{ timestamp | date:'d-M-yyyy H:mm' }}",
 
-    "TECHNICAL_ERROR": "Er is een technische fout opgetreden"
+    "TECHNICAL_ERROR": "Er is een technische fout opgetreden",
+    "ITEM_ALREADY_LOCKED": "U kunt deze pagina niet bewerken omdat '{{ lockedBy }}' hem al bewerkt"
 }
