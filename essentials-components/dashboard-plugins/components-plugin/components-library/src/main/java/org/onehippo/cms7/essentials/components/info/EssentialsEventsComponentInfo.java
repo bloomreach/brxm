@@ -27,10 +27,10 @@ public interface EssentialsEventsComponentInfo extends EssentialsDocumentListCom
      *
      * @return {@code true} if items should be hidden, {@code false} otherwise
      */
-    @Parameter(name = "hidePastEvents", defaultValue = "off", required = false, displayName = "Hide past events")
+    @Parameter(name = "hidePastEvents", defaultValue = "on", required = false, displayName = "Hide past events")
     Boolean getHidePastEvents();
 
-    @Parameter(name = "documentDateField", required = true, defaultValue ="hippostdpubwf:publicationDate", displayName = "Field that contains document date (for hiding)")
+    @Parameter(name = "documentDateField", required = false, displayName = "Field that contains document date (for hiding)")
     String getDocumentDateField();
 
 }

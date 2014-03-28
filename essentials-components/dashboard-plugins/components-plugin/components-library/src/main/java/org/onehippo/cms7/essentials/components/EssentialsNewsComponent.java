@@ -27,6 +27,8 @@ import org.onehippo.cms7.essentials.components.utils.query.QueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
+
 /**
  * HST component used for listing of News document types
  *
@@ -62,12 +64,12 @@ public class EssentialsNewsComponent extends EssentialsListComponent {
         final String[] types = SiteUtils.parseCommaSeparatedValue(documentTypes);
 
         builder.scope(scope).documents(types).includeSubtypes();
-
-        if (newsComponentInfo.isHideFutureItems()) {
+        final String documentDateField = newsComponentInfo.getDocumentDateField();
+        if (newsComponentInfo.getHideFutureItems() && !Strings.isNullOrEmpty(documentDateField)) {
             try {
                 final Session session = request.getRequestContext().getSession();
                 Filter filter = new FilterImpl(session, DateTools.Resolution.DAY);
-                filter.addLessOrEqualThan(newsComponentInfo.getDocumentDateField(), Calendar.getInstance(), DateTools.Resolution.DAY);
+                filter.addLessThan(documentDateField, Calendar.getInstance(), DateTools.Resolution.DAY);
                 builder.addFilter(filter);
             } catch (RepositoryException | FilterException e) {
                 log.error("An exception occurred while trying to create a query filter for hiding future items: {}", e);
