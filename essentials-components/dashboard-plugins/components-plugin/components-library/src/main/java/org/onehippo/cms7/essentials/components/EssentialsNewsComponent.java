@@ -69,7 +69,7 @@ public class EssentialsNewsComponent extends EssentialsListComponent {
             try {
                 final Session session = request.getRequestContext().getSession();
                 Filter filter = new FilterImpl(session, DateTools.Resolution.DAY);
-                filter.addLessThan(documentDateField, Calendar.getInstance(), DateTools.Resolution.DAY);
+                filter.addLessOrEqualThan(documentDateField, Calendar.getInstance(), DateTools.Resolution.DAY);
                 builder.addFilter(filter);
             } catch (RepositoryException | FilterException e) {
                 log.error("An exception occurred while trying to create a query filter for hiding future items: {}", e);
