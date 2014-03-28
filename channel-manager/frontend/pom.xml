@@ -133,15 +133,6 @@
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-chosen</artifactId>
-      <version>${hippo.chosen.version}</version>
-      <classifier>distribution</classifier>
-      <type>zip</type>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-plugins</artifactId>
       <version>${hippo.plugins.version}</version>
       <classifier>distribution</classifier>
@@ -312,7 +303,6 @@
             <configuration>
               <includeGroupIds>org.onehippo.cms7</includeGroupIds>
               <includeArtifactIds>
-                hippo-chosen,
                 hippo-plugins,
                 hippo-theme
               </includeArtifactIds>
