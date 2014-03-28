@@ -27,6 +27,8 @@ import org.onehippo.cms7.essentials.components.utils.query.QueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
+
 /**
  * HST component used for listing of Event document types
  *
@@ -59,20 +61,20 @@ public class EssentialsEventsComponent extends EssentialsListComponent {
         final QueryBuilder builder = new HstQueryBuilder(this, request);
         final String documentTypes = componentInfo.getDocumentTypes();
         final String[] types = SiteUtils.parseCommaSeparatedValue(documentTypes);
-        EssentialsEventsComponentInfo essentialsEventsComponentInfo = (EssentialsEventsComponentInfo) componentInfo;
-
+        final EssentialsEventsComponentInfo essentialsEventsComponentInfo = (EssentialsEventsComponentInfo) componentInfo;
         builder.scope(scope).documents(types).includeSubtypes();
-
         if (essentialsEventsComponentInfo.getHidePastEvents()) {
-            String dateField = null;
-            try {
-                final Session session = request.getRequestContext().getSession();
-                Filter filter = new FilterImpl(session, DateTools.Resolution.DAY);
-                dateField = essentialsEventsComponentInfo.getDocumentDateField();
-                filter.addGreaterOrEqualThan(dateField, Calendar.getInstance(), DateTools.Resolution.DAY);
-                builder.addFilter(filter);
-            } catch (FilterException | RepositoryException e) {
-                log.error("Error while creating query filter to hide past events using date field {}", dateField, e);
+            final String dateField  = essentialsEventsComponentInfo.getDocumentDateField();
+            if (!Strings.isNullOrEmpty(dateField)) {
+                try {
+                    final Session session = request.getRequestContext().getSession();
+                    final Filter filter = new FilterImpl(session, DateTools.Resolution.DAY);
+
+                    filter.addGreaterOrEqualThan(dateField, Calendar.getInstance(), DateTools.Resolution.DAY);
+                    builder.addFilter(filter);
+                } catch (FilterException | RepositoryException e) {
+                    log.error("Error while creating query filter to hide past events using date field {}", dateField, e);
+                }
             }
         }
         return builder.build();

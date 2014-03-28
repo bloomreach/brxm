@@ -164,7 +164,14 @@ public class HstQueryBuilder implements QueryBuilder {
             final HstQuery query = manager.createQuery(scope, classes);
             query.setLimit(size);
             query.setOffset(size * (page - 1));
-            // TODO: add filters, limits etc
+            if (filters != null && filters.size() > 0) {
+                final Filter root = query.createFilter();
+                for (Filter filter : filters) {
+                    root.addAndFilter(filter);
+                }
+                query.setFilter(root);
+            }
+
             return query;
         } catch (QueryException e) {
             log.error("Error creating HST query", e);
