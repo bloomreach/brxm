@@ -17,11 +17,6 @@
 (function () {
     "use strict";
 
-    function moveItemModel(sourceScope, sourceIndex, destScope, destIndex) {
-        var removedItem = destScope.sortableModelValue.splice(destIndex, 1)[0];
-        sourceScope.sortableModelValue.splice(sourceIndex, 0, removedItem);
-    }
-
     angular.module('hippo.channel.menu')
 
         .controller('hippo.channel.menu.TreeCtrl', [
