@@ -89,10 +89,10 @@
                 };
 
                 $scope.showTooltip = function() {
-                    if (!$scope.state.isEditable) {
-                        $scope.tooltip = translate('TOOLTIP_NOT_EDITABLE');
-                    } else if ($scope.page.isHomePage) {
+                    if ($scope.page.isHomePage) {
                         $scope.tooltip = translate('TOOLTIP_IS_HOMEPAGE');
+                    } else if (!$scope.state.isEditable) {
+                        $scope.tooltip = translate('TOOLTIP_NOT_EDITABLE');
                     } else {
                         $scope.tooltip = '';
                     }
@@ -147,6 +147,9 @@
                             // unless they are locked by someone else
                             $scope.state.isLocked = angular.isString(currentPage.lockedBy) && currentPage.lockedBy !== ConfigService.cmsUser;
                             $scope.state.isEditable = !$scope.state.isLocked && currentPage.workspaceConfiguration;
+
+                            // the home page is not editable
+                            $scope.state.isEditable = ($scope.page.isHomePage) ? false : $scope.state.isEditable;
 
                             // lock information
                             $scope.lock.owner = currentPage.lockedBy;
