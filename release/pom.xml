@@ -46,7 +46,6 @@
     <hippo.cms.version>2.25.04-SNAPSHOT</hippo.cms.version>
     <hippo.hst.version>2.27.03-SNAPSHOT</hippo.hst.version>
     <hippo.packages.version>2.25.02-SNAPSHOT</hippo.packages.version>
-    <hippo.chosen.version>1.01.00-SNAPSHOT</hippo.chosen.version>
     <hippo.plugins.version>1.01.00-SNAPSHOT</hippo.plugins.version>
     <hippo.release.version>7.9.0-SNAPSHOT</hippo.release.version>
     <hippo.repository.version>2.25.05-SNAPSHOT</hippo.repository.version>
@@ -797,13 +796,6 @@
       </dependency>
 
       <!-- All Hippo Github artifacts -->
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-chosen</artifactId>
-        <version>${hippo.chosen.version}</version>
-        <classifier>distribution</classifier>
-        <type>zip</type>
-      </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-plugins</artifactId>
