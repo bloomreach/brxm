@@ -143,6 +143,9 @@ public class MountDecoratorImpl implements MountDecorator {
 
         @Override
         public String getType() {
+            if (delegatee.isPreview()) {
+                return delegatee.getType();
+            }
             if (Mount.LIVE_NAME.equals(delegatee.getType())) {
                 return Mount.PREVIEW_NAME;
             } else {
@@ -153,13 +156,22 @@ public class MountDecoratorImpl implements MountDecorator {
 
         @Override
         public List<String> getTypes() {
+            if (delegatee.isPreview()) {
+                return delegatee.getTypes();
+            }
             // immutable list
             List<String> types = delegatee.getTypes();
-            List<String> decoratedTypes = new ArrayList<>(types);
             String decoratedType = getType();
             String unDecoratedType = delegatee.getType();
-            decoratedTypes.remove(unDecoratedType);
-            decoratedTypes.add(decoratedType);
+            // postfix all delegate types with '-preview'
+            List<String> decoratedTypes = new ArrayList<>(types);
+            for (String type : types) {
+                if (type.equals(unDecoratedType)) {
+                    decoratedTypes.add(decoratedType);
+                } else {
+                    decoratedTypes.add(type + "-preview");
+                }
+            }
             return Collections.unmodifiableList(decoratedTypes);
         }
 
