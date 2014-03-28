@@ -72,7 +72,7 @@
       <sv:value>OBO</sv:value>
     </sv:property>
     <sv:property sv:name="{{namespace}}:date" sv:type="Date">
-      <sv:value>2013-11-12T13:03:59.719+01:00</sv:value>
+      <sv:value>{{jcrDate}}</sv:value>
     </sv:property>
     <sv:property sv:name="{{namespace}}:documenttype" sv:type="String">
       <sv:value>news</sv:value>

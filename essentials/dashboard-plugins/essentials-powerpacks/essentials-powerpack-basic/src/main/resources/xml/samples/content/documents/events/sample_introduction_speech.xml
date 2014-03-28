@@ -86,7 +86,7 @@
       <sv:value>event</sv:value>
     </sv:property>
     <sv:property sv:name="{{namespace}}:enddate" sv:type="Date">
-      <sv:value>2013-11-12T12:00:04.813+01:00</sv:value>
+      <sv:value>{{jcrDateNextYear}}</sv:value>
     </sv:property>
     <sv:property sv:name="{{namespace}}:introduction" sv:type="String">
       <sv:value>After breakfast there will be an introductory speech.</sv:value>

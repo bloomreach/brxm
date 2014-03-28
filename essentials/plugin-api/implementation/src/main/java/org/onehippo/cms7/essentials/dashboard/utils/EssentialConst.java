@@ -27,6 +27,10 @@ public final class EssentialConst {
     public static final String PLACEHOLDER_PROJECT_ROOT = "projectRoot";
     public static final String PLACEHOLDER_DATE_REPO_YYYY_MM = "dateRepoYearMonth";
     public static final String PLACEHOLDER_DATE_FILE_YYYY_MM = "dateFileYearMonth";
+    public static final String PLACEHOLDER_DATE_REPO_YYYY_MM_NEXT_MONTH = "dateRepoYearMonthNextMonth";
+    public static final String PLACEHOLDER_DATE_FILE_YYYY_MM_NEXT_MONTH = "dateFileYearMonthNextMonth";
+    public static final String PLACEHOLDER_DATE_REPO_YYYY_MM_NEXT_YEAR = "dateRepoYearMonthNextYear";
+    public static final String PLACEHOLDER_DATE_FILE_YYYY_MM_NEXT_YEAR = "dateFileYearMonthNextYear";
     public static final String PLACEHOLDER_SITE_ROOT = "siteRoot";
     public static final String PLACEHOLDER_SITE_WEB_ROOT = "siteWebRoot";
     public static final String PLACEHOLDER_SITE_RESOURCES = "siteResources";
@@ -48,6 +52,8 @@ public final class EssentialConst {
     public static final String PLACEHOLDER_TMP_FOLDER = "tmpFolder";
     public static final String PLACEHOLDER_SITE_OVERRIDE_FOLDER = "siteOverrideFolder";
     public static final String PLACEHOLDER_JCR_TODAY_DATE = "jcrDate";
+    public static final String PLACEHOLDER_JCR_DATE_NEXT_MONTH = "jcrDateNextMonth";
+    public static final String PLACEHOLDER_JCR_DATE_NEXT_YEAR = "jcrDateNextYear";
     /**
      * @see org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated#internalName()
      */

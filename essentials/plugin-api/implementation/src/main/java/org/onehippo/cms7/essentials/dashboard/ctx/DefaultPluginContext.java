@@ -232,13 +232,28 @@ public class DefaultPluginContext implements PluginContext {
 
         placeholderData.put(EssentialConst.PLACEHOLDER_NAMESPACE, getProjectNamespacePrefix());
         placeholderData.put(EssentialConst.PLACEHOLDER_PROJECT_ROOT, ProjectUtils.getBaseProjectDirectory());
-        DateFormat formatter = new SimpleDateFormat(EssentialConst.REPO_FOLDER_FORMAT);
-        final Calendar calendarInstance = Calendar.getInstance();
-        final Date today = calendarInstance.getTime();
-        placeholderData.put(EssentialConst.PLACEHOLDER_DATE_REPO_YYYY_MM, formatter.format(today));
-        formatter = new SimpleDateFormat("yyyy" + File.separator + "MM");
-        final String fileFolder = formatter.format(today);
-        placeholderData.put(EssentialConst.PLACEHOLDER_DATE_FILE_YYYY_MM, fileFolder);
+        //############################################
+        // DATE PLACEHOLDERS
+        //############################################
+        // current
+        final Calendar today = Calendar.getInstance();
+        setFolderPlaceholders(EssentialConst.PLACEHOLDER_DATE_REPO_YYYY_MM, EssentialConst.PLACEHOLDER_DATE_FILE_YYYY_MM, today);
+        setDatePlaceholder(EssentialConst.PLACEHOLDER_JCR_TODAY_DATE, today);
+        // next month
+        final Calendar nextMonth = Calendar.getInstance();
+        nextMonth.add(Calendar.MONTH, 1);
+        setFolderPlaceholders(EssentialConst.PLACEHOLDER_DATE_REPO_YYYY_MM_NEXT_MONTH, EssentialConst.PLACEHOLDER_DATE_FILE_YYYY_MM_NEXT_MONTH, nextMonth);
+        setDatePlaceholder(EssentialConst.PLACEHOLDER_JCR_DATE_NEXT_MONTH, nextMonth);
+        // next year
+        final Calendar nextYear = Calendar.getInstance();
+        nextYear.add(Calendar.YEAR, 1);
+        setFolderPlaceholders(EssentialConst.PLACEHOLDER_DATE_REPO_YYYY_MM_NEXT_YEAR, EssentialConst.PLACEHOLDER_DATE_FILE_YYYY_MM_NEXT_YEAR, nextYear);
+        setDatePlaceholder(EssentialConst.PLACEHOLDER_JCR_DATE_NEXT_YEAR, nextYear);
+        //############################################
+        //
+        //############################################
+
+
         placeholderData.put(EssentialConst.PLACEHOLDER_SITE_ROOT, ProjectUtils.getSite().getAbsolutePath());
         final String siteWebRoot = ProjectUtils.getSite().getAbsolutePath()
                 + File.separator + EssentialConst.PATH_REL_WEB_ROOT;
@@ -269,16 +284,28 @@ public class DefaultPluginContext implements PluginContext {
             placeholderData.put(EssentialConst.PLACEHOLDER_COMPONENTS_FOLDER, componentsPackagePath.toString());
         }
         placeholderData.put(EssentialConst.PLACEHOLDER_TMP_FOLDER, System.getProperty("java.io.tmpdir"));
-        // JCR date
-        try {
-            final String jcrDate = ValueFactoryImpl.getInstance().createValue(calendarInstance).getString();
-            placeholderData.put(EssentialConst.PLACEHOLDER_JCR_TODAY_DATE, jcrDate);
-        } catch (RepositoryException e) {
-            log.error("Error setting date instance", e);
-            placeholderData.put(EssentialConst.PLACEHOLDER_JCR_TODAY_DATE, "1970-01-01T01:00:00.000+01:00");
-        }
+
 
         return placeholderData;
+    }
+
+    private void setFolderPlaceholders(final String repoPlaceholder, final String filePlaceholder, final Calendar calendarInstance) {
+        final Date today = calendarInstance.getTime();
+        DateFormat formatter = new SimpleDateFormat(EssentialConst.REPO_FOLDER_FORMAT);
+        placeholderData.put(repoPlaceholder, formatter.format(today));
+        formatter = new SimpleDateFormat("yyyy" + File.separator + "MM");
+        final String fileFolder = formatter.format(today);
+        placeholderData.put(filePlaceholder, fileFolder);
+    }
+
+    private void setDatePlaceholder(final String placeholderName, final Calendar calendarInstance) {
+        try {
+            final String jcrDate = ValueFactoryImpl.getInstance().createValue(calendarInstance).getString();
+            placeholderData.put(placeholderName, jcrDate);
+        } catch (RepositoryException e) {
+            log.error("Error setting date instance", e);
+            placeholderData.put(placeholderName, "1970-01-01T01:00:00.000+01:00");
+        }
     }
 
 
