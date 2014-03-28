@@ -74,10 +74,6 @@ public class EssentialsCarouselComponent extends CommonComponent {
         addBeanForPath(request, componentInfo.getCarouselItem4(), beans);
         addBeanForPath(request, componentInfo.getCarouselItem5(), beans);
         addBeanForPath(request, componentInfo.getCarouselItem6(), beans);
-        addBeanForPath(request, componentInfo.getCarouselItem7(), beans);
-        addBeanForPath(request, componentInfo.getCarouselItem8(), beans);
-        addBeanForPath(request, componentInfo.getCarouselItem9(), beans);
-        addBeanForPath(request, componentInfo.getCarouselItem10(), beans);
         return beans;
     }
 
