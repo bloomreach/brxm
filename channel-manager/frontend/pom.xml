@@ -132,18 +132,18 @@
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo.cms7</groupId>
+      <groupId>org.onehippo.cms7.frontend</groupId>
       <artifactId>hippo-plugins</artifactId>
-      <version>${hippo.plugins.version}</version>
+      <version>${hippo.frontend.plugins.version}</version>
       <classifier>distribution</classifier>
       <type>zip</type>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo.cms7</groupId>
+      <groupId>org.onehippo.cms7.frontend</groupId>
       <artifactId>hippo-theme</artifactId>
-      <version>${hippo.theme.version}</version>
+      <version>${hippo.frontend.theme.version}</version>
       <classifier>distribution</classifier>
       <type>zip</type>
       <scope>provided</scope>
@@ -301,7 +301,7 @@
             <phase>initialize</phase>
             <goals><goal>copy-dependencies</goal></goals>
             <configuration>
-              <includeGroupIds>org.onehippo.cms7</includeGroupIds>
+              <includeGroupIds>org.onehippo.cms7.frontend</includeGroupIds>
               <includeArtifactIds>
                 hippo-plugins,
                 hippo-theme
