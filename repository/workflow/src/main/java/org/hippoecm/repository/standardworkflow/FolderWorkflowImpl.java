@@ -663,6 +663,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         }
         if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(NT_HANDLE)) {
             Node handle = subject.addNode(targetName, NT_HANDLE);
+            handle.addMixin(JcrConstants.MIX_REFERENCEABLE);
 
             Node document = copyDocument(targetName, Collections.<String,String>emptyMap(), source, handle);
 
@@ -771,6 +772,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         }
         if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(NT_HANDLE)) {
             Node handle = folder.addNode(targetName, NT_HANDLE);
+            handle.addMixin(JcrConstants.MIX_REFERENCEABLE);
 
             Node document = copyDocument(targetName, (arguments == null ? Collections.<String, String>emptyMap() : arguments), source, handle);
             renameChildDocument(handle);
