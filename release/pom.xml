@@ -44,15 +44,15 @@
     <hippo.addon-search-service.version>1.02.01-SNAPSHOT</hippo.addon-search-service.version>
     <hippo.commons.version>1.03.01-SNAPSHOT</hippo.commons.version>
     <hippo.cms.version>2.25.04-SNAPSHOT</hippo.cms.version>
+    <hippo.frontend.plugins.version>1.01.00-SNAPSHOT</hippo.frontend.plugins.version>
+    <hippo.frontend.theme.version>1.01.00-SNAPSHOT</hippo.frontend.theme.version>
     <hippo.hst.version>2.27.03-SNAPSHOT</hippo.hst.version>
     <hippo.packages.version>2.25.02-SNAPSHOT</hippo.packages.version>
-    <hippo.plugins.version>1.01.00-SNAPSHOT</hippo.plugins.version>
     <hippo.release.version>7.9.0-SNAPSHOT</hippo.release.version>
     <hippo.repository.version>2.25.05-SNAPSHOT</hippo.repository.version>
     <hippo.services.version>1.03.04-SNAPSHOT</hippo.services.version>
     <hippo.services.eventbus.version>1.03.04-SNAPSHOT</hippo.services.eventbus.version>
     <hippo.services.contenttype.version>1.03.02-SNAPSHOT</hippo.services.contenttype.version>
-    <hippo.theme.version>1.01.00-SNAPSHOT</hippo.theme.version>
     <hippo.utilities.version>1.02.01-SNAPSHOT</hippo.utilities.version>
 
     <forge.content-blocks.version>1.10.01-SNAPSHOT</forge.content-blocks.version>
@@ -797,16 +797,16 @@
 
       <!-- All Hippo Github artifacts -->
       <dependency>
-        <groupId>org.onehippo.cms7</groupId>
+        <groupId>org.onehippo.cms7.frontend</groupId>
         <artifactId>hippo-plugins</artifactId>
-        <version>${hippo.plugins.version}</version>
+        <version>${hippo.frontend.plugins.version}</version>
         <classifier>distribution</classifier>
         <type>zip</type>
       </dependency>
       <dependency>
-        <groupId>org.onehippo.cms7</groupId>
+        <groupId>org.onehippo.cms7.frontend</groupId>
         <artifactId>hippo-theme</artifactId>
-        <version>${hippo.theme.version}</version>
+        <version>${hippo.frontend.theme.version}</version>
         <classifier>distribution</classifier>
         <type>zip</type>
       </dependency>
