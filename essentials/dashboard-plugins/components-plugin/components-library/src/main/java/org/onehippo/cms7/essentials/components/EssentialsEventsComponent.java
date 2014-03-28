@@ -51,6 +51,7 @@ public class EssentialsEventsComponent extends EssentialsListComponent {
 
         final Pageable<HippoBean> pageable = doSearch(request, essentialsEventsComponentInfo, scope);
         request.setAttribute(REQUEST_PARAM_PAGEABLE, pageable);
+        populateRequest(request, essentialsEventsComponentInfo, pageable);
     }
 
     @Override

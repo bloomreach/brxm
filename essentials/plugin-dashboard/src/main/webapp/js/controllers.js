@@ -54,7 +54,6 @@
                  * needs to be passed to Powerpack class itself
                  */
                 $scope.$on('powerpackEvent', function () {
-                    console.log(eventBroadcastService.event);
                     $scope.powerpackProperties = eventBroadcastService.event;
                 });
 
