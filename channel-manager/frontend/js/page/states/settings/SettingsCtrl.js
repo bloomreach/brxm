@@ -143,13 +143,12 @@
                             $scope.page.hasContainerItem = currentPage.hasContainerItemInPageDefinition;
                             $scope.page.isHomePage = currentPage.isHomePage;
 
-                            // only pages whose sitemap item is located in the HST workspace are editable,
-                            // unless they are locked by someone else
+                            // pages are only editable when the sitemap item is:
+                            // 1. located in the HST workspace
+                            // 2. the page is not the homepage
+                            // 3. the page is not locked by someone else
                             $scope.state.isLocked = angular.isString(currentPage.lockedBy) && currentPage.lockedBy !== ConfigService.cmsUser;
-                            $scope.state.isEditable = !$scope.state.isLocked && currentPage.workspaceConfiguration;
-
-                            // the home page is not editable
-                            $scope.state.isEditable = ($scope.page.isHomePage) ? false : $scope.state.isEditable;
+                            $scope.state.isEditable = !$scope.page.isHomePage && !$scope.state.isLocked && currentPage.workspaceConfiguration;
 
                             // lock information
                             $scope.lock.owner = currentPage.lockedBy;
