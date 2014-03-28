@@ -18,7 +18,7 @@
         <sv:value>hst:containeritemcomponent</sv:value>
       </sv:property>
       <sv:property sv:name="hst:componentclassname" sv:type="String">
-        <sv:value>org.onehippo.cms7.essentials.components.EssentialsListComponent</sv:value>
+        <sv:value>org.onehippo.cms7.essentials.components.EssentialsEventsComponent</sv:value>
       </sv:property>
       <sv:property sv:name="hst:label" sv:type="String">
         <sv:value>Events List</sv:value>
