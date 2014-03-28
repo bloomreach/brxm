@@ -12,10 +12,10 @@
     "hippo-plugins": "./target/dependency/hippo-plugins.zip",
     "jasmine-jquery": "2.0.3",
     "respond": "1.4.2",
-    "Angular-NestedSortable": "https://github.com/JimLiu/Angular-NestedSortable.git#1706ed72b28c3e913253cb7bd1df196fa463b04c"
+    "Angular-NestedSortable": "https://github.com/JimLiu/angular-ui-tree.git#ab47451963fa312c7cb6ce358d09710ecfec376c"
   },
   "resolutions": {
-    "Angular-NestedSortable": "1706ed72b28c3e913253cb7bd1df196fa463b04c",
+    "Angular-NestedSortable": "ab47451963fa312c7cb6ce358d09710ecfec376c",
     "jasmine-jquery": "2.0.3",
     "es5-shim": "d24a08dfe81e0eda3d5e9f3b859d63c1da05aba7"
   }
