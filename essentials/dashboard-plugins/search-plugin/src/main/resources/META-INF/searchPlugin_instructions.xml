@@ -1,28 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
-
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-  -->
-
 <instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
-  <!--
-    TODO: add instructions sets here
-  -->
+
   <instructionSet>
-    <!--
-        <cnd documentType=" searchPluginDocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated,hippostd:taggable" />
-    -->
+    <xml action="copy" source="powerpack/xml/hst/search-catalog.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:catalog"/>
+  </instructionSet>
+
+  <instructionSet group="jsp">
+    <file action="copy" source="powerpack/jsp/essentials-search.jsp" target="{{jspRoot}}/essentials/essentials-search.jsp"/>
+    <xml action="copy" source="powerpack/hst/search-template-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+
+  </instructionSet>
+  <instructionSet group="freemarker">
+    <file action="copy" source="powerpack/freemarker/essentials-search.ftl" target="{{freemarkerRoot}}/essentials/essentials-search.ftl"/>
+    <xml action="copy" source="powerpack/hst/search-template-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
 </instructions>
