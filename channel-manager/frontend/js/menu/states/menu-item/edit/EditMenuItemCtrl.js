@@ -17,16 +17,16 @@
 (function () {
     "use strict";
 
-    function getRenderPath(menuItem) {
-        var renderPath;
+    function getLink(menuItem) {
+        var link;
 
         if (menuItem.pathInfo) {
-            renderPath = menuItem.mountPath + '/' + menuItem.pathInfo;
+            link = menuItem.mountPath + '/' + menuItem.pathInfo;
         } else {
-            renderPath = menuItem.link;
+            link = menuItem.link;
         }
 
-        return renderPath;
+        return link;
     }
 
     angular.module('hippo.channel.menu')
@@ -100,8 +100,8 @@
                 };
 
                 $scope.showPage = function() {
-                    var renderPath = getRenderPath($scope.selectedMenuItem);
-                    ContainerService.showPage(renderPath);
+                    var link = getLink($scope.selectedMenuItem);
+                    ContainerService.showPage(link);
                 };
 
                 $scope.dismissFeedback = function () {
