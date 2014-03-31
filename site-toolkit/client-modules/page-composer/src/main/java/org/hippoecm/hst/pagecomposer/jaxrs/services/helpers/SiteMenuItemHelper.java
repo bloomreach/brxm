@@ -28,11 +28,14 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
@@ -211,29 +214,43 @@ public class SiteMenuItemHelper extends AbstractHelper {
     }
 
     private String getSuccessorOfSourceNodeName(Node parent, String sourceName, Integer newIndex) throws RepositoryException {
-        final List<Node> childNodes = ImmutableList.copyOf(parent.getNodes());
+        final List<String> childNodeNames = Lists.transform(ImmutableList.copyOf(parent.getNodes()), new Function<Node, String>() {
+            @Override
+            public String apply(final Node input) {
+                try {
+                    return input.getName();
+                } catch (RepositoryException e) {
+                    throw new RuntimeRepositoryException(e);
+                }
+            }
+        });
         if (newIndex == 0) {
             // move to start
-            return childNodes.isEmpty() ? null : childNodes.get(0).getName();
+            return childNodeNames.isEmpty() ? null : childNodeNames.get(0);
         }
-        if (newIndex >= childNodes.size()) {
+        if (newIndex >= childNodeNames.size()) {
             // move to end
             return null;
         }
-        int indexOfSourceName = 0;
-        while (indexOfSourceName < childNodes.size() && !sourceName.equals(childNodes.get(indexOfSourceName).getName())) {
-            indexOfSourceName++;
+        int indexOfSourceName = childNodeNames.indexOf(sourceName);
+        if (indexOfSourceName == -1) {
+            // the item to move is moved in as sibling but was *not* a sibling before. It just needs to be placed
+            // before the 'newIndex'
+            return childNodeNames.get(newIndex);
         }
-        if (indexOfSourceName < newIndex) {
+
+        // the item to move was already a sibling. If it was *already* before 'newIndex', it means that successor sibling
+        // is at location newIndex + 1.
+        if (newIndex <= indexOfSourceName) {
+            // current index is at or after new index, so successor node is at position newIndex
+            return childNodeNames.get(newIndex);
+        } else {
             // current index is before new index, so successor node is at position newIndex + 1
-            if (newIndex + 1 >=  childNodes.size()) {
+            if (newIndex + 1 >=  childNodeNames.size()) {
                 // move to end
                 return null;
             }
-            return childNodes.get(newIndex + 1).getName();
-        } else {
-            // current index is at or after new index, so successor node is at position newIndex
-            return childNodes.get(newIndex).getName();
+            return childNodeNames.get(newIndex + 1);
         }
     }
 
