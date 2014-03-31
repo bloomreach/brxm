@@ -138,12 +138,12 @@ public class SiteMenuItemRepresentation {
         this.siteMenuItemLink = new SiteMenuItemLink(siteMenuItemLink.getLinkType(), siteMenuItemLink.getLink(), pathInfo, mountPath);
     }
 
-    public String getRenderPathInfo() {
-        return siteMenuItemLink.getRenderPathInfo();
+    public String getMountPath() {
+        return siteMenuItemLink.getMountPath();
     }
-    public void setRenderPathInfo(String renderPathInfo) {
-        String pathInfo = renderPathInfo.substring(mountPath.length());
-        this.siteMenuItemLink = new SiteMenuItemLink(siteMenuItemLink.getLinkType(), siteMenuItemLink.getLink(),  pathInfo, mountPath);
+    public void setMountPath(String mountPath) {
+        this.siteMenuItemLink = new SiteMenuItemLink(siteMenuItemLink.getLinkType(), siteMenuItemLink.getLink(),
+                siteMenuItemLink.getPathInfo() , mountPath);
     }
 
 }

@@ -26,44 +26,33 @@ public class SiteMenuItemLink {
     private final LinkType linkType;
     private final String link;
     private final String pathInfo;
-    // mountPath + site map item path
-    private final String renderPathInfo;
+    private final String mountPath;
 
     public SiteMenuItemLink(final LinkType linkType, final String link,
                             final String pathInfo, final String mountPath) {
         this.linkType = linkType;
         this.link = link;
         this.pathInfo = pathInfo;
-        renderPathInfo = mountPath + pathInfo;
+        this.mountPath = mountPath;
     }
 
     public SiteMenuItemLink(HstSiteMenuItemConfiguration item, Mount mount) {
         final String externalLink = item.getExternalLink();
         final String siteMapItemPath = item.getSiteMapItemPath();
+        mountPath = mount.getMountPath();
         if (externalLink != null && siteMapItemPath == null) {
             link = externalLink;
             linkType = LinkType.EXTERNAL;
             pathInfo = link;
-            renderPathInfo = link;
         } else if (siteMapItemPath != null && externalLink == null) {
             final String path = HstSiteMapUtils.getPath(mount, siteMapItemPath);
             link = siteMapItemPath;
             linkType = LinkType.SITEMAPITEM;
             pathInfo = path;
-            if (StringUtils.isEmpty(pathInfo)) {
-                renderPathInfo = mount.getMountPath();
-            } else {
-                if (pathInfo.startsWith("/")) {
-                    renderPathInfo = mount.getMountPath() + pathInfo;
-                } else {
-                    renderPathInfo = mount.getMountPath() + "/" + pathInfo;
-                }
-            }
         } else {
             link = null;
             linkType = LinkType.NONE;
             pathInfo = null;
-            renderPathInfo = null;
         }
     }
 
@@ -79,7 +68,8 @@ public class SiteMenuItemLink {
         return pathInfo;
     }
 
-    public String getRenderPathInfo() {
-        return renderPathInfo;
+    public String getMountPath() {
+        return mountPath;
     }
+
 }
