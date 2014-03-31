@@ -44,8 +44,8 @@
     <hippo.addon-search-service.version>1.02.01-SNAPSHOT</hippo.addon-search-service.version>
     <hippo.commons.version>1.03.01-SNAPSHOT</hippo.commons.version>
     <hippo.cms.version>2.25.04-SNAPSHOT</hippo.cms.version>
-    <hippo.frontend.plugins.version>1.01.00-SNAPSHOT</hippo.frontend.plugins.version>
-    <hippo.frontend.theme.version>1.01.00-SNAPSHOT</hippo.frontend.theme.version>
+    <hippo.frontend.plugins.version>1.01.00-iteration-14</hippo.frontend.plugins.version>
+    <hippo.frontend.theme.version>1.01.00-iteration-14</hippo.frontend.theme.version>
     <hippo.hst.version>2.27.03-SNAPSHOT</hippo.hst.version>
     <hippo.packages.version>2.25.02-SNAPSHOT</hippo.packages.version>
     <hippo.release.version>7.9.0-SNAPSHOT</hippo.release.version>
