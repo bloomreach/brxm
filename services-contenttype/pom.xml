@@ -21,12 +21,12 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>24.1-SNAPSHOT</version>
+    <version>24.1-iteration-14</version>
   </parent>
 
   <name>Hippo CMS7 Services - contenttype</name>
   <artifactId>hippo-services-contenttype</artifactId>
-  <version>1.03.02-SNAPSHOT</version>
+  <version>1.03.02-iteration-14</version>
 
   <inceptionYear>2013</inceptionYear>
 
@@ -34,15 +34,15 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS7 Services - contenttype</notice.project.name>
     
-    <hippo.services.version>1.03.04-SNAPSHOT</hippo.services.version>
-    <hippo.repository.version>2.25.05-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>2.25.04-SNAPSHOT</hippo.cms.version>
+    <hippo.services.version>1.03.04-iteration-14</hippo.services.version>
+    <hippo.repository.version>2.25.05-iteration-14</hippo.repository.version>
+    <hippo.cms.version>2.25.04-iteration-14</hippo.cms.version>
   </properties>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-contenttype/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-contenttype/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-contenttype/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-contenttype/tags/hippo-services-contenttype-1.03.02-iteration-14</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-contenttype/tags/hippo-services-contenttype-1.03.02-iteration-14</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-contenttype/tags/hippo-services-contenttype-1.03.02-iteration-14</url>
   </scm>
 
   <repositories>
