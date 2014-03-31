@@ -37,7 +37,8 @@ public class TestMountDecoratorImpl {
         expect(mount.isPreview()).andReturn(false).anyTimes();
         expect(mount.getMountPoint()).andReturn("/hst:hst/hst:sites/myproject").anyTimes();
         expect(mount.getType()).andReturn("live").anyTimes();
-        String[] arr = {"foo", "bar", "lux"};
+        // getType is always part of 'types' hence below also add 'live'
+        String[] arr = {"foo", "bar", "lux", "live"};
         List<String> types = Arrays.asList(arr);
         expect(mount.getTypes()).andReturn(types).anyTimes();
         
@@ -50,7 +51,14 @@ public class TestMountDecoratorImpl {
         assertFalse("The decorated mount should not have live ", decoratedMount.getTypes().contains("live"));
         assertTrue("The decorated mount should  have preview ", decoratedMount.getTypes().contains("preview"));
         assertTrue("The decorated mount should  have foo, bar and lux ",
-                decoratedMount.getTypes().contains("foo") && decoratedMount.getTypes().contains("bar") && decoratedMount.getTypes().contains("lux"));
+                decoratedMount.getTypes().contains("foo-preview") &&
+                        decoratedMount.getTypes().contains("bar-preview") &&
+                        decoratedMount.getTypes().contains("lux-preview"));
+
+        assertFalse("The decorated mount should  have foo, bar and lux ",
+                decoratedMount.getTypes().contains("foo") ||
+                        decoratedMount.getTypes().contains("bar") ||
+                        decoratedMount.getTypes().contains("lux"));
         
     }
     

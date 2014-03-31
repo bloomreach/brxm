@@ -164,7 +164,7 @@ public class MountDecoratorImpl implements MountDecorator {
             String decoratedType = getType();
             String unDecoratedType = delegatee.getType();
             // postfix all delegate types with '-preview'
-            List<String> decoratedTypes = new ArrayList<>(types);
+            List<String> decoratedTypes = new ArrayList<>();
             for (String type : types) {
                 if (type.equals(unDecoratedType)) {
                     decoratedTypes.add(decoratedType);
