@@ -37,7 +37,8 @@ public class SiteMenuItemRepresentation {
     private boolean repositoryBased;
     private Map<String, String> localParameters;
     private Set<String> roles;
-    private SiteMenuItemLink siteMenuItemLink = new SiteMenuItemLink(null, null, null);
+    private String mountPath;
+    private SiteMenuItemLink siteMenuItemLink = new SiteMenuItemLink(null, null, null, null);
 
     private List<SiteMenuItemRepresentation> children = new ArrayList<>();
 
@@ -56,6 +57,7 @@ public class SiteMenuItemRepresentation {
         repositoryBased = item.isRepositoryBased();
         localParameters = item.getLocalParameters();
         roles = item.getRoles();
+        mountPath = mount.getMountPath();
         for (HstSiteMenuItemConfiguration childItem : item.getChildItemConfigurations()) {
             children.add(new SiteMenuItemRepresentation(childItem, mount));
         }
@@ -117,7 +119,7 @@ public class SiteMenuItemRepresentation {
     }
 
     public void setLinkType(LinkType linkType) {
-        this.siteMenuItemLink = new SiteMenuItemLink(linkType, siteMenuItemLink.getLink(), siteMenuItemLink.getPathInfo());
+        this.siteMenuItemLink = new SiteMenuItemLink(linkType, siteMenuItemLink.getLink(), siteMenuItemLink.getPathInfo(), mountPath);
     }
 
     public String getLink() {
@@ -125,7 +127,7 @@ public class SiteMenuItemRepresentation {
     }
 
     public void setLink(String link) {
-        this.siteMenuItemLink = new SiteMenuItemLink(siteMenuItemLink.getLinkType(), link, siteMenuItemLink.getPathInfo());
+        this.siteMenuItemLink = new SiteMenuItemLink(siteMenuItemLink.getLinkType(), link, siteMenuItemLink.getPathInfo(), mountPath);
     }
 
     public String getPathInfo() {
@@ -133,7 +135,15 @@ public class SiteMenuItemRepresentation {
     }
 
     public void setPathInfo(String pathInfo) {
-        this.siteMenuItemLink = new SiteMenuItemLink(siteMenuItemLink.getLinkType(), siteMenuItemLink.getLink(), pathInfo);
+        this.siteMenuItemLink = new SiteMenuItemLink(siteMenuItemLink.getLinkType(), siteMenuItemLink.getLink(), pathInfo, mountPath);
+    }
+
+    public String getRenderPathInfo() {
+        return siteMenuItemLink.getRenderPathInfo();
+    }
+    public void setRenderPathInfo(String renderPathInfo) {
+        String pathInfo = renderPathInfo.substring(mountPath.length());
+        this.siteMenuItemLink = new SiteMenuItemLink(siteMenuItemLink.getLinkType(), siteMenuItemLink.getLink(),  pathInfo, mountPath);
     }
 
 }

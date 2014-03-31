@@ -26,6 +26,8 @@ public class SiteMapPageRepresentation {
     private String name;
     private String pageTitle;
     private String pathInfo;
+    // mountPath + sitemap item path = renderPathInfo
+    private String renderPathInfo;
     private String componentConfigurationId;
     private boolean workspaceConfiguration;
     private boolean inherited;
@@ -33,13 +35,14 @@ public class SiteMapPageRepresentation {
 
 
     public SiteMapPageRepresentation represent(final SiteMapItemRepresentation siteMapItemRepresentation,
-                                               final String parentId) throws IllegalArgumentException {
+                                               final String parentId, final String mountPath) throws IllegalArgumentException {
 
         id = siteMapItemRepresentation.getId();
         this.parentId = parentId;
         name = siteMapItemRepresentation.getName();
         pageTitle = siteMapItemRepresentation.getPageTitle();
         pathInfo = siteMapItemRepresentation.getPathInfo();
+        renderPathInfo = mountPath + pathInfo;
         componentConfigurationId = siteMapItemRepresentation.getComponentConfigurationId();
         workspaceConfiguration = siteMapItemRepresentation.isWorkspaceConfiguration();
         inherited = siteMapItemRepresentation.isInherited();
@@ -85,6 +88,14 @@ public class SiteMapPageRepresentation {
 
     public void setPathInfo(final String pathInfo) {
         this.pathInfo = pathInfo;
+    }
+
+    public String getRenderPathInfo() {
+        return renderPathInfo;
+    }
+
+    public void setRenderPathInfo(final String renderPathInfo) {
+        this.renderPathInfo = renderPathInfo;
     }
 
     public String getComponentConfigurationId() {

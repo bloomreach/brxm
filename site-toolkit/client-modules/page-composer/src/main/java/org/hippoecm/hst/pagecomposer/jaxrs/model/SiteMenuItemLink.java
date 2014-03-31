@@ -25,11 +25,15 @@ public class SiteMenuItemLink {
     private final LinkType linkType;
     private final String link;
     private final String pathInfo;
+    // mountPath + site map item path
+    private final String renderPathInfo;
 
-    public SiteMenuItemLink(final LinkType linkType, final String link, String pathInfo) {
+    public SiteMenuItemLink(final LinkType linkType, final String link,
+                            final String pathInfo, final String mountPath) {
         this.linkType = linkType;
         this.link = link;
         this.pathInfo = pathInfo;
+        renderPathInfo = mountPath + pathInfo;
     }
 
     public SiteMenuItemLink(HstSiteMenuItemConfiguration item, Mount mount) {
@@ -39,15 +43,18 @@ public class SiteMenuItemLink {
             link = externalLink;
             linkType = LinkType.EXTERNAL;
             pathInfo = link;
+            renderPathInfo = link;
         } else if (siteMapItemPath != null && externalLink == null) {
             final String path = HstSiteMapUtils.getPath(mount, siteMapItemPath);
             link = siteMapItemPath;
             linkType = LinkType.SITEMAPITEM;
             pathInfo = path;
+            renderPathInfo = mount.getMountPath() + pathInfo;
         } else {
             link = null;
             linkType = LinkType.NONE;
             pathInfo = null;
+            renderPathInfo = null;
         }
     }
 
@@ -61,5 +68,9 @@ public class SiteMenuItemLink {
 
     public String getPathInfo() {
         return pathInfo;
+    }
+
+    public String getRenderPathInfo() {
+        return renderPathInfo;
     }
 }

@@ -332,6 +332,7 @@ public class SiteMenuResourceTest {
         expect(virtualHost.getVirtualHosts()).andReturn(virtualHosts).anyTimes();
         expect(virtualHosts.getMountByIdentifier("mount")).andReturn(mount).anyTimes();
         expect(mount.getPreviewHstSite()).andReturn(site).anyTimes();
+        expect(mount.getMountPath()).andReturn("").anyTimes();
         expect(site.getConfigurationPath()).andReturn("/preview/configuration/path").anyTimes();
         expect(pageComposerContextService.getEditingPreviewSite()).andReturn(site).anyTimes();
 

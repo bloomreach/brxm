@@ -58,9 +58,9 @@ public class SiteMapPagesRepresentation {
         final SiteMapPageRepresentation siteMapPageRepresentation = new SiteMapPageRepresentation();
         pages.add(siteMapPageRepresentation);
         if (parent == null) {
-            siteMapPageRepresentation.represent(siteMapItemRepresentation, null);
+            siteMapPageRepresentation.represent(siteMapItemRepresentation, null, mount);
         } else {
-            siteMapPageRepresentation.represent(siteMapItemRepresentation, parent.getId());
+            siteMapPageRepresentation.represent(siteMapItemRepresentation, parent.getId(), mount);
         }
         for (SiteMapItemRepresentation child : siteMapItemRepresentation.getChildren()) {
             addPages(child, siteMapPageRepresentation);
