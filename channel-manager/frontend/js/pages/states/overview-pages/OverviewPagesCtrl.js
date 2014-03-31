@@ -55,7 +55,7 @@
                 };
 
                 $scope.showPage = function(page) {
-                    ContainerService.showPage(page.pathInfo);
+                    ContainerService.showPage(page.renderPathInfo);
                 };
             }
         ]);
