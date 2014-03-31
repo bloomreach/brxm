@@ -107,9 +107,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
      * @throws RepositoryException
      */
     public void update(Node node, SiteMenuItemRepresentation modifiedItem) throws RepositoryException {
-
         lockHelper.acquireSimpleLock(getMenuAncestor(node), 0);
-
         final String modifiedName = modifiedItem.getName();
         if (modifiedName != null && !modifiedName.equals(decode(node.getName()))) {
             rename(node, modifiedName);
@@ -146,24 +144,12 @@ public class SiteMenuItemHelper extends AbstractHelper {
      * @param newParent   the new parent of the node
      * @throws RepositoryException
      */
-    public void move(Node node, String newNodeName, Node newParent) throws RepositoryException {
-        lockHelper.acquireSimpleLock(getMenuAncestor(node), 0);
+    private void move(Node node, String newNodeName, Node newParent) throws RepositoryException {
         try {
             node.getSession().move(node.getPath(), newParent.getPath() + "/" + encode(newNodeName, true));
         } catch (ItemExistsException e) {
             throw createClientException(newParent, newNodeName, e.getMessage());
         }
-    }
-
-    /**
-     * Move the given node by appending it as the last child of the new parent.
-     *
-     * @param node      the node to move
-     * @param newParent the new parent of the node
-     * @throws RepositoryException
-     */
-    public void move(Node node, Node newParent) throws RepositoryException {
-        move(node, node.getName(), newParent);
     }
 
     /**
@@ -175,13 +161,13 @@ public class SiteMenuItemHelper extends AbstractHelper {
      * @throws RepositoryException
      */
     public void move(Node parent, Node source, Integer childIndex) throws RepositoryException {
+        lockHelper.acquireSimpleLock(getMenuAncestor(source), 0);
         final String sourceName = source.getName();
         final String successorNodeName = getSuccessorOfSourceNodeName(parent, sourceName, childIndex);
 
         if (!source.getParent().isSame(parent)) {
-            move(source, parent);
+            move(source, source.getName(), parent);
         }
-        lockHelper.acquireSimpleLock(getMenuAncestor(source), 0);
         try {
             parent.orderBefore(encode(sourceName, true), successorNodeName);
         } catch (ItemExistsException e) {
@@ -230,16 +216,20 @@ public class SiteMenuItemHelper extends AbstractHelper {
             // move to start
             return childNodes.isEmpty() ? null : childNodes.get(0).getName();
         }
-        if (newIndex >= childNodes.size() - 1) {
+        if (newIndex >= childNodes.size()) {
             // move to end
             return null;
         }
-        int currentIndex = 0;
-        while (currentIndex < childNodes.size() && !sourceName.equals(childNodes.get(currentIndex).getName())) {
-            currentIndex++;
+        int indexOfSourceName = 0;
+        while (indexOfSourceName < childNodes.size() && !sourceName.equals(childNodes.get(indexOfSourceName).getName())) {
+            indexOfSourceName++;
         }
-        if (currentIndex < newIndex) {
+        if (indexOfSourceName < newIndex) {
             // current index is before new index, so successor node is at position newIndex + 1
+            if (newIndex + 1 >=  childNodes.size()) {
+                // move to end
+                return null;
+            }
             return childNodes.get(newIndex + 1).getName();
         } else {
             // current index is at or after new index, so successor node is at position newIndex
