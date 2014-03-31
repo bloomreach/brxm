@@ -43,6 +43,7 @@ class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior implements ILinkD
 
     private static final long serialVersionUID = 1L;
 
+    private static final String JS_PREVENT_DEFAULT = "Wicket.Event.fix(event).preventDefault();";
     private static final String JS_STOP_EVENT = "Wicket.Event.stop(event);";
     private static final Logger log = LoggerFactory.getLogger(PreviewLinksBehavior.class);
 
@@ -88,7 +89,7 @@ class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior implements ILinkD
         final Charset charset = RequestCycle.get().getRequest().getCharset();
         attributes.getExtraParameters().put("link", UrlEncoder.QUERY_INSTANCE.encode(link, charset));
         CharSequence asString = renderAjaxAttributes(getComponent(), attributes);
-        return "href=\"#\" onclick='" + JS_STOP_EVENT + "Wicket.Ajax.get(" + asString + ");'";
+        return "href=\"#\" onclick='" + JS_PREVENT_DEFAULT + JS_STOP_EVENT + "Wicket.Ajax.get(" + asString + ");'";
     }
 
     @Override
