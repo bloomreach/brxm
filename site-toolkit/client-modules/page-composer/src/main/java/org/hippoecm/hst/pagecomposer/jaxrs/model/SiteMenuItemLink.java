@@ -16,6 +16,7 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 import org.hippoecm.hst.util.HstSiteMapUtils;
@@ -49,7 +50,15 @@ public class SiteMenuItemLink {
             link = siteMapItemPath;
             linkType = LinkType.SITEMAPITEM;
             pathInfo = path;
-            renderPathInfo = mount.getMountPath() + pathInfo;
+            if (StringUtils.isEmpty(pathInfo)) {
+                renderPathInfo = mount.getMountPath();
+            } else {
+                if (pathInfo.startsWith("/")) {
+                    renderPathInfo = mount.getMountPath() + pathInfo;
+                } else {
+                    renderPathInfo = mount.getMountPath() + "/" + pathInfo;
+                }
+            }
         } else {
             link = null;
             linkType = LinkType.NONE;
