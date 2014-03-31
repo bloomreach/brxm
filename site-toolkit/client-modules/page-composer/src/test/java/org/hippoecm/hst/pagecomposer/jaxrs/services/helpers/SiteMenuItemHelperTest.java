@@ -168,8 +168,6 @@ public class SiteMenuItemHelperTest {
         mockGetAncestor();
         // once for rename
         mockGetAncestor();
-        // once for move
-        mockGetAncestor();
 
         expect(node.setProperty(SITEMENUITEM_PROPERTY_REPOBASED, false)).andReturn(null);
         expect(node.getSession()).andReturn(session);
@@ -207,8 +205,6 @@ public class SiteMenuItemHelperTest {
         // once for update
         mockGetAncestor();
         // once for rename
-        mockGetAncestor();
-        // once for move
         mockGetAncestor();
 
         expect(node.getSession()).andReturn(session);
