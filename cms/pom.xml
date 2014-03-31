@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>hippo-cms</artifactId>
-  <version>2.25.04-iteration-14</version>
+  <version>2.25.04-SNAPSHOT</version>
 
   <inceptionYear>2007</inceptionYear>
 
@@ -142,9 +142,9 @@
      This is used by normal plugins, but also to autogenerate documentation in .../target/site/source-repository.html
   -->
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/tags/hippo-cms-2.25.04-iteration-14</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/cms/tags/hippo-cms-2.25.04-iteration-14</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/tags/hippo-cms-2.25.04-iteration-14</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</url>
   </scm>
 
   <build>
