@@ -18,12 +18,9 @@ package org.hippoecm.frontend.plugins.richtext.dialog;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.dialog.AbstractDialog;
@@ -34,6 +31,8 @@ public abstract class AbstractRichTextEditorDialog<T extends AbstractPersistedMa
 
     private RichTextEditorAction<T> cancelAction;
     private RichTextEditorAction<T> closeAction;
+
+    private boolean okSucceeded = false;
 
     public AbstractRichTextEditorDialog(IModel<T> model) {
         super(model);
@@ -55,9 +54,13 @@ public abstract class AbstractRichTextEditorDialog<T extends AbstractPersistedMa
         this.closeAction = closeAction;
     }
 
+    protected final void setOkSucceeded(boolean value) {
+        this.okSucceeded = value;
+    }
+
     @Override
     public void onClose() {
-        final RichTextEditorAction<T> action = cancelled ? cancelAction : closeAction;
+        final RichTextEditorAction<T> action = (cancelled  || !okSucceeded) ? cancelAction : closeAction;
         if (action != null) {
             final String script = action.getJavaScript(getModelObject());
             if (StringUtils.isNotBlank(script)) {
@@ -67,6 +70,7 @@ public abstract class AbstractRichTextEditorDialog<T extends AbstractPersistedMa
                 }
             }
         }
+        setOkSucceeded(false);
         super.onClose();
     }
 

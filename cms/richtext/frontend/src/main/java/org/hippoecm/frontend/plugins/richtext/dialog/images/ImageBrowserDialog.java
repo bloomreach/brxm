@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -65,11 +64,11 @@ import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.richtext.dialog.AbstractBrowserDialog;
-import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorImageLink;
 import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
+import org.hippoecm.frontend.plugins.richtext.dialog.AbstractBrowserDialog;
+import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorImageLink;
 import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.ThrottledTextFieldWidget;
@@ -124,7 +123,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
         add(createUploadForm());
 
         if (nameTypeMap == null) {
-            nameTypeMap = new  LinkedHashMap<String, String>();
+            nameTypeMap = new LinkedHashMap<String, String>();
         }
         type = new DropDownChoice<String>("type", new StringPropertyModel(model, RichTextEditorImageLink.TYPE), new ArrayList<String>(nameTypeMap.keySet()), new IChoiceRenderer<String>() {
             private static final long serialVersionUID = 1L;
@@ -202,10 +201,9 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
     }
 
     /**
-     * This is the callback to enable/disable the OK button of the image browser dialog.
-     * We abuse it here as a signal that a new folder may have been selected. If so, the
-     * drop-down menu for selecting the target gallery type for uploaded images may need to
-     * be adjusted.
+     * This is the callback to enable/disable the OK button of the image browser dialog. We abuse it here as a signal
+     * that a new folder may have been selected. If so, the drop-down menu for selecting the target gallery type for
+     * uploaded images may need to be adjusted.
      *
      * @param isset pass-through parameter
      */
@@ -242,7 +240,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
 
     private void setTypeChoices(final Node imageSetNode) {
         if (nameTypeMap == null) {
-             nameTypeMap = new LinkedHashMap<String, String>();
+            nameTypeMap = new LinkedHashMap<String, String>();
         } else {
             nameTypeMap.clear();
         }
@@ -270,7 +268,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
             log.error("Error updating the available image variants.", repositoryException);
         }
 
-        for(Map.Entry<String, String> entry : sortedEntries){
+        for (Map.Entry<String, String> entry : sortedEntries) {
             nameTypeMap.put(entry.getKey(), entry.getValue());
         }
 
@@ -302,13 +300,13 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
     }
 
     private List<String> getMultipleString(final String key) {
-        List<String> result=new ArrayList<>();
-        if (!getPluginConfig().containsKey(key)){
+        List<String> result = new ArrayList<>();
+        if (!getPluginConfig().containsKey(key)) {
             return null;
         }
         final String values = getPluginConfig().getString(key);
         final String[] stringArray = values.split(",");
-        for (String value:stringArray){
+        for (String value : stringArray) {
             result.add(value.trim());
         }
         return result;
@@ -462,6 +460,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
 
         if (imageIsValid) {
             image.save();
+            super.setOkSucceeded(true);
         } else {
             error("Please select an image");
         }
@@ -511,9 +510,8 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
     }
 
     /**
-     * Create the galleryTypeSelector, only shown in the UI if there actually is something to choose from.
-     * Send changes to the backend using Ajax, in order to remember old choices while navigating through the
-     * gallery.
+     * Create the galleryTypeSelector, only shown in the UI if there actually is something to choose from. Send changes
+     * to the backend using Ajax, in order to remember old choices while navigating through the gallery.
      *
      * @return the type selector component
      */
@@ -527,17 +525,18 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
                 return getChoices().size() > 1;
             }
         }
-        .setNullValid(false)
-        .add(new AjaxFormComponentUpdatingBehavior("onchange") {
-            @Override
-            protected void onUpdate(AjaxRequestTarget target) {
-                // required because abstract, but all we need is to have galleryType set, which happens underwater.
-            }
-        });
+                .setNullValid(false)
+                .add(new AjaxFormComponentUpdatingBehavior("onchange") {
+                    @Override
+                    protected void onUpdate(AjaxRequestTarget target) {
+                        // required because abstract, but all we need is to have galleryType set, which happens underwater.
+                    }
+                });
     }
 
     /**
      * Load gallery types from repo-based configuration (target folder)
+     *
      * @return list of supported type names for the current folder.
      */
     private List<String> loadGalleryTypes() {
