@@ -19,6 +19,7 @@ import java.io.File;
 import java.net.URI;
 import java.net.URL;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
@@ -44,7 +45,7 @@ public class ResourceFactoryBean implements FactoryBean<Object>, ResourceLoaderA
     private boolean singleton = true;
     private Object singletonBean;
     private boolean ignoreCreationError;
-    private Object defaultResourceObject;
+    private ResourceFactoryBean defaultResourceFactoryBean;
     
     public ResourceFactoryBean(String resourcePath) {
         this(resourcePath, null);
@@ -54,10 +55,13 @@ public class ResourceFactoryBean implements FactoryBean<Object>, ResourceLoaderA
         this(resourcePath, objectType, null);
     }
     
-    public ResourceFactoryBean(String resourcePath, Class<?> objectType, Object defaultResourceObject) {
+    public ResourceFactoryBean(String resourcePath, Class<?> objectType, ResourceFactoryBean defaultResourceFactoryBean) {
         this.resourcePath = resourcePath;
         this.objectType = objectType;
-        this.defaultResourceObject = defaultResourceObject;
+        if (defaultResourceFactoryBean != null && !StringUtils.equals(resourcePath, defaultResourceFactoryBean.resourcePath)) {
+            // there is a default and it has a different resourcePath
+            this.defaultResourceFactoryBean = defaultResourceFactoryBean;
+        }
     }
 
     @Override
@@ -117,18 +121,15 @@ public class ResourceFactoryBean implements FactoryBean<Object>, ResourceLoaderA
                 return resource.getFile();
             }
         } catch (Throwable th) {
-            if (isIgnoreCreationError()) {
+            if (isIgnoreCreationError() && defaultResourceFactoryBean != null) {
                 if (log.isDebugEnabled()) {
                     log.warn("Failed to create resource, '{}'.", resourcePath, th);
                 } else {
                     log.warn("Failed to create resource, '{}'. {}", resourcePath, th.toString());
                 }
-
                 // resource can be non-null if it throws an exception while resolving URL, URI or File.
                 // whenever getting an exception, return the defaultResourceObject instead.
-                if (defaultResourceObject != null) {
-                    return defaultResourceObject;
-                }
+                return defaultResourceFactoryBean.getObject();
             } else {
                 throw new BeanCreationException("Failed to create resource, '" + resourcePath + "'.", th);
             }

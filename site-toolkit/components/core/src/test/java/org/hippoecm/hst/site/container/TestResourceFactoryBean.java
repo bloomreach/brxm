@@ -97,8 +97,11 @@ public class TestResourceFactoryBean {
         String resourcePath = "classpath:/some/non/existing/resource/path/really.no";
         String defaultResourceValue = "file:/a/default/path/really.yes";
 
-        ResourceFactoryBean factoryBean = new ResourceFactoryBean(resourcePath, String.class, defaultResourceValue);
-        ((ResourceLoaderAware) factoryBean).setResourceLoader(appContext);
+        ResourceFactoryBean defaultBean = new ResourceFactoryBean(defaultResourceValue,String.class, null);
+        defaultBean.setResourceLoader(appContext);
+
+        ResourceFactoryBean factoryBean = new ResourceFactoryBean(resourcePath, String.class, defaultBean);
+        factoryBean.setResourceLoader(appContext);
         factoryBean.setIgnoreCreationError(true);
 
         Object bean = factoryBean.getObject();
