@@ -41,7 +41,6 @@ public class HstNodeLoadingCache implements HstEventConsumer {
     private static final Logger log = LoggerFactory.getLogger(HstNodeLoadingCache.class);
 
     private String rootPath;
-    private String rootConfigurationsPrefix;
     private int rootPathLength;
     private HstNode rootNode;
     private Repository repository;
@@ -66,7 +65,6 @@ public class HstNodeLoadingCache implements HstEventConsumer {
     public void setRootPath(final String rootPath) {
         this.rootPath = rootPath;
         rootPathLength = rootPath.length();
-        rootConfigurationsPrefix = rootPath + "/hst:configurations/";
     }
 
     @Override
