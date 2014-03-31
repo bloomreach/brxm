@@ -109,6 +109,8 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
     private final LoadableDetachableModel<List<String>> galleryTypesModel;
     private String galleryType;
 
+    private boolean okSucceeded = false;
+
     public ImageBrowserDialog(IPluginContext context, final IPluginConfig config, final IModel<RichTextEditorImageLink> model) {
         super(context, config, model);
         imageModel = model;
@@ -460,10 +462,19 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
 
         if (imageIsValid) {
             image.save();
-            super.setOkSucceeded(true);
+            okSucceeded = true;
         } else {
+            okSucceeded = false;
             error("Please select an image");
         }
+    }
+
+    @Override
+    public void onClose() {
+        if (!okSucceeded) {
+            cancelled = true;
+        }
+        super.onClose();
     }
 
     @Override

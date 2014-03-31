@@ -32,8 +32,6 @@ public abstract class AbstractRichTextEditorDialog<T extends AbstractPersistedMa
     private RichTextEditorAction<T> cancelAction;
     private RichTextEditorAction<T> closeAction;
 
-    private boolean okSucceeded = false;
-
     public AbstractRichTextEditorDialog(IModel<T> model) {
         super(model);
     }
@@ -54,13 +52,9 @@ public abstract class AbstractRichTextEditorDialog<T extends AbstractPersistedMa
         this.closeAction = closeAction;
     }
 
-    protected final void setOkSucceeded(boolean value) {
-        this.okSucceeded = value;
-    }
-
     @Override
     public void onClose() {
-        final RichTextEditorAction<T> action = (cancelled  || !okSucceeded) ? cancelAction : closeAction;
+        final RichTextEditorAction<T> action = cancelled ? cancelAction : closeAction;
         if (action != null) {
             final String script = action.getJavaScript(getModelObject());
             if (StringUtils.isNotBlank(script)) {
@@ -70,7 +64,6 @@ public abstract class AbstractRichTextEditorDialog<T extends AbstractPersistedMa
                 }
             }
         }
-        setOkSucceeded(false);
         super.onClose();
     }
 
