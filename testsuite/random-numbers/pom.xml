@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-testsuite</artifactId>
-    <version>1.05.00-iteration-14</version>
+    <version>1.05.00-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Test Suite Random Numbers</name>
