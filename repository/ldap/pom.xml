@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-repository</artifactId>
-    <version>2.25.05-iteration-14</version>
+    <version>2.25.05-SNAPSHOT</version>
   </parent>
 
   <name>Repository LDAP based Authorization</name>
