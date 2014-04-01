@@ -42,7 +42,13 @@ public class SiteMapPageRepresentation {
         name = siteMapItemRepresentation.getName();
         pageTitle = siteMapItemRepresentation.getPageTitle();
         pathInfo = siteMapItemRepresentation.getPathInfo();
-        renderPathInfo = mountPath + pathInfo;
+        if (siteMapItemRepresentation.getIsHomePage()) {
+            renderPathInfo = mountPath;
+        } else if (pathInfo.startsWith("/")){
+            renderPathInfo = mountPath + pathInfo;
+        } else {
+            renderPathInfo = mountPath + "/" + pathInfo;
+        }
         componentConfigurationId = siteMapItemRepresentation.getComponentConfigurationId();
         workspaceConfiguration = siteMapItemRepresentation.isWorkspaceConfiguration();
         inherited = siteMapItemRepresentation.isInherited();
