@@ -99,7 +99,7 @@
             {
                 "@type": "dependency",
                 "groupId": "org.onehippo.cms7.essentials",
-                "artifactId": "hippo-blog-plugin",
+                "artifactId": "hippo-essentials-blog-plugin",
                 "scope": "compile",
                 "type": "essentials",
                 "version": "1.01.02-SNAPSHOT"

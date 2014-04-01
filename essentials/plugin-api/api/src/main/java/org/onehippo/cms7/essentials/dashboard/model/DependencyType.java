@@ -38,6 +38,8 @@ public enum DependencyType {
             return BOOTSTRAP_CONFIG;
         } else if (type.equals(BOOTSTRAP_CONTENT.name)) {
             return BOOTSTRAP_CONTENT;
+        } else if (type.equals(ESSENTIALS.name)) {
+            return ESSENTIALS;
         }
         return DependencyType.INVALID;
 
