@@ -93,6 +93,19 @@ public class TestResourceFactoryBean {
     }
 
     @Test
+    public void testFallbackingHstJaasLoginModuleConfigUrlInSpringAssembly() throws Exception {
+        Object defaultConfigUrl = appContext.getBean("defaultHstJaasLoginModuleConfigUrlString");
+        assertEquals("java.lang.String", defaultConfigUrl.getClass().getName());
+        assertTrue(((String) defaultConfigUrl).endsWith("/META-INF/example-login.conf"));
+
+        Object fallbackingConfigUrl = appContext.getBean("fallbackingHstJaasLoginModuleConfigUrlString");
+        assertEquals("java.lang.String", fallbackingConfigUrl.getClass().getName());
+        assertTrue(fallbackingConfigUrl.toString().endsWith("/META-INF/example-login.conf"));
+
+        assertEquals(defaultConfigUrl, fallbackingConfigUrl);
+    }
+
+    @Test
     public void testResourceFactoryBeanFallbackToDefaultObject() throws Exception {
         String resourcePath = "classpath:/some/non/existing/resource/path/really.no";
         String defaultResourceValue = "file:/a/default/path/really.yes";

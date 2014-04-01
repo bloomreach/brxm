@@ -30,7 +30,8 @@ import org.springframework.core.io.ResourceLoader;
 /**
  * ResourceFactoryBean
  * <P>
- * Simple Resource Factory Bean to create URL string or FILE from resource string for convenience.
+ * Simple Resource Factory Bean to create URL string or FILE from resource string for convenience,
+ * depending on <code>objectType</code> constructor argument.
  * </P>
  * @version $Id$
  */

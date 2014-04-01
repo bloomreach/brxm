@@ -31,4 +31,11 @@
     </property>
   </bean>
 
+  <bean id="fallbackingHstJaasLoginModuleConfigUrlString" class="org.hippoecm.hst.site.container.ResourceFactoryBean">
+    <constructor-arg value="classpath:/META-INF/non-existing-login.conf" />
+    <constructor-arg value="java.lang.String" />
+    <constructor-arg ref="defaultHstJaasLoginModuleConfigUrlString" />
+    <property name="ignoreCreationError" value="true" />
+  </bean>
+
 </beans>
