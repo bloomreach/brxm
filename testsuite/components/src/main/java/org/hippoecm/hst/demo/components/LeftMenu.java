@@ -35,7 +35,6 @@ public class LeftMenu extends BaseHstComponent {
 
         final HstRequestContext requestContext = request.getRequestContext();
         HstSiteMenu menu = requestContext.getHstSiteMenus().getSiteMenu("main");
-        request.setAttribute("menu", menu);
 
         if (menu != null) {
             EditableMenu editable = menu.getEditableMenu();
@@ -51,9 +50,8 @@ public class LeftMenu extends BaseHstComponent {
                     }
                 }
             }
-            request.setAttribute("fullMenu", editable);
+            request.setAttribute("menu", editable);
         }
 
     }
-
 }

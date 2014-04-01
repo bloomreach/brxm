@@ -25,7 +25,7 @@
   <hst:cmseditmenu menu="${menu}"/>
 
   <ul class="sitenav">
-  <c:forEach var="item" items="${fullMenu.menuItems}">
+  <c:forEach var="item" items="${menu.menuItems}">
   <li>
       <c:choose >
           <c:when test="${item.selected}">
