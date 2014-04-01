@@ -183,19 +183,12 @@
         <module>bootstrap</module>
         <module>cms</module>
         <module>site</module>
+        <module>essentials</module>
       </modules>
     </profile>
 
     <profile>
       <id>cargo.run</id>
-      <dependencies>
-        <dependency>
-          <groupId>org.onehippo.cms7.essentials</groupId>
-          <artifactId>plugin-dashboard</artifactId>
-          <version>${essentials.version}</version>
-          <type>war</type>
-        </dependency>
-      </dependencies>
       <build>
         <plugins>
           <plugin>
@@ -219,11 +212,12 @@
                     </properties>
                   </deployable>
                   <deployable>
-                    <groupId>org.onehippo.cms7.essentials</groupId>
-                    <artifactId>plugin-dashboard</artifactId>
+                    <location>${dollar}{project.basedir}/essentials/target/essentials.war</location>
                     <type>war</type>
+                    <properties>
+                      <context>/essentials</context>
+                    </properties>
                   </deployable>
-
                 </deployables>
                 <properties>
                   <catalina.servlet.uriencoding>UTF-8</catalina.servlet.uriencoding>

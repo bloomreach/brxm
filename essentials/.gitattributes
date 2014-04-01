@@ -60,6 +60,8 @@ archetype/website/src/main/resources/archetype-resources/conf/context.xml -text
 archetype/website/src/main/resources/archetype-resources/conf/log4j-dev.xml -text
 archetype/website/src/main/resources/archetype-resources/conf/log4j-prod.xml -text
 archetype/website/src/main/resources/archetype-resources/conf/log4j.dtd -text
+archetype/website/src/main/resources/archetype-resources/essentials/pom.xml -text
+archetype/website/src/main/resources/archetype-resources/essentials/src/main/webapp/WEB-INF/web.xml -text
 archetype/website/src/main/resources/archetype-resources/pom.xml -text
 archetype/website/src/main/resources/archetype-resources/site/pom.xml -text
 archetype/website/src/main/resources/archetype-resources/site/src/main/java/beans/BaseDocument.java -text
@@ -883,7 +885,6 @@ plugin-dashboard/src/main/resources/plugin_descriptor.json -text
 plugin-dashboard/src/main/resources/rest.xml -text
 plugin-dashboard/src/main/resources/rest_workflow_content_block_template.xml -text
 plugin-dashboard/src/main/resources/template.xml -text
-plugin-dashboard/src/main/webapp/META-INF/context.xml -text
 plugin-dashboard/src/main/webapp/WEB-INF/jsp/errors/404.jsp -text
 plugin-dashboard/src/main/webapp/WEB-INF/jsp/errors/500.jsp -text
 plugin-dashboard/src/main/webapp/WEB-INF/jsp/index.jsp -text
