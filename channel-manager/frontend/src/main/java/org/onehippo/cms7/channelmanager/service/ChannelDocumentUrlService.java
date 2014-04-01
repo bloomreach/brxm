@@ -94,7 +94,7 @@ public class ChannelDocumentUrlService extends Plugin implements IDocumentUrlSer
 
     private String getUuidOfHandle(Node documentNode) {
         try {
-            return documentNode.getParent().getIdentifier();
+            return documentNode.getIdentifier();
         } catch (RepositoryException e) {
             log.error("Error retrieving UUID from document handle", e);
         }
