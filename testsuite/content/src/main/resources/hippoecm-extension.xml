@@ -272,7 +272,7 @@
       <sv:value>hstconfiguration/demosite/workspace/sitemenus.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/demosite/workspace</sv:value>
+      <sv:value>/hst:hst/hst:configurations/demosite/hst:workspace</sv:value>
     </sv:property>
   </sv:node>
 
@@ -288,7 +288,7 @@
       <sv:value>hstconfiguration/demosite_fr/workspace/sitemenus.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/demosite_fr/workspace</sv:value>
+      <sv:value>/hst:hst/hst:configurations/demosite_fr/hst:workspace</sv:value>
     </sv:property>
   </sv:node>
 
@@ -470,7 +470,7 @@
       <sv:value>hstconfiguration/demosite_test_many/workspace/sitemenus.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/demosite-test-many/workspace</sv:value>
+      <sv:value>/hst:hst/hst:configurations/demosite-test-many/hst:workspace</sv:value>
     </sv:property>
   </sv:node>
 
