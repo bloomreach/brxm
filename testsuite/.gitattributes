@@ -152,8 +152,8 @@ content/src/main/resources/hstconfiguration/demosite/workspace.xml -text
 content/src/main/resources/hstconfiguration/demosite/workspace/sitemenus.xml svneol=native#text/plain
 content/src/main/resources/hstconfiguration/demosite_de/sitemap.xml -text
 content/src/main/resources/hstconfiguration/demosite_fr/sitemap.xml -text svneol=unset#text/plain
+content/src/main/resources/hstconfiguration/demosite_fr/sitemenus.xml -text svneol=unset#text/plain
 content/src/main/resources/hstconfiguration/demosite_fr/templates.xml -text svneol=unset#text/plain
-content/src/main/resources/hstconfiguration/demosite_fr/workspace/sitemenus.xml -text svneol=unset#text/plain
 content/src/main/resources/hstconfiguration/demosite_it/sitemap.xml -text
 content/src/main/resources/hstconfiguration/demosite_nl/sitemap.xml -text
 content/src/main/resources/hstconfiguration/demosite_test_many/pages.xml -text svneol=unset#text/plain
