@@ -17,7 +17,7 @@ package org.hippoecm.hst.core.sitemenu;
 
 import java.util.List;
 
-public interface EditableMenu extends CommonMenu{
+public interface EditableMenu extends CommonMenu {
 
     /**
      * Note: the method should have been called getSelectedMenuItem because of a 

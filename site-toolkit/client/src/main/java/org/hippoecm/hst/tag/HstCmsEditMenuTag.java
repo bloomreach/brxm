@@ -27,13 +27,13 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
-import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
+import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.sitemenu.HstSiteMenu;
+import org.hippoecm.hst.core.sitemenu.CommonMenu;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +52,7 @@ public class HstCmsEditMenuTag extends TagSupport {
 
     private final static String MENU_ATTR_NAME = "menu";
 
-    protected HstSiteMenu menu;
+    protected CommonMenu menu;
 
     @Override
     public int doStartTag() throws JspException {
@@ -156,11 +156,11 @@ public class HstCmsEditMenuTag extends TagSupport {
         return (String) httpSession.getAttribute(CMS_USER_ID_ATTR);
     }
 
-    public HstSiteMenu getMenu() {
+    public CommonMenu getMenu() {
         return menu;
     }
 
-    public void setMenu(HstSiteMenu menu) {
+    public void setMenu(CommonMenu menu) {
         this.menu = menu;
     }
 
@@ -170,7 +170,7 @@ public class HstCmsEditMenuTag extends TagSupport {
 
         public VariableInfo[] getVariableInfo(TagData tagData) {
             VariableInfo vi[] = new VariableInfo[1];
-            vi[0] = new VariableInfo(MENU_ATTR_NAME, "org.hippoecm.hst.core.sitemenu.HstSiteMenu", true,
+            vi[0] = new VariableInfo(MENU_ATTR_NAME, "org.hippoecm.hst.core.sitemenu.CommonMenu", true,
                     VariableInfo.AT_BEGIN);
 
             return vi;

@@ -503,19 +503,22 @@
   </tag>
 
   <tag>
-    <description>This tag can be used to show in the channel manager in the cms an editable menu. This tag
-      won't output anything when not in cms channel manager preview
+    <description>This tag can be used to show in the channel manager in the CMS a menu to edit. This tag
+      won't output anything when not in cms channel manager preview. As argument, a CommonMenu instance is expected, which
+      in general can be a HstSiteMenu (plain configuration menu) or EditableMenu (a combination of configuration menu +
+      code piece and/or repository documents based). The editting of the menu in CMS channel manager will ONLY show the
+      hst configuration site menu items (thus in case of EditableMenu, the backing HstSiteMenu items)
     </description>
     <name>cmseditmenu</name>
     <tag-class>org.hippoecm.hst.tag.HstCmsEditMenuTag</tag-class>
     <tei-class>org.hippoecm.hst.tag.HstCmsEditMenuTag$TEI</tei-class>
     <body-content>JSP</body-content>
     <attribute>
-      <description>A HstSiteMenu object.</description>
+      <description>A CommonMenu object, for example EditableMenu or HstSiteMenu.</description>
       <name>menu</name>
       <required>true</required>
       <rtexprvalue>true</rtexprvalue>
-      <type>org.hippoecm.hst.core.sitemenu.HstSiteMenu</type>
+      <type>org.hippoecm.hst.core.sitemenu.CommonMenu</type>
     </attribute>
   </tag>
 
