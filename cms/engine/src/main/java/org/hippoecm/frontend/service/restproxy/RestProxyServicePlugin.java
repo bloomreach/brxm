@@ -229,7 +229,7 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         Subject subject = getSubject();
         // The accept method is called to solve an issue as the REST call was sent with 'text/plain' as an accept header
         // which caused problems matching with the relevant JAXRS resource
-        WebClient.client(clientProxy).header(CMSREST_CREDENTIALS_HEADER, getEncryptedCredentials(subject)).accept(MediaType.APPLICATION_JSON);
+        WebClient.client(clientProxy).header(CMSREST_CREDENTIALS_HEADER, getEncryptedCredentials(subject)).accept(MediaType.WILDCARD_TYPE);
         return clientProxy;
     }
 
