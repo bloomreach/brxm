@@ -136,29 +136,28 @@ public final class DependencyUtils {
         if (type == DependencyType.INVALID) {
             return false;
         }
-        if (type == DependencyType.CMS) {
-            final Model model = ProjectUtils.getPomModel(type);
-            final List<Dependency> dependencies = model.getDependencies();
-            for (Dependency projectDependency : dependencies) {
-                final boolean isSameDependency = isSameDependency(dependency, projectDependency);
-                if (isSameDependency) {
-                    final String ourVersion = dependency.getVersion();
-                    // we don't   care about the version:
-                    if (Strings.isNullOrEmpty(ourVersion)) {
-                        return true;
-                    }
-                    //check if versions match:    (TODO fix placeholder versions)
-                    final String currentVersion = projectDependency.getVersion();
-                    if (Strings.isNullOrEmpty(currentVersion) || currentVersion.indexOf('$') != -1) {
-                        log.warn("Current version couldn't be resolved {}", currentVersion);
-                        return true;
-                    }
-                    return VersionUtils.compareVersionNumbers(currentVersion, ourVersion) >= 0;
+        final Model model = ProjectUtils.getPomModel(type);
+        final List<Dependency> dependencies = model.getDependencies();
+        for (Dependency projectDependency : dependencies) {
+            final boolean isSameDependency = isSameDependency(dependency, projectDependency);
+            if (isSameDependency) {
+                final String ourVersion = dependency.getVersion();
+                // we don't   care about the version:
+                if (Strings.isNullOrEmpty(ourVersion)) {
+                    return true;
                 }
+                //check if versions match:    (TODO fix placeholder versions)
+                final String currentVersion = projectDependency.getVersion();
+                if (Strings.isNullOrEmpty(currentVersion) || currentVersion.indexOf('$') != -1) {
+                    log.warn("Current version couldn't be resolved {}", currentVersion);
+                    return true;
+                }
+                return VersionUtils.compareVersionNumbers(currentVersion, ourVersion) >= 0;
             }
-            return false;
         }
         return false;
+
+
     }
 
 
