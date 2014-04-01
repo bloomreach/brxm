@@ -85,6 +85,15 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         response.render(JavaScriptHeaderItem.forReference(MODAL_JS));
     }
 
+    /**
+     * Revert ModalWindow change committed in https://issues.apache.org/jira/browse/WICKET-5101. Dialogs should be created
+     * synchronously, otherwise other initialization code inside the dialogs (e.g. initializing YUI accordions) fails.
+     */
+    @Override
+    protected CharSequence getShowJavaScript() {
+        return "Wicket.Window.create(settings).show();\n";
+    }
+
     public void show(Dialog dialog) {
         if (isShown()) {
             pending.add(dialog);
