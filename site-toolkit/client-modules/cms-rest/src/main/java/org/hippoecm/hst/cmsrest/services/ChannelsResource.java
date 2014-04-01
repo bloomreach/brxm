@@ -49,7 +49,7 @@ public class ChannelsResource extends BaseResource implements ChannelService {
         // do not use HstServices.getComponentManager().getComponent(HstManager.class.getName()) to get to
         // virtualhosts object since we REALLY need the hst model instance for the current request!!
         HstRequestContext requestContext = RequestContextProvider.get();
-        final VirtualHosts virtualHosts = requestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts();
+        final VirtualHosts virtualHosts = requestContext.getVirtualHost().getVirtualHosts();
         final List<Mount> mountsForHostGroup = virtualHosts.getMountsByHostGroup(virtualHosts.getChannelManagerHostGroupName());
         for (Mount mount : mountsForHostGroup) {
             if (!(mount instanceof ContextualizableMount)) {
