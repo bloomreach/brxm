@@ -17,14 +17,19 @@
 <div class="panel panel-default l-stretch">
 
     <div hippo.theme.confirmation-dialog
+         class="confirmation"
          data-confirm-icon="trash-o"
          data-perform-confirmation="confirmDelete()"
          data-perform-cancel="cancelDelete()"
          data-confirm-label="{{ 'DELETE_PAGE' | translate }}"
          data-cancel-label="{{ 'CANCEL' | translate }}"
-         data-show="isConfirmationVisible" class="confirmation">
-        <p><strong>{{ 'CONFIRM_DELETE_TITLE' | translate:page }}</strong></p>
-        <p>{{ 'CONFIRM_DELETE_MESSAGE' | translate:page }}</p>
+         data-show="isConfirmationVisible">
+        <p class="confirmation-title">
+            {{ 'CONFIRM_DELETE_TITLE' | translate:page }}
+        </p>
+        <p class="confirmation-message">
+            {{ 'CONFIRM_DELETE_MESSAGE' | translate:page }}
+        </p>
     </div>
 
     <div class="panel-body l-fixed-height">

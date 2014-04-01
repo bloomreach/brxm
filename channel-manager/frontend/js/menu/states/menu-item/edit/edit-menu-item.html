@@ -24,10 +24,10 @@
          data-perform-cancel="remove.cancel()"
          data-confirm-label="{{ 'DELETE_MENU_ITEM' | translate }}"
          data-cancel-label="{{ 'CANCEL' | translate }}">
-        <p>
-            <strong>{{ 'REMOVE_CONFIRMATION_TITLE' | translate }}</strong>
+        <p class="confirmation-dialog-title">
+            {{ 'REMOVE_CONFIRMATION_TITLE' | translate }}
         </p>
-        <p>
+        <p class="confirmation-dialog-message">
             {{ 'REMOVE_CONFIRMATION' | translate:selectedMenuItem }}
         </p>
     </div>
@@ -38,10 +38,10 @@
          data-perform-cancel="external.cancel()"
          data-confirm-label="{{ 'OPEN_LINK' | translate }}"
          data-cancel-label="{{ 'CANCEL' | translate }}">
-        <p>
-            <strong>{{ 'OPEN_CONFIRMATION_TITLE' | translate }}</strong>
+        <p class="confirmation-dialog-title">
+            {{ 'OPEN_CONFIRMATION_TITLE' | translate }}
         </p>
-        <p>
+        <p class="confirmation-dialog-message">
             {{ 'OPEN_CONFIRMATION' | translate:selectedMenuItem }}
         </p>
     </div>

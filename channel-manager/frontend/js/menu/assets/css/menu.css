@@ -150,7 +150,6 @@ h3.lead.item-title {
 .confirmation-dialog {
     position: absolute;
     z-index: 999999;
-    top: -161px;
     border-top: none;
     margin-left: -100px;
     width: 500px;
@@ -158,6 +157,20 @@ h3.lead.item-title {
 
 .confirmation-dialog.s-visible {
     top: 0;
+}
+
+.confirmation-dialog.s-invisible {
+    top: -181px;
+}
+
+.confirmation-dialog-title {
+    font-weight: bold;
+}
+
+.confirmation-dialog-message {
+    /* prevent long messages from making the confirmation dialog so high
+       that its bottom becomes visible in 'invisible' state */
+    max-height: 40px;
 }
 
 #close-confirmation {

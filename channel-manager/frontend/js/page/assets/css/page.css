@@ -82,9 +82,27 @@ form {
     display: none;
 }
 
-.confirmation.s-visible, .confirmation.s-invisible { display: block }
-.confirmation.s-visible { top: 0 }
-.confirmation.s-invisible { top: -162px }
+.confirmation.s-visible, .confirmation.s-invisible {
+    display: block
+}
+
+.confirmation.s-visible {
+    top: 0
+}
+
+.confirmation.s-invisible {
+    top: -181px
+}
+
+.confirmation-title {
+    font-weight: bold;
+}
+
+.confirmation-message {
+    /* prevent long messages from making the confirmation so high
+       that its bottom becomes visible in 'invisible' state */
+    max-height: 40px;
+}
 
 /* --- Tooltip --- */
 .tooltip-newlines + .tooltip > .tooltip-inner {
