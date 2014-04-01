@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -296,6 +296,39 @@
 
     }
 
+    function makeCompatibleWithMaximizePlugin(editor) {
+        // The 'maximize' plugin breaks the styling of Hippo's modal Wicket dialogs because it removes all CSS classes
+        // (including 'hippo-root') from the document body when the editor is maximized. Here we explicitly re-add
+        // the 'hippo-root' CSS class when the editor is maximized so the image picker dialog still looks good.
+        editor.on("afterCommandExec", function(event) {
+            if (event.data.name === 'maximize') {
+                if (event.data.command.state === CKEDITOR.TRISTATE_ON) {
+                    CKEDITOR.document.getBody().addClass('hippo-root');
+                }
+            }
+        });
+    }
+
+    function makeCompatibleWithLinkPlugin() {
+        // The 'link' plugin should only show the option 'New Window (_blank)' in the list of possible link targets
+        CKEDITOR.on('dialogDefinition', function(event) {
+            var dialogName = event.data.name,
+                dialogDefinition = event.data.definition,
+                editor = event.editor,
+                targetTab, linkTargetType;
+
+            if (dialogName === 'link') {
+                targetTab = dialogDefinition.getContents('target');
+                linkTargetType = targetTab.get('linkTargetType');
+
+                linkTargetType.items = [
+                    [ editor.lang.common.notSet, 'notSet' ],
+                    [ editor.lang.common.targetNew, '_blank' ]
+                ];
+            }
+        });
+    }
+
     CKEDITOR.plugins.add('hippopicker', {
 
         icons: 'pickinternallink,pickimage',
@@ -308,17 +341,8 @@
             initInternalLinkPicker(editor, config.internalLink.callbackUrl);
             initImagePicker(editor, config.image.callbackUrl);
 
-            // Ensure compatibility with the 'Maximize' plugin. That plugin breaks the styling of Hippo's modal Wicket
-            // dialogs because it removes all CSS classes (including 'hippo-root') from the document body when the
-            // editor is maximized. Here we explicitly re-add the 'hippo-root' CSS class when the editor is maximized
-            // so the image picker dialog still looks good.
-            editor.on("afterCommandExec", function(event) {
-                if (event.data.name === 'maximize') {
-                    if (event.data.command.state === CKEDITOR.TRISTATE_ON) {
-                        CKEDITOR.document.getBody().addClass('hippo-root');
-                    }
-                }
-            });
+            makeCompatibleWithMaximizePlugin(editor);
+            makeCompatibleWithLinkPlugin();
         }
 
     });
