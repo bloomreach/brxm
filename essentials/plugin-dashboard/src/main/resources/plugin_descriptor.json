@@ -60,7 +60,7 @@
         ]
     },
     {
-        "needsInstallation": false,
+        "needsInstallation": true,
         "enabled": true,
         "@type": "plugin",
         "introduction": "Blog plugin",
@@ -95,7 +95,16 @@
                 "artifactId": "selectionplugins-addon-cms",
                 "scope": "compile",
                 "type": "cms"
+            },
+            {
+                "@type": "dependency",
+                "groupId": "org.onehippo.cms7.essentials",
+                "artifactId": "hippo-blog-plugin",
+                "scope": "compile",
+                "type": "essentials",
+                "version": "1.01.02-SNAPSHOT"
             }
+
         ],
         "libraries": [
             {
@@ -160,7 +169,7 @@
         ]
     },
     {
-        "needsInstallation": false,
+        "needsInstallation": true,
         "enabled": true,
         "@type": "plugin",
         "introduction": "Adds Banner document type to your project",
@@ -181,6 +190,16 @@
                         "file": "bannerPlugin.js"
                     }
                 ]
+            }
+        ],
+        "dependencies": [
+            {
+                "@type": "dependency",
+                "groupId": "org.onehippo.cms7.essentials",
+                "artifactId": "hippo-banner-plugin",
+                "scope": "compile",
+                "type": "essentials",
+                "version": "1.01.02-SNAPSHOT"
             }
         ]
     },
