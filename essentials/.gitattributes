@@ -481,7 +481,6 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/reso
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/pages/eventspage.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/pages/newsoverview.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/pages/newspage.xml -text
-dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/pages/standard.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/sitemap/events.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/sitemap/news.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/templates/events-main-content.xml -text
@@ -529,6 +528,7 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/r
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/jsp/pagination.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/menu/main.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/pages/homepage.xml -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/pages/standard.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/sitemap/root.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/templates/homepage-ftl.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/templates/homepage-jsp.xml -text

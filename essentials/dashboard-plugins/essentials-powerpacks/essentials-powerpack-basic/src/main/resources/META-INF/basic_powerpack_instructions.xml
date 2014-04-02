@@ -62,7 +62,6 @@
     <xml action="copy" source="xml/hst/components/content.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:components"/>
   </instructionSet>
   <instructionSet>
-    <xml action="copy" source="xml/hst/pages/standard.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="xml/hst/pages/newsoverview.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="xml/hst/pages/newspage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="xml/hst/pages/eventsoverview.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
