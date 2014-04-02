@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.cms.root;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -200,6 +201,12 @@ public class RootPlugin extends TabsPlugin {
             settings.setLoadCssReset(true);
             getPage().add(new WebAppBehavior(settings));
             rendered = true;
+        }
+        final IDataProvider<IRenderService> provider = view.getDataProvider();
+        final Iterator<? extends IRenderService> children = provider.iterator(0, provider.size());
+        while (children.hasNext()) {
+            IRenderService child = children.next();
+            child.render(target);
         }
         super.render(target);
     }
