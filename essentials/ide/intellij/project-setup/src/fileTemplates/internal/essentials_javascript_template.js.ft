@@ -7,8 +7,11 @@
                 ${dollar}scope.message = {};
                 ${dollar}scope.run = function() {
                         #if ($PLUGIN_GROUP == "powerpacks")
-                            ${dollar}http.post(${dollar}scope.endpoint).success(function (data) {
-                            ${dollar}scope.message = data;
+                        var payload = Essentials.addPayloadData("sampleData", ${dollar}scope.sampleData, null);
+                        Essentials.addPayloadData("templateName", ${dollar}scope.templateName, payload);
+                        ${dollar}http.post(${dollar}scope.endpoint, payload).success(function (data) {
+                            // globally handled
+                        });
                         #else
                              ${dollar}http.get(${dollar}scope.endpoint).success(function (data) {
                              ${dollar}scope.message = data;

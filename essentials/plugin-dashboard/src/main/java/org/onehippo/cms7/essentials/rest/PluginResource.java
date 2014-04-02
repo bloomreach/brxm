@@ -164,6 +164,7 @@ public class PluginResource extends BaseResource {
                     continue;
                 }
                 application.addClass(endpointClass);
+                log.info("Adding dynamic REST (plugin) endpoint {}", endpointClass.getName());
 
             }
             // register:

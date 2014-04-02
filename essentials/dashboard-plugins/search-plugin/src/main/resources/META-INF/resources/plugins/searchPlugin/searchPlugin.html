@@ -15,21 +15,32 @@
   -->
 
 <div class="panel panel-default" ng-controller="searchPluginCtrl">
-    <div class="panel-heading">searchPlugin</div>
+    <div class="panel-heading">Adds search component to your project</div>
     <div class="panel-body">
         <form novalidate name="searchPluginForm">
             <div class="form-group">
-                <label>searchPlugin</label>
+                <label>Please select templating language:</label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" ng-model="templateName" required value="jsp"/>
+                    JSP template
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" ng-model="templateName" required value="freemarker"/>
+                    Freemarker template
+                </label>
             </div>
         </form>
     </div>
     <div class="panel-footer">
         <div class="input-group">
               <span class="input-group-btn">
-                <button ng-disabled="!searchPluginForm.$valid" class="btn btn-primary pull-right" type="submit" ng-click="run()">Run searchPlugin</button>
+                <button ng-disabled="!searchPluginForm.$valid" class="btn btn-primary pull-right" type="submit" ng-click="run()">Add search support</button>
               </span>
         </div>
     </div>
 </div>
-
 

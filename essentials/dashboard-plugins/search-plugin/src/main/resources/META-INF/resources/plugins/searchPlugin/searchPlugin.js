@@ -21,8 +21,10 @@
             $scope.endpoint = $rootScope.REST.dynamic + 'searchPlugin/';
             $scope.message = {};
             $scope.run = function () {
-                $http.post($scope.endpoint).success(function (data) {
-                    $scope.message = data;
+                var payload = Essentials.addPayloadData("sampleData", $scope.sampleData, null);
+                Essentials.addPayloadData("templateName", $scope.templateName, payload);
+                $http.post($scope.endpoint, payload).success(function (data) {
+                    // globally handled
                 });
             };
         })
