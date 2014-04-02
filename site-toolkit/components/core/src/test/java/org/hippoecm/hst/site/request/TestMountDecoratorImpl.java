@@ -61,15 +61,29 @@ public class TestMountDecoratorImpl {
                         decoratedMount.getTypes().contains("lux"));
         
     }
-    
+
     @Test
-    public void testDecorationsOfAlreadyPreviewMount() throws Exception {
-        ContextualizableMount mount = createNiceMock(ContextualizableMount.class);
+    public void testDecorationsOfPreviewMountGetsDecorated() throws Exception {
+        Mount mount = createNiceMock(Mount.class);
 
         expect(mount.isPreview()).andReturn(true).anyTimes();
         replay(mount);
         Mount decoratedMount = new MountDecoratorImpl().decorateMountAsPreview(mount);
-        assertTrue("The decoratedMount of a mount that is already preview should be the same instance. ", decoratedMount == mount);
-        
+        assertFalse("The decoratedMount of a mount that is already preview should still be decorated. ", decoratedMount == mount);
+
+    }
+
+    @Test
+    public void testDoubleDecoratedMountGetsSameInstance() throws Exception {
+        Mount mount = createNiceMock(Mount.class);
+        expect(mount.isPreview()).andReturn(false).anyTimes();
+        replay(mount);
+        final MountDecoratorImpl mountDecorator = new MountDecoratorImpl();
+        Mount decoratedMount = mountDecorator.decorateMountAsPreview(mount);
+
+        assertTrue(decoratedMount.isPreview());
+
+        Mount doubleDecorated =  mountDecorator.decorateMountAsPreview(decoratedMount);
+        assertTrue(decoratedMount == doubleDecorated);
     }
 }

@@ -34,18 +34,24 @@ public class ResolvedMountImpl implements MutableResolvedMount {
 
 
     private final static Logger log = LoggerFactory.getLogger(ResolvedMountImpl.class);
-    
+
     private Mount mount;
-    private ResolvedVirtualHost resolvedVirtualHost;
-    private String resolvedMountPath;
+    final private ResolvedVirtualHost resolvedVirtualHost;
+    final private String resolvedMountPath;
     // If there was a prefix in the requestPath which is ignored for Mount matching, it is stored in matchingIgnoredPrefix
-    private String matchingIgnoredPrefix;
+    final private String matchingIgnoredPrefix;
+    final private int portNumber;
     
-    public ResolvedMountImpl(Mount mount, ResolvedVirtualHost resolvedVirtualHost, String resolvedMountPath, String matchingIgnoredPrefix){
+    public ResolvedMountImpl(final Mount mount,
+                             final ResolvedVirtualHost resolvedVirtualHost,
+                             final String resolvedMountPath,
+                             final String matchingIgnoredPrefix,
+                             final int portNumber){
         this.mount = mount;
         this.resolvedVirtualHost = resolvedVirtualHost;
         this.resolvedMountPath = resolvedMountPath;
-        this.matchingIgnoredPrefix = matchingIgnoredPrefix; 
+        this.matchingIgnoredPrefix = matchingIgnoredPrefix;
+        this.portNumber = portNumber;
     }
     
     @Override
@@ -59,6 +65,7 @@ public class ResolvedMountImpl implements MutableResolvedMount {
     }
 
     @Override
+    @Deprecated
     public ResolvedVirtualHost getResolvedVirtualHost() {
         return resolvedVirtualHost;
     }
@@ -76,6 +83,11 @@ public class ResolvedMountImpl implements MutableResolvedMount {
     @Override
     public String getNamedPipeline() {
        return mount.getNamedPipeline();
+    }
+
+    @Override
+    public int getPortNumber() {
+        return portNumber;
     }
 
     @Override
@@ -98,7 +110,8 @@ public class ResolvedMountImpl implements MutableResolvedMount {
                log.debug("siteMapPathInfo is '' or '/'. If there is a homepage path configured, we try to map this path to the sitemap");
                siteMapPathInfo = HstSiteMapUtils.getPath(mount, mount.getHomePage());
                if(siteMapPathInfo == null || "".equals(siteMapPathInfo) || "/".equals(siteMapPathInfo)) {
-                   log.warn("Mount '{}' for host '{}' does not have a homepage configured and the path info is empty. Cannot map to sitemap item. Return null", getMount().getName(), getResolvedVirtualHost().getResolvedHostName());
+                   log.warn("Mount '{}' for host '{}' does not have a homepage configured and the path info is empty. Cannot map to sitemap item. Return null",
+                           getMount().getName(), mount.getVirtualHost().getHostName());
                    throw new MatchException("No homepage configured and empty path after Mount");
                } else {
                    log.debug("Trying to map homepage '{}' to the sitemap for Mount '{}'", siteMapPathInfo, getMount().getName());

@@ -30,9 +30,9 @@ import javax.ws.rs.core.Response;
 import com.google.common.base.Predicate;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -82,7 +82,7 @@ public class SiteMenuResourceTest {
     private HttpSession httpSession;
     private VirtualHost virtualHost;
     private VirtualHosts virtualHosts;
-    private ContextualizableMount mount;
+    private Mount mount;
     private HstSite site;
     private MockSiteMenuConfiguration menuConfig;
     private MockSiteMenuItemConfiguration itemConfig;
@@ -102,7 +102,7 @@ public class SiteMenuResourceTest {
         this.httpSession = createMock(HttpSession.class);
         this.virtualHost = createMock(VirtualHost.class);
         this.virtualHosts = createMock(VirtualHosts.class);
-        this.mount = createMock(ContextualizableMount.class);
+        this.mount = createMock(Mount.class);
         this.site = createMock(HstSite.class);
         this.menuConfig = createMock(MockSiteMenuConfiguration.class);
         this.itemConfig = createNiceMock(MockSiteMenuItemConfiguration.class);
@@ -331,7 +331,6 @@ public class SiteMenuResourceTest {
         expect(context.getVirtualHost()).andReturn(virtualHost).anyTimes();
         expect(virtualHost.getVirtualHosts()).andReturn(virtualHosts).anyTimes();
         expect(virtualHosts.getMountByIdentifier("mount")).andReturn(mount).anyTimes();
-        expect(mount.getPreviewHstSite()).andReturn(site).anyTimes();
         expect(mount.getMountPath()).andReturn("").anyTimes();
         expect(site.getConfigurationPath()).andReturn("/preview/configuration/path").anyTimes();
         expect(pageComposerContextService.getEditingPreviewSite()).andReturn(site).anyTimes();
@@ -339,9 +338,15 @@ public class SiteMenuResourceTest {
     }
 
     private void mockCreateMandatoryWorkspaceNodesIfMissing() throws RepositoryException {
-        expect(pageComposerContextService.getEditingLiveSite()).andReturn(site).anyTimes();
+        expect(pageComposerContextService.getEditingLiveConfigurationPath()).andReturn("/live/configuration/path").anyTimes();
+        expect(pageComposerContextService.getEditingPreviewConfigurationPath()).andReturn("/preview/configuration/path").anyTimes();
+
+        expect(session.nodeExists("/live/configuration/path")).andReturn(true).anyTimes();
+        expect(session.getNode("/live/configuration/path")).andReturn(node).anyTimes();
+
         expect(session.nodeExists("/preview/configuration/path")).andReturn(true).anyTimes();
         expect(session.getNode("/preview/configuration/path")).andReturn(node).anyTimes();
+
         expect(node.hasNode(HstNodeTypes.NODENAME_HST_WORKSPACE)).andReturn(false).anyTimes();
         expect(node.addNode(HstNodeTypes.NODENAME_HST_WORKSPACE)).andReturn(node).anyTimes();
         expect(node.addNode(HstNodeTypes.NODENAME_HST_PAGES)).andReturn(node).anyTimes();

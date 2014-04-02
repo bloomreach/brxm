@@ -31,9 +31,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.internal.CanonicalInfo;
-import org.hippoecm.hst.configuration.internal.ContextualizableMount;
-import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -43,9 +41,6 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_LOCKED_BY;
-import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER;
-import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_LOCKED_ON;
 import static org.hippoecm.hst.utils.TagUtils.encloseInHTMLComment;
 import static org.hippoecm.hst.utils.TagUtils.toJSONMap;
 
@@ -112,7 +107,7 @@ public class HstCmsEditLinkTag extends TagSupport  {
                 return EVAL_PAGE;
             }
 
-            ContextualizableMount mount = (ContextualizableMount)requestContext.getResolvedMount().getMount();
+            Mount mount = requestContext.getResolvedMount().getMount();
 
 
             // cmsBaseUrl is something like : http://localhost:8080

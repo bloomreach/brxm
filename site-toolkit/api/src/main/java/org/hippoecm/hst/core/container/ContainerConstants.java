@@ -134,6 +134,8 @@ public interface ContainerConstants {
      */
     String RENDERING_HOST = "org.hippoecm.hst.container.render_host";
 
+    String UNDECORATED_MOUNT = "org.hippoecm.hst.container.undecorated_mount";
+
     /**
      * The mount id of the site that is being viewed in the channel manager
      */

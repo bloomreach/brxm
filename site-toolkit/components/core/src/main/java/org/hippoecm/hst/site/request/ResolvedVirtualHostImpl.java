@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * ResolvedVirtualHostImpl
  * @version $Id$
  */
-public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
+public class ResolvedVirtualHostImpl implements ResolvedVirtualHost {
 
     private final static Logger log = LoggerFactory.getLogger(ResolvedVirtualHostImpl.class);
     
@@ -111,16 +111,18 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
         }
         String resolvedMountPath = builder.toString();
         
-        ResolvedMount resolvedMount = new ResolvedMountImpl(mount, this , resolvedMountPath, matchingIgnoredPrefix);
+        ResolvedMount resolvedMount = new ResolvedMountImpl(mount, this , resolvedMountPath, matchingIgnoredPrefix, portMount.getPortNumber());
         log.debug("Found ResolvedMount is '{}' and the mount prefix for it is :", resolvedMount.getResolvedMountPath());
         
         return resolvedMount;
     }
 
+    @Deprecated
     public String getResolvedHostName() {
         return hostName;
     }
-    
+
+    @Deprecated
     public int getPortNumber() {
     	return portMount.getPortNumber();
     }

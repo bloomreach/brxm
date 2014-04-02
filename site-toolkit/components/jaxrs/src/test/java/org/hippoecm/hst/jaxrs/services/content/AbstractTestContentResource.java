@@ -106,9 +106,7 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
         };
         
         resolvedVirtualHost = EasyMock.createNiceMock(ResolvedVirtualHost.class);
-        EasyMock.expect(resolvedVirtualHost.getResolvedHostName()).andReturn("localhost").anyTimes();
-        EasyMock.expect(resolvedVirtualHost.getPortNumber()).andReturn(8085).anyTimes();
-        
+
         String hostGroupName = "dev";
         List<Mount> mountsForHostGroup = Collections.emptyList();
         virtualHosts = EasyMock.createNiceMock(VirtualHosts.class);
@@ -128,7 +126,6 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
         EasyMock.expect(mount.getMountProperties()).andReturn(new HashMap<String,String>()).anyTimes();
         
         resolvedMount = EasyMock.createNiceMock(ResolvedMount.class);
-        EasyMock.expect(resolvedMount.getResolvedVirtualHost()).andReturn(resolvedVirtualHost).anyTimes();
         EasyMock.expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
         EasyMock.expect(resolvedMount.getResolvedMountPath()).andReturn(MOUNT_PATH).anyTimes();
         

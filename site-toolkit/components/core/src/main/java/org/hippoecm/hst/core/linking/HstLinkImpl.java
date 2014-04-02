@@ -321,6 +321,8 @@ public class HstLinkImpl implements HstLink {
                 if (!farthestRequestScheme.equals(siteMapItem.getScheme())) {
                     scheme = siteMapItem.getScheme();
                     return true;
+                } else {
+                    return false;
                 }
             }
 
@@ -365,26 +367,26 @@ public class HstLinkImpl implements HstLink {
             // for the mount
             if (schemeCannotBeDifferent()) {
                 if (mount.isSchemeAgnostic()) {
-                    scheme =  SCHEME_AGNOSTIC;
+                    scheme = SCHEME_AGNOSTIC;
                     return scheme;
                 }
-                scheme =  mount.getScheme();
+                scheme = mount.getScheme();
                 return scheme;
             }
             final ResolvedSiteMapItem resolvedSiteMapItem = resolveSiteMapItem();
             if (resolvedSiteMapItem != null) {
                 if (resolvedSiteMapItem.getHstSiteMapItem().isSchemeAgnostic()) {
-                    scheme =  SCHEME_AGNOSTIC;
+                    scheme = SCHEME_AGNOSTIC;
                     return scheme;
                 }
-                scheme =  resolvedSiteMapItem.getHstSiteMapItem().getScheme();
+                scheme = resolvedSiteMapItem.getHstSiteMapItem().getScheme();
                 return scheme;
             }
             if (mount.isSchemeAgnostic()) {
-                scheme =  SCHEME_AGNOSTIC;
+                scheme = SCHEME_AGNOSTIC;
                 return scheme;
             }
-            scheme =  mount.getScheme();
+            scheme = mount.getScheme();
             return scheme;
         }
 
@@ -401,6 +403,7 @@ public class HstLinkImpl implements HstLink {
             try {
                 MutableResolvedVirtualHost resolvedHostForLink = new MutableResolvedVirtualHost() {
                     private ResolvedMount resolvedMountForLink = null;
+
                     @Override
                     public VirtualHost getVirtualHost() {
                         return mount.getVirtualHost();
@@ -420,13 +423,15 @@ public class HstLinkImpl implements HstLink {
                     public ResolvedMount matchMount(final String contextPath, final String requestPath) throws MatchException {
                         return resolvedMountForLink;
                     }
+
                     @Override
                     public void setResolvedMount(ResolvedMount resMount) {
                         this.resolvedMountForLink = resMount;
                     }
                 };
 
-                ResolvedMount resMount = new ResolvedMountImpl(mount, resolvedHostForLink, mount.getMountPath(), mount.getVirtualHost().getVirtualHosts().getCmsPreviewPrefix());
+                ResolvedMount resMount = new ResolvedMountImpl(mount, resolvedHostForLink, mount.getMountPath(),
+                        mount.getVirtualHost().getVirtualHosts().getCmsPreviewPrefix(), requestContext.getResolvedMount().getPortNumber());
                 resolvedHostForLink.setResolvedMount(resMount);
                 return mount.getHstSiteMapMatcher().match(path, resMount);
             } catch (Exception e) {

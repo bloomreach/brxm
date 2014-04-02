@@ -474,4 +474,9 @@ public interface Mount {
      */
     String [] getDefaultResourceBundleIds();
 
+    /**
+     * @return the cms location (fully qualified URL) or <code>null</code> if not configured
+     */
+    String getCmsLocation();
+
 }

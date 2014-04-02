@@ -21,6 +21,7 @@ import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
@@ -34,10 +35,13 @@ import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
+import org.hippoecm.hst.core.internal.MountDecorator;
+import org.hippoecm.hst.core.internal.MutableResolvedMount;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -77,6 +81,7 @@ public class TestHstLinkForCmsRequest extends AbstractBeanTestCase {
     private ObjectConverter objectConverter;
     private HstLinkCreator linkCreator;
     private HstSiteMapMatcher siteMapMatcher;
+    protected MountDecorator mountDecorator;
 
     @Before
     public void setUp() throws Exception {
@@ -89,6 +94,8 @@ public class TestHstLinkForCmsRequest extends AbstractBeanTestCase {
         this.hstURLFactory = getComponent(HstURLFactory.class.getName());
         this.objectConverter = getObjectConverter();
         this.linkCreator = getComponent(HstLinkCreator.class.getName());
+        this.mountDecorator = HstServices.getComponentManager().getComponent(MountDecorator.class.getName());
+
     }
 
     @Test
@@ -168,7 +175,7 @@ public class TestHstLinkForCmsRequest extends AbstractBeanTestCase {
         // the rendering host is www.unit.test
         HstRequestContext requestContext = getRequestFromCms("cms.example.com", "/home", null, "www.unit.test", false);
         // assert that the match Mount is www.unit.test
-        assertEquals("Matched mount should be the renderHost mount", "www.unit.test", requestContext.getResolvedMount().getResolvedVirtualHost().getResolvedHostName());
+        assertEquals("Matched mount should be the renderHost mount", "www.unit.test", requestContext.getResolvedMount().getMount().getVirtualHost().getHostName());
 
         ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
         Object homeBean = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
@@ -219,7 +226,8 @@ public class TestHstLinkForCmsRequest extends AbstractBeanTestCase {
         HstRequestContext requestContext = getRequestFromCms("cms.example.com", "/home", null, "localhost:8081", false);
         assertTrue(requestContext.isCmsRequest());
         // assert that the match Mount is localhost
-        assertEquals("Matched mount should be the renderHost mount", "localhost", requestContext.getResolvedMount().getResolvedVirtualHost().getResolvedHostName());
+        assertEquals("Matched mount should be the renderHost mount", "localhost",
+                requestContext.getResolvedMount().getMount().getVirtualHost().getHostName());
 
         ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
 
@@ -255,14 +263,14 @@ public class TestHstLinkForCmsRequest extends AbstractBeanTestCase {
         // Since hst:defaulthostname is localhost, with 'force client host' and client host 'cms.example.com' which does
         // not have a configured mount, a fallback to localhost should be seen:
         assertEquals("Matched mount should be the renderHost mount", "localhost",
-                requestContext.getResolvedMount().getResolvedVirtualHost().getResolvedHostName());
+                requestContext.getResolvedMount().getMount().getVirtualHost().getHostName());
 
 
         // when not forcing client host, we should get www.unit.test as the matched mount its hostname
 
         requestContext = getRequestFromCms("cms.example.com", "/home", null, "www.unit.test", false);
         assertEquals("Matched mount should be the renderHost mount", "www.unit.test",
-                requestContext.getResolvedMount().getResolvedVirtualHost().getResolvedHostName());
+                requestContext.getResolvedMount().getMount().getVirtualHost().getHostName());
 
     }
 
@@ -323,7 +331,10 @@ public class TestHstLinkForCmsRequest extends AbstractBeanTestCase {
 
     public ResolvedSiteMapItem getResolvedSiteMapItem(HstContainerURL url) throws ContainerException {
         VirtualHosts vhosts = hstManager.getVirtualHosts();
-        return vhosts.matchSiteMapItem(url);
+        final ResolvedMount resolvedMount = vhosts.matchMount(url.getHostName(), url.getContextPath(), url.getRequestPath());
+        final Mount decorated = mountDecorator.decorateMountAsPreview(resolvedMount.getMount());
+        ((MutableResolvedMount) resolvedMount).setMount(decorated);
+        return resolvedMount.matchSiteMapItem(url.getPathInfo());
     }
 
 

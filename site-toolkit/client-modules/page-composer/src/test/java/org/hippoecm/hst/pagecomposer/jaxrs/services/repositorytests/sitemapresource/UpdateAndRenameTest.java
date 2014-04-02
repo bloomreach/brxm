@@ -29,8 +29,8 @@ import javax.jcr.Value;
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
-import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -65,10 +65,10 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL(request, "localhost", "/home");
         ((HstMutableRequestContext) ctx).setSession(session);
-        final ContextualizableMount mount = (ContextualizableMount) ctx.getResolvedMount().getMount();
+        final Mount mount = ctx.getResolvedMount().getMount();
 
         {
-            final HstSiteMapItem home = mount.getPreviewHstSite().getSiteMap().getSiteMapItem("home");
+            final HstSiteMapItem home = mount.getHstSite().getSiteMap().getSiteMapItem("home");
             assertTrue(home instanceof CanonicalInfo);
             assertTrue(((CanonicalInfo) home).isWorkspaceConfiguration());
             final String homeUuid = ((CanonicalInfo) home).getCanonicalIdentifier();
@@ -77,7 +77,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         }
 
         {
-            final HstSiteMapItem news = mount.getPreviewHstSite().getSiteMap().getSiteMapItem("news");
+            final HstSiteMapItem news = mount.getHstSite().getSiteMap().getSiteMapItem("news");
             assertTrue(((CanonicalInfo) news).isWorkspaceConfiguration());
             final String newsUuid = ((CanonicalInfo) news).getCanonicalIdentifier();
             new NodePathPrefixValidator(getPreviewConfigurationWorkspacePath(), newsUuid, HstNodeTypes.NODETYPE_HST_SITEMAPITEM).validate(ctx);
@@ -89,7 +89,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
         }
 
         {
-            final HstSiteMapItem aboutUs = mount.getPreviewHstSite().getSiteMap().getSiteMapItem("about-us");
+            final HstSiteMapItem aboutUs = mount.getHstSite().getSiteMap().getSiteMapItem("about-us");
             assertFalse(((CanonicalInfo) aboutUs).isWorkspaceConfiguration());
             final String aboutUsUuid = ((CanonicalInfo) aboutUs).getCanonicalIdentifier();
             try {

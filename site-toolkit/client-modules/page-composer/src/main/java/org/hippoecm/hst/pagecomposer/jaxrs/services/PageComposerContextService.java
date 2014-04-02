@@ -20,9 +20,9 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -63,7 +63,6 @@ public class PageComposerContextService {
         }
     }
 
-
     public String getRenderingMountId() {
         final String renderingMountId = (String)getRequestContext().getServletRequest().getSession(true).getAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID);
         if (renderingMountId == null) {
@@ -72,14 +71,38 @@ public class PageComposerContextService {
         return renderingMountId;
     }
 
-    public HstSite getEditingLiveSite() {
-        final Mount mount = getEditingMount();
-        return mount.getHstSite();
+
+    public String getEditingLiveConfigurationPath() {
+        String editingPreviewConfigurationPath = getEditingPreviewConfigurationPath();
+        if (editingPreviewConfigurationPath.endsWith("-preview")) {
+            return StringUtils.substringBeforeLast(editingPreviewConfigurationPath, "-preview");
+        }
+        // there is no preview yet: Live and preview are same paths
+        return editingPreviewConfigurationPath;
     }
 
+    public String getEditingPreviewConfigurationPath() {
+        return getEditingPreviewSite().getConfigurationPath();
+    }
+
+    public String getEditingLiveChannelPath() {
+        final String channelPath = getEditingPreviewChannelPath();
+        if (channelPath.endsWith("-preview")) {
+            return StringUtils.substringAfterLast(channelPath, "-preview");
+        }
+        // there is no preview yet: Live and preview are same paths
+        return channelPath;
+    }
+
+    public String getEditingPreviewChannelPath() {
+        final Mount previewMount = getEditingMount();
+        return  previewMount.getChannelPath();
+    }
+
+
     public HstSite getEditingPreviewSite() {
-        final Mount liveMount = getEditingMount();
-        return castToContextualizableMount(liveMount).getPreviewHstSite();
+        final Mount previewMount = getEditingMount();
+        return previewMount.getHstSite();
     }
 
     public Mount getEditingMount() {
@@ -87,38 +110,26 @@ public class PageComposerContextService {
         final String renderingMountId = getRenderingMountId();
         Mount mount = requestContext.getVirtualHost().getVirtualHosts().getMountByIdentifier(renderingMountId);
         if (mount == null) {
-            throw new IllegalStateException("Cound not find a Mount for identifier + '"+renderingMountId+"'");
+            String msg = String.format("Could not find a Mount for identifier + '%s'", renderingMountId);
+            throw new IllegalStateException(msg);
+        }
+        if (!Mount.PREVIEW_NAME.equals(mount.getType())) {
+            String msg = String.format("Expected a preview (decorated) mount but '%s' is not of " +
+                    "type preview.", mount.toString());
+            throw new IllegalStateException(msg);
         }
         return mount;
-    }
-
-
-    public String getEditingPreviewChannelPath() {
-        final Mount liveMount = getEditingMount();
-        // assert is contextualizable mount
-        castToContextualizableMount(liveMount);
-        return  liveMount.getChannelPath()+ "-preview";
     }
 
     /**
      * @return the preview {@link org.hippoecm.hst.configuration.channel.Channel} and <code>null</code> if there is no preview channel available
      */
     public Channel getEditingPreviewChannel() {
-        final String previewChannelPath =  getEditingPreviewChannelPath();
-        return getRequestContext().getVirtualHost().getVirtualHosts().getChannelByJcrPath(previewChannelPath);
+        return getEditingMount().getChannel();
     }
 
     public boolean hasPreviewConfiguration() {
-        final Mount mount = getEditingMount();
-        return castToContextualizableMount(mount).getPreviewHstSite().hasPreviewConfiguration();
+        return getEditingPreviewSite().hasPreviewConfiguration();
     }
 
-    private ContextualizableMount castToContextualizableMount(Mount liveMount) throws IllegalStateException{
-        if (liveMount instanceof  ContextualizableMount) {
-            return ContextualizableMount.class.cast(liveMount);
-        } else {
-            throw new IllegalStateException("Expected a mount of type "+ContextualizableMount.class.getName()+"" +
-                " but found '"+liveMount.toString()+"' which is of type " + liveMount.getClass().getName());
-        }
-    }
 }

@@ -31,7 +31,6 @@
 
     <property name="linkProcessor" ref="org.hippoecm.hst.core.linking.HstLinkProcessor"/>
     <property name="locationResolvers" ref="org.hippoecm.hst.core.linking.locationResolvers"/>
-    <property name="mountDecorator" ref="org.hippoecm.hst.core.internal.MountDecorator"/>
   </bean>
 
   <bean id="org.hippoecm.hst.core.linking.locationResolvers"

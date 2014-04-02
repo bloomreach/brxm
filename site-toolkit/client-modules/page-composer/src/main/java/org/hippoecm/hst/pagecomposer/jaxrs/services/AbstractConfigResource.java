@@ -130,8 +130,8 @@ public class AbstractConfigResource {
 
 
     private void createMandatoryWorkspaceNodesIfMissing() throws RepositoryException {
-        final String liveConfigPath = getPageComposerContextService().getEditingLiveSite().getConfigurationPath();
-        final String previewConfigPath = getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
+        final String liveConfigPath = getPageComposerContextService().getEditingLiveConfigurationPath();
+        final String previewConfigPath = getPageComposerContextService().getEditingPreviewConfigurationPath();
         createMandatoryWorkspaceNodesIfMissing(liveConfigPath);
         createMandatoryWorkspaceNodesIfMissing(previewConfigPath);
     }
@@ -207,15 +207,11 @@ public class AbstractConfigResource {
     }
 
     protected String getPreviewConfigurationPath() {
-        return getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
+        return getPageComposerContextService().getEditingPreviewConfigurationPath();
     }
 
     protected String getPreviewConfigurationWorkspacePath() {
         return getPreviewConfigurationPath() + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
-    }
-
-    protected String getPreviewConfigurationPrototypePath() {
-        return getPreviewConfigurationPath() + "/" + HstNodeTypes.NODENAME_HST_PROTOTYPEPAGES;
     }
 
 }

@@ -26,6 +26,7 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.cache.HstEventsCollector;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstConfigurationEventListener;
 import org.hippoecm.hst.configuration.model.HstManager;
@@ -37,6 +38,8 @@ import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
+import org.hippoecm.hst.core.internal.MountDecorator;
+import org.hippoecm.hst.core.internal.MutableResolvedMount;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedMount;
@@ -62,6 +65,7 @@ public class AbstractPageComposerTest {
     protected HstEventsCollector hstEventsCollector;
     protected HippoSession session;
     protected Object hstModelMutex;
+    protected MountDecorator mountDecorator;
     private HstConfigurationEventListener listener;
 
 
@@ -78,6 +82,7 @@ public class AbstractPageComposerTest {
         this.hstURLFactory = HstServices.getComponentManager().getComponent(HstURLFactory.class.getName());
         this.hstEventsCollector = HstServices.getComponentManager().getComponent("hstEventsCollector");
         this.hstModelMutex = HstServices.getComponentManager().getComponent("hstModelMutex");
+        this.mountDecorator = HstServices.getComponentManager().getComponent(MountDecorator.class.getName());
 
         session = (HippoSession)createSession();
 
@@ -147,9 +152,11 @@ public class AbstractPageComposerTest {
         HstMutableRequestContext requestContext = rcc.create();
         HstContainerURL containerUrl = createContainerUrl(request, scheme, hostAndPort, requestURI, requestContext, queryString);
         requestContext.setBaseURL(containerUrl);
-        ResolvedSiteMapItem resolvedSiteMapItem = getResolvedSiteMapItem(containerUrl);
+        ResolvedSiteMapItem resolvedSiteMapItem = getResolvedSiteMapItem(containerUrl, requestContext);
+
         requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
         requestContext.setResolvedMount(resolvedSiteMapItem.getResolvedMount());
+
         HstURLFactory hstURLFactory = HstServices.getComponentManager().getComponent(HstURLFactory.class.getName());
         requestContext.setURLFactory(hstURLFactory);
         requestContext.setSiteMapMatcher(siteMapMatcher);
@@ -192,9 +199,13 @@ public class AbstractPageComposerTest {
         return hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
     }
 
-    protected ResolvedSiteMapItem getResolvedSiteMapItem(HstContainerURL url) throws ContainerException {
+    protected ResolvedSiteMapItem getResolvedSiteMapItem(HstContainerURL url, final HstMutableRequestContext requestContext) throws ContainerException {
         VirtualHosts vhosts = hstManager.getVirtualHosts();
-        return vhosts.matchSiteMapItem(url);
+        final ResolvedMount resolvedMount = vhosts.matchMount(url.getHostName(), url.getContextPath(), url.getRequestPath());
+        requestContext.setAttribute(ContainerConstants.UNDECORATED_MOUNT, resolvedMount.getMount());
+        final Mount decorated = mountDecorator.decorateMountAsPreview(resolvedMount.getMount());
+        ((MutableResolvedMount) resolvedMount).setMount(decorated);
+        return resolvedMount.matchSiteMapItem(url.getPathInfo());
     }
 
     protected void createHstConfigBackup(Session session) throws RepositoryException {

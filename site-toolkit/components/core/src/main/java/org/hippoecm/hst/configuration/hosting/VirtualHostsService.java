@@ -412,8 +412,8 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
     }
 
+    @Deprecated
     public ResolvedSiteMapItem matchSiteMapItem(HstContainerURL hstContainerURL)  throws MatchException {
-
         ResolvedVirtualHost resolvedVirtualHost = matchVirtualHost(hstContainerURL.getHostName());
         if(resolvedVirtualHost == null) {
             throw new MatchException("Unknown host '"+hstContainerURL.getHostName()+"'");

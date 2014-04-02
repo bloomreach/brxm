@@ -226,7 +226,7 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
     }
 
     protected String getLiveConfigurationPath() {
-        return mountResource.getPageComposerContextService().getEditingLiveSite().getConfigurationPath();
+        return mountResource.getPageComposerContextService().getEditingLiveConfigurationPath();
     }
 
     protected String getPreviewConfigurationWorkspacePath() {

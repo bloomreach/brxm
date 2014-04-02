@@ -121,8 +121,8 @@ public abstract class AbstractHelper {
     }
 
     protected void publishNodeList(final List<Node> lockedNodes) throws RepositoryException {
-        String liveConfigurationPath = pageComposerContextService.getEditingLiveSite().getConfigurationPath();
-        String previewConfigurationPath = pageComposerContextService.getEditingPreviewSite().getConfigurationPath();
+        String liveConfigurationPath = pageComposerContextService.getEditingLiveConfigurationPath();
+        String previewConfigurationPath = pageComposerContextService.getEditingPreviewConfigurationPath();
         final Session session = pageComposerContextService.getRequestContext().getSession();
         for (Node lockedNode : lockedNodes) {
             String relPath = lockedNode.getPath().substring(previewConfigurationPath.length());
@@ -155,8 +155,8 @@ public abstract class AbstractHelper {
     }
 
     protected void discardNodeList(final List<Node> lockedNodeRoots) throws RepositoryException {
-        String liveConfigurationPath = pageComposerContextService.getEditingLiveSite().getConfigurationPath();
-        String previewConfigurationPath = pageComposerContextService.getEditingPreviewSite().getConfigurationPath();
+        String liveConfigurationPath = pageComposerContextService.getEditingLiveConfigurationPath();
+        String previewConfigurationPath = pageComposerContextService.getEditingPreviewConfigurationPath();
         final Session session = pageComposerContextService.getRequestContext().getSession();
 
         for (Node lockedNodeRoot : lockedNodeRoots) {

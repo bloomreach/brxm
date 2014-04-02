@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.hosting.MutableMount;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.jcr.SessionSecurityDelegation;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -68,7 +67,7 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
 
         if(servletRequest.getHeader("CMS-User") == null && !requestContext.isCmsRequest()) {
             String ignoredPrefix = requestContext.getResolvedMount().getMatchingIgnoredPrefix();
-            if(!StringUtils.isEmpty(ignoredPrefix) && ignoredPrefix.equals(requestContext.getResolvedMount().getResolvedVirtualHost().getVirtualHost().getVirtualHosts().getCmsPreviewPrefix())) {
+            if(!StringUtils.isEmpty(ignoredPrefix) && ignoredPrefix.equals(requestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().getCmsPreviewPrefix())) {
                 // When the ignoredPrefix is not equal cmsPreviewPrefix the request is only allowed in the CMS CONTEXT
                 try {
                     servletResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
@@ -147,11 +146,6 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
             if (encryptedCredentials == null) {
                 // no secret or credentials; if possible, add the secret and request the
                 // encrypted credentials by redirecting back to CMS
-
-                if(!(requestContext.getResolvedMount().getMount() instanceof MutableMount)) {
-                    throw new ContainerException("CmsSecurityValve is only available for mounts that are of type MutableMount.");
-                }
-
                 final String method = servletRequest.getMethod();
                 if (!"GET".equals(method) && !"HEAD".equals(method)) {
                     try {

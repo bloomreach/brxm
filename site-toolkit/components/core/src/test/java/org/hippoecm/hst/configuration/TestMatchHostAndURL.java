@@ -482,8 +482,8 @@ public class TestMatchHostAndURL extends AbstractTestConfigurations {
                 ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                 
                 assertFalse("For port 7979 we do not have a configured a portmount, and thus we should get a mount that is live ", mount.getMount().isPreview());
-                
-                assertTrue("Resolved virtualhost has a portMount but this port has to be 0 because it is not present ",mount.getResolvedVirtualHost().getPortNumber() == 0);
+
+                assertTrue("Resolved virtualhost has a portMount but this port has to be 0 because it is not present ",mount.getPortNumber() == 0);
                 
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
@@ -559,7 +559,7 @@ public class TestMatchHostAndURL extends AbstractTestConfigurations {
                 
                 assertTrue("For port 8081 we do not have a configured a portmount, and thus we should get a mount that is preview ", mount.getMount().isPreview());
                 
-                assertTrue("Resolved virtualhost has a portMount and this mount has to be 8081 because it is present ",mount.getResolvedVirtualHost().getPortNumber() == 8081);
+                assertTrue("Resolved virtualhost has a portMount and this mount has to be 8081 because it is present ",mount.getPortNumber() == 8081);
                 
                 
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);

@@ -97,8 +97,8 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
     public HstContainerURL parseURL(ResolvedMount mount, String contextPath, String requestPath, String requestCharacterEncoding) {
         HstContainerURLImpl url = new HstContainerURLImpl();
         url.setContextPath(contextPath);
-        url.setHostName(mount.getResolvedVirtualHost().getResolvedHostName());
-        url.setPortNumber(mount.getResolvedVirtualHost().getPortNumber());
+        url.setHostName(mount.getMount().getVirtualHost().getHostName());
+        url.setPortNumber(mount.getPortNumber());
         url.setResolvedMountPath(mount.getResolvedMountPath());
         url.setRequestPath(requestPath);
         url.setPathInfo(requestPath.substring(mount.getResolvedMountPath().length()));

@@ -52,7 +52,6 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
     private HstLinkProcessor linkProcessor;
     
     private List<LocationResolver> locationResolvers;
-    private MountDecorator mountDecorator;
 
     public void setBinariesPrefix(String binariesPrefix){
         this.binariesPrefix = binariesPrefix;
@@ -82,11 +81,6 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
     public void setPageNotFoundPath(String pageNotFoundPath){
         this.pageNotFoundPath = PathUtils.normalizePath(pageNotFoundPath);
     }
-
-    public void setMountDecorator(final MountDecorator mountDecorator) {
-        this.mountDecorator = mountDecorator;
-    }
-
 
     public void clear() {
         // nothing to clear for now
@@ -414,9 +408,6 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                         
                         List<Mount> mountsForHostGroup = mount.getVirtualHost().getVirtualHosts().getMountsByHostGroup(mount.getVirtualHost().getHostGroupName());
 
-                        if (Mount.PREVIEW_NAME.equals(mount.getType()) && isCmsRequest) {
-                            mountsForHostGroup = decorateMountsToPreview(mountsForHostGroup);
-                        }
                         /*
                          * There can be multiple suited Mount's (for example the Mount for preview and composermode can be the 'same' subsite). We
                          * choose the best suited Mount as follows:
@@ -585,10 +576,6 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                     }
                 }
 
-                if (Mount.PREVIEW_NAME.equals(type) && isCmsRequest) {
-                    mountsForHostGroup = decorateMountsToPreview(mountsForHostGroup);
-                }
-
                 /*
                  * There can be multiple suited Mount's (for example the Mount for preview and composermode can be the 'same' subsite). We
                  * choose the candicate mounts as follows:
@@ -669,25 +656,6 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             
             return allLinks;
         }
-
-        private List<Mount> decorateMountsToPreview(final List<Mount> mounts) {
-            List<Mount> previewMounts = new ArrayList<>();
-            for (Mount mount : mounts) {
-                if (Mount.PREVIEW_NAME.equals(mount.getType())) {
-                    previewMounts.add(mount);
-                } else {
-                    if (mount instanceof ContextualizableMount) {
-                        log.debug("decorating mount '{}' to preview mount", mount.toString());
-                        previewMounts.add(mountDecorator.decorateMountAsPreview((ContextualizableMount)mount));
-                    } else {
-                        log.info("Cannot decorate mount '{}' to preview since not an instanceof ContextualizableMount. Skipping" +
-                                "this mount.", mount.toString());
-                    }
-                }
-            }
-            return previewMounts;
-        }
-
 
         /**
          * @param nodePath jcr node path

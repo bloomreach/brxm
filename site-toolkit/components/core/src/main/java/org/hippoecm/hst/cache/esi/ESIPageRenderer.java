@@ -199,7 +199,7 @@ public class ESIPageRenderer implements ComponentManagerAware {
                 String curContextPath = curBaseURL.getContextPath();
                 String requestPathFromURL = uri.getPath();
 
-                if (curResolvedMount.getResolvedVirtualHost().getVirtualHost().isContextPathInUrl()) {
+                if (curResolvedMount.getMount().getVirtualHost().isContextPathInUrl()) {
                     requestPathFromURL = StringUtils.substringAfter(uri.getPath(), curContextPath);
                 }
 

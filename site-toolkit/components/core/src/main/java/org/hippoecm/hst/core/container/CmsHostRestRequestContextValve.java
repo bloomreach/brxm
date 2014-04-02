@@ -16,18 +16,35 @@
 package org.hippoecm.hst.core.container;
 
 
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
+import org.hippoecm.hst.core.internal.MountDecorator;
+import org.hippoecm.hst.core.internal.MutableResolvedMount;
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedMount;
 
 /**
  * CmsHostRestRequestContextValve sets an attribute on the request that indicates it is a request from a CMS host context
  */
 public class CmsHostRestRequestContextValve extends AbstractBaseOrderableValve {
 
+    private MountDecorator mountDecorator;
+
+    public void setMountDecorator(final MountDecorator mountDecorator) {
+        this.mountDecorator = mountDecorator;
+    }
     @Override
     public void invoke(ValveContext context) throws ContainerException {
 
         context.getServletRequest().setAttribute(ContainerConstants.CMS_REST_REQUEST_CONTEXT, Boolean.TRUE);
-        ((HstMutableRequestContext)context.getRequestContext()).setCmsRequest(true);
+        final HstRequestContext requestContext = context.getRequestContext();
+
+        ((HstMutableRequestContext) requestContext).setCmsRequest(true);
+        // decorate the mount to a preview mount
+        final ResolvedMount resolvedMount = requestContext.getResolvedMount();
+        requestContext.setAttribute(ContainerConstants.UNDECORATED_MOUNT, resolvedMount.getMount());
+        final Mount decoratedPreviewMount = mountDecorator.decorateMountAsPreview(resolvedMount.getMount());
+        ((MutableResolvedMount) resolvedMount).setMount(decoratedPreviewMount);
         context.invokeNext();
 
     }

@@ -108,7 +108,7 @@ public class TestSiteService extends AbstractTestConfigurations {
         assertNull(hstSite.componentsConfiguration);
         assertNull(previewHstSite.componentsConfiguration);
 
-        final VirtualHosts virtualHosts = resMount.getResolvedVirtualHost().getVirtualHost().getVirtualHosts();
+        final VirtualHosts virtualHosts = resMount.getMount().getVirtualHost().getVirtualHosts();
         assertTrue(virtualHosts.getChannelById("testchannel").getChangedBySet() instanceof HashSet);
 
         virtualHosts.getChannelById("testchannel").getChangedBySet().size();
@@ -154,7 +154,7 @@ public class TestSiteService extends AbstractTestConfigurations {
                 final HstSiteService hstSite = (HstSiteService)mount.getHstSite();
                 // componentsConfiguration is laoded lazily
                 assertNull(hstSite.componentsConfiguration);
-                final VirtualHosts virtualHosts = resMount.getResolvedVirtualHost().getVirtualHost().getVirtualHosts();
+                final VirtualHosts virtualHosts = resMount.getMount().getVirtualHost().getVirtualHosts();
 
                 assertEquals(0, virtualHosts.getChannelById("testchannel").getChangedBySet().size());
 

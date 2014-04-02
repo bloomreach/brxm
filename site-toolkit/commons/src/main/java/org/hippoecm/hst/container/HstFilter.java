@@ -409,16 +409,16 @@ public class HstFilter implements Filter {
                                 session.setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, resolvedMount.getMount().getIdentifier());
                                 session.setAttribute(ContainerConstants.RENDERING_HOST, renderingHost);
                                 if (resolvedMount instanceof MutableResolvedMount) {
-                                    Mount mount = resolvedMount.getMount();
-                                    if (!(mount instanceof ContextualizableMount)) {
+                                    Mount undecoratedMount = resolvedMount.getMount();
+                                    if (!(undecoratedMount instanceof ContextualizableMount)) {
                                         throw new MatchException("The matched mount for request '" + hostName + " and " + containerRequest.getRequestURI() + "' is not an instanceof of a ContextualizableMount. Cannot act as preview mount. Cannot proceed request for CMS SSO environment.");
                                     }
                                     MountDecorator mountDecorator = HstServices.getComponentManager().getComponent(MountDecorator.class.getName());
-                                    Mount decoratedMount = mountDecorator.decorateMountAsPreview((ContextualizableMount) mount);
-                                    if (decoratedMount == mount) {
-                                        log.debug("Matched mount pointing to site '{}' is already a preview so no need for CMS SSO context to decorate the mount to a preview", mount.getMountPoint());
+                                    Mount decoratedMount = mountDecorator.decorateMountAsPreview(undecoratedMount);
+                                    if (decoratedMount == undecoratedMount) {
+                                        log.debug("Matched mount pointing to site '{}' is already a preview so no need for CMS SSO context to decorate the mount to a preview", undecoratedMount.getMountPoint());
                                     } else {
-                                        log.debug("Matched mount pointing to site '{}' is because of CMS SSO context replaced by preview decorated mount pointing to site '{}'", mount.getMountPoint(), decoratedMount.getMountPoint());
+                                        log.debug("Matched mount pointing to site '{}' is because of CMS SSO context replaced by preview decorated mount pointing to site '{}'", undecoratedMount.getMountPoint(), decoratedMount.getMountPoint());
                                     }
                                     ((MutableResolvedMount) resolvedMount).setMount(decoratedMount);
                                 } else {

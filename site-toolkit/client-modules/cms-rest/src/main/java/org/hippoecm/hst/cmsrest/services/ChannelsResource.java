@@ -26,7 +26,6 @@ import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.rest.ChannelService;
@@ -52,20 +51,21 @@ public class ChannelsResource extends BaseResource implements ChannelService {
         final VirtualHosts virtualHosts = requestContext.getVirtualHost().getVirtualHosts();
         final List<Mount> mountsForHostGroup = virtualHosts.getMountsByHostGroup(virtualHosts.getChannelManagerHostGroupName());
         for (Mount mount : mountsForHostGroup) {
-            if (!(mount instanceof ContextualizableMount)) {
-                log.debug("Skip mount '{}' because not a ContextualizableMount (but instead for example a custom Mount used for" +
-                        "cms rest communication)", mount);
+            if (!Mount.PREVIEW_NAME.equals(mount.getType())) {
+                log.debug("Skipping non preview mount '{}'. This can be for example the 'composer' auto augmented mount.",
+                        mount.toString());
                 continue;
             }
-            final Channel previewChannel = ((ContextualizableMount) mount).getPreviewChannel();
-            if (previewChannel == null) {
-
+            final Channel channel =  mount.getChannel();
+            if (channel == null) {
                 log.debug("Skipping link for mount '{}' since it does not have a channel", mount.getName());
                 continue;
             }
-            if (channelFilter.apply(previewChannel)) {
-                log.info("Skipping channel '{}' because filtered out by channel filters", previewChannel.toString());
-                channels.add(previewChannel);
+            if (channelFilter.apply(channel)) {
+                log.debug("Including channel '{}' because passes filters.", channel.toString());
+                channels.add(channel);
+            } else {
+                log.info("Skipping channel '{}' because filtered out by channel filters.", channel.toString());
             }
         }
 

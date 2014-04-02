@@ -26,6 +26,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
@@ -61,6 +62,9 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
         prototypeNode.getNode("main/container2").remove();
         session.save();
         mockNewRequest(session, "localhost", "/home");
+        PrototypesRepresentation representation = (PrototypesRepresentation)((ExtResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
+        assertEquals(1, representation.getPrototypes().size());
+        assertFalse(representation.getPrototypes().get(0).getHasContainerInPageDefinition());
      }
 
 

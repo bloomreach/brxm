@@ -73,7 +73,10 @@ public interface VirtualHosts {
      * @return the resolvedSiteMapItem for this request
      * @throws MatchException when the matching cannot be done, for example because no valid virtual hosts are configured or when the request path does not match
      * a sitemap item
+     * @deprecated since 2.28.00 (CMS 7.9) use {@link #matchMount(String, String, String)} instead and then
+     * {@link ResolvedMount#matchSiteMapItem(String)}
      */
+    @Deprecated
     ResolvedSiteMapItem matchSiteMapItem(HstContainerURL hstContainerURL) throws MatchException;
 
 
@@ -155,7 +158,6 @@ public interface VirtualHosts {
     List<String> getHostGroupNames();
 
     /**
-     *
      * @param uuid
      * @return
      */

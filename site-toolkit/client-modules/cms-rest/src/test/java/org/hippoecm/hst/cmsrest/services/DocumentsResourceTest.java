@@ -19,20 +19,26 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.cmsrest.AbstractCmsRestTest;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.component.HstURLFactory;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
+import org.hippoecm.hst.core.internal.MountDecorator;
+import org.hippoecm.hst.core.internal.MutableResolvedMount;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -50,6 +56,7 @@ public class DocumentsResourceTest extends AbstractCmsRestTest {
     private HstSiteMapMatcher siteMapMatcher;
     private DocumentsResource documentsResource;
     private String homePageNodeId;
+    protected MountDecorator mountDecorator;
 
     @Override
     @Before
@@ -59,6 +66,7 @@ public class DocumentsResourceTest extends AbstractCmsRestTest {
         this.linkCreator = getComponentManager().getComponent(HstLinkCreator.class.getName());
         this.siteMapMatcher = getComponentManager().getComponent(HstSiteMapMatcher.class.getName());
         this.hstURLFactory = getComponentManager().getComponent(HstURLFactory.class.getName());
+        this.mountDecorator = HstServices.getComponentManager().getComponent(MountDecorator.class.getName());
         this.session = createSession();
     }
 
@@ -81,7 +89,7 @@ public class DocumentsResourceTest extends AbstractCmsRestTest {
         ModifiableRequestContextProvider.set(requestContext);
     }
     @Test
-    public void testDocumentResourceGetURLIsFullyQualifiedSiteURLs() throws Exception {
+    public void testDocumentResourceLiveUrls() throws Exception {
         initRequest();
         // this homepage document can be exposed by two unittest mounts name (see hst-unittestvirtualhosts.xml):
         /*
@@ -112,22 +120,11 @@ public class DocumentsResourceTest extends AbstractCmsRestTest {
     }
 
     @Test
-    public void testDocumentResourceGetLinkToUrlFormIsNotFullyQualified() throws Exception {
+    public void testDocumentResourcePreviewUrls() throws Exception {
         initRequest();
-        /*
-         * same test as above, but now, we do get the bestLink and call toUrlForm, however, this time,
-         * the toUrlForm is done with the requestContext marked as 'cmsRequest' which makes the link absolute (starting
-         * with /) but not containing the host : THIS is even though we call toUrlForm with 'true' meaning fully qualified.
-         *
-         * However, link for cms context never must be fullyqualified, as they must be resolved over the host of the cms!
-         * This also means it does not use the 'onlyforcontextpath' of the matched mount, but the default context path of 
-         * the site application which is 'site' instead of 'mycontextpath'
-         * 
-         */
-        HstLink bestLink = documentsResource.getBestLink(homePageNodeId, "live");
-        String url =  bestLink.toUrlForm(RequestContextProvider.get(), true);
-        // NOTE url only contains an absolute path
-        assertEquals("/site/examplecontextpathonly", url);
+        String url = documentsResource.getUrl(homePageNodeId, "preview");
+        assertEquals("/site/preview/custompipeline", url);
+        System.out.println(url);
     }
 
     @Test
@@ -160,7 +157,7 @@ public class DocumentsResourceTest extends AbstractCmsRestTest {
         HstMutableRequestContext requestContext = rcc.create();
         HstContainerURL containerUrl = createContainerUrlForCmsRequest(requestContext, hostAndPort, requestURI);
         requestContext.setBaseURL(containerUrl);
-        requestContext.setResolvedMount(getResolvedMount(containerUrl));
+        requestContext.setResolvedMount(getResolvedMount(containerUrl, requestContext));
         HstURLFactory hstURLFactory = getComponentManager().getComponent(HstURLFactory.class.getName());
         requestContext.setURLFactory(hstURLFactory);
         requestContext.setSiteMapMatcher(siteMapMatcher);
@@ -193,8 +190,13 @@ public class DocumentsResourceTest extends AbstractCmsRestTest {
         return hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
     }
 
-    public ResolvedMount getResolvedMount(HstContainerURL url) throws ContainerException {
+    public ResolvedMount getResolvedMount(HstContainerURL url, final HstMutableRequestContext requestContext) throws ContainerException {
         VirtualHosts vhosts = hstManager.getVirtualHosts();
-        return vhosts.matchMount(url.getHostName(), url.getContextPath(), url.getRequestPath());
+        final ResolvedMount resolvedMount = vhosts.matchMount(url.getHostName(), url.getContextPath(), url.getRequestPath());
+        requestContext.setAttribute(ContainerConstants.UNDECORATED_MOUNT, resolvedMount.getMount());
+        final Mount decorated = mountDecorator.decorateMountAsPreview(resolvedMount.getMount());
+        ((MutableResolvedMount) resolvedMount).setMount(decorated);
+    return resolvedMount;
     }
+
 }

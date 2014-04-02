@@ -78,16 +78,16 @@ public class TestCustomMountAndVirtualCmsHostAugmenter extends AbstractTestConfi
 
         final ResolvedMount localHostComposerMount = hstSitesManager.getVirtualHosts().matchMount("localhost", "", "_rp");
         assertNotNull(localHostComposerMount);
-        assertEquals(localHostComposerMount.getResolvedVirtualHost().getVirtualHost().getHostGroupName(), "dev-localhost");
+        assertEquals(localHostComposerMount.getMount().getVirtualHost().getHostGroupName(), "dev-localhost");
 
         final ResolvedMount testGroupHostComposerMount = hstSitesManager.getVirtualHosts().matchMount("testgroup.example.com", "", "_rp");
         assertNotNull(testGroupHostComposerMount);
-        assertTrue(testGroupHostComposerMount.getResolvedVirtualHost().getVirtualHost().getHostGroupName().startsWith("org.hippoecm.hst.core.hosting.CustomMountAndVirtualCmsHostAugmenter-"));
+        assertTrue(testGroupHostComposerMount.getMount().getVirtualHost().getHostGroupName().startsWith("org.hippoecm.hst.core.hosting.CustomMountAndVirtualCmsHostAugmenter-"));
 
         final ResolvedMount globalAndSubsetComposerMount = hstSitesManager.getVirtualHosts().matchMount("globalandsubset.example.com", "", "_rp");
 
         assertNotNull(globalAndSubsetComposerMount);
-        assertTrue(globalAndSubsetComposerMount.getResolvedVirtualHost().getVirtualHost().getHostGroupName().startsWith("org.hippoecm.hst.core.hosting.CustomMountAndVirtualCmsHostAugmenter-"));
+        assertTrue(globalAndSubsetComposerMount.getMount().getVirtualHost().getHostGroupName().startsWith("org.hippoecm.hst.core.hosting.CustomMountAndVirtualCmsHostAugmenter-"));
 
     }
 

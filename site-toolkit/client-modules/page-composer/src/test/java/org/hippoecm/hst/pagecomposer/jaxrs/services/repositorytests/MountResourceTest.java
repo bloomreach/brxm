@@ -76,10 +76,13 @@ public class MountResourceTest extends AbstractMountResourceTest {
 
         mockNewRequest(session, "localhost", "/home");
 
-        assertTrue(pccs.getEditingPreviewSite().getConfigurationPath().equals(pccs.getEditingLiveSite().getConfigurationPath() + "-preview"));
+        assertTrue(pccs.getEditingPreviewSite().getConfigurationPath().equals(pccs.getEditingLiveConfigurationPath() + "-preview"));
+        assertTrue(pccs.getEditingPreviewConfigurationPath().equals(pccs.getEditingLiveConfigurationPath() + "-preview"));
         assertTrue(pccs.getEditingPreviewChannel().getHstConfigPath().equals(pccs.getEditingPreviewSite().getConfigurationPath()));
         assertEquals(0, pccs.getEditingPreviewChannel().getChangedBySet().size());
-        assertTrue(pccs.getEditingPreviewChannel().getId().equals(pccs.getEditingMount().getChannel().getId() + "-preview"));
+
+        assertTrue(pccs.getEditingPreviewChannel().getId().endsWith("-preview"));
+        assertTrue(pccs.getEditingPreviewChannel().getId().equals(pccs.getEditingMount().getChannel().getId()));
 
         final String previewContainerNodeUUID = session.getNode(previewConfigurationPath)
                 .getNode("hst:workspace/hst:containers/testcontainer").getIdentifier();

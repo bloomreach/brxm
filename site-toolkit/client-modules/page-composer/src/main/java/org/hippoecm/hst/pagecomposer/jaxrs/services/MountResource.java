@@ -176,14 +176,12 @@ public class MountResource extends AbstractConfigResource {
     }
 
     private void createPreviewChannelAndConfigurationNode() throws RepositoryException {
-        HstSite editingLiveSite = getPageComposerContextService().getEditingLiveSite();
-        String liveConfigurationPath = editingLiveSite.getConfigurationPath();
+        String liveConfigurationPath = getPageComposerContextService().getEditingLiveConfigurationPath();
         String previewConfigurationPath = liveConfigurationPath + "-preview";
         Session session = getPageComposerContextService().getRequestContext().getSession();
         JcrUtils.copy(session, liveConfigurationPath, previewConfigurationPath);
 
-        Mount editingMount = getPageComposerContextService().getEditingMount();
-        String liveChannelPath =  editingMount.getChannelPath();
+        String liveChannelPath =  getPageComposerContextService().getEditingLiveChannelPath();
         String previewChannelPath = liveChannelPath + "-preview";
         JcrUtils.copy(session, liveChannelPath, previewChannelPath);
     }
@@ -254,8 +252,8 @@ public class MountResource extends AbstractConfigResource {
 
     private Response publishChangesOfUsers(List<String> userIds) {
         try {
-            String liveConfigurationPath = getPageComposerContextService().getEditingLiveSite().getConfigurationPath();
-            String previewConfigurationPath = getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
+            String liveConfigurationPath = getPageComposerContextService().getEditingLiveConfigurationPath();
+            String previewConfigurationPath = getPageComposerContextService().getEditingPreviewConfigurationPath();
 
             HippoSession session = HstConfigurationUtils.getNonProxiedSession(getPageComposerContextService().getRequestContext().getSession(false));
             List<String> mainConfigNodeNamesToPublish = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds);
@@ -379,7 +377,7 @@ public class MountResource extends AbstractConfigResource {
     private Response discardChanges(List<String> userIds) {
         try {
             final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
-            String liveConfigurationPath = getPageComposerContextService().getEditingLiveSite().getConfigurationPath();
+            String liveConfigurationPath = getPageComposerContextService().getEditingLiveConfigurationPath();
             final HstSite editingPreviewSite = getPageComposerContextService().getEditingPreviewSite();
             String previewConfigurationPath = editingPreviewSite.getConfigurationPath();
 

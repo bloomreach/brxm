@@ -130,7 +130,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
             // check for a wildcard (**) matcher :
             HstSiteMapItem hstSiteMapItemAny = siteMap.getSiteMapItem(ANY);
             if(hstSiteMapItemAny == null) {
-                log.info("Did not find a matching sitemap item for path '{}', Mount '{}' and Host '"+resolvedMount.getResolvedVirtualHost().getResolvedHostName()+"'" +
+                log.info("Did not find a matching sitemap item for path '{}', Mount '{}' and Host '"+resolvedMount.getMount().getVirtualHost().getHostName()+"'" +
                         ". Return null", pathInfo, resolvedMount.getMount().getParent() == null ? "hst:root" : resolvedMount.getMount().getMountPath() );
                 throw new NotFoundException("PathInfo '"+pathInfo+"' could not be matched");
             } else {

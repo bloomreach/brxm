@@ -71,6 +71,7 @@
 
   <bean id="cmsHostRestRequestContextValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CmsHostRestRequestContextValve">
     <property name="valveName" value="cmsHostRestRequestContextValve" />
+    <property name="mountDecorator" ref="org.hippoecm.hst.core.internal.MountDecorator"/>
   </bean>
 
   <!-- Generic no-cache response headers setting valve -->

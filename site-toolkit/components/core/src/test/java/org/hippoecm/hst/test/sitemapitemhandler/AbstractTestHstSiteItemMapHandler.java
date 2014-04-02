@@ -60,9 +60,5 @@ public abstract class AbstractTestHstSiteItemMapHandler implements HstSiteMapIte
             HttpServletResponse response, ResolvedSiteMapItem currentResolvedSiteMapItem, String pathInfo){
         return currentResolvedSiteMapItem.getResolvedMount().matchSiteMapItem(pathInfo);
     }
-    
-    public HstURLFactory getURLFactory(ResolvedSiteMapItem resolvedSiteMapItem) {
-        HstURLFactory factory = resolvedSiteMapItem.getResolvedMount().getResolvedVirtualHost().getVirtualHost().getVirtualHosts().getHstManager().getUrlFactory();
-        return factory;
-    }
+
 }

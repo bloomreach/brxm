@@ -48,10 +48,5 @@ public interface MutableMount extends Mount {
      * @throws IllegalArgumentException if the <code>mount</code> could not be added
      */
     void addMount(MutableMount mount) throws IllegalArgumentException;
-    
-    /**
-     * @return the cms location (fully qualified URL) or <code>null</code> if not configured
-     */
-    String getCmsLocation();
 
 }

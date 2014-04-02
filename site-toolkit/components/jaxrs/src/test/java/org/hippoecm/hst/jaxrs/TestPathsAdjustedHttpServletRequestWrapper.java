@@ -40,12 +40,11 @@ public class TestPathsAdjustedHttpServletRequestWrapper {
     @Before
     public void setUp() throws Exception {
         ResolvedVirtualHost resolvedVirtualHost = EasyMock.createNiceMock(ResolvedVirtualHost.class);
-        EasyMock.expect(resolvedVirtualHost.getResolvedHostName()).andReturn(serverName).anyTimes();
-        EasyMock.expect(resolvedVirtualHost.getPortNumber()).andReturn(serverPort).anyTimes();
+        //EasyMock.expect(resolvedVirtualHost.getResolvedHostName()).andReturn(serverName).anyTimes();
+        //EasyMock.expect(resolvedVirtualHost.getPortNumber()).andReturn(serverPort).anyTimes();
         
         resolvedMount = EasyMock.createNiceMock(ResolvedMount.class);
-        EasyMock.expect(resolvedMount.getResolvedVirtualHost()).andReturn(resolvedVirtualHost).anyTimes();
-        
+
         EasyMock.replay(resolvedVirtualHost);
         EasyMock.replay(resolvedMount);
     }

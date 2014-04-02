@@ -35,13 +35,19 @@ public interface ResolvedVirtualHost {
      * hostName might contain not yet filled in wildcards. 
      * @see VirtualHost#getHostName()
      * @return the hostName that resolved to this ResolvedVirtualHost
+     * @deprecated since HST 2.28.00 (CMS 7.9.0) use {@link #getVirtualHost()}#{@link org.hippoecm.hst.configuration.hosting.VirtualHost#getHostName()}
+     * instead
      */
+    @Deprecated
     String getResolvedHostName();
 
     /**
      * the portNumber that resolved to this ResolvedVirtualHost.
      * @return the portNumber that resolved to this ResolvedVirtualHost
+     * @deprecated since HST 2.28.00 (CMS 7.9.0) use {@link org.hippoecm.hst.core.request.ResolvedMount#getPortNumber()}
+     * instead
      */
+    @Deprecated
     int getPortNumber();
 
     /**

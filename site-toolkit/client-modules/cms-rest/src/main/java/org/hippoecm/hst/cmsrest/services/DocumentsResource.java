@@ -24,12 +24,14 @@ import javax.jcr.Node;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
+import org.hippoecm.hst.core.internal.MutableResolvedMount;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.rest.DocumentService;
 import org.hippoecm.hst.rest.beans.ChannelDocument;
 import org.slf4j.Logger;
@@ -62,12 +64,6 @@ public class DocumentsResource extends BaseResource implements DocumentService {
 
         for (HstLink link : canonicalLinks) {
             final Mount linkMount = link.getMount();
-            if (!(linkMount instanceof ContextualizableMount)) {
-                log.warn("Unexpected mount '{}' found because not an instance of ContextualizableMount. Skip " +
-                        "it as cannot be used as input for Channel Document", linkMount);
-                continue;
-            }
-
             final Channel channel = linkMount.getChannel();
 
             if (channel == null) {
@@ -125,25 +121,36 @@ public class DocumentsResource extends BaseResource implements DocumentService {
             return "";
         }
 
-        HstLink bestLink = getBestLink(uuid, type);
-        if (bestLink == null) {
-            return "";
+        HstRequestContext requestContext = RequestContextProvider.get();
+        final MutableResolvedMount resolvedMount = (MutableResolvedMount) requestContext.getResolvedMount();
+        final Mount previewDecoratedMount = resolvedMount.getMount();
+        if (Mount.LIVE_NAME.equals(type)) {
+            try {
+                // although this is a cms request, the links that are requested now are links meant to share, like in
+                // 'twitter', 'facebook', 'linkedin' or for example the news letter manager. Hence, during url creation, we
+                // temporarily switch off that the request is a cms request
+                ((HstMutableRequestContext) requestContext).setCmsRequest(false);
+                final Mount unDecoratedMount = (Mount) requestContext.getAttribute(ContainerConstants.UNDECORATED_MOUNT);
+                resolvedMount.setMount(unDecoratedMount);
+                HstLink bestLink = getBestLink(uuid, type);
+                if (bestLink == null) {
+                    return "";
+                }
+                return bestLink.toUrlForm(requestContext, true);
+
+            } finally {
+                // switch cms context back
+                ((HstMutableRequestContext) requestContext).setCmsRequest(true);
+                resolvedMount.setMount(previewDecoratedMount);
+            }
+        } else {
+            HstLink bestLink = getBestLink(uuid, type);
+            if (bestLink == null) {
+                return "";
+            }
+            return bestLink.toUrlForm(requestContext, true);
         }
 
-        HstRequestContext requestContext = RequestContextProvider.get();
-        if (requestContext.isCmsRequest()) {
-            // although this is a cms request, the links that are requested now are links meant to share, like in
-            // 'twitter', 'facebook', 'linkedin' or for example the news letter manager. Hence, during url creation, we
-            // temporarily switch off that the request is a cms request
-            try {
-                ((HstMutableRequestContext) requestContext).setCmsRequest(false);
-                return bestLink.toUrlForm(requestContext, true);
-            } finally {
-                // switch it back
-                ((HstMutableRequestContext) requestContext).setCmsRequest(true);
-            }
-        }
-        return bestLink.toUrlForm(requestContext, true);
     }
 
     /**
