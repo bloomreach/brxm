@@ -169,6 +169,31 @@
         ]
     },
     {
+        "needsInstallation": false,
+        "enabled": true,
+        "@type": "plugin",
+        "introduction": "Adds search component",
+        "name": "Search plugin",
+        "pluginId": "searchPlugin",
+        "restClasses": ["org.onehippo.essentials.plugins.search.SearchPluginResource"],
+        "type": "plugins",
+        "vendor": {
+            "@type": "vendor",
+            "name": "Hippo",
+            "url": "http://www.onehippo.com"
+        },
+        "libraries": [
+            {
+                "items": [
+                    {
+                        "component": "searchPlugin",
+                        "file": "searchPlugin.js"
+                    }
+                ]
+            }
+        ]
+    },
+    {
         "needsInstallation": true,
         "enabled": true,
         "@type": "plugin",
