@@ -16,34 +16,14 @@
 
 package org.onehippo.cms7.essentials.dashboard.banner;
 
-import java.util.Set;
-
-import org.onehippo.cms7.essentials.dashboard.packaging.DefaultPowerpack;
-import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableSet;
+import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportPowerpack;
 
 /**
  * @version "$Id$"
  */
-public class BannerPowerpack extends DefaultPowerpack {
+public class BannerPowerpack extends TemplateSupportPowerpack {
 
-    @Override
-    public Set<String> groupNames() {
-        final Boolean sampleData = Boolean.valueOf((String) getProperties().get(PROP_SAMPLE_DATA));
-        final String templateName = (String) getProperties().get(PROP_TEMPLATE_NAME);
-        final String templateGroup = Strings.isNullOrEmpty(templateName) ? "jsp" : templateName;
-        if (sampleData) {
-            return new ImmutableSet.Builder<String>()
-                    .add(EssentialConst.INSTRUCTION_GROUP_DEFAULT)
-                    .add(PROP_SAMPLE_DATA)
-                    .add(templateGroup).build();
-        }
-        return new ImmutableSet.Builder<String>()
-                .add(EssentialConst.INSTRUCTION_GROUP_DEFAULT)
-                .add(templateGroup).build();
-    }
+
     @Override
     public String getInstructionPath() {
         return "/META-INF/banner_instructions.xml";

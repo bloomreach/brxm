@@ -16,37 +16,12 @@
 
 package org.onehippo.cms7.essentials.dashboard.blog;
 
-import java.util.Set;
-
-import org.onehippo.cms7.essentials.dashboard.packaging.DefaultPowerpack;
-import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
-
-import com.google.common.collect.ImmutableSet;
+import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportPowerpack;
 
 /**
  * @version "$Id$"
  */
-public class BlogPowerpack extends DefaultPowerpack {
-
-
-
-    public static final ImmutableSet<String> JSP_GROUPS = new ImmutableSet.Builder<String>()
-            .add(EssentialConst.INSTRUCTION_GROUP_DEFAULT)
-            .add("jsp")
-            .build();
-
-
-    @Override
-    public Set<String> groupNames() {
-        final String templateName = (String) getProperties().get(PROP_TEMPLATE_NAME);
-        if (templateName != null) {
-            return new ImmutableSet.Builder<String>()
-                    .add(EssentialConst.INSTRUCTION_GROUP_DEFAULT)
-                    .add(templateName)
-                    .build();
-        }
-        return JSP_GROUPS;
-    }
+public class BlogPowerpack extends TemplateSupportPowerpack {
 
     @Override
     public String getInstructionPath() {

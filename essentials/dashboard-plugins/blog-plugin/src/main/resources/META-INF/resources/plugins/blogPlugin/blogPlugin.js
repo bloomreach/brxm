@@ -36,6 +36,7 @@
 
                 $scope.execute = function () {
                     var payload = Essentials.addPayloadData("templateName", $scope.templateName, null);
+                    Essentials.addPayloadData("sampleData", $scope.installSampleData, payload);
                     if ($scope.setupImport) {
                         // prefix importer values, so we have no key clashes:
                         var prefix = "importer_";

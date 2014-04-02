@@ -8,11 +8,11 @@
 
   <instructionSet group="jsp">
     <file action="copy" source="powerpack/jsp/essentials-search.jsp" target="{{jspRoot}}/essentials/essentials-search.jsp"/>
-    <xml action="copy" source="powerpack/hst/search-template-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="powerpack/xml/hst/search-template-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
 
   </instructionSet>
   <instructionSet group="freemarker">
     <file action="copy" source="powerpack/freemarker/essentials-search.ftl" target="{{freemarkerRoot}}/essentials/essentials-search.ftl"/>
-    <xml action="copy" source="powerpack/hst/search-template-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="powerpack/xml/hst/search-template-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
 </instructions>

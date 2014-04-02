@@ -684,6 +684,7 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/m
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/TemplateExistsException.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/package-info.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/packaging/DefaultPowerpack.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/packaging/TemplateSupportPowerpack.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/rest/BaseResource.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/rest/ErrorMessageRestful.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/rest/KeyValueRestful.java -text
@@ -758,6 +759,7 @@ plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/i
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/parser/DefaultInstructionParserTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/model/hst/HstConfigurationServiceTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/packaging/DefaultPowerpackTest.java -text
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/packaging/TemplateSupportPowerpackTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/rest/BaseResourceTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/rest/PluginModuleRestfulTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/rest/QueryRestfulTest.java -text

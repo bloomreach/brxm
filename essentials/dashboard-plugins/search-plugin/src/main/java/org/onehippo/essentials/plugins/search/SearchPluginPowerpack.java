@@ -16,10 +16,10 @@
 
 package org.onehippo.essentials.plugins.search;
 
-import org.onehippo.cms7.essentials.dashboard.packaging.DefaultPowerpack;
+import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportPowerpack;
 
 
-public class SearchPluginPowerpack extends DefaultPowerpack {
+public class SearchPluginPowerpack extends TemplateSupportPowerpack {
 
     @Override
     public String getInstructionPath() {
