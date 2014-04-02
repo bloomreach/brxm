@@ -51,6 +51,7 @@ public class CKEditorPanel extends Panel {
     private static final ResourceReference CKEDITOR_PANEL_JS = new PackageResourceReference(CKEditorPanel.class, "CKEditorPanel.js");
     private static final String CKEDITOR_TIMESTAMP = RandomStringUtils.randomAlphanumeric(4);
     private static final int LOGGED_EDITOR_CONFIG_INDENT_SPACES = 2;
+    private static final String CONFIG_STYLES_SET_LANGUAGE_PARAM = "{language}";
 
     private static final Logger log = LoggerFactory.getLogger(CKEditorPanel.class);
 
@@ -144,7 +145,9 @@ public class CKEditorPanel extends Panel {
             editorConfig.putOpt(CKEditorConstants.CONFIG_KEYSTROKES, numericKeystrokes);
 
             // load the localized hippo styles if no other styles are specified
-            JsonUtils.putIfAbsent(editorConfig, CKEditorConstants.CONFIG_STYLES_SET, HippoStyles.getConfigStyleSet(locale));
+            String stylesSet = editorConfig.optString(CKEditorConstants.CONFIG_STYLES_SET, HippoStyles.getConfigStyleSet(locale));
+            stylesSet = stylesSet.replace(CONFIG_STYLES_SET_LANGUAGE_PARAM, locale.getLanguage());
+            editorConfig.put(CKEditorConstants.CONFIG_STYLES_SET, stylesSet);
 
             // disable custom config loading if not configured
             JsonUtils.putIfAbsent(editorConfig, CKEditorConstants.CONFIG_CUSTOM_CONFIG, StringUtils.EMPTY);
