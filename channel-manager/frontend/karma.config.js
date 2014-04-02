@@ -104,6 +104,14 @@ module.exports = function(config) {
 
         // Continuous Integration mode
         // if true, it captures browsers, runs tests and exits
-        singleRun: false
+        singleRun: false,
+
+        preprocessors: {
+            'menu/**/!(*spec).js': ['coverage'],
+            'page/**/!(*spec).js': ['coverage'],
+            'pages/**/!(*spec).js': ['coverage'],
+            'shared/**/!(*spec).js': ['coverage']
+        }
+
     });
 };
