@@ -65,7 +65,7 @@ public class MountDecoratorImpl implements MountDecorator {
         return new MountAsPreviewDecorator(mount);
     }
 
-    private class MountAsPreviewDecorator implements Mount {
+    class MountAsPreviewDecorator implements Mount {
 
         private Mount delegatee;
         private Mount parentAsPreview;
@@ -404,7 +404,7 @@ public class MountDecoratorImpl implements MountDecorator {
 
     }
 
-    private class VirtualHostAsPreviewDecorator implements VirtualHost {
+    class VirtualHostAsPreviewDecorator implements VirtualHost {
 
         private VirtualHost delegatee;
 
@@ -540,7 +540,7 @@ public class MountDecoratorImpl implements MountDecorator {
         }
     }
 
-    private class PortMountAsPreviewDecorator implements PortMount {
+    class PortMountAsPreviewDecorator implements PortMount {
 
         private PortMount delegatee;
 
@@ -559,7 +559,7 @@ public class MountDecoratorImpl implements MountDecorator {
         }
     }
 
-    private class VirtualHostsAsPreviewDecorator implements VirtualHosts {
+    class VirtualHostsAsPreviewDecorator implements VirtualHosts {
         private VirtualHosts delegatee;
 
         private VirtualHostsAsPreviewDecorator(VirtualHosts delegatee) {
