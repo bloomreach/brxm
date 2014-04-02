@@ -15,7 +15,7 @@
   limitations under the License.
   --%>
 
-<%--@elvariable id="document" type="{{beansPackage}}.NewsDocument"--%>
+<%--@elvariable id="item" type="{{beansPackage}}.NewsDocument"--%>
 <%--@elvariable id="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable"--%>
 <%--@elvariable id="showPagination" type="java.lang.Boolean"--%>
 
