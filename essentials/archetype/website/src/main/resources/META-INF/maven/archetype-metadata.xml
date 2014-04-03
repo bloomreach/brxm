@@ -226,4 +226,11 @@
       <include>**/*.js</include>
     </includes>
   </fileSet>
+  <fileSet filtered="true" encoding="UTF-8">
+    <directory>essentials/src/main/webapp</directory>
+    <includes>
+      <include>**/*.xml</include>
+      <include>**/*.css</include>
+    </includes>
+  </fileSet>
 </archetype-descriptor>
