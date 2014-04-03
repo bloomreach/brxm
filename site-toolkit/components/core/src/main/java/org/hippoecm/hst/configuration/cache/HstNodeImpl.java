@@ -34,6 +34,7 @@ import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.provider.ValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.LoggerFactory;
 
@@ -264,16 +265,15 @@ public class HstNodeImpl implements HstNode {
             return;
         }
 
-        if (!session.nodeExists(getValueProvider().getPath())) {
+        log.debug("Reload provider for : "  + getValueProvider().getPath());
+        Node jcrNode = JcrUtils.getNodeIfExists(getValueProvider().getPath(), session);
+        if (jcrNode == null) {
             if (parent != null) {
                 log.debug("Removing path '{}' from HstNode tree.", getValueProvider().getPath());
                 parent.removeNode(getName());
             }
             return;
         }
-
-        log.debug("Reload provider for : "  + getValueProvider().getPath());
-        Node jcrNode = session.getNode(getValueProvider().getPath());
         setJCRValueProvider(new JCRValueProviderImpl(jcrNode, false, true, false));
         // node type might have changed, just reset
         nodeTypeName = StringPool.get(jcrNode.getPrimaryNodeType().getName());
