@@ -289,7 +289,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
                             boolean inherited = !containerItem.getValueProvider().getPath().startsWith(rootConfigurationPathPrefix);
                             // create a HstComponentConfigurationService that does not traverse to descendant components: this is not needed for the catalog. Hence, the argument 'false'
                             HstComponentConfiguration componentConfiguration = new HstComponentConfigurationService(containerItem,
-                                    null, HstNodeTypes.NODENAME_HST_COMPONENTS , false, null, inherited, null);
+                                    null, HstNodeTypes.NODENAME_HST_COMPONENTS , true, null, inherited, null);
                             availableContainerItems.add(componentConfiguration);
                             log.debug("Added catalog component to availableContainerItems with key '{}'", componentConfiguration.getId());
                         } catch (ModelLoadingException e) {

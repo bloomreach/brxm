@@ -237,7 +237,7 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
                         try {
                             // create a HstComponentConfigurationService that does not traverse to descendant components: this is not needed for the catalog. Hence, the argument 'false'
                             HstComponentConfiguration componentConfiguration = new HstComponentConfigurationService(containerItem,
-                                    null, HstNodeTypes.NODENAME_HST_COMPONENTS , false, null, true, null);
+                                    null, HstNodeTypes.NODENAME_HST_COMPONENTS , true, null, true, null);
                             commonCatalogItemsList.add(componentConfiguration);
                             log.debug("Added catalog component to availableContainerItems with key '{}'", componentConfiguration.getId());
                         } catch (ModelLoadingException e) {

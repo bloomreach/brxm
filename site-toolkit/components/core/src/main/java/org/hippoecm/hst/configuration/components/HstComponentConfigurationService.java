@@ -189,7 +189,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                                             final String rootNodeName,
                                             final Map<String, HstNode> referenceableContainers,
                                             final boolean inherited) {
-        this(node, parent, rootNodeName, true, referenceableContainers, inherited, null);
+        this(node, parent, rootNodeName, false, referenceableContainers, inherited, null);
     }
 
     /**
@@ -199,7 +199,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     public HstComponentConfigurationService(final HstNode node,
                                             final HstComponentConfiguration parent,
                                             final String rootNodeName,
-                                            final boolean traverseDescendants,
+                                            final boolean isCatalogItem,
                                             final Map<String, HstNode> referenceableContainers,
                                             final boolean inherited,
                                             final String explicitName) {
@@ -240,7 +240,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         } else if(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName())) {
             type = Type.CONTAINER_ITEM_COMPONENT;
             componentFilterTag = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_FILTER_TAG);
-            if (parent == null || !Type.CONTAINER_COMPONENT.equals(parent.getComponentType())) {
+            if (!isCatalogItem && (parent == null || !(Type.CONTAINER_COMPONENT.equals(parent.getComponentType())))) {
                 log.warn("Component of type '{}' at '{}' is not configured below a '{}' node. This is not allowed. " +
                         "Either change the primary nodetype to '{}' or '{}' or move the node below a node of type '{}'.",
                         new String[]{HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT, canonicalStoredLocation,
@@ -342,7 +342,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             lastModified = (lastModified == null) ?  parent.getLastModified() : lastModified;
         }
 
-        if(!traverseDescendants) {
+        if(isCatalogItem) {
             // do not load children 
             return;
         }
@@ -384,9 +384,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                     // the name of the component node
                     String explicitName = child.getValueProvider().getName();
                     return new HstComponentConfigurationService(referencedContainerNode,
-                            this, rootNodeName, true, referenceableContainers, inherited, explicitName);
+                            this, rootNodeName, false, referenceableContainers, inherited, explicitName);
                 } else {
-                    return new HstComponentConfigurationService(child, this, rootNodeName, true, referenceableContainers, inherited, null);
+                    return new HstComponentConfigurationService(child, this, rootNodeName, false, referenceableContainers, inherited, null);
                 }
             } catch (ModelLoadingException e) {
                 if (log.isDebugEnabled()) {
