@@ -50,6 +50,7 @@ import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TranslationUtils;
 import org.onehippo.cms7.essentials.rest.model.PropertyRestful;
@@ -106,7 +107,10 @@ public class ImageGalleryResource extends BaseResource {
 
         } catch (RepositoryException e) {
             log.error("Exception while trying to retrieve document types from repository {}", e);
+        } finally {
+            GlobalUtils.cleanupSession(session);
         }
+
         List<ImageProcessorRestful> processors = new ArrayList<>();
         processors.add(processorRestful);
 
@@ -131,6 +135,8 @@ public class ImageGalleryResource extends BaseResource {
                     saveImageProcessor(session, imageProcessor);
                 } catch (RepositoryException e) {
                     log.error("Error saving image sets:", e);
+                } finally {
+                    GlobalUtils.cleanupSession(session);
                 }
                 return imageProcessor;
             }
@@ -283,14 +289,18 @@ public class ImageGalleryResource extends BaseResource {
 
                 final PluginContext pluginContext = getPluginContext();
                 final Session session = pluginContext.createSession();
-                for (final ImageSetRestful imageSet : imageSets.getImageSets()) {
-                    try {
-                        saveImageSet(session, imageSet);
-                    } catch (RepositoryException e) {
-                        log.error("Error saving images {}", e);
+                try {
+                    for (final ImageSetRestful imageSet : imageSets.getImageSets()) {
+                        try {
+                            saveImageSet(session, imageSet);
+                        } catch (RepositoryException e) {
+                            log.error("Error saving images {}", e);
+                        }
                     }
+                    session.save();
+                } finally {
+                    GlobalUtils.cleanupSession(session);
                 }
-                session.save();
                 return imageSets;
             }
         } catch (JAXBException | IOException e) {
@@ -347,9 +357,14 @@ public class ImageGalleryResource extends BaseResource {
         final Session session = pluginContext.createSession();
 
 
-        final Node processorNode = session.getNode(GALLERY_PROCESSOR_SERVICE_PATH);
-        final List<ImageSetRestful> imageSets = fetchImageSets(session);
-        populateVariantsInImageSets(session, imageSets, processorNode);
+        final List<ImageSetRestful> imageSets;
+        try {
+            final Node processorNode = session.getNode(GALLERY_PROCESSOR_SERVICE_PATH);
+            imageSets = fetchImageSets(session);
+            populateVariantsInImageSets(session, imageSets, processorNode);
+        } finally {
+            GlobalUtils.cleanupSession(session);
+        }
 
         return imageSets;
     }

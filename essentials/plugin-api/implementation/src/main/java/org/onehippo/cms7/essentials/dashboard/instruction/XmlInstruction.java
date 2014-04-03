@@ -181,7 +181,7 @@ public class XmlInstruction extends PluginInstruction {
         } catch (RepositoryException e) {
             log.error("Error deleting node", e);
         } finally {
-            GlobalUtils.refreshSession(session, false);
+            GlobalUtils.cleanupSession(session);
         }
         return InstructionStatus.FAILED;
     }

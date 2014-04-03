@@ -21,7 +21,7 @@ import javax.jcr.Session;
 /**
  * @version "$Id$"
  */
-public interface DocumentManager {
+public interface DocumentManager extends AutoCloseable {
 
 
     Session getSession();

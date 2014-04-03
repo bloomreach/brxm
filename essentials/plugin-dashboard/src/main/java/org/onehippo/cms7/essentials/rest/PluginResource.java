@@ -111,43 +111,44 @@ public class PluginResource extends BaseResource {
             response = RestfulList.class)
     @GET
     @Path("/")
-    public RestfulList<PluginRestful> getPluginList(@Context ServletContext servletContext) {
+    public RestfulList<PluginRestful> getPluginList(@Context ServletContext servletContext) throws Exception {
         final RestfulList<PluginRestful> plugins = new RestList<>();
 
 
         final List<PluginRestful> items = getPlugins(servletContext);
 
         final Collection<String> restClasses = new ArrayList<>();
-        final DocumentManager manager = new DefaultDocumentManager(getContext(servletContext));
-        for (PluginRestful item : items) {
-            plugins.add(item);
-            final String pluginId = item.getPluginId();
-            if (item.isNeedsInstallation() && isInstalled(item)) {
-                item.setNeedsInstallation(false);
-            }
-            //############################################
-            // collect endpoints
-            //############################################
-            final List<String> pluginRestClasses = item.getRestClasses();
-            if (pluginRestClasses != null) {
-                for (String clazz : pluginRestClasses) {
-                    restClasses.add(clazz);
+        try (DocumentManager manager = new DefaultDocumentManager(getContext(servletContext))) {
+            for (PluginRestful item : items) {
+                plugins.add(item);
+                final String pluginId = item.getPluginId();
+                if (item.isNeedsInstallation() && isInstalled(item)) {
+                    item.setNeedsInstallation(false);
                 }
-            }
-
-
-            // check if recently installed:
-            // TODO: move to client?
-            final InstallerDocument document = manager.fetchDocument(GlobalUtils.getFullConfigPath(pluginId), InstallerDocument.class);
-            if (document != null && document.getDateInstalled() != null) {
-                final Calendar dateInstalled = document.getDateInstalled();
-                final Calendar lastWeek = Calendar.getInstance();
-                lastWeek.add(Calendar.DAY_OF_MONTH, WEEK_OLD);
-                if (dateInstalled.after(lastWeek)) {
-                    item.setDateInstalled(dateInstalled);
+                //############################################
+                // collect endpoints
+                //############################################
+                final List<String> pluginRestClasses = item.getRestClasses();
+                if (pluginRestClasses != null) {
+                    for (String clazz : pluginRestClasses) {
+                        restClasses.add(clazz);
+                    }
                 }
-            }
 
+
+                // check if recently installed:
+                // TODO: move to client?
+                final InstallerDocument document = manager.fetchDocument(GlobalUtils.getFullConfigPath(pluginId), InstallerDocument.class);
+                if (document != null && document.getDateInstalled() != null) {
+                    final Calendar dateInstalled = document.getDateInstalled();
+                    final Calendar lastWeek = Calendar.getInstance();
+                    lastWeek.add(Calendar.DAY_OF_MONTH, WEEK_OLD);
+                    if (dateInstalled.after(lastWeek)) {
+                        item.setDateInstalled(dateInstalled);
+                    }
+                }
+
+            }
         }
         //############################################
         // Register endpoints:
@@ -348,7 +349,7 @@ public static List<PluginRestful> parseGist() {
     @ApiParam(name = PLUGIN_ID, value = "Plugin  id", required = true)
     @POST
     @Path("/install/{pluginId}")
-    public MessageRestful installPlugin(@Context ServletContext servletContext, @PathParam(PLUGIN_ID) String pluginId) {
+    public MessageRestful installPlugin(@Context ServletContext servletContext, @PathParam(PLUGIN_ID) String pluginId) throws Exception {
 
         final MessageRestful message = new MessageRestful();
         final RestfulList<PluginRestful> pluginList = getPluginList(servletContext);
@@ -374,13 +375,15 @@ public static List<PluginRestful> parseGist() {
                 }
 
                 if (notInstalled.size() == 0) {
-                    final DocumentManager manager = new DefaultDocumentManager(getContext(servletContext));
-                    final InstallerDocument document = new InstallerDocument();
-                    document.setName(id);
-                    document.setParentPath(GlobalUtils.getParentConfigPath(id));
-                    document.setDateInstalled(Calendar.getInstance());
+                    try (DocumentManager manager = new DefaultDocumentManager(getContext(servletContext))) {
+                        final InstallerDocument document = new InstallerDocument();
+                        document.setName(id);
+                        document.setParentPath(GlobalUtils.getParentConfigPath(id));
+                        document.setDateInstalled(Calendar.getInstance());
 
-                    manager.saveDocument(document);
+                        manager.saveDocument(document);
+
+                    }
                     message.setValue("Plugin successfully installed. Please rebuild and restart your application");
                     return message;
                 } else {

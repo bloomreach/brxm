@@ -74,4 +74,8 @@ public class DefaultDocumentManager implements DocumentManager {
     }
 
 
+    @Override
+    public void close() throws Exception {
+        GlobalUtils.cleanupSession(session);
+    }
 }

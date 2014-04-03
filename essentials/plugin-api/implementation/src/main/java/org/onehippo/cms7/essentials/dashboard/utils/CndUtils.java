@@ -44,8 +44,12 @@ public final class CndUtils {
      */
     public static void registerNamespace(final PluginContext context, final String prefix, final String uri) throws RepositoryException {
         final Session session = context.createSession();
-        final NamespaceRegistry namespaceRegistry = session.getWorkspace().getNamespaceRegistry();
-        namespaceRegistry.registerNamespace(prefix, uri);
+        try {
+            final NamespaceRegistry namespaceRegistry = session.getWorkspace().getNamespaceRegistry();
+            namespaceRegistry.registerNamespace(prefix, uri);
+        } finally {
+            GlobalUtils.cleanupSession(session);
+        }
     }
 
     /**
@@ -56,8 +60,8 @@ public final class CndUtils {
      * @return true when namespace with given URI exists, false otherwise
      */
     public static boolean namespaceUriExists(final PluginContext context, final String uri) {
+        final Session session = context.createSession();
         try {
-            final Session session = context.createSession();
             final NamespaceRegistry namespaceRegistry = session.getWorkspace().getNamespaceRegistry();
             // Check whether a prefix is mapped for the prefix
             final String p = namespaceRegistry.getPrefix(uri);
@@ -67,6 +71,8 @@ public final class CndUtils {
             log.debug("Namespace exception", e);
         } catch (RepositoryException e) {
             log.error("Error while determining namespace check.", e);
+        }finally {
+            GlobalUtils.cleanupSession(session);
         }
         return false;
     }
@@ -79,8 +85,8 @@ public final class CndUtils {
      * @return true when namespace with given prefix exists, false otherwise
      */
     public static boolean namespacePrefixExists(final PluginContext context, final String prefix) {
+        final Session session = context.createSession();
         try {
-            final Session session = context.createSession();
             final NamespaceRegistry namespaceRegistry = session.getWorkspace().getNamespaceRegistry();
             // Check whether a URI is mapped for the prefix
             final String p = namespaceRegistry.getURI(prefix);
@@ -90,6 +96,8 @@ public final class CndUtils {
             log.debug("Namespace exception", e);
         } catch (RepositoryException e) {
             log.error("Error while determining namespace check.", e);
+        }finally {
+            GlobalUtils.cleanupSession(session);
         }
         return false;
     }
@@ -102,19 +110,23 @@ public final class CndUtils {
             final boolean mixin,
             final String... superTypes) throws RepositoryException {
         final Session session = context.createSession();
-        final Workspace workspace = session.getWorkspace();
-        final NodeTypeManager manager = workspace.getNodeTypeManager();
-        final NodeTypeTemplate template = manager.createNodeTypeTemplate();
+        try {
+            final Workspace workspace = session.getWorkspace();
+            final NodeTypeManager manager = workspace.getNodeTypeManager();
+            final NodeTypeTemplate template = manager.createNodeTypeTemplate();
 
-        template.setName(prefix + ':' + name);
-        template.setOrderableChildNodes(orderable);
-        template.setMixin(mixin);
-        if (superTypes.length > 0) {
-            template.setDeclaredSuperTypeNames(superTypes);
+            template.setName(prefix + ':' + name);
+            template.setOrderableChildNodes(orderable);
+            template.setMixin(mixin);
+            if (superTypes.length > 0) {
+                template.setDeclaredSuperTypeNames(superTypes);
+            }
+
+
+            manager.registerNodeType(template, false);
+        } finally {
+            GlobalUtils.cleanupSession(session);
         }
-
-
-        manager.registerNodeType(template, false);
     }
 
     public static boolean unRegisterDocumentType(
@@ -137,6 +149,7 @@ public final class CndUtils {
             manager.unregisterNodeType(prefix + ':' + name);
         } finally {
             NodeTypeRegistry.disableCheckForReferencesInContentException = false;
+            GlobalUtils.cleanupSession(session);
 
         }
         return true;
@@ -157,12 +170,16 @@ public final class CndUtils {
         }
 
         final Session session = context.createSession();
-        final Node namespaces = session.getRootNode().getNode(HippoNodeType.NAMESPACES_PATH);
-        if (namespaces.hasNode(prefix)) {
-            log.info("Namespace '{}' already registered", prefix);
-            return;
+        try {
+            final Node namespaces = session.getRootNode().getNode(HippoNodeType.NAMESPACES_PATH);
+            if (namespaces.hasNode(prefix)) {
+                log.info("Namespace '{}' already registered", prefix);
+                return;
+            }
+            namespaces.addNode(prefix, HippoNodeType.NT_NAMESPACE);
+        } finally {
+            GlobalUtils.cleanupSession(session);
         }
-        namespaces.addNode(prefix, HippoNodeType.NT_NAMESPACE);
     }
 
     /**
@@ -179,9 +196,13 @@ public final class CndUtils {
             return false;
         }
         final Session session = context.createSession();
-        final Workspace workspace = session.getWorkspace();
-        final NodeTypeManager manager = workspace.getNodeTypeManager();
-        return manager.hasNodeType(nodeType);
+        try {
+            final Workspace workspace = session.getWorkspace();
+            final NodeTypeManager manager = workspace.getNodeTypeManager();
+            return manager.hasNodeType(nodeType);
+        } finally {
+            GlobalUtils.cleanupSession(session);
+        }
     }
 
     /**
@@ -199,13 +220,17 @@ public final class CndUtils {
             return false;
         }
         final Session session = context.createSession();
-        final Workspace workspace = session.getWorkspace();
-        final NodeTypeManager manager = workspace.getNodeTypeManager();
-        if (manager.hasNodeType(nodeType)) {
-            final NodeType type = manager.getNodeType(nodeType);
-            if (type != null) {
-                return type.isNodeType(superType);
+        try {
+            final Workspace workspace = session.getWorkspace();
+            final NodeTypeManager manager = workspace.getNodeTypeManager();
+            if (manager.hasNodeType(nodeType)) {
+                final NodeType type = manager.getNodeType(nodeType);
+                if (type != null) {
+                    return type.isNodeType(superType);
+                }
             }
+        } finally {
+            GlobalUtils.cleanupSession(session);
         }
         return false;
     }
@@ -245,19 +270,23 @@ public final class CndUtils {
             return nodeTypes;
         }
         final Session session = context.createSession();
-        final Workspace workspace = session.getWorkspace();
-        final NodeTypeManager manager = workspace.getNodeTypeManager();
-        final NodeTypeIterator primaryNodeTypes = manager.getPrimaryNodeTypes();
-        while (primaryNodeTypes.hasNext()) {
-            final NodeType nodeType = primaryNodeTypes.nextNodeType();
-            final String name = nodeType.getName();
-            if (includeSuperType && isNodeType(nodeType, superType)) {
-                log.debug("Adding {} to list of types of {}", name, superType);
-                nodeTypes.add(name);
-            } else if (isSubType(nodeType, superType)) {
-                log.debug("Adding {} to list of sub types of {}", name, superType);
-                nodeTypes.add(name);
+        try {
+            final Workspace workspace = session.getWorkspace();
+            final NodeTypeManager manager = workspace.getNodeTypeManager();
+            final NodeTypeIterator primaryNodeTypes = manager.getPrimaryNodeTypes();
+            while (primaryNodeTypes.hasNext()) {
+                final NodeType nodeType = primaryNodeTypes.nextNodeType();
+                final String name = nodeType.getName();
+                if (includeSuperType && isNodeType(nodeType, superType)) {
+                    log.debug("Adding {} to list of types of {}", name, superType);
+                    nodeTypes.add(name);
+                } else if (isSubType(nodeType, superType)) {
+                    log.debug("Adding {} to list of sub types of {}", name, superType);
+                    nodeTypes.add(name);
+                }
             }
+        } finally {
+            GlobalUtils.cleanupSession(session);
         }
         return nodeTypes;
     }

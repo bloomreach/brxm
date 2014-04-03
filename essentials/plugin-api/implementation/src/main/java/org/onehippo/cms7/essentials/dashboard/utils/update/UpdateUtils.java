@@ -14,6 +14,7 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +51,8 @@ public final class UpdateUtils {
             }
         } catch (RepositoryException e) {
             log.error("", e);
+        }finally {
+            GlobalUtils.cleanupSession(session);
         }
     }
 
@@ -104,7 +107,9 @@ public final class UpdateUtils {
                 session.save();
             }
         } catch (RepositoryException e) {
-            log.error("Repository Exception occured while trying to save Updater log info", e);
+            log.error("Repository Exception occurred while trying to save Updater log info", e);
+        }finally {
+            GlobalUtils.cleanupSession(session);
         }
 
     }
@@ -137,6 +142,7 @@ public final class UpdateUtils {
             log.error("", e);
         } finally {
             IOUtils.closeQuietly(in);
+            GlobalUtils.cleanupSession(session);
         }
     }
 

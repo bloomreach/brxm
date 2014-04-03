@@ -121,6 +121,7 @@ public class NodeFolderInstruction extends PluginInstruction {
             GlobalUtils.refreshSession(session, false);
         } finally {
             IOUtils.closeQuietly(stream);
+            GlobalUtils.cleanupSession(session);
         }
         return InstructionStatus.FAILED;
     }
