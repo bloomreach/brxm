@@ -43,6 +43,7 @@ archetype/website/src/main/resources/archetype-resources/bootstrap/configuration
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/prototypepages/document-prototype.xml -text
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/prototypepages/no-document-prototype.xml -text
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/sitemap.xml -text
+archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/sitemenus.xml -text
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/templates.xml -text
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/workspace.xml -text
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/workspace/containers.xml -text
