@@ -22,7 +22,7 @@ import org.hippoecm.hst.core.parameters.Parameter;
 /**
  * @version "$Id$"
  */
-public interface EssentialsSearchComponentInfo extends EssentialsPageable {
+public interface EssentialsSearchComponentInfo extends EssentialsDocumentListComponentInfo {
 
     @Parameter(name = "searchScope", required = false, displayName = "Search scope (folder)")
     @JcrPath(
