@@ -34,5 +34,13 @@ public interface EssentialsSearchComponentInfo extends EssentialsDocumentListCom
     )
     String getScope();
 
+    @Override
+    @Parameter(name = "showPagination", required = false, defaultValue = "on", displayName = "Show pagination")
+    Boolean getShowPagination();
+
+
+    @Override
+    @Parameter(name = "documentTypes", required = false, displayName = "Document types (comma separated)")
+    String getDocumentTypes();
 
 }

@@ -557,14 +557,11 @@ dashboard-plugins/search-plugin/src/main/resources/META-INF/resources/plugins/se
 dashboard-plugins/search-plugin/src/main/resources/META-INF/resources/plugins/searchPlugin/searchPlugin.js -text
 dashboard-plugins/search-plugin/src/main/resources/META-INF/searchPlugin_instructions.xml -text
 dashboard-plugins/search-plugin/src/main/resources/META-INF/web-fragment.xml -text
-dashboard-plugins/search-plugin/src/main/resources/powerpack/freemarker/essentials-search-results.ftl -text
 dashboard-plugins/search-plugin/src/main/resources/powerpack/freemarker/essentials-search.ftl -text
-dashboard-plugins/search-plugin/src/main/resources/powerpack/jsp/essentials-search-results.jsp -text
 dashboard-plugins/search-plugin/src/main/resources/powerpack/jsp/essentials-search.jsp -text
 dashboard-plugins/search-plugin/src/main/resources/powerpack/xml/hst/search-catalog.xml -text
+dashboard-plugins/search-plugin/src/main/resources/powerpack/xml/hst/search-menu-item.xml -text
 dashboard-plugins/search-plugin/src/main/resources/powerpack/xml/hst/search-page.xml -text
-dashboard-plugins/search-plugin/src/main/resources/powerpack/xml/hst/search-results-template-ftl.xml -text
-dashboard-plugins/search-plugin/src/main/resources/powerpack/xml/hst/search-results-template-jsp.xml -text
 dashboard-plugins/search-plugin/src/main/resources/powerpack/xml/hst/search-sitemap.xml -text
 dashboard-plugins/search-plugin/src/main/resources/powerpack/xml/hst/search-template-ftl.xml -text
 dashboard-plugins/search-plugin/src/main/resources/powerpack/xml/hst/search-template-jsp.xml -text

@@ -4,20 +4,16 @@
 
   <instructionSet>
     <xml action="copy" source="powerpack/xml/hst/search-catalog.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:catalog"/>
+    <xml action="copy" source="powerpack/xml/hst/search-menu-item.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemenus/main"/>
     <xml action="copy" source="powerpack/xml/hst/search-page.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
+    <xml action="copy" source="powerpack/xml/hst/search-sitemap.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
   </instructionSet>
-
   <instructionSet group="jsp">
     <file action="copy" source="powerpack/jsp/essentials-search.jsp" target="{{jspRoot}}/essentials/essentials-search.jsp"/>
-    <file action="copy" source="powerpack/jsp/essentials-search-results.jsp" target="{{jspRoot}}/essentials/essentials-search-results.jsp"/>
     <xml action="copy" source="powerpack/xml/hst/search-template-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="powerpack/xml/hst/search-results-template-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-
   </instructionSet>
   <instructionSet group="freemarker">
     <file action="copy" source="powerpack/freemarker/essentials-search.ftl" target="{{freemarkerRoot}}/essentials/essentials-search.ftl"/>
-    <file action="copy" source="powerpack/freemarker/essentials-search-results.ftl" target="{{freemarkerRoot}}/essentials/essentials-search-results.ftl"/>
     <xml action="copy" source="powerpack/xml/hst/search-template-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="powerpack/xml/hst/search-results-template-ftl.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
 </instructions>
