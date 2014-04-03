@@ -136,7 +136,7 @@ public class XmlInstruction extends PluginInstruction {
             log.error("Error on copy node", e);
         } finally {
             IOUtils.closeQuietly(stream);
-            GlobalUtils.refreshSession(session, false);
+            GlobalUtils.cleanupSession(session);
         }
         return InstructionStatus.FAILED;
 
