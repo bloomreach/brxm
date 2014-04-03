@@ -2163,8 +2163,6 @@ plugin-dashboard/src/main/webapp/plugins/galleryPlugin/galleryPlugin.html -text
 plugin-dashboard/src/main/webapp/plugins/galleryPlugin/galleryPlugin.js -text
 plugin-dashboard/src/main/webapp/plugins/galleryPlugin/testimageprocessor.json -text
 plugin-dashboard/src/main/webapp/plugins/galleryPlugin/testimagesets.json -text
-plugin-dashboard/src/main/webapp/plugins/xinhaPlugin/xinhaPlugin.html -text
-plugin-dashboard/src/main/webapp/plugins/xinhaPlugin/xinhaPlugin.js -text
 plugin-dashboard/src/main/webapp/powerpacks/index.html -text
 plugin-dashboard/src/main/webapp/theme/fonts/glyphicons-halflings-regular.eot -text
 plugin-dashboard/src/main/webapp/theme/fonts/glyphicons-halflings-regular.svg -text

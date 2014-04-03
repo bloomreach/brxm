@@ -34,32 +34,6 @@
         ]
     },
     {
-
-        "needsInstallation": false,
-        "enabled": true,
-        "@type": "plugin",
-        "introduction": "Xinha configuration plugin",
-        "name": "Xinha configuration",
-        "pluginId": "xinhaPlugin",
-
-        "type": "plugins",
-        "vendor": {
-            "@type": "vendor",
-            "name": "Hippo",
-            "url": "http://www.onehippo.com"
-        },
-        "libraries": [
-            {
-                "items": [
-                    {
-                        "component": "xinhaPlugin",
-                        "file": "xinhaPlugin.js"
-                    }
-                ]
-            }
-        ]
-    },
-    {
         "needsInstallation": true,
         "enabled": true,
         "@type": "plugin",
