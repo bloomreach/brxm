@@ -130,12 +130,6 @@ archetype/website/src/main/resources/archetype-resources/bootstrap/configuration
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__-subsite-common/.DS_Store
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__-subsite-common/.idea
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__-subsite-common/atlassian-ide-plugin.xml
-archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__-subsite-common/components/*.iml
-archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__-subsite-common/components/.DS_Store
-archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__-subsite-common/components/.idea
-archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__-subsite-common/components/atlassian-ide-plugin.xml
-archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__-subsite-common/components/hippo-plugins.iws
-archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__-subsite-common/components/target
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__-subsite-common/hippo-plugins.iws
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__-subsite-common/target
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/*.iml
@@ -148,12 +142,6 @@ archetype/website/src/main/resources/archetype-resources/bootstrap/configuration
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/abstractpages/hippo-plugins.iws
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/abstractpages/target
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/atlassian-ide-plugin.xml
-archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/components/*.iml
-archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/components/.DS_Store
-archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/components/.idea
-archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/components/atlassian-ide-plugin.xml
-archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/components/hippo-plugins.iws
-archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/components/target
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/hippo-plugins.iws
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/pages/*.iml
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/pages/.DS_Store
