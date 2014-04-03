@@ -323,34 +323,6 @@
       <sv:value>/hst:hst/hst:configurations/${rootArtifactId.replace($hyphen,$empty)}</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="${rootArtifactId.replace($hyphen,$empty)}-configuration-pages-home">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>30076</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hst/configurations/${rootArtifactId}/pages/home.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/${rootArtifactId.replace($hyphen,$empty)}/hst:pages</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="${rootArtifactId.replace($hyphen,$empty)}-configuration-pages-pagenotfound">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>30081</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hst/configurations/${rootArtifactId}/pages/pagenotfound.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/${rootArtifactId.replace($hyphen,$empty)}/hst:pages</sv:value>
-    </sv:property>
-  </sv:node>
   <sv:node sv:name="${rootArtifactId.replace($hyphen,$empty)}-configuration-components">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
@@ -363,20 +335,6 @@
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hst:hst/hst:configurations/${rootArtifactId.replace($hyphen,$empty)}</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="${rootArtifactId.replace($hyphen,$empty)}-configuration-components-notfound">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>30087</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hst/configurations/${rootArtifactId}/components/notfound.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/${rootArtifactId.replace($hyphen,$empty)}/hst:components</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="${rootArtifactId.replace($hyphen,$empty)}-configuration-templates">
