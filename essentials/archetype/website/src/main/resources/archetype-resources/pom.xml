@@ -88,7 +88,27 @@
 
   <dependencyManagement>
     <dependencies>
-      
+      <dependency>
+        <groupId>org.onehippo.cms7.essentials</groupId>
+        <artifactId>hippo-essentials-plugin-api-implementation</artifactId>
+        <version>${dollar}{essentials.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7.essentials</groupId>
+        <artifactId>hippo-essentials-plugin-api</artifactId>
+        <version>${dollar}{essentials.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7.essentials</groupId>
+        <artifactId>hippo-components-cms-plugin-library</artifactId>
+        <version>${dollar}{essentials.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7.essentials</groupId>
+        <artifactId>hippo-components-plugin-library</artifactId>
+        <version>${dollar}{essentials.version}</version>
+      </dependency>
+
       <!-- other predefined runtime scope versioned dependencies -->
       <dependency>
         <groupId>javax.servlet</groupId>
