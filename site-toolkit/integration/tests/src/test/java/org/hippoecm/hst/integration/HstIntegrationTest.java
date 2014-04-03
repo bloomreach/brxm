@@ -187,6 +187,7 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
     private void copyPagesAndComponentsFromCommonConfig(final Session remoteSession, final Session localSession) throws RepositoryException, InterruptedException {
         JcrUtils.copy(remoteSession, "/hst:hst/hst:configurations/unittestcommon/hst:components", "/hst:hst/hst:configurations/unittestproject/hst:components");
         JcrUtils.copy(remoteSession, "/hst:hst/hst:configurations/unittestcommon/hst:pages", "/hst:hst/hst:configurations/unittestproject/hst:pages");
+        JcrUtils.copy(remoteSession, "/hst:hst/hst:configurations/unittestcommon/hst:abstractpages", "/hst:hst/hst:configurations/unittestproject/hst:abstractpages");
         remoteSession.save();
 
         localSession.refresh(false);
@@ -202,7 +203,7 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
     }
 
     /**
-     * validation on preview mount : it is a just created copy of the live, hence we 'know' which  con
+     * validation on preview mount : it is a just created copy of the live.
      */
     private void validatePreviewConfiguration(final ContextualizableMount mount, boolean hasPreview) {
         final Map<String,HstComponentConfiguration> previewComponentConfigurations = mount.getPreviewHstSite().getComponentsConfiguration().getComponentConfigurations();
@@ -216,7 +217,7 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
                 assertTrue(previewComp.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestproject-preview/"));
                 assertTrue(liveComp.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestproject/"));
             } else {
-                assertTrue(previewComp.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestproject/"));;
+                assertTrue(previewComp.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestproject/"));
                 assertTrue(liveComp.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestproject/"));
             }
         }
@@ -232,7 +233,7 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
                 assertTrue(previewSiteMapItem.getQualifiedId().startsWith("/hst:hst/hst:configurations/unittestproject-preview/"));
                 assertTrue(liveSiteMapItem.getQualifiedId().startsWith("/hst:hst/hst:configurations/unittestproject/"));
             } else {
-                assertTrue(previewSiteMapItem.getQualifiedId().startsWith("/hst:hst/hst:configurations/unittestproject/"));;
+                assertTrue(previewSiteMapItem.getQualifiedId().startsWith("/hst:hst/hst:configurations/unittestproject/"));
                 assertTrue(liveSiteMapItem.getQualifiedId().startsWith("/hst:hst/hst:configurations/unittestproject/"));
             }
         }
