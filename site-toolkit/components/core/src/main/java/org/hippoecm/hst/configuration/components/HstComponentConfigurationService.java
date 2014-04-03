@@ -240,6 +240,13 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         } else if(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName())) {
             type = Type.CONTAINER_ITEM_COMPONENT;
             componentFilterTag = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_FILTER_TAG);
+            if (parent == null || !Type.CONTAINER_COMPONENT.equals(parent.getComponentType())) {
+                log.warn("Component of type '{}' at '{}' is not configured below a '{}' node. This is not allowed. " +
+                        "Either change the primary nodetype to '{}' or '{}' or move the node below a node of type '{}'.",
+                        new String[]{HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT, canonicalStoredLocation,
+                                HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT, HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT,
+                                HstNodeTypes.NODETYPE_HST_COMPONENT, HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT});
+            }
         } else {
             throw new ModelLoadingException("Unknown componentType '" + node.getNodeTypeName() + "' for '" + canonicalStoredLocation + "'. Cannot build configuration.");
         }
