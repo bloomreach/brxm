@@ -16,7 +16,7 @@
       <sv:value>hippo:handle</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:hardhandle</sv:value>
+      <sv:value>mix:referenceable</sv:value>
     </sv:property>
     <sv:node sv:name="hipposysedit:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">

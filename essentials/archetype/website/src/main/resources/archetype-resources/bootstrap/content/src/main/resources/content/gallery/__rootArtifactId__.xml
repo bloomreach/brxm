@@ -6,7 +6,7 @@
       <sv:value>hippogallery:stdImageGallery</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:harddocument</sv:value>
+      <sv:value>mix:referenceable</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>a62d5ba7-424f-4b8e-870e-4493aa74f619</sv:value>

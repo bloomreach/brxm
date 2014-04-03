@@ -31,6 +31,13 @@
     </dependency>
 
     <dependency>
+      <groupId>javax.servlet.jsp</groupId>
+      <artifactId>jsp-api</artifactId>
+      <version>${dollar}{jsp-api.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.onehippo.cms7.hst.dependencies</groupId>
       <artifactId>hst-server-dependencies</artifactId>
       <type>pom</type>

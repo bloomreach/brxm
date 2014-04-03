@@ -4963,3 +4963,8 @@ a.badge:hover {
 article {
     position: relative;
 }
+
+/* HST Website nested navigation items */
+ul.nav.nav-pills li > ul.nav.nav-pills {
+    padding-left: 25px;
+}

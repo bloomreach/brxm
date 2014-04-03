@@ -22,7 +22,7 @@ public class Header extends BaseHstComponent {
         if (info != null) {
             request.setAttribute("headerName", info.getHeaderName());
         } else {
-            log.warn("No channel info available for website '{}'", mount.getMountPath());
+            log.info("No channel info available for website '{}'", mount.getMountPath());
         }
     }
 

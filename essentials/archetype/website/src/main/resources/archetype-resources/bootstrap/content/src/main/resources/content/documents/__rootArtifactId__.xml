@@ -14,7 +14,7 @@
     <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-    <sv:value>hippo:harddocument</sv:value>
+    <sv:value>mix:referenceable</sv:value>
     <sv:value>hippotranslation:translated</sv:value>
   </sv:property>
   <sv:property sv:name="hippotranslation:locale" sv:type="String">

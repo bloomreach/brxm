@@ -138,17 +138,6 @@
     <level value="error"/>
   </logger>
 
-  <!-- ignore DataNucleus errors -->
-  <logger name="DataNucleus.Plugin">
-    <level value="fatal"/>
-  </logger>
-  <logger name="DataNucleus.ClassLoading">
-    <level value="fatal"/>
-  </logger>
-  <logger name="DataNucleus.Enhancer">
-    <level value="fatal"/>
-  </logger>
-
   <!-- more info wanted -->
   <logger name="org.apache.jackrabbit.core.persistence.bundle">
     <level value="info"/>

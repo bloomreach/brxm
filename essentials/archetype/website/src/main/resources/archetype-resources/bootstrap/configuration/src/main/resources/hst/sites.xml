@@ -18,14 +18,6 @@
       <sv:value>/content/documents/${rootArtifactId.replace($hyphen,$empty)}</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="${rootArtifactId.replace($hyphen,$empty)}-preview">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/content/documents/${rootArtifactId.replace($hyphen,$empty)}</sv:value>
-    </sv:property>
-  </sv:node>
 
 </sv:node>
   

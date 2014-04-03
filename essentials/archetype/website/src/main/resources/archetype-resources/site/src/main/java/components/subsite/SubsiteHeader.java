@@ -22,7 +22,7 @@ public class SubsiteHeader extends BaseHstComponent {
         if (info != null) {
             request.setAttribute("headerName", info.getHeaderName());
         } else {
-            log.warn("No channel info available for subsite '{}'", mount.getMountPath());
+            log.info("No channel info available for subsite '{}'", mount.getMountPath());
         }
     }
 

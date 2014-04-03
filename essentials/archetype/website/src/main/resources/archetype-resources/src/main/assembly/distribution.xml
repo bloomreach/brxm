@@ -40,7 +40,6 @@
       <scope>provided</scope>
       <includes>
         <include>javax.jcr:jcr</include>
-        <include>javax.jdo:jdo2-api</include>
         <include>org.apache.geronimo.specs:geronimo-jta_1.1_spec</include>
         <include>javax.mail:mail</include>
       </includes>
@@ -50,7 +49,6 @@
       <outputDirectory>/shared/lib</outputDirectory>
       <scope>provided</scope>
       <includes>
-        <include>org.onehippo.cms7:hippo-cms-editor-common</include>
         <include>org.onehippo.cms7:hippo-cms7-commons</include>
         <include>org.onehippo.cms7:hippo-services</include>
         <include>org.onehippo.cms7:hippo-repository-api</include>

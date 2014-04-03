@@ -7,7 +7,7 @@
     <sv:value>hippostd:folder</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-    <sv:value>hippo:harddocument</sv:value>
+    <sv:value>mix:referenceable</sv:value>
   </sv:property>
   <sv:property sv:name="hippostd:foldertype" sv:type="String">
     <sv:value>new-document</sv:value>
@@ -18,7 +18,7 @@
       <sv:value>hippostd:folder</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:harddocument</sv:value>
+      <sv:value>mix:referenceable</sv:value>
       <sv:value>hippo:translated</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -91,7 +91,7 @@
       <sv:value>hippogallery:stdImageGallery</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:harddocument</sv:value>
+      <sv:value>mix:referenceable</sv:value>
       <sv:value>hippo:translated</sv:value>
     </sv:property>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
@@ -161,7 +161,7 @@
       <sv:value>hippogallery:stdAssetGallery</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:harddocument</sv:value>
+      <sv:value>mix:referenceable</sv:value>
       <sv:value>hippo:translated</sv:value>
     </sv:property>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
@@ -231,7 +231,7 @@
       <sv:value>hippostd:folder</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:harddocument</sv:value>
+      <sv:value>mix:referenceable</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>

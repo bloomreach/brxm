@@ -55,7 +55,8 @@
   -->
   <context-param>
     <param-name>hst-beans-annotated-classes</param-name>
-    <param-value>classpath*:${package.replace(".","/")}/beans/**/*.class</param-value>
+    <param-value>classpath*:${package.replace(".","/")}/beans/**/*.class
+      ,classpath*:org/onehippo/forge/**/*.class</param-value>
   </context-param>
 
   <filter>
@@ -89,28 +90,6 @@
       <param-name>suffixExclusions</param-name>
       <param-value>.jsp, .ftl, .FTL</param-value>
     </init-param>
-    <!--
-      HST Application Context Namespace Prefix. This should be unique
-      among multiple HST-based application contexts.
-    -->
-    <!--
-      <init-param> <param-name>hstContextNamespace</param-name>
-      <param-value>news</param-value> </init-param>
-    -->
-    <!--
-      HST-2 based SITE application can define and assemble its own
-      components by uncommenting the following two init parameters and
-      set the spring configuration files properly. The spring
-      configuration resources are loaded by the context classloader.
-    -->
-    <!--
-      <init-param> <param-name>clientComponentManagerClass</param-name>
-      <param-value>org.hippoecm.hst.component.support.ClientComponentManager</param-value>
-      </init-param> <init-param>
-      <param-name>clientComponentManagerConfigurations</param-name>
-      <param-value>/META-INF/client-assembly/*.xml</param-value>
-      </init-param>
-    -->
   </filter>
 
   <filter-mapping>
@@ -273,6 +252,11 @@
     <description>Default role of Hippo Repository</description>
     <role-name>everybody</role-name>
   </security-role>
+
+  <error-page>
+    <error-code>400</error-code>
+    <location>/WEB-INF/jsp/errorpages/ErrorPage400.jsp</location>
+  </error-page>
 
   <error-page>
     <error-code>401</error-code>

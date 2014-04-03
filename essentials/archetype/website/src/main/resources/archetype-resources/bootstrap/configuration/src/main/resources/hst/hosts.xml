@@ -24,6 +24,9 @@
   <sv:property sv:name="hst:versioninpreviewheader" sv:type="Boolean">
     <sv:value>true</sv:value>
   </sv:property>
+  <sv:property sv:name="hst:channelmanagersiteauthenticationskipped" sv:type="Boolean">
+    <sv:value>true</sv:value>
+  </sv:property>
   <sv:property sv:name="hst:defaultcontextpath" sv:type="String">
     <sv:value>/site</sv:value>
   </sv:property>

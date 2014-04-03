@@ -12,7 +12,7 @@
   <context-param>
     <description>The address of the repository</description>
     <param-name>repository-address</param-name>
-    <param-value>rmi://localhost:1099/hipporepository</param-value>
+    <param-value>vm://</param-value>
   </context-param>
   <context-param>
     <description>The (relative) location where to store files</description>
@@ -105,11 +105,11 @@
   </listener>
 
   <servlet>
-    <servlet-name>XinhaResourceServlet</servlet-name>
+    <servlet-name>AngularResourceServlet</servlet-name>
     <servlet-class>org.onehippo.cms7.utilities.servlet.ResourceServlet</servlet-class>
     <init-param>
       <param-name>jarPathPrefix</param-name>
-      <param-value>/xinha</param-value>
+      <param-value>/angular</param-value>
     </init-param>
     <init-param>
       <param-name>allowedResourcePaths</param-name>
@@ -118,6 +118,33 @@
       </param-value>
     </init-param>
     <init-param>
+      <!--
+        Cache timeout in seconds. Make sure to increase it in production environments,
+        for example to one day (cacheTimeout = 86400)
+      -->
+      <param-name>cacheTimeout</param-name>
+      <param-value>0</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet>
+    <servlet-name>CKEditorResourceServlet</servlet-name>
+    <servlet-class>org.onehippo.cms7.utilities.servlet.ResourceServlet</servlet-class>
+    <init-param>
+      <param-name>jarPathPrefix</param-name>
+      <param-value>/ckeditor</param-value>
+    </init-param>
+    <init-param>
+      <param-name>allowedResourcePaths</param-name>
+      <param-value>
+        ^/.*\..*
+      </param-value>
+    </init-param>
+    <init-param>
+      <!--
+        Cache timeout in seconds. Make sure to increase it in production environments,
+        for example to one day (cacheTimeout = 86400)
+      -->
       <param-name>cacheTimeout</param-name>
       <param-value>0</param-value>
     </init-param>
@@ -137,15 +164,13 @@
       </param-value>
     </init-param>
     <init-param>
+      <!--
+        Cache timeout in seconds. Make sure to increase it in production environments,
+        for example to one day (cacheTimeout = 86400)
+      -->
       <param-name>cacheTimeout</param-name>
       <param-value>0</param-value>
     </init-param>
-  </servlet>
-
-  <servlet>
-    <servlet-name>StatusServlet</servlet-name>
-    <servlet-class>org.hippoecm.repository.StatusServlet</servlet-class>
-    <load-on-startup>2</load-on-startup>
   </servlet>
 
   <servlet>
@@ -172,11 +197,6 @@
   </servlet> 
 
   <servlet-mapping>
-    <servlet-name>StatusServlet</servlet-name>
-    <url-pattern>/status/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
     <servlet-name>LoggingServlet</servlet-name>
     <url-pattern>/logging/*</url-pattern>
   </servlet-mapping>
@@ -192,8 +212,13 @@
   </servlet-mapping>
 
   <servlet-mapping>
-    <servlet-name>XinhaResourceServlet</servlet-name>
-    <url-pattern>/xinha/*</url-pattern>
+    <servlet-name>AngularResourceServlet</servlet-name>
+    <url-pattern>/angular/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>CKEditorResourceServlet</servlet-name>
+    <url-pattern>/ckeditor/*</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
@@ -204,6 +229,7 @@
   <!-- Timeout in minutes -->
   <session-config>
     <session-timeout>10</session-timeout>
+    <tracking-mode>COOKIE</tracking-mode>
   </session-config>
 
   <error-page>
