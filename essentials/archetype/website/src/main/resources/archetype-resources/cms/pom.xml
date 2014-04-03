@@ -15,6 +15,16 @@
   <packaging>war</packaging>
 
   <dependencies>
+    <!-- TODO: should be added by installer-->
+    <dependency>
+      <groupId>org.onehippo.cms7.essentials</groupId>
+      <artifactId>hippo-components-cms-plugin-library</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.essentials</groupId>
+      <artifactId>hippo-essentials-plugin-api</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.hst.dependencies</groupId>
       <artifactId>hst-repository-dependencies</artifactId>
@@ -66,8 +76,38 @@
         </exclusion>
       </exclusions>
     </dependency>
-   
+    <dependency>
+      <groupId>org.onehippo.forge.selectionplugins</groupId>
+      <artifactId>selectionplugins-addon-repository</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.forge.selectionplugins</groupId>
+      <artifactId>selectionplugins-addon-cms</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.forge.properties</groupId>
+      <artifactId>properties-addon-repository</artifactId>
+    </dependency>
+
   </dependencies>
+
+  <profiles>
+    <profile>
+      <id>essentials</id>
+      <activation>
+        <!-- For the moment the essentials profile is active by default and
+         therefore the essentials content is always bootstrapped. -->
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>${groupId}</groupId>
+          <artifactId>${rootArtifactId}-bootstrap-essentials</artifactId>
+          <version>${dollar}{project.version}</version>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 
   <build>
     <finalName>cms</finalName>
