@@ -4,8 +4,8 @@
   "dependencies": {
     "angular": "1.2.15",
     "angular-route": "1.2.15",
-    "angular-translate": "2.0.1",
-    "angular-translate-loader-static-files": "2.0.0",
+    "angular-translate": "2.1.0",
+    "angular-translate-loader-static-files": "2.1.0",
     "angular-mocks": "1.2.15",
     "angular-ui-router": "0.2.7",
     "hippo-theme": "./target/dependency/hippo-theme.zip",
