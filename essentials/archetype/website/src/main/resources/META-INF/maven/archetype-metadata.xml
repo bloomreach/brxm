@@ -213,24 +213,8 @@
       <directory>essentials</directory>
       <includes>
         <include>pom.xml</include>
+        <include>src/main/webapp/WEB-INF/web.xml</include>
       </includes>
     </fileSet>
   </fileSets>
-  <fileSet filtered="false" encoding="UTF-8">
-    <directory>essentials/src/main/webapp</directory>
-    <includes>
-      <include>**/WEB-INF/jsp/errorpages/*.jsp</include>
-      <include>**/*.gif</include>
-      <include>**/*.css</include>
-      <include>**/*.png</include>
-      <include>**/*.js</include>
-    </includes>
-  </fileSet>
-  <fileSet filtered="true" encoding="UTF-8">
-    <directory>essentials/src/main/webapp</directory>
-    <includes>
-      <include>**/*.xml</include>
-      <include>**/*.css</include>
-    </includes>
-  </fileSet>
 </archetype-descriptor>
