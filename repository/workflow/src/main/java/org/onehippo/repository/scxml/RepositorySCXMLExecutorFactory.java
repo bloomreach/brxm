@@ -17,6 +17,7 @@ package org.onehippo.repository.scxml;
 
 import org.apache.commons.scxml2.SCXMLExecutor;
 import org.apache.commons.scxml2.env.SimpleDispatcher;
+import org.apache.commons.scxml2.model.ModelException;
 
 /**
  * RepositorySCXMLExecutorFactory
@@ -31,7 +32,12 @@ public class RepositorySCXMLExecutorFactory implements SCXMLExecutorFactory {
 
         SCXMLExecutor executor = new SCXMLExecutor(scxmlDef.getEvaluator(), new SimpleDispatcher(), new SCXMLStrictErrorReporter(scxmlDef));
         executor.setRootContext(scxmlDef.getEvaluator().newContext(null));
-        executor.setStateMachine(scxmlDef.getSCXML());
+        try {
+            executor.setStateMachine(scxmlDef.getSCXML());
+        }
+        catch (ModelException me) {
+            throw new SCXMLException(me);
+        }
         return executor;
     }
 

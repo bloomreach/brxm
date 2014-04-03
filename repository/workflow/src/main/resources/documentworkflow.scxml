@@ -17,8 +17,7 @@
 <scxml version="1.0"
        xmlns="http://www.w3.org/2005/07/scxml"
        xmlns:hippo="http://www.onehippo.org/cms7/repository/scxml"
-       xmlns:cs="http://commons.apache.org/scxml"
-       initial="handle">
+       xmlns:cs="http://commons.apache.org/scxml">
 
   <script>
     def getScxmlId() { workflowContext.scxmlId }
@@ -74,7 +73,7 @@
       </transition>
     </state>
 
-    <state id="edit" initial="no-edit">
+    <state id="edit">
 
       <state id="no-edit">
         <onentry>
@@ -162,7 +161,7 @@
 
     </state>
 
-    <state id="request" initial="no-request">
+    <state id="request">
 
       <state id="no-request">
         <!-- transition to state "requested" when requests exists -->
@@ -202,7 +201,7 @@
         <transition event="acceptRequest">
 
           <!-- define temporary request variable for the event payload request parameter -->
-          <cs:var name="request" expr="_eventdatamap.acceptRequest?.request"/>
+          <cs:var name="request" expr="_event.data?.request"/>
           <!-- store the request workflow type as temporary variable -->
           <cs:var name="workflowType" expr="request.workflowType"/>
           <!-- store the request targetDate as temporary variable -->
@@ -225,18 +224,18 @@
         </transition>
 
         <transition event="rejectRequest">
-          <hippo:rejectRequest requestExpr="_eventdatamap.rejectRequest?.request" reasonExpr="_eventdatamap.rejectRequest?.reason"/>
+          <hippo:rejectRequest requestExpr="_event.data?.request" reasonExpr="_event.data?.reason"/>
         </transition>
 
         <transition event="cancelRequest">
-          <hippo:deleteRequest requestExpr="_eventdatamap.cancelRequest?.request"/>
+          <hippo:deleteRequest requestExpr="_event.data?.request"/>
         </transition>
 
       </state>
 
     </state>
 
-    <state id="publish" initial="no-publish">
+    <state id="publish">
 
       <state id="no-publish">
         <onentry>
@@ -258,29 +257,29 @@
           </if>
         </onentry>
 
-        <transition event="requestPublication" cond="!_eventdatamap.requestPublication?.targetDate">
+        <transition event="requestPublication" cond="!_event.data?.targetDate">
           <hippo:workflowRequest type="publish" contextVariantExpr="unpublished"/>
         </transition>
 
-        <transition event="requestPublication" cond="!!_eventdatamap.requestPublication?.targetDate">
-          <hippo:workflowRequest type="scheduledpublish" contextVariantExpr="unpublished" targetDateExpr="_eventdatamap.requestPublication.targetDate"/>
+        <transition event="requestPublication" cond="!!_event.data?.targetDate">
+          <hippo:workflowRequest type="scheduledpublish" contextVariantExpr="unpublished" targetDateExpr="_event.data?.targetDate"/>
         </transition>
 
-        <transition event="publish" cond="!_eventdatamap.publish?.targetDate">
+        <transition event="publish" cond="!_event.data?.targetDate">
           <hippo:copyVariant sourceState="unpublished" targetState="published"/>
           <hippo:configVariant variant="published" applyPublished="true" availabilities="live"/>
           <hippo:version variant="unpublished"/>
         </transition>
 
-        <transition event="publish" cond="!!_eventdatamap.publish?.targetDate">
-          <hippo:scheduleWorkflow type="publish" targetDateExpr="_eventdatamap.publish.targetDate"/>
+        <transition event="publish" cond="!!_event.data?.targetDate">
+          <hippo:scheduleWorkflow type="publish" targetDateExpr="_event.data?.targetDate"/>
         </transition>
 
       </state>
 
     </state>
 
-    <state id="depublish" initial="no-depublish">
+    <state id="depublish">
 
       <state id="no-depublish">
         <onentry>
@@ -302,15 +301,15 @@
           </if>
         </onentry>
 
-        <transition event="requestDepublication" cond="!_eventdatamap.requestDepublication?.targetDate">
+        <transition event="requestDepublication" cond="!_event.data?.targetDate">
           <hippo:workflowRequest type="depublish" contextVariantExpr="published"/>
         </transition>
 
-        <transition event="requestDepublication" cond="!!_eventdatamap.requestDepublication?.targetDate">
-          <hippo:workflowRequest type="scheduleddepublish" contextVariantExpr="published" targetDateExpr="_eventdatamap.requestDepublication.targetDate"/>
+        <transition event="requestDepublication" cond="!!_event.data?.targetDate">
+          <hippo:workflowRequest type="scheduleddepublish" contextVariantExpr="published" targetDateExpr="_event.data?.targetDate"/>
         </transition>
 
-        <transition event="depublish" cond="!_eventdatamap.depublish?.targetDate">
+        <transition event="depublish" cond="!_event.data?.targetDate">
           <if cond="!unpublished">
             <hippo:copyVariant sourceState="published" targetState="unpublished"/>
           </if>
@@ -319,15 +318,15 @@
           <hippo:version variant="unpublished"/>
         </transition>
 
-        <transition event="depublish" cond="!!_eventdatamap.depublish?.targetDate">
-          <hippo:scheduleWorkflow type="depublish" targetDateExpr="_eventdatamap.depublish.targetDate"/>
+        <transition event="depublish" cond="!!_event.data?.targetDate">
+          <hippo:scheduleWorkflow type="depublish" targetDateExpr="_event.data?.targetDate"/>
         </transition>
 
       </state>
 
     </state>
 
-    <state id="versioning" initial="no-versioning">
+    <state id="versioning">
 
       <state id="no-versioning">
         <!-- a document only becomes versionable once an unpublished document variant exists -->
@@ -354,22 +353,22 @@
         </transition>
 
         <transition event="retrieveVersion">
-          <hippo:retrieveVersion historic="_eventdatamap.retrieveVersion?.date" variant="unpublished" />
+          <hippo:retrieveVersion historic="_event.data?.date" variant="unpublished" />
         </transition>
 
         <transition event="versionRestoreTo">
-          <hippo:versionRestoreTo historic="_eventdatamap.versionRestoreTo?.date" variant="unpublished" target="_eventdatamap.versionRestoreTo?.target"/>
+          <hippo:versionRestoreTo historic="_event.data?.date" variant="unpublished" target="_event.data?.target"/>
         </transition>
 
         <transition event="restoreVersion">
-          <hippo:restoreVersion historic="_eventdatamap.restoreVersion?.date"  variant="unpublished" />
+          <hippo:restoreVersion historic="_event.data?.date"  variant="unpublished" />
         </transition>
 
       </state>
 
     </state>
 
-    <state id="terminate" initial="no-terminate">
+    <state id="terminate">
 
       <state id="no-terminate">
         <onentry>
@@ -404,18 +403,18 @@
         </transition>
 
         <transition event="move" target="terminated">
-          <hippo:moveDocument destinationExpr="_eventdatamap.move?.destination" newNameExpr="_eventdatamap.move?.name"/>
+          <hippo:moveDocument destinationExpr="_event.data?.destination" newNameExpr="_event.data?.name"/>
         </transition>
 
         <transition event="rename" target="terminated">
-          <hippo:renameDocument newNameExpr="_eventdatamap.rename?.name"/>
+          <hippo:renameDocument newNameExpr="_event.data?.name"/>
         </transition>
 
       </state>
 
     </state>
 
-    <state id="copy" initial="no-copy">
+    <state id="copy">
 
       <state id="no-copy">
         <transition target="copyable" cond="workflowContext.isGranted(copySource,'hippo:editor')"/>
@@ -427,7 +426,7 @@
         </onentry>
 
         <transition event="copy">
-          <hippo:copyDocument destinationExpr="_eventdatamap.copy?.destination" newNameExpr="_eventdatamap.copy?.name"/>
+          <hippo:copyDocument destinationExpr="_event.data?.destination" newNameExpr="_event.data?.name"/>
         </transition>
 
       </state>

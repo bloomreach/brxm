@@ -20,15 +20,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.scxml2.ErrorReporter;
-import org.apache.commons.scxml2.EventDispatcher;
-import org.apache.commons.scxml2.SCInstance;
+import org.apache.commons.scxml2.ActionExecutionContext;
 import org.apache.commons.scxml2.SCXMLExpressionException;
-import org.apache.commons.scxml2.TriggerEvent;
 import org.apache.commons.scxml2.model.Action;
 import org.apache.commons.scxml2.model.ModelException;
 import org.junit.Before;
@@ -169,7 +164,7 @@ public class RepositorySCXMLRegistryTest {
         assertNull(registry.getSCXMLDefinition("hello-wrong-execution-in-state"));
 
         List<LogRecord> logRecords = recordingLogger.getLogRecords();
-        assertTrue(containsLogMessage(logRecords, "Invalid SCXML model definition at '/hippo:moduleconfig/hipposcxml:definitions/hello-wrong-execution-in-state'. Ignoring unknown or invalid element <log> in namespace \"http://www.w3.org/2005/07/scxml\" as child  of <state> at Line number = 3"));
+        assertTrue(containsLogMessage(logRecords, "Invalid SCXML model definition at '/hippo:moduleconfig/hipposcxml:definitions/hello-wrong-execution-in-state'. Ignoring unknown or invalid element <log> in namespace \"http://www.w3.org/2005/07/scxml\" as child of <state> at Line number = 3"));
     }
 
     /*
@@ -186,7 +181,7 @@ public class RepositorySCXMLRegistryTest {
         assertNull(helloScxml);
 
         List<LogRecord> logRecords = recordingLogger.getLogRecords();
-        assertTrue(containsLogMessage(logRecords, "Invalid SCXML model definition at '/hippo:moduleconfig/hipposcxml:definitions/hello-with-unknown-custom-actions'. Ignoring unknown or invalid element <unknown-custom-action> in namespace \"http://www.onehippo.org/cms7/repository/scxml\" as child  of <onentry> at Line number = 4"));
+        assertTrue(containsLogMessage(logRecords, "Invalid SCXML model definition at '/hippo:moduleconfig/hipposcxml:definitions/hello-with-unknown-custom-actions'. Ignoring unknown or invalid element <unknown-custom-action> in namespace \"http://www.onehippo.org/cms7/repository/scxml\" as child of <onentry> at Line number = 4"));
     }
 
     /*
@@ -202,7 +197,7 @@ public class RepositorySCXMLRegistryTest {
         assertNull(helloScxml);
 
         List<LogRecord> logRecords = recordingLogger.getLogRecords();
-        assertTrue(containsLogMessage(logRecords, "Invalid SCXML model definition at '/hippo:moduleconfig/hipposcxml:definitions/hello-with-unknown-custom-actions'. Ignoring unknown or invalid element <unknown-custom-action> in namespace \"http://www.onehippo.org/cms7/repository/scxml\" as child  of <onentry> at Line number = 4"));
+        assertTrue(containsLogMessage(logRecords, "Invalid SCXML model definition at '/hippo:moduleconfig/hipposcxml:definitions/hello-with-unknown-custom-actions'. Ignoring unknown or invalid element <unknown-custom-action> in namespace \"http://www.onehippo.org/cms7/repository/scxml\" as child of <onentry> at Line number = 4"));
     }
 
     /*
@@ -224,8 +219,7 @@ public class RepositorySCXMLRegistryTest {
     private static class KnownAction extends Action {
         private static final long serialVersionUID = 1L;
         @Override
-        public void execute(EventDispatcher evtDispatcher, ErrorReporter errRep, SCInstance scInstance, Log appLog,
-                Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException {
+        public void execute(ActionExecutionContext exctx) throws ModelException, SCXMLExpressionException {
         }
     }
 }

@@ -21,19 +21,16 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.impl.SimpleLog;
+import org.apache.commons.scxml2.ActionExecutionContext;
 import org.apache.commons.scxml2.Context;
 import org.apache.commons.scxml2.ErrorReporter;
 import org.apache.commons.scxml2.Evaluator;
 import org.apache.commons.scxml2.EventDispatcher;
-import org.apache.commons.scxml2.SCInstance;
 import org.apache.commons.scxml2.SCXMLExpressionException;
-import org.apache.commons.scxml2.TriggerEvent;
 import org.apache.commons.scxml2.env.SimpleDispatcher;
 import org.apache.commons.scxml2.env.SimpleErrorReporter;
 import org.apache.commons.scxml2.env.groovy.GroovyContext;
@@ -53,9 +50,8 @@ public class AbstractWorkflowTaskActionTest {
 
     private EventDispatcher evtDispatcher;
     private ErrorReporter errRep;
-    private SCInstance scInstance;
     private Log appLog;
-    private Collection<TriggerEvent> derivedEvents;
+    ActionExecutionContext exctx;
 
     private OnEntry onEntry;
     private Context context;
@@ -67,18 +63,20 @@ public class AbstractWorkflowTaskActionTest {
         evtDispatcher = new SimpleDispatcher();
         errRep = new SimpleErrorReporter();
         appLog = new SimpleLog(getClass().getName());
-        derivedEvents = Collections.emptyList();
 
         final State state = new State();
         onEntry = new OnEntry();
-        state.setOnEntry(onEntry);
+        state.addOnEntry(onEntry);
 
         context = new GroovyContext();
         final Evaluator evaluator = new GroovyEvaluator();
-        scInstance = EasyMock.createNiceMock(SCInstance.class);
-        EasyMock.expect(scInstance.getContext(state)).andReturn(context).anyTimes();
-        EasyMock.expect(scInstance.getEvaluator()).andReturn(evaluator).anyTimes();
-        EasyMock.replay(scInstance);
+        exctx = EasyMock.createNiceMock(ActionExecutionContext.class);
+        EasyMock.expect(exctx.getEventDispatcher()).andReturn(evtDispatcher).anyTimes();
+        EasyMock.expect(exctx.getErrorReporter()).andReturn(errRep).anyTimes();
+        EasyMock.expect(exctx.getAppLog()).andReturn(appLog).anyTimes();
+        EasyMock.expect(exctx.getContext(state)).andReturn(context).anyTimes();
+        EasyMock.expect(exctx.getEvaluator()).andReturn(evaluator).anyTimes();
+        EasyMock.replay(exctx);
     }
 
     @Test
@@ -114,7 +112,7 @@ public class AbstractWorkflowTaskActionTest {
         };
         action.setParent(onEntry);
 
-        action.execute(evtDispatcher, errRep, scInstance, appLog, derivedEvents);
+        action.execute(exctx);
         assertEquals(1, createWorkflowTaskCallCount.get());
         assertEquals(1, initTaskCallCount.get());
         assertEquals(1, processTaskResultCallCount.get());
@@ -141,7 +139,7 @@ public class AbstractWorkflowTaskActionTest {
         };
         action.setParent(onEntry);
 
-        action.execute(evtDispatcher, errRep, scInstance, appLog, derivedEvents);
+        action.execute(exctx);
 
         assertFalse(context.has("eventResult"));
         assertNull(context.get("eventResult"));

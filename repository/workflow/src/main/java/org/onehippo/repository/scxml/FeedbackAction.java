@@ -17,14 +17,10 @@
 package org.onehippo.repository.scxml;
 
 import java.io.Serializable;
-import java.util.Collection;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.scxml2.ErrorReporter;
-import org.apache.commons.scxml2.EventDispatcher;
+import org.apache.commons.scxml2.ActionExecutionContext;
 import org.apache.commons.scxml2.SCXMLExpressionException;
-import org.apache.commons.scxml2.TriggerEvent;
 import org.apache.commons.scxml2.model.ModelException;
 
 /**
@@ -53,8 +49,7 @@ public class FeedbackAction extends AbstractAction {
     }
 
     @Override
-    protected void doExecute(EventDispatcher evtDispatcher, ErrorReporter errRep, Log appLog,
-                             Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException {
+    protected void doExecute(ActionExecutionContext exctx) throws ModelException, SCXMLExpressionException {
 
         String key = getKey();
         if (StringUtils.isBlank(key)) {

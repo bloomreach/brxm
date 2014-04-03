@@ -64,7 +64,7 @@ public class SCXMLWorkflowExecutorTest {
                     "      <hippo:action action=\"terminate\" enabledExpr=\"true\"/>\n" +
                     "    </onentry>\n" +
                     "    <transition event=\"hello\">\n" +
-                    "      <hippo:result value=\"_eventdatamap.hello?.message\"/>\n" +
+                    "      <hippo:result value=\"_event.data?.message\"/>\n" +
                     "    </transition>\n" +
                     "    <transition event=\"terminate\" target=\"terminated\"/>\n" +
                     "  </state>\n" +

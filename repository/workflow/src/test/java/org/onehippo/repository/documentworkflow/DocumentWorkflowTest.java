@@ -27,7 +27,7 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.scxml2.model.TransitionTarget;
+import org.apache.commons.scxml2.model.EnterableState;
 import org.apache.jackrabbit.util.ISO8601;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -138,7 +138,7 @@ public class DocumentWorkflowTest {
     }
 
     protected Set<String> getCurrentStateIds(SCXMLWorkflowExecutor executor) {
-        Set<TransitionTarget> targets = executor.getSCXMLExecutor().getCurrentStatus().getStates();
+        Set<EnterableState> targets = executor.getSCXMLExecutor().getCurrentStatus().getStates();
 
         if (targets.isEmpty()) {
             return Collections.emptySet();
@@ -146,7 +146,7 @@ public class DocumentWorkflowTest {
 
         Set<String> ids = new TreeSet<>();
 
-        for (TransitionTarget target : targets) {
+        for (EnterableState target : targets) {
             ids.add(target.getId());
         }
 

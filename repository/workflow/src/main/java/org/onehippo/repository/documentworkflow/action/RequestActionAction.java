@@ -17,16 +17,12 @@
 package org.onehippo.repository.documentworkflow.action;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.scxml2.ErrorReporter;
-import org.apache.commons.scxml2.EventDispatcher;
+import org.apache.commons.scxml2.ActionExecutionContext;
 import org.apache.commons.scxml2.SCXMLExpressionException;
-import org.apache.commons.scxml2.TriggerEvent;
 import org.apache.commons.scxml2.model.ModelException;
 import org.onehippo.repository.scxml.AbstractAction;
 import org.onehippo.repository.scxml.SCXMLWorkflowContext;
@@ -64,8 +60,7 @@ public class RequestActionAction extends AbstractAction {
 
     @Override
     @SuppressWarnings("unchecked")
-    protected void doExecute(EventDispatcher evtDispatcher, ErrorReporter errRep, Log appLog,
-                             Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException {
+    protected void doExecute(ActionExecutionContext exctx) throws ModelException, SCXMLExpressionException {
 
         String identifier = (StringUtils.isBlank(getIdentifierExpr()) ? null : (String)eval(getIdentifierExpr()));
         if (StringUtils.isBlank(identifier)) {

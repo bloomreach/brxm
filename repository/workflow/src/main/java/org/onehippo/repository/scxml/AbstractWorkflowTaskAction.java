@@ -15,15 +15,10 @@
  */
 package org.onehippo.repository.scxml;
 
-import java.util.Collection;
-
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.scxml2.ErrorReporter;
-import org.apache.commons.scxml2.EventDispatcher;
+import org.apache.commons.scxml2.ActionExecutionContext;
 import org.apache.commons.scxml2.SCXMLExpressionException;
-import org.apache.commons.scxml2.TriggerEvent;
 import org.apache.commons.scxml2.model.ModelException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.api.WorkflowTask;
@@ -51,8 +46,7 @@ public abstract class AbstractWorkflowTaskAction<T extends WorkflowTask> extends
      * Implementation of the real task execution.
      */
     @Override
-    protected void doExecute(EventDispatcher evtDispatcher, ErrorReporter errRep, Log appLog,
-            Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException,
+    protected void doExecute(ActionExecutionContext exctx) throws ModelException, SCXMLExpressionException,
             WorkflowException, RepositoryException {
 
         T task = createWorkflowTask();

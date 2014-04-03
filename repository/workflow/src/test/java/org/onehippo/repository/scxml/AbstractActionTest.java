@@ -20,20 +20,16 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.impl.SimpleLog;
+import org.apache.commons.scxml2.ActionExecutionContext;
 import org.apache.commons.scxml2.Context;
 import org.apache.commons.scxml2.ErrorReporter;
 import org.apache.commons.scxml2.Evaluator;
 import org.apache.commons.scxml2.EventDispatcher;
-import org.apache.commons.scxml2.SCInstance;
 import org.apache.commons.scxml2.SCXMLExpressionException;
-import org.apache.commons.scxml2.TriggerEvent;
 import org.apache.commons.scxml2.env.SimpleDispatcher;
 import org.apache.commons.scxml2.env.SimpleErrorReporter;
 import org.apache.commons.scxml2.env.groovy.GroovyContext;
@@ -53,9 +49,8 @@ public class AbstractActionTest {
 
     private EventDispatcher evtDispatcher;
     private ErrorReporter errRep;
-    private SCInstance scInstance;
+    private ActionExecutionContext exctx;
     private Log appLog;
-    private Collection<TriggerEvent> derivedEvents;
 
     private State state;
     private OnEntry onEntry;
@@ -68,18 +63,20 @@ public class AbstractActionTest {
         evtDispatcher = new SimpleDispatcher();
         errRep = new SimpleErrorReporter();
         appLog = new SimpleLog(getClass().getName());
-        derivedEvents = Collections.emptyList();
 
         state = new State();
         onEntry = new OnEntry();
-        state.setOnEntry(onEntry);
+        state.addOnEntry(onEntry);
 
         context = new GroovyContext();
         Evaluator evaluator = new GroovyEvaluator();
-        scInstance = EasyMock.createNiceMock(SCInstance.class);
-        EasyMock.expect(scInstance.getContext(state)).andReturn(context).anyTimes();
-        EasyMock.expect(scInstance.getEvaluator()).andReturn(evaluator).anyTimes();
-        EasyMock.replay(scInstance);
+        exctx = EasyMock.createNiceMock(ActionExecutionContext.class);
+        EasyMock.expect(exctx.getEventDispatcher()).andReturn(evtDispatcher).anyTimes();
+        EasyMock.expect(exctx.getErrorReporter()).andReturn(errRep).anyTimes();
+        EasyMock.expect(exctx.getAppLog()).andReturn(appLog).anyTimes();
+        EasyMock.expect(exctx.getContext(state)).andReturn(context).anyTimes();
+        EasyMock.expect(exctx.getEvaluator()).andReturn(evaluator).anyTimes();
+        EasyMock.replay(exctx);
     }
 
     @Test
@@ -87,8 +84,7 @@ public class AbstractActionTest {
         action = new AbstractAction() {
             private static final long serialVersionUID = 1L;
             @Override
-            protected void doExecute(EventDispatcher evtDispatcher, ErrorReporter errRep, Log appLog,
-                    Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException,
+            protected void doExecute(ActionExecutionContext exctx) throws ModelException, SCXMLExpressionException,
                     WorkflowException, RepositoryException {
                 
             }
@@ -96,7 +92,7 @@ public class AbstractActionTest {
         action.setParent(onEntry);
 
         assertSame(onEntry, action.getParent());
-        assertSame(state, action.getParentTransitionTarget());
+        assertSame(state, action.getParentEnterableState());
     }
 
     @Test
@@ -112,7 +108,7 @@ public class AbstractActionTest {
         ((ParametersTestingAction) action).setOneExpression("1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10");
         assertEquals("1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10", ((ParametersTestingAction) action).getOneExpression());
 
-        action.execute(evtDispatcher, errRep, scInstance, appLog, derivedEvents);
+        action.execute(exctx);
     }
 
     private class ParametersTestingAction extends AbstractAction {
@@ -142,8 +138,7 @@ public class AbstractActionTest {
         }
 
         @Override
-        protected void doExecute(EventDispatcher evtDispatcher, ErrorReporter errRep, Log appLog,
-                Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException,
+        protected void doExecute(ActionExecutionContext exctx) throws ModelException, SCXMLExpressionException,
                 WorkflowException, RepositoryException {
 
             assertSame(context, getContext());

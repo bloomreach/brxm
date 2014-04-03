@@ -16,14 +16,9 @@
 
 package org.onehippo.repository.scxml;
 
-import java.util.Collection;
-
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.scxml2.ErrorReporter;
-import org.apache.commons.scxml2.EventDispatcher;
+import org.apache.commons.scxml2.ActionExecutionContext;
 import org.apache.commons.scxml2.SCXMLExpressionException;
-import org.apache.commons.scxml2.TriggerEvent;
 import org.apache.commons.scxml2.model.ModelException;
 
 /**
@@ -51,8 +46,7 @@ public class ActionAction extends AbstractAction {
     }
 
     @Override
-    protected void doExecute(EventDispatcher evtDispatcher, ErrorReporter errRep, Log appLog,
-                             Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException {
+    protected void doExecute(ActionExecutionContext exctx) throws ModelException, SCXMLExpressionException {
 
         String action = getAction();
         if (StringUtils.isBlank(action)) {

@@ -15,20 +15,15 @@
  */
 package org.onehippo.repository.scxml;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.logging.Log;
+import org.apache.commons.scxml2.ActionExecutionContext;
 import org.apache.commons.scxml2.Context;
-import org.apache.commons.scxml2.ErrorReporter;
-import org.apache.commons.scxml2.EventDispatcher;
-import org.apache.commons.scxml2.SCInstance;
 import org.apache.commons.scxml2.SCXMLExpressionException;
-import org.apache.commons.scxml2.TriggerEvent;
 import org.apache.commons.scxml2.model.Action;
 import org.apache.commons.scxml2.model.ModelException;
 import org.hippoecm.repository.api.WorkflowException;
@@ -43,7 +38,7 @@ public abstract class AbstractAction extends Action {
 
     private static final long serialVersionUID = 1L;
 
-    private static ThreadLocal<SCInstance> tlSCInstance = new ThreadLocal<>();
+    private static ThreadLocal<ActionExecutionContext> tlExCtx = new ThreadLocal<>();
     private static ThreadLocal<Context> tlContext = new ThreadLocal<>();
 
     private Map<String, String> parameters;
@@ -51,12 +46,11 @@ public abstract class AbstractAction extends Action {
     private boolean immutable = false;
 
     @Override
-    public final void execute(EventDispatcher evtDispatcher, ErrorReporter errRep, SCInstance scInstance, Log appLog,
-            Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException {
+    public final void execute(ActionExecutionContext exctx) throws ModelException, SCXMLExpressionException {
         try {
-            tlSCInstance.set(scInstance);
+            tlExCtx.set(exctx);
             if (getContext() == null) {
-                tlContext.set(scInstance.getContext(getParentTransitionTarget()));
+                tlContext.set(exctx.getContext(getParentEnterableState()));
             }
             synchronized (this) {
                 if (!isImmutable()) {
@@ -72,17 +66,17 @@ public abstract class AbstractAction extends Action {
                     immutable = true;
                 }
             }
-            doExecute(evtDispatcher, errRep, appLog, derivedEvents);
+            doExecute(exctx);
         } catch (WorkflowException | RepositoryException e) {
             throw new ModelException(e);
         } finally {
             tlContext.remove();
-            tlSCInstance.remove();
+            tlExCtx.remove();
         }
     }
 
     /**
-     * @return true once {@link #doExecute(EventDispatcher, ErrorReporter, Log, Collection)}
+     * @return true once {@link #doExecute(ActionExecutionContext)}
      * for this instance is about to be invoked for the first time, after which no instance state should be mutable anymore
      */
     protected boolean isImmutable() {
@@ -90,7 +84,7 @@ public abstract class AbstractAction extends Action {
     }
 
     /**
-     * Called before {@link #doExecute(EventDispatcher, ErrorReporter, Log, Collection)} is to be invoked for the first time.
+     * Called before {@link #doExecute(ActionExecutionContext)} is to be invoked for the first time.
      * {@link Action} instance state must be immutable from that moment on,  as they may be executed concurrently from
      * different threads, and even multiple times within one thread (but only sequentially).
      */
@@ -123,7 +117,7 @@ public abstract class AbstractAction extends Action {
 
     /**
      * @return the current {@link Context} of this action. Only not null when invoked within the context of
-     * {@link #doExecute(EventDispatcher, ErrorReporter, Log, Collection)}
+     * {@link #doExecute(ActionExecutionContext)}
      */
     protected Context getContext() {
         return tlContext.get();
@@ -131,7 +125,7 @@ public abstract class AbstractAction extends Action {
 
     /**
      * @return the {@link SCXMLWorkflowData} from the {@link Context} of this action.
-     * May only be called when invoked within the context of {@link #doExecute(EventDispatcher, ErrorReporter, Log, Collection)}
+     * May only be called when invoked within the context of {@link #doExecute(ActionExecutionContext)}
      */
     protected SCXMLWorkflowData getSCXMLWorkflowData() {
         Context context = tlContext.get();
@@ -140,7 +134,7 @@ public abstract class AbstractAction extends Action {
 
     /**
      * @return the {@link SCXMLWorkflowContext} from the {@link Context} of this action.
-     * May only be called when invoked within the context of {@link #doExecute(EventDispatcher, ErrorReporter, Log, Collection)}
+     * May only be called when invoked within the context of {@link #doExecute(ActionExecutionContext)}
      */
     protected SCXMLWorkflowContext getSCXMLWorkflowContext() {
         Context context = tlContext.get();
@@ -148,20 +142,21 @@ public abstract class AbstractAction extends Action {
     }
 
     /**
-     * Evaluates the expression by the {@link org.apache.commons.scxml2.Evaluator} using the current {@link #getContext()} and returns the evaluation result.
-     * May only be invoked within the context of {@link #doExecute(EventDispatcher, ErrorReporter, Log, Collection)}
+     * Evaluates the expression by the {@link org.apache.commons.scxml2.Evaluator} using the current
+     * {@link #getContext()} and returns the evaluation result.
+     * May only be invoked within the context of {@link #doExecute(ActionExecutionContext)}
      * @throws org.apache.commons.scxml2.model.ModelException
      * @throws org.apache.commons.scxml2.SCXMLExpressionException
      */
     @SuppressWarnings("unchecked")
     protected <T> T eval(String expr) throws ModelException, SCXMLExpressionException {
         Context ctx = tlContext.get();
-        return (T) tlSCInstance.get().getEvaluator().eval(ctx, expr);
+        return (T) tlExCtx.get().getEvaluator().eval(ctx, expr);
     }
 
     /**
      * An SCXML action implementation should implement this method to include the real execution code.
      */
-    abstract protected void doExecute(EventDispatcher evtDispatcher, ErrorReporter errRep, Log appLog,
-            Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException, WorkflowException, RepositoryException;
+    abstract protected void doExecute(ActionExecutionContext exctx) throws ModelException,
+            SCXMLExpressionException, WorkflowException, RepositoryException;
 }

@@ -100,7 +100,7 @@
     <json-lib.version>2.2.2</json-lib.version>
     <easymock.version>3.2</easymock.version>
     <decentxml.version>1.4</decentxml.version>
-    <commons-scxml2.version>2.0-M0</commons-scxml2.version>
+    <commons-scxml2.version>2.0-M1</commons-scxml2.version>
   </properties>
 
   <scm>
