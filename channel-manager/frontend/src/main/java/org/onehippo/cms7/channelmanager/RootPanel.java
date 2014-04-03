@@ -43,6 +43,7 @@ import org.wicketstuff.js.ext.util.JSONIdentifier;
 
 import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.CONFIG_REST_PROXY_SERVICE_ID;
 import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.HST_CONFIG_EDITOR_DISABLED;
+import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.HST_CONFIG_EDITOR_LOCK_INHERITED_NODES;
 
 @ExtClass("Hippo.ChannelManager.RootPanel")
 public class RootPanel extends ExtPanel {
@@ -116,7 +117,8 @@ public class RootPanel extends ExtPanel {
         if (config.getAsBoolean(HST_CONFIG_EDITOR_DISABLED, false)) {
             hstConfigEditor = null;
         } else {
-            hstConfigEditor = new HstConfigEditor(context);
+            final boolean lockInheritedConfig = config.getAsBoolean(HST_CONFIG_EDITOR_LOCK_INHERITED_NODES, true);
+            hstConfigEditor = new HstConfigEditor(context, lockInheritedConfig);
         }
 
         channelManagerCard.add(this.blueprintStore);

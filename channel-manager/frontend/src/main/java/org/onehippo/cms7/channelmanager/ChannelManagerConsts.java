@@ -23,5 +23,6 @@ public final class ChannelManagerConsts {
 	
 	public static final String CONFIG_REST_PROXY_SERVICE_ID = "rest.proxy.service.id";
     public static final String HST_CONFIG_EDITOR_DISABLED = "hst.config.editor.disabled";
+    public static final String HST_CONFIG_EDITOR_LOCK_INHERITED_NODES = "hst.config.editor.lock.inherited.nodes";
 
 }
