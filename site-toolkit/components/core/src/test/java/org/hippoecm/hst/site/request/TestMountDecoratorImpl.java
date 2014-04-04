@@ -115,12 +115,12 @@ public class TestMountDecoratorImpl {
         assertTrue(decoratedMount.isPreview());
 
         final VirtualHost decoratedHost = decoratedMount.getVirtualHost();
-        assertTrue(decoratedHost instanceof MountDecoratorImpl.VirtualHostAsPreviewDecorator);
+        assertTrue(decoratedHost instanceof MountDecoratorImpl.PreviewDecoratedVirtualHost);
         final PortMount decoratedPort = decoratedHost.getPortMount(0);
-        assertTrue(decoratedPort instanceof MountDecoratorImpl.PortMountAsPreviewDecorator);
+        assertTrue(decoratedPort instanceof MountDecoratorImpl.PreviewDecoratedPortMount);
 
         final Mount decoratedMountViaHostPort = decoratedPort.getRootMount();
-        assertTrue(decoratedMountViaHostPort instanceof MountDecoratorImpl.MountAsPreviewDecorator);
+        assertTrue(decoratedMountViaHostPort instanceof MountDecoratorImpl.PreviewDecoratedMount);
 
         // via via you get a new decorated instance
         assertFalse(decoratedMountViaHostPort == mountDecorator);
@@ -152,6 +152,8 @@ public class TestMountDecoratorImpl {
         expect(virtualHost.getVirtualHosts()).andReturn(virtualHosts).anyTimes();
 
         expect(virtualHosts.getMountsByHostGroup("foo")).andReturn(Lists.asList(mount1, new Mount[]{mount2, mount3})).anyTimes();
+        expect(virtualHosts.getMountByGroupAliasAndType("foo", "bar", "preview")).andReturn(mount1).anyTimes();
+        expect(virtualHosts.getMountByIdentifier("uuid")).andReturn(mount1).anyTimes();
 
         replay(mount1, mount2, mount3, resolvedMount1, resolvedMount2, resolvedMount3, virtualHost, virtualHosts);
 
@@ -160,11 +162,18 @@ public class TestMountDecoratorImpl {
         assertTrue(decoratedMount.isPreview());
 
         final VirtualHosts decoratedHosts = decoratedMount.getVirtualHost().getVirtualHosts();
-        assertTrue(decoratedHosts instanceof MountDecoratorImpl.VirtualHostsAsPreviewDecorator);
+        assertTrue(decoratedHosts instanceof MountDecoratorImpl.PreviewDecoratedVirtualHosts);
+
+        final Mount mountByGroupAliasAndType = decoratedHosts.getMountByGroupAliasAndType("foo", "bar", "preview");
+
+        assertTrue(mountByGroupAliasAndType instanceof MountDecoratorImpl.PreviewDecoratedMount);
+
+        final Mount decoratedByUUID = decoratedHosts.getMountByIdentifier("uuid");
+        assertTrue(decoratedByUUID instanceof MountDecoratorImpl.PreviewDecoratedMount);
 
         final List<Mount> decoratedHostsMountsViaHosts = decoratedHosts.getMountsByHostGroup("foo");
         for (Mount decoratedHostsMountsViaHost : decoratedHostsMountsViaHosts) {
-            assertTrue(decoratedHostsMountsViaHost instanceof MountDecoratorImpl.MountAsPreviewDecorator);
+            assertTrue(decoratedHostsMountsViaHost instanceof MountDecoratorImpl.PreviewDecoratedMount);
         }
     }
 
