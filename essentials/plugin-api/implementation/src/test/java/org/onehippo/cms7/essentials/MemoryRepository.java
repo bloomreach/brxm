@@ -83,6 +83,7 @@ public class MemoryRepository {
 
     private void initialize() throws Exception {
         storageDirectory = new File(System.getProperty("java.io.tmpdir"), "jcr");
+        deleteDirectory(storageDirectory);
         memoryRepository = new TransientRepository(RepositoryConfig.create(resource.toURI(), storageDirectory.getAbsolutePath()));
     }
 
@@ -101,6 +102,9 @@ public class MemoryRepository {
     }
 
     private boolean deleteDirectory(File path) {
+        if(path==null){
+            return true;
+        }
         if (path.exists()) {
             File[] files = path.listFiles();
             if (files == null) {
