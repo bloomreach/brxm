@@ -42,7 +42,7 @@ public class MavenModelReaderWriterTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        target = new File(absolutePomTempPath);
+        target = new File(GlobalUtils.decodeUrl(absolutePomTempPath));
     }
 
     @AfterClass
@@ -61,7 +61,7 @@ public class MavenModelReaderWriterTest {
             final URL resource = getClass().getResource("/cms-pom.xml");
             final String path = resource.getPath();
 
-            final File source = new File(path);
+            final File source = new File(GlobalUtils.decodeUrl(path));
 
             // To copy a file to a specified folder we can use the
             // FileUtils.copyFileToDirectory() method.
