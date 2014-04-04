@@ -52,7 +52,7 @@ public class CndUtilsTest extends BaseRepositoryTest {
         // test un-register type
         boolean removed = CndUtils.unRegisterDocumentType(getContext(), TEST_PREFIX, "myname");
         assertTrue("Expected type to be removed", removed);
-
+        session.logout();
 
     }
 

@@ -45,6 +45,7 @@ public class UpdateUtilsTest extends BaseRepositoryTest {
     @Override
     @After
     public void tearDown() throws Exception {
+        super.tearDown();
         session.logout();
     }
 }

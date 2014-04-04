@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.jcr.Item;
-import javax.jcr.Session;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -39,15 +38,11 @@ import static org.junit.Assert.assertNotNull;
 public class JcrPersistenceWriterTest extends BaseRepositoryTest {
 
 
-    private Session session;
-
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
         createHstRootConfig();
-
-
     }
 
     @Test
@@ -55,29 +50,29 @@ public class JcrPersistenceWriterTest extends BaseRepositoryTest {
         final PluginContext context = getContext();
 
 
-        JcrPersistenceWriter writer = new JcrPersistenceWriter(getContext().createSession(), context);
-        //############################################
-        // POPULATE TREE:
-        //############################################
-        final HstConfiguration config = new HstConfiguration("mytestconfiguration", "/hst:hst/hst:configurations");
-        // template
-        final HstTemplate template = config.addTemplate("main.test", "/JSP/somepath.jsp");
-        final List<String> containers = new ArrayList<>();
-        containers.add("foo");
-        containers.add("bar");
-        template.setContainers(containers);
+        try (JcrPersistenceWriter writer = new JcrPersistenceWriter(getContext().createSession(), context)) {
+            //############################################
+            // POPULATE TREE:
+            //############################################
+            final HstConfiguration config = new HstConfiguration("mytestconfiguration", "/hst:hst/hst:configurations");
+            // template
+            final HstTemplate template = config.addTemplate("main.test", "/JSP/somepath.jsp");
+            final List<String> containers = new ArrayList<>();
+            containers.add("foo");
+            containers.add("bar");
+            template.setContainers(containers);
 
-        // menu
-        final HstSiteMenu myMenu = config.addMenu("myMenu");
-        final HstSiteMenuItem menuItem = new HstSiteMenuItem("HOME", "home");
-        myMenu.addMenuItem(menuItem);
+            // menu
+            final HstSiteMenu myMenu = config.addMenu("myMenu");
+            final HstSiteMenuItem menuItem = new HstSiteMenuItem("HOME", "home");
+            myMenu.addMenuItem(menuItem);
 
 
-        //############################################
-        //
-        //############################################
-        final Item item = writer.write(config);
-        assertNotNull("Expected saved object", item);
-        writer.close();
+            //############################################
+            //
+            //############################################
+            final Item item = writer.write(config);
+            assertNotNull("Expected saved object", item);
+        }
     }
 }

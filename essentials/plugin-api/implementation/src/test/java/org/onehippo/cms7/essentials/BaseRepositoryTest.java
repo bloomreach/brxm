@@ -13,6 +13,8 @@ import org.hippoecm.repository.HippoRepositoryFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
@@ -20,6 +22,7 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 public abstract class BaseRepositoryTest extends BaseTest {
 
 
+    private static final Logger log = LoggerFactory.getLogger(BaseRepositoryTest.class);
     protected MemoryRepository repository;
     protected Session hippoSession;
 
@@ -35,6 +38,9 @@ public abstract class BaseRepositoryTest extends BaseTest {
     @Override
     @Before
     public void setUp() throws Exception {
+        log.info("======================================");
+        log.info("setUp()");
+        log.info("======================================");
         super.setUp();
         repository = new MemoryRepository();
     }
@@ -42,7 +48,9 @@ public abstract class BaseRepositoryTest extends BaseTest {
     @Override
     @After
     public void tearDown() throws Exception {
-
+        log.info("======================================");
+        log.info("tearDown()");
+        log.info("======================================");
         super.tearDown();
         if (repository != null) {
             repository.shutDown();

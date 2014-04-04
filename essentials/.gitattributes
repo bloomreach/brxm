@@ -804,7 +804,6 @@ plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/u
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/VersionUtilsTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/XmlUtilsTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/annotations/AnnotationUtilsTest.java -text
-plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/annotations/ProcessAnnotationTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/common/PackageVisitorTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/inject/EventBusModuleTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/inject/PropertiesModuleTest.java -text

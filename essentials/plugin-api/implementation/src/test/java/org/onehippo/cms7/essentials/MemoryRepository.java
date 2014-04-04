@@ -51,8 +51,6 @@ public class MemoryRepository {
 
         //add namespace:
         final Node rootNode = session.getRootNode();
-        final Node testing123 = rootNode.addNode("testing123", "essentials:folder");
-        log.info("testing123 {}", testing123);
         final Node namespaceNode = rootNode.addNode("hippo:namespaces", "hipposysedit:namespacefolder");
         namespaceNode.addNode("testnamespace", "hipposysedit:namespace");
         // add  hippoconfig

@@ -126,7 +126,7 @@
     <level value="warn"/>
   </logger>
   <logger name="org.onehippo.cms7.essentials">
-    <level value="debug"/>
+    <level value="info"/>
   </logger>
 
 
