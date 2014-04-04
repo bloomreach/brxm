@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,12 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import javax.jcr.Credentials;
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
 import javax.jcr.Repository;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -57,8 +52,6 @@ import org.hippoecm.hst.core.internal.HstRequestContextComponent;
 import org.hippoecm.hst.core.internal.MountDecorator;
 import org.hippoecm.hst.core.internal.MutableResolvedMount;
 import org.hippoecm.hst.core.jcr.pool.MultipleRepository;
-import org.hippoecm.hst.core.linking.HstLink;
-import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -82,8 +75,6 @@ public class HstFilter implements Filter {
 
     private final static String FILTER_DONE_KEY = "filter.done_"+HstFilter.class.getName();
 
-    // used to redirect to nodes with a certain JCR uuid in mounts of a certain type
-    private static final String PATH_PREFIX_UUID_REDIRECT = "/previewfromcms";
     private static final String REQUEST_PARAM_UUID = "uuid";
     private static final String REQUEST_PARAM_TYPE = "type";
     private static final String DEFAULT_REQUEST_PARAM_TYPE = "live";
@@ -117,8 +108,6 @@ public class HstFilter implements Filter {
 
     public static final String PREFIX_EXCLUSIONS_INIT_PARAM = "prefixExclusions";
     public static final String SUFFIX_EXCLUSIONS_INIT_PARAM = "suffixExclusions";
-
-    private static final String DEFAULT_LOGIN_RESOURCE_PATH = "/login/resource";
 
     protected String contextNamespace;
     protected boolean doClientRedirectAfterJaasLoginBehindProxy;
@@ -383,142 +372,132 @@ public class HstFilter implements Filter {
             RequestContextProvider.set(requestContext);
             requestContextSetToProvider = true;
 
-            if (containerRequest.getPathInfo().startsWith(PATH_PREFIX_UUID_REDIRECT)) {
-                /*
-                 * The request starts PATH_PREFIX_UUID_REDIRECT which means it is called from the cms with a uuid. Below, we compute
-                 * a URL for the uuid, and send a browser redirect to this URL.
-                 */
-                sendRedirectToUuidUrl(req, res, requestContext, hstManager, resolvedVirtualHost, containerRequest, hostName);
-                return;
-            } else {
+            ResolvedMount resolvedMount = requestContext.getResolvedMount();
 
-                ResolvedMount resolvedMount = requestContext.getResolvedMount();
+            if (resolvedMount == null) {
 
-                if (resolvedMount == null) {
-
-                    resolvedMount = vHosts.matchMount(hostName, containerRequest.getContextPath(), containerRequest.getPathInfo());
-                    if (resolvedMount != null) {
-                        requestContext.setResolvedMount(resolvedMount);
-                        // if we are in RENDERING_HOST mode, we always need to include the contextPath, even if showcontextpath = false.
-                        String renderingHost = HstRequestUtils.getRenderingHost(containerRequest);
-                        if (renderingHost != null) {
-                            requestContext.setRenderHost(renderingHost);
-                            HttpSession session = containerRequest.getSession(false);
-                            if (requestComesFromCms(vHosts, resolvedMount) && session != null && Boolean.TRUE.equals(session.getAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED))) {
-                                requestContext.setCmsRequest(true);
-                                session.setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, resolvedMount.getMount().getIdentifier());
-                                session.setAttribute(ContainerConstants.RENDERING_HOST, renderingHost);
-                                if (resolvedMount instanceof MutableResolvedMount) {
-                                    Mount undecoratedMount = resolvedMount.getMount();
-                                    if (!(undecoratedMount instanceof ContextualizableMount)) {
-                                        throw new MatchException("The matched mount for request '" + hostName + " and " + containerRequest.getRequestURI() + "' is not an instanceof of a ContextualizableMount. Cannot act as preview mount. Cannot proceed request for CMS SSO environment.");
-                                    }
-                                    MountDecorator mountDecorator = HstServices.getComponentManager().getComponent(MountDecorator.class.getName());
-                                    Mount decoratedMount = mountDecorator.decorateMountAsPreview(undecoratedMount);
-                                    if (decoratedMount == undecoratedMount) {
-                                        log.debug("Matched mount pointing to site '{}' is already a preview so no need for CMS SSO context to decorate the mount to a preview", undecoratedMount.getMountPoint());
-                                    } else {
-                                        log.debug("Matched mount pointing to site '{}' is because of CMS SSO context replaced by preview decorated mount pointing to site '{}'", undecoratedMount.getMountPoint(), decoratedMount.getMountPoint());
-                                    }
-                                    ((MutableResolvedMount) resolvedMount).setMount(decoratedMount);
-                                } else {
-                                    throw new MatchException("ResolvedMount must be an instance of MutableResolvedMount to be usable in CMS SSO environment. Cannot proceed request for " + hostName + " and " + containerRequest.getRequestURI());
+                resolvedMount = vHosts.matchMount(hostName, containerRequest.getContextPath(), containerRequest.getPathInfo());
+                if (resolvedMount != null) {
+                    requestContext.setResolvedMount(resolvedMount);
+                    // if we are in RENDERING_HOST mode, we always need to include the contextPath, even if showcontextpath = false.
+                    String renderingHost = HstRequestUtils.getRenderingHost(containerRequest);
+                    if (renderingHost != null) {
+                        requestContext.setRenderHost(renderingHost);
+                        HttpSession session = containerRequest.getSession(false);
+                        if (requestComesFromCms(vHosts, resolvedMount) && session != null && Boolean.TRUE.equals(session.getAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED))) {
+                            requestContext.setCmsRequest(true);
+                            session.setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, resolvedMount.getMount().getIdentifier());
+                            session.setAttribute(ContainerConstants.RENDERING_HOST, renderingHost);
+                            if (resolvedMount instanceof MutableResolvedMount) {
+                                Mount undecoratedMount = resolvedMount.getMount();
+                                if (!(undecoratedMount instanceof ContextualizableMount)) {
+                                    throw new MatchException("The matched mount for request '" + hostName + " and " + containerRequest.getRequestURI() + "' is not an instanceof of a ContextualizableMount. Cannot act as preview mount. Cannot proceed request for CMS SSO environment.");
                                 }
+                                MountDecorator mountDecorator = HstServices.getComponentManager().getComponent(MountDecorator.class.getName());
+                                Mount decoratedMount = mountDecorator.decorateMountAsPreview(undecoratedMount);
+                                if (decoratedMount == undecoratedMount) {
+                                    log.debug("Matched mount pointing to site '{}' is already a preview so no need for CMS SSO context to decorate the mount to a preview", undecoratedMount.getMountPoint());
+                                } else {
+                                    log.debug("Matched mount pointing to site '{}' is because of CMS SSO context replaced by preview decorated mount pointing to site '{}'", undecoratedMount.getMountPoint(), decoratedMount.getMountPoint());
+                                }
+                                ((MutableResolvedMount) resolvedMount).setMount(decoratedMount);
+                            } else {
+                                throw new MatchException("ResolvedMount must be an instance of MutableResolvedMount to be usable in CMS SSO environment. Cannot proceed request for " + hostName + " and " + containerRequest.getRequestURI());
                             }
                         }
-                    } else {
-                        throw new MatchException("No matching Mount for '" + hostName + "' and '" + containerRequest.getRequestURI() + "'");
                     }
+                } else {
+                    throw new MatchException("No matching Mount for '" + hostName + "' and '" + containerRequest.getRequestURI() + "'");
+                }
+            }
+
+            // sets filterChain for ValveContext to be able to retrieve...
+            req.setAttribute(ContainerConstants.HST_FILTER_CHAIN, chain);
+
+            HstContainerURL hstContainerUrl = setMountPathAsServletPath(containerRequest, hstManager, requestContext, resolvedMount, res);
+
+            final String farthestRequestScheme = HstRequestUtils.getFarthestRequestScheme(req);
+            if (resolvedMount.getMount().isMapped()) {
+                ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
+                boolean processSiteMapItemHandlers = false;
+
+                if (resolvedSiteMapItem == null) {
+                    processSiteMapItemHandlers = true;
+                    resolvedSiteMapItem = resolvedMount.matchSiteMapItem(hstContainerUrl.getPathInfo());
+                    if(resolvedSiteMapItem == null) {
+                        // should not be possible as when it would be null, an exception should have been thrown
+                        log.warn(hostName+"' and '"+containerRequest.getRequestURI()+"' could not be processed by the HST: Error resolving request to sitemap item");
+                        sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
+                        return;
+                    }
+                    requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
                 }
 
-                // sets filterChain for ValveContext to be able to retrieve...
-                req.setAttribute(ContainerConstants.HST_FILTER_CHAIN, chain);
+                if (!isSupportedScheme(requestContext, resolvedSiteMapItem, farthestRequestScheme)) {
+                   final HstSiteMapItem hstSiteMapItem = resolvedSiteMapItem.getHstSiteMapItem();
+                   switch (hstSiteMapItem.getSchemeNotMatchingResponseCode()) {
+                       case HttpServletResponse.SC_OK:
+                            // just continue;
+                            break;
+                       case HttpServletResponse.SC_MOVED_PERMANENTLY :
+                           res.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+                           // create fully qualified redirect to scheme from sitemap item
+                           res.setHeader("Location", HstRequestUtils.createURLWithExplicitSchemeForRequest(hstSiteMapItem.getScheme(), resolvedSiteMapItem.getResolvedMount().getMount(), req));
+                           return;
+                       case HttpServletResponse.SC_MOVED_TEMPORARILY:
+                       case HttpServletResponse.SC_SEE_OTHER:
+                       case HttpServletResponse.SC_TEMPORARY_REDIRECT:
+                           // create fully qualified redirect to scheme from sitemap item
+                           res.sendRedirect(HstRequestUtils.createURLWithExplicitSchemeForRequest(hstSiteMapItem.getScheme(), resolvedSiteMapItem.getResolvedMount().getMount(), req));
+                           return;
+                       case HttpServletResponse.SC_NOT_FOUND:
+                           sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
+                           return;
+                       case HttpServletResponse.SC_FORBIDDEN:
+                           sendError(req, res, HttpServletResponse.SC_FORBIDDEN);
+                           return;
+                       default :
+                           log.warn("Unsupported 'schemenotmatchingresponsecode' {} encountered. Continue rendering.", hstSiteMapItem.getSchemeNotMatchingResponseCode());
+                   }
+                }
 
-                HstContainerURL hstContainerUrl = setMountPathAsServletPath(containerRequest, hstManager, requestContext, resolvedMount, res);
+                processResolvedSiteMapItem(containerRequest, res, chain, hstManager, siteMapItemHandlerFactory, requestContext, processSiteMapItemHandlers);
 
-                final String farthestRequestScheme = HstRequestUtils.getFarthestRequestScheme(req);
-                if (resolvedMount.getMount().isMapped()) {
-                    ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
-                    boolean processSiteMapItemHandlers = false;
-
-                    if (resolvedSiteMapItem == null) {
-                        processSiteMapItemHandlers = true;
-                        resolvedSiteMapItem = resolvedMount.matchSiteMapItem(hstContainerUrl.getPathInfo());
-                        if(resolvedSiteMapItem == null) {
-                            // should not be possible as when it would be null, an exception should have been thrown
-                            log.warn(hostName+"' and '"+containerRequest.getRequestURI()+"' could not be processed by the HST: Error resolving request to sitemap item");
-                            sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
-                            return;
-                        }
-                        requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
-                    }
-
-                    if (!isSupportedScheme(requestContext, resolvedSiteMapItem, farthestRequestScheme)) {
-                       final HstSiteMapItem hstSiteMapItem = resolvedSiteMapItem.getHstSiteMapItem();
-                       switch (hstSiteMapItem.getSchemeNotMatchingResponseCode()) {
-                           case HttpServletResponse.SC_OK:
+            } else {
+                if(resolvedMount.getNamedPipeline() == null) {
+                    log.warn(hostName + "' and '" + containerRequest.getRequestURI() + "' could not be processed by the HST: No hstSite and no custom namedPipeline for Mount");
+                    sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
+                }
+                else {
+                    if (!isSupportedScheme(requestContext, resolvedMount, farthestRequestScheme)) {
+                        final Mount mount = resolvedMount.getMount();
+                        switch (mount.getSchemeNotMatchingResponseCode()) {
+                            case HttpServletResponse.SC_OK:
                                 // just continue;
                                 break;
-                           case HttpServletResponse.SC_MOVED_PERMANENTLY :
-                               res.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-                               // create fully qualified redirect to scheme from sitemap item
-                               res.setHeader("Location", HstRequestUtils.createURLWithExplicitSchemeForRequest(hstSiteMapItem.getScheme(), resolvedSiteMapItem.getResolvedMount().getMount(), req));
-                               return;
-                           case HttpServletResponse.SC_MOVED_TEMPORARILY:
-                           case HttpServletResponse.SC_SEE_OTHER:
-                           case HttpServletResponse.SC_TEMPORARY_REDIRECT:
-                               // create fully qualified redirect to scheme from sitemap item
-                               res.sendRedirect(HstRequestUtils.createURLWithExplicitSchemeForRequest(hstSiteMapItem.getScheme(), resolvedSiteMapItem.getResolvedMount().getMount(), req));
-                               return;
-                           case HttpServletResponse.SC_NOT_FOUND:
-                               sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
-                               return;
-                           case HttpServletResponse.SC_FORBIDDEN:
-                               sendError(req, res, HttpServletResponse.SC_FORBIDDEN);
-                               return;
-                           default :
-                               log.warn("Unsupported 'schemenotmatchingresponsecode' {} encountered. Continue rendering.", hstSiteMapItem.getSchemeNotMatchingResponseCode());
-                       }
-                    }
-
-                    processResolvedSiteMapItem(containerRequest, res, chain, hstManager, siteMapItemHandlerFactory, requestContext, processSiteMapItemHandlers);
-
-                } else {
-                    if(resolvedMount.getNamedPipeline() == null) {
-                        log.warn(hostName + "' and '" + containerRequest.getRequestURI() + "' could not be processed by the HST: No hstSite and no custom namedPipeline for Mount");
-                        sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
-                    }
-                    else {
-                        if (!isSupportedScheme(requestContext, resolvedMount, farthestRequestScheme)) {
-                            final Mount mount = resolvedMount.getMount();
-                            switch (mount.getSchemeNotMatchingResponseCode()) {
-                                case HttpServletResponse.SC_OK:
-                                    // just continue;
-                                    break;
-                                case HttpServletResponse.SC_MOVED_PERMANENTLY :
-                                    res.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-                                    // create fully qualified redirect to scheme from sitemap item
-                                    res.setHeader("Location", HstRequestUtils.createURLWithExplicitSchemeForRequest(mount.getScheme(), mount, req));
-                                    return;
-                                case HttpServletResponse.SC_MOVED_TEMPORARILY:
-                                case HttpServletResponse.SC_SEE_OTHER:
-                                case HttpServletResponse.SC_TEMPORARY_REDIRECT:
-                                    // create fully qualified redirect to scheme from sitemap item
-                                    res.sendRedirect(HstRequestUtils.createURLWithExplicitSchemeForRequest(mount.getScheme(), mount, req));
-                                    return;
-                                case HttpServletResponse.SC_NOT_FOUND:
-                                    sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
-                                    return;
-                                case HttpServletResponse.SC_FORBIDDEN:
-                                    sendError(req, res, HttpServletResponse.SC_FORBIDDEN);
-                                    return;
-                                default :
-                                    log.warn("Unsupported 'schemenotmatchingresponsecode' {} encountered. Continue rendering.", mount.getSchemeNotMatchingResponseCode());
-                            }
+                            case HttpServletResponse.SC_MOVED_PERMANENTLY :
+                                res.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+                                // create fully qualified redirect to scheme from sitemap item
+                                res.setHeader("Location", HstRequestUtils.createURLWithExplicitSchemeForRequest(mount.getScheme(), mount, req));
+                                return;
+                            case HttpServletResponse.SC_MOVED_TEMPORARILY:
+                            case HttpServletResponse.SC_SEE_OTHER:
+                            case HttpServletResponse.SC_TEMPORARY_REDIRECT:
+                                // create fully qualified redirect to scheme from sitemap item
+                                res.sendRedirect(HstRequestUtils.createURLWithExplicitSchemeForRequest(mount.getScheme(), mount, req));
+                                return;
+                            case HttpServletResponse.SC_NOT_FOUND:
+                                sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
+                                return;
+                            case HttpServletResponse.SC_FORBIDDEN:
+                                sendError(req, res, HttpServletResponse.SC_FORBIDDEN);
+                                return;
+                            default :
+                                log.warn("Unsupported 'schemenotmatchingresponsecode' {} encountered. Continue rendering.", mount.getSchemeNotMatchingResponseCode());
                         }
-                        log.info("Processing request for pipeline '{}'", resolvedMount.getNamedPipeline());
-                        HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, requestContext, containerRequest, res, resolvedMount.getNamedPipeline());
                     }
+                    log.info("Processing request for pipeline '{}'", resolvedMount.getNamedPipeline());
+                    HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, requestContext, containerRequest, res, resolvedMount.getNamedPipeline());
                 }
             }
     	}
@@ -759,85 +738,6 @@ public class HstFilter implements Filter {
         }
 
         return hstContainerURL;
-    }
-
-    /**
-     * Sends a redirect to a URL for the JCR node with the given UUID.
-     *
-     * @param req HTTP servlet request
-     * @param res HTTP servlet response
-     * @param requestContext the HST request context
-     * @param hstSitesManager
-     * @throws javax.jcr.RepositoryException
-     * @throws java.io.IOException
-     */
-    private void sendRedirectToUuidUrl(HttpServletRequest req, HttpServletResponse res, HstMutableRequestContext requestContext,
-            HstManager hstSitesManager, ResolvedVirtualHost resolvedVirtualHost, HstContainerRequest containerRequest, String hostName) throws RepositoryException, IOException {
-
-        final String jcrUuid = getJcrUuidParameter(req);
-        if (jcrUuid == null) {
-            sendError(req, res, HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
-
-        Session session = null;
-        try {
-            Credentials configReaderCreds = HstServices.getComponentManager().getComponent(Credentials.class.getName() + ".hstconfigreader");
-            Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName());
-            session = repository.login(configReaderCreds);
-
-            Node node = null;
-            try {
-                node = session.getNodeByIdentifier(jcrUuid);
-            } catch (ItemNotFoundException e) {
-                log.warn("Cannot find a node for uuid '{}'", jcrUuid);
-                sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
-                return;
-            }
-
-            final String mountType = getTypeParameter(req);
-
-            final String hostGroupName = resolvedVirtualHost.getVirtualHost().getHostGroupName();
-            final ResolvedMount mount = getMountForType(containerRequest, mountType, hostName, hostGroupName, resolvedVirtualHost.getVirtualHost().getVirtualHosts(), node.getPath());
-            if (mount != null) {
-                requestContext.setResolvedMount(mount);
-            } else {
-                throw new MatchException("No matching mount for '" + hostName + "' and '" + containerRequest.getRequestURL() + "'");
-            }
-
-            ((GenericHttpServletRequestWrapper)containerRequest).setRequestURI(mount.getResolvedMountPath() + "/" + PATH_PREFIX_UUID_REDIRECT);
-            setMountPathAsServletPath(containerRequest,hstSitesManager, requestContext, mount, res);
-
-
-            final HstLinkCreator linkCreator = HstServices.getComponentManager().getComponent(HstLinkCreator.class.getName());
-            if (linkCreator == null) {
-                log.error("Cannot create a 'uuid url' when there is no linkCreator available");
-                sendError(req, res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                return;
-            }
-
-            requestContext.setURLFactory(hstSitesManager.getUrlFactory());
-            final HstLink link = linkCreator.create(node, requestContext);
-            if (link == null) {
-                log.warn("Not able to create link for node '{}' belonging to uuid = '{}'", node.getPath(), jcrUuid);
-                sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
-                return;
-            }
-
-            String url = link.toUrlForm(requestContext, false);
-            if (requestContext.isFullyQualifiedURLs()) {
-                url += "?" + ContainerConstants.HST_REQUEST_USE_FULLY_QUALIFIED_URLS + "=true";
-            }
-            if (log.isInfoEnabled()) {
-                log.info("Created HstLink for uuid '{}': '{}'", node.getPath(), url);
-            }
-            req.removeAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
-            res.sendRedirect(url);
-        } finally {
-            if(session != null) {
-                session.logout();
-            }
-        }
     }
 
     /**
