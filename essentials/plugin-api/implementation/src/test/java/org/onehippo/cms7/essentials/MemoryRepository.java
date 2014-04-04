@@ -44,16 +44,22 @@ public class MemoryRepository {
         for (String fileName : CND_FILE_NAMES) {
             log.debug("Registering CND file *{}*", fileName);
             InputStream stream = getClass().getResourceAsStream(fileName);
-            mgr.registerNodeTypes(stream, "text/x-jcr-cnd");
+            mgr.registerNodeTypes(stream, "text/x-jcr-cnd", true);
         }
+
         //add namespace:
         final Node rootNode = session.getRootNode();
+        final Node testing123 = rootNode.addNode("testing123", "essentials:folder");
+        log.info("testing123 {}", testing123);
         final Node namespaceNode = rootNode.addNode("hippo:namespaces", "hipposysedit:namespacefolder");
         namespaceNode.addNode("testnamespace", "hipposysedit:namespace");
         // add  hippoconfig
         final Node config = rootNode.addNode("hippo:configuration", "hipposys:configuration");
         config.addNode("hippo:workflows", "hipposys:workflowfolder");
         config.addNode("hippo:documents", "hipposys:ocmqueryfolder");
+        if (!config.hasNode("hippo:update")) {
+            config.addNode("hippo:update", "hipposys:update");
+        }
 
         Node queryNode;
         if (!config.hasNode("hippo:queries")) {
@@ -70,7 +76,8 @@ public class MemoryRepository {
         content.addNode("documents", "hippostd:folder")
                 .addNode("testnamespace", "hippostd:folder");
         session.save();
-        session.logout();
+        // mm: todo check out why this fails:
+        //session.logout();
     }
 
 
@@ -115,6 +122,6 @@ public class MemoryRepository {
 
 
     public final Session getSession() throws RepositoryException {
-        return  memoryRepository.login(new SimpleCredentials("admin", "admin".toCharArray()));
+        return memoryRepository.login(new SimpleCredentials("admin", "admin".toCharArray()));
     }
 }

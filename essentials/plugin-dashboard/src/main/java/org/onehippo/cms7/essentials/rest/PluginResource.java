@@ -190,7 +190,7 @@ public class PluginResource extends BaseResource {
             response = RestfulList.class)
     @POST
     @Path("/install/powerpack")
-    public RestfulList<MessageRestful> installPowerpack(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
+    public RestfulList<MessageRestful> installPowerpack(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) throws Exception {
         final RestfulList<MessageRestful> messageRestfulRestfulList = new RestList<>();
         final Map<String, String> values = payloadRestful.getValues();
         final String pluginId = String.valueOf(values.get(PLUGIN_ID));
@@ -205,41 +205,44 @@ public class PluginResource extends BaseResource {
         final String className = ProjectSetupPlugin.class.getName();
         final PluginContext context = new DefaultPluginContext(new PluginRestful(className));
         // inject project settings:
-        final PluginConfigService configService = context.getConfigService();
-        final PluginConfigService service = configService;
-
-        final ProjectSettingsBean document = service.read(className, ProjectSettingsBean.class);
-        if (document != null) {
-            context.setBeansPackageName(document.getSelectedBeansPackage());
-            context.setComponentsPackageName(document.getSelectedComponentsPackage());
-            context.setRestPackageName(document.getSelectedRestPackage());
-            context.setProjectNamespacePrefix(document.getProjectNamespace());
-        }
-        //############################################
-        // EXECUTE SKELETON:
-        //############################################
-        final PowerpackPackage commonsPack = new CommonsPowerpack();
-        getInjector().autowireBean(commonsPack);
-        commonsPack.setProperties(new HashMap<String, Object>(values));
-        commonsPack.execute(context);
-
-        final PowerpackPackage powerpackPackage = GlobalUtils.newInstance(myPlugin.getPowerpackClass());
-        powerpackPackage.setProperties(new HashMap<String, Object>(values));
-        getInjector().autowireBean(powerpackPackage);
+        final PluginConfigService service;
+        try (PluginConfigService configService = context.getConfigService()) {
+            service = configService;
 
 
-        final InstructionStatus status = powerpackPackage.execute(context);
-        log.info("status {}", status);
-        // save status:
-        if (document != null) {
-            document.setSetupDone(true);
-            final boolean written = service.write(document);
-            log.info("Config saved: {}", written);
-        }
-        addRestartInformation(eventBus);
-        final List<DisplayEvent> displayEvents = listener.consumeEvents();
-        for (DisplayEvent displayEvent : displayEvents) {
-            messageRestfulRestfulList.add(new MessageRestful(displayEvent.getMessage(), displayEvent.getDisplayType()));
+            final ProjectSettingsBean document = service.read(className, ProjectSettingsBean.class);
+            if (document != null) {
+                context.setBeansPackageName(document.getSelectedBeansPackage());
+                context.setComponentsPackageName(document.getSelectedComponentsPackage());
+                context.setRestPackageName(document.getSelectedRestPackage());
+                context.setProjectNamespacePrefix(document.getProjectNamespace());
+            }
+            //############################################
+            // EXECUTE SKELETON:
+            //############################################
+            final PowerpackPackage commonsPack = new CommonsPowerpack();
+            getInjector().autowireBean(commonsPack);
+            commonsPack.setProperties(new HashMap<String, Object>(values));
+            commonsPack.execute(context);
+
+            final PowerpackPackage powerpackPackage = GlobalUtils.newInstance(myPlugin.getPowerpackClass());
+            powerpackPackage.setProperties(new HashMap<String, Object>(values));
+            getInjector().autowireBean(powerpackPackage);
+
+
+            final InstructionStatus status = powerpackPackage.execute(context);
+            log.info("status {}", status);
+            // save status:
+            if (document != null) {
+                document.setSetupDone(true);
+                final boolean written = service.write(document);
+                log.info("Config saved: {}", written);
+            }
+            addRestartInformation(eventBus);
+            final List<DisplayEvent> displayEvents = listener.consumeEvents();
+            for (DisplayEvent displayEvent : displayEvents) {
+                messageRestfulRestfulList.add(new MessageRestful(displayEvent.getMessage(), displayEvent.getDisplayType()));
+            }
         }
         return messageRestfulRestfulList;
     }
@@ -459,12 +462,14 @@ public static List<PluginRestful> parseGist() {
         try {
             final Plugin plugin = getPluginById(ProjectSetupPlugin.class.getName(), servletContext);
             final PluginContext context = new DefaultPluginContext(plugin);
-            final ProjectSettingsBean document = context.getConfigService().read(ProjectSetupPlugin.class.getName(), ProjectSettingsBean.class);
-
-            if (document != null && document.getSetupDone()) {
-                status.setStatus(true);
-                return status;
+            try (PluginConfigService configService = context.getConfigService()) {
+                final ProjectSettingsBean document = configService.read(ProjectSetupPlugin.class.getName(), ProjectSettingsBean.class);
+                if (document != null && document.getSetupDone()) {
+                    status.setStatus(true);
+                    return status;
+                }
             }
+
 
         } catch (Exception e) {
 

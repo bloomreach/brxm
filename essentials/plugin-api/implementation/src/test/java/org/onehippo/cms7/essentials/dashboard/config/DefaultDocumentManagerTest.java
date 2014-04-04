@@ -67,6 +67,7 @@ public class DefaultDocumentManagerTest extends BaseRepositoryTest {
             final List<Calendar> dateTypeArray = new ArrayList<>();
             dateTypeArray.add(today);
             document.setDateTypeArray(dateTypeArray);
+
             final boolean saved = manager.saveDocument(document);
             assertTrue("Expected document to be saved", saved);
             TestBeanDocument fetched = manager.fetchDocument(document.getPath(), TestBeanDocument.class);

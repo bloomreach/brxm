@@ -15,7 +15,7 @@ import org.junit.Before;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 
 /**
- * @version "$Id: BaseRepositoryTest.java 172679 2013-08-02 14:21:12Z mmilicevic $"
+ * @version "$Id$"
  */
 public abstract class BaseRepositoryTest extends BaseTest {
 
