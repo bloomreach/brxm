@@ -17,6 +17,7 @@
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
 import javax.inject.Inject;
+import javax.jcr.Session;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Test;
@@ -44,6 +45,7 @@ public class CndInstructionTest extends BaseRepositoryTest {
     @Test
     public void testProcess() throws Exception {
 
+        final Session session = getSession();
         session.getRootNode().addNode(HippoNodeType.NAMESPACES_PATH);
         session.save();
         CndUtils.registerNamespace(getContext(), TEST_PREFIX, TEST_URI);
@@ -62,5 +64,6 @@ public class CndInstructionTest extends BaseRepositoryTest {
         // this should node throw exists exception
         status = executor.execute(instructionSet, getContext());
         assertTrue("Expected success but got: " + status, status == InstructionStatus.FAILED);
+        session.logout();
     }
 }

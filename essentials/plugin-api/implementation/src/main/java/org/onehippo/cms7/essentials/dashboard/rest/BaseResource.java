@@ -73,16 +73,21 @@ public class BaseResource {
 
     protected ProjectRestful getProjectRestful() {
         final PluginContext context = new DefaultPluginContext(null);
-        // inject project settings:
-        final ProjectSettingsBean document = context.getConfigService().read(ProjectSetupPlugin.class.getName(), ProjectSettingsBean.class);
         final ProjectRestful projectRestful = new ProjectRestful();
-        if (document != null) {
-            projectRestful.setNamespace(document.getProjectNamespace());
+        // inject project settings:
+        try (final PluginConfigService configService = context.getConfigService()) {
+
+            final ProjectSettingsBean document = configService.read(ProjectSetupPlugin.class.getName(), ProjectSettingsBean.class);
+
+            if (document != null) {
+                projectRestful.setNamespace(document.getProjectNamespace());
+            }
+
+
+        } catch (Exception e) {
+            log.error("Error reading project settings", e);
         }
-
         return projectRestful;
-
-
     }
 
     protected List<PluginRestful> getPlugins(final ServletContext servletContext) {
@@ -103,14 +108,17 @@ public class BaseResource {
     public PluginContext getContext(ServletContext servletContext) {
         final String className = ProjectSetupPlugin.class.getName();
         final PluginContext context = new DefaultPluginContext(new PluginRestful(className));
-        final PluginConfigService service = context.getConfigService();
 
-        final ProjectSettingsBean document = service.read(className, ProjectSettingsBean.class);
-        if (document != null) {
-            context.setBeansPackageName(document.getSelectedBeansPackage());
-            context.setComponentsPackageName(document.getSelectedComponentsPackage());
-            context.setRestPackageName(document.getSelectedRestPackage());
-            context.setProjectNamespacePrefix(document.getProjectNamespace());
+        try (final PluginConfigService service = context.getConfigService()) {
+            final ProjectSettingsBean document = service.read(className, ProjectSettingsBean.class);
+            if (document != null) {
+                context.setBeansPackageName(document.getSelectedBeansPackage());
+                context.setComponentsPackageName(document.getSelectedComponentsPackage());
+                context.setRestPackageName(document.getSelectedRestPackage());
+                context.setProjectNamespacePrefix(document.getProjectNamespace());
+            }
+        } catch (Exception e) {
+            log.error("Error getting context", e);
         }
         return context;
     }

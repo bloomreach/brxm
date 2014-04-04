@@ -20,6 +20,7 @@ import java.util.Calendar;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
+import org.onehippo.cms7.essentials.TestPluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,9 +46,12 @@ public class InstallerDocumentTest extends BaseRepositoryTest {
         document.setPluginId("test.foo");
         final Calendar today = Calendar.getInstance();
         document.setDateInstalled(today);
-        final DocumentManager manager = new DefaultDocumentManager(getContext());
-        manager.saveDocument(document);
-        final InstallerDocument fetched = manager.fetchDocument(document.getPath(), InstallerDocument.class);
+        final TestPluginContext context = (TestPluginContext) getContext();
+        final InstallerDocument fetched;
+        try (DocumentManager manager = new DefaultDocumentManager(context.createSession(), context)) {
+            manager.saveDocument(document);
+            fetched = manager.fetchDocument(document.getPath(), InstallerDocument.class);
+        }
         assertNotNull(fetched.getDateInstalled());
         assertEquals(fetched.getDateInstalled().getTime(), today.getTime());
         assertNotNull(fetched.getPluginId());

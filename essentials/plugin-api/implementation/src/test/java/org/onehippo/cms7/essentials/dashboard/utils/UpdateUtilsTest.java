@@ -3,6 +3,7 @@ package org.onehippo.cms7.essentials.dashboard.utils;
 import java.io.InputStream;
 
 import javax.jcr.Node;
+import javax.jcr.Session;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -26,17 +27,21 @@ public class UpdateUtilsTest extends BaseRepositoryTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
+        final Session session = getSession();
         final Node updaterNode = session.getNode(UpdateUtils.UPDATE_UTIL_PATH);
         if (!updaterNode.hasNode(UpdateUtils.UpdateType.REGISTRY.getPath())) {
             updaterNode.addNode(UpdateUtils.UpdateType.REGISTRY.getPath(), "hipposys:updaterfolder");
         }
+        session.logout();
     }
 
     @Test
     public void testUpdateStreamUtil() throws Exception {
         PluginContext context = new TestPluginContext(repository, null);
+
         final InputStream resourceAsStream = getClass().getResourceAsStream("/updateplugintest.xml");
         UpdateUtils.addToRegistry(context, resourceAsStream);
-        assertTrue(session.itemExists(UpdateUtils.UPDATE_UTIL_PATH + UpdateUtils.UpdateType.REGISTRY.getPath() + "/new-1"));
+        Session mySession = context.createSession();
+        assertTrue(mySession.itemExists(UpdateUtils.UPDATE_UTIL_PATH + UpdateUtils.UpdateType.REGISTRY.getPath() + "/new-1"));
     }
 }

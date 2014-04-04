@@ -118,7 +118,8 @@ public class PluginResource extends BaseResource {
         final List<PluginRestful> items = getPlugins(servletContext);
 
         final Collection<String> restClasses = new ArrayList<>();
-        try (DocumentManager manager = new DefaultDocumentManager(getContext(servletContext))) {
+        final PluginContext context = getContext(servletContext);
+        try (DocumentManager manager = new DefaultDocumentManager(context.createSession(), context)) {
             for (PluginRestful item : items) {
                 plugins.add(item);
                 final String pluginId = item.getPluginId();
@@ -204,7 +205,8 @@ public class PluginResource extends BaseResource {
         final String className = ProjectSetupPlugin.class.getName();
         final PluginContext context = new DefaultPluginContext(new PluginRestful(className));
         // inject project settings:
-        final PluginConfigService service = context.getConfigService();
+        final PluginConfigService configService = context.getConfigService();
+        final PluginConfigService service = configService;
 
         final ProjectSettingsBean document = service.read(className, ProjectSettingsBean.class);
         if (document != null) {
@@ -224,8 +226,6 @@ public class PluginResource extends BaseResource {
         final PowerpackPackage powerpackPackage = GlobalUtils.newInstance(myPlugin.getPowerpackClass());
         powerpackPackage.setProperties(new HashMap<String, Object>(values));
         getInjector().autowireBean(powerpackPackage);
-
-
 
 
         final InstructionStatus status = powerpackPackage.execute(context);
@@ -375,14 +375,14 @@ public static List<PluginRestful> parseGist() {
                 }
 
                 if (notInstalled.size() == 0) {
-                    try (DocumentManager manager = new DefaultDocumentManager(getContext(servletContext))) {
+                    final PluginContext context = getContext(servletContext);
+                    try (DocumentManager manager = new DefaultDocumentManager(context.createSession(), context)) {
                         final InstallerDocument document = new InstallerDocument();
                         document.setName(id);
                         document.setParentPath(GlobalUtils.getParentConfigPath(id));
                         document.setDateInstalled(Calendar.getInstance());
 
                         manager.saveDocument(document);
-
                     }
                     message.setValue("Plugin successfully installed. Please rebuild and restart your application");
                     return message;

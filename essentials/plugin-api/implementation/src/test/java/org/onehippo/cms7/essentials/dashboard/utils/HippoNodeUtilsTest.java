@@ -7,6 +7,8 @@ package org.onehippo.cms7.essentials.dashboard.utils;
 import java.util.List;
 import java.util.Set;
 
+import javax.jcr.Session;
+
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
 
@@ -21,11 +23,13 @@ public class HippoNodeUtilsTest extends BaseRepositoryTest {
 
     @Test
     public void testGetProjectNamespaces() throws Exception {
+        Session session = getSession();
         final List<String> projectNamespaces = HippoNodeUtils.getProjectNamespaces(session);
         final Set<String> reserved = EssentialConst.HIPPO_BUILT_IN_NAMESPACES;
         for (String r : reserved) {
             assertFalse(projectNamespaces.contains(r));
         }
+        session.logout();
     }
 
     @Test
@@ -51,8 +55,10 @@ public class HippoNodeUtilsTest extends BaseRepositoryTest {
 
     @Test
     public void testGetCompounds() throws Exception {
+        Session session = getSession();
         final Set<String> compounds = HippoNodeUtils.getCompounds(session);
         assertTrue(compounds.size() == 0);
+        session.logout();
     }
 
     @Test(expected = Exception.class)

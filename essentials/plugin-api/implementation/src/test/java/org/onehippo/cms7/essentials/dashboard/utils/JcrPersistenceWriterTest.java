@@ -78,5 +78,6 @@ public class JcrPersistenceWriterTest extends BaseRepositoryTest {
         //############################################
         final Item item = writer.write(config);
         assertNotNull("Expected saved object", item);
+        writer.close();
     }
 }

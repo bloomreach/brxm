@@ -25,6 +25,7 @@ public class JcrPluginConfigServiceTest extends BaseRepositoryTest {
     @Test
     public void testConfigReadingWriting() throws Exception {
 
+        final Session session = getSession();
         final Node root = session.getRootNode();
         root.addNode("essentials", "essentials:folder");
         final Node dashboard = root.getNode("essentials");
@@ -52,7 +53,9 @@ public class JcrPluginConfigServiceTest extends BaseRepositoryTest {
         session1.getNode("/essentials/plugins/").remove();
         session1.save();
         GlobalUtils.cleanupSession(session1);
+        GlobalUtils.cleanupSession(session);
         service.write(document, DummyTestPlugin.class.getName());
+
 
 
     }

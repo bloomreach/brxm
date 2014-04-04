@@ -6,6 +6,8 @@ package org.onehippo.cms7.essentials.dashboard.utils;
 
 import java.util.List;
 
+import javax.jcr.Session;
+
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
@@ -26,6 +28,7 @@ public class CndUtilsTest extends BaseRepositoryTest {
     @Test
     public void testRegisterNamespaceUri() throws Exception {
 
+        Session session = getSession();
         session.getRootNode().addNode(HippoNodeType.NAMESPACES_PATH);
         session.save();
         CndUtils.registerNamespace(getContext(), TEST_PREFIX, TEST_URI);

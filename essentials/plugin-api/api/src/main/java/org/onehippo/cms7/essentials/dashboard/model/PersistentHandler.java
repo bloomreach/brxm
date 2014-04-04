@@ -32,5 +32,13 @@ public interface PersistentHandler<T, E extends Item> {
 
     E execute(Session session, Document model, T annotation);
 
+    /**
+     * NOTE: session is left open
+     * @param session
+     * @param parent
+     * @param path
+     * @param annotation
+     * @return
+     */
     E read(Session session, Node parent, String path, T annotation);
 }

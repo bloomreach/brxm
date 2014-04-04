@@ -44,7 +44,7 @@ import com.google.common.base.Strings;
 /**
  * @version "$Id$"
  */
-public class JcrPersistenceWriter {
+public class JcrPersistenceWriter implements AutoCloseable {
 
     public static final char PATH_SEPARATOR = '/';
     public static final String ERROR_PROCESSING_VALUE = "Error processing value";
@@ -183,29 +183,28 @@ public class JcrPersistenceWriter {
 
         final String[] pathParts = StringUtils.split(path, PATH_SEPARATOR);
         final StringBuilder parent = new StringBuilder();
-        final Session mySession = context.createSession();
-        Node parentNode;
-        try {
-            parentNode = mySession.getRootNode();
-            for (final String pathPart : pathParts) {
-                parent.append(PATH_SEPARATOR);
-                String folderPath = parent.append(pathPart).toString();
-                if (mySession.itemExists(folderPath)) {
-                    log.info("folderPath {}", folderPath);
-                    parentNode = parentNode.getNode(pathPart);
-                    continue;
-                }
+        Node parentNode = session.getRootNode();
+        for (final String pathPart : pathParts) {
+            parent.append(PATH_SEPARATOR);
+            String folderPath = parent.append(pathPart).toString();
+            if (session.itemExists(folderPath)) {
                 log.info("folderPath {}", folderPath);
-                parentNode = parentNode.addNode(pathPart, "essentials:folder");
-                mySession.save();
-
+                parentNode = parentNode.getNode(pathPart);
+                continue;
             }
-        } finally {
-            GlobalUtils.cleanupSession(mySession);
+            log.info("folderPath {}", folderPath);
+            parentNode = parentNode.addNode(pathPart, "essentials:folder");
+            session.save();
+
         }
+
 
         return parentNode;
     }
 
+    @Override
+    public void close() throws Exception {
+        GlobalUtils.cleanupSession(session);
+    }
 }
 

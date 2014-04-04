@@ -24,7 +24,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 /**
  * Service used to read/write plugin configuration(s)
  *
- * @version "$Id: JcrPluginConfigService.java 174393 2013-08-20 13:46:56Z mmilicevic $"
+ * @version "$Id$"
  */
 public class JcrPluginConfigService implements PluginConfigService {
 
@@ -37,7 +37,7 @@ public class JcrPluginConfigService implements PluginConfigService {
     public JcrPluginConfigService(final PluginContext context) {
         this.context = context;
         this.session = context.createSession();
-        this.manager = new DefaultDocumentManager(context);
+        this.manager = new DefaultDocumentManager(session, context);
     }
 
     public PluginContext getContext() {
@@ -81,4 +81,8 @@ public class JcrPluginConfigService implements PluginConfigService {
     }
 
 
+    @Override
+    public void close() throws Exception {
+        manager.close();
+    }
 }

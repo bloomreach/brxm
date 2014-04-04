@@ -19,6 +19,7 @@ package org.onehippo.cms7.essentials.tools.rest;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.Session;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
@@ -43,7 +44,8 @@ public class FSUtilsTest extends BaseRepositoryTest {
     public void testWriting() throws Exception {
         final TestPluginContext context = (TestPluginContext) getContext();
 
-        session = context.createSession();
+
+        Session session = context.createSession();
         // create hst nodes
         createHstRootConfig();
         String path = "/hst:hst/hst:configurations/" + getContext().getProjectNamespacePrefix() + "/hst:templates";
@@ -61,5 +63,6 @@ public class FSUtilsTest extends BaseRepositoryTest {
         final Map<String, String> map = FSUtils.writeFreemarkerFiles(context, freemarkerPath, scriptNodes);
         assertEquals(2, map.size());
 
+        session.logout();
     }
 }

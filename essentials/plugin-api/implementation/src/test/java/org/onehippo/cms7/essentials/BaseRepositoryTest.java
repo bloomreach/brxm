@@ -21,7 +21,6 @@ public abstract class BaseRepositoryTest extends BaseTest {
 
 
     protected MemoryRepository repository;
-    protected Session session;
     protected Session hippoSession;
 
     @Override
@@ -38,8 +37,6 @@ public abstract class BaseRepositoryTest extends BaseTest {
     public void setUp() throws Exception {
         super.setUp();
         repository = new MemoryRepository();
-        session = repository.getSession();
-
     }
 
     @Override
@@ -59,6 +56,7 @@ public abstract class BaseRepositoryTest extends BaseTest {
     // UTILITY METHODS
     //############################################
     public void createHstRootConfig() throws RepositoryException {
+        final Session session = repository.getSession();
         final Node rootNode = session.getRootNode();
         final Node siteRootNode = rootNode.addNode("hst:hst", "hst:hst");
         final Node configs = siteRootNode.addNode("hst:configurations", "hst:configurations");
@@ -70,6 +68,7 @@ public abstract class BaseRepositoryTest extends BaseTest {
         siteNode.addNode("hst:sitemenus", "hst:sitemenus");
         siteNode.addNode("hst:templates", "hst:templates");
         session.save();
+        session.logout();
     }
 
     /**
@@ -85,6 +84,15 @@ public abstract class BaseRepositoryTest extends BaseTest {
         }
         return hippoSession;
 
+    }
+
+    public Session getSession(){
+        try {
+            return repository.getSession();
+        } catch (RepositoryException e) {
+           // ignore
+        }
+        return null;
     }
 
 }

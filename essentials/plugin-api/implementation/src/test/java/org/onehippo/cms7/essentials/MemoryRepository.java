@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version "$Id: MemoryRepository.java 172679 2013-08-02 14:21:12Z mmilicevic $"
+ * @version "$Id$"
  */
 public class MemoryRepository {
 
@@ -33,12 +33,13 @@ public class MemoryRepository {
     private static Logger log = LoggerFactory.getLogger(MemoryRepository.class);
     private static String configFileName = "repository.xml";
     private static URL resource = MemoryRepository.class.getClassLoader().getResource(configFileName);
-    private Session session;
+
     private File storageDirectory;
     private TransientRepository memoryRepository;
 
     public MemoryRepository() throws Exception {
         initialize();
+        final Session session = getSession();
         NodeTypeManagerImpl mgr = (NodeTypeManagerImpl) session.getWorkspace().getNodeTypeManager();
         for (String fileName : CND_FILE_NAMES) {
             log.debug("Registering CND file *{}*", fileName);
@@ -66,30 +67,16 @@ public class MemoryRepository {
         // add content:
         final Node content = rootNode.addNode("content", "hippostd:folder");
 
-        content.addNode("documents", "hippostd:folder").addNode("testnamespace", "hippostd:folder");
-
+        content.addNode("documents", "hippostd:folder")
+                .addNode("testnamespace", "hippostd:folder");
         session.save();
-
-
+        session.logout();
     }
 
-    public MemoryRepository(String[] cnds) throws Exception {
-        initialize();
-        NodeTypeManagerImpl mgr = (NodeTypeManagerImpl) session.getWorkspace().getNodeTypeManager();
-        for (String fileName : cnds) {
-            fileName = String.format("%s%s", '/', fileName);
-            log.info("Registering CND file *{}*", fileName);
-            InputStream stream = getClass().getResourceAsStream(fileName);
-            mgr.registerNodeTypes(stream, "text/x-jcr-cnd");
-        }
-    }
 
     private void initialize() throws Exception {
         storageDirectory = new File(System.getProperty("java.io.tmpdir"), "jcr");
-        deleteDirectory(storageDirectory);
         memoryRepository = new TransientRepository(RepositoryConfig.create(resource.toURI(), storageDirectory.getAbsolutePath()));
-        // initialize session
-        session = getSession();
     }
 
     public File getStorageDirectory() {
@@ -98,11 +85,10 @@ public class MemoryRepository {
 
     public void shutDown() {
         if (this.memoryRepository != null) {
+            memoryRepository.shutdown();
+            deleteDirectory(storageDirectory);
+            // gc
             storageDirectory = null;
-            if (session != null) {
-                session.logout();
-            }
-            // gc it
             memoryRepository = null;
         }
     }
@@ -127,11 +113,8 @@ public class MemoryRepository {
         return path.delete();
     }
 
-    public Session getSession() throws RepositoryException {
-        if (session != null) {
-            return session;
-        }
-        session = memoryRepository.login(new SimpleCredentials("admin", "admin".toCharArray()));
-        return session;
+
+    public final Session getSession() throws RepositoryException {
+        return  memoryRepository.login(new SimpleCredentials("admin", "admin".toCharArray()));
     }
 }

@@ -195,7 +195,7 @@ public final class GlobalUtils {
     }
 
     public static void cleanupSession(final Session session) {
-        if (session != null && session.isLive()) {
+        if (session != null) {
             session.logout();
         }
 

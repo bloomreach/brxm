@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.jcr.Session;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
@@ -104,10 +105,12 @@ public class PluginInstructionExecutorTest extends BaseRepositoryTest {
         final Date today = Calendar.getInstance().getTime();
         final String folder = formatter.format(today);
         final String folderPath = "/foo/bar/foobar2/" + folder;
+        Session session = getSession();
         assertTrue(session.nodeExists(folderPath));
         // default group has only 2 instructions , execute and folder one.
         assertEquals(2, listener.getNrInstructions());
 
+        session.logout();
 
     }
 }
