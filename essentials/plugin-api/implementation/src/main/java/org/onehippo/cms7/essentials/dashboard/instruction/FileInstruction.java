@@ -40,6 +40,7 @@ import org.onehippo.cms7.essentials.dashboard.event.MessageEvent;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -160,11 +161,12 @@ public class FileInstruction extends PluginInstruction {
 
     protected InputStream extractStream() throws FileNotFoundException {
         // try to read file first:
-        final File file = new File(source);
+        final String encoded  = GlobalUtils.decodeUrl(source);
+        final File file = new File(encoded );
         if (file.exists()) {
             return new FileInputStream(file);
         } else {
-            return getClass().getClassLoader().getResourceAsStream(source);
+            return getClass().getClassLoader().getResourceAsStream(encoded );
         }
     }
 

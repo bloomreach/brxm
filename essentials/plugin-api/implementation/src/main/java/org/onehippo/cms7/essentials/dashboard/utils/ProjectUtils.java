@@ -134,7 +134,7 @@ public final class ProjectUtils {
     }
 
     private static File getFolder(final String name) {
-        final String baseDir = getBaseProjectDirectory();
+        final String baseDir = GlobalUtils.decodeUrl(ProjectUtils.getBaseProjectDirectory());
         if (Strings.isNullOrEmpty(baseDir)) {
             return null;
         }

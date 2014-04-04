@@ -129,6 +129,7 @@ public final class EssentialConst {
     public static final String CONTENT_BLOCKS_TEMPLATE_XML = "content_blocks_template.xml";
     public static final String INSTRUCTION_GROUP_DEFAULT = "default";
     public static final String REPO_FOLDER_FORMAT = "yyyy/MM";
+    public static final String UTF_8 = "UTF8";
 
 
     private EssentialConst() {

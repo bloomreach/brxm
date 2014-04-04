@@ -3,6 +3,8 @@ package org.onehippo.cms7.essentials.dashboard.utils;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -243,4 +245,13 @@ public final class GlobalUtils {
     }
 
 
+    public static String decodeUrl(final String url) {
+        try {
+            return URLDecoder.decode(url, EssentialConst.UTF_8);
+        } catch (UnsupportedEncodingException e) {
+            log.error("Error using encoder", e);
+        }
+        return url;
+
+    }
 }

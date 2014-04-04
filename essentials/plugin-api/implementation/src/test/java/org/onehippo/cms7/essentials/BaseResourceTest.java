@@ -20,6 +20,7 @@ import java.io.File;
 import java.net.URL;
 import java.nio.file.Path;
 
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +35,7 @@ public abstract class BaseResourceTest extends BaseTest {
     public void setUp() throws Exception {
 
         final URL resource = getClass().getResource("/project");
-        final String path = resource.getPath();
+        final String path = GlobalUtils.decodeUrl(resource.getPath());
         final Path myDir = new File(path).toPath();
         setProjectRoot(myDir);
         getPluginContextFile();
