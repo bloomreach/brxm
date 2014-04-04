@@ -34,12 +34,14 @@ public class MemoryRepository {
     private static String configFileName = "repository.xml";
     private static URL resource = MemoryRepository.class.getClassLoader().getResource(configFileName);
 
+    private final Session session;
     private File storageDirectory;
     private TransientRepository memoryRepository;
 
     public MemoryRepository() throws Exception {
         initialize();
-        final Session session = getSession();
+
+        session = getSession();
         NodeTypeManagerImpl mgr = (NodeTypeManagerImpl) session.getWorkspace().getNodeTypeManager();
         for (String fileName : CND_FILE_NAMES) {
             log.debug("Registering CND file *{}*", fileName);
@@ -92,7 +94,9 @@ public class MemoryRepository {
     }
 
     public void shutDown() {
+
         if (this.memoryRepository != null) {
+            session.logout();
             memoryRepository.shutdown();
             deleteDirectory(storageDirectory);
             // gc
