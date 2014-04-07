@@ -235,7 +235,7 @@
 + hst:content (hippo:facetselect)
 - hst:configurationpath (string)
 - hst:version (long)
-// uuid or absolute path
+// absolute path
 - hst:content (string)
 // deprecated and unused: do not use
 - hst:portalconfigurationenabled (boolean)
