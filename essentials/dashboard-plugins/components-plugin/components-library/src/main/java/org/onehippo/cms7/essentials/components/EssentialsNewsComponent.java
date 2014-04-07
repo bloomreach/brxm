@@ -44,7 +44,7 @@ public class EssentialsNewsComponent extends EssentialsListComponent {
         final EssentialsNewsComponentInfo paramInfo = getComponentParametersInfo(request);
         final String path = getScopePath(paramInfo);
         log.debug("Calling EssentialsNewsComponentInfo for documents path:  [{}]", path);
-        final HippoBean scope = getScopeBean(request, path);
+        final HippoBean scope = getScopeBean(path);
         if (scope == null) {
             log.warn("Search scope was null");
             handleInvalidScope(request, response);
@@ -52,7 +52,7 @@ public class EssentialsNewsComponent extends EssentialsListComponent {
         }
 
         final Pageable<HippoBean> pageable = doSearch(request, paramInfo, scope);
-        request.setAttribute(REQUEST_PARAM_PAGEABLE, pageable);
+        request.setAttribute(REQUEST_ATTR_PAGEABLE, pageable);
         populateRequest(request, paramInfo, pageable);
     }
 

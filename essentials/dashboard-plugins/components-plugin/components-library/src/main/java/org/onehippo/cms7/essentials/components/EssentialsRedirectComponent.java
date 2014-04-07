@@ -32,19 +32,19 @@ import com.google.common.base.Strings;
  */
 public class EssentialsRedirectComponent extends CommonComponent {
 
-    public static final String REDIRECT_PARAM = "redirect";
-    public static final String TYPE_PARAM = "type";
+    public static final String COMPONENT_PARAM_REDIRECT = "redirect";
+    public static final String COMPONENT_PARAM_TYPE = "type";
 
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) {
 
-        final String redirect = getComponentParameter(REDIRECT_PARAM);
+        final String redirect = getComponentParameter(COMPONENT_PARAM_REDIRECT);
 
         if (Strings.isNullOrEmpty(redirect)) {
-            throw new HstComponentException("Parameter '" + REDIRECT_PARAM + "' is required for " + this.getClass().getName());
+            throw new HstComponentException("Parameter '" + COMPONENT_PARAM_REDIRECT + "' is required for " + this.getClass().getName());
         }
 
-        final String typeStr = getComponentParameter(TYPE_PARAM);
+        final String typeStr = getComponentParameter(COMPONENT_PARAM_TYPE);
         if (!Strings.isNullOrEmpty(typeStr)) {
             final RedirectType type = RedirectType.valueOf(typeStr);
             switch (type) {

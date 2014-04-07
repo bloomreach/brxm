@@ -250,7 +250,6 @@ dashboard-plugins/components-plugin/components-library/src/main/java/org/onehipp
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/EssentialsMenuComponent.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/EssentialsNewsComponent.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/EssentialsRedirectComponent.java -text
-dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/EssentialsRepositoryMenuComponent.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/EssentialsSearchComponent.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/icons/10_device_access_accounts.png -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/icons/10_device_access_add_alarm.png -text

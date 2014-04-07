@@ -37,8 +37,8 @@ public class EssentialsSearchComponent extends EssentialsListComponent {
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
         // execute only if valid query
         final String query = cleanupSearchQuery(getAnyParameter(request, REQUEST_PARAM_QUERY));
-        if(Strings.isNullOrEmpty(query)){
-            request.setAttribute(REQUEST_PARAM_DOCUMENT, DefaultPagination.emptyCollection());
+        if (Strings.isNullOrEmpty(query)) {
+            request.setAttribute(REQUEST_ATTR_DOCUMENT, DefaultPagination.emptyCollection());
             return;
         }
         super.doBeforeRender(request, response);

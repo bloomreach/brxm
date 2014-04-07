@@ -22,8 +22,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.request.HstRequestContext;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
@@ -39,22 +41,22 @@ public final class ComponentsUtils {
     /**
      * Get content bean based on path e.g. {@code "/foo/bar/"}
      *
-     * @param component HST component
-     * @param request   HST request
      * @param path      content path
      * @return null if nothing found
      */
-    public static HippoBean getBean(final BaseHstComponent component, final HstRequest request, final String path) {
+    public static HippoBean getBean(final String path) {
+
+        final HstRequestContext context = RequestContextProvider.get();
+        final HippoBean currentBean = context.getContentBean();
 
         if (path == null) {
-            return component.getContentBean(request);
+            return currentBean;
         }
 
         if (path.startsWith("/")) {
-            return component.getSiteContentBaseBean(request).getBean(path.substring(1));
+            return context.getSiteContentBaseBean().getBean(path.substring(1));
         }
 
-        HippoBean currentBean = component.getContentBean(request);
         if (currentBean != null) {
             return currentBean.getBean(path);
         }

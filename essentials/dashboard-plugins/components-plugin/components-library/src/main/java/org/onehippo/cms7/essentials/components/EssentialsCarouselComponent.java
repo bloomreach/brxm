@@ -23,6 +23,7 @@ import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo;
 import org.onehippo.cms7.essentials.components.paging.DefaultPagination;
 
@@ -38,8 +39,8 @@ public class EssentialsCarouselComponent extends CommonComponent {
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
         final EssentialsCarouselComponentInfo componentInfo = getComponentParametersInfo(request);
-        final List<HippoDocument> items = getCarouselItems(request, componentInfo);
-        request.setAttribute(REQUEST_PARAM_PAGEABLE, new DefaultPagination<>(items));
+        final List<HippoDocument> items = getCarouselItems(componentInfo);
+        request.setAttribute(REQUEST_ATTR_PAGEABLE, new DefaultPagination<>(items));
         setCarouselOptions(request, componentInfo);
     }
 
@@ -62,18 +63,17 @@ public class EssentialsCarouselComponent extends CommonComponent {
     /**
      * Populates a list of carousel documents
      *
-     * @param request       HstRequest instance
      * @param componentInfo Carousel component annotation
      * @return list of documents to be populated
      */
-    public List<HippoDocument> getCarouselItems(final HstRequest request, final EssentialsCarouselComponentInfo componentInfo) {
+    public List<HippoDocument> getCarouselItems(final EssentialsCarouselComponentInfo componentInfo) {
         final List<HippoDocument> beans = new ArrayList<>();
-        addBeanForPath(request, componentInfo.getCarouselItem1(), beans);
-        addBeanForPath(request, componentInfo.getCarouselItem2(), beans);
-        addBeanForPath(request, componentInfo.getCarouselItem3(), beans);
-        addBeanForPath(request, componentInfo.getCarouselItem4(), beans);
-        addBeanForPath(request, componentInfo.getCarouselItem5(), beans);
-        addBeanForPath(request, componentInfo.getCarouselItem6(), beans);
+        addBeanForPath(componentInfo.getCarouselItem1(), beans);
+        addBeanForPath(componentInfo.getCarouselItem2(), beans);
+        addBeanForPath(componentInfo.getCarouselItem3(), beans);
+        addBeanForPath(componentInfo.getCarouselItem4(), beans);
+        addBeanForPath(componentInfo.getCarouselItem5(), beans);
+        addBeanForPath(componentInfo.getCarouselItem6(), beans);
         return beans;
     }
 

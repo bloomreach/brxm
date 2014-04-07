@@ -28,6 +28,7 @@ import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.ContentBeanUtils;
 import org.onehippo.cms7.essentials.components.info.EssentialsBlogAuthorPostsComponentInfo;
 import org.onehippo.cms7.essentials.components.model.AuthorEntry;
@@ -49,7 +50,8 @@ public class EssentialsBlogAuthorPostsComponent extends EssentialsListComponent 
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
         log.info("**** BLOG AUTHOR COMPONENT ****");
-        final HippoBean document = getContentBean(request);
+        final HstRequestContext context = request.getRequestContext();
+        final HippoBean document = context.getContentBean();
         if (document instanceof Authors) {
             final Authors entry = (Authors) document;
             final List<? extends AuthorEntry> authors = entry.getAuthors();
@@ -58,15 +60,15 @@ public class EssentialsBlogAuthorPostsComponent extends EssentialsListComponent 
                 // so for convenience purposes  also add first author on request
                 request.setAttribute("author", authors.get(0));
                 request.setAttribute("authors", authors);
-                final Class<? extends HippoBean> clazz = getPrimaryType(document);
+                final Class<? extends HippoBean> clazz = getPrimaryType(context, document);
                 final EssentialsBlogAuthorPostsComponentInfo componentInfo = getComponentParametersInfo(request);
                 final int limit = componentInfo.getPageSize();
                 final String sortField = componentInfo.getSortField();
                 final List<HippoBean> beans = new ArrayList<>(limit);
-                final HippoBean scopeBean = getScopeBean(request, componentInfo.getScope());
+                final HippoBean scopeBean = getScopeBean(componentInfo.getScope());
                 try {
                     for (AuthorEntry author : authors) {
-                        final HstQuery hstQuery = ContentBeanUtils.createIncomingBeansQuery(author, scopeBean, getSearchDepth(), getObjectConverter(), clazz, true);
+                        final HstQuery hstQuery = ContentBeanUtils.createIncomingBeansQuery(author, scopeBean, getSearchDepth(), clazz, true);
                         hstQuery.setLimit(limit);
                         hstQuery.addOrderByDescending(sortField);
                         final HippoBeanIterator it = hstQuery.execute().getHippoBeans();
@@ -82,7 +84,7 @@ public class EssentialsBlogAuthorPostsComponent extends EssentialsListComponent 
 
                     }
                     final Pageable<HippoBean> pageable = new DefaultPagination<>(beans);
-                    request.setAttribute(REQUEST_PARAM_PAGEABLE, pageable);
+                    request.setAttribute(REQUEST_ATTR_PAGEABLE, pageable);
                 } catch (QueryException e) {
                     log.error("Error fetching posts by authors", e);
                 }
@@ -90,9 +92,9 @@ public class EssentialsBlogAuthorPostsComponent extends EssentialsListComponent 
         }
     }
 
-    private Class<? extends HippoBean> getPrimaryType(final HippoBean document) {
+    private Class<? extends HippoBean> getPrimaryType(final HstRequestContext context, final HippoBean document) {
         try {
-            final ObjectConverter converter = getObjectConverter();
+            final ObjectConverter converter = context.getContentBeansTool().getObjectConverter();
             final String primaryObjectType = converter.getPrimaryObjectType(document.getNode());
             return converter.getAnnotatedClassFor(primaryObjectType);
 
