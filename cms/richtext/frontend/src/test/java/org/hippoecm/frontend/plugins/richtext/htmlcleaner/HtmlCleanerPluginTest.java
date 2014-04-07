@@ -58,6 +58,16 @@ public class HtmlCleanerPluginTest extends PluginTest {
     }
 
     @Test
+    public void testCleanMultipleNonWhiteListedAttributes() throws Exception {
+        final HtmlCleanerPlugin htmlCleanerPlugin = new HtmlCleanerPlugin(null, getPluginConfig());
+
+        String html = htmlCleanerPlugin.clean("<p foo=\"bar\" hippo=\"ok\">&nbsp;</p>");
+        log.debug(html);
+        // attribute 'foo' nor 'hippo' of p is on whitelist
+        assertEquals("<p>&nbsp;</p>", html);
+    }
+
+    @Test
     public void testCleanPlainText() throws Exception {
         final HtmlCleanerPlugin htmlCleanerPlugin = new HtmlCleanerPlugin(null, getPluginConfig());
 

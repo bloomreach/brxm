@@ -18,10 +18,12 @@ package org.hippoecm.frontend.plugins.richtext.htmlcleaner;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -93,12 +95,15 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
             return null;
         }
         final Element element = whitelist.get(node.getName());
+
         final Map<String, String> attributes = node.getAttributes();
+        final List<String> attributesToRemove = new ArrayList<>();
+
         for (Map.Entry<String, String> attribute : attributes.entrySet()) {
             final String attributeName = attribute.getKey();
             final String attributeValue = attribute.getValue();
             if (!element.attributes.contains(attributeName)) {
-                attributes.remove(attribute.getKey());
+                attributesToRemove.add(attributeName);
                 continue;
             }
             final String value = escaper.escapeText(attributeValue.toLowerCase().trim());
@@ -106,6 +111,11 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
                 attributes.put(attributeName, "");
             }
         }
+
+        for (String attribute : attributesToRemove) {
+            attributes.remove(attribute);
+        }
+
         node.setAttributes(attributes);
         for (TagNode childNode : node.getChildTags()) {
             if (filter(childNode) == null) {
