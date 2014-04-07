@@ -6,6 +6,7 @@ package org.onehippo.cms7.essentials.components;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
 import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
@@ -19,6 +20,7 @@ import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.onehippo.cms7.essentials.components.info.EssentialsDocumentListComponentInfo;
 import org.onehippo.cms7.essentials.components.info.EssentialsPageable;
 import org.onehippo.cms7.essentials.components.info.EssentialsSortable;
@@ -74,37 +76,37 @@ public class EssentialsListComponent extends CommonComponent {
      * @param request   HstRequest
      * @param paramInfo EssentialsPageable instance
      * @param pageable  search results (Pageable<HippoBean>)
-     * @see CommonComponent#REQUEST_PARAM_QUERY
-     * @see CommonComponent#REQUEST_PARAM_PAGEABLE
-     * @see CommonComponent#REQUEST_PARAM_PAGE
-     * @see CommonComponent#REQUEST_PARAM_PAGE_SIZE
-     * @see CommonComponent#REQUEST_PARAM_PAGE_PAGINATION
+     * @see CommonComponent#REQUEST_ATTR_QUERY
+     * @see CommonComponent#REQUEST_ATTR_PAGEABLE
+     * @see CommonComponent#REQUEST_ATTR_PAGE
+     * @see CommonComponent#REQUEST_ATTR_PAGE_SIZE
+     * @see CommonComponent#REQUEST_ATTR_PAGE_PAGINATION
      */
     protected void populateRequest(final HstRequest request, final EssentialsPageable paramInfo, final Pageable<? extends HippoBean> pageable) {
-        request.setAttribute(REQUEST_PARAM_QUERY, getSearchQuery(request));
-        request.setAttribute(REQUEST_PARAM_PAGEABLE, pageable);
-        request.setAttribute(REQUEST_PARAM_PAGE, getCurrentPage(request));
-        request.setAttribute(REQUEST_PARAM_PAGE_SIZE, paramInfo.getPageSize());
-        request.setAttribute(REQUEST_PARAM_PAGE_PAGINATION, paramInfo.getShowPagination());
+        request.setAttribute(REQUEST_ATTR_QUERY, getSearchQuery(request));
+        request.setAttribute(REQUEST_ATTR_PAGEABLE, pageable);
+        request.setAttribute(REQUEST_ATTR_PAGE, getCurrentPage(request));
+        request.setAttribute(REQUEST_ATTR_PAGE_SIZE, paramInfo.getPageSize());
+        request.setAttribute(REQUEST_ATTR_PAGE_PAGINATION, paramInfo.getShowPagination());
     }
 
     /**
      * Returns Search scope for given path. If path is null, current scope bean will be used, site wide scope otherwise
      *
-     * @param request
+     * @param request current HST request. Unused, available when overriding.
      * @param path    path (optional)
      * @return hippo bean or null
      */
     protected HippoBean getSearchScope(final HstRequest request, final String path) {
-        HippoBean scope;
+        final HstRequestContext context = RequestContextProvider.get();
+        HippoBean scope = null;
+
         if (Strings.isNullOrEmpty(path)) {
-            scope = getContentBean(request);
-            if (scope == null) {
-                // use global scope by default
-                scope = getSiteContentBaseBean(request);
-            }
-        } else {
-            scope = getScopeBean(request, path);
+            scope = context.getContentBean();
+        }
+
+        if (scope == null) {
+            scope = getScopeBean(path);
         }
         return scope;
     }
@@ -228,7 +230,7 @@ public class EssentialsListComponent extends CommonComponent {
      * @return null if query was null or invalid
      */
     protected String getSearchQuery(HstRequest request) {
-        return cleanupSearchQuery(getAnyParameter(request, REQUEST_PARAM_QUERY));
+        return cleanupSearchQuery(getAnyParameter(request, REQUEST_ATTR_QUERY));
     }
 
 
@@ -239,7 +241,7 @@ public class EssentialsListComponent extends CommonComponent {
      * @return the current page of the query
      */
     protected int getCurrentPage(final HstRequest request) {
-        return getAnyIntParameter(request, REQUEST_PARAM_PAGE, 1);
+        return getAnyIntParameter(request, REQUEST_ATTR_PAGE, 1);
     }
 
     /**

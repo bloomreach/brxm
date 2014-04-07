@@ -18,9 +18,7 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
-import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstRequest;
-import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,31 +37,6 @@ public final class SiteUtils {
     private static final Logger log = LoggerFactory.getLogger(SiteUtils.class);
     public static final int DEFAULT_PAGE = 1;
     public static final int DEFAULT_PAGE_SIZE = 10;
-
-
-    /**
-     * Find HippoBean for given path. If path is null or empty, site root bean will be returned
-     *
-     * @param request HstRequest
-     * @param path    document (or folder) path
-     * @return null if document of folder exists
-     */
-    public static HippoBean getScopeBean(final HstRequest request, final String path, final BaseHstComponent component) {
-        HippoBean scope;
-        final HippoBean siteBean = component.getSiteContentBaseBean(request);
-        if (Strings.isNullOrEmpty(path)) {
-            scope = siteBean;
-        } else {
-            final String myPath = PathUtils.normalizePath(path);
-            log.debug("Looking for bean {}", myPath);
-            scope = siteBean.getBean(myPath);
-            if (scope == null) {
-                log.warn("Bean was null for selected path:  {}", myPath);
-                scope = siteBean;
-            }
-        }
-        return scope;
-    }
 
 
     public static boolean getAnyBooleanParam(HstRequest request, String parameter, boolean defaultValue, final BaseHstComponent component) {
