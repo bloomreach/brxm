@@ -249,6 +249,29 @@
                     <tofile>context.xml</tofile>
                   </configfile>
                 </configfiles>
+                <deployables>
+                  <deployable>
+                    <type>war</type>
+                    <properties>
+                      <context>/cms</context>
+                    </properties>
+                    <location>${dollar}{project.basedir}/cms/target/cms.war</location>
+                  </deployable>
+                  <deployable>
+                    <location>${dollar}{project.basedir}/site/target/site.war</location>
+                    <type>war</type>
+                    <properties>
+                      <context>/site</context>
+                    </properties>
+                  </deployable>
+                  <deployable>
+                    <location>${dollar}{project.basedir}/essentials/target/essentials.war</location>
+                    <type>war</type>
+                    <properties>
+                      <context>/essentials</context>
+                    </properties>
+                  </deployable>
+                </deployables>
               </configuration>
               <container>
                 <systemProperties>
@@ -259,29 +282,6 @@
                   <project.basedir>${project.basedir}</project.basedir>
                 </systemProperties>
               </container>
-              <deployables>
-                <deployable>
-                  <type>war</type>
-                  <properties>
-                    <context>/cms</context>
-                  </properties>
-                  <location>${dollar}{project.basedir}/cms/target/cms.war</location>
-                </deployable>
-                <deployable>
-                  <location>${dollar}{project.basedir}/site/target/site.war</location>
-                  <type>war</type>
-                  <properties>
-                    <context>/site</context>
-                  </properties>
-                </deployable>
-                <deployable>
-                  <location>${dollar}{project.basedir}/essentials/target/essentials.war</location>
-                  <type>war</type>
-                  <properties>
-                    <context>/essentials</context>
-                  </properties>
-                </deployable>
-              </deployables>
             </configuration>
           </plugin>
         </plugins>
