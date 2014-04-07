@@ -20,11 +20,10 @@ import java.util.HashMap;
 import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.hosting.MutableMount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
+import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -115,26 +114,25 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
                     requestContext);
             attributes.put("url", url.toString());
             attributes.put("refNS", window.getReferenceNamespace());
-            if (mount instanceof MutableMount) {
-                if (compConfig instanceof ConfigurationLockInfo) {
-                    ConfigurationLockInfo lockInfo = (ConfigurationLockInfo)compConfig;
-                    if (lockInfo.getLockedBy() != null) {
-                        String cmsUserId = (String)session.getAttribute(ContainerConstants.CMS_USER_ID_ATTR);
-                        attributes.put(ChannelManagerConstants.HST_LOCKED_BY, lockInfo.getLockedBy());
-                        if (lockInfo.getLockedBy().equals(cmsUserId)) {
-                            attributes.put(ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER, "true");
-                        } else {
-                            attributes.put(ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER, "false");
-                        }
-                        if (lockInfo.getLockedOn() != null) {
-                            attributes.put(ChannelManagerConstants.HST_LOCKED_ON, String.valueOf(lockInfo.getLockedOn().getTimeInMillis()));
-                        }
+            if (compConfig instanceof ConfigurationLockInfo) {
+                ConfigurationLockInfo lockInfo = (ConfigurationLockInfo)compConfig;
+                if (lockInfo.getLockedBy() != null) {
+                    String cmsUserId = (String)session.getAttribute(ContainerConstants.CMS_USER_ID_ATTR);
+                    attributes.put(ChannelManagerConstants.HST_LOCKED_BY, lockInfo.getLockedBy());
+                    if (lockInfo.getLockedBy().equals(cmsUserId)) {
+                        attributes.put(ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER, "true");
+                    } else {
+                        attributes.put(ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER, "false");
+                    }
+                    if (lockInfo.getLockedOn() != null) {
+                        attributes.put(ChannelManagerConstants.HST_LOCKED_ON, String.valueOf(lockInfo.getLockedOn().getTimeInMillis()));
                     }
                 }
-                if (compConfig.getLastModified() != null) {
-                    attributes.put(ChannelManagerConstants.HST_LAST_MODIFIED, String.valueOf(compConfig.getLastModified().getTimeInMillis()));
-                }
             }
+            if (compConfig.getLastModified() != null) {
+                attributes.put(ChannelManagerConstants.HST_LAST_MODIFIED, String.valueOf(compConfig.getLastModified().getTimeInMillis()));
+            }
+
             Comment comment = createCommentWithAttr(attributes, response);
             response.addPreamble(comment);
         }
