@@ -28,7 +28,6 @@ archetype/website/src/main/resources/archetype-resources/bootstrap/configuration
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__-subsite-common/components.xml -text
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__-subsite-common/templates.xml -text
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/abstractpages.xml -text
-archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/abstractpages/base.xml -text
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/catalog.xml -text
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/components.xml -text
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/pages.xml -text
@@ -41,7 +40,6 @@ archetype/website/src/main/resources/archetype-resources/bootstrap/configuration
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/pages/textpage.xml -text
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/prototypepages.xml -text
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/prototypepages/document-prototype.xml -text
-archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/prototypepages/no-document-prototype.xml -text
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/sitemap.xml -text
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/sitemenus.xml -text
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/templates.xml -text

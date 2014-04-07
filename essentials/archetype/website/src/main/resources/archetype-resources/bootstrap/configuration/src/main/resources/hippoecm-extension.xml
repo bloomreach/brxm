@@ -279,21 +279,7 @@
       <sv:value>/hst:hst/hst:configurations/${rootArtifactId.replace($hyphen,$empty)}/hst:prototypepages</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="${rootArtifactId.replace($hyphen,$empty)}-configuration-prototypepages-no-document-prototype">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>30072.1</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hst/configurations/${rootArtifactId}/prototypepages/no-document-prototype.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/${rootArtifactId.replace($hyphen,$empty)}/hst:prototypepages</sv:value>
-    </sv:property>
-  </sv:node>
-  
+
   <sv:node sv:name="${rootArtifactId.replace($hyphen,$empty)}-configuration-abstractpages">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
@@ -306,20 +292,6 @@
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hst:hst/hst:configurations/${rootArtifactId.replace($hyphen,$empty)}</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="${rootArtifactId.replace($hyphen,$empty)}-configuration-abstractpages-base">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>30074</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hst/configurations/${rootArtifactId}/abstractpages/base.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/${rootArtifactId.replace($hyphen,$empty)}/hst:abstractpages</sv:value>
     </sv:property>
   </sv:node>
 

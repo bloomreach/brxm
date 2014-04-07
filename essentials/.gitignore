@@ -135,12 +135,6 @@ archetype/website/src/main/resources/archetype-resources/bootstrap/configuration
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/*.iml
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/.DS_Store
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/.idea
-archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/abstractpages/*.iml
-archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/abstractpages/.DS_Store
-archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/abstractpages/.idea
-archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/abstractpages/atlassian-ide-plugin.xml
-archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/abstractpages/hippo-plugins.iws
-archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/abstractpages/target
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/atlassian-ide-plugin.xml
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/hippo-plugins.iws
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/configurations/__rootArtifactId__/pages/*.iml
