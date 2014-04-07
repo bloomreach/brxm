@@ -56,6 +56,7 @@ public class BrowserSectionAccordion extends Panel implements ICardView {
     private IRenderService parentService;
     private BrowserSections sections;
     private IBrowserSection focussed;
+    private final AbstractView<String> view;
 
     public BrowserSectionAccordion(String id, final BrowserSections sections,
             final AccordionManagerBehavior accordionManager, IRenderService parentRenderService) {
@@ -99,7 +100,7 @@ public class BrowserSectionAccordion extends Panel implements ICardView {
                 names = null;
             }
         };
-        add(new AbstractView<String>("list", sectionProvider) {
+        view = new AbstractView<String>("list", sectionProvider) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -143,7 +144,8 @@ public class BrowserSectionAccordion extends Panel implements ICardView {
                 IBrowserSection section = sections.getSection(item.getModelObject());
                 section.unbind();
             }
-        });
+        };
+        add(view);
 
         String selectedBrowserSection = (String) getDefaultModelObject();
         if (selectedBrowserSection != null) {
@@ -156,6 +158,7 @@ public class BrowserSectionAccordion extends Panel implements ICardView {
     }
 
     public void render(PluginRequestTarget target) {
+        view.populate();
         for (String name : sections.getSections()) {
             sections.getSection(name).render(target);
         }
