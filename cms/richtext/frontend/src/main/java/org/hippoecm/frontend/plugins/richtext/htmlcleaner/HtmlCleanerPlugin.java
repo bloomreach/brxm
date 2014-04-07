@@ -112,9 +112,7 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
             }
         }
 
-        for (String attribute : attributesToRemove) {
-            attributes.remove(attribute);
-        }
+        attributes.keySet().removeAll(attributesToRemove);
 
         node.setAttributes(attributes);
         for (TagNode childNode : node.getChildTags()) {
