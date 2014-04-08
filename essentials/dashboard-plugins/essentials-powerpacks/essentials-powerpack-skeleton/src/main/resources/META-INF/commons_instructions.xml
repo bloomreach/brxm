@@ -49,7 +49,7 @@
     <xml action="copy" source="powerpack/xml/hst/pages/standard.xml" target="/hst:hst/hst:configurations/hst:default/hst:pages"/>
     <xml action="copy" source="powerpack/xml/hst/menu/main.xml" target="/hst:hst/hst:configurations/common/hst:sitemenus"/>
     <xml action="copy" source="powerpack/xml/hst/sitemap/root.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
-    <xml action="copy" source="powerpack/xml/hst/pages/homepage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
+    <xml action="copy" source="powerpack/xml/hst/pages/homepage.xml" target="/hst:hst/hst:configurations/common/hst:pages"/>
   </instructionSet>
 
   <!--
