@@ -15,12 +15,10 @@
     <!-- skeleton-->
     <file action="copy" source="powerpack/jsp/homepage-main-content.jsp" target="{{jspRoot}}/hstdefault/homepage-main-content.jsp"/>
     <file action="copy" source="powerpack/jsp/standard-layout.jsp" target="{{jspRoot}}/hstdefault/standard-layout.jsp"/>
-    <file action="copy" source="powerpack/jsp/standard-main.jsp" target="{{jspRoot}}/hstdefault/standard-main.jsp"/>
     <file action="copy" source="powerpack/jsp/standard-top-menu.jsp" target="{{jspRoot}}/hstdefault/standard-top-menu.jsp"/>
   </instructionSet>
   <instructionSet group="jsp">
     <xml action="copy" source="powerpack/xml/hst/templates/standard-layout-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
-    <xml action="copy" source="powerpack/xml/hst/templates/standard-main-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
     <xml action="copy" source="powerpack/xml/hst/templates/standard-top-menu-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
     <xml action="copy" source="powerpack/xml/hst/templates/homepage-main-content-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
@@ -32,12 +30,10 @@
      <!-- skeleton -->
     <file action="copy" source="powerpack/freemarker/homepage-main-content.ftl" target="{{freemarkerRoot}}/hstdefault/homepage-main-content.ftl"/>
     <file action="copy" source="powerpack/freemarker/standard-layout.ftl" target="{{freemarkerRoot}}/hstdefault/standard-layout.ftl"/>
-    <file action="copy" source="powerpack/freemarker/standard-main.ftl" target="{{freemarkerRoot}}/hstdefault/standard-main.jsp"/>
     <file action="copy" source="powerpack/freemarker/standard-top-menu.ftl" target="{{freemarkerRoot}}/hstdefault/standard-top-menu.ftl"/>
   </instructionSet>
   <instructionSet group="freemarker">
     <xml action="copy" source="powerpack/xml/hst/templates/standard-layout-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
-    <xml action="copy" source="powerpack/xml/hst/templates/standard-main-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
     <xml action="copy" source="powerpack/xml/hst/templates/standard-top-menu-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
     <xml action="copy" source="powerpack/xml/hst/templates/homepage-main-content-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
@@ -49,9 +45,10 @@
 
   -->
   <instructionSet>
-    <xml action="copy" source="powerpack/xml/hst/menu/main.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemenus"/>
+    <xml action="copy" source="powerpack/xml/hst/catalog/essentials-catalog.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog"/>
+    <xml action="copy" source="powerpack/xml/hst/pages/standard.xml" target="/hst:hst/hst:configurations/hst:default/hst:pages"/>
+    <xml action="copy" source="powerpack/xml/hst/menu/main.xml" target="/hst:hst/hst:configurations/common/hst:sitemenus"/>
     <xml action="copy" source="powerpack/xml/hst/sitemap/root.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
-    <xml action="copy" source="powerpack/xml/hst/pages/standard.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="powerpack/xml/hst/pages/homepage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
   </instructionSet>
 

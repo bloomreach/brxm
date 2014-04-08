@@ -10,12 +10,6 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:containercomponent</sv:value>
     </sv:property>
-    <sv:property sv:name="hst:lastmodified" sv:type="Date">
-      <sv:value>{{jcrDate}}</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:lastmodifiedby" sv:type="String">
-      <sv:value>admin</sv:value>
-    </sv:property>
     <sv:property sv:name="hst:xtype" sv:type="String">
       <sv:value>HST.Span</sv:value>
     </sv:property>
@@ -48,10 +42,10 @@
   </sv:node>
   <sv:node sv:name="main">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
+      <sv:value>hst:containercomponent</sv:value>
     </sv:property>
-    <sv:property sv:name="hst:template" sv:type="String">
-      <sv:value>standard.main</sv:value>
+    <sv:property sv:name="hst:xtype" sv:type="String">
+      <sv:value>HST.Span</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>

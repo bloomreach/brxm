@@ -16,36 +16,17 @@
 
 package org.onehippo.cms7.essentials.powerpack;
 
-import java.util.Set;
-
-import org.onehippo.cms7.essentials.dashboard.packaging.DefaultPowerpack;
-import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
+import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportPowerpack;
 import org.springframework.stereotype.Component;
-
-import com.google.common.collect.ImmutableSet;
 
 
 /**
  * @version "$Id$"
  */
 @Component
-public class BasicPowerpack extends DefaultPowerpack {
-
-    private static final ImmutableSet<String> INSTRUCTION_GROUPS_SAMPLE = new ImmutableSet.Builder<String>().add(EssentialConst.INSTRUCTION_GROUP_DEFAULT).add("samples").build();
-
-
+public class BasicPowerpack extends TemplateSupportPowerpack {
     @Override
     public String getInstructionPath() {
         return "/META-INF/basic_powerpack_instructions.xml";
     }
-
-    @Override
-    public Set<String> groupNames() {
-        if (Boolean.valueOf((String) getProperties().get("sampleData"))) {
-            return INSTRUCTION_GROUPS_SAMPLE;
-        }
-        return DEFAULT_GROUPS;
-    }
-
-
 }

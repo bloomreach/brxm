@@ -1,8 +1,4 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="hst" uri="http://www.hippoecm.org/jsp/hst/core" %>
-<%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
+<%@ include file="/WEB-INF/jsp/include/imports.jsp" %>
 <%--@elvariable id="document" type="{{beansPackage}}.EventsDocument"--%>
 <%--@elvariable id="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable"--%>
 <%--@elvariable id="showPagination" type="java.lang.Boolean"--%>
@@ -26,5 +22,5 @@
   </article>
 </c:forEach>
 <c:if test="${showPagination}">
-  <%@ include file="/WEB-INF/jsp/essentials/common/pagination.jsp" %>
+  <%@ include file="/WEB-INF/jsp/include/pagination.jsp" %>
 </c:if>

@@ -1,9 +1,5 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="hst" uri="http://www.hippoecm.org/jsp/hst/core" %>
-<%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
-<%--@elvariable id="document" type="{{beansPackage}}.NewsDocument"--%>
+<#include "/WEB-INF/freemarker/include/imports.ftl">
+<%--@elvariable id="document" type="{{beansPackage}}.EventsDocument"--%>
 <%--@elvariable id="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable"--%>
 <%--@elvariable id="showPagination" type="java.lang.Boolean"--%>
 
@@ -17,9 +13,14 @@
         <fmt:formatDate value="${item.date.time}" type="both" dateStyle="medium" timeStyle="short"/>
       </p>
     </c:if>
-    <p><c:out value="${item.introduction}"/></p>
+    <c:if test="${hst:isReadable(item, 'enddate.time')}">
+      <p>
+        <fmt:formatDate value="${item.enddate.time}" type="both" dateStyle="medium" timeStyle="short"/>
+      </p>
+    </c:if>
+    <p><c:out value="${item.location}"/></p>
   </article>
 </c:forEach>
 <c:if test="${showPagination}">
-  <%@ include file="/WEB-INF/jsp/essentials/common/pagination.jsp" %>
+<#include "/WEB-INF/freemarker/include/pagination.ftl">
 </c:if>

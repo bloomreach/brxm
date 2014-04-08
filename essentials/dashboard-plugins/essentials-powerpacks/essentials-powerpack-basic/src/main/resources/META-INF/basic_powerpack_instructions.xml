@@ -18,44 +18,49 @@
 
 <instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
+
+
   <instructionSet>
     <cnd documentType="newsdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
     <cnd documentType="eventsdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
     <xml action="copy" source="xml/namespaces/newsdocument.xml" target="/hippo:namespaces/{{namespace}}"/>
     <xml action="copy" source="xml/namespaces/eventsdocument.xml" target="/hippo:namespaces/{{namespace}}"/>
   </instructionSet>
-  <instructionSet>
-    <xml action="copy" source="xml/folderoptions/new-news-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
-    <xml action="copy" source="xml/folderoptions/new-news-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
-    <xml action="copy" source="xml/folderoptions/new-events-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
-    <xml action="copy" source="xml/folderoptions/new-events-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
-  </instructionSet>
-  <instructionSet>
-    <file action="copy" binary="true"  source="icons/new-folder-16.png" target="{{cmsRoot}}/src/main/resources/org/hippoecm/frontend/plugins/standardworkflow/new-news-folder-16.png"/>
-    <file action="copy" binary="true"  source="icons/new-folder-16.png" target="{{cmsRoot}}/src/main/resources/org/hippoecm/frontend/plugins/standardworkflow/new-events-folder-16.png"/>
-  </instructionSet>
+
+
   <instructionSet>
     <folder path="/content/documents/{{namespace}}/news/{{dateRepoYearMonth}}" template="xml/content/news.xml"/>
     <folder path="/content/documents/{{namespace}}/events/{{dateRepoYearMonth}}" template="xml/content/events.xml"/>
   </instructionSet>
-  <instructionSet>
 
 
-    <file action="copy" source="jsp/essentials-component-list.jsp" target="{{jspRoot}}/essentials/essentials-component-list.jsp"/>
-    <file action="copy"  source="jsp/essentials-component-document.jsp" target="{{jspRoot}}/essentials/essentials-component-document.jsp"/>
-    <file action="copy"  source="jsp/essentials-component-news.jsp" target="{{jspRoot}}/essentials/essentials-component-news.jsp"/>
-    <file action="copy"  source="jsp/essentials-component-news-detail.jsp" target="{{jspRoot}}/essentials/essentials-component-news-detail.jsp"/>
-    <file action="copy"  source="jsp/essentials-component-events.jsp" target="{{jspRoot}}/essentials/essentials-component-events.jsp"/>
-    <file action="copy"  source="jsp/essentials-component-event-detail.jsp" target="{{jspRoot}}/essentials/essentials-component-event-detail.jsp"/>
+  <instructionSet group="jsp">
 
+    <file action="copy" source="jsp/essentials-component-list.jsp" target="{{jspRoot}}/hstdefault/essentials-component-list.jsp"/>
+    <file action="copy" source="jsp/essentials-component-document.jsp" target="{{jspRoot}}/hstdefault/essentials-component-document.jsp"/>
+    <file action="copy" source="jsp/newslist-main-content.jsp" target="{{jspRoot}}/hstdefault/newslist-main-content.jsp"/>
+    <file action="copy" source="jsp/newspage-main-content.jsp" target="{{jspRoot}}/hstdefault/newspage-main-content.jsp"/>
+    <file action="copy" source="jsp/eventslist-main-content.jsp" target="{{jspRoot}}/hstdefault/eventslist-main-content.jsp"/>
+    <file action="copy" source="jsp/eventsspage-main-content.jsp" target="{{jspRoot}}/hstdefault/eventspage-main-content.jsp"/>
   </instructionSet>
+
+  <instructionSet group="freemarker">
+    <file action="copy" source="freemarker/essentials-component-list.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-component-list.ftl"/>
+    <file action="copy" source="freemarker/essentials-component-document.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-component-document.ftl"/>
+    <file action="copy" source="freemarker/newslist-main-content.ftl" target="{{freemarkerRoot}}/hstdefault/newslist-main-content.ftl"/>
+    <file action="copy" source="freemarker/newspage-main-content.ftl" target="{{freemarkerRoot}}/hstdefault/newspage-main-content.ftl"/>
+    <file action="copy" source="freemarker/eventslist-main-content.ftl" target="{{freemarkerRoot}}/hstdefault/eventslist-main-content.ftl"/>
+    <file action="copy" source="freemarker/eventsspage-main-content.ftl" target="{{freemarkerRoot}}/hstdefault/eventspage-main-content.ftl"/>
+  </instructionSet>
+
+
   <instructionSet>
     <xml action="copy" source="xml/hst/sitemap/news.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
     <xml action="copy" source="xml/hst/sitemap/events.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
   </instructionSet>
   <instructionSet>
-    <file action="copy"  source="java/NewsDocument.txt" target="{{beansFolder}}/NewsDocument.java"/>
-    <file action="copy"  source="java/EventsDocument.txt" target="{{beansFolder}}/EventsDocument.java"/>
+    <file action="copy" source="java/NewsDocument.txt" target="{{beansFolder}}/NewsDocument.java"/>
+    <file action="copy" source="java/EventsDocument.txt" target="{{beansFolder}}/EventsDocument.java"/>
   </instructionSet>
   <instructionSet>
     <xml action="copy" source="xml/hst/components/list.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:components"/>
@@ -77,19 +82,22 @@
     <xml action="copy" source="xml/hst/templates/events-main-overview-content.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="xml/hst/templates/events-main-content.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
+
   <instructionSet>
-    <xml action="copy" source="xml/hst/catalog/basic-powerpack-catalog.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:catalog"/>
+    <xml action="copy" source="xml/hst/catalog/eventslist.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <xml action="copy" source="xml/hst/catalog/newslist.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
   </instructionSet>
+
 
   <!--
-    MENU
+    //############################################
+    // MENU
+    //############################################
   -->
   <instructionSet>
-    <xml action="copy" source="xml/hst/menu/menu-item-news.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemenus/main"/>
-    <xml action="copy" source="xml/hst/menu/menu-item-events.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemenus/main"/>
+    <xml action="copy" source="xml/hst/menu/menu-item-news.xml" target="/hst:hst/hst:configurations/common/hst:sitemenus/main"/>
+    <xml action="copy" source="xml/hst/menu/menu-item-events.xml" target="/hst:hst/hst:configurations/common/hst:sitemenus/main"/>
   </instructionSet>
-
-
 
   <!-- SAMPLES GROUP-->
   <instructionSet group="samples">
@@ -101,4 +109,20 @@
     <xml action="copy" source="xml/samples/content/documents/news/sample_gastropoda.xml" target="/content/documents/{{namespace}}/news/{{dateRepoYearMonth}}"/>
     <xml action="copy" source="xml/samples/content/gallery/samples.xml" target="/content/gallery/{{namespace}}"/>
   </instructionSet>
+  <!--
+    CONFIG DATA
+  -->
+
+  <instructionSet>
+    <xml action="copy" source="xml/folderoptions/new-news-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+    <xml action="copy" source="xml/folderoptions/new-news-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+    <xml action="copy" source="xml/folderoptions/new-events-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+    <xml action="copy" source="xml/folderoptions/new-events-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+  </instructionSet>
+  <instructionSet>
+    <file action="copy" binary="true" source="icons/new-folder-16.png" target="{{cmsRoot}}/src/main/resources/org/hippoecm/frontend/plugins/standardworkflow/new-news-folder-16.png"/>
+    <file action="copy" binary="true" source="icons/new-folder-16.png" target="{{cmsRoot}}/src/main/resources/org/hippoecm/frontend/plugins/standardworkflow/new-events-folder-16.png"/>
+  </instructionSet>
+
+
 </instructions>

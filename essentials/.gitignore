@@ -1727,6 +1727,12 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/reso
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/META-INF/resources/target
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/META-INF/target
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/atlassian-ide-plugin.xml
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/freemarker/*.iml
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/freemarker/.DS_Store
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/freemarker/.idea
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/freemarker/atlassian-ide-plugin.xml
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/freemarker/hippo-plugins.iws
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/freemarker/target
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/hippo-plugins.iws
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/icons/*.iml
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/icons/.DS_Store
@@ -2037,6 +2043,12 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/r
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/.DS_Store
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/.idea
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/atlassian-ide-plugin.xml
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/catalog/*.iml
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/catalog/.DS_Store
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/catalog/.idea
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/catalog/atlassian-ide-plugin.xml
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/catalog/hippo-plugins.iws
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/catalog/target
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/hippo-plugins.iws
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/menu/*.iml
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/menu/.DS_Store

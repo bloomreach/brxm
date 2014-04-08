@@ -1,4 +1,4 @@
-<%@ include file="/WEB-INF/jsp/include/imports.jsp" %>
+<#include "/WEB-INF/freemarker/include/imports.ftl">
 <%--@elvariable id="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable"--%>
 <h1>${pageable.total}</h1>
-<%@ include file="/WEB-INF/jsp/include/pagination.jsp" %>
+<#include "/WEB-INF/freemarker/include/pagination.ftl">
