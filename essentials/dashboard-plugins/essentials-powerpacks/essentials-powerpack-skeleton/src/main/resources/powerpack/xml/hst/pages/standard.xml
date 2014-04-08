@@ -45,7 +45,7 @@
       <sv:value>hst:containercomponent</sv:value>
     </sv:property>
     <sv:property sv:name="hst:xtype" sv:type="String">
-      <sv:value>HST.Span</sv:value>
+      <sv:value>HST.vBox</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
