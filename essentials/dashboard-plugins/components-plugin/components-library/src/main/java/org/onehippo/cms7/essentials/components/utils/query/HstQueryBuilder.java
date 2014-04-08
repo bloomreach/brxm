@@ -21,6 +21,7 @@ import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.onehippo.cms7.essentials.components.utils.SiteUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +98,7 @@ public class HstQueryBuilder implements QueryBuilder {
     @Override
     @Nonnull
     public HstQueryBuilder siteScope() {
-        this.scope = component.getSiteContentBaseBean(request);
+        this.scope = getSiteScope();
         return this;
     }
 
@@ -119,7 +120,8 @@ public class HstQueryBuilder implements QueryBuilder {
         if (mappings == null) {
             mappings = new ArrayList<>();
         }
-        final ObjectConverter objectConverter = component.getObjectConverter();
+        final HstRequestContext context = request.getRequestContext();
+        final ObjectConverter objectConverter = context.getContentBeansTool().getObjectConverter();
         int typeCounter = 0;
         for (String primaryNodeType : primaryNodeTypes) {
             final Class<? extends HippoBean> clazz = objectConverter.getAnnotatedClassFor(primaryNodeType);
@@ -156,7 +158,8 @@ public class HstQueryBuilder implements QueryBuilder {
         if (scope == null) {
             siteScope();
         }
-        HstQueryManager manager = component.getQueryManager(request);
+        final HstRequestContext context = request.getRequestContext();
+        final HstQueryManager manager = context.getQueryManager();
         try {
             @SuppressWarnings("unchecked")
             final Class<? extends HippoBean>[] classes = mappings.toArray(new Class[mappings.size()]);
@@ -192,6 +195,7 @@ public class HstQueryBuilder implements QueryBuilder {
     @Nullable
     @Override
     public HippoBean getSiteScope() {
-        return component.getSiteContentBaseBean(request);
+        final HstRequestContext context = request.getRequestContext();
+        return context.getSiteContentBaseBean();
     }
 }
