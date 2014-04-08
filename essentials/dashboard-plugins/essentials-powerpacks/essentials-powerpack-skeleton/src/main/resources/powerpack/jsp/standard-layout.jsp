@@ -1,5 +1,5 @@
 <!doctype html>
-<%@ include file="/WEB-INF/jsp/essentials/common/imports.jsp" %>
+<%@ include file="/WEB-INF/jsp/include/imports.jsp" %>
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
