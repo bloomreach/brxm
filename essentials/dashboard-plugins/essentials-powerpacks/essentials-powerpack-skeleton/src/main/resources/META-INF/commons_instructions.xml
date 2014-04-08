@@ -7,9 +7,12 @@
   // COMMONS POWERPACK ADDS SHARED FILES/CONFIGURATION
   //############################################
   -->
+
   <instructionSet group="jsp">
-    <file action="copy" source="powerpack/jsp/imports.jsp" target="{{jspRoot}}/essentials/common/imports.jsp"/>
-    <file action="copy" source="powerpack/jsp/pagination.jsp" target="{{jspRoot}}/essentials/common/pagination.jsp"/>
+    <!-- include-->
+    <file action="copy" source="powerpack/jsp/imports.jsp" target="{{jspRoot}}/include/imports.jsp"/>
+    <file action="copy" source="powerpack/jsp/pagination.jsp" target="{{jspRoot}}/pagination.jsp"/>
+    <!-- skeleton-->
     <file action="copy" source="powerpack/jsp/essentials-home.jsp" target="{{jspRoot}}/essentials/essentials-home.jsp"/>
     <file action="copy" source="powerpack/jsp/essentials-layout-webpage.jsp" target="{{jspRoot}}/essentials/essentials-layout-webpage.jsp"/>
     <file action="copy" source="powerpack/jsp/essentials-standard-main.jsp" target="{{jspRoot}}/essentials/essentials-standard-main.jsp"/>
@@ -23,8 +26,10 @@
   </instructionSet>
 
   <instructionSet group="freemarker">
-    <file action="copy" source="powerpack/freemarker/imports.ftl" target="{{freemarkerRoot}}/essentials/common/imports.ftl"/>
-    <file action="copy" source="powerpack/freemarker/pagination.ftl" target="{{freemarkerRoot}}/essentials/common/pagination.ftl"/>
+    <!-- include -->
+    <file action="copy" source="powerpack/freemarker/imports.ftl" target="{{freemarkerRoot}}/include/imports.ftl"/>
+    <file action="copy" source="powerpack/freemarker/pagination.ftl" target="{{freemarkerRoot}}/include/pagination.ftl"/>
+     <!-- skeleton -->
     <file action="copy" source="powerpack/freemarker/essentials-home.jsp" target="{{freemarkerRoot}}/essentials/essentials-home.jsp"/>
     <file action="copy" source="powerpack/freemarker/essentials-layout-webpage.jsp" target="{{freemarkerRoot}}/essentials/essentials-layout-webpage.jsp"/>
     <file action="copy" source="powerpack/freemarker/essentials-standard-main.jsp" target="{{freemarkerRoot}}/essentials/essentials-standard-main.jsp"/>
