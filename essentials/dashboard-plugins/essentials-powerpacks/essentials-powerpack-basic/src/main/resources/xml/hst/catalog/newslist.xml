@@ -10,7 +10,7 @@
     <sv:value>News List</sv:value>
   </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
-    <sv:value>common-newslist-main-content</sv:value>
+    <sv:value>hstdefault-newslist-main-content</sv:value>
   </sv:property>
   <sv:property sv:name="hst:xtype" sv:type="String">
     <sv:value>HST.Item</sv:value>

@@ -4,7 +4,7 @@
     <sv:value>hst:component</sv:value>
   </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
-    <sv:value>standard.layout</sv:value>
+    <sv:value>hstdefault-standard-layout</sv:value>
   </sv:property>
   <sv:node sv:name="top">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -33,7 +33,7 @@
         <sv:value>main</sv:value>
       </sv:property>
       <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>standard.top.menu</sv:value>
+        <sv:value>hstdefault-standard-top-menu</sv:value>
       </sv:property>
       <sv:property sv:name="hst:xtype" sv:type="String">
         <sv:value>HST.Item</sv:value>

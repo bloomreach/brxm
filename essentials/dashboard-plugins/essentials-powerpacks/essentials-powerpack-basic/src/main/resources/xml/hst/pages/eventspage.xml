@@ -18,7 +18,7 @@
         <sv:value>hst:components/content</sv:value>
       </sv:property>
       <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>common-eventspage-main-content</sv:value>
+        <sv:value>hstdefault-eventspage-main-content</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

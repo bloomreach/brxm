@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="common-eventslist-main-content">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hstdefault-eventslist-main-content">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:template</sv:value>
   </sv:property>
   <sv:property sv:name="hst:renderpath" sv:type="String">
-    <sv:value>jsp/common/eventslist-main-content.jsp</sv:value>
+    <sv:value>jsp/hstdefault/eventslist-main-content.jsp</sv:value>
   </sv:property>
 </sv:node>

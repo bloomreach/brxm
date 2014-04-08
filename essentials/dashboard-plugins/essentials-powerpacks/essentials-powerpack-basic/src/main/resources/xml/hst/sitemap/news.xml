@@ -4,7 +4,7 @@
     <sv:value>hst:sitemapitem</sv:value>
   </sv:property>
   <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-    <sv:value>hst:pages/newsoverview</sv:value>
+    <sv:value>hst:pages/newslist</sv:value>
   </sv:property>
   <sv:property sv:name="hst:relativecontentpath" sv:type="String">
     <sv:value>news</sv:value>
@@ -25,7 +25,7 @@
       <sv:value>hst:sitemapitem</sv:value>
     </sv:property>
     <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-      <sv:value>hst:pages/newsoverview</sv:value>
+      <sv:value>hst:pages/newslist</sv:value>
     </sv:property>
     <sv:property sv:name="hst:relativecontentpath" sv:type="String">
       <sv:value>${parent}/${1}</sv:value>

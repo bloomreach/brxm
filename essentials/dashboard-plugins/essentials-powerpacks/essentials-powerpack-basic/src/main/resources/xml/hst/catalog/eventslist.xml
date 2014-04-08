@@ -26,7 +26,7 @@
     <sv:value>Events List</sv:value>
   </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
-    <sv:value>common-eventslist-main-content</sv:value>
+    <sv:value>hstdefault-eventslist-main-content</sv:value>
   </sv:property>
   <sv:property sv:name="hst:xtype" sv:type="String">
     <sv:value>HST.Item</sv:value>

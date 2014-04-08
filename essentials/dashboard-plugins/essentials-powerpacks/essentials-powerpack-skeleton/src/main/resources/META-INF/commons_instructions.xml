@@ -11,7 +11,7 @@
   <instructionSet group="jsp">
     <!-- include-->
     <file action="copy" source="powerpack/jsp/imports.jsp" target="{{jspRoot}}/include/imports.jsp"/>
-    <file action="copy" source="powerpack/jsp/pagination.jsp" target="{{jspRoot}}/pagination.jsp"/>
+    <file action="copy" source="powerpack/jsp/pagination.jsp" target="{{jspRoot}}/include/pagination.jsp"/>
     <!-- skeleton-->
     <file action="copy" source="powerpack/jsp/homepage-main-content.jsp" target="{{jspRoot}}/hstdefault/homepage-main-content.jsp"/>
     <file action="copy" source="powerpack/jsp/standard-layout.jsp" target="{{jspRoot}}/hstdefault/standard-layout.jsp"/>
@@ -45,11 +45,14 @@
 
   -->
   <instructionSet>
+    <!-- common -->
+    <xml action="copy" source="powerpack/xml/hst/sitemap/root.xml" target="/hst:hst/hst:configurations/common/hst:sitemap"/>
+    <xml action="copy" source="powerpack/xml/hst/menu/main.xml" target="/hst:hst/hst:configurations/common/hst:sitemenus"/>
+
+    <!-- default-->
     <xml action="copy" source="powerpack/xml/hst/catalog/essentials-catalog.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog"/>
     <xml action="copy" source="powerpack/xml/hst/pages/standard.xml" target="/hst:hst/hst:configurations/hst:default/hst:pages"/>
-    <xml action="copy" source="powerpack/xml/hst/menu/main.xml" target="/hst:hst/hst:configurations/common/hst:sitemenus"/>
-    <xml action="copy" source="powerpack/xml/hst/sitemap/root.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
-    <xml action="copy" source="powerpack/xml/hst/pages/homepage.xml" target="/hst:hst/hst:configurations/common/hst:pages"/>
+    <xml action="copy" source="powerpack/xml/hst/pages/homepage.xml" target="/hst:hst/hst:configurations/hst:default/hst:pages"/>
   </instructionSet>
 
   <!--
