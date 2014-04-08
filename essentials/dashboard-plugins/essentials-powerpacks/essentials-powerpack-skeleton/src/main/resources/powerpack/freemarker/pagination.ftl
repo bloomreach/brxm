@@ -1,4 +1,4 @@
-<#include "/WEB-INF/ftl/essentials/common/imports.ftl">
+<#include "/WEB-INF/freemarker/include/imports.ftl">
 <#-- @ftlvariable name="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable" -->
 <#-- @ftlvariable name="pageSize" type="java.lang.Integer" -->
 <#-- @ftlvariable name="page" type="java.lang.Integer" -->

@@ -1,5 +1,5 @@
 <!doctype html>
-<#include "/WEB-INF/ftl/essentials/common/imports.ftl">
+<#include "/WEB-INF/freemarker/include/imports.ftl">
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
