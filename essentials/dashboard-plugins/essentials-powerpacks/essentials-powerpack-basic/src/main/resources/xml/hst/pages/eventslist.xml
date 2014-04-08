@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="eventsoverview">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="eventslist">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:component</sv:value>
   </sv:property>
@@ -46,7 +46,7 @@
         <sv:value>{{namespace}}:enddate</sv:value>
       </sv:property>
       <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>news.main.overview.content</sv:value>
+        <sv:value>common-eventslist-main-content</sv:value>
       </sv:property>
       <sv:property sv:name="hst:xtype" sv:type="String">
         <sv:value>HST.Item</sv:value>

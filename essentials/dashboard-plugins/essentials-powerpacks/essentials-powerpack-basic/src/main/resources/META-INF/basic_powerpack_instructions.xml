@@ -35,24 +35,34 @@
 
 
   <instructionSet group="jsp">
-
-    <file action="copy" source="jsp/essentials-component-list.jsp" target="{{jspRoot}}/hstdefault/essentials-component-list.jsp"/>
-    <file action="copy" source="jsp/essentials-component-document.jsp" target="{{jspRoot}}/hstdefault/essentials-component-document.jsp"/>
-    <file action="copy" source="jsp/newslist-main-content.jsp" target="{{jspRoot}}/hstdefault/newslist-main-content.jsp"/>
-    <file action="copy" source="jsp/newspage-main-content.jsp" target="{{jspRoot}}/hstdefault/newspage-main-content.jsp"/>
-    <file action="copy" source="jsp/eventslist-main-content.jsp" target="{{jspRoot}}/hstdefault/eventslist-main-content.jsp"/>
-    <file action="copy" source="jsp/eventsspage-main-content.jsp" target="{{jspRoot}}/hstdefault/eventspage-main-content.jsp"/>
+    <file action="copy" source="jsp/essentials-component-list.jsp" target="{{jspRoot}}/common/essentials-component-list.jsp"/>
+    <file action="copy" source="jsp/essentials-component-document.jsp" target="{{jspRoot}}/common/essentials-component-document.jsp"/>
+    <file action="copy" source="jsp/newslist-main-content.jsp" target="{{jspRoot}}/common/newslist-main-content.jsp"/>
+    <file action="copy" source="jsp/newspage-main-content.jsp" target="{{jspRoot}}/common/newspage-main-content.jsp"/>
+    <file action="copy" source="jsp/eventslist-main-content.jsp" target="{{jspRoot}}/common/eventslist-main-content.jsp"/>
+    <file action="copy" source="jsp/eventspage-main-content.jsp" target="{{jspRoot}}/common/eventspage-main-content.jsp"/>
+  </instructionSet>
+  <instructionSet group="jsp">
+    <xml action="copy" source="xml/hst/templates/news-main-content-jsp.xml" target="/hst:hst/hst:configurations/common/hst:templates"/>
+    <xml action="copy" source="xml/hst/templates/newslist-main-content-jsp.xml" target="/hst:hst/hst:configurations/common/hst:templates"/>
+    <xml action="copy" source="xml/hst/templates/events-main-content-jsp.xml" target="/hst:hst/hst:configurations/common/hst:templates"/>
+    <xml action="copy" source="xml/hst/templates/eventslist-main-content-jsp.xml" target="/hst:hst/hst:configurations/common/hst:templates"/>
   </instructionSet>
 
   <instructionSet group="freemarker">
     <file action="copy" source="freemarker/essentials-component-list.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-component-list.ftl"/>
     <file action="copy" source="freemarker/essentials-component-document.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-component-document.ftl"/>
-    <file action="copy" source="freemarker/newslist-main-content.ftl" target="{{freemarkerRoot}}/hstdefault/newslist-main-content.ftl"/>
-    <file action="copy" source="freemarker/newspage-main-content.ftl" target="{{freemarkerRoot}}/hstdefault/newspage-main-content.ftl"/>
-    <file action="copy" source="freemarker/eventslist-main-content.ftl" target="{{freemarkerRoot}}/hstdefault/eventslist-main-content.ftl"/>
-    <file action="copy" source="freemarker/eventsspage-main-content.ftl" target="{{freemarkerRoot}}/hstdefault/eventspage-main-content.ftl"/>
+    <file action="copy" source="freemarker/newslist-main-content.ftl" target="{{freemarkerRoot}}/common/newslist-main-content.ftl"/>
+    <file action="copy" source="freemarker/newspage-main-content.ftl" target="{{freemarkerRoot}}/common/newspage-main-content.ftl"/>
+    <file action="copy" source="freemarker/eventslist-main-content.ftl" target="{{freemarkerRoot}}/common/eventslist-main-content.ftl"/>
+    <file action="copy" source="freemarker/eventsspage-main-content.ftl" target="{{freemarkerRoot}}/common/eventspage-main-content.ftl"/>
   </instructionSet>
-
+  <instructionSet group="freemarker">
+    <xml action="copy" source="xml/hst/templates/news-main-content-freemarker.xml" target="/hst:hst/hst:configurations/common/hst:templates"/>
+    <xml action="copy" source="xml/hst/templates/newslist-main-content-freemarker.xml" target="/hst:hst/hst:configurations/common/hst:templates"/>
+    <xml action="copy" source="xml/hst/templates/events-main-content-freemarker.xml" target="/hst:hst/hst:configurations/common/hst:templates"/>
+    <xml action="copy" source="xml/hst/templates/eventslist-main-content-freemarker.xml" target="/hst:hst/hst:configurations/common/hst:templates"/>
+  </instructionSet>
 
   <instructionSet>
     <xml action="copy" source="xml/hst/sitemap/news.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
@@ -66,6 +76,8 @@
     <xml action="copy" source="xml/hst/components/list.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:components"/>
     <xml action="copy" source="xml/hst/components/content.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:components"/>
   </instructionSet>
+
+
   <instructionSet>
     <xml action="copy" source="xml/hst/pages/newsoverview.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="xml/hst/pages/newspage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
@@ -73,15 +85,7 @@
     <xml action="copy" source="xml/hst/pages/eventspage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
 
   </instructionSet>
-  <instructionSet>
 
-    <xml action="copy" source="xml/hst/templates/standard-main-overview-content.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="xml/hst/templates/standard-main-content.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="xml/hst/templates/news-main-overview-content.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="xml/hst/templates/news-main-content.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="xml/hst/templates/events-main-overview-content.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="xml/hst/templates/events-main-content.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-  </instructionSet>
 
   <instructionSet>
     <xml action="copy" source="xml/hst/catalog/eventslist.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
