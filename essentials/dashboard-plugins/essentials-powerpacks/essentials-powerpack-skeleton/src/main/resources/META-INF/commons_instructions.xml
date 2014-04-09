@@ -45,8 +45,8 @@
 
   -->
   <instructionSet>
-    <xml action="copy" source="powerpack/xml/hst/workspace/base.xml" target="/hst:hst/hst:configurations/common/hst:workspace"/>
-    <xml action="copy" source="powerpack/xml/hst/workspace/homepage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace"/>
+    <xml action="copy" source="powerpack/xml/hst/workspace/base.xml" target="/hst:hst/hst:configurations/common/hst:workspace/hst:containers"/>
+    <xml action="copy" source="powerpack/xml/hst/workspace/homepage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
     <!-- common -->
     <xml action="copy" source="powerpack/xml/hst/sitemap/root.xml" target="/hst:hst/hst:configurations/common/hst:sitemap"/>
     <xml action="copy" source="powerpack/xml/hst/menu/main.xml" target="/hst:hst/hst:configurations/common/hst:sitemenus"/>
