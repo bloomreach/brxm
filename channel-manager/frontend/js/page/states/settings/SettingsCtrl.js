@@ -102,7 +102,7 @@
                     $scope.tooltip = '';
                 };
 
-                $scope.delete = function () {
+                $scope.deletePage = function () {
                     $scope.isConfirmationVisible = true;
                 };
 

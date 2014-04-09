@@ -72,7 +72,7 @@ form {
 }
 
 /* --- Confirmation dialog --- */
-.confirmation {
+.confirmation-dialog {
     position: absolute;
     width: 80%;
     left: 10%;
@@ -82,23 +82,23 @@ form {
     display: none;
 }
 
-.confirmation.s-visible, .confirmation.s-invisible {
+.confirmation-dialog.s-visible, .confirmation.s-invisible {
     display: block
 }
 
-.confirmation.s-visible {
+.confirmation-dialog.s-visible {
     top: 0
 }
 
-.confirmation.s-invisible {
+.confirmation-dialog.s-invisible {
     top: -181px
 }
 
-.confirmation-title {
+.confirmation-dialog-title {
     font-weight: bold;
 }
 
-.confirmation-message {
+.confirmation-dialog-message {
     /* prevent long messages from making the confirmation so high
        that its bottom becomes visible in 'invisible' state */
     max-height: 40px;

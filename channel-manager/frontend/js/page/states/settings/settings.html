@@ -17,17 +17,17 @@
 <div class="panel panel-default l-stretch">
 
     <div hippo.theme.confirmation-dialog
-         class="confirmation"
+         class="confirmation-dialog"
          data-confirm-icon="trash-o"
          data-perform-confirmation="confirmDelete()"
          data-perform-cancel="cancelDelete()"
          data-confirm-label="{{ 'DELETE_PAGE' | translate }}"
          data-cancel-label="{{ 'CANCEL' | translate }}"
          data-show="isConfirmationVisible">
-        <p class="confirmation-title">
+        <p class="confirmation-dialog-title">
             {{ 'CONFIRM_DELETE_TITLE' | translate:page }}
         </p>
-        <p class="confirmation-message">
+        <p class="confirmation-dialog-message">
             {{ 'CONFIRM_DELETE_MESSAGE' | translate:page }}
         </p>
     </div>
@@ -144,7 +144,7 @@
              data-ng-mouseenter="showTooltip()"
              data-ng-mouseleave="hideTooltip()">
             <button class="btn btn-default btn-md"
-                    data-ng-click="delete(page)"
+                    data-ng-click="deletePage(page)"
                     data-ng-disabled="!state.isEditable || page.isHomepage">
                 <i class="fa fa-trash-o"></i> {{ 'DELETE_PAGE' | translate }}
             </button>
