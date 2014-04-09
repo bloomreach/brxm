@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.MountRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPageRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPagesRepresentation;
@@ -50,7 +51,9 @@ public class PagesTest extends AbstractSiteMapResourceTest {
         final Response response = siteMapResource.getHostName();
         final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
         assertThat(Response.Status.OK.getStatusCode(), is(response.getStatus()));
-        assertThat(representation.getData().toString(), is("localhost"));
+        final MountRepresentation data =  (MountRepresentation)representation.getData();
+        assertThat(data.getHostName(), is("localhost"));
+        assertThat(data.getMountPath(), is(""));
     }
 
     @Test
