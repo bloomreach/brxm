@@ -25,14 +25,13 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPlugin;
@@ -42,19 +41,16 @@ import org.hippoecm.frontend.plugins.yui.accordion.AccordionConfiguration;
 import org.hippoecm.frontend.plugins.yui.accordion.AccordionManagerBehavior;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.AbstractRenderService;
-import org.hippoecm.frontend.service.render.ICardView;
 import org.hippoecm.frontend.service.render.ListRenderService;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.util.MappingException;
 import org.hippoecm.frontend.util.PluginConfigMapper;
-import org.hippoecm.frontend.widgets.AbstractView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SectionTreePlugin extends ListRenderService implements IPlugin, ICardView {
+public class SectionTreePlugin extends ListRenderService implements IPlugin {
 
     private static final long serialVersionUID = 1L;
-    private final AbstractView<Section> view;
 
     private class Section implements IDetachable {
         private static final long serialVersionUID = 1L;
@@ -135,11 +131,11 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin, ICa
             findSectionForInitialFocus = true;
         }
 
-        view = new AbstractView<Section>("list", new ListDataProvider<>(sections)) {
+        add(new ListView<Section>("list", sections) {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void populateItem(Item<Section> item) {
+            protected void populateItem(ListItem<Section> item) {
                 final Section section = item.getModelObject();
                 AjaxLink<Void> link = new AjaxLink<Void>("link") {
                     private static final long serialVersionUID = 1L;
@@ -170,7 +166,7 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin, ICa
                 link.add(new Label("header", new StringResourceModel(label, SectionTreePlugin.this, null)));
 
                 if (section.extPt.getChildren().size() > 0) {
-                    Component c = ((IRenderService) section.extPt.getChildren().get(0)).getComponent();
+                    Component c = ((IRenderService)section.extPt.getChildren().get(0)).getComponent();
                     item.add(c);
                 } else {
                     item.add(new EmptyPanel("id"));
@@ -178,14 +174,7 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin, ICa
                     item.setVisible(false);
                 }
             }
-        };
-        add(view);
-    }
-
-    @Override
-    public void render(final PluginRequestTarget target) {
-        view.populate();
-        super.render(target);
+        });
     }
 
     @Override
@@ -332,24 +321,6 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin, ICa
             }
         }
         return dirty;
-    }
-
-    @Override
-    public boolean isActive(Component component) {
-        if (isActive()) {
-            while (component != this) {
-                for (Section section : sections) {
-                    if (section.extPt.getChildren().size() > 0) {
-                        IRenderService service = (IRenderService) section.extPt.getChildren().get(0);
-                        if (service.getComponent() == component) {
-                            return section.focussed;
-                        }
-                    }
-                }
-                component = component.getParent();
-            }
-        }
-        return false;
     }
 
     public void start() {
