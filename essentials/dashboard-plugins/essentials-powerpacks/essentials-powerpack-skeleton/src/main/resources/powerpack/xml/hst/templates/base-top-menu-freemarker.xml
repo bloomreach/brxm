@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="common-base-top-menu">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="base-top-menu">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:template</sv:value>
   </sv:property>

@@ -541,12 +541,14 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/r
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/bootstrap/fonts/glyphicons-halflings-regular.svg -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/bootstrap/fonts/glyphicons-halflings-regular.ttf -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/bootstrap/fonts/glyphicons-halflings-regular.woff -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/freemarker/base-footer-content.ftl -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/freemarker/base-layout.ftl -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/freemarker/base-top-menu.ftl -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/freemarker/homepage-main-content.ftl -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/freemarker/imports.ftl -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/freemarker/pagination.ftl -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/js/jquery-2.1.0.min.js -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/jsp/base-footer-content.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/jsp/base-layout.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/jsp/base-top-menu.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/jsp/homepage-main-content.jsp -text
@@ -557,6 +559,8 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/r
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/pages/base.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/pages/homepage.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/sitemap/root.xml -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/templates/base-footer-content-freemarker.xml -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/templates/base-footer-content-jsp.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/templates/base-layout-freemarker.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/templates/base-layout-jsp.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/xml/hst/templates/base-top-menu-freemarker.xml -text

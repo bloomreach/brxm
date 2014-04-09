@@ -20,6 +20,7 @@
   <instructionSet group="jsp">
     <xml action="copy" source="powerpack/xml/hst/templates/base-layout-jsp.xml" target="/hst:hst/hst:configurations/common/hst:templates"/>
     <xml action="copy" source="powerpack/xml/hst/templates/base-top-menu-jsp.xml" target="/hst:hst/hst:configurations/common/hst:templates"/>
+    <xml action="copy" source="powerpack/xml/hst/templates/base-footer-content-jsp.xml" target="/hst:hst/hst:configurations/common/hst:templates"/>
     <xml action="copy" source="powerpack/xml/hst/templates/homepage-main-content-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
 
@@ -31,10 +32,12 @@
     <file action="copy" source="powerpack/freemarker/homepage-main-content.ftl" target="{{freemarkerRoot}}/common/homepage-main-content.ftl"/>
     <file action="copy" source="powerpack/freemarker/base-layout.ftl" target="{{freemarkerRoot}}/common/base-layout.ftl"/>
     <file action="copy" source="powerpack/freemarker/base-top-menu.ftl" target="{{freemarkerRoot}}/common/base-top-menu.ftl"/>
+    <file action="copy" source="powerpack/freemarker/base-footer-content.ftl" target="{{freemarkerRoot}}/common/base-footer-content.ftl"/>
   </instructionSet>
   <instructionSet group="freemarker">
     <xml action="copy" source="powerpack/xml/hst/templates/base-layout-freemarker.xml" target="/hst:hst/hst:configurations/common/hst:templates"/>
     <xml action="copy" source="powerpack/xml/hst/templates/base-top-menu-freemarker.xml" target="/hst:hst/hst:configurations/common/hst:templates"/>
+    <xml action="copy" source="powerpack/xml/hst/templates/base-footer-content-freemarker.xml" target="/hst:hst/hst:configurations/common/hst:templates"/>
     <xml action="copy" source="powerpack/xml/hst/templates/homepage-main-content-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
 
@@ -52,7 +55,7 @@
     <xml action="copy" source="powerpack/xml/hst/menu/main.xml" target="/hst:hst/hst:configurations/common/hst:sitemenus"/>
 
     <xml action="copy" source="powerpack/xml/hst/pages/base.xml" target="/hst:hst/hst:configurations/common/hst:abstractpages"/>
-    <xml action="copy" source="powerpack/xml/hst/pages/homepage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:abstractpages"/>
+    <xml action="copy" source="powerpack/xml/hst/pages/homepage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <!-- default-->
     <xml action="copy" source="powerpack/xml/hst/catalog/essentials-catalog.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog"/>
 

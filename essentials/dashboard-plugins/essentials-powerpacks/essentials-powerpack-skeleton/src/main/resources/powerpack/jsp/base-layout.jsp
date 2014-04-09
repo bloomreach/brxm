@@ -3,7 +3,6 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-
   <link rel="stylesheet" href="<hst:link  path="/css/bootstrap.css"/>" type="text/css"/>
   <hst:headContributions categoryIncludes="componentsCss" xhtml="true"/>
   <hst:headContributions categoryIncludes="globalJavascript" xhtml="true"/>
@@ -15,6 +14,9 @@
   </div>
   <div class="row">
     <hst:include ref="main"/>
+  </div>
+  <div class="row">
+    <hst:include ref="footer"/>
   </div>
 </div>
 <hst:headContributions categoryIncludes="componentsJavascript" xhtml="true"/>

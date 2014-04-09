@@ -3,20 +3,9 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:containercomponentfolder</sv:value>
   </sv:property>
-  <sv:node sv:name="main">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:containercomponent</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:xtype" sv:type="String">
-      <sv:value>HST.vBox</sv:value>
-    </sv:property>
-  </sv:node>
   <sv:node sv:name="top">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:containercomponent</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>929a08f1-b18a-437d-ad4e-1880473697fe</sv:value>
     </sv:property>
     <sv:property sv:name="hst:xtype" sv:type="String">
       <sv:value>HST.Span</sv:value>
@@ -42,6 +31,25 @@
       </sv:property>
       <sv:property sv:name="hst:template" sv:type="String">
         <sv:value>common-base-top-menu</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:xtype" sv:type="String">
+        <sv:value>HST.Item</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="footer">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:containercomponent</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:xtype" sv:type="String">
+      <sv:value>HST.vBox</sv:value>
+    </sv:property>
+    <sv:node sv:name="menu">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:containeritemcomponent</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:template" sv:type="String">
+        <sv:value>common-base-footer-content</sv:value>
       </sv:property>
       <sv:property sv:name="hst:xtype" sv:type="String">
         <sv:value>HST.Item</sv:value>
