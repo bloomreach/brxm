@@ -70,9 +70,9 @@ final class LocationMapper {
         contextNode = "/hst:hst/hst:configurations/$1/$2";
         file = "hst/configurations/$1/$2.xml";
         ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
-        // /hst:hst/hst:configurations/project/hst:components|hst:pages
-        nodePatterns = new String[] {"/hst:hst/hst:configurations/" + NAME + "/(hst:components|hst:pages)/" + NAME, "/hst:hst/hst:configurations/" + NAME + "/(hst:components|hst:pages)/" + NAME + "/" + ANY};
-        propertyPatterns = new String [] {"/hst:hst/hst:configurations/" + NAME + "/(hst:components|hst:pages)/" + NAME + "/" + ANY};
+        // /hst:hst/hst:configurations/project/hst:components|hst:pages|hst:abstractpages|hst:prototypepages
+        nodePatterns = new String[] {"/hst:hst/hst:configurations/" + NAME + "/(hst:components|hst:pages|hst:abstractpages|hst:prototypepages)/" + NAME, "/hst:hst/hst:configurations/" + NAME + "/(hst:components|hst:pages|hst:abstractpages|hst:prototypepages)/" + NAME + "/" + ANY};
+        propertyPatterns = new String [] {"/hst:hst/hst:configurations/" + NAME + "/(hst:components|hst:pages|hst:abstractpages|hst:prototypepages)/" + NAME + "/" + ANY};
         contextNode = "/hst:hst/hst:configurations/$1/$2/$3";
         file = "hst/configurations/$1/$2/$3.xml";
         ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
