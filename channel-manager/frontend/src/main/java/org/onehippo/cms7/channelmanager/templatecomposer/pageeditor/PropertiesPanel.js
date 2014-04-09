@@ -590,9 +590,10 @@
         },
 
         _submitForm: function() {
-            var uncheckedValues = {};
+            var uncheckedValues = {},
+                form = this.getForm();
 
-            this.getForm().items.each(function(item) {
+            form.items.each(function(item) {
                 if (item instanceof Ext.form.Checkbox) {
                     if (!item.checked) {
                         uncheckedValues[item.name] = 'off';
@@ -600,7 +601,7 @@
                 }
             });
 
-            this.getForm().submit({
+            form.submit({
                 headers: {
                     'FORCE_CLIENT_HOST': 'true',
                     'lastModifiedTimestamp': this.lastModifiedTimestamp
@@ -610,15 +611,16 @@
                 method: 'POST',
                 success: function() {
                     this.fireEvent('propertiesSaved', this.newVariantId);
-                }.bind(this),
-                failure: function(form, action) {
+                },
+                failure: function() {
                     Hippo.Msg.alert(Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['toolkit-store-error-message-title'],
-                            Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['toolkit-store-error-message'], function (id) {
+                            Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['toolkit-store-error-message'], function () {
                                 Ext.getCmp('Hippo.ChannelManager.TemplateComposer.Instance').pageContainer.pageContext = null;
                                 // reload channel manager
                                 Ext.getCmp('Hippo.ChannelManager.TemplateComposer.Instance').pageContainer.refreshIframe();
                             });
-                }
+                },
+                scope: this
             });
         },
 
