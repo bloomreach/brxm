@@ -32,6 +32,7 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.MountRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPagesRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapRepresentation;
@@ -74,13 +75,13 @@ public class SiteMapResource extends AbstractConfigResource {
     }
 
     @GET
-    @Path("/hostname")
+    @Path("/mount")
     public Response getHostName() {
         return tryGet(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
                 final Mount mount = getPageComposerContextService().getEditingMount();
-                return ok("Hostname loaded successfully", mount.getVirtualHost().getHostName());
+                return ok("Hostname loaded successfully", new MountRepresentation().represent(mount));
             }
         });
     }
