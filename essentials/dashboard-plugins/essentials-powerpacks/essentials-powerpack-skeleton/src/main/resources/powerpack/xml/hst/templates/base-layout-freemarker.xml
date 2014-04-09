@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hstdefault-standard-top-menu">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="common-base-layout">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:template</sv:value>
   </sv:property>
   <sv:property sv:name="hst:renderpath" sv:type="String">
-    <sv:value>freemarker/hstdefault/standard-top-menu.ftl</sv:value>
+    <sv:value>freemarker/common/base-layout.ftl</sv:value>
   </sv:property>
 </sv:node>

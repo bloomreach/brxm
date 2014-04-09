@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node sv:name="homepage" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hst:containercomponentfolder</sv:value>
+  </sv:property>
+  <sv:node sv:name="main">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:containercomponent</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:xtype" sv:type="String">
+      <sv:value>HST.vBox</sv:value>
+    </sv:property>
+  </sv:node>
+</sv:node>
