@@ -76,7 +76,7 @@ public class SiteMapResource extends AbstractConfigResource {
 
     @GET
     @Path("/mount")
-    public Response getHostName() {
+    public Response getMountRepresentation() {
         return tryGet(new Callable<Response>() {
             @Override
             public Response call() throws Exception {

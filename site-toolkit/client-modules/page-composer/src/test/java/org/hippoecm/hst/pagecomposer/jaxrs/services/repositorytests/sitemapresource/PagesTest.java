@@ -48,7 +48,7 @@ public class PagesTest extends AbstractSiteMapResourceTest {
     public void test_get_hostname() throws Exception {
         initContext();
         final SiteMapResource siteMapResource = createResource();
-        final Response response = siteMapResource.getHostName();
+        final Response response = siteMapResource.getMountRepresentation();
         final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
         assertThat(Response.Status.OK.getStatusCode(), is(response.getStatus()));
         final MountRepresentation data =  (MountRepresentation)representation.getData();
