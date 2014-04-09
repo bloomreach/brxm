@@ -44,6 +44,7 @@
                 };
 
                 $scope.host = '';
+                $scope.mountPath = '';
                 $scope.prototypes = [];
 
                 $scope.submit = function () {
@@ -54,7 +55,7 @@
                     };
 
                     PageService.createPage(pageModel).then(function () {
-                        ContainerService.showPage(pageModel.name);
+                        ContainerService.showPage($scope.mountPath + '/' + pageModel.name);
                     }, function (errorResponse) {
                         $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
                         $scope.title.focus = true;
@@ -70,8 +71,9 @@
                 });
 
                 // fetch host
-                PageService.getHost().then(function (response) {
-                    $scope.host = response;
+                PageService.getMountInfo().then(function (mountInfo) {
+                    $scope.mountPath = mountInfo.mountPath;
+                    $scope.host = mountInfo.hostName + mountInfo.mountPath;
                 }, function (errorResponse) {
                     $scope.errorFeedback = FeedbackService.getFeedback(errorResponse);
                 });

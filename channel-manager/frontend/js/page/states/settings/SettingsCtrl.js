@@ -57,6 +57,7 @@
                 };
 
                 $scope.host = '';
+                $scope.mountPath = '';
                 $scope.isConfirmationVisible = false;
                 $scope.isHomePage = false;
                 $scope.tooltip = '';
@@ -80,7 +81,7 @@
                     };
 
                     PageService.updatePage(pageModel).then(function () {
-                        ContainerService.showPage(pageModel.name);
+                        ContainerService.showPage($scope.mountPath + '/' + pageModel.name);
                     }, setErrorFeedback);
                 };
 
@@ -119,10 +120,11 @@
                 };
 
                 function loadHost() {
-                    return PageService.getHost()
-                        .then(function (host) {
-                            $scope.host = host;
-                            return host;
+                    return PageService.getMountInfo()
+                        .then(function (mountInfo) {
+                            $scope.host = mountInfo.hostName + mountInfo.mountPath;
+                            $scope.mountPath = mountInfo.mountPath;
+                            return mountInfo;
                         }, setErrorFeedback);
                 }
 

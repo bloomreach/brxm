@@ -62,10 +62,10 @@
                     return deferred.promise;
                 };
 
-                pageService.getHost = function () {
+                pageService.getMountInfo = function () {
                     var deferred = $q.defer();
 
-                    $http.get(pageServiceUrl('/' + ConfigService.sitemapId + './hostname'))
+                    $http.get(pageServiceUrl('/' + ConfigService.sitemapId + './mount'))
                         .success(function (response) {
                             deferred.resolve(response.data);
                         })

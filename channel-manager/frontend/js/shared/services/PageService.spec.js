@@ -147,11 +147,12 @@ describe('Page Service', function () {
     });
 
     it('should get the hostname by sitemap id', function () {
-        $httpBackend.expectGET('api/7a66c027-9dd1-423e-8158-7c28144f47e2./hostname').respond({
-            data: 'hostname'
+        $httpBackend.expectGET('api/7a66c027-9dd1-423e-8158-7c28144f47e2./mount').respond({
+            data: {hostName: 'hostname', mountPath: 'mountpath'}
         });
-        pageService.getHost().then(function (data) {
-            expect(data).toBe('hostname');
+        pageService.getMountInfo().then(function (mountInfo) {
+            expect(mountInfo.hostName).toBe('hostname');
+            expect(mountInfo.mountPath).toBe('mountpath');
         });
         $httpBackend.flush();
     });

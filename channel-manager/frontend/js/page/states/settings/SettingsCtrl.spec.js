@@ -31,7 +31,7 @@ describe('Settings Controller', function () {
 
         setCmsUser('admin');
 
-        PageService = jasmine.createSpyObj('PageService', ['getHost', 'getCurrentPage']);
+        PageService = jasmine.createSpyObj('PageService', ['getMountInfo', 'getCurrentPage']);
         $provide.value('hippo.channel.PageService', PageService);
 
         PrototypeService = jasmine.createSpyObj('PrototypeService', ['getPrototypes']);
@@ -52,8 +52,8 @@ describe('Settings Controller', function () {
         }
 
         createController = function() {
-            PageService.getHost.and.callFake(function() {
-                return resolvedPromise('www.onehippo.com');
+            PageService.getMountInfo.and.callFake(function() {
+                return resolvedPromise({hostName: 'www.onehippo.com', mountPath: '/mountpath'});
             });
 
             PageService.getCurrentPage.and.callFake(function() {
@@ -88,8 +88,8 @@ describe('Settings Controller', function () {
 
     it('should get the host', function () {
         createController();
-        expect(PageService.getHost).toHaveBeenCalled();
-        expect(scope.host).toEqual('www.onehippo.com');
+        expect(PageService.getMountInfo).toHaveBeenCalled();
+        expect(scope.host).toEqual('www.onehippo.com/mountpath');
     });
 
     it('should get the prototypes', function () {
