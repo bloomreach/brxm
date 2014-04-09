@@ -1,6 +1,7 @@
-<%@ include file="/WEB-INF/jsp/include/imports.jsp" %>
+<#include "/WEB-INF/freemarker/include/imports.ftl">
 <div class="row">
-  <p class="text-center">
-    <sub>(&copy;) 2014, All Rights Reserved</sub>
-  </p>
+    <hr/>
+    <div class="text-center">
+        <sub>(&copy;) 2014, All Rights Reserved</sub>
+    </div>
 </div>
