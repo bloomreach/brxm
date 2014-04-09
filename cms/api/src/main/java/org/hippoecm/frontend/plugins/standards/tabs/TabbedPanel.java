@@ -28,8 +28,6 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.CancelEventIfAjaxListener;
-import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -359,12 +357,6 @@ public class TabbedPanel extends WebMarkupContainer {
             @Override
             protected void onEvent(AjaxRequestTarget target) {
                 plugin.onSelect(tabs.get(tabIndex), target);
-            }
-
-            @Override
-            protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
-                super.updateAjaxAttributes(attributes);
-                attributes.getAjaxCallListeners().add(new CancelEventIfAjaxListener());
             }
 
         };

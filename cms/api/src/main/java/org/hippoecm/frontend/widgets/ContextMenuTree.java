@@ -21,8 +21,6 @@ import javax.swing.tree.TreeNode;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.CancelEventIfAjaxListener;
-import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.extensions.markup.html.tree.DefaultAbstractTree;
@@ -249,12 +247,6 @@ public class ContextMenuTree extends DefaultAbstractTree {
                 content.setVisible(false);
                 target.add(parent);
             }
-        }
-
-        @Override
-        protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
-            super.updateAjaxAttributes(attributes);
-            attributes.getAjaxCallListeners().add(new CancelEventIfAjaxListener());
         }
 
     }

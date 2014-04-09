@@ -17,8 +17,6 @@ package org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb;
 
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.CancelEventIfAjaxListener;
-import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.extensions.breadcrumb.BreadCrumbLink;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.markup.ComponentTag;
@@ -35,12 +33,6 @@ public abstract class AjaxBreadCrumbLink extends BreadCrumbLink {
             @Override
             protected void onEvent(AjaxRequestTarget target) {
                 onClick(target);
-            }
-
-            @Override
-            protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
-                super.updateAjaxAttributes(attributes);
-                attributes.getAjaxCallListeners().add(new CancelEventIfAjaxListener());
             }
 
             @Override

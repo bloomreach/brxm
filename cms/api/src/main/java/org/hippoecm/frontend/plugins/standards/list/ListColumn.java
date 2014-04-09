@@ -23,8 +23,6 @@ import java.util.List;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.CancelEventIfAjaxListener;
-import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.markup.repeater.Item;
@@ -195,12 +193,6 @@ public class ListColumn<T> extends AbstractColumn<T, String> {
         if (isLink()) {
             item.add(new AjaxEventBehavior("onclick") {
                 private static final long serialVersionUID = 1L;
-
-                @Override
-                protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
-                    super.updateAjaxAttributes(attributes);
-                    attributes.getAjaxCallListeners().add(new CancelEventIfAjaxListener());
-                }
 
                 @Override
                 protected void onEvent(AjaxRequestTarget target) {
