@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>25</version>
+    <version>undefined</version>
   </parent>
 
   <name>Repository</name>
@@ -80,10 +80,10 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Repository</notice.project.name>
 
-    <hippo.commons.version>1.04.00</hippo.commons.version>
-    <hippo.services.version>1.04.00</hippo.services.version>
-    <hippo.services.eventbus.version>1.04.00</hippo.services.eventbus.version>
-    <hippo.utilities.version>1.03.00</hippo.utilities.version>
+    <hippo.commons.version>1.04.01-SNAPSHOT</hippo.commons.version>
+    <hippo.services.version>1.04.01-SNAPSHOT</hippo.services.version>
+    <hippo.services.eventbus.version>1.04.01-SNAPSHOT</hippo.services.eventbus.version>
+    <hippo.utilities.version>1.03.01-SNAPSHOT</hippo.utilities.version>
 
     <!-- Test dependencies  -->
     <junit.version>4.10</junit.version>
