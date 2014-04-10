@@ -57,14 +57,7 @@
   </instructionSet>
   <instructionSet>
     <xml action="copy" source="hst/carousel-catalog.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:catalog"/>
-
     <xml action="copy" source="hst/banner-template.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <file binary="true" action="copy" source="webapp/js/jquery-1.11.0.min.js" target="{{javascriptRoot}}/jquery-1.11.0.min.js"/>
-    <file binary="true" action="copy" source="webapp/js/bootstrap.min.js" target="{{javascriptRoot}}/bootstrap.min.js"/>
-    <file action="copy" binary="true" source="bootstrap/fonts/glyphicons-halflings-regular.eot" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.eot"/>
-    <file action="copy" binary="true" source="bootstrap/fonts/glyphicons-halflings-regular.svg" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.svg"/>
-    <file action="copy" binary="true" source="bootstrap/fonts/glyphicons-halflings-regular.ttf" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.ttf"/>
-    <file action="copy" binary="true" source="bootstrap/fonts/glyphicons-halflings-regular.woff" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.woff"/>
   </instructionSet>
 
 

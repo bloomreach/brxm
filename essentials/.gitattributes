@@ -127,10 +127,6 @@ dashboard-plugins/banner-plugin/src/main/resources/META-INF/banner_instructions.
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/resources/plugins/bannerPlugin/bannerPlugin.html -text
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/resources/plugins/bannerPlugin/bannerPlugin.js -text
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/web-fragment.xml -text
-dashboard-plugins/banner-plugin/src/main/resources/bootstrap/fonts/glyphicons-halflings-regular.eot -text
-dashboard-plugins/banner-plugin/src/main/resources/bootstrap/fonts/glyphicons-halflings-regular.svg -text
-dashboard-plugins/banner-plugin/src/main/resources/bootstrap/fonts/glyphicons-halflings-regular.ttf -text
-dashboard-plugins/banner-plugin/src/main/resources/bootstrap/fonts/glyphicons-halflings-regular.woff -text
 dashboard-plugins/banner-plugin/src/main/resources/ftl/essentials-banner.ftl -text
 dashboard-plugins/banner-plugin/src/main/resources/ftl/essentials-carousel.ftl -text
 dashboard-plugins/banner-plugin/src/main/resources/ftl/imports.ftl -text
@@ -144,8 +140,6 @@ dashboard-plugins/banner-plugin/src/main/resources/java/Banner.txt -text
 dashboard-plugins/banner-plugin/src/main/resources/jsp/essentials-banner.jsp -text
 dashboard-plugins/banner-plugin/src/main/resources/jsp/essentials-carousel.jsp -text
 dashboard-plugins/banner-plugin/src/main/resources/jsp/imports.jsp -text
-dashboard-plugins/banner-plugin/src/main/resources/webapp/js/bootstrap.min.js -text
-dashboard-plugins/banner-plugin/src/main/resources/webapp/js/jquery-1.11.0.min.js -text
 dashboard-plugins/banner-plugin/src/main/resources/xml/configuration/new-banner-document.xml -text
 dashboard-plugins/banner-plugin/src/main/resources/xml/configuration/new-banner-folder.xml -text
 dashboard-plugins/banner-plugin/src/main/resources/xml/data/banner-folder-creator.xml -text
@@ -407,6 +401,7 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/r
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/freemarker/homepage-main-content.ftl -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/freemarker/imports.ftl -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/freemarker/pagination.ftl -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/js/bootstrap.min.js -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/js/jquery-2.1.0.min.js -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/jsp/base-footer-content.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-skeleton/src/main/resources/powerpack/jsp/base-layout.jsp -text

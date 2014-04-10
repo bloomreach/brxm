@@ -68,6 +68,7 @@
   //############################################
 -->
   <instructionSet>
+    <file binary="true" action="copy" source="powerpack/js/bootstrap.min.js" target="{{javascriptRoot}}/bootstrap.min.js"/>
     <file binary="true" action="copy" source="powerpack/js/jquery-2.1.0.min.js" target="{{javascriptRoot}}/jquery-2.1.0.min.js"/>
     <file action="copy" binary="true" source="powerpack/bootstrap/css/bootstrap.css" target="{{siteWebRoot}}/css/bootstrap.css"/>
     <file action="copy" binary="true" source="powerpack/bootstrap/css/bootstrap.min.css" target="{{siteWebRoot}}/css/bootstrap.min.css"/>
