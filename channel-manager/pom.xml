@@ -39,8 +39,8 @@
     <hippo.cms.version>2.25.04-SNAPSHOT</hippo.cms.version>
     <hippo.hst.version>2.27.03-SNAPSHOT</hippo.hst.version>
     <hippo.addon-hst-configuration-editor.version>1.12.03-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
-    <hippo.frontend.plugins.version>1.01.00-iteration-14</hippo.frontend.plugins.version>
-    <hippo.frontend.theme.version>1.01.00-iteration-14</hippo.frontend.theme.version>
+    <hippo.frontend.plugins.version>1.01.00</hippo.frontend.plugins.version>
+    <hippo.frontend.theme.version>1.01.00</hippo.frontend.theme.version>
 
     <commons-lang.version>2.1</commons-lang.version>
 
