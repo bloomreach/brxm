@@ -1168,12 +1168,6 @@ dashboard-plugins/components-plugin/components-library/src/main/java/org/onehipp
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/.idea
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/atlassian-ide-plugin.xml
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/hippo-plugins.iws
-dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/icons/*.iml
-dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/icons/.DS_Store
-dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/icons/.idea
-dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/icons/atlassian-ide-plugin.xml
-dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/icons/hippo-plugins.iws
-dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/icons/target
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/*.iml
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/.DS_Store
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/.idea
