@@ -14,13 +14,14 @@
   <!-- HST CONFIG-->
   <instructionSet>
 
-    <!-- NOTE: if menu already exists it'll fail so we add second instruction for sitemap item only-->
-    <xml action="copy" source="hst/content-menu-main.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemenus"/>
-    <xml action="copy" source="hst/content-menu-item.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemenus/main"/>
+
     <xml action="copy" source="hst/content-sitemap.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
     <xml action="copy" source="hst/content-page.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="hst/content-list-page.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
-    <xml action="copy" source="hst/simplecontent-catalog.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:catalog"/>
+
+
+    <xml action="copy" source="hst/menu/content-menu-item.xml" target="/hst:hst/hst:configurations/common/hst:sitemenus/main"/>
+    <xml action="copy" source="hst/catalog/simplecontent-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
 
 
   </instructionSet>

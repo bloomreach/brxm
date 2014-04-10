@@ -462,12 +462,11 @@ dashboard-plugins/simple-content/src/main/resources/config/new-content-folder.xm
 dashboard-plugins/simple-content/src/main/resources/data/sample-content_entry.xml -text
 dashboard-plugins/simple-content/src/main/resources/freemarker/essentials-simplecontent-list.ftl -text
 dashboard-plugins/simple-content/src/main/resources/freemarker/essentials-simplecontent.ftl -text
+dashboard-plugins/simple-content/src/main/resources/hst/catalog/simplecontent-catalog-item.xml -text
 dashboard-plugins/simple-content/src/main/resources/hst/content-list-page.xml -text
-dashboard-plugins/simple-content/src/main/resources/hst/content-menu-item.xml -text
-dashboard-plugins/simple-content/src/main/resources/hst/content-menu-main.xml -text
 dashboard-plugins/simple-content/src/main/resources/hst/content-page.xml -text
 dashboard-plugins/simple-content/src/main/resources/hst/content-sitemap.xml -text
-dashboard-plugins/simple-content/src/main/resources/hst/simplecontent-catalog.xml -text
+dashboard-plugins/simple-content/src/main/resources/hst/menu/content-menu-item.xml -text
 dashboard-plugins/simple-content/src/main/resources/hst/template-content-ftl.xml -text
 dashboard-plugins/simple-content/src/main/resources/hst/template-content-jsp.xml -text
 dashboard-plugins/simple-content/src/main/resources/hst/template-content-list-ftl.xml -text
