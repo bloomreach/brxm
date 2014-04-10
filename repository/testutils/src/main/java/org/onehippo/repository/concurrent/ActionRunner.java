@@ -275,9 +275,7 @@ public class ActionRunner extends Thread {
             return !(e.getCause() != null && !(e.getCause() instanceof RepositoryException || e.getCause().getClass().getSimpleName().endsWith("ItemStateException")));
         }
         if (e instanceof WorkflowException) {
-            if (!e.getMessage().equals("Cannot rename document to same name")) {
-                return true;
-            }
+            return true;
         }
         return false;
     }
