@@ -115,7 +115,6 @@ public class HeadContributionsTag extends TagSupport {
         xhtml = false;
         categoryIncludes = null;
         categoryExcludes = null;
-
     }
 
     private boolean shouldBeIncludedInOutput(Element headElement) {
