@@ -5,17 +5,17 @@
 
             .controller('newsEventsCtrl', function ($scope, $rootScope, eventBroadcastService) {
 
-                $scope.installSampleData = true;
+                $scope.sampleData = true;
                 $scope.onChange = function () {
                     eventBroadcastService.broadcast('powerpackEvent', [
-                        {'key': 'sampleDate', 'value': $scope.installSampleData}
+                        {'key': 'sampleData', 'value': $scope.sampleData}
                     ])
                 };
                 $scope.init = function () {
 
                     // broadcast our item:
                     eventBroadcastService.broadcast('powerpackEvent', [
-                        {'key': 'sampleData', 'value': $scope.installSampleData}
+                        {'key': 'sampleData', 'value': $scope.sampleData}
                     ])
 
 

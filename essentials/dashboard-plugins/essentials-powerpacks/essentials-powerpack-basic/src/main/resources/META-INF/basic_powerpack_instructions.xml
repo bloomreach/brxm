@@ -106,7 +106,7 @@
   </instructionSet>
 
   <!-- SAMPLES GROUP-->
-  <instructionSet group="samples">
+  <instructionSet group="sampleData">
     <xml action="copy" source="xml/samples/content/documents/events/sample_breakfast.xml" target="/content/documents/{{namespace}}/events/{{dateRepoYearMonth}}"/>
     <xml action="copy" source="xml/samples/content/documents/events/sample_introduction_speech.xml" target="/content/documents/{{namespace}}/events/{{dateRepoYearMonth}}"/>
     <xml action="copy" source="xml/samples/content/documents/events/sample_workshop.xml" target="/content/documents/{{namespace}}/events/{{dateRepoYearMonth}}"/>

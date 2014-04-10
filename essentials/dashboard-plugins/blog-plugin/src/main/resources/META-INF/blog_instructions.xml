@@ -51,7 +51,7 @@
   <!--
     SAMPLE DATA
   -->
-  <instructionSet>
+  <instructionSet group="sampleData">
     <xml action="copy" source="xml/samples/author_1.xml" target="/content/documents/{{namespace}}/blog/authors"/>
     <xml action="copy" source="xml/samples/author_2.xml" target="/content/documents/{{namespace}}/blog/authors"/>
     <xml action="copy" source="xml/samples/blog_entry_1.xml" target="/content/documents/{{namespace}}/blog/{{dateRepoYearMonth}}"/>
