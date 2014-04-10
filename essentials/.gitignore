@@ -594,6 +594,12 @@ dashboard-plugins/banner-plugin/src/main/resources/hst/*.iml
 dashboard-plugins/banner-plugin/src/main/resources/hst/.DS_Store
 dashboard-plugins/banner-plugin/src/main/resources/hst/.idea
 dashboard-plugins/banner-plugin/src/main/resources/hst/atlassian-ide-plugin.xml
+dashboard-plugins/banner-plugin/src/main/resources/hst/catalog/*.iml
+dashboard-plugins/banner-plugin/src/main/resources/hst/catalog/.DS_Store
+dashboard-plugins/banner-plugin/src/main/resources/hst/catalog/.idea
+dashboard-plugins/banner-plugin/src/main/resources/hst/catalog/atlassian-ide-plugin.xml
+dashboard-plugins/banner-plugin/src/main/resources/hst/catalog/hippo-plugins.iws
+dashboard-plugins/banner-plugin/src/main/resources/hst/catalog/target
 dashboard-plugins/banner-plugin/src/main/resources/hst/hippo-plugins.iws
 dashboard-plugins/banner-plugin/src/main/resources/hst/target
 dashboard-plugins/banner-plugin/src/main/resources/java/*.iml

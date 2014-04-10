@@ -55,7 +55,8 @@
     <xml action="copy" source="hst/banner-template-ftl.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
   <instructionSet>
-    <xml action="copy" source="hst/carousel-catalog.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:catalog"/>
+    <xml action="copy" source="hst/catalog/banner-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <xml action="copy" source="hst/catalog/carousel-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <xml action="copy" source="hst/banner-template.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
 

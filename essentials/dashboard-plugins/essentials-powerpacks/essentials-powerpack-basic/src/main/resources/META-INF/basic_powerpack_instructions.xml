@@ -35,12 +35,12 @@
 
 
   <instructionSet group="jsp">
-    <file action="copy" source="jsp/essentials-component-list.jsp" target="{{jspRoot}}/common/essentials-component-list.jsp"/>
-    <file action="copy" source="jsp/essentials-component-document.jsp" target="{{jspRoot}}/{{namespace}}/essentials-component-document.jsp"/>
-    <file action="copy" source="jsp/newslist-main-newslist.jsp" target="{{jspRoot}}/{{namespace}}/newslist-main-newslist.jsp"/>
-    <file action="copy" source="jsp/newspage-main-content.jsp" target="{{jspRoot}}/{{namespace}}/newspage-main-content.jsp"/>
-    <file action="copy" source="jsp/eventslist-main-eventslist.jsp" target="{{jspRoot}}/{{namespace}}/eventslist-main-eventslist.jsp"/>
-    <file action="copy" source="jsp/eventspage-main-content.jsp" target="{{jspRoot}}/{{namespace}}/eventspage-main-content.jsp"/>
+    <file action="copy" source="jsp/essentials-component-list.jsp" target="{{jspRoot}}/hstdefault/essentials-component-list.jsp"/>
+    <file action="copy" source="jsp/essentials-component-document.jsp" target="{{jspRoot}}/hstdefault/essentials-component-document.jsp"/>
+    <file action="copy" source="jsp/newslist-main-newslist.jsp" target="{{jspRoot}}/hstdefault/newslist-main-newslist.jsp"/>
+    <file action="copy" source="jsp/newspage-main-content.jsp" target="{{jspRoot}}/hstdefault/newspage-main-content.jsp"/>
+    <file action="copy" source="jsp/eventslist-main-eventslist.jsp" target="{{jspRoot}}/hstdefault/eventslist-main-eventslist.jsp"/>
+    <file action="copy" source="jsp/eventspage-main-content.jsp" target="{{jspRoot}}/hstdefault/eventspage-main-content.jsp"/>
   </instructionSet>
   <instructionSet group="jsp">
     <xml action="copy" source="xml/hst/templates/news-main-content-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
@@ -50,12 +50,12 @@
   </instructionSet>
 
   <instructionSet group="freemarker">
-    <file action="copy" source="freemarker/essentials-component-list.ftl" target="{{freemarkerRoot}}/common/essentials-component-list.ftl"/>
-    <file action="copy" source="freemarker/essentials-component-document.ftl" target="{{freemarkerRoot}}/{{namespace}}/essentials-component-document.ftl"/>
-    <file action="copy" source="freemarker/newslist-main-content.ftl" target="{{freemarkerRoot}}/{{namespace}}/newslist-main-newslist.ftl"/>
-    <file action="copy" source="freemarker/newspage-main-content.ftl" target="{{freemarkerRoot}}/{{namespace}}/newspage-main-content.ftl"/>
-    <file action="copy" source="freemarker/eventslist-main-newslist.ftl" target="{{freemarkerRoot}}/{{namespace}}/eventslist-main-newslist.ftl"/>
-    <file action="copy" source="freemarker/eventspage-main-content.ftl" target="{{freemarkerRoot}}/{{namespace}}/eventspage-main-content.ftl"/>
+    <file action="copy" source="freemarker/essentials-component-list.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-component-list.ftl"/>
+    <file action="copy" source="freemarker/essentials-component-document.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-component-document.ftl"/>
+    <file action="copy" source="freemarker/newslist-main-content.ftl" target="{{freemarkerRoot}}/hstdefault/newslist-main-newslist.ftl"/>
+    <file action="copy" source="freemarker/newspage-main-content.ftl" target="{{freemarkerRoot}}/hstdefault/newspage-main-content.ftl"/>
+    <file action="copy" source="freemarker/eventslist-main-newslist.ftl" target="{{freemarkerRoot}}/hstdefault/eventslist-main-newslist.ftl"/>
+    <file action="copy" source="freemarker/eventspage-main-content.ftl" target="{{freemarkerRoot}}/hstdefault/eventspage-main-content.ftl"/>
   </instructionSet>
   <instructionSet group="freemarker">
     <xml action="copy" source="xml/hst/templates/news-main-content-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>

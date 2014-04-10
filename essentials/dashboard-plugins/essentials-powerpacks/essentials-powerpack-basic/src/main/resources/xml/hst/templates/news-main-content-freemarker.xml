@@ -4,6 +4,6 @@
     <sv:value>hst:template</sv:value>
   </sv:property>
   <sv:property sv:name="hst:renderpath" sv:type="String">
-    <sv:value>freemarker/{{namespace}}/newspage-main-content.ftl</sv:value>
+    <sv:value>freemarker/hstdefault/newspage-main-content.ftl</sv:value>
   </sv:property>
 </sv:node>
