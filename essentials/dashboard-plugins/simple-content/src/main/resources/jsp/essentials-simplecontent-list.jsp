@@ -17,5 +17,5 @@
   </article>
 </c:forEach>
 <c:if test="${showPagination}">
-  <%@ include file="/WEB-INF/jsp/essentials/common/pagination.jsp" %>
+  <%@ include file="/WEB-INF/jsp/include/pagination.jsp" %>
 </c:if>

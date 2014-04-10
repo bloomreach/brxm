@@ -1,4 +1,4 @@
-<%@ include file="/WEB-INF/jsp/essentials/common/imports.jsp" %>
+<%@ include file="/WEB-INF/jsp/include/imports.jsp" %>
 <%--@elvariable id="item" type="{{beansPackage}}.NewsDocument"--%>
 <%--@elvariable id="query" type="java.lang.String"--%>
 <%--@elvariable id="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable"--%>
@@ -23,5 +23,5 @@
   </article>
 </c:forEach>
 <c:if test="${showPagination}">
-  <%@ include file="/WEB-INF/jsp/essentials/common/pagination.jsp" %>
+  <%@ include file="/WEB-INF/jsp/include/pagination.jsp" %>
 </c:if>

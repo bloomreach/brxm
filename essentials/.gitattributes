@@ -127,8 +127,8 @@ dashboard-plugins/banner-plugin/src/main/resources/META-INF/banner_instructions.
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/resources/plugins/bannerPlugin/bannerPlugin.html -text
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/resources/plugins/bannerPlugin/bannerPlugin.js -text
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/web-fragment.xml -text
-dashboard-plugins/banner-plugin/src/main/resources/ftl/essentials-banner.ftl -text
-dashboard-plugins/banner-plugin/src/main/resources/ftl/essentials-carousel.ftl -text
+dashboard-plugins/banner-plugin/src/main/resources/freemarker/essentials-banner.ftl -text
+dashboard-plugins/banner-plugin/src/main/resources/freemarker/essentials-carousel.ftl -text
 dashboard-plugins/banner-plugin/src/main/resources/hst/banner-template-ftl.xml -text
 dashboard-plugins/banner-plugin/src/main/resources/hst/banner-template-jsp.xml -text
 dashboard-plugins/banner-plugin/src/main/resources/hst/carousel-template-ftl.xml -text

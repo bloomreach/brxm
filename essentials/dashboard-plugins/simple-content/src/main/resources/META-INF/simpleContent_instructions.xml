@@ -37,9 +37,9 @@
 
 
   <instructionSet group="freemarker">
-    <xml action="copy" source="hst/template-content-ftl.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="hst/template-content-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <file action="copy" source="freemarker/essentials-simplecontent.ftl" target="{{freemarkerRoot}}/essentials/essentials-simplecontent.ftl"/>
-    <xml action="copy" source="hst/template-content-list-ftl.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="hst/template-content-list-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <file action="copy" source="freemarker/essentials-simplecontent-list.ftl" target="{{freemarkerRoot}}/essentials/essentials-simplecontent-list.ftl"/>
   </instructionSet>
 </instructions>

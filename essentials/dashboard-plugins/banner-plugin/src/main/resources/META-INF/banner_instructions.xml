@@ -49,10 +49,10 @@
     <xml action="copy" source="hst/banner-template-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
   <instructionSet group="freemarker">
-    <file action="copy" source="ftl/essentials-carousel.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-carousel.ftl"/>
-    <file action="copy" source="ftl/essentials-banner.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-banner.ftk"/>
-    <xml action="copy" source="hst/carousel-template-ftl.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
-    <xml action="copy" source="hst/banner-template-ftl.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+    <file action="copy" source="freemarker/essentials-carousel.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-carousel.ftl"/>
+    <file action="copy" source="freemarker/essentials-banner.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-banner.ftk"/>
+    <xml action="copy" source="hst/carousel-template-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" source="hst/banner-template-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
   <instructionSet>
     <xml action="copy" source="hst/catalog/banner-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>

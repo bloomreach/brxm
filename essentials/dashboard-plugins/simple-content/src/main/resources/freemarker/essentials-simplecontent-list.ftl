@@ -22,5 +22,5 @@
     </#list>
 </#if>
 <#if showPagination>
-    <#include "/WEB-INF/ftl/essentials/common/pagination.ftl">
+    <#include "/WEB-INF/freemarker/include/pagination.ftl">
 </#if>

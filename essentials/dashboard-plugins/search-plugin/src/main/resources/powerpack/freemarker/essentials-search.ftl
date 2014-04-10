@@ -1,4 +1,4 @@
-<#include "/WEB-INF/ftl/essentials/common/imports.ftl">
+<#include "/WEB-INF/freemarker/include/imports.ftl">
 <#-- @ftlvariable name="query" type="java.lang.String" -->
 <#-- @ftlvariable name="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable" -->
 <#-- @ftlvariable name="showPagination" type="java.lang.Boolean" -->
@@ -22,7 +22,7 @@
         </article>
         </#list>
         <#if showPagination??>
-            <#include "/WEB-INF/ftl/essentials/common/pagination.ftl">
+            <#include "/WEB-INF/freemarker/include/pagination.ftl">
         </#if>
     </#if>
 </#if>
