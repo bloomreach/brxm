@@ -86,7 +86,7 @@ describe('Settings Controller', function () {
         };
     }));
 
-    it('should get the host', function () {
+    it('should get the mount info', function () {
         createController();
         expect(PageService.getMountInfo).toHaveBeenCalled();
         expect(scope.host).toEqual('www.onehippo.com/mountpath');
