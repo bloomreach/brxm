@@ -16,7 +16,7 @@
     <file action="copy" source="powerpack/jsp/homepage-main-content.jsp" target="{{jspRoot}}/{{namespace}}/homepage-main-content.jsp"/>
     <file action="copy" source="powerpack/jsp/base-layout.jsp" target="{{jspRoot}}/common/base-layout.jsp"/>
     <file action="copy" source="powerpack/jsp/base-top-menu.jsp" target="{{jspRoot}}/common/base-top-menu.jsp"/>
-    <file action="copy" source="powerpack/base-footer-content.jsp" target="{{jspRoot}}/common/base-footer-content.jsp"/>
+    <file action="copy" source="powerpack/jsp/base-footer-content.jsp" target="{{jspRoot}}/common/base-footer-content.jsp"/>
   </instructionSet>
   <instructionSet group="jsp">
     <xml action="copy" source="powerpack/xml/hst/templates/base-layout-jsp.xml" target="/hst:hst/hst:configurations/common/hst:templates"/>
