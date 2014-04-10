@@ -123,7 +123,7 @@ public class ChannelPropertyMapper {
         }
     }
 
-    public static void saveChannel(Node channelNode, Channel channel) throws RepositoryException, IllegalStateException {
+    public static void saveChannel(Node channelNode, Channel channel) throws RepositoryException, ChannelException {
         long validateLastModifiedTimestamp = -1L;
         if (channel.getLastModified() != null) {
             validateLastModifiedTimestamp = channel.getLastModified().getTimeInMillis();
@@ -374,11 +374,11 @@ public class ChannelPropertyMapper {
      * by someone else
      *
      */
-    public static void tryLockOnNodeIfNeeded(final Node nodeToLock, final long validateLastModifiedTimestamp) throws RepositoryException, IllegalStateException {
+    public static void tryLockOnNodeIfNeeded(final Node nodeToLock, final long validateLastModifiedTimestamp) throws RepositoryException, ChannelException {
         Session session = nodeToLock.getSession();
         if (isLockedBySomeoneElse(nodeToLock)) {
             log.info("Node '{}' is already locked by someone else.", nodeToLock.getPath());
-            throw new IllegalStateException("Node '"+nodeToLock.getPath()+"' is already locked by someone else.");
+            throw new ChannelException("Node '"+nodeToLock.getPath()+"' is already locked by someone else.");
         }
         if (isLockedBySession(nodeToLock)) {
             log.debug("Container '{}' already has a lock for user '{}'.", nodeToLock.getPath(), session.getUserID());
@@ -396,7 +396,7 @@ public class ChannelPropertyMapper {
                 log.info("Node '{}' has been modified at '{}' but validation timestamp was '{}'. Cannot acquire lock now for user '{}'.",
                         new String[]{nodeToLock.getPath(), dateFormat.format(existing.getTime()),
                                 dateFormat.format(validate.getTime()) , session.getUserID()});
-                throw new IllegalStateException("Node '"+nodeToLock.getPath()+"' cannot be changed because timestamp validation did not pass.");
+                throw new ChannelException("Node '"+nodeToLock.getPath()+"' cannot be changed because timestamp validation did not pass.");
             }
         }
         log.info("Node '{}' gets a lock for user '{}'.", nodeToLock.getPath(), session.getUserID());

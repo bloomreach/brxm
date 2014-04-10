@@ -81,7 +81,7 @@ public class ChannelsResource extends BaseResource implements ChannelService {
             }
             channelManager.save(channel);
         } catch (ChannelException ce) {
-            log.warn("Error while saving a channel - Channel: {} - {} : {}", channel, ce.getClass().getName(), ce.toString());
+            log.info("Error while saving a channel - Channel: {} - {} : {}", channel, ce.getClass().getName(), ce.toString());
             throw ce;
         }
     }
@@ -126,7 +126,11 @@ public class ChannelsResource extends BaseResource implements ChannelService {
             }
             return channelInfoClassInfo;
         } catch (ChannelException e) {
-            log.warn("Failed to retrieve channel info class for channel with id '" + id + "'", e);
+            if (log.isDebugEnabled()) {
+                log.info("Failed to retrieve channel info class for channel with id '{}'",id, e);
+            } else {
+                log.info("Failed to retrieve channel info class for channel with id '{}'",id, e.toString());
+            }
             throw e;
         }
     }

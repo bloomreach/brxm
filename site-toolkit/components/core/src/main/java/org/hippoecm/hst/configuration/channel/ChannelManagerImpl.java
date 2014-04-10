@@ -306,7 +306,7 @@ public class ChannelManagerImpl implements ChannelManager {
         }
     }
 
-    private void copyOrCreateChannelNode(final Node configRoot, final String channelId, final Channel channel) throws RepositoryException {
+    private void copyOrCreateChannelNode(final Node configRoot, final String channelId, final Channel channel) throws RepositoryException, ChannelException {
         if (!configRoot.hasNode(HstNodeTypes.NODENAME_HST_CHANNELS)) {
             configRoot.addNode(HstNodeTypes.NODENAME_HST_CHANNELS, HstNodeTypes.NODETYPE_HST_CHANNELS);
         }
