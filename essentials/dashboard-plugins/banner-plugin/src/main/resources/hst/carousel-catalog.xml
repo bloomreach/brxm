@@ -14,7 +14,7 @@
       <sv:value>Carousel</sv:value>
     </sv:property>
     <sv:property sv:name="hst:template" sv:type="String">
-      <sv:value>essentials.carousel</sv:value>
+      <sv:value>essentials-carousel</sv:value>
     </sv:property>
     <sv:property sv:name="hst:xtype" sv:type="String">
       <sv:value>HST.Item</sv:value>
@@ -31,7 +31,7 @@
       <sv:value>Banner</sv:value>
     </sv:property>
     <sv:property sv:name="hst:template" sv:type="String">
-      <sv:value>essentials.banner</sv:value>
+      <sv:value>essentials-banner</sv:value>
     </sv:property>
     <sv:property sv:name="hst:xtype" sv:type="String">
       <sv:value>HST.Item</sv:value>

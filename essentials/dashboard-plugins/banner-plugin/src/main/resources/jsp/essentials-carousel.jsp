@@ -1,4 +1,4 @@
-<%@ include file="/WEB-INF/jsp/essentials/common/imports.jsp" %>
+<%@ include file="/WEB-INF/jsp/include/imports.jsp" %>
 <%--@elvariable id="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable"--%>
 <%--@elvariable id="item" type="{{beansPackage}}.Banner"--%>
 <%--@elvariable id="pause" type="java.lang.Boolean"--%>
@@ -64,7 +64,7 @@
 </style>
 
 <hst:headContribution category="componentsJavascript">
-  <script type="text/javascript" src="<hst:link path="/js/jquery-1.11.0.min.js"/>"></script>
+  <script type="text/javascript" src="<hst:link path="/js/jquery-2.1.0.min.js"/>"></script>
 </hst:headContribution>
 <hst:headContribution category="componentsJavascript">
   <script type="text/javascript" src="<hst:link path="/js/bootstrap.min.js"/>"></script>

@@ -1,4 +1,4 @@
-<#include "/WEB-INF/ftl/essentials/common/imports.ftl">
+<#include "/WEB-INF/freemarker/include/imports.ftl">
 <#-- @ftlvariable name="item" type="{{beansPackage}}.Banner" -->
 <#-- @ftlvariable name="showPagination" type="java.lang.Boolean" -->
 <#-- @ftlvariable name="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable" -->
@@ -74,7 +74,7 @@
 </style>
 
     <@hst.headContribution category="componentsJavascript">
-    <script type="text/javascript" src="<@hst.link path="/js/jquery-1.11.0.min.js"/>"></script>
+    <script type="text/javascript" src="<@hst.link path="/js/jquery-2.1.0.min.js"/>"></script>
     </@hst.headContribution>
     <@hst.headContribution category="componentsJavascript">
     <script type="text/javascript" src="<@hst.link path="/js/bootstrap.min.js"/>"></script>
