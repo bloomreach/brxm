@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>24.1-SNAPSHOT</version>
+    <version>25</version>
   </parent>
 
   <name>Hippo Search Service</name>
@@ -28,7 +28,7 @@
   <url>http://www.onehippo.com/</url>
 
   <artifactId>hippo-search-service</artifactId>
-  <version>1.02.01-SNAPSHOT</version>
+  <version>1.03.00</version>
   <packaging>pom</packaging>
   <inceptionYear>2012</inceptionYear>
 
@@ -57,8 +57,8 @@
     <aspectj.version>1.6.9</aspectj.version>
     <cglib.version>2.2.2</cglib.version>
 
-    <hippo.repository.version>2.25.05-SNAPSHOT</hippo.repository.version>
-    <hippo.utilities.version>1.02.01-SNAPSHOT</hippo.utilities.version>
+    <hippo.repository.version>2.26.00</hippo.repository.version>
+    <hippo.utilities.version>1.03.00</hippo.utilities.version>
 
     <maven.plugin.site.version>3.0-beta-3</maven.plugin.site.version>
     <maven.plugin.jxr.version>2.2</maven.plugin.jxr.version>
@@ -435,9 +435,9 @@
   </profiles>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-search-service/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-search-service/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-search-service/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-search-service/tags/hippo-search-service-1.03.00</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-search-service/tags/hippo-search-service-1.03.00</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-search-service/tags/hippo-search-service-1.03.00</url>
   </scm>
 
 
