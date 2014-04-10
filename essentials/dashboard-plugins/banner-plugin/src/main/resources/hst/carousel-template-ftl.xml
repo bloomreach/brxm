@@ -20,6 +20,6 @@
     <sv:value>hst:template</sv:value>
   </sv:property>
   <sv:property sv:name="hst:renderpath" sv:type="String">
-    <sv:value>freemarker/common/essentials-carousel.ftl</sv:value>
+    <sv:value>freemarker/hstdefault/essentials-carousel.ftl</sv:value>
   </sv:property>
 </sv:node>

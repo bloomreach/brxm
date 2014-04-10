@@ -43,21 +43,20 @@
   -->
   <instructionSet group="jsp">
 
-    <file action="copy" source="jsp/essentials-carousel.jsp" target="{{jspRoot}}/common/essentials-carousel.jsp"/>
-    <file action="copy" source="jsp/essentials-banner.jsp" target="{{jspRoot}}/common/essentials-banner.jsp"/>
-    <xml action="copy" source="hst/carousel-template-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="hst/banner-template-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <file action="copy" source="jsp/essentials-carousel.jsp" target="{{jspRoot}}/hstdefault/essentials-carousel.jsp"/>
+    <file action="copy" source="jsp/essentials-banner.jsp" target="{{jspRoot}}/hstdefault/essentials-banner.jsp"/>
+    <xml action="copy" source="hst/carousel-template-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" source="hst/banner-template-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
   <instructionSet group="freemarker">
-    <file action="copy" source="ftl/essentials-carousel.ftl" target="{{freemarkerRoot}}/common/essentials-carousel.ftl"/>
-    <file action="copy" source="ftl/essentials-banner.ftl" target="{{freemarkerRoot}}/common/essentials-banner.ftk"/>
-    <xml action="copy" source="hst/carousel-template-ftl.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="hst/banner-template-ftl.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <file action="copy" source="ftl/essentials-carousel.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-carousel.ftl"/>
+    <file action="copy" source="ftl/essentials-banner.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-banner.ftk"/>
+    <xml action="copy" source="hst/carousel-template-ftl.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" source="hst/banner-template-ftl.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
   <instructionSet>
     <xml action="copy" source="hst/catalog/banner-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <xml action="copy" source="hst/catalog/carousel-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
-    <xml action="copy" source="hst/banner-template.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
 
 
