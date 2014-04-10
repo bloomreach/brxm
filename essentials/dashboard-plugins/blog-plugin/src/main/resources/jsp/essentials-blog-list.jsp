@@ -1,4 +1,4 @@
-<%@ include file="/WEB-INF/jsp/essentials/common/imports.jsp" %>
+<%@ include file="/WEB-INF/jsp/include/imports.jsp" %>
 <%--@elvariable id="item" type="{{beansPackage}}.Blogpost"--%>
 <%--@elvariable id="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable"--%>
 <%--@elvariable id="showPagination" type="java.lang.Boolean"--%>

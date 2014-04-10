@@ -1,4 +1,4 @@
-<#include "/WEB-INF/ftl/essentials/common/imports.ftl">
+<#include "/WEB-INF/freemarker/include/imports.ftl">
 <#-- @ftlvariable name="facets" type="org.hippoecm.hst.content.beans.standard.HippoFacetNavigationBean" -->
 <#-- @ftlvariable name="facetLimit" type="java.lang.Integer" -->
 <#-- @ftlvariable name="query" type="java.lang.String" -->

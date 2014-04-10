@@ -1,4 +1,4 @@
-<#include "/WEB-INF/ftl/essentials/common/imports.ftl">
+<#include "/WEB-INF/freemarker/include/imports.ftl">
 <div>
     <div class="col-md-9">
     <@hst.include ref="detailcontainer"/>

@@ -1,4 +1,4 @@
-<#include "/WEB-INF/ftl/essentials/common/imports.ftl">
+<#include "/WEB-INF/freemarker/include/imports.ftl">
 <#-- @ftlvariable name="item" type="{{beansPackage}}.Blogpost" -->
 <#-- @ftlvariable name="author" type="{{beansPackage}}.Author" -->
 <#-- @ftlvariable name="showPagination" type="java.lang.Boolean" -->

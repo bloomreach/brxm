@@ -1,4 +1,4 @@
-<%@ include file="/WEB-INF/jsp/essentials/common/imports.jsp" %>
+<%@ include file="/WEB-INF/jsp/include/imports.jsp" %>
 <%--@elvariable id="document" type="{{beansPackage}}.ContentDocument"--%>
 
 <hst:link var="link" hippobean="${document}"/>

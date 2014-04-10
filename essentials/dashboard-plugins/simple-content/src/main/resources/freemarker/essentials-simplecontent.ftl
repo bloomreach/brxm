@@ -1,4 +1,4 @@
-<#include "/WEB-INF/ftl/essentials/common/imports.ftl">
+<#include "/WEB-INF/freemarker/include/imports.ftl">
 <#-- @ftlvariable name="document" type="{{beansPackage}}.ContentDocument" -->
 <#if document??>
     <@hst.link var="link" hippobean=document/>

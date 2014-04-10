@@ -1,4 +1,4 @@
-<%@ include file="/WEB-INF/jsp/essentials/common/imports.jsp" %>
+<%@ include file="/WEB-INF/jsp/include/imports.jsp" %>
 <%--@elvariable id="facets" type="org.hippoecm.hst.content.beans.standard.HippoFacetNavigationBean"--%>
 <%--@elvariable id="facetLimit" type="java.lang.Integer"--%>
 <%--@elvariable id="query" type="java.lang.String"--%>

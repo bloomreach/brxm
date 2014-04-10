@@ -1,4 +1,4 @@
-<%@ include file="/WEB-INF/jsp/essentials/common/imports.jsp" %>
+<%@ include file="/WEB-INF/jsp/include/imports.jsp" %>
 <%--@elvariable id="item" type="{{beansPackage}}.Blogpost"--%>
 <%--@elvariable id="author" type="{{beansPackage}}.Author"--%>
 <%--@elvariable id="showPagination" type="java.lang.Boolean"--%>

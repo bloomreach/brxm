@@ -1,4 +1,4 @@
-<%@ include file="/WEB-INF/jsp/essentials/common/imports.jsp" %>
+<%@ include file="/WEB-INF/jsp/include/imports.jsp" %>
 <div>
   <div class="col-md-9">
     <hst:include ref="detailcontainer"/>

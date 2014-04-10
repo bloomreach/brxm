@@ -1,4 +1,4 @@
-<%@ include file="/WEB-INF/jsp/essentials/common/imports.jsp" %>
+<%@ include file="/WEB-INF/jsp/include/imports.jsp" %>
 <%--@elvariable id="document" type="{{beansPackage}}.Blogpost"--%>
 <h1><c:out value="${document.title}"/></h1>
 <h2>by: <c:out value="${document.author}"/></h2>
