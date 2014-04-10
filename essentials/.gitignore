@@ -1812,6 +1812,12 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/reso
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/templates/atlassian-ide-plugin.xml
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/templates/hippo-plugins.iws
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/templates/target
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/workspace/*.iml
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/workspace/.DS_Store
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/workspace/.idea
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/workspace/atlassian-ide-plugin.xml
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/workspace/hippo-plugins.iws
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hst/workspace/target
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/namespaces/*.iml
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/namespaces/.DS_Store
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/namespaces/.idea

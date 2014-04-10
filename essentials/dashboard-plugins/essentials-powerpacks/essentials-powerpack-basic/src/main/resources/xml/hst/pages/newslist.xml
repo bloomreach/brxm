@@ -1,56 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="newslist">
+<sv:node sv:name="newslist" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:component</sv:value>
   </sv:property>
   <sv:property sv:name="hst:referencecomponent" sv:type="String">
-    <sv:value>hst:pages/base</sv:value>
+    <sv:value>hst:abstractpages/base</sv:value>
   </sv:property>
   <sv:node sv:name="main">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:containercomponent</sv:value>
+      <sv:value>hst:containercomponentreference</sv:value>
     </sv:property>
-    <sv:property sv:name="hst:xtype" sv:type="String">
-      <sv:value>HST.vBox</sv:value>
+    <sv:property sv:name="hst:referencecomponent" sv:type="String">
+      <sv:value>newslist/main</sv:value>
     </sv:property>
-    <sv:node sv:name="newslist">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:containeritemcomponent</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:componentclassname" sv:type="String">
-        <sv:value>org.onehippo.cms7.essentials.components.EssentialsNewsComponent</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:label" sv:type="String">
-        <sv:value>News List</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
-        <sv:value>hidePastEvents</sv:value>
-        <sv:value>documentTypes</sv:value>
-        <sv:value>sortField</sv:value>
-        <sv:value>sortOrder</sv:value>
-        <sv:value>includeSubtypes</sv:value>
-        <sv:value>showPagination</sv:value>
-        <sv:value>path</sv:value>
-        <sv:value>pageSize</sv:value>
-        <sv:value>documentDateField</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
-        <sv:value>on</sv:value>
-        <sv:value>{{namespace}}:newsdocument</sv:value>
-        <sv:value/>
-        <sv:value>desc</sv:value>
-        <sv:value>off</sv:value>
-        <sv:value>off</sv:value>
-        <sv:value/>
-        <sv:value>10</sv:value>
-        <sv:value>{{namespace}}:date</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>hstdefault-newslist-main-content</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:xtype" sv:type="String">
-        <sv:value>HST.Item</sv:value>
-      </sv:property>
-    </sv:node>
   </sv:node>
 </sv:node>
