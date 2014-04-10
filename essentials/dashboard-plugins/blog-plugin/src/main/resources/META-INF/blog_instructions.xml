@@ -95,12 +95,14 @@
   //############################################
   -->
   <instructionSet>
-    <xml action="copy" source="xml/menu/blog-menu-item.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemenus/main"/>
+    <xml action="copy" source="xml/menu/blog-menu-item.xml" target="/hst:hst/hst:configurations/common/hst:sitemenus/main"/>
   </instructionSet>
 
   <instructionSet>
-    <xml action="copy" source="hst/blog-catalog.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:catalog"/>
-    <xml action="copy" source="hst/blog-sitemap.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
+    <xml action="copy" source="hst/blog-sitemap.xml" target="/hst:hst/hst:configurations/common/hst:sitemap"/>
+    <xml action="copy" source="hst/catalog/facets.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <xml action="copy" source="hst/catalog/bloglist.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <xml action="copy" source="hst/catalog/blogauthorposts.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <xml action="copy" source="hst/page-blog-main.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="hst/page-blog-list.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="hst/page-blog-page.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
