@@ -38,13 +38,6 @@
   <packaging>jar</packaging>
 
   <dependencies>
-
-    <!-- NONE PROVIDED DEPENDENCIES-->
-    <dependency>
-      <groupId>org.onehippo.forge.utilities</groupId>
-      <artifactId>hippo-utilities-repository</artifactId>
-      <version>${hippo-utilities-repository.version}</version>
-    </dependency>
     <dependency>
       <!-- jsoup HTML parser library @ http://jsoup.org/ -->
       <groupId>org.jsoup</groupId>
@@ -138,19 +131,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifest>
-              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-            </manifest>
-            <manifestEntries>
-              <Implementation-Build>150100</Implementation-Build>
-              <Hippo-Modules>
-                org.onehippo.forge.utilities.repository.scheduler.SchedulerDaemon
-              </Hippo-Modules>
-            </manifestEntries>
-          </archive>
-        </configuration>
       </plugin>
     </plugins>
 
