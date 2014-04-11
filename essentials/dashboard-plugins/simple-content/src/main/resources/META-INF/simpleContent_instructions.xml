@@ -31,16 +31,16 @@
   <!-- HST TEMPLATES -->
   <instructionSet group="jsp">
     <xml action="copy" source="hst/template-content-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <file action="copy" source="jsp/essentials-simplecontent.jsp" target="{{jspRoot}}/essentials/essentials-simplecontent.jsp"/>
+    <file action="copy" source="jsp/contentpage-main-content.jsp" target="{{jspRoot}}/{{namespace}}/jsp/contentpage-main-content.jsp"/>
     <xml action="copy" source="hst/template-content-list-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <file action="copy" source="jsp/essentials-simplecontent-list.jsp" target="{{jspRoot}}/essentials/essentials-simplecontent-list.jsp"/>
+    <file action="copy" source="jsp/contentlist-main-contentlist.jsp" target="{{jspRoot}}/{{namespace}}/contentlist-main-contentlist.jsp"/>
   </instructionSet>
 
 
   <instructionSet group="freemarker">
     <xml action="copy" source="hst/template-content-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <file action="copy" source="freemarker/essentials-simplecontent.ftl" target="{{freemarkerRoot}}/essentials/essentials-simplecontent.ftl"/>
+    <file action="copy" source="freemarker/contentpage-main-content.ftl" target="{{freemarkerRoot}}/{{namespace}}/contentpage-main-content.ftl"/>
     <xml action="copy" source="hst/template-content-list-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <file action="copy" source="freemarker/essentials-simplecontent-list.ftl" target="{{freemarkerRoot}}/essentials/essentials-simplecontent-list.ftl"/>
+    <file action="copy" source="freemarker/contentlist-main-contentlist.ftl" target="{{freemarkerRoot}}/{{namespace}}/contentlist-main-contentlist.ftl"/>
   </instructionSet>
 </instructions>
