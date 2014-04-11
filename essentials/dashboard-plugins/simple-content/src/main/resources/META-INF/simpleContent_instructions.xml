@@ -31,7 +31,7 @@
   <!-- HST TEMPLATES -->
   <instructionSet group="jsp">
     <xml action="copy" source="hst/template-content-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <file action="copy" source="jsp/contentpage-main-content.jsp" target="{{jspRoot}}/{{namespace}}/jsp/contentpage-main-content.jsp"/>
+    <file action="copy" source="jsp/contentpage-main-content.jsp" target="{{jspRoot}}/{{namespace}}/contentpage-main-content.jsp"/>
     <xml action="copy" source="hst/template-content-list-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <file action="copy" source="jsp/contentlist-main-contentlist.jsp" target="{{jspRoot}}/{{namespace}}/contentlist-main-contentlist.jsp"/>
   </instructionSet>
