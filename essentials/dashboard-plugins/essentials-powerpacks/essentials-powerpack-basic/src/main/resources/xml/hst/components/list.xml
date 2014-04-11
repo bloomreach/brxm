@@ -7,6 +7,6 @@
     <sv:value>org.onehippo.cms7.essentials.components.EssentialsListComponent</sv:value>
   </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
-    <sv:value>default-list-template</sv:value>
+    <sv:value>list-component</sv:value>
   </sv:property>
 </sv:node>
