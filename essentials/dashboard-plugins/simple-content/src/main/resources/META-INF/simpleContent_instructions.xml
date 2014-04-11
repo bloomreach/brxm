@@ -15,7 +15,8 @@
   <instructionSet>
 
 
-    <xml action="copy" source="hst/content-sitemap.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
+    <xml action="copy" source="hst/workspace/contentlist.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
+    <xml action="copy" source="hst/content-sitemap.xml" target="/hst:hst/hst:configurations/common/hst:sitemap"/>
     <xml action="copy" source="hst/content-page.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="hst/content-list-page.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
 

@@ -19,9 +19,6 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:component</sv:value>
   </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>165d43de-5d36-4ed3-bb44-b6f3eecb0699</sv:value>
-  </sv:property>
   <sv:property sv:name="hst:referencecomponent" sv:type="String">
     <sv:value>hst:abstractpages/base</sv:value>
   </sv:property>
@@ -29,15 +26,9 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:component</sv:value>
     </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>558f6012-5057-4ba2-b84e-d3b474444d78</sv:value>
-    </sv:property>
     <sv:node sv:name="content">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>b348c1df-bb79-456f-97b1-116b3100387a</sv:value>
       </sv:property>
       <sv:property sv:name="hst:referencecomponent" sv:type="String">
         <sv:value>hst:components/content</sv:value>

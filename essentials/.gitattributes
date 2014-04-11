@@ -468,6 +468,7 @@ dashboard-plugins/simple-content/src/main/resources/hst/template-content-ftl.xml
 dashboard-plugins/simple-content/src/main/resources/hst/template-content-jsp.xml -text
 dashboard-plugins/simple-content/src/main/resources/hst/template-content-list-ftl.xml -text
 dashboard-plugins/simple-content/src/main/resources/hst/template-content-list-jsp.xml -text
+dashboard-plugins/simple-content/src/main/resources/hst/workspace/contentlist.xml -text
 dashboard-plugins/simple-content/src/main/resources/java/ContentDocument.txt -text
 dashboard-plugins/simple-content/src/main/resources/jsp/essentials-simplecontent-list.jsp -text
 dashboard-plugins/simple-content/src/main/resources/jsp/essentials-simplecontent.jsp -text
