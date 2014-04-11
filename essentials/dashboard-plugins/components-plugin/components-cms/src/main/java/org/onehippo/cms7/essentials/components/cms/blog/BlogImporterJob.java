@@ -31,16 +31,13 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.jsoup.Jsoup;
-import org.onehippo.forge.utilities.repository.scheduler.JobConfiguration;
-import org.onehippo.forge.utilities.repository.scheduler.jcr.JCRScheduler;
-import org.quartz.InterruptableJob;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.UnableToInterruptJobException;
+import org.onehippo.repository.scheduling.RepositoryJob;
+import org.onehippo.repository.scheduling.RepositoryJobExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +52,7 @@ import com.sun.syndication.io.XmlReader;
 /**
  * @version "$Id$"
  */
-public class BlogImporterJob implements InterruptableJob {
+public class BlogImporterJob implements RepositoryJob {
 
     private static final Logger log = LoggerFactory.getLogger(BlogImporterJob.class);
     private static final String BLOGS_BASE_PATH = "blogsBasePath";
@@ -66,41 +63,40 @@ public class BlogImporterJob implements InterruptableJob {
     private static final String MAX_DESCRIPTION_LENGTH = "maxDescriptionLength";
     private static final int DEFAULT_MAX_DESCRIPTION_LENGTH = 200;
     private static final Pattern PATH_PATTERN = Pattern.compile("/");
+    public static final char[] PASSWORD = new char[]{};
 
 
     @Override
-    public void interrupt() throws UnableToInterruptJobException {
+    public void execute(final RepositoryJobExecutionContext context) throws RepositoryException {
 
-    }
 
-    @Override
-    public void execute(JobExecutionContext context) throws JobExecutionException {
         log.info("+---------------------------------------------------+");
         log.info("|          Start importing blogs                    |");
         log.info("+---------------------------------------------------+");
-        JCRScheduler jcrScheduler = (JCRScheduler) context.getScheduler();
 
-        // get session from jcrScheduling context!
-        final Session jcrSession = jcrScheduler.getJCRSchedulingContext().getSession();
+        final Session jcrSession = context.createSession(new SimpleCredentials("system", PASSWORD));
+
         if (jcrSession == null) {
             log.error("Error in getting session");
             return;
         }
 
-        final JobConfiguration jobConfiguration = (JobConfiguration) context.getMergedJobDataMap().get(JobConfiguration.class.getName());
-        final String blogBasePath = jobConfiguration.getString(BLOGS_BASE_PATH);
-        final String[] urls = cleanupUrls(jobConfiguration.getStrings(URLS, ArrayUtils.EMPTY_STRING_ARRAY));
+        final String blogBasePath = context.getAttribute(BLOGS_BASE_PATH);
+        final String[] urls = ArrayUtils.EMPTY_STRING_ARRAY;
+
+        //cleanupUrls(context.getAttribute(URLS, ArrayUtils.EMPTY_STRING_ARRAY));
         if (urls.length == 0) {
             log.warn("There are no valid URL configured to import");
             return;
         }
 
-        final String authorsBasePath = jobConfiguration.getString(AUTHORS_BASE_PATH, null);
-        final String projectNamespace = jobConfiguration.getString(PROJECT_NAMESPACE, null);
-        final String[] authors = jobConfiguration.getStrings(AUTHORS, null);
+        final String authorsBasePath = context.getAttribute(AUTHORS_BASE_PATH);
+        final String projectNamespace = context.getAttribute(PROJECT_NAMESPACE);
+        // TODO fixme
+        final String[] authors = {};//context.getAttribute(AUTHORS);
         int maxDescriptionLength;
         try {
-            maxDescriptionLength = Integer.parseInt(jobConfiguration.getString(MAX_DESCRIPTION_LENGTH));
+            maxDescriptionLength = Integer.parseInt(context.getAttribute(MAX_DESCRIPTION_LENGTH));
 
         } catch (NumberFormatException e) {
             maxDescriptionLength = DEFAULT_MAX_DESCRIPTION_LENGTH;
@@ -411,4 +407,5 @@ public class BlogImporterJob implements InterruptableJob {
         blogFolder.setProperty("hippostd:foldertype", new String[]{"new-blog-folder", "new-blog-document"});
         return blogFolder;
     }
+
 }

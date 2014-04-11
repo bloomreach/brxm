@@ -23,7 +23,7 @@
     <sv:value>165d43de-5d36-4ed3-bb44-b6f3eecb0699</sv:value>
   </sv:property>
   <sv:property sv:name="hst:referencecomponent" sv:type="String">
-    <sv:value>hst:pages/standard</sv:value>
+    <sv:value>hst:abstractpages/base</sv:value>
   </sv:property>
   <sv:node sv:name="main">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">

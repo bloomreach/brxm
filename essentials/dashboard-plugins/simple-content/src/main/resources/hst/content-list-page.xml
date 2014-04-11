@@ -19,18 +19,12 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:component</sv:value>
   </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>27919b57-de2b-4af3-bfc1-328d9740d9d4</sv:value>
-  </sv:property>
   <sv:property sv:name="hst:referencecomponent" sv:type="String">
-    <sv:value>hst:pages/standard</sv:value>
+    <sv:value>hst:abstractpages/base</sv:value>
   </sv:property>
   <sv:node sv:name="main">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:containercomponent</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>32371fde-60ea-42c3-8ec0-978f32f6dfab</sv:value>
     </sv:property>
     <sv:property sv:name="hst:lastmodified" sv:type="Date">
       <sv:value>2014-03-22T17:43:41.464+01:00</sv:value>
