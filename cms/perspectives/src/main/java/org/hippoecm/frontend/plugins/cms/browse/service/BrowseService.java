@@ -41,6 +41,7 @@ import org.hippoecm.frontend.plugins.cms.browse.service.IBrowserSection.Match;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -223,7 +224,13 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
                 documentService.updateModel(document);
             }
         } else {
-            documentService.updateModel(document);
+            IModel<Node> version = null;
+            try {
+                if (model.getObject().isNodeType(JcrConstants.NT_VERSION)) {
+                    version = model;
+                }
+            } catch (RepositoryException ignore) {}
+            documentService.updateModel(version != null ? version : document);
         }
         onBrowse();
     }
