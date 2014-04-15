@@ -22,15 +22,6 @@ Hippo.Hst.AsyncPage = {
             }
         }
 
-        // Fail safe node retrieval
-        function findNodes(node, name) {
-            if (window.addEventListener) {
-                return node.querySelectorAll(name);
-            } else { // IE8 or less
-                return node.getElementsByTagName(name.toUpperCase());
-            }
-        }
-
         // Find all script elements, extract them from the fragment and store
         // them into a new array. Cloning the nodes does not work as the script
         // will not be executed that way, so we have to clone them manually.
@@ -38,7 +29,7 @@ Hippo.Hst.AsyncPage = {
             var i, j, length, node, nodes, script, scripts, atts;
 
             atts = ['async', 'charset', 'defer', 'src', 'type'];
-            scripts = findNodes(fragment, 'script');
+            scripts = fragment.querySelectorAll('script');
             nodes = [];
 
             for (i = 0, length = scripts.length; i < length; i++) {
@@ -81,7 +72,16 @@ Hippo.Hst.AsyncPage = {
 
                     // Convert the responseText into HTML nodes
                     tmpDiv = document.createElement('div');
-                    tmpDiv.innerHTML = xmlHttp.responseText;
+                    if (window.addEventListener) {
+                        tmpDiv.innerHTML = xmlHttp.responseText;
+                    } else { // IE8 or less
+                        // If firstChild is a script/style element IE will
+                        // ignore it, so we add a textNode first, then 
+                        // immediately remove it again and IE will show the 
+                        // script/style elements 
+                        tmpDiv.innerHTML = '<span>&#160;</span>' + xmlHttp.responseText;
+                        tmpDiv.removeChild(tmpDiv.firstChild);
+                    }
 
                     // Move the nodes into a fragment
                     fragment = document.createDocumentFragment();
