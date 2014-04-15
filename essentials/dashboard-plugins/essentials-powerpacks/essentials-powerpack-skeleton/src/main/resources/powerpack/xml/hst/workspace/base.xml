@@ -3,39 +3,39 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:containercomponentfolder</sv:value>
   </sv:property>
-  <sv:node sv:name="menu">
+  <sv:node sv:name="top">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:containercomponent</sv:value>
     </sv:property>
     <sv:property sv:name="hst:xtype" sv:type="String">
       <sv:value>HST.Span</sv:value>
     </sv:property>
-    <sv:node sv:name="menu">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:containeritemcomponent</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:componentclassname" sv:type="String">
-        <sv:value>org.onehippo.cms7.essentials.components.EssentialsMenuComponent</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
-        <sv:value>selectedMenu</sv:value>
-        <sv:value>level</sv:value>
-        <sv:value>menu</sv:value>
-        <sv:value>menuName</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
-        <sv:value>on</sv:value>
-        <sv:value>1</sv:value>
-        <sv:value>main</sv:value>
-        <sv:value>main</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>base-top-menu</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:xtype" sv:type="String">
-        <sv:value>HST.Item</sv:value>
-      </sv:property>
-    </sv:node>
+  </sv:node>
+  <sv:node sv:name="menu">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:containercomponent</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:componentclassname" sv:type="String">
+      <sv:value>org.onehippo.cms7.essentials.components.EssentialsMenuComponent</sv:value>
+    </sv:property>
+    <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
+      <sv:value>selectedMenu</sv:value>
+      <sv:value>level</sv:value>
+      <sv:value>menu</sv:value>
+      <sv:value>menuName</sv:value>
+    </sv:property>
+    <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
+      <sv:value>on</sv:value>
+      <sv:value>1</sv:value>
+      <sv:value>main</sv:value>
+      <sv:value>main</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:template" sv:type="String">
+      <sv:value>base-top-menu</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:xtype" sv:type="String">
+      <sv:value>HST.Item</sv:value>
+    </sv:property>
   </sv:node>
   <sv:node sv:name="footer">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">

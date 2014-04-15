@@ -20,7 +20,7 @@
     <sv:value>hst:template</sv:value>
   </sv:property>
   <sv:property sv:name="hst:renderpath" sv:type="String">
-    <sv:value>jsp/common/base-footer-content.jsp</sv:value>
+    <sv:value>jsp/{{namespace}}/base-footer-content.jsp</sv:value>
   </sv:property>
 
 </sv:node>
