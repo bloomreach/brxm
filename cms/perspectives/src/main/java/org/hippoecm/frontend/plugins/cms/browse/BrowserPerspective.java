@@ -205,11 +205,16 @@ public class BrowserPerspective extends Perspective {
     }
 
     private void checkExpandDefault() {
-        if (tabs == null || listing == null || wireframe == null) {
+        if (tabs == null || listing == null) {
             return;
         }
 
-        if (!clientOverride && !tabs.hasOpenTabs() && listing.isSupported()) {
+        if (tabs.hasOpenTabs()) {
+            if (listing.isSupported() && !clientOverride) {
+                wireframe.expandDefault();
+            }
+        } else {
+            clientOverride = false;
             wireframe.expandDefault();
         }
     }

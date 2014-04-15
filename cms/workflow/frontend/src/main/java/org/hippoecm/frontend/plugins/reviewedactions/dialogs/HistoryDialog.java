@@ -59,6 +59,8 @@ public class HistoryDialog extends AbstractDialog<WorkflowDescriptor> {
                         error("Could not open editor");
                         return;  // don't close dialog
                     }
+                } else {
+                    editor.focus();
                 }
                 closeDialog();
             }

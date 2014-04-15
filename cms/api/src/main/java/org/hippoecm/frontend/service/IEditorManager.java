@@ -15,17 +15,19 @@
  */
 package org.hippoecm.frontend.service;
 
-import org.apache.wicket.util.io.IClusterable;
+import javax.jcr.Node;
+
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.io.IClusterable;
 
 public interface IEditorManager extends IClusterable {
 
     String EDITOR_ID = "editor.id";
 
-    <T> IEditor<T> getEditor(IModel<T> model);
+    IEditor<Node> getEditor(IModel<Node> model);
 
-    <T> IEditor<T> openEditor(IModel<T> model) throws ServiceException;
+    IEditor<Node> openEditor(IModel<Node> model) throws ServiceException;
 
-    <T> IEditor<T> openPreview(IModel<T> model) throws ServiceException;
+    IEditor<Node> openPreview(IModel<Node> model) throws ServiceException;
 
 }

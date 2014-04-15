@@ -103,7 +103,7 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
         }
     }
 
-    public IEditor<Node> getEditor(IModel model) {
+    public IEditor<Node> getEditor(IModel<Node> model) {
         if (model instanceof JcrNodeModel) {
             JcrNodeModel editModel = getEditorModel((JcrNodeModel) model);
             for (IEditor<Node> editor : editors) {
@@ -117,7 +117,7 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
         return null;
     }
 
-    public IEditor<Node> openEditor(IModel model) throws ServiceException {
+    public IEditor<Node> openEditor(IModel<Node> model) throws ServiceException {
         if (active) {
             throw new ServiceException("Cannot create editors recursively");
         }
@@ -135,7 +135,7 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
         }
     }
 
-    public IEditor<Node> openPreview(IModel model) throws ServiceException {
+    public IEditor<Node> openPreview(IModel<Node> model) throws ServiceException {
         JcrNodeModel nodeModel = getEditorModel((JcrNodeModel) model);
 
         checkEditorDoesNotExist(nodeModel);
@@ -143,7 +143,7 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
         return createEditor(nodeModel, IEditor.Mode.VIEW);
     }
 
-    protected void checkEditorDoesNotExist(IModel model) throws ServiceException {
+    protected void checkEditorDoesNotExist(IModel<Node> model) throws ServiceException {
         for (IEditor editor : editors) {
             if (editor.getModel().equals(model)) {
                 throw new ServiceException("editor already exists");
@@ -218,7 +218,7 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
         if (model != null) {
             // cleanup internals
             editors.remove(getEditor(model));
-            if (editors.size() == 0 && model.equals(browser.getModel())) {
+            if (editors.size() == 0) {
                 browser.setModel(new JcrNodeModel((Node) null));
             }
         }
