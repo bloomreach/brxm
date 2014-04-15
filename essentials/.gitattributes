@@ -188,6 +188,10 @@ dashboard-plugins/blog-plugin/src/main/resources/hst/template-blog-main-ftl.xml 
 dashboard-plugins/blog-plugin/src/main/resources/hst/template-blog-main-jsp.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/hst/template-facet-ftl.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/hst/template-facet-jsp.xml -text
+dashboard-plugins/blog-plugin/src/main/resources/hst/workspace/bloglistdetail.xml -text
+dashboard-plugins/blog-plugin/src/main/resources/hst/workspace/bloglistsidebar.xml -text
+dashboard-plugins/blog-plugin/src/main/resources/hst/workspace/blogpagedetail.xml -text
+dashboard-plugins/blog-plugin/src/main/resources/hst/workspace/blogpagesidebar.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/img/blog-icon.png -text
 dashboard-plugins/blog-plugin/src/main/resources/java/Account.txt -text
 dashboard-plugins/blog-plugin/src/main/resources/java/Author.txt -text

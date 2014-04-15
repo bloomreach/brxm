@@ -29,6 +29,11 @@
 
     <xml action="copy" source="xml/folderoptions/new-blogauthor-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <xml action="copy" source="xml/folderoptions/new-blogauthor-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+    <!-- workspace-->
+    <xml action="copy" source="hst/workspace/bloglistdetail.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
+    <xml action="copy" source="hst/workspace/bloglistsidebar.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
+    <xml action="copy" source="hst/workspace/blogpagesidebar.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
+    <xml action="copy" source="hst/workspace/blogpagedetail.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
   </instructionSet>
   <!--
     CREATE DATA FOLDERS

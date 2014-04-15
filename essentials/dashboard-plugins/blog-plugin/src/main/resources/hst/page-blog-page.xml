@@ -3,9 +3,6 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:component</sv:value>
   </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>3ee2bd86-7134-44a3-b616-36d1f8cc826d</sv:value>
-  </sv:property>
   <sv:property sv:name="hst:referencecomponent" sv:type="String">
     <sv:value>hst:pages/blog</sv:value>
   </sv:property>
@@ -13,68 +10,23 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:component</sv:value>
     </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>f514b2af-fc14-4dec-99aa-4ba03e0116d9</sv:value>
+    <sv:property sv:name="hst:template" sv:type="String">
+      <sv:value>blog.main</sv:value>
     </sv:property>
     <sv:node sv:name="sidebarcontainer">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:containercomponent</sv:value>
+        <sv:value>hst:containercomponentreference</sv:value>
       </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>955dbe6d-0e17-40e1-95e6-3e3415e9b40d</sv:value>
+      <sv:property sv:name="hst:referencecomponent" sv:type="String">
+        <sv:value>blogpagesidebar/main</sv:value>
       </sv:property>
-      <sv:property sv:name="hst:lastmodified" sv:type="Date">
-        <sv:value>2014-03-06T22:33:28.490+01:00</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:lastmodifiedby" sv:type="String">
-        <sv:value>admin</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:xtype" sv:type="String">
-        <sv:value>HST.vBox</sv:value>
-      </sv:property>
-      <sv:node sv:name="blogauthorposts">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:containeritemcomponent</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>f73ff458-de8c-4c52-81e3-bf4ccd8682de</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentclassname" sv:type="String">
-          <sv:value>org.onehippo.cms7.essentials.components.EssentialsBlogAuthorPostsComponent</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:label" sv:type="String">
-          <sv:value>Blog posts by author</sv:value>
-        </sv:property>
-        <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
-          <sv:value>sortField</sv:value>
-          <sv:value>postScope</sv:value>
-          <sv:value>pageSize</sv:value>
-        </sv:property>
-        <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
-          <sv:value>hippostdpubwf:publicationDate</sv:value>
-          <sv:value>/content/documents/{{namespace}}/blog</sv:value>
-          <sv:value>3</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:template" sv:type="String">
-          <sv:value>blog.author.posts</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:xtype" sv:type="String">
-          <sv:value>HST.Item</sv:value>
-        </sv:property>
-      </sv:node>
     </sv:node>
     <sv:node sv:name="detailcontainer">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
+        <sv:value>hst:containercomponentreference</sv:value>
       </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>20c4be56-495c-4a9f-b6eb-c7a215220e91</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:componentclassname" sv:type="String">
-        <sv:value>org.onehippo.cms7.essentials.components.EssentialsContentComponent</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>blog.main.content</sv:value>
+      <sv:property sv:name="hst:referencecomponent" sv:type="String">
+        <sv:value>blogpagedetail/main</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

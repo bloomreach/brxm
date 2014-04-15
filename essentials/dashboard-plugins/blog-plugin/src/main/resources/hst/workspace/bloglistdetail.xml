@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node sv:name="bloglistdetail" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hst:containercomponentfolder</sv:value>
+  </sv:property>
+  <sv:node sv:name="main">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:containercomponent</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:xtype" sv:type="String">
+      <sv:value>HST.vBox</sv:value>
+    </sv:property>
+    <sv:node sv:name="content">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:containeritemcomponent</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentclassname" sv:type="String">
+        <sv:value>org.onehippo.cms7.essentials.components.EssentialsBlogComponent</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:label" sv:type="String">
+        <sv:value>Blog List</sv:value>
+      </sv:property>
+      <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
+        <sv:value>documentTypes</sv:value>
+        <sv:value>sortField</sv:value>
+        <sv:value>sortOrder</sv:value>
+        <sv:value>showPagination</sv:value>
+        <sv:value>includeSubtypes</sv:value>
+        <sv:value>pageSize</sv:value>
+        <sv:value>path</sv:value>
+      </sv:property>
+      <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
+        <sv:value>appstore:blogpost</sv:value>
+        <sv:value/>
+        <sv:value>desc</sv:value>
+        <sv:value>on</sv:value>
+        <sv:value>off</sv:value>
+        <sv:value>1</sv:value>
+        <sv:value/>
+      </sv:property>
+      <sv:property sv:name="hst:template" sv:type="String">
+        <sv:value>blog.list.content</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:xtype" sv:type="String">
+        <sv:value>HST.Item</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+</sv:node>
