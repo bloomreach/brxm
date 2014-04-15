@@ -3,17 +3,21 @@
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
 
   <instructionSet>
-    <xml action="copy" source="powerpack/xml/hst/search-catalog.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:catalog"/>
-    <xml action="copy" source="powerpack/xml/hst/search-menu-item.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemenus/main"/>
+    <xml action="copy" source="powerpack/xml/hst/search-catalog.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <xml action="copy" source="powerpack/xml/hst/search-page.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="powerpack/xml/hst/search-sitemap.xml" target="/hst:hst/hst:configurations/common/hst:sitemap"/>
   </instructionSet>
   <instructionSet group="jsp">
-    <file action="copy" source="powerpack/jsp/essentials-search.jsp" target="{{jspRoot}}/essentials/essentials-search.jsp"/>
-    <xml action="copy" source="powerpack/xml/hst/search-template-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <file action="copy" source="powerpack/jsp/search-box.jsp" target="{{jspRoot}}/{{namespace}}/search-box.jsp"/>
+    <file action="copy" source="powerpack/jsp/search-main.jsp" target="{{jspRoot}}/{{namespace}}/search-main.jsp"/>
+    <xml action="copy" source="powerpack/xml/hst/search-box-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="powerpack/xml/hst/search-main-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
   <instructionSet group="freemarker">
-    <file action="copy" source="powerpack/freemarker/essentials-search.ftl" target="{{freemarkerRoot}}/essentials/essentials-search.ftl"/>
-    <xml action="copy" source="powerpack/xml/hst/search-template-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <file action="copy" source="powerpack/freemarker/search-main.ftl" target="{{freemarkerRoot}}/{{namespace}}/search-main.ftl"/>
+    <file action="copy" source="powerpack/freemarker/search-box.ftl" target="{{freemarkerRoot}}/{{namespace}}/search-box.ftl"/>
+    <xml action="copy" source="powerpack/xml/hst/search-main-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="powerpack/xml/hst/search-box-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
 </instructions>
+

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="essentials.search">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="search-main">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:template</sv:value>
   </sv:property>
   <sv:property sv:name="hst:renderpath" sv:type="String">
-    <sv:value>freemarker/essentials/essentials-search.ftl</sv:value>
+    <sv:value>freemarker/{{namespace}}/search-main.ftl</sv:value>
   </sv:property>
 </sv:node>

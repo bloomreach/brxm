@@ -10,22 +10,11 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:component</sv:value>
     </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>e6bed467-fb4b-4d46-87db-c8ca880b8df7</sv:value>
+    <sv:property sv:name="hst:componentclassname" sv:type="String">
+      <sv:value>org.onehippo.cms7.essentials.components.EssentialsSearchComponent</sv:value>
     </sv:property>
-    <sv:node sv:name="content">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>73af7596-289d-4ec5-a605-cbf87dd49f7f</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:componentclassname" sv:type="String">
-        <sv:value>org.onehippo.cms7.essentials.components.EssentialsSearchComponent</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>essentials.search</sv:value>
-      </sv:property>
-    </sv:node>
+    <sv:property sv:name="hst:template" sv:type="String">
+      <sv:value>search-main</sv:value>
+    </sv:property>
   </sv:node>
 </sv:node>
