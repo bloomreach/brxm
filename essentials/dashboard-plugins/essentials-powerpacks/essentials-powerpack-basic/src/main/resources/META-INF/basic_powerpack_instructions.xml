@@ -38,9 +38,9 @@
     <file action="copy" source="jsp/list-component.jsp" target="{{jspRoot}}/hstdefault/list-component.jsp"/>
     <file action="copy" source="jsp/content-component.jsp" target="{{jspRoot}}/hstdefault/jsp/content-component.jsp"/>
     <file action="copy" source="jsp/newslist-main-newslist.jsp" target="{{jspRoot}}/hstdefault/newslist-main-newslist.jsp"/>
-    <file action="copy" source="jsp/newspage-main-content.jsp" target="{{jspRoot}}/hstdefault/newspage-main-content.jsp"/>
+    <file action="copy" source="jsp/newspage-main-content.jsp" target="{{jspRoot}}/hstdefault/newspage-main.jsp"/>
     <file action="copy" source="jsp/eventslist-main-eventslist.jsp" target="{{jspRoot}}/hstdefault/eventslist-main-eventslist.jsp"/>
-    <file action="copy" source="jsp/eventspage-main-content.jsp" target="{{jspRoot}}/hstdefault/eventspage-main-content.jsp"/>
+    <file action="copy" source="jsp/eventspage-main-content.jsp" target="{{jspRoot}}/hstdefault/eventspage-main.jsp"/>
   </instructionSet>
   <instructionSet group="jsp">
     <xml action="copy" source="xml/hst/templates/list-component-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
@@ -54,10 +54,10 @@
   <instructionSet group="freemarker">
     <file action="copy" source="freemarker/list-component.ftl" target="{{freemarkerRoot}}/hstdefault/list-comonent.ftl"/>
     <file action="copy" source="freemarker/content-component.ftl" target="{{freemarkerRoot}}/hstdefault/content-component.ftl"/>
-    <file action="copy" source="freemarker/newslist-main-content.ftl" target="{{freemarkerRoot}}/hstdefault/newslist-main-newslist.ftl"/>
-    <file action="copy" source="freemarker/newspage-main-content.ftl" target="{{freemarkerRoot}}/hstdefault/newspage-main-content.ftl"/>
-    <file action="copy" source="freemarker/eventslist-main-newslist.ftl" target="{{freemarkerRoot}}/hstdefault/eventslist-main-newslist.ftl"/>
-    <file action="copy" source="freemarker/eventspage-main-content.ftl" target="{{freemarkerRoot}}/hstdefault/eventspage-main-content.ftl"/>
+    <file action="copy" source="freemarker/newslist-main-newslist.ftl" target="{{freemarkerRoot}}/hstdefault/newslist-main-newslist.ftl"/>
+    <file action="copy" source="freemarker/newspage-main-content.ftl" target="{{freemarkerRoot}}/hstdefault/newspage-main.ftl"/>
+    <file action="copy" source="freemarker/eventslist-main-eventslist.ftl" target="{{freemarkerRoot}}/hstdefault/eventslist-main-eventslist.ftl"/>
+    <file action="copy" source="freemarker/eventspage-main-content.ftl" target="{{freemarkerRoot}}/hstdefault/eventspage-main.ftl"/>
   </instructionSet>
   <instructionSet group="freemarker">
     <xml action="copy" source="xml/hst/templates/content-component-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
