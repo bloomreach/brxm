@@ -18,6 +18,8 @@ package org.hippoecm.frontend.plugins.standards.list;
 import java.util.Iterator;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.version.Version;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
@@ -28,6 +30,7 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.IModelReference;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
@@ -38,6 +41,8 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -207,6 +212,9 @@ public abstract class AbstractListingPlugin<T> extends RenderPlugin<T> implement
     }
 
     public void updateSelection(IModel<Node> model) {
+        if (model.getObject() instanceof Version) {
+            model = getOriginalDocument(model);
+        }
         dataTable.setDefaultModel(model);
         onSelectionChanged(model);
     }
@@ -265,6 +273,21 @@ public abstract class AbstractListingPlugin<T> extends RenderPlugin<T> implement
 
     protected boolean isOrderable() {
         return false;
+    }
+
+    private IModel<Node> getOriginalDocument(IModel<Node> model) {
+        final Version version = (Version) model.getObject();
+        try {
+            final Node frozen = version.getFrozenNode();
+            final Node docNode = frozen.getProperty(JcrConstants.JCR_FROZEN_UUID).getNode();
+            Node parent = docNode.getParent();
+            if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                return new JcrNodeModel(parent);
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+        return model;
     }
 
 }

@@ -216,20 +216,20 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
             section.select(document);
             sections.setActiveSection(closestName);
         }
+        IModel<Node> version = null;
+        try {
+            if (model.getObject().isNodeType(JcrConstants.NT_VERSION)) {
+                version = model;
+            }
+        } catch (RepositoryException ignore) {}
         if (collectionModel.getObject() != null
                 && collectionModel.getObject().getType() == DocumentCollectionType.FOLDER) {
             if (collectionModel.getObject().getFolder().equals(document)) {
                 documentService.updateModel(new JcrNodeModel((Node) null));
             } else {
-                documentService.updateModel(document);
+                documentService.updateModel(version != null ? version : document);
             }
         } else {
-            IModel<Node> version = null;
-            try {
-                if (model.getObject().isNodeType(JcrConstants.NT_VERSION)) {
-                    version = model;
-                }
-            } catch (RepositoryException ignore) {}
             documentService.updateModel(version != null ? version : document);
         }
         onBrowse();
