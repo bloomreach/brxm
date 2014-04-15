@@ -3,7 +3,7 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:containercomponentfolder</sv:value>
   </sv:property>
-  <sv:node sv:name="top">
+  <sv:node sv:name="menu">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:containercomponent</sv:value>
     </sv:property>

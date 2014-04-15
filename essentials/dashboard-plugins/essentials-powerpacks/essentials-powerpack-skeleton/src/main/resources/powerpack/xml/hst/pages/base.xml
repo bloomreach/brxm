@@ -6,12 +6,17 @@
   <sv:property sv:name="hst:template" sv:type="String">
     <sv:value>base-layout</sv:value>
   </sv:property>
-  <sv:node sv:name="top">
+  <sv:node sv:name="menu">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:containercomponentreference</sv:value>
     </sv:property>
     <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>base/top</sv:value>
+      <sv:value>base/menu</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="top">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="footer">
