@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sv:node sv:name="bloglistsidebar" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<sv:node sv:name="blogpagesidebar" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:containercomponentfolder</sv:value>
   </sv:property>
@@ -7,31 +7,30 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:containercomponent</sv:value>
     </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>91951413-0193-4f55-b8be-e4b935309ca3</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:lastmodified" sv:type="Date">
+      <sv:value>2014-04-15T15:02:10.775+02:00</sv:value>
+    </sv:property>
     <sv:property sv:name="hst:xtype" sv:type="String">
       <sv:value>HST.vBox</sv:value>
     </sv:property>
-    <sv:node sv:name="content">
+    <sv:node sv:name="blogauthorposts">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:containeritemcomponent</sv:value>
       </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>7986adae-dc5b-410e-8eb6-4f6f08b959b8</sv:value>
+      </sv:property>
       <sv:property sv:name="hst:componentclassname" sv:type="String">
-        <sv:value>org.onehippo.cms7.essentials.components.EssentialsFacetsComponent</sv:value>
+        <sv:value>org.onehippo.cms7.essentials.components.EssentialsBlogAuthorPostsComponent</sv:value>
       </sv:property>
       <sv:property sv:name="hst:label" sv:type="String">
-        <sv:value>Facets</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
-        <sv:value>facetPath</sv:value>
-        <sv:value>showPagination</sv:value>
-        <sv:value>pageSize</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
-        <sv:value>blogFacets</sv:value>
-        <sv:value>on</sv:value>
-        <sv:value>10</sv:value>
+        <sv:value>Blog posts by author</sv:value>
       </sv:property>
       <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>facet.template</sv:value>
+        <sv:value>blog.author.posts</sv:value>
       </sv:property>
       <sv:property sv:name="hst:xtype" sv:type="String">
         <sv:value>HST.Item</sv:value>
