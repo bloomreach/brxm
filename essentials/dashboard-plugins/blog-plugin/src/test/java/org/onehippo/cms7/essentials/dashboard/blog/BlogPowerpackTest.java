@@ -41,7 +41,7 @@ import static org.junit.Assert.assertEquals;
 public class BlogPowerpackTest extends BaseRepositoryTest {
 
 
-    public static final int TOTAL_INSTRUCTIONS = 13;
+    public static final int TOTAL_INSTRUCTIONS = 12;
     public static final int TOTAL_FILES = 4;
     @Inject
     private AutowireCapableBeanFactory injector;

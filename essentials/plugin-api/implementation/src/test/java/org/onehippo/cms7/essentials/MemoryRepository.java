@@ -24,8 +24,8 @@ import org.slf4j.LoggerFactory;
  */
 public class MemoryRepository {
 
-    public static final String[] CND_FILE_NAMES = {"/test_cnd.cnd", "/test_hippo.cnd",
-            "/test_hippostd.cnd", "/test_hst.cnd",
+    public static final String[] CND_FILE_NAMES = {"/test_cnd.cnd", "/test_hippo.cnd", "/test_hippostd.cnd",
+             "/test_hst.cnd",
             "/test_hippo_sys_edit.cnd", "/test_hippotranslation.cnd",
             "/test_hipposys.cnd", "/test_frontend.cnd",
             "/test_editor.cnd", "/test_hippogallerypicker.cnd",

@@ -1,42 +1,40 @@
-<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
-<'hipposysedit'='http://www.onehippo.org/jcr/hipposysedit/nt/1.2'>
-<'nt'='http://www.jcp.org/jcr/nt/1.0'>
+<nt='http://www.jcp.org/jcr/nt/1.0'>
+<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
+<hipposysedit='http://www.onehippo.org/jcr/hipposysedit/nt/1.2'>
+
+// mixin on nodetype and prototype nodes for a particular version
+// of a namespace.
+[hipposysedit:remodel] mixin
+- hipposysedit:uri (string) mandatory
 
 [hipposysedit:field] > nt:base
-  - hipposysedit:type (string)
-  - hipposysedit:validators (string) multiple
-  - hipposysedit:multiple (boolean)
-  - hipposysedit:ordered (boolean)
-  - hipposysedit:protected (boolean)
-  - hipposysedit:primary (boolean)
-  - hipposysedit:path (string) mandatory
-  - hipposysedit:mandatory (boolean)
-  - hipposysedit:autocreated (boolean)
+- hipposysedit:path (string) mandatory
+- hipposysedit:type (string)
+- hipposysedit:multiple (boolean)
+- hipposysedit:mandatory (boolean)
+- hipposysedit:ordered (boolean)
+- hipposysedit:primary (boolean)
+- hipposysedit:autocreated (boolean)
+- hipposysedit:protected (boolean)
+- hipposysedit:validators (string) multiple
 
-[hipposysedit:prototypeset] > nt:base
-  + hipposysedit:prototype (nt:base) multiple
+[hipposysedit:nodetype] > hippo:document orderable
+- hipposysedit:type (string)
+- hipposysedit:supertype (string) multiple
+- hipposysedit:node (boolean)
+- hipposysedit:mixin (boolean)
+- hipposysedit:cascadevalidation (boolean)
++ * (hipposysedit:field)
 
-[hipposysedit:templatetype] > nt:base
-  orderable
-  + hipposysedit:nodetype (hippo:handle) mandatory
-  + hipposysedit:prototypes (hipposysedit:prototypeset)
+[hipposysedit:prototypeset]
++ hipposysedit:prototype (nt:base) multiple
 
-[hipposysedit:namespace] > nt:base
-  + * (hipposysedit:templatetype) = hipposysedit:templatetype
+[hipposysedit:templatetype] orderable
++ hipposysedit:nodetype (hippo:handle) mandatory
++ hipposysedit:prototypes (hipposysedit:prototypeset)
 
-[hipposysedit:namespacefolder] > nt:base
-  + * (hipposysedit:namespace) = hipposysedit:namespace
+[hipposysedit:namespace]
++ * (hipposysedit:templatetype) = hipposysedit:templatetype
 
-[hipposysedit:nodetype] > hippo:document
-  orderable
-  - hipposysedit:type (string)
-  - hipposysedit:supertype (string) multiple
-  - hipposysedit:mixin (boolean)
-  - hipposysedit:node (boolean)
-  - hipposysedit:cascadevalidation (boolean)
-  + * (hipposysedit:field)
-
-[hipposysedit:remodel]
-  mixin
-  - hipposysedit:uri (string) mandatory
-
+[hipposysedit:namespacefolder]
++ * (hipposysedit:namespace) = hipposysedit:namespace

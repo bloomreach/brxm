@@ -1,338 +1,441 @@
-<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
-<'hst'='http://www.hippoecm.org/hst/nt/2.1'>
-<'mix'='http://www.jcp.org/jcr/mix/1.0'>
-<'nt'='http://www.jcp.org/jcr/nt/1.0'>
+/*
+ * Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
+<nt='http://www.jcp.org/jcr/nt/1.0'>
+<mix='http://www.jcp.org/jcr/mix/1.0'>
+<hst='http://www.hippoecm.org/hst/nt/2.1'>
+<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
 
-[hst:descriptive]
-  mixin
-  - hst:description (string)
-  + hst:icon (hippo:resource) = hippo:resource
+[hst:descriptive] mixin
+- hst:description (string)
++ hst:icon (hippo:resource) = hippo:resource
 
-[hst:abstractcomponent] > hst:descriptive, mix:referenceable, nt:base
-  orderable
-  - hst:page_errorhandlerclassname (string)
-  - hst:template (string)
-  - hst:asyncmode (string)
-  - hst:referencename (string)
-  - hst:componentclassname (string)
-  - hst:async (boolean)
-  - hst:cacheable (boolean)
-  - hst:parametervalues (string) multiple
-  - hst:parameternameprefixes (string) multiple
-  - hst:standalone (boolean)
-  - hst:resourcetemplate (string)
-  - hst:parameternames (string) multiple
+[hst:editable] mixin
+- hst:lockedby (string)
+- hst:lockedon (date)
+- hst:lastmodifiedby (string)
+- hst:state (string)
 
-[hst:site] > mix:referenceable, mix:versionable, nt:base
-  - hst:content (string)
-  - hst:portalconfigurationenabled (boolean)
-  - hst:version (long)
-  - hst:configurationpath (string)
-  + hst:content (hippo:facetselect)
+[hst:prototypemeta] mixin
+// the name to show for the prototype
+- hst:displayname (string)
+// the relative path to primary container
+- hst:primarycontainer (string)
 
-[hst:sitemapitem] > mix:referenceable, nt:base
-  - hst:namedpipeline (string)
-  - hst:refId (string)
-  - hst:componentconfigurationmappingnames (string) multiple
-  - hst:statuscode (long)
-  - hst:excludedforlinkrewriting (boolean)
-  - hst:value (string)
-  - hst:componentconfigurationid (string)
-  - hst:errorcode (long)
-  - hst:portletcomponentconfigurationid (string)
-  - hst:schemeagnostic (boolean)
-  - hst:componentconfigurationmappingvalues (string) multiple
-  - hst:parameternames (string) multiple
-  - hst:schemenotmatchresponsecode (long)
-  - hst:roles (string) multiple
-  - hst:parametervalues (string) multiple
-  - hst:resourcebundleid (string)
-  - hst:cacheable (boolean)
-  - hst:users (string) multiple
-  - hst:relativecontentpath (string)
-  - hst:scheme (string)
-  - hst:locale (string)
-  - hst:authenticated (boolean)
-  - hst:sitemapitemhandlerids (string) multiple
-  + * (hst:sitemapitem)
+[hst:template] > nt:base, mix:referenceable, hst:descriptive
+- hst:renderpath (string)
+- hst:isnamed (boolean)
+- hst:containers (string) multiple
+- hst:script (string)
+- * (string)
 
-[hst:sitemap] > mix:referenceable, nt:base
-  orderable
-  - hst:lockedon (date)
-  - hst:lastmodified (date)
-  - hst:lastmodifiedby (string)
-  - hst:lockedby (string)
-  + * (hst:sitemapitem)
+[hst:templates] > nt:base, mix:referenceable orderable
+- hst:lockedby (string)
+- hst:lockedon (date)
+- hst:lastmodified (date)
+- hst:lastmodifiedby (string)
++ * (hst:template)
 
-[hst:sitemenuitem] > mix:referenceable, nt:base
-  orderable
-  - hst:parameternames (string) multiple
-  - hst:mountalias (string)
-  - hst:parametervalues (string) multiple
-  - hst:foldersonly (boolean)
-  - hst:depth (long)
-  - hst:referencesitemapitem (string)
-  - hst:repobased (boolean)
-  - hst:refidsitemapitem (string)
-  - hst:externallink (string)
-  - hst:roles (string) multiple
-  + * (hst:sitemenuitem)
 
-[hst:sitemenu] > mix:referenceable, nt:base
-  orderable
-  + * (hst:sitemenuitem)
 
-[hst:sitemenus] > mix:referenceable, nt:base
-  - hst:lastmodifiedby (string)
-  - hst:lockedby (string)
-  - hst:lastmodified (date)
-  - hst:lockedon (date)
-  + * (hst:sitemenu)
+[hst:abstractcomponent] > nt:base, mix:referenceable, hst:descriptive orderable 
+- hst:template (string)
+- hst:resourcetemplate (string)
+- hst:componentclassname (string)
+- hst:referencename (string)
+- hst:page_errorhandlerclassname (string)
+- hst:parameternames (string) multiple
+- hst:parameternameprefixes (string) multiple
+- hst:parametervalues (string) multiple
+// whether the component is rendered in standalone mode during componentRendering URLs
+// when not set, default value is true
+- hst:standalone (boolean)
+// whether the component is rendered in a separate http ajax request. Note that you can better not
+// use hst:async  = true combined with hst:standalone = false, as then, all doBeforeRenders of
+// all components will be invoked again for the async get. When not set, default async = false
+- hst:async (boolean)
+- hst:asyncmode (string)
+- hst:cacheable (boolean)
 
-[hst:components] > mix:referenceable, nt:base
-  orderable
-  + * (hst:abstractcomponent)
 
-[hst:template] > hst:descriptive, mix:referenceable, nt:base
-  - hst:containers (string) multiple
-  - * (string)
-  - hst:renderpath (string)
-  - hst:script (string)
-  - hst:isnamed (boolean)
+[hst:containercomponentreference] > nt:base orderable
+- hst:referencecomponent (string) mandatory
 
-[hst:templates] > mix:referenceable, nt:base
-  orderable
-  - hst:lastmodifiedby (string)
-  - hst:lockedon (date)
-  - hst:lockedby (string)
-  - hst:lastmodified (date)
-  + * (hst:template)
+[hst:component] > hst:abstractcomponent orderable
+- hst:referencecomponent (string)
+- hst:lastmodified (date)
+- hst:iconpath (string)
++ * (hst:containercomponentreference)
++ * (hst:abstractcomponent)
 
-[hst:pages] > mix:referenceable, nt:base
-  orderable
-  + * (hst:abstractcomponent)
+[hst:containeritemcomponent] > hst:abstractcomponent orderable
+// deprecate 'hst:referencecomponent' : not allowed for containeritemcomponent
+- hst:referencecomponent(string)
+- hst:xtype (string) mandatory
+// deprecated and unused : do not use
+- hst:dummycontent (string)
+// the label of the hst:containeritemcomponent
+- hst:label (string)
+// icon path relative to the sites webapp
+- hst:iconpath (string)
+- hst:componentfiltertag (string)
++ * (hst:abstractcomponent)
 
-[hst:sitemapitemhandler] > mix:referenceable, nt:base
-  - * (date)
-  - * (long) multiple
-  - * (boolean) multiple
-  - * (boolean)
-  - * (double)
-  - * (string) multiple
-  - * (long)
-  - * (string)
-  - hst:sitemapitemhandlerclassname (string) mandatory
-  - * (date) multiple
-  - * (double) multiple
+[hst:containercomponent] > hst:abstractcomponent orderable
+- hst:xtype (string) mandatory
+- hst:lockedby (string)
+- hst:lockedon (date)
+- hst:lastmodified (date)
+- hst:lastmodifiedby (string)
++ * (hst:containeritemcomponent)
 
-[hst:sitemapitemhandlers] > mix:referenceable, nt:base
-  orderable
-  + * (hst:sitemapitemhandler)
+[hst:containeritempackage] > nt:base, mix:referenceable orderable
++ * (hst:containeritemcomponent)
 
-[hst:containeritemcomponent] > hst:abstractcomponent
-  orderable
-  - hst:dummycontent (string)
-  - hst:componentfiltertag (string)
-  - hst:xtype (string) mandatory
-  - hst:label (string)
-  - hst:iconpath (string)
-  - hst:referencecomponent (string)
-  + * (hst:abstractcomponent)
+[hst:containercomponentfolder] > nt:base orderable
++ * (hst:containercomponentfolder)
++ * (hst:containercomponent)
 
-[hst:containeritempackage] > mix:referenceable, nt:base
-  orderable
-  + * (hst:containeritemcomponent)
+[hst:catalog] > nt:base, mix:referenceable orderable
+- hst:lockedby (string)
+- hst:lockedon (date)
+- hst:lastmodified (date)
+- hst:lastmodifiedby (string)
++ * (hst:containeritempackage)
 
-[hst:catalog] > mix:referenceable, nt:base
-  orderable
-  - hst:lastmodified (date)
-  - hst:lockedby (string)
-  - hst:lastmodifiedby (string)
-  - hst:lockedon (date)
-  + * (hst:containeritempackage)
+[hst:components] > nt:base, mix:referenceable orderable
++ * (hst:abstractcomponent)
 
-[hst:configuration] > mix:referenceable, mix:versionable, nt:base
-  - hst:lockedon (date)
-  - hst:lockedby (string)
-  - hst:inheritsfrom (string) multiple
-  + hst:sitemap (hst:sitemap) = hst:sitemap
-  + hst:pages (hst:pages) = hst:pages
-  + hst:components (hst:components) = hst:components
-  + hst:catalog (hst:catalog) = hst:catalog
-  + hst:sitemenus (hst:sitemenus) = hst:sitemenus
-  + hst:sitemapitemhandlers (hst:sitemapitemhandlers) = hst:sitemapitemhandlers
-  + hst:templates (hst:templates) = hst:templates
 
-[hst:mount] > mix:referenceable, nt:base
-  - hst:cacheable (boolean)
-  - hst:defaultresourcebundleid (string)
-  - * (string)
-  - hst:showport (boolean)
-  - hst:defaultsitemapitemhandlerids (string) multiple
-  - hst:pagenotfound (string)
-  - hst:schemeagnostic (boolean)
-  - hst:versioninpreviewheader (boolean)
-  - hst:schemenotmatchresponsecode (long)
-  - hst:namedpipeline (string)
-  - hst:ismapped (boolean)
-  - hst:formloginpage (string)
-  - hst:parametervalues (string) multiple
-  - hst:subjectbasedsession (boolean)
-  - hst:scheme (string)
-  - hst:channelpath (string)
-  - hst:showcontextpath (boolean)
-  - hst:isSite (boolean)
-  - hst:types (string) multiple
-  - hst:onlyforcontextpath (string)
-  - hst:authenticated (boolean)
-  - hst:mountpoint (string)
-  - hst:sessionstateful (boolean)
-  - hst:embeddedmountpath (string)
-  - hst:roles (string) multiple
-  - hst:users (string) multiple
-  - hst:locale (string)
-  - hst:type (string)
-  - hst:parameternames (string) multiple
-  - hst:alias (string)
-  - hst:homepage (string)
-  + * (hst:mount)
+[hst:pages] > nt:base, mix:referenceable orderable
++ * (hst:abstractcomponent)
 
-[hst:channelinfo] > nt:base
-  - * (long) multiple
-  - * (long)
-  - * (string) multiple
-  - * (date) multiple
-  - * (boolean) multiple
-  - * (double) multiple
-  - * (boolean)
-  - * (date)
-  - * (double)
-  - * (string)
+[hst:sitemapitemhandler] > nt:base, mix:referenceable
+- hst:sitemapitemhandlerclassname (string) mandatory
+- * (string) 
+- * (string) multiple
+- * (boolean) 
+- * (boolean) multiple
+- * (long) 
+- * (long) multiple
+- * (double) 
+- * (double) multiple
+- * (date) 
+- * (date) multiple
 
-[hst:channel] > mix:referenceable, mix:versionable, nt:base
-  - hst:name (string)
-  - hst:channelinfoclass (string)
-  - hst:defaultdevice (string)
-  - hst:devices (string) multiple
-  - hst:type (string)
-  + hst:channelinfo (hst:channelinfo)
+[hst:sitemapitemhandlers] >  nt:base, mix:referenceable orderable
++ * (hst:sitemapitemhandler)
 
-[hst:blueprint] > mix:referenceable, mix:versionable, nt:base
-  - hst:description (string)
-  - hst:name (string)
-  - hst:contentRoot (string)
-  + hst:mount (hst:mount)
-  + hst:configuration (hst:configuration)
-  + hst:site (hst:site)
-  + hst:channel (hst:channel)
+[hst:sitemapitem] > nt:base, mix:referenceable
+- hst:value
+- hst:relativecontentpath (string)
+- hst:componentconfigurationid (string)
+- hst:pagetitle (string)
+// deprecated and unused: do not use
+- hst:portletcomponentconfigurationid (string)
+- hst:sitemapitemhandlerids (string) multiple
+- hst:parameternames (string) multiple
+- hst:parametervalues (string) multiple
+- hst:namedpipeline (string)
+- hst:statuscode (long)
+- hst:errorcode (long)
+- hst:excludedforlinkrewriting (boolean)
+- hst:authenticated (boolean)
+- hst:roles (string) multiple
+// refId must be unique within a single sitemap item tree. The property is optional
+- hst:refId (string)
+- hst:users (string) multiple
+- hst:locale (string)
+- hst:scheme (string)
+- hst:schemenotmatchresponsecode (long)
+- hst:schemeagnostic (boolean)
+- hst:componentconfigurationmappingnames (string) multiple
+- hst:componentconfigurationmappingvalues (string) multiple
+- hst:cacheable (boolean)
+- hst:resourcebundleid (string)
+- hst:lastmodified (date)
 
-[hst:blueprints] > mix:referenceable, mix:versionable, nt:base
-  + * (hst:blueprint)
++ * (hst:sitemapitem)
 
-[hst:channels] > mix:referenceable, mix:versionable, nt:base
-  + * (hst:channel)
+[hst:sitemap] > nt:base, mix:referenceable orderable
+- hst:lockedby (string)
+- hst:lockedon (date)
+- hst:lastmodified (date)
+- hst:lastmodifiedby (string)
++ * (hst:sitemapitem)
 
-[hst:component] > hst:abstractcomponent
-  orderable
-  - hst:referencecomponent (string)
-  + * (hst:abstractcomponent)
+[hst:sitemenuitem] > nt:base, mix:referenceable orderable
+// sitemap item by path or by refid. This can be a path including wildcards when setting by path, but this cannot include wildcard when setting by refid.
+- hst:referencesitemapitem (string)
+// deprecated and unused : do not use
+- hst:refidsitemapitem (string)
+- hst:externallink (string)
+// if this sitemenu item should link to a specific mount, you can specify it through the mountalias below
+- hst:mountalias (string)
+- hst:foldersonly (boolean)
+- hst:repobased (boolean)
+- hst:depth (long)
+- hst:roles (string) multiple
+- hst:parameternames (string) multiple
+- hst:parametervalues (string) multiple
++ * (hst:sitemenuitem)
 
-[hst:configurations] > mix:referenceable, mix:versionable, nt:base
-  + hst:catalog (hst:catalog) = hst:catalog
-  + * (hst:configuration) = hst:configuration version
+[hst:sitemenu] > nt:base, mix:referenceable orderable
+- hst:lastmodified (date)
++ * (hst:sitemenuitem)
 
-[hst:containercomponent] > hst:abstractcomponent
-  orderable
-  - hst:lastmodifiedby (string)
-  - hst:lockedby (string)
-  - hst:lastmodified (date)
-  - hst:xtype (string) mandatory
-  - hst:lockedon (date)
-  + * (hst:containeritemcomponent)
+[hst:sitemenus] > nt:base, mix:referenceable
+- hst:lockedby (string)
+- hst:lockedon (date)
+- hst:lastmodified (date)
+- hst:lastmodifiedby (string)
++ * (hst:sitemenu)
 
+[hst:workspace] > nt:base orderable
++ hst:containers (hst:containercomponentfolder) = hst:containercomponentfolder
++ hst:sitemenus (hst:sitemenus) = hst:sitemenus
++ hst:pages (hst:pages) = hst:pages
++ hst:sitemap (hst:sitemap) = hst:sitemap
+
+[hst:configuration] > nt:base, mix:referenceable, mix:versionable
+- hst:inheritsfrom (string) multiple
+// deprecated : not used any more as only fine grained locking
+- hst:lockedby (string)
+// deprecated : not used any more as only fine grained locking
+- hst:lockedon (date)
++ hst:components (hst:components) = hst:components
++ hst:abstractpages (hst:pages) = hst:pages
++ hst:pages (hst:pages) = hst:pages
++ hst:prototypepages (hst:pages) = hst:pages
++ hst:sitemap (hst:sitemap) = hst:sitemap
++ hst:templates (hst:templates) = hst:templates
++ hst:sitemenus (hst:sitemenus) = hst:sitemenus
++ hst:sitemapitemhandlers (hst:sitemapitemhandlers) = hst:sitemapitemhandlers
++ hst:catalog (hst:catalog) = hst:catalog
++ hst:workspace (hst:workspace) = hst:workspace
+
+[hst:configurations] > nt:base, mix:referenceable, mix:versionable
++ * (hst:configuration) = hst:configuration version
++ hst:catalog (hst:catalog) = hst:catalog
+
+[hst:site] > nt:base, mix:referenceable, mix:versionable
++ hst:content (hippo:facetselect)
+- hst:configurationpath (string)
+- hst:version (long)
+// uuid or absolute path
+- hst:content (string)
+// deprecated and unused: do not use
+- hst:portalconfigurationenabled (boolean)
+
+[hst:sites] > nt:base, mix:referenceable, mix:versionable
++ * (hst:site) = hst:site version
+
+[hst:primarydomain] mixin
+
+[hst:redirectdomain] mixin 
+- hst:redirect (string)
+
+
+[hst:channelinfo]
+- * (string)
+- * (string) multiple
+- * (boolean)
+- * (boolean) multiple
+- * (long)
+- * (long) multiple
+- * (double)
+- * (double) multiple
+- * (date)
+- * (date) multiple
+
+[hst:channel] > nt:base, mix:referenceable, mix:versionable
+- hst:name (string)
+- hst:channelinfoclass (string)
+- hst:type (string)
+- hst:defaultdevice (string)
+- hst:devices (string) multiple
+- hst:lockedby (string)
+- hst:lockedon (date)
+- hst:lastmodified (date)
+- hst:lastmodifiedby (string)
+// properties of the channel
++ hst:channelinfo (hst:channelinfo)
+
+[hst:channels] > nt:base, mix:referenceable, mix:versionable
++ * (hst:channel)
+
+[hst:mount] > nt:base, mix:referenceable
++ * (hst:mount)
+// the path to the (sub)site. for example /preview/myproject
+- hst:mountpoint (string)
+// whether this mount is associated with a hstSite
+- hst:ismapped (boolean)
+// if you do not want to mount to run with the default hst pipeline, you can configure the pipeline to be used here
+- hst:namedpipeline (string)
+- hst:showcontextpath (boolean)
+// when this mount is only applicable for certain contextpath, add this property containing the contextpath that 
+// is allowed (it can be an empty string, or if non empty it must start with '/' and no further '/' is allowed)
+- hst:onlyforcontextpath (string)
+// deprecated and unused: do not use
+- hst:embeddedmountpath
+- hst:scheme (string)
+- hst:schemenotmatchresponsecode (long)
+- hst:schemeagnostic (boolean)
+// whether the port should be visible in the created urls
+- hst:showport (boolean)
+// the hst:defaultsitemapitemhandlerids that all sitemap items get that do not define their own hst:sitemapitemhandlerids
+- hst:defaultsitemapitemhandlerids (string) multiple
+- hst:parameternames (string) multiple
+- hst:parametervalues (string) multiple
+- hst:homepage (string)
+- hst:pagenotfound (string)
+- hst:locale (string)
+- hst:versioninpreviewheader (boolean)
+// when false, links that would normally be excluded for hst request 
+// processing (for example .pdf) get a ./ appended automatically
+- hst:isSite (boolean)
+- hst:authenticated (boolean)
+- hst:roles (string) multiple
+- hst:users (string) multiple
+// the alias of this mount. If not present, the alias is the current name
+- hst:alias (string)
+// the primary type of this mount, for example 'preview'. Default when missing is 'live'
+- hst:type (string)
+// the types this mount also belongs to, for example 'composer'.
+- hst:types (string) multiple
+// whether jcr session should be used per subject
+- hst:subjectbasedsession (boolean)
+// whether subject based jcr session should be statefully managed
+- hst:sessionstateful (boolean)
+// form login page for this site mount, to which the request can be redirected for non-authenticated user.
+- hst:formloginpage (string)
+// channel to which this mount belongs
+- hst:channelpath (string)
+- hst:cacheable (boolean)
+// to hold all the 'free defined properties'
+- hst:defaultresourcebundleid (string)
+- * (string)
+
+[hst:portmount] > nt:base, mix:referenceable
++ hst:root (hst:mount)
+
+[hst:virtualhost] > nt:base, mix:referenceable
++ * (hst:virtualhost)
++ * (hst:portmount)
++ hst:root (hst:mount)
+- hst:showcontextpath (boolean)
+// whether the port should be visible in the created urls
+- hst:showport (boolean)
+- hst:scheme (string)
+- hst:schemenotmatchresponsecode (long)
+- hst:schemeagnostic (boolean)
+// when customhttpssupport is true, a https request will always be processed, even if
+// the matching indicated hst:scheme = http.
+- hst:customhttpssupport (boolean)
+- hst:parameternames (string) multiple
+- hst:parametervalues (string) multiple
+- hst:homepage (string)
+- hst:pagenotfound (string)
+- hst:locale (string)
+- hst:versioninpreviewheader (boolean)
+// when the mounts for this host is only applicable for certain contextpath, add this property containing the contextpath that 
+// is allowed (it can be an empty string, or if non empty it must start with '/' and no further '/' is allowed)
+- hst:onlyforcontextpath (string)
+- hst:cacheable (boolean)
+- hst:defaultresourcebundleid (string)
+
+[hst:virtualhostgroup] > nt:base, mix:referenceable
+// the fully qualified cms url, for example http://localhost:8080/cms
+- hst:cmslocation (string)
+- hst:defaultport (long)
++ * (hst:virtualhost)
+
+[hst:virtualhosts] > nt:base, mix:referenceable, mix:versionable
+- hst:showcontextpath (boolean)
+// whether the port should be visible in the created urls
+- hst:showport (boolean)
+- hst:prefixexclusions (string) multiple
+- hst:suffixexclusions (string) multiple
+- hst:scheme (string)
+- hst:schemenotmatchresponsecode (long)
+- hst:defaulthostname (string)
+- hst:parameternames (string) multiple
+- hst:parametervalues (string) multiple
+- hst:homepage (string)
+- hst:pagenotfound (string)
+- hst:locale (string)
+- hst:versioninpreviewheader (boolean)
+// The default contextpath for this webapp. If configured, this will be the value 
+// for the 'hst:onlyforcontextpath' for the hst:mounts. 
+// (it can be an empty string, or if non empty it must start with '/' and no further '/' is allowed)
+- hst:defaultcontextpath (string)
+// Configurable override of the default _cmsinternal pathInfo prefix for the preview in the cms
+- hst:cmspreviewprefix (string)
+// the hostgroup the channel manager should use : if missing, the channel manager cannot load the channels
+- hst:channelmanagerhostgroup (string)
+// the sites the channel manager should use: Default is 'hst:sites'
+- hst:channelmanagersites (string)
+- hst:diagnosticsenabled (boolean)
+- hst:diagnosticsforips (string) multiple
+- hst:cacheable (boolean)
+- hst:defaultresourcebundleid (string)
+// since 7.9 default is true when missing
+- hst:channelmanagersiteauthenticationskipped (boolean)
++ * (hst:virtualhostgroup)
+
+[hst:blueprint] > nt:base, mix:referenceable, mix:versionable
+//"User-friendly" Name of the Blueprint that is used in Channel Manager
+- hst:name (string)
+- hst:description (string)
+// the absolute location where, if this blueprint contains content, the content is created. If missing
+// the default contentRoot is used. It must start with a / 
+- hst:contentRoot (string)
+// prototype for the channel properties.
+// Used for default values
++ hst:channel (hst:channel)
++ hst:configuration (hst:configuration)
++ hst:site (hst:site)
++ hst:mount (hst:mount)
+
+
+[hst:blueprints] > nt:base, mix:referenceable, mix:versionable
++ * (hst:blueprint)
+
+[hst:hst] > nt:base, mix:referenceable, mix:versionable
++ hst:configurations (hst:configurations) = hst:configurations version
++ hst:hosts (hst:virtualhosts) = hst:virtualhosts version
++ hst:blueprints (hst:blueprints) = hst:blueprints version
++ hst:channels (hst:channels) = hst:channels version
++ * (hst:sites) = hst:sites version
+
+// the hst nodetype for the contentmount's: this nodetype is for content sharing between subsites
 [hst:contentshare] > hippo:mirror
 
-[hst:formfieldvalue] > nt:base
-  - hst:formfielddata (string) multiple
-  - hst:formfieldname (string) mandatory
-  - hst:formfieldmessages (string) multiple
+[hst:formfieldvalue]
+- hst:formfieldname (string) mandatory
+- hst:formfielddata (string) multiple
+- hst:formfieldmessages (string) multiple
 
-[hst:formdata] > nt:base
-  - hst:predecessor (string)
-  - hst:sealed (boolean)
-  - hst:creationtime (date) mandatory
-  + hst:formfieldvalue (hst:formfieldvalue) multiple
+[hst:formdata]
+- hst:creationtime (date) mandatory
++ hst:formfieldvalue (hst:formfieldvalue) multiple
+- hst:predecessor (string)
+- hst:sealed (boolean)
 
-[hst:formdatacontainer] > nt:base
-  + * (hst:formdata)
-  + * (hst:formdatacontainer)
 
-[hst:sites] > mix:referenceable, mix:versionable, nt:base
-  + * (hst:site) = hst:site version
-
-[hst:portmount] > mix:referenceable, nt:base
-  + hst:root (hst:mount)
-
-[hst:virtualhost] > mix:referenceable, nt:base
-  - hst:showport (boolean)
-  - hst:showcontextpath (boolean)
-  - hst:versioninpreviewheader (boolean)
-  - hst:onlyforcontextpath (string)
-  - hst:scheme (string)
-  - hst:schemenotmatchresponsecode (long)
-  - hst:parameternames (string) multiple
-  - hst:defaultresourcebundleid (string)
-  - hst:homepage (string)
-  - hst:schemeagnostic (boolean)
-  - hst:pagenotfound (string)
-  - hst:cacheable (boolean)
-  - hst:parametervalues (string) multiple
-  - hst:locale (string)
-  + hst:root (hst:mount)
-  + * (hst:portmount)
-  + * (hst:virtualhost)
-
-[hst:virtualhostgroup] > mix:referenceable, nt:base
-  - hst:cmslocation (string)
-  - hst:defaultport (long)
-  + * (hst:virtualhost)
-
-[hst:virtualhosts] > mix:referenceable, mix:versionable, nt:base
-  - hst:prefixexclusions (string) multiple
-  - hst:showcontextpath (boolean)
-  - hst:locale (string)
-  - hst:suffixexclusions (string) multiple
-  - hst:defaultcontextpath (string)
-  - hst:diagnosticsenabled (boolean)
-  - hst:showport (boolean)
-  - hst:parametervalues (string) multiple
-  - hst:channelmanagersiteauthenticationskipped (boolean)
-  - hst:scheme (string)
-  - hst:pagenotfound (string)
-  - hst:defaulthostname (string)
-  - hst:channelmanagerhostgroup (string)
-  - hst:schemenotmatchresponsecode (long)
-  - hst:channelmanagersites (string)
-  - hst:homepage (string)
-  - hst:diagnosticsforips (string) multiple
-  - hst:cacheable (boolean)
-  - hst:parameternames (string) multiple
-  - hst:defaultresourcebundleid (string)
-  - hst:cmspreviewprefix (string)
-  - hst:versioninpreviewheader (boolean)
-  + * (hst:virtualhostgroup)
-
-[hst:hst] > mix:referenceable, mix:versionable, nt:base
-  + hst:channels (hst:channels) = hst:channels version
-  + hst:hosts (hst:virtualhosts) = hst:virtualhosts version
-  + * (hst:sites) = hst:sites version
-  + hst:configurations (hst:configurations) = hst:configurations version
-  + hst:blueprints (hst:blueprints) = hst:blueprints version
-
-[hst:primarydomain]
-  mixin
-
-[hst:redirectdomain]
-  mixin
-  - hst:redirect (string)
-
+[hst:formdatacontainer] 
++ * (hst:formdatacontainer)
++ * (hst:formdata)

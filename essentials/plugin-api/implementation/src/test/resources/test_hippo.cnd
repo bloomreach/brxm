@@ -1,107 +1,132 @@
-<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
-<'jcr'='http://www.jcp.org/jcr/1.0'>
-<'mix'='http://www.jcp.org/jcr/mix/1.0'>
-<'nt'='http://www.jcp.org/jcr/nt/1.0'>
+<rep='internal'>
+<jcr='http://www.jcp.org/jcr/1.0'>
+<nt='http://www.jcp.org/jcr/nt/1.0'>
+<mix='http://www.jcp.org/jcr/mix/1.0'>
+<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
 
-[hippo:compound] > nt:base
+[rep:jarFile] mixin
+- rep:jarExpanded (date) mandatory copy
++ rep:jarContents (nt:base) = nt:folder mandatory copy
 
-[hippo:query] > nt:query
+// DATA TYPES: MARKERS
 
-[hippo:facetbasesearch] > nt:base
-  - hippo:queryname (string) mandatory
-  - hippo:count (long)
-  + * (hippo:facetbasesearch) multiple ignore
+[hippo:derived] mixin
+- hippo:compute (Reference)
+  // Indicates the method that is used to compute the derived properties
+  // defined by any subtypes that extend this type.
+  // should point to a node of type hippo:deriveddefinition
+- hippo:related (Reference) multiple
+  // A multivalue property that links to all the nodes that where used to
+  // compute derived proper
 
-[hippo:facetresult] > nt:base
-  - hippo:count (long)
-  + * (nt:base) multiple ignore
-
-[hippo:facetsearch] > hippo:facetbasesearch
-  - hippo:docbase (string) mandatory
-  - hippo:facets (string) mandatory multiple
-  + hippo:resultset (hippo:facetresult) = hippo:facetresult
-
-[hippo:mirror] > nt:base
-  - hippo:docbase (string) mandatory
-  + * (nt:base) multiple ignore
-
-[hippo:facetselect] > nt:base
-  - hippo:values (string) mandatory multiple
-  - hippo:modes (string) mandatory multiple < 'select', 'stick', 'clear', 'single', 'prefer', 'prefer-single'
-  - hippo:facets (string) mandatory multiple
-  - hippo:docbase (string) mandatory
-  + * (nt:base) multiple ignore
-
-[hippo:resource] > nt:base
-  - jcr:mimeType (string) mandatory
-  - hippo:filename (string)
-  - hippo:text (binary)
-  - jcr:encoding (string)
-  - jcr:data (binary) primary mandatory
-  - jcr:lastModified (date) mandatory ignore
-
-[hippo:container]
-  mixin
-  + * (hippo:query) multiple
-  + * (hippo:facetsearch) multiple
-  + * (hippo:mirror) multiple
-  + * (hippo:facetselect) multiple
-  + * (hippo:compound) multiple
-  + * (hippo:resource) multiple
-
-[hippo:derived]
-  mixin
-  - hippo:compute (reference)
-  - hippo:related (reference) multiple
-
-[hippo:document] > nt:base
-  - hippo:availability (string) multiple ignore
+// DATA TYPES: DOCUMENTS
 
 [hippo:request] > nt:base
 
+[hippo:document] > nt:base
+- hippo:availability (string) multiple ignore
+- hippo:paths (string) multiple
+
 [hippo:handle] > nt:base
-  - hippo:discriminator (string) multiple
-  + * (hippo:document) = hippo:document multiple version
-  + hippo:request (hippo:request) multiple ignore
+- hippo:discriminator (string) multiple
++ * (hippo:document) = hippo:document multiple version
++ hippo:request (hippo:request) multiple ignore
 
-[hippo:harddocument] > mix:referenceable, mix:versionable, hippo:derived
-  mixin
-  - hippo:paths (string) mandatory multiple
+[hippo:hardhandle] > mix:versionable mixin
 
-[hippo:hardhandle] > mix:versionable
-  mixin
+[hippo:harddocument] > hippo:derived, mix:referenceable, mix:versionable mixin
+
+// DATA TYPES: VIRTUAL LAYER
+
+[hippo:facetresult] orderable
+- hippo:count (long)
++ * multiple ignore
+
+[hippo:facetbasesearch]
+- hippo:queryname (string) mandatory
+- hippo:count (long)
++ * (hippo:facetbasesearch) multiple ignore
+
+[hippo:facetsearch] > hippo:facetbasesearch
+- hippo:docbase (string) mandatory
+- hippo:facets (string) mandatory multiple
++ hippo:resultset (hippo:facetresult) = hippo:facetresult
+
+[hippo:facetselect] > nt:base
+- hippo:docbase (string) mandatory
+- hippo:facets (string) mandatory multiple
+- hippo:values (string) mandatory multiple
+- hippo:modes (string) mandatory multiple < 'select', 'stick', 'clear', 'single', 'prefer', 'prefer-single'
++ * multiple ignore
+
+[hippo:mirror]
+- hippo:docbase (string) mandatory
++ * multiple ignore
+
+
+// DATA TYPES: RESOURCES
+
+[hippo:resource]
+- jcr:encoding (string)
+- jcr:mimeType (string) mandatory
+- jcr:data (binary) primary mandatory
+- jcr:lastModified (date) mandatory ignore
+- hippo:filename (string)
+- hippo:text (binary)
+
+[hippo:query] > nt:query
+
+[hippo:compound] abstract
+
+[hippo:container] mixin
++ * (hippo:mirror) multiple
++ * (hippo:facetselect) multiple
++ * (hippo:facetsearch) multiple
++ * (hippo:resource) multiple
++ * (hippo:query) multiple
++ * (hippo:compound) multiple
+
+
+// DATA TYPES: TRANSLATION
+
+[hippo:translation]
+- hippo:language (string) mandatory
+- hippo:message (string) mandatory
+- hippo:property (string)
+- hippo:value (string)
+- hippo:class (string)
+
+[hippo:translated] mixin
++ hippo:translation (hippo:translation) multiple
+
+// BOOTSTRAP
 
 [hippo:initializeitem] > nt:base
-  - hippo:contextnodename (string)
-  - hippo:timestamp (long)
-  - hippo:namespace (string)
-  - hippo:version (string)
-  - hippo:contentresource (string)
-  - hippo:contentdelete (string)
-  - hippo:sequence (double)
-  - hippo:status (string) < 'pending', 'done', 'disabled'
-  - hippo:nodetypesresource (string)
-  - hippo:content (string)
-  - hippo:nodetypes (binary)
-  - hippo:contentpropadd (string) multiple
-  - hippo:contentpropset (string) multiple
-  - hippo:reloadonstartup (boolean)
-  - hippo:contentroot (string)
+- hippo:sequence (double)
+- hippo:namespace (string)
+- hippo:nodetypesresource (string)
+- hippo:nodetypes (binary)
+- hippo:contentresource (string)
+- hippo:content (string)
+- hippo:contentroot (string)
+- hippo:contentdelete (string)
+- hippo:contentpropdelete (string)
+- hippo:contentpropset (string) multiple
+- hippo:contentpropadd (string) multiple
+- hippo:reloadonstartup (boolean)
+- hippo:status (string) < 'pending', 'done', 'disabled'
+- hippo:contextnodename (string)
+- hippo:version (string)
+- hippo:timestamp (long)
 
-[hippo:initializefolder] > nt:base
-  orderable
-  - hippo:sequence (double)
-  - hippo:version (string) multiple
-  + * (hippo:initializeitem) = hippo:initializeitem
+[hippo:initializefolder] > nt:base orderable
+- hippo:version (string) multiple // never specify this item at this time
+- hippo:sequence (double) // not yet supported
++ * (hippo:initializeitem) = hippo:initializeitem
 
-[hippo:translation] > nt:base
-  - hippo:value (string)
-  - hippo:language (string) mandatory
-  - hippo:message (string) mandatory
-  - hippo:property (string)
-  - hippo:class (string)
+[hippo:deleted] > hippo:document, mix:versionable
+- hippo:deletedDate (date)
+- hippo:deletedBy (string)
 
-[hippo:translated]
-  mixin
-  + hippo:translation (hippo:translation) multiple
-
+// marker mixin that excludes the node from being indexed
+[hippo:skipindex] mixin

@@ -25,7 +25,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
@@ -38,7 +37,7 @@ import static org.junit.Assert.assertEquals;
 public class BasicPowerpackTest extends BaseRepositoryTest {
 
 
-    public static final int TOTAL_INSTRUCTIONS = 13;
+    public static final int TOTAL_INSTRUCTIONS = 15;
     public static final int TOTAL_FILES = 6;
 
 
@@ -62,17 +61,7 @@ public class BasicPowerpackTest extends BaseRepositoryTest {
         assertEquals(TOTAL_INSTRUCTIONS, instructionSets.size());
     }
 
-    @Test
-    public void testExecute() throws Exception {
-        final PowerpackPackage powerpackPackage = new BasicPowerpack();
-        injector.autowireBean(powerpackPackage);
-        final InstructionStatus status = powerpackPackage.execute(getContext());
-        // mm: todo check why skipped is returned (one of the instructions is skipped)
-        //assertEquals(InstructionStatus.SKIPPED, status);
-        assertEquals(TOTAL_FILES, jspDirectory.listFiles().length);
 
-
-    }
 
 
     @Override
