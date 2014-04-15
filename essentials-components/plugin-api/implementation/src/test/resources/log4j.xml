@@ -126,12 +126,12 @@
     <level value="warn"/>
   </logger>
   <logger name="org.onehippo.cms7.essentials">
-    <level value="info"/>
+    <level value="debug"/>
   </logger>
 
 
   <root>
-    <level value="info"/>
+    <level value="debug"/>
     <appender-ref ref="console"/>
   </root>
 
