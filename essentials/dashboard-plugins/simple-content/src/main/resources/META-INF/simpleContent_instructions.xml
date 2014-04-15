@@ -31,7 +31,7 @@
   <!-- HST TEMPLATES -->
   <instructionSet group="jsp">
     <xml action="copy" source="hst/template-content-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <file action="copy" source="jsp/contentpage-main-content.jsp" target="{{jspRoot}}/{{namespace}}/contentpage-main.jsp"/>
+    <file action="copy" source="jsp/contentpage-main.jsp" target="{{jspRoot}}/{{namespace}}/contentpage-main.jsp"/>
     <xml action="copy" source="hst/template-content-list-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <file action="copy" source="jsp/contentlist-main-contentlist.jsp" target="{{jspRoot}}/{{namespace}}/contentlist-main-contentlist.jsp"/>
   </instructionSet>
@@ -39,7 +39,7 @@
 
   <instructionSet group="freemarker">
     <xml action="copy" source="hst/template-content-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <file action="copy" source="freemarker/contentpage-main-content.ftl" target="{{freemarkerRoot}}/{{namespace}}/contentpage-main.ftl"/>
+    <file action="copy" source="freemarker/contentpage-main.ftl" target="{{freemarkerRoot}}/{{namespace}}/contentpage-main.ftl"/>
     <xml action="copy" source="hst/template-content-list-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <file action="copy" source="freemarker/contentlist-main-contentlist.ftl" target="{{freemarkerRoot}}/{{namespace}}/contentlist-main-contentlist.ftl"/>
   </instructionSet>
