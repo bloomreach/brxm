@@ -47,12 +47,17 @@
   <bean id="esiAsynchronousComponentWindowRenderer" class="org.hippoecm.hst.core.container.ESIAsynchronousComponentWindowRenderer">
   </bean>
 
+  <!-- SSI based asynchronous component window renderer -->
+  <bean id="ssiAsynchronousComponentWindowRenderer" class="org.hippoecm.hst.core.container.SSIAsynchronousComponentWindowRenderer">
+  </bean>
+
   <!-- Asynchronous component window renderers map used by AggregationValve -->
   <bean id="asynchronousComponentWindowRendererMap" class="org.springframework.beans.factory.config.MapFactoryBean">
     <property name="sourceMap">
       <map>
         <entry key="ajax" value-ref="ajaxAsynchronousComponentWindowRenderer" />
         <entry key="esi" value-ref="esiAsynchronousComponentWindowRenderer" />
+        <entry key="ssi" value-ref="ssiAsynchronousComponentWindowRenderer" />
       </map>
     </property>
   </bean>

@@ -602,6 +602,7 @@ components/core/src/main/java/org/hippoecm/hst/core/container/PageCachingValve.j
 components/core/src/main/java/org/hippoecm/hst/core/container/PageInfoRenderingValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/PersistableSessionAroundAdvice.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/ResourceServingValve.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/SSIAsynchronousComponentWindowRenderer.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/SecurityValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/SiteMenusResolvingValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/SubjectBasedSessionValve.java -text
