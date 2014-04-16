@@ -21,7 +21,7 @@ import org.hippoecm.hst.core.component.HstURL;
 import org.w3c.dom.Comment;
 
 /**
- * Asynchronous component window rendering implementation rending SSI include comments. </P>
+ * Asynchronous component window rendering implementation rending SSI include comments.
  */
 public class SSIAsynchronousComponentWindowRenderer implements AsynchronousComponentWindowRenderer {
 
