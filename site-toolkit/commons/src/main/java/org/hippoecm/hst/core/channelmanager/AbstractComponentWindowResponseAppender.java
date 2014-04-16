@@ -50,7 +50,7 @@ public abstract class AbstractComponentWindowResponseAppender implements Compone
             }
             builder.append("\"").append(attr.getKey()).append("\":").append("\"").append(attr.getValue()).append("\"");
         }
-        Comment comment = response.createComment("{ " + builder.toString() + "}");
+        Comment comment = response.createComment(" { " + builder.toString() + "} ");
         return comment;
     }
 
