@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import de.pdark.decentxml.Attribute;
@@ -64,23 +65,31 @@ public class ContentUpgrade79 {
     }
 
     public void process(File file) throws IOException {
-        Document document;
+        final String filePath = file.getAbsolutePath();
         try {
             XMLParser reader = new XMLParser();
-            document = reader.parse(new XMLIOSource(new FileInputStream(file)));
+            Document document = reader.parse(new XMLIOSource(new FileInputStream(file)));
             final Namespace sv = document.getNamespace("sv");
             if (sv == null || !sv.equals(SV)) {
                 return;
             }
-
             final Element rootElement = document.getRootElement();
             processNode(rootElement, false);
+            try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file), Charset.forName("UTF-8"))) {
+                    final Element newRoot = document.getRootElement();
+                    // document contains root node only:
+                    if (newRoot == null) {
+                        System.out.println("***************************************************************************************");
+                        System.out.println("*  ERROR: INVALID XML FILE, exclude from hippoecm-extensions.xml:");
+                        System.out.println("* " + filePath);
+                        System.out.println("***************************************************************************************");
+                    }
 
-            OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file));
-            writer.write(document.toString());
-            writer.close();
+                writer.write(document.toString());
+                System.out.println("Done processing XML file: " + filePath);
+            }
         } catch (XMLParseException xpe) {
-            System.out.println("Unable to process " + file.getAbsolutePath() + " : " + xpe.getMessage());
+            System.out.println("Unable to process " + filePath + " : " + xpe.getMessage());
         }
     }
 
@@ -94,7 +103,7 @@ public class ContentUpgrade79 {
             element.remove();
             return;
         }
-        
+
         String name = nameAttr.getValue();
         boolean prototype = "hipposysedit:prototype".equals(name);
 
