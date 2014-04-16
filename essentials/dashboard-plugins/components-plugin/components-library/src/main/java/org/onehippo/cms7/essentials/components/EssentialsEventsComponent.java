@@ -5,12 +5,14 @@
 package org.onehippo.cms7.essentials.components;
 
 import java.util.Calendar;
+import java.util.List;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
+import org.hippoecm.hst.content.beans.query.filter.BaseFilter;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.query.filter.FilterImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -40,44 +42,20 @@ public class EssentialsEventsComponent extends EssentialsListComponent {
     private static Logger log = LoggerFactory.getLogger(EssentialsEventsComponent.class);
 
     @Override
-    public void doBeforeRender(final HstRequest request, final HstResponse response) {
-        final EssentialsEventsComponentInfo essentialsEventsComponentInfo = getComponentParametersInfo(request);
-        final String path = getScopePath(essentialsEventsComponentInfo);
-        log.debug("Getting EssentialsEventsComponentInfo for documents path:  [{}]", path);
-        final HippoBean scope = getScopeBean(path);
-        if (scope == null) {
-            log.warn("Search scope was null");
-            handleInvalidScope(request, response);
-            return;
-        }
-
-        final Pageable<HippoBean> pageable = doSearch(request, essentialsEventsComponentInfo, scope);
-        request.setAttribute(REQUEST_ATTR_PAGEABLE, pageable);
-        populateRequest(request, essentialsEventsComponentInfo, pageable);
-    }
-
-    @Override
-    protected <T extends EssentialsDocumentListComponentInfo> HstQuery buildQuery(final HstRequest request, final T componentInfo, final HippoBean scope) {
-        final QueryBuilder builder = new HstQueryBuilder(this, request);
-        final String documentTypes = componentInfo.getDocumentTypes();
-        final String[] types = SiteUtils.parseCommaSeparatedValue(documentTypes);
-        final EssentialsEventsComponentInfo essentialsEventsComponentInfo = (EssentialsEventsComponentInfo) componentInfo;
-        builder.scope(scope).documents(types).includeSubtypes();
-        if (essentialsEventsComponentInfo.getHidePastEvents()) {
-            final String dateField  = essentialsEventsComponentInfo.getDocumentDateField();
+    protected void contributeAndFilters(final List<BaseFilter> filters, final HstRequest request, final HstQuery query) {
+        final EssentialsEventsComponentInfo info = getComponentParametersInfo(request);
+        if (info.getHidePastEvents()) {
+            final String dateField  = info.getDocumentDateField();
             if (!Strings.isNullOrEmpty(dateField)) {
                 try {
-                    final Session session = request.getRequestContext().getSession();
-                    final Filter filter = new FilterImpl(session, DateTools.Resolution.DAY);
-
+                    final Filter filter = query.createFilter();
                     filter.addGreaterOrEqualThan(dateField, Calendar.getInstance(), DateTools.Resolution.DAY);
-                    builder.addFilter(filter);
-                } catch (FilterException | RepositoryException e) {
+                    filters.add(filter);
+                } catch (FilterException e) {
                     log.error("Error while creating query filter to hide past events using date field {}", dateField, e);
                 }
             }
         }
-        return builder.build();
     }
 }
 

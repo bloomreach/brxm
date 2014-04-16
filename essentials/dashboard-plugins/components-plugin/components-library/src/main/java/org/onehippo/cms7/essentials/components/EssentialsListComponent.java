@@ -6,11 +6,13 @@ package org.onehippo.cms7.essentials.components;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.codehaus.jackson.map.deser.ValueInstantiators;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
 import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
+import org.hippoecm.hst.content.beans.query.filter.BaseFilter;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentIterator;
@@ -33,6 +35,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * HST component used for listing of documents.
@@ -186,9 +191,9 @@ public class EssentialsListComponent extends CommonComponent {
         final int page = getCurrentPage(request);
         query.setLimit(pageSize);
         query.setOffset((page - 1) * pageSize);
-        applySearchFilter(request, query);
         applyOrdering(request, query, paramInfo);
         applyExcludeScopes(request, query, paramInfo);
+        buildAndApplyFilters(request, query);
 
         final HstQueryResult execute = query.execute();
         final Pageable<HippoBean> pageable = new IterablePagination<>(
@@ -205,21 +210,80 @@ public class EssentialsListComponent extends CommonComponent {
     }
 
     /**
-     * Apply search filter (query) to result list
+     * Create a list of filters and apply them to the query, using AND logic.
      *
-     * @param request HstRequest
-     * @param query   HstQuery
+     * @param request current HST request
+     * @param query   query under construction
      * @throws FilterException
      */
-    protected void applySearchFilter(final HstRequest request, final HstQuery query) throws FilterException {
+    protected void buildAndApplyFilters(final HstRequest request, final HstQuery query) throws FilterException {
+        final List<BaseFilter> filters = new ArrayList<BaseFilter>();
+
+        contributeAndFilters(filters, request, query);
+
+        final Filter queryFilter = createQueryFilter(request, query);
+        if (queryFilter != null) {
+            filters.add(queryFilter);
+        }
+
+        applyAndFilters(query, filters);
+    }
+
+    /**
+     * Extension point for sub-classes: contribute to a list of filters to apply using AND logic.
+     *
+     * @param filters list of filters under construction
+     * @param request current HST request
+     * @param query   query under construction, provider for new filters
+     */
+    protected void contributeAndFilters(final List<BaseFilter> filters, final HstRequest request, final HstQuery query) {
+        // empty
+    }
+
+    /**
+     * Apply a list of filters fo a query, using AND logic.
+     *
+     * Make sure that if the query already had a filter, it gets preserved.
+     *
+     * @param query   query under construction
+     * @param filters list of filters to be AND-ed
+     */
+    protected void applyAndFilters(final HstQuery query, final List<BaseFilter> filters) {
+        final BaseFilter oldRootFilter = query.getFilter();
+        if (oldRootFilter != null) {
+            filters.add(oldRootFilter);
+        }
+
+        if (filters.size() > 1) {
+            final Filter andFilter = query.createFilter();
+            for (BaseFilter filter : filters) {
+                andFilter.addAndFilter(filter);
+            }
+            query.setFilter(andFilter);
+        } else if (filters.size() == 1) {
+            query.setFilter(filters.get(0));
+        }
+    }
+
+    /**
+     * Apply search filter (query) to result list
+     *
+     * @param request current HST request
+     * @param query   query under construction, provider for new filters
+     * @throws FilterException
+     */
+    protected Filter createQueryFilter(final HstRequest request, final HstQuery query) throws FilterException {
+        Filter queryFilter = null;
+
         // check if we have query parameter
         final String queryParam = getSearchQuery(request);
         if (!Strings.isNullOrEmpty(queryParam)) {
-            final Filter filter = query.createFilter();
-            filter.addContains(".", queryParam);
             log.debug("using search query {}", queryParam);
-            query.setFilter(filter);
+
+            queryFilter = query.createFilter();
+            queryFilter.addContains(".", queryParam);
         }
+        return queryFilter;
     }
 
 
