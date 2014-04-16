@@ -230,7 +230,7 @@ public class EssentialsListComponent extends CommonComponent {
      * @return null if query was null or invalid
      */
     protected String getSearchQuery(HstRequest request) {
-        return cleanupSearchQuery(getAnyParameter(request, REQUEST_ATTR_QUERY));
+        return cleanupSearchQuery(getAnyParameter(request, REQUEST_PARAM_QUERY));
     }
 
 
@@ -241,7 +241,7 @@ public class EssentialsListComponent extends CommonComponent {
      * @return the current page of the query
      */
     protected int getCurrentPage(final HstRequest request) {
-        return getAnyIntParameter(request, REQUEST_ATTR_PAGE, 1);
+        return getAnyIntParameter(request, REQUEST_PARAM_PAGE, 1);
     }
 
     /**
