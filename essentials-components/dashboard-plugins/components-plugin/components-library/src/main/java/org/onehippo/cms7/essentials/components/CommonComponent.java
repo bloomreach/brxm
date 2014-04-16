@@ -32,7 +32,7 @@ import com.google.common.base.Strings;
  *
  * @version "$Id$"
  */
-public class CommonComponent extends BaseHstComponent {
+public abstract class CommonComponent extends BaseHstComponent {
 
     /**
      * Name of the content not found (404) redirect page
