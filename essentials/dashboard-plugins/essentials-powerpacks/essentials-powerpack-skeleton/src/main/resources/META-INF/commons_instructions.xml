@@ -14,14 +14,14 @@
     <file action="copy" source="powerpack/jsp/pagination.jsp" target="{{jspRoot}}/include/pagination.jsp"/>
     <!-- skeleton-->
     <file action="copy" source="powerpack/jsp/homepage-main-content.jsp" target="{{jspRoot}}/{{namespace}}/homepage-main-content.jsp"/>
-    <file action="copy" source="powerpack/jsp/base-layout.jsp" target="{{jspRoot}}/common/base-layout.jsp"/>
-    <file action="copy" source="powerpack/jsp/base-top-menu.jsp" target="{{jspRoot}}/common/base-top-menu.jsp"/>
-    <file action="copy" source="powerpack/jsp/base-footer-content.jsp" target="{{jspRoot}}/common/base-footer-content.jsp"/>
+    <file action="copy" source="powerpack/jsp/base-layout.jsp" target="{{jspRoot}}/{{namespace}}/base-layout.jsp"/>
+    <file action="copy" source="powerpack/jsp/base-top-menu.jsp" target="{{jspRoot}}/{{namespace}}/base-top-menu.jsp"/>
+    <file action="copy" source="powerpack/jsp/base-footer-content.jsp" target="{{jspRoot}}/{{namespace}}/base-footer-content.jsp"/>
   </instructionSet>
   <instructionSet group="jsp">
-    <xml action="copy" source="powerpack/xml/hst/templates/base-layout-jsp.xml" target="/hst:hst/hst:configurations/common/hst:templates"/>
-    <xml action="copy" source="powerpack/xml/hst/templates/base-top-menu-jsp.xml" target="/hst:hst/hst:configurations/common/hst:templates"/>
-    <xml action="copy" source="powerpack/xml/hst/templates/base-footer-content-jsp.xml" target="/hst:hst/hst:configurations/common/hst:templates"/>
+    <xml action="copy" source="powerpack/xml/hst/templates/base-layout-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="powerpack/xml/hst/templates/base-top-menu-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="powerpack/xml/hst/templates/base-footer-content-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="powerpack/xml/hst/templates/homepage-main-content-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
 
@@ -36,9 +36,9 @@
     <file action="copy" source="powerpack/freemarker/base-footer-content.ftl" target="{{freemarkerRoot}}/{{namespace}}/base-footer-content.ftl"/>
   </instructionSet>
   <instructionSet group="freemarker">
-    <xml action="copy" source="powerpack/xml/hst/templates/base-layout-freemarker.xml" target="/hst:hst/hst:configurations/common/hst:templates"/>
-    <xml action="copy" source="powerpack/xml/hst/templates/base-top-menu-freemarker.xml" target="/hst:hst/hst:configurations/common/hst:templates"/>
-    <xml action="copy" source="powerpack/xml/hst/templates/base-footer-content-freemarker.xml" target="/hst:hst/hst:configurations/common/hst:templates"/>
+    <xml action="copy" source="powerpack/xml/hst/templates/base-layout-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="powerpack/xml/hst/templates/base-top-menu-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="powerpack/xml/hst/templates/base-footer-content-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="powerpack/xml/hst/templates/homepage-main-content-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
 

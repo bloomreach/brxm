@@ -24,7 +24,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
-import org.onehippo.cms7.essentials.components.cms.modules.EventBusListenerModule;
+import org.onehippo.cms7.essentials.components.cms.handlers.HandlerUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +71,7 @@ public final class BlogUpdater {
         final String authorProperty = projectNamespace + ":fullname";
         while (authorMirrors.hasNext()) {
             final Node mirror = authorMirrors.nextNode();
-            final Node author = EventBusListenerModule.getReferencedVariant(mirror, "published");
+            final Node author = HandlerUtils.getReferencedVariant(mirror, "published");
 
             if (author != null) {
 
