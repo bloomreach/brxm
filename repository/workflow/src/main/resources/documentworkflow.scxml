@@ -328,13 +328,17 @@
 
     <state id="versioning">
 
+      <onentry>
+        <!-- always enable the listVersions, even if no version is available (yet) -->
+        <hippo:action action="listVersions" enabledExpr="true"/>
+      </onentry>
+
+      <!-- always support the listVersions operation -->
+      <transition event="listVersions">
+        <hippo:listVersions variant="unpublished" />
+      </transition>
+
       <state id="no-versioning">
-        <onentry>
-          <hippo:action action="listVersions" enabledExpr="true"/>
-        </onentry>
-        <transition event="listVersions">
-          <hippo:listVersions variant="unpublished" />
-        </transition>
         <!-- a document only becomes versionable once an unpublished document variant exists -->
         <transition target="versionable" cond="!!unpublished"/>
       </state>
