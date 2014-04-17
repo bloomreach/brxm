@@ -31,11 +31,10 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
-import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
+import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.configuration.site.MountSiteMapConfiguration;
@@ -46,6 +45,37 @@ import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.core.util.PropertyParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.configuration.HstNodeTypes.ANY;
+import static org.hippoecm.hst.configuration.HstNodeTypes.EDITABLE_PROPERTY_STATE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROEPRTY_SCHEME_AGNOSTIC;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_CACHEABLE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCALE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_ABSTRACTPAGES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMAPITEM;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PAGE_TITLE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_AUTHENTICATED;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENT_CONFIG_MAPPING_NAMES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENT_CONFIG_MAPPING_VALUES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_ERRORCODE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_NAMEDPIPELINE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_REF_ID;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_RESOURCE_BUNDLE_ID;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_ROLES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_SCHEME;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_SITEMAPITEMHANDLERIDS;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_STATUSCODE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_USERS;
+import static org.hippoecm.hst.configuration.HstNodeTypes.WILDCARD;
+
 
 public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, ConfigurationLockInfo
 {
@@ -71,8 +101,6 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
     private String refId;
 
     private String pageTitle;
-
-    private String qualifiedId;
 
     private String value;
 
@@ -157,22 +185,17 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
         this.parentItem = (HstSiteMapItemService)parentItem;
         this.hstSiteMap = hstSiteMap;
         this.depth = depth;
-        String nodePath = StringPool.get(node.getValueProvider().getPath());
-
         canonicalIdentifier = node.getValueProvider().getIdentifier();
-        canonicalPath = node.getValueProvider().getPath();
+        canonicalPath = StringPool.get(node.getValueProvider().getPath());
         workspaceConfiguration = ConfigurationUtils.isWorkspaceConfig(node);
-        lockedBy = node.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY);
-        lockedOn = node.getValueProvider().getDate(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON);
-
-
-        qualifiedId = nodePath;
+        lockedBy = node.getValueProvider().getString(GENERAL_PROPERTY_LOCKED_BY);
+        lockedOn = node.getValueProvider().getDate(GENERAL_PROPERTY_LOCKED_ON);
 
         // the id is the relative path below the root sitemap node. You cannot do a substring on the value provider getPath because due to inheritance
         // there can be completely different paths for the root sitemap node than for the inherited sitemap items.
         HstNode crNode = node;
         StringBuilder idBuilder = new StringBuilder("/").append(crNode.getValueProvider().getName());
-        while(crNode.getParent().getNodeTypeName().equals(HstNodeTypes.NODETYPE_HST_SITEMAPITEM)) {
+        while(crNode.getParent().getNodeTypeName().equals(NODETYPE_HST_SITEMAPITEM)) {
             crNode = crNode.getParent();
             idBuilder.insert(0, crNode.getValueProvider().getName()).insert(0, "/");
         }
@@ -182,16 +205,16 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
         // currently, the value is always the nodename
         value = StringPool.get(node.getValueProvider().getName());
 
-        if(node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_REF_ID)) {
-            refId = StringPool.get(node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_REF_ID));
+        if(node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_REF_ID)) {
+            refId = StringPool.get(node.getValueProvider().getString(SITEMAPITEM_PROPERTY_REF_ID));
         }
 
-        if(node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PAGE_TITLE)) {
-            pageTitle = StringPool.get(node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PAGE_TITLE));
+        if(node.getValueProvider().hasProperty(SITEMAPITEM_PAGE_TITLE)) {
+            pageTitle = StringPool.get(node.getValueProvider().getString(SITEMAPITEM_PAGE_TITLE));
         }
 
-        statusCode = node.getValueProvider().getLong(HstNodeTypes.SITEMAPITEM_PROPERTY_STATUSCODE).intValue();
-        errorCode = node.getValueProvider().getLong(HstNodeTypes.SITEMAPITEM_PROPERTY_ERRORCODE).intValue();
+        statusCode = node.getValueProvider().getLong(SITEMAPITEM_PROPERTY_STATUSCODE).intValue();
+        errorCode = node.getValueProvider().getLong(SITEMAPITEM_PROPERTY_ERRORCODE).intValue();
 
         if(parentItem != null) {
             parameterizedPath = this.parentItem.getParameterizedPath()+"/";
@@ -199,18 +222,18 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
         } else {
             parameterizedPath = "";
         }
-        if(HstNodeTypes.WILDCARD.equals(value)) {
+        if(WILDCARD.equals(value)) {
             occurences++;
             parameterizedPath = parameterizedPath + "${" + occurences + "}";
             isWildCard = true;
-        } else if(HstNodeTypes.ANY.equals(value)) {
+        } else if(ANY.equals(value)) {
             occurences++;
             parameterizedPath = parameterizedPath + "${" + occurences + "}";
             isAny = true;
-        } else if(value.contains(HstNodeTypes.WILDCARD)) {
+        } else if(value.contains(WILDCARD)) {
             containsWildCard = true;
-            postfix = value.substring(value.indexOf(HstNodeTypes.WILDCARD) + HstNodeTypes.WILDCARD.length());
-            prefix = value.substring(0, value.indexOf(HstNodeTypes.WILDCARD));
+            postfix = value.substring(value.indexOf(WILDCARD) + WILDCARD.length());
+            prefix = value.substring(0, value.indexOf(WILDCARD));
             if(postfix.contains(".")) {
                 extension = postfix.substring(postfix.indexOf("."));
             }
@@ -218,19 +241,19 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
                 ((HstSiteMapItemService)parentItem).addWildCardPrefixedChildSiteMapItems(this);
             }
             occurences++;
-            parameterizedPath = parameterizedPath + value.replace(HstNodeTypes.WILDCARD, "${"+occurences+"}" );
-        } else if(value.contains(HstNodeTypes.ANY)) {
+            parameterizedPath = parameterizedPath + value.replace(WILDCARD, "${"+occurences+"}" );
+        } else if(value.contains(ANY)) {
             containsAny = true;
-            postfix = value.substring(value.indexOf(HstNodeTypes.ANY) + HstNodeTypes.ANY.length());
+            postfix = value.substring(value.indexOf(ANY) + ANY.length());
             if(postfix.contains(".")) {
                 extension = postfix.substring(postfix.indexOf("."));
             }
-            prefix = value.substring(0, value.indexOf(HstNodeTypes.ANY));
+            prefix = value.substring(0, value.indexOf(ANY));
             if(parentItem != null) {
                 ((HstSiteMapItemService)parentItem).addAnyPrefixedChildSiteMapItems(this);
             }
             occurences++;
-            parameterizedPath = parameterizedPath + value.replace(HstNodeTypes.ANY, "${"+occurences+"}" );
+            parameterizedPath = parameterizedPath + value.replace(ANY, "${"+occurences+"}" );
         }
         else {
             parameterizedPath = parameterizedPath + value;
@@ -250,16 +273,17 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
                 PropertyParser.DEFAULT_VALUE_SEPARATOR,
                 true);
 
-        String[] parameterNames = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES);
-        String[] parameterValues = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES);
+        String[] parameterNames = node.getValueProvider().getStrings(GENERAL_PROPERTY_PARAMETER_NAMES);
+        String[] parameterValues = node.getValueProvider().getStrings(GENERAL_PROPERTY_PARAMETER_VALUES);
 
         //componentConfigurationIdMappings
-        String[] componentConfigurationNames = node.getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENT_CONFIG_MAPPING_NAMES);
-        String[] componentConfigurationValues = node.getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENT_CONFIG_MAPPING_VALUES);
+        String[] componentConfigurationNames = node.getValueProvider().getStrings(SITEMAPITEM_PROPERTY_COMPONENT_CONFIG_MAPPING_NAMES);
+        String[] componentConfigurationValues = node.getValueProvider().getStrings(SITEMAPITEM_PROPERTY_COMPONENT_CONFIG_MAPPING_VALUES);
 
         if(componentConfigurationNames != null && componentConfigurationValues != null){
             if(componentConfigurationNames.length != componentConfigurationValues.length) {
-                log.warn("Skipping componentConfigurationMappings for sitemapitem '{}' because they only make sense if there are equal number of names and values", qualifiedId);
+                log.warn("Skipping componentConfigurationMappings for sitemapitem '{}' because they only make sense " +
+                        "if there are equal number of names and values", canonicalPath);
             }  else {
                 componentConfigurationIdMappings = new HashMap<>();
                 for(int i = 0; i < componentConfigurationNames.length ; i++) {
@@ -270,7 +294,8 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
 
         if(parameterNames != null && parameterValues != null){
            if(parameterNames.length != parameterValues.length) {
-               log.warn("Skipping parameters for sitemapitem '{}' because they only make sense if there are equal number of names and values", qualifiedId);
+               log.warn("Skipping parameters for sitemapitem '{}' because they only make sense if there are equal number of names and values",
+                       canonicalPath);
            }  else {
                for (int i = 0; i < parameterNames.length ; i++) {
                    if (parameterValues[i] != null && parameterValues[i].contains("${")) {
@@ -299,7 +324,7 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
             }
         }
 
-        relativeContentPath = node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH);
+        relativeContentPath = node.getValueProvider().getString(SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH);
         if(relativeContentPath != null && relativeContentPath.contains(PARENT_PROPERTY_PLACEHOLDER)) {
              if(parentItem == null || parentItem.getRelativeContentPath() == null) {
                  log.error("Cannot use '{}' for a sitemap item that does not have a parent or a parent without relative content path. Used at: '{}'", PARENT_PROPERTY_PLACEHOLDER, id);
@@ -312,7 +337,7 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
             String resolved = (String) mountParameterParser.resolveProperty("relativeContentPath", relativeContentPath);
             if (containsInvalidOrNonIntegerPlaceholders(resolved)) {
                 log.warn("Invalid irreplaceable property placeholder found for hst:relativecontentpath '{}' for sitemap item '{}'." +
-                        "Setting relativeContentPath to null", new String[]{relativeContentPath, qualifiedId});
+                        "Setting relativeContentPath to null", new String[]{relativeContentPath, canonicalPath});
                 relativeContentPath = null;
             } else {
                 relativeContentPath = resolved;
@@ -323,12 +348,13 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
         }
         relativeContentPath = StringPool.get(relativeContentPath);
 
-        this.componentConfigurationId = node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID);
+        this.componentConfigurationId = node.getValueProvider().getString(SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID);
         if (componentConfigurationId != null && componentConfigurationId.contains("${")) {
             String resolved = (String) mountParameterParser.resolveProperty("componentConfigurationId", componentConfigurationId);
             if (containsInvalidOrNonIntegerPlaceholders(resolved)) {
-                log.warn("Invalid irreplaceable property placeholder found for hst:componentconfigurationid '{}' for sitemap item '{}'. " +
-                        "Setting relativeContentPath to null", new String[]{relativeContentPath, qualifiedId});
+                log.warn("Invalid irreplaceable property placeholder found for {} '{}' for sitemap item '{}'. " +
+                        "Setting relativeContentPath to null", new String[]{SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID,
+                        relativeContentPath, canonicalPath});
                 componentConfigurationId = null;
             } else {
                 componentConfigurationId = resolved;
@@ -336,7 +362,13 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
         }
         componentConfigurationId = StringPool.get(componentConfigurationId);
 
-        String[] siteMapItemHandlerIds = node.getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_SITEMAPITEMHANDLERIDS);
+        if (componentConfigurationId != null && componentConfigurationId.startsWith(NODENAME_HST_ABSTRACTPAGES) ) {
+            log.warn("Invalid {} '{}' for '{}' because a sitemap item should not reference an " +
+                    "abstract page.",
+                    new String[] {SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID, componentConfigurationId, canonicalPath});
+        }
+
+        String[] siteMapItemHandlerIds = node.getValueProvider().getStrings(SITEMAPITEM_PROPERTY_SITEMAPITEMHANDLERIDS);
         if (ArrayUtils.isEmpty(siteMapItemHandlerIds)) {
             siteMapItemHandlerIds = mountSiteMapConfiguration.getDefaultSiteMapItemHandlerIds();
         }
@@ -351,8 +383,8 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
             }
         }
 
-        if (node.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCALE)) {
-            locale = node.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCALE);
+        if (node.getValueProvider().hasProperty(GENERAL_PROPERTY_LOCALE)) {
+            locale = node.getValueProvider().getString(GENERAL_PROPERTY_LOCALE);
         } else if(parentItem != null){
             locale = parentItem.getLocale();
         } else {
@@ -360,14 +392,14 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
         }
         locale = StringPool.get(locale);
 
-        if (node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_AUTHENTICATED)) {
-            authenticated = node.getValueProvider().getBoolean(HstNodeTypes.SITEMAPITEM_PROPERTY_AUTHENTICATED);
+        if (node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_AUTHENTICATED)) {
+            authenticated = node.getValueProvider().getBoolean(SITEMAPITEM_PROPERTY_AUTHENTICATED);
         } else if(this.parentItem != null){
             authenticated = parentItem.isAuthenticated();
         }
 
-        if (node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_ROLES)) {
-            String [] rolesProp = node.getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_ROLES);
+        if (node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_ROLES)) {
+            String [] rolesProp = node.getValueProvider().getStrings(SITEMAPITEM_PROPERTY_ROLES);
             roles = new HashSet<>();
             CollectionUtils.addAll(this.roles, rolesProp);
         } else if (this.parentItem != null){
@@ -376,8 +408,8 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
             roles = new HashSet<>(0);
         }
 
-        if (node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_USERS)) {
-            String [] usersProp = node.getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_USERS);
+        if (node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_USERS)) {
+            String [] usersProp = node.getValueProvider().getStrings(SITEMAPITEM_PROPERTY_USERS);
             users = new HashSet<>();
             CollectionUtils.addAll(this.users, usersProp);
         } else if (parentItem != null){
@@ -386,12 +418,12 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
             users = new HashSet<>();
         }
 
-        if(node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING)) {
-            this.isExcludedForLinkRewriting = node.getValueProvider().getBoolean(HstNodeTypes.SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING);
+        if(node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING)) {
+            this.isExcludedForLinkRewriting = node.getValueProvider().getBoolean(SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING);
         }
 
-        if(node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_NAMEDPIPELINE)) {
-            namedPipeline = node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_NAMEDPIPELINE);
+        if(node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_NAMEDPIPELINE)) {
+            namedPipeline = node.getValueProvider().getString(SITEMAPITEM_PROPERTY_NAMEDPIPELINE);
         } else if(this.parentItem != null) {
             namedPipeline = parentItem.getNamedPipeline();
         } else {
@@ -401,8 +433,8 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
 
         namedPipeline = StringPool.get(namedPipeline);
 
-        if(node.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE)) {
-            cacheable = node.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE);
+        if(node.getValueProvider().hasProperty(GENERAL_PROPERTY_CACHEABLE)) {
+            cacheable = node.getValueProvider().getBoolean(GENERAL_PROPERTY_CACHEABLE);
         } else if(this.parentItem != null) {
             cacheable = parentItem.isCacheable();
         } else {
@@ -410,23 +442,23 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
         }
 
         scheme = null;
-        if (node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_SCHEME)) {
-            scheme = StringPool.get(node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_SCHEME));
+        if (node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_SCHEME)) {
+            scheme = StringPool.get(node.getValueProvider().getString(SITEMAPITEM_PROPERTY_SCHEME));
         }
         if (StringUtils.isBlank(scheme)) {
             scheme = parentItem != null ? parentItem.getScheme() : mountSiteMapConfiguration.getScheme();
         }
 
-        if(node.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROEPRTY_SCHEME_AGNOSTIC)) {
-            schemeAgnostic = node.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROEPRTY_SCHEME_AGNOSTIC);
+        if(node.getValueProvider().hasProperty(GENERAL_PROEPRTY_SCHEME_AGNOSTIC)) {
+            schemeAgnostic = node.getValueProvider().getBoolean(GENERAL_PROEPRTY_SCHEME_AGNOSTIC);
         } else {
             schemeAgnostic = parentItem != null ? parentItem.isSchemeAgnostic() : mountSiteMapConfiguration.isSchemeAgnostic();
         }
 
-        if(node.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE)) {
-            schemeNotMatchingResponseCode = (int)node.getValueProvider().getLong(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE).longValue();
+        if(node.getValueProvider().hasProperty(GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE)) {
+            schemeNotMatchingResponseCode = (int)node.getValueProvider().getLong(GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE).longValue();
             if (!ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode(schemeNotMatchingResponseCode)) {
-                log.warn("Invalid '{}' configured on '{}'. Use inherited value. Supported values are '{}'", new String[]{HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE,
+                log.warn("Invalid '{}' configured on '{}'. Use inherited value. Supported values are '{}'", new String[]{GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE,
                         node.getValueProvider().getPath(), ConfigurationUtils.suppertedSchemeNotMatchingResponseCodesAsString()});
                 schemeNotMatchingResponseCode = -1;
             }
@@ -436,18 +468,18 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
                     parentItem.getSchemeNotMatchingResponseCode() : mountSiteMapConfiguration.getSchemeNotMatchingResponseCode();
         }
 
-        if (node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RESOURCE_BUNDLE_ID)) {
-            resourceBundleIds = StringUtils.split(StringPool.get(node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_RESOURCE_BUNDLE_ID)), " ,\t\f\r\n");
+        if (node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_RESOURCE_BUNDLE_ID)) {
+            resourceBundleIds = StringUtils.split(StringPool.get(node.getValueProvider().getString(SITEMAPITEM_PROPERTY_RESOURCE_BUNDLE_ID)), " ,\t\f\r\n");
         } else {
             resourceBundleIds = parentItem != null ? parentItem.getResourceBundleIds() : mountSiteMapConfiguration.getDefaultResourceBundleIds();
         }
 
         for(HstNode child : node.getNodes()) {
-            if ("deleted".equals(child.getValueProvider().getString(HstNodeTypes.EDITABLE_PROPERTY_STATE))) {
+            if ("deleted".equals(child.getValueProvider().getString(EDITABLE_PROPERTY_STATE))) {
                 log.debug("SKipping marked deleted node {}", child.getValueProvider().getPath());
                 continue;
             }
-            if(HstNodeTypes.NODETYPE_HST_SITEMAPITEM.equals(child.getNodeTypeName())) {
+            if(NODETYPE_HST_SITEMAPITEM.equals(child.getNodeTypeName())) {
                 try {
                     HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, mountSiteMapConfiguration,  siteMapItemHandlersConfiguration , this, this.hstSiteMap, depth + 1);
                     childSiteMapItems.put(siteMapItemService.getValue(), siteMapItemService);
@@ -758,7 +790,7 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
     }
 
     public String getQualifiedId() {
-        return qualifiedId;
+        return canonicalPath;
     }
 
     public boolean isExcludedForLinkRewriting() {
