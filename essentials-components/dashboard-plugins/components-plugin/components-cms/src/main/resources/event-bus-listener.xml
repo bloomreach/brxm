@@ -20,7 +20,7 @@
     <sv:value>hipposys:module</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:className" sv:type="String">
-    <sv:value>org.onehippo.cms7.essentials.components.cms.modules.EventBusListenerModule</sv:value>
+    <sv:value>org.onehippo.cms7.essentials.components.cms.modules.BlogListenerModule</sv:value>
   </sv:property>
   <sv:node sv:name="hippo:moduleconfig">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
