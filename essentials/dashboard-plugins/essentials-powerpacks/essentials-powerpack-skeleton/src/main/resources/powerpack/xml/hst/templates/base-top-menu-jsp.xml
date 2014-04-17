@@ -4,7 +4,7 @@
     <sv:value>hst:template</sv:value>
   </sv:property>
   <sv:property sv:name="hst:renderpath" sv:type="String">
-    <sv:value>jsp/{{namespace}}/base-top-menu.jsp</sv:value>
+    <sv:value>jsp/common/base-top-menu.jsp</sv:value>
   </sv:property>
 
 </sv:node>

@@ -20,7 +20,7 @@
     <sv:value>hst:template</sv:value>
   </sv:property>
   <sv:property sv:name="hst:renderpath" sv:type="String">
-    <sv:value>freemarker/{{namespace}}/base-footer-content.ftl</sv:value>
+    <sv:value>freemarker/common/base-footer-content.ftl</sv:value>
   </sv:property>
 
 </sv:node>

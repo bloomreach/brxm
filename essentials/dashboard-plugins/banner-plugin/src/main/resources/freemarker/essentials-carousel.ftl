@@ -3,7 +3,6 @@
 <#-- @ftlvariable name="showPagination" type="java.lang.Boolean" -->
 <#-- @ftlvariable name="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable" -->
 <#-- @ftlvariable name="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable" -->
-<#-- @ftlvariable name="item" type="org.onehippo.appstore.beans.Banner" -->
 <#-- @ftlvariable name="pause" type="java.lang.Boolean" -->
 <#-- @ftlvariable name="cycle" type="java.lang.Boolean" -->
 <#-- @ftlvariable name="interval" type="java.lang.Integer" -->

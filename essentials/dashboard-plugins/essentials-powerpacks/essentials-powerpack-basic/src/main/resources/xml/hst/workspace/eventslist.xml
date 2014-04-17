@@ -33,14 +33,14 @@
       </sv:property>
       <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
         <sv:value>on</sv:value>
-        <sv:value>appstore:eventsdocument</sv:value>
+        <sv:value>{{namespace}}:eventsdocument</sv:value>
         <sv:value/>
         <sv:value>desc</sv:value>
         <sv:value>off</sv:value>
         <sv:value>on</sv:value>
         <sv:value/>
         <sv:value>10</sv:value>
-        <sv:value>appstore:enddate</sv:value>
+        <sv:value>{{namespace}}:enddate</sv:value>
       </sv:property>
       <sv:property sv:name="hst:template" sv:type="String">
         <sv:value>eventslist-main-eventslist</sv:value>
