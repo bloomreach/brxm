@@ -52,26 +52,25 @@ public class ListVersionsVariantTask extends AbstractDocumentTask {
 
     @Override
     public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
-        if (getVariant() == null || !getVariant().hasNode()) {
-            throw new WorkflowException("No variant provided");
-        }
-        Node subject = getVariant().getNode(getWorkflowContext().getInternalWorkflowSession());
-        if (subject.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
-            final SortedMap<Calendar, Set<String>> listing = new TreeMap<>();
-            VersionHistory versionHistory = subject.getVersionHistory();
+        if (getVariant() != null && getVariant().hasNode()) {
+            Node subject = getVariant().getNode(getWorkflowContext().getInternalWorkflowSession());
+            if (subject.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
+                final SortedMap<Calendar, Set<String>> listing = new TreeMap<>();
+                VersionHistory versionHistory = subject.getVersionHistory();
 
-            for (VersionIterator iter = versionHistory.getAllVersions(); iter.hasNext(); ) {
-                Version version = iter.nextVersion();
-                if (version.getName().equals(JcrConstants.JCR_ROOT_VERSION)) {
-                    continue;
+                for (VersionIterator iter = versionHistory.getAllVersions(); iter.hasNext(); ) {
+                    Version version = iter.nextVersion();
+                    if (version.getName().equals(JcrConstants.JCR_ROOT_VERSION)) {
+                        continue;
+                    }
+                    Set<String> labelsSet = new TreeSet<String>();
+                    String[] labels = versionHistory.getVersionLabels();
+                    Collections.addAll(labelsSet, labels);
+                    labelsSet.add(version.getName());
+                    listing.put(version.getCreated(), labelsSet);
                 }
-                Set<String> labelsSet = new TreeSet<String>();
-                String[] labels = versionHistory.getVersionLabels();
-                Collections.addAll(labelsSet, labels);
-                labelsSet.add(version.getName());
-                listing.put(version.getCreated(), labelsSet);
+                return listing;
             }
-            return listing;
         }
         return new TreeMap<>();
     }

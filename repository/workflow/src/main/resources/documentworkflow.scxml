@@ -329,13 +329,18 @@
     <state id="versioning">
 
       <state id="no-versioning">
+        <onentry>
+          <hippo:action action="listVersions" enabledExpr="true"/>
+        </onentry>
+        <transition event="listVersions">
+          <hippo:listVersions variant="unpublished" />
+        </transition>
         <!-- a document only becomes versionable once an unpublished document variant exists -->
         <transition target="versionable" cond="!!unpublished"/>
       </state>
 
       <state id="versionable">
         <onentry>
-          <hippo:action action="listVersions" enabledExpr="true"/>
           <hippo:action action="retrieveVersion" enabledExpr="true"/>
           <if cond="workflowContext.isGranted(unpublished, 'hippo:editor')">
             <hippo:action action="version" enabledExpr="true"/>
@@ -346,10 +351,6 @@
 
         <transition event="version">
           <hippo:version variant="unpublished"  />
-        </transition>
-
-        <transition event="listVersions">
-          <hippo:listVersions variant="unpublished"  />
         </transition>
 
         <transition event="retrieveVersion">
