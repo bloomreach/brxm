@@ -85,7 +85,6 @@ public class EssentialsListComponent extends CommonComponent {
     protected void populateRequest(final HstRequest request, final EssentialsPageable paramInfo, final Pageable<? extends HippoBean> pageable) {
         request.setAttribute(REQUEST_ATTR_QUERY, getSearchQuery(request));
         request.setAttribute(REQUEST_ATTR_PAGEABLE, pageable);
-        request.setAttribute(REQUEST_ATTR_PAGE, getCurrentPage(request));
         request.setAttribute(REQUEST_ATTR_PARAM_INFO, paramInfo);
 
         if (pageable != null) {

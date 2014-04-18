@@ -1,6 +1,5 @@
 <#include "/WEB-INF/freemarker/include/imports.ftl">
 <#-- @ftlvariable name="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable" -->
-<#-- @ftlvariable name="page" type="java.lang.Integer" -->
 <#if pageable??>
 <ul class="pagination">
     <li class="disabled"><a href="#">${pageable.total} document(s)</a></li>
@@ -16,7 +15,7 @@
             </@hst.renderURL>
             <li><a href="${pageUrlPrevious}">previous</a></li>
         </#if>
-        <#if page == pageNr>
+        <#if pageable.currentPage == pageNr>
             <li class="active"><a href="#">${pageNr}</a></li>
         <#else >
             <li><a href="${pageUrl}">${pageNr}</a></li>

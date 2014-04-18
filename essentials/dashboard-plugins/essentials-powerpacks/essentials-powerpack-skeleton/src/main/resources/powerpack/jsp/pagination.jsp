@@ -1,6 +1,5 @@
 <%@ include file="/WEB-INF/jsp/include/imports.jsp" %>
 <%--@elvariable id="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable"--%>
-<%--@elvariable id="page" type="java.lang.Integer"--%>
 <ul class="pagination">
   <li class="disabled"><a href="#">${pageable.total} document(s)</a></li>
   <c:forEach var="pageNr" items="${pageable.pageNumbersArray}" varStatus="index">
@@ -16,7 +15,7 @@
       <li><a href="${pageUrlPrevious}">previous</a></li>
     </c:if>
     <c:choose>
-      <c:when test="${page eq pageNr}">
+      <c:when test="${pageable.currentPage eq pageNr}">
         <li class="active"><a href="#">${pageNr}</a></li>
       </c:when>
       <c:otherwise>
