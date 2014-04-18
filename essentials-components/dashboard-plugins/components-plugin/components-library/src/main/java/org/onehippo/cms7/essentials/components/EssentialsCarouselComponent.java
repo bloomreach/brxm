@@ -34,30 +34,12 @@ import org.onehippo.cms7.essentials.components.paging.DefaultPagination;
 @ParametersInfo(type = EssentialsCarouselComponentInfo.class)
 public class EssentialsCarouselComponent extends CommonComponent {
 
-
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
         final EssentialsCarouselComponentInfo paramInfo = getComponentParametersInfo(request);
         final List<HippoDocument> items = getCarouselItems(paramInfo);
         request.setAttribute(REQUEST_ATTR_PAGEABLE, new DefaultPagination<>(items));
         request.setAttribute(REQUEST_ATTR_PARAM_INFO, paramInfo);
-        setCarouselOptions(request, paramInfo);
-    }
-
-    /**
-     * Sets options like effects, speed, etc. of selected carousel component
-     *
-     * @param request       HstRequest instance
-     * @param componentInfo Carousel component annotation
-     */
-    public void setCarouselOptions(final HstRequest request, final EssentialsCarouselComponentInfo componentInfo) {
-        request.setAttribute("interval", componentInfo.getInterval());
-        request.setAttribute("cycle", componentInfo.getCycle());
-        request.setAttribute("pause", componentInfo.getPause());
-        request.setAttribute("showNavigation", componentInfo.getShowNavigation());
-        request.setAttribute("carouselHeight", componentInfo.getCarouselHeight());
-        request.setAttribute("carouselWidth", componentInfo.getCarouselWidth());
-        request.setAttribute("carouselBackgroundColor", componentInfo.getCarouselBackgroundColor());
     }
 
     /**
@@ -76,6 +58,4 @@ public class EssentialsCarouselComponent extends CommonComponent {
         addBeanForPath(componentInfo.getCarouselItem6(), beans);
         return beans;
     }
-
-
 }
