@@ -18,7 +18,9 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +40,25 @@ public final class SiteUtils {
     public static final int DEFAULT_PAGE = 1;
     public static final int DEFAULT_PAGE_SIZE = 10;
 
+    /**
+     * Try to determine the site-relative repository path of a bean, given a request context.
+     *
+     * If the bean doesn't fall under the requested site root, just return the bean's full path.
+     *
+     * @param bean    representing the desired repository node
+     * @param context current HST context
+     * @return        relative repository path of the bean under the current site root,
+     *                or absolute path if the bean is not under the current site root.
+     */
+    public static String relativePathFrom(final HippoBean bean, final HstRequestContext context) {
+        final String basePath = context.getSiteContentBasePath();
+        final String beanPath = bean.getCanonicalPath();
+
+        if (!Strings.isNullOrEmpty(beanPath) && beanPath.substring(1).startsWith(basePath)) {
+            return beanPath.substring(1 + basePath.length() + 1); // skip slashes
+        }
+        return beanPath;
+    }
 
     public static boolean getAnyBooleanParam(HstRequest request, String parameter, boolean defaultValue, final BaseHstComponent component) {
         final String p = getAnyParameter(parameter, request, component);
