@@ -3,7 +3,7 @@
 <%--@elvariable id="facetLimit" type="java.lang.Integer"--%>
 <%--@elvariable id="query" type="java.lang.String"--%>
 <form action="<hst:actionURL />" method="get">
-  <div class="form-group">
+  <div class="row form-group">
     <div class="col-xs-8">
       <input type="search" value="<c:out value="${query}"/>" name="query" class="form-control" placeholder="Search blog posts">
 
