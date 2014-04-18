@@ -38,27 +38,19 @@ public abstract class CommonComponent extends BaseHstComponent {
      * Name of the content not found (404) redirect page
      */
     public static final String PAGE_404 = "404page";
-    /**
-     * Attributes  names used within Essentials
-     */
 
     /**
-     * Request parameter to set the current page.
+     * Attribute names used within Essentials
      */
-    protected static final String REQUEST_ATTR_PAGE = "page";
-    protected static final String REQUEST_ATTR_PAGE_SIZE = "pageSize";
-    protected static final String REQUEST_ATTR_PAGE_PAGINATION = "showPagination";
-
-    protected static final String REQUEST_ATTR_PAGEABLE = "pageable";
-    /**
-     * Request attribute to store pageable result in.
-     */
-    protected static final String REQUEST_ATTR_FACETS = "facets";
     protected static final String REQUEST_ATTR_DOCUMENT = "document";
-    protected static final String REQUEST_ATTR_QUERY = "query";
+    protected static final String REQUEST_ATTR_FACETS = "facets";
+    protected static final String REQUEST_ATTR_PAGE = "page"; // current page
+    protected static final String REQUEST_ATTR_PAGEABLE = "pageable";
+    protected static final String REQUEST_ATTR_PARAM_INFO = "cparam"; // (annotated) Component Parameters
+    protected static final String REQUEST_ATTR_QUERY = "query"; // free-text query string
 
     /**
-     * Request parameters (as submitted in HTTP-GET request.
+     * Request parameters (as submitted in HTTP-GET request).
      */
     protected static final String REQUEST_PARAM_QUERY = REQUEST_ATTR_QUERY;
     protected static final String REQUEST_PARAM_PAGE = REQUEST_ATTR_PAGE;

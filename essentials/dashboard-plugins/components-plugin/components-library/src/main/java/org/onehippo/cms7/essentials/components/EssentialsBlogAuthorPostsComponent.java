@@ -61,11 +61,11 @@ public class EssentialsBlogAuthorPostsComponent extends EssentialsListComponent 
                 request.setAttribute("author", authors.get(0));
                 request.setAttribute("authors", authors);
                 final Class<? extends HippoBean> clazz = getPrimaryType(context, document);
-                final EssentialsBlogAuthorPostsComponentInfo componentInfo = getComponentParametersInfo(request);
-                final int limit = componentInfo.getPageSize();
-                final String sortField = componentInfo.getSortField();
+                final EssentialsBlogAuthorPostsComponentInfo paramInfo = getComponentParametersInfo(request);
+                final int limit = paramInfo.getPageSize();
+                final String sortField = paramInfo.getSortField();
                 final List<HippoBean> beans = new ArrayList<>(limit);
-                final HippoBean scopeBean = getScopeBean(componentInfo.getScope());
+                final HippoBean scopeBean = getScopeBean(paramInfo.getScope());
                 try {
                     for (AuthorEntry author : authors) {
                         final HstQuery hstQuery = ContentBeanUtils.createIncomingBeansQuery(author, scopeBean, getSearchDepth(), clazz, true);
@@ -88,6 +88,7 @@ public class EssentialsBlogAuthorPostsComponent extends EssentialsListComponent 
                 } catch (QueryException e) {
                     log.error("Error fetching posts by authors", e);
                 }
+                request.setAttribute(REQUEST_ATTR_PARAM_INFO, paramInfo);
             }
         }
     }

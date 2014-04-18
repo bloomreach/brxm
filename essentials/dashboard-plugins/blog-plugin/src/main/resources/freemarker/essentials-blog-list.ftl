@@ -11,7 +11,7 @@
         <p>${item.introduction}</p>
     </article>
     </#list>
-    <#if showPagination??>
+    <#if pageable.showPagination??>
         <#include "/WEB-INF/freemarker/include/pagination.ftl">
     </#if>
 </#if>

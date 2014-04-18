@@ -1,4 +1,4 @@
-\<!doctype html>
+<!doctype html>
 <%@ include file="/WEB-INF/jsp/include/imports.jsp" %>
 <html lang="en">
 <head>

@@ -1,7 +1,6 @@
 <%@ include file="/WEB-INF/jsp/include/imports.jsp" %>
 <%--@elvariable id="item" type="{{beansPackage}}.Blogpost"--%>
 <%--@elvariable id="author" type="{{beansPackage}}.Author"--%>
-<%--@elvariable id="showPagination" type="java.lang.Boolean"--%>
 <%--@elvariable id="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable"--%>
 <div class="panel panel-default">
   <c:if test="${(pageable ne null)}">

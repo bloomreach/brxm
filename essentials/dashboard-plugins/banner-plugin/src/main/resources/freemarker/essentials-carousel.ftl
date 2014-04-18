@@ -1,7 +1,5 @@
 <#include "/WEB-INF/freemarker/include/imports.ftl">
 <#-- @ftlvariable name="item" type="{{beansPackage}}.Banner" -->
-<#-- @ftlvariable name="showPagination" type="java.lang.Boolean" -->
-<#-- @ftlvariable name="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable" -->
 <#-- @ftlvariable name="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable" -->
 <#-- @ftlvariable name="pause" type="java.lang.Boolean" -->
 <#-- @ftlvariable name="cycle" type="java.lang.Boolean" -->

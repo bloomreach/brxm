@@ -23,7 +23,6 @@ import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo;
 import org.onehippo.cms7.essentials.components.paging.DefaultPagination;
 
@@ -38,10 +37,11 @@ public class EssentialsCarouselComponent extends CommonComponent {
 
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
-        final EssentialsCarouselComponentInfo componentInfo = getComponentParametersInfo(request);
-        final List<HippoDocument> items = getCarouselItems(componentInfo);
+        final EssentialsCarouselComponentInfo paramInfo = getComponentParametersInfo(request);
+        final List<HippoDocument> items = getCarouselItems(paramInfo);
         request.setAttribute(REQUEST_ATTR_PAGEABLE, new DefaultPagination<>(items));
-        setCarouselOptions(request, componentInfo);
+        request.setAttribute(REQUEST_ATTR_PARAM_INFO, paramInfo);
+        setCarouselOptions(request, paramInfo);
     }
 
     /**

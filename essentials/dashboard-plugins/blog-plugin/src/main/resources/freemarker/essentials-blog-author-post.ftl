@@ -1,7 +1,6 @@
 <#include "/WEB-INF/freemarker/include/imports.ftl">
 <#-- @ftlvariable name="item" type="{{beansPackage}}.Blogpost" -->
 <#-- @ftlvariable name="author" type="{{beansPackage}}.Author" -->
-<#-- @ftlvariable name="showPagination" type="java.lang.Boolean" -->
 <#-- @ftlvariable name="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable" -->
 
 <div class="panel panel-default">

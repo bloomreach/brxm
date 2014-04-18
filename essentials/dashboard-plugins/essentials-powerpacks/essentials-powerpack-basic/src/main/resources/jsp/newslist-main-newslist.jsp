@@ -1,7 +1,6 @@
 <%@ include file="/WEB-INF/jsp/include/imports.jsp" %>
 <%--@elvariable id="document" type="{{beansPackage}}.NewsDocument"--%>
 <%--@elvariable id="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable"--%>
-<%--@elvariable id="showPagination" type="java.lang.Boolean"--%>
 
 <c:forEach var="item" items="${pageable.items}" varStatus="status">
   <hst:link var="link" hippobean="${item}"/>
@@ -16,6 +15,6 @@
     <p><c:out value="${item.introduction}"/></p>
   </article>
 </c:forEach>
-<c:if test="${showPagination}">
+<c:if test="${pageable.showPagination}">
   <%@ include file="/WEB-INF/jsp/include/pagination.jsp" %>
 </c:if>

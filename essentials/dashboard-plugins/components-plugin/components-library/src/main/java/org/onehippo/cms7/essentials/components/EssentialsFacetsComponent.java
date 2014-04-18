@@ -41,9 +41,9 @@ public class EssentialsFacetsComponent extends CommonComponent {
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
         log.info("**** FACET COMPONENT **** ");
-        final EssentialsFacetsComponentInfo componentInfo = getComponentParametersInfo(request);
+        final EssentialsFacetsComponentInfo paramInfo = getComponentParametersInfo(request);
         final HstRequestContext context = request.getRequestContext();
-        final String facetPath = componentInfo.getFacetPath();
+        final String facetPath = paramInfo.getFacetPath();
         final String queryParam = cleanupSearchQuery(getAnyParameter(request, REQUEST_PARAM_QUERY));
         final HippoFacetNavigationBean hippoFacetNavigationBean = getFacetNavigationBean(context, facetPath, queryParam);
         if (hippoFacetNavigationBean == null) {
@@ -53,6 +53,7 @@ public class EssentialsFacetsComponent extends CommonComponent {
 
         request.setAttribute(REQUEST_ATTR_QUERY, queryParam);
         request.setAttribute(REQUEST_ATTR_FACETS, hippoFacetNavigationBean);
+        request.setAttribute(REQUEST_ATTR_PARAM_INFO, paramInfo);
     }
 
     protected HippoFacetNavigationBean getFacetNavigationBean(final HstRequestContext context, String path, String query) {
