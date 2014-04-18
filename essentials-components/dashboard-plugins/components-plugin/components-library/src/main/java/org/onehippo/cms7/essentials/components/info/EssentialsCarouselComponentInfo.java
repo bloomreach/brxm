@@ -47,10 +47,10 @@ public interface EssentialsCarouselComponentInfo {
     //############################################
     // CAROUSEL SETTINGS
     //############################################
-    @Parameter(name = "pause", displayName = "Pause carousel on mouse enter", defaultValue = "false")
+    @Parameter(name = "pause", displayName = "Pause carousel on mouse enter", defaultValue = "true")
     Boolean getPause();
 
-    @Parameter(name = "cycle", displayName = "Cycle carousel continuously", defaultValue = "false")
+    @Parameter(name = "cycle", displayName = "Cycle carousel continuously", defaultValue = "true")
     Boolean getCycle();
 
     @Parameter(name = "carouselHeight", defaultValue = "250", required = true, displayName = "Carousel height")
