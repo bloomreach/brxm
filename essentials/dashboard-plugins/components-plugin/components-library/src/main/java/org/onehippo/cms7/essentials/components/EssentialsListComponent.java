@@ -23,6 +23,7 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.util.ContentBeanUtils;
 import org.onehippo.cms7.essentials.components.info.EssentialsDocumentListComponentInfo;
 import org.onehippo.cms7.essentials.components.info.EssentialsPageable;
 import org.onehippo.cms7.essentials.components.info.EssentialsSortable;
@@ -65,10 +66,7 @@ public class EssentialsListComponent extends CommonComponent {
 
         final Pageable<HippoBean> pageable;
         if (scope instanceof HippoFacetNavigationBean) {
-            final HippoFacetNavigationBean facetBean = (HippoFacetNavigationBean) scope;
-            final HippoResultSetBean resultSet = facetBean.getResultSet();
-            final HippoDocumentIterator<HippoBean> iterator = resultSet.getDocumentIterator(HippoBean.class);
-            pageable = new IterablePagination<>(iterator, resultSet.getCount().intValue(), paramInfo.getPageSize(), getCurrentPage(request));
+            pageable = doFacetedSearch(request, paramInfo, scope);
         } else {
             pageable = doSearch(request, paramInfo, scope);
         }
@@ -149,6 +147,16 @@ public class EssentialsListComponent extends CommonComponent {
             log.debug("Query exception: ", e);
         }
         return null;
+    }
+
+    protected <T extends EssentialsDocumentListComponentInfo>
+            Pageable<HippoBean> doFacetedSearch(final HstRequest request, final T paramInfo, final HippoBean scope) {
+
+        final String relPath = SiteUtils.relativePathFrom(scope, request.getRequestContext());
+        final HippoFacetNavigationBean facetBean = ContentBeanUtils.getFacetNavigationBean(relPath, getSearchQuery(request));
+        final HippoResultSetBean resultSet = facetBean.getResultSet();
+        final HippoDocumentIterator<HippoBean> iterator = resultSet.getDocumentIterator(HippoBean.class);
+        return new IterablePagination<>(iterator, resultSet.getCount().intValue(), paramInfo.getPageSize(), getCurrentPage(request));
     }
 
     protected void handleInvalidScope(final HstRequest request, final HstResponse response) {
