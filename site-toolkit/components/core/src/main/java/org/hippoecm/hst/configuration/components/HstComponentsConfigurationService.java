@@ -63,14 +63,14 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
 
         id = ccn.getConfigurationRootNode().getValueProvider().getPath();
 
-        final CompositeConfigurationNodes.CompositeConfigurationNode modifiableContainers = ccn.getCompositeConfigurationNodes().get(
+        final CompositeConfigurationNodes.CompositeConfigurationNode referableContainersCNN = ccn.getCompositeConfigurationNodes().get(
                 HstNodeTypes.NODENAME_HST_WORKSPACE + "/" + HstNodeTypes.NODENAME_HST_CONTAINERS);
 
-        final Map<String, HstNode> containers;
-        if (modifiableContainers != null) {
-            containers = modifiableContainers.getCompositeChildren();
+        final Map<String, HstNode> referableContainers;
+        if (referableContainersCNN != null) {
+            referableContainers = referableContainersCNN.getCompositeChildren();
         } else {
-            containers = Collections.emptyMap();
+            referableContainers = Collections.emptyMap();
         }
 
         String[] mainComponentNodeNames = {HstNodeTypes.NODENAME_HST_COMPONENTS,
@@ -88,7 +88,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
                 log.debug("No configuration nodes present for {}", mainComponentNodeName);
                 continue;
             }
-            init(componentNodes, mainComponentNodeName, rootConfigurationPathPrefix, containers, nonPrototypeRootComponents);
+            init(componentNodes, mainComponentNodeName, rootConfigurationPathPrefix, referableContainers, nonPrototypeRootComponents);
         }
 
         prototypePages = Collections.unmodifiableMap(prototypePages);
@@ -233,7 +233,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     private void init(final CompositeConfigurationNodes.CompositeConfigurationNode node,
                       final String rootNodeName,
                       final String rootConfigurationPathPrefix,
-                      final Map<String, HstNode> modifiableContainers,
+                      final Map<String, HstNode> referableContainers,
                       final List<HstComponentConfiguration> nonPrototypeRootComponents) {
 
         for (HstNode child : node.getCompositeChildren().values()) {
@@ -247,9 +247,8 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
                     usedReferenceNames.add(StringPool.get(child.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)));
                 }
                 try {
-                    boolean inherited = !child.getValueProvider().getPath().startsWith(rootConfigurationPathPrefix);
                     HstComponentConfiguration componentConfiguration = new HstComponentConfigurationService(child,
-                            null, rootNodeName, modifiableContainers, inherited);
+                            null, rootNodeName, referableContainers, rootConfigurationPathPrefix);
 
                     if (rootNodeName.equals(HstNodeTypes.NODENAME_HST_PROTOTYPEPAGES)) {
                         prototypePages.put(componentConfiguration.getId(), componentConfiguration);
@@ -286,10 +285,9 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
                     if(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(containerItem.getNodeTypeName()))
                     {
                         try {
-                            boolean inherited = !containerItem.getValueProvider().getPath().startsWith(rootConfigurationPathPrefix);
                             // create a HstComponentConfigurationService that does not traverse to descendant components: this is not needed for the catalog. Hence, the argument 'false'
                             HstComponentConfiguration componentConfiguration = new HstComponentConfigurationService(containerItem,
-                                    null, HstNodeTypes.NODENAME_HST_COMPONENTS , true, null, inherited, null);
+                                    null, HstNodeTypes.NODENAME_HST_COMPONENTS , true, null, rootConfigurationPathPrefix, null);
                             availableContainerItems.add(componentConfiguration);
                             log.debug("Added catalog component to availableContainerItems with key '{}'", componentConfiguration.getId());
                         } catch (ModelLoadingException e) {

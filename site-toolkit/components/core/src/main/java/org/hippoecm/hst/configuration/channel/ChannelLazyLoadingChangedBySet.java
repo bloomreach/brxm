@@ -132,6 +132,11 @@ public class ChannelLazyLoadingChangedBySet implements Set<String> {
             if (!(config instanceof ConfigurationLockInfo)) {
                 continue;
             }
+            final boolean inherited = !((CanonicalInfo) config).getCanonicalPath().startsWith(previewHstSite.getConfigurationPath() + "/");
+            if (inherited) {
+                // skip inherited sitemenu item changes as that is not supported currently
+                continue;
+            }
             String lockedBy = ((ConfigurationLockInfo)config).getLockedBy();
             addUserWithSiteMenuLock(lockedBy, usersWithLock);
         }

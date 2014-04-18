@@ -111,14 +111,17 @@ public class CompositeConfigurationNodes {
             }
 
             List<HstNode> fallbackMainConfigNodes = new ArrayList<>();
-            // see if there is an inherited main config node
-            for (HstNode inherited : orderedRootConfigurationNodeInheritanceList) {
-                if (mainConfigNode == null) {
-                    mainConfigNode =  inherited.getNode(compositeConfigurationNodeRelPath);
-                } else {
-                    HstNode inheritedMainConfigNode = inherited.getNode(compositeConfigurationNodeRelPath);
-                    if (inheritedMainConfigNode != null) {
-                        fallbackMainConfigNodes.add(inheritedMainConfigNode);
+            // see if there is an inherited main config node that is *not* below workspace since workspace nodes are NOT
+            // inherited
+            if (!compositeConfigurationNodeRelPath.startsWith(HstNodeTypes.NODENAME_HST_WORKSPACE)) {
+                for (HstNode inherited : orderedRootConfigurationNodeInheritanceList) {
+                    if (mainConfigNode == null) {
+                        mainConfigNode =  inherited.getNode(compositeConfigurationNodeRelPath);
+                    } else {
+                        HstNode inheritedMainConfigNode = inherited.getNode(compositeConfigurationNodeRelPath);
+                        if (inheritedMainConfigNode != null) {
+                            fallbackMainConfigNodes.add(inheritedMainConfigNode);
+                        }
                     }
                 }
             }

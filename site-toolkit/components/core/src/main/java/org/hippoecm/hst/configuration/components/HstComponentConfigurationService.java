@@ -182,33 +182,33 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     /**
      * rootNodeName is either hst:components or hst:pages.
-     * @param referenceableContainers : can be null
+     * @param referableContainers : can be null
      */
     public HstComponentConfigurationService(final HstNode node,
                                             final HstComponentConfiguration parent,
                                             final String rootNodeName,
-                                            final Map<String, HstNode> referenceableContainers,
-                                            final boolean inherited) {
-        this(node, parent, rootNodeName, false, referenceableContainers, inherited, null);
+                                            final Map<String, HstNode> referableContainers,
+                                            final String rootConfigurationPathPrefix) {
+        this(node, parent, rootNodeName, false, referableContainers, rootConfigurationPathPrefix, null);
     }
 
     /**
      * rootNodeName is either hst:components or hst:pages.
-     * @param referenceableContainers : can be null
+     * @param referableContainers : can be null
      */
     public HstComponentConfigurationService(final HstNode node,
                                             final HstComponentConfiguration parent,
                                             final String rootNodeName,
                                             final boolean isCatalogItem,
-                                            final Map<String, HstNode> referenceableContainers,
-                                            final boolean inherited,
+                                            final Map<String, HstNode> referableContainers,
+                                            String rootConfigurationPathPrefix,
                                             final String explicitName) {
 
 
         this.canonicalStoredLocation = StringPool.get(node.getValueProvider().getCanonicalPath());
         this.canonicalIdentifier = StringPool.get(node.getValueProvider().getIdentifier());
 
-        this.inherited =  inherited;
+        inherited = !canonicalStoredLocation.startsWith(rootConfigurationPathPrefix);
         this.parent = parent;
         this.prototype = HstNodeTypes.NODENAME_HST_PROTOTYPEPAGES.equals(rootNodeName);
 
@@ -351,7 +351,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 log.debug("SKipping marked deleted node {}", child.getValueProvider().getPath());
                 continue;
             }
-            HstComponentConfigurationService childComponent = loadChildComponent(child, rootNodeName, referenceableContainers);
+            HstComponentConfigurationService childComponent = loadChildComponent(child, rootNodeName,
+                    rootConfigurationPathPrefix, referableContainers);
             if (childComponent == null) {
                 continue;
             }
@@ -364,6 +365,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     private HstComponentConfigurationService loadChildComponent(final HstNode child,
                                                                 final String rootNodeName,
+                                                                final String rootConfigurationPathPrefix,
                                                                 final Map<String, HstNode> referenceableContainers) {
         if (isHstComponentOrReferenceType(child)) {
             if (isPrototype() && isNotAllowedInPrototype(child)) {
@@ -384,9 +386,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                     // the name of the component node
                     String explicitName = child.getValueProvider().getName();
                     return new HstComponentConfigurationService(referencedContainerNode,
-                            this, rootNodeName, false, referenceableContainers, inherited, explicitName);
+                            this, rootNodeName, false, referenceableContainers, rootConfigurationPathPrefix, explicitName);
                 } else {
-                    return new HstComponentConfigurationService(child, this, rootNodeName, false, referenceableContainers, inherited, null);
+                    return new HstComponentConfigurationService(child, this, rootNodeName, false, referenceableContainers, rootConfigurationPathPrefix, null);
                 }
             } catch (ModelLoadingException e) {
                 if (log.isDebugEnabled()) {
