@@ -6,7 +6,6 @@ package org.onehippo.cms7.essentials.components;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.codehaus.jackson.map.deser.ValueInstantiators;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
