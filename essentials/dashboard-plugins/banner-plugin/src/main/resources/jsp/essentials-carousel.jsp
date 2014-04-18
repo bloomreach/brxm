@@ -1,15 +1,10 @@
 <%@ include file="/WEB-INF/jsp/include/imports.jsp" %>
 <%--@elvariable id="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable"--%>
 <%--@elvariable id="item" type="{{beansPackage}}.Banner"--%>
-<%--@elvariable id="pause" type="java.lang.Boolean"--%>
-<%--@elvariable id="cycle" type="java.lang.Boolean"--%>
-<%--@elvariable id="interval" type="java.lang.Integer"--%>
-<%--@elvariable id="carouselHeight" type="java.lang.Integer"--%>
-<%--@elvariable id="carouselWidth" type="java.lang.Integer"--%>
-<%--@elvariable id="carouselBackgroundColor" type="java.lang.String"--%>
-<%--@elvariable id="showNavigation" type="java.lang.Boolean"--%>
-<c:set var="pauseCarousel" value="${pause ? 'hoover':''}"/>
-<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="${interval}" data-pause="${pauseCarousel}" data-wrap="${cycle}">
+<%--@elvariable id="cparam" type="org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo"--%>
+<c:set var="pauseCarousel" value="${cparam.pause ? 'hover':''}"/>
+<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="${cparam.interval}"
+     data-pause="${pauseCarousel}" data-wrap="${cparam.cycle}">
   <ol class="carousel-indicators">
     <c:forEach begin="0" end="${pageable.total -1}" varStatus="index">
       <c:choose>
@@ -34,7 +29,7 @@
       </div>
     </c:forEach>
   </div>
-  <c:if test="${showNavigation}">
+  <c:if test="${cparam.showNavigation}">
     <a class="left carousel-control" href="#myCarousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
     <a class="right carousel-control" href="#myCarousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
   </c:if>
@@ -42,8 +37,8 @@
 <style type="text/css">
   /* Carousel base class */
   .carousel {
-    height: ${carouselHeight}px;
-    /*width: ${carouselWidth}px;*/
+    height: ${cparam.carouselHeight}px;
+    /*width: ${cparam.carouselWidth}px;*/
     margin-bottom: 60px;
   }
 
@@ -54,8 +49,8 @@
 
   /* Declare heights because of positioning of img element */
   .carousel .item {
-    height: ${carouselHeight}px;
-    background-color: ${carouselBackgroundColor};
+    height: ${cparam.carouselHeight}px;
+    background-color: ${cparam.carouselBackgroundColor};
   }
   /* center images*/
   .carousel-inner > .item > img {
