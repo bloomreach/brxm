@@ -81,15 +81,16 @@ public class EssentialsListComponent extends CommonComponent {
      * @see CommonComponent#REQUEST_ATTR_QUERY
      * @see CommonComponent#REQUEST_ATTR_PAGEABLE
      * @see CommonComponent#REQUEST_ATTR_PAGE
-     * @see CommonComponent#REQUEST_ATTR_PAGE_SIZE
-     * @see CommonComponent#REQUEST_ATTR_PAGE_PAGINATION
      */
     protected void populateRequest(final HstRequest request, final EssentialsPageable paramInfo, final Pageable<? extends HippoBean> pageable) {
         request.setAttribute(REQUEST_ATTR_QUERY, getSearchQuery(request));
         request.setAttribute(REQUEST_ATTR_PAGEABLE, pageable);
         request.setAttribute(REQUEST_ATTR_PAGE, getCurrentPage(request));
-        request.setAttribute(REQUEST_ATTR_PAGE_SIZE, paramInfo.getPageSize());
-        request.setAttribute(REQUEST_ATTR_PAGE_PAGINATION, paramInfo.getShowPagination());
+        request.setAttribute(REQUEST_ATTR_PARAM_INFO, paramInfo);
+
+        if (pageable != null) {
+            pageable.setShowPagination(isShowPagination(request, paramInfo));
+        }
     }
 
     /**
@@ -148,14 +149,27 @@ public class EssentialsListComponent extends CommonComponent {
         return null;
     }
 
+    /**
+     * Execute the search given a facet navigation scope.
+     *
+     * @param request   current HST request
+     * @param paramInfo component parameters
+     * @param scope     bean representing search scope
+     * @param <T>       type of component info interface
+     * @return          pageable search results, or null if search failed.
+     */
     protected <T extends EssentialsDocumentListComponentInfo>
             Pageable<HippoBean> doFacetedSearch(final HstRequest request, final T paramInfo, final HippoBean scope) {
 
+        Pageable<HippoBean> pageable = null;
         final String relPath = SiteUtils.relativePathFrom(scope, request.getRequestContext());
         final HippoFacetNavigationBean facetBean = ContentBeanUtils.getFacetNavigationBean(relPath, getSearchQuery(request));
-        final HippoResultSetBean resultSet = facetBean.getResultSet();
-        final HippoDocumentIterator<HippoBean> iterator = resultSet.getDocumentIterator(HippoBean.class);
-        return new IterablePagination<>(iterator, resultSet.getCount().intValue(), paramInfo.getPageSize(), getCurrentPage(request));
+        if (facetBean != null) {
+            final HippoResultSetBean resultSet = facetBean.getResultSet();
+            final HippoDocumentIterator<HippoBean> iterator = resultSet.getDocumentIterator(HippoBean.class);
+            pageable = new IterablePagination<>(iterator, resultSet.getCount().intValue(), paramInfo.getPageSize(), getCurrentPage(request));
+        }
+        return pageable;
     }
 
     protected void handleInvalidScope(final HstRequest request, final HstResponse response) {
@@ -208,7 +222,6 @@ public class EssentialsListComponent extends CommonComponent {
                 execute.getTotalSize(),
                 pageSize,
                 page);
-        pageable.setShowPagination(isShowPagination(request, paramInfo));
         return pageable;
     }
 

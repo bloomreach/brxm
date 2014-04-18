@@ -39,8 +39,8 @@ public class EssentialsMenuComponent extends CommonComponent {
 
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
-        final EssentialsMenuComponentInfo info = getComponentParametersInfo(request);
-        String siteMenu = info.getSiteMenu();
+        final EssentialsMenuComponentInfo paramInfo = getComponentParametersInfo(request);
+        String siteMenu = paramInfo.getSiteMenu();
         if (Strings.isNullOrEmpty(siteMenu)) {
             // check if set as component parameter:
             siteMenu = getComponentParameter("menuName");
@@ -58,5 +58,6 @@ public class EssentialsMenuComponent extends CommonComponent {
         }
         log.debug("Using site menu:[{}]", siteMenu);
         request.setAttribute("menu", menu);
+        request.setAttribute(REQUEST_ATTR_PARAM_INFO, paramInfo);
     }
 }

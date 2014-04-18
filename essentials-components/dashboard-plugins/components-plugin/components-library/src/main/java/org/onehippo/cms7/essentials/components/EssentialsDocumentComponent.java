@@ -40,6 +40,7 @@ public class EssentialsDocumentComponent extends CommonComponent {
         final String documentPath = paramInfo.getDocument();
         log.debug("Calling EssentialsDocumentComponent for document path:  [{}]", documentPath);
         setContentBean(documentPath, request, response);
+        request.setAttribute(REQUEST_ATTR_PARAM_INFO, paramInfo);
     }
 
 

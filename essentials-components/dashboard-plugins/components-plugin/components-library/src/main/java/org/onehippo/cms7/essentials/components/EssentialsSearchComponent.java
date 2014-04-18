@@ -46,7 +46,7 @@ public class EssentialsSearchComponent extends EssentialsListComponent {
 
     @Override
     protected HippoBean getSearchScope(final HstRequest request, final String path) {
-        final EssentialsSearchComponentInfo componentInfo = getComponentParametersInfo(request);
-        return super.getSearchScope(request, componentInfo.getScope());
+        final EssentialsSearchComponentInfo paramInfo = getComponentParametersInfo(request);
+        return super.getSearchScope(request, paramInfo.getScope());
     }
 }

@@ -43,9 +43,9 @@ public class EssentialsNewsComponent extends EssentialsListComponent {
 
     @Override
     protected void contributeAndFilters(final List<BaseFilter> filters, final HstRequest request, final HstQuery query) {
-        final EssentialsNewsComponentInfo info = getComponentParametersInfo(request);
-        if (info.getHideFutureItems()) {
-            final String documentDateField = info.getDocumentDateField();
+        final EssentialsNewsComponentInfo paramInfo = getComponentParametersInfo(request);
+        if (paramInfo.getHideFutureItems()) {
+            final String documentDateField = paramInfo.getDocumentDateField();
             if (!Strings.isNullOrEmpty(documentDateField)) {
                 try {
                     Filter filter = query.createFilter();
