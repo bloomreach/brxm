@@ -56,22 +56,25 @@ public class BeanWriterResource extends BaseResource {
 
 
     @POST
-    public RestfulList<MessageRestful> runBeanWriter(@Context ServletContext servletContext) {
+    public RestfulList<MessageRestful> runBeanWriter(@Context ServletContext servletContext) throws Exception {
         final String basePath = ProjectUtils.getBaseProjectDirectory();
 
 
         final String className = ProjectSetupPlugin.class.getName();
         final PluginContext context = new DefaultPluginContext(new PluginRestful(className));
         // inject project settings:
-        final PluginConfigService service = context.getConfigService();
         final RestfulList<MessageRestful> messages = new MyRestList();
-        final ProjectSettingsBean document = service.read(className, ProjectSettingsBean.class);
-        if (document != null) {
-            context.setBeansPackageName(document.getSelectedBeansPackage());
-            context.setComponentsPackageName(document.getSelectedComponentsPackage());
-            context.setRestPackageName(document.getSelectedRestPackage());
-            context.setProjectNamespacePrefix(document.getProjectNamespace());
+        try (PluginConfigService service = context.getConfigService()) {
+            final ProjectSettingsBean document = service.read(className, ProjectSettingsBean.class);
+            if (document != null) {
+                context.setBeansPackageName(document.getSelectedBeansPackage());
+                context.setComponentsPackageName(document.getSelectedComponentsPackage());
+                context.setRestPackageName(document.getSelectedRestPackage());
+                context.setProjectNamespacePrefix(document.getProjectNamespace());
+            }
         }
+
+
 
         /*messages.add(new MessageRestful("Not Enabled @see org.onehippo.cms7.essentials.rest.BeanWriterResource"));
         messages.add(new MessageRestful("Not implemented yet"));*/

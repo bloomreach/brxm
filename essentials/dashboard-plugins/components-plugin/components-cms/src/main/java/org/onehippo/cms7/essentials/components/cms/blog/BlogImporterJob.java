@@ -23,6 +23,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -41,7 +42,9 @@ import org.onehippo.repository.scheduling.RepositoryJobExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
@@ -55,15 +58,16 @@ import com.sun.syndication.io.XmlReader;
 public class BlogImporterJob implements RepositoryJob {
 
     private static final Logger log = LoggerFactory.getLogger(BlogImporterJob.class);
-    private static final String BLOGS_BASE_PATH = "blogsBasePath";
-    private static final String URLS = "urls";
-    private static final String AUTHORS_BASE_PATH = "authorsBasePath";
-    private static final String AUTHORS = "authors";
-    private static final String PROJECT_NAMESPACE = "projectNamespace";
-    private static final String MAX_DESCRIPTION_LENGTH = "maxDescriptionLength";
+    public static final String BLOGS_BASE_PATH = "blogsBasePath";
+    public static final String URLS = "urls";
+    public static final String AUTHORS_BASE_PATH = "authorsBasePath";
+    public static final String AUTHORS = "authors";
+    public static final String PROJECT_NAMESPACE = "projectNamespace";
+    public static final String MAX_DESCRIPTION_LENGTH = "maxDescriptionLength";
     private static final int DEFAULT_MAX_DESCRIPTION_LENGTH = 200;
     private static final Pattern PATH_PATTERN = Pattern.compile("/");
     public static final char[] PASSWORD = new char[]{};
+    public static final char SPLITTER = '|';
 
 
     @Override
@@ -82,18 +86,18 @@ public class BlogImporterJob implements RepositoryJob {
         }
 
         final String blogBasePath = context.getAttribute(BLOGS_BASE_PATH);
-        final String[] urls = ArrayUtils.EMPTY_STRING_ARRAY;
+        final String urlsAttribute = context.getAttribute(URLS);
+        final String authorsAttribute = context.getAttribute(AUTHORS);
+        final String[] urls = extractArray(urlsAttribute);
 
-        //cleanupUrls(context.getAttribute(URLS, ArrayUtils.EMPTY_STRING_ARRAY));
+        cleanupUrls(urls);
         if (urls.length == 0) {
             log.warn("There are no valid URL configured to import");
             return;
         }
-
         final String authorsBasePath = context.getAttribute(AUTHORS_BASE_PATH);
         final String projectNamespace = context.getAttribute(PROJECT_NAMESPACE);
-        // TODO fixme
-        final String[] authors = {};//context.getAttribute(AUTHORS);
+        final String[] authors = extractArray(authorsAttribute);
         int maxDescriptionLength;
         try {
             maxDescriptionLength = Integer.parseInt(context.getAttribute(MAX_DESCRIPTION_LENGTH));
@@ -110,6 +114,18 @@ public class BlogImporterJob implements RepositoryJob {
         log.info("+----------------------------------------------------+");
         log.info("|           Finished importing blogs                 |");
         log.info("+----------------------------------------------------+");
+    }
+
+    private String[] extractArray(final String value) {
+        final String[] retValue;
+        if (Strings.isNullOrEmpty(value)) {
+            retValue = ArrayUtils.EMPTY_STRING_ARRAY;
+        } else{
+            final Iterator<String> iterator = Splitter.on(SPLITTER).omitEmptyStrings().split(value).iterator();
+            final List<String> strings = Lists.newArrayList(iterator);
+            retValue = strings.toArray(new String[strings.size()]);
+        }
+        return retValue;
     }
 
     private String[] cleanupUrls(final String[] urls) {

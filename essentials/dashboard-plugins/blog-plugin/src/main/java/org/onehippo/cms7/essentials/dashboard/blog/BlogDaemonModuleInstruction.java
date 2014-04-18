@@ -16,7 +16,6 @@
 
 package org.onehippo.cms7.essentials.dashboard.blog;
 
-import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -44,8 +43,7 @@ public class BlogDaemonModuleInstruction implements Instruction {
     private static final Pattern PREFIX_PATTERN = Pattern.compile(PREFIX);
     private static Logger log = LoggerFactory.getLogger(BlogDaemonModuleInstruction.class);
 
-    private static final String CONFIG_DATA = "/blog-importer/blogscheduler/blogJobSchedule/scheduler:jobConfiguration";
-    private static final String CONFIG_SCHEDULER = "/blog-importer/blogscheduler/blogJobSchedule";
+
     private static final String CONFIG_EVENT_BUS = "/hippo:configuration/hippo:modules/essentials-eventbus-listener/hippo:moduleconfig";
 
 
@@ -82,9 +80,6 @@ public class BlogDaemonModuleInstruction implements Instruction {
                 log.info("setupImport was disabled: {}", runSetup);
                 return InstructionStatus.SKIPPED;
             }
-
-            final Node schedulerNode = session.getNode(CONFIG_SCHEDULER);
-            final Node dataNode = session.getNode(CONFIG_DATA);
             final Collection<String> urls = new HashSet<>();
             final Collection<String> authors = new HashSet<>();
             for (Map.Entry<String, Object> entry : placeholderData.entrySet()) {
@@ -95,25 +90,25 @@ public class BlogDaemonModuleInstruction implements Instruction {
                 }
                 final String key = PREFIX_PATTERN.matcher(originalKey).replaceFirst("");
                 final String value = (String) entry.getValue();
-                final String schedulerPropName = MessageFormat.format("scheduler:{0}", key);
+
                 if (key.equals("active") || key.equals("runInstantly")) {
-                    schedulerNode.setProperty(schedulerPropName, Boolean.valueOf(value));
+                    eventBusNode.setProperty(key, Boolean.valueOf(value));
                 } else if (key.equals("cronExpression") || key.equals("cronExpressionDescription") || key.equals("jobClassName")) {
-                    schedulerNode.setProperty(schedulerPropName, value);
+                    eventBusNode.setProperty(key, value);
                 } else if (key.startsWith("url")) {
                     urls.add(value);
                 } else if (key.startsWith("authorsBasePath")) {
-                    dataNode.setProperty(key, value);
+                    eventBusNode.setProperty(key, value);
                 } else if (key.startsWith("author")) {
                     authors.add(value);
                 } else {
-                    dataNode.setProperty(key, value);
+                    eventBusNode.setProperty(key, value);
                 }
             }
             final String[] myUrls = urls.toArray(new String[urls.size()]);
-            dataNode.setProperty("urls", myUrls);
+            eventBusNode.setProperty("urls", myUrls);
             final String[] myAuthors = authors.toArray(new String[authors.size()]);
-            dataNode.setProperty("authors", myAuthors);
+            eventBusNode.setProperty("authors", myAuthors);
 
             session.save();
         } catch (RepositoryException e) {
