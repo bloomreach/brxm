@@ -29,7 +29,7 @@ public interface EssentialsMenuComponentInfo {
     String getSiteMenu();
 
     @Parameter(name = "level", required = false, defaultValue = "1", displayName = "Menu display level (depth)", description = "How many menu levels will be displayed")
-    @DropDownList(value = {"1", "2", "3", "4", "5"})
+    @DropDownList(value = {"1", "2", "3"})
     String getLevel();
 
     /**
