@@ -29,6 +29,7 @@ import org.hippoecm.hst.util.ContentBeanUtils;
 import org.onehippo.cms7.essentials.components.info.EssentialsDocumentListComponentInfo;
 import org.onehippo.cms7.essentials.components.info.EssentialsPageable;
 import org.onehippo.cms7.essentials.components.info.EssentialsSortable;
+import org.onehippo.cms7.essentials.components.paging.DefaultPagination;
 import org.onehippo.cms7.essentials.components.paging.IterablePagination;
 import org.onehippo.cms7.essentials.components.paging.Pageable;
 import org.onehippo.cms7.essentials.components.utils.SiteUtils;
@@ -165,6 +166,9 @@ public class EssentialsListComponent extends CommonComponent {
         final HippoFacetNavigationBean facetBean = ContentBeanUtils.getFacetNavigationBean(relPath, getSearchQuery(request));
         if (facetBean != null) {
             final HippoResultSetBean resultSet = facetBean.getResultSet();
+            if (resultSet == null) {
+                return DefaultPagination.emptyCollection();
+            }
             final HippoDocumentIterator<HippoBean> iterator = resultSet.getDocumentIterator(HippoBean.class);
             pageable = new IterablePagination<>(iterator, resultSet.getCount().intValue(), paramInfo.getPageSize(), getCurrentPage(request));
         }
