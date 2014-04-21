@@ -756,12 +756,14 @@ public final class JavaSourceUtils {
         log.debug("Rewriting\n{}", rewrite);
         GlobalUtils.writeToFile(rewrite, path);
     }
-
     @SuppressWarnings(UNCHECKED)
     private static List<Object> getClassAnnotations(final Path path) {
         final CompilationUnit unit = getCompilationUnit(path);
-        final TypeDeclaration classType = (TypeDeclaration) unit.types().get(0);
-        final List<Object> modifiers = classType.modifiers();
+        List<Object> modifiers = null;
+        if (unit.types().size() > 0) {
+            final TypeDeclaration classType = (TypeDeclaration) unit.types().get(0);
+            modifiers = classType.modifiers();
+        }
         if (modifiers == null) {
             return Collections.emptyList();
         }
