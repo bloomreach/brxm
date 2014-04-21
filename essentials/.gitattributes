@@ -129,9 +129,9 @@ dashboard-plugins/banner-plugin/src/main/resources/META-INF/resources/plugins/ba
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/banner-plugin/src/main/resources/freemarker/essentials-banner.ftl -text
 dashboard-plugins/banner-plugin/src/main/resources/freemarker/essentials-carousel.ftl -text
-dashboard-plugins/banner-plugin/src/main/resources/hst/banner-template-ftl.xml -text
+dashboard-plugins/banner-plugin/src/main/resources/hst/banner-template-freemarker.xml -text
 dashboard-plugins/banner-plugin/src/main/resources/hst/banner-template-jsp.xml -text
-dashboard-plugins/banner-plugin/src/main/resources/hst/carousel-template-ftl.xml -text
+dashboard-plugins/banner-plugin/src/main/resources/hst/carousel-template-freemarker.xml -text
 dashboard-plugins/banner-plugin/src/main/resources/hst/carousel-template-jsp.xml -text
 dashboard-plugins/banner-plugin/src/main/resources/hst/catalog/banner-catalog-item.xml -text
 dashboard-plugins/banner-plugin/src/main/resources/hst/catalog/carousel-catalog-item.xml -text
