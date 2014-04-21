@@ -155,10 +155,10 @@ public class EssentialsListComponent extends CommonComponent {
      * @param paramInfo component parameters
      * @param scope     bean representing search scope
      * @param <T>       type of component info interface
-     * @return          pageable search results, or null if search failed.
+     * @return pageable search results, or null if search failed.
      */
     protected <T extends EssentialsDocumentListComponentInfo>
-            Pageable<HippoBean> doFacetedSearch(final HstRequest request, final T paramInfo, final HippoBean scope) {
+    Pageable<HippoBean> doFacetedSearch(final HstRequest request, final T paramInfo, final HippoBean scope) {
 
         Pageable<HippoBean> pageable = null;
         final String relPath = SiteUtils.relativePathFrom(scope, request.getRequestContext());
@@ -261,7 +261,7 @@ public class EssentialsListComponent extends CommonComponent {
 
     /**
      * Apply a list of filters fo a query, using AND logic.
-     *
+     * <p/>
      * Make sure that if the query already had a filter, it gets preserved.
      *
      * @param query   query under construction
@@ -348,6 +348,10 @@ public class EssentialsListComponent extends CommonComponent {
      * @return the scope of the query
      */
     protected String getScopePath(final EssentialsDocumentListComponentInfo paramInfo) {
+        if (paramInfo == null) {
+            log.warn("Component parameter was null for:  {}", getClass().getName());
+            return null;
+        }
         return paramInfo.getPath();
     }
 

@@ -83,7 +83,7 @@ public class IterablePagination<T extends HippoBean> extends Pageable<T> {
      * Constructor to be used when the paging is not done beforehand (for example in HST query), but has to be done by
      * this class, for instance paging on facet navigation results.
      */
-    public IterablePagination(List<T> items, final int pageSize, final int currentPage) {
+    public IterablePagination(List<T> items, final int currentPage, final int pageSize) {
         super(items.size(), currentPage, pageSize);
         this.items = new ArrayList<>();
         int fromIndex = (currentPage - 1) * pageSize;
