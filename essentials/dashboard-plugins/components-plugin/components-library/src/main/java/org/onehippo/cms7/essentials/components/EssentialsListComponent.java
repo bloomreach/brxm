@@ -4,6 +4,9 @@
 
 package org.onehippo.cms7.essentials.components;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.container.RequestContextProvider;
@@ -36,9 +39,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * HST component used for listing of documents.
  *
@@ -63,7 +63,7 @@ public class EssentialsListComponent extends CommonComponent {
             return;
         }
 
-        final Pageable<HippoBean> pageable;
+        final Pageable<? extends HippoBean> pageable;
         if (scope instanceof HippoFacetNavigationBean) {
             pageable = doFacetedSearch(request, paramInfo, scope);
         } else {
@@ -135,7 +135,7 @@ public class EssentialsListComponent extends CommonComponent {
     }
 
 
-    protected <T extends EssentialsDocumentListComponentInfo> Pageable<HippoBean> doSearch(final HstRequest request, final T paramInfo, final HippoBean scope) {
+    protected <T extends EssentialsDocumentListComponentInfo> Pageable<? extends HippoBean> doSearch(final HstRequest request, final T paramInfo, final HippoBean scope) {
         try {
             final HstQuery build = buildQuery(request, paramInfo, scope);
             if (build != null) {
