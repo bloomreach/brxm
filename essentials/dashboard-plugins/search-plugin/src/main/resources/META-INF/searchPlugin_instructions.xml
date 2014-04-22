@@ -6,6 +6,7 @@
     <xml action="copy" source="powerpack/xml/hst/search-catalog.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <xml action="copy" source="powerpack/xml/hst/search-page.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="powerpack/xml/hst/search-sitemap.xml" target="/hst:hst/hst:configurations/common/hst:sitemap"/>
+    <file action="copy" binary="true" source="powerpack/images/component-icon-search.png" target="{{siteWebRoot}}/images/component-icon-search.png"/>
   </instructionSet>
   <instructionSet group="jsp">
     <file action="copy" source="powerpack/jsp/search-box.jsp" target="{{jspRoot}}/{{namespace}}/search-box.jsp"/>
