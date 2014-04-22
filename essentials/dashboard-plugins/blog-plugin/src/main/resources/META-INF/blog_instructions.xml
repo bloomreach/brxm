@@ -111,6 +111,9 @@
     <xml action="copy" source="hst/page-blog-main.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="hst/page-blog-list.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="hst/page-blog-page.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
+    <file action="copy" binary="true" source="images/component-icon-blog.png" target="{{siteWebRoot}}/images/component-icon-blog.png"/>
+    <file action="copy" binary="true" source="images/component-icon-author.png" target="{{siteWebRoot}}/images/component-icon-author.png"/>
+    <file action="copy" binary="true" source="images/component-icon-facets.png" target="{{siteWebRoot}}/images/component-icon-facets.png"/>
   </instructionSet>
   <!-- HST TEMPLATES -->
   <instructionSet group="jsp">

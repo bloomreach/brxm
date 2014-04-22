@@ -9,6 +9,9 @@
   <sv:property sv:name="hst:label" sv:type="String">
     <sv:value>News List</sv:value>
   </sv:property>
+  <sv:property sv:name="hst:iconpath" sv:type="String">
+    <sv:value>images/component-icon-news.png</sv:value>
+  </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
     <sv:value>newslist-main-newslist</sv:value>
   </sv:property>

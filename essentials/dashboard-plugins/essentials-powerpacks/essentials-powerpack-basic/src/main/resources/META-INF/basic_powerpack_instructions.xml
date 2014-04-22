@@ -96,6 +96,8 @@
   <instructionSet>
     <xml action="copy" source="xml/hst/catalog/eventslist.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <xml action="copy" source="xml/hst/catalog/newslist.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <file action="copy" binary="true" source="images/component-icon-events.png" target="{{siteWebRoot}}/images/component-icon-events.png"/>
+    <file action="copy" binary="true" source="images/component-icon-news.png" target="{{siteWebRoot}}/images/component-icon-news.png"/>
   </instructionSet>
 
 

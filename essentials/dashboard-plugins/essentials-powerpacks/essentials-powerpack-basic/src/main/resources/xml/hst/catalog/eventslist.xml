@@ -25,6 +25,9 @@
   <sv:property sv:name="hst:label" sv:type="String">
     <sv:value>Events List</sv:value>
   </sv:property>
+  <sv:property sv:name="hst:iconpath" sv:type="String">
+    <sv:value>images/component-icon-events.png</sv:value>
+  </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
     <sv:value>eventslist-main-eventslist</sv:value>
   </sv:property>

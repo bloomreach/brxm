@@ -53,6 +53,8 @@
     <file action="copy" source="freemarker/essentials-banner.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-banner.ftl"/>
     <xml action="copy" source="hst/carousel-template-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
     <xml action="copy" source="hst/banner-template-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+    <file action="copy" binary="true" source="images/component-icon-banner.png" target="{{siteWebRoot}}/images/component-icon-banner.png"/>
+    <file action="copy" binary="true" source="images/component-icon-carousel.png" target="{{siteWebRoot}}/images/component-icon-carousel.png"/>
   </instructionSet>
   <instructionSet>
     <xml action="copy" source="hst/catalog/banner-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>

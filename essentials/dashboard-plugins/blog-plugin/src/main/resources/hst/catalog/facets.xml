@@ -9,6 +9,9 @@
   <sv:property sv:name="hst:label" sv:type="String">
     <sv:value>Facets</sv:value>
   </sv:property>
+  <sv:property sv:name="hst:iconpath" sv:type="String">
+    <sv:value>images/component-icon-facets.png</sv:value>
+  </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
     <sv:value>facet.template</sv:value>
   </sv:property>
