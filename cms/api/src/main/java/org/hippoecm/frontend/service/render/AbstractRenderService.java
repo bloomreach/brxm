@@ -58,6 +58,7 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITranslateService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -201,7 +202,7 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
         String[] skins = config.getStringArray(SKIN_ID);
         if (skins != null) {
             for (String skin : skins) {
-                final UrlResourceReference cssContributor = new UrlResourceReference(Url.parse(skin));
+                final UrlResourceReference cssContributor = WebApplicationHelper.createUniqueUrlResourceReference(Url.parse(skin));
                 cssContributor.setContextRelative(true);
                 add(new Behavior() {
                     @Override

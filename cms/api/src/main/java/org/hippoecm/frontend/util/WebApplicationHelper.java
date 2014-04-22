@@ -19,11 +19,12 @@ import javax.servlet.http.Cookie;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
+import org.apache.wicket.request.Url;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.request.http.WebResponse;
+import org.apache.wicket.request.resource.UrlResourceReference;
 import org.hippoecm.frontend.PluginApplication;
 
 
@@ -31,7 +32,7 @@ public class WebApplicationHelper {
 
     public static final String HIPPO_AUTO_LOGIN_COOKIE_BASE_NAME = "hal";
     public static final String REMEMBERME_COOKIE_BASE_NAME = "rememberme";
-
+    private static final String ANTI_CACHE_KEY = Long.toString(System.currentTimeMillis());
 
     private WebApplicationHelper() {
     }
@@ -68,6 +69,11 @@ public class WebApplicationHelper {
 
     public static boolean isPartOfPage(final Component component) {
         return component.findParent(Page.class) != null;
+    }
+
+    public static UrlResourceReference createUniqueUrlResourceReference(Url url) {
+        url.addQueryParameter("antiCache", ANTI_CACHE_KEY);
+        return new UrlResourceReference(url);
     }
 
     protected static void validateNotBlank(String value) {

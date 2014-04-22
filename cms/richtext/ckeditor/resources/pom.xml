@@ -31,8 +31,9 @@
   <dependencies>
 
     <dependency>
-      <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket-core</artifactId>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-api</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>

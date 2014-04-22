@@ -41,7 +41,7 @@ public class CKEditorConstantsTest {
     }
 
     private static void assertConstantRefersToFileOnClassPath(final ResourceReference constant) {
-        final String url = ((UrlResourceReference)constant).getUrl().toString();
+        final String url = ((UrlResourceReference)constant).getUrl().getPath();
         final InputStream js = CKEditorConstants.class.getResourceAsStream("/" + url);
         assertNotNull("The file '" + url + "' does not exist on the classpath", js);
         try {
