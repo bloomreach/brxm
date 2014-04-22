@@ -31,6 +31,30 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 
+/**
+ * A SCXMLWorkflowContext serves as the main bridge between the calling {@link org.hippoecm.repository.api.Workflow}
+ * implementation and the SCXML state machine.
+ * <p>
+ * A SCXMLWorkflowContext is injected in the external context of an SCXML state machine by the
+ * {@link SCXMLWorkflowExecutor} under the predefined and reserved {@link #SCXML_CONTEXT_KEY} ("workflowContext") key
+ * to provide access to the {@link WorkflowContext} and its {@link #getActions()},
+ * {@link #getFeedback()} and {@link #getResult()} state for the SCXML state machine.
+ * </p>
+ * <p>
+ * The SCXML state machine can uses the SCXMLWorkflowContext to communicate back the allowable actions, additional
+ * feedback and possible state machine execution results back to the the invoking workflow implementation.
+ * </p>
+ * <p>
+ * In addition, the SCXMLWorkflowContext also provides a content authorization service through several isGranted(..)
+ * methods which can be used from within the SCXML state machine to check if the current invoking user is granted
+ * specific privileges to relevant JCR content.
+ * </p>
+ * <p>
+ * The internal state of the SCXMLWorkflowContext is controlled and managed by the {@link SCXMLWorkflowExecutor} through
+ * the {@link #initialize()} and {@link #reset()} methods. Extended versions of the SCXMLWorkflowContext must honor
+ * these methods and not retain any internal state outside the scope of these method calls.
+ * </p>
+ */
 public class SCXMLWorkflowContext {
 
     public static final String SCXML_CONTEXT_KEY = "workflowContext";
@@ -49,14 +73,14 @@ public class SCXMLWorkflowContext {
     }
 
     /**
-     * Checks if specific privileges (e.g. hippo:editor) are granted to the current workflow subject (e.g. handle) its session for a specific
-     * {@link org.hippoecm.repository.api.Document}.
+     * Checks if specific privileges (e.g. hippo:editor) are granted to the current workflow context its
+     * {@link WorkflowContext#getSubjectSession()} for a specific {@link org.hippoecm.repository.api.Document}.
      * <p> Implementation note: previously evaluated privileges are cached against the Document node's identifier
-     * within the DocumentHandle instance </p>
+     * within the SCXMLWorkflowContext instance </p>
      *
      * @param document the document to check permission for
      * @param privileges the privileges (, separated) to check permission for
-     * @return true if the current subject session has been granted all of the specified privileges for the document node
+     * @return true if the current subject session has been granted all the specified privileges for the document node
      */
     public final boolean isGranted(Document document, String privileges) {
         if (document == null) {
@@ -68,14 +92,14 @@ public class SCXMLWorkflowContext {
     }
 
     /**
-     * Checks if specific privileges (e.g. hippo:editor) are granted to the current workflow subject (e.g. handle) its session for a specific
-     * {@link javax.jcr.Node}.
+     * Checks if specific privileges (e.g. hippo:editor) are granted to the current workflow context its
+     * {@link WorkflowContext#getSubjectSession()} for a specific {@link javax.jcr.Node}.
      * <p> Implementation note: previously evaluated privileges are cached against the node's identifier
-     * within the DocumentHandle instance </p>
+     * within the SCXMLWorkflowContext instance </p>
      *
-     * @param node the document to check permission for
+     * @param node the JCR node to check permission for
      * @param privileges the privileges (, separated) to check permission for
-     * @return true if the current subject session has been granted all of the specified privileges for the document node
+     * @return true if the current subject session has been granted all of the specified privileges for the JCR node
      */
     public final boolean isGranted(Node node, String privileges) {
         if (node == null) {
@@ -130,30 +154,71 @@ public class SCXMLWorkflowContext {
 
     }
 
+    /**
+     * @return the unique SCXML state machine (repository) id used for retrieving through the {@link SCXMLRegistry}
+     */
     public final String getScxmlId() {
         return scxmlId;
     }
 
+    /**
+     * @return the invoking workflow its context
+     */
     public final WorkflowContext getWorkflowContext() {
         return workflowContext;
     }
 
+    /**
+     * @return the current invoking workflow user
+     */
     public final String getUser() {
         return workflowContext.getUserIdentity();
     }
 
+    /**
+     * The actions map is used by the SCXML state machine to communicate the currently (e.g. based upon the current
+     * state machine state) available events which it can handle transitions for.
+     * <p>
+     * Typically these actions should be logically named after the supported invoking workflow operations (method names)
+     * and either not be set at all (meaning: current user doesn't have the appropriate privileges), or be configured
+     * with value Boolean.FALSE if the action is not possible within the current state configuration.
+     * </p>
+     * <p>
+     * Only actions which are configured with value Boolean.TRUE through this map will be allowed to be executed against
+     * the SCXML state machine, which is checked first by the {@link SCXMLWorkflowExecutor} before they are 'triggered'
+     * as an event against the SCXML state machine.
+     * </p>
+     *
+     * @return the map of actions available to the invoking workflow as allowable operations / events to be
+     * fired.
+     */
     public final Map<String, Boolean> getActions() {
         return actions;
     }
 
+    /**
+     * @return an optional map of additional information (like messages, info, data, etc.) to be communicated back to
+     * the invoking workflow implementation, besides the {@link #getActions()} and possible (single) {@link #getResult()}
+     * object.
+     */
     public final Map<String, Serializable> getFeedback() {
         return feedback;
     }
 
+    /**
+     * @return an optional result object set by the SCXML state machine after processing one SCXML state machine
+     * evaluation (start or triggered event). Note: The result object is always reset to again before invoking the state
+     * machine.
+     */
     public final Object getResult() {
         return result;
     }
 
+    /**
+     * Method reserved for the SCXML state machine to set a possible result object, NOT to be invoked outside
+     * the scope of the SCXML state machine execution.
+     * @param result
+     */
     public final void setResult(Object result) {
         this.result = result;
     }
@@ -162,6 +227,10 @@ public class SCXMLWorkflowContext {
         return initialized;
     }
 
+    /**
+     * Invoked by the {@link SCXMLWorkflowExecutor} when starting the SCXML state machine
+     * @throws WorkflowException
+     */
     protected void initialize() throws WorkflowException {
         if (initialized) {
             reset();
@@ -169,6 +238,10 @@ public class SCXMLWorkflowContext {
         initialized = true;
     }
 
+    /**
+     * Invoked by the {@link SCXMLWorkflowExecutor} when resetting the SCXML state machine
+     * @throws WorkflowException
+     */
     protected void reset() {
         if (initialized) {
             actions.clear();

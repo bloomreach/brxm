@@ -22,7 +22,9 @@ import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
 
 /**
- * ActionAction sets a provided action enabled setting in the {@link SCXMLWorkflowData}, or removes it if empty/null
+ * ActionAction is a basic SCXML state machine custom action to store a specific {@link #setAction(String)} as enabled
+ * in the {@link SCXMLWorkflowContext#getActions()} map if the configured {@link #setEnabledExpr(String)} expression
+ * evaluates at runtime to Boolean.TRUE, or else removes it from the map.
  */
 public class ActionAction extends AbstractAction {
 

@@ -18,7 +18,8 @@ package org.onehippo.repository.scxml;
 import org.apache.commons.scxml2.env.SimpleErrorReporter;
 
 /**
- * SCXMLStrictErrorReporter throws an SCXMLExecutionError on every reported error and injects the current SCXML path into the error message
+ * SCXMLStrictErrorReporter enforces throwing a {@link SCXMLExecutionError} exception on every reported error
+ * and injects the current SCXML path into the error message.
  */
 public class SCXMLStrictErrorReporter extends SimpleErrorReporter {
 

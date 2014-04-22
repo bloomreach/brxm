@@ -20,7 +20,8 @@ import org.apache.commons.scxml2.env.SimpleDispatcher;
 import org.apache.commons.scxml2.model.ModelException;
 
 /**
- * RepositorySCXMLExecutorFactory
+ * RepositorySCXMLExecutorFactory provides a concrete factory for creating new {@link SCXMLExecutor} instances based on
+ * a provided {@link SCXMLDefinition}
  */
 public class RepositorySCXMLExecutorFactory implements SCXMLExecutorFactory {
 
@@ -30,7 +31,8 @@ public class RepositorySCXMLExecutorFactory implements SCXMLExecutorFactory {
     @Override
     public SCXMLExecutor createSCXMLExecutor(SCXMLDefinition scxmlDef) throws SCXMLException {
 
-        SCXMLExecutor executor = new SCXMLExecutor(scxmlDef.getEvaluator(), new SimpleDispatcher(), new SCXMLStrictErrorReporter(scxmlDef));
+        SCXMLExecutor executor = new SCXMLExecutor(scxmlDef.getEvaluator(), new SimpleDispatcher(),
+                new SCXMLStrictErrorReporter(scxmlDef));
         executor.setRootContext(scxmlDef.getEvaluator().newContext(null));
         try {
             executor.setStateMachine(scxmlDef.getSCXML());

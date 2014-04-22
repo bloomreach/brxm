@@ -29,10 +29,18 @@ import org.apache.commons.scxml2.model.ModelException;
 import org.hippoecm.repository.api.WorkflowException;
 
 /**
- * AbstractAction
- * <P>
- * Abstract base class for SCXML Action implementations.
- * </P>
+ * AbstractAction is a base class Apache Commons SCXML state machine custom Action implementations with specific
+ * support for usage with the {@link SCXMLWorkflowExecutor} engine.
+ * <p>
+ * This base custom action provides access to the {@link SCXMLWorkflowContext} and {@link SCXMLWorkflowData} objects
+ * in the SCXML state machine root context which provide the bridge to the invoking workflow implementation.
+ * </p>
+ * <p>
+ * In addition, this base class provide convenience handling of custom Action parameters (defined as SCXML element
+ * attributes) which can be used concurrently as reusable and thus immutable parameters between different SCXML state
+ * machine instance executions. The underlying parameter map will be 'locked down' and made immutable on the first
+ * execution of this action instance, to enforce this restricted usage.
+ * </p>
  */
 public abstract class AbstractAction extends Action {
 

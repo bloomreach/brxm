@@ -16,7 +16,7 @@
 package org.onehippo.repository.scxml;
 
 /**
- * SCXMLException
+ * SCXMLException is a specialized Exception for notifying SCXML state machine instantiation and loading exceptions.
  */
 public class SCXMLException extends Exception {
 
@@ -47,7 +47,6 @@ public class SCXMLException extends Exception {
      * @param   nested
      *          the nested exception
      */
-    @SuppressWarnings("unused")
     public SCXMLException(Throwable nested) {
         super(nested);
     }

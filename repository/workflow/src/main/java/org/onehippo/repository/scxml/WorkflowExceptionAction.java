@@ -23,7 +23,8 @@ import org.apache.commons.scxml2.model.ModelException;
 import org.hippoecm.repository.api.WorkflowException;
 
 /**
- * WorkflowExceptionAction raises a WorkflowException with specified error message optionally under a specific condition
+ * WorkflowExceptionAction is a basic SCXML state machine custom action to raise a {@link WorkflowException} with a
+ * specific runtime evaluated error message, optionally under a specific runtime evaluated condition.
  */
 public class WorkflowExceptionAction extends AbstractAction {
 
@@ -33,14 +34,25 @@ public class WorkflowExceptionAction extends AbstractAction {
         return getParameter("condExpr");
     }
 
+    /**
+     * Sets the optional condition expression which will be evaluated at runtime to determine if the specified
+     * workflow exception should be raised.
+     * @param condExpr the optional condition expression which if defined should resolve to Boolean.TRUE to trigger
+     *                 raising the specified workflow exception
+     */
     @SuppressWarnings("unused")
     public void setCond(String condExpr) {
         setParameter("condExpr", condExpr);
     }
+
     public String getErrorExpr() {
         return getParameter("errorExpr");
     }
 
+    /**
+     * Sets the runtime evaluated expression for the error message to be used when raising the {@link WorkflowException}
+     * @param errorExpr the error (message) expression which should evaluate to a String
+     */
     @SuppressWarnings("unused")
     public void setErrorExpr(final String errorExpr) {
         setParameter("errorExpr", errorExpr);

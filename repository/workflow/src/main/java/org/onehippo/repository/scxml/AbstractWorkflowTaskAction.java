@@ -29,6 +29,20 @@ import org.onehippo.repository.api.WorkflowTask;
  * SCXML base class for {@link WorkflowTask} based actions
  * </p>
  */
+/**
+ * AbstractWorkflowTaskAction provides a base class for custom SCXML state machine actions which involve executing
+ * a specific {@link WorkflowTask}.
+ * <p>
+ * Such {@link WorkflowTask}s represent unit of works to be executed independent of SCXML workflow execution
+ * context following the command pattern.
+ * </p>
+ * <p>
+ * This base base will automatically {@link #doExecute(ActionExecutionContext) execute} such a task and provides
+ * default {@link #processTaskResult(Object) processing} of the result, leaving only the implementation of
+ * {@link #createWorkflowTask() creating} and {@link #initTask(WorkflowTask) initializing} of the task to the
+ * concrete implementation of this base class.
+ * </p>
+ */
 public abstract class AbstractWorkflowTaskAction<T extends WorkflowTask> extends AbstractAction {
 
     private static final long serialVersionUID = 1L;

@@ -22,7 +22,8 @@ import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
 
 /**
- * ResultAction stores a provided result value in the {@link SCXMLWorkflowData}
+ * ResultAction is a basic SCXML state machine custom action to store an (SCXML) runtime expression result value as
+ * result in the {@link SCXMLWorkflowContext#getResult()} object.
  */
 public class ResultAction extends AbstractAction {
 

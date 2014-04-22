@@ -48,7 +48,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * RepositorySCXMLRegistry
+ * RepositorySCXMLRegistry is a concrete implementation of {@link SCXMLRegistry} to provide repository based loading
+ * of SCXML state machine definitions.
+ * <p>
+ * This implementation also provides caching and and cache refresh capabilities for loaded {@link SCXMLDefinition}
+ * instances. Through the management of this registry by a {@link SCXMLRegistryModule}, this effectively means that
+ * SCXMLDefinitions are cached in memory until either the module is reloaded or a node under the module configured
+ * repository storage location is modified.
+ * </p>
+ * <p>
+ * If a SCXML state machine definition is re-loaded from the repository, but fails to be successfully parsed and
+ * instantiated errors will be logged and the previous instance of the SCXMLDefinition will be kept in cache and be used.
+ * </p>
+ * <p>
+ * This implementation also instantiates a dedicated {@link GroovyEvaluator} to be used for each SCXML state machine.
+ * </p>
  */
 public class RepositorySCXMLRegistry implements SCXMLRegistry {
 

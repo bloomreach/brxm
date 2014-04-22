@@ -26,6 +26,13 @@ import org.apache.commons.scxml2.model.ModelException;
 /**
  * InfoAction stores a provided feedback value in the SCXMLWorkflowContext
  */
+/**
+ * FeedbackAction is a basic SCXML state machine custom action to store a specific {@link #setValue(String)} expression
+ * under the configured {@link #setKey(String)} inthe {@link SCXMLWorkflowContext#getFeedback()} map.
+ * <p>
+ * If the value expression is empty or evaluates to null the configured key is removed from the map.
+ * </p>
+ */
 public class FeedbackAction extends AbstractAction {
 
     private static final long serialVersionUID = 1L;

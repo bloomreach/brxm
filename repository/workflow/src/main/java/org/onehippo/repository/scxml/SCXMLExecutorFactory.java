@@ -20,11 +20,11 @@ import org.onehippo.cms7.services.SingletonService;
 
 
 /**
- * SCXMLExecutorFactory which is responsible for creating SCXML Executor instance.
+ * SCXMLExecutorFactory is a {@link SingletonService} responsible for creating Apache Commons {@link SCXMLExecutor}
+ * instances based on a provided {@link SCXMLDefinition}.
  */
 @SingletonService
 public interface SCXMLExecutorFactory {
 
     public SCXMLExecutor createSCXMLExecutor(SCXMLDefinition scxmlDef) throws SCXMLException;
-
 }

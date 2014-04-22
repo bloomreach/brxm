@@ -19,11 +19,15 @@ import org.onehippo.cms7.services.SingletonService;
 
 
 /**
- * SCXMLRegistry which is responsible for managing SCXML instances.
+ * SCXMLRegistry is a {@link SingletonService} responsible for loading SCXML state machines definitions.
  */
 @SingletonService
 public interface SCXMLRegistry {
 
+    /**
+     * @param id a unique SCXML state machine id
+     * @return a specific SCXML state machine instance and some additional metadata based on the provided unique
+     * SCXML id.
+     */
     public SCXMLDefinition getSCXMLDefinition(String id);
-
 }
