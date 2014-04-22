@@ -52,13 +52,32 @@ public class TestContainerComponentConfigurations extends AbstractTestConfigurat
         super.setUp();
         this.hstSitesManager = getComponent(HstManager.class.getName());
         this.session = createSession();
+        createHstConfigBackup(session);
+        movePagesInheritedPagesToProject(session);
         testComponent = addTestComponent();
+        session.save();
     }
+
+    private void movePagesInheritedPagesToProject(final Session session) throws RepositoryException {
+        session.move("/hst:hst/hst:configurations/unittestcommon/hst:pages",
+                "/hst:hst/hst:configurations/unittestproject/hst:pages");
+    }
+
+    private Node addTestComponent() throws RepositoryException {
+        Node homePageComponent = getHomePageComponentNode();
+        Node testComponent = homePageComponent.addNode("test", HstNodeTypes.NODETYPE_HST_COMPONENT);
+        return testComponent;
+    }
+
+    public Node getHomePageComponentNode() throws RepositoryException {
+        return session.getNode("/hst:hst/hst:configurations/unittestproject/hst:pages/homepage");
+    }
+
 
     @Override
     @After
     public void tearDown() throws Exception {
-        removeTestComponent();
+        restoreHstConfigBackup(session);
         session.logout();
         super.tearDown();
     }
@@ -67,7 +86,7 @@ public class TestContainerComponentConfigurations extends AbstractTestConfigurat
     @Test
     public void testCorrectContainerComponent() throws Exception {
         final String containerName = "canonicalContainer";
-        addCorrectHomePageContainer(testComponent, containerName);
+        add_non_workspace_referencing_correct_container(testComponent, containerName);
         VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
         final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
         final HstComponentConfiguration pageComponent = mount.getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/homepage");
@@ -78,7 +97,7 @@ public class TestContainerComponentConfigurations extends AbstractTestConfigurat
         assertNotNull(canonicalContainer.getChildByName("item"));
     }
 
-    private void addCorrectHomePageContainer(final Node parent, final String containerName) throws Exception {
+    private void add_non_workspace_referencing_correct_container(final Node parent, final String containerName) throws Exception {
         /*
            Add to test component a container:
              + containerName [hst:containercomponent]
@@ -94,7 +113,7 @@ public class TestContainerComponentConfigurations extends AbstractTestConfigurat
     }
 
     @Test(expected = ConstraintViolationException.class)
-    public void testContainerComponentNotAllowedToHaveAReference() throws Exception {
+    public void reference_component_property_not_allowed_on_container() throws Exception {
         final String containerName = "canonicalContainer";
         addIllegalHomePageContainer(testComponent, containerName);
     }
@@ -114,13 +133,13 @@ public class TestContainerComponentConfigurations extends AbstractTestConfigurat
     }
 
     @Test(expected = ConstraintViolationException.class)
-    public void testComponentReferenceWithoutReferenceProperty() throws Exception {
+    public void reference_component_property_mandatory_on_containercomponentreference() throws Exception {
         testComponent.addNode("containerRef", HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTREFERENCE);
         session.save();
     }
 
     @Test
-    public void testContainerComponentReferenceGetsRemovedWhenHstWorkspaceMissing() throws Exception {
+    public void reference_component_not_in_model_when_missing_workspace() throws Exception {
         final String containerReference = "canonicalContainerComponentReference";
         addComponentReference(testComponent, containerReference, "someReference");
         VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
@@ -147,9 +166,9 @@ public class TestContainerComponentConfigurations extends AbstractTestConfigurat
     }
 
     @Test
-    public void testContainerComponentReferenceGetsRemovedForNonExistingReference() throws Exception {
+    public void container_component_not_part_of_model_for_non_existing_reference() throws Exception {
 
-        String highestAncestorNewNode = createHstWorkspaceAndReferenceableContainer("dummyContainer");
+        createHstWorkspaceAndReferenceableContainer("dummyContainer", "/hst:hst/hst:configurations/unittestproject");
         final String containerReference = "canonicalContainerComponentReference";
         addComponentReference(testComponent, containerReference, "folderA/containerNonExisting");
         VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
@@ -163,14 +182,12 @@ public class TestContainerComponentConfigurations extends AbstractTestConfigurat
 
         assertNull(testComponent.getChildByName("canonicalContainerComponentReference"));
 
-        session.getNode(highestAncestorNewNode).remove();
-        session.save();
     }
 
     @Test
-    public void testContainerComponentReferenceNameIsPreserved() throws Exception {
+    public void container_component_referenceName_is_used_instead_of_referenced_name() throws Exception {
 
-        String highestAncestorNewNode = createHstWorkspaceAndReferenceableContainer("myReferenceableContainer");
+        createHstWorkspaceAndReferenceableContainer("myReferenceableContainer", "/hst:hst/hst:configurations/unittestproject");
         addComponentReference(testComponent, "containerReferencePreserveMyName", "myReferenceableContainer");
         VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
 
@@ -189,27 +206,25 @@ public class TestContainerComponentConfigurations extends AbstractTestConfigurat
         // from hst:workspace below unittestcommon
 
         assertTrue(component.getId().equals("hst:pages/homepage/test/containerReferencePreserveMyName"));
-        assertTrue(component.getCanonicalStoredLocation().equals("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:containers/myReferenceableContainer"));
+        assertTrue(component.getCanonicalStoredLocation().equals("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:containers/myReferenceableContainer"));
         String canonId = component.getCanonicalIdentifier();
         Node canonicalNode = session.getNodeByIdentifier(canonId);
-        assertTrue(canonicalNode.getPath().equals("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:containers/myReferenceableContainer"));
+        assertTrue(canonicalNode.getPath().equals("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:containers/myReferenceableContainer"));
         assertTrue(component.getChildren().size() == 1);
         final HstComponentConfiguration child = component.getChildByName("item");
         assertNotNull(child);
         assertTrue(child.getId().equals("hst:pages/homepage/test/containerReferencePreserveMyName/item"));
-        assertTrue(child.getCanonicalStoredLocation().equals("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:containers/myReferenceableContainer/item"));
+        assertTrue(child.getCanonicalStoredLocation().equals("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:containers/myReferenceableContainer/item"));
         String canonChildId = child.getCanonicalIdentifier();
         Node canonChildNode = session.getNodeByIdentifier(canonChildId);
-        assertTrue(canonChildNode.getPath().equals("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:containers/myReferenceableContainer/item"));
+        assertTrue(canonChildNode.getPath().equals("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:containers/myReferenceableContainer/item"));
 
-        session.getNode(highestAncestorNewNode).remove();
-        session.save();
     }
 
     @Test
-    public void testWorkingContainerComponentReferenceInDeeperFolder() throws Exception {
+    public void deeper_nested_referenced_container() throws Exception {
 
-        String highestAncestorNewNode = createHstWorkspaceAndReferenceableContainer("foo/bar/myReferenceableContainer");
+        createHstWorkspaceAndReferenceableContainer("foo/bar/myReferenceableContainer", "/hst:hst/hst:configurations/unittestproject");
         addComponentReference(testComponent, "containerReferencePreserveMyName", "foo/bar/myReferenceableContainer");
         VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
 
@@ -226,25 +241,23 @@ public class TestContainerComponentConfigurations extends AbstractTestConfigurat
         // from hst:modifiable below unittestcommon
 
         assertTrue(component.getId().equals("hst:pages/homepage/test/containerReferencePreserveMyName"));
-        assertTrue(component.getCanonicalStoredLocation().equals("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:containers/foo/bar/myReferenceableContainer"));
+        assertTrue(component.getCanonicalStoredLocation().equals("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:containers/foo/bar/myReferenceableContainer"));
         String canonId = component.getCanonicalIdentifier();
         Node canonicalNode = session.getNodeByIdentifier(canonId);
-        assertTrue(canonicalNode.getPath().equals("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:containers/foo/bar/myReferenceableContainer"));
+        assertTrue(canonicalNode.getPath().equals("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:containers/foo/bar/myReferenceableContainer"));
         assertTrue(component.getChildren().size() == 1);
         final HstComponentConfiguration child = component.getChildByName("item");
         assertNotNull(child);
         assertTrue(child.getId().equals("hst:pages/homepage/test/containerReferencePreserveMyName/item"));
-        assertTrue(child.getCanonicalStoredLocation().equals("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:containers/foo/bar/myReferenceableContainer/item"));
+        assertTrue(child.getCanonicalStoredLocation().equals("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:containers/foo/bar/myReferenceableContainer/item"));
         String canonChildId = child.getCanonicalIdentifier();
         Node canonChildNode = session.getNodeByIdentifier(canonChildId);
-        assertTrue(canonChildNode.getPath().equals("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:containers/foo/bar/myReferenceableContainer/item"));
+        assertTrue(canonChildNode.getPath().equals("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:containers/foo/bar/myReferenceableContainer/item"));
 
-        session.getNode(highestAncestorNewNode).remove();
-        session.save();
     }
 
     @Test
-    public void testContainerComponentReferenceGetReloaded() throws Exception {
+    public void referenced_container_triggers_model_reload_on_change() throws Exception {
         {
             // start directly with loading hst model first:
             final VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
@@ -256,12 +269,12 @@ public class TestContainerComponentConfigurations extends AbstractTestConfigurat
             assertNull(component);
         }
         // add new config nodes
-        String highestAncestorNewNode = createHstWorkspaceAndReferenceableContainer("foo/bar/myReferenceableContainer");
+        createHstWorkspaceAndReferenceableContainer("foo/bar/myReferenceableContainer", "/hst:hst/hst:configurations/unittestproject");
         addComponentReference(testComponent, "containerReferencePreserveMyName", "foo/bar/myReferenceableContainer");
 
         // trigger events as during tests the jcr event listeners are not enabled
         EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
-        invalidator.eventPaths("/hst:hst/hst:configurations/unittestcommon/" + HstNodeTypes.NODENAME_HST_WORKSPACE, testComponent.getPath());
+        invalidator.eventPaths("/hst:hst/hst:configurations/unittestproject/" + HstNodeTypes.NODENAME_HST_WORKSPACE, testComponent.getPath());
 
         {
             // reload model after changes
@@ -297,16 +310,54 @@ public class TestContainerComponentConfigurations extends AbstractTestConfigurat
 
         }
 
-        session.getNode(highestAncestorNewNode).remove();
-        session.save();
+    }
+
+    @Test
+    public void referenceable_containers_from_inherited_configuration_not_included() throws Exception {
+        // below add a container to hst:workspace in 'unittestcommon' : this workspace is invisible for
+        // 'unittestproject' as workspace nodes are not inherited
+        createHstWorkspaceAndReferenceableContainer("myReferenceableContainer",
+                "/hst:hst/hst:configurations/unittestcommon");
+        addComponentReference(testComponent, "inheritedcontainer", "myReferenceableContainer");
+        {
+            final VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
+            final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
+            final HstComponentConfiguration pageComponent = mount.getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/homepage");
+            final HstComponentConfiguration testComponent = pageComponent.getChildByName(TEST_COMPONENT_NODE_NAME);
+            assertNotNull(testComponent);
+            // container available since part of inherited
+            final HstComponentConfiguration component = testComponent.getChildByName("container");
+            assertNull(component);
+        }
+
+        createHstWorkspaceAndReferenceableContainer("myReferenceableContainer",
+                "/hst:hst/hst:configurations/unittestproject");
+        addComponentReference(testComponent, "localcontainer", "myReferenceableContainer");
+
+        // trigger events as during tests the jcr event listeners are not enabled
+        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        invalidator.eventPaths("/hst:hst/hst:configurations/unittestproject/" + HstNodeTypes.NODENAME_HST_WORKSPACE, testComponent.getPath());
+
+        {
+            final VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
+            final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
+            final HstComponentConfiguration pageComponent = mount.getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/homepage");
+            final HstComponentConfiguration testComponent = pageComponent.getChildByName(TEST_COMPONENT_NODE_NAME);
+            assertNotNull(testComponent);
+            // container available since part of inherited
+            final HstComponentConfiguration component = testComponent.getChildByName("localcontainer");
+            assertNotNull(component);
+        }
+
     }
 
     /**
      * @return the highest ancestor path of newly created nodes: This is the node that needs to be cleanup at the end again
      */
-    private String createHstWorkspaceAndReferenceableContainer(final String containerRelPath) throws RepositoryException {
+    private String createHstWorkspaceAndReferenceableContainer(final String containerRelPath,
+                                                               final String projectPath) throws RepositoryException {
         String highestAncestorPath = null;
-        final Node hstConfigurationNode = session.getNode("/hst:hst/hst:configurations/unittestcommon");
+        final Node hstConfigurationNode = session.getNode(projectPath);
         Node modifiableHstNode;
         if (hstConfigurationNode.hasNode(HstNodeTypes.NODENAME_HST_WORKSPACE)) {
             modifiableHstNode = hstConfigurationNode.getNode(HstNodeTypes.NODENAME_HST_WORKSPACE);
@@ -352,29 +403,11 @@ public class TestContainerComponentConfigurations extends AbstractTestConfigurat
         return highestAncestorPath;
     }
 
-
-    private Node addTestComponent() throws RepositoryException {
-        Node homePageComponent = getHomePageComponentNode();
-        Node testComponent = homePageComponent.addNode("test", HstNodeTypes.NODETYPE_HST_COMPONENT);
-        session.save();
-        return testComponent;
-    }
-
-    private void removeTestComponent() throws RepositoryException {
-        testComponent.remove();
-        session.save();
-    }
-
-
-
     protected Session createSession() throws RepositoryException {
         Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
         return repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
     }
 
-    public Node getHomePageComponentNode() throws RepositoryException {
-        return session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:pages/homepage");
-    }
 
     public String getLocalhostRootMountId() throws RepositoryException {
         return session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root").getIdentifier();
