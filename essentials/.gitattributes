@@ -442,6 +442,7 @@ dashboard-plugins/freemarker-synchronizer/src/main/resources/META-INF/resources/
 dashboard-plugins/freemarker-synchronizer/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/freemarker-synchronizer/src/test/java/org/onehippo/cms7/essentials/tools/rest/FSUtilsTest.java -text
 dashboard-plugins/freemarker-synchronizer/src/test/resources/log4j.xml -text
+dashboard-plugins/icons/onebit/license.txt -text
 dashboard-plugins/menu-plugin/pom.xml -text
 dashboard-plugins/menu-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/menu/MenuPluginResource.java -text
 dashboard-plugins/menu-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/menu/MenuPowerpack.java -text
@@ -453,6 +454,7 @@ dashboard-plugins/menu-plugin/src/main/resources/freemarker/essentials-menu.ftl 
 dashboard-plugins/menu-plugin/src/main/resources/hst/catalog/menu-catalog-item.xml -text
 dashboard-plugins/menu-plugin/src/main/resources/hst/menu-template-freemarker.xml -text
 dashboard-plugins/menu-plugin/src/main/resources/hst/menu-template-jsp.xml -text
+dashboard-plugins/menu-plugin/src/main/resources/images/component-icon-menu.png -text
 dashboard-plugins/menu-plugin/src/main/resources/jsp/essentials-menu.jsp -text
 dashboard-plugins/menu-plugin/src/test/java/org/onehippo/cms7/essentials/dashboard/menu/MenuPowerpackTest.java -text
 dashboard-plugins/menu-plugin/src/test/resources/log4j.xml -text
@@ -466,6 +468,7 @@ dashboard-plugins/search-plugin/src/main/resources/META-INF/searchPlugin_instruc
 dashboard-plugins/search-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/search-plugin/src/main/resources/powerpack/freemarker/search-box.ftl -text
 dashboard-plugins/search-plugin/src/main/resources/powerpack/freemarker/search-main.ftl -text
+dashboard-plugins/search-plugin/src/main/resources/powerpack/images/component-icon-search.png -text
 dashboard-plugins/search-plugin/src/main/resources/powerpack/jsp/search-box.jsp -text
 dashboard-plugins/search-plugin/src/main/resources/powerpack/jsp/search-main.jsp -text
 dashboard-plugins/search-plugin/src/main/resources/powerpack/xml/hst/search-box-freemarker.xml -text
