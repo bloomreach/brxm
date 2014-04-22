@@ -101,6 +101,7 @@
           <include>**/*.svg</include>
           <include>**/*.woff</include>
           <include>**/*.eot</include>
+          <include>**/*.png</include>
           <include>**/*.txt</include>
           <include>**/*.css</include>
           <include>**/*.MF</include>

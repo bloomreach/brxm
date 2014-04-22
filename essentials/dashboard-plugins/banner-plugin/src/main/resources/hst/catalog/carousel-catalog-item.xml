@@ -9,6 +9,9 @@
   <sv:property sv:name="hst:label" sv:type="String">
     <sv:value>Carousel</sv:value>
   </sv:property>
+  <sv:property sv:name="hst:iconpath" sv:type="String">
+    <sv:value>images/component-icon-carousel.png</sv:value>
+  </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
     <sv:value>essentials-carousel</sv:value>
   </sv:property>

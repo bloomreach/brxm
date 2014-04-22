@@ -102,6 +102,7 @@
           <include>**/*.MF</include>
           <include>**/*.jsp</include>
           <include>**/*.ftl</include>
+          <include>**/*.png</include>
           <include>**/*.properties</include>
         </includes>
       </resource>
