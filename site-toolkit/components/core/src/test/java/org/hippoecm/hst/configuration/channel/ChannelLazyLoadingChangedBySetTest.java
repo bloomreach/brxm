@@ -114,11 +114,14 @@ public class ChannelLazyLoadingChangedBySetTest {
         expect(siteMap.getSiteMapItems()).andReturn(siteMapItems);
 
         expect(previewSite.getComponentsConfiguration()).andReturn(componentsConfig);
+        expect(previewSite.getConfigurationPath()).andReturn("/hst:hst/hst:configurations/myproject");
         final Map<String, HstComponentConfiguration> configurationMap = Collections.emptyMap();
         expect(componentsConfig.getComponentConfigurations()).andReturn(configurationMap);
 
         expect(previewSite.getSiteMenusConfiguration()).andReturn(menusConfig);
         final Map<String, HstSiteMenuConfiguration> menuMap = new HashMap<>();
+
+        expect(menuConfig.getCanonicalPath()).andReturn("/hst:hst/hst:configurations/myproject/hst:sitemenus/home").anyTimes();
         expect(menuConfig.getLockedBy()).andReturn("joe").atLeastOnce();
         menuMap.put("menu-1", menuConfig);
         expect(menusConfig.getSiteMenuConfigurations()).andReturn(menuMap);
