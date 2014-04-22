@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,6 +73,7 @@ import org.hippoecm.repository.jackrabbit.HippoCompactNodeTypeDefReader;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.MavenComparableVersion;
 import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.RepoUtils;
 import org.onehippo.repository.api.ContentResourceLoader;
 import org.onehippo.repository.util.FileContentResourceLoader;
 import org.onehippo.repository.util.ZipFileContentResourceLoader;
@@ -352,7 +354,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             getLogger().error("Bootstrapping content to " + INIT_PATH + " is no supported");
             return;
         }
-        initializeNodecontent(session, root, contentStream, contentName + ":" + node.getPath());
+        initializeNodecontent(session, root, contentStream, null);
     }
 
     public void processContentFromFile(final Node node, final Session session, final boolean dryRun) throws RepositoryException, IOException {
@@ -386,7 +388,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                     try {
                         is = contentURL.openStream();
                         bis = new BufferedInputStream(is); 
-                        initializeNodecontent(session, contentRoot, bis, contentURL.toString(), pckg);
+                        initializeNodecontent(session, contentRoot, bis, contentURL, pckg);
                     } finally {
                         IOUtils.closeQuietly(bis);
                         IOUtils.closeQuietly(is);
@@ -406,7 +408,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             try {
                 is = contentURL.openStream();
                 bis = new BufferedInputStream(is); 
-                initializeNodecontent(session, contentRoot, bis, contentURL.toString(), pckg);
+                initializeNodecontent(session, contentRoot, bis, contentURL, pckg);
             } finally {
                 IOUtils.closeQuietly(bis);
                 IOUtils.closeQuietly(is);
@@ -566,7 +568,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         List<Node> initializeItems = new ArrayList<Node>();
         getLogger().info("Initializing extension "+configurationURL);
         try {
-            initializeNodecontent(session, "/hippo:configuration/hippo:temporary", configurationURL.openStream(), configurationURL.getPath());
+            initializeNodecontent(session, "/hippo:configuration/hippo:temporary", configurationURL.openStream(), configurationURL);
             final Node tempInitFolderNode = session.getNode("/hippo:configuration/hippo:temporary/hippo:initialize");
             final String moduleVersion = getModuleVersion(configurationURL);
             for (final Node tempInitItemNode : new NodeIterable(tempInitFolderNode.getNodes())) {
@@ -921,11 +923,11 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         return false;
     }
 
-    public void initializeNodecontent(Session session, String parentAbsPath, InputStream istream, String location) {
+    public void initializeNodecontent(Session session, String parentAbsPath, InputStream istream, URL location) {
         initializeNodecontent(session, parentAbsPath, istream, location, false);
     }
 
-    public void initializeNodecontent(Session session, String parentAbsPath, InputStream istream, String location, boolean pckg) {
+    public void initializeNodecontent(Session session, String parentAbsPath, InputStream istream, URL location, boolean pckg) {
         getLogger().info("Initializing content from: " + location + " to " + parentAbsPath);
         File tempFile = null;
         ZipFile zipFile = null;
@@ -955,13 +957,17 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                 }
                 else {
                     ContentResourceLoader contentResourceLoader = null;
-                    if ((StringUtils.startsWith(location, "jar:file:") || StringUtils.startsWith(location, "file:")) && StringUtils.contains(location, "!")) {
-                        File sourceFile = new File(URI.create(StringUtils.removeStart(StringUtils.substringBefore(location, "!"), "jar:")));
-                        zipFile = new ZipFile(sourceFile);
-                        contentResourceLoader = new ZipFileContentResourceLoader(zipFile);
-                    } else if (StringUtils.startsWith(location, "file:")) {
-                        File sourceFile = new File(URI.create(location));
-                        contentResourceLoader = new FileContentResourceLoader(sourceFile.getParentFile());
+                    if (location != null) {
+                        String file = location.getFile();
+                        int offset = file.indexOf(".jar!");
+                        if (offset != -1) {
+                            file = file.substring(0, offset+4);
+                            zipFile = new ZipFile(RepoUtils.stripFileProtocol(file));
+                            contentResourceLoader = new ZipFileContentResourceLoader(zipFile);
+                        } else if (location.getProtocol().equals("file")) {
+                            File sourceFile = new File(location.toURI());
+                            contentResourceLoader = new FileContentResourceLoader(sourceFile.getParentFile());
+                        }
                     }
                     hippoSession.importDereferencedXML(parentAbsPath, istream, contentResourceLoader,
                             uuidBehaviour, referenceBehaviour, mergeBehaviour);
@@ -969,11 +975,11 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             } else {
                 session.importXML(parentAbsPath, istream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
             }
-        } catch (IOException | RepositoryException e) {
+        } catch (IOException | RepositoryException | URISyntaxException e) {
             if (getLogger().isDebugEnabled()) {
                 getLogger().error("Error initializing content for " + location + " in '" + parentAbsPath + "' : " + e.getClass().getName() + ": " + e.getMessage(), e);
             } else {
-                getLogger().error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + e.getClass().getName() + ": " + e.getMessage());
+                getLogger().error("Error initializing content for " + location + " in '" + parentAbsPath + "' : " + e.getClass().getName() + ": " + e.getMessage());
             }
         } finally {
             IOUtils.closeQuietly(out);

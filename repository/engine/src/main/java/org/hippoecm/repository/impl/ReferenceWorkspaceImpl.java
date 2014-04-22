@@ -73,7 +73,7 @@ public class ReferenceWorkspaceImpl implements ReferenceWorkspace {
             final InitializationProcessorImpl initializationProcessor = new InitializationProcessorImpl();
 
             if (!session.nodeExists("/hippo:configuration")) {
-                initializationProcessor.initializeNodecontent(session, "/", LocalHippoRepository.class.getResourceAsStream("configuration.xml"), "configuration.xml");
+                initializationProcessor.initializeNodecontent(session, "/", LocalHippoRepository.class.getResourceAsStream("configuration.xml"), null);
             }
 
             session.save();

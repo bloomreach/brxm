@@ -409,7 +409,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             log.info("Initializing configuration content");
             InputStream configuration = getClass().getResourceAsStream("configuration.xml");
             if (configuration != null) {
-                initializationProcessor.initializeNodecontent(systemSession, "/", configuration, getClass().getPackage().getName() + ".configuration.xml");
+                initializationProcessor.initializeNodecontent(systemSession, "/", configuration, null);
             } else {
                 log.error("Could not initialize configuration content: ResourceAsStream not found: configuration.xml");
             }
