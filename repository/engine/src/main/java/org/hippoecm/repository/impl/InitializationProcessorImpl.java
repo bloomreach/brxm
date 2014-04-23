@@ -962,7 +962,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                         int offset = file.indexOf(".jar!");
                         if (offset != -1) {
                             file = file.substring(0, offset+4);
-                            zipFile = new ZipFile(RepoUtils.stripFileProtocol(file));
+                            zipFile = new ZipFile(new File(URI.create(file)));
                             contentResourceLoader = new ZipFileContentResourceLoader(zipFile);
                         } else if (location.getProtocol().equals("file")) {
                             File sourceFile = new File(location.toURI());
