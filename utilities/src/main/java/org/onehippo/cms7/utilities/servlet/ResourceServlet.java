@@ -254,10 +254,6 @@ public class ResourceServlet extends HttpServlet {
     static {
         DEFAULT_COMPRESSED_MIME_TYPES.add(Pattern.compile("text/.*"));
     }
-
-    // Round the creation timestamp at seconds so it can be used as a value for the HTTP headers
-    // 'Last-Modified' and 'If-Modified-Since' (which do not have a milliseconds component)
-    private static final long SERVLET_CREATION_TIMESTAMP_MILLIS_ROUNDED_AT_SECONDS = (System.currentTimeMillis() / 1000) * 1000;
     
     private Set<Pattern> allowedResourcePaths;
     
@@ -345,30 +341,16 @@ public class ResourceServlet extends HttpServlet {
         }
         
         long ifModifiedSince = request.getDateHeader("If-Modified-Since");
-
+        
         URLConnection conn = resource.openConnection();
-        long lastModified;
-
-        if (ifModifiedSince >= SERVLET_CREATION_TIMESTAMP_MILLIS_ROUNDED_AT_SECONDS) {
-            // The resource has been fetched before *after this resource servlet has been created*.
-            // We can therefore safely assume the resource was not modified if it's last modification
-            // time lies before the time it has been fetched.
-            lastModified = conn.getLastModified();
-
-            if (ifModifiedSince >= lastModified) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Resource: {} Not Modified.", resourcePath);
-                }
-                response.setStatus(304);
-                return;
+        long lastModified = conn.getLastModified();
+        
+        if (ifModifiedSince >= lastModified) {
+            if (log.isDebugEnabled()) {
+                log.debug("Resource: {} Not Modified.", resourcePath);
             }
-        } else {
-            // The resource has been fetched before from another resource servlet instance. We cannot
-            // assume anything about such files, since it is possible that the other resource servlet
-            // served a newer file with the same name, and now an *older* file with that name is requested.
-            // We therefore assume the file may be modified, and return the creation time of this servlet
-            // as the last modification time of the file.
-            lastModified = SERVLET_CREATION_TIMESTAMP_MILLIS_ROUNDED_AT_SECONDS;
+            response.setStatus(304);
+            return;
         }
         
         int contentLength = conn.getContentLength();
