@@ -253,16 +253,21 @@ public class BinariesServlet extends HttpServlet {
         if (setExpiresNeeded) {
             HeaderUtils.setExpiresHeaders(response, page);
         }
-        
-        if(setContentLength) {
-            HeaderUtils.setContentLengthHeader(response, page);
-        }
 
         if (HeaderUtils.hasMatchingEtag(request, page)) {
             log.debug("Matching ETag for uri {} , page {}", request.getRequestURI(), page.getResourcePath());
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+            /**
+             * NOTE: RFC 2616 the 304 response should *not* contain a message body,
+             * hence it should not contain a {@code Content-Length} header either.
+             */
             return;
         }
+
+        if (setContentLength) {
+            HeaderUtils.setContentLengthHeader(response, page);
+        }
+
 
         if (!HeaderUtils.isModifiedSince(request, page)) {
             log.debug("Page not modified for uri {} , page {}", request.getRequestURI(), page.getResourcePath());
