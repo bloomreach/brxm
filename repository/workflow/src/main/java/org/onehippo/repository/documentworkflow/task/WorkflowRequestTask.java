@@ -24,11 +24,10 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.documentworkflow.WorkflowRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * Custom workflow task for requestting publication, depublication, scheduled publication, scheduled depublication and deletion.
+ * Custom workflow task for requesting a publish, depublish, schedpublish, scheddepublish or delete operation of
+ * a document.
  */
 public class WorkflowRequestTask extends AbstractDocumentTask {
 
@@ -46,6 +45,7 @@ public class WorkflowRequestTask extends AbstractDocumentTask {
         this.type = type;
     }
 
+    @SuppressWarnings("unused")
     public DocumentVariant getContextVariant() {
         return contextVariant;
     }
@@ -54,6 +54,7 @@ public class WorkflowRequestTask extends AbstractDocumentTask {
         this.contextVariant = contextVariant;
     }
 
+    @SuppressWarnings("unused")
     public Date getTargetDate() {
         return targetDate;
     }
@@ -68,18 +69,16 @@ public class WorkflowRequestTask extends AbstractDocumentTask {
         DocumentHandle dm = getDocumentHandle();
 
         if (!dm.isRequestPending()) {
-            WorkflowRequest req;
 
             if (targetDate == null) {
-                req = new WorkflowRequest(getType(), contextVariant.getNode(getWorkflowContext().getInternalWorkflowSession()),
+                new WorkflowRequest(getType(), contextVariant.getNode(getWorkflowContext().getInternalWorkflowSession()),
                         contextVariant, getWorkflowContext().getUserIdentity());
             } else {
-                req = new WorkflowRequest(getType(), contextVariant.getNode(getWorkflowContext().getInternalWorkflowSession()),
+                new WorkflowRequest(getType(), contextVariant.getNode(getWorkflowContext().getInternalWorkflowSession()),
                         contextVariant, getWorkflowContext().getUserIdentity(), targetDate);
             }
 
             getWorkflowContext().getInternalWorkflowSession().save();
-//            dm.setRequest(req);
         } else {
             throw new WorkflowException("publication request already pending");
         }

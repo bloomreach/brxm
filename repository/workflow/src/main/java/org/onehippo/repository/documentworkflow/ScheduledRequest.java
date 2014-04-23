@@ -18,6 +18,9 @@ package org.onehippo.repository.documentworkflow;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+/**
+ * ScheduledRequest provides the model object for a Hippo document workflow scheduled operation to the DocumentWorkflow SCXML state machine.
+ */
 public class ScheduledRequest extends Request {
 
     public ScheduledRequest(Node node) throws RepositoryException {

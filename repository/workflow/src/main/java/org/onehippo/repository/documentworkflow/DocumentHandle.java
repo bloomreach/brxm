@@ -29,6 +29,9 @@ import org.onehippo.repository.scxml.SCXMLWorkflowData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * DocumentHandle provides the {@link SCXMLWorkflowData} backing model object for the DocumentWorkflow SCXML state machine.
+ */
 public class DocumentHandle implements SCXMLWorkflowData {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentHandle.class);

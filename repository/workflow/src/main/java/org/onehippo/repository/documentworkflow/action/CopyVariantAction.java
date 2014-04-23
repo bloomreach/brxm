@@ -21,7 +21,11 @@ import org.apache.commons.scxml2.model.ModelException;
 import org.onehippo.repository.documentworkflow.task.CopyVariantTask;
 
 /**
- * CopyVariantAction delegating the execution to CopyVariantTask.
+ * CopyVariantAction is a custom DocumentWorkflow SCXML state machine action for creating a new document variant based
+ * on another document variant, or overriding/replacing the target variant its content with that from the source variant.
+ * <p>
+ * The execution of this task is delegated to its corresponding {@link CopyVariantTask}.
+ * </p>
  */
 public class CopyVariantAction extends AbstractDocumentTaskAction<CopyVariantTask> {
 

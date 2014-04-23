@@ -38,7 +38,8 @@ import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
 
 /**
- * Custom workflow task for restoring a version to a specified target node.
+ * Custom workflow task for restoring a version to a specified target node using custom/manual copying of the version
+ * its content.
  */
 public class VersionRestoreToTask extends AbstractDocumentTask {
 

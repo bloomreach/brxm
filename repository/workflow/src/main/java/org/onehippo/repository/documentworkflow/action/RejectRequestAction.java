@@ -22,7 +22,11 @@ import org.onehippo.repository.documentworkflow.WorkflowRequest;
 import org.onehippo.repository.documentworkflow.task.RejectRequestTask;
 
 /**
- * RejectRequestAction delegating the execution to RejectRequestTask.
+ * RejectRequestAction is a custom DocumentWorkflow SCXML state machine action for marking a specific document handle
+ * request node as rejected, optionally together with an reason.
+ * <p>
+ * The execution of this task is delegated to its corresponding {@link RejectRequestTask}.
+ * </p>
  */
 public class RejectRequestAction extends AbstractDocumentTaskAction<RejectRequestTask> {
 

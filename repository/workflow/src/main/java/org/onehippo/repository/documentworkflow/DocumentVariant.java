@@ -25,6 +25,9 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 
+/**
+ * DocumentVariant provides a model object for a Hippo Document variant node to the DocumentWorkflow SCXML state machine.
+ */
 public class DocumentVariant extends Document {
 
     public DocumentVariant() {

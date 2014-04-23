@@ -23,6 +23,14 @@ import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.quartz.HippoSchedJcrConstants;
 
+/**
+ * Request provides a base class model object for a Hippo Document request node to the DocumentWorkflow SCXML state machine.
+ * <p>
+ * {@link ScheduledRequest} and {@link WorkflowRequest} provide concrete implementations for the two different
+ * usage types, and this base class provides static factory methods to create the correct instance based on the
+ * underlying JCr node type.
+ * </p>
+ */
 public abstract class Request extends Document {
 
     protected Request() {

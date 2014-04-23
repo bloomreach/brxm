@@ -27,7 +27,7 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
 
 /**
- * Custom workflow task for versioning a variant node.
+ * Custom workflow task for retrieving a specific a document variant version its frozen node as {@link Document}.
  */
 public class RetrieveVersionTask extends AbstractDocumentTask {
 

@@ -25,6 +25,9 @@ import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.util.JcrConstants;
 
+/**
+ * WorkflowRequest provides the model object for a Hippo document workflow request operation to the DocumentWorkflow SCXML state machine.
+ */
 public class WorkflowRequest extends Request {
 
     public WorkflowRequest(Node node) throws RepositoryException {

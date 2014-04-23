@@ -19,7 +19,11 @@ package org.onehippo.repository.documentworkflow.action;
 import org.onehippo.repository.documentworkflow.task.ArchiveDocumentTask;
 
 /**
- * ArchiveAction delegating the execution to ArchiveTask.
+ * ArchiveDocumentAction is a custom DocumentWorkflow SCXML state machine action for archiving the current document
+ * through its folder workflow archive operation.
+ * <p>
+ * The execution of this task is delegated to its corresponding {@link ArchiveDocumentTask}.
+ * </p>
  */
 public class ArchiveDocumentAction extends AbstractDocumentTaskAction<ArchiveDocumentTask> {
 

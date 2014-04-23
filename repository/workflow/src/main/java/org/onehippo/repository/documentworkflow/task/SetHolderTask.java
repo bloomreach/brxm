@@ -24,7 +24,7 @@ import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
 
 /**
- * Custom workflow task which sets the draft variant holder to the current user
+ * Custom workflow task which sets or removes the draft document variant holder
  */
 public class SetHolderTask extends AbstractDocumentTask {
 

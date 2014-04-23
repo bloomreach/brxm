@@ -22,7 +22,11 @@ import org.onehippo.repository.documentworkflow.Request;
 import org.onehippo.repository.documentworkflow.task.DeleteRequestTask;
 
 /**
- * DeleteRequestAction delegating the execution to DeleteRequestTask.
+ * DeleteRequestAction is a custom DocumentWorkflow SCXML state machine action for removing an existing document
+ * request child node from the document handle node.
+ * <p>
+ * The execution of this task is delegated to its corresponding {@link DeleteRequestTask}.
+ * </p>
  */
 public class DeleteRequestAction extends AbstractDocumentTaskAction<DeleteRequestTask> {
 

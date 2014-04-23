@@ -27,6 +27,20 @@ import org.apache.commons.scxml2.model.ModelException;
 import org.onehippo.repository.scxml.AbstractAction;
 import org.onehippo.repository.scxml.SCXMLWorkflowContext;
 
+/**
+ * RequestActionAction is a basic SCXML state machine custom action to record a specific {@link #setAction(String) action}
+ * for a DocumentWorkflow Hippo request node as enabled in the dedicated "requests" keyed map object within the state
+ * machine {@link SCXMLWorkflowContext#getFeedback() feedback} map.
+ * <p>
+ * These request actions are themselves stored in an 'actions' map by their request node identifier in the same way
+ * standard state machine actions are stored in the {@link SCXMLWorkflowContext#getActions() actions} map.
+ * </p>
+ * <p>
+ * If the configured {@link #setEnabledExpr(String) enabledExpr} attribute expression evaluates at runtime to
+ * Boolean.TRUE, the configured {@link #setAction(String) action} attribute value will be stored as enabled in the map,
+ * or else it will remove such action from the map.
+ * </p>
+ */
 public class RequestActionAction extends AbstractAction {
 
     private static final long serialVersionUID = 1L;

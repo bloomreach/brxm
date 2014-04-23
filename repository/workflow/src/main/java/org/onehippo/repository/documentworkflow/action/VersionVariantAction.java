@@ -22,7 +22,15 @@ import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.documentworkflow.task.VersionVariantTask;
 
 /**
- * VersionVariantAction delegating the execution to VersionVariantTask.
+ * VersionVariantAction is a custom DocumentWorkflow SCXML state machine action for creating a new JCR version for the
+ * specified document variant.
+ * <p>
+ * A {@link org.hippoecm.repository.api.Document} wrapper object for the newly versioned target node is returned as
+ * SCXML state machine execution {@link org.onehippo.repository.scxml.SCXMLWorkflowContext#getResult() result}.
+ * </p>
+ * <p>
+ * The execution of this task is delegated to its corresponding {@link VersionVariantTask}.
+ * </p>
  */
 public class VersionVariantAction extends AbstractDocumentTaskAction<VersionVariantTask> {
 

@@ -36,10 +36,24 @@ import org.hippoecm.repository.ext.WorkflowImpl;
 import org.onehippo.repository.scxml.SCXMLWorkflowContext;
 import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
 
+/**
+ * DocumentWorkflow implementation which delegates the document workflow state management and action processing
+ * to an SCXML state machine executed through an {@link SCXMLWorkflowExecutor} using a {@link DocumentHandle}
+ * instance as {@link org.onehippo.repository.scxml.SCXMLWorkflowData} backing model object.
+ * <p>
+ * All workflow operations will (re)start the backing SCXML state machine to ensure the current external (repository)
+ * state is (re)evaluated again and the current set of allowable actions, as determined by the state machine, is used to
+ * validate if the intended operation (action) is actually allowed within the current state.
+ * </p>
+ */
 public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkflow {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Workflow repository configuration property name under which a custom SCXML definition id can be provided.
+     * If undefined SCXML definition id "documentworkflow" will be used.
+     */
     public static final String SCXML_DEFINITION_KEY = "scxml-definition";
 
     private SCXMLWorkflowExecutor<SCXMLWorkflowContext, DocumentHandle> workflowExecutor;

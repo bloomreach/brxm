@@ -24,12 +24,6 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.api.WorkflowTask;
 
 /**
- * AbstractWorkflowTaskAction
- * <p>
- * SCXML base class for {@link WorkflowTask} based actions
- * </p>
- */
-/**
  * AbstractWorkflowTaskAction provides a base class for custom SCXML state machine actions which involve executing
  * a specific {@link WorkflowTask}.
  * <p>

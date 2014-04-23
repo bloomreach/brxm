@@ -25,7 +25,7 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
 
 /**
- * Custom workflow task for versioning a variant node.
+ * Custom workflow task for creating a JCR version of a document variant node.
  */
 public class VersionVariantTask extends AbstractDocumentTask {
 

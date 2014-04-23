@@ -22,10 +22,9 @@ import org.onehippo.repository.documentworkflow.task.AbstractDocumentTask;
 import org.onehippo.repository.scxml.AbstractWorkflowTaskAction;
 
 /**
- * AbstractDocumentTaskAction
- * <p>
- * SCXML base class for {@link AbstractDocumentTask} based actions
- * </p>
+ * AbstractDocumentTaskAction provides an extended {@link AbstractWorkflowTaskAction} base class for custom SCXML
+ * state machine actions which involve executing a specific {@link AbstractDocumentTask} in the context of
+ * a {@link org.onehippo.repository.documentworkflow.DocumentWorkflow} operation.
  */
 public abstract class AbstractDocumentTaskAction<T extends AbstractDocumentTask> extends AbstractWorkflowTaskAction<T> {
 

@@ -43,7 +43,7 @@ import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_S
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_WORKFLOW_JOB;
 
 /**
- * Custom workflow task for scheduling a publication or depublication of a document.
+ * Custom workflow task for scheduling a publish or depublish workflow operation for a document.
  */
 public class ScheduleWorkflowTask extends AbstractDocumentTask {
 

@@ -22,7 +22,12 @@ import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.documentworkflow.task.ListVersionsVariantTask;
 
 /**
- * ListVersionsVariantAction delegating the execution to ListVersionsVariantTask.
+ * ListVersionsVariantAction is a custom DocumentWorkflow SCXML state machine action for reporting the available
+ * versions of a specific document variant (e.g. the unpublished variant) as SCXML state machine result through the
+ * {@link org.onehippo.repository.scxml.SCXMLWorkflowContext#getResult()} object.
+ * <p>
+ * The execution of this task is delegated to its corresponding {@link ListVersionsVariantTask}.
+ * </p>
  */
 public class ListVersionsVariantAction extends AbstractDocumentTaskAction<ListVersionsVariantTask> {
 

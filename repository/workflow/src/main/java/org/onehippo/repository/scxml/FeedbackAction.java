@@ -24,9 +24,6 @@ import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
 
 /**
- * InfoAction stores a provided feedback value in the SCXMLWorkflowContext
- */
-/**
  * FeedbackAction is a basic SCXML state machine custom action to store a specific {@link #setValue(String)} expression
  * under the configured {@link #setKey(String)} inthe {@link SCXMLWorkflowContext#getFeedback()} map.
  * <p>

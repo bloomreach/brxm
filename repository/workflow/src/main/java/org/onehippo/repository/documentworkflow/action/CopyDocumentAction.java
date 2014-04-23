@@ -22,7 +22,11 @@ import org.hippoecm.repository.api.Document;
 import org.onehippo.repository.documentworkflow.task.CopyDocumentTask;
 
 /**
- * CopyDocumentAction delegating the execution to CopyDocumentTask.
+ * CopyDocumentAction is a custom DocumentWorkflow SCXML state machine action for copying the current document
+ * to a new destination folder under a specific (possibly different) name.
+ * <p>
+ * The execution of this task is delegated to its corresponding {@link CopyDocumentTask}.
+ * </p>
  */
 public class CopyDocumentAction extends AbstractDocumentTaskAction<CopyDocumentTask> {
 

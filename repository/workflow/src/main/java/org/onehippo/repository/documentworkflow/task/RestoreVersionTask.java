@@ -26,7 +26,7 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
 
 /**
- * Custom workflow task for restoring a version.
+ * Custom workflow task for restoring a version using standard JCR restore
  */
 public class RestoreVersionTask extends AbstractDocumentTask {
 

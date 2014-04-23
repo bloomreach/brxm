@@ -21,7 +21,15 @@ import java.io.Serializable;
 import org.onehippo.repository.documentworkflow.task.IsModifiedTask;
 
 /**
- * IsModifiedAction delegating the execution to IsModifiedTask.
+ * IsModifiedAction is a custom DocumentWorkflow SCXML state machine action which compares the current document draft
+ * variant with the unpublished variant and stores the boolean result under the "modified" key in the
+ * {@link org.onehippo.repository.scxml.SCXMLWorkflowContext#getFeedback() feedback} map.
+ * <p>
+ * If either the draft or unpublished variant does not exists, the "modified" key is removed from the feedback map.
+ * </p>
+ * <p>
+ * The execution of the task to compare the two variants is delegated to the corresponding {@link IsModifiedTask}.
+ * </p>
  */
 public class IsModifiedAction extends AbstractDocumentTaskAction<IsModifiedTask> {
 

@@ -22,7 +22,12 @@ import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.documentworkflow.task.ConfigVariantTask;
 
 /**
- * ConfigVariantAction delegating the execution to ConfigVariantTask.
+ * ConfigVariantAction is a custom DocumentWorkflow SCXML state machine action for configuring a newly created or
+ * copied (merged) document variant with specific characteristics, like setting its availabilities, modification info,
+ * current holder (editor) and possibly marking the document variant as being published.
+ * <p>
+ * The execution of this task is delegated to its corresponding {@link ConfigVariantTask}.
+ * </p>
  */
 public class ConfigVariantAction extends AbstractDocumentTaskAction<ConfigVariantTask> {
 

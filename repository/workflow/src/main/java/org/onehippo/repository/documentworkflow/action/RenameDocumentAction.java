@@ -21,7 +21,10 @@ import org.apache.commons.scxml2.model.ModelException;
 import org.onehippo.repository.documentworkflow.task.RenameDocumentTask;
 
 /**
- * RenameDocumentAction delegating the execution to RenameDocumentTask.
+ * RenameDocumentAction is a custom DocumentWorkflow SCXML state machine action for renaming the current document (handle).
+ * <p>
+ * The execution of this task is delegated to its corresponding {@link RenameDocumentTask}.
+ * </p>
  */
 public class RenameDocumentAction extends AbstractDocumentTaskAction<RenameDocumentTask> {
 

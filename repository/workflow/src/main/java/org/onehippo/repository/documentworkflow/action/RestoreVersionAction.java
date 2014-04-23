@@ -24,7 +24,19 @@ import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.documentworkflow.task.RestoreVersionTask;
 
 /**
- * RestoreVersionAction delegating the execution to RestoreVersionTask.
+ * RestoreVersionAction is a custom DocumentWorkflow SCXML state machine action for restoring a specific document
+ * version to a document variant (e.g. unpublished), using the standard JCR version restore functionality.
+ * <p>
+ * The resulting {@link DocumentVariant} document object is returned as SCXML state machine execution
+ * {@link org.onehippo.repository.scxml.SCXMLWorkflowContext#getResult() result}.
+ * </p>
+ * <p>
+ * Note the difference of this action compared to {@link VersionRestoreToAction} which uses a custom/manual copying
+ * of the version content onto its target node.
+ * </p>
+ * <p>
+ * The execution of this task is delegated to its corresponding {@link RestoreVersionTask}.
+ * </p>
  */
 public class RestoreVersionAction extends AbstractDocumentTaskAction<RestoreVersionTask> {
 

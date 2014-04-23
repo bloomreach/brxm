@@ -48,11 +48,8 @@ import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.util.JcrConstants;
 
 /**
- * AbstractDocumentTask
- * <P>
  * Abstract base workflow task class having sharable workflow/document related operations and
  * delegating operations to the underlying AbstractAction to retrieve execution context attributes.
- * </P>
  */
 public abstract class AbstractDocumentTask implements WorkflowTask, Serializable {
 
@@ -101,8 +98,7 @@ public abstract class AbstractDocumentTask implements WorkflowTask, Serializable
     protected abstract Object doExecute() throws WorkflowException, RepositoryException, RemoteException;
 
     /**
-     * Returns the document handle object from the current SCXML execution context.
-     * @return
+     * @return the document handle object from the current SCXML execution context.
      */
     public DocumentHandle getDocumentHandle() {
         return documentHandle;

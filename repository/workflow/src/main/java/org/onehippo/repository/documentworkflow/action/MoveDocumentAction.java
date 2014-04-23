@@ -22,7 +22,11 @@ import org.hippoecm.repository.api.Document;
 import org.onehippo.repository.documentworkflow.task.MoveDocumentTask;
 
 /**
- * MoveDocumentAction delegating the execution to MoveDocumentTask.
+ * MoveDocumentAction is a custom DocumentWorkflow SCXML state machine action for moving the current document (handle)
+ * to a new destination folder under a specific (possibly different) name.
+ * <p>
+ * The execution of this task is delegated to its corresponding {@link MoveDocumentTask}.
+ * </p>
  */
 public class MoveDocumentAction extends AbstractDocumentTaskAction<MoveDocumentTask> {
 

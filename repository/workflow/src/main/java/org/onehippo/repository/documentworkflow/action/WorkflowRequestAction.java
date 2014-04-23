@@ -24,7 +24,12 @@ import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.documentworkflow.task.WorkflowRequestTask;
 
 /**
- * RequestAction delegating the execution to WorkflowRequestTask.
+ * WorkflowRequestAction is a custom DocumentWorkflow SCXML state machine action for creating a new
+ * document workflow request node of a specific type (publish, depublish, scheduledpublish, scheduleddepublish, delete)
+ * for the current document, optionally (depending on the type) on a specific target date.
+ * <p>
+ * The execution of this task is delegated to its corresponding {@link WorkflowRequestTask}.
+ * </p>
  */
 public class WorkflowRequestAction extends AbstractDocumentTaskAction<WorkflowRequestTask> {
 

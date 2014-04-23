@@ -23,7 +23,15 @@ import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.documentworkflow.task.RetrieveVersionTask;
 
 /**
- * VersionVariantAction delegating the execution to VersionVariantTask.
+ * RetrieveVersionAction is a custom DocumentWorkflow SCXML state machine action for retrieving a
+ * {@link org.hippoecm.repository.api.Document} wrapper object for a specific document version (JCR frozen node).
+ * <p>
+ * The resulting document object is returned as SCXML state machine execution
+ * {@link org.onehippo.repository.scxml.SCXMLWorkflowContext#getResult() result}.
+ * </p>
+ * <p>
+ * The execution of this task is delegated to its corresponding {@link RetrieveVersionTask}.
+ * </p>
  */
 public class RetrieveVersionAction extends AbstractDocumentTaskAction<RetrieveVersionTask> {
 

@@ -23,7 +23,12 @@ import org.apache.commons.scxml2.model.ModelException;
 import org.onehippo.repository.documentworkflow.task.ScheduleWorkflowTask;
 
 /**
- * ScheduleRequestAction delegating the execution to ScheduleWorkflowTask.
+ * ScheduleWorkflowAction is a custom DocumentWorkflow SCXML state machine action for scheduling a "publish" or
+ * "depublish" {@link #setType(String) type} workflow operation of the current document on a specific
+ * {@link #setTargetDateExpr(String) date}.
+ * <p>
+ * The execution of this task is delegated to its corresponding {@link ScheduleWorkflowTask}.
+ * </p>
  */
 public class ScheduleWorkflowAction extends AbstractDocumentTaskAction<ScheduleWorkflowTask> {
 

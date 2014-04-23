@@ -20,6 +20,13 @@ import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
 import org.onehippo.repository.documentworkflow.task.SetHolderTask;
 
+/**
+ * SetHolderAction is a custom DocumentWorkflow SCXML state machine action for setting or removing the current
+ * draft document variant holder.
+ * <p>
+ * The execution of this task is delegated to its corresponding {@link SetHolderTask}.
+ * </p>
+ */
 public class SetHolderAction extends AbstractDocumentTaskAction<SetHolderTask> {
 
     private static final long serialVersionUID = 1L;
