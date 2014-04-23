@@ -16,8 +16,6 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
-impo
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -50,8 +48,7 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.eventbus.EventBus; * @version "$Id$"
- */
+import com.google.common.eventbus.EventBus;
 @Component
 @XmlRootElement(name = "file", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class FileInstruction extends PluginInstruction {
