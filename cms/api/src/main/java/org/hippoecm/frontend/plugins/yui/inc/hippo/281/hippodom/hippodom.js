@@ -62,7 +62,7 @@ if (!YAHOO.hippo.Dom) { // Ensure only one hippo dom exists
                                 }
                             }
                         } catch(e) {
-                            //ignore
+                            console.warn("Error while searching node with yui:id '" + yuiId + "': ", e);
                         }
                     };
                     traverse(element);
@@ -91,7 +91,7 @@ if (!YAHOO.hippo.Dom) { // Ensure only one hippo dom exists
 
         YAHOO.hippo.Dom.isValidChildNode = function(node) {
             if (node.nodeType === 1 && (node.prefix === null || node.prefix === undefined || node.prefix === 'html')
-                    && (!node.getAttribute("id") || node.getAttribute("yui:id") || node.localName.indexOf('wicket:') === 0)) {
+                    && (!node.getAttribute("id") || node.getAttribute("yui:id"))) {
                 return true;
             }
             return false;
@@ -169,36 +169,3 @@ if (!YAHOO.hippo.Dom) { // Ensure only one hippo dom exists
         version: "2.8.1", build: "19"
     });
 }
-
-/*
- * Proposed patch for 'Empty string passed to getElementById()' error in FF3
- * with Firebug 1.2.0b2.
- */
-
-//TODO: not needed anymore?
-/*
-YAHOO.util.Dom.get = function(el) {
-    if (el) {
-        if (el.nodeType || el.item) { // Node, or NodeList
-            return el;
-        }
-
-        if (typeof el === 'string') { // id
-            return document.getElementById(el);
-        }
-
-        if ('length' in el) { // array-like
-            var c = [];
-            for ( var i = 0, len = el.length; i < len; ++i) {
-                c[c.length] = YAHOO.util.Dom.get(el[i]);
-            }
-
-            return c;
-        }
-
-        return el; // some other object, just pass it back
-    }
-
-    return null;
-};
-*/
