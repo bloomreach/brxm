@@ -59,68 +59,82 @@
 
   <parallel id="handle">
 
+    <!-- the atomic status state is used to report several statuses and info feedback to the invoking workflow -->
     <state id="status">
       <onentry>
         <hippo:feedback key="status" value="editable"/>
         <hippo:feedback key="isLive" value="live"/>
         <hippo:feedback key="previewAvailable" value="previewAvailable"/>
+        <!-- enable the checkModified operation if both draft and unpublished variants exists -->
         <hippo:action action="checkModified" enabledExpr="draft and unpublished"/>
       </onentry>
 
+      <!-- target-less transition on event checkModified to compare the draft and unpublished variants which result is
+           reported back as Boolean value through the 'modified' feedback variable and the workflow operation result -->
       <transition event="checkModified">
         <hippo:isModified/>
         <hippo:result value="workflowContext.feedback['modified']"/>
       </transition>
     </state>
 
+    <!-- the composite edit state is used to manage all operations for editing a draft variant -->
     <state id="edit">
 
+      <!-- default no-edit state initially disables all editing operations -->
       <state id="no-edit">
         <onentry>
           <hippo:action action="disposeEditableInstance" enabledExpr="false"/>
           <hippo:action action="obtainEditableInstance" enabledExpr="false"/>
           <hippo:action action="commitEditableInstance" enabledExpr="false"/>
         </onentry>
-        <!-- transition to state "editing" when there is no pending request and the draft variant is being edited -->
+        <!-- event-less transition to state "editing" if there is no pending request and the draft variant is edited -->
         <transition target="editing"  cond="!requestPending and editing"/>
-        <!-- else transition to state "editable" when there is no pending request and the draft variant doesn't exist
-             yet or isn't being edited -->
+        <!-- (else) event-less transition to state "editable" if there is no pending request and the draft variant
+                    doesn't exist yet or isn't edited -->
         <transition target="editable" cond="!requestPending"/>
       </state>
 
+      <!-- editing state becomes active when the draft variant is currently edited -->
       <state id="editing">
         <onentry>
           <if cond="editor">
+            <!-- current editor is allowed all editing operations -->
             <hippo:action action="disposeEditableInstance" enabledExpr="true"/>
             <hippo:action action="obtainEditableInstance" enabledExpr="true"/>
             <hippo:action action="commitEditableInstance" enabledExpr="true"/>
           <else/>
-            <!-- provide the current draft document holder as "inUseBy" feedback -->
+            <!-- for a not-current editor the current editor (holder) is reported through the 'inUseBy' feedback -->
             <hippo:feedback key="inUseBy" value="holder"/>
           </if>
-          <!-- if not draft document holder AND granted hippo:admin -->
           <if cond="!editor and workflowContext.isGranted(draft,'hippo:admin')">
-            <!-- then "unlock" action" is enabled -->
+            <!-- For an admin (granted hippo:admin) enable the unlock operation if not-current editor -->
             <hippo:action action="unlock" enabledExpr="true"/>
           </if>
         </onentry>
       </state>
 
+      <!-- editable state becomes active if editing is possible but there is no current editor -->
       <state id="editable">
         <onentry>
           <if cond="workflowContext.isGranted(draft,'hippo:admin')">
+            <!-- for an admin (granted hippo:admin) report the unlock operation as available but disabled -->
             <hippo:action action="unlock" enabledExpr="false"/>
           </if>
+          <!-- enable the operation to start editing -->
           <hippo:action action="obtainEditableInstance" enabledExpr="true"/>
         </onentry>
       </state>
 
+      <!-- target-less transition to 'dispose' an editable instance by (only) removing the current draft holder, and the
+           current unpublished document variant is returned if currently in preview state else the published variant -->
       <transition event="disposeEditableInstance">
         <!-- remove holder from the draft document -->
         <hippo:setHolder holder="null"/>
         <hippo:result value="preview ? unpublished : published"/>
       </transition>
 
+      <!-- target-less transition to 'obtain' an editable draft document variant by creating or updating a draft variant
+           by copying (the contents of) the current unpublished variant if available or else the published variant -->
       <transition event="obtainEditableInstance">
         <if cond="!!unpublished">
           <!-- unpublished document exists: copy it to draft first -->
@@ -135,69 +149,96 @@
         <hippo:result value="draft"/>
       </transition>
 
+      <!-- target-less transition to 'commit' an editable instance by removing the holder and, if new or modified,
+           copying its content to the unpublished variant -->
       <transition event="commitEditableInstance">
         <hippo:setHolder holder="null"/>
         <if cond="!!unpublished">
+          <!-- if unpublished variant exist only 'commit' changes if there are any -->
           <hippo:isModified/>
         </if>
         <if cond="!unpublished or workflowContext.feedback['modified']">
+          <!-- we either have a new draft (no unpublished) or the draft is modified compared to the unpublished -->
           <if cond="!unpublished and !!published">
+            <!-- we have no unpublished variant yet but do have a published variant:
+                 remove possible 'preview' availability from the published variant -->
             <if cond="live">
               <hippo:configVariant variant="published" availabilities="live"/>
             <else/>
               <hippo:configVariant variant="published" availabilities=""/>
             </if>
           </if>
+          <!-- copy the new or modified draft variant to the unpublished variant, creating it if needed -->
           <hippo:copyVariant sourceState="draft" targetState="unpublished"/>
+          <!-- configure the new or updated unpublished to be versionable, modified and available as 'preview' -->
           <hippo:configVariant variant="unpublished" versionable="true" applyModified="true" availabilities="preview"/>
         </if>
+        <!-- return the possibly updated unpublished variant -->
         <hippo:result value="unpublished"/>
       </transition>
 
+      <!-- target-less transition to 'unlock' the current edited draft variant by overriding its current holder
+           with that of the current invoking admin (granted hippo:admin) user. -->
       <transition event="unlock">
-        <!-- unlock the current draft document by setting the holder to the current (hippo:admin) user -->
         <hippo:setHolder holder="user"/>
       </transition>
 
     </state>
 
+    <!-- the composite request state is used to manage all workflow operations on existing document workflow requests -->
     <state id="request">
 
+      <!-- the initial no-request state is used and active when there are no current document workflow requests -->
       <state id="no-request">
-        <!-- transition to state "requested" when requests exists -->
+        <!-- event-less transition to state "requested" when requests exists -->
         <transition target="requested" cond="!empty(requests)"/>
       </state>
 
+      <!-- the requested state becomes active when document workflow requests are present -->
       <state id="requested">
         <onentry>
           <foreach item="request" array="requests.values()">
+            <!-- for all requests determine the available request actions and report them through the special 'requests'
+                 feedback map variable -->
+            <!-- for document workflow requests: -->
             <if cond="request.workflowRequest">
               <if cond="workflowContext.isGranted(request, 'hippo:editor')">
+                <!-- editor users (granted hippo:editor) may reject and accept as well as cancel requests -->
                 <if cond="request.workflowType!='rejected'">
+                  <!-- if request not rejected yet, enable reject operation -->
                   <hippo:requestAction identifierExpr="request.identity" action="rejectRequest" enabledExpr="true"/>
                 </if>
                 <if cond="request.workflowType=='delete'">
+                  <!-- if request for delete: enable accept operation if not live and not editing -->
                   <hippo:requestAction identifierExpr="request.identity" action="acceptRequest" enabledExpr="!live and !editing"/>
                 <elseif cond="request.workflowType=='publish'">
+                  <!-- if request for publish: enable accept operation if modified and not editing -->
                   <hippo:requestAction identifierExpr="request.identity" action="acceptRequest" enabledExpr="modified and !editing"/>
                 </elseif>
                 <elseif cond="request.workflowType=='depublish'"/>
+                  <!-- if request for depublish: enable accept operation if live and not editing -->
                   <hippo:requestAction identifierExpr="request.identity" action="acceptRequest" enabledExpr="live and !editing"/>
                 </if>
                 <if cond="!request.owner or request.owner==user">
+                  <!-- if request owner or no request owner: enable cancel operation -->
                   <hippo:requestAction identifierExpr="request.identity" action="cancelRequest" enabledExpr="true"/>
                 </if>
+              <!-- when not an editor user (not granted hippo:editor) then: -->
               <elseif cond="request?.owner==user"/>
+                <!-- if request owner: enable cancel operation -->
                 <hippo:requestAction identifierExpr="request.identity" action="cancelRequest" enabledExpr="true"/>
               </if>
             <else/>
+              <!-- scheduled workflow operation -->
               <if cond="workflowContext.isGranted(request, 'hippo:editor')">
+                <!-- if editor user (granted hippo:editor): enable cancel operation -->
                 <hippo:requestAction identifierExpr="request.identity" action="cancelRequest" enabledExpr="true"/>
               </if>
             </if>
           </foreach>
         </onentry>
 
+        <!-- target-less transition to 'accept' a specific request -->
         <transition event="acceptRequest">
 
           <!-- define temporary request variable for the event payload request parameter -->
@@ -208,8 +249,8 @@
           <cs:var name="targetDate" expr="request.scheduledDate"/>
 
           <!-- First delete the request itself.
-               Note: after this the request object no longer can be accessed...
-                     which is why we had to create the temporary variables workflowType and targetDate above first!
+               Note: After this, the request object no longer can be accessed!
+                     Which is why we need to define the temporary variables workflowType and targetDate above.
           -->
           <hippo:deleteRequest requestExpr="request"/>
 
@@ -223,11 +264,16 @@
 
         </transition>
 
+        <!-- target-less transition to 'reject' a request -->
         <transition event="rejectRequest">
+          <!-- update the specific request to type rejected with an optional reason, using the event payload
+               'request' and optional 'reason' parameters -->
           <hippo:rejectRequest requestExpr="_event.data?.request" reasonExpr="_event.data?.reason"/>
         </transition>
 
+        <!-- target-less transition to 'cancel' a request -->
         <transition event="cancelRequest">
+          <!-- delete the specific request using the event payload 'request' parameter -->
           <hippo:deleteRequest requestExpr="_event.data?.request"/>
         </transition>
 
@@ -235,42 +281,59 @@
 
     </state>
 
+    <!-- the composite publish state is used to manage workflow operations for publishing a document -->
     <state id="publish">
 
+      <!-- the initial no-publish state is used and active to indicate publish operations are currently not
+           allowed or possible because the document is being edited or not (yet) modified -->
       <state id="no-publish">
         <onentry>
+          <!-- by default report the request publication operation as available but disabled -->
           <hippo:action action="requestPublication" enabledExpr="false"/>
           <if cond="workflowContext.isGranted(unpublished ?: published ?: draft, 'hippo:editor')">
+              <!-- if editor user (granted hippo:editor) by default report the publish operation as available but disabled -->
               <hippo:action action="publish" enabledExpr="false"/>
           </if>
         </onentry>
+        <!-- event-less transition to publishable state if not currently editing and the document is modified -->
         <transition target="publishable" cond="!editing and modified"/>
       </state>
 
+      <!-- state publishable is active when the  document is modified and not currently edited -->
       <state id="publishable">
         <onentry>
           <if cond="!requestPending or user=='system'">
+            <!-- if no request pending OR invoked by the 'system' user (scheduled workflow jobs daemon):
+                 enable request publication operation -->
             <hippo:action action="requestPublication" enabledExpr="true"/>
             <if cond="workflowContext.isGranted(unpublished, 'hippo:editor')">
+              <!-- if (also) editor user (granted hippo:editor): enable publish operation -->
               <hippo:action action="publish" enabledExpr="true"/>
             </if>
           </if>
         </onentry>
 
+        <!-- target-less transition to create a publish request when no event payload parameter targetDate is provided -->
         <transition event="requestPublication" cond="!_event.data?.targetDate">
           <hippo:workflowRequest type="publish" contextVariantExpr="unpublished"/>
         </transition>
 
+        <!-- target-less transition to create a scheduledpublish request at the required event payload parameter targetDate -->
         <transition event="requestPublication" cond="!!_event.data?.targetDate">
           <hippo:workflowRequest type="scheduledpublish" contextVariantExpr="unpublished" targetDateExpr="_event.data?.targetDate"/>
         </transition>
 
+        <!-- target-less transition to publish the document when no event payload parameter targetDate is provided -->
         <transition event="publish" cond="!_event.data?.targetDate">
+          <!-- copy the content of the unpublished variant to the published variant -->
           <hippo:copyVariant sourceState="unpublished" targetState="published"/>
+          <!-- mark the published variant as published and set its availability to (only) 'live' -->
           <hippo:configVariant variant="published" applyPublished="true" availabilities="live"/>
+          <!-- create a JCR version of the published document via the unpublished variant -->
           <hippo:version variant="unpublished"/>
         </transition>
 
+        <!-- target-less transition to schedule the publication of the document at the required event payload parameter targetDate -->
         <transition event="publish" cond="!!_event.data?.targetDate">
           <hippo:scheduleWorkflow type="publish" targetDateExpr="_event.data?.targetDate"/>
         </transition>
@@ -279,45 +342,63 @@
 
     </state>
 
+    <!-- the composite depublish state is used to manage workflow operations for depublishing a document -->
     <state id="depublish">
 
+      <!-- the initial no-depublish state is used and active to indicate depublish operations are currently not
+           allowed or possible because the document is being edited or not 'live' -->
       <state id="no-depublish">
         <onentry>
+          <!-- by default report the request depublication operation as available but disabled -->
           <hippo:action action="requestDepublication" enabledExpr="false"/>
           <if cond="workflowContext.isGranted(published ?: unpublished ?: draft, 'hippo:editor')">
+            <!-- if editor user (granted hippo:editor) by default report the depublish operation as available but disabled -->
             <hippo:action action="depublish" enabledExpr="false"/>
           </if>
         </onentry>
+        <!-- event-less transition to depublishable state if not currently editing and the document is 'live' -->
         <transition target="depublishable" cond="!editing and live"/>
       </state>
 
+      <!-- state depublishable is active when the  document is live and not currently edited -->
       <state id="depublishable">
         <onentry>
           <if cond="!requestPending or user=='system'">
+            <!-- if no request pending OR invoked by the 'system' user (scheduled workflow jobs daemon):
+                 enable request depublication operation -->
             <hippo:action action="requestDepublication" enabledExpr="true"/>
             <if cond="workflowContext.isGranted(published, 'hippo:editor')">
+              <!-- if (also) editor user (granted hippo:editor): enable publish operation -->
               <hippo:action action="depublish" enabledExpr="true"/>
             </if>
           </if>
         </onentry>
 
+        <!-- target-less transition to create a depublish request when no event payload parameter targetDate is provided -->
         <transition event="requestDepublication" cond="!_event.data?.targetDate">
           <hippo:workflowRequest type="depublish" contextVariantExpr="published"/>
         </transition>
 
+        <!-- target-less transition to create a scheduleddepublish request at the required event payload parameter targetDate -->
         <transition event="requestDepublication" cond="!!_event.data?.targetDate">
           <hippo:workflowRequest type="scheduleddepublish" contextVariantExpr="published" targetDateExpr="_event.data?.targetDate"/>
         </transition>
 
+        <!-- target-less transition to depublish the document when no event payload parameter targetDate is provided -->
         <transition event="depublish" cond="!_event.data?.targetDate">
           <if cond="!unpublished">
+            <!-- if no unpublished variant exists yet, copy it from the published variant -->
             <hippo:copyVariant sourceState="published" targetState="unpublished"/>
           </if>
+          <!-- ensure the unpublished variant to be versionable set its availability to (only) 'live' -->
           <hippo:configVariant variant="unpublished" versionable="true" availabilities="preview"/>
+          <!-- remove all availabilities from the published variant -->
           <hippo:configVariant variant="published" availabilities=""/>
+          <!-- create an extra version of the current unpublished (possibly modified?) -->
           <hippo:version variant="unpublished"/>
         </transition>
 
+        <!-- target-less transition to schedule the depublication of the document at the required event payload parameter targetDate -->
         <transition event="depublish" cond="!!_event.data?.targetDate">
           <hippo:scheduleWorkflow type="depublish" targetDateExpr="_event.data?.targetDate"/>
         </transition>
@@ -326,6 +407,7 @@
 
     </state>
 
+    <!-- the composite versioning state is used to manage versioning related workflow operations of a document -->
     <state id="versioning">
 
       <onentry>
@@ -333,38 +415,50 @@
         <hippo:action action="listVersions" enabledExpr="true"/>
       </onentry>
 
-      <!-- always support the listVersions operation -->
+      <!-- target-less transition to report a list of available versions of the document -->
       <transition event="listVersions">
         <hippo:listVersions variant="unpublished" />
       </transition>
 
+      <!-- the initial no-versioning state is used and active to indicate versioning operations are currently not
+           allowed or possible because there is no unpublished document variant yet -->
       <state id="no-versioning">
-        <!-- a document only becomes versionable once an unpublished document variant exists -->
+        <!-- event-less transition to versionable state when an unpublished document variant exists -->
         <transition target="versionable" cond="!!unpublished"/>
       </state>
 
+      <!-- the versionable state becomes active when an unpublished document variant exists -->
       <state id="versionable">
         <onentry>
+          <!-- enable the retrieveVersion operation -->
           <hippo:action action="retrieveVersion" enabledExpr="true"/>
           <if cond="workflowContext.isGranted(unpublished, 'hippo:editor')">
+            <!-- if the user is editor (granted hippo:editor) also enable the other versioning operations -->
             <hippo:action action="version" enabledExpr="true"/>
             <hippo:action action="restoreVersion" enabledExpr="true"/>
             <hippo:action action="versionRestoreTo" enabledExpr="true"/>
           </if>
         </onentry>
 
+        <!-- target-less transition to create a new version for the current unpublished variant -->
         <transition event="version">
           <hippo:version variant="unpublished"  />
         </transition>
 
+        <!-- target-less transition to retrieve a specific version created on the event payload provided date parameter -->
         <transition event="retrieveVersion">
           <hippo:retrieveVersion historic="_event.data?.date" variant="unpublished" />
         </transition>
 
+        <!-- target-less transition to restore a specific version from the event payload provided parameter date to the
+             payload provided parameter target (document).
+             Note: this uses custom/manual copying of the version contents, unlike the restoreVersion operation below -->
         <transition event="versionRestoreTo">
           <hippo:versionRestoreTo historic="_event.data?.date" variant="unpublished" target="_event.data?.target"/>
         </transition>
 
+        <!-- target-less transition to restore a specific document version from the event payload provided parameter date.
+             Note: this uses standard JCR version restore unlike the versionRestoreTo operation above -->
         <transition event="restoreVersion">
           <hippo:restoreVersion historic="_event.data?.date"  variant="unpublished" />
         </transition>
@@ -373,25 +467,38 @@
 
     </state>
 
+    <!-- the composite terminate state is used to manage termination and related/similar workflow operations like
+         move and rename -->
     <state id="terminate">
 
+      <!-- the initial no-terminate state is used and active when delete/move/rename operations are currently now
+           allowed or possible -->
       <state id="no-terminate">
         <onentry>
+          <!-- report request delete operation as available but default disabled -->
           <hippo:action action="requestDelete" enabledExpr="false"/>
           <if cond="workflowContext.isGranted(deleteSource, 'hippo:editor') and workflowContext.isGranted(containingFolder, 'jcr:write')">
+            <!-- if the user is editor (granted hippo:editor) AND allowed to modify (jcr:write) the document folder,
+                 report the delete/move/rename operations as available but default disabled -->
             <hippo:action action="delete" enabledExpr="false"/>
             <hippo:action action="move" enabledExpr="false"/>
             <hippo:action action="rename" enabledExpr="false"/>
           </if>
         </onentry>
+        <!-- event-less transition to terminatable state if the document is not live and not being edited -->
         <transition target="terminateable" cond="!live and !editing"/>
       </state>
 
+      <!-- the terminateable state becomes active when the document is not live and not being edited -->
       <state id="terminateable">
         <onentry>
           <if cond="!requestPending">
+            <!-- delete operations are only allowed when (also) no request is pending -->
+            <!-- (then) always enable the request delete operation -->
             <hippo:action action="requestDelete" enabledExpr="true"/>
             <if cond="workflowContext.isGranted(deleteSource, 'hippo:editor') and workflowContext.isGranted(containingFolder, 'jcr:write')">
+              <!-- if the user is editor (granted hippo:editor) AND allowed to modify (jcr:write) the document folder,
+                   enable the delete/move/rename operations -->
               <hippo:action action="delete" enabledExpr="true"/>
               <hippo:action action="move" enabledExpr="true"/>
               <hippo:action action="rename" enabledExpr="true"/>
@@ -399,18 +506,22 @@
           </if>
         </onentry>
 
+        <!-- target-less transition to create a delete request -->
         <transition event="requestDelete">
           <hippo:workflowRequest type="delete" contextVariantExpr="deleteSource"/>
         </transition>
 
+        <!-- transition to delete the current document and go to final state terminated -->
         <transition event="delete" target="terminated">
           <hippo:archiveDocument/>
         </transition>
 
+        <!-- transition to move the current document and go to final state terminated -->
         <transition event="move" target="terminated">
           <hippo:moveDocument destinationExpr="_event.data?.destination" newNameExpr="_event.data?.name"/>
         </transition>
 
+        <!-- transition to rename the current document and go to final state terminated -->
         <transition event="rename" target="terminated">
           <hippo:renameDocument newNameExpr="_event.data?.name"/>
         </transition>
@@ -419,17 +530,23 @@
 
     </state>
 
+    <!-- the composite copy state is used to manage the copy workflow operation -->
     <state id="copy">
 
+      <!-- the initial no-copy state is used and active when the user is not an editor (granted hippo:editor) -->
       <state id="no-copy">
+        <!-- event-less transition to copyable state when the user is an editor (granted hippo:editor) -->
         <transition target="copyable" cond="workflowContext.isGranted(copySource,'hippo:editor')"/>
       </state>
 
+      <!-- the state copyable is only active for users which are editor (granted hippo:editor) -->
       <state id="copyable">
         <onentry>
+          <!-- always enable the copy operation -->
           <hippo:action action="copy" enabledExpr="true"/>
         </onentry>
 
+        <!-- target-less transition to copy the document to the event payload provided parameters destination and name -->
         <transition event="copy">
           <hippo:copyDocument destinationExpr="_event.data?.destination" newNameExpr="_event.data?.name"/>
         </transition>
@@ -440,6 +557,7 @@
 
   </parallel>
 
+  <!-- the final terminated state is used when the document no longer exists, is renamed or moved -->
   <final id="terminated" />
 
 </scxml>
