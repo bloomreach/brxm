@@ -87,18 +87,18 @@
 
 
   <repositories>
-<!--
-    <repository>
-      <id>hippo-maven2-private</id>
-      <name>Hippo maven 2 private repository.</name>
-      <url>https://maven.onehippo.com/maven2-private</url>
-    </repository>
-    <repository>
-      <id>hippo-maven2-private-snapshots</id>
-      <name>Hippo maven 2 private repository snapshots</name>
-      <url>https://maven.onehippo.com/maven2-private-snapshots</url>
-    </repository>
--->
+    <!--
+        <repository>
+          <id>hippo-maven2-private</id>
+          <name>Hippo maven 2 private repository.</name>
+          <url>https://maven.onehippo.com/maven2-private</url>
+        </repository>
+        <repository>
+          <id>hippo-maven2-private-snapshots</id>
+          <name>Hippo maven 2 private repository snapshots</name>
+          <url>https://maven.onehippo.com/maven2-private-snapshots</url>
+        </repository>
+    -->
     <repository>
       <id>hippo</id>
       <name>Hippo maven 2 repository.</name>
@@ -210,5 +210,58 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>pedantic</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.rat</groupId>
+            <artifactId>apache-rat-plugin</artifactId>
+            <inherited>false</inherited>
+            <configuration>
+              <addDefaultLicenseMatchers>false</addDefaultLicenseMatchers>
+              <excludeSubProjects>false</excludeSubProjects>
+              <licenses>
+                <license implementation="org.apache.rat.analysis.license.AppliedApacheSoftwareLicense20">
+                  <copyrightOwner>Hippo B\.V\. \(http://www\.onehippo\.com\)</copyrightOwner>
+                </license>
+              </licenses>
+              <excludes>
+                <!-- no license headers needed for these files -->
+                <exclude>**/*.cnd</exclude>
+                <exclude>**/*.json</exclude>
+                <exclude>**/*.log</exclude>
+
+                <exclude>**/*.patch</exclude>
+                <exclude>**/*.properties</exclude>
+                <exclude>**/hippoecm-extension.xml</exclude>
+                <exclude>**/log4j.dtd</exclude>
+                <exclude>**/MANIFEST.MF</exclude>
+                <!-- exclude IntelliJ module files of sub-projects -->
+                <exclude>**/*.iml</exclude>
+                <!-- exclude IntelliJ Atlassian plugin file -->
+                <exclude>**/atlassian-ide-plugin.xml</exclude>
+                <!-- essentials specific -->
+                <exclude>plugin-dashboard/src/main/webapp/bootstrap-3.0.0/**</exclude>
+                <exclude>plugin-dashboard/src/main/webapp/components/**</exclude>
+                <exclude>plugin-dashboard/src/main/webapp/js/lib/**</exclude>
+                <exclude>archetype/**</exclude>
+                <exclude>ide/**</exclude>
+                <exclude>**/*.md</exclude>
+                <exclude>*/.idea/**</exclude>
+                <exclude>*/.bowerrc/**</exclude>
+                <exclude>**/*.svg</exclude>
+                <exclude>**/*.woff</exclude>
+                <exclude>**/*.ttf</exclude>
+              </excludes>
+            </configuration>
+
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>
