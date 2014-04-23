@@ -243,8 +243,8 @@ form {
 }
 
 .busy-loader {
-  position: absolute;
-  z-index: 100;
+  position: fixed;
+  z-index: 1000;
   margin: 0 0 0 -12px;
   left: 50%;
 }
@@ -263,8 +263,11 @@ form {
 }
 
 .messages{
+  position: fixed;
+  z-index: 999;
   padding: 8px;
   text-align: center;
+  width: 100%;
 }
 
 .sep-10 {
