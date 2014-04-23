@@ -34,7 +34,7 @@ import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTREFERENCE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_ABSTRACT_COMPONENT;
 import static org.junit.Assert.assertThat;
 
@@ -96,7 +96,7 @@ public class PrototypePageValidatorTest {
 
         expect(node.getPath()).andReturn("/" + HstNodeTypes.NODENAME_HST_PROTOTYPEPAGES + "/");
         expect(node.isNodeType(NODETYPE_HST_ABSTRACT_COMPONENT)).andReturn(true);
-        expect(node.isNodeType(COMPONENT_PROPERTY_REFERECENCECOMPONENT)).andReturn(true);
+        expect(node.isNodeType(NODETYPE_HST_CONTAINERCOMPONENTREFERENCE)).andReturn(true);
 
         replay(mocks);
 
@@ -112,14 +112,14 @@ public class PrototypePageValidatorTest {
 
         expect(node.getPath()).andReturn("/" + HstNodeTypes.NODENAME_HST_PROTOTYPEPAGES + "/");
         expect(node.isNodeType(NODETYPE_HST_ABSTRACT_COMPONENT)).andReturn(true);
-        expect(node.isNodeType(COMPONENT_PROPERTY_REFERECENCECOMPONENT)).andReturn(false);
+        expect(node.isNodeType(NODETYPE_HST_CONTAINERCOMPONENTREFERENCE)).andReturn(false);
 
         // mock that node has one child
         expect(node.getNodes()).andReturn(nodeIterator);
         expect(nodeIterator.hasNext()).andReturn(true);
         expect(nodeIterator.next()).andReturn(node);
         expect(node.isNodeType(NODETYPE_HST_ABSTRACT_COMPONENT)).andReturn(true);
-        expect(node.isNodeType(COMPONENT_PROPERTY_REFERECENCECOMPONENT)).andReturn(false);
+        expect(node.isNodeType(NODETYPE_HST_CONTAINERCOMPONENTREFERENCE)).andReturn(false);
 
         // mock that child has no children
         expect(node.getNodes()).andReturn(nodeIterator);
