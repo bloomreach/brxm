@@ -129,7 +129,7 @@ public abstract class AbstractCKEditorPlugin<ModelType> extends RenderPlugin {
             // validate JSON and return the sanitized version. This also strips additional extra JSON literals from the end.
             return JsonUtils.createJSONObject(jsonOrNull);
         } catch (JSONException e) {
-            log.warn("Ignoring CKEditor configuration variable '{}' because does not contain valid JSON, but \"{}\"",
+            log.warn("Ignoring CKEditor configuration variable '{}' because it does not contain valid JSON, but \"{}\"",
                     key, jsonOrNull);
         }
         return null;
