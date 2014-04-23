@@ -63,12 +63,12 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
 
         id = ccn.getConfigurationRootNode().getValueProvider().getPath();
 
-        final CompositeConfigurationNodes.CompositeConfigurationNode referableContainersCNN = ccn.getCompositeConfigurationNodes().get(
+        final CompositeConfigurationNodes.CompositeConfigurationNode referableContainersCCN = ccn.getCompositeConfigurationNodes().get(
                 HstNodeTypes.NODENAME_HST_WORKSPACE + "/" + HstNodeTypes.NODENAME_HST_CONTAINERS);
 
         final Map<String, HstNode> referableContainers;
-        if (referableContainersCNN != null) {
-            referableContainers = referableContainersCNN.getCompositeChildren();
+        if (referableContainersCCN != null) {
+            referableContainers = referableContainersCCN.getCompositeChildren();
         } else {
             referableContainers = Collections.emptyMap();
         }
