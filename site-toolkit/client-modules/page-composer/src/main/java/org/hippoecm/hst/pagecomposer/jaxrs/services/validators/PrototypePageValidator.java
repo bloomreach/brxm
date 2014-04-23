@@ -25,8 +25,12 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.repository.util.NodeIterable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PrototypePageValidator extends AbstractValidator {
+
+    private static final Logger log = LoggerFactory.getLogger(PrototypePageValidator.class);
 
     private final String prototypePageUuid;
 
@@ -51,14 +55,16 @@ public class PrototypePageValidator extends AbstractValidator {
 
 
     private static void validatePrototypePage(Node component) throws RepositoryException {
+        if (component.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTREFERENCE)) {
+            String message = String.format("Prototype page is not allowed to contain nodes of type '%s' but there is one " +
+                    "at '%s'. Fix prototype configuration. The prototype page cannot be used", HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTREFERENCE, component.getPath());
+            log.warn(message);
+            throw new ClientException(message, ClientError.INVALID_NODE_TYPE);
+        }
         if (!component.isNodeType(HstNodeTypes.NODETYPE_HST_ABSTRACT_COMPONENT)) {
             throw new ClientException("Expected node of subtype 'hst:abstractcomponent'", ClientError.INVALID_NODE_TYPE);
         }
-        if (component.isNodeType(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT)) {
-            String message = String.format("Prototype page is not allowed to contain nodes of type '%s' but there is one " +
-                    "at '%s'. Prototype page cannot be used", HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT, component.getPath());
-            throw new ClientException(message, ClientError.INVALID_NODE_TYPE);
-        }
+
         for (Node child : new NodeIterable(component.getNodes())) {
             validatePrototypePage(child);
         }
