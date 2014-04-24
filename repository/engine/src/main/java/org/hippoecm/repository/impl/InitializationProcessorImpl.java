@@ -928,7 +928,11 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     }
 
     public void initializeNodecontent(Session session, String parentAbsPath, InputStream istream, URL location, boolean pckg) {
-        getLogger().info("Initializing content from: " + location + " to " + parentAbsPath);
+        if (location != null) {
+            getLogger().info("Initializing content from: {} to {}", location, parentAbsPath);
+        } else {
+            getLogger().info("Initializing content to {}", parentAbsPath);
+        }
         File tempFile = null;
         ZipFile zipFile = null;
         InputStream esvIn = null;
@@ -962,6 +966,9 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                         int offset = file.indexOf(".jar!");
                         if (offset != -1) {
                             file = file.substring(0, offset+4);
+                            if (!file.startsWith("file:")) {
+                                file = "file:" + file;
+                            }
                             zipFile = new ZipFile(new File(URI.create(file)));
                             contentResourceLoader = new ZipFileContentResourceLoader(zipFile);
                         } else if (location.getProtocol().equals("file")) {
