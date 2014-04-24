@@ -73,15 +73,14 @@ import org.hippoecm.repository.jackrabbit.HippoCompactNodeTypeDefReader;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.MavenComparableVersion;
 import org.hippoecm.repository.util.NodeIterable;
-import org.hippoecm.repository.util.RepoUtils;
 import org.onehippo.repository.api.ContentResourceLoader;
 import org.onehippo.repository.util.FileContentResourceLoader;
 import org.onehippo.repository.util.ZipFileContentResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
 
 public class InitializationProcessorImpl implements InitializationProcessor {
 
@@ -114,17 +113,6 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             "WHERE jcr:path = '/hippo:configuration/hippo:initialize/%' AND (" +
             HippoNodeType.HIPPO_TIMESTAMP + " IS NULL OR " +
             HippoNodeType.HIPPO_TIMESTAMP + " < {})";
-
-    private static XmlPullParserFactory factory;
-
-    static {
-        try {
-            factory = XmlPullParserFactory.newInstance();
-            factory.setNamespaceAware(true);
-        } catch (XmlPullParserException e) {
-            log.error("Could not get xpp factory instance: " + e.getMessage());
-        }
-    }
 
     private Logger logger;
 
@@ -735,9 +723,6 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     }
 
     public ContentFileInfo readContentFileInfo(final Node item) {
-        if (factory == null) {
-            return null;
-        }
         try {
             final String contentResource = StringUtils.trim(item.getProperty(HippoNodeType.HIPPO_CONTENTRESOURCE).getString());
             if (contentResource.endsWith(".zip") || contentResource.endsWith(".jar")) {
@@ -751,7 +736,8 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                     // inspect the xml file to find out if it is a delta xml and to read the name of the context node we must remove
                     String contextNodeName = null;
                     String deltaDirective = null;
-                    XmlPullParser xpp = factory.newPullParser();
+                    final XmlPullParser xpp = new MXParser();
+                    xpp.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
                     is = contentURL.openStream();
                     bis = new BufferedInputStream(is);
                     xpp.setInput(bis, null);
