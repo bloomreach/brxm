@@ -27,8 +27,6 @@ import org.hippoecm.hst.site.request.ComponentConfigurationImpl;
 
 /**
  * HstComponentFactoryImpl
- * 
- * @version $Id$
  */
 public class HstComponentFactoryImpl implements HstComponentFactory {
     
@@ -77,11 +75,11 @@ public class HstComponentFactoryImpl implements HstComponentFactory {
                 
                 initialized = true;
             } catch (ClassNotFoundException e) {
-                throw new HstComponentException("Cannot find the class of " + componentId + ": " + componentClassName);
+                throw new HstComponentException("Cannot find the class of " + compConfig.getCanonicalStoredLocation() + ": " + componentClassName);
             } catch (InstantiationException e) {
-                throw new HstComponentException("Cannot instantiate the class of " + componentId + ": " + componentClassName);
+                throw new HstComponentException("Cannot instantiate the class of " + compConfig.getCanonicalStoredLocation() + ": " + componentClassName);
             } catch (IllegalAccessException e) {
-                throw new HstComponentException("Illegal access to the class of " + componentId + ": " + componentClassName);
+                throw new HstComponentException("Illegal access to the class of " + compConfig.getCanonicalStoredLocation() + ": " + componentClassName);
             }
             
             if (initialized) {
