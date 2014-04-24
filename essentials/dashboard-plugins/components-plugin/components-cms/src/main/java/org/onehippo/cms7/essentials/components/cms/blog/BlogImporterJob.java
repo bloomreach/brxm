@@ -114,6 +114,7 @@ public class BlogImporterJob implements RepositoryJob {
         log.info("+----------------------------------------------------+");
         log.info("|           Finished importing blogs                 |");
         log.info("+----------------------------------------------------+");
+        jcrSession.logout();
     }
 
     private String[] extractArray(final String value) {
