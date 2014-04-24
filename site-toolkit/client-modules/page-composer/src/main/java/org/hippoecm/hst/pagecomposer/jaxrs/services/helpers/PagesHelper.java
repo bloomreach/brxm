@@ -49,20 +49,25 @@ public class PagesHelper extends AbstractHelper {
     }
 
     public Node create(final Node prototype, final String targetPageNodeName) throws RepositoryException {
-        return create(prototype, targetPageNodeName, null);
+        return create(prototype, targetPageNodeName, null, false);
     }
 
 
     public Node create(final Node pageOrPrototype,
                        final String targetPageNodeName,
-                       final HstComponentConfiguration pageInstance) throws RepositoryException {
+                       final HstComponentConfiguration pageInstance,
+                       final boolean skipContainerItems) throws RepositoryException {
         final String previewWorkspacePagesPath = getPreviewWorkspacePagesPath();
 
         final Session session = pageComposerContextService.getRequestContext().getSession();
         final String validTargetPageNodeName = getValidTargetPageNodeName(previewWorkspacePagesPath, targetPageNodeName, session);
         final Node newPage = JcrUtils.copy(session, pageOrPrototype.getPath(), previewWorkspacePagesPath + "/" + validTargetPageNodeName);
+
         if (newPage.isNodeType(HstNodeTypes.MIXINTYPE_HST_PROTOTYPE_META)) {
             newPage.removeMixin(HstNodeTypes.MIXINTYPE_HST_PROTOTYPE_META);
+        }
+        if (skipContainerItems) {
+            removeContainerItems(newPage);
         }
         if (pageInstance != null) {
             // copy has been done from a page, not from a prototype. We need to check whether there
@@ -86,7 +91,7 @@ public class PagesHelper extends AbstractHelper {
 
         // check if not locked
         lockHelper.acquireLock(oldPage, 0);
-        Node newPage = create(newPrototypePage, targetPageNodeName, null);
+        Node newPage = create(newPrototypePage, targetPageNodeName, null, true);
 
         Node primaryContainer = findPrimaryContainer(newPage, getStringProperty(newPrototypePage, PROTOTYPE_META_PROPERTY_PRIMARY_CONTAINER, null));
         if (primaryContainer == null) {
@@ -123,6 +128,17 @@ public class PagesHelper extends AbstractHelper {
 
         deletePageNodeIfNotReferencedAnyMore(oldPage);
         return newPage;
+    }
+
+
+    private void removeContainerItems(final Node page) throws RepositoryException {
+        final List<Node> containers = findContainers(page);
+        for (Node container : containers) {
+            for (Node child : new NodeIterable(container.getNodes())) {
+                log.debug("Remove container item '{}' for container '{}'.", child.getName(), container.getPath());
+                child.remove();
+            }
+        }
     }
 
     private void moveContainerItems(final Node from, final Node to) throws RepositoryException {

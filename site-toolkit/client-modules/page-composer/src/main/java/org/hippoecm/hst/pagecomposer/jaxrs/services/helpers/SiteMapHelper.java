@@ -245,7 +245,7 @@ public class SiteMapHelper extends AbstractHelper {
             targetPageNodeName = pageToCopy.getName() + postfix;
         }
         Node clonedPage = pagesHelper.create(session.getNodeByIdentifier(pageToCopy.getCanonicalIdentifier()),
-                targetPageNodeName, pageToCopy);
+                targetPageNodeName, pageToCopy, false);
         newSitemapNode.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID,
                 HstNodeTypes.NODENAME_HST_PAGES + "/" + clonedPage.getName());
         return newSitemapNode;

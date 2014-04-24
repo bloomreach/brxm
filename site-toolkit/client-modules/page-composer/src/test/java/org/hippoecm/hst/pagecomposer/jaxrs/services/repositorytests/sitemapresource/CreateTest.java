@@ -130,6 +130,35 @@ public class CreateTest extends AbstractSiteMapResourceTest {
     }
 
     @Test
+    public void test_create_with_prototype_container_items() throws Exception {
+        final Node prototype = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:prototypepages/prototype-page");
+        final Node containerItem1 = prototype.getNode("main/container1").addNode("x", HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
+        containerItem1.setProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.Item");
+        final Node containerItem2 = prototype.getNode("main/container1").addNode("y", HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
+        containerItem2.setProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.Item");
+        final Node containerItem3 = prototype.getNode("main/container2").addNode("z", HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
+        containerItem3.setProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.Item");
+
+        session.save();
+        Thread.sleep(200);
+        initContext();
+        final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getPrototypePageUUID());
+        final SiteMapResource siteMapResource = createResource();
+        final Response response = siteMapResource.create(newFoo);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        String newId = (String) ((ExtResponseRepresentation) response.getEntity()).getData();
+
+        final Node newSitemapItemNode = session.getNodeByIdentifier(newId);
+        assertEquals("foo", newSitemapItemNode.getName());
+
+        String newPageNodeName = "foo-" + session.getNodeByIdentifier(getPrototypePageUUID()).getName();
+        Node newPageNode = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/"+newPageNodeName);
+        assertTrue(newPageNode.hasNode("main/container1/x"));
+        assertTrue(newPageNode.hasNode("main/container1/y"));
+        assertTrue(newPageNode.hasNode("main/container2/z"));
+    }
+
+    @Test
     public void test_create_succeeds_when_workspace_missing() throws Exception {
         session.removeItem("/hst:hst/hst:configurations/unittestproject/hst:workspace");
         session.removeItem("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace");

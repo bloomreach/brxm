@@ -38,6 +38,12 @@ import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import junit.framework.Assert;
 import static junit.framework.Assert.assertNull;
+import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT;
+import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_XTYPE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_COMPONENT;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
+import static org.hippoecm.hst.configuration.HstNodeTypes.PROTOTYPE_META_PROPERTY_PRIMARY_CONTAINER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -292,14 +298,14 @@ public class ReApplyPrototypesTest  extends AbstractSiteMapResourceTest {
     @Test
     public void test_reapply_prototype_with_same_and_other_container() throws Exception {
         final String[] secondPrototype = new String[] {
-                "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx", HstNodeTypes.NODETYPE_HST_COMPONENT,
-                    HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT, "hst:abstractpages/basepage",
-                    "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main", HstNodeTypes.NODETYPE_HST_COMPONENT,
+                "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx", NODETYPE_HST_COMPONENT,
+                    COMPONENT_PROPERTY_REFERECENCECOMPONENT, "hst:abstractpages/basepage",
+                    "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main", NODETYPE_HST_COMPONENT,
                         "hst:template", "prototype",
-                "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main/container1", HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT,
-                        HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.vBox",
-                "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main/holder2", HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT,
-                HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.vBox"
+                "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main/container1", NODETYPE_HST_CONTAINERCOMPONENT,
+                        COMPONENT_PROPERTY_XTYPE, "HST.vBox",
+                "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main/holder2", NODETYPE_HST_CONTAINERCOMPONENT,
+                COMPONENT_PROPERTY_XTYPE, "HST.vBox"
         };
         final String[] relContainerPathsForItem = {"main/container1", "main/container1", "main/container2"};
 
@@ -354,14 +360,14 @@ public class ReApplyPrototypesTest  extends AbstractSiteMapResourceTest {
     @Test
     public void test_reapply_prototype_with_only_other_containers_gets_items_moved_to_first_container() throws Exception {
         final String[] secondPrototype = new String[] {
-                "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx", HstNodeTypes.NODETYPE_HST_COMPONENT,
-                    HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT, "hst:abstractpages/basepage",
-                    "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main", HstNodeTypes.NODETYPE_HST_COMPONENT,
+                "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx", NODETYPE_HST_COMPONENT,
+                    COMPONENT_PROPERTY_REFERECENCECOMPONENT, "hst:abstractpages/basepage",
+                    "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main", NODETYPE_HST_COMPONENT,
                         "hst:template", "prototype",
-                        "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main/holder1", HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT,
-                            HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.vBox",
-                        "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main/holder2", HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT,
-                            HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.vBox"
+                        "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main/holder1", NODETYPE_HST_CONTAINERCOMPONENT,
+                            COMPONENT_PROPERTY_XTYPE, "HST.vBox",
+                        "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main/holder2", NODETYPE_HST_CONTAINERCOMPONENT,
+                            COMPONENT_PROPERTY_XTYPE, "HST.vBox"
         };
         final String[] relContainerPathsForItem = {"main/container1", "main/container1", "main/container2"};
 
@@ -412,16 +418,16 @@ public class ReApplyPrototypesTest  extends AbstractSiteMapResourceTest {
     @Test
     public void test_reapply_prototype_with_other_containers_gets_items_moved_to_marked_container() throws Exception {
         final String[] secondPrototype = new String[] {
-                "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx", HstNodeTypes.NODETYPE_HST_COMPONENT,
-                    HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT, "hst:abstractpages/basepage",
+                "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx", NODETYPE_HST_COMPONENT,
+                    COMPONENT_PROPERTY_REFERECENCECOMPONENT, "hst:abstractpages/basepage",
                     "jcr:mixinTypes", HstNodeTypes.MIXINTYPE_HST_PROTOTYPE_META,
-                     HstNodeTypes.PROTOTYPE_META_PROPERTY_PRIMARY_CONTAINER, "main/holder2",
-                    "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main", HstNodeTypes.NODETYPE_HST_COMPONENT,
+                     PROTOTYPE_META_PROPERTY_PRIMARY_CONTAINER, "main/holder2",
+                    "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main", NODETYPE_HST_COMPONENT,
                         "hst:template", "prototype",
-                         "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main/holder1", HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT,
-                             HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.vBox",
-                        "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main/holder2", HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT,
-                             HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.vBox"
+                        "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main/holder1", NODETYPE_HST_CONTAINERCOMPONENT,
+                             COMPONENT_PROPERTY_XTYPE, "HST.vBox",
+                        "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main/holder2", NODETYPE_HST_CONTAINERCOMPONENT,
+                             COMPONENT_PROPERTY_XTYPE, "HST.vBox"
         };
         final String[] relContainerPathsForItem = {"main/container1", "main/container1", "main/container2"};
 
@@ -473,9 +479,9 @@ public class ReApplyPrototypesTest  extends AbstractSiteMapResourceTest {
     @Test
     public void test_reapply_prototype_with_no_container_gets_existing_items_deleted() throws Exception {
         final String[] secondPrototype = new String[] {
-                "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx", HstNodeTypes.NODETYPE_HST_COMPONENT,
-                    HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT, "hst:abstractpages/basepage",
-                    "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main", HstNodeTypes.NODETYPE_HST_COMPONENT,
+                "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx", NODETYPE_HST_COMPONENT,
+                    COMPONENT_PROPERTY_REFERECENCECOMPONENT, "hst:abstractpages/basepage",
+                    "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main", NODETYPE_HST_COMPONENT,
                         "hst:template", "prototype"
         };
         final String[] relContainerPathsForItem = {"main/container1", "main/container1", "main/container2"};
@@ -542,4 +548,69 @@ public class ReApplyPrototypesTest  extends AbstractSiteMapResourceTest {
 
         }
     }
+
+    @Test
+    public void test_reapply_prototype_skips_container_items_from_prototype() throws Exception {
+        final String[] secondPrototype = new String[] {
+                "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx", NODETYPE_HST_COMPONENT,
+                   COMPONENT_PROPERTY_REFERECENCECOMPONENT, "hst:abstractpages/basepage",
+                   "jcr:mixinTypes", HstNodeTypes.MIXINTYPE_HST_PROTOTYPE_META,
+                   "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main", NODETYPE_HST_COMPONENT,
+                      "hst:template", "prototype",
+                      "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main/container1", NODETYPE_HST_CONTAINERCOMPONENT,
+                         COMPONENT_PROPERTY_XTYPE, "HST.vBox",
+                         "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main/container1/prototypeitem", NODETYPE_HST_CONTAINERITEMCOMPONENT,
+                         COMPONENT_PROPERTY_XTYPE, "HST.Item",
+                      "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main/container2", NODETYPE_HST_CONTAINERCOMPONENT,
+                      COMPONENT_PROPERTY_XTYPE, "HST.vBox",
+                         "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main/container2/prototypeitem", NODETYPE_HST_CONTAINERITEMCOMPONENT,
+                         COMPONENT_PROPERTY_XTYPE, "HST.Item"
+        };
+        final String[] relContainerPathsForItem = {"main/container1", "main/container1", "main/container2"};
+        final TestContext testContext = initContextAndFixture(secondPrototype, relContainerPathsForItem);
+
+        reapplyPrototype(testContext, testContext.secondPrototypeUUID);
+
+        final SiteMapItemRepresentation updatedFoo = getSiteMapItemRepresentation(session, "foo");
+        final String newFooPageId = updatedFoo.getComponentConfigurationId();
+
+        final HstComponentConfiguration updatedFooPage = mountResource.getPageComposerContextService().getEditingPreviewSite()
+                .getComponentsConfiguration().getComponentConfiguration(newFooPageId);
+
+        Node updatedFooPageNode = session.getNodeByIdentifier(updatedFooPage.getCanonicalIdentifier());
+        final Node newContainer1 = updatedFooPageNode.getNode("main/container1");
+        final Node newContainer2 = updatedFooPageNode.getNode("main/container2");
+
+        /*
+         *
+         * Since the page before re-applying prototype container
+         * + main
+         *    + container1
+         *        + catalog-item
+         *        + catalog-item1
+         *    + container2
+         *        + catalog-item
+         *
+         * AND it got mapped to secondPrototype:
+         *
+         * + protoxxx
+         *   - hst:primarycontainer = main/holder2
+         *   + main
+         *      + container1
+         *          + prototypeitem
+         *      + container2
+         *          + prototypeitem
+         *
+         * We expect a catalog items to be moved to 'container1' and one to 'container2' and expect the container-items from
+         * protoxxx to be ignored during re-apply of the prototype
+         */
+
+        assertTrue(newContainer1.hasNode("catalog-item"));
+        assertTrue(newContainer1.hasNode("catalog-item1"));
+        assertTrue(newContainer2.hasNode("catalog-item"));
+        assertFalse(newContainer1.hasNode("prototypeitem"));
+        assertFalse(newContainer2.hasNode("prototypeitem"));
+
+    }
+
 }
