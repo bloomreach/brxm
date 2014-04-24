@@ -57,6 +57,8 @@ public class MessageInstructionExecutor {
                     KeyValueRestful keyValueRestful = new KeyValueRestful("FileInstruction", userMessage);
                     retVal.add(keyValueRestful);
 
+                }else{
+                    retVal.add(new KeyValueRestful(instruction.getAction(), instruction.getMessage()));
                 }
             }
         }
