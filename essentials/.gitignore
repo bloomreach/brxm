@@ -2709,6 +2709,12 @@ dashboard-plugins/simple-content/src/main/resources/hst/workspace/.idea
 dashboard-plugins/simple-content/src/main/resources/hst/workspace/atlassian-ide-plugin.xml
 dashboard-plugins/simple-content/src/main/resources/hst/workspace/hippo-plugins.iws
 dashboard-plugins/simple-content/src/main/resources/hst/workspace/target
+dashboard-plugins/simple-content/src/main/resources/images/*.iml
+dashboard-plugins/simple-content/src/main/resources/images/.DS_Store
+dashboard-plugins/simple-content/src/main/resources/images/.idea
+dashboard-plugins/simple-content/src/main/resources/images/atlassian-ide-plugin.xml
+dashboard-plugins/simple-content/src/main/resources/images/hippo-plugins.iws
+dashboard-plugins/simple-content/src/main/resources/images/target
 dashboard-plugins/simple-content/src/main/resources/java/*.iml
 dashboard-plugins/simple-content/src/main/resources/java/.DS_Store
 dashboard-plugins/simple-content/src/main/resources/java/.idea

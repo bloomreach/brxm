@@ -16,7 +16,10 @@
 
 package org.onehippo.cms7.essentials.dashboard.instructions;
 
+import java.util.Set;
+
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.model.Restful;
 
 /**
  * @version "$Id$"
@@ -24,4 +27,6 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 public interface InstructionExecutor {
 
     InstructionStatus execute(InstructionSet instruction, PluginContext context);
+
+    <T extends Restful> Set<T> getInstructionsMessages(InstructionSet instruction, PluginContext context);
 }

@@ -23,6 +23,7 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionParser;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
+import org.onehippo.cms7.essentials.dashboard.model.Restful;
 
 import com.google.common.eventbus.EventBus;
 
@@ -39,11 +40,17 @@ public interface PowerpackPackage {
     /**
      * Defines a group name. Each instruction set can have a several group names
      * <p></p>
-     * (FYI by default, instruction set name  is "default").
+     * (NOTE: by default, instruction set name  is {@code "default"}).
      *
      * @return
      */
     Set<String> groupNames();
+
+    /**
+     * Parses instructions and retrieves messages which can be presented to the users
+     * @return set of messages
+     */
+    Set<? extends Restful> getInstructionsMessages(PluginContext context);
 
     /**
      * Returns parsed instructions

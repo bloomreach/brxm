@@ -17,7 +17,9 @@
 package org.onehippo.cms7.essentials.dashboard.packaging;
 
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,6 +33,8 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionParser;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
+import org.onehippo.cms7.essentials.dashboard.model.Restful;
+import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
@@ -79,6 +83,31 @@ public class DefaultPowerpack implements PowerpackPackage {
     @Override
     public Set<String> groupNames() {
         return DEFAULT_GROUPS;
+    }
+
+    @Override
+    public Set<? extends Restful> getInstructionsMessages(final PluginContext context) {
+        final Instructions myInstructions = getInstructions();
+        if(myInstructions==null){
+            return Collections.emptySet();
+
+        }
+        final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
+        final InstructionExecutor executor = new PluginInstructionExecutor();
+        final Set<String> myGroupNames = groupNames();
+        final Set<KeyValueRestful> instructionsMessages = new HashSet<>();
+        for (InstructionSet instructionSet : instructionSets) {
+            final String group = instructionSet.getGroup();
+            // execute only or group(s)
+            if (myGroupNames.contains(group)) {
+                final Set<KeyValueRestful> instructionsMessages1 = executor.getInstructionsMessages(instructionSet, context);
+                instructionsMessages.addAll(instructionsMessages1);
+
+            } else {
+                log.debug("Skipping instruction group for name: [{}]", group);
+            }
+        }
+        return instructionsMessages;
     }
 
 

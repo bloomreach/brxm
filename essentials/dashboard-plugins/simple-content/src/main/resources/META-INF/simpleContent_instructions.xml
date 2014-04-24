@@ -39,7 +39,7 @@
 
     <xml action="copy" source="hst/menu/content-menu-item.xml" target="/hst:hst/hst:configurations/common/hst:sitemenus/main"/>
     <xml action="copy" source="hst/catalog/simplecontent-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
-
+    <file action="copy" binary="true" source="images/component-icon-simplecontent.png" target="{{siteWebRoot}}/images/component-icon-carousel.png"/>
 
   </instructionSet>
 

@@ -505,6 +505,7 @@ dashboard-plugins/simple-content/src/main/resources/hst/template-content-jsp.xml
 dashboard-plugins/simple-content/src/main/resources/hst/template-content-list-freemarker.xml -text
 dashboard-plugins/simple-content/src/main/resources/hst/template-content-list-jsp.xml -text
 dashboard-plugins/simple-content/src/main/resources/hst/workspace/contentlist.xml -text
+dashboard-plugins/simple-content/src/main/resources/images/component-icon-simplecontent.png -text
 dashboard-plugins/simple-content/src/main/resources/java/ContentDocument.txt -text
 dashboard-plugins/simple-content/src/main/resources/jsp/contentlist-main-contentlist.jsp -text
 dashboard-plugins/simple-content/src/main/resources/jsp/contentpage-main.jsp -text

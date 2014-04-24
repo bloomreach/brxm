@@ -206,6 +206,31 @@
         "needsInstallation": false,
         "enabled": true,
         "@type": "plugin",
+        "introduction": "Adds menu document type to your project",
+        "name": "Menu plugin",
+        "pluginId": "menuPlugin",
+        "restClasses": ["org.onehippo.cms7.essentials.dashboard.menu.MenuPluginResource"],
+        "type": "plugins",
+        "vendor": {
+            "@type": "vendor",
+            "name": "Hippo",
+            "url": "http://www.onehippo.com"
+        },
+        "libraries": [
+            {
+                "items": [
+                    {
+                        "component": "menuPlugin",
+                        "file": "menuPlugin.js"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "needsInstallation": false,
+        "enabled": true,
+        "@type": "plugin",
         "introduction": "Adds Simple content document to your project",
         "name": "Simple content plugin",
         "pluginId": "simpleContent",

@@ -17,6 +17,8 @@
 package org.onehippo.cms7.essentials.dashboard.instruction.executors;
 
 import java.io.InputStream;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -28,11 +30,14 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 
 public class MessageInstructionExecutorTest extends BaseTest{
 
+    private static final Logger log = LoggerFactory.getLogger(MessageInstructionExecutorTest.class);
     @Inject
     private InstructionParser parser;
     @Test
@@ -43,8 +48,16 @@ public class MessageInstructionExecutorTest extends BaseTest{
         final Instructions instructions = parser.parseInstructions(content);
         final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
         assertEquals(3, instructionSets.size());
-        final Set<KeyValueRestful> messages = executor.execute(instructionSets, getContext());
+        Collection<KeyValueRestful> messages = new HashSet<>();
+        for (InstructionSet instructionSet : instructionSets) {
+            final Set<KeyValueRestful> m = executor.execute(instructionSet, getContext());
+            messages.addAll(m);
+        }
+
         assertEquals(7, messages.size());
+        for (KeyValueRestful message : messages) {
+            log.info("message {}", message);
+        }
 
 
 

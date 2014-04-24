@@ -25,6 +25,7 @@ import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.springframework.stereotype.Component;
 
 /**
@@ -35,6 +36,7 @@ import org.springframework.stereotype.Component;
 public class PluginInstructionExecutor implements InstructionExecutor {
 
 
+
     @Override
     public InstructionStatus execute(final InstructionSet set, PluginContext context) {
         InstructionStatus status = InstructionStatus.SUCCESS;
@@ -43,6 +45,13 @@ public class PluginInstructionExecutor implements InstructionExecutor {
             status = instruction.process(context, status);
         }
         return status;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Set<KeyValueRestful> getInstructionsMessages(final InstructionSet instruction, final PluginContext context) {
+        MessageInstructionExecutor executor = new MessageInstructionExecutor();
+        return executor.execute(instruction, context);
     }
 
 }
