@@ -70,7 +70,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
     private final QueryHandlerContext queryHandlerContext;
 
     protected ServicingIndexingConfiguration servicingIndexingConfig;
-    private boolean supportSimilarityOnStrings;
+    private boolean supportSimilarityOnStrings = true;
     private boolean supportSimilarityOnBinaries;
 
     public ServicingNodeIndexer(NodeState node, QueryHandlerContext context, NamespaceMappings mappings, Parser parser) {
