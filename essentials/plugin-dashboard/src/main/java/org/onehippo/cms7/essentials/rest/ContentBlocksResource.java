@@ -93,7 +93,8 @@ public class ContentBlocksResource extends BaseResource {
 
             for (String primaryType : primaryTypes) {
                 final RestList<KeyValueRestful> keyValueRestfulRestfulList = new RestList<>();
-                final NodeIterator it = executeQuery(MessageFormat.format("{0}//element(*, frontend:plugin)[@cpItemsPath]", HippoNodeUtils.resolvePath(primaryType).substring(1)));
+                final NodeIterator it = executeQuery(MessageFormat.format("{0}//element(*, frontend:plugin)[@cpItemsPath]",
+                        HippoNodeUtils.resolvePath(primaryType).substring(1)), session);
                 while (it.hasNext()) {
                     final String name = it.nextNode().getName();
                     String namespaceName = MessageFormat.format("{0}{1}", prefix, name);
@@ -107,13 +108,16 @@ public class ContentBlocksResource extends BaseResource {
             }
         } catch (RepositoryException e) {
             log.error("Exception while trying to retrieve document types from repository {}", e);
+            GlobalUtils.refreshSession(session, false);
+        }finally {
+            GlobalUtils.cleanupSession(session);
         }
 
         return types;
     }
 
-    private NodeIterator executeQuery(String queryString) throws RepositoryException {
-        final Session session = GlobalUtils.createSession();
+    private NodeIterator executeQuery(String queryString, final Session session) throws RepositoryException {
+
         final QueryManager queryManager = session.getWorkspace().getQueryManager();
         final Query query = queryManager.createQuery(queryString, EssentialConst.XPATH);
         final QueryResult execute = query.execute();
@@ -154,20 +158,30 @@ public class ContentBlocksResource extends BaseResource {
             throw new RestException("Content block name was empty", Response.Status.NOT_ACCEPTABLE);
         }
         final Session session = GlobalUtils.createSession();
-        final PluginContext context = getContext(servletContext);
-        final RestWorkflow workflow = new RestWorkflow(session, context);
-        workflow.addContentBlockCompound(name);
-        return new MessageRestful("Successfully created compound with name: " + name);
+        try {
+            final PluginContext context = getContext(servletContext);
+            final RestWorkflow workflow = new RestWorkflow(session, context);
+            workflow.addContentBlockCompound(name);
+            return new MessageRestful("Successfully created compound with name: " + name);
+        } finally {
+            GlobalUtils.cleanupSession(session);
+        }
     }
 
     @DELETE
     @Path("/compounds/delete/{name}")
     public MessageRestful deleteCompound(@PathParam("name") String name, @Context ServletContext servletContext) {
         final Session session = GlobalUtils.createSession();
-        final PluginContext context = getContext(servletContext);
-        final RestWorkflow workflow = new RestWorkflow(session, context);
-        workflow.removeDocumentType(name);
-        return new MessageRestful("Document type for name: " + name + " successfully deleted. You'll have to manually delete " + name + " entry from project CND file");
+        try {
+
+            final PluginContext context = getContext(servletContext);
+            final RestWorkflow workflow = new RestWorkflow(session, context);
+            workflow.removeDocumentType(name);
+            return new MessageRestful("Document type for name: " + name + " successfully deleted. You'll have to manually delete " + name + " entry from project CND file");
+        } finally {
+
+            GlobalUtils.cleanupSession(session);
+        }
     }
 
 

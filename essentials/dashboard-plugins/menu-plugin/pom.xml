@@ -100,6 +100,7 @@
           <include>**/*.ttf</include>
           <include>**/*.svg</include>
           <include>**/*.woff</include>
+          <include>**/*.png</include>
           <include>**/*.eot</include>
           <include>**/*.txt</include>
           <include>**/*.css</include>
