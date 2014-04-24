@@ -90,7 +90,9 @@
         </li>
         <li>
           <a target="API" href="${pageContext.request.contextPath}/docs/rest-api/index.html">REST API</a>
-
+        </li>
+        <li>
+          <a target="FEEDBACK" href="https://issues.onehippo.com/rest/collectors/1.0/template/form/a23eddf8?os_authType=none">Feedback</a>
         </li>
       </ul>
     </div>
