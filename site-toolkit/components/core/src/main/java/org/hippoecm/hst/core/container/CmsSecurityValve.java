@@ -146,6 +146,7 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
             if (encryptedCredentials == null) {
                 // no secret or credentials; if possible, add the secret and request the
                 // encrypted credentials by redirecting back to CMS
+                log.debug("No encryptedCredentials found. Redirect to the CMS");
                 final String method = servletRequest.getMethod();
                 if (!"GET".equals(method) && !"HEAD".equals(method)) {
                     try {
@@ -158,6 +159,7 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
                 }
                 return false;
             } else {
+                log.debug("EncryptedCredentials found.");
                 storeAuthentication(httpSession, key, encryptedCredentials);
             }
         }
@@ -176,6 +178,11 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
             httpSession.setAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME, cred);
             httpSession.setAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED, true);
         } catch (SignatureException se) {
+            if (log.isDebugEnabled()) {
+                log.error("SignatureException while decrypting credentials : ", se);
+            } else {
+                log.error("SignatureException while decrypting credentials : {} ", se.toString());
+            }
             throw new ContainerException(se);
         }
     }
