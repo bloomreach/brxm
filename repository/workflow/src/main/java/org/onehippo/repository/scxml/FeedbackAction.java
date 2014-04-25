@@ -24,11 +24,10 @@ import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
 
 /**
- * FeedbackAction is a basic SCXML state machine custom action to store a specific {@link #setValue(String)} expression
- * under the configured {@link #setKey(String)} inthe {@link SCXMLWorkflowContext#getFeedback()} map.
- * <p>
- * If the value expression is empty or evaluates to null the configured key is removed from the map.
- * </p>
+ * FeedbackAction is a basic SCXML state machine custom action to store a specific {@link #setValue(String) value }
+ * expression under the configured {@link #setKey(String) key} in the {@link SCXMLWorkflowContext#getFeedback()
+ * feedback} map.
+ * <p> If the value expression is empty or evaluates to null the configured key is removed from the map. </p>
  */
 public class FeedbackAction extends AbstractAction {
 
@@ -61,7 +60,7 @@ public class FeedbackAction extends AbstractAction {
         }
 
         String valueExpr = getValue();
-        Serializable value = (Serializable)(StringUtils.isBlank(valueExpr) ? null : eval(valueExpr));
+        Serializable value = (Serializable) (StringUtils.isBlank(valueExpr) ? null : eval(valueExpr));
 
         if (value == null) {
             getSCXMLWorkflowContext().getFeedback().remove(key);

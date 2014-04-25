@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  * allowable actions) first before an action is actually triggered on the SCXML state machine itself.
  * </p>
  * <p>
- * Any exception encountered while execution the state machine is trapped and possibly unwrap first before being
+ * Any exception encountered while executing the state machine is trapped and possibly unwrapped first before being
  * rethrown as a WorkflowException or a RuntimeException if otherwise unknown.
  * </p>
  */

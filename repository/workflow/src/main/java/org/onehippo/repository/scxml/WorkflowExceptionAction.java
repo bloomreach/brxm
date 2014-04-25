@@ -23,7 +23,7 @@ import org.apache.commons.scxml2.model.ModelException;
 import org.hippoecm.repository.api.WorkflowException;
 
 /**
- * WorkflowExceptionAction is a basic SCXML state machine custom action to raise a {@link WorkflowException} with a
+ * WorkflowExceptionAction is a basic SCXML state machine custom action to throw a {@link WorkflowException} with a
  * specific runtime evaluated error message, optionally under a specific runtime evaluated condition.
  */
 public class WorkflowExceptionAction extends AbstractAction {

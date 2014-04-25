@@ -28,7 +28,7 @@ import org.hippoecm.repository.quartz.HippoSchedJcrConstants;
  * <p>
  * {@link ScheduledRequest} and {@link WorkflowRequest} provide concrete implementations for the two different
  * usage types, and this base class provides static factory methods to create the correct instance based on the
- * underlying JCr node type.
+ * underlying JCR node type.
  * </p>
  */
 public abstract class Request extends Document {

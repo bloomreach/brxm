@@ -38,14 +38,14 @@ import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
 
 /**
- * Custom workflow task for restoring a version to a specified target node using custom/manual copying of the version
- * its content.
+ * Custom workflow task for restoring a version to a specified target node using custom/manual copying of the content of
+ * it's version.
  */
 public class VersionRestoreToTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Collection<String> immune = new TreeSet<String>(){{
+    private static final Collection<String> immune = new TreeSet<String>() {{
         add(HippoNodeType.HIPPO_RELATED);
         add(HippoNodeType.HIPPO_COMPUTE);
         add(HippoNodeType.HIPPO_PATHS);

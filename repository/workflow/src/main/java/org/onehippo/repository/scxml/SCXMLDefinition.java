@@ -19,7 +19,7 @@ import org.apache.commons.scxml2.Evaluator;
 import org.apache.commons.scxml2.model.SCXML;
 
 /**
- * SCXMLDefinition wraps a specific SCXML state machine {@link #getSCXML() instance} and some extra meta data as the
+ * SCXMLDefinition wraps a specific SCXML state machine {@link #getSCXML() instance} and some extra metadata as the
  * {@link Evaluator} and the concrete location or {@link #getPath()} of the state machine definition needed for the
  * execution of the state machine.
  */

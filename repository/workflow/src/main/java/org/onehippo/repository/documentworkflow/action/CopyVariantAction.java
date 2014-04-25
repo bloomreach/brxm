@@ -22,7 +22,8 @@ import org.onehippo.repository.documentworkflow.task.CopyVariantTask;
 
 /**
  * CopyVariantAction is a custom DocumentWorkflow SCXML state machine action for creating a new document variant based
- * on another document variant, or overriding/replacing the target variant its content with that from the source variant.
+ * on another document variant, or overriding/replacing the content of the target variant with that from the source
+ * variant.
  * <p>
  * The execution of this task is delegated to its corresponding {@link CopyVariantTask}.
  * </p>

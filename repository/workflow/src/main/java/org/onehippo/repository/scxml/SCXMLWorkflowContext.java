@@ -41,8 +41,8 @@ import org.hippoecm.repository.api.WorkflowException;
  * {@link #getFeedback()} and {@link #getResult()} state for the SCXML state machine.
  * </p>
  * <p>
- * The SCXML state machine can uses the SCXMLWorkflowContext to communicate back the allowable actions, additional
- * feedback and possible state machine execution results back to the the invoking workflow implementation.
+ * The SCXML state machine uses the SCXMLWorkflowContext to communicate back the allowable actions, additional
+ * feedback and possible state machine execution results to the the invoking workflow implementation.
  * </p>
  * <p>
  * In addition, the SCXMLWorkflowContext also provides a content authorization service through several isGranted(..)

@@ -25,7 +25,7 @@ import org.onehippo.repository.modules.ProvidesService;
 
 /**
  * SCXMLRegistryModule is a repository daemon module providing access to the {@link SCXMLRegistry} and
- * {link SCXMLExecutorFactory} services, implemented through {@link RepositorySCXMLRegistry} and
+ * {@link SCXMLExecutorFactory} services, implemented through {@link RepositorySCXMLRegistry} and
  * {@link RepositorySCXMLExecutorFactory}.
  * <p>
  * The SCXMLRegistry service is automatically refreshed when this daemon module its configuration (node) is changed,

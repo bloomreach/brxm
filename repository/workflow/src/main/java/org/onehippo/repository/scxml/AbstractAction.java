@@ -36,7 +36,7 @@ import org.hippoecm.repository.api.WorkflowException;
  * in the SCXML state machine root context which provide the bridge to the invoking workflow implementation.
  * </p>
  * <p>
- * In addition, this base class provide convenience handling of custom Action parameters (defined as SCXML element
+ * In addition, this base class provides convenience handling of custom Action parameters (defined as SCXML element
  * attributes) which can be used concurrently as reusable and thus immutable parameters between different SCXML state
  * machine instance executions. The underlying parameter map will be 'locked down' and made immutable on the first
  * execution of this action instance, to enforce this restricted usage.

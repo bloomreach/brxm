@@ -36,7 +36,7 @@ import org.onehippo.repository.api.annotation.WorkflowAction;
 /**
  * Aggregate DocumentWorkflow, combining all Document handle based workflow operations into one generic interface.
  * <p>
- * This workflow replaces now all deprecated org,hippoecm.repository.reviewedactions.* workflow, which operations
+ * This workflow replaces all deprecated org,hippoecm.repository.reviewedactions.* workflows, whose operations
  * have been inlined.
  * </p>
  * <p> The -Request- and VersionWorkflows operations have been re-defined to be able to use different parameters
@@ -228,7 +228,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
-     * Depublication of this document
+     * Depublish this document
      *
      * @throws WorkflowException   indicates that the work-flow call failed due work-flow specific conditions
      * @throws MappingException    indicates that the work-flow call failed because of configuration problems

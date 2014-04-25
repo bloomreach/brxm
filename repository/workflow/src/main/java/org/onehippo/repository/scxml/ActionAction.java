@@ -22,9 +22,9 @@ import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
 
 /**
- * ActionAction is a basic SCXML state machine custom action to store a specific {@link #setAction(String)} as enabled
- * in the {@link SCXMLWorkflowContext#getActions()} map if the configured {@link #setEnabledExpr(String)} expression
- * evaluates at runtime to Boolean.TRUE, or else removes it from the map.
+ * ActionAction is a basic SCXML state machine custom action to store a specific {@link #setAction(String) action} as
+ * enabled in the {@link SCXMLWorkflowContext#getActions() map}  if the configured {@link #setEnabledExpr(String)
+ * expression} evaluates at runtime to Boolean.TRUE, or else removes it from the map.
  */
 public class ActionAction extends AbstractAction {
 
@@ -56,7 +56,7 @@ public class ActionAction extends AbstractAction {
         }
 
         String enabledExpr = getEnabledExpr();
-        Boolean enabled = (StringUtils.isBlank(enabledExpr) ? null : (Boolean)eval(enabledExpr));
+        Boolean enabled = (StringUtils.isBlank(enabledExpr) ? null : (Boolean) eval(enabledExpr));
 
         if (enabled == null) {
             getSCXMLWorkflowContext().getActions().remove(action);
