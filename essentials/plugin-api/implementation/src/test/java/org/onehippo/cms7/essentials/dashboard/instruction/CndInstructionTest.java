@@ -27,6 +27,7 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -64,6 +65,11 @@ public class CndInstructionTest extends BaseRepositoryTest {
         // this should node throw exists exception
         status = executor.execute(instructionSet, getContext());
         assertTrue("Expected success but got: " + status, status == InstructionStatus.FAILED);
+        // test prefix:
+        final String testingPrefix = "testingprefix";
+        cndInstruction.setNamespacePrefix(testingPrefix);
+        assertEquals("testingprefix", cndInstruction.getNamespacePrefix());
+
         session.logout();
     }
 }

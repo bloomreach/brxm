@@ -59,6 +59,7 @@ public class CndInstruction extends PluginInstruction {
     private String namespace;
     private String superType;
     private String documentType;
+    private String namespacePrefix;
 
     @Named("${instruction.message.cnd.register.failed}")
     private String messageRegisterError;
@@ -69,8 +70,11 @@ public class CndInstruction extends PluginInstruction {
 
     @Override
     public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
-
-        namespace = context.getProjectNamespacePrefix();
+        if (Strings.isNullOrEmpty(namespacePrefix)) {
+            namespace = context.getProjectNamespacePrefix();
+        } else {
+            namespace = namespacePrefix;
+        }
         final Map<String, Object> data = context.getPlaceholderData();
         processAllPlaceholders(data);
         //
@@ -99,7 +103,7 @@ public class CndInstruction extends PluginInstruction {
         } catch (RepositoryException e) {
             log.error(String.format("Error registering document type: %s", namespace), e);
             GlobalUtils.refreshSession(session, false);
-        }finally{
+        } finally {
             GlobalUtils.cleanupSession(session);
         }
 
@@ -159,6 +163,15 @@ public class CndInstruction extends PluginInstruction {
         this.documentType = documentType;
     }
 
+
+    @XmlAttribute
+    public String getNamespacePrefix() {
+        return namespacePrefix;
+    }
+
+    public void setNamespacePrefix(final String namespacePrefix) {
+        this.namespacePrefix = namespacePrefix;
+    }
 
     @XmlAttribute
     public String getSuperType() {
