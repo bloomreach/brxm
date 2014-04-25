@@ -120,10 +120,13 @@
     <xs:attribute use="required" name="documentType" type="xs:string"/>
     <xs:attribute use="required" name="superType" type="xs:string"/>
     <xs:attribute use="optional" name="namespaceUrl" type="xs:string">
+    <xs:annotation>
+      <!--TODO: NOT IMPLEMENTED YET -->
+      <xs:documentation>If not defined essentials template namespace will be used (TODO: NOT IMPLEMENTED YET)</xs:documentation>
+    </xs:annotation>
     <xs:attribute use="optional" name="namespacePrefix" type="xs:string">
       <xs:annotation>
-        <!--TODO: NOT IMPLEMENTED YET -->
-        <xs:documentation>If not defined essentials template namespace will be used (TODO: NOT IMPLEMENTED YET)</xs:documentation>
+        <xs:documentation>If not defined essentials template namespace will be used</xs:documentation>
       </xs:annotation>
     </xs:attribute>
   </xs:complexType>
