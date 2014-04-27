@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,18 +26,19 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
+import org.hippoecm.frontend.model.tree.JcrTreeNodeComparator;
 import org.hippoecm.frontend.plugins.console.dialog.LookupDialog;
 import org.hippoecm.frontend.plugins.console.menu.t9ids.GenerateNewTranslationIdsVisitor;
-import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.LabelledBooleanFieldWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
-import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +56,7 @@ public class CopyDialog extends LookupDialog {
     private final IModelReference<Node> modelReference;
 
     public CopyDialog(IModelReference<Node> modelReference) {
-        super(new JcrTreeNode(new JcrNodeModel("/"), null), modelReference.getModel());
+        super(new JcrTreeNode(new JcrNodeModel("/"), null, new JcrTreeNodeComparator()), modelReference.getModel());
         this.modelReference = modelReference;
         JcrNodeModel model = (JcrNodeModel) modelReference.getModel();
         setSelectedNode(model);
@@ -78,7 +79,7 @@ public class CopyDialog extends LookupDialog {
                 
                 LabelledBooleanFieldWidget checkbox = new LabelledBooleanFieldWidget("generate", 
                         new PropertyModel<Boolean>(this, "generate"), 
-                        new Model<String>("Generate new translation ids"));
+                        Model.of("Generate new translation ids"));
                 add(checkbox);
             } else {
                 add(new Label("source", "Cannot copy the root node"));
@@ -98,7 +99,7 @@ public class CopyDialog extends LookupDialog {
     }
 
     public IModel<String> getTitle() {
-        return new Model<String>("Copy Node");
+        return Model.of("Copy Node");
     }
         
     @Override
@@ -123,36 +124,36 @@ public class CopyDialog extends LookupDialog {
 
     @Override
     public void onOk() {
+        Node sourceNode = getOriginalModel().getObject();
+        Node parentNode = getParentDestNode();
+        
+        if (Strings.isEmpty(name) || parentNode == null || sourceNode == null) {
+            return;
+        }
+
         try {
-            IModel<Node> nodeModel = getOriginalModel();
+            JcrUtils.copy(sourceNode, name, parentNode);
 
-            IModel<Node> selectedNode = getSelectedNode().getNodeModel();
-            if (selectedNode != null && name != null && !"".equals(name)) {
-                IModel<Node> targetNodeModel = getSelectedNode().getNodeModel();
-                String targetPath = targetNodeModel.getObject().getPath();
-                if (!targetPath.endsWith("/")) {
-                    targetPath += "/";
-                }
-                targetPath += name;
-
-                // The actual copy
-                UserSession wicketSession = UserSession.get();
-                HippoSession jcrSession = (HippoSession) wicketSession.getJcrSession();
-                jcrSession.copy(nodeModel.getObject(), targetPath);
-
-                Node rootNode = nodeModel.getObject().getSession().getRootNode();
-                Node targetNode = rootNode.getNode(targetPath.substring(1));
-                
+            Node targetNode = JcrUtils.getNodeIfExists(parentNode, name);
+            if (targetNode != null) {
                 if (generate) {
                     targetNode.accept(new GenerateNewTranslationIdsVisitor());
                 }
-                
+
                 modelReference.setModel(new JcrNodeModel(targetNode));
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
             error(ex.getMessage());
         }
+    }
+
+    private Node getParentDestNode() {
+        IJcrTreeNode selectedTreeNode = getSelectedNode();
+        if (selectedTreeNode == null || selectedTreeNode.getNodeModel() == null ) {
+            return null;
+        }
+        return selectedTreeNode.getNodeModel().getObject();
     }
 
     @Override

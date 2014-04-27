@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
+import org.hippoecm.frontend.model.tree.JcrTreeNodeComparator;
 import org.hippoecm.frontend.plugins.console.NodeModelReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,9 +59,8 @@ public class DeleteMultipleDialog extends AbstractDialog<Node> {
 
         DefaultTreeModel model = null;
         try {
-
             selectedModel = modelReference.getModel();
-            final JcrTreeNode root = new JcrTreeNode(new JcrNodeModel(selectedModel.getObject().getPath()), null);
+            final JcrTreeNode root = new JcrTreeNode(new JcrNodeModel(selectedModel.getObject().getPath()), null, new JcrTreeNodeComparator());
             model = new DefaultTreeModel(root);
         } catch (RepositoryException e) {
             log.error("Error initializing tree", e);
@@ -75,7 +75,7 @@ public class DeleteMultipleDialog extends AbstractDialog<Node> {
         if (model != null) {
             tree.getTreeState().expandNode(model.getRoot());
         }
-        checkboxModel = new Model<Boolean>(Boolean.FALSE);
+        checkboxModel = Model.of(Boolean.FALSE);
         add(new CheckBox("deleteFolders", checkboxModel));
 
     }
@@ -130,8 +130,8 @@ public class DeleteMultipleDialog extends AbstractDialog<Node> {
     }
 
     @Override
-    public IModel getTitle() {
-        return new Model<String>("Delete multiple nodes");
+    public IModel<String> getTitle() {
+        return Model.of("Delete multiple nodes");
     }
 
     @Override
