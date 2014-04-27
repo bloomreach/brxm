@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -73,15 +73,11 @@ import org.hippoecm.frontend.plugins.yui.widget.tree.TreeWidgetSettings;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.JcrTree;
 
-import wicket.contrib.input.events.InputBehavior;
-
 public class BrowserPlugin extends RenderPlugin<Node> {
 
     private static final long serialVersionUID = 1L;
 
     private static final JavaScriptResourceReference NAVIGATION_JS = new JavaScriptResourceReference(BrowserPlugin.class, "navigation.js");
-    private static final JavaScriptResourceReference SHORTCUTS_JS = new JavaScriptResourceReference(InputBehavior.class, "shortcuts.js");
-
 
     protected final JcrTree tree;
     private TreeWidgetBehavior treeBehavior;
@@ -196,8 +192,6 @@ public class BrowserPlugin extends RenderPlugin<Node> {
         @Override
         public void renderHead(final IHeaderResponse response) {
             super.renderHead(response);
-
-            response.render(JavaScriptHeaderItem.forReference(SHORTCUTS_JS));
             response.render(JavaScriptHeaderItem.forReference(NAVIGATION_JS));
         }
 
