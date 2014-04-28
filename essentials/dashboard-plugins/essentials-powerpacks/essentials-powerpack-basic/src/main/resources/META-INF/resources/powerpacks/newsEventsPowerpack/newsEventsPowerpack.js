@@ -19,7 +19,7 @@
 
     angular.module('hippo.essentials')
 
-            .controller('newsEventsCtrl', function ($scope, $rootScope, eventBroadcastService) {
+            .controller('newsEventsCtrl', function ($scope, $http, $rootScope, eventBroadcastService) {
 
                 $scope.sampleData = true;
                 $scope.onChange = function () {
@@ -32,7 +32,10 @@
                     // broadcast our item:
                     eventBroadcastService.broadcast('powerpackEvent', [
                         {'key': 'sampleData', 'value': $scope.sampleData}
-                    ])
+                    ]);
+                    $http.get($rootScope.REST.powerpacksMessages + $scope.selectedPlugin.powerpackClass).success(function (data) {
+                        $scope.powerpackMessages = data;
+                    });
 
 
                 };

@@ -96,7 +96,7 @@ public class MessageInstructionExecutor {
     private void processFolderInstruction(final Collection<KeyValueRestful> retVal, final Map<String, Object> placeholderData, final NodeFolderInstruction instruction) {
         final String path = instruction.getPath();
         final String replacedData = TemplateUtils.replaceTemplateData(path, placeholderData);
-        final String userMessage = MessageFormat.format("Following folder will be created: {0}", replacedData);
+        final String userMessage = MessageFormat.format("Following repository folder will be created: {0}", replacedData);
         KeyValueRestful keyValueRestful = new KeyValueRestful("NodeFolderInstruction", userMessage);
         retVal.add(keyValueRestful);
     }

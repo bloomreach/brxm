@@ -36,7 +36,7 @@
 
   <instructionSet group="jsp">
     <file action="copy" source="jsp/list-component.jsp" target="{{jspRoot}}/hstdefault/list-component.jsp"/>
-    <file action="copy" source="jsp/content-component.jsp" target="{{jspRoot}}/hstdefault/jsp/content-component.jsp"/>
+    <file action="copy" source="jsp/content-component.jsp" target="{{jspRoot}}/hstdefault/content-component.jsp"/>
     <file action="copy" source="jsp/newslist-main-newslist.jsp" target="{{jspRoot}}/hstdefault/newslist-main-newslist.jsp"/>
     <file action="copy" source="jsp/newspage-main.jsp" target="{{jspRoot}}/hstdefault/newspage-main.jsp"/>
     <file action="copy" source="jsp/eventslist-main-eventslist.jsp" target="{{jspRoot}}/hstdefault/eventslist-main-eventslist.jsp"/>

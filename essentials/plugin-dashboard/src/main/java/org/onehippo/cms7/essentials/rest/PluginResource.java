@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
@@ -245,34 +246,6 @@ public class PluginResource extends BaseResource {
         return messageRestfulRestfulList;
     }
 
-
-    // TODO mm: enable this after we figure out new endpoint
-/*
-public static List<PluginRestful> parseGist() {
-        try {
-
-
-
-
-            final RestClient client = new RestClient("https://api.github.com/gists/8453217");
-            final String pluginList = client.getPluginList();
-            final Gson gson = new Gson();
-            final Gist gist = gson.fromJson(pluginList, Gist.class);
-            final Map<String, GistFile> files = gist.getFiles();
-            final GistFile gistFile = files.get("gistfile1.json");
-            final String json = gistFile.getContent();
-
-            final Type listType = new TypeToken<RestfulList<PluginRestful>>() {
-            }.getType();
-            final RestfulList<PluginRestful> restfulList = gson.fromJson(json, listType);
-            return restfulList.getItems();
-        } catch (Exception e) {
-            log.error("Error parsing gist", e);
-        }
-        return Collections.emptyList();
-
-    }
-*/
 
     @ApiOperation(
             value = "Adds a plugin to recently installed list of plugins",
@@ -499,6 +472,38 @@ public static List<PluginRestful> parseGist() {
             }
         }
         return modules;
+    }
+
+
+    @ApiOperation(
+            value = "Returns a list of messages about the changes plugin would made for specific choice",
+            notes = "Messages are only indication what might change, because a lot of operations are not executed, e.g. file copy if is not executed" +
+                    "if file already exists.",
+            response = PluginModuleRestful.class)
+    @GET
+    @Path("/changes/{powerpackClass}")
+    public RestfulList<MessageRestful> getPowerpackChanges(@Context ServletContext servletContext, @PathParam("powerpackClass") String powerpackClass) {
+        final RestfulList<MessageRestful> list = new RestfulList<>();
+        if (Strings.isNullOrEmpty(powerpackClass)) {
+
+            log.warn("No powerpack class was given");
+            return list;
+        }
+        final Class<?> clazz = GlobalUtils.loadCLass(powerpackClass);
+        if (clazz == null) {
+            log.warn("Class was null for classname:  {}", powerpackClass);
+            return list;
+        }
+
+        final PowerpackPackage powerpackPackage = (PowerpackPackage) GlobalUtils.newInstance(clazz);
+        getInjector().autowireBean(powerpackPackage);
+        @SuppressWarnings("unchecked")
+        final Set<KeyValueRestful> messages = (Set<KeyValueRestful>) powerpackPackage.getInstructionsMessages(getContext(servletContext));
+        for (KeyValueRestful message : messages) {
+            list.add(new MessageRestful(message.getValue()));
+        }
+
+        return list;
     }
 
 
