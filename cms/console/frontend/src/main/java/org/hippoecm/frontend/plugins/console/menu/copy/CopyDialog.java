@@ -36,6 +36,7 @@ import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeNodeComparator;
 import org.hippoecm.frontend.plugins.console.dialog.LookupDialog;
 import org.hippoecm.frontend.plugins.console.menu.t9ids.GenerateNewTranslationIdsVisitor;
+import org.hippoecm.frontend.widgets.AutoFocusSelectTextFieldWidget;
 import org.hippoecm.frontend.widgets.LabelledBooleanFieldWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.util.JcrUtils;
@@ -47,13 +48,14 @@ public class CopyDialog extends LookupDialog {
     static final Logger log = LoggerFactory.getLogger(CopyDialog.class);
 
     private static final IValueMap SIZE = new ValueMap("width=515,height=540");
-    
+
     private String name;
     private Boolean generate = true;
     @SuppressWarnings("unused")
     private String target;
     private Label targetLabel;
     private final IModelReference<Node> modelReference;
+    //private TextFieldWidget nameField;
 
     public CopyDialog(IModelReference<Node> modelReference) {
         super(new JcrTreeNode(new JcrNodeModel("/"), null, new JcrTreeNodeComparator()), modelReference.getModel());
@@ -73,12 +75,12 @@ public class CopyDialog extends LookupDialog {
                 add(targetLabel);
 
                 name = model.getNode().getName();
-                TextFieldWidget nameField = new TextFieldWidget("name", new PropertyModel<String>(this, "name"));
+                TextFieldWidget nameField = new AutoFocusSelectTextFieldWidget("name", new PropertyModel<String>(this, "name"));
                 nameField.setSize(String.valueOf(name.length() + 5));
                 add(nameField);
-                
-                LabelledBooleanFieldWidget checkbox = new LabelledBooleanFieldWidget("generate", 
-                        new PropertyModel<Boolean>(this, "generate"), 
+
+                LabelledBooleanFieldWidget checkbox = new LabelledBooleanFieldWidget("generate",
+                        new PropertyModel<Boolean>(this, "generate"),
                         Model.of("Generate new translation ids"));
                 add(checkbox);
             } else {
@@ -87,6 +89,7 @@ public class CopyDialog extends LookupDialog {
                 add(new EmptyPanel("name"));
                 add(new EmptyPanel("generate"));
                 setOkVisible(false);
+                setFocusOnCancel();
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
@@ -94,14 +97,14 @@ public class CopyDialog extends LookupDialog {
             add(new Label("target", e.getMessage()));
             add(new EmptyPanel("name"));
             setOkVisible(false);
+            setFocusOnCancel();
         }
-        setFocusOnCancel();
     }
 
     public IModel<String> getTitle() {
         return Model.of("Copy Node");
     }
-        
+
     @Override
     public void onSelect(IModel<Node> model) {
         if (model != null) {
@@ -156,6 +159,15 @@ public class CopyDialog extends LookupDialog {
         return selectedTreeNode.getNodeModel().getObject();
     }
 
+  /*  @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+        if (nameField != null && nameField.getFocusComponent() != null) {
+            final Component textField = nameField.getFocusComponent();
+            response.render(OnDomReadyHeaderItem.forScript("document.getElementById('" + textField.getMarkupId() + "').focus(); document.getElementById('" + textField.getMarkupId() + "').select();"));
+        }
+    }
+*/
     @Override
     public IValueMap getProperties() {
         return SIZE;

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
@@ -31,6 +30,7 @@ import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.widgets.AutoFocusSelectTextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +59,7 @@ public class RenameDialog extends AbstractDialog<Node> {
             setOkVisible(false);
         }
 
-        add(setFocus(new TextField("name", new PropertyModel(this, "name"))));
+        add(new AutoFocusSelectTextFieldWidget("name", new PropertyModel<String>(this, "name")));
     }
 
     @Override
@@ -117,8 +117,8 @@ public class RenameDialog extends AbstractDialog<Node> {
         return null;
     }
 
-    public IModel getTitle() {
-        return new Model("Rename Node");
+    public IModel<String> getTitle() {
+        return Model.of("Rename Node");
     }
 
     public String getName() {

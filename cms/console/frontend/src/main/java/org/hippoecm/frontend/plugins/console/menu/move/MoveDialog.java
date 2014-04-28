@@ -35,6 +35,7 @@ import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeNodeComparator;
 import org.hippoecm.frontend.plugins.console.dialog.LookupDialog;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.widgets.AutoFocusSelectTextFieldWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
@@ -67,7 +68,7 @@ public class MoveDialog extends LookupDialog {
                 add(targetLabel);
 
                 name = model.getNode().getName();
-                TextFieldWidget nameField = new TextFieldWidget("name", new PropertyModel<String>(this, "name"));
+                TextFieldWidget nameField = new AutoFocusSelectTextFieldWidget("name", new PropertyModel<String>(this, "name"));
                 nameField.setSize(String.valueOf(name.length() + 5));
                 add(nameField);
             } else {
@@ -75,6 +76,7 @@ public class MoveDialog extends LookupDialog {
                 add(new EmptyPanel("target"));
                 add(new EmptyPanel("name"));
                 setOkVisible(false);
+                setFocusOnCancel();
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
@@ -82,8 +84,8 @@ public class MoveDialog extends LookupDialog {
             add(new Label("target", e.getMessage()));
             add(new EmptyPanel("name"));
             setOkVisible(false);
+            setFocusOnCancel();
         }
-        setFocusOnCancel();
     }
 
     public IModel<String> getTitle() {
@@ -146,5 +148,4 @@ public class MoveDialog extends LookupDialog {
         }
         return selectedTreeNode.getNodeModel().getObject();
     }
-
 }
