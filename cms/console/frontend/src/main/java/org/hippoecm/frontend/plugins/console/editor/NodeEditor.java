@@ -54,11 +54,11 @@ class NodeEditor extends Form<Node> {
 
     public static final String NONE_LABEL = "<none>";
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings("unused FieldCanBeLocal")
     private String name;
-    @SuppressWarnings("unused")
+    @SuppressWarnings("unused FieldCanBeLocal")
     private String uuid;
-    @SuppressWarnings("unused")
+    @SuppressWarnings("unused FieldCanBeLocal")
     private String nodePath;
 
     private NamespaceProvider namespaceProvider;
@@ -84,7 +84,7 @@ class NodeEditor extends Form<Node> {
         add(new Label("types", new PropertyModel<String>(typesEditor, "mixinTypes")));
 
         add(new ToggleHeader("toggle-header-2", "2", "Properties"));
-        namespaceProvider = new NamespaceProvider(new EmptyDataProvider());
+        namespaceProvider = new NamespaceProvider(new EmptyDataProvider<Property>());
         namespacePropertiesEditor = new NamespacePropertiesEditor("namespaces", namespaceProvider);
         add(namespacePropertiesEditor);
 
@@ -170,7 +170,10 @@ class NodeEditor extends Form<Node> {
             final String namespace = propertiesProvider.getNamespace();
 
             final String namespaceHeading = namespace + " (" + propertiesProvider.size() + ")";
-            item.add(new ToggleHeader("toggle-namespace", namespace, namespaceHeading));
+            final ToggleHeader toggleHeader = new ToggleHeader("toggle-namespace", namespace, namespaceHeading);
+            toggleHeader.setMarkupId("toggle-header-" + namespace);
+            toggleHeader.setOutputMarkupId(true);
+            item.add(toggleHeader);
 
             final WebMarkupContainer propertiesContainer = new WebMarkupContainer("propertiesContainer");
             propertiesContainer.setOutputMarkupId(true);
@@ -212,7 +215,7 @@ class NodeEditor extends Form<Node> {
 
         @Override
         public IModel<NamespacePropertiesProvider> model(final NamespacePropertiesProvider object) {
-            return new Model<NamespacePropertiesProvider>(object);
+            return Model.of(object);
         }
 
         @Override
@@ -222,9 +225,9 @@ class NodeEditor extends Form<Node> {
         }
 
         private void load() {
-            namespaces = new ArrayList<NamespacePropertiesProvider>();
+            namespaces = new ArrayList<>();
 
-            Map<String, NamespacePropertiesProvider> namespaceMap = new TreeMap<String, NamespacePropertiesProvider>();
+            Map<String, NamespacePropertiesProvider> namespaceMap = new TreeMap<>();
             try {
                 Iterator<? extends Property> it = wrapped.iterator(0, wrapped.size());
                 while (it.hasNext()) {
@@ -261,7 +264,7 @@ class NodeEditor extends Form<Node> {
 
         NamespacePropertiesProvider(String namespace) {
             this.namespace = namespace;
-            properties = new ArrayList<Property>();
+            properties = new ArrayList<>();
             sorted = true;
         }
 
@@ -277,7 +280,7 @@ class NodeEditor extends Form<Node> {
         }
         
         @Override
-        public Iterator iterator(final long first, final long count) {
+        public Iterator<Property> iterator(final long first, final long count) {
             if (!sorted) {
                 Collections.sort(properties, PROPERTY_COMPARATOR);
                 sorted = true;
@@ -291,6 +294,7 @@ class NodeEditor extends Form<Node> {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public IModel<Property> model(final Property object) {
             return new JcrPropertyModel(object);
         }

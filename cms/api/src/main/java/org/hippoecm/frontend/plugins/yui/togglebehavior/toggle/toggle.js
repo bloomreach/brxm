@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@
 
 YAHOO.namespace("hippo");
 
-(function() {
+(function () {
     var Dom = YAHOO.util.Dom, Cookie = YAHOO.util.Cookie,
         CLOSED_BOXES = 'ConsoleClosedBoxes';
 
@@ -66,33 +66,54 @@ YAHOO.namespace("hippo");
         updateBox(boxName, false, 'group-expanded', 'group-collapsed');
     }
 
-    YAHOO.hippo.ToggleInit = function(d) {
-      var c = getCookie(CLOSED_BOXES),
-          l = Dom.getElementsByClassName('toggle-header', 'h3', d || null).length,
-          i;
-      if(!c || !l) {
-        return;
-      }
-      for (i = 1; i <= l; i++) {
-        if(c['box-' + i] === '1') {
-          hideBox(i);
+    YAHOO.hippo.ToggleInit = function (d) {
+        var c = getCookie(CLOSED_BOXES),
+            l = Dom.getElementsByClassName('toggle-header', 'h3', d || null).length,
+            m = Dom.getElementsByClassName('toggle-header', 'h4', d || null),
+            n, i, id, boxName, boxId;
+
+        if (!c || !l) {
+            return;
         }
-      }
+
+        // toggle big boxes
+        for (i = 0; i <= l; i++) {
+            if (c['box-' + i] === '1') {
+                hideBox(i);
+            }
+        }
+
+        // toggle property namespace boxes of big box 2 ("Properties")
+        if (m) {
+            for (i = 0; i <= m.length; i++) {
+                n = m[i];
+                if (n) {
+                    id = n.id; // 'toggle-header-jcr'
+                    if (id) {
+                        boxName = id.replace('header', 'box'); // 'toggle-box-jcr'
+                        boxId = boxName.substr(7); // 'box-jcr'
+                        if (c[boxId] === '1') {
+                            hideBox(boxId.substr(4)); // 'jcr'
+                        }
+                    }
+                }
+            }
+        }
     };
 
-    YAHOO.hippo.ToggleBox = function(boxName) {
-      var box, dStyle;
+    YAHOO.hippo.ToggleBox = function (boxName) {
+        var box, dStyle;
 
-      box = Dom.get('toggle-box-' + boxName);
-      if (box === null || box === undefined) {
-        return;
-      }
-      dStyle = Dom.getStyle(box, 'display');
-      if (dStyle === 'none') {
-        showBox(boxName);
-      } else if (dStyle === 'block') {
-        hideBox(boxName);
-      }
+        box = Dom.get('toggle-box-' + boxName);
+        if (box === null || box === undefined) {
+            return;
+        }
+        dStyle = Dom.getStyle(box, 'display');
+        if (dStyle === 'none') {
+            showBox(boxName);
+        } else if (dStyle === 'block') {
+            hideBox(boxName);
+        }
     };
 
 }());
