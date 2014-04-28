@@ -180,6 +180,7 @@ li.hippo-console-menu-actions-save.session-changes a { background-color: red; }
 .hippo-console-editor .properties-group { padding-left: 16px; }
 .hippo-console-editor .property { margin: 10px 0 10px; }
 .hippo-console-editor .property-name {font-size: 14px; color:#333; font-weight: bold; }
+.hippo-console-editor .property-namespace {font-size: 14px; color: #8d8d8d; font-weight: bold; }
 .hippo-console-editor .property-type {font-size: 14px; color:#666; margin-right: 5px;}
 .hippo-console-editor .property-add {font-size: 14px; color:#32629b; }
 .hippo-console-editor .property-remove {font-size: 14px; color:#32629b; }

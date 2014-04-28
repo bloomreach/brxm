@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -46,11 +46,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class NodeEditor extends Form<Node> {
-
     private static final long serialVersionUID = 1L;
-    private static final NamespacePropertyComparator PROPERTY_COMPARATOR = new NamespacePropertyComparator();
 
     static final Logger log = LoggerFactory.getLogger(NodeEditor.class);
+
+    private static final NamespacePropertyComparator PROPERTY_COMPARATOR = new NamespacePropertyComparator();
+
+    public static final String NONE_LABEL = "<none>";
 
     @SuppressWarnings("unused")
     private String name;
@@ -231,7 +233,7 @@ class NodeEditor extends Form<Node> {
                     if (!propName.equals("jcr:primaryType") && !propName.equals("jcr:mixinTypes")) {
                         String propNamespace = new JcrName(propName).getNamespace();
                         if (propNamespace == null) {
-                            propNamespace = "<none>";
+                            propNamespace = NONE_LABEL;
                         }
                         NamespacePropertiesProvider propertiesProvider = namespaceMap.get(propNamespace);
                         if (propertiesProvider == null) {
@@ -249,7 +251,7 @@ class NodeEditor extends Form<Node> {
         }
     }
 
-    private static class NamespacePropertiesProvider implements IDataProvider<Property> {
+    protected static class NamespacePropertiesProvider implements IDataProvider<Property> {
         @SuppressWarnings("unused")
         private static final long serialVersionUID = 1L;
 

@@ -25,6 +25,7 @@ import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 import javax.jcr.nodetype.PropertyDefinition;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -48,9 +49,18 @@ public class PropertiesEditor extends DataView {
 
     static final Logger log = LoggerFactory.getLogger(PropertiesEditor.class);
 
+    private String namespacePrefix;
+
     public PropertiesEditor(String id, IDataProvider model) {
         super(id, model);
         setItemReuseStrategy(ReuseIfModelsEqualStrategy.getInstance());
+        
+        String namespace = ((NodeEditor.NamespacePropertiesProvider) model).getNamespace();
+        if (namespace.equals(NodeEditor.NONE_LABEL)) {
+            namespacePrefix = StringUtils.EMPTY;
+        } else {
+            namespacePrefix = namespace + ":";
+        }
     }
 
     @Override
@@ -62,6 +72,7 @@ public class PropertiesEditor extends DataView {
             deleteLink.setVisible(!model.getProperty().getDefinition().isProtected());
 
             JcrName propName = new JcrName(model.getProperty().getName());
+            item.add(new Label("namespace", namespacePrefix));
             item.add(new Label("name", propName.getName()));
 
             item.add(new Label("type", PropertyType.nameFromValue(model.getProperty().getType())));
