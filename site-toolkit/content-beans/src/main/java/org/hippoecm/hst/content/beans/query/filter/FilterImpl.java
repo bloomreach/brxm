@@ -53,6 +53,10 @@ public class FilterImpl implements Filter {
         OR, AND
     }
 
+    /**
+     * @param resolution supported resolutions are {@link DateTools.Resolution#YEAR}, {@link DateTools.Resolution#MONTH},
+     *                   {@link DateTools.Resolution#DAY} or {@link DateTools.Resolution#MONTH}
+     */
     public FilterImpl(final Session session, final DateTools.Resolution resolution) {
         this.session = session;
         if (resolution == null) {
