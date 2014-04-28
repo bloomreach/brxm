@@ -1,5 +1,5 @@
 <!--
-    * Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
+    * Copyright 2007-2014 Hippo B.V. (http://www.onehippo.com)
     *
     * Licensed under the Apache License, Version 2.0 (the  "License");
     * you may not use this file except in compliance with the License.
@@ -52,21 +52,26 @@
             <span class="property-name" wicket:id="name">Property name</span>
             &nbsp;
             <span wicket:id="type" class="property-type">Property type</span>
-            <a wicket:id="delete">(delete)</a>
-            <table class="property-value-container" width="100%">
+            <a wicket:id="delete">
+              <img wicket:id="remove-icon" class="remove-icon" width="16" height="16"/>
+            </a>
+            <table class="property-value-container" width="100%" wicket:id="values-container">
               <tr>
                 <td width="100%">
                   <ul style="list-style: none">
                     <li class="property-value" wicket:id="values">
-                      <span wicket:id="value"></span><a class="property-value-remove" wicket:id="remove">X</a>
+                      <span wicket:id="value"></span>
+                      <a class="property-value-remove" wicket:id="remove">
+                        <img wicket:id="remove-icon" width="16" height="16"/>
+                      </a>
                     </li>
                   </ul>
                 </td>
-                <td>
-                  <a class="property-add" wicket:id="add">(add)</a>
-                </td>
               </tr>
             </table>
+            <a class="property-add" wicket:id="add">
+              <img wicket:id="add-icon" class="add-icon" width="16" height="16"/>
+            </a>
           </li>
         </ul>
       </li>

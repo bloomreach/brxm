@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,16 +23,20 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
+import javax.jcr.nodetype.PropertyDefinition;
 
-import org.apache.wicket.Component;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
+import org.apache.wicket.request.resource.PackageResourceReference;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
@@ -53,59 +57,64 @@ public class PropertiesEditor extends DataView {
     protected void populateItem(Item item) {
         JcrPropertyModel model = (JcrPropertyModel) item.getModel();
         try {
-            item.add(deleteLink("delete", model));
+            final AjaxLink deleteLink = deleteLink("delete", model);
+            item.add(deleteLink);
+            deleteLink.setVisible(!model.getProperty().getDefinition().isProtected());
 
             JcrName propName = new JcrName(model.getProperty().getName());
             item.add(new Label("name", propName.getName()));
 
             item.add(new Label("type", PropertyType.nameFromValue(model.getProperty().getType())));
-            item.add(new PropertyValueEditor("values", model));
 
-            if (model.getProperty().getDefinition().isMultiple() && !model.getProperty().getDefinition().isProtected()) {
-                item.add(addLink("add", model));
-            } else {
-                item.add(new Label("add", ""));
-            }
+            WebMarkupContainer valuesContainer = new WebMarkupContainer("values-container");
+            valuesContainer.setOutputMarkupId(true);
+            item.add(valuesContainer);
+            valuesContainer.add(new PropertyValueEditor("values", model));
+
+            final AjaxLink addLink = addLink("add", model, valuesContainer);
+            addLink.add(new AttributeModifier("title", getString("property.value.add")));
+            item.add(addLink);
+
+            addLink.add(new Image("add-icon", new PackageResourceReference(PropertiesEditor.class, "list-add-16.png")));
+            
+            PropertyDefinition definition = model.getProperty().getDefinition();
+            addLink.setVisible(definition.isMultiple() && !definition.isProtected());
+
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
     }
 
     // privates
+    private AjaxLink deleteLink(String id, final JcrPropertyModel model) throws RepositoryException {
+        AjaxLink deleteLink = new AjaxLink<Property>(id, model) {
+            private static final long serialVersionUID = 1L;
 
-    private Component deleteLink(String id, final JcrPropertyModel model) throws RepositoryException {
-        Component result = null;
-        if (model.getProperty().getDefinition().isProtected()) {
-            result = new Label(id, "(protected)");
+            @Override
+            protected void onComponentTag(final ComponentTag tag) {
+                super.onComponentTag(tag);
+                tag.put("class", "property-value-remove");
+            }
 
-        } else {
-            result = new AjaxLink(id, model) {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected void onComponentTag(final ComponentTag tag) {
-                    super.onComponentTag(tag);
-                    tag.put("class", "property-value-remove");
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                try {
+                    Property prop = model.getProperty();
+                    prop.remove();
+                } catch (RepositoryException e) {
+                    log.error(e.getMessage());
                 }
-
-                @Override
-                public void onClick(AjaxRequestTarget target) {
-                    try {
-                        Property prop = model.getProperty();
-                        prop.remove();
-                    } catch (RepositoryException e) {
-                        log.error(e.getMessage());
-                    }
-                    NodeEditor editor = findParent(NodeEditor.class);
-                    target.add(editor);
-                }
-            };
-        }
-        return result;
+                NodeEditor editor = findParent(NodeEditor.class);
+                target.add(editor);
+            }
+        };
+        deleteLink.add(new Image("remove-icon", new PackageResourceReference(PropertiesEditor.class, "edit-delete-16.png")));
+        deleteLink.add(new AttributeModifier("title", getString("property.remove")));
+        return deleteLink;
     }
 
-    private AjaxLink addLink(String id, final JcrPropertyModel model) {
-        return new AjaxLink(id, model) {
+    private AjaxLink addLink(String id, final JcrPropertyModel model, final WebMarkupContainer focusComponent) {
+        return new AjaxLink<Property>(id, model) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -115,9 +124,7 @@ public class PropertiesEditor extends DataView {
                 try {
                     Value[] oldValues = prop.getValues();
                     newValues = new Value[oldValues.length + 1];
-                    for (int i = 0; i < oldValues.length; i++) {
-                        newValues[i] = oldValues[i];
-                    }
+                    System.arraycopy(oldValues, 0, newValues, 0, oldValues.length);
                     newValues[newValues.length - 1] = createDefaultValue(prop.getType());
                     prop.setValue(newValues);
                 } catch (RepositoryException e) {
@@ -125,8 +132,7 @@ public class PropertiesEditor extends DataView {
                     return;
                 }
 
-                NodeEditor editor = findParent(NodeEditor.class);
-                target.add(editor);
+                target.add(focusComponent);
             }
         };
     }

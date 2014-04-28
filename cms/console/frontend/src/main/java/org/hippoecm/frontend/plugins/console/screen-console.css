@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -180,13 +180,15 @@ li.hippo-console-menu-actions-save.session-changes a { background-color: red; }
 .hippo-console-editor .properties-group { padding-left: 16px; }
 .hippo-console-editor .property { margin: 10px 0 10px; }
 .hippo-console-editor .property-name {font-size: 14px; color:#333; font-weight: bold; }
-.hippo-console-editor .property-type {font-size: 14px; color:#666; margin-right: 20px;}
+.hippo-console-editor .property-type {font-size: 14px; color:#666; margin-right: 5px;}
 .hippo-console-editor .property-add {font-size: 14px; color:#32629b; }
 .hippo-console-editor .property-remove {font-size: 14px; color:#32629b; }
 .hippo-console-editor .property-value-container {margin: 4px 0 4px;}
 .hippo-console-editor .property-value {font-size: 12px;}
 .hippo-console-editor .property-value a {color:#32629b;}
 .hippo-console-editor .property-value-remove {font-size: 14px; color:#32629b; display: inline-block; }
+.hippo-console-editor .property .add-icon {margin-top:-5px;}
+.hippo-console-editor .property .remove-icon {vertical-align: middle;}
 .hippo-console-editor textarea {width: 95%; font-size: 14px; display: inline-block; margin: 3px 0 3px;}
 .hippo-console-editor .mixin-type {font-size: 14px; margin: 3px 0 3px;}
 .hippo-console-editor .mixin-type .mixin-name {margin-left: 4px; font-weight: bold; color: #666;}

@@ -1381,8 +1381,10 @@ console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/Refe
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/ToggleHeader.html -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/ToggleHeader.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/ValueEditorFactory.java -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/edit-delete-16.png -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/group-collapsed.png -text svneol=unset#image/png
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/group-expanded.png -text svneol=unset#image/png
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/list-add-16.png -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/MenuPlugin.html svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/MenuPlugin.java svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/SortMenuPlugin.html -text svneol=unset#text/plain

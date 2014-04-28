@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,16 +21,20 @@ import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
+import javax.jcr.nodetype.PropertyDefinition;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.markup.repeater.data.DataView;
+import org.apache.wicket.request.resource.PackageResourceReference;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.model.properties.StringConverter;
@@ -117,32 +121,34 @@ class PropertyValueEditor extends DataView {
                 }
             }
 
-            //Remove value link
-            if (propertyModel.getProperty().getDefinition().isMultiple()
-                    && !propertyModel.getProperty().getDefinition().isProtected()) {
-                item.add(new AjaxLink("remove") {
-                    private static final long serialVersionUID = 1L;
+            final AjaxLink removeLink = new AjaxLink("remove") {
+                private static final long serialVersionUID = 1L;
 
-                    @Override
-                    public void onClick(AjaxRequestTarget target) {
-                        try {
-                            Property prop = propertyModel.getProperty();
-                            Value[] values = prop.getValues();
-                            values = (Value[]) ArrayUtils.remove(values, valueModel.getIndex());
-                            prop.getParent().setProperty(prop.getName(), values, prop.getType());
-                        } catch (RepositoryException e) {
-                            log.error(e.getMessage());
-                        }
-                        NodeEditor editor = findParent(NodeEditor.class);
-                        if (editor != null) {
-                            target.add(editor);
-                        }
+                @Override
+                public void onClick(AjaxRequestTarget target) {
+                    try {
+                        Property prop = propertyModel.getProperty();
+                        Value[] values = prop.getValues();
+                        values = (Value[]) ArrayUtils.remove(values, valueModel.getIndex());
+                        prop.getParent().setProperty(prop.getName(), values, prop.getType());
+                    } catch (RepositoryException e) {
+                        log.error(e.getMessage());
                     }
-                });
-            } else {
-                item.add(new Label("remove").setVisible(false));
-            }
-        } catch (RepositoryException e) {
+                    NodeEditor editor = findParent(NodeEditor.class);
+                    if (editor != null) {
+                        target.add(editor);
+                    }
+                }
+            };
+            removeLink.add(new Image("remove-icon", new PackageResourceReference(PropertiesEditor.class, "edit-delete-16.png")));
+            removeLink.add(new AttributeModifier("title", getString("property.value.remove")));
+            
+            PropertyDefinition definition = propertyModel.getProperty().getDefinition();
+            removeLink.setVisible(definition.isMultiple() && !definition.isProtected());
+
+            item.add(removeLink);
+        }
+        catch (RepositoryException e) {
             log.error(e.getMessage());
             item.add(new Label("value", e.getClass().getName() + ":" + e.getMessage()));
             item.add(new Label("remove", ""));
