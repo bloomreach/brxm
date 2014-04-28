@@ -119,6 +119,7 @@ public class HstServletResponseState implements HstResponseState {
 
         isStateAwareResponse = isActionResponse;
         isMimeResponse = isRenderResponse || isResourceResponse;
+        characterEncoding = parentResponse.getCharacterEncoding();
     }
 
     public Element createElement(String tagName) {
