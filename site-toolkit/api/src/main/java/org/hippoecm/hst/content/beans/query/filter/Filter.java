@@ -74,7 +74,7 @@ public interface Filter extends BaseFilter {
      * @param end the date to end  (including)
      * @param resolution the resolution to use to compare dates. The higher the Resolution (year is highest) the better the performance.
      *                   supported resolutions are {@link DateTools.Resolution#YEAR}, {@link DateTools.Resolution#MONTH},
-     *                   {@link DateTools.Resolution#DAY} or {@link DateTools.Resolution#MONTH}
+     *                   {@link DateTools.Resolution#DAY} or {@link DateTools.Resolution#HOUR}
      * @throws FilterException
      */
     void addBetween(String fieldAttributeName, Calendar start, Calendar end, DateTools.Resolution resolution) throws FilterException;
@@ -99,7 +99,7 @@ public interface Filter extends BaseFilter {
 
     /**
      * <p><strong>note:</strong> supported resolutions are {@link DateTools.Resolution#YEAR}, {@link DateTools.Resolution#MONTH},
-     *                   {@link DateTools.Resolution#DAY} or {@link DateTools.Resolution#MONTH}
+     *                   {@link DateTools.Resolution#DAY} or {@link DateTools.Resolution#HOUR}
      * </p>
      * @see  #addBetween(String, java.util.Calendar, java.util.Calendar, DateTools.Resolution) addBetween(
      * String, java.util.Calendar, java.util.Calendar, DateTools.Resolution) but now negated
@@ -123,7 +123,7 @@ public interface Filter extends BaseFilter {
      * </p>
      * <p>
      * supported resolutions are {@link DateTools.Resolution#YEAR}, {@link DateTools.Resolution#MONTH},
-     *                   {@link DateTools.Resolution#DAY} or {@link DateTools.Resolution#MONTH}
+     *                   {@link DateTools.Resolution#DAY} or {@link DateTools.Resolution#HOUR}
      * </p>
      */
     void addEqualTo(String fieldAttributeName, Calendar calendar, DateTools.Resolution resolution) throws FilterException;
@@ -139,7 +139,7 @@ public interface Filter extends BaseFilter {
     /**
      *
      * <p><strong>note:</strong> supported resolutions are {@link DateTools.Resolution#YEAR}, {@link DateTools.Resolution#MONTH},
-     *                   {@link DateTools.Resolution#DAY} or {@link DateTools.Resolution#MONTH}
+     *                   {@link DateTools.Resolution#DAY} or {@link DateTools.Resolution#HOUR}
      * </p>
      * @see #addEqualTo(String, java.util.Calendar, DateTools.Resolution) addEqualTo(String, java.util.Calendar, DateTools.Resolution) only now negated
      */
@@ -163,7 +163,7 @@ public interface Filter extends BaseFilter {
 
     /**
      * <p><strong>note:</strong> supported resolutions are {@link DateTools.Resolution#YEAR}, {@link DateTools.Resolution#MONTH},
-     *                   {@link DateTools.Resolution#DAY} or {@link DateTools.Resolution#MONTH}
+     *                   {@link DateTools.Resolution#DAY} or {@link DateTools.Resolution#HOUR}
      * </p>
      * @see #addBetween(String, java.util.Calendar, java.util.Calendar, DateTools.Resolution) addBetween(String, java.util.Calendar, java.util.Calendar, DateTools.Resolution)
      * but now no upper bound
@@ -188,7 +188,7 @@ public interface Filter extends BaseFilter {
 
     /**
      * <p><strong>note:</strong> supported resolutions are {@link DateTools.Resolution#YEAR}, {@link DateTools.Resolution#MONTH},
-     *                   {@link DateTools.Resolution#DAY} or {@link DateTools.Resolution#MONTH}
+     *                   {@link DateTools.Resolution#DAY} or {@link DateTools.Resolution#HOUR}
      * </p>
      * @see #addBetween(String, java.util.Calendar, java.util.Calendar, DateTools.Resolution) addBetween(
      * String, java.util.Calendar, java.util.Calendar, DateTools.Resolution) but now no upper bound and lower bound not included
@@ -213,7 +213,7 @@ public interface Filter extends BaseFilter {
 
     /**
      * <p><strong>note:</strong> supported resolutions are {@link DateTools.Resolution#YEAR}, {@link DateTools.Resolution#MONTH},
-     *                   {@link DateTools.Resolution#DAY} or {@link DateTools.Resolution#MONTH}
+     *                   {@link DateTools.Resolution#DAY} or {@link DateTools.Resolution#HOUR}
      * </p>
      * @see #addBetween(String, java.util.Calendar, java.util.Calendar, DateTools.Resolution) addBetween(
      * String, java.util.Calendar, java.util.Calendar, DateTools.Resolution) but now no lower bound
@@ -238,7 +238,7 @@ public interface Filter extends BaseFilter {
 
     /**
      * <p><strong>note:</strong> supported resolutions are {@link DateTools.Resolution#YEAR}, {@link DateTools.Resolution#MONTH},
-     *                   {@link DateTools.Resolution#DAY} or {@link DateTools.Resolution#MONTH}
+     *                   {@link DateTools.Resolution#DAY} or {@link DateTools.Resolution#HOUR}
      * </p>
      * @see #addBetween(String, java.util.Calendar, java.util.Calendar, DateTools.Resolution) #addBetween(
      * String, java.util.Calendar, java.util.Calendar, DateTools.Resolution) but now no lower bound and upper bound not included
