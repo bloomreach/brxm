@@ -205,12 +205,10 @@ public class PluginResource extends BaseResource {
         final String className = ProjectSetupPlugin.class.getName();
         final PluginContext context = new DefaultPluginContext(new PluginRestful(className));
         // inject project settings:
-        final PluginConfigService service;
         try (PluginConfigService configService = context.getConfigService()) {
-            service = configService;
 
 
-            final ProjectSettingsBean document = service.read(className, ProjectSettingsBean.class);
+            final ProjectSettingsBean document = configService.read(className, ProjectSettingsBean.class);
             if (document != null) {
                 context.setBeansPackageName(document.getSelectedBeansPackage());
                 context.setComponentsPackageName(document.getSelectedComponentsPackage());
@@ -235,7 +233,7 @@ public class PluginResource extends BaseResource {
             // save status:
             if (document != null) {
                 document.setSetupDone(true);
-                final boolean written = service.write(document);
+                final boolean written = configService.write(document);
                 log.info("Config saved: {}", written);
             }
             addRestartInformation(eventBus);
