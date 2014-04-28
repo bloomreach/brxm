@@ -1,9 +1,9 @@
 package ${PACKAGE};
 
-import org.onehippo.cms7.essentials.dashboard.packaging.DefaultPowerpack;
+import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportPowerpack;
 
 
-public class ${PLUGIN_NAME_CAPITALIZED}Powerpack extends DefaultPowerpack {
+public class ${PLUGIN_NAME_CAPITALIZED}Powerpack extends TemplateSupportPowerpack {
 
     @Override
     public String getInstructionPath() {
