@@ -131,7 +131,7 @@ public class ButtonWrapper implements IClusterable {
 
                 @Override
                 protected Boolean getDisable_in_input() {
-                    return true;
+                    return !getKeyType().equals(KeyType.Escape);
                 }
 
                 @Override
