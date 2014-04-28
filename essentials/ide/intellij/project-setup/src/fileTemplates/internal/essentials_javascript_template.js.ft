@@ -15,8 +15,8 @@
                         #else
                              ${dollar}http.get(${dollar}scope.endpoint).success(function (data) {
                              ${dollar}scope.message = data;
+                             });
                         #end
-                    });
                 };
             })
 })();
