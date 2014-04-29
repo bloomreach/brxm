@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,10 @@ package org.hippoecm.frontend.plugins.console.menu;
 
 import javax.jcr.Node;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.event.Broadcast;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogLink;
@@ -28,6 +31,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.console.NodeModelReference;
 import org.hippoecm.frontend.plugins.console.Shortcuts;
+import org.hippoecm.frontend.plugins.console.editor.EditorUpdate;
 import org.hippoecm.frontend.plugins.console.menu.copy.CopyDialog;
 import org.hippoecm.frontend.plugins.console.menu.delete.DeleteDialog;
 import org.hippoecm.frontend.plugins.console.menu.deletemultiple.DeleteMultipleDialog;
@@ -91,7 +95,16 @@ public class MenuPlugin extends ListViewPlugin<Node> {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog<Node> createDialog() {
-                return new ResetDialog();
+                return new ResetDialog() {
+                    @Override
+                    public void onOk() {
+                        super.onOk();
+                        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+                        if (target != null) {
+                            send(getPage(), Broadcast.DEPTH, new EditorUpdate(target));
+                        }
+                    }
+                };
             }
         };
         add(new DialogLink("reset-dialog", new Model<String>("Reset"), dialogFactory, dialogService));
@@ -100,7 +113,16 @@ public class MenuPlugin extends ListViewPlugin<Node> {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog<Node> createDialog() {
-                return new PropertyDialog(new NodeModelReference(MenuPlugin.this,  (JcrNodeModel) getDefaultModel()));
+                return new PropertyDialog(new NodeModelReference(MenuPlugin.this,  (JcrNodeModel) getDefaultModel())) {
+                    @Override
+                    public void onOk() {
+                        super.onOk();
+                        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+                        if (target != null) {
+                            send(getPage(), Broadcast.DEPTH, new EditorUpdate(target));
+                        }
+                    }
+                };
             }
         };
         add(new DialogLink("property-dialog", new Model<String>("Add Property"), dialogFactory, dialogService, Shortcuts.CTRL_P));
