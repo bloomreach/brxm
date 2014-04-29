@@ -85,7 +85,13 @@ public class MenuPlugin extends ListViewPlugin<Node> {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog<Node> createDialog() {
-                return new SaveDialog();
+                return new SaveDialog() {
+                    @Override
+                    public void onOk() {
+                        super.onOk();
+                        redrawEditor();
+                    }
+                };
             }
         };
         saveDialogLink = new SaveDialogLink("save-dialog", new Model<String>("Write changes to repository"), dialogFactory, dialogService);
@@ -99,10 +105,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
                     @Override
                     public void onOk() {
                         super.onOk();
-                        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-                        if (target != null) {
-                            send(getPage(), Broadcast.DEPTH, new EditorUpdate(target));
-                        }
+                        redrawEditor();
                     }
                 };
             }
@@ -117,10 +120,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
                     @Override
                     public void onOk() {
                         super.onOk();
-                        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-                        if (target != null) {
-                            send(getPage(), Broadcast.DEPTH, new EditorUpdate(target));
-                        }
+                        redrawEditor();
                     }
                 };
             }
@@ -191,6 +191,13 @@ public class MenuPlugin extends ListViewPlugin<Node> {
 //            }
 //        };
 //        add(new DialogLink("t9ids-dialog", new Model<String>("Generate new t9 ids"), dialogFactory, dialogService));
+    }
+
+    private void redrawEditor() {
+        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+        if (target != null) {
+            send(getPage(), Broadcast.DEPTH, new EditorUpdate(target));
+        }
     }
 
     @Override
