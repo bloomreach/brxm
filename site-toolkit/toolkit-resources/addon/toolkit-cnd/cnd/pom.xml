@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
     <artifactId>toolkit-cnd</artifactId>
-    <version>2.28.01-iteration-78</version>
+    <version>2.28.01-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Site Toolkit CND Addon Resources</name>
