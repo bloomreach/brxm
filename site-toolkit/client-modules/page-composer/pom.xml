@@ -89,12 +89,6 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <!--  TODO : remove TEMPPPPP -->
-    <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-      <version>1.4</version>
-    </dependency>
     
     <!-- Test dependencies -->
     

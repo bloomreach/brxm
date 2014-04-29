@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,9 +31,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.NotFoundException;
@@ -135,15 +131,9 @@ public class ContainerComponentResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateContainer(final @PathParam("itemUUID") String itemUUID,
                                     final @QueryParam("versionStamp") long versionStamp,
-                                    final String json) {
+                                    final PostRepresentation<ContainerRepresentation> post) {
 
-        // TODO Instead of 'String json' in the argument it should be possible to have: ContainerRepresentation presentation
-        // It should be possible to automatically bind to ContainerRepresentation. Also, I don't think we need a Gson dependency here
-        // See HSTTWO-1823
-
-        Type type = new TypeToken<PostRepresentation<ContainerRepresentation>>() {}.getType();
-        PostRepresentation<ContainerRepresentation> pr = new Gson().fromJson(json, type);
-        ContainerRepresentation container = pr.getData();
+        ContainerRepresentation container = post.getData();
 
         HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
         try {
@@ -248,7 +238,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
 
 
     /**
-     * @return <code>true</code> is node got moved
+     * Move the node identified by {@code childId} to node {@code parent} if it has a different parent.
      */
     private void moveIfNeeded(final Node parent,
                               final String childId,
@@ -263,10 +253,9 @@ public class ContainerComponentResource extends AbstractConfigResource {
             String newChildPath = parentPath + "/" + name;
             log.debug("Move needed from '{}' to '{}'.", childPath, newChildPath);
             session.move(childPath, newChildPath);
-            return;
+        } else {
+            log.debug("No Move needed for '{}' below '{}'", childId, parentPath);
         }
-        log.debug("No Move needed for '{}' below '{}'", childId, parentPath);
-        return;
     }
 
 }

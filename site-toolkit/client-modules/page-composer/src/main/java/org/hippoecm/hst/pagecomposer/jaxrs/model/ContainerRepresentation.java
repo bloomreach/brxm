@@ -31,20 +31,18 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 public class ContainerRepresentation extends ComponentRepresentation {
 
     private List<String> children;
-    private long lastModifiedTimestamp;
 
-    @Override
-    public ComponentRepresentation represent(HstComponentConfiguration componentConfiguration, Mount mount) {
+    public ContainerRepresentation represent(HstComponentConfiguration componentConfiguration, Mount mount) {
         super.represent(componentConfiguration, mount);
         if (componentConfiguration.getLastModified() == null) {
-            lastModifiedTimestamp = 0;
+            setLastModifiedTimestamp(0);
         } else {
-            lastModifiedTimestamp = componentConfiguration.getLastModified().getTimeInMillis();
+            setLastModifiedTimestamp(componentConfiguration.getLastModified().getTimeInMillis());
         }
-
+  
         Map<String, HstComponentConfiguration> childrenMap = componentConfiguration.getChildren();
 
-        children = new LinkedList<String>();
+        children = new LinkedList<>();
         if (!childrenMap.isEmpty()) {
             for (Map.Entry<String, HstComponentConfiguration> entry : componentConfiguration.getChildren().entrySet()) {
                 HstComponentConfiguration cc = entry.getValue();
@@ -55,14 +53,6 @@ public class ContainerRepresentation extends ComponentRepresentation {
         return this;
     }
 
-    public long getLastModifiedTimestamp() {
-        return lastModifiedTimestamp;
-    }
-
-    public void setLastModifiedTimestamp(final long lastModifiedTimestamp) {
-        this.lastModifiedTimestamp = lastModifiedTimestamp;
-    }
-
     public List<String> getChildren() {
         return children;
     }
@@ -71,7 +61,7 @@ public class ContainerRepresentation extends ComponentRepresentation {
         if (children == null) {
             this.children = null;
         } else {
-            this.children = new LinkedList<String>(children);
+            this.children = new LinkedList<>(children);
         }
     }
 
