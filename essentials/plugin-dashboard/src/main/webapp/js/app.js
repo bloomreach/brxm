@@ -243,37 +243,37 @@
             };
         }).directive("messages", function () {
             return {
-                replace: true,
+                replace: false,
                 restrict: 'E',
                 scope: {
                     label: '@',
                     powerpackMessages: '='
                 },
 
-                template: '<div class="alert alert-info" ng-show="powerpackMessages.items.length > 0">'
-                    +'<h2>Following changes will be made:</h2>'
-                    + '<div ng-repeat="message in powerpackMessages.items" ng-switch="message.displayType">'
-                    + '<div ng-switch-when="PRE">'
-                    + '   <pre>{{message.value}}</pre>'
-                    + '</div>'
-                    + '<div ng-switch-when="A">'
-                    + '   <a target="_blank" href="{{message.value}}">{{message.value}}</a>'
-                    + '</div>'
-                    + '<div ng-switch-when="H3">'
-                    + '<h3>{{message.value}}</h3>'
-                    + '</div>'
-                    + '<div ng-switch-when="H4">'
-                    + '<h3>{{message.value}}</h3>'
-                    + '</div>'
-                    + '<div ng-switch-when="STRONG">'
-                    + '<strong>{{message.value}}</strong>'
-                    + '</div>'
-                    + '<div ng-switch-when="BR">'
-                    + '<br/>'
-                    + '</div>'
-                    + '<div ng-switch-default>{{message.value}}</div>'
-                    + '</div>'
-                    + '</div>'
+                template: '<accordion close-others="oneAtATime">' +
+                    '<accordion-group is-open="isopen">' +
+                    ' <accordion-heading ng-class="active">' +
+                    'Display changes made by this plugin' +
+                    '<i class="pull-right glyphicon" ng-class="{\'glyphicon-chevron-down\': isopen, \'glyphicon-chevron-right\': !isopen}"></i>' +
+                    '</accordion-heading>' +
+                    '<div ng-repeat="message in powerpackMessages.items" ng-switch="message.displayType">' +
+                    '<div ng-switch-when="PRE">' +
+                    '<pre>{{message.value}}</pre>' +
+                    '</div>' +
+                    '<div ng-switch-when="A">' +
+                    '<a target="_blank" href="{{message.value}}">{{message.value}}</a>' +
+                    '</div>' +
+                    '<div ng-switch-when="H3"><h3 class="alert-info">{{message.value}}</h3>' +
+                    '</div>' +
+                    '<div ng-switch-when="H4">' +
+                    '<h3>{{message.value}}</h3>' +
+                    '</div>' +
+                    '<div ng-switch-when="STRONG">' +
+                    '<strong>{{message.value}}</strong></div>' +
+                    '<div ng-switch-when="BR"><br/></div>' +
+                    '<div ng-switch-default class="alert-info"><br/>{{message.value}}</div>' +
+                    '</div></accordion-group>' +
+                    '</accordion>'
             };
         })
 
