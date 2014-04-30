@@ -467,10 +467,10 @@
       <sv:value>30061.2</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hstconfiguration/demosite_test_many/workspace/sitemenus.xml</sv:value>
+      <sv:value>hstconfiguration/demosite_test_many/sitemenus.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/demosite-test-many/hst:workspace</sv:value>
+      <sv:value>/hst:hst/hst:configurations/demosite-test-many</sv:value>
     </sv:property>
   </sv:node>
 
