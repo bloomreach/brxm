@@ -22,7 +22,7 @@
         'ngRoute',
         'pascalprecht.translate',
         'ui.router',
-        'ui.nestedSortable'
+        'ui.tree'
     ]);
 
 }());

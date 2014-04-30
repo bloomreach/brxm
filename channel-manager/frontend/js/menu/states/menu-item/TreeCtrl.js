@@ -47,39 +47,40 @@
                 }
 
                 $scope.callbacks = {
-                    accept: function(modelData, sourceItemScope, targetScope, destIndex) {
+                    accept: function(sourceNodeScope, destNodesScope, destIndex) {
                         // created an issue for the Tree component, to add a disabled state
                         // link: https://github.com/JimLiu/angular-ui-tree/issues/63
                         // for now, simply don't accept any moves when the form is invalid
                         return FormStateService.isValid();
                     },
-                    itemClicked: function (itemScope) {
-                        var clickedItemId = itemScope.id;
-
+                    dragStart: function(event) {
+                        var clickedItemId = event.source.nodeScope.$modelValue.id;
                         if (FormStateService.isDirty()) {
                             if (FormStateService.isValid()) {
                                 MenuService.saveMenuItem($scope.$parent.selectedMenuItem).then(function() {
-                                        editItem(clickedItemId);
-                                    },
-                                    function (error) {
-                                        setErrorFeedback(error);
-                                        FormStateService.setValid(false);
-                                    }
+                                            editItem(clickedItemId);
+                                        },
+                                        function (error) {
+                                            setErrorFeedback(error);
+                                            FormStateService.setValid(false);
+                                        }
                                 );
                             }
                         } else {
                             editItem(clickedItemId);
                         }
                     },
-                    itemMoved: function (sourceScope, modelData, sourceIndex, destScope, destIndex) {
-                        var parentData = destScope.parentItemScope(),
-                            destId = (!parentData) ? ConfigService.menuId : parentData.itemData().id;
-                        MenuService.moveMenuItem(modelData.id, destId, destIndex).then(onSuccess, setErrorFeedback);
-                    },
-                    orderChanged: function (scope, modelData, sourceIndex, destIndex) {
-                        var parentData = scope.parentItemScope(),
-                            destId = (!parentData) ? ConfigService.menuId : parentData.itemData().id;
-                        MenuService.moveMenuItem(modelData.id, destId, destIndex).then(onSuccess, setErrorFeedback);
+                    dropped: function(event) {
+                        var source = event.source,
+                            sourceNodeScope = source.nodeScope,
+                            sourceId = sourceNodeScope.$modelValue.id,
+                            dest = event.dest,
+                            destNodesScope = dest.nodesScope,
+                            destId = destNodesScope.$nodeScope ? destNodesScope.$nodeScope.$modelValue.id : ConfigService.menuId;
+
+                        if (source.nodesScope !== destNodesScope || source.index !== dest.index) {
+                            MenuService.moveMenuItem(sourceId, destId, dest.index);
+                        }
                     }
                 };
             }
