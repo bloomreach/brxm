@@ -31,6 +31,7 @@
   <script src="${pageContext.request.contextPath}/js/lib/chosen.jquery.js"></script>
   <script src="${pageContext.request.contextPath}/js/lib/chosen.js"></script>
   <script src="${pageContext.request.contextPath}/js/lib/ui-sortable.js"></script>
+  <script src="${pageContext.request.contextPath}/js/lib/ui-utils.js"></script>
 
   <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/chosen.css"/>
   <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/chosen-spinner.css"/>

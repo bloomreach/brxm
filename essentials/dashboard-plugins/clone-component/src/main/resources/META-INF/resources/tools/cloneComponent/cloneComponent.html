@@ -15,18 +15,67 @@
   -->
 
 <div class="panel panel-primary" ng-controller="cloneComponentCtrl">
-    <div class="panel-heading">cloneComponent</div>
+    <div class="panel-heading">Clone an catalog component</div>
     <div class="panel-body">
         <form novalidate name="cloneComponentForm">
             <div class="form-group">
-                <label>cloneComponent</label>
+                <label>Choose an component to clone:</label>
+            </div>
+            <div ng-show="components.length">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>Component Name</th>
+                        <th>Template name</th>
+                        <th>New component name</th>
+                        <th>New template name</th>
+                    </tr>
+
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="component in components">
+                        <td>
+                            <span style="padding-right: 20px; cursor: default"><input type="checkbox" ng-click="onComponentClick(component)" checked="{{component.checked}}" ng-model="component.checked"/></span>
+                        </td>
+                        <td>{{component.key}}</td>
+                        <td>{{component.value}}</td>
+                        <td>
+                            <div class="form-group"
+                                 ng-show="component.checked">
+                                <input type="text"
+                                       class="form-control"
+                                       placeholder="{{component.key}}"
+                                       ng-model="newComponents[$index].key"
+                                       ng-minlength="3"
+                                       ui-validate="'validateName($value)'">
+
+
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-group" ng-show="component.checked">
+                                <input type="text" name="componentValue" class="form-control" placeholder="{{component.value}}"
+                                       ng-model="newComponents[$index].value" ng-minlength="3"
+                                       ui-validate="'validateTemplate($value)'">
+
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+
+                </table>
+
+
             </div>
         </form>
     </div>
     <div class="panel-footer">
+
         <div class="input-group">
               <span class="input-group-btn">
-                <button ng-disabled="!cloneComponentForm.$valid" class="btn btn-primary pull-right" type="submit" ng-click="run()">Run cloneComponent</button>
+
+                <button ng-disabled="!cloneComponentForm.$valid" class="btn btn-primary pull-right" type="submit" ng-click="validClones()">Run cloneComponent</button>
               </span>
         </div>
     </div>
