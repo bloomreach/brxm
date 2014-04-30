@@ -32,13 +32,14 @@
      * @returns {*}
      */
     function addCssImport(styleCount, cssFileUrl) {
-        var styleId, style, imports, importsLength, urlWithoutDotSlash, i;
+        var styleId, style, sheet, imports, importsLength, urlWithoutDotSlash, i;
 
         styleId = "wicketimportstyle" + styleCount;
         style = window.document.getElementById(styleId);
 
         if (style) {
-            imports = style.styleSheet.imports;
+            sheet = style.styleSheet || style.sheet;
+            imports = sheet.imports;
             importsLength = imports.length;
 
             // Check if href already imported by this stylesheet. Compare the substring after the "./" because the URL
@@ -55,7 +56,7 @@
                 return addCssImport(styleCount + 1, cssFileUrl);
             }
 
-            style.styleSheet.addImport(cssFileUrl);
+            sheet.addImport(cssFileUrl);
         } else {
             style = window.document.createStyleSheet();
             style.owningElement.id = styleId;
