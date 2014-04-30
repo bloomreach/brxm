@@ -12,7 +12,7 @@
     "hippo-plugins": "./target/dependency/hippo-plugins.zip",
     "jasmine-jquery": "2.0.3",
     "respond": "1.4.2",
-    "angular-ui-tree": "2.0.10"
+    "angular-ui-tree": "2.0.11"
   },
   "resolutions": {
     "jasmine-jquery": "2.0.3",
