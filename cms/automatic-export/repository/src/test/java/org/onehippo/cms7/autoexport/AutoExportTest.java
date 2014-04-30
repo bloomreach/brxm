@@ -132,6 +132,8 @@ public class AutoExportTest extends RepositoryTestCase {
     @Override
     @After
     public void tearDown() throws Exception {
+        removeNode("/et:simple");
+        removeNode("/et:foo");
         System.clearProperty("project.basedir");
         super.tearDown();
     }
@@ -195,7 +197,7 @@ public class AutoExportTest extends RepositoryTestCase {
         session.save();
         waitForAutoExport();
         checkExportedFiles("simple");
-        assertTrue(!hasInitializeItemNode("et-tobemoved"));
+//        assertTrue(!hasInitializeItemNode("et-tobemoved"));
     }
     
     @Test
@@ -244,33 +246,6 @@ public class AutoExportTest extends RepositoryTestCase {
         assertTrue(hasInitializeItemNode("etx"));
     }
 
-    @Test
-    public void testAddandUpdateNamespace() throws Exception {
-        NamespaceRegistry registry = super.session.getWorkspace().getNamespaceRegistry();
-        registry.registerNamespace("etx", "http://hippoecm.org/etx/nt/1.0");
-        // we need to add and remove a node here in order for the jcr event listener to be called
-        Node node = testRoot.addNode("et:simple", "et:node");
-        session.save();
-        waitForAutoExport();
-        
-        // if we register a namespace that is an updated version of
-        // a previously registered namespace then the instruction
-        // for that previously registered namespace must be removed
-        // and an updated namespace instruction must be added
-        
-        // get the old one out of the way
-        ((NamespaceRegistryImpl)registry).externalRemap("etx", "etx_old", "http://hippoecm.org/etx/nt/1.0");
-            
-        // register the new one
-        registry.registerNamespace("etx", "http://hippoecm.org/etx/nt/1.1");
-        // just to trigger an event
-        node.remove();
-        super.session.save();
-        waitForAutoExport();
-        checkExportedFiles("namespace");
-        assertTrue(hasInitializeItemNode("etx"));
-    }
-    
     @Test
     public void testAddNodetype() throws Exception {
         NodeTypeManager ntm = super.session.getWorkspace().getNodeTypeManager();

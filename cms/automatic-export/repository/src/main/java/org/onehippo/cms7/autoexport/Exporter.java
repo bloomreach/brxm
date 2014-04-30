@@ -292,7 +292,8 @@ final class Exporter {
     }
     
     private void deleteIfEmpty(File directory) {
-        if (directory.list().length == 0) {
+        final String[] files = directory.list();
+        if (files != null && files.length == 0) {
             directory.delete();
             deleteIfEmpty(directory.getParentFile());
         }

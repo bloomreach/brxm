@@ -20,7 +20,6 @@ import java.io.File;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.dom4j.DocumentException;
 import org.onehippo.repository.modules.DaemonModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +60,7 @@ public final class AutoExportModule implements DaemonModule {
         
         try {
             processor = new EventProcessor(baseDir, session);
-        } catch (DocumentException e) {
+        } catch (Exception e) {
             log.error("Failed to initialize auto export. Auto export will not be available", e);
         }
 

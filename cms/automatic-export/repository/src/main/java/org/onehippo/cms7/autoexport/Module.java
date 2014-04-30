@@ -22,8 +22,6 @@ import java.util.List;
 
 import javax.jcr.Session;
 
-import org.dom4j.DocumentException;
-
 final class Module {
 
     private final String modulePath;
@@ -34,7 +32,7 @@ final class Module {
     private final InitializeItemFactory factory;
     private final ExclusionContext exclusionContext;
     
-    Module(String modulePath, Collection<String> repositoryPaths, File baseDir, InitializeItemRegistry registry, Session session, Configuration configuration) throws DocumentException {
+    Module(String modulePath, Collection<String> repositoryPaths, File baseDir, InitializeItemRegistry registry, Session session, Configuration configuration) throws Exception {
         this.modulePath = modulePath;
         this.repositoryPaths = repositoryPaths;
         exportDir = new File(baseDir.getPath() + "/" + modulePath + "/src/main/resources");

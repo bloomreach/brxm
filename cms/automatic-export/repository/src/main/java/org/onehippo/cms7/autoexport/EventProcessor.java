@@ -37,8 +37,6 @@ import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 import javax.jcr.observation.ObservationManager;
 
-import org.dom4j.DocumentException;
-
 import static javax.jcr.observation.Event.NODE_ADDED;
 import static javax.jcr.observation.Event.NODE_REMOVED;
 import static javax.jcr.observation.Event.PROPERTY_ADDED;
@@ -110,7 +108,7 @@ public class EventProcessor implements EventListener {
     private Module defaultModule;
     private ScheduledFuture<?> future;
     
-    EventProcessor(File baseDir, Session session) throws RepositoryException, DocumentException {
+    EventProcessor(File baseDir, Session session) throws Exception {
         this.session = session;
         configuration = new Configuration(session);
 
@@ -292,29 +290,15 @@ public class EventProcessor implements EventListener {
             // Were any namespaces added?
             for (String uri : nsRegistry.getURIs()) {
                 if (!uris.contains(uri)) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("New namespace detected: " + uri);
-                    }
-                    InitializeItem item = registry.getInitializeItemByNamespace(uri);
-                    if (item != null) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Updating initialize item: " + item.getName());
-                        }
-                        Module module = item.getModule();
-                        InitializeItem newItem = module.getInitializeItemFactory().createInitializeItem(uri, item.getName());
-                        registry.replaceInitializeItem(item, newItem);
-                        module.getExtension().initializeItemReplaced(item, newItem);
-                    } else {
-                        String prefix = nsRegistry.getPrefix(uri);
-                        Module module = getModuleForNSPrefix(prefix);
-                        item = module.getInitializeItemFactory().createInitializeItem(uri, prefix);
-                        if (log.isDebugEnabled()) {
-                            log.debug("Adding initialize item: " + item.getName());
-                        }
-                        registry.addInitializeItem(item);
-                        module.getExtension().initializeItemAdded(item);
-                        added.add(item);
-                    }
+                    log.debug("New namespace detected: {}", uri);
+                    String prefix = nsRegistry.getPrefix(uri);
+                    Module module = getModuleForNSPrefix(prefix);
+
+                    final InitializeItem item = module.getInitializeItemFactory().createInitializeItem(uri, prefix);
+                    log.debug("Adding initialize item: {}", item.getName());
+                    registry.addInitializeItem(item);
+                    module.getExtension().initializeItemAdded(item);
+                    added.add(item);
                     uris.add(uri);
                 }
             }
@@ -339,16 +323,11 @@ public class EventProcessor implements EventListener {
     
     void shutdown() {
         // remove event listener
-        if (manager != null) {
-            try {
-                manager.removeEventListener(this);
-            } catch (RepositoryException ignore) {
-            }
+        try {
+            manager.removeEventListener(this);
+        } catch (RepositoryException ignore) {
         }
-        // shutdown executor
-        if (executor != null) {
-            executor.shutdown();
-        }
+        executor.shutdown();
     }
 
     private void addInitializeItemNode(InitializeItem item) {

@@ -16,18 +16,29 @@
 package org.onehippo.cms7.autoexport;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.jcr.observation.Event;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import static org.onehippo.cms7.autoexport.AutoExportModule.log;
-import static org.onehippo.cms7.autoexport.Constants.FILE_QNAME;
-import static org.onehippo.cms7.autoexport.Constants.MERGE_QNAME;
-import static org.onehippo.cms7.autoexport.Constants.NAME_QNAME;
+import static org.onehippo.cms7.autoexport.Constants.DELTA_URI;
+import static org.onehippo.cms7.autoexport.Constants.FILE;
+import static org.onehippo.cms7.autoexport.Constants.MERGE;
+import static org.onehippo.cms7.autoexport.Constants.NAME;
+import static org.onehippo.cms7.autoexport.Constants.QFILE;
+import static org.onehippo.cms7.autoexport.Constants.QMERGE;
+import static org.onehippo.cms7.autoexport.Constants.QNAME;
+import static org.onehippo.cms7.autoexport.Constants.QNODE;
+import static org.onehippo.cms7.autoexport.Constants.SV_URI;
 
 final class InitializeItem {
     
@@ -195,15 +206,16 @@ final class InitializeItem {
         }
         // context must be read from file, it is the contentroot plus
         // name of the root node in the content xml file
-        SAXReader reader = new SAXReader();
-        Document document;
+        final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+
         try {
-            document = reader.read(file);
-            
-            String contextNodeName = document.getRootElement().attributeValue(NAME_QNAME);
+            final DocumentBuilder builder = dbf.newDocumentBuilder();
+            Document document = builder.parse(file);
+
+            String contextNodeName = document.getDocumentElement().getAttribute(QNAME);
             contextPath = contentRoot.equals("/") ? "/" + contextNodeName : contentRoot + "/" + contextNodeName;
             
-            String directive = document.getRootElement().attributeValue(MERGE_QNAME);
+            String directive = document.getDocumentElement().getAttribute(QMERGE);
             isDeltaXML = directive != null && !directive.equals("");
             
             if (isDeltaXML) {
@@ -220,14 +232,17 @@ final class InitializeItem {
                         + " must be exported manually.");
                 enabled = false;
             }
-        }
-        catch (DocumentException e) {
+        } catch (ParserConfigurationException e) {
+            log.error("Failed to read content resource " + contentResource + " as xml.", e);
+        } catch (SAXException e) {
+            log.error("Failed to read content resource " + contentResource + " as xml.", e);
+        } catch (IOException e) {
             log.error("Failed to read content resource " + contentResource + " as xml.", e);
         }
     }
     
     private DeltaXML parseDeltaXML(Document document) {
-        DeltaXMLInstruction instruction = parseInstructionElement(document.getRootElement(), null);
+        DeltaXMLInstruction instruction = parseInstructionElement(document.getDocumentElement(), null);
         if (instruction == null) {
             return null;
         }
@@ -237,9 +252,9 @@ final class InitializeItem {
     
     private DeltaXMLInstruction parseInstructionElement(Element element, DeltaXMLInstruction parent) {
         
-        boolean isNode = element.getName().equals("node");
-        String name = element.attributeValue(NAME_QNAME);
-        String directive = element.attributeValue(MERGE_QNAME);
+        boolean isNode = element.getTagName().equals(QNODE);
+        String name = element.getAttribute(QNAME);
+        String directive = element.getAttribute(QMERGE);
 
         DeltaXMLInstruction instruction;
         if (parent == null) {
@@ -248,12 +263,16 @@ final class InitializeItem {
             instruction = new DeltaXMLInstruction(isNode, name, directive, parent);
         }
         if (instruction.isCombineDirective()) {
-            for (Object o : element.elements()) {
-                DeltaXMLInstruction child = parseInstructionElement((Element) o, instruction);
-                if (child == null) {
-                    return null;
+            final NodeList childNodes = element.getChildNodes();
+            for (int i = 0; i < childNodes.getLength(); i++) {
+                final Node item = childNodes.item(i);
+                if (item instanceof Element) {
+                    DeltaXMLInstruction child = parseInstructionElement((Element) item, instruction);
+                    if (child == null) {
+                        return null;
+                    }
+                    instruction.addInstruction(child);
                 }
-                instruction.addInstruction(child);
             }
         }
         if (instruction.isUnsupportedDirective()) {
@@ -263,16 +282,20 @@ final class InitializeItem {
     }
 
     private boolean containsFileReferenceValues(Document document) {
-        return containsFileReferenceValues(document.getRootElement());
+        return containsFileReferenceValues(document.getDocumentElement());
     }
 
     private boolean containsFileReferenceValues(final Element element) {
-        if (element.attribute(FILE_QNAME) != null) {
+        if (element.hasAttribute(QFILE)) {
             return true;
         }
-        for (Object o : element.elements()) {
-            if (containsFileReferenceValues((Element) o)) {
-                return true;
+        final NodeList childNodes = element.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            final Node item = childNodes.item(i);
+            if (item instanceof Element) {
+                if (containsFileReferenceValues((Element) item)) {
+                    return true;
+                }
             }
         }
         return false;

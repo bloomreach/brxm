@@ -15,9 +15,6 @@
  */
 package org.onehippo.cms7.autoexport;
 
-import org.dom4j.Namespace;
-import org.dom4j.QName;
-
 public final class Constants {
 
     private Constants() {
@@ -25,14 +22,13 @@ public final class Constants {
 
     static final String SV_URI = "http://www.jcp.org/jcr/sv/1.0";
     static final String DELTA_URI = "http://www.onehippo.org/jcr/xmlimport";
+    static final String AE_URI = "http://www.onehippo.org/jcr/autoexport/1.0";
 
     static final String SV_PREFIX = "sv";
     static final String DELTA_PREFIX = "h";
 
-    static final Namespace SV_NAMESPACE = new Namespace(SV_PREFIX, SV_URI);
-    static final Namespace H_NAMESPACE = new Namespace(DELTA_PREFIX, DELTA_URI);
-    static final Namespace AE_NAMESPACE = new Namespace("ae", "http://www.onehippo.org/jcr/autoexport/1.0");
-
+    static final String ID = "id";
+    static final String QID = "ae:id";
     static final String NAME = "name";
     static final String QNAME = "sv:name";
     static final String NODE = "node";
@@ -49,15 +45,7 @@ public final class Constants {
     static final String FILE = "file";
     static final String QFILE = "h:file";
 
-    static final QName NAME_QNAME = new QName(NAME, SV_NAMESPACE);
-    static final QName TYPE_QNAME = new QName(TYPE, SV_NAMESPACE);
-    static final QName NODE_QNAME = new QName(NODE, SV_NAMESPACE);
-    static final QName PROPERTY_QNAME = new QName(PROPERTY, SV_NAMESPACE);
-    static final QName VALUE_QNAME = new QName(VALUE, SV_NAMESPACE);
-    static final QName MERGE_QNAME = new QName(MERGE, H_NAMESPACE);
-    static final QName FILE_QNAME = new QName(FILE, H_NAMESPACE);
-    static final QName AE_ID_QNAME = new QName("id", AE_NAMESPACE);
-    
+
     public static final String CONFIG_NODE_PATH = "/hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig";
     public static final String CONFIG_ENABLED_PROPERTY_NAME = "autoexport:enabled";
     static final String NODETYPES_PATH = "/jcr:system/jcr:nodeTypes";

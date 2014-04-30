@@ -112,7 +112,6 @@
     <wicket.version>6.14.0</wicket.version>
     <wicket-extjs.version>0.24</wicket-extjs.version>
     <nekohtml.version>1.9.13</nekohtml.version>
-    <dom4j.version>1.6.1</dom4j.version>
     <httpclient.version>4.2.2</httpclient.version>
 
     <joda-time.version>2.0</joda-time.version>
@@ -127,7 +126,7 @@
     <yui.sources.version>1.01.11</yui.sources.version>
     <hippo.htmlcleaner.version>1.02.09</hippo.htmlcleaner.version>
     <hippo.htmldiff.version>1.01.03</hippo.htmldiff.version>
-    <hippo.jcrdiff.version>1.01.03</hippo.jcrdiff.version>
+    <hippo.jcrdiff.version>1.01.05-SNAPSHOT</hippo.jcrdiff.version>
     <hippo.ckeditor.version>4.3.0-h6</hippo.ckeditor.version>
 
     <sonar.l10n.locales>nl,fr,it,de</sonar.l10n.locales>
@@ -449,12 +448,6 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>jcrdiff-core</artifactId>
         <version>${hippo.jcrdiff.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>dom4j</groupId>
-        <artifactId>dom4j</artifactId>
-        <version>${dom4j.version}</version>
       </dependency>
 
     </dependencies>
