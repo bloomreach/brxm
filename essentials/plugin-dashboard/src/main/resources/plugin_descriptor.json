@@ -146,6 +146,31 @@
         "needsInstallation": false,
         "enabled": true,
         "@type": "plugin",
+        "introduction": "Clones an catalog component",
+        "name": "Clone component plugin",
+        "pluginId": "cloneComponent",
+        "restClasses": ["org.onehippo.cms7.essentials.plugin.clonecomponent.CloneComponentResource"],
+        "type": "tools",
+        "vendor": {
+            "@type": "vendor",
+            "name": "Hippo",
+            "url": "http://www.onehippo.com"
+        },
+        "libraries": [
+            {
+                "items": [
+                    {
+                        "component": "cloneComponent",
+                        "file": "cloneComponent.js"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "needsInstallation": false,
+        "enabled": true,
+        "@type": "plugin",
         "introduction": "Adds search component",
         "name": "Search plugin",
         "pluginId": "searchPlugin",
