@@ -142,7 +142,7 @@
             }
         ]
     },
-    {
+    /*{
         "needsInstallation": false,
         "enabled": true,
         "@type": "plugin",
@@ -166,7 +166,7 @@
                 ]
             }
         ]
-    },
+    },*/
     {
         "needsInstallation": false,
         "enabled": true,
