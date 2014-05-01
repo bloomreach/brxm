@@ -178,7 +178,11 @@ public class RepositoryLogger implements DaemonModule {
             if (itemRelPath.length() > 1) {
                 getOrCreateFolder(itemRelPath.substring(0, itemRelPath.lastIndexOf('/')));
             }
-            return logFolder.addNode(itemRelPath, "hippolog:folder");
+            final Node descendantFolder = logFolder.addNode(itemRelPath, "hippolog:folder");
+            if (log.isDebugEnabled()) {
+                log.debug("Created folder " + descendantFolder.getPath());
+            }
+            return descendantFolder;
         }
         return logFolder.getNode(itemRelPath);
     }

@@ -15,17 +15,12 @@
  */
 package org.hippoecm.repository.logging;
 
-import java.rmi.RemoteException;
-
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.api.WorkflowException;
 import org.junit.After;
 import org.junit.Test;
 import org.onehippo.cms7.event.HippoEvent;
-import org.onehippo.repository.events.HippoWorkflowEvent;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static junit.framework.Assert.assertEquals;
@@ -51,7 +46,14 @@ public class RepositoryLoggerTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testCreateLogNode() throws RemoteException, RepositoryException, WorkflowException {
+    public void testCreateLogNodeRepeatedly() throws Exception {
+        for (int i = 0; i < 500; i++) {
+            testCreateLogNode();
+        }
+    }
+
+    @Test
+    public void testCreateLogNode() throws Exception {
         final RepositoryLogger repositoryLogger = new RepositoryLogger();
         repositoryLogger.initialize(session);
 
@@ -64,7 +66,7 @@ public class RepositoryLoggerTest extends RepositoryTestCase {
         Node currentNode = logFolder;
         for (int i = 0; i < 4; i++) {
             NodeIterator nodes = currentNode.getNodes();
-            assertTrue(nodes.hasNext());
+            assertTrue("Node " + currentNode.getPath() + " should have child", nodes.hasNext());
             currentNode = nodes.nextNode();
         }
         Node logEvent = currentNode;
