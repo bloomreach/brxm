@@ -113,7 +113,7 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
 
         WidgetSettings settings = new WidgetSettings();
         settings.setCalculateWidthAndHeight(new JsFunction(
-                "function(sizes) {return {width: sizes.wrap.w, height: sizes.wrap.h-25};}"));
+                "function(sizes) {return {width: sizes.wrap.w, height: sizes.wrap.h};}"));
         galleryList.add(new WidgetBehavior(settings));
 
         addButton(toggleLink = new AjaxLink<String>("toggle", new Model<String>()) {
