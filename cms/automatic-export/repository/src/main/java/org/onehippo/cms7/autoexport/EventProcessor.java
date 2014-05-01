@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -81,7 +81,7 @@ public class EventProcessor implements EventListener {
         ignored.add("/hippo:configuration/hippo:update/hippo:history");
         ignored.add("/hippo:configuration/hippo:update/jcr:");
     }
-    
+
     private final InitializeItemRegistry registry;
     private final Session session;
     private final ScheduledExecutorService executor;
@@ -96,7 +96,10 @@ public class EventProcessor implements EventListener {
             } catch (Exception e) {
                 log.error(e.getClass().getName() + " : " + e.getMessage(), e);
             } finally {
-                try { session.refresh(false); } catch (RepositoryException ignore) { }
+                try {
+                    session.refresh(false);
+                } catch (RepositoryException ignore) {
+                }
             }
         }
     };
@@ -107,7 +110,7 @@ public class EventProcessor implements EventListener {
     private final List<Module> modules;
     private Module defaultModule;
     private ScheduledFuture<?> future;
-    
+
     EventProcessor(File baseDir, Session session) throws Exception {
         this.session = session;
         configuration = new Configuration(session);
@@ -116,7 +119,7 @@ public class EventProcessor implements EventListener {
 
         registry = new InitializeItemRegistry();
         modules = new ArrayList<Module>();
-        for (Map.Entry<String, Collection<String>> entry: configuration.getModules().entrySet()) {
+        for (Map.Entry<String, Collection<String>> entry : configuration.getModules().entrySet()) {
             String modulePath = entry.getKey();
             Collection<String> repositoryPaths = entry.getValue();
             Module module = new Module(modulePath, repositoryPaths, baseDir, registry, session, configuration);
@@ -129,15 +132,15 @@ public class EventProcessor implements EventListener {
 
         executor = Executors.newSingleThreadScheduledExecutor();
         eventPreProcessor = new EventPreProcessor(session);
-        
+
         // cache the registered namespace uris so we can detect it when any were added
         String[] uris = session.getWorkspace().getNamespaceRegistry().getURIs();
         this.uris = new HashSet<String>(uris.length + 10);
         Collections.addAll(this.uris, uris);
-        
+
         manager = session.getWorkspace().getObservationManager();
         manager.addEventListener(this, EVENT_TYPES, "/", true, null, null, false);
-        
+
     }
 
     @Override
@@ -188,7 +191,7 @@ public class EventProcessor implements EventListener {
             }
         }
     }
-    
+
     private void addEvent(Event event) {
         try {
             events.add(new ExportEvent(event));
@@ -196,7 +199,7 @@ public class EventProcessor implements EventListener {
             log.error("Unable to add event because unable to compute event path", e);
         }
     }
-    
+
     private boolean isExcluded(String path) {
         for (String ignore : ignored) {
             if (path.startsWith(ignore)) {
@@ -205,7 +208,7 @@ public class EventProcessor implements EventListener {
         }
         return configuration.getExclusionContext().isExcluded(path);
     }
-    
+
     private void processEvents() {
         long startTime = System.nanoTime();
 
@@ -214,7 +217,7 @@ public class EventProcessor implements EventListener {
 
         Collection<InitializeItem> created = new HashSet<InitializeItem>();
         Collection<InitializeItem> updated = new HashSet<InitializeItem>();
-        
+
         // process the events, passing them on to the designated initialize items
         for (ExportEvent event : events) {
             String path = event.getPath();
@@ -283,7 +286,7 @@ public class EventProcessor implements EventListener {
                 added.add(item);
             }
         }
-        
+
         // now check if the namespace registry has changed
         try {
             NamespaceRegistry nsRegistry = session.getWorkspace().getNamespaceRegistry();
@@ -306,21 +309,18 @@ public class EventProcessor implements EventListener {
         } catch (RepositoryException e) {
             log.error("Failed to update namespace instructions.", e);
         }
-        
+
         export();
-        
+
         // update the initialize items in the repository
         for (InitializeItem item : added) {
             addInitializeItemNode(item);
         }
 
-        if (log.isDebugEnabled()) {
-            long estimatedTime = System.nanoTime() - startTime;
-            log.debug("Processing events took " + TimeUnit.MILLISECONDS.convert(estimatedTime, TimeUnit.NANOSECONDS) + " ms.");
-        }
-
+        long estimatedTime = System.nanoTime() - startTime;
+        log.debug("Processing events took {} ms. ", TimeUnit.MILLISECONDS.convert(estimatedTime, TimeUnit.NANOSECONDS));
     }
-    
+
     void shutdown() {
         // remove event listener
         try {
@@ -341,8 +341,7 @@ public class EventProcessor implements EventListener {
                 node.setPrimaryType(NT_INITIALIZEITEM);
                 node.setProperty(HIPPO_SEQUENCE, item.getSequence());
             }
-        }
-        catch (RepositoryException e) {
+        } catch (RepositoryException e) {
             log.error("Failed to add initialize item node: " + item.getName(), e);
         }
     }
@@ -350,7 +349,7 @@ public class EventProcessor implements EventListener {
     private Module getModuleForNSPrefix(String nsPrefix) {
         return getModuleForPath("/hippo:namespaces/" + nsPrefix);
     }
-    
+
     private Module getModuleForPath(String path) {
         final String nodeTypesPathPrefix = NODETYPES_PATH + "/";
         if (path.startsWith(nodeTypesPathPrefix)) {
@@ -373,7 +372,7 @@ public class EventProcessor implements EventListener {
         }
         return result;
     }
-    
+
     private void export() {
         for (Module module : modules) {
             module.getExporter().export();
@@ -382,5 +381,5 @@ public class EventProcessor implements EventListener {
         defaultModule.getExporter().export();
         defaultModule.getExtension().export();
     }
-    
+
 }
