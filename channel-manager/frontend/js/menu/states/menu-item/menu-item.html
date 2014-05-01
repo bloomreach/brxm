@@ -19,7 +19,12 @@
         <div class="col-sm-4" id="menu-tree" data-ng-controller="hippo.channel.menu.TreeCtrl">
             <div class="panel panel-default">
                 <div class="panel-content l-sidebar">
-                    <div data-hippo.theme.tree data-items="list" data-callbacks="callbacks" data-selected-item-id="selectedMenuItem.id">{{ item.title }}</div>
+                    <div data-hippo.theme.tree data-items="list" data-callbacks="callbacks" data-selected-item-id="selectedMenuItem.id">
+                        <a class="btn btn-default btn-xs" data-nodrag data-ng-click="toggle(this)" data-ng-hide="childNodes().length === 0">
+                            <span class="fa" data-ng-class="{'fa-minus-square': !collapsed, 'fa-plus-square': collapsed}"></span>
+                        </a>
+                        {{ item.title }}
+                    </div>
                 </div>
                 <div class="panel-footer" data-ng-controller="hippo.channel.menu.MenuCtrl">
                     <button type="button" class="btn btn-default btn-block" data-ng-click="addItem()">
