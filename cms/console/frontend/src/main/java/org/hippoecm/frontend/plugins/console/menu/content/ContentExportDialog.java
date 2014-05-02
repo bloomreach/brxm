@@ -116,7 +116,7 @@ public class ContentExportDialog extends AbstractDialog<Node> {
         } catch (RepositoryException e) {
             path = e.getMessage();
         }
-        return new Model<>("Export " + path);
+        return new Model<>("XML Export " + path);
     }
     
     public boolean isSkipBinary() {
