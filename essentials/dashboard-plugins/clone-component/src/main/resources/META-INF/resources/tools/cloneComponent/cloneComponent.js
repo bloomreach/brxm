@@ -101,7 +101,6 @@
                         item.key = value.key;
                         item.value = value.value;
                         item.label = value.label;
-                        item.checked = false;
                         payload.push(item);
                     }
                 });
