@@ -52,7 +52,7 @@
 .hippo-window .window-details { width:450px; float: left; padding-top: 10px; padding-left: 10px; clear:left}
 
 .hippo-window .xml-dump span.activated p { height: 270px; display:block; overflow: auto; border: 1px solid #666; border-bottom:0; padding-left: 3px;}
-.hippo-window .xml-input textarea { width: 820px; height: 140px; margin-top: 5px; }
+.hippo-window .xml-input textarea { width: 820px; height: 120px; margin-top: 5px; }
 .hippo-window .import-properties p { margin-top: 5px; }
 
 .hippo-window .cnd-export-dump span { height: 317px; display:block; overflow: auto; border: 1px solid #666; border-bottom:0; padding-left: 3px; padding-bottom: 3px;}

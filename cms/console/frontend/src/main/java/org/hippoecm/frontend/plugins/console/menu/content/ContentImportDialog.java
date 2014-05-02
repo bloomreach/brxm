@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,11 +24,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipFile;
 
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.io.FileUtils;
@@ -49,7 +51,9 @@ import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.console.menu.t9ids.GenerateNewTranslationIdsVisitor;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.widgets.LabelledBooleanFieldWidget;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
@@ -85,12 +89,13 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
     private final JcrNodeModel nodeModel;
     private FileUploadField fileUploadField;
     private String xmlInput;
+    private Boolean saveBehavior = false;
+    private Boolean generate = false;
 
     // hard coded defaults
     private String uuidBehavior = "Create new uuids on import";
     private String mergeBehavior = "Disable merging";
     private String derefBehavior = "Throw error when not found";
-    private boolean saveBehavior = false;
 
     private void InitMaps() {
         uuidOpts.put(ImportUUIDBehavior.IMPORT_UUID_COLLISION_REMOVE_EXISTING, "Remove existing node with same uuid");
@@ -118,12 +123,19 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
         DropDownChoice<String> uuid = new DropDownChoice<>("uuidBehaviors", new PropertyModel<String>(this, "uuidBehavior"), new ArrayList<>(uuidOpts.values()));
         DropDownChoice<String> merge = new DropDownChoice<>("mergeBehaviors", new PropertyModel<String>(this, "mergeBehavior"), new ArrayList<>(mergeOpts.values()));
         DropDownChoice<String> reference = new DropDownChoice<>("derefBehaviors", new PropertyModel<String>(this, "derefBehavior"), new ArrayList<>(derefOpts.values()));
-        CheckBox save = new CheckBox("saveBehavior", new PropertyModel<Boolean>(this, "saveBehavior"));
+        LabelledBooleanFieldWidget save = new LabelledBooleanFieldWidget("saveBehavior",
+                new PropertyModel<Boolean>(this, "saveBehavior"),
+                Model.of("Immediate save after import"));
 
         add(uuid.setNullValid(false).setRequired(true));
         add(merge.setNullValid(false).setRequired(true));
         add(reference.setNullValid(false).setRequired(true));
         add(save);
+
+        LabelledBooleanFieldWidget generate = new LabelledBooleanFieldWidget("generate",
+                new PropertyModel<Boolean>(this, "generate"),
+                Model.of("Generate new translation ids"));
+        add(generate);
 
         // file upload
         setMultiPart(true);
@@ -133,7 +145,7 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
         //xml import
         add(new TextArea<String>("xmlInput", new PropertyModel<String>(this, "xmlInput")));
 
-        setOkLabel("import");
+        setOkLabel("Import");
         setFocus(uuid);
 
         try {
@@ -148,7 +160,7 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
     }
 
     public IModel<String> getTitle() {
-        return new Model<>("Import content");
+        return new Model<>("XML Import");
     }
 
     @Override
@@ -183,6 +195,14 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
             OutputStream out = null;
             try {
                 final HippoSession session = (HippoSession) UserSession.get().getJcrSession();
+                List<String> nodesBefore = new ArrayList<>();
+
+                if(generate) {
+                    for(NodeIterator nodeIterator = nodeModel.getNode().getNodes(); nodeIterator.hasNext();) {
+                        final Node node = nodeIterator.nextNode();
+                        nodesBefore.add(node.getPath());
+                    }
+                }
 
                 if (upload != null) {
                     final String fileName = upload.getClientFileName();
@@ -212,6 +232,14 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
                     session.importDereferencedXML(absPath, in, uuidOpt, derefOpt, mergeOpt);
                 }
 
+                if(generate) {
+                    final Node newNode = findNewNode(nodesBefore, nodeModel.getNode());
+                    if(newNode != null) {
+                        log.debug("Applying new translation ids on node: " + newNode.getPath());
+                        newNode.accept(new GenerateNewTranslationIdsVisitor());
+                    }
+                }
+
                 if (saveBehavior) {
                     nodeModel.getNode().getSession().save();
                 }
@@ -238,6 +266,25 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
             log.error("IOException initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
             error("Import failed: " + ex.getMessage());
         }
+    }
+
+    /**
+     * Check all childnodes after the import and find the new node
+     * @param nodesBefore list of nodepaths of the childnodes before the import
+     * @param node the node on which the import has been done
+     * @return the new child node or null (e.g. in case a merge was done and no new node was created)
+     * @throws RepositoryException if iterating child nodes goes wrong
+     */
+    private Node findNewNode(final List<String> nodesBefore, final Node node) throws RepositoryException {
+        // iterate all childnodes after the import
+        for(final NodeIterator nodesAfter = node.getNodes(); nodesAfter.hasNext();) {
+            final Node afterNode = nodesAfter.nextNode();
+            // if its path is new, it is the new node
+            if(!nodesBefore.contains(afterNode.getPath())) {
+                return afterNode;
+            }
+        }
+        return null;
     }
 
     public void setMergeBehavior(String mergeBehavior) {
