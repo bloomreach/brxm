@@ -232,7 +232,7 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
                     session.importDereferencedXML(absPath, in, uuidOpt, derefOpt, mergeOpt);
                 }
 
-                if(generate) {
+                if (generate) {
                     final Node newNode = findNewNode(nodesBefore, nodeModel.getNode());
                     if(newNode != null) {
                         log.debug("Applying new translation ids on node: " + newNode.getPath());
