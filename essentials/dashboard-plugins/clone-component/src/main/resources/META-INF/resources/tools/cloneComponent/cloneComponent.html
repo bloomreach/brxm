@@ -30,13 +30,14 @@
                         <th>Template name</th>
                         <th>New component name</th>
                         <th>New template name</th>
+                        <th>New template label</th>
                     </tr>
 
                     </thead>
                     <tbody>
                     <tr ng-repeat="component in components">
                         <td>
-                            <span style="padding-right: 20px; cursor: default"><input type="checkbox" ng-click="onComponentClick(component)" checked="{{component.checked}}" ng-model="component.checked"/></span>
+                            <span style="padding-right: 20px; cursor: default"><input type="checkbox" checked="{{component.checked}}" ng-model="component.checked"/></span>
                         </td>
                         <td>{{component.key}}</td>
                         <td>{{component.value}}</td>
@@ -61,6 +62,13 @@
 
                             </div>
                         </td>
+                        <td>
+                            <div class="form-group" ng-show="component.checked">
+                                <input type="text" name="componentValue" class="form-control" placeholder="{{component.label}}"
+                                       ng-model="newComponents[$index].label" ng-minlength="3">
+
+                            </div>
+                        </td>
                     </tr>
                     </tbody>
 
@@ -75,7 +83,7 @@
         <div class="input-group">
               <span class="input-group-btn">
 
-                <button ng-disabled="!cloneComponentForm.$valid" class="btn btn-primary pull-right" type="submit" ng-click="validClones()">Run cloneComponent</button>
+                <button ng-disabled="!cloneComponentForm.$valid && !itemsValid()" class="btn btn-primary pull-right" type="submit" ng-click="runClones()">Run cloneComponent</button>
               </span>
         </div>
     </div>
