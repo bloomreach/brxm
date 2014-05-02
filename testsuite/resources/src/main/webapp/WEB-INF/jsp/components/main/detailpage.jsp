@@ -64,7 +64,7 @@
                 <span class="editable" id="demosite:summary">${document.summary}</span>
             </c:when>
             <c:otherwise>
-                ${document.summary}
+                <hst:messagesReplace>${document.summary}</hst:messagesReplace>
             </c:otherwise>
         </c:choose>
     </p>

@@ -60,7 +60,7 @@ ${document.title}
         <#if isPreview>
             <span class="editable" id="demosite:summary">${document.summary}</span>
         <#else>
-            ${document.summary}
+            <@hst.messagesReplace>${document.summary}</@hst.messagesReplace>
         </#if>
     </p>
     <div>
