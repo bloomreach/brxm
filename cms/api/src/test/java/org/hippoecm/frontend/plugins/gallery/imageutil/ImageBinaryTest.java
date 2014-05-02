@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,12 +42,14 @@ public class ImageBinaryTest extends RepositoryTestCase {
     private static final String TEST_YCCK_JPG = "test-YCCK.jpg";
     private static final String TEST_RGB_PNG = "test-5000x1.png";
     private static final String TEST_RGB_GIF = "test-380x428.gif";
+    private static final String TEST_SVG = "test-SVG.svg";
 
     private static final String TEST_BROKEN_THUMBS_JPG = "test-broken-thumbnails.jpg";
 
     private static final String JPEG_MIME_TYPE = "image/jpeg";
     private static final String PNG_MIME_TYPE = "image/png";
     private static final String GIF_MIME_TYPE = "image/gif";
+    private static final String SVG_MIME_TYPE = "image/svg+xml";
 
     private Node imageNode;
 
@@ -88,7 +90,7 @@ public class ImageBinaryTest extends RepositoryTestCase {
         return new ImageBinary(imageNode, readImage(fileName), fileName);
     }
 
-    private void testImage(final String fileName, final String mimeType)
+    private void testRgbImage(final String fileName, final String mimeType)
             throws GalleryException, RepositoryException, IOException, ImageReadException {
 
         ImageBinary binary = createImageBinary(fileName, mimeType);
@@ -97,6 +99,15 @@ public class ImageBinaryTest extends RepositoryTestCase {
         assertEquals(ColorModel.RGB, binary.getColorModel());
         assertTrue(ImageUtilTest.isRGB(binary.getStream(), fileName));
         assertEquals(mimeType, createImageBinary(fileName).getMimeType());
+    }
+
+    private void testSvgImage(final String fileName, final String mimeType)
+            throws GalleryException, RepositoryException, IOException, ImageReadException {
+
+        ImageBinary binary = new ImageBinary(imageNode, readImage(fileName), fileName, mimeType);
+        assertEquals(fileName, binary.getFileName());
+        assertEquals(mimeType, binary.getMimeType());
+        assertEquals(ColorModel.UNKNOWN, binary.getColorModel());
     }
 
     @Test
@@ -109,11 +120,12 @@ public class ImageBinaryTest extends RepositoryTestCase {
 
     @Test
     public void testSupportedImages() throws Exception {
-        testImage(TEST_RGB_JPG, JPEG_MIME_TYPE);
-        testImage(TEST_YCCK_JPG, JPEG_MIME_TYPE);
-        testImage(TEST_CMYK_JPG, JPEG_MIME_TYPE);
-        testImage(TEST_RGB_PNG, PNG_MIME_TYPE);
-        testImage(TEST_RGB_GIF, GIF_MIME_TYPE);
+        testRgbImage(TEST_RGB_JPG, JPEG_MIME_TYPE);
+        testRgbImage(TEST_YCCK_JPG, JPEG_MIME_TYPE);
+        testRgbImage(TEST_CMYK_JPG, JPEG_MIME_TYPE);
+        testRgbImage(TEST_RGB_PNG, PNG_MIME_TYPE);
+        testRgbImage(TEST_RGB_GIF, GIF_MIME_TYPE);
+        testSvgImage(TEST_SVG, SVG_MIME_TYPE);
     }
 
     /**

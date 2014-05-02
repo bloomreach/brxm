@@ -33,6 +33,7 @@
     <sv:value>*.jpeg</sv:value>
     <sv:value>*.gif</sv:value>
     <sv:value>*.png</sv:value>
+    <sv:value>*.svg</sv:value>
   </sv:property>
   <sv:property sv:name="max.width" sv:type="Long">
     <sv:value>1920</sv:value>

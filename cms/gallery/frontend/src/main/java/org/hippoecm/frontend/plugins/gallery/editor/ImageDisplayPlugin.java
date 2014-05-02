@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.ResourceLink;
@@ -34,6 +35,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.image.JcrImage;
 import org.hippoecm.frontend.plugins.standards.util.ByteSizeFormatter;
+import org.hippoecm.frontend.plugins.yui.upload.validation.ImageUploadValidationService;
 import org.hippoecm.frontend.resource.JcrResource;
 import org.hippoecm.frontend.resource.JcrResourceStream;
 import org.hippoecm.frontend.service.IEditor;
@@ -127,40 +129,53 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
     protected Fragment createImageFragment(String id, final JcrResourceStream resource, Node node, IPluginConfig config)
             throws RepositoryException {
         Fragment fragment = new Fragment(id, "image", this);
-        fragment.add(new JcrImage("image", resource));
+
+        int width = (int)getWidthOrZero(node);
+        int height = (int)getHeightOrZero(node);
+
+        fragment.add(new JcrImage("image", resource, width, height));
         addImageMetaData(node, fragment);
+
         return fragment;
     }
 
     protected boolean shouldDisplayImage(final JcrResourceStream resource, Node node, IPluginConfig config)
             throws RepositoryException {
-        try {
-            long width = node.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getLong();
-            long height = node.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getLong();
 
-            final long maxWidth = config.getAsLong("display.max.width", 800);
-            final long maxHeight = config.getAsLong("display.max.height", 800);
+        int width = getWidthOrZero(node);
+        int height = getHeightOrZero(node);
 
-            return width <= maxWidth && height <= maxHeight;
-        } catch (PathNotFoundException e) {
-            // width and/or height are not available
+        if (width <= 0 || height <= 0) {
             return false;
         }
+
+        final long maxWidth = config.getAsLong("display.max.width", 800);
+        final long maxHeight = config.getAsLong("display.max.height", 800);
+
+        return width <= maxWidth && height <= maxHeight;
     }
 
     protected void addImageMetaData(Node node, Fragment fragment) throws RepositoryException {
-        long width = 0;
-        long height = 0;
+        int width = getWidthOrZero(node);
+        int height = getHeightOrZero(node);
+        fragment.add(new Label("width", new Model<Integer>(width)));
+        fragment.add(new Label("height", new Model<Integer>(height)));
+    }
 
+    private int getWidthOrZero(Node imageNode) throws RepositoryException {
         try {
-            width = node.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getLong();
-            height = node.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getLong();
-        } catch (PathNotFoundException ignored) {
-            log.debug("Cannot retrieve width and/or height of image");
+            return (int)imageNode.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getLong();
+        } catch (PathNotFoundException noWidthFound) {
+            return 0;
         }
+    }
 
-        fragment.add(new Label("width", new Model<Long>(width)));
-        fragment.add(new Label("height", new Model<Long>(height)));
+    private int getHeightOrZero(Node imageNode) throws RepositoryException {
+        try {
+            return (int)imageNode.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getLong();
+        } catch (PathNotFoundException noHeightFound) {
+            return 0;
+        }
     }
 
     private Fragment createEmbedFragment(String id, final JcrResourceStream resource, final String filename) {

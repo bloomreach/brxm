@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,10 +31,27 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.IOUtils;
+import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
+import org.hippoecm.frontend.plugins.yui.upload.validation.ImageUploadValidationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 /**
  * <p>
@@ -109,6 +127,117 @@ public class ScaleImageOperation extends AbstractImageOperation {
         this.compressionQuality = compressionQuality;
     }
 
+    @Override
+    public void execute(final InputStream data, final String mimeType) throws GalleryException {
+        if (ImageUploadValidationService.isSvgMimeType(mimeType)) {
+            try {
+                processSvg(data);
+            } catch (IOException e) {
+                throw new GalleryException("Error processing SVG file", e);
+            }
+        } else {
+            super.execute(data, mimeType);
+        }
+    }
+
+    private void processSvg(final InputStream data) throws IOException {
+        // Save the image data in a temporary file so we can reuse the original data as-is
+        // without putting it all into memory
+        final File tmpFile = writeToTmpFile(data);
+        log.debug("Stored uploaded image in temporary file {}", tmpFile);
+
+        // by default, store SVG data as-is for all variants: the browser will do the real scaling
+        scaledData = new AutoDeletingTmpFileInputStream(tmpFile);
+
+        // by default, use the bounding box as scaled width and height
+        scaledWidth = width;
+        scaledHeight = height;
+
+        if (!isOriginalVariant()) {
+            try {
+                scaleSvg(tmpFile);
+            } catch (ParserConfigurationException | SAXException e) {
+                log.info("Could not read dimensions of SVG image, using the bounding box dimensions instead", e);
+            }
+        }
+    }
+
+    private boolean isOriginalVariant() {
+        return width <= 0 && height <= 0;
+    }
+
+    private void scaleSvg(final File tmpFile) throws ParserConfigurationException, SAXException, IOException {
+        final Document svgDocument = readSvgDocument(tmpFile);
+        final Element svg = svgDocument.getDocumentElement();
+
+        if (svg.hasAttribute("width") && svg.hasAttribute("height")) {
+            final String svgWidth = svg.getAttribute("width");
+            final String svgHeight = svg.getAttribute("height");
+
+            log.info("SVG size: {} x {}", svgWidth, svgHeight);
+
+            final int originalWidth = readIntFromStart(svgWidth);
+            final int originalHeight = readIntFromStart(svgHeight);
+
+            final double resizeRatio = calculateResizeRatio(originalWidth, originalHeight, width, height);
+
+            scaledWidth = (int) Math.max(originalWidth * resizeRatio, 1);
+            scaledHeight = (int) Math.max(originalHeight * resizeRatio, 1);
+
+            // save variant with scaled dimensions
+            svg.setAttribute("width", Integer.toString(scaledWidth));
+            svg.setAttribute("height", Integer.toString(scaledHeight));
+            writeSvgDocument(tmpFile, svgDocument);
+        }
+    }
+
+    private Document readSvgDocument(final File tmpFile) throws ParserConfigurationException, SAXException, IOException {
+        final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+        // disable validation to speed up SVG parsing (without it parsing a tiny SVG file can take up to 15 seconds)
+        disableValidation(factory);
+
+        final DocumentBuilder builder = factory.newDocumentBuilder();
+        return builder.parse(tmpFile);
+    }
+
+    private void writeSvgDocument(final File file, final Document svgDocument) {
+        try {
+             final Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+            transformer.setOutputProperty(OutputKeys.ENCODING, svgDocument.getInputEncoding());
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", Integer.toString(2));
+            Result output = new StreamResult(file);
+            Source input = new DOMSource(svgDocument);
+            transformer.transform(input, output);
+        } catch (TransformerConfigurationException e) {
+            log.info("Writing SVG file " + file.getName() + " failed, using original instead", e);
+        } catch (TransformerException e) {
+            log.info("Writing SVG file " + file.getName() + " failed, using original instead", e);
+        }
+    }
+
+    private void disableValidation(final DocumentBuilderFactory factory) throws ParserConfigurationException {
+        factory.setNamespaceAware(false);
+        factory.setValidating(false);
+        factory.setFeature("http://xml.org/sax/features/namespaces", false);
+        factory.setFeature("http://xml.org/sax/features/validation", false);
+        factory.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+        factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+    }
+
+    private int readIntFromStart(String s) {
+        int i = 0;
+        while (i < s.length() && Character.isDigit(s.charAt(i))) {
+            i++;
+        }
+        if (i == 0) {
+            return 0;
+        }
+        return Integer.parseInt(s.substring(0, i));
+    }
+
     /**
      * Creates a scaled version of an image. The given scaling parameters define a bounding box with
      * a certain width and height. Images that do not fit in this box (i.e. are too large) are always scaled
@@ -151,14 +280,7 @@ public class ScaleImageOperation extends AbstractImageOperation {
                 // stream is closed
                 log.debug("Using the original image of {}x{} as-is", originalWidth, originalHeight);
                 deleteTmpFile = false;
-                scaledData = new FileInputStream(tmpFile) {
-                    @Override
-                    public void close() throws IOException {
-                        super.close();
-                        log.debug("Deleting temporary file {}", tmpFile);
-                        tmpFile.delete();
-                    }
-                };
+                scaledData = new AutoDeletingTmpFileInputStream(tmpFile);
                 scaledWidth = originalWidth;
                 scaledHeight = originalHeight;
             } else {
@@ -259,6 +381,25 @@ public class ScaleImageOperation extends AbstractImageOperation {
 
     public float getCompressionQuality() {
         return compressionQuality;
+    }
+
+
+    private static class AutoDeletingTmpFileInputStream extends FileInputStream {
+
+        private final File tmpFile;
+
+        AutoDeletingTmpFileInputStream(File tmpFile) throws FileNotFoundException {
+            super(tmpFile);
+            this.tmpFile = tmpFile;
+        }
+
+        @Override
+        public void close() throws IOException {
+            super.close();
+            log.debug("Deleting temporary file {}", tmpFile);
+            tmpFile.delete();
+        }
+
     }
 
 }

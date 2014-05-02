@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import org.apache.wicket.util.io.IOUtils;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
+import org.hippoecm.frontend.plugins.yui.upload.validation.ImageUploadValidationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +41,8 @@ import com.drew.imaging.jpeg.JpegSegmentReader;
 
 /**
  * This class extends a {@link Binary} class with extra information regarding images: filename, mimetype and
- * color model. It uses the Sanselan library to figure out the mimetype if none is provided.
+ * color model. It uses the Sanselan library to figure out the mimetype if none is provided. For SVG images
+ * (which Sanselan does not recognize) the mimetype auto-detection is skipped and the color model is set to UNKNOWN.
  *
  * Furthermore it converts YCCK and CMYK input into the RGB color model so it can be used by the JPEGImageReader. See
  * CMS7-5074 for more info.
@@ -55,13 +57,13 @@ public class ImageBinary implements Binary {
 
     private ColorModel colorModel = ColorModel.UNKNOWN;
     private String mimeType;
-    private String fileName;
+    private final String fileName;
 
     public ImageBinary(final Node node, final InputStream stream, final String fileName) throws GalleryException {
         this(node, stream, fileName, null);
     }
 
-    public ImageBinary(final Node parent, final InputStream stream, final String fileName, final String mimeType) throws GalleryException {
+    public ImageBinary(final Node parent, final InputStream stream, final String fileName, String mimeType) throws GalleryException {
 
         try {
             binary = ResourceHelper.getValueFactory(parent).createBinary(stream);
@@ -69,34 +71,41 @@ public class ImageBinary implements Binary {
             die("Failed to create binary", e);
         }
 
-        ImageInfo info = createImageInfo();
-
         this.fileName = fileName;
-        this.mimeType = ResourceHelper.sanitizeMimeType(Strings.isEmpty(mimeType) ? info.getMimeType() : mimeType);
-        try {
-            colorModel = parseColorModel(info);
-        } catch (RepositoryException e) {
-            die("Failed to parse color model", e);
-        }
 
-        if (colorModel == ColorModel.UNKNOWN) {
-            throw new GalleryException("Unknown color profile for " + toString());
-        }
+        if (ImageUploadValidationService.isSvgMimeType(mimeType)) {
+            // Sanselan does not recognize SVG files, so do not auto-detect the MIME type and color model
+            this.mimeType = ImageUploadValidationService.getSvgMimeType();
+            this.colorModel = ColorModel.UNKNOWN;
+        } else {
+            final ImageInfo info = createImageInfo();
 
-        if (colorModel != ColorModel.RGB) {
+            this.mimeType = ResourceHelper.sanitizeMimeType(Strings.isEmpty(mimeType) ? info.getMimeType() : mimeType);
             try {
-                synchronized(conversionLock) {
-                    InputStream converted = ImageUtils.convertToRGB(getStream(), colorModel);
-                    binary.dispose();
-                    binary = ResourceHelper.getValueFactory(parent).createBinary(converted);
-                    colorModel = ColorModel.RGB;
-                }
-            } catch (IOException e) {
-                die("Error during conversion to RGB", e);
-            } catch (UnsupportedImageException e) {
-                die("Image can't be converted to RGB", e);
+                colorModel = parseColorModel(info);
             } catch (RepositoryException e) {
-                die("Repository error after conversion", e);
+                die("Failed to parse color model", e);
+            }
+
+            if (colorModel == ColorModel.UNKNOWN) {
+                throw new GalleryException("Unknown color profile for " + toString());
+            }
+
+            if (colorModel != ColorModel.RGB) {
+                try {
+                    synchronized (conversionLock) {
+                        InputStream converted = ImageUtils.convertToRGB(getStream(), colorModel);
+                        binary.dispose();
+                        binary = ResourceHelper.getValueFactory(parent).createBinary(converted);
+                        colorModel = ColorModel.RGB;
+                    }
+                } catch (IOException e) {
+                    die("Error during conversion to RGB", e);
+                } catch (UnsupportedImageException e) {
+                    die("Image can't be converted to RGB", e);
+                } catch (RepositoryException e) {
+                    die("Repository error after conversion", e);
+                }
             }
         }
     }

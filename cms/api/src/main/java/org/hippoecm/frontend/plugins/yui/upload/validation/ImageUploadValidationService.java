@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,10 @@ public class ImageUploadValidationService extends DefaultUploadValidationService
     public static final int DEFAULT_MAX_WIDTH = 1920;
     public static final int DEFAULT_MAX_HEIGHT = 1280;
     public static final String DEFAULT_MAX_FILE_SIZE = "4mb";
-    public static final String[] DEFAULT_EXTENSIONS_ALLOWED = new String[] {"*.jpg", "*.jpeg", "*.gif", "*.png"};
+    public static final String[] DEFAULT_EXTENSIONS_ALLOWED = new String[] {"*.jpg", "*.jpeg", "*.gif", "*.png", "*.svg"};
+
+    private static final String MIME_TYPE_SVG = "image/svg+xml";
+    private static final String MIME_TYPE_XML = "text/xml";
 
     private static final String MAX_WIDTH = "max.width";
     private static final String MAX_HEIGHT = "max.height";
@@ -51,9 +54,22 @@ public class ImageUploadValidationService extends DefaultUploadValidationService
 
             @Override
             public void validate(FileUpload upload) {
-                validateSizes(upload);
+                // SVG files do not have a fixed size so they are always OK
+                if (!isSvgMimeType(upload.getContentType())) {
+                    validateSizes(upload);
+                }
             }
         });
+    }
+
+    public static boolean isSvgMimeType(final String mimeType) {
+        // Uploaded SVG images are stored in a file on disk. For some SVG files the MIME type
+        // is then incorrectly read as 'text/xml'. We assume those files are OK too.
+        return MIME_TYPE_SVG.equals(mimeType) || MIME_TYPE_XML.equals(mimeType);
+    }
+
+    public static String getSvgMimeType() {
+        return MIME_TYPE_SVG;
     }
 
     private void validateSizes(final FileUpload upload) {

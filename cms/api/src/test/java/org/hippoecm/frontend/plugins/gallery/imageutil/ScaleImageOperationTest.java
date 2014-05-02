@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -141,6 +141,36 @@ public class ScaleImageOperationTest {
         ScaleImageOperation scaleOp = new ScaleImageOperation(200, 100, true, ImageUtils.ScalingStrategy.SPEED);
         scaleOp.execute(data, "image/gif");
         checkImageDimensions(scaleOp, "image/gif", 88, 100);
+    }
+
+    @Test
+    public void scaleSvg() throws GalleryException, IOException {
+        InputStream data = getClass().getResourceAsStream("/test-SVG.svg");
+        ScaleImageOperation scaleOp = new ScaleImageOperation(200, 100, true, ImageUtils.ScalingStrategy.SPEED);
+        scaleOp.execute(data, "image/svg+xml");
+
+        assertEquals(122, scaleOp.getScaledWidth());
+        assertEquals(100, scaleOp.getScaledHeight());
+    }
+
+    @Test
+    public void scaleSvgWithoutDimensionsInBoundingBox() throws GalleryException, IOException {
+        InputStream data = getClass().getResourceAsStream("/test-SVG-without-dimensions.svg");
+        ScaleImageOperation scaleOp = new ScaleImageOperation(200, 100, true, ImageUtils.ScalingStrategy.SPEED);
+        scaleOp.execute(data, "image/svg+xml");
+
+        assertEquals(200, scaleOp.getScaledWidth());
+        assertEquals(100, scaleOp.getScaledHeight());
+    }
+
+    @Test
+    public void scaleSvgWithoutDimensionsAsOriginal() throws GalleryException, IOException {
+        InputStream data = getClass().getResourceAsStream("/test-SVG-without-dimensions.svg");
+        ScaleImageOperation scaleOp = new ScaleImageOperation(0, 0, true, ImageUtils.ScalingStrategy.SPEED);
+        scaleOp.execute(data, "image/svg+xml");
+
+        assertEquals(0, scaleOp.getScaledWidth());
+        assertEquals(0, scaleOp.getScaledHeight());
     }
 
     @Test

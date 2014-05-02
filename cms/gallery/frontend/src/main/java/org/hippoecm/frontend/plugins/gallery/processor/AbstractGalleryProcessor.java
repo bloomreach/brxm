@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugins.gallery.imageutil.ImageBinary;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
+import org.hippoecm.frontend.plugins.yui.upload.validation.ImageUploadValidationService;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -71,8 +72,10 @@ public abstract class AbstractGalleryProcessor implements GalleryProcessor {
         log.debug("Setting JCR data of primary resource");
         ResourceHelper.setDefaultResourceProperties(resourceNode, image.getMimeType(), image, image.getFileName());
 
-        //TODO: here for backwards compatibility
-        validateResource(resourceNode, image.getFileName());
+        if (!ImageUploadValidationService.isSvgMimeType(mimeType)) {
+            //TODO: here for backwards compatibility
+            validateResource(resourceNode, image.getFileName());
+        }
 
         //TODO: Currently the InputStream is never used in our impls, might revisit this piece of the API
         InputStream isTemp = image.getStream();
