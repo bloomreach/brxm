@@ -872,6 +872,69 @@
     </attribute>
   </tag>
 
+  <tag>
+    <description>
+      This tag replaces all the variables in the body content by the either current locale context or provided resource bundle.
+    </description>
+    <name>messagesReplace</name>
+    <tag-class>org.hippoecm.hst.tag.MesssagesReplaceTag</tag-class>
+    <tei-class>org.hippoecm.hst.tag.MesssagesReplaceTag$TEI</tei-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <description>The variable name of the replaced string</description>
+      <name>var</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>
+        The resource bundle used when replacing messages.
+        If not specified, then the default localization context is used to find a bundle.
+      </description>
+      <name>bundle</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.util.ResourceBundle</type>
+    </attribute>
+    <attribute>
+      <description>
+        The resource bundle basename to find a resource bundle used when replacing messages.
+        If not specified, then the default localization context is used to find a bundle.
+      </description>
+      <name>basename</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>
+        The locale string to determine the locale to choose a proper resource bundle.
+        If not specified, then the current response locale or default locale is used.
+      </description>
+      <name>localeString</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>
+        The locale object to determine the locale to choose a proper resource bundle.
+        If not specified, then the current response locale or default locale is used.
+      </description>
+      <name>locale</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.util.Locale</type>
+    </attribute>
+    <example><![CDATA[
+      <%-- Replaces all the variables (e.g, ${company.name}) in the html output --%>
+      <hst:messagesReplace>
+        <hst:html hippohtml="${document.body}" />
+      </hst:messagesReplace>
+      ]]></example>
+  </tag>
+
   <function>
     <description>
       Tests if the property of the bean is a readable one
@@ -909,6 +972,30 @@
     <function-signature>boolean isBeanType(java.lang.Object, java.lang.String)</function-signature>
     <example>
       &lt;c:if test="${hst:isBeanType(bean, 'org.hippoecm.hst.demo.beans.NewsBean')}"&gt;
+    </example>
+  </function>
+
+  <function>
+    <description>
+      Replaces all the variables in the body content by the either current locale context or provided resource bundle basename.
+    </description>
+    <name>replaceMessages</name>
+    <function-class>org.hippoecm.hst.utils.MessageUtils</function-class>
+    <function-signature>String replaceMessages(java.lang.String,java.lang.String)</function-signature>
+    <example>
+      &lt;c:out value="${hst:replaceMessages(basename, text)}" /&gt;
+    </example>
+  </function>
+
+  <function>
+    <description>
+      Replaces all the variables in the body content by the either current locale context or provided resource bundle.
+    </description>
+    <name>replaceMessagesByBundle</name>
+    <function-class>org.hippoecm.hst.utils.MessageUtils</function-class>
+    <function-signature>String replaceMessagesByBundle(java.util.ResourceBundle,java.lang.String)</function-signature>
+    <example>
+      &lt;c:out value="${hst:replaceMessagesByBundle(bundle, text)}" /&gt;
     </example>
   </function>
 

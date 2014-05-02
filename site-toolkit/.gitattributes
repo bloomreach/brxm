@@ -405,6 +405,7 @@ client/src/main/java/org/hippoecm/hst/tag/HstLinkTag.java svneol=native#text/pla
 client/src/main/java/org/hippoecm/hst/tag/HstRenderURLTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/tag/HstResourceURLTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/tag/HstTagSupport.java -text svneol=unset#text/plain
+client/src/main/java/org/hippoecm/hst/tag/MesssagesReplaceTag.java -text
 client/src/main/java/org/hippoecm/hst/tag/NamespaceTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/tag/ParamContainerTag.java -text svneol=unset#text/plain
 client/src/main/java/org/hippoecm/hst/tag/ParamTag.java svneol=native#text/plain
@@ -412,6 +413,7 @@ client/src/main/java/org/hippoecm/hst/tag/SetHstBundleTag.java -text
 client/src/main/java/org/hippoecm/hst/tag/SetWrapperElementTag.java -text
 client/src/main/java/org/hippoecm/hst/tag/SiteMapItemTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/utils/BeanUtils.java svneol=native#text/plain
+client/src/main/java/org/hippoecm/hst/utils/MessageUtils.java -text
 client/src/main/java/org/hippoecm/hst/utils/ParameterUtils.java -text
 client/src/main/java/org/hippoecm/hst/utils/PropertyUtils.java -text svneol=unset#text/plain
 client/src/main/resources/META-INF/hst-core.tld svneol=native#text/plain
@@ -428,7 +430,9 @@ client/src/test/java/org/hippoecm/hst/tag/TestHstFacetNavigationLinkTag.java -te
 client/src/test/java/org/hippoecm/hst/utils/TestBeanUtilsIsReadable.java -text svneol=unset#text/plain
 client/src/test/java/org/hippoecm/hst/utils/TestFoldToASCIIReplacer.java -text svneol=unset#text/plain
 client/src/test/java/org/hippoecm/hst/utils/TestIsoLatin1AccentReplacer.java -text svneol=unset#text/plain
+client/src/test/java/org/hippoecm/hst/utils/TestMessageUtils.java -text
 client/src/test/resources/org/hippoecm/hst/component/support/bean/TestBaseHstComponent-beans-annotated-classes.xml -text
+client/src/test/resources/org/hippoecm/hst/utils/TestMessageUtils.properties -text
 commons/pom.xml svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/cache/NOOPHstCache.java -text
 commons/src/main/java/org/hippoecm/hst/container/HstContainerConfigImpl.java -text
@@ -892,6 +896,7 @@ components/resourcebundle-cnd/pom.xml -text
 components/resourcebundle-cnd/src/main/resources/hippoecm-extension.xml -text
 components/resourcebundle-cnd/src/main/resources/resourcebundle.cnd -text
 components/resourcebundle/pom.xml -text
+components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/MapResourceBundle.java -text
 components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/PlaceHolderEmptyResourceBundleFamily.java -text
 components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/SimpleListResourceBundle.java -text
 components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/internal/DefaultMutableResourceBundleFamily.java -text
@@ -899,6 +904,7 @@ components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/internal
 components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/internal/HippoRepositoryResourceBundleEventListener.java -text
 components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/internal/HippoRepositoryResourceBundleFamilyFactory.java -text
 components/resourcebundle/src/test/java/org/hippoecm/hst/resourcebundle/TestDefaultResourceBundleRegistry.java -text
+components/resourcebundle/src/test/java/org/hippoecm/hst/resourcebundle/TestMapResourceBundle.java -text
 components/resourcebundle/src/test/java/org/hippoecm/hst/resourcebundle/internal/TestHippoRepositoryResourceBundleFamilyFactory.java -text
 components/resourcebundle/src/test/resources/log4j.xml -text
 components/resourcebundle/src/test/resources/org/hippoecm/hst/resourcebundle/TestMessages.properties -text
