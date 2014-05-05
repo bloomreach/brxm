@@ -30,7 +30,7 @@
                 });
             };
             // initialize messages
-            $http.get($rootScope.REST.powerpacksMessages + $scope.selectedPlugin.powerpackClass).success(function (data) {
+            $http.get($rootScope.REST.powerpacksMessages + $rootScope.selectedPlugin.powerpackClass).success(function (data) {
                 $scope.powerpackMessages = data;
             });
 

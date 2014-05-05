@@ -16,7 +16,7 @@
 
 <div class="col-md-3" style="padding-left: 0;">
     <div class="list-group">
-        <a href="#/plugins/{{plugin.pluginId}}" ng-class="{true:'active', false:''}[isMenuSelected('{{plugin.pluginId}}')]" class="list-group-item"
+        <a href="#/plugins/{{plugin.pluginId}}" ng-click="showPluginDetail(plugin.pluginId)" ng-class="{true:'active', false:''}[isMenuSelected('{{plugin.pluginId}}')]" class="list-group-item"
            ng-repeat="plugin in plugins | filter:{needsInstallation:false} | filter:{type:'plugins'} | orderBy:'name'">{{plugin.name}}</a>
     </div>
 </div>

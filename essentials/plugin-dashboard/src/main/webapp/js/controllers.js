@@ -212,6 +212,8 @@
 
             $scope.showPluginDetail = function (pluginId) {
                 $scope.selectedPlugin = extracted(pluginId);
+                $rootScope.selectedPlugin = extracted(pluginId);
+                console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>  SELECTED" + $rootScope.selectedPlugin);
             };
             $scope.installPlugin = function (pluginId) {
                 $rootScope.pluginsCache = null;
