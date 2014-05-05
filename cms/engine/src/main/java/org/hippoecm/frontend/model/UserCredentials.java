@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.model;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import javax.jcr.Credentials;
 import javax.jcr.SimpleCredentials;
@@ -28,7 +29,9 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import org.apache.jackrabbit.core.security.authentication.CredentialsCallback;
 import org.hippoecm.frontend.session.LoginException;
 
-public class UserCredentials {
+public class UserCredentials implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private Credentials credentials = null;
     private String username = "";
@@ -51,8 +54,7 @@ public class UserCredentials {
         CredentialsCallback credentialsCallback = new CredentialsCallback();
         try {
             callbackHandler.handle(new Callback[] { credentialsCallback, nameCallback });
-        } catch (IOException ex) {
-        } catch (UnsupportedCallbackException ex) {
+        } catch (IOException | UnsupportedCallbackException ignore) {
         }
         credentials = credentialsCallback.getCredentials();
         username = nameCallback.getName();
@@ -72,11 +74,6 @@ public class UserCredentials {
         return username;
     }
 
-    /**
-     * JCR credentials.
-     *
-     * @return
-     */
     public Credentials getJcrCredentials() {
         return credentials;
     }
