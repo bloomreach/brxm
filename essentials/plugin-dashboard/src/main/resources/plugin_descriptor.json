@@ -321,13 +321,13 @@
     {
         "enabled": true,
         "@type": "plugin",
-        "description": "A basic News and Events site that contains a homepage template, News and Agenda components and detail pages to render both News and Event articles. It comes with a standard navigational menu and URL structure. This is the most basic Power Pack to start with. You can easily extend with more components later on.",
-        "introduction": "Basic News and Events site",
-        "name": "Basic News and Events site",
-        "powerpackClass": "org.onehippo.cms7.essentials.powerpack.BasicPowerpack",
-        "pluginId": "newsEventsPowerpack",
+        "description": "A basic Events site that contains Events component and detail page to render Event articles. It comes with a standard navigational menu and URL structure.",
+        "introduction": "Basic Events site",
+        "name": "Basic Event site",
+        "powerpackClass": "org.onehippo.cms7.essentials.powerpack.EventsPowerpack",
+        "pluginId": "eventsPlugin",
         "restClasses": [],
-        "type": "powerpacks",
+        "type": "plugins",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -337,14 +337,42 @@
             {
                 "items": [
                     {
-                        "component": "newsEventsPowerpack",
-                        "file": "newsEventsPowerpack.js"
+                        "component": "eventsPlugin",
+                        "file": "eventsPlugin.js"
                     }
                 ]
             }
         ]
 
     },
+    {
+        "enabled": true,
+        "@type": "plugin",
+        "description": "A basic News site that contains News component and detail page to render News articles. It comes with a standard navigational menu and URL structure.",
+        "introduction": "Basic News site",
+        "name": "Basic News site",
+        "powerpackClass": "org.onehippo.cms7.essentials.powerpack.NewsPowerpack",
+        "pluginId": "newsPlugin",
+        "restClasses": [],
+        "type": "plugins",
+        "vendor": {
+            "@type": "vendor",
+            "name": "Hippo",
+            "url": "http://www.onehippo.com"
+        },
+        "libraries": [
+            {
+                "items": [
+                    {
+                        "component": "newsPlugin",
+                        "file": "newsPlugin.js"
+                    }
+                ]
+            }
+        ]
+
+    },
+
     {
         "enabled": false,
         "@type": "plugin",

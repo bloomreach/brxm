@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+
+<instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
+
+
+  <instructionSet>
+    <cnd documentType="newsdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
+    <xml action="copy" source="xml/namespaces/newsdocument.xml" target="/hippo:namespaces/{{namespace}}"/>
+    <folder path="/content/documents/{{namespace}}/news/{{dateRepoYearMonth}}" template="xml/content/news.xml"/>
+  </instructionSet>
+
+
+  <instructionSet group="jsp">
+    <file action="copy" source="jsp/newslist-main-newslist.jsp" target="{{jspRoot}}/hstdefault/newslist-main-newslist.jsp"/>
+    <file action="copy" source="jsp/newspage-main.jsp" target="{{jspRoot}}/hstdefault/newspage-main.jsp"/>
+    <xml action="copy" source="xml/hst/templates/news-main-content-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" source="xml/hst/templates/newslist-main-newslist-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+
+  </instructionSet>
+
+  <instructionSet group="freemarker">
+    <file action="copy" source="freemarker/newslist-main-newslist.ftl" target="{{freemarkerRoot}}/hstdefault/newslist-main-newslist.ftl"/>
+    <file action="copy" source="freemarker/newspage-main.ftl" target="{{freemarkerRoot}}/hstdefault/newspage-main.ftl"/>
+
+    <xml action="copy" source="xml/hst/templates/news-main-content-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" source="xml/hst/templates/newslist-main-newslist-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+  </instructionSet>
+
+  <instructionSet>
+    <xml action="copy" source="xml/hst/workspace/newslist.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
+    <xml action="copy" source="xml/hst/sitemap/news.xml" target="/hst:hst/hst:configurations/common/hst:sitemap"/>
+  </instructionSet>
+  <instructionSet>
+    <file action="copy" source="java/NewsDocument.txt" target="{{beansFolder}}/NewsDocument.java"/>
+  </instructionSet>
+
+
+  <instructionSet>
+    <xml action="copy" source="xml/hst/pages/newslist.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
+    <xml action="copy" source="xml/hst/pages/newspage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
+  </instructionSet>
+
+
+  <instructionSet>
+
+    <xml action="copy" source="xml/hst/catalog/newslist.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <file action="copy" binary="true" source="images/component-icon-news.png" target="{{siteWebRoot}}/images/component-icon-news.png"/>
+  </instructionSet>
+
+
+  <!--
+    //############################################
+    // MENU
+    //############################################
+  -->
+  <instructionSet>
+    <xml action="copy" source="xml/hst/menu/menu-item-news.xml" target="/hst:hst/hst:configurations/common/hst:sitemenus/main"/>
+
+  </instructionSet>
+
+  <!-- SAMPLES GROUP-->
+  <instructionSet group="sampleData">
+    <xml action="copy" source="xml/samples/content/documents/news/sample_medusa.xml" target="/content/documents/{{namespace}}/news/{{dateRepoYearMonth}}"/>
+    <xml action="copy" source="xml/samples/content/documents/news/sample_harvest.xml" target="/content/documents/{{namespace}}/news/{{dateRepoYearMonth}}"/>
+    <xml action="copy" source="xml/samples/content/documents/news/sample_gastropoda.xml" target="/content/documents/{{namespace}}/news/{{dateRepoYearMonth}}"/>
+    <xml action="copy" source="xml/samples/content/gallery/samples.xml" target="/content/gallery/{{namespace}}"/>
+  </instructionSet>
+  <!--
+    CONFIG DATA
+  -->
+
+  <instructionSet>
+    <xml action="copy" source="xml/folderoptions/new-news-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+    <xml action="copy" source="xml/folderoptions/new-news-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+   </instructionSet>
+  <instructionSet>
+    <file action="copy" binary="true" source="icons/new-folder-16.png" target="{{cmsRoot}}/src/main/resources/org/hippoecm/frontend/plugins/standardworkflow/new-news-folder-16.png"/>
+
+  </instructionSet>
+
+
+</instructions>

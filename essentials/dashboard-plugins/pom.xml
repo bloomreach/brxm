@@ -45,6 +45,8 @@
     <module>menu-plugin</module>
     <module>simple-content</module>
     <module>search-plugin</module>
+    <module>dashboard-news-plugin</module>
+    <module>dashboard-events-plugin</module>
     <module>dashboard-gallery-plugin</module>
     <module>dashboard-setup-plugin</module>
     <module>essentials-powerpacks</module>
