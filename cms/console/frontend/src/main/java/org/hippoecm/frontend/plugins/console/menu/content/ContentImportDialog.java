@@ -134,7 +134,7 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
 
         LabelledBooleanFieldWidget generate = new LabelledBooleanFieldWidget("generate",
                 new PropertyModel<Boolean>(this, "generate"),
-                Model.of("Generate new translation ids"));
+                Model.of("Generate new translation ids (only when adding a node)"));
         add(generate);
 
         // file upload
