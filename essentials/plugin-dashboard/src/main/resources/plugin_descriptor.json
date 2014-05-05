@@ -163,7 +163,6 @@
         ]
     },
     {
-        "needsInstallation": false,
         "enabled": true,
         "@type": "plugin",
         "introduction": "Adds search component",
