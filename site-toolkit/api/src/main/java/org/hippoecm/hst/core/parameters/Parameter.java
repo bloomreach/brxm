@@ -55,6 +55,7 @@ public @interface Parameter {
     /**
      * @return the description for this {@link org.hippoecm.hst.core.parameters.Parameter}
      */
+
     String description() default "";
 
     /**
