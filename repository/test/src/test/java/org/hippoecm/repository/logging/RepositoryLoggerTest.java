@@ -46,13 +46,6 @@ public class RepositoryLoggerTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testCreateLogNodeRepeatedly() throws Exception {
-        for (int i = 0; i < 500; i++) {
-            testCreateLogNode();
-        }
-    }
-
-    @Test
     public void testCreateLogNode() throws Exception {
         final RepositoryLogger repositoryLogger = new RepositoryLogger();
         repositoryLogger.initialize(session);
