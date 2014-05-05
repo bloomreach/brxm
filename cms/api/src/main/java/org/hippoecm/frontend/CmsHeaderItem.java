@@ -60,13 +60,18 @@ public class CmsHeaderItem extends HeaderItem {
         JavaScriptReferenceHeaderItem.forReference(FUTURE_JS).render(response);
         JavaScriptReferenceHeaderItem.forReference(GLOBAL_JS).render(response);
 
-        if (isBrowserInternetExplorer()) {
+
+        if (isBrowserInternetExplorer() && getBrowserVersion() < 10) {
             JavaScriptReferenceHeaderItem.forReference(IE_JS).render(response);
         }
     }
 
     private boolean isBrowserInternetExplorer() {
         return WebSession.get().getClientInfo().getProperties().isBrowserInternetExplorer();
+    }
+
+    private int getBrowserVersion() {
+        return WebSession.get().getClientInfo().getProperties().getBrowserVersionMajor();
     }
 
 }
