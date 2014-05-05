@@ -361,8 +361,8 @@ dashboard-plugins/dashboard-gallery-plugin/pom.xml -text
 dashboard-plugins/dashboard-news-plugin/pom.xml -text
 dashboard-plugins/dashboard-news-plugin/src/main/java/org/onehippo/cms7/essentials/powerpack/NewsPowerpack.java -text
 dashboard-plugins/dashboard-news-plugin/src/main/resources/META-INF/news_powerpack_instructions.xml -text
-dashboard-plugins/dashboard-news-plugin/src/main/resources/META-INF/resources/powerpacks/newsPlugin/newsPlugin.html -text
-dashboard-plugins/dashboard-news-plugin/src/main/resources/META-INF/resources/powerpacks/newsPlugin/newsPlugin.js -text
+dashboard-plugins/dashboard-news-plugin/src/main/resources/META-INF/resources/plugins/newsPlugin/newsPlugin.html -text
+dashboard-plugins/dashboard-news-plugin/src/main/resources/META-INF/resources/plugins/newsPlugin/newsPlugin.js -text
 dashboard-plugins/dashboard-news-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/dashboard-news-plugin/src/main/resources/freemarker/newslist-main-content.ftl -text
 dashboard-plugins/dashboard-news-plugin/src/main/resources/freemarker/newspage-main.ftl -text
