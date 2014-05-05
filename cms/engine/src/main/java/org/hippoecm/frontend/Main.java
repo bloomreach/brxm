@@ -402,8 +402,10 @@ public class Main extends PluginApplication {
             @Override
             public IHeaderResponse decorate(IHeaderResponse response) {
                 boolean isIE = WebSession.get().getClientInfo().getProperties().isBrowserInternetExplorer();
+                int version = WebSession.get().getClientInfo().getProperties().getBrowserVersionMajor();
                 boolean isAjax = ((WebRequest) RequestCycle.get().getRequest()).isAjax();
-                if (isIE && !isAjax) {
+                if (isIE && !isAjax && (0 < version && version < 10)) {
+                    // Before IE10 the number of stylesheets is restricted to 31
                     return new CssImportingHeaderResponse(response);
                 }
                 return response;

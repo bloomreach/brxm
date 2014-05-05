@@ -20,7 +20,7 @@
 (function() {
     "use strict";
 
-    // IE cannot handle more than 31 stylesheets, as described at http://support.microsoft.com/kb/262161
+    // IE9 and earlier cannot handle more than 31 stylesheets, as described at http://support.microsoft.com/kb/262161
     var MAX_IE_STYLESHEETS = 31;
 
     /**
