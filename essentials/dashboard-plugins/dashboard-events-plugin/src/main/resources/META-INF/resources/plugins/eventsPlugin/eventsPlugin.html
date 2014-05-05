@@ -14,29 +14,45 @@
   limitations under the License.
   -->
 
-<div ng-controller="eventsPluginCtrl">
-    <div class="checkbox">
-        <label><input id="sample-content" type="checkbox" ng-change="onChange()" ng-model="sampleData">Add sample content</label>
+<div class="panel panel-default" ng-controller="eventsPluginCtrl">
+    <div class="panel-heading">News plugin</div>
+    <div class="panel-body">
+        <form novalidate name="bannerForm">
+            <div class="form-group">
+                <label>Please select templating language:</label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" ng-model="templateName" required value="jsp"/>
+                    JSP template
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" ng-model="templateName" required value="freemarker"/>
+                    Freemarker template
+                </label>
+            </div>
+            <div class="form-group">
+                <label>Content:</label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    Add sample content
+                    <input type="checkbox" ng-model="sampleData"/>
+                </label>
+            </div>
+        </form>
     </div>
-
-    <div class="radio">
-        <label>
-            <input id="jspFilesystemRadio" type="radio" name="template" checked="checked">Generate JSP templates on filesystem.
-        </label>
-    </div>
-    <div class="radio">
-        <label>
-            <input id="freemarkerFilesystemRadio" name="template" disabled="disabled" type="radio">Generate Freemarker templates on filesystem.
-        </label>
-    </div>
-<!--
- <div class="radio">
-        <label>
-            <input id="freemarkerRepositoryRadio" name="template" disabled="disabled" type="radio">Generate Freemarker templates in repository.
-        </label>
-    </div>
--->
-
     <messages powerpack-messages="powerpackMessages"/>
+    <div class="panel-footer">
 
+        <div class="input-group">
+              <span class="input-group-btn">
+                <button class="btn btn-primary pull-right" type="submit" ng-click="run()">Add events support</button>
+              </span>
+        </div>
+    </div>
 </div>
+
+
