@@ -141,7 +141,7 @@
     {
         "enabled": true,
         "@type": "plugin",
-        "introduction": "Clones an catalog component",
+        "introduction": "Creates a duplicate of a catalog component configuration and markup (template).",
         "name": "Clone component plugin",
         "pluginId": "cloneComponent",
         "restClasses": ["org.onehippo.cms7.essentials.plugin.clonecomponent.CloneComponentResource"],
