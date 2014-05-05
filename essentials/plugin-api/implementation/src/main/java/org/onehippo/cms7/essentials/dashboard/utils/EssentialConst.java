@@ -26,11 +26,11 @@ import com.google.common.collect.ImmutableSet;
  */
 public final class EssentialConst {
 
-    /**
-     * SCRIPTING
-     */
-    public static final String FREEMARKER_RELATIVE_FOLDER = "src" + File.separator + "main" + File.separator + "webapp" + File.separator + "WEB-INF" + File.separator + "freemarker";
+
     public static final String PATH_REL_WEB_ROOT = "src" + File.separator + "main" + File.separator + "webapp";
+    public static final String PATH_REL_WEB_INF = PATH_REL_WEB_ROOT + File.separator + "WEB-INF";
+    public static final String FREEMARKER_RELATIVE_FOLDER = PATH_REL_WEB_INF + File.separator + "freemarker";
+
     public static final String PATH_REL_OVERRIDE = "META-INF" + File.separator + "hst-assembly" + File.separator + "overrides";
     /**
      * Namespace placeholder name
@@ -45,6 +45,8 @@ public final class EssentialConst {
     public static final String PLACEHOLDER_DATE_FILE_YYYY_MM_NEXT_YEAR = "dateFileYearMonthNextYear";
     public static final String PLACEHOLDER_SITE_ROOT = "siteRoot";
     public static final String PLACEHOLDER_SITE_WEB_ROOT = "siteWebRoot";
+    public static final String PLACEHOLDER_SITE_WEB_INF_ROOT = "cmsWebInfRoot";
+    public static final String PLACEHOLDER_CMS_WEB_INF_ROOT = "siteWebInfRoot";
     public static final String PLACEHOLDER_SITE_RESOURCES = "siteResources";
     public static final String PLACEHOLDER_SITE_FREEMARKER_ROOT = "freemarkerRoot";
     public static final String PLACEHOLDER_JSP_ROOT = "jspRoot";

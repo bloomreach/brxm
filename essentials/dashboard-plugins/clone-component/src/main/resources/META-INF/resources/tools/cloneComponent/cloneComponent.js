@@ -21,8 +21,7 @@
             $scope.endpoint = $rootScope.REST.dynamic + 'cloneComponent/';
             $scope.components = null;
             $scope.newComponents = [];
-            $scope.run = function () {
-            };
+
             $scope.validateName = function (name) {
                 var valid = true;
                 if (!name) {
@@ -40,6 +39,20 @@
                         }
                     });
                 }
+                return valid;
+            };
+            $scope.itemsValid = function () {
+
+                var valid = true;
+                angular.forEach($scope.newComponents, function (value) {
+                        if (Essentials.isEmpty(value.key) && Essentials.isEmpty(value.value)) {
+                            // do nothing, both empty
+                        } else if (Essentials.isEmpty(value.key) || Essentials.isEmpty(value.value)) {
+                            // must have a pair (both values)
+                            valid = false;
+                        }
+                    }
+                );
                 return valid;
             };
             $scope.validateTemplate = function (name) {
@@ -62,35 +75,41 @@
                 return valid;
             };
 
-            $scope.onComponentClick = function (component) {
-                console.log(component);
-            };
-            $scope.checkShown = function (component) {
-                console.log(component);
-                return true;
-            };
-            $scope.validClones = function () {
-                angular.forEach($scope.components, function (value, key) {
-                    if (value.key && value.key.length > 0) {
 
-                    }
-                });
-                return true;
-
-            };
             $scope.init = function () {
                 $http.get($scope.endpoint).success(function (data) {
                     $scope.components = data;
-                    console.log("======================================");
-                    console.log("======================================");
-                    console.log("======================================");
-                    console.log(data);
                     angular.forEach(data, function (value, key) {
-                        $scope.newComponents.push({});
+                        var item = {"uuid": value.uuid};
+                        $scope.newComponents.push(item);
                     });
 
                 });
             };
+
+            //############################################
+            // ON SUBMIT
+            //############################################
+
+            $scope.runClones = function () {
+
+                var payload = [];
+                angular.forEach($scope.newComponents, function (value) {
+                    if (!Essentials.isEmpty(value.key) && !Essentials.isEmpty(value.value)) {
+                        var item = {};
+                        item.uuid = value.uuid;
+                        item.key = value.key;
+                        item.value = value.value;
+                        item.label = value.label;
+                        payload.push(item);
+                    }
+                });
+                //
+                $http.post($scope.endpoint, payload).success(function (data) {
+                    $scope.components = $scope.components.concat(payload);
+                });
+            };
+
             $scope.init();
         })
 })();

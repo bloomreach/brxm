@@ -227,6 +227,8 @@ dashboard-plugins/blog-plugin/src/test/java/org/onehippo/cms7/essentials/dashboa
 dashboard-plugins/blog-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/clone-component/pom.xml -text
 dashboard-plugins/clone-component/src/main/java/org/onehippo/cms7/essentials/plugin/clonecomponent/CloneComponentResource.java -text
+dashboard-plugins/clone-component/src/main/java/org/onehippo/cms7/essentials/plugin/clonecomponent/CloneRestful.java -text
+dashboard-plugins/clone-component/src/main/java/org/onehippo/cms7/essentials/plugin/clonecomponent/TemplateWrapper.java -text
 dashboard-plugins/clone-component/src/main/resources/META-INF/resources/tools/cloneComponent/cloneComponent.html -text
 dashboard-plugins/clone-component/src/main/resources/META-INF/resources/tools/cloneComponent/cloneComponent.js -text
 dashboard-plugins/clone-component/src/main/resources/META-INF/web-fragment.xml -text

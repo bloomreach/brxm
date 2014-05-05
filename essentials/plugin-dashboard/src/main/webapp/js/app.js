@@ -231,11 +231,11 @@
                     }
                 },
 
-                template: '' +
+                template:
                     '<div>' +
                     ' <div class="form-group">' +
                     '   <select class="form-control" ng-required="true" ng-selected="onPowerpackSelect()" ng-model="ngModel">' +
-                    '     <option ng-repeat="option in options" value="{{option.pluginId}}" ng-disabled="!option.enabled">{{option.name}}</option>' +
+                    '<option  ng-repeat="option in options" value="{{option.pluginId}}" ng-disabled="!option.enabled">{{option.name}}</option>' +
                     '   </select>' +
                     ' </div>' +
                     ' <div class="panel panel-info"><div class="panel-body">{{selectedDescription}}</div></div>' +
@@ -250,6 +250,7 @@
                     powerpackMessages: '='
                 },
 
+
                 template: '<accordion close-others="oneAtATime">' +
                     '<accordion-group is-open="isopen">' +
                     ' <accordion-heading ng-class="active">' +
@@ -257,7 +258,7 @@
                     '<i class="pull-right glyphicon" ng-class="{\'glyphicon-chevron-down\': isopen, \'glyphicon-chevron-right\': !isopen}"></i>' +
                     '</accordion-heading>' +
                     '<div ng-repeat="message in powerpackMessages.items" ng-switch="message.displayType">' +
-                    '<div ng-switch-when="PRE">' +
+                    '<div  ng-switch-when="PRE">' +
                     '<pre>{{message.value}}</pre>' +
                     '</div>' +
                     '<div ng-switch-when="A">' +
