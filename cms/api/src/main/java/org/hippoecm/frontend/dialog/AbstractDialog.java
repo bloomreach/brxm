@@ -585,6 +585,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
                 for (ButtonWrapper bw : buttons) {
                     if (bw.hasChanges()) {
                         target.add(bw.getButton());
+                        bw.rendered();
                     }
                 }
             }

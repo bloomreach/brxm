@@ -246,6 +246,10 @@ public class ButtonWrapper implements IClusterable {
         return hasChanges;
     }
 
+    public void rendered() {
+        hasChanges = false;
+    }
+
     protected KeyType getKeyType() {
         return keyType;
     }
