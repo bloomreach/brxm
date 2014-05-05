@@ -31,6 +31,7 @@ import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
+import org.onehippo.cms7.essentials.dashboard.model.DependencyType;
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
@@ -98,11 +99,37 @@ public class BaseResource {
 
             @SuppressWarnings("unchecked")
             final RestfulList<PluginRestful> restfulList = mapper.readValue(json, RestfulList.class);
+
+            postProcessPlugins(restfulList);
+
             return restfulList.getItems();
         } catch (IOException e) {
             log.error("Error parsing plugins", e);
         }
         return Collections.emptyList();
+    }
+
+    /**
+     * Post-process the list of available plugins to provide additional, project-specific information to the front-end.
+     *
+     * @param plugins list of plugins.
+     */
+    protected void postProcessPlugins(final RestfulList<PluginRestful> plugins) {
+
+        // Populate the "needsInstallation" flag based on other plugin descriptor fields.
+        for (PluginRestful plugin : plugins.getItems()) {
+            if ("plugins".equals(plugin.getType())) {
+                final List<EssentialsDependency> deps = plugin.getDependencies();
+                boolean needsInstallation = false;
+                for (EssentialsDependency dep : deps) {
+                    final DependencyType depType = dep.getDependencyType();
+                    if (depType == DependencyType.ESSENTIALS) {
+                        plugin.setNeedsInstallation(!ProjectUtils.isInstalled(depType, dep.createMavenDependency()));
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     public PluginContext getContext(ServletContext servletContext) {
