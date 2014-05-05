@@ -1419,6 +1419,7 @@ console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/conten
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/content/ContentImportDialog_it.properties -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/content/ContentImportPlugin.html -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/content/ContentImportPlugin.java -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/content/DownloadExportAsFileLink.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/content/DownloadExportAsPackageLink.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/copy/CopyDialog.html svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/copy/CopyDialog.java svneol=native#text/plain

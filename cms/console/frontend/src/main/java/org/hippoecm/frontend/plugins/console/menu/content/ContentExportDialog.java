@@ -34,6 +34,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.value.IValueMap;
+import org.apache.wicket.util.value.ValueMap;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.hippoecm.frontend.dialog.AbstractDialog;
@@ -51,6 +53,8 @@ public class ContentExportDialog extends AbstractDialog<Node> {
 
     private boolean skipBinary = false;
 
+    private static IValueMap SIZE = new ValueMap("width=855,height=460").makeImmutable();
+
     public ContentExportDialog(final IModelReference<Node> modelReference) {
         final IModel<Node> nodeModel = modelReference.getModel();
         setModel(nodeModel);
@@ -60,23 +64,27 @@ public class ContentExportDialog extends AbstractDialog<Node> {
             add(new Label("message", new StringResourceModel("dialog.message", this, null, null, path)));
             //info("Export content from : " + );
         } catch (RepositoryException e) {
-            log.error("Error getting node from model for contant import",e);
-            throw new RuntimeException("Error getting node from model for contant import: " + e.getMessage());
+            log.error("Error getting node from model for content export",e);
+            throw new RuntimeException("Error getting node from model for content export: " + e.getMessage());
         }
 
         IModel<Boolean> skipBinaryModel = new PropertyModel<>(this, "skipBinary");
         AjaxCheckBox skipBinaries = new AjaxCheckBox("skip-binaries", skipBinaryModel) {
-            private static final long serialVersionUID = 1L;
+            private static final long serialVersionUIDø = 1L;
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
             }
         };
-        skipBinaries.add(new Label("skip-binaries-text", new Model<>("Do not include binary properties in export")));
+        skipBinaries.add(new Label("skip-binaries-text", new Model<>("Do not include binary properties in export (does not apply to 'download as zip')")));
         add(skipBinaries);
 
         DownloadExportAsPackageLink downloadPackageLink = new DownloadExportAsPackageLink("download-package-link", modelReference.getModel());
-        downloadPackageLink.add(new Label("download-package-link-text", "Download as zip (or right click and choose \"Save as...\")"));
+        downloadPackageLink.add(new Label("download-package-link-text", "Download as zip (or right-click and choose \"Save as...\")"));
         add(downloadPackageLink);
+
+        DownloadExportAsFileLink downloadFileLink = new DownloadExportAsFileLink("download-file-link", nodeModel, skipBinaryModel);
+        downloadFileLink.add(new Label("download-file-link-text", "Download as file (or right-click and choose \"Save as...\")"));
+        add(downloadFileLink);
 
         final Label dump = new Label("dump");
         dump.setOutputMarkupId(true);
@@ -125,6 +133,11 @@ public class ContentExportDialog extends AbstractDialog<Node> {
     
     public void setSkipBinary(boolean skipBinary) {
         this.skipBinary = skipBinary;
+    }
+
+    @Override
+    public IValueMap getProperties() {
+        return SIZE;
     }
 
     // privates
