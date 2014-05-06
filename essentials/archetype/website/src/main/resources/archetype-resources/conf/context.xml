@@ -15,7 +15,7 @@
     -->
 
     <!-- Enable this to let wicket output a wicketpath attribute for elements,
-         see: http://www.onehippo.org/7_8/library/development/create-a-selenium-test-case.html -->
+         see: http://www.onehippo.org/library/development/create-a-selenium-test-case.html -->
     <!--
     <Parameter name="output-wicketpaths" value="true"/>
     -->
