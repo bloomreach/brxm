@@ -80,8 +80,13 @@ public class CloneComponentResource extends BaseResource {
             while (nodes.hasNext()) {
                 final Node componentNode = nodes.nextNode();
                 if (componentNode.hasProperty(HST_TEMPLATE)) {
+                    String label = componentNode.getName();
+                    if (componentNode.hasProperty(HST_LABEL)) {
+                        final Property labelProperty = componentNode.getProperty(HST_LABEL);
+                        label = labelProperty.getString();
+                    }
                     componentList.add(new CloneRestful(componentNode.getIdentifier(), componentNode.getName(),
-                            componentNode.getProperty(HST_TEMPLATE).getString(), componentNode.getProperty(HST_LABEL).getString()));
+                            componentNode.getProperty(HST_TEMPLATE).getString(), label));
                 } else {
                     log.warn("Component node does not have a template: {}", componentNode.getPath());
                 }
