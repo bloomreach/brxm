@@ -171,6 +171,7 @@
                 documentTypes: root + '/documenttypes/',
 
                 powerpacks_install: plugins + '/install/powerpack',
+                hide_introduction: plugins + '/hideintroduction',
 
                 compounds: root + '/documenttypes/compounds',
                 compoundsCreate: root + '/documenttypes/compounds/create/',

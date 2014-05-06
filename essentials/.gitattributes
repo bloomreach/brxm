@@ -2170,6 +2170,7 @@ plugin-dashboard/src/main/webapp/images/sort_desc_disabled.png -text
 plugin-dashboard/src/main/webapp/images/targeting1.png -text
 plugin-dashboard/src/main/webapp/images/targeting2.png -text
 plugin-dashboard/src/main/webapp/images/top-back.png -text
+plugin-dashboard/src/main/webapp/introduction/introduction.html -text
 plugin-dashboard/src/main/webapp/js/Essentials.js -text
 plugin-dashboard/src/main/webapp/js/app.js -text
 plugin-dashboard/src/main/webapp/js/controllers.js -text

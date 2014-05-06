@@ -240,11 +240,11 @@ public class PluginResource extends BaseResource {
 
 
     @ApiOperation(
-            value = "Adds a plugin to recently installed list of plugins",
+            value = "Hides introduction screen",
             response = MessageRestful.class)
     @POST
-    @Path("/setupdone")
-    public Restful hideWelcomeScreen(@Context ServletContext servletContext, final PostPayloadRestful payload) {
+    @Path("/hideintroduction")
+    public Restful hideWelcomeScreen(@Context ServletContext servletContext) {
         try {
             final Plugin plugin = getPluginById(ProjectSetupPlugin.class.getName(), servletContext);
             final PluginContext context = new DefaultPluginContext(plugin);

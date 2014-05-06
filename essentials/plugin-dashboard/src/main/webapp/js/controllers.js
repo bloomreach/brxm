@@ -187,6 +187,13 @@
             $scope.init();
 
         })
+        .controller('introductionCtrl', function ($scope, $location, $sce, $log, $rootScope, $http) {
+            // just sets a hide screen boolean flag to true
+            $scope.hide = function () {
+                $http.post($rootScope.REST.hide_introduction).success(function (data) {
+                });
+            }
+        })
         .controller('pluginCtrl', function ($scope, $location, $sce, $log, $rootScope, $http) {
 
             $scope.allPluginsInstalled = "No additional plugins could be found";
