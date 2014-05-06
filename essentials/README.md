@@ -29,6 +29,11 @@ $ cd essentials
 $ mvn clean install
 ```
 
+### Validate license headers:
+```
+$ mvn clean && mvn validate -Ppedantic
+```
+
 ### Create and install archetype locally :
 ```
 $ cd essentials/archetype
