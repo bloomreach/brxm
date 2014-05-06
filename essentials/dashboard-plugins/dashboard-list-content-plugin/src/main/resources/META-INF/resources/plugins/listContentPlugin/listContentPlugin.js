@@ -17,14 +17,14 @@
 (function () {
     "use strict";
     angular.module('hippo.essentials')
-        .controller('eventsPluginCtrl', function ($scope, $sce, $log, $rootScope, $http) {
+        .controller('listContentPluginCtrl', function ($scope, $sce, $log, $rootScope, $http) {
             $scope.sampleData = true;
             $scope.templateName = 'jsp';
             $scope.message = {};
             $scope.run = function () {
                 var payload = Essentials.addPayloadData("sampleData", $scope.sampleData, null);
                 Essentials.addPayloadData("templateName", $scope.templateName, payload);
-                Essentials.addPayloadData("pluginId", "eventsPlugin", payload);
+                Essentials.addPayloadData("pluginId", "listContentPlugin", payload);
                 $http.post($rootScope.REST.powerpacks_install, payload).success(function (data) {
                     // globally handled
                 });

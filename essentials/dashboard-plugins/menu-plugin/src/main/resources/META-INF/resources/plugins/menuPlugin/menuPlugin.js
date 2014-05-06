@@ -18,12 +18,20 @@
     "use strict";
     angular.module('hippo.essentials')
         .controller('menuPluginCtrl', function ($scope, $sce, $log, $rootScope, $http) {
-            $scope.endpoint = $rootScope.REST.dynamic + 'menu/';
+            $scope.sampleData = true;
+            $scope.templateName = 'jsp';
+            $scope.message = {};
             $scope.run = function () {
-
-                $http.post($scope.endpoint).success(function (data) {
+                var payload = Essentials.addPayloadData("templateName", $scope.sampleData, null);
+                Essentials.addPayloadData("pluginId", "menuPlugin", payload);
+                $http.post($rootScope.REST.powerpacks_install, payload).success(function (data) {
                     // globally handled
                 });
             };
+            // initialize messages
+            $http.get($rootScope.REST.powerpacksMessages + $rootScope.selectedPlugin.powerpackClass).success(function (data) {
+                $scope.powerpackMessages = data;
+            });
+
         })
 })();

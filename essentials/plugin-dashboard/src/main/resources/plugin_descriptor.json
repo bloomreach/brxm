@@ -348,6 +348,33 @@
     {
         "enabled": true,
         "@type": "plugin",
+        "description": "A generic List and Content plugin  contains List and Content component",
+        "introduction": "Generic List and Content plugin",
+        "name": "Generic List and Content plugin",
+        "powerpackClass": "org.onehippo.cms7.essentials.powerpack.GenericListContentPowerpack",
+        "pluginId": "listContentPlugin",
+        "restClasses": [],
+        "type": "plugins",
+        "vendor": {
+            "@type": "vendor",
+            "name": "Hippo",
+            "url": "http://www.onehippo.com"
+        },
+        "libraries": [
+            {
+                "items": [
+                    {
+                        "component": "listContentPlugin",
+                        "file": "listContentPlugin.js"
+                    }
+                ]
+            }
+        ]
+
+    },
+    {
+        "enabled": true,
+        "@type": "plugin",
         "description": "A basic News plugin that contains News component and detail page to render News articles. It comes with a standard navigational menu and URL structure.",
         "introduction": "Basic News site",
         "name": "News plugin",
