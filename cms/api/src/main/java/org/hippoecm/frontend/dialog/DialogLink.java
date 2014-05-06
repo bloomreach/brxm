@@ -26,6 +26,7 @@ import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
 import wicket.contrib.input.events.EventType;
 import wicket.contrib.input.events.InputBehavior;
 import wicket.contrib.input.events.key.KeyType;
+import static org.apache.wicket.ajax.attributes.AjaxRequestAttributes.EventPropagation.BUBBLE;
 
 public class DialogLink extends Panel {
     private static final long serialVersionUID = 1L;
@@ -51,7 +52,7 @@ public class DialogLink extends Panel {
             @Override
             protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
                 super.updateAjaxAttributes(attributes);
-                attributes.getAjaxCallListeners().add(new EventStoppingDecorator());
+                attributes.setEventPropagation(BUBBLE);
             }
         };
 
