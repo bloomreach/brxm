@@ -53,6 +53,7 @@ import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventL
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
+import org.onehippo.cms7.essentials.dashboard.model.Restful;
 import org.onehippo.cms7.essentials.dashboard.packaging.CommonsPowerpack;
 import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
@@ -233,6 +234,37 @@ public class PluginResource extends BaseResource {
         return new MessageRestful("Please rebuild and restart your application:", DisplayEvent.DisplayType.STRONG);
     }
 
+
+
+
+
+
+    @ApiOperation(
+            value = "Adds a plugin to recently installed list of plugins",
+            response = MessageRestful.class)
+    @POST
+    @Path("/setupdone")
+    public Restful hideWelcomeScreen(@Context ServletContext servletContext, final PostPayloadRestful payload) {
+        try {
+            final Plugin plugin = getPluginById(ProjectSetupPlugin.class.getName(), servletContext);
+            final PluginContext context = new DefaultPluginContext(plugin);
+            try (PluginConfigService configService = context.getConfigService()) {
+                final ProjectSettingsBean document = configService.read(ProjectSetupPlugin.class.getName(), ProjectSettingsBean.class);
+                document.setSetupDone(true);
+                configService.write(document);
+                return new KeyValueRestful("message", "Saved property for welcome screen");
+            }
+
+
+        } catch (Exception e) {
+
+            log.error("Error checking powerpack status", e);
+        }
+
+        final MessageRestful messageRestful = new MessageRestful();
+        messageRestful.setSuccessMessage(false);
+        return messageRestful;
+    }
 
     @ApiOperation(
             value = "Adds a plugin to recently installed list of plugins",
