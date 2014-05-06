@@ -45,28 +45,39 @@ import org.hippoecm.hst.security.User;
  * SecurityValve
  */
 public class SecurityValve extends AbstractBaseOrderableValve {
-    
+
     public static final String DESTINATION_ATTR_NAME = "org.hippoecm.hst.security.servlet.destination";
-    
+
     public static final String SECURITY_EXCEPTION_ATTR_NAME = "org.hippoecm.hst.security.servlet.exception";
 
     protected AuthenticationProvider authProvider;
-    
+
     public void setAuthenticationProvider(AuthenticationProvider authProvider) {
         this.authProvider = authProvider;
     }
-    
+
     @Override
     public void invoke(ValveContext context) throws ContainerException {
+        HstRequestContext requestContext = context.getRequestContext();
+
+        // If the request comes for CMS application (e.g, Channel Manager) and it's configured to skip authentication for those requests,
+        // just bypass this security valve.
+        if (requestContext.isCmsRequest()) {
+            if (requestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().isChannelMngrSiteAuthenticationSkipped()) {
+                log.debug("Bypassing security valve because the request comes fo a CMS application and it's configured to skip authentication for those requests.");
+                context.invokeNext();
+                return;
+            }
+        }
+
         HttpServletRequest servletRequest =  context.getServletRequest();
         HttpServletResponse servletResponse =  context.getServletResponse();
-        HstRequestContext requestContext = context.getRequestContext();
         ResolvedMount resolvedMount = requestContext.getResolvedMount();
-         
+
         boolean accessAllowed = false;
         boolean authenticationRequired = false;
         ContainerSecurityException securityException = null;
-        
+
         try {
             checkAccess(servletRequest);
             accessAllowed = true;
@@ -78,27 +89,26 @@ public class SecurityValve extends AbstractBaseOrderableValve {
         } catch (ContainerSecurityException e) {
             securityException = e;
         }
-        
+
         if (!accessAllowed) {
             HstLink destinationLink = null;
             String formLoginPage = resolvedMount.getFormLoginPage();
-            
 
             Mount destLinkMount = resolvedMount.getMount();
-            
+
             try {
                 if (!destLinkMount.isSite()) {
                     Mount siteMount = requestContext.getMount(ContainerConstants.MOUNT_ALIAS_SITE);
-                    
+
                     if (siteMount != null) {
                         destLinkMount = siteMount;
                     }
                 }
-                
+
                 if (StringUtils.isBlank(formLoginPage)) {
                     formLoginPage = destLinkMount.getFormLoginPage();
                 }
-                
+
                 ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
                 String pathInfo = (resolvedSiteMapItem == null ? "" : resolvedSiteMapItem.getPathInfo());
                 destinationLink = requestContext.getHstLinkCreator().create(pathInfo, destLinkMount);
@@ -109,7 +119,7 @@ public class SecurityValve extends AbstractBaseOrderableValve {
                     log.warn("Failed to create destination link. {}", linkEx.toString());
                 }
             }
-            
+
             if (authenticationRequired && !StringUtils.isBlank(formLoginPage)) {
                 try {
                     HttpSession httpSession = servletRequest.getSession(true);
@@ -126,7 +136,7 @@ public class SecurityValve extends AbstractBaseOrderableValve {
                     }
                 }
             }
-            
+
             try {
                 HttpSession httpSession = servletRequest.getSession(true);
                 httpSession.setAttribute(DESTINATION_ATTR_NAME, destinationLink.toUrlForm(requestContext, true));
@@ -145,22 +155,22 @@ public class SecurityValve extends AbstractBaseOrderableValve {
                 }
             }
         }
-        
+
         // NOTE: We need to check if subject is injected from somewhere into request context first.
         //       For example, a custom security integration valve could do that before securityValve.
         Subject subject = requestContext.getSubject();
-        
+
         if (subject == null) {
             subject = getSubject(servletRequest);
         }
-        
+
         if (subject == null) {
             context.invokeNext();
             return;
         }
 
         final ValveContext valveContext = context;
-        
+
         ContainerException ce = (ContainerException) HstSubject.doAsPrivileged(subject, new PrivilegedAction<ContainerException>() {
             public ContainerException run() {
                 try {
@@ -178,9 +188,15 @@ public class SecurityValve extends AbstractBaseOrderableValve {
             throw ce;
         }
     }
-    
+
+    /**
+     * Check authority granted accesses on resolved sitemap item or resolved mount for the request.
+     * If no access check is needed or allowed to access, then it returns without <code>ContainerSecurityException</code>.
+     * Otherwise, this method should throw a <code>ContainerSecurityException</code>.
+     * @param servletRequest
+     * @throws ContainerSecurityException
+     */
     protected void checkAccess(HttpServletRequest servletRequest) throws ContainerSecurityException {
-        
         HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
         ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
         Set<String> roles = null;
@@ -207,25 +223,18 @@ public class SecurityValve extends AbstractBaseOrderableValve {
             return;
         }
 
-        if (requestContext.isCmsRequest()) {
-            if (requestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().isChannelMngrSiteAuthenticationSkipped()) {
-                log.debug("Overriding authentication requirement because cms request");
-                return;
-            }
-        }
-
         Principal userPrincipal = servletRequest.getUserPrincipal();
-        
+
         if (userPrincipal == null) {
             log.debug("The user has not been authenticated yet.");
 
             throw new ContainerSecurityNotAuthenticatedException("Not authenticated yet.");
         }
-        
+
         if (users.isEmpty() && roles.isEmpty()) {
             log.debug("The roles or users are not configured.");
         }
-        
+
         if (!users.isEmpty()) {
             if (users.contains(userPrincipal.getName())) {
                 return;
@@ -233,7 +242,7 @@ public class SecurityValve extends AbstractBaseOrderableValve {
 
             log.debug("The user is not assigned to users, {}", users);
         }
-        
+
         if (!roles.isEmpty()) {
             for (String role : roles) {
                 if (servletRequest.isUserInRole(role)) {
@@ -243,65 +252,64 @@ public class SecurityValve extends AbstractBaseOrderableValve {
 
             log.debug("The user is not assigned to roles, {}", roles);
         }   
+
         throw new ContainerSecurityNotAuthorizedException("Not authorized.");
     }
-    
+
     protected Subject getSubject(HttpServletRequest request) {
         Principal userPrincipal = request.getUserPrincipal();
-        
+
         if (userPrincipal == null) {
             return null;
         }
-        
+
         // In a container that supports JACC Providers, the following line will return the container subject.
         Subject subject = (Subject) PolicyContextWrapper.getContext("javax.security.auth.Subject.container");
-        
+
         if (subject == null) {
             HttpSession session = request.getSession(false);
-            
+
             if (session != null) {
                 subject = (Subject) session.getAttribute(ContainerConstants.SUBJECT_ATTR_NAME);
             }
         }
-        
+
         if (subject == null) {
             User user = new TransientUser(userPrincipal.getName());
-            
+
             Set<Principal> principals = new HashSet<Principal>();
             principals.add(userPrincipal);
             principals.add(user);
-            
+
             if (authProvider != null) {
                 Set<Role> roleSet = authProvider.getRolesByUsername(userPrincipal.getName());
                 principals.addAll(roleSet);
             }
-            
+
             Set<Object> pubCred = new HashSet<Object>();
             Set<Object> privCred = new HashSet<Object>();
-            
+
             HttpSession session = request.getSession(false);
-            
+
             if (session != null) {
                 Credentials subjectRepoCreds = (Credentials) session.getAttribute(ContainerConstants.SUBJECT_REPO_CREDS_ATTR_NAME);
-                
+
                 if (subjectRepoCreds != null) {
                     session.removeAttribute(ContainerConstants.SUBJECT_REPO_CREDS_ATTR_NAME);
                     privCred.add(subjectRepoCreds);
                 }
-                
             } 
-            
+
             subject = new Subject(true, principals, pubCred, privCred);
-            
+
             if (session != null) {
                 session.setAttribute(ContainerConstants.SUBJECT_ATTR_NAME, subject);
             }
         }
-        
+
         HstRequestContext requestContext = (HstRequestContext) request.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
         ((HstMutableRequestContext) requestContext).setSubject(subject);
-        
-        
+
         return subject;
     }
 
