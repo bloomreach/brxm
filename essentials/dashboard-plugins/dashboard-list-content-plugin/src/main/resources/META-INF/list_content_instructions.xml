@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+
+<instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
+
+
+  <instructionSet group="jsp">
+    <file action="copy" source="jsp/list-component.jsp" target="{{jspRoot}}/hstdefault/list-component.jsp"/>
+    <file action="copy" source="jsp/content-component.jsp" target="{{jspRoot}}/hstdefault/content-component.jsp"/>
+    <xml action="copy" source="xml/hst/templates/list-component-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" source="xml/hst/templates/content-component-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+  </instructionSet>
+
+  <instructionSet group="freemarker">
+    <file action="copy" source="freemarker/list-component.ftl" target="{{freemarkerRoot}}/hstdefault/list-comonent.ftl"/>
+    <file action="copy" source="freemarker/content-component.ftl" target="{{freemarkerRoot}}/hstdefault/content-component.ftl"/>
+    <xml action="copy" source="xml/hst/templates/content-component-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" source="xml/hst/templates/list-component-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+  </instructionSet>
+
+
+  <instructionSet>
+    <xml action="copy" source="xml/hst/catalog/list.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <xml action="copy" source="xml/hst/catalog/content.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <file action="copy" binary="true" source="images/component-icon-list.png" target="{{siteWebRoot}}/images/component-icon-list.png"/>
+    <file action="copy" binary="true" source="images/component-icon-content.png" target="{{siteWebRoot}}/images/component-icon-content.png"/>
+  </instructionSet>
+
+
+</instructions>
