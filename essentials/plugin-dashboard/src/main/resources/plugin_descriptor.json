@@ -38,7 +38,8 @@
         "introduction": "Blog plugin",
         "description": "Hippo Blog plugin contains Blog document types, HST components and markup files",
         "name": "Blog plugin",
-        "restClasses": ["org.onehippo.cms7.essentials.dashboard.blog.BlogPluginResource"],
+        "powerpackClass": "org.onehippo.cms7.essentials.dashboard.blog.BlogPowerpack",
+        "restClasses": [],
         "pluginId": "blogPlugin",
         "type": "plugins",
         "vendor": {
@@ -168,7 +169,8 @@
         "introduction": "Adds search component",
         "name": "Search plugin",
         "pluginId": "searchPlugin",
-        "restClasses": ["org.onehippo.essentials.plugins.search.SearchPluginResource"],
+        "powerpackClass": "org.onehippo.essentials.plugins.search.SearchPluginPowerpack",
+        "restClasses": [],
         "type": "plugins",
         "vendor": {
             "@type": "vendor",
@@ -192,7 +194,8 @@
         "introduction": "Adds Banner document type to your project",
         "name": "Banner plugin",
         "pluginId": "bannerPlugin",
-        "restClasses": ["org.onehippo.cms7.essentials.dashboard.banner.BannerPluginResource"],
+        "powerpackClass": "org.onehippo.cms7.essentials.dashboard.banner.BannerPowerpack",
+        "restClasses": [],
         "type": "plugins",
         "vendor": {
             "@type": "vendor",
@@ -251,7 +254,8 @@
         "introduction": "Adds Simple content document to your project",
         "name": "Simple content plugin",
         "pluginId": "simpleContent",
-        "restClasses": ["org.onehippo.cms7.essentials.dashboard.simplecontent.SimpleContentResource"],
+        "powerpackClass": "org.onehippo.cms7.essentials.dashboard.simplecontent.SimpleContentPowerpack",
+        "restClasses": [],
         "type": "plugins",
         "vendor": {
             "@type": "vendor",

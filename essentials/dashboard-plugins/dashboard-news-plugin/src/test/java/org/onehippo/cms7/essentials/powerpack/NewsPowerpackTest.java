@@ -37,8 +37,8 @@ import static org.junit.Assert.assertEquals;
 public class NewsPowerpackTest extends BaseRepositoryTest {
 
 
-    public static final int TOTAL_INSTRUCTIONS = 15;
-    public static final int TOTAL_FILES = 6;
+    public static final int TOTAL_INSTRUCTIONS = 11;
+
 
 
     private File jspDirectory;

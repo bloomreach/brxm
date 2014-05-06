@@ -18,16 +18,21 @@
     "use strict";
     angular.module('hippo.essentials')
         .controller('bannerPluginCtrl', function ($scope, $sce, $log, $rootScope, $http) {
-            $scope.endpoint = $rootScope.REST.dynamic + 'banner/';
+
             $scope.sampleData = true;
             $scope.templateName = 'jsp';
             $scope.message = {};
             $scope.run = function () {
                 var payload = Essentials.addPayloadData("sampleData", $scope.sampleData, null);
                 Essentials.addPayloadData("templateName", $scope.templateName, payload);
-                $http.post($scope.endpoint, payload).success(function (data) {
+                Essentials.addPayloadData("pluginId", "eventsPlugin", payload);
+                $http.post($rootScope.REST.powerpacks_install, payload).success(function (data) {
                     // globally handled
                 });
             };
+            // initialize messages
+            $http.get($rootScope.REST.powerpacksMessages + $rootScope.selectedPlugin.powerpackClass).success(function (data) {
+                $scope.powerpackMessages = data;
+            });
         })
 })();

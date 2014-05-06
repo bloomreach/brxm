@@ -145,7 +145,6 @@ archetype/website/src/main/resources/archetype-resources/site/src/main/webapp/js
 archetype/website/src/main/resources/archetype-resources/site/src/test/resources/log4j.xml -text
 archetype/website/src/main/resources/archetype-resources/src/main/assembly/distribution.xml -text
 dashboard-plugins/banner-plugin/pom.xml -text
-dashboard-plugins/banner-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/banner/BannerPluginResource.java -text
 dashboard-plugins/banner-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/banner/BannerPowerpack.java -text
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/banner_instructions.xml -text
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/resources/plugins/bannerPlugin/bannerPlugin.html -text
@@ -183,7 +182,6 @@ dashboard-plugins/beanwriter-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/blog-plugin/pom.xml -text
 dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/blog/BlogDaemonModuleInstruction.java -text
 dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/blog/BlogFacetInstruction.java -text
-dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/blog/BlogPluginResource.java -text
 dashboard-plugins/blog-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/blog/BlogPowerpack.java -text
 dashboard-plugins/blog-plugin/src/main/resources/META-INF/blog_instructions.xml -text
 dashboard-plugins/blog-plugin/src/main/resources/META-INF/resources/plugins/blogPlugin/blogPlugin.html -text
@@ -584,7 +582,6 @@ dashboard-plugins/menu-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/pom.xml -text
 dashboard-plugins/search-plugin/pom.xml -text
 dashboard-plugins/search-plugin/src/main/java/org/onehippo/essentials/plugins/search/SearchPluginPowerpack.java -text
-dashboard-plugins/search-plugin/src/main/java/org/onehippo/essentials/plugins/search/SearchPluginResource.java -text
 dashboard-plugins/search-plugin/src/main/resources/META-INF/resources/plugins/searchPlugin/searchPlugin.html -text
 dashboard-plugins/search-plugin/src/main/resources/META-INF/resources/plugins/searchPlugin/searchPlugin.js -text
 dashboard-plugins/search-plugin/src/main/resources/META-INF/searchPlugin_instructions.xml -text
@@ -603,7 +600,6 @@ dashboard-plugins/search-plugin/src/main/resources/powerpack/xml/hst/search-page
 dashboard-plugins/search-plugin/src/main/resources/powerpack/xml/hst/search-sitemap.xml -text
 dashboard-plugins/simple-content/pom.xml -text
 dashboard-plugins/simple-content/src/main/java/org/onehippo/cms7/essentials/dashboard/simplecontent/SimpleContentPowerpack.java -text
-dashboard-plugins/simple-content/src/main/java/org/onehippo/cms7/essentials/dashboard/simplecontent/SimpleContentResource.java -text
 dashboard-plugins/simple-content/src/main/resources/META-INF/resources/plugins/simpleContent/simpleContent.html -text
 dashboard-plugins/simple-content/src/main/resources/META-INF/resources/plugins/simpleContent/simpleContent.js -text
 dashboard-plugins/simple-content/src/main/resources/META-INF/simpleContent_instructions.xml -text

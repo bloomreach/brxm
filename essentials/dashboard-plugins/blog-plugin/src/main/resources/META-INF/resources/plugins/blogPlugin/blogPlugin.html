@@ -139,7 +139,8 @@
                     <div class="col-sm-2">
                         <input type="text" class="form-control" required ng-model="url.author">
                     </div>
-                </div><div class="form-group">
+                </div>
+                <div class="form-group">
                     <label class="col-sm-2 control-label">&nbsp;</label>
                     <div class="col-sm-6">
                         <a ng-show="importConfig.urls.length > 1" href="javascript:void(0);" ng-click="removeUrl(url)"><span class="glyphicon glyphicon-minus pull-right text-warning">Remove</span></a>
@@ -148,6 +149,7 @@
             </div>
 
         </form>
+        <messages powerpack-messages="powerpackMessages"/>
 
     </div>
     <div class="panel-footer">

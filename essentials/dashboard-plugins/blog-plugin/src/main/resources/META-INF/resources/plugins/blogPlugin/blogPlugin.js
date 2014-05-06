@@ -18,7 +18,6 @@
     "use strict";
     angular.module('hippo.essentials')
             .controller('blogPluginCtrl', function ($scope, $sce, $log, $rootScope, $http) {
-                $scope.endpoint = $rootScope.REST.dynamic + 'blog/';
                 $scope.templateName = 'jsp';
                 $scope.setupImport = false;
                 $scope.importConfig = {
@@ -64,8 +63,9 @@
                             }
                         }
                     }
-                    $http.post($scope.endpoint, payload).success(function (data) {
 
+                    $http.post($rootScope.REST.powerpacks_install, payload).success(function (data) {
+                        // globally handled
                     });
                 };
 
@@ -90,6 +90,10 @@
                         $scope.importConfig.blogsBasePath = '/content/documents/' + $rootScope.projectSettings.namespace + '/blog';
                         $scope.importConfig.authorsBasePath = '/content/documents/' + $rootScope.projectSettings.namespace + '/blog' + '/authors';
                         $scope.importConfig.projectNamespace = $rootScope.projectSettings.namespace;
+                    });
+                    // initialize messages
+                    $http.get($rootScope.REST.powerpacksMessages + $rootScope.selectedPlugin.powerpackClass).success(function (data) {
+                        $scope.powerpackMessages = data;
                     });
 
 

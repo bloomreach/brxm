@@ -37,8 +37,8 @@ import static org.junit.Assert.assertEquals;
 public class GenericListContentPowerpackTest extends BaseRepositoryTest {
 
 
-    public static final int TOTAL_INSTRUCTIONS = 15;
-    public static final int TOTAL_FILES = 6;
+    public static final int TOTAL_INSTRUCTIONS = 3;
+
 
 
     private File jspDirectory;
