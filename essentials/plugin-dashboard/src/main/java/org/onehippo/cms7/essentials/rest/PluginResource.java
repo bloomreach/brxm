@@ -50,7 +50,6 @@ import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
@@ -191,8 +190,8 @@ public class PluginResource extends BaseResource {
             response = RestfulList.class)
     @POST
     @Path("/install/powerpack")
-    public RestfulList<MessageRestful> installPowerpack(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) throws Exception {
-        final RestfulList<MessageRestful> messageRestfulRestfulList = new RestList<>();
+    public MessageRestful installPowerpack(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) throws Exception {
+
         final Map<String, String> values = payloadRestful.getValues();
         final String pluginId = String.valueOf(values.get(PLUGIN_ID));
         Plugin myPlugin = getPluginById(pluginId, servletContext);
@@ -200,8 +199,7 @@ public class PluginResource extends BaseResource {
         if (Strings.isNullOrEmpty(pluginId) || myPlugin == null) {
             final MessageRestful resource = new MessageRestful("No valid powerpack was selected");
             resource.setSuccessMessage(false);
-            messageRestfulRestfulList.add(resource);
-            return messageRestfulRestfulList;
+            return resource;
         }
         final String className = ProjectSetupPlugin.class.getName();
         final PluginContext context = new DefaultPluginContext(new PluginRestful(className));
@@ -224,26 +222,15 @@ public class PluginResource extends BaseResource {
             commonsPack.setProperties(new HashMap<String, Object>(values));
             commonsPack.execute(context);
 
+            // execute powerpack itself
             final PowerpackPackage powerpackPackage = GlobalUtils.newInstance(myPlugin.getPowerpackClass());
             powerpackPackage.setProperties(new HashMap<String, Object>(values));
             getInjector().autowireBean(powerpackPackage);
+            powerpackPackage.execute(context);
 
 
-            final InstructionStatus status = powerpackPackage.execute(context);
-            log.info("status {}", status);
-            // save status:
-            if (document != null) {
-                document.setSetupDone(true);
-                final boolean written = configService.write(document);
-                log.info("Config saved: {}", written);
-            }
-            addRestartInformation(eventBus);
-            final List<DisplayEvent> displayEvents = listener.consumeEvents();
-            for (DisplayEvent displayEvent : displayEvents) {
-                messageRestfulRestfulList.add(new MessageRestful(displayEvent.getMessage(), displayEvent.getDisplayType()));
-            }
         }
-        return messageRestfulRestfulList;
+        return new MessageRestful("Please rebuild and restart your application:", DisplayEvent.DisplayType.STRONG);
     }
 
 

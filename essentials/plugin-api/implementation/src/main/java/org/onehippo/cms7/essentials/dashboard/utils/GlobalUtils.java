@@ -242,6 +242,10 @@ public final class GlobalUtils {
 
     public static Class<?> loadCLass(final String clazz) {
         try {
+            if(Strings.isNullOrEmpty(clazz)){
+                log.warn("Class name was null or empty");
+                return null;
+            }
             return Class.forName(clazz);
         } catch (ClassNotFoundException e) {
             log.error("Error loading class: [" + clazz + ']', e);

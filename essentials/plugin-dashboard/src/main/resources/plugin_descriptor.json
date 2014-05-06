@@ -226,7 +226,8 @@
         "introduction": "Adds menu document type to your project",
         "name": "Menu plugin",
         "pluginId": "menuPlugin",
-        "restClasses": ["org.onehippo.cms7.essentials.dashboard.menu.MenuPluginResource"],
+        "powerpackClass":"org.onehippo.cms7.essentials.dashboard.menu.MenuPowerpack",
+        "restClasses": [],
         "type": "plugins",
         "vendor": {
             "@type": "vendor",
