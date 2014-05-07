@@ -306,9 +306,11 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             window.addComponentExcpetion(e);
             
             if (log.isDebugEnabled()) {
-                log.warn("Component exception caught on window " + window.getName() + " with component " + component.getClass().getName() + ": " + e, e);
+                log.warn("Component exception caught on window " + window.getName() + " with component " +
+                        window.getComponentName() + ": " + e.toString(), e);
             } else if (log.isWarnEnabled()) {
-                log.warn("Component exception caught on window " + window.getName() + " with component " + component.getClass().getName() + ": {} at {}", e, getFirstStackTraceElement(e));
+                log.warn("Component exception caught on window '{}' with component '{}': {} at {}",
+                        window.getName(), window.getComponentName(), e.toString(), getFirstStackTraceElement(e));
             }
         } catch (Exception e) {
             if (this.exceptionThrowable) {
