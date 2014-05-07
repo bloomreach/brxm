@@ -40,10 +40,10 @@ public class DownloadExportAsFileLink extends DownloadLink<Node> {
 
     private static final Logger log = LoggerFactory.getLogger(DownloadExportAsFileLink.class);
 
-    private IModel skipBinaryModel;
+    private IModel<Boolean> skipBinaryModel;
     private File tempFile;
 
-    public DownloadExportAsFileLink(String id, IModel<Node> model, IModel skipBinaryModel) {
+    public DownloadExportAsFileLink(String id, IModel<Node> model, IModel<Boolean> skipBinaryModel) {
         super(id, model);
         this.skipBinaryModel = skipBinaryModel;
     }
@@ -75,7 +75,7 @@ public class DownloadExportAsFileLink extends DownloadLink<Node> {
             try {
                 BufferedOutputStream bos = new BufferedOutputStream(fos);
                 try {
-                    boolean skipBinary = (Boolean) skipBinaryModel.getObject();
+                    boolean skipBinary = skipBinaryModel.getObject();
                     ((HippoSession)getModelObject().getSession()).exportDereferencedView(getModelObject().getPath(), bos, skipBinary, false);
                 } finally {
                     bos.close();

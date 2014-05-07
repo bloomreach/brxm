@@ -17,26 +17,19 @@
   <wicket:extend>
     <div wicket:id="message" class="message"/>
     <ul>
-      <li>
-        <a wicket:id="download-package-link">
-          - <span wicket:id="download-package-link-text"/>
-        </a>
+      <li style="padding: 1px">
+        Download as <a wicket:id="download-zip-link" style="color: #0000FF">ZIP</a> (or right-click and choose &quot;Save as...&quot;)
       </li>
-      <li>
-        <a wicket:id="download-file-link">
-          - <span wicket:id="download-file-link-text"/>
-        </a>
+      <li style="padding: 1px">
+        Download as <a wicket:id="download-xml-link" style="color: #0000FF">XML</a> (or right-click and choose &quot;Save as...&quot;)
       </li>
-      <li style="padding-top: 4px;">
-        <a wicket:id="view-link">
-          - <span wicket:id="view-link-text"/>
-        </a>
+      <li style="padding: 1px">
+        <a wicket:id="view-link" style="color: #0000FF">Show export in this window</a>
       </li>
-      <li>
-        <input type="checkbox" wicket:id="skip-binaries">&nbsp;<span wicket:id="skip-binaries-text"/></input>
+      <li style="padding: 1px">
+        <input type="checkbox" wicket:id="skip-binaries">&nbsp;&nbsp;Do not include binary properties in export (does not apply to 'download as zip')</input>
       </li>
     </ul>
-    <br/>
     <div class="xml-dump">
       <textarea readonly="true" style="width: 820px; height: 280px;" wicket:id="dump"/>
     </div>

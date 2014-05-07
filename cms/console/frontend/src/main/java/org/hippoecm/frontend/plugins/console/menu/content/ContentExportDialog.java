@@ -53,7 +53,7 @@ public class ContentExportDialog extends AbstractDialog<Node> {
 
     private boolean skipBinary = false;
 
-    private static IValueMap SIZE = new ValueMap("width=855,height=460").makeImmutable();
+    private static IValueMap SIZE = new ValueMap("width=855,height=475").makeImmutable();
 
     public ContentExportDialog(final IModelReference<Node> modelReference) {
         final IModel<Node> nodeModel = modelReference.getModel();
@@ -70,20 +70,17 @@ public class ContentExportDialog extends AbstractDialog<Node> {
 
         IModel<Boolean> skipBinaryModel = new PropertyModel<>(this, "skipBinary");
         AjaxCheckBox skipBinaries = new AjaxCheckBox("skip-binaries", skipBinaryModel) {
-            private static final long serialVersionUIDø = 1L;
+            private static final long serialVersionUID = 1L;
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
             }
         };
-        skipBinaries.add(new Label("skip-binaries-text", new Model<>("Do not include binary properties in export (does not apply to 'download as zip')")));
         add(skipBinaries);
 
-        DownloadExportAsPackageLink downloadPackageLink = new DownloadExportAsPackageLink("download-package-link", modelReference.getModel());
-        downloadPackageLink.add(new Label("download-package-link-text", "Download as zip (or right-click and choose \"Save as...\")"));
+        DownloadExportAsPackageLink downloadPackageLink = new DownloadExportAsPackageLink("download-zip-link", modelReference.getModel());
         add(downloadPackageLink);
 
-        DownloadExportAsFileLink downloadFileLink = new DownloadExportAsFileLink("download-file-link", nodeModel, skipBinaryModel);
-        downloadFileLink.add(new Label("download-file-link-text", "Download as file (or right-click and choose \"Save as...\")"));
+        DownloadExportAsFileLink downloadFileLink = new DownloadExportAsFileLink("download-xml-link", nodeModel, skipBinaryModel);
         add(downloadFileLink);
 
         final Label dump = new Label("dump");
@@ -110,7 +107,6 @@ public class ContentExportDialog extends AbstractDialog<Node> {
                 target.add(dump);
             }
         };
-        viewLink.add(new Label("view-link-text", "Show export in this window"));
         add(viewLink);
 
         setOkVisible(false);
