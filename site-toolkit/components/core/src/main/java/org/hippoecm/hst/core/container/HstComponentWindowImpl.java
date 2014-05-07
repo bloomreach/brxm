@@ -44,7 +44,6 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     protected final static Logger log = LoggerFactory.getLogger(HstComponentWindowImpl.class);
     
     protected HstComponentConfiguration hstComponentConfiguration;
-    protected String name;
     protected String referenceNamespace;
     protected HstComponent component;
     protected HstComponentMetadata componentMetadata;
