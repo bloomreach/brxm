@@ -381,7 +381,7 @@ dashboard-plugins/dashboard-news-plugin/src/main/resources/META-INF/news_powerpa
 dashboard-plugins/dashboard-news-plugin/src/main/resources/META-INF/resources/plugins/newsPlugin/newsPlugin.html -text
 dashboard-plugins/dashboard-news-plugin/src/main/resources/META-INF/resources/plugins/newsPlugin/newsPlugin.js -text
 dashboard-plugins/dashboard-news-plugin/src/main/resources/META-INF/web-fragment.xml -text
-dashboard-plugins/dashboard-news-plugin/src/main/resources/freemarker/newslist-main-content.ftl -text
+dashboard-plugins/dashboard-news-plugin/src/main/resources/freemarker/newslist-main-newslist.ftl -text
 dashboard-plugins/dashboard-news-plugin/src/main/resources/freemarker/newspage-main.ftl -text
 dashboard-plugins/dashboard-news-plugin/src/main/resources/icons/new-folder-16.png -text
 dashboard-plugins/dashboard-news-plugin/src/main/resources/images/component-icon-news.png -text
