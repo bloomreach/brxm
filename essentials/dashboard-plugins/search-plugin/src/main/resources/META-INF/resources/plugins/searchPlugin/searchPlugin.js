@@ -22,7 +22,7 @@
             $scope.templateName = "jsp";
             $scope.run = function () {
                 var payload = Essentials.addPayloadData("templateName", $scope.templateName, null);
-                Essentials.addPayloadData("pluginId", "eventsPlugin", payload);
+                Essentials.addPayloadData("pluginId", "searchPlugin", payload);
                 $http.post($rootScope.REST.powerpacks_install, payload).success(function (data) {
                     // globally handled
                 });
