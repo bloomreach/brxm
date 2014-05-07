@@ -22,13 +22,13 @@
 
   <parent>
     <groupId>org.onehippo.cms7.essentials</groupId>
-    <artifactId>hippo-dashboard-powerpacks</artifactId>
+    <artifactId>hippo-dashboard-plugins</artifactId>
     <version>1.01.02-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Essentials Skeleton Powerpack</name>
-  <description>Hippo Essentials Skeleton Powerpack</description>
-  <artifactId>hippo-essentials-skeleton-powerpack</artifactId>
+  <name>Hippo Essentials Skeleton Package</name>
+  <description>Hippo Essentials Skeleton Package</description>
+  <artifactId>hippo-essentials-skeleton-package</artifactId>
   <packaging>jar</packaging>
 
 

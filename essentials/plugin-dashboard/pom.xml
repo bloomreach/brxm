@@ -156,12 +156,7 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-essentials-basic-powerpack</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-essentials-skeleton-powerpack</artifactId>
+      <artifactId>hippo-essentials-skeleton-package</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
