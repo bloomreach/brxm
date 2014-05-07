@@ -15,8 +15,6 @@
   limitations under the License.
 -->
 <#-- @ftlvariable name="document" type="{{beansPackage}}EventsDocument" -->
-
-<h1>${document}</h1>
 <#if document??>
     <@hst.link var="link" hippobean=document/>
 <article>

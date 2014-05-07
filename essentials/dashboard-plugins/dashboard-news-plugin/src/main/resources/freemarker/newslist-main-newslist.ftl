@@ -14,22 +14,23 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<%--@elvariable id="document" type="{{beansPackage}}.NewsDocument"--%>
-<%--@elvariable id="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable"--%>
+<#-- @ftlvariable name="item" type="{{beansPackage}}.NewsDocument" -->
+<#-- @ftlvariable name="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable" -->
+<#if pageable??>
+    <#list pageable.items as item>
+        <@hst.link var="link" hippobean=item />
+    <article>
+        <h3><a href="${link}">${item.title}</a></h3>
+        <#if item.date?? && item.date.time??>
+            <p><@fmt.formatDate value=item.date.time type="both" dateStyle="medium" timeStyle="short"/></p>
+        </#if>
+        <p>${item.location}</p>
+        <p>${item.introduction}</p>
+    </article>
+    </#list>
+    <#if pageable.showPagination??>
+        <#include "/WEB-INF/freemarker/include/pagination.ftl">
+    </#if>
+</#if>
 
-<c:forEach var="item" items="${pageable.items}" varStatus="status">
-  <hst:link var="link" hippobean="${item}"/>
-  <article>
-    <hst:cmseditlink hippobean="${item}"/>
-    <h3><a href="${link}"><c:out value="${item.title}"/></a></h3>
-    <c:if test="${hst:isReadable(item, 'date.time')}">
-      <p>
-        <fmt:formatDate value="${item.date.time}" type="both" dateStyle="medium" timeStyle="short"/>
-      </p>
-    </c:if>
-    <p><c:out value="${item.introduction}"/></p>
-  </article>
-</c:forEach>
-<c:if test="${pageable.showPagination}">
-<#include "/WEB-INF/freemarker/include/pagination.ftl">
-</c:if>
+
