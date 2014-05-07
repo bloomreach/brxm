@@ -146,6 +146,8 @@ public class ContentBlocksResource extends BaseResource {
             }
         } catch (RepositoryException e) {
             log.error("Exception while trying to retrieve document types from repository {}", e);
+        }finally{
+            GlobalUtils.cleanupSession(session);
         }
         //example if empty
         return types;
