@@ -123,7 +123,7 @@
           <include>**/*.MF</include>
           <include>**/*.java</include>
           <include>**/*.png</include>
-          <include>**/*.png</include>
+          <include>**/*.ftl</include>
         </includes>
       </resource>
     </resources>

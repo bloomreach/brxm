@@ -327,7 +327,7 @@ dashboard-plugins/dashboard-events-plugin/src/main/resources/META-INF/events_pow
 dashboard-plugins/dashboard-events-plugin/src/main/resources/META-INF/resources/plugins/eventsPlugin/eventsPlugin.html -text
 dashboard-plugins/dashboard-events-plugin/src/main/resources/META-INF/resources/plugins/eventsPlugin/eventsPlugin.js -text
 dashboard-plugins/dashboard-events-plugin/src/main/resources/META-INF/web-fragment.xml -text
-dashboard-plugins/dashboard-events-plugin/src/main/resources/freemarker/eventslist-main-content.ftl -text
+dashboard-plugins/dashboard-events-plugin/src/main/resources/freemarker/eventslist-main-eventslist.ftl -text
 dashboard-plugins/dashboard-events-plugin/src/main/resources/freemarker/eventspage-main.ftl -text
 dashboard-plugins/dashboard-events-plugin/src/main/resources/icons/new-folder-16.png -text
 dashboard-plugins/dashboard-events-plugin/src/main/resources/images/component-icon-events.png -text
