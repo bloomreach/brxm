@@ -64,7 +64,18 @@
       <artifactId>hippo-testsuite-content</artifactId>
       <version>${project.version}</version>
     </dependency>
-    
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-intranet-bootstrap-configuration</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-intranet-bootstrap-content</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
     <!--  Gallery picker dependency -->
     <dependency>
       <groupId>org.onehippo.addon.frontend.gallerypicker</groupId>

@@ -39,6 +39,15 @@
     </layout>
   </appender>
 
+  <!-- hippo-intranet.log -->
+  <appender name="intranet" class="org.apache.log4j.DailyRollingFileAppender">
+    <param name="File" value="${catalina.base}/logs/hippo-intranet.log"/>
+    <param name="Append" value="true"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%t] [%C.%M():%L] %m%n"/>
+    </layout>
+  </appender>
+
   <!-- hippo-demo-events.log -->
   <appender name="demo-events" class="org.apache.log4j.DailyRollingFileAppender">
     <param name="File" value="${catalina.base}/logs/hippo-demo-events.log"/>
@@ -51,6 +60,16 @@
   <!-- hippo-site-diagnostic.log -->
   <appender name="site-diagnostic" class="org.apache.log4j.DailyRollingFileAppender">
     <param name="File" value="${catalina.base}/logs/hippo-site-diagnostic.log"/>
+    <param name="Append" value="true"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%t] %m%n"/>
+    </layout>
+  </appender>
+
+
+  <!-- hippo-site-diagnostic.log -->
+  <appender name="intranet-diagnostic" class="org.apache.log4j.DailyRollingFileAppender">
+    <param name="File" value="${catalina.base}/logs/hippo-intranet-diagnostic.log"/>
     <param name="Append" value="true"/>
     <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%t] %m%n"/>
@@ -121,6 +140,7 @@
   <logger additivity="false" name="org.hippoecm.hst">
     <level value="warn"/>
     <appender-ref ref="site"/>
+    <appender-ref ref="intranet"/>
     <appender-ref ref="console"/>
   </logger>
 
@@ -128,24 +148,28 @@
   <logger additivity="false" name="org.hippoecm.hst.configuration.model.HstManagerImpl">
     <level value="info"/>
     <appender-ref ref="site"/>
+    <appender-ref ref="intranet"/>
     <appender-ref ref="console"/>
   </logger>
 
   <logger additivity="false" name="org.hippoecm.hst.core.container.DiagnosticReportingValve">
     <level value="info"/>
     <appender-ref ref="site-diagnostic"/>
+    <appender-ref ref="intranet-diagnostic"/>
     <appender-ref ref="console"/>
   </logger>
 
   <logger additivity="false" name="org.hippoecm.hst.demo">
     <level value="info"/>
     <appender-ref ref="site"/>
+    <appender-ref ref="intranet"/>
     <appender-ref ref="console"/>
   </logger>
 
   <logger additivity="false" name="freemarker">
     <level value="info"/>
     <appender-ref ref="site"/>
+    <appender-ref ref="intranet"/>
     <appender-ref ref="console"/>
   </logger>
 

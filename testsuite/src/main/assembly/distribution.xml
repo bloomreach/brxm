@@ -33,6 +33,11 @@
       <destName>site.war</destName>
     </file>
     <file>
+      <source>intranet/target/intranet.war</source>
+      <outputDirectory>/webapps</outputDirectory>
+      <destName>intranet.war</destName>
+    </file>
+    <file>
       <source>conf/log4j.xml</source>
       <outputDirectory>/conf</outputDirectory>
       <destName>log4j.xml</destName>

@@ -22,6 +22,7 @@
     <version>7.9.1-SNAPSHOT</version>
   </parent>
 
+
   <artifactId>hippo-testsuite</artifactId>
   <name>Hippo Test Suite</name>
   <description>Hippo Test Suite</description>
@@ -32,19 +33,23 @@
 
   <properties>
 
+    <!-- ***START temporary override of versions*** -->
+    <!-- ***END temporary override of versions*** -->
+
+    <jsp-api.version>2.1</jsp-api.version>
     <jstl.version>1.1.2</jstl.version>
     <taglibs.version>1.1.2</taglibs.version>
-
     <commons.lang.version>2.6</commons.lang.version>
-
-    <junit.version>4.8.2</junit.version>
-
+    <junit.version>4.10</junit.version>
+    <easymock.version>3.1</easymock.version>
     <freemarker.version>2.3.18</freemarker.version>
+
+    <filesync.override>false</filesync.override>
+    <maven.plugins.filesync.version>1.0.0</maven.plugins.filesync.version>
 
     <commons-math.version>2.2</commons-math.version>
 
     <filesync.override>false</filesync.override>
-
     <maven.plugins.filesync.version>1.0.0</maven.plugins.filesync.version>
 
     <geronimo-annotation_1.1_spec.version>1.0.1</geronimo-annotation_1.1_spec.version>
@@ -193,11 +198,13 @@
         <module>linear-algebra</module>
         <!-- End Add-on component context -->
         <module>content</module>
+        <module>intranet-bootstrap</module>
         <module>components</module>
         <module>dependencies</module>
         <module>resources</module>
         <module>cms</module>
         <module>site</module>
+        <module>intranet</module>
         <module>solr</module>
       </modules>
     </profile>
@@ -242,6 +249,13 @@
                   <type>war</type>
                   <properties>
                     <context>/site</context>
+                  </properties>
+                </deployable>
+                <deployable>
+                  <location>${project.basedir}/intranet/target/intranet.war</location>
+                  <type>war</type>
+                  <properties>
+                    <context>/intranet</context>
                   </properties>
                 </deployable>
                 <deployable>

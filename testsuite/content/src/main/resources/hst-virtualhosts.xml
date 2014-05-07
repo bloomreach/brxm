@@ -54,9 +54,6 @@
   <sv:property sv:name="hst:locale" sv:type="String">
     <sv:value>en_US</sv:value>
   </sv:property>
-  <sv:property sv:name="hst:defaultresourcebundleid" sv:type="String">
-    <sv:value>org.onehippo.hst.demo.resources.ProductResources, org.onehippo.hst.demo.resources.GeneralTranslationsBundle</sv:value>
-  </sv:property>
   <sv:property sv:name="hst:diagnosticsenabled" sv:type="Boolean">
     <sv:value>false</sv:value>
   </sv:property>
@@ -76,6 +73,9 @@
       </sv:property>
       <sv:property sv:name="hst:schemeagnostic" sv:type="Boolean">
         <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:defaultresourcebundleid" sv:type="String">
+        <sv:value>org.onehippo.hst.demo.resources.ProductResources, org.onehippo.hst.demo.resources.GeneralTranslationsBundle</sv:value>
       </sv:property>
       <sv:node sv:name="hst:root">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">

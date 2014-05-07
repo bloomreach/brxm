@@ -50,6 +50,10 @@
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>mix:referenceable</sv:value>
         </sv:property>
+        <sv:property sv:name="hippo:availability" sv:type="String">
+          <sv:value>live</sv:value>
+          <sv:value>preview</sv:value>
+        </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>6e2e4788-14d6-45b1-b03b-5ba29e37621a</sv:value>
         </sv:property>
