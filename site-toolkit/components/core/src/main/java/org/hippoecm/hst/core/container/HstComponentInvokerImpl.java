@@ -205,18 +205,24 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             }
             
             window.addComponentExcpetion(new HstComponentException(e));
-            
-            if (log.isDebugEnabled()) {
-                log.warn("Component exception caught on window " + window.getName() + " with component " + component.getClass().getName() + ": " + e, e);
-            } else if (log.isWarnEnabled()) {
-                log.warn("Component exception caught on window " + window.getName() + " with component " + component.getClass().getName() + ": {} at {}", e, getFirstStackTraceElement(e));
-            }
+
+            logComponentException(window, e);
         } finally {
             removeHstObjectAttributesForServlet(wrappedRequest, hstRequest, hstResponse);
         }
         
         if (window.hasComponentExceptions()) {
             renderErrorInformation(requestContainerConfig, servletRequest, servletResponse, window);
+        }
+    }
+
+    private void logComponentException(final HstComponentWindow window, final Exception e) {
+        if (log.isDebugEnabled()) {
+            log.warn("Component exception caught on window " + window.getName() + " with component " +
+                    window.getComponentName() + ": " + e.toString(), e);
+        } else if (log.isWarnEnabled()) {
+            log.warn("Component exception caught on window '{}' with component '{}': {} at {}",
+                    window.getName(), window.getComponentName(), e.toString(), getFirstStackTraceElement(e));
         }
     }
 
@@ -304,14 +310,8 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             }
             
             window.addComponentExcpetion(e);
-            
-            if (log.isDebugEnabled()) {
-                log.warn("Component exception caught on window " + window.getName() + " with component " +
-                        window.getComponentName() + ": " + e.toString(), e);
-            } else if (log.isWarnEnabled()) {
-                log.warn("Component exception caught on window '{}' with component '{}': {} at {}",
-                        window.getName(), window.getComponentName(), e.toString(), getFirstStackTraceElement(e));
-            }
+
+            logComponentException(window, e);
         } catch (Exception e) {
             if (this.exceptionThrowable) {
                 throw new HstComponentException(e);
