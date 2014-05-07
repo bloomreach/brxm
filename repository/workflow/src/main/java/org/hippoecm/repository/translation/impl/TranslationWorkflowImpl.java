@@ -99,9 +99,12 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
             if (copiedDoc == null) {
                 throw new WorkflowException("Could not locate handle for document after copying");
             }
-            copiedDoc = copiedDoc.getNode(copiedDoc.getName());
-            JcrUtils.ensureIsCheckedOut(copiedDoc);
-            copiedDoc.setProperty(HippoTranslationNodeType.LOCALE, language);
+            NodeIterator copiedVariants = copiedDoc.getNodes(copiedDoc.getName());
+            while (copiedVariants.hasNext()) {
+                Node copiedVariant = copiedVariants.nextNode();
+                JcrUtils.ensureIsCheckedOut(copiedVariant);
+                copiedVariant.setProperty(HippoTranslationNodeType.LOCALE, language);
+            }
         } else {
             Workflow internalWorkflow = workflowContext.getWorkflow("internal", targetFolder);
             if (!(internalWorkflow instanceof FolderWorkflow)) {
