@@ -321,7 +321,6 @@ dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/META-INF/res
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/content_blocks_nodetype.xml -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/content_blocks_template.xml -text
-dashboard-plugins/dashboard-easyforms-plugin/pom.xml -text
 dashboard-plugins/dashboard-events-plugin/pom.xml -text
 dashboard-plugins/dashboard-events-plugin/src/main/java/org/onehippo/cms7/essentials/powerpack/EventsPowerpack.java -text
 dashboard-plugins/dashboard-events-plugin/src/main/resources/META-INF/events_powerpack_instructions.xml -text
@@ -441,10 +440,6 @@ dashboard-plugins/dashboard-restservices-plugin/src/main/resources/spring-conten
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/spring-plain-rest-api.xml -text
 dashboard-plugins/dashboard-restservices-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/dashboard-setup-plugin/pom.xml -text
-dashboard-plugins/dashboard-xinha-plugin/pom.xml -text
-dashboard-plugins/dashboard-xinha-plugin/src/main/resources/root.xml -text
-dashboard-plugins/dashboard-xinha-plugin/src/test/java/org/onehippo/cms7/essentials/xinha/XinhaTest.java -text
-dashboard-plugins/dashboard-xinha-plugin/src/test/resources/root.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/pom.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/java/org/onehippo/cms7/essentials/powerpack/BasicPowerpack.java -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/META-INF/basic_powerpack_instructions.xml -text
