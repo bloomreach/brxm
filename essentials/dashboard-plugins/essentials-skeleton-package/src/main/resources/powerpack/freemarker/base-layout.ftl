@@ -26,12 +26,15 @@
 <div class="container">
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
-        <@hst.include ref="menu"/>
         <@hst.include ref="top"/>
+        <@hst.include ref="menu"/>
         </div>
     </div>
     <div class="row">
-    <@hst.include ref="main"/>
+        <@hst.include ref="main"/>
+    </div>
+    <div class="row">
+        <@hst.include ref="footer"/>
     </div>
 </div>
 <@hst.headContributions categoryIncludes="componentsJavascript" xhtml="true"/>
