@@ -19,6 +19,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.repository.testutils.RepositoryTestCase;
@@ -28,13 +29,15 @@ import static junit.framework.Assert.assertTrue;
 
 public class RepositoryLoggerTest extends RepositoryTestCase {
 
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        removeNode("/hippo:log/default");
+    }
+
     @After
     public void tearDown() throws Exception {
-        NodeIterator nodes = session.getNode("/hippo:log").getNodes();
-        while (nodes.hasNext()) {
-            nodes.nextNode().remove();
-        }
-        session.save();
+        removeNode("/hippo:log/default");
         super.tearDown();
     }
 
