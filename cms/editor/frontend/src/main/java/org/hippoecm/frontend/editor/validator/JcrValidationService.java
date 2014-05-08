@@ -74,6 +74,7 @@ public class JcrValidationService implements IValidationService, IDetachable {
     private ITypeLocator locator;
     private IFeedbackLogger logger;
     private ValidationResult result;
+    private boolean validated = false;
 
     @SuppressWarnings("unchecked")
     public JcrValidationService(IPluginContext context, IPluginConfig config) {
@@ -105,6 +106,9 @@ public class JcrValidationService implements IValidationService, IDetachable {
     }
 
     public void validate() throws ValidationException {
+        if (validated) {
+            return;
+        }
         IModel<Node> model = getModel();
         if (model == null || model.getObject() == null) {
             throw new ValidationException("No model found, skipping validation");
@@ -120,7 +124,6 @@ public class JcrValidationService implements IValidationService, IDetachable {
                 validator = new JcrTypeValidator(descriptor, validatorService);
             }
             result.setViolations(validator.validate(model));
-
             List<IValidationListener> listeners = context.getServices(config.getString(IValidationService.VALIDATE_ID),
                     IValidationListener.class);
             for (IValidationListener listener : new ArrayList<IValidationListener>(listeners)) {
@@ -133,6 +136,8 @@ public class JcrValidationService implements IValidationService, IDetachable {
             throw new ValidationException("Repository error", e);
         } catch (StoreException e) {
             throw new ValidationException("Could not construct validator", e);
+        } finally {
+            validated = true;
         }
     }
 
@@ -156,6 +161,7 @@ public class JcrValidationService implements IValidationService, IDetachable {
     public void detach() {
         locator.detach();
         result.detach();
+        validated = false;
     }
 
 }
