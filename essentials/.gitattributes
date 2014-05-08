@@ -2104,11 +2104,6 @@ plugin-dashboard/src/main/webapp/pages/plugins.html -text
 plugin-dashboard/src/main/webapp/pages/tools.html -text
 plugin-dashboard/src/main/webapp/plugins/carouselPlugin/carouselPlugin.html -text
 plugin-dashboard/src/main/webapp/plugins/carouselPlugin/carouselPlugin.js -text
-plugin-dashboard/src/main/webapp/plugins/galleryPlugin/cmslanguages.json -text
-plugin-dashboard/src/main/webapp/plugins/galleryPlugin/galleryPlugin.html -text
-plugin-dashboard/src/main/webapp/plugins/galleryPlugin/galleryPlugin.js -text
-plugin-dashboard/src/main/webapp/plugins/galleryPlugin/testimageprocessor.json -text
-plugin-dashboard/src/main/webapp/plugins/galleryPlugin/testimagesets.json -text
 plugin-dashboard/src/main/webapp/theme/fonts/glyphicons-halflings-regular.eot -text
 plugin-dashboard/src/main/webapp/theme/fonts/glyphicons-halflings-regular.svg -text
 plugin-dashboard/src/main/webapp/theme/fonts/glyphicons-halflings-regular.ttf -text
@@ -2117,6 +2112,11 @@ plugin-dashboard/src/main/webapp/theme/hippo-theme/_font-awesome.css -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/main.css -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/theme.html -text
 plugin-dashboard/src/main/webapp/theme/styles.css -text
+plugin-dashboard/src/main/webapp/tools/galleryPlugin/cmslanguages.json -text
+plugin-dashboard/src/main/webapp/tools/galleryPlugin/galleryPlugin.html -text
+plugin-dashboard/src/main/webapp/tools/galleryPlugin/galleryPlugin.js -text
+plugin-dashboard/src/main/webapp/tools/galleryPlugin/testimageprocessor.json -text
+plugin-dashboard/src/main/webapp/tools/galleryPlugin/testimagesets.json -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/dashboard/contentblocks/ContentBlocksPluginTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/ContentBlocksTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/RestClientTest.java -text
