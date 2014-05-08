@@ -26,6 +26,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -56,7 +57,7 @@ public class TestEventCache {
             queueLength++;
             poll = integerReferenceQueue.poll();
         }
-        assertTrue(queueLength == numberOfObjects);
+        assertEquals(queueLength, numberOfObjects);
     }
 
     @Test
@@ -73,25 +74,24 @@ public class TestEventCache {
         FinalizableTinyObject tinyObject =  new FinalizableTinyObject(finalizedObjectsCounter);
         weakTaggedCache.put(new FinalizableTinyKey("unGarbagableKey", finalizedKeyCounter), tinyObject, "unGarbagableTag");
         while (finalizedObjectsCounter.finalized.get() != numberOfObjects) {
-            System.out.println(finalizedObjectsCounter.finalized.get());
             System.gc();
             Thread.sleep(100);
             System.gc();
         }
 
         // the cache is only cleaned on next access
-        assertTrue(weakTaggedCache.keyValueMap.size() == numberOfObjects + 1);
-        assertTrue(weakTaggedCache.valueKeyMap.size() == numberOfObjects + 1);
+        assertEquals("size of key value map other than expected.", numberOfObjects + 1, weakTaggedCache.keyValueMap.size());
+        assertEquals("size of value key map other than expected.", numberOfObjects + 1, weakTaggedCache.valueKeyMap.size());
 
         // since the cachekey are strongly referenced in the WeakTaggedCache and the WeakTaggedCache did not yet had a cleanup()
         // there still can't be finalized a single cachekey
-        Assert.assertTrue(finalizedKeyCounter.finalized.get() == 0);
+        assertEquals(0, finalizedKeyCounter.finalized.get());
 
         // access the cache for force cleanup
         weakTaggedCache.get(new FinalizableTinyKey("foo", null));
 
-        assertTrue(weakTaggedCache.keyValueMap.size() == 1);
-        assertTrue(weakTaggedCache.valueKeyMap.size() == 1);
+        assertEquals(1, weakTaggedCache.keyValueMap.size());
+        assertEquals(1, weakTaggedCache.valueKeyMap.size());
 
         // now, all items should have been evicted *EXCEPT* the one we still reference
         for (int i = 0 ; i < numberOfObjects; i++) {
@@ -99,8 +99,8 @@ public class TestEventCache {
         }
 
         // the registry is only cleaned on next access when all keys have been GC-ed
-        assertTrue(weakTaggedCache.weakKeyTagRegistry.keyTagsMap.size() == numberOfObjects + 1);
-        assertTrue(weakTaggedCache.weakKeyTagRegistry.tagKeysMap.size() == numberOfObjects + 1);
+        assertEquals(numberOfObjects + 1, weakTaggedCache.weakKeyTagRegistry.keyTagsMap.size());
+        assertEquals(numberOfObjects + 1, weakTaggedCache.weakKeyTagRegistry.tagKeysMap.size());
 
         while (finalizedKeyCounter.finalized.get() != numberOfObjects) {
             System.gc();
@@ -114,8 +114,8 @@ public class TestEventCache {
 
         // access the cache for force cleanup
         weakTaggedCache.weakKeyTagRegistry.get("foo");
-        assertTrue(weakTaggedCache.weakKeyTagRegistry.keyTagsMap.size() ==  1);
-        assertTrue(weakTaggedCache.weakKeyTagRegistry.tagKeysMap.size() == 1);
+        assertEquals(1, weakTaggedCache.weakKeyTagRegistry.keyTagsMap.size());
+        assertEquals(1, weakTaggedCache.weakKeyTagRegistry.tagKeysMap.size());
 
 
         assertNotNull(weakTaggedCache.get(new FinalizableTinyKey("unGarbagableKey", null)));
