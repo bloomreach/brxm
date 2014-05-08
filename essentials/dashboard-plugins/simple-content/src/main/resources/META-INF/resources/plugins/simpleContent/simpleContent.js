@@ -25,7 +25,7 @@
             $scope.run = function () {
                 var payload = Essentials.addPayloadData("sampleData", $scope.sampleData, null);
                 Essentials.addPayloadData("templateName", $scope.templateName, payload);
-                Essentials.addPayloadData("pluginId", "simpleContentPlugin", payload);
+                Essentials.addPayloadData("pluginId", "simpleContent", payload);
                 $http.post($rootScope.REST.powerpacks_install, payload).success(function (data) {
                     // globally handled
                 });
