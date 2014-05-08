@@ -205,6 +205,7 @@
         <module>cms</module>
         <module>site</module>
         <module>intranet</module>
+        <module>prod-server-config</module>
         <module>solr</module>
       </modules>
     </profile>

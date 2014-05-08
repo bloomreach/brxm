@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+
+Licensed under the Apache License, Version 2.0 (the  "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS"
+BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. -->
+<sv:node sv:name="prod-env" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hst:virtualhostgroup</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:cmslocation" sv:type="String">
+    <sv:value>http://cms.example.com</sv:value>
+  </sv:property>
+  <sv:node sv:name="com">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:virtualhost</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:homepage" sv:type="String">
+      <sv:value>root</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:onlyforcontextpath" sv:type="String">
+      <sv:value>/intranet</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:showcontextpath" sv:type="Boolean">
+      <sv:value>false</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:showport" sv:type="Boolean">
+      <sv:value>false</sv:value>
+    </sv:property>
+    <sv:node sv:name="example">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:virtualhost</sv:value>
+      </sv:property>
+      <sv:node sv:name="www">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:virtualhost</sv:value>
+        </sv:property>
+        <sv:node sv:name="hst:root">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:mount</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:mountpoint" sv:type="String">
+            <sv:value>/hst:hst/hst:sites/intranet</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="org">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:virtualhost</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:showcontextpath" sv:type="Boolean">
+      <sv:value>false</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:showport" sv:type="Boolean">
+      <sv:value>false</sv:value>
+    </sv:property>
+    <sv:node sv:name="example">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:virtualhost</sv:value>
+      </sv:property>
+      <sv:node sv:name="www">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:virtualhost</sv:value>
+        </sv:property>
+        <sv:node sv:name="hst:root">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:mount</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:alias" sv:type="String">
+            <sv:value>site</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:cacheable" sv:type="Boolean">
+            <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:channelpath" sv:type="String">
+            <sv:value>/hst:hst/hst:channels/demosite</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:mountpoint" sv:type="String">
+            <sv:value>/hst:hst/hst:sites/demosite</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:mountrest" sv:type="String">
+            <sv:value>restapi</sv:value>
+          </sv:property>
+          <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
+            <sv:value>exampleMountParam</sv:value>
+          </sv:property>
+          <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
+            <sv:value>testValue</sv:value>
+          </sv:property>
+          <sv:node sv:name="demosite_fr">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hst:mount</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:alias" sv:type="String">
+              <sv:value>fr_site</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:channelpath" sv:type="String">
+              <sv:value>/hst:hst/hst:channels/demosite-fr</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:homepage" sv:type="String">
+              <sv:value>accueil</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:locale" sv:type="String">
+              <sv:value>fr_FR</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:mountpoint" sv:type="String">
+              <sv:value>/hst:hst/hst:sites/demosite_fr</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:pagenotfound" sv:type="String">
+              <sv:value>error</sv:value>
+            </sv:property>
+          </sv:node>
+          <sv:node sv:name="demosite_it">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hst:mount</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:homepage" sv:type="String">
+              <sv:value>wikipedia</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:locale" sv:type="String">
+              <sv:value>it_IT</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:mountpoint" sv:type="String">
+              <sv:value>/hst:hst/hst:sites/demosite_it</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:pagenotfound" sv:type="String">
+              <sv:value>error</sv:value>
+            </sv:property>
+          </sv:node>
+          <sv:node sv:name="demosite_de">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hst:mount</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:homepage" sv:type="String">
+              <sv:value>wikipedia</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:locale" sv:type="String">
+              <sv:value>de_DE</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:mountpoint" sv:type="String">
+              <sv:value>/hst:hst/hst:sites/demosite_de</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:pagenotfound" sv:type="String">
+              <sv:value>error</sv:value>
+            </sv:property>
+          </sv:node>
+          <sv:node sv:name="demosite_nl">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hst:mount</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:homepage" sv:type="String">
+              <sv:value>wikipedia</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:locale" sv:type="String">
+              <sv:value>nl_NL</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:mountpoint" sv:type="String">
+              <sv:value>/hst:hst/hst:sites/demosite_nl</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:pagenotfound" sv:type="String">
+              <sv:value>error</sv:value>
+            </sv:property>
+          </sv:node>
+          <sv:node sv:name="restapi">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hst:mount</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:alias" sv:type="String">
+              <sv:value>restapi</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:authenticated" sv:type="Boolean">
+              <sv:value>false</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:isSite" sv:type="Boolean">
+              <sv:value>false</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:mountassets" sv:type="String">
+              <sv:value>restapi-assets</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:mountgallery" sv:type="String">
+              <sv:value>restapi-gallery</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:mountsite" sv:type="String">
+              <sv:value>site</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:namedpipeline" sv:type="String">
+              <sv:value>JaxrsRestContentPipeline</sv:value>
+            </sv:property>
+            <sv:property sv:multiple="true" sv:name="hst:roles" sv:type="String">
+              <sv:value>everybody</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:subjectbasedsession" sv:type="Boolean">
+              <sv:value>true</sv:value>
+            </sv:property>
+            <sv:property sv:multiple="true" sv:name="hst:types" sv:type="String">
+              <sv:value>rest</sv:value>
+            </sv:property>
+            <sv:node sv:name="gallery">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:mount</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:alias" sv:type="String">
+                <sv:value>restapi-gallery</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:isSite" sv:type="Boolean">
+                <sv:value>false</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:ismapped" sv:type="Boolean">
+                <sv:value>false</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:mountassets" sv:type="String">
+                <sv:value>restapi-assets</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:mountpoint" sv:type="String">
+                <sv:value>/content/gallery</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:mountrest" sv:type="String">
+                <sv:value>restapi</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:mountsite" sv:type="String">
+                <sv:value>site</sv:value>
+              </sv:property>
+              <sv:property sv:multiple="true" sv:name="hst:types" sv:type="String">
+                <sv:value>rest</sv:value>
+              </sv:property>
+            </sv:node>
+            <sv:node sv:name="assets">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:mount</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:alias" sv:type="String">
+                <sv:value>restapi-assets</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:isSite" sv:type="Boolean">
+                <sv:value>false</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:ismapped" sv:type="Boolean">
+                <sv:value>false</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:mountpoint" sv:type="String">
+                <sv:value>/content/assets</sv:value>
+              </sv:property>
+              <sv:property sv:multiple="true" sv:name="hst:types" sv:type="String">
+                <sv:value>rest</sv:value>
+              </sv:property>
+            </sv:node>
+          </sv:node>
+          <sv:node sv:name="restservices">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hst:mount</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:alias" sv:type="String">
+              <sv:value>restservices</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:isSite" sv:type="Boolean">
+              <sv:value>false</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:ismapped" sv:type="Boolean">
+              <sv:value>true</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:namedpipeline" sv:type="String">
+              <sv:value>JaxrsRestPlainPipeline</sv:value>
+            </sv:property>
+            <sv:property sv:multiple="true" sv:name="hst:types" sv:type="String">
+              <sv:value>rest</sv:value>
+            </sv:property>
+          </sv:node>
+          <sv:node sv:name="preview">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hst:mount</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:alias" sv:type="String">
+              <sv:value>site</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:authenticated" sv:type="Boolean">
+              <sv:value>true</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:channelpath" sv:type="String">
+              <sv:value>/hst:hst/hst:channels/demosite</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:mountpoint" sv:type="String">
+              <sv:value>/hst:hst/hst:sites/demosite</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:mountrest" sv:type="String">
+              <sv:value>restapi</sv:value>
+            </sv:property>
+            <sv:property sv:multiple="true" sv:name="hst:roles" sv:type="String">
+              <sv:value>everybody</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:type" sv:type="String">
+              <sv:value>preview</sv:value>
+            </sv:property>
+            <sv:node sv:name="demosite_fr">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:mount</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:alias" sv:type="String">
+                <sv:value>fr_site</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:channelpath" sv:type="String">
+                <sv:value>/hst:hst/hst:channels/demosite-fr</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:homepage" sv:type="String">
+                <sv:value>accueil</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:locale" sv:type="String">
+                <sv:value>fr_FR</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:mountpoint" sv:type="String">
+                <sv:value>/hst:hst/hst:sites/demosite_fr</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:pagenotfound" sv:type="String">
+                <sv:value>erreur</sv:value>
+              </sv:property>
+            </sv:node>
+            <sv:node sv:name="restapi">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:mount</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:alias" sv:type="String">
+                <sv:value>restapi</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:authenticated" sv:type="Boolean">
+                <sv:value>false</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:isSite" sv:type="Boolean">
+                <sv:value>false</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:mountassets" sv:type="String">
+                <sv:value>restapi-assets</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:mountgallery" sv:type="String">
+                <sv:value>restapi-gallery</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:mountsite" sv:type="String">
+                <sv:value>site</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:namedpipeline" sv:type="String">
+                <sv:value>JaxrsRestContentPipeline</sv:value>
+              </sv:property>
+              <sv:property sv:multiple="true" sv:name="hst:roles" sv:type="String">
+                <sv:value>everybody</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:subjectbasedsession" sv:type="Boolean">
+                <sv:value>true</sv:value>
+              </sv:property>
+              <sv:property sv:multiple="true" sv:name="hst:types" sv:type="String">
+                <sv:value>preview-rest</sv:value>
+              </sv:property>
+              <sv:node sv:name="gallery">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hst:mount</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:alias" sv:type="String">
+                  <sv:value>restapi-gallery</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:isSite" sv:type="Boolean">
+                  <sv:value>false</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:ismapped" sv:type="Boolean">
+                  <sv:value>false</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:mountassets" sv:type="String">
+                  <sv:value>restapi-assets</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:mountpoint" sv:type="String">
+                  <sv:value>/content/gallery</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:mountrest" sv:type="String">
+                  <sv:value>restapi</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:mountsite" sv:type="String">
+                  <sv:value>site</sv:value>
+                </sv:property>
+                <sv:property sv:multiple="true" sv:name="hst:types" sv:type="String">
+                  <sv:value>preview-rest</sv:value>
+                </sv:property>
+              </sv:node>
+              <sv:node sv:name="assets">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hst:mount</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:alias" sv:type="String">
+                  <sv:value>restapi-assets</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:isSite" sv:type="Boolean">
+                  <sv:value>false</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:ismapped" sv:type="Boolean">
+                  <sv:value>false</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:mountpoint" sv:type="String">
+                  <sv:value>/content/assets</sv:value>
+                </sv:property>
+                <sv:property sv:multiple="true" sv:name="hst:types" sv:type="String">
+                  <sv:value>preview-rest</sv:value>
+                </sv:property>
+              </sv:node>
+            </sv:node>
+            <sv:node sv:name="restservices">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:mount</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:alias" sv:type="String">
+                <sv:value>restservices</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:isSite" sv:type="Boolean">
+                <sv:value>false</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:ismapped" sv:type="Boolean">
+                <sv:value>true</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:namedpipeline" sv:type="String">
+                <sv:value>JaxrsRestPlainPipeline</sv:value>
+              </sv:property>
+              <sv:property sv:multiple="true" sv:name="hst:types" sv:type="String">
+                <sv:value>preview-rest</sv:value>
+              </sv:property>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+</sv:node>

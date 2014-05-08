@@ -27,7 +27,7 @@ limitations under the License. -->
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:virtualhost</sv:value>
     </sv:property>
-    <sv:node sv:name="www">
+    <sv:node sv:name="dev">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:virtualhost</sv:value>
       </sv:property>

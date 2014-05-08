@@ -317,6 +317,8 @@ linear-algebra/src/main/resources/META-INF/hst-assembly/addon/module.xml -text
 linear-algebra/src/main/resources/META-INF/hst-assembly/addon/org/hippoecm/hst/demo/addonmodules/linearalgebra/base.xml -text
 /mysql_setup_patch.patch -text
 /pom.xml svneol=native#text/plain
+prod-server-config/src/main/resources/hippoecm-extension.xml -text
+prod-server-config/src/main/resources/hst-hst/hst-prod-hosts.xml -text
 random-numbers/pom.xml -text
 random-numbers/src/main/java/org/hippoecm/hst/demo/addonmodules/randomnumbers/RandomGeneratorImpl.java -text
 random-numbers/src/main/resources/META-INF/hst-assembly/addon/module.xml -text
