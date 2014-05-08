@@ -179,10 +179,7 @@
         "libraries": [
             {
                 "items": [
-                    {
-                        "component": "searchPlugin",
-                        "file": "searchPlugin.js"
-                    }
+
                 ]
             }
         ]
@@ -203,12 +200,7 @@
         },
         "libraries": [
             {
-                "items": [
-                    {
-                        "component": "bannerPlugin",
-                        "file": "bannerPlugin.js"
-                    }
-                ]
+                "items": []
             }
         ],
         "dependencies": [
@@ -238,12 +230,7 @@
         },
         "libraries": [
             {
-                "items": [
-                    {
-                        "component": "menuPlugin",
-                        "file": "menuPlugin.js"
-                    }
-                ]
+                "items": []
             }
         ]
     },
@@ -264,10 +251,7 @@
         "libraries": [
             {
                 "items": [
-                    {
-                        "component": "simpleContent",
-                        "file": "simpleContent.js"
-                    }
+
                 ]
             }
         ]
@@ -339,10 +323,7 @@
         "libraries": [
             {
                 "items": [
-                    {
-                        "component": "eventsPlugin",
-                        "file": "eventsPlugin.js"
-                    }
+
                 ]
             }
         ]
@@ -365,10 +346,7 @@
         "libraries": [
             {
                 "items": [
-                    {
-                        "component": "listContentPlugin",
-                        "file": "listContentPlugin.js"
-                    }
+
                 ]
             }
         ]
@@ -391,10 +369,7 @@
         "libraries": [
             {
                 "items": [
-                    {
-                        "component": "newsPlugin",
-                        "file": "newsPlugin.js"
-                    }
+
                 ]
             }
         ]

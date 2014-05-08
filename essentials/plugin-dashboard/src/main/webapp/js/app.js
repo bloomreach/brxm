@@ -267,7 +267,7 @@
                     buttonText: '@',
                     sample: '@'
                 },
-                template: '<div class="panel-heading">{{pluginTitle}}</div> \
+                template: '<div class="panel panel-default"><div class="panel-heading">{{pluginTitle}}</div> \
             <div class="panel-body"> \
                 <form novalidate name="templateForm"> \
             <div class="form-group"> \
@@ -303,7 +303,7 @@
                     <button class="btn btn-primary pull-right" type="submit" ng-click="run()">{{buttonText}}</button>\
                 </span> \
                 </div> \
-            </div>',
+            </div></div>',
                 controller: function ($scope, $sce, $log, $rootScope, $http) {
                     $scope.pluginId = "eventsPlugin";
                     $scope.sampleData = true;

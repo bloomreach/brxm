@@ -148,7 +148,6 @@ dashboard-plugins/banner-plugin/pom.xml -text
 dashboard-plugins/banner-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/banner/BannerInstructionPackage.java -text
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/banner_instructions.xml -text
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/resources/plugins/bannerPlugin/bannerPlugin.html -text
-dashboard-plugins/banner-plugin/src/main/resources/META-INF/resources/plugins/bannerPlugin/bannerPlugin.js -text
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/banner-plugin/src/main/resources/freemarker/essentials-banner.ftl -text
 dashboard-plugins/banner-plugin/src/main/resources/freemarker/essentials-carousel.ftl -text
@@ -325,7 +324,6 @@ dashboard-plugins/dashboard-events-plugin/pom.xml -text
 dashboard-plugins/dashboard-events-plugin/src/main/java/org/onehippo/cms7/essentials/packaging/EventsInstructionPackage.java -text
 dashboard-plugins/dashboard-events-plugin/src/main/resources/META-INF/events_package_instructions.xml -text
 dashboard-plugins/dashboard-events-plugin/src/main/resources/META-INF/resources/plugins/eventsPlugin/eventsPlugin.html -text
-dashboard-plugins/dashboard-events-plugin/src/main/resources/META-INF/resources/plugins/eventsPlugin/eventsPlugin.js -text
 dashboard-plugins/dashboard-events-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/dashboard-events-plugin/src/main/resources/freemarker/eventslist-main-eventslist.ftl -text
 dashboard-plugins/dashboard-events-plugin/src/main/resources/freemarker/eventspage-main.ftl -text
@@ -359,7 +357,6 @@ dashboard-plugins/dashboard-list-content-plugin/pom.xml -text
 dashboard-plugins/dashboard-list-content-plugin/src/main/java/org/onehippo/cms7/essentials/packaging/GenericListContentInstructionPackage.java -text
 dashboard-plugins/dashboard-list-content-plugin/src/main/resources/META-INF/list_content_instructions.xml -text
 dashboard-plugins/dashboard-list-content-plugin/src/main/resources/META-INF/resources/plugins/listContentPlugin/listContentPlugin.html -text
-dashboard-plugins/dashboard-list-content-plugin/src/main/resources/META-INF/resources/plugins/listContentPlugin/listContentPlugin.js -text
 dashboard-plugins/dashboard-list-content-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/dashboard-list-content-plugin/src/main/resources/freemarker/content-component.ftl -text
 dashboard-plugins/dashboard-list-content-plugin/src/main/resources/freemarker/list-component.ftl -text
@@ -379,7 +376,6 @@ dashboard-plugins/dashboard-news-plugin/pom.xml -text
 dashboard-plugins/dashboard-news-plugin/src/main/java/org/onehippo/cms7/essentials/packaging/NewsInstructionPackage.java -text
 dashboard-plugins/dashboard-news-plugin/src/main/resources/META-INF/news_package_instructions.xml -text
 dashboard-plugins/dashboard-news-plugin/src/main/resources/META-INF/resources/plugins/newsPlugin/newsPlugin.html -text
-dashboard-plugins/dashboard-news-plugin/src/main/resources/META-INF/resources/plugins/newsPlugin/newsPlugin.js -text
 dashboard-plugins/dashboard-news-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/dashboard-news-plugin/src/main/resources/freemarker/newslist-main-newslist.ftl -text
 dashboard-plugins/dashboard-news-plugin/src/main/resources/freemarker/newspage-main.ftl -text
@@ -480,7 +476,6 @@ dashboard-plugins/menu-plugin/pom.xml -text
 dashboard-plugins/menu-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/menu/MenuInstructionPackage.java -text
 dashboard-plugins/menu-plugin/src/main/resources/META-INF/menu_instructions.xml -text
 dashboard-plugins/menu-plugin/src/main/resources/META-INF/resources/plugins/menuPlugin/menuPlugin.html -text
-dashboard-plugins/menu-plugin/src/main/resources/META-INF/resources/plugins/menuPlugin/menuPlugin.js -text
 dashboard-plugins/menu-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/menu-plugin/src/main/resources/freemarker/essentials-menu.ftl -text
 dashboard-plugins/menu-plugin/src/main/resources/hst/catalog/menu-catalog-item.xml -text
@@ -494,7 +489,6 @@ dashboard-plugins/pom.xml -text
 dashboard-plugins/search-plugin/pom.xml -text
 dashboard-plugins/search-plugin/src/main/java/org/onehippo/essentials/plugins/search/SearchPluginInstructionPackage.java -text
 dashboard-plugins/search-plugin/src/main/resources/META-INF/resources/plugins/searchPlugin/searchPlugin.html -text
-dashboard-plugins/search-plugin/src/main/resources/META-INF/resources/plugins/searchPlugin/searchPlugin.js -text
 dashboard-plugins/search-plugin/src/main/resources/META-INF/searchPlugin_instructions.xml -text
 dashboard-plugins/search-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/search-plugin/src/main/resources/instructions/freemarker/search-box.ftl -text
@@ -512,7 +506,6 @@ dashboard-plugins/search-plugin/src/main/resources/instructions/xml/hst/search-s
 dashboard-plugins/simple-content/pom.xml -text
 dashboard-plugins/simple-content/src/main/java/org/onehippo/cms7/essentials/dashboard/simplecontent/SimpleContentInstructionPackage.java -text
 dashboard-plugins/simple-content/src/main/resources/META-INF/resources/plugins/simpleContent/simpleContent.html -text
-dashboard-plugins/simple-content/src/main/resources/META-INF/resources/plugins/simpleContent/simpleContent.js -text
 dashboard-plugins/simple-content/src/main/resources/META-INF/simpleContent_instructions.xml -text
 dashboard-plugins/simple-content/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/simple-content/src/main/resources/config/new-content-document.xml -text
