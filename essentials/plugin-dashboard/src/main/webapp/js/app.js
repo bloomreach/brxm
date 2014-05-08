@@ -110,7 +110,7 @@
             $rootScope.headerMessage = "Welcome on the Hippo Trail";
             // routing listener
             $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
-                  // noop
+                // noop
 
             });
 
@@ -216,12 +216,12 @@
                 restrict: 'E',
                 scope: {
                     label: '@',
-                    packageMessages: '='
+                    payload:'='
                 },
                 template: '<accordion close-others="oneAtATime"> \
                     <accordion-group is-open="isopen"> \
                     <accordion-heading ng-class="active"> \
-                    Display changes made by this plugin \
+                    {{label ? label : "Display changes made by this plugin"}}\
                     <i class="pull-right glyphicon" ng-class="{\'glyphicon-chevron-down\': isopen, \'glyphicon-chevron-right\': !isopen}"></i> \
                     </accordion-heading> \
                     <div ng-repeat="message in packageMessages.items" ng-switch="message.displayType"> \
@@ -241,7 +241,28 @@
                     <div ng-switch-when="BR"><br/></div> \
                     <div ng-switch-default class="alert-info"><br/>{{message.value}}</div> \
                     </div></accordion-group> \
-                    </accordion>'
+                    </accordion>',
+                controller: function ($scope, installerFactory) {
+                    // refresh messages when changes are made:
+                    $scope.$watch('payload', function (newValue, oldValue) {
+                        if (newValue) {
+                            return installerFactory.packageMessages($scope.payload).success(function (data) {
+                                return $scope.packageMessages = data;
+                            });
+                        }
+                    }, true);
+                    return installerFactory.packageMessages($scope.payload).success(function (data) {
+                        return $scope.packageMessages = data;
+                    });
+                }
+            }
+        })
+        .factory('installerFactory', function ($http, $rootScope) {
+            var packageMessages = function (payload) {
+                return $http.post($rootScope.REST.packageMessages, payload);
+            };
+            return {
+                packageMessages: packageMessages
             };
         })
 

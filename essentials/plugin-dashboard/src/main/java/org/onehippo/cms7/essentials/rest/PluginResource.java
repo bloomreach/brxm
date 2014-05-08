@@ -235,10 +235,6 @@ public class PluginResource extends BaseResource {
     }
 
 
-
-
-
-
     @ApiOperation(
             value = "Hides introduction screen",
             response = MessageRestful.class)
@@ -499,12 +495,23 @@ public class PluginResource extends BaseResource {
             notes = "Messages are only indication what might change, because a lot of operations are not executed, e.g. file copy if is not executed" +
                     "if file already exists.",
             response = PluginModuleRestful.class)
-    @GET
-    @Path("/changes/{packageClass}")
-    public RestfulList<MessageRestful> getInstructionPackageChanges(@Context ServletContext servletContext, @PathParam("packageClass") String packageClass) {
-        final RestfulList<MessageRestful> list = new RestfulList<>();
-        if (Strings.isNullOrEmpty(packageClass)) {
+    @POST
+    @Path("/changes/")
+    public RestfulList<MessageRestful> getInstructionPackageChanges(final PostPayloadRestful payload, @Context ServletContext servletContext) {
 
+        final Map<String, String> values = payload.getValues();
+        final String pluginId = values.get(PLUGIN_ID);
+        final Plugin myPlugin = getPluginById(pluginId, servletContext);
+
+        final RestfulList<MessageRestful> list = new RestfulList<>();
+        if (Strings.isNullOrEmpty(pluginId) || myPlugin == null) {
+            final MessageRestful resource = new MessageRestful("No valid InstructionPackage was selected");
+            resource.setSuccessMessage(false);
+            list.add(resource);
+            return list;
+        }
+        final String packageClass = myPlugin.getPackageClass();
+        if (Strings.isNullOrEmpty(packageClass)) {
             log.warn("No InstructionPackage class was given");
             return list;
         }

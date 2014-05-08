@@ -30,12 +30,22 @@
                         {'value': 'http://blog.jeroenreijn.com/feeds/posts/default', 'author':'Jeroen Rijn'}
                     ]
                 };
-                $scope.installSampleData = true;
+            $scope.pluginId = "blogPlugin";
+            $scope.sampleData = true;
+            $scope.templateName = 'jsp';
+            $scope.payload = {values: {pluginId: $scope.pluginId, sampleData: $scope.sampleData, templateName: $scope.templateName}};
+            $scope.$watchCollection("[sampleData, templateName]", function () {
+                $scope.payload = {values: {pluginId: $scope.pluginId, sampleData: $scope.sampleData, templateName: $scope.templateName}};
+            });
+            $scope.run = function () {
+                $http.post($rootScope.REST.package_install, $scope.payload).success(function (data) {
+                });
+            };
 
 
                 $scope.execute = function () {
                     var payload = Essentials.addPayloadData("templateName", $scope.templateName, null);
-                    Essentials.addPayloadData("sampleData", $scope.installSampleData, payload);
+                    Essentials.addPayloadData("sampleData", $scope.sampleData, payload);
                     Essentials.addPayloadData("pluginId", "blogPlugin", payload);
                     if ($scope.setupImport) {
                         // prefix importer values, so we have no key clashes:
@@ -92,12 +102,6 @@
                         $scope.importConfig.authorsBasePath = '/content/documents/' + $rootScope.projectSettings.namespace + '/blog' + '/authors';
                         $scope.importConfig.projectNamespace = $rootScope.projectSettings.namespace;
                     });
-                    // initialize messages
-                    $http.get($rootScope.REST.packageMessages + $rootScope.selectedPlugin.packageClass).success(function (data) {
-                        $scope.packageMessages = data;
-                    });
-
-
                 };
                 $scope.init();
             })
