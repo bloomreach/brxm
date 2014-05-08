@@ -25,7 +25,9 @@ import javax.jcr.Session;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tree.ITreeState;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
@@ -179,12 +181,17 @@ public class FolderTreePlugin extends RenderPlugin {
 
             @Override
             public void onTargetRespond(final AjaxRequestTarget target) {
-                if (findPage() != null) {
-                    super.onTargetRespond(target);
-                    target.appendJavaScript(treeHelperBehavior.getRenderString());
-                    if (workflowEnabled) {
-                        target.appendJavaScript(treeHelperBehavior.getUpdateString());
-                    }
+                super.onTargetRespond(target);
+                target.appendJavaScript(treeHelperBehavior.getRenderString());
+                if (workflowEnabled) {
+                    target.appendJavaScript(treeHelperBehavior.getUpdateString());
+                }
+            }
+
+            @Override
+            protected void addComponent(final AjaxRequestTarget target, final Component component) {
+                if (component.findParent(Page.class) != null) {
+                    super.addComponent(target, component);
                 }
             }
         };

@@ -271,15 +271,19 @@ public class ComparingController<P extends Item, C extends IModel> implements ID
 
     public void start(AbstractProvider<P,C> oldProvider, AbstractProvider<P,C> newProvider) {
         List<ItemValue<C>> oldItems = new LinkedList<ItemValue<C>>();
-        Iterator<C> oldIter = oldProvider.iterator(0, oldProvider.size());
-        while (oldIter.hasNext()) {
-            oldItems.add(new ItemValue<C>(comparer, oldIter.next()));
+        if (oldProvider != null) {
+            Iterator<C> oldIter = oldProvider.iterator(0, oldProvider.size());
+            while (oldIter.hasNext()) {
+                oldItems.add(new ItemValue<C>(comparer, oldIter.next()));
+            }
         }
 
         List<ItemValue<C>> newItems = new LinkedList<ItemValue<C>>();
-        Iterator<C> newIter = newProvider.iterator(0, newProvider.size());
-        while (newIter.hasNext()) {
-            newItems.add(new ItemValue<C>(comparer, newIter.next()));
+        if (newProvider != null) {
+            Iterator<C> newIter = newProvider.iterator(0, newProvider.size());
+            while (newIter.hasNext()) {
+                newItems.add(new ItemValue<C>(comparer, newIter.next()));
+            }
         }
 
         List<ItemValue> common = LCS.getLongestCommonSubsequence(oldItems.toArray(new ItemValue[oldItems.size()]),
