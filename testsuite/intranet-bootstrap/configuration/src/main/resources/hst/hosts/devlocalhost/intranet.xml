@@ -18,7 +18,7 @@ limitations under the License. -->
     <sv:value>hst:virtualhost</sv:value>
   </sv:property>
   <sv:property sv:name="hst:onlyforcontextpath" sv:type="String">
-    <sv:value>intranet</sv:value>
+    <sv:value>/intranet</sv:value>
   </sv:property>
   <sv:property sv:name="hst:homepage" sv:type="String">
     <sv:value>root</sv:value>
