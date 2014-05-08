@@ -877,8 +877,8 @@
       This tag replaces all the variables in the body content by the either current locale context or provided resource bundle.
     </description>
     <name>messagesReplace</name>
-    <tag-class>org.hippoecm.hst.tag.MesssagesReplaceTag</tag-class>
-    <tei-class>org.hippoecm.hst.tag.MesssagesReplaceTag$TEI</tei-class>
+    <tag-class>org.hippoecm.hst.tag.MessagesReplaceTag</tag-class>
+    <tei-class>org.hippoecm.hst.tag.MessagesReplaceTag$TEI</tei-class>
     <body-content>JSP</body-content>
     <attribute>
       <description>The variable name of the replaced string</description>

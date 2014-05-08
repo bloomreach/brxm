@@ -405,7 +405,7 @@ client/src/main/java/org/hippoecm/hst/tag/HstLinkTag.java svneol=native#text/pla
 client/src/main/java/org/hippoecm/hst/tag/HstRenderURLTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/tag/HstResourceURLTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/tag/HstTagSupport.java -text svneol=unset#text/plain
-client/src/main/java/org/hippoecm/hst/tag/MesssagesReplaceTag.java -text
+client/src/main/java/org/hippoecm/hst/tag/MessagesReplaceTag.java -text
 client/src/main/java/org/hippoecm/hst/tag/NamespaceTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/tag/ParamContainerTag.java -text svneol=unset#text/plain
 client/src/main/java/org/hippoecm/hst/tag/ParamTag.java svneol=native#text/plain

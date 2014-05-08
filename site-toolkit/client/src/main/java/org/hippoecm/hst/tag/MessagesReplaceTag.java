@@ -41,7 +41,7 @@ import org.hippoecm.hst.utils.MessageUtils;
 /**
  * Messages Replacing Tag by resource bundle
  */
-public class MesssagesReplaceTag extends BodyTagSupport {
+public class MessagesReplaceTag extends BodyTagSupport {
 
     private static final long serialVersionUID = 1L;
 
