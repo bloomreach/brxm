@@ -112,6 +112,7 @@ public class HstElementTag extends BodyTagSupport {
         name = null;
         element = null;
         parentElement = null;
+        bodyContent = null;
     }
 
 
