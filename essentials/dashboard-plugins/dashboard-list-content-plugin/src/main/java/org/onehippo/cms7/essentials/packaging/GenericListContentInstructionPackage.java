@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.powerpack;
+package org.onehippo.cms7.essentials.packaging;
 
 import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructionPackage;
 import org.springframework.stereotype.Component;

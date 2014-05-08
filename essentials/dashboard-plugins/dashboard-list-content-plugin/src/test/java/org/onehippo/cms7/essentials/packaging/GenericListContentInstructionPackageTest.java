@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.powerpack;
+package org.onehippo.cms7.essentials.packaging;
 
 import java.io.File;
 import java.util.Set;

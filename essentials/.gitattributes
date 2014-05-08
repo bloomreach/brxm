@@ -322,7 +322,7 @@ dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/META-INF/web
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/content_blocks_nodetype.xml -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/content_blocks_template.xml -text
 dashboard-plugins/dashboard-events-plugin/pom.xml -text
-dashboard-plugins/dashboard-events-plugin/src/main/java/org/onehippo/cms7/essentials/powerpack/EventsInstructionPackage.java -text
+dashboard-plugins/dashboard-events-plugin/src/main/java/org/onehippo/cms7/essentials/packaging/EventsInstructionPackage.java -text
 dashboard-plugins/dashboard-events-plugin/src/main/resources/META-INF/events_package_instructions.xml -text
 dashboard-plugins/dashboard-events-plugin/src/main/resources/META-INF/resources/plugins/eventsPlugin/eventsPlugin.html -text
 dashboard-plugins/dashboard-events-plugin/src/main/resources/META-INF/resources/plugins/eventsPlugin/eventsPlugin.js -text
@@ -352,11 +352,11 @@ dashboard-plugins/dashboard-events-plugin/src/main/resources/xml/samples/content
 dashboard-plugins/dashboard-events-plugin/src/main/resources/xml/samples/content/documents/events/sample_introduction_speech.xml -text
 dashboard-plugins/dashboard-events-plugin/src/main/resources/xml/samples/content/documents/events/sample_workshop.xml -text
 dashboard-plugins/dashboard-events-plugin/src/main/resources/xml/samples/content/gallery/samples.xml -text
-dashboard-plugins/dashboard-events-plugin/src/test/java/org/onehippo/cms7/essentials/powerpack/EventsInstructionPackageTest.java -text
+dashboard-plugins/dashboard-events-plugin/src/test/java/org/onehippo/cms7/essentials/packaging/EventsInstructionPackageTest.java -text
 dashboard-plugins/dashboard-events-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/dashboard-gallery-plugin/pom.xml -text
 dashboard-plugins/dashboard-list-content-plugin/pom.xml -text
-dashboard-plugins/dashboard-list-content-plugin/src/main/java/org/onehippo/cms7/essentials/powerpack/GenericListContentInstructionPackage.java -text
+dashboard-plugins/dashboard-list-content-plugin/src/main/java/org/onehippo/cms7/essentials/packaging/GenericListContentInstructionPackage.java -text
 dashboard-plugins/dashboard-list-content-plugin/src/main/resources/META-INF/list_content_instructions.xml -text
 dashboard-plugins/dashboard-list-content-plugin/src/main/resources/META-INF/resources/plugins/listContentPlugin/listContentPlugin.html -text
 dashboard-plugins/dashboard-list-content-plugin/src/main/resources/META-INF/resources/plugins/listContentPlugin/listContentPlugin.js -text
@@ -373,10 +373,10 @@ dashboard-plugins/dashboard-list-content-plugin/src/main/resources/xml/hst/templ
 dashboard-plugins/dashboard-list-content-plugin/src/main/resources/xml/hst/templates/content-component-jsp.xml -text
 dashboard-plugins/dashboard-list-content-plugin/src/main/resources/xml/hst/templates/list-component-freemarker.xml -text
 dashboard-plugins/dashboard-list-content-plugin/src/main/resources/xml/hst/templates/list-component-jsp.xml -text
-dashboard-plugins/dashboard-list-content-plugin/src/test/java/org/onehippo/cms7/essentials/powerpack/GenericListContentInstructionPackageTest.java -text
+dashboard-plugins/dashboard-list-content-plugin/src/test/java/org/onehippo/cms7/essentials/packaging/GenericListContentInstructionPackageTest.java -text
 dashboard-plugins/dashboard-list-content-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/dashboard-news-plugin/pom.xml -text
-dashboard-plugins/dashboard-news-plugin/src/main/java/org/onehippo/cms7/essentials/powerpack/NewsInstructionPackage.java -text
+dashboard-plugins/dashboard-news-plugin/src/main/java/org/onehippo/cms7/essentials/packaging/NewsInstructionPackage.java -text
 dashboard-plugins/dashboard-news-plugin/src/main/resources/META-INF/news_package_instructions.xml -text
 dashboard-plugins/dashboard-news-plugin/src/main/resources/META-INF/resources/plugins/newsPlugin/newsPlugin.html -text
 dashboard-plugins/dashboard-news-plugin/src/main/resources/META-INF/resources/plugins/newsPlugin/newsPlugin.js -text
@@ -406,7 +406,7 @@ dashboard-plugins/dashboard-news-plugin/src/main/resources/xml/samples/content/d
 dashboard-plugins/dashboard-news-plugin/src/main/resources/xml/samples/content/documents/news/sample_harvest.xml -text
 dashboard-plugins/dashboard-news-plugin/src/main/resources/xml/samples/content/documents/news/sample_medusa.xml -text
 dashboard-plugins/dashboard-news-plugin/src/main/resources/xml/samples/content/gallery/samples.xml -text
-dashboard-plugins/dashboard-news-plugin/src/test/java/org/onehippo/cms7/essentials/powerpack/NewsInstructionPackageTest.java -text
+dashboard-plugins/dashboard-news-plugin/src/test/java/org/onehippo/cms7/essentials/packaging/NewsInstructionPackageTest.java -text
 dashboard-plugins/dashboard-news-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/dashboard-restservices-plugin/pom.xml -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/MountRestful.java -text

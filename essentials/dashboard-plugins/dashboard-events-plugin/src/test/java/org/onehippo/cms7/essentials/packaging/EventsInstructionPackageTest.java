@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.powerpack;
+package org.onehippo.cms7.essentials.packaging;
 
 import java.io.File;
 import java.util.Set;
@@ -34,10 +34,10 @@ import static org.junit.Assert.assertEquals;
 /**
  * @version "$Id$"
  */
-public class NewsInstructionPackageTest extends BaseRepositoryTest {
+public class EventsInstructionPackageTest extends BaseRepositoryTest {
 
 
-    public static final int TOTAL_INSTRUCTIONS = 11;
+    public static final int TOTAL_INSTRUCTIONS = 8;
 
 
 
@@ -54,7 +54,7 @@ public class NewsInstructionPackageTest extends BaseRepositoryTest {
 
     @Test
     public void testParseInstructions() throws Exception {
-        final InstructionPackage instructionPackage = new NewsInstructionPackage();
+        final InstructionPackage instructionPackage = new EventsInstructionPackage();
         injector.autowireBean(instructionPackage);
         final Instructions instructions = instructionPackage.getInstructions();
         final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
