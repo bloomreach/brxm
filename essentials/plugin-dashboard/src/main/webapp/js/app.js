@@ -295,7 +295,7 @@
                 </div> \
             \
         </form> \
-        <messages  payload="payload"/> \
+        <messages  payload="payload" label="{{label}}"/> \
          </div> \
         <div class="panel-footer">    \
             <div class = "input-group">\
