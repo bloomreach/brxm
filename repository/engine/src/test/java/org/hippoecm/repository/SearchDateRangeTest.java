@@ -144,7 +144,8 @@ public class SearchDateRangeTest extends RepositoryTestCase {
         int attempts = 0;
         boolean success = false;
         AssertionError error = null;
-        while (!success && attempts < 50) {
+        // multiple attempts because search results are not always immediately available after save (see REPO-878)
+        while (!success && attempts < 10) {
             try {
                 for (DateTools.Resolution resolution : DateTools.getSupportedResolutions()) {
                     String dateWithResolution = DateTools.createXPathConstraint(session, calToday, resolution);
@@ -166,7 +167,7 @@ public class SearchDateRangeTest extends RepositoryTestCase {
             throw error;
         }
         if (attempts > 0) {
-            log.error("Needed " + attempts + " attempts " + attempts*100 + " ms. to pass test");
+            log.debug("Needed " + attempts + " attempts, " + attempts*100 + " ms. to pass test");
         }
     }
 
