@@ -6,7 +6,7 @@
                 ${dollar}scope.endpoint = ${dollar}rootScope.REST.dynamic + '${PLUGIN_NAME}/';
                 ${dollar}scope.message = {};
                 ${dollar}scope.run = function() {
-                        #if ($PLUGIN_GROUP == "powerpacks")
+                        #if ($PLUGIN_GROUP == "package")
                         var payload = Essentials.addPayloadData("sampleData", ${dollar}scope.sampleData, null);
                         Essentials.addPayloadData("templateName", ${dollar}scope.templateName, payload);
                         ${dollar}http.post(${dollar}scope.endpoint, payload).success(function (data) {

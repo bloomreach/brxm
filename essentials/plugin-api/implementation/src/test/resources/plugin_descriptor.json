@@ -94,7 +94,7 @@
         "introduction": "Basic News and Events site",
         "name": "Basic News and Events site",
         "pluginId": "newsEventsPowerpack",
-        "powerpackClass": "org.onehippo.cms7.essentials.powerpack.BasicPowerpack",
+        "packageClass": "org.onehippo.cms7.essentials.powerpack.BasicPowerpack",
 
         "restClasses": [],
         "type": "powerpacks",
