@@ -54,8 +54,8 @@ import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
-import org.onehippo.cms7.essentials.dashboard.packaging.CommonsPowerpack;
-import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
+import org.onehippo.cms7.essentials.dashboard.packaging.CommonsInstructionPackage;
+import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
@@ -186,19 +186,19 @@ public class PluginResource extends BaseResource {
 
 
     @ApiOperation(
-            value = "Installs selected powerpack package",
-            notes = "Use PostPayloadRestful and set powerpack id property (pluginId)",
+            value = "Installs selected instruction package",
+            notes = "Use PostPayloadRestful and set InstructionPackage id property (pluginId)",
             response = RestfulList.class)
     @POST
-    @Path("/install/powerpack")
-    public MessageRestful installPowerpack(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) throws Exception {
+    @Path("/install/package")
+    public MessageRestful installInstructionPackage(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) throws Exception {
 
         final Map<String, String> values = payloadRestful.getValues();
         final String pluginId = String.valueOf(values.get(PLUGIN_ID));
         Plugin myPlugin = getPluginById(pluginId, servletContext);
 
         if (Strings.isNullOrEmpty(pluginId) || myPlugin == null) {
-            final MessageRestful resource = new MessageRestful("No valid powerpack was selected");
+            final MessageRestful resource = new MessageRestful("No valid InstructionPackage was selected");
             resource.setSuccessMessage(false);
             return resource;
         }
@@ -218,16 +218,16 @@ public class PluginResource extends BaseResource {
             //############################################
             // EXECUTE SKELETON:
             //############################################
-            final PowerpackPackage commonsPack = new CommonsPowerpack();
-            getInjector().autowireBean(commonsPack);
-            commonsPack.setProperties(new HashMap<String, Object>(values));
-            commonsPack.execute(context);
+            final InstructionPackage commonPackage = new CommonsInstructionPackage();
+            getInjector().autowireBean(commonPackage);
+            commonPackage.setProperties(new HashMap<String, Object>(values));
+            commonPackage.execute(context);
 
-            // execute powerpack itself
-            final PowerpackPackage powerpackPackage = GlobalUtils.newInstance(myPlugin.getPowerpackClass());
-            powerpackPackage.setProperties(new HashMap<String, Object>(values));
-            getInjector().autowireBean(powerpackPackage);
-            powerpackPackage.execute(context);
+            // execute InstructionPackage itself
+            final InstructionPackage instructionPackage = GlobalUtils.newInstance(myPlugin.getPackageClass());
+            instructionPackage.setProperties(new HashMap<String, Object>(values));
+            getInjector().autowireBean(instructionPackage);
+            instructionPackage.execute(context);
 
 
         }
@@ -258,7 +258,7 @@ public class PluginResource extends BaseResource {
 
         } catch (Exception e) {
 
-            log.error("Error checking powerpack status", e);
+            log.error("Error checking InstructionPackage status", e);
         }
 
         final MessageRestful messageRestful = new MessageRestful();
@@ -443,10 +443,10 @@ public class PluginResource extends BaseResource {
 
     @ApiOperation(
             value = "Populated StatusRestful object",
-            notes = "Status contains true value if one of the Powerpacks is installed",
+            notes = "Status contains true value if one of the InstructionPackage is installed",
             response = StatusRestful.class)
     @GET
-    @Path("/status/powerpack")
+    @Path("/status/package")
     public StatusRestful getMenu(@Context ServletContext servletContext) {
         final StatusRestful status = new StatusRestful();
         try {
@@ -463,14 +463,14 @@ public class PluginResource extends BaseResource {
 
         } catch (Exception e) {
 
-            log.error("Error checking powerpack status", e);
+            log.error("Error checking InstructionPackage status", e);
         }
         return status;
     }
 
     @ApiOperation(
             value = "Returns list of plugin Javascript modules",
-            notes = "Modules are prefixed with tool, plugin or powerpack dependent on their plugin type",
+            notes = "Modules are prefixed with tool, plugin or InstructionPackage dependent on their plugin type",
             response = PluginModuleRestful.class)
     @GET
     @Path("/modules")
@@ -500,24 +500,24 @@ public class PluginResource extends BaseResource {
                     "if file already exists.",
             response = PluginModuleRestful.class)
     @GET
-    @Path("/changes/{powerpackClass}")
-    public RestfulList<MessageRestful> getPowerpackChanges(@Context ServletContext servletContext, @PathParam("powerpackClass") String powerpackClass) {
+    @Path("/changes/{packageClass}")
+    public RestfulList<MessageRestful> getInstructionPackageChanges(@Context ServletContext servletContext, @PathParam("packageClass") String packageClass) {
         final RestfulList<MessageRestful> list = new RestfulList<>();
-        if (Strings.isNullOrEmpty(powerpackClass)) {
+        if (Strings.isNullOrEmpty(packageClass)) {
 
-            log.warn("No powerpack class was given");
+            log.warn("No InstructionPackage class was given");
             return list;
         }
-        final Class<?> clazz = GlobalUtils.loadCLass(powerpackClass);
+        final Class<?> clazz = GlobalUtils.loadCLass(packageClass);
         if (clazz == null) {
-            log.warn("Class was null for classname:  {}", powerpackClass);
+            log.warn("Class was null for classname:  {}", packageClass);
             return list;
         }
 
-        final PowerpackPackage powerpackPackage = (PowerpackPackage) GlobalUtils.newInstance(clazz);
-        getInjector().autowireBean(powerpackPackage);
+        final InstructionPackage instructionPackage = (InstructionPackage) GlobalUtils.newInstance(clazz);
+        getInjector().autowireBean(instructionPackage);
         @SuppressWarnings("unchecked")
-        final Set<KeyValueRestful> messages = (Set<KeyValueRestful>) powerpackPackage.getInstructionsMessages(getContext(servletContext));
+        final Set<KeyValueRestful> messages = (Set<KeyValueRestful>) instructionPackage.getInstructionsMessages(getContext(servletContext));
         for (KeyValueRestful message : messages) {
             list.add(new MessageRestful(message.getValue()));
         }

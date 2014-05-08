@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.menu;
+package org.onehippo.cms7.essentials.powerpack;
 
-import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportPowerpack;
+import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructionPackage;
+import org.springframework.stereotype.Component;
+
 
 /**
  * @version "$Id$"
  */
-public class MenuPowerpack extends TemplateSupportPowerpack {
-
-
+@Component
+public class NewsInstructionPackage extends TemplateSupportInstructionPackage {
     @Override
     public String getInstructionPath() {
-        return "/META-INF/menu_instructions.xml";
+        return "/META-INF/news_package_instructions.xml";
     }
 }

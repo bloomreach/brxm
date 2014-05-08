@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.blog;
+package org.onehippo.cms7.essentials.dashboard.banner;
 
-import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportPowerpack;
+import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructionPackage;
 
 /**
  * @version "$Id$"
  */
-public class BlogPowerpack extends TemplateSupportPowerpack {
+public class BannerInstructionPackage extends TemplateSupportInstructionPackage {
+
 
     @Override
     public String getInstructionPath() {
-        return "/META-INF/blog_instructions.xml";
+        return "/META-INF/banner_instructions.xml";
     }
 }

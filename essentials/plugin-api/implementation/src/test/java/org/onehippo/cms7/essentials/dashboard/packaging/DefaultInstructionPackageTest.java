@@ -32,32 +32,32 @@ import static org.junit.Assert.assertNotNull;
 /**
  * @version "$Id$"
  */
-public class DefaultPowerpackTest extends BaseTest {
+public class DefaultInstructionPackageTest extends BaseTest {
 
 
 
     @Test(expected = IllegalArgumentException.class)
-    public void testPowerpackNoInjection() throws Exception {
-        PowerpackPackage powerpackPackage = new DefaultPowerpack();
-        powerpackPackage.execute(getContext());
+    public void testInstructionPackageNoInjection() throws Exception {
+        InstructionPackage instructionPackage = new DefaultInstructionPackage();
+        instructionPackage.execute(getContext());
     }
 
     @Test
-    public void testPowerpack() throws Exception {
-        PowerpackPackage powerpackPackage = new DefaultPowerpack();
-        injector.autowireBean(powerpackPackage);
-        final String instructionPath = powerpackPackage.getInstructionPath();
-        assertEquals("Expected default path", instructionPath, DefaultPowerpack.DEFAULT_INSTRUCTIONS_PATH);
-        final Map<String, Object> properties = powerpackPackage.getProperties();
+    public void testInstructionPackage() throws Exception {
+        InstructionPackage instructionPackage = new DefaultInstructionPackage();
+        injector.autowireBean(instructionPackage);
+        final String instructionPath = instructionPackage.getInstructionPath();
+        assertEquals("Expected default path", instructionPath, DefaultInstructionPackage.DEFAULT_INSTRUCTIONS_PATH);
+        final Map<String, Object> properties = instructionPackage.getProperties();
         assertEquals("Expected empty property set", 0, properties.size());
-        final Set<String> groupNames = powerpackPackage.groupNames();
-        assertEquals("Expected default group names", DefaultPowerpack.DEFAULT_GROUPS.size(), groupNames.size());
-        assertEquals("Expected default group name", DefaultPowerpack.DEFAULT_GROUPS.iterator().next(), groupNames.iterator().next());
-        final InstructionParser parser = powerpackPackage.getInstructionParser();
+        final Set<String> groupNames = instructionPackage.groupNames();
+        assertEquals("Expected default group names", DefaultInstructionPackage.DEFAULT_GROUPS.size(), groupNames.size());
+        assertEquals("Expected default group name", DefaultInstructionPackage.DEFAULT_GROUPS.iterator().next(), groupNames.iterator().next());
+        final InstructionParser parser = instructionPackage.getInstructionParser();
         assertNotNull(parser);
-        final EventBus bus = powerpackPackage.getEventBus();
+        final EventBus bus = instructionPackage.getEventBus();
         assertNotNull(bus);
-        final Instructions instructions = powerpackPackage.getInstructions();
+        final Instructions instructions = instructionPackage.getInstructions();
         assertEquals("Expected no instructions", null, instructions);
 
     }

@@ -30,7 +30,7 @@ import com.google.common.eventbus.EventBus;
 /**
  * @version "$Id$"
  */
-public interface PowerpackPackage {
+public interface InstructionPackage {
 
 
     void setProperties(Map<String, Object> properties);

@@ -32,26 +32,26 @@ import static org.junit.Assert.assertNotNull;
 /**
  * @version "$Id$"
  */
-public class TemplateSupportPowerpackTest extends BaseTest {
+public class TemplateSupportInstructionPackageTest extends BaseTest {
 
 
     public static final int EXPECTED = 2;
 
     @Test
-    public void testPowerpack() throws Exception {
-        PowerpackPackage powerpackPackage = new TemplateSupportPowerpack();
-        injector.autowireBean(powerpackPackage);
-        final String instructionPath = powerpackPackage.getInstructionPath();
-        assertEquals("Expected default path", instructionPath, DefaultPowerpack.DEFAULT_INSTRUCTIONS_PATH);
-        final Map<String, Object> properties = powerpackPackage.getProperties();
+    public void testInstructionPackage() throws Exception {
+        InstructionPackage instructionPackage = new TemplateSupportInstructionPackage();
+        injector.autowireBean(instructionPackage);
+        final String instructionPath = instructionPackage.getInstructionPath();
+        assertEquals("Expected default path", instructionPath, DefaultInstructionPackage.DEFAULT_INSTRUCTIONS_PATH);
+        final Map<String, Object> properties = instructionPackage.getProperties();
         assertEquals("Expected empty property set", 0, properties.size());
-        final Set<String> groupNames = powerpackPackage.groupNames();
+        final Set<String> groupNames = instructionPackage.groupNames();
         assertEquals("Expected default group names", EXPECTED, groupNames.size());
-        final InstructionParser parser = powerpackPackage.getInstructionParser();
+        final InstructionParser parser = instructionPackage.getInstructionParser();
         assertNotNull(parser);
-        final EventBus bus = powerpackPackage.getEventBus();
+        final EventBus bus = instructionPackage.getEventBus();
         assertNotNull(bus);
-        final Instructions instructions = powerpackPackage.getInstructions();
+        final Instructions instructions = instructionPackage.getInstructions();
         assertEquals("Expected no instructions", null, instructions);
 
     }

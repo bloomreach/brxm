@@ -44,18 +44,18 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.eventbus.EventBus;
 
 /**
- * Default implementation of a powerpack. Reads instruction XML from {@code /META-INF/instructions.xml}
+ * Default implementation of a instruction package. Reads instruction XML from {@code /META-INF/instructions.xml}
  *
  * @version "$Id$"
  */
-public class DefaultPowerpack implements PowerpackPackage {
+public class DefaultInstructionPackage implements InstructionPackage {
 
 
     public static final ImmutableSet<String> DEFAULT_GROUPS = new ImmutableSet.Builder<String>().add(EssentialConst.INSTRUCTION_GROUP_DEFAULT).build();
     public static final String DEFAULT_INSTRUCTIONS_PATH = "/META-INF/instructions.xml";
     public static final String PROP_TEMPLATE_NAME = "templateName";
     public static final String PROP_SAMPLE_DATA = "sampleData";
-    private static Logger log = LoggerFactory.getLogger(DefaultPowerpack.class);
+    private static Logger log = LoggerFactory.getLogger(DefaultInstructionPackage.class);
 
     @Inject
     private InstructionParser instructionParser;
@@ -131,7 +131,7 @@ public class DefaultPowerpack implements PowerpackPackage {
                         .append('\n')
                         .append("If you are running a test case, make sure you autowire beans like:")
                         .append('\n')
-                        .append("PowerpackPackage powerpackPackage = new MyPowerpack();injector.autowireBean(powerpackPackage);")
+                        .append("InstructionPackage instructionPackage = new MyInstructionPackage();injector.autowireBean(instructionPackage);")
                         .append('\n')
                         .append("=============================================================================")
                         .append('\n');

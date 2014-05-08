@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package org.onehippo.essentials.plugins.search;
+package org.onehippo.cms7.essentials.dashboard.menu;
 
-import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportPowerpack;
+import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructionPackage;
 
+/**
+ * @version "$Id$"
+ */
+public class MenuInstructionPackage extends TemplateSupportInstructionPackage {
 
-public class SearchPluginPowerpack extends TemplateSupportPowerpack {
 
     @Override
     public String getInstructionPath() {
-        return "/META-INF/searchPlugin_instructions.xml";
+        return "/META-INF/menu_instructions.xml";
     }
 }

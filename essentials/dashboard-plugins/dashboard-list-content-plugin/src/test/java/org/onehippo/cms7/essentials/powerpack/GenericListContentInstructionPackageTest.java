@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
-import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
+import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
 import static org.junit.Assert.assertEquals;
@@ -34,10 +34,10 @@ import static org.junit.Assert.assertEquals;
 /**
  * @version "$Id$"
  */
-public class NewsPowerpackTest extends BaseRepositoryTest {
+public class GenericListContentInstructionPackageTest extends BaseRepositoryTest {
 
 
-    public static final int TOTAL_INSTRUCTIONS = 11;
+    public static final int TOTAL_INSTRUCTIONS = 3;
 
 
 
@@ -54,9 +54,9 @@ public class NewsPowerpackTest extends BaseRepositoryTest {
 
     @Test
     public void testParseInstructions() throws Exception {
-        final PowerpackPackage powerpackPackage = new NewsPowerpack();
-        injector.autowireBean(powerpackPackage);
-        final Instructions instructions = powerpackPackage.getInstructions();
+        final InstructionPackage instructionPackage = new GenericListContentInstructionPackage();
+        injector.autowireBean(instructionPackage);
+        final Instructions instructions = instructionPackage.getInstructions();
         final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
         assertEquals(TOTAL_INSTRUCTIONS, instructionSets.size());
     }

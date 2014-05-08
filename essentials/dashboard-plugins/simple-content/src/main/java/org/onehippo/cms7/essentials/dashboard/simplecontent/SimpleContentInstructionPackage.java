@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.powerpack;
+package org.onehippo.cms7.essentials.dashboard.simplecontent;
 
-import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportPowerpack;
-import org.springframework.stereotype.Component;
+import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructionPackage;
 
 
-/**
- * @version "$Id$"
- */
-@Component
-public class EventsPowerpack extends TemplateSupportPowerpack {
+public class SimpleContentInstructionPackage extends TemplateSupportInstructionPackage {
+
     @Override
     public String getInstructionPath() {
-        return "/META-INF/events_powerpack_instructions.xml";
+        return "/META-INF/simpleContent_instructions.xml";
     }
 }

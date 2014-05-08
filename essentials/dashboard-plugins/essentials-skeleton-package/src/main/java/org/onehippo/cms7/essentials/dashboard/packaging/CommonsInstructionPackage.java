@@ -24,12 +24,12 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Adds all files that are shared between other powerpacks,
+ * Adds all files that are shared between other installer packages,
  * like JSP/Freemarker includes, pagination, template skeleton etc.
  *
  * @version "$Id$"
  */
-public class CommonsPowerpack extends DefaultPowerpack {
+public class CommonsInstructionPackage extends DefaultInstructionPackage {
 
     @Override
     public Set<String> groupNames() {

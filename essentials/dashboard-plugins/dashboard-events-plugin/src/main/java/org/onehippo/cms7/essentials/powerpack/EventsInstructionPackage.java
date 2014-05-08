@@ -16,7 +16,7 @@
 
 package org.onehippo.cms7.essentials.powerpack;
 
-import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportPowerpack;
+import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructionPackage;
 import org.springframework.stereotype.Component;
 
 
@@ -24,9 +24,9 @@ import org.springframework.stereotype.Component;
  * @version "$Id$"
  */
 @Component
-public class GenericListContentPowerpack extends TemplateSupportPowerpack {
+public class EventsInstructionPackage extends TemplateSupportInstructionPackage {
     @Override
     public String getInstructionPath() {
-        return "/META-INF/list_content_instructions.xml";
+        return "/META-INF/events_package_instructions.xml";
     }
 }

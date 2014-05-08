@@ -29,7 +29,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * @version "$Id$"
  */
-public class CommonsPowerpackTest extends BaseRepositoryTest{
+public class CommonsInstructionPackageTest extends BaseRepositoryTest{
 
 
     public static final int INSTRUCTIONS_SIZE = 6;
@@ -37,18 +37,18 @@ public class CommonsPowerpackTest extends BaseRepositoryTest{
     @Test
     public void testGroupNames() throws Exception {
 
-        final PowerpackPackage powerpackPackage = new CommonsPowerpack();
-        injector.autowireBean(powerpackPackage);
-        final Instructions instructions = powerpackPackage.getInstructions();
+        final InstructionPackage instructionPackage = new CommonsInstructionPackage();
+        injector.autowireBean(instructionPackage);
+        final Instructions instructions = instructionPackage.getInstructions();
         final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
         Assert.assertTrue(instructionSets.size() == INSTRUCTIONS_SIZE);
-        powerpackPackage.execute(getContext());
+        instructionPackage.execute(getContext());
     }
 
     @Test
     public void testGetInstructionPath() throws Exception {
-        PowerpackPackage powerpackPackage = new CommonsPowerpack();
-        final String instructionPath = powerpackPackage.getInstructionPath();
+        InstructionPackage instructionPackage = new CommonsInstructionPackage();
+        final String instructionPath = instructionPackage.getInstructionPath();
         assertEquals(instructionPath, "/META-INF/commons_instructions.xml");
 
     }

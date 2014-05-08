@@ -100,12 +100,12 @@ public class DummyTestPlugin implements Plugin {
     }
 
     @Override
-    public String getPowerpackClass() {
+    public String getPackageClass() {
         return null;
     }
 
     @Override
-    public void setPowerpackClass(final String powerpackClass) {
+    public void setPackageClass(final String packageClass) {
 
     }
 
