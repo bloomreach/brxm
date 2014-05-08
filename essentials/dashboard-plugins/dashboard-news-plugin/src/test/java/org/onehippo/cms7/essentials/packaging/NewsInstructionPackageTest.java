@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.powerpack;
+package org.onehippo.cms7.essentials.packaging;
 
 import java.io.File;
 import java.util.Set;
@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
-import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
+import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
 import static org.junit.Assert.assertEquals;
@@ -34,10 +34,10 @@ import static org.junit.Assert.assertEquals;
 /**
  * @version "$Id$"
  */
-public class GenericListContentPowerpackTest extends BaseRepositoryTest {
+public class NewsInstructionPackageTest extends BaseRepositoryTest {
 
 
-    public static final int TOTAL_INSTRUCTIONS = 3;
+    public static final int TOTAL_INSTRUCTIONS = 11;
 
 
 
@@ -54,9 +54,9 @@ public class GenericListContentPowerpackTest extends BaseRepositoryTest {
 
     @Test
     public void testParseInstructions() throws Exception {
-        final PowerpackPackage powerpackPackage = new GenericListContentPowerpack();
-        injector.autowireBean(powerpackPackage);
-        final Instructions instructions = powerpackPackage.getInstructions();
+        final InstructionPackage instructionPackage = new NewsInstructionPackage();
+        injector.autowireBean(instructionPackage);
+        final Instructions instructions = instructionPackage.getInstructions();
         final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
         assertEquals(TOTAL_INSTRUCTIONS, instructionSets.size());
     }

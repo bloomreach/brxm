@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package org.onehippo.essentials.plugins.search;
+package org.onehippo.cms7.essentials.packaging;
 
-import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportPowerpack;
+import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructionPackage;
+import org.springframework.stereotype.Component;
 
 
-public class SearchPluginPowerpack extends TemplateSupportPowerpack {
-
+/**
+ * @version "$Id$"
+ */
+@Component
+public class EventsInstructionPackage extends TemplateSupportInstructionPackage {
     @Override
     public String getInstructionPath() {
-        return "/META-INF/searchPlugin_instructions.xml";
+        return "/META-INF/events_package_instructions.xml";
     }
 }

@@ -1,0 +1,12 @@
+package ${PACKAGE};
+
+import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructionPackage;
+
+
+public class ${PLUGIN_NAME_CAPITALIZED}InstructionPackage extends TemplateSupportInstructionPackage {
+
+    @Override
+    public String getInstructionPath() {
+        return "/META-INF/${PLUGIN_NAME}_instructions.xml";
+    }
+}

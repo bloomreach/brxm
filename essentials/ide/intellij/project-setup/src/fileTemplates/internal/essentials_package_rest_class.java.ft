@@ -12,7 +12,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
+import org.onehippo.cms7.essentials.dashboard.packaging.instructionPackage;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
@@ -24,19 +24,16 @@ import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 public class ${PLUGIN_NAME_CAPITALIZED}Resource extends BaseResource {
 
 
-    /**
-     * Executes powerpack
-     */
     @POST
     @Path("/")
-    public MessageRestful executePowerpack(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
+    public MessageRestful executeInstructionPackage(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
         final MessageRestful message = new MessageRestful();
         final Map<String, String> values = payloadRestful.getValues();
         final PluginContext context = getContext(servletContext);
-        final PowerpackPackage powerpack = new ${PLUGIN_NAME_CAPITALIZED}Powerpack();
-        getInjector().autowireBean(powerpack);
-        powerpack.setProperties(new HashMap<String, Object>(values));
-        powerpack.execute(context);
+        final InstructionPackage instructionPackage = new ${PLUGIN_NAME_CAPITALIZED}InstructionPackage();
+        getInjector().autowireBean(instructionPackage);
+        instructionPackage.setProperties(new HashMap<String, Object>(values));
+        instructionPackage.execute(context);
         message.setValue("Please rebuild and restart your application");
         return message;
     }

@@ -16,12 +16,12 @@
 
 package org.onehippo.cms7.essentials.dashboard.menu;
 
-import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportPowerpack;
+import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructionPackage;
 
 /**
  * @version "$Id$"
  */
-public class MenuPowerpack extends TemplateSupportPowerpack {
+public class MenuInstructionPackage extends TemplateSupportInstructionPackage {
 
 
     @Override

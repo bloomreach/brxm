@@ -40,17 +40,6 @@
                     templateUrl: 'introduction/introduction.html',
                     controller: 'introductionCtrl'
                 })
-                .state('powerpacks', {
-                    url: '/powerpacks',
-                    templateUrl: 'powerpacks/index.html',
-                    controller: 'powerpacksCtrl'
-                })
-                .state('powerpacks-id', {
-                    url: '/powerpacks/:id',
-                    templateUrl: function ($stateParams) {
-                        return 'powerpacks/' + $stateParams.id + '/' + $stateParams.id + '.html';
-                    }
-                })
                 .state('tools-id', {
                     url: '/tools/:id',
                     templateUrl: function ($stateParams) {
@@ -119,11 +108,11 @@
     var checkPackInstalled = function ($q, $rootScope, $location, $http, $log) {
         $rootScope.checkDone = true;
         if ($rootScope.packsInstalled) {
-            $log.info("powerpack is installed");
+            $log.info("package is installed");
             return true;
         } else {
             var deferred = $q.defer();
-            $http.get($rootScope.REST.powerpacksStatus)
+            $http.get($rootScope.REST.packageStatus)
                 .success(function (response) {
                     $rootScope.packsInstalled = response.status;
                     deferred.resolve(true);

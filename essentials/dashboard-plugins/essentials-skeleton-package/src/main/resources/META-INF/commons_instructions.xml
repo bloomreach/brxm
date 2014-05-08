@@ -20,42 +20,42 @@
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
   <!--
   //############################################
-  // COMMONS POWERPACK ADDS SHARED FILES/CONFIGURATION
+  // COMMONS PACKAGE ADDS SHARED FILES/CONFIGURATION
   //############################################
   -->
 
   <instructionSet group="jsp">
     <!-- include-->
-    <file action="copy" source="powerpack/jsp/imports.jsp" target="{{jspRoot}}/include/imports.jsp"/>
-    <file action="copy" source="powerpack/jsp/pagination.jsp" target="{{jspRoot}}/include/pagination.jsp"/>
+    <file action="copy" source="instructions/jsp/imports.jsp" target="{{jspRoot}}/include/imports.jsp"/>
+    <file action="copy" source="instructions/jsp/pagination.jsp" target="{{jspRoot}}/include/pagination.jsp"/>
     <!-- skeleton-->
-    <file action="copy" source="powerpack/jsp/homepage-main-content.jsp" target="{{jspRoot}}/{{namespace}}/homepage-main-content.jsp"/>
-    <file action="copy" source="powerpack/jsp/base-layout.jsp" target="{{jspRoot}}/{{namespace}}/base-layout.jsp"/>
-    <file action="copy" source="powerpack/jsp/base-top-menu.jsp" target="{{jspRoot}}/{{namespace}}/base-top-menu.jsp"/>
-    <file action="copy" source="powerpack/jsp/base-footer-content.jsp" target="{{jspRoot}}/{{namespace}}/base-footer-content.jsp"/>
+    <file action="copy" source="instructions/jsp/homepage-main-content.jsp" target="{{jspRoot}}/{{namespace}}/homepage-main-content.jsp"/>
+    <file action="copy" source="instructions/jsp/base-layout.jsp" target="{{jspRoot}}/{{namespace}}/base-layout.jsp"/>
+    <file action="copy" source="instructions/jsp/base-top-menu.jsp" target="{{jspRoot}}/{{namespace}}/base-top-menu.jsp"/>
+    <file action="copy" source="instructions/jsp/base-footer-content.jsp" target="{{jspRoot}}/{{namespace}}/base-footer-content.jsp"/>
   </instructionSet>
   <instructionSet group="jsp">
-    <xml action="copy" source="powerpack/xml/hst/templates/base-layout-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="powerpack/xml/hst/templates/base-top-menu-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="powerpack/xml/hst/templates/base-footer-content-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="powerpack/xml/hst/templates/homepage-main-content-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/templates/base-layout-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/templates/base-top-menu-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/templates/base-footer-content-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/templates/homepage-main-content-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
 
   <instructionSet group="freemarker">
     <!-- include -->
-    <file action="copy" source="powerpack/freemarker/imports.ftl" target="{{freemarkerRoot}}/include/imports.ftl"/>
-    <file action="copy" source="powerpack/freemarker/pagination.ftl" target="{{freemarkerRoot}}/include/pagination.ftl"/>
+    <file action="copy" source="instructions/freemarker/imports.ftl" target="{{freemarkerRoot}}/include/imports.ftl"/>
+    <file action="copy" source="instructions/freemarker/pagination.ftl" target="{{freemarkerRoot}}/include/pagination.ftl"/>
      <!-- skeleton -->
-    <file action="copy" source="powerpack/freemarker/homepage-main-content.ftl" target="{{freemarkerRoot}}/{{namespace}}/homepage-main-content.ftl"/>
-    <file action="copy" source="powerpack/freemarker/base-layout.ftl" target="{{freemarkerRoot}}/{{namespace}}/base-layout.ftl"/>
-    <file action="copy" source="powerpack/freemarker/base-top-menu.ftl" target="{{freemarkerRoot}}/{{namespace}}/base-top-menu.ftl"/>
-    <file action="copy" source="powerpack/freemarker/base-footer-content.ftl" target="{{freemarkerRoot}}/{{namespace}}/base-footer-content.ftl"/>
+    <file action="copy" source="instructions/freemarker/homepage-main-content.ftl" target="{{freemarkerRoot}}/{{namespace}}/homepage-main-content.ftl"/>
+    <file action="copy" source="instructions/freemarker/base-layout.ftl" target="{{freemarkerRoot}}/{{namespace}}/base-layout.ftl"/>
+    <file action="copy" source="instructions/freemarker/base-top-menu.ftl" target="{{freemarkerRoot}}/{{namespace}}/base-top-menu.ftl"/>
+    <file action="copy" source="instructions/freemarker/base-footer-content.ftl" target="{{freemarkerRoot}}/{{namespace}}/base-footer-content.ftl"/>
   </instructionSet>
   <instructionSet group="freemarker">
-    <xml action="copy" source="powerpack/xml/hst/templates/base-layout-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="powerpack/xml/hst/templates/base-top-menu-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="powerpack/xml/hst/templates/base-footer-content-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="powerpack/xml/hst/templates/homepage-main-content-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/templates/base-layout-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/templates/base-top-menu-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/templates/base-footer-content-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/templates/homepage-main-content-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
 
   <!--
@@ -65,16 +65,16 @@
 
   -->
   <instructionSet>
-    <xml action="copy" source="powerpack/xml/hst/workspace/base.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
-    <xml action="copy" source="powerpack/xml/hst/workspace/homepage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
+    <xml action="copy" source="instructions/xml/hst/workspace/base.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
+    <xml action="copy" source="instructions/xml/hst/workspace/homepage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
     <!-- common -->
-    <xml action="copy" source="powerpack/xml/hst/sitemap/root.xml" target="/hst:hst/hst:configurations/common/hst:sitemap"/>
-    <xml action="copy" source="powerpack/xml/hst/menu/main.xml" target="/hst:hst/hst:configurations/common/hst:sitemenus"/>
+    <xml action="copy" source="instructions/xml/hst/sitemap/root.xml" target="/hst:hst/hst:configurations/common/hst:sitemap"/>
+    <xml action="copy" source="instructions/xml/hst/menu/main.xml" target="/hst:hst/hst:configurations/common/hst:sitemenus"/>
 
-    <xml action="copy" source="powerpack/xml/hst/pages/base.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:abstractpages"/>
-    <xml action="copy" source="powerpack/xml/hst/pages/homepage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
+    <xml action="copy" source="instructions/xml/hst/pages/base.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:abstractpages"/>
+    <xml action="copy" source="instructions/xml/hst/pages/homepage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <!-- default-->
-    <xml action="copy" source="powerpack/xml/hst/catalog/essentials-catalog.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog"/>
+    <xml action="copy" source="instructions/xml/hst/catalog/essentials-catalog.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog"/>
 
   </instructionSet>
 
@@ -84,14 +84,14 @@
   //############################################
 -->
   <instructionSet>
-    <file binary="true" action="copy" source="powerpack/js/bootstrap.min.js" target="{{javascriptRoot}}/bootstrap.min.js"/>
-    <file binary="true" action="copy" source="powerpack/js/jquery-2.1.0.min.js" target="{{javascriptRoot}}/jquery-2.1.0.min.js"/>
-    <file action="copy" binary="true" source="powerpack/bootstrap/css/bootstrap.css" target="{{siteWebRoot}}/css/bootstrap.css"/>
-    <file action="copy" binary="true" source="powerpack/bootstrap/css/bootstrap.min.css" target="{{siteWebRoot}}/css/bootstrap.min.css"/>
-    <file action="copy" binary="true" source="powerpack/bootstrap/fonts/glyphicons-halflings-regular.eot" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.eot"/>
-    <file action="copy" binary="true" source="powerpack/bootstrap/fonts/glyphicons-halflings-regular.svg" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.svg"/>
-    <file action="copy" binary="true" source="powerpack/bootstrap/fonts/glyphicons-halflings-regular.ttf" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.ttf"/>
-    <file action="copy" binary="true" source="powerpack/bootstrap/fonts/glyphicons-halflings-regular.woff" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.woff"/>
+    <file binary="true" action="copy" source="instructions/js/bootstrap.min.js" target="{{javascriptRoot}}/bootstrap.min.js"/>
+    <file binary="true" action="copy" source="instructions/js/jquery-2.1.0.min.js" target="{{javascriptRoot}}/jquery-2.1.0.min.js"/>
+    <file action="copy" binary="true" source="instructions/bootstrap/css/bootstrap.css" target="{{siteWebRoot}}/css/bootstrap.css"/>
+    <file action="copy" binary="true" source="instructions/bootstrap/css/bootstrap.min.css" target="{{siteWebRoot}}/css/bootstrap.min.css"/>
+    <file action="copy" binary="true" source="instructions/bootstrap/fonts/glyphicons-halflings-regular.eot" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.eot"/>
+    <file action="copy" binary="true" source="instructions/bootstrap/fonts/glyphicons-halflings-regular.svg" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.svg"/>
+    <file action="copy" binary="true" source="instructions/bootstrap/fonts/glyphicons-halflings-regular.ttf" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.ttf"/>
+    <file action="copy" binary="true" source="instructions/bootstrap/fonts/glyphicons-halflings-regular.woff" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.woff"/>
   </instructionSet>
 
 </instructions>

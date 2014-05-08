@@ -24,15 +24,15 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Used for template (& sample data powerpacks). Properties for templates and sample data are:
+ * Used for template (& sample data InstructionPackage). Properties for templates and sample data are:
  * <p>{@code sampleData}</p>
  * <p>{@code templateName}</p>
  *
  * @version "$Id$"
- * @see DefaultPowerpack#PROP_SAMPLE_DATA
- * @see DefaultPowerpack#PROP_TEMPLATE_NAME
+ * @see DefaultInstructionPackage#PROP_SAMPLE_DATA
+ * @see DefaultInstructionPackage#PROP_TEMPLATE_NAME
  */
-public class TemplateSupportPowerpack extends DefaultPowerpack {
+public class TemplateSupportInstructionPackage extends DefaultInstructionPackage {
 
     @Override
     public Set<String> groupNames() {

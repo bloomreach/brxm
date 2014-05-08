@@ -93,11 +93,11 @@
         "description": "A basic News and Events site that contains a homepage template, News and Agenda components and detail pages to render both News and Event articles. It comes with a standard navigational menu and URL structure. This is the most basic Power Pack to start with. You can easily extend with more components later on.",
         "introduction": "Basic News and Events site",
         "name": "Basic News and Events site",
-        "pluginId": "newsEventsPowerpack",
-        "powerpackClass": "org.onehippo.cms7.essentials.powerpack.BasicPowerpack",
+        "pluginId": "newsEventsPackage",
+        "packageClass": "org.onehippo.cms7.essentials.packaging.BasicInstructionPackage",
 
         "restClasses": [],
-        "type": "powerpacks",
+        "type": "plugins",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -114,7 +114,7 @@
         "pluginId": "notImplementedYet",
 
         "restClasses": [],
-        "type": "powerpacks",
+        "type": "plugins",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",

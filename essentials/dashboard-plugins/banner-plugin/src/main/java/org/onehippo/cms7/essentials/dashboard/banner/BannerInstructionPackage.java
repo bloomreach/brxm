@@ -14,25 +14,18 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.restservices;
+package org.onehippo.cms7.essentials.dashboard.banner;
 
-import java.util.Set;
-
-import org.onehippo.cms7.essentials.dashboard.packaging.DefaultPowerpack;
-
-import com.google.common.collect.ImmutableSet;
+import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructionPackage;
 
 /**
  * @version "$Id$"
  */
-public class RestServicesPowerpack extends DefaultPowerpack {
+public class BannerInstructionPackage extends TemplateSupportInstructionPackage {
+
 
     @Override
-    public Set<String> groupNames() {
-        final String restType = (String) getProperties().get(RestPluginConst.REST_TYPE);
-        if (restType != null) {
-            return new ImmutableSet.Builder<String>().add(restType).build();
-        }
-        return DEFAULT_GROUPS;
+    public String getInstructionPath() {
+        return "/META-INF/banner_instructions.xml";
     }
 }

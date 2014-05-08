@@ -132,11 +132,11 @@ public class HippoEssentialsProject extends WebProjectTemplate {
                                 final Iterator<String> packageNames = Splitter.on('.').split(projectPackage).iterator();
                                 final String packageDir = javaRoot + '/' + Joiner.on('/').join(packageNames);
                                 final PsiDirectory restDir = DirectoryUtil.mkdirs(rootDirectory.getManager(), packageDir);
-                                // check if plain rest or powerpack:
-                                if (mySettings.getPluginGroup().equals("powerpacks")) {
-                                    createFile(restDir, mySettings, pluginName + "Resource.java", HippoTemplatesFactory.HippoTemplate.ESSENTIALS_POWERPACK_REST_CLASS_TEMPLATE);
-                                    createFile(restDir, mySettings, pluginName + "Powerpack.java", HippoTemplatesFactory.HippoTemplate.ESSENTIALS_POWERPACK_CLASS_TEMPLATE);
-                                    createFile(metaDir, mySettings, pluginName + "_instructions.xml", HippoTemplatesFactory.HippoTemplate.ESSENTIALS_POWERPACK_INSTRUCTIONS_TEMPLATE);
+                                // check if plain rest or InstructionPackage:
+                                if (mySettings.getPluginGroup().equals("package")) {
+                                    createFile(restDir, mySettings, pluginName + "Resource.java", HippoTemplatesFactory.HippoTemplate.ESSENTIALS_PACKAGE_REST_CLASS_TEMPLATE);
+                                    createFile(restDir, mySettings, pluginName + "InstructionPackage.java", HippoTemplatesFactory.HippoTemplate.ESSENTIALS_PACKAGE_CLASS_TEMPLATE);
+                                    createFile(metaDir, mySettings, pluginName + "_instructions.xml", HippoTemplatesFactory.HippoTemplate.ESSENTIALS_PACKAGE_INSTRUCTIONS_TEMPLATE);
                                 } else {
                                     createFile(restDir, mySettings, pluginName + "Resource.java", HippoTemplatesFactory.HippoTemplate.ESSENTIALS_REST_CLASS_TEMPLATE);
                                 }

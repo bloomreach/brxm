@@ -14,15 +14,25 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.simplecontent;
+package org.onehippo.cms7.essentials.dashboard.restservices;
 
-import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportPowerpack;
+import java.util.Set;
 
+import org.onehippo.cms7.essentials.dashboard.packaging.DefaultInstructionPackage;
 
-public class SimpleContentPowerpack extends TemplateSupportPowerpack {
+import com.google.common.collect.ImmutableSet;
+
+/**
+ * @version "$Id$"
+ */
+public class RestServicesInstructionPackage extends DefaultInstructionPackage {
 
     @Override
-    public String getInstructionPath() {
-        return "/META-INF/simpleContent_instructions.xml";
+    public Set<String> groupNames() {
+        final String restType = (String) getProperties().get(RestPluginConst.REST_TYPE);
+        if (restType != null) {
+            return new ImmutableSet.Builder<String>().add(restType).build();
+        }
+        return DEFAULT_GROUPS;
     }
 }

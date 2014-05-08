@@ -110,11 +110,7 @@
             $rootScope.headerMessage = "Welcome on the Hippo Trail";
             // routing listener
             $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
-
-                // check if we need powerpacks install check
-                /*  if(!$rootScope.checkDone && (toState != "powerpacks" && $location.url() != "/" || $location.url() != "")){
-                 $state.transitionTo('powerpacks');
-                 }*/
+                  // noop
 
             });
 
@@ -140,8 +136,8 @@
                  */
                 plugins: root + "/plugins/",
                 projectSettings: plugins + '/settings',
-                powerpacksStatus: plugins + '/status/powerpack/',
-                powerpacksMessages: plugins + '/changes/',
+                packageStatus: plugins + '/status/package/',
+                packageMessages: plugins + '/changes/',
                 controllers: plugins + '/controllers/',
                 /**
                  * Returns list of all plugins that need configuration
@@ -170,7 +166,7 @@
 
                 documentTypes: root + '/documenttypes/',
 
-                powerpacks_install: plugins + '/install/powerpack',
+                package_install: plugins + '/install/package',
                 hide_introduction: plugins + '/hideintroduction',
 
                 compounds: root + '/documenttypes/compounds',
@@ -220,7 +216,7 @@
                 restrict: 'E',
                 scope: {
                     label: '@',
-                    powerpackMessages: '='
+                    packageMessages: '='
                 },
                 template: '<accordion close-others="oneAtATime"> \
                     <accordion-group is-open="isopen"> \
@@ -228,7 +224,7 @@
                     Display changes made by this plugin \
                     <i class="pull-right glyphicon" ng-class="{\'glyphicon-chevron-down\': isopen, \'glyphicon-chevron-right\': !isopen}"></i> \
                     </accordion-heading> \
-                    <div ng-repeat="message in powerpackMessages.items" ng-switch="message.displayType"> \
+                    <div ng-repeat="message in packageMessages.items" ng-switch="message.displayType"> \
                     <div  ng-switch-when="PRE"> \
                     <pre>{{message.value}}</pre> \
                     </div> \

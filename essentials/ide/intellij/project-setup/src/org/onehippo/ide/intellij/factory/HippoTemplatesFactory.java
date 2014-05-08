@@ -47,10 +47,10 @@ public class HippoTemplatesFactory implements FileTemplateGroupDescriptorFactory
         ESSENTIALS_REST_CLASS_TEMPLATE("essentials_rest_class"),
         ESSENTIALS_PLUGIN_HTML_TEMPLATE("essentials_html_template"),
         ESSENTIALS_PLUGIN_JS_TEMPLATE("essentials_javascript_template"),
-        // powerpack section
-        ESSENTIALS_POWERPACK_REST_CLASS_TEMPLATE("essentials_powerpack_rest_class"),
-        ESSENTIALS_POWERPACK_CLASS_TEMPLATE("essentials_powerpack_class"),
-        ESSENTIALS_POWERPACK_INSTRUCTIONS_TEMPLATE("essentials_powerpack_instructions");
+        // InstructionPackage section
+        ESSENTIALS_PACKAGE_REST_CLASS_TEMPLATE("essentials_package_rest_class"),
+        ESSENTIALS_PACKAGE_CLASS_TEMPLATE("essentials_package_class"),
+        ESSENTIALS_PACKAGE_INSTRUCTIONS_TEMPLATE("essentials_package_instructions");
 
         final String name;
 

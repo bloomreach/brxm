@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.blog;
+package org.onehippo.cms7.essentials.packaging;
 
 import java.io.File;
 import java.util.Set;
-
-import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -27,24 +25,21 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
-import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
+import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 import static org.junit.Assert.assertEquals;
 
 /**
  * @version "$Id$"
  */
-public class BlogPowerpackTest extends BaseRepositoryTest {
+public class EventsInstructionPackageTest extends BaseRepositoryTest {
 
 
-    public static final int TOTAL_INSTRUCTIONS = 12;
-    public static final int TOTAL_FILES = 4;
-    @Inject
-    private AutowireCapableBeanFactory injector;
+    public static final int TOTAL_INSTRUCTIONS = 8;
+
+
 
     private File jspDirectory;
 
@@ -52,31 +47,21 @@ public class BlogPowerpackTest extends BaseRepositoryTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        jspDirectory = new File(getContext().getPlaceholderData().get(EssentialConst.PLACEHOLDER_JSP_ROOT) + File.separator + "essentials" + File.separator +"blog");
+        jspDirectory = new File(getContext().getPlaceholderData().get(EssentialConst.PLACEHOLDER_JSP_ROOT) + File.separator + "essentials");
         createHstRootConfig();
 
     }
 
     @Test
     public void testParseInstructions() throws Exception {
-        final PowerpackPackage powerpackPackage = new BlogPowerpack();
-        injector.autowireBean(powerpackPackage);
-        final Instructions instructions = powerpackPackage.getInstructions();
+        final InstructionPackage instructionPackage = new EventsInstructionPackage();
+        injector.autowireBean(instructionPackage);
+        final Instructions instructions = instructionPackage.getInstructions();
         final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
         assertEquals(TOTAL_INSTRUCTIONS, instructionSets.size());
     }
 
-    @Test
-    public void testExecute() throws Exception {
-        final PowerpackPackage powerpackPackage = new BlogPowerpack();
-        injector.autowireBean(powerpackPackage);
-        final InstructionStatus status = powerpackPackage.execute(getContext());
-        // mm: todo check why skipped is returned (one of the instructions is skipped)
-        //assertEquals(InstructionStatus.SKIPPED, status);
-        assertEquals(TOTAL_FILES, jspDirectory.listFiles().length);
 
-
-    }
 
 
     @Override

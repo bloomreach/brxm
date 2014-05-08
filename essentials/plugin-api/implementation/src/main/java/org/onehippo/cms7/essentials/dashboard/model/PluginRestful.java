@@ -43,7 +43,7 @@ public class PluginRestful implements Plugin, Restful {
     private String introduction;
     private String description;
     private String pluginLink;
-    private String powerpackClass;
+    private String packageClass;
     private String type;
     private boolean installed;
     private boolean needsInstallation;
@@ -134,13 +134,13 @@ public class PluginRestful implements Plugin, Restful {
     }
 
     @Override
-    public String getPowerpackClass() {
-        return powerpackClass;
+    public String getPackageClass() {
+        return packageClass;
     }
 
     @Override
-    public void setPowerpackClass(final String powerpackClass) {
-        this.powerpackClass = powerpackClass;
+    public void setPackageClass(final String packageClass) {
+        this.packageClass = packageClass;
     }
 
     @Override

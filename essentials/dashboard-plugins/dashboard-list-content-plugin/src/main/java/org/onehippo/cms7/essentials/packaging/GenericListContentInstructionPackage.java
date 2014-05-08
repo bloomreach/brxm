@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.powerpack;
+package org.onehippo.cms7.essentials.packaging;
 
-import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportPowerpack;
+import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructionPackage;
 import org.springframework.stereotype.Component;
 
 
@@ -24,9 +24,9 @@ import org.springframework.stereotype.Component;
  * @version "$Id$"
  */
 @Component
-public class NewsPowerpack extends TemplateSupportPowerpack {
+public class GenericListContentInstructionPackage extends TemplateSupportInstructionPackage {
     @Override
     public String getInstructionPath() {
-        return "/META-INF/news_powerpack_instructions.xml";
+        return "/META-INF/list_content_instructions.xml";
     }
 }

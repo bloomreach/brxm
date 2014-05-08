@@ -16,12 +16,12 @@
 
 package org.onehippo.cms7.essentials.dashboard.blog;
 
-import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportPowerpack;
+import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructionPackage;
 
 /**
  * @version "$Id$"
  */
-public class BlogPowerpack extends TemplateSupportPowerpack {
+public class BlogInstructionPackage extends TemplateSupportInstructionPackage {
 
     @Override
     public String getInstructionPath() {

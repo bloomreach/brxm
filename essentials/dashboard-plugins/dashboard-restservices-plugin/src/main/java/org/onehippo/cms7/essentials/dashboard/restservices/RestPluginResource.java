@@ -34,7 +34,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
+import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
@@ -81,12 +81,9 @@ public class RestPluginResource extends BaseResource {
     }
 
 
-    /**
-     * Executes REST powerpack
-     */
     @POST
     @Path("/")
-    public MessageRestful executePowerpack(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
+    public MessageRestful executeInstructionPackage(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
 
         final MessageRestful message = new MessageRestful();
 
@@ -98,11 +95,11 @@ public class RestPluginResource extends BaseResource {
         }
         final PluginContext context = getContext(servletContext);
 
-        final PowerpackPackage powerpack = new RestServicesPowerpack();
+        final InstructionPackage instructionPackage = new RestServicesInstructionPackage();
         // TODO: figure out injection part
-        getInjector().autowireBean(powerpack);
-        powerpack.setProperties(new HashMap<String, Object>(values));
-        powerpack.execute(context);
+        getInjector().autowireBean(instructionPackage);
+        instructionPackage.setProperties(new HashMap<String, Object>(values));
+        instructionPackage.execute(context);
         message.setValue("Please rebuild and restart your application");
         return message;
     }

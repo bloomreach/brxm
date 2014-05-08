@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.banner;
+package org.onehippo.cms7.essentials.dashboard.menu;
 
 import java.util.Set;
 
@@ -23,23 +23,23 @@ import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
-import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
+import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
 
 /**
  * @version "$Id$"
  */
-public class BannerPowerpackTest extends BaseRepositoryTest {
+public class MenuInstructionPackageTest extends BaseRepositoryTest {
 
 
 
     @Test
     public void testGroupNames() throws Exception {
-        final PowerpackPackage powerpackPackage = new BannerPowerpack();
-        injector.autowireBean(powerpackPackage);
-        final Instructions instructions = powerpackPackage.getInstructions();
+        final InstructionPackage instructionPackage = new MenuInstructionPackage();
+        injector.autowireBean(instructionPackage);
+        final Instructions instructions = instructionPackage.getInstructions();
         final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
-        Assert.assertTrue(instructionSets.size() > 4);
-        powerpackPackage.execute(getContext());
+        Assert.assertTrue(instructionSets.size() > 1);
+        instructionPackage.execute(getContext());
 
 
     }

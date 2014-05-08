@@ -23,13 +23,13 @@
             $scope.run = function () {
                 var payload = Essentials.addPayloadData("templateName", $scope.templateName, null);
                 Essentials.addPayloadData("pluginId", "searchPlugin", payload);
-                $http.post($rootScope.REST.powerpacks_install, payload).success(function (data) {
+                $http.post($rootScope.REST.package_install, payload).success(function (data) {
                     // globally handled
                 });
             };
             // initialize messages
-            $http.get($rootScope.REST.powerpacksMessages + $rootScope.selectedPlugin.powerpackClass).success(function (data) {
-                $scope.powerpackMessages = data;
+            $http.get($rootScope.REST.packageMessages + $rootScope.selectedPlugin.packageClass).success(function (data) {
+                $scope.packageMessages = data;
             });
         })
 })();
