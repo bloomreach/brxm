@@ -216,7 +216,7 @@
                 restrict: 'E',
                 scope: {
                     label: '@',
-                    payload:'='
+                    payload: '='
                 },
                 template: '<accordion close-others="oneAtATime"> \
                     <accordion-group is-open="isopen"> \
@@ -255,6 +255,70 @@
                         return $scope.packageMessages = data;
                     });
                 }
+            }
+        }).directive("templatePlugin", function () {
+            return {
+                replace: false,
+                restrict: 'E',
+                scope: {
+                    label: '@',
+                    pluginId: '@',
+                    pluginTitle: '@',
+                    buttonText: '@',
+                    sample: '@'
+                },
+                template: '<div class="panel-heading">{{pluginTitle}}</div> \
+            <div class="panel-body"> \
+                <form novalidate name="templateForm"> \
+            <div class="form-group"> \
+                <label>Please select templating language:</label> \
+            </div> \
+            <div class="radio"> \
+                <label> \
+                    <input type="radio" ng-model="templateName" required value="jsp"/> \
+                    JSP template \
+                </label> \
+            </div> \
+            <div class="radio"> \
+                <label> \
+                    <input type="radio" ng-model="templateName" required value="freemarker"/> \
+                    Freemarker template \
+                </label> \
+            </div> \
+            <div ng-show="sample" class="form-group"> \
+                    <label> Content: </label>\
+            </div> \
+            <div ng-show="sample" class = "checkbox">\
+                <label>  \
+                Add sample content <input type="checkbox" ng-model="sampleData"/> \
+                </label> \
+                </div> \
+            \
+        </form> \
+        <messages  payload="payload"/> \
+         </div> \
+        <div class="panel-footer">    \
+            <div class = "input-group">\
+                <span class="input-group-btn"> \
+                    <button class="btn btn-primary pull-right" type="submit" ng-click="run()">{{buttonText}}</button>\
+                </span> \
+                </div> \
+            </div>',
+                controller: function ($scope, $sce, $log, $rootScope, $http) {
+                    $scope.pluginId = "eventsPlugin";
+                    $scope.sampleData = true;
+                    $scope.templateName = 'jsp';
+                    $scope.message = {};
+                    $scope.payload = {values: {pluginId: $scope.pluginId, sampleData: $scope.sampleData, templateName: $scope.templateName}};
+                    $scope.$watchCollection("[sampleData, templateName]", function () {
+                        $scope.payload = {values: {pluginId: $scope.pluginId, sampleData: $scope.sampleData, templateName: $scope.templateName}};
+                    });
+                    $scope.run = function () {
+                        $http.post($rootScope.REST.package_install, $scope.payload).success(function (data) {
+                        });
+                    };
+                }
+
             }
         })
         .factory('installerFactory', function ($http, $rootScope) {

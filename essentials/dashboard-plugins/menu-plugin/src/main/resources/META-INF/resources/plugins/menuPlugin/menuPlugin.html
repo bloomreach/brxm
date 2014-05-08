@@ -15,37 +15,7 @@
   -->
 
 <div class="panel panel-default" ng-controller="menuPluginCtrl">
-    <div class="panel-heading">Menu component plugin</div>
-    <div class="panel-body">
-        <form novalidate name="bannerForm">
-            <div class="form-group">
-                <label>Please select templating language:</label>
-            </div>
-            <div class="radio">
-                <label>
-                    <input type="radio" ng-model="templateName" required value="jsp"/>
-                    JSP template
-                </label>
-            </div>
-            <div class="radio">
-                <label>
-                    <input type="radio" ng-model="templateName" required value="freemarker"/>
-                    Freemarker template
-                </label>
-            </div>
-
-        </form>
-        <messages  payload="payload"/>
-    </div>
-
-    <div class="panel-footer">
-
-        <div class="input-group">
-              <span class="input-group-btn">
-                <button class="btn btn-primary pull-right" type="submit" ng-click="run()">Add menu component</button>
-              </span>
-        </div>
-    </div>
+    <template-plugin plugin-id="menuPlugin" plugin-title="Menu plugin support" button-text="Add Menu component support" />
 </div>
 
 

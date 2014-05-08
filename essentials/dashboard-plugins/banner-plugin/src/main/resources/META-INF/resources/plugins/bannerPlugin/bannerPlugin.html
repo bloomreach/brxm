@@ -15,44 +15,7 @@
   -->
 
 <div class="panel panel-default" ng-controller="bannerPluginCtrl">
-    <div class="panel-heading">Banner and Carousel plugin</div>
-    <div class="panel-body">
-        <form novalidate name="bannerForm">
-            <div class="form-group">
-                <label>Please select templating language:</label>
-            </div>
-            <div class="radio">
-                <label>
-                    <input type="radio" ng-model="templateName" required value="jsp"/>
-                    JSP template
-                </label>
-            </div>
-            <div class="radio">
-                <label>
-                    <input type="radio" ng-model="templateName" required value="freemarker"/>
-                    Freemarker template
-                </label>
-            </div>
-            <div class="form-group">
-                <label>Content:</label>
-            </div>
-            <div class="checkbox">
-                <label>
-                    Add sample content
-                    <input type="checkbox" ng-model="sampleData"/>
-                </label>
-            </div>
-        </form>
-        <messages  payload="payload"/>
-    </div>
-    <div class="panel-footer">
-
-        <div class="input-group">
-              <span class="input-group-btn">
-                <button class="btn btn-primary pull-right" type="submit" ng-click="run()">Add Banner and carousel support</button>
-              </span>
-        </div>
-    </div>
+    <template-plugin plugin-id="bannerPlugin" plugin-title="Banner and Carousel plugin" button-text="Banner and Carousel support" sample="true"/>
 </div>
 
 

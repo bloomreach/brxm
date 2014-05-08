@@ -18,16 +18,5 @@
     "use strict";
     angular.module('hippo.essentials')
         .controller('searchPluginCtrl', function ($scope, $sce, $log, $rootScope, $http) {
-            $scope.pluginId = "eventsPlugin";
-            $scope.sampleData = true;
-            $scope.templateName = 'jsp';
-            $scope.payload = {values: {pluginId: $scope.pluginId, sampleData: $scope.sampleData, templateName: $scope.templateName}};
-            $scope.$watchCollection("[sampleData, templateName]", function () {
-                $scope.payload = {values: {pluginId: $scope.pluginId, sampleData: $scope.sampleData, templateName: $scope.templateName}};
-            });
-            $scope.run = function () {
-                $http.post($rootScope.REST.package_install, $scope.payload).success(function (data) {
-                });
-            };
         })
 })();
