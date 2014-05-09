@@ -28,6 +28,7 @@
                     // only navigate to the add menu item form when there are no
                     // validation errors for the edit menu item form
                     MenuService.saveMenuItem($scope.$parent.selectedMenuItem).then(function () {
+                            $scope.$parent.selectedMenuItem.collapsed = false;
                             // navigate to the add menu item state
                             var parentItemId = $stateParams.menuItemId || $stateParams.menuId;
                             $state.go('menu-item.add', {menuItemId: parentItemId});

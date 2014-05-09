@@ -39,6 +39,15 @@
                     return url;
                 }
 
+                function addCollapsedProperties(items, collapsed) {
+                    _.each(items, function (item) {
+                        if (item.items && item.items.length > 0) {
+                            item.collapsed = collapsed;
+                            addCollapsedProperties(item.items, collapsed);
+                        }
+                    });
+                }
+
                 function loadMenu() {
                     if (menuLoader === null) {
                         var loader = $q.defer();
@@ -46,6 +55,7 @@
                             .success(function (response) {
                                 if (!angular.equals(menuData.items, response.data.items)) {
                                     menuData.items = response.data.items;
+                                    addCollapsedProperties(menuData.items, true);
                                 }
                                 menuData.id = response.data.id;
                                 loader.resolve(menuData);
@@ -147,6 +157,14 @@
                     return deferred.promise;
                 }
 
+                function removeCollapsedProperties(item) {
+                    delete item.collapsed;
+                    _.each(item.items, function (item) {
+                            removeCollapsedProperties(item);
+                        }
+                    );
+                }
+
                 return {
 
                     FIRST : 'first',
@@ -170,7 +188,9 @@
 
                     saveMenuItem : function (menuItem) {
                         var deferred = $q.defer();
-                        post(menuServiceUrl(), menuItem).then(function() {
+                        var menuItemCopy = angular.copy(menuItem);
+                        removeCollapsedProperties(menuItemCopy);
+                        post(menuServiceUrl(), menuItemCopy).then(function() {
                                     deferred.resolve();
                                 }, function (errorResponse) {
                                     deferred.reject(errorResponse);
