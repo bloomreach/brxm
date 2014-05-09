@@ -63,7 +63,7 @@ public interface InstructionPackage {
     /**
      * Path to instruction XML file
      *
-     * @return by default {@code /META-INF/instrucitons.xml}
+     * @return by default {@code /META-INF/instructions.xml}
      */
     String getInstructionPath();
 

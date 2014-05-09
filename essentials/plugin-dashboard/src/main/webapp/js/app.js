@@ -305,7 +305,7 @@
                 </div> \
             </div></div>',
                 controller: function ($scope, $sce, $log, $rootScope, $http) {
-                    $scope.pluginId = "eventsPlugin";
+                    $scope.pluginId = "";
                     $scope.sampleData = true;
                     $scope.templateName = 'jsp';
                     $scope.message = {};
