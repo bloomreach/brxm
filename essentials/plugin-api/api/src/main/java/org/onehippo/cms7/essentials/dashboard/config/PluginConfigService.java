@@ -19,7 +19,7 @@ package org.onehippo.cms7.essentials.dashboard.config;
 /**
  * @version "$Id$"
  */
-public interface PluginConfigService extends AutoCloseable{
+public interface PluginConfigService extends AutoCloseable {
 
     /**
      * Stores given configuration

@@ -68,10 +68,6 @@ archetype/website/src/main/resources/archetype-resources/bootstrap/content/src/m
 archetype/website/src/main/resources/archetype-resources/bootstrap/content/src/main/resources/content/documents/__rootArtifactId__.xml -text
 archetype/website/src/main/resources/archetype-resources/bootstrap/content/src/main/resources/content/gallery/__rootArtifactId__.xml -text
 archetype/website/src/main/resources/archetype-resources/bootstrap/content/src/main/resources/hippoecm-extension.xml -text
-archetype/website/src/main/resources/archetype-resources/bootstrap/essentials/pom.xml -text
-archetype/website/src/main/resources/archetype-resources/bootstrap/essentials/src/main/resources/essentials.xml -text
-archetype/website/src/main/resources/archetype-resources/bootstrap/essentials/src/main/resources/essentials/plugins/org.xml -text
-archetype/website/src/main/resources/archetype-resources/bootstrap/essentials/src/main/resources/hippoecm-extension.xml -text
 archetype/website/src/main/resources/archetype-resources/bootstrap/pom.xml -text
 archetype/website/src/main/resources/archetype-resources/cms/pom.xml -text
 archetype/website/src/main/resources/archetype-resources/cms/src/main/resources/org/hippoecm/frontend/plugins/standards/icon/res/__rootArtifactId__-newsdocument-16.png -text
@@ -82,6 +78,7 @@ archetype/website/src/main/resources/archetype-resources/conf/log4j-dev.xml -tex
 archetype/website/src/main/resources/archetype-resources/conf/log4j-prod.xml -text
 archetype/website/src/main/resources/archetype-resources/conf/log4j.dtd -text
 archetype/website/src/main/resources/archetype-resources/essentials/pom.xml -text
+archetype/website/src/main/resources/archetype-resources/essentials/src/main/resources/project-settings.xml -text
 archetype/website/src/main/resources/archetype-resources/essentials/src/main/webapp/WEB-INF/web.xml -text
 archetype/website/src/main/resources/archetype-resources/pom.xml -text
 archetype/website/src/main/resources/archetype-resources/site/pom.xml -text
@@ -579,6 +576,7 @@ plugin-api/api/src/test/resources/log4j.xml -text
 plugin-api/implementation/pom.xml -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/BaseDocument.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/DefaultDocumentManager.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/FilePluginService.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/InstallerDocument.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/JcrPluginConfigService.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/ProjectSettingsBean.java -text

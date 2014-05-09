@@ -16,7 +16,6 @@
   <modules>
     <module>configuration</module>
     <module>content</module>
-    <module>essentials</module>
   </modules>
 
 </project>

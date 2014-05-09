@@ -18,9 +18,12 @@ package org.onehippo.cms7.essentials.dashboard.config;
 
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 /**
  * @version "$Id$"
  */
+@XmlTransient
 public interface Document {
 
 
