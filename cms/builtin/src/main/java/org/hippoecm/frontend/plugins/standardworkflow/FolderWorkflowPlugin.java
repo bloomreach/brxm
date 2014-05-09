@@ -419,45 +419,47 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                 if (editorMgr == null) {
                     return;
                 }
-                if (node.isNodeType(HippoNodeType.NT_HANDLE) || node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-                    Node editNode = node;
-                    if (node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-                        editNode = node.getParent();
-                    }
+                if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    log.warn("Folder workflow returned node of type handle; expected a variant");
+                    return;
+                }
+                if (!node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                    return;
+                }
 
-                    JcrNodeModel editNodeModel = nodeModel;
-                    javax.jcr.Session session = UserSession.get().getJcrSession();
-                    WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace())
-                            .getWorkflowManager();
-                    Workflow workflow = workflowManager.getWorkflow("editing", editNode);
-                    if (workflow == null && editNode.hasNode(editNode.getName())) {
-                        Node variantNode = editNode.getNode(editNode.getName());
-                        workflow = workflowManager.getWorkflow("editing", variantNode);
-                    }
-                    if (workflow instanceof EditableWorkflow) {
-                        try {
-                            EditableWorkflow editableWorkflow = (EditableWorkflow) workflow;
-                            Document editableDocument = editableWorkflow.obtainEditableInstance();
-                            if (editableDocument != null) {
-                                session.refresh(true);
-                                final Node docNode = session.getNodeByIdentifier(editableDocument.getIdentity());
-                                editNodeModel = new JcrNodeModel(docNode);
-                            }
-                        } catch (WorkflowException | RemoteException | RepositoryException ex) {
-                            log.error("Cannot auto-edit document", ex);
-                        }
-                    }
+                Node editNode = node.getParent();
 
+                JcrNodeModel editNodeModel = nodeModel;
+                javax.jcr.Session session = UserSession.get().getJcrSession();
+                WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace())
+                        .getWorkflowManager();
+                Workflow workflow = workflowManager.getWorkflow("editing", editNode);
+                if (workflow == null) {
+                    workflow = workflowManager.getWorkflow("editing", node);
+                }
+                if (workflow instanceof EditableWorkflow) {
                     try {
-                        IEditor editor = editorMgr.getEditor(editNodeModel);
-                        if (editor == null) {
-                            editorMgr.openEditor(editNodeModel);
-                        } else if (editor.getMode() == IEditor.Mode.VIEW) {
-                            editor.setMode(IEditor.Mode.EDIT);
+                        EditableWorkflow editableWorkflow = (EditableWorkflow) workflow;
+                        Document editableDocument = editableWorkflow.obtainEditableInstance();
+                        if (editableDocument != null) {
+                            session.refresh(true);
+                            final Node docNode = session.getNodeByIdentifier(editableDocument.getIdentity());
+                            editNodeModel = new JcrNodeModel(docNode);
                         }
-                    } catch (EditorException | ServiceException ex) {
+                    } catch (WorkflowException | RemoteException | RepositoryException ex) {
                         log.error("Cannot auto-edit document", ex);
                     }
+                }
+
+                try {
+                    IEditor editor = editorMgr.getEditor(editNodeModel);
+                    if (editor == null) {
+                        editorMgr.openEditor(editNodeModel);
+                    } else if (editor.getMode() == IEditor.Mode.VIEW) {
+                        editor.setMode(IEditor.Mode.EDIT);
+                    }
+                } catch (EditorException | ServiceException ex) {
+                    log.error("Cannot auto-edit document", ex);
                 }
             }
         } catch (RepositoryException ex) {
