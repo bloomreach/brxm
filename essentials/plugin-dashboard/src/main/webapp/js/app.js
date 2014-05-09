@@ -210,7 +210,7 @@
         //############################################
         // DIRECTIVES
         //############################################
-        .directive("messages", function () {
+        .directive("essentialsMessages", function () {
             return {
                 replace: false,
                 restrict: 'E',
@@ -295,7 +295,7 @@
                 </div> \
             \
         </form> \
-        <messages  payload="payload" label="{{label}}"/> \
+        <essentials-messages  payload="payload" label="{{label}}"/> \
          </div> \
         <div class="panel-footer">    \
             <div class = "input-group">\
