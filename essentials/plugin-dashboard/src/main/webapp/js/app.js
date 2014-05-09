@@ -256,7 +256,7 @@
                     });
                 }
             }
-        }).directive("templatePlugin", function () {
+        }).directive("essentialsSimpleInstallPlugin", function () {
             return {
                 replace: false,
                 restrict: 'E',
