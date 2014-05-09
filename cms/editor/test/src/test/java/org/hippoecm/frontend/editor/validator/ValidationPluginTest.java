@@ -21,6 +21,7 @@ import java.util.TreeSet;
 
 import javax.jcr.Node;
 
+import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.editor.editor.EditorPlugin;
 import org.hippoecm.frontend.editor.validator.plugins.EscapedCmsValidator;
@@ -36,6 +37,7 @@ import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -102,7 +104,6 @@ public class ValidationPluginTest extends PluginTest {
         regex = new JcrClusterConfig(new JcrNodeModel("/config/test-app/validator/email"));
     }
 
-
     protected Set<Violation> getViolations() {
         return context.getService("service.validator", IValidationService.class).getValidationResult().getViolations();
     }
@@ -110,6 +111,10 @@ public class ValidationPluginTest extends PluginTest {
     protected void validate(final Node node) throws ValidationException {
         modelRef.setModel(new JcrNodeModel(node));
         context.getService("service.validator", IValidationService.class).validate();
+    }
+
+    protected void detach() {
+        ((IDetachable) context.getService("service.validator", IValidationService.class)).detach();
     }
 
     @Test
@@ -140,12 +145,14 @@ public class ValidationPluginTest extends PluginTest {
 
         Set<Violation> violations = getViolations();
         assertEquals(0, violations.size());
+        detach();
 
         for (char c : "<>\"'&".toCharArray()) {
             content.setProperty("test:escaped", "a" + c);
             validate(content);
             violations = getViolations();
             assertEquals(1, violations.size());
+            detach();
         }
     }
 
@@ -165,6 +172,7 @@ public class ValidationPluginTest extends PluginTest {
 
         Set<Violation> violations = getViolations();
         assertEquals(0, violations.size());
+        detach();
 
         String[] wrongEmailArray = new String[]{"info@one$hippo.com", "info@onehippo", ""};
         String[] rightEmailArray = new String[]{"info@onehippo.com", "info@onehippo.org", "123info@google.com"};
@@ -174,12 +182,14 @@ public class ValidationPluginTest extends PluginTest {
             validate(content);
             violations = getViolations();
             assertEquals(1, violations.size());
+            detach();
         }
         for (String right : rightEmailArray) {
             content.setProperty("test:email", right);
             validate(content);
             violations = getViolations();
             assertEquals(0, violations.size());
+            detach();
         }
     }
 
