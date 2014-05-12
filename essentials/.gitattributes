@@ -684,6 +684,7 @@ plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/MemoryRepos
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/TestPluginContext.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/DefaultDocumentManagerTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/DummyTestPlugin.java -text
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/FilePluginServiceTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/InstallerDocumentTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/JcrPluginConfigServiceTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/TestBeanDocument.java -text

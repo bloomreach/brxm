@@ -84,6 +84,14 @@ public interface PluginContext extends Serializable {
      */
     File getCmsDirectory();
 
+
+    /**
+     * Returns root of the essentials project directory
+     *
+     * @return directory of essentials module
+     */
+    File getEssentialsDirectory();
+
     /**
      * Check if Hippo  Enterprise project
      *

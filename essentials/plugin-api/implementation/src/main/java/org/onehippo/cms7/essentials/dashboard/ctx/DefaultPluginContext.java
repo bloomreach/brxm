@@ -109,6 +109,12 @@ public class DefaultPluginContext implements PluginContext {
     }
 
     @Override
+    public File getEssentialsDirectory() {
+        return ProjectUtils.getEssentialsFolder();
+    }
+
+
+    @Override
     public boolean isEnterpriseProject() {
         // TODO implement
         return false;
@@ -301,6 +307,8 @@ public class DefaultPluginContext implements PluginContext {
             placeholderData.put(EssentialConst.PLACEHOLDER_COMPONENTS_FOLDER, componentsPackagePath.toString());
         }
         placeholderData.put(EssentialConst.PLACEHOLDER_TMP_FOLDER, System.getProperty("java.io.tmpdir"));
+        // essentials
+        placeholderData.put(EssentialConst.PLACEHOLDER_ESSENTIALS_ROOT, getEssentialsDirectory().getAbsolutePath());
 
 
         return placeholderData;

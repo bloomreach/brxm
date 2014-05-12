@@ -26,7 +26,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentProper
  * @version "$Id$"
  */
 
-@XmlRootElement(name = "project-settings")
+@XmlRootElement(name = "project")
 @PersistentNode(type = "essentials:document")
 public class ProjectSettingsBean extends BaseDocument {
 
