@@ -243,7 +243,6 @@ intranet/src/main/java/org/hippoecm/hst/intranet/componentsinfo/ListViewInfo.jav
 intranet/src/main/java/org/hippoecm/hst/intranet/componentsinfo/PageableListInfo.java -text
 intranet/src/main/java/org/hippoecm/hst/intranet/componentsinfo/SearchInfo.java -text
 intranet/src/main/resources/META-INF/hst-assembly/overrides/hst-cms-rest.xml -text
-intranet/src/main/resources/META-INF/hst-assembly/overrides/jndi-repository.xml -text
 intranet/src/main/resources/META-INF/hst-assembly/overrides/template-composer-rest.xml -text
 intranet/src/main/resources/messages.properties -text
 intranet/src/main/resources/messages_fr.properties -text
