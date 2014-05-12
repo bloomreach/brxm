@@ -40,7 +40,7 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS7 Product Packages</notice.project.name>
 
-    <hippo.utilities.version>1.03.01</hippo.utilities.version>
+    <hippo.utilities.version>1.03.00</hippo.utilities.version>
     <hippo.repository.version>2.26.01</hippo.repository.version>
     <hippo.cms.version>2.26.00</hippo.cms.version>
     <hippo.hst.version>2.28.01</hippo.hst.version>
