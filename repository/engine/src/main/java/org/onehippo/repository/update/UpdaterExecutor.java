@@ -138,12 +138,10 @@ public class UpdaterExecutor implements EventListener {
     }
 
     public void destroy() {
-        if (session != null) {
-            try {
-                session.getWorkspace().getObservationManager().removeEventListener(this);
-            } catch (RepositoryException e) {
-                log.error("Failed to remove self as event listener during destroy", e);
-            }
+        try {
+            session.getWorkspace().getObservationManager().removeEventListener(this);
+        } catch (RepositoryException e) {
+            log.error("Failed to remove self as event listener during destroy", e);
         }
         if (background != null) {
             background.logout();
@@ -205,6 +203,10 @@ public class UpdaterExecutor implements EventListener {
 
     private void runQueryVisitor() throws RepositoryException {
         for (String identifier : getQueryResult()) {
+            if (cancelled) {
+                info("Update cancelled");
+                return;
+            }
             try {
                 final Node node = session.getNodeByIdentifier(identifier);
                 executeUpdater(node);
