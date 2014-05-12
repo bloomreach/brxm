@@ -214,7 +214,7 @@ public class SCXMLWorkflowExecutor<T extends SCXMLWorkflowContext, V extends SCX
         }
         getSCXMLExecutor().getRootContext().set(SCXMLWorkflowContext.SCXML_CONTEXT_KEY, context);
         getSCXMLExecutor().getRootContext().set(SCXMLWorkflowData.SCXML_CONTEXT_KEY, data);
-        log.info("Starting workflow {}", scxmlId);
+        log.debug("Starting workflow {}", scxmlId);
         try {
             executor.go();
             started = true;
@@ -284,10 +284,10 @@ public class SCXMLWorkflowExecutor<T extends SCXMLWorkflowContext, V extends SCX
             }
             TriggerEvent event = new TriggerEvent(action, TriggerEvent.SIGNAL_EVENT, payload);
             if (payload == null) {
-                log.info("Invoking workflow {} action {}", scxmlId, action);
+                log.debug("Invoking workflow {} action {}", scxmlId, action);
             }
             else {
-                log.info("Invoking workflow {} action {} with payload {}", scxmlId, action, payload.toString());
+                log.debug("Invoking workflow {} action {} with payload {}", scxmlId, action, payload.toString());
             }
             // reset result
             context.setResult(null);

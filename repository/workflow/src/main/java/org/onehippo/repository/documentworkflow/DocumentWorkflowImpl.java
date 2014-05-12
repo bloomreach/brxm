@@ -56,9 +56,36 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
      */
     public static final String SCXML_DEFINITION_KEY = "scxml-definition";
 
+    /**
+     * Optional workflow repository configuration property name through which a custom factory class name can be
+     * configured for creating a DocumentHandle instance,
+     *
+     * @see #createDocumentHandle(javax.jcr.Node)
+     */
+    public static final String DOCUMENT_HANDLE_FACTORY_CLASS_KEY = "documentHandleFactoryClass";
+
     private SCXMLWorkflowExecutor<SCXMLWorkflowContext, DocumentHandle> workflowExecutor;
 
     public DocumentWorkflowImpl() throws RemoteException {
+    }
+
+    @SuppressWarnings("unchecked")
+    protected DocumentHandle createDocumentHandle(Node node) throws WorkflowException {
+        final RepositoryMap workflowConfiguration = getWorkflowContext().getWorkflowConfiguration();
+        Object configurationValue;
+        if (workflowConfiguration != null && workflowConfiguration.exists() &&
+                (configurationValue = workflowConfiguration.get(DOCUMENT_HANDLE_FACTORY_CLASS_KEY)) != null) {
+            String className = configurationValue.toString().trim();
+            if (!className.isEmpty()) {
+                try {
+                    Class<DocumentHandleFactory> clazz = (Class<DocumentHandleFactory>) Class.forName(className);
+                    return clazz.newInstance().createDocumentHandle(node);
+                } catch (ClassNotFoundException|InstantiationException|IllegalAccessException|ClassCastException e) {
+                    throw new WorkflowException("Invalid document handle factory class '"+className+"'", e);
+                }
+            }
+        }
+        return new DocumentHandle(node);
     }
 
     SCXMLWorkflowExecutor getWorkflowExecutor() {
@@ -110,7 +137,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
             }
 
             // instantiate SCXMLWorkflowExecutor using default SCXMLWorkflowContext and DocumentHandle implementing SCXMLWorkflowData
-            workflowExecutor = new SCXMLWorkflowExecutor<>(new SCXMLWorkflowContext(scxmlId, getWorkflowContext()), new DocumentHandle(node));
+            workflowExecutor = new SCXMLWorkflowExecutor<>(new SCXMLWorkflowContext(scxmlId, getWorkflowContext()), createDocumentHandle(node));
         }
         catch (WorkflowException wfe) {
             if (wfe.getCause() != null && wfe.getCause() instanceof RepositoryException) {

@@ -46,6 +46,14 @@ public class DocumentHandle implements SCXMLWorkflowData {
         this.handle = handle;
     }
 
+    protected DocumentVariant createDocumentVariant(Node node) throws RepositoryException {
+        return new DocumentVariant(node);
+    }
+
+    protected Request createRequest(Node node) throws RepositoryException {
+        return Request.createRequest(node);
+    }
+
     protected boolean isInitialized() {
         return initialized;
     }
@@ -59,7 +67,7 @@ public class DocumentHandle implements SCXMLWorkflowData {
 
         try {
             for (Node variant : new NodeIterable(handle.getNodes(handle.getName()))) {
-                DocumentVariant doc = new DocumentVariant(variant);
+                DocumentVariant doc = createDocumentVariant(variant);
                 if (documents.containsKey(doc.getState())) {
                     log.warn("Document at path {} has multiple variants with state {}. Variant with identifier {} ignored.",
                             new String[]{handle.getPath(), doc.getState(), variant.getIdentifier()});
@@ -68,7 +76,7 @@ public class DocumentHandle implements SCXMLWorkflowData {
             }
 
             for (Node requestNode : new NodeIterable(handle.getNodes(HippoStdPubWfNodeType.HIPPO_REQUEST))) {
-                Request request = Request.createRequest(requestNode);
+                Request request = createRequest(requestNode);
                 if (request != null) {
                     if (request.isWorkflowRequest()) {
                         requests.put(request.getIdentity(), request);

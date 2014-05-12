@@ -158,12 +158,12 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
                         // NOTE: The new SCXML instance has error(s) so it's null here.
                         //       Now, let put the old existing SCXML instance back into the map if there's any.
                         newScxmlDef = oldScxmlDef;
-                        log.info("The existing SCXML definition was kept due to invalid SCXML. Id: '{}'.", scxmlDefId);
+                        log.error("The existing SCXML definition was kept due to invalid SCXML. Id: '{}'.", scxmlDefId);
                     }
 
                     if (newScxmlDef != null) {
                         newScxmlDefMap.put(scxmlDefId, newScxmlDef);
-                        log.info("Registering SCXML definition. Id: '{}'.", scxmlDefId);
+                        log.debug("Registering SCXML definition. Id: '{}'.", scxmlDefId);
                     }
                 }
             }
