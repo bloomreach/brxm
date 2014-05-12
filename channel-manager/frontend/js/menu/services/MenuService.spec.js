@@ -199,4 +199,14 @@ describe('Menu Service', function () {
 
         expect(allChangesProcessed).toEqual(true);
     }));
+
+    it('should delete collapsed property before sending to server', inject (function($rootScope) {
+        var menuItem = {id: 'id', collapsed: true};
+
+        $httpBackend.expectPOST('api/menuId', {id: 'id'}).respond('OK');
+
+        menuService.saveMenuItem(menuItem);
+
+        $httpBackend.flush();
+    }));
 });
