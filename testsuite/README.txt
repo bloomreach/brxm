@@ -33,6 +33,20 @@ Start with:
 
   $ mvn -P cargo.run -Djrebel
 
+Available webapps/hosts/sites
+============
+http://localhost:8080/cms
+http://localhost:8080/cms/console
+http://localhost:8080/cms/repository
+http://localhost:8080/site  (corporate site)
+http://localhost:8080/site/demosite_fr  (french sub-site)
+
+http://com.localhost:8080/site (environment to add new sites)
+http://dev.example.com:8080/intranet (intranet is different webapp!!!)
+
+Note for the last two URLs you need to make sure the hosts are added to /etc/hosts (ubuntu) and have
+IP address 127.0.0.1 associated.
+
 Best Practice for development
 ============
 

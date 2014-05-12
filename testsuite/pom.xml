@@ -198,14 +198,14 @@
         <module>linear-algebra</module>
         <!-- End Add-on component context -->
         <module>content</module>
-        <module>intranet-bootstrap</module>
+        <!--<module>intranet-bootstrap</module>-->
         <module>components</module>
         <module>dependencies</module>
         <module>resources</module>
         <module>cms</module>
         <module>site</module>
-        <module>intranet</module>
-        <module>prod-server-config</module>
+        <!--<module>intranet</module>-->
+        <!--<module>prod-server-config</module>-->
         <module>solr</module>
       </modules>
     </profile>
