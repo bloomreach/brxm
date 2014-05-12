@@ -58,7 +58,7 @@
     <cglib.version>2.2.2</cglib.version>
 
     <hippo.repository.version>2.26.01</hippo.repository.version>
-    <hippo.utilities.version>1.03.01</hippo.utilities.version>
+    <hippo.utilities.version>1.03.00</hippo.utilities.version>
 
     <maven.plugin.site.version>3.0-beta-3</maven.plugin.site.version>
     <maven.plugin.jxr.version>2.2</maven.plugin.jxr.version>
