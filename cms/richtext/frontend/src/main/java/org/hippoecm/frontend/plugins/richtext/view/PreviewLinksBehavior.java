@@ -61,7 +61,7 @@ class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior implements ILinkD
         final StringValue linkValue = request.getRequestParameters().getParameterValue("link");
         if (linkValue != null) {
             String link = linkValue.toString();
-            link = UrlDecoder.PATH_INSTANCE.decode(link, request.getCharset());
+            link = UrlDecoder.QUERY_INSTANCE.decode(link, request.getCharset());
             if (browser != null) {
                 Node node = model.getObject();
                 try {
