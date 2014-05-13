@@ -102,7 +102,6 @@ public class MessageInstructionExecutor {
     }
 
     private void processFileInstruction(final Collection<KeyValueRestful> retVal, final Map<String, Object> placeholderData, final FileInstruction instruction) {
-        log.info("instruction {}", instruction.getClass());
         final String action = instruction.getAction();
         if (action.equals("copy")) {
 
