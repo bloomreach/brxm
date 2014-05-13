@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>26-SNAPSHOT</version>
+    <version>25</version>
   </parent>
 
   <artifactId>hippo-cms</artifactId>
@@ -126,7 +126,7 @@
     <yui.sources.version>1.01.11</yui.sources.version>
     <hippo.htmlcleaner.version>1.02.09</hippo.htmlcleaner.version>
     <hippo.htmldiff.version>1.01.03</hippo.htmldiff.version>
-    <hippo.jcrdiff.version>1.01.05-SNAPSHOT</hippo.jcrdiff.version>
+    <hippo.jcrdiff.version>1.01.05</hippo.jcrdiff.version>
     <hippo.ckeditor.version>4.3.0-h6</hippo.ckeditor.version>
 
     <sonar.l10n.locales>nl,fr,it,de</sonar.l10n.locales>
