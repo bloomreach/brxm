@@ -102,6 +102,7 @@ public class FilePluginService implements PluginConfigService {
                 log.info("Path not found, configuration will not be read: {}", path);
                 return null;
             }
+
             log.info("Reading settings of: {}", path);
             final String setting = GlobalUtils.readStreamAsText(new FileInputStream(path));
             log.info("setting {}", setting);
