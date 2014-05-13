@@ -28,3 +28,7 @@
     </c:choose>
   </c:forEach>
 </ul>
+<%--@elvariable id="editMode" type="java.lang.Boolean"--%>
+<c:if test="${editMode && (menu eq null)}">
+  <img src="<hst:link path="/images/essentials-edit-component.png" />" alt="Edit component settings">
+</c:if>
