@@ -32,7 +32,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.jackrabbit.value.ValueFactoryImpl;
-import org.onehippo.cms7.essentials.dashboard.config.JcrPluginConfigService;
+import org.onehippo.cms7.essentials.dashboard.config.FilePluginService;
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
@@ -111,6 +111,11 @@ public class DefaultPluginContext implements PluginContext {
     @Override
     public File getEssentialsDirectory() {
         return ProjectUtils.getEssentialsFolder();
+    }
+
+    @Override
+    public String getEssentialsResourcePath() {
+        return ProjectUtils.getEssentialsFolder().getAbsolutePath() + MAIN_RESOURCE_PART;
     }
 
 
@@ -203,7 +208,7 @@ public class DefaultPluginContext implements PluginContext {
 
     @Override
     public PluginConfigService getConfigService() {
-        return new JcrPluginConfigService(this);
+        return new FilePluginService(this);
     }
 
     @Override

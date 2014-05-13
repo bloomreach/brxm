@@ -22,13 +22,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.Writer;
-import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.commons.io.FileUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
@@ -41,7 +41,7 @@ import com.google.common.base.Strings;
  */
 public class FilePluginService implements PluginConfigService {
 
-    private static final Pattern DOT_PATTERN = Pattern.compile("\\.");
+
     private static Logger log = LoggerFactory.getLogger(FilePluginService.class);
     public static final String SETTINGS_EXTENSION = ".xml";
 
@@ -59,9 +59,15 @@ public class FilePluginService implements PluginConfigService {
             final JAXBContext jaxbContext = JAXBContext.newInstance(document.getClass());
             final Marshaller marshaller = jaxbContext.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            final String path = getFilePath(document);
+            final String path = getFilePath(document, null);
             log.info("Writing settings of: {}", path);
-            final Writer writer = new FileWriter(new File(path));
+            final File file = new File(path);
+            //  make sure parent directory exists:
+            final File parentFile = file.getParentFile();
+            if (!parentFile.exists()) {
+                FileUtils.forceMkdir(parentFile);
+            }
+            final Writer writer = new FileWriter(file);
             marshaller.marshal(document, writer);
             return true;
         } catch (JAXBException e) {
@@ -77,15 +83,37 @@ public class FilePluginService implements PluginConfigService {
 
     @Override
     public boolean write(final Document document, final String pluginId) {
-        if (!Strings.isNullOrEmpty(pluginId)) {
-            document.setName(pluginId);
+        final String cleanedId = GlobalUtils.validFileName(pluginId);
+        if (!Strings.isNullOrEmpty(cleanedId)) {
+            document.setName(cleanedId);
         }
         return write(document);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <T extends Document> T read(final String pluginClass, final Class<T> clazz) {
-        return read(clazz);
+    public <T extends Document> T read(final String pluginId, final Class<T> clazz) {
+        try {
+            final JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
+            final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+            final String cleanedId = GlobalUtils.validFileName(pluginId);
+            final String path = getFilePath(GlobalUtils.newInstance(clazz), cleanedId);
+            if(!new File(path).exists()){
+                log.info("Path not found, configuration will not be read: {}", path);
+                return null;
+            }
+            log.info("Reading settings of: {}", path);
+            final String setting = GlobalUtils.readStreamAsText(new FileInputStream(path));
+            log.info("setting {}", setting);
+            return (T) unmarshaller.unmarshal(new StringReader(setting));
+        } catch (JAXBException e) {
+            log.error("Error reading settings", e);
+        } catch (IOException e) {
+            log.error("Error reading file", e);
+        }
+
+        return null;
+
     }
 
     @SuppressWarnings("unchecked")
@@ -94,9 +122,10 @@ public class FilePluginService implements PluginConfigService {
         try {
             final JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
             final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            final String path = getFilePath(GlobalUtils.newInstance(clazz));
+            final String path = getFilePath(GlobalUtils.newInstance(clazz), null);
             log.info("Reading settings of: {}", path);
             final String setting = GlobalUtils.readStreamAsText(new FileInputStream(path));
+            log.info("setting {}", setting);
             return (T) unmarshaller.unmarshal(new StringReader(setting));
         } catch (JAXBException e) {
             log.error("Error reading settings", e);
@@ -118,21 +147,25 @@ public class FilePluginService implements PluginConfigService {
     // UTILS
     //############################################
 
-    private String getFilePath(final Document document) {
-        final File essentialsDirectory = context.getEssentialsDirectory();
-        final String fileName;
-        if (Strings.isNullOrEmpty(document.getName())) {
-            fileName = fileNameForClass(document);
-        } else {
-            fileName = document.getName() + SETTINGS_EXTENSION;
+    private String getFilePath(final Document document, String pluginName) {
+        String fileName = pluginName;
+        if (Strings.isNullOrEmpty(fileName)) {
+            if (Strings.isNullOrEmpty(document.getName())) {
+                fileName = fileNameForClass(document);
+            } else {
+                fileName = GlobalUtils.validFileName(document.getName()) + SETTINGS_EXTENSION;
+            }
         }
-        return essentialsDirectory.getAbsolutePath() + File.separator + fileName;
+        if(!fileName.endsWith(SETTINGS_EXTENSION)){
+            fileName = fileName + SETTINGS_EXTENSION;
+        }
+        return context.getEssentialsResourcePath() + File.separator + fileName;
     }
 
 
     private String fileNameForClass(final Document document) {
         final String name = document.getClass().getName();
-        return DOT_PATTERN.matcher(name).replaceAll("_") + SETTINGS_EXTENSION;
+        return GlobalUtils.validFileName(name) + SETTINGS_EXTENSION;
     }
 
 

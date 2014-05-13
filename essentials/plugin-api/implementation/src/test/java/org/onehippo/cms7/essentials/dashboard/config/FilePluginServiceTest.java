@@ -30,12 +30,14 @@ public class FilePluginServiceTest extends BaseTest {
         try (PluginConfigService service = new FilePluginService(getContext())) {
             final ProjectSettingsBean bean = new ProjectSettingsBean();
             bean.setSetupDone(true);
+            bean.setProjectNamespace("myNamespace");
             bean.setSelectedBeansPackage("testBeanPackage");
             bean.setSelectedComponentsPackage("testComponentPackage");
             bean.setSelectedRestPackage("testRestPackage");
             final boolean written = service.write(bean);
             assertTrue(written);
             final ProjectSettingsBean myBean = service.read(bean.getClass());
+            assertEquals(myBean.getProjectNamespace(), bean.getProjectNamespace());
             assertEquals(myBean.getSelectedBeansPackage(), bean.getSelectedBeansPackage());
             assertEquals(myBean.getSelectedComponentsPackage(), bean.getSelectedComponentsPackage());
             assertEquals(myBean.getSelectedRestPackage(), bean.getSelectedRestPackage());

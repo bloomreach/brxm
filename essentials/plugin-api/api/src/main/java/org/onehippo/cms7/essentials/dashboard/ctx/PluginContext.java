@@ -216,4 +216,10 @@ public interface PluginContext extends Serializable {
      * @return object containing a number of items which can be used to inject into templates etc.
      */
     Map<String, Object> getPlaceholderData();
+
+    /**
+     *
+     * @return essentials project resource directory path
+     */
+    String getEssentialsResourcePath();
 }

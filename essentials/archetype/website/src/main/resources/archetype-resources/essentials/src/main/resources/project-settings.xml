@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!--
   Copyright 2014 Hippo B.V. (http://www.onehippo.com)
 
@@ -14,6 +14,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<project-settings>
-
-</project-settings>
+<project>
+  <projectNamespace>${rootArtifactId.replace($hyphen,$empty)}</projectNamespace>
+  <selectedBeansPackage>${package}.beans</selectedBeansPackage>
+  <selectedComponentsPackage>${package}.components</selectedComponentsPackage>
+  <selectedRestPackage>${package}.rest</selectedRestPackage>
+  <setupDone>false</setupDone>
+</project>

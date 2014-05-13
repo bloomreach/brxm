@@ -31,6 +31,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentProper
 public class ProjectSettingsBean extends BaseDocument {
 
 
+    public static final String DEFAULT_NAME = "project-settings";
     @PersistentProperty(name = "projectNamespace")
     private String projectNamespace;
     @PersistentProperty(name = "selectedBeansPackage")
@@ -43,6 +44,7 @@ public class ProjectSettingsBean extends BaseDocument {
     private Boolean setupDone;
 
     public ProjectSettingsBean() {
+        super(DEFAULT_NAME);
     }
 
     public ProjectSettingsBean(final String name) {

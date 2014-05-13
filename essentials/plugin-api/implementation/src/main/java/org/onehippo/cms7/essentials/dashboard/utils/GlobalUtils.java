@@ -34,16 +34,12 @@ import javax.jcr.Session;
 import org.apache.commons.io.IOUtils;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
-import org.onehippo.cms7.essentials.dashboard.config.JcrPluginConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Charsets;
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 
 /**
  * @version "$Id$"
@@ -52,6 +48,7 @@ public final class GlobalUtils {
 
     private static final String PREFIX_GET = "get";
     private static final Pattern NAMESPACE_PATTERN = Pattern.compile(":");
+    private static final Pattern DOT_PATTERN = Pattern.compile("\\.");
     private static Logger log = LoggerFactory.getLogger(GlobalUtils.class);
 
     private GlobalUtils() {
@@ -242,7 +239,7 @@ public final class GlobalUtils {
 
     public static Class<?> loadCLass(final String clazz) {
         try {
-            if(Strings.isNullOrEmpty(clazz)){
+            if (Strings.isNullOrEmpty(clazz)) {
                 log.warn("Class name was null or empty");
                 return null;
             }
@@ -251,17 +248,6 @@ public final class GlobalUtils {
             log.error("Error loading class: [" + clazz + ']', e);
         }
         return null;
-    }
-
-    public static String getParentConfigPath(final CharSequence pluginId) {
-        final String fullConfigPath = getFullConfigPath(pluginId);
-        return fullConfigPath.substring(0, fullConfigPath.lastIndexOf('/'));
-    }
-
-    public static String getFullConfigPath(final CharSequence pluginId) {
-        final List<String> configList = Lists.newLinkedList(Splitter.on('/').split(JcrPluginConfigService.CONFIG_PATH));
-        configList.addAll(Lists.newLinkedList(Splitter.on('.').split(pluginId)));
-        return '/' + Joiner.on('/').join(configList);
     }
 
 
@@ -273,5 +259,19 @@ public final class GlobalUtils {
         }
         return url;
 
+    }
+
+    public static String validFileName(final String input) {
+        if(Strings.isNullOrEmpty(input)){
+            return null;
+        }
+
+        final String myInput = DOT_PATTERN.matcher(input).replaceAll("-");
+        return CharMatcher.inRange('a', 'z')
+                .or(CharMatcher.inRange('0', '9'))
+                .or(CharMatcher.inRange('A', 'Z'))
+                .or(CharMatcher.is('_'))
+                .or(CharMatcher.is('-'))
+                .retainFrom(myInput);
     }
 }

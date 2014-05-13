@@ -33,7 +33,15 @@ public class GlobalUtilsTest extends BaseTest {
 
     public static final String REPLACE_NAMESPACE = "testnamespace";
     public static final String REPLACE_DOC_NAME = "mytestname";
+    private static final String CLASS_NAME_EXPECTED = "org-onehippo-cms7-essentials-dashboard-utils-GlobalUtilsTest";
 
+
+    @Test
+    public void testValidFileName() throws Exception {
+        final String myFileName = GlobalUtils.validFileName(getClass().getName());
+        assertEquals(CLASS_NAME_EXPECTED, myFileName);
+
+    }
 
     @Test
     public void testNewInstance() throws Exception {

@@ -78,7 +78,7 @@ public class BaseResource {
         // inject project settings:
         try (final PluginConfigService configService = context.getConfigService()) {
 
-            final ProjectSettingsBean document = configService.read(ProjectSetupPlugin.class.getName(), ProjectSettingsBean.class);
+            final ProjectSettingsBean document = configService.read(ProjectSettingsBean.DEFAULT_NAME, ProjectSettingsBean.class);
 
             if (document != null) {
                 projectRestful.setNamespace(document.getProjectNamespace());
@@ -137,7 +137,7 @@ public class BaseResource {
         final PluginContext context = new DefaultPluginContext(new PluginRestful(className));
 
         try (final PluginConfigService service = context.getConfigService()) {
-            final ProjectSettingsBean document = service.read(className, ProjectSettingsBean.class);
+            final ProjectSettingsBean document = service.read(ProjectSettingsBean.DEFAULT_NAME, ProjectSettingsBean.class);
             if (document != null) {
                 context.setBeansPackageName(document.getSelectedBeansPackage());
                 context.setComponentsPackageName(document.getSelectedComponentsPackage());
