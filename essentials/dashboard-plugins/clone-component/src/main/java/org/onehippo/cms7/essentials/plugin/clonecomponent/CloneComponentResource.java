@@ -67,12 +67,10 @@ public class CloneComponentResource extends BaseResource {
 
     @GET
     public List<CloneRestful> runCloneComponent(@Context ServletContext servletContext) {
-
         final PluginContext context = getContext(servletContext);
         final Session session = context.createSession();
         List<CloneRestful> componentList = new ArrayList<>();
         try {
-
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
             final Query query = queryManager.createQuery("//hst:hst/hst:configurations//element(*, hst:containeritemcomponent)", "xpath");
             final QueryResult result = query.execute();

@@ -19,7 +19,7 @@
     <div class="panel-body">
         <form novalidate name="cloneComponentForm">
             <div class="form-group">
-                <label>Choose an component to clone:</label>
+                <label>Choose a component to clone:</label>
             </div>
             <div ng-show="components.length">
                 <table class="table table-hover">
@@ -83,7 +83,7 @@
         <div class="input-group">
               <span class="input-group-btn">
 
-                <button ng-disabled="!cloneComponentForm.$valid && !itemsValid()" class="btn btn-primary pull-right" type="submit" ng-click="runClones()">Run cloneComponent</button>
+                <button ng-disabled="!cloneComponentForm.$valid && !itemsValid()" class="btn btn-primary pull-right" type="submit" ng-click="runClones()">Clone selected components</button>
               </span>
         </div>
     </div>
