@@ -1,5 +1,13 @@
 #Hippo Essentials
 
+#BETA notice
+
+```
+Hippo Essentials is in BETA stage and is still undergoing testing and changes before its official release.
+Please use the Hippo Essentials feedback form to inform us if you encounter any bugs/glithces or if you have any suggestions
+for improvements.
+```
+
 
 Hippo Essentials is a project aimed at speeding up [Hippo CMS](http://www.onehippo.org) project implementations.
 It allows developers to easily install and configure Hippo CMS functionalities.
