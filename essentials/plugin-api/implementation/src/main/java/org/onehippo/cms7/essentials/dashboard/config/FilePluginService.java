@@ -92,10 +92,8 @@ public class FilePluginService implements PluginConfigService {
     @Override
     public <T extends Document> T read(final Class<T> clazz) {
         try {
-            final JAXBContext jaxbContext = JAXBContext.newInstance(clazz.getClass());
-            final Marshaller m = jaxbContext.createMarshaller();
+            final JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
             final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             final String path = getFilePath(GlobalUtils.newInstance(clazz));
             log.info("Reading settings of: {}", path);
             final String setting = GlobalUtils.readStreamAsText(new FileInputStream(path));
