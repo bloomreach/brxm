@@ -36,6 +36,7 @@ public class EssentialsDocumentComponent extends CommonComponent {
 
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
+        super.doBeforeRender(request, response);
         final EssentialsDocumentComponentInfo paramInfo = getComponentParametersInfo(request);
         final String documentPath = paramInfo.getDocument();
         log.debug("Calling EssentialsDocumentComponent for document path:  [{}]", documentPath);
