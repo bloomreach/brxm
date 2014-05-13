@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
   Copyright 2014 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,11 +14,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="essentials">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hipposysedit:namespace</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-    <sv:value>mix:referenceable</sv:value>
-  </sv:property>
-</sv:node>
+<project>
+  <projectNamespace>${rootArtifactId.replace($hyphen,$empty)}</projectNamespace>
+  <selectedBeansPackage>${package}.beans</selectedBeansPackage>
+  <selectedComponentsPackage>${package}.components</selectedComponentsPackage>
+  <selectedRestPackage>${package}.rest</selectedRestPackage>
+  <setupDone>false</setupDone>
+</project>

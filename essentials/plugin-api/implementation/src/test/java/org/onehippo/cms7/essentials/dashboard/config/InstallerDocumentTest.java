@@ -19,9 +19,8 @@ package org.onehippo.cms7.essentials.dashboard.config;
 import java.util.Calendar;
 
 import org.junit.Test;
-import org.onehippo.cms7.essentials.BaseRepositoryTest;
+import org.onehippo.cms7.essentials.BaseTest;
 import org.onehippo.cms7.essentials.TestPluginContext;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +30,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * @version "$Id$"
  */
-public class InstallerDocumentTest extends BaseRepositoryTest {
+public class InstallerDocumentTest extends BaseTest {
 
     private static Logger log = LoggerFactory.getLogger(InstallerDocumentTest.class);
 
@@ -40,7 +39,6 @@ public class InstallerDocumentTest extends BaseRepositoryTest {
 
         final InstallerDocument document = new InstallerDocument();
         final String pluginId = "foo.bar.zar.MyBean";
-        document.setParentPath(GlobalUtils.getParentConfigPath(pluginId));
         document.setName(pluginId);
         log.info("document {}", document);
         document.setPluginId("test.foo");
@@ -48,9 +46,9 @@ public class InstallerDocumentTest extends BaseRepositoryTest {
         document.setDateInstalled(today);
         final TestPluginContext context = (TestPluginContext) getContext();
         final InstallerDocument fetched;
-        try (DocumentManager manager = new DefaultDocumentManager(context.createSession(), context)) {
-            manager.saveDocument(document);
-            fetched = manager.fetchDocument(document.getPath(), InstallerDocument.class);
+        try (PluginConfigService manager = new FilePluginService(context)) {
+            manager.write(document);
+            fetched = manager.read(pluginId, InstallerDocument.class);
         }
         assertNotNull(fetched.getDateInstalled());
         assertEquals(fetched.getDateInstalled().getTime(), today.getTime());

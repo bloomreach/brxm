@@ -19,6 +19,8 @@ package org.onehippo.cms7.essentials.dashboard.config;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentMultiProperty;
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode;
 
@@ -26,6 +28,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode;
  * @version "$Id$"
  */
 
+@XmlRootElement(name = "base-document")
 @PersistentNode(type = "essentials:document")
 public class BaseDocument implements Document {
 

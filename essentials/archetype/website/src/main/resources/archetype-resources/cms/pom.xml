@@ -100,13 +100,6 @@
          therefore the essentials content is always bootstrapped. -->
         <activeByDefault>true</activeByDefault>
       </activation>
-      <dependencies>
-        <dependency>
-          <groupId>${groupId}</groupId>
-          <artifactId>${rootArtifactId}-bootstrap-essentials</artifactId>
-          <version>${dollar}{project.version}</version>
-        </dependency>
-      </dependencies>
     </profile>
   </profiles>
 

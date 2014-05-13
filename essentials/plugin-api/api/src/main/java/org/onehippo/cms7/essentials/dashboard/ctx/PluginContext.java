@@ -84,6 +84,14 @@ public interface PluginContext extends Serializable {
      */
     File getCmsDirectory();
 
+
+    /**
+     * Returns root of the essentials project directory
+     *
+     * @return directory of essentials module
+     */
+    File getEssentialsDirectory();
+
     /**
      * Check if Hippo  Enterprise project
      *
@@ -208,4 +216,10 @@ public interface PluginContext extends Serializable {
      * @return object containing a number of items which can be used to inject into templates etc.
      */
     Map<String, Object> getPlaceholderData();
+
+    /**
+     *
+     * @return essentials project resource directory path
+     */
+    String getEssentialsResourcePath();
 }

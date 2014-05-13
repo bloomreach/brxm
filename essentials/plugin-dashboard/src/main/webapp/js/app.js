@@ -246,7 +246,7 @@
                     // refresh messages when changes are made:
                     $scope.$watch('payload', function (newValue, oldValue) {
                         if (newValue) {
-                            return installerFactory.packageMessages($scope.payload).success(function (data) {
+                            return installerFactory.packageMessages(newValue).success(function (data) {
                                 return $scope.packageMessages = data;
                             });
                         }

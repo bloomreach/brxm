@@ -81,8 +81,11 @@ public class TestPluginContext extends DefaultPluginContext {
         /*placeholderData.put(EssentialConst.PLACEHOLDER_BEANS_FOLDER, getBeansPackagePath().toString());
         placeholderData.put(EssentialConst.PLACEHOLDER_REST_FOLDER, getRestPackagePath().toString());
         placeholderData.put(EssentialConst.PLACEHOLDER_COMPONENTS_FOLDER, getComponentsPackagePath().toString());*/
-
-
+        final File essentials = new File(tmpDir + File.separator + "essentials");
+        if (!essentials.exists()) {
+            essentials.mkdir();
+        }
+        placeholderData.put(EssentialConst.PLACEHOLDER_ESSENTIALS_ROOT, essentials.getAbsolutePath());
         return placeholderData;
     }
 

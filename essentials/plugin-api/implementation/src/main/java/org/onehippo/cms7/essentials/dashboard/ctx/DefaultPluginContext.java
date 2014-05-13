@@ -32,7 +32,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.jackrabbit.value.ValueFactoryImpl;
-import org.onehippo.cms7.essentials.dashboard.config.JcrPluginConfigService;
+import org.onehippo.cms7.essentials.dashboard.config.FilePluginService;
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
@@ -107,6 +107,17 @@ public class DefaultPluginContext implements PluginContext {
     public File getCmsDirectory() {
         return ProjectUtils.getCms();
     }
+
+    @Override
+    public File getEssentialsDirectory() {
+        return ProjectUtils.getEssentialsFolder();
+    }
+
+    @Override
+    public String getEssentialsResourcePath() {
+        return ProjectUtils.getEssentialsFolder().getAbsolutePath() + MAIN_RESOURCE_PART;
+    }
+
 
     @Override
     public boolean isEnterpriseProject() {
@@ -197,7 +208,7 @@ public class DefaultPluginContext implements PluginContext {
 
     @Override
     public PluginConfigService getConfigService() {
-        return new JcrPluginConfigService(this);
+        return new FilePluginService(this);
     }
 
     @Override
@@ -301,6 +312,8 @@ public class DefaultPluginContext implements PluginContext {
             placeholderData.put(EssentialConst.PLACEHOLDER_COMPONENTS_FOLDER, componentsPackagePath.toString());
         }
         placeholderData.put(EssentialConst.PLACEHOLDER_TMP_FOLDER, System.getProperty("java.io.tmpdir"));
+        // essentials
+        placeholderData.put(EssentialConst.PLACEHOLDER_ESSENTIALS_ROOT, getEssentialsDirectory().getAbsolutePath());
 
 
         return placeholderData;

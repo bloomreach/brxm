@@ -41,8 +41,7 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
-import org.onehippo.cms7.essentials.dashboard.config.DefaultDocumentManager;
-import org.onehippo.cms7.essentials.dashboard.config.DocumentManager;
+import org.onehippo.cms7.essentials.dashboard.config.FilePluginService;
 import org.onehippo.cms7.essentials.dashboard.config.InstallerDocument;
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
@@ -120,7 +119,7 @@ public class PluginResource extends BaseResource {
 
         final Collection<String> restClasses = new ArrayList<>();
         final PluginContext context = getContext(servletContext);
-        try (DocumentManager manager = new DefaultDocumentManager(context.createSession(), context)) {
+        try (PluginConfigService service = new FilePluginService(context)) {
             for (PluginRestful item : items) {
                 plugins.add(item);
                 final String pluginId = item.getPluginId();
@@ -140,7 +139,7 @@ public class PluginResource extends BaseResource {
 
                 // check if recently installed:
                 // TODO: move to client?
-                final InstallerDocument document = manager.fetchDocument(GlobalUtils.getFullConfigPath(pluginId), InstallerDocument.class);
+                final InstallerDocument document = service.read(pluginId, InstallerDocument.class);
                 if (document != null && document.getDateInstalled() != null) {
                     final Calendar dateInstalled = document.getDateInstalled();
                     final Calendar lastWeek = Calendar.getInstance();
@@ -202,13 +201,13 @@ public class PluginResource extends BaseResource {
             resource.setSuccessMessage(false);
             return resource;
         }
-        final String className = ProjectSetupPlugin.class.getName();
-        final PluginContext context = new DefaultPluginContext(new PluginRestful(className));
+
+        final PluginContext context = new DefaultPluginContext(new PluginRestful(ProjectSettingsBean.DEFAULT_NAME));
         // inject project settings:
         try (PluginConfigService configService = context.getConfigService()) {
 
 
-            final ProjectSettingsBean document = configService.read(className, ProjectSettingsBean.class);
+            final ProjectSettingsBean document = configService.read(ProjectSettingsBean.DEFAULT_NAME, ProjectSettingsBean.class);
             if (document != null) {
                 context.setBeansPackageName(document.getSelectedBeansPackage());
                 context.setComponentsPackageName(document.getSelectedComponentsPackage());
@@ -245,7 +244,7 @@ public class PluginResource extends BaseResource {
             final Plugin plugin = getPluginById(ProjectSetupPlugin.class.getName(), servletContext);
             final PluginContext context = new DefaultPluginContext(plugin);
             try (PluginConfigService configService = context.getConfigService()) {
-                final ProjectSettingsBean document = configService.read(ProjectSetupPlugin.class.getName(), ProjectSettingsBean.class);
+                final ProjectSettingsBean document = configService.read(ProjectSettingsBean.DEFAULT_NAME, ProjectSettingsBean.class);
                 document.setSetupDone(true);
                 configService.write(document);
                 return new KeyValueRestful("message", "Saved property for welcome screen");
@@ -365,13 +364,11 @@ public class PluginResource extends BaseResource {
 
                 if (notInstalled.size() == 0) {
                     final PluginContext context = getContext(servletContext);
-                    try (DocumentManager manager = new DefaultDocumentManager(context.createSession(), context)) {
+                    try (PluginConfigService service = new FilePluginService(context)) {
                         final InstallerDocument document = new InstallerDocument();
                         document.setName(id);
-                        document.setParentPath(GlobalUtils.getParentConfigPath(id));
                         document.setDateInstalled(Calendar.getInstance());
-
-                        manager.saveDocument(document);
+                        service.write(document);
                     }
                     message.setValue("Plugin successfully installed. Please rebuild and restart your application");
                     return message;
@@ -449,7 +446,7 @@ public class PluginResource extends BaseResource {
             final Plugin plugin = getPluginById(ProjectSetupPlugin.class.getName(), servletContext);
             final PluginContext context = new DefaultPluginContext(plugin);
             try (PluginConfigService configService = context.getConfigService()) {
-                final ProjectSettingsBean document = configService.read(ProjectSetupPlugin.class.getName(), ProjectSettingsBean.class);
+                final ProjectSettingsBean document = configService.read(ProjectSettingsBean.DEFAULT_NAME, ProjectSettingsBean.class);
                 if (document != null && document.getSetupDone()) {
                     status.setStatus(true);
                     return status;
@@ -523,6 +520,7 @@ public class PluginResource extends BaseResource {
 
         final InstructionPackage instructionPackage = (InstructionPackage) GlobalUtils.newInstance(clazz);
         getInjector().autowireBean(instructionPackage);
+        instructionPackage.setProperties(new HashMap<String, Object>(values));
         @SuppressWarnings("unchecked")
         final Set<KeyValueRestful> messages = (Set<KeyValueRestful>) instructionPackage.getInstructionsMessages(getContext(servletContext));
         for (KeyValueRestful message : messages) {

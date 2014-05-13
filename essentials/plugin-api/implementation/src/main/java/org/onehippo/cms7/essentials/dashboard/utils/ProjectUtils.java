@@ -28,7 +28,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -118,6 +117,7 @@ public final class ProjectUtils {
     public static File getBootstrapConfigFolder() {
         return getFolder(BOOTSTRAP + File.separator + "configuration");
     }
+
     /**
      * Returns Content root folder e.g. {@code /home/foo/myproject/bootstrap/content}
      *
@@ -133,9 +133,15 @@ public final class ProjectUtils {
      * @return Essentials project folder
      */
     public static File getEssentialsFolder() {
-        //TODO:  NOTE we still need to decide about location
         return getFolder("essentials");
     }
+
+    public static File getEssentialsResourcesFolder() {
+        final File site = getSite();
+        final String absolutePath = site.getAbsolutePath() + File.separator + "src" + File.separator + "main" + File.separator + "resources";
+        return new File(absolutePath);
+    }
+
     /**
      * Returns Bootstrap root folder e.g. {@code /home/foo/myproject/bootstrap}
      *
@@ -185,7 +191,7 @@ public final class ProjectUtils {
      * @return null if type is invalid
      */
     public static String getPomPath(DependencyType type) {
-        if (type == null || type== DependencyType.INVALID) {
+        if (type == null || type == DependencyType.INVALID) {
             return null;
         }
         switch (type) {
@@ -214,18 +220,15 @@ public final class ProjectUtils {
     }
 
     private static Model getPomModel(String path) {
-        Reader fileReader = null;
-        Model model = null;
-        try {
+
+        try (Reader fileReader = new FileReader(path)) {
             final MavenXpp3Reader reader = new MavenXpp3Reader();
-            fileReader = new FileReader(path);
-            model = reader.read(fileReader);
+            return reader.read(fileReader);
         } catch (XmlPullParserException | IOException e) {
             log.error("Error parsing pom", e);
-        } finally {
-            IOUtils.closeQuietly(fileReader);
         }
-        return model;
+        return null;
+
     }
 
 

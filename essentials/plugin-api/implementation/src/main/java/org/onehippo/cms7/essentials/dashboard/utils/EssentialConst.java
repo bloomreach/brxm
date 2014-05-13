@@ -45,6 +45,7 @@ public final class EssentialConst {
     public static final String PLACEHOLDER_DATE_FILE_YYYY_MM_NEXT_YEAR = "dateFileYearMonthNextYear";
     public static final String PLACEHOLDER_SITE_ROOT = "siteRoot";
     public static final String PLACEHOLDER_SITE_WEB_ROOT = "siteWebRoot";
+    public static final String PLACEHOLDER_ESSENTIALS_ROOT = "essentialsRoot";
     public static final String PLACEHOLDER_SITE_WEB_INF_ROOT = "cmsWebInfRoot";
     public static final String PLACEHOLDER_CMS_WEB_INF_ROOT = "siteWebInfRoot";
     public static final String PLACEHOLDER_SITE_RESOURCES = "siteResources";

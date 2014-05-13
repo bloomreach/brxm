@@ -128,6 +128,10 @@ public abstract class BaseTest {
                 if (!siteFolder.exists()) {
                     siteFolder.mkdir();
                 }
+                final File essentialsFolder = new File(basePath + File.separator + "essentials");
+                if (!essentialsFolder.exists()) {
+                    essentialsFolder.mkdir();
+                }
             }
         }
         return context;
