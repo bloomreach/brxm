@@ -19,14 +19,14 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>7.9.1-SNAPSHOT</version>
+    <version>7.9.1-iteration-79</version>
   </parent>
 
 
   <artifactId>hippo-testsuite</artifactId>
   <name>Hippo Test Suite</name>
   <description>Hippo Test Suite</description>
-  <version>1.06.01-SNAPSHOT</version>
+  <version>1.06.01-iteration-79</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2009</inceptionYear>
@@ -346,9 +346,9 @@
   </profiles>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/testsuite/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/testsuite/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/testsuite/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/testsuite/tags/hippo-testsuite-1.06.01-iteration-79</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/testsuite/tags/hippo-testsuite-1.06.01-iteration-79</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/testsuite/tags/hippo-testsuite-1.06.01-iteration-79</url>
   </scm>
 
 </project>
