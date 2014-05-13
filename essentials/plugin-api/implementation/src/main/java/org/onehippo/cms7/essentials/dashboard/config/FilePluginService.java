@@ -105,7 +105,7 @@ public class FilePluginService implements PluginConfigService {
 
             log.info("Reading settings of: {}", path);
             final String setting = GlobalUtils.readStreamAsText(new FileInputStream(path));
-            log.info("setting {}", setting);
+            log.debug("setting {}", setting);
             return (T) unmarshaller.unmarshal(new StringReader(setting));
         } catch (JAXBException e) {
             log.error("Error reading settings", e);
@@ -126,7 +126,7 @@ public class FilePluginService implements PluginConfigService {
             final String path = getFilePath(GlobalUtils.newInstance(clazz), null);
             log.info("Reading settings of: {}", path);
             final String setting = GlobalUtils.readStreamAsText(new FileInputStream(path));
-            log.info("setting {}", setting);
+            log.debug("setting {}", setting);
             return (T) unmarshaller.unmarshal(new StringReader(setting));
         } catch (JAXBException e) {
             log.error("Error reading settings", e);
