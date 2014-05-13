@@ -54,6 +54,9 @@ public interface Plugin extends Serializable {
 
     void setPluginId(String pluginId);
 
+    String getPackageFile();
+
+    void setPackageFile(String packageFile);
 
     Vendor getVendor();
 

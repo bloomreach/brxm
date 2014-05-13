@@ -27,6 +27,7 @@ import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
+import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
 import static org.junit.Assert.assertEquals;
@@ -54,7 +55,7 @@ public class NewsInstructionPackageTest extends BaseRepositoryTest {
 
     @Test
     public void testParseInstructions() throws Exception {
-        final InstructionPackage instructionPackage = new NewsInstructionPackage();
+        final InstructionPackage instructionPackage = new TemplateSupportInstructionPackage("/META-INF/news_package_instructions.xml");
         injector.autowireBean(instructionPackage);
         final Instructions instructions = instructionPackage.getInstructions();
         final Set<InstructionSet> instructionSets = instructions.getInstructionSets();

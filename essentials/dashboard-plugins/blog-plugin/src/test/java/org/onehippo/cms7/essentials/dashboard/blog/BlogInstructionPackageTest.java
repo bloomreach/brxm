@@ -30,6 +30,7 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
+import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
@@ -59,7 +60,7 @@ public class BlogInstructionPackageTest extends BaseRepositoryTest {
 
     @Test
     public void testParseInstructions() throws Exception {
-        final InstructionPackage instructionPackage = new BlogInstructionPackage();
+        final InstructionPackage instructionPackage = new TemplateSupportInstructionPackage("/META-INF/blog_instructions.xml");
         injector.autowireBean(instructionPackage);
         final Instructions instructions = instructionPackage.getInstructions();
         final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
@@ -68,7 +69,7 @@ public class BlogInstructionPackageTest extends BaseRepositoryTest {
 
     @Test
     public void testExecute() throws Exception {
-        final InstructionPackage instructionPackage = new BlogInstructionPackage();
+        final InstructionPackage instructionPackage = new TemplateSupportInstructionPackage("/META-INF/blog_instructions.xml");
         injector.autowireBean(instructionPackage);
         final InstructionStatus status = instructionPackage.execute(getContext());
         // mm: todo check why skipped is returned (one of the instructions is skipped)

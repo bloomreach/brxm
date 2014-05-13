@@ -35,6 +35,8 @@ import org.onehippo.cms7.essentials.dashboard.model.DependencyType;
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
+import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
+import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.DependencyUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
@@ -60,6 +62,28 @@ public class BaseResource {
 
     private ApplicationContext applicationContext;
 
+
+    /**
+     * Instantiate InstructionPackage for plugin.
+     * @param plugin Plugin instance
+     * @return   null if packageClass & packageFile are null or empty
+     */
+    protected InstructionPackage instructionPackageInstance(final Plugin plugin) {
+        final String packageClass = plugin.getPackageClass();
+        final String packageFile = plugin.getPackageFile();
+        InstructionPackage instructionPackage;
+        if (Strings.isNullOrEmpty(packageClass)) {
+            if (Strings.isNullOrEmpty(packageFile)) {
+                return null;
+            }
+            instructionPackage = GlobalUtils.newInstance(TemplateSupportInstructionPackage.class);
+            instructionPackage.setInstructionPath(packageFile);
+        } else {
+            instructionPackage = GlobalUtils.newInstance(packageClass);
+        }
+        getInjector().autowireBean(instructionPackage);
+        return instructionPackage;
+    }
 
     protected boolean isInstalled(final Plugin plugin) {
         final List<EssentialsDependency> dependencies = plugin.getDependencies();

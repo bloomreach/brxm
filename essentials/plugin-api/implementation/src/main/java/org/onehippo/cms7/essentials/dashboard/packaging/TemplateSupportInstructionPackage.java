@@ -34,6 +34,14 @@ import com.google.common.collect.ImmutableSet;
  */
 public class TemplateSupportInstructionPackage extends DefaultInstructionPackage {
 
+    public TemplateSupportInstructionPackage() {
+    }
+
+    public TemplateSupportInstructionPackage(final String path) {
+        setInstructionPath(path);
+    }
+
+
     @Override
     public Set<String> groupNames() {
         final Boolean sampleData = Boolean.valueOf((String) getProperties().get(PROP_SAMPLE_DATA));

@@ -223,15 +223,18 @@ public class PluginResource extends BaseResource {
             commonPackage.execute(context);
 
             // execute InstructionPackage itself
-            final InstructionPackage instructionPackage = GlobalUtils.newInstance(myPlugin.getPackageClass());
+            InstructionPackage instructionPackage = instructionPackageInstance(myPlugin);
+            if(instructionPackage==null){
+                return new MessageRestful("Could not execute Installation package", DisplayEvent.DisplayType.STRONG);
+            }
             instructionPackage.setProperties(new HashMap<String, Object>(values));
-            getInjector().autowireBean(instructionPackage);
             instructionPackage.execute(context);
 
 
         }
         return new MessageRestful("Please rebuild and restart your application:", DisplayEvent.DisplayType.STRONG);
     }
+
 
 
     @ApiOperation(
@@ -507,19 +510,16 @@ public class PluginResource extends BaseResource {
             list.add(resource);
             return list;
         }
-        final String packageClass = myPlugin.getPackageClass();
-        if (Strings.isNullOrEmpty(packageClass)) {
-            log.warn("No InstructionPackage class was given");
-            return list;
-        }
-        final Class<?> clazz = GlobalUtils.loadCLass(packageClass);
-        if (clazz == null) {
-            log.warn("Class was null for classname:  {}", packageClass);
+
+        final InstructionPackage instructionPackage = instructionPackageInstance(myPlugin);
+        if(instructionPackage==null){
+            final MessageRestful resource = new MessageRestful("Could not create Instruction Package");
+            resource.setSuccessMessage(false);
+            list.add(resource);
             return list;
         }
 
-        final InstructionPackage instructionPackage = (InstructionPackage) GlobalUtils.newInstance(clazz);
-        getInjector().autowireBean(instructionPackage);
+
         instructionPackage.setProperties(new HashMap<String, Object>(values));
         @SuppressWarnings("unchecked")
         final Set<KeyValueRestful> messages = (Set<KeyValueRestful>) instructionPackage.getInstructionsMessages(getContext(servletContext));

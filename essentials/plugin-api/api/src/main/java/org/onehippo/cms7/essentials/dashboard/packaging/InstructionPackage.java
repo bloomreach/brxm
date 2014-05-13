@@ -67,6 +67,14 @@ public interface InstructionPackage {
      */
     String getInstructionPath();
 
+
+    /**
+     * Path to instruction XML file
+     *
+     * @return by default {@code /META-INF/instructions.xml}, if not set
+     */
+    void setInstructionPath(String path);
+
     /**
      * Executes instructions
      *

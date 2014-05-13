@@ -44,6 +44,7 @@ public class PluginRestful implements Plugin, Restful {
     private String description;
     private String pluginLink;
     private String packageClass;
+    private String packageFile;
     private String type;
     private boolean installed;
     private boolean needsInstallation;
@@ -126,11 +127,13 @@ public class PluginRestful implements Plugin, Restful {
     }
 
     @Override
-    @XmlElementRef(type = VendorRestful.class)
-    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
-    @JsonSubTypes({@JsonSubTypes.Type(value = VendorRestful.class, name = "vendor")})
-    public Vendor getVendor() {
-        return vendor;
+    public String getPackageFile() {
+        return packageFile;
+    }
+
+    @Override
+    public void setPackageFile(final String packageFile) {
+        this.packageFile = packageFile;
     }
 
     @Override
@@ -142,6 +145,16 @@ public class PluginRestful implements Plugin, Restful {
     public void setPackageClass(final String packageClass) {
         this.packageClass = packageClass;
     }
+
+
+    @Override
+    @XmlElementRef(type = VendorRestful.class)
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
+    @JsonSubTypes({@JsonSubTypes.Type(value = VendorRestful.class, name = "vendor")})
+    public Vendor getVendor() {
+        return vendor;
+    }
+
 
     @Override
     public void setVendor(final Vendor vendor) {

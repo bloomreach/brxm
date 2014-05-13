@@ -95,6 +95,16 @@ public class DummyTestPlugin implements Plugin {
     }
 
     @Override
+    public String getPackageFile() {
+        return null;
+    }
+
+    @Override
+    public void setPackageFile(final String packageFile) {
+
+    }
+
+    @Override
     public Vendor getVendor() {
         return new VendorRestful();
     }

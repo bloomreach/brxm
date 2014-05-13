@@ -40,6 +40,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.eventbus.EventBus;
 
@@ -65,6 +66,7 @@ public class DefaultInstructionPackage implements InstructionPackage {
 
     private Map<String, Object> properties;
     private Instructions instructions;
+    private String path;
 
     @Override
     public Map<String, Object> getProperties() {
@@ -88,7 +90,7 @@ public class DefaultInstructionPackage implements InstructionPackage {
     @Override
     public Set<? extends Restful> getInstructionsMessages(final PluginContext context) {
         final Instructions myInstructions = getInstructions();
-        if(myInstructions==null){
+        if (myInstructions == null) {
             return Collections.emptySet();
 
         }
@@ -113,7 +115,16 @@ public class DefaultInstructionPackage implements InstructionPackage {
 
     @Override
     public String getInstructionPath() {
-        return DEFAULT_INSTRUCTIONS_PATH;
+        if (Strings.isNullOrEmpty(path)) {
+            return DEFAULT_INSTRUCTIONS_PATH;
+        }
+        return path;
+    }
+
+
+    @Override
+    public void setInstructionPath(final String path) {
+        this.path = path;
     }
 
     @Override
