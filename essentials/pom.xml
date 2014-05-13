@@ -62,22 +62,20 @@
     <developerConnection>scm:git:git@github.com:onehippo/essentials.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
-  <!-- PUBLISH TO PRIVATE REPO-->
   <distributionManagement>
     <repository>
-      <id>hippo-maven2-private</id>
-      <name>Hippo Private Maven 2</name>
-      <url>https://maven.onehippo.com/content/repositories/private-releases/</url>
+      <name>Hippo Maven 2 Repository</name>
+      <id>hippo-maven2</id>
+      <url>https://maven.onehippo.com/content/repositories/releases</url>
       <uniqueVersion>false</uniqueVersion>
     </repository>
     <snapshotRepository>
-      <id>hippo-maven2-private-snapshots</id>
-      <name>Hippo Private Maven 2 Snapshots</name>
-      <url>https://maven.onehippo.com/content/repositories/private-snapshots/</url>
+      <id>hippo-maven2-snapshots</id>
+      <name>Hippo Maven 2 Snapshots Repository</name>
+      <url>https://maven.onehippo.com/content/repositories/snapshots</url>
       <uniqueVersion>false</uniqueVersion>
     </snapshotRepository>
   </distributionManagement>
-
 
   <modules>
     <module>plugin-api</module>
