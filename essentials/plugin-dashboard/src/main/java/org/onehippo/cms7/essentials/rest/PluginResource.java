@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
@@ -55,6 +54,7 @@ import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 import org.onehippo.cms7.essentials.dashboard.packaging.CommonsInstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
+import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
@@ -74,6 +74,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ContextLoader;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Multimap;
 import com.google.common.eventbus.EventBus;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -522,11 +523,13 @@ public class PluginResource extends BaseResource {
 
         instructionPackage.setProperties(new HashMap<String, Object>(values));
         @SuppressWarnings("unchecked")
-        final Set<KeyValueRestful> messages = (Set<KeyValueRestful>) instructionPackage.getInstructionsMessages(getContext(servletContext));
-        for (KeyValueRestful message : messages) {
-            list.add(new MessageRestful(message.getValue()));
+        final Multimap<MessageGroup, MessageRestful> messages = (Multimap<MessageGroup, MessageRestful>) instructionPackage.getInstructionsMessages(getContext(servletContext));
+        final Collection<Map.Entry<MessageGroup, MessageRestful>> entries = messages.entries();
+        for (Map.Entry<MessageGroup, MessageRestful> entry : entries) {
+            final MessageRestful value = entry.getValue();
+            value.setGroup(entry.getKey());
+            list.add(value);
         }
-
         return list;
     }
 

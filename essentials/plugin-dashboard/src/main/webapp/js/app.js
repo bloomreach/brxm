@@ -224,23 +224,19 @@
                     {{label ? label : "Display changes made by this plugin"}}\
                     <i class="pull-right glyphicon" ng-class="{\'glyphicon-chevron-down\': isopen, \'glyphicon-chevron-right\': !isopen}"></i> \
                     </accordion-heading> \
-                    <div ng-repeat="message in packageMessages.items" ng-switch="message.displayType"> \
-                    <div  ng-switch-when="PRE"> \
-                    <pre>{{message.value}}</pre> \
+                    <div class="alert-info"  ng-repeat="message in packageMessages.items" ng-switch="message.group"> \
+                          <div ng-switch-when="FILE_CREATE">{{message.value}}</div> \
                     </div> \
-                    <div ng-switch-when="A"> \
-                    <a target="_blank" href="{{message.value}}">{{message.value}}</a> \
+                    <div class="alert-success"  ng-repeat="message in packageMessages.items" ng-switch="message.group"> \
+                          <div ng-switch-when="DOCUMENT_REGISTER">{{message.value}}</div> \
                     </div> \
-                    <div ng-switch-when="H3"><h3 class="alert-info">{{message.value}}</h3> \
+                    <div class="alert-warning"  ng-repeat="message in packageMessages.items" ng-switch="message.group"> \
+                          <div ng-switch-when="XML_NODE_CREATE">{{message.value}}</div> \
                     </div> \
-                    <div ng-switch-when="H4"> \
-                    <h3>{{message.value}}</h3> \
+                       <div class="alert-danger"  ng-repeat="message in packageMessages.items" ng-switch="message.group"> \
+                          <div ng-switch-when="XML_NODE_FOLDER_CREATE">{{message.value}}</div> \
                     </div> \
-                    <div ng-switch-when="STRONG"> \
-                    <strong>{{message.value}}</strong></div> \
-                    <div ng-switch-when="BR"><br/></div> \
-                    <div ng-switch-default class="alert-info"><br/>{{message.value}}</div> \
-                    </div></accordion-group> \
+                  </accordion-group> \
                     </accordion>',
                 controller: function ($scope, installerFactory) {
                     // refresh messages when changes are made:

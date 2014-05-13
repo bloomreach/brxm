@@ -17,14 +17,17 @@
 package org.onehippo.cms7.essentials.dashboard.packaging;
 
 /**
- * Adds all files that are shared between other installer packages,
- * like JSP/Freemarker includes, pagination, template skeleton etc.
- *
- * @version "$Id$"
+ * * @version "$Id$"
  */
-public class CommonsInstructionPackage extends TemplateSupportInstructionPackage {
-    @Override
-    public String getInstructionPath() {
-        return "/META-INF/commons_instructions.xml";
-    }
+public enum MessageGroup {
+
+    FILE_CREATE,
+    FILE_DELETE,
+    XML_NODE_CREATE,
+    XML_NODE_DELETE,
+    XML_NODE_FOLDER_DELETE,
+    XML_NODE_FOLDER_CREATE,
+    DOCUMENT_REGISTER,
+    UNKNOWN,
+
 }

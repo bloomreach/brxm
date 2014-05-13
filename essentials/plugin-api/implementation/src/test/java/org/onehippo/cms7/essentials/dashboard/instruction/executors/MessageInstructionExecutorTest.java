@@ -17,8 +17,6 @@
 package org.onehippo.cms7.essentials.dashboard.instruction.executors;
 
 import java.io.InputStream;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -28,10 +26,14 @@ import org.onehippo.cms7.essentials.BaseTest;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionParser;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
-import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
+import org.onehippo.cms7.essentials.dashboard.model.Restful;
+import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 
 import static org.junit.Assert.assertEquals;
 
@@ -48,18 +50,12 @@ public class MessageInstructionExecutorTest extends BaseTest{
         final Instructions instructions = parser.parseInstructions(content);
         final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
         assertEquals(3, instructionSets.size());
-        Collection<KeyValueRestful> messages = new HashSet<>();
+        final Multimap<MessageGroup, Restful> messages = ArrayListMultimap.create();
         for (InstructionSet instructionSet : instructionSets) {
-            final Set<KeyValueRestful> m = executor.execute(instructionSet, getContext());
-            messages.addAll(m);
+            final Multimap<MessageGroup,Restful> m = executor.execute(instructionSet, getContext());
+            messages.putAll(m);
         }
-
         assertEquals(7, messages.size());
-        for (KeyValueRestful message : messages) {
-            log.info("message {}", message);
-        }
-
-
-
+        assertEquals(7, messages.keys().size());
     }
 }

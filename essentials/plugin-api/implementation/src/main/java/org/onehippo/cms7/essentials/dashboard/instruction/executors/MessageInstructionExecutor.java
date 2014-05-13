@@ -17,8 +17,6 @@
 package org.onehippo.cms7.essentials.dashboard.instruction.executors;
 
 import java.text.MessageFormat;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,10 +27,13 @@ import org.onehippo.cms7.essentials.dashboard.instruction.NodeFolderInstruction;
 import org.onehippo.cms7.essentials.dashboard.instruction.XmlInstruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
-import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
+import org.onehippo.cms7.essentials.dashboard.model.Restful;
+import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
+import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 
 /**
  * Unlike {@code PluginInstructionExecutor}, {@code MessageInstructionExecutor} does not execute any instructions,
@@ -43,13 +44,12 @@ import org.slf4j.LoggerFactory;
  */
 public class MessageInstructionExecutor {
 
-    private static Logger log = LoggerFactory.getLogger(MessageInstructionExecutor.class);
+
+    @SuppressWarnings("InstanceofInterfaces")
+    public Multimap<MessageGroup, Restful> execute(final InstructionSet instructionSet, PluginContext context) {
 
 
-    public Set<KeyValueRestful> execute(final InstructionSet instructionSet, PluginContext context) {
-
-
-        final Set<KeyValueRestful> retVal = new HashSet<>();
+        final Multimap<MessageGroup, Restful> retVal = ArrayListMultimap.create();
         final Map<String, Object> placeholderData = context.getPlaceholderData();
 
         final Set<Instruction> mySet = instructionSet.getInstructions();
@@ -64,56 +64,57 @@ public class MessageInstructionExecutor {
             } else if (instruction instanceof XmlInstruction) {
                 processXmlInstruction(retVal, placeholderData, (XmlInstruction) instruction);
             } else {
-                retVal.add(new KeyValueRestful(instruction.getAction(), instruction.getMessage()));
+                retVal.put(MessageGroup.UNKNOWN, new MessageRestful(instruction.getMessage()));
             }
         }
 
         return retVal;
     }
 
-    private void processXmlInstruction(final Collection<KeyValueRestful> retVal, final Map<String, Object> placeholderData, final XmlInstruction instruction) {
+    private void processXmlInstruction(final Multimap<MessageGroup, Restful> retVal, final Map<String, Object> placeholderData, final XmlInstruction instruction) {
         final String replacedTarget = TemplateUtils.replaceTemplateData(instruction.getTarget(), placeholderData);
         if (instruction.getAction().equals("copy")) {
             final String replacedSource = TemplateUtils.replaceTemplateData(instruction.getSource(), placeholderData);
-            final String userMessage = MessageFormat.format("XML file: {0}  will be imported into following location: {1}", replacedSource, replacedTarget);
-            KeyValueRestful keyValueRestful = new KeyValueRestful("XmlInstruction", userMessage);
-            retVal.add(keyValueRestful);
+            final String userMessage = MessageFormat.format("File: {0}  will be imported into following location: {1}", replacedSource, replacedTarget);
+            Restful keyValueRestful = new MessageRestful(userMessage);
+            retVal.put(MessageGroup.XML_NODE_CREATE, keyValueRestful);
         } else {
             final String userMessage = MessageFormat.format("Following node will be deleted: {0}", replacedTarget);
-            KeyValueRestful keyValueRestful = new KeyValueRestful("XmlInstruction", userMessage);
-            retVal.add(keyValueRestful);
+            Restful keyValueRestful = new MessageRestful(userMessage);
+            retVal.put(MessageGroup.XML_NODE_CREATE, keyValueRestful);
         }
     }
 
-    private void processCndInstruction(final Collection<KeyValueRestful> retVal, final Map<String, Object> placeholderData, final CndInstruction instr) {
+    private void processCndInstruction(final Multimap<MessageGroup, Restful> retVal, final Map<String, Object> placeholderData, final CndInstruction instr) {
         final String documentType = instr.getDocumentType();
         final String replacedData = TemplateUtils.replaceTemplateData(documentType, placeholderData);
         final String userMessage = MessageFormat.format("New document type will be registered:  {0}", replacedData);
-        KeyValueRestful keyValueRestful = new KeyValueRestful("CndInstruction", userMessage);
-        retVal.add(keyValueRestful);
+        Restful keyValueRestful = new MessageRestful(userMessage);
+        retVal.put(MessageGroup.DOCUMENT_REGISTER, keyValueRestful);
     }
 
-    private void processFolderInstruction(final Collection<KeyValueRestful> retVal, final Map<String, Object> placeholderData, final NodeFolderInstruction instruction) {
+
+    private void processFolderInstruction(final Multimap<MessageGroup, Restful> retVal, final Map<String, Object> placeholderData, final NodeFolderInstruction instruction) {
         final String path = instruction.getPath();
         final String replacedData = TemplateUtils.replaceTemplateData(path, placeholderData);
         final String userMessage = MessageFormat.format("Following repository folder will be created: {0}", replacedData);
-        KeyValueRestful keyValueRestful = new KeyValueRestful("NodeFolderInstruction", userMessage);
-        retVal.add(keyValueRestful);
+        Restful keyValueRestful = new MessageRestful(userMessage);
+        retVal.put(MessageGroup.XML_NODE_FOLDER_CREATE, keyValueRestful);
     }
 
-    private void processFileInstruction(final Collection<KeyValueRestful> retVal, final Map<String, Object> placeholderData, final FileInstruction instruction) {
+    private void processFileInstruction(final Multimap<MessageGroup, Restful> retVal, final Map<String, Object> placeholderData, final FileInstruction instruction) {
         final String action = instruction.getAction();
         if (action.equals("copy")) {
 
             final String replacedData = TemplateUtils.replaceTemplateData(instruction.getTarget(), placeholderData);
             final String userMessage = MessageFormat.format("New file will be created: {0}", replacedData);
-            KeyValueRestful keyValueRestful = new KeyValueRestful("FileInstruction", userMessage);
-            retVal.add(keyValueRestful);
+            Restful keyValueRestful = new MessageRestful(userMessage);
+            retVal.put(MessageGroup.FILE_CREATE, keyValueRestful);
         } else if (action.equals("delete")) {
             final String replacedData = TemplateUtils.replaceTemplateData(instruction.getTarget(), placeholderData);
             final String userMessage = MessageFormat.format("Following file will be deleted: {0}", replacedData);
-            KeyValueRestful keyValueRestful = new KeyValueRestful("FileInstruction", userMessage);
-            retVal.add(keyValueRestful);
+            Restful keyValueRestful = new MessageRestful(userMessage);
+            retVal.put(MessageGroup.FILE_DELETE, keyValueRestful);
         }
     }
 

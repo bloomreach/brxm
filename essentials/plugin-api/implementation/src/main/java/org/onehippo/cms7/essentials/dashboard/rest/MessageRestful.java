@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
+import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 
 import com.wordnik.swagger.annotations.ApiModel;
 
@@ -43,6 +44,7 @@ public class MessageRestful implements Restful {
     private static final long serialVersionUID = 1L;
 
     private DisplayEvent.DisplayType displayType;
+    private MessageGroup group;
 
     public MessageRestful() {
     }
@@ -73,6 +75,15 @@ public class MessageRestful implements Restful {
 
     public void setDisplayType(final DisplayEvent.DisplayType displayType) {
         this.displayType = displayType;
+    }
+
+
+    public MessageGroup getGroup() {
+        return group;
+    }
+
+    public void setGroup(final MessageGroup group) {
+        this.group = group;
     }
 
     @Override

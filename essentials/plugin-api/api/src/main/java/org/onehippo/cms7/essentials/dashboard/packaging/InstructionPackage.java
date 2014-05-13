@@ -25,6 +25,7 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 
+import com.google.common.collect.Multimap;
 import com.google.common.eventbus.EventBus;
 
 /**
@@ -48,9 +49,10 @@ public interface InstructionPackage {
 
     /**
      * Parses instructions and retrieves messages which can be presented to the users
-     * @return set of messages
+     *
+     * @return Multimap of messages, with
      */
-    Set<? extends Restful> getInstructionsMessages(PluginContext context);
+    Multimap<MessageGroup, ? extends Restful> getInstructionsMessages(PluginContext context);
 
     /**
      * Returns parsed instructions

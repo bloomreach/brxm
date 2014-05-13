@@ -17,9 +17,7 @@
 package org.onehippo.cms7.essentials.dashboard.packaging;
 
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,14 +32,15 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
-import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimap;
 import com.google.common.eventbus.EventBus;
 
 /**
@@ -88,22 +87,22 @@ public class DefaultInstructionPackage implements InstructionPackage {
     }
 
     @Override
-    public Set<? extends Restful> getInstructionsMessages(final PluginContext context) {
+    public Multimap<MessageGroup, ? extends Restful> getInstructionsMessages(final PluginContext context) {
         final Instructions myInstructions = getInstructions();
         if (myInstructions == null) {
-            return Collections.emptySet();
+            return ArrayListMultimap.create();
 
         }
         final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
         final InstructionExecutor executor = new PluginInstructionExecutor();
         final Set<String> myGroupNames = groupNames();
-        final Set<KeyValueRestful> instructionsMessages = new HashSet<>();
+        final Multimap<MessageGroup,Restful> instructionsMessages = ArrayListMultimap.create();
         for (InstructionSet instructionSet : instructionSets) {
             final String group = instructionSet.getGroup();
             // execute only or group(s)
             if (myGroupNames.contains(group)) {
-                final Set<KeyValueRestful> instructionsMessages1 = executor.getInstructionsMessages(instructionSet, context);
-                instructionsMessages.addAll(instructionsMessages1);
+                final Multimap<MessageGroup, Restful> instr = executor.getInstructionsMessages(instructionSet, context);
+                instructionsMessages.putAll(instr);
 
             } else {
                 log.debug("Skipping instruction group for name: [{}]", group);

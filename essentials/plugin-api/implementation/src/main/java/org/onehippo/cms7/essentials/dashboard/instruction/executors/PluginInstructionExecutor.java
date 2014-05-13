@@ -25,8 +25,11 @@ import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
+import org.onehippo.cms7.essentials.dashboard.model.Restful;
+import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.springframework.stereotype.Component;
+
+import com.google.common.collect.Multimap;
 
 /**
  * @version "$Id$"
@@ -49,7 +52,7 @@ public class PluginInstructionExecutor implements InstructionExecutor {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Set<KeyValueRestful> getInstructionsMessages(final InstructionSet instruction, final PluginContext context) {
+    public Multimap<MessageGroup,Restful> getInstructionsMessages(final InstructionSet instruction, final PluginContext context) {
         MessageInstructionExecutor executor = new MessageInstructionExecutor();
         return executor.execute(instruction, context);
     }
