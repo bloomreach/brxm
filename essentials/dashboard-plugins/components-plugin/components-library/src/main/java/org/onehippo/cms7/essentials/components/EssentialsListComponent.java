@@ -65,6 +65,7 @@ public class EssentialsListComponent extends CommonComponent {
 
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
+        super.doBeforeRender(request, response);
         final EssentialsDocumentListComponentInfo paramInfo = getComponentParametersInfo(request);
         final String path = getScopePath(paramInfo);
         log.debug("Calling EssentialsListComponent for documents path:  [{}]", path);

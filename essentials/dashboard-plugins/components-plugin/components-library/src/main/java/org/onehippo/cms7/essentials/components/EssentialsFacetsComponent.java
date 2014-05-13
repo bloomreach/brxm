@@ -40,6 +40,7 @@ public class EssentialsFacetsComponent extends CommonComponent {
 
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
+        super.doBeforeRender(request, response);
         log.info("**** FACET COMPONENT **** ");
         final EssentialsFacetsComponentInfo paramInfo = getComponentParametersInfo(request);
         final HstRequestContext context = request.getRequestContext();

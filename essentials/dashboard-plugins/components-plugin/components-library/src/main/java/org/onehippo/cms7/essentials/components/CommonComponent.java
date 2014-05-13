@@ -60,6 +60,7 @@ public abstract class CommonComponent extends BaseHstComponent {
     protected static final String REQUEST_ATTR_PAGEABLE = "pageable";
     protected static final String REQUEST_ATTR_PARAM_INFO = "cparam"; // (annotated) Component Parameters
     protected static final String REQUEST_ATTR_QUERY = "query"; // free-text query string
+    protected static final String REQUEST_ATTR_CMS_EDIT = "editMode"; // CMS edit mode
 
     /**
      * Request parameters (as submitted in HTTP-GET request).
@@ -72,7 +73,7 @@ public abstract class CommonComponent extends BaseHstComponent {
 
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
-        // do nothing
+        request.setAttribute(REQUEST_ATTR_CMS_EDIT, RequestContextProvider.get().isCmsRequest());
     }
 
     public <T extends HippoBean> T getHippoBeanForPath(final String documentPath, Class<T> beanMappingClass) {

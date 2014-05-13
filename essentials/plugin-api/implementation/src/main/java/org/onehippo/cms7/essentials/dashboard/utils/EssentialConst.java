@@ -52,6 +52,7 @@ public final class EssentialConst {
     public static final String PLACEHOLDER_SITE_FREEMARKER_ROOT = "freemarkerRoot";
     public static final String PLACEHOLDER_JSP_ROOT = "jspRoot";
     public static final String PLACEHOLDER_JAVASCRIPT_ROOT = "javascriptRoot";
+    public static final String PLACEHOLDER_IMAGES_ROOT = "imagesRoot";
     public static final String PLACEHOLDER_CSS_ROOT = "cssRoot";
     public static final String PLACEHOLDER_CMS_ROOT = "cmsRoot";
     public static final String PLACEHOLDER_CMS_RESOURCES = "cmsResources";

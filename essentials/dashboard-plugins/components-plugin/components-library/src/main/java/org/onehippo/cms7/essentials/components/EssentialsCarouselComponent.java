@@ -36,6 +36,7 @@ public class EssentialsCarouselComponent extends CommonComponent {
 
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
+        super.doBeforeRender(request, response);
         final EssentialsCarouselComponentInfo paramInfo = getComponentParametersInfo(request);
         final List<HippoDocument> items = getCarouselItems(paramInfo);
         request.setAttribute(REQUEST_ATTR_PAGEABLE, new DefaultPagination<>(items));

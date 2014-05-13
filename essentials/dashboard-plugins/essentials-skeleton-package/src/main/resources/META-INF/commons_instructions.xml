@@ -84,6 +84,7 @@
   //############################################
 -->
   <instructionSet>
+    <file binary="true" action="copy" source="instructions/images/essentials-edit-component.png" target="{{imagesRoot}}/essentials-edit-component.png"/>
     <file binary="true" action="copy" source="instructions/js/bootstrap.min.js" target="{{javascriptRoot}}/bootstrap.min.js"/>
     <file binary="true" action="copy" source="instructions/js/jquery-2.1.0.min.js" target="{{javascriptRoot}}/jquery-2.1.0.min.js"/>
     <file action="copy" binary="true" source="instructions/bootstrap/css/bootstrap.css" target="{{siteWebRoot}}/css/bootstrap.css"/>

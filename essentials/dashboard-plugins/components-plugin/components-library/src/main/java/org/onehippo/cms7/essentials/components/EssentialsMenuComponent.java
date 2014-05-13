@@ -39,6 +39,7 @@ public class EssentialsMenuComponent extends CommonComponent {
 
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
+        super.doBeforeRender(request, response);
         final EssentialsMenuComponentInfo paramInfo = getComponentParametersInfo(request);
         String siteMenu = paramInfo.getSiteMenu();
         if (Strings.isNullOrEmpty(siteMenu)) {

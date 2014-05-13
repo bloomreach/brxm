@@ -271,7 +271,6 @@ dashboard-plugins/components-plugin/components-library/src/main/java/org/onehipp
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/EssentialsListPickerComponent.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/EssentialsMenuComponent.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/EssentialsNewsComponent.java -text
-dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/EssentialsRedirectComponent.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/EssentialsSearchComponent.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsBlogAuthorPostsComponentInfo.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsBlogComponentInfo.java -text
@@ -430,6 +429,7 @@ dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/fr
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/freemarker/homepage-main-content.ftl -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/freemarker/imports.ftl -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/freemarker/pagination.ftl -text
+dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/images/essentials-edit-component.png -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/js/bootstrap.min.js -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/js/jquery-2.1.0.min.js -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/jsp/base-footer-content.jsp -text

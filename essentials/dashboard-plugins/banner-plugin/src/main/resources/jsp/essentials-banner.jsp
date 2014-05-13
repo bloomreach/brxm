@@ -19,3 +19,7 @@
 <div class="row">
   <a href="<hst:link hippobean="${document.link}" />"><img src="<hst:link hippobean="${document.image}" />" alt="${document.title}"/></a>
 </div>
+<%--@elvariable id="editMode" type="java.lang.Boolean"--%>
+<c:if test="${editMode && (document eq null)}">
+  <img src="<hst:link path="/images/essentials-edit-component.png" />" alt="Edit component settings">
+</c:if>
