@@ -520,6 +520,7 @@ public class PluginResource extends BaseResource {
 
         final InstructionPackage instructionPackage = (InstructionPackage) GlobalUtils.newInstance(clazz);
         getInjector().autowireBean(instructionPackage);
+        instructionPackage.setProperties(new HashMap<String, Object>(values));
         @SuppressWarnings("unchecked")
         final Set<KeyValueRestful> messages = (Set<KeyValueRestful>) instructionPackage.getInstructionsMessages(getContext(servletContext));
         for (KeyValueRestful message : messages) {
