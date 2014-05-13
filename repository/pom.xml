@@ -20,13 +20,13 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>26-SNAPSHOT</version>
+    <version>26-iteration-79</version>
   </parent>
 
   <name>Repository</name>
   <description>Hippo Repository</description>
   <artifactId>hippo-repository</artifactId>
-  <version>2.26.02-SNAPSHOT</version>
+  <version>2.26.02-iteration-79</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2007</inceptionYear>
@@ -80,10 +80,10 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Repository</notice.project.name>
 
-    <hippo.commons.version>1.04.00</hippo.commons.version>
-    <hippo.services.version>1.04.00</hippo.services.version>
-    <hippo.services.eventbus.version>1.04.00</hippo.services.eventbus.version>
-    <hippo.utilities.version>1.03.00</hippo.utilities.version>
+    <hippo.commons.version>1.04.01-iteration-79</hippo.commons.version>
+    <hippo.services.version>1.04.01-iteration-79</hippo.services.version>
+    <hippo.services.eventbus.version>1.04.01-iteration-79</hippo.services.eventbus.version>
+    <hippo.utilities.version>1.03.01-iteration-79</hippo.utilities.version>
 
     <!-- Test dependencies  -->
     <junit.version>4.10</junit.version>
@@ -103,9 +103,9 @@
   </properties>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/repository/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/tags/hippo-repository-2.26.02-iteration-79</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/repository/tags/hippo-repository-2.26.02-iteration-79</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/tags/hippo-repository-2.26.02-iteration-79</url>
   </scm>
 
   <build>
