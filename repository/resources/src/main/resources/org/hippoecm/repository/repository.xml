@@ -59,7 +59,7 @@
       <param name="analyzer" value="org.hippoecm.repository.query.lucene.StandardHippoAnalyzer"/>
       <param name="queryClass" value="org.apache.jackrabbit.core.query.QueryImpl"/>
       <param name="respectDocumentOrder" value="false"/>
-      <param name="resultFetchSize" value="100"/>
+      <param name="resultFetchSize" value="10000"/>
       <param name="extractorPoolSize" value="0"/>
       <param name="extractorTimeout" value="100"/>
       <param name="extractorBackLogSize" value="100"/>
