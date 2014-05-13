@@ -26,7 +26,7 @@
 
   <name>Hippo CMS7 Services - eventbus</name>
   <artifactId>hippo-services-eventbus</artifactId>
-  <version>1.04.01-iteration-79</version>
+  <version>1.04.01-SNAPSHOT</version>
 
   <inceptionYear>2012</inceptionYear>
 
@@ -41,9 +41,9 @@
   </properties>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-eventbus/tags/hippo-services-eventbus-1.04.01-iteration-79</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-eventbus/tags/hippo-services-eventbus-1.04.01-iteration-79</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-eventbus/tags/hippo-services-eventbus-1.04.01-iteration-79</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-eventbus/trunk</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-eventbus/trunk</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-eventbus/trunk</url>
   </scm>
 
   <repositories>
