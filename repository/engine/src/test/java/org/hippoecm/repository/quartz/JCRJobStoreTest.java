@@ -56,7 +56,7 @@ public class JCRJobStoreTest extends RepositoryTestCase {
 
     @Test
     public void testStoreJobAndTrigger() throws Exception {
-        final JCRJobStore store = new JCRJobStore(session);
+        final JCRJobStore store = new JCRJobStore(10, session, "/test");
         final Node jobNode = createAndStoreJobAndSimpleTrigger(store);
 
         assertTrue(jobNode.hasNode("hipposched:triggers"));
@@ -66,7 +66,7 @@ public class JCRJobStoreTest extends RepositoryTestCase {
 
     @Test
     public void testAcquireNextTrigger() throws Exception {
-        final JCRJobStore store = new JCRJobStore(session);
+        final JCRJobStore store = new JCRJobStore(10, session, "/test");
         final Node jobNode = createAndStoreJobAndSimpleTrigger(store);
         final List<OperableTrigger> triggers = store.acquireNextTriggers(System.currentTimeMillis(), 1, -1l);
         assertNotNull(triggers);
@@ -77,7 +77,7 @@ public class JCRJobStoreTest extends RepositoryTestCase {
 
     @Test
     public void testAcquireNextTriggerAndRelease() throws Exception {
-        final JCRJobStore store = new JCRJobStore(session);
+        final JCRJobStore store = new JCRJobStore(10, session, "/test");
         final Node jobNode = createAndStoreJobAndSimpleTrigger(store);
         final List<OperableTrigger> triggers = store.acquireNextTriggers(System.currentTimeMillis(), 1, -1l);
         assumeNotNull(triggers);
@@ -88,7 +88,7 @@ public class JCRJobStoreTest extends RepositoryTestCase {
 
     @Test
     public void testTriggeredJobCompleteSimple() throws Exception {
-        final JCRJobStore store = new JCRJobStore(session);
+        final JCRJobStore store = new JCRJobStore(10, session, "/test");
         final Node jobNode = createAndStoreJobAndSimpleTrigger(store);
         final String jobNodePath = jobNode.getPath();
         final JobDetail jobDetail = store.retrieveJob(new JobKey(jobNode.getIdentifier()));
@@ -102,7 +102,7 @@ public class JCRJobStoreTest extends RepositoryTestCase {
 
     @Test
     public void testTriggeredJobCompleteRepeated() throws Exception {
-        final JCRJobStore store = new JCRJobStore(session);
+        final JCRJobStore store = new JCRJobStore(10, session, "/test");
         final Node jobNode = createAndStoreJobAndRepeatedTrigger(store);
         final String jobNodePath = jobNode.getPath();
         final JobDetail jobDetail = store.retrieveJob(new JobKey(jobNode.getIdentifier()));
@@ -117,7 +117,7 @@ public class JCRJobStoreTest extends RepositoryTestCase {
 
     @Test
     public void testGetTriggersForJob() throws Exception {
-        final JCRJobStore store = new JCRJobStore(session);
+        final JCRJobStore store = new JCRJobStore(10, session, "/test");
         final Node jobNode = createAndStoreJobAndSimpleTrigger(store);
         final List<OperableTrigger> triggersForJob = store.getTriggersForJob(new JobKey(jobNode.getIdentifier()));
         assertNotNull(triggersForJob);
@@ -126,7 +126,7 @@ public class JCRJobStoreTest extends RepositoryTestCase {
 
     @Test
     public void testTriggerLockKeepAlive() throws Exception {
-        final JCRJobStore store = new JCRJobStore(10, session);
+        final JCRJobStore store = new JCRJobStore(10, session, "/test");
         final Node jobNode = createAndStoreJobAndSimpleTrigger(store);
         final List<OperableTrigger> triggers = store.acquireNextTriggers(System.currentTimeMillis(), 1, -1l);
         Thread.sleep(1000*12); // sleep longer than lock timeout
