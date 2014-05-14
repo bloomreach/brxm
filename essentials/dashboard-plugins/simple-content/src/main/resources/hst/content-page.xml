@@ -26,8 +26,8 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:component</sv:value>
     </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:components/content</sv:value>
+    <sv:property sv:name="hst:componentclassname" sv:type="String">
+      <sv:value>org.onehippo.cms7.essentials.components.EssentialsContentComponent</sv:value>
     </sv:property>
     <sv:property sv:name="hst:template" sv:type="String">
       <sv:value>contentpage-main</sv:value>
