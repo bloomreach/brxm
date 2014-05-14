@@ -24,6 +24,7 @@ import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 import org.hippoecm.hst.content.beans.query.filter.BaseFilter;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.repository.util.DateTools;
 import org.onehippo.cms7.essentials.components.info.EssentialsNewsComponentInfo;
@@ -41,6 +42,17 @@ import com.google.common.base.Strings;
 public class EssentialsNewsComponent extends EssentialsListComponent {
 
     private static Logger log = LoggerFactory.getLogger(EssentialsNewsComponent.class);
+
+    @Override
+    public void doBeforeRender(final HstRequest request, final HstResponse response) {
+        final EssentialsNewsComponentInfo paramInfo = getComponentParametersInfo(request);
+        final String documentTypes = paramInfo.getDocumentTypes();
+        if(Strings.isNullOrEmpty(documentTypes)){
+            log.warn("No news document type(s) are defined.");
+            return;
+        }
+        super.doBeforeRender(request, response);
+    }
 
     @Override
     protected void contributeAndFilters(final List<BaseFilter> filters, final HstRequest request, final HstQuery query) {

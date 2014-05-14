@@ -34,4 +34,8 @@ public interface EssentialsNewsComponentInfo extends EssentialsDocumentListCompo
     @Parameter(name = "documentDateField", required = false, displayName = "Field that contains document date (for hiding)")
     String getDocumentDateField();
 
+    @Override
+    @Parameter(name = "documentTypes", required = true, displayName = "News Document types (comma separated)")
+    String getDocumentTypes();
+
 }

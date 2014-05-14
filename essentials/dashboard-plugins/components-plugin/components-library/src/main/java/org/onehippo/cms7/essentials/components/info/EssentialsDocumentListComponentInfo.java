@@ -49,7 +49,7 @@ public interface EssentialsDocumentListComponentInfo extends EssentialsPageable,
     Boolean getIncludeSubtypes();
 
 
-    @Parameter(name = "documentTypes", required = true, displayName = "Document types (comma separated)")
+    @Parameter(name = "documentTypes", required = false, displayName = "Document types (comma separated)")
     String getDocumentTypes();
 
 
