@@ -33,4 +33,8 @@ public interface EssentialsEventsComponentInfo extends EssentialsDocumentListCom
     @Parameter(name = "documentDateField", required = false, displayName = "Field that contains document date (for hiding)")
     String getDocumentDateField();
 
+    @Override
+    @Parameter(name = "documentTypes", required = true, displayName = "Events document types (comma separated)")
+    String getDocumentTypes();
+
 }
