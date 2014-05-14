@@ -1,5 +1,6 @@
 * text=auto !eol
 /LICENSE -text
+/NOTICE -text
 /README.md -text
 archetype/LICENSE -text
 archetype/NOTICE -text
