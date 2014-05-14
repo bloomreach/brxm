@@ -56,27 +56,26 @@ public class ChannelGridPanel extends ExtPanel {
     
     @ExtProperty
     @SuppressWarnings("unused")
-    private String composerRestMountUrl;
+    private String composerRestMountPath;
 
-    public ChannelGridPanel(IPluginConfig config, ExtStoreFuture storeFuture) {
+    public ChannelGridPanel(IPluginConfig channelListConfig, String composerRestMountPath, ExtStoreFuture storeFuture) {
         this.store = (ChannelStore) storeFuture.getStore();
 
         this.cmsUser = UserSession.get().getJcrSession().getUserID();
-        this.composerRestMountUrl = config.getString("templateComposerContextPath", "/site") +
-                config.getString("composerRestMountPath", "/_rp");
+        this.composerRestMountPath = composerRestMountPath;
 
-        visibleFields = parseChannelFields(config);
+        visibleFields = parseChannelFields(channelListConfig);
         visibleFields.removeAll(ChannelStore.INTERNAL_FIELDS);
     }
 
-    static List<String> parseChannelFields(IPluginConfig config) {
+    static List<String> parseChannelFields(IPluginConfig channelListConfig) {
         List<String> columns = new ArrayList<String>();
 
-        if (config == null) {
+        if (channelListConfig == null) {
             return ChannelStore.ALL_FIELD_NAMES;
         }
 
-        String[] columnNames = config.getStringArray(ChannelStoreFactory.CONFIG_COLUMNS);
+        String[] columnNames = channelListConfig.getStringArray(ChannelStoreFactory.CONFIG_COLUMNS);
         if (columnNames == null || columnNames.length == 0) {
             return ChannelStore.ALL_FIELD_NAMES;
         }

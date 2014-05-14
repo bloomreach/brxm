@@ -29,8 +29,7 @@
 
     Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observable, {
 
-        constructor: function(config, cache, oldContext, pageContainer) {
-
+        constructor: function(cache, oldContext, pageContainer) {
             if (oldContext !== null) {
                 this.ids = {
                     pageUrl: oldContext.ids.pageUrl,
@@ -63,19 +62,18 @@
             }
 
             this.pageContainer = pageContainer;
-            this.resources = config.resources;
-            this.previewMode = config.previewMode;
-            this.contextPath = config.contextPath;
-            this.templateComposerContextPath = config.templateComposerContextPath;
-            this.composerRestMountUrl = config.templateComposerContextPath + config.composerRestMountPath;
-            this.renderPath = config.renderPath;
+            this.resources = pageContainer.resources;
+            this.previewMode = pageContainer.previewMode;
+            this.contextPath = pageContainer.contextPath;
+            this.composerRestMountUrl = pageContainer.composerRestMountUrl;
+            this.renderPath = pageContainer.renderPath;
             this.internalLinkUrlPrefix = document.location.protocol + '//' + document.location.host;
-            this.internalLinkUrlPrefix = appendPathFragment(this.internalLinkUrlPrefix, config.templateComposerContextPath);
-            this.internalLinkUrlPrefix = appendPathFragment(this.internalLinkUrlPrefix, config.cmsPreviewPrefix);
+            this.internalLinkUrlPrefix = appendPathFragment(this.internalLinkUrlPrefix, pageContainer.contextPath);
+            this.internalLinkUrlPrefix = appendPathFragment(this.internalLinkUrlPrefix, pageContainer.cmsPreviewPrefix);
 
             this.iframeResourceCache = cache;
 
-            Hippo.ChannelManager.TemplateComposer.PageContext.superclass.constructor.call(this, config);
+            Hippo.ChannelManager.TemplateComposer.PageContext.superclass.constructor.call(this, pageContainer);
             this.addEvents('mountChanged',
                     'pageContextInitialized');
 

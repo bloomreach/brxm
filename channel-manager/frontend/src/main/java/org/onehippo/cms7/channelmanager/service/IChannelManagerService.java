@@ -30,8 +30,7 @@ public interface IChannelManagerService extends IClusterable {
      * @param pathInfo the location inside the channel (without a context path but including the path of the mount + the path of the document)
      * @param contextPath the contextPath of the channel to load
      * @param cmsPreviewPrefix the prefix for viewing the preview
-     * @param templateComposerContextPath the context path for the template composer
      */
-    void viewChannel(String channelId, String pathInfo, String contextPath, String cmsPreviewPrefix, String templateComposerContextPath);
+    void viewChannel(String channelId, String pathInfo, String contextPath, String cmsPreviewPrefix);
 
 }

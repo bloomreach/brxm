@@ -69,6 +69,9 @@ public class RootPanel extends ExtPanel {
     }
 
     public static final String CONFIG_CHANNEL_LIST = "channel-list";
+    public static final String CONFIG_TEMPLATE_COMPOSER = "templatecomposer";
+    public static final String COMPOSER_REST_MOUNT_PATH_PROPERTY = "composerRestMountPath";
+    public static final String DEFAULT_COMPOSER_REST_MOUNT_PATH = "/_rp";
 
     private BlueprintStore blueprintStore;
     private ChannelStore channelStore;
@@ -79,6 +82,10 @@ public class RootPanel extends ExtPanel {
 
     @ExtProperty
     private Integer activeItem = 0;
+
+    @ExtProperty
+    @SuppressWarnings("unused")
+    private String composerRestMountPath;
 
     @Override
     public void buildInstantiationJs(final StringBuilder js, final String extClass, final JSONObject properties) {
@@ -91,6 +98,14 @@ public class RootPanel extends ExtPanel {
         super(id);
 
         final IPluginConfig channelListConfig = config.getPluginConfig(CONFIG_CHANNEL_LIST);
+
+        // card 1: template composer
+        final IPluginConfig pageEditorConfig = config.getPluginConfig(CONFIG_TEMPLATE_COMPOSER);
+        if (pageEditorConfig == null) {
+            composerRestMountPath = DEFAULT_COMPOSER_REST_MOUNT_PATH;
+        } else {
+            composerRestMountPath = pageEditorConfig.getString(COMPOSER_REST_MOUNT_PATH_PROPERTY, DEFAULT_COMPOSER_REST_MOUNT_PATH);
+        }
 
         // Retrieve the Channel Service
         IRestProxyService restProxyService = context.getService(config.getString(CONFIG_REST_PROXY_SERVICE_ID, IRestProxyService.class.getName()), IRestProxyService.class);
@@ -109,7 +124,7 @@ public class RootPanel extends ExtPanel {
         channelManagerCard.setHeader(false);
         channelManagerCard.setLayout(new BorderLayout());
 
-        final ChannelOverview channelOverview = new ChannelOverview(channelListConfig, this.channelStoreFuture, !blueprintStore.isEmpty());
+        final ChannelOverview channelOverview = new ChannelOverview(channelListConfig, composerRestMountPath, this.channelStoreFuture, !blueprintStore.isEmpty());
         channelOverview.setRegion(BorderLayout.Region.CENTER);
         channelManagerCard.add(channelOverview);
 
@@ -125,9 +140,7 @@ public class RootPanel extends ExtPanel {
 
         add(channelManagerCard);
 
-        // card 1: template composer
-        final IPluginConfig pageEditorConfig = config.getPluginConfig("templatecomposer");
-        pageEditor = new PageEditor(context, pageEditorConfig, hstConfigEditor, this.channelStoreFuture);
+        pageEditor = new PageEditor(context, pageEditorConfig, composerRestMountPath, hstConfigEditor, this.channelStoreFuture);
         add(pageEditor);
 
         // card 2: HST config editor

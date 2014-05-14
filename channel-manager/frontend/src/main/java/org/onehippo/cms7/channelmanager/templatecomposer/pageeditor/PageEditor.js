@@ -166,7 +166,7 @@
             this.cmsUser = config.cmsUser;
             config.header = false;
 
-            this.composerRestMountUrl = config.templateComposerContextPath + config.composerRestMountPath;
+            this.composerRestMountUrl = config.contextPath + config.composerRestMountPath;
             this.variantsUuid = config.variantsUuid;
             this.pageContainer = new Hippo.ChannelManager.TemplateComposer.PageContainer(config);
             this.locale = config.locale;

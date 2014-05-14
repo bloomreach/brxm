@@ -66,9 +66,6 @@
       <sv:property sv:name="previewMode" sv:type="Boolean">
         <sv:value>true</sv:value>
       </sv:property>
-      <sv:property sv:name="templateComposerContextPath" sv:type="String">
-        <sv:value>/site</sv:value>
-      </sv:property>
       <sv:property sv:name="variantsPath" sv:type="String">
         <sv:value/>
       </sv:property>

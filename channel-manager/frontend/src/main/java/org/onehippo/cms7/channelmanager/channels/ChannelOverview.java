@@ -42,7 +42,9 @@ public class ChannelOverview extends ExtPanel {
     @SuppressWarnings("unused")
     private boolean blueprintsAvailable;
 
-    public ChannelOverview(IPluginConfig channelListConfig, ExtStoreFuture channelStoreFuture, boolean blueprintsAvailable) {
+    public ChannelOverview(final IPluginConfig channelListConfig,
+                           final String composerRestMountPath,
+                           final ExtStoreFuture channelStoreFuture, boolean blueprintsAvailable) {
         this.store = (ChannelStore) channelStoreFuture.getStore();
 
         canModifyChannels = store.canModifyChannels();
@@ -55,7 +57,7 @@ public class ChannelOverview extends ExtPanel {
         channelIconCard.setRegion(BorderLayout.Region.CENTER);
         add(channelIconCard);
 
-        final ChannelGridPanel channelListCard = new ChannelGridPanel(channelListConfig, channelStoreFuture);
+        final ChannelGridPanel channelListCard = new ChannelGridPanel(channelListConfig, composerRestMountPath, channelStoreFuture);
         channelListCard.setRegion(BorderLayout.Region.CENTER);
         add(channelListCard);
     }

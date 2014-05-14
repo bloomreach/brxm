@@ -22,15 +22,12 @@
 
         constructor: function(config) {
             this.resources = config.resources;
-
             this.cmsUser = config.cmsUser;
-            this.templateComposerContextPath = config.templateComposerContextPath;
             this.composerRestMountPath = config.composerRestMountPath;
             this.contextPath = config.contextPath;
             this.cmsPreviewPrefix = config.cmsPreviewPrefix;
             this.renderPathInfo = config.renderPathInfo;
-            this.composerRestMountUrl = this.templateComposerContextPath + this.composerRestMountPath;
-
+            this.composerRestMountUrl = this.contextPath + this.composerRestMountPath;
             this.iFrameErrorPage = config.iFrameErrorPage;
             this.initialHstConnectionTimeout = config.initialHstConnectionTimeout;
             this.iFrameJsHeadContributions = config.iFrameJsHeadContributions;
@@ -455,16 +452,8 @@
                 this.pageContext.suspendEvents();
             }
 
-            var config = {
-                templateComposerContextPath: this.templateComposerContextPath,
-                cmsPreviewPrefix: this.cmsPreviewPrefix,
-                composerRestMountPath: this.composerRestMountPath,
-                renderPath: this.renderPath,
-                previewMode: this.previewMode,
-                resources: this.resources
-            };
             this.pageContext = new Hippo.ChannelManager.TemplateComposer.PageContext(
-                    config, this.iframeResourceCache, this.pageContext, this);
+                    this.iframeResourceCache, this.pageContext, this);
             this.relayEvents(this.pageContext, [
                 'mountChanged',
                 'fatalIFrameException'

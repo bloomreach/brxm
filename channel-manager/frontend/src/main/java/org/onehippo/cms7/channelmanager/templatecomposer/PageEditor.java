@@ -125,20 +125,19 @@ public class PageEditor extends ExtPanel {
     private Boolean debug = false;
 
     @ExtProperty
-    private String composerRestMountPath = "/_rp";
+    @SuppressWarnings("unused")
+    private String composerRestMountPath;
 
     @ExtProperty
     @SuppressWarnings("unused")
     private String renderPathInfo = "";
 
     @ExtProperty
+    @SuppressWarnings("unused")
     private String contextPath = "/site";
 
     @ExtProperty
     private String cmsPreviewPrefix;
-
-    @ExtProperty
-    private String templateComposerContextPath = "/site";
 
     @ExtProperty
     @SuppressWarnings("unused")
@@ -187,18 +186,18 @@ public class PageEditor extends ExtPanel {
     private boolean refreshIFrame;
     private List<ToolbarPlugin> toolbarPlugins;
 
-    public PageEditor(final IPluginContext context, final IPluginConfig config, final HstConfigEditor hstConfigEditor, final ExtStoreFuture<Object> channelStoreFuture) {
+    public PageEditor(final IPluginContext context, final IPluginConfig config,
+                      final String composerRestMountPath, final HstConfigEditor hstConfigEditor,
+                      final ExtStoreFuture<Object> channelStoreFuture) {
         this.context = context;
         this.channelStoreFuture = channelStoreFuture;
         this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
         this.locale = Session.get().getLocale().toString();
         this.cmsUser = UserSession.get().getJcrSession().getUserID();
-
+        this.composerRestMountPath = composerRestMountPath;
         String variantsPath = null;
         if (config != null) {
             variantsPath = config.getString("variantsPath");
-            this.composerRestMountPath = config.getString("composerRestMountPath", composerRestMountPath);
-            this.templateComposerContextPath = config.getString("templateComposerContextPath", templateComposerContextPath);
             this.contextPath = config.getString("contextPath", contextPath);
             this.initialHstConnectionTimeout = config.getLong("initialHstConnectionTimeout", DEFAULT_INITIAL_CONNECTION_TIMEOUT);
             this.extAjaxTimeout = config.getLong("extAjaxTimeoutMillis", DEFAULT_EXT_AJAX_TIMEOUT);
@@ -513,11 +512,6 @@ public class PageEditor extends ExtPanel {
     
     public void setRenderContextPath(String contextPath) {
         this.contextPath = contextPath;
-        redraw();
-    }
-    
-    public void setTemplateComposerContextPath(String templateComposerContextPath) {
-        this.templateComposerContextPath = templateComposerContextPath;
         redraw();
     }
 
