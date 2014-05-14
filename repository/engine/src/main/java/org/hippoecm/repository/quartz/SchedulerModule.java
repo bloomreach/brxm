@@ -17,10 +17,12 @@ package org.hippoecm.repository.quartz;
 
 import java.util.Properties;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.repository.modules.ConfigurableDaemonModule;
 import org.onehippo.repository.modules.DaemonModule;
 import org.onehippo.repository.modules.ProvidesService;
 import org.onehippo.repository.scheduling.RepositoryScheduler;
@@ -34,7 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ProvidesService(types = { RepositoryScheduler.class } )
-public class SchedulerModule implements DaemonModule {
+public class SchedulerModule implements DaemonModule, ConfigurableDaemonModule {
 
     private static final Logger log = LoggerFactory.getLogger(SchedulerModule.class);
 
@@ -54,9 +56,15 @@ public class SchedulerModule implements DaemonModule {
     private Session session;
     private JCRScheduler scheduler = null;
     private RepositoryScheduler service;
+    private String moduleConfigPath;
 
     private static boolean isEnabled() {
         return !Boolean.getBoolean("hippo.scheduler.disabled");
+    }
+
+    @Override
+    public void configure(final Node moduleConfig) throws RepositoryException {
+        moduleConfigPath = moduleConfig.getPath();
     }
 
     @Override
@@ -82,6 +90,10 @@ public class SchedulerModule implements DaemonModule {
 
     static Session getSession() {
         return instance.session;
+    }
+
+    static String getModuleConfigPath() {
+        return instance.moduleConfigPath;
     }
 
     @Override

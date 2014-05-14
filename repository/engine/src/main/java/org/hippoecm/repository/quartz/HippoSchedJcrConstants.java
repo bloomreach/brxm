@@ -32,6 +32,7 @@ public final class HippoSchedJcrConstants {
     public static final String HIPPOSCHED_REPOSITORY_JOB = "hipposched:repositoryjob";
     public static final String HIPPOSCHED_WORKFLOW_JOB = "hipposched:workflowjob";
     public static final String HIPPOSCHED_JOBGROUP = "hipposched:jobgroup";
+    public static final String HIPPOSCHED_ENABLED = "hipposched:enabled";
 
     // hipposched:repositoryjob properties
     public static final String HIPPOSCHED_REPOSITORY_JOB_CLASS = "hipposched:repositoryJobClass";

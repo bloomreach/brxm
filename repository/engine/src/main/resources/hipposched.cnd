@@ -21,6 +21,7 @@
 
 [hipposched:trigger] > nt:base, mix:referenceable
 - hipposched:nextFireTime (date)
+- hipposched:enabled (boolean)
 - hipposched:data (binary) // deprecated
 - hipposched:fireTime (date) // deprecated
 
@@ -38,6 +39,7 @@
 
 [hipposched:job] > hippo:request
 + hipposched:triggers (hipposched:triggers) = hipposched:triggers
+- hipposched:enabled (boolean)
 - hipposched:data (binary) // deprecated
 - hippo:document (string) // deprecated
 

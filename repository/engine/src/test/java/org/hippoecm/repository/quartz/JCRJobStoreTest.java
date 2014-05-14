@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.quartz;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -27,6 +28,7 @@ import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.quartz.JobPersistenceException;
+import org.quartz.SimpleTrigger;
 import org.quartz.impl.triggers.SimpleTriggerImpl;
 import org.quartz.spi.OperableTrigger;
 
@@ -34,6 +36,12 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_JOBGROUP;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_REPOSITORY_JOB;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_REPOSITORY_JOB_CLASS;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_SIMPLE_TRIGGER;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_STARTTIME;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_TRIGGERS;
 import static org.junit.Assume.assumeNotNull;
 import static org.junit.Assume.assumeTrue;
 
@@ -127,9 +135,34 @@ public class JCRJobStoreTest extends RepositoryTestCase {
         assertFalse(jobNode.getNode("hipposched:triggers/trigger").isLocked());
     }
 
+    @Test
+    public void testConfigureJobInRepository() throws Exception {
+        final Node test = session.getNode("/test");
+        final Node groupNode = test.addNode("group", HIPPOSCHED_JOBGROUP);
+        final Node jobNode = groupNode.addNode("job", HIPPOSCHED_REPOSITORY_JOB);
+        jobNode.setProperty(HIPPOSCHED_REPOSITORY_JOB_CLASS, "<class>");
+        final Node triggerNode = jobNode.addNode(HIPPOSCHED_TRIGGERS, HIPPOSCHED_TRIGGERS).addNode("trigger", HIPPOSCHED_SIMPLE_TRIGGER);
+        triggerNode.setProperty(HIPPOSCHED_STARTTIME, Calendar.getInstance());
+        session.save();
+        final JCRJobStore store = new JCRJobStore(10, session, "/test");
+        store.initialize(null, null);
+        // wait until initialization of triggers is saved on separate thread
+        Thread.sleep(1000l);
+        final List<OperableTrigger> triggers = store.acquireNextTriggers(System.currentTimeMillis(), 1, -1l);
+        assertEquals(1, triggers.size());
+        final OperableTrigger trigger = triggers.get(0);
+        assertTrue(trigger instanceof SimpleTrigger);
+        SimpleTrigger simpleTrigger = (SimpleTrigger) trigger;
+        assertTrue(simpleTrigger.getJobKey().getName().equals(jobNode.getIdentifier()));
+        final JobDetail jobDetail = store.retrieveJob(simpleTrigger.getJobKey());
+        assertTrue(jobDetail instanceof RepositoryJobDetail);
+        final RepositoryJobDetail repositoryJobDetail = (RepositoryJobDetail) jobDetail;
+        assertEquals("<class>", repositoryJobDetail.getRepositoryJobClassName());
+    }
+
     private Node createAndStoreJobAndRepeatedTrigger(final JCRJobStore store) throws RepositoryException, JobPersistenceException {
-        final Node jobNode = session.getNode("/test").addNode("job", HippoSchedJcrConstants.HIPPOSCHED_REPOSITORY_JOB);
-        jobNode.setProperty(HippoSchedJcrConstants.HIPPOSCHED_REPOSITORY_JOB_CLASS, Job.class.getName());
+        final Node jobNode = session.getNode("/test").addNode("job", HIPPOSCHED_REPOSITORY_JOB);
+        jobNode.setProperty(HIPPOSCHED_REPOSITORY_JOB_CLASS, Job.class.getName());
         final JobDetail jobDetail = new RepositoryJobDetail(jobNode);
         final SimpleTriggerImpl trigger = new SimpleTriggerImpl("trigger", 2, 1000);
         trigger.setNextFireTime(new Date());
@@ -138,8 +171,8 @@ public class JCRJobStoreTest extends RepositoryTestCase {
     }
 
     private Node createAndStoreJobAndSimpleTrigger(final JCRJobStore store) throws RepositoryException, JobPersistenceException {
-        final Node jobNode = session.getNode("/test").addNode("job", HippoSchedJcrConstants.HIPPOSCHED_REPOSITORY_JOB);
-        jobNode.setProperty(HippoSchedJcrConstants.HIPPOSCHED_REPOSITORY_JOB_CLASS, Job.class.getName());
+        final Node jobNode = session.getNode("/test").addNode("job", HIPPOSCHED_REPOSITORY_JOB);
+        jobNode.setProperty(HIPPOSCHED_REPOSITORY_JOB_CLASS, Job.class.getName());
         final JobDetail jobDetail = new RepositoryJobDetail(jobNode);
         final SimpleTriggerImpl trigger = new SimpleTriggerImpl("trigger");
         trigger.setNextFireTime(new Date());

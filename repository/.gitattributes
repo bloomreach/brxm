@@ -165,6 +165,7 @@ engine/src/main/java/org/hippoecm/repository/quartz/JobExecutionContextImpl.java
 engine/src/main/java/org/hippoecm/repository/quartz/RepositoryJobDetail.java -text
 engine/src/main/java/org/hippoecm/repository/quartz/RepositoryJobJob.java -text
 engine/src/main/java/org/hippoecm/repository/quartz/RepositorySchedulerImpl.java -text
+engine/src/main/java/org/hippoecm/repository/quartz/TestRepositoryJob.java -text
 engine/src/main/java/org/hippoecm/repository/query/lucene/FacetFiltersQuery.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/query/lucene/FacetRangeQuery.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/query/lucene/HippoIndexSearcher.java -text

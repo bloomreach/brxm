@@ -50,8 +50,6 @@ import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_R
  */
 public class RepositorySchedulerImpl implements RepositoryScheduler {
 
-    private static final String CONFIG_NODE_PATH = "/hippo:configuration/hippo:modules/scheduler/hippo:moduleconfig";
-
     private final Session session;
     private final JCRScheduler scheduler;
 
@@ -154,7 +152,7 @@ public class RepositorySchedulerImpl implements RepositoryScheduler {
     private Node newJobNode(final RepositoryJobInfo info) throws RepositoryException {
         final String name = info.getName();
         final String group = info.getGroup();
-        final Node moduleConfig = session.getNode(CONFIG_NODE_PATH);
+        final Node moduleConfig = session.getNode(SchedulerModule.getModuleConfigPath());
         final Node jobGroup;
         if (moduleConfig.hasNode(group)) {
             jobGroup = moduleConfig.getNode(group);
@@ -168,7 +166,7 @@ public class RepositorySchedulerImpl implements RepositoryScheduler {
     }
 
     private Node getJobNode(final String jobName, final String groupName) throws RepositoryException {
-        final Node moduleConfig = session.getNode(CONFIG_NODE_PATH);
+        final Node moduleConfig = session.getNode(SchedulerModule.getModuleConfigPath());
         final Node groupNode = JcrUtils.getNodeIfExists(moduleConfig, getGroupName(groupName));
         if (groupNode != null) {
             return JcrUtils.getNodeIfExists(groupNode, jobName);

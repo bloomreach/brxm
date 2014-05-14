@@ -36,10 +36,13 @@ import javax.jcr.Session;
 import javax.jcr.lock.Lock;
 import javax.jcr.lock.LockException;
 import javax.jcr.lock.LockManager;
+import javax.jcr.observation.EventIterator;
+import javax.jcr.observation.EventListener;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
+import org.apache.jackrabbit.spi.Event;
 import org.apache.jackrabbit.util.ISO8601;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
@@ -55,6 +58,7 @@ import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
+import org.quartz.impl.calendar.BaseCalendar;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.quartz.impl.triggers.CronTriggerImpl;
 import org.quartz.impl.triggers.SimpleTriggerImpl;
@@ -70,6 +74,7 @@ import org.slf4j.LoggerFactory;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_CRONEXPRESSION;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_CRON_TRIGGER;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_DATA;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_ENABLED;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_ENDTIME;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_NEXTFIRETIME;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_REPEATCOUNT;
@@ -86,6 +91,7 @@ public class JCRJobStore implements JobStore {
 
     private final long lockTimeout;
     private final Session session;
+    private final String jobStorePath;
 
     private ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
     private Map<String, Future<?>> keepAlives = Collections.synchronizedMap(new HashMap<String, Future<?>>());
@@ -99,14 +105,89 @@ public class JCRJobStore implements JobStore {
     }
 
     JCRJobStore(final long lockTimeout, final Session session) {
+        this(lockTimeout, session, SchedulerModule.getModuleConfigPath());
+    }
+
+    JCRJobStore(final long lockTimeout, final Session session, final String jobStorePath) {
         this.lockTimeout = lockTimeout;
         this.session = session;
+        this.jobStorePath = jobStorePath;
     }
 
     @Override
     public void initialize(final ClassLoadHelper loadHelper, final SchedulerSignaler signaler)
             throws SchedulerConfigException {
-        signaler.signalSchedulingChange(1000);
+        if (signaler != null) {
+            signaler.signalSchedulingChange(1000);
+        }
+        initializeTriggers();
+        try {
+            getSession().getWorkspace().getObservationManager().addEventListener(new EventListener() {
+                @Override
+                public void onEvent(final EventIterator events) {
+                    initializeTriggers();
+                }
+            }, Event.ALL_TYPES, jobStorePath, true, null, null, true);
+        } catch (RepositoryException e) {
+            log.error("Failed to register event listener for initializing triggers", e);
+        }
+    }
+
+    /**
+     * Find triggers without a nextFireTime property (i.e. that were manually added in the repository)
+     * and compute and set the nextFireTime property.
+     */
+    private void initializeTriggers() {
+        log.debug("Initializing triggers");
+        try {
+            boolean changes = false;
+            synchronized (getSession()) {
+                final Node moduleConfig = getSession().getNode(jobStorePath);
+                for (Node groupNode : new NodeIterable(moduleConfig.getNodes())) {
+                    for (Node jobNode : new NodeIterable(groupNode.getNodes())) {
+                        final boolean jobEnabled = JcrUtils.getBooleanProperty(jobNode, HIPPOSCHED_ENABLED, true);
+                        if (jobEnabled && jobNode.hasNode(HIPPOSCHED_TRIGGERS)) {
+                            for (Node triggerNode : new NodeIterable(jobNode.getNode(HIPPOSCHED_TRIGGERS).getNodes())) {
+                                final boolean triggerEnabled = JcrUtils.getBooleanProperty(triggerNode, HIPPOSCHED_ENABLED, true);
+                                if (triggerEnabled && !triggerNode.isLocked() && !triggerNode.hasProperty(HIPPOSCHED_NEXTFIRETIME)) {
+                                    OperableTrigger trigger = getOperableTrigger(triggerNode, null);
+                                    if (trigger != null) {
+                                        final Date nextFireTime = trigger.computeFirstFireTime(new BaseCalendar());
+                                        if (nextFireTime != null) {
+                                            log.info("Initializing trigger {}", triggerNode.getPath());
+                                            triggerNode.setProperty(HIPPOSCHED_NEXTFIRETIME, dateToCalendar(nextFireTime));
+                                            changes = true;
+                                        } else {
+                                            log.warn("No fire time for manually added trigger {}", triggerNode.getPath());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if (changes) {
+                executorService.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        synchronized (getSession()) {
+                            try {
+                                getSession().save();
+                            } catch (RepositoryException e) {
+                                log.error("Failed to save ");
+                                try {
+                                    getSession().refresh(false);
+                                } catch (RepositoryException ignore) {
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        } catch (RepositoryException e) {
+            log.error("Failed to initialize triggers", e);
+        }
     }
 
     @Override
@@ -150,10 +231,9 @@ public class JCRJobStore implements JobStore {
             throw new JobPersistenceException("Cannot store trigger of type " + newTrigger.getClass().getName());
         }
         final JCRJobDetail jobDetail = (JCRJobDetail) newJob;
-        Session session = getSession();
-        synchronized(session) {
+        synchronized(getSession()) {
             try {
-                final Node jobNode = session.getNodeByIdentifier(jobDetail.getIdentifier());
+                final Node jobNode = getSession().getNodeByIdentifier(jobDetail.getIdentifier());
 
                 final Node triggersNode;
                 if(jobNode.hasNode(HIPPOSCHED_TRIGGERS)) {
@@ -191,9 +271,9 @@ public class JCRJobStore implements JobStore {
                 final java.util.Calendar fireTime = dateToCalendar(newTrigger.getNextFireTime());
                 triggerNode.setProperty(HIPPOSCHED_NEXTFIRETIME, fireTime);
 
-                session.save();
+                getSession().save();
             } catch (RepositoryException e) {
-                refreshSession(session);
+                refreshSession(getSession());
                 throw new JobPersistenceException("Failed to store job and trigger", e);
             }
         }
@@ -426,7 +506,13 @@ public class JCRJobStore implements JobStore {
                     if (maxCount-- <= 0) {
                         break;
                     }
+                    if (!JcrUtils.getBooleanProperty(triggerNode, HIPPOSCHED_ENABLED, true)) {
+                        continue;
+                    }
                     final Node jobNode = triggerNode.getParent().getParent();
+                    if (!JcrUtils.getBooleanProperty(jobNode, HIPPOSCHED_ENABLED, true)) {
+                        continue;
+                    }
                     if (lock(session, triggerNode.getPath())) {
                         try {
                             startLockKeepAlive(session, triggerNode.getIdentifier());
@@ -537,50 +623,60 @@ public class JCRJobStore implements JobStore {
         if (triggerNode.hasProperty(HIPPOSCHED_DATA)) {
             log.warn("Cannot deserialize obsolete trigger definition at " + triggerNode.getPath());
         } else {
-            final String triggerType = triggerNode.getPrimaryNodeType().getName();
             final java.util.Calendar nextFireTime = JcrUtils.getDateProperty(triggerNode, HIPPOSCHED_NEXTFIRETIME, java.util.Calendar.getInstance());
-            if (HIPPOSCHED_SIMPLE_TRIGGER.equals(triggerType)) {
-                final java.util.Calendar startTime = JcrUtils.getDateProperty(triggerNode, HIPPOSCHED_STARTTIME, null);
-                final java.util.Calendar endTime = JcrUtils.getDateProperty(triggerNode, HIPPOSCHED_ENDTIME, null);
-                final long repeatCount = JcrUtils.getLongProperty(triggerNode, HIPPOSCHED_REPEATCOUNT, 0);
-                final long repeatInterval = JcrUtils.getLongProperty(triggerNode, HIPPOSCHED_REPEATINTERVAL, 0);
-                if (startTime == null) {
-                    log.warn("Cannot create simple trigger from node {}: mandatory property {} is missing",
-                            triggerNode.getPath(), HIPPOSCHED_STARTTIME);
-                } else {
-                    final SimpleTriggerImpl simpleTrigger = new SimpleTriggerImpl(triggerNode.getIdentifier(), startTime.getTime());
-                    if (endTime != null) {
-                        simpleTrigger.setEndTime(endTime.getTime());
-                    }
-                    if (repeatCount != 0) {
-                        simpleTrigger.setRepeatCount((int) repeatCount);
-                    }
-                    if (repeatInterval != 0) {
-                        simpleTrigger.setRepeatInterval(repeatInterval);
-                    }
-                    simpleTrigger.setNextFireTime(nextFireTime.getTime());
-                    simpleTrigger.setJobName(triggerNode.getParent().getParent().getIdentifier());
-                    trigger = simpleTrigger;
-                }
-            } else if (HIPPOSCHED_CRON_TRIGGER.equals(triggerType)) {
-                final String cronExpression = JcrUtils.getStringProperty(triggerNode, HIPPOSCHED_CRONEXPRESSION, null);
-                if (cronExpression == null) {
-                    log.warn("Cannot create cron trigger from node {}: mandatory property {} is missing",
-                            triggerNode.getPath(), HIPPOSCHED_CRONEXPRESSION);
-                } else {
-                    try {
-                        CronTriggerImpl cronTrigger = new CronTriggerImpl(triggerNode.getIdentifier(), null, cronExpression);
-                        cronTrigger.setNextFireTime(nextFireTime.getTime());
-                        cronTrigger.setJobName(triggerNode.getParent().getParent().getIdentifier());
-                        trigger = cronTrigger;
-                    } catch (ParseException e) {
-                        log.warn("Failed to create cron trigger from node {}: invalid cron expression {}",
-                                triggerNode.getPath(), cronExpression);
-                    }
-                }
+            trigger = getOperableTrigger(triggerNode, nextFireTime);
+        }
+        return trigger;
+    }
+
+    private OperableTrigger getOperableTrigger(final Node triggerNode, final java.util.Calendar nextFireTime) throws RepositoryException {
+        OperableTrigger trigger = null;
+        final String triggerType = triggerNode.getPrimaryNodeType().getName();
+        if (HIPPOSCHED_SIMPLE_TRIGGER.equals(triggerType)) {
+            final java.util.Calendar startTime = JcrUtils.getDateProperty(triggerNode, HIPPOSCHED_STARTTIME, null);
+            final java.util.Calendar endTime = JcrUtils.getDateProperty(triggerNode, HIPPOSCHED_ENDTIME, null);
+            final long repeatCount = JcrUtils.getLongProperty(triggerNode, HIPPOSCHED_REPEATCOUNT, 0);
+            final long repeatInterval = JcrUtils.getLongProperty(triggerNode, HIPPOSCHED_REPEATINTERVAL, 0);
+            if (startTime == null) {
+                log.warn("Cannot create simple trigger from node {}: mandatory property {} is missing",
+                        triggerNode.getPath(), HIPPOSCHED_STARTTIME);
             } else {
-                log.warn("Cannot create trigger of unknown type {}", triggerType);
+                final SimpleTriggerImpl simpleTrigger = new SimpleTriggerImpl(triggerNode.getIdentifier(), startTime.getTime());
+                if (endTime != null) {
+                    simpleTrigger.setEndTime(endTime.getTime());
+                }
+                if (repeatCount != 0) {
+                    simpleTrigger.setRepeatCount((int) repeatCount);
+                }
+                if (repeatInterval != 0) {
+                    simpleTrigger.setRepeatInterval(repeatInterval);
+                }
+                if (nextFireTime != null) {
+                    simpleTrigger.setNextFireTime(nextFireTime.getTime());
+                }
+                simpleTrigger.setJobName(triggerNode.getParent().getParent().getIdentifier());
+                trigger = simpleTrigger;
             }
+        } else if (HIPPOSCHED_CRON_TRIGGER.equals(triggerType)) {
+            final String cronExpression = JcrUtils.getStringProperty(triggerNode, HIPPOSCHED_CRONEXPRESSION, null);
+            if (cronExpression == null) {
+                log.warn("Cannot create cron trigger from node {}: mandatory property {} is missing",
+                        triggerNode.getPath(), HIPPOSCHED_CRONEXPRESSION);
+            } else {
+                try {
+                    CronTriggerImpl cronTrigger = new CronTriggerImpl(triggerNode.getIdentifier(), null, cronExpression);
+                    if (nextFireTime != null) {
+                        cronTrigger.setNextFireTime(nextFireTime.getTime());
+                    }
+                    cronTrigger.setJobName(triggerNode.getParent().getParent().getIdentifier());
+                    trigger = cronTrigger;
+                } catch (ParseException e) {
+                    log.warn("Failed to create cron trigger from node {}: invalid cron expression {}",
+                            triggerNode.getPath(), cronExpression);
+                }
+            }
+        } else {
+            log.warn("Cannot create trigger of unknown type {}", triggerType);
         }
         return trigger;
     }
