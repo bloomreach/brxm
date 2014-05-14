@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.configuration.hosting;
 
+import java.util.List;
+
 public interface MutableVirtualHost extends VirtualHost {
 
     /**
@@ -33,7 +35,14 @@ public interface MutableVirtualHost extends VirtualHost {
 
     /**
      * @return the cms location (fully qualified URL) or <code>null</code> if not configured
+     * @deprecated since 7.9.1 : Use {@link #getCmsLocations()} instead
      */
+    @Deprecated
     String getCmsLocation();
+
+    /**
+     * @return the cms location(s) (fully qualified URL) or empty list if not configured
+     */
+    List<String> getCmsLocations();
 
 }

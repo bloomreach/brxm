@@ -104,8 +104,8 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
                 continue;
             }
             MutableVirtualHost host = rootVirtualHosts.values().iterator().next();
-            if (host.getCmsLocation() != null) {
-                cmsLocations.add(host.getCmsLocation());
+            if (!host.getCmsLocations().isEmpty()) {
+                cmsLocations.addAll(host.getCmsLocations());
             }
         }
 
@@ -275,14 +275,15 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         private String name;
         private String hostName;
         private MutablePortMount portMount;
-        private String cmsLocation;
+        private final List<String> cmsLocations;
         private final String hostGroupName;
 
         private CustomVirtualHost(VirtualHosts virtualHosts, String[] hostSegments, String cmsLocation, int position, String hostGroupName) {
             this.virtualHosts = virtualHosts;
             this.hostGroupName = hostGroupName;
             name = hostSegments[position];
-            this.cmsLocation = cmsLocation;
+            this.cmsLocations = new ArrayList<>();
+            cmsLocations.add(cmsLocation);
             int i = position;
             while (i > -1) {
                 if (hostName != null) {
@@ -434,11 +435,18 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
             return false;
         }
 
+        @Deprecated
         @Override
         public String getCmsLocation() {
-            return cmsLocation;
+            if (!cmsLocations.isEmpty()) {
+                return  cmsLocations.get(0);
+            }
+            return null;
         }
 
+        public List<String> getCmsLocations() {
+            return cmsLocations;
+        }
 
         @Override
         public String toString() {
@@ -814,16 +822,29 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
                     + ", getType()=" + getType() + ", getIdentifier()="+ getIdentifier() + "]";
         }
 
+        @Deprecated
         @Override
         public String getCmsLocation() {
             if(virtualHost instanceof MutableVirtualHost) {
-                return ((MutableVirtualHost)virtualHost).getCmsLocation();
+                if (((MutableVirtualHost)virtualHost).getCmsLocations().isEmpty()) {
+                    return null;
+                }
+                return ((MutableVirtualHost)virtualHost).getCmsLocations().get(0);
             } else {
                 log.warn("Can only get cms location of a MutableVirtualHost. '{}' is not a MutableVirtualHost", virtualHost);
             }
             return null;
         }
 
+        @Override
+        public List<String> getCmsLocations() {
+            if(virtualHost instanceof MutableVirtualHost) {
+                return ((MutableVirtualHost)virtualHost).getCmsLocations();
+            } else {
+                log.warn("Can only get cms locations of a MutableVirtualHost. '{}' is not a MutableVirtualHost", virtualHost);
+            }
+            return Collections.emptyList();
+        }
     }
 
 }

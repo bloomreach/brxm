@@ -317,9 +317,15 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
             return false;
         }
 
+        @Deprecated
         @Override
         public String getCmsLocation() {
             return null;
+        }
+
+        @Override
+        public List<String> getCmsLocations() {
+            return Collections.emptyList();
         }
 
         @Override
@@ -674,7 +680,6 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
             return false;
         }
 
-
         @Deprecated
         @Override
         public String getDefaultResourceBundleId() {
@@ -706,10 +711,17 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
                     + ", getType()=" + getType() + ", getIdentifier()=" + getIdentifier() + "]";
         }
 
+        @Deprecated
         @Override
         public String getCmsLocation() {
             // nothing to return for the custom mount
             return null;
+        }
+
+        @Override
+        public List<String> getCmsLocations() {
+            // nothing to return for the custom mount
+            return Collections.emptyList();
         }
 
     }

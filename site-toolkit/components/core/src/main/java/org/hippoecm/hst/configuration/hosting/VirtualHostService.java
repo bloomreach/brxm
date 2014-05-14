@@ -85,7 +85,7 @@ public class VirtualHostService implements MutableVirtualHost {
     private String scheme;
     private boolean schemeAgnostic;
     private int schemeNotMatchingResponseCode = -1;
-    private String cmsLocation;
+    private final List<String> cmsLocations;
     private Integer defaultPort;
     private final boolean cacheable;
     private String [] defaultResourceBundleIds;
@@ -95,14 +95,14 @@ public class VirtualHostService implements MutableVirtualHost {
                               final HstNode virtualHostNode,
                               final VirtualHostService parentHost,
                               final String hostGroupName,
-                              final String cmsLocation,
+                              final List<String> cmsLocations,
                               final int defaultPort,
                               final HstNodeLoadingCache hstNodeLoadingCache) throws ModelLoadingException {
 
         this.parentHost = parentHost;
         this.virtualHosts = virtualHosts;
         this.hostGroupName = StringPool.get(hostGroupName);
-        this.cmsLocation = cmsLocation;
+        this.cmsLocations = cmsLocations;
         this.defaultPort = defaultPort;
 
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH)) {
@@ -257,7 +257,7 @@ public class VirtualHostService implements MutableVirtualHost {
             // add child host services
             int depth = nameSegments.length - 2;
             if(depth > -1 ) {
-                VirtualHostService childHost = new VirtualHostService(this, nameSegments, depth, hostGroupName, cmsLocation, defaultPort);
+                VirtualHostService childHost = new VirtualHostService(this, nameSegments, depth, hostGroupName, cmsLocations, defaultPort);
                 this.childVirtualHosts.put(childHost.name, childHost);
                 // we need to switch the attachPortMountToHost to the last host
             }
@@ -297,7 +297,7 @@ public class VirtualHostService implements MutableVirtualHost {
         for(HstNode child : virtualHostNode.getNodes()) {
             if(HstNodeTypes.NODETYPE_HST_VIRTUALHOST.equals(child.getNodeTypeName())) {
                 try {
-                    VirtualHostService childHost = new VirtualHostService(virtualHosts, child, attachPortMountToHost, hostGroupName, cmsLocation, defaultPort, hstNodeLoadingCache);
+                    VirtualHostService childHost = new VirtualHostService(virtualHosts, child, attachPortMountToHost, hostGroupName, cmsLocations, defaultPort, hstNodeLoadingCache);
                     attachPortMountToHost.childVirtualHosts.put(childHost.name, childHost);
                 } catch (ModelLoadingException e) {
                     log.error("Skipping incorrect virtual host for node '"+child.getValueProvider().getPath()+"'" ,e);
@@ -319,12 +319,12 @@ public class VirtualHostService implements MutableVirtualHost {
                               final String[] nameSegments,
                               final int position,
                               final String hostGroupName,
-                              final String cmsLocation,
+                              final List<String> cmsLocations,
                               final Integer defaultPort) {
         this.parentHost = parent;
         this.virtualHosts = parent.virtualHosts;
         this.hostGroupName = hostGroupName;
-        this.cmsLocation = cmsLocation;
+        this.cmsLocations = cmsLocations;
         this.defaultPort = defaultPort;
         this.scheme = parent.scheme;
         this.schemeAgnostic = parent.schemeAgnostic;
@@ -343,7 +343,7 @@ public class VirtualHostService implements MutableVirtualHost {
         // add child host services
         int nextPosition = position - 1;
         if(nextPosition > -1 ) {
-            VirtualHostService childHost = new VirtualHostService(this,nameSegments, nextPosition, hostGroupName, cmsLocation, defaultPort);
+            VirtualHostService childHost = new VirtualHostService(this,nameSegments, nextPosition, hostGroupName, cmsLocations, defaultPort);
             this.childVirtualHosts.put(childHost.name, childHost);
         }
         hostName = StringPool.get(buildHostName());
@@ -421,8 +421,16 @@ public class VirtualHostService implements MutableVirtualHost {
         return versionInPreviewHeader;
     }
 
+    @Deprecated
     public String getCmsLocation() {
-        return cmsLocation;
+        if (!cmsLocations.isEmpty()) {
+            return  cmsLocations.get(0);
+        }
+        return null;
+    }
+
+    public List<String> getCmsLocations() {
+        return cmsLocations;
     }
 
     public Integer getDefaultPort() {

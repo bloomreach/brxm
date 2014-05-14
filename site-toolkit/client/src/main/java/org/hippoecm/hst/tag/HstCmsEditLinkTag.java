@@ -16,7 +16,10 @@
 package org.hippoecm.hst.tag;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -30,12 +33,14 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.EncodingUtils;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -109,14 +114,24 @@ public class HstCmsEditLinkTag extends TagSupport  {
 
             Mount mount = requestContext.getResolvedMount().getMount();
 
-
             // cmsBaseUrl is something like : http://localhost:8080
-            String cmsBaseUrl = mount.getCmsLocation();
-
-            if(cmsBaseUrl == null || "".equals(cmsBaseUrl)) {
-                log.warn("Skipping cms edit url because cms location property is not configured in hst hostgroup configuration");
-                 return EVAL_PAGE;
+            // try to find find the best cms location in case multiple ones are configured
+            if (mount.getCmsLocations().isEmpty()) {
+                log.warn("Skipping cms edit url no cms locations configured in hst hostgroup configuration");
+                return EVAL_PAGE;
             }
+            String cmsBaseUrl;
+            if (mount.getCmsLocations().size() == 1) {
+                cmsBaseUrl = mount.getCmsLocations().get(0);
+            } else {
+                try {
+                    cmsBaseUrl = getBestCmsLocation(mount, servletRequest);
+                } catch (URISyntaxException e) {
+                    log.error("Exception while trying to find best cms location", e);
+                    return EVAL_PAGE;
+                }
+            }
+           
             if(cmsBaseUrl.endsWith("/")) {
                 cmsBaseUrl = cmsBaseUrl.substring(0, cmsBaseUrl.length() -1);
             }
@@ -195,6 +210,27 @@ public class HstCmsEditLinkTag extends TagSupport  {
         } finally {
             cleanup();
         }
+    }
+
+    private String getBestCmsLocation(final Mount mount, final HttpServletRequest request) throws URISyntaxException {
+        String cmsRequestHostName = HstRequestUtils.getFarthestRequestHost(request, false);
+        for (String cmsLocation : mount.getCmsLocations()) {
+            String hostName = cmsLocation;
+            if (cmsLocation.startsWith("http://")) {
+                hostName = hostName.substring("http://".length());
+            } else if (cmsLocation.startsWith("https://")) {
+                hostName = hostName.substring("https://".length());
+            }
+            hostName = StringUtils.substringBefore(hostName,"/");
+            if (cmsRequestHostName.equals(hostName)) {
+                log.debug("For cms request with host {} found from {} best cms host to be {}",cmsRequestHostName,
+                        mount.getCmsLocations(), cmsLocation);
+                return cmsLocation;
+            }
+        }
+        log.debug("For cms request with host {} no matching host was found in {}. Return {} as cms host.",cmsRequestHostName,
+                mount.getCmsLocations(), mount.getCmsLocations().get(0));
+        return mount.getCmsLocations().get(0);
     }
 
     protected void cleanup() {

@@ -381,9 +381,15 @@ public class MountDecoratorImpl implements MountDecorator {
             return delegatee.onlyForContextPath();
         }
 
+        @Deprecated
         @Override
         public String getCmsLocation() {
             return delegatee.getCmsLocation();
+        }
+
+        @Override
+        public List<String> getCmsLocations() {
+            return delegatee.getCmsLocations();
         }
 
         @Override

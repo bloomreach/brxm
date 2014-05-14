@@ -270,17 +270,22 @@ public class VirtualHostsService implements MutableVirtualHosts {
                 throw new ModelLoadingException("It should not be possible to have two hostgroups with the same name. We found duplicate group with name '"+hostGroupNode.getValueProvider().getName()+"'");
             }
 
-            String cmsLocation = hostGroupNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_CMS_LOCATION);
-            if(cmsLocation == null) {
+            List<String> validCmsLocations = new ArrayList<>();
+            String[] cmsLocations = StringUtils.split(hostGroupNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_CMS_LOCATION), " ,\t\f\r\n");
+            if(cmsLocations == null) {
                 log.warn("VirtualHostGroup '{}' does not have a property hst:cmslocation configured.", hostGroupNode.getValueProvider().getName());
             } else {
-                cmsLocation = cmsLocation.toLowerCase();
-                try {
-                    URI testLocation = new URI(cmsLocation);
-                    log.info("Cms host location for hostGroup '{}' is '{}'", hostGroupNode.getValueProvider().getName(), testLocation.getHost());
-                } catch (URISyntaxException e) {
-                    log.warn("'{}' is an invalid cmsLocation. cms location can't be used and set to null for hostGroup '{}'", cmsLocation, hostGroupNode.getValueProvider().getName());
+                for (String cmsLocation : cmsLocations) {
+                    cmsLocation = cmsLocation.toLowerCase();
+                    try {
+                        URI testLocation = new URI(cmsLocation);
+                        log.info("Cms host location for hostGroup '{}' is '{}'", hostGroupNode.getValueProvider().getName(), testLocation.getHost());
+                        validCmsLocations.add(cmsLocation);
+                    } catch (URISyntaxException e) {
+                        log.warn("'{}' is an invalid cmsLocation. cms location can't be used and skipped for hostGroup '{}'", cmsLocation, hostGroupNode.getValueProvider().getName());
+                    }
                 }
+
             }
 
             int defaultPort = 0;
@@ -295,7 +300,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
             for(HstNode virtualHostNode : hostGroupNode.getNodes()) {
 
                 try {
-                    VirtualHostService virtualHost = new VirtualHostService(this, virtualHostNode, null, hostGroupNode.getValueProvider().getName(), cmsLocation , defaultPort, hstNodeLoadingCache);
+                    VirtualHostService virtualHost = new VirtualHostService(this, virtualHostNode, null, hostGroupNode.getValueProvider().getName(), validCmsLocations , defaultPort, hstNodeLoadingCache);
                     rootVirtualHosts.put(virtualHost.getName(), virtualHost);
                 } catch (ModelLoadingException e) {
                     log.error("Unable to add virtualhost with name '"+virtualHostNode.getValueProvider().getName()+"'. Fix the configuration. This virtualhost will be skipped.", e);

@@ -225,7 +225,7 @@ public class MountService implements ContextualizableMount, MutableMount {
 
     private String[] defaultSiteMapItemHandlerIds;
 
-    private String cmsLocation;
+    private List<String> cmsLocations;
 
     private Map<String, String> parameters;
 
@@ -510,7 +510,7 @@ public class MountService implements ContextualizableMount, MutableMount {
             this.defaultResourceBundleIds =  virtualHost.getDefaultResourceBundleIds();
         }
 
-        this.cmsLocation = ((VirtualHostService)virtualHost).getCmsLocation();
+        this.cmsLocations = ((VirtualHostService)virtualHost).getCmsLocations();
 
         if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_DEFAULTSITEMAPITEMHANDLERIDS)) {
             defaultSiteMapItemHandlerIds = mount.getValueProvider().getStrings(HstNodeTypes.MOUNT_PROPERTY_DEFAULTSITEMAPITEMHANDLERIDS);
@@ -800,8 +800,16 @@ public class MountService implements ContextualizableMount, MutableMount {
         return versionInPreviewHeader;
     }
 
-   public String getCmsLocation() {
-        return cmsLocation;
+    @Deprecated
+    public String getCmsLocation() {
+        if (!cmsLocations.isEmpty()) {
+           return  cmsLocations.get(0);
+        }
+        return null;
+    }
+
+    public List<String> getCmsLocations() {
+        return cmsLocations;
     }
 
     public String getNamedPipeline(){
