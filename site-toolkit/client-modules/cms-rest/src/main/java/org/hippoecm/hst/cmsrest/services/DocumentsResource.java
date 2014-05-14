@@ -98,13 +98,6 @@ public class DocumentsResource extends BaseResource implements DocumentService {
                 document.setContextPath(requestContext.getServletRequest().getContextPath());
             }
 
-            // and set the contextpath through which the template composer is available
-            if (link.getMount().getVirtualHost().getVirtualHosts().getDefaultContextPath() != null) {
-                document.setTemplateComposerContextPath(link.getMount().getVirtualHost().getVirtualHosts().getDefaultContextPath());
-            } else {
-                document.setTemplateComposerContextPath(requestContext.getServletRequest().getContextPath());
-            }
-
             // set the cmsPreviewPrefix through which prefix after the contextPath the channels can be accessed
             document.setCmsPreviewPrefix(link.getMount().getVirtualHost().getVirtualHosts().getCmsPreviewPrefix());
 
