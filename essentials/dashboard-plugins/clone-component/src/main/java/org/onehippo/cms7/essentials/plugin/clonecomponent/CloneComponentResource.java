@@ -59,7 +59,7 @@ import com.google.common.base.Strings;
 @Path("/cloneComponent/")
 public class CloneComponentResource extends BaseResource {
 
-    public static final String COMPONENTS_ROOT = "/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog";
+    public static final String COMPONENTS_ROOT = "//hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog//";
 
     private static final Logger log = LoggerFactory.getLogger(CloneComponentResource.class);
     public static final String HST_TEMPLATE = "hst:template";
@@ -72,7 +72,8 @@ public class CloneComponentResource extends BaseResource {
         List<CloneRestful> componentList = new ArrayList<>();
         try {
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
-            final Query query = queryManager.createQuery("//hst:hst/hst:configurations//element(*, hst:containeritemcomponent)", "xpath");
+            //final Query query = queryManager.createQuery("//hst:hst/hst:configurations//element(*, hst:containeritemcomponent)", "xpath");
+            final Query query = queryManager.createQuery(COMPONENTS_ROOT + "element(*, hst:containeritemcomponent)", "xpath");
             final QueryResult result = query.execute();
             final NodeIterator nodes = result.getNodes();
             while (nodes.hasNext()) {
