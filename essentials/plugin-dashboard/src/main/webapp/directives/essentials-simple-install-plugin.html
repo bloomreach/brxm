@@ -1,0 +1,54 @@
+<!--
+  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+   
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+   
+   http://www.apache.org/licenses/LICENSE-2.0
+   
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<div class="panel panel-default"><div class="panel-heading">{{pluginTitle}}</div>
+  <div class="panel-body">
+    <form novalidate name="templateForm">
+      <div class="form-group">
+        <label>Please select templating language:</label>
+      </div>
+      <div class="radio">
+        <label>
+          <input type="radio" ng-model="templateName" required value="jsp"/>
+          JSP template
+        </label>
+      </div>
+      <div class="radio">
+        <label>
+          <input type="radio" ng-model="templateName" required value="freemarker"/>
+          Freemarker template
+        </label>
+      </div>
+      <div ng-show="sample" class="form-group">
+        <label> Content: </label>
+      </div>
+      <div ng-show="sample" class = "checkbox">
+        <label>
+          Add sample content <input type="checkbox" ng-model="sampleData"/>
+        </label>
+      </div>
+
+    </form>
+    <essentials-messages  payload="payload" label="{{label}}"/>
+  </div>
+  <div class="panel-footer">
+    <div class="input-group">
+      <span class="input-group-btn">
+        <button class="btn btn-primary pull-right" type="submit" ng-click="run()">{{buttonText}}</button>
+      </span>
+    </div>
+  </div>
+</div>

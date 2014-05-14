@@ -1,0 +1,36 @@
+<!--
+  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+   
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+   
+   http://www.apache.org/licenses/LICENSE-2.0
+   
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<accordion close-others="oneAtATime"> 
+  <accordion-group is-open="isopen"> 
+    <accordion-heading ng-class="active"> 
+      {{label ? label : "Display changes made by this plugin"}}
+      <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': isopen, 'glyphicon-chevron-right': !isopen}"></i> 
+    </accordion-heading> 
+    <div class="alert-info"  ng-repeat="message in packageMessages.items" ng-switch="message.group"> 
+      <div ng-switch-when="FILE_CREATE">{{message.value}}</div> 
+    </div> 
+    <div class="alert-success"  ng-repeat="message in packageMessages.items" ng-switch="message.group"> 
+      <div ng-switch-when="DOCUMENT_REGISTER">{{message.value}}</div> 
+    </div> 
+    <div class="alert-warning"  ng-repeat="message in packageMessages.items" ng-switch="message.group"> 
+      <div ng-switch-when="XML_NODE_CREATE">{{message.value}}</div> 
+    </div> 
+    <div class="alert-danger"  ng-repeat="message in packageMessages.items" ng-switch="message.group"> 
+      <div ng-switch-when="XML_NODE_FOLDER_CREATE">{{message.value}}</div> 
+    </div> 
+  </accordion-group> 
+</accordion>

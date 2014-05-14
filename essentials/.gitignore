@@ -15324,6 +15324,12 @@ plugin-dashboard/src/main/webapp/css/.idea
 plugin-dashboard/src/main/webapp/css/atlassian-ide-plugin.xml
 plugin-dashboard/src/main/webapp/css/hippo-plugins.iws
 plugin-dashboard/src/main/webapp/css/target
+plugin-dashboard/src/main/webapp/directives/*.iml
+plugin-dashboard/src/main/webapp/directives/.DS_Store
+plugin-dashboard/src/main/webapp/directives/.idea
+plugin-dashboard/src/main/webapp/directives/atlassian-ide-plugin.xml
+plugin-dashboard/src/main/webapp/directives/hippo-plugins.iws
+plugin-dashboard/src/main/webapp/directives/target
 plugin-dashboard/src/main/webapp/docs/*.iml
 plugin-dashboard/src/main/webapp/docs/.DS_Store
 plugin-dashboard/src/main/webapp/docs/.idea
