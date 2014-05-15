@@ -164,7 +164,7 @@ angular/components/angular-route/*
     THE SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
-angular/components/Angular-NestedSortable/dist/angular-nested-sortable.js
+angular/components/angular-ui-tree/dist/angular-ui-tree.min.js
 
     The MIT License (MIT)
 
