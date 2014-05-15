@@ -4,8 +4,7 @@
 
 ```
 Hippo Essentials is in BETA stage and is still undergoing testing and changes before its official release.
-Please use the Hippo Essentials feedback form to inform us if you encounter any bugs/glithces or if you have any suggestions
-for improvements.
+Please use our feedback form to inform us if you encounter any bugs/glithces or if you have any suggestions for improvements. It's accessible from the Essentials menu once the application is running.
 ```
 
 
