@@ -15,11 +15,11 @@
   limitations under the License.
   -->
 
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="content-component">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="list-component">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:template</sv:value>
   </sv:property>
   <sv:property sv:name="hst:renderpath" sv:type="String">
-    <sv:value>freemarker/hstdefault/list-component.ftl</sv:value>
+    <sv:value>jsp/hstdefault/list-component.jsp</sv:value>
   </sv:property>
 </sv:node>
