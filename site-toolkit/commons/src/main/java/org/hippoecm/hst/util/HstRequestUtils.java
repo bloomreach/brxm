@@ -320,24 +320,32 @@ public class HstRequestUtils {
     }
 
     public static String getFarthestRequestScheme(HttpServletRequest request) {
-        String scheme = request.getHeader("X-Forwarded-Proto");
-        if (scheme != null && scheme.length() > 0) {
-            return scheme;
-        }
-        scheme = request.getHeader("X-Forwarded-Scheme");
-        if (scheme != null && scheme.length() > 0) {
-            return scheme;
+        String [] schemes = getCommaSeparatedMultipleHeaderValues(request, "X-Forwarded-Proto");
+
+        if (schemes != null && schemes.length != 0) {
+            return schemes[0];
         }
 
-        String sslEnabled = request.getHeader("X-SSL-Enabled");
-        if (sslEnabled == null) {
-            sslEnabled = request.getHeader("Front-End-Https");
+        schemes = getCommaSeparatedMultipleHeaderValues(request, "X-Forwarded-Scheme");
+
+        if (schemes != null && schemes.length != 0) {
+            return schemes[0];
         }
-        if (sslEnabled != null) {
-            if (sslEnabled.equalsIgnoreCase("on") || sslEnabled.equalsIgnoreCase("yes") || sslEnabled.equalsIgnoreCase("1")) {
+
+        String [] sslEnabledArray = getCommaSeparatedMultipleHeaderValues(request, "X-SSL-Enabled");
+
+        if (sslEnabledArray == null) {
+            sslEnabledArray = getCommaSeparatedMultipleHeaderValues(request, "Front-End-Https");
+        }
+
+        if (sslEnabledArray != null && sslEnabledArray.length != 0) {
+            String sslEnabled = sslEnabledArray[0];
+
+            if (sslEnabled.equalsIgnoreCase("on") || sslEnabled.equalsIgnoreCase("yes") || sslEnabled.equals("1")) {
                 return "https";
             }
         }
+
         return request.getScheme();
     }
 
@@ -513,4 +521,28 @@ public class HstRequestUtils {
         str = str.replaceAll("'", "&#039;");
         return str;
     }
+
+    /**
+     * Parse comma separated multiple header value and return an array if the header exists.
+     * If the header doesn't exist, it returns null.
+     * @param request
+     * @param headerName
+     * @return null if the header doesn't exist or an array parsed from the comma separated string header value.
+     */
+    private static String [] getCommaSeparatedMultipleHeaderValues(final HttpServletRequest request, final String headerName) {
+        String value = request.getHeader(headerName);
+
+        if (value == null) {
+            return null;
+        }
+
+        String [] tokens = value.split(",");
+
+        for (int i = 0; i < tokens.length; i++) {
+            tokens[i] = tokens[i].trim();
+        }
+
+        return tokens;
+    }
+
 }

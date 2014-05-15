@@ -103,12 +103,22 @@ public class TestHstRequestUtils {
         expect(request.getHeader("X-Forwarded-Proto")).andReturn("https");
         replay(request);
         assertEquals("https", HstRequestUtils.getFarthestRequestScheme(request));
+
+        request = createNiceMock(HttpServletRequest.class);
+        expect(request.getHeader("X-Forwarded-Proto")).andReturn("https,http");
+        replay(request);
+        assertEquals("https", HstRequestUtils.getFarthestRequestScheme(request));
     }
 
     @Test
     public void testForwardedScheme()  throws Exception {
         HttpServletRequest request = createNiceMock(HttpServletRequest.class);
         expect(request.getHeader("X-Forwarded-Scheme")).andReturn("https");
+        replay(request);
+        assertEquals("https", HstRequestUtils.getFarthestRequestScheme(request));
+
+        request = createNiceMock(HttpServletRequest.class);
+        expect(request.getHeader("X-Forwarded-Scheme")).andReturn("https,http");
         replay(request);
         assertEquals("https", HstRequestUtils.getFarthestRequestScheme(request));
     }
@@ -118,6 +128,11 @@ public class TestHstRequestUtils {
     public void testSSLEnabled()  throws Exception {
         HttpServletRequest request = createNiceMock(HttpServletRequest.class);
         expect(request.getHeader("X-SSL-Enabled")).andReturn("On");
+        replay(request);
+        assertEquals("https", HstRequestUtils.getFarthestRequestScheme(request));
+
+        request = createNiceMock(HttpServletRequest.class);
+        expect(request.getHeader("X-SSL-Enabled")).andReturn("On,Off");
         replay(request);
         assertEquals("https", HstRequestUtils.getFarthestRequestScheme(request));
     }
