@@ -39,7 +39,7 @@ import com.intellij.psi.PsiFileFactory;
  */
 public class HippoTemplatesFactory implements FileTemplateGroupDescriptorFactory {
 
-    public static final String ESSENTIALS_VERSION = "1.01.02-SNAPSHOT";
+    public static final String ESSENTIALS_VERSION = "1.01.03-SNAPSHOT";
 
     public enum HippoTemplate {
         ESSENTIALS_POM_TEMPLATE("essentials_pom"),

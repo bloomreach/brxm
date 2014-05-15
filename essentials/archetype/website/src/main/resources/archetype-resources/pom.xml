@@ -62,7 +62,7 @@
   <properties>
 
     <!--***START temporary override of versions*** -->
-    <essentials.version>1.01.02-SNAPSHOT</essentials.version>
+    <essentials.version>1.01.03-SNAPSHOT</essentials.version>
     <!-- ***END temporary override of versions*** -->
 
     <jsp-api.version>2.1</jsp-api.version>

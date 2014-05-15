@@ -74,7 +74,7 @@
                 "artifactId": "hippo-essentials-blog-plugin",
                 "scope": "compile",
                 "type": "essentials",
-                "version": "1.01.02-SNAPSHOT"
+                "version": "1.01.03-SNAPSHOT"
             }
 
         ],
@@ -210,7 +210,7 @@
                 "artifactId": "hippo-banner-plugin",
                 "scope": "compile",
                 "type": "essentials",
-                "version": "1.01.02-SNAPSHOT"
+                "version": "1.01.03-SNAPSHOT"
             }
         ]
     },
