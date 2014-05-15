@@ -1,7 +1,5 @@
 # Hippo Essentials
-
-Hippo Essentials helps you kickstart your [Hippo CMS](http://www.onehippo.org) projects.
-It allows developers to easily install and configure Hippo CMS functionalities.
+Hippo Essentials is for developers who want to setup a new [Hippo CMS](http://www.onehippo.org) project and it enables them to kickstart their project in a matter of minutes, to benefit from our best practices and to easily add Enterprise or community plugins from the Hippo Marketplace.
 
 # BETA notice
 
