@@ -141,8 +141,9 @@ public class JCRJobStore implements JobStore {
         log.debug("Initializing triggers");
         try {
             boolean changes = false;
-            synchronized (getSession()) {
-                final Node moduleConfig = getSession().getNode(jobStorePath);
+            final Session session = getSession();
+            synchronized (session) {
+                final Node moduleConfig = session.getNode(jobStorePath);
                 for (Node groupNode : new NodeIterable(moduleConfig.getNodes())) {
                     for (Node jobNode : new NodeIterable(groupNode.getNodes())) {
                         final boolean jobEnabled = JcrUtils.getBooleanProperty(jobNode, HIPPOSCHED_ENABLED, true);
@@ -171,13 +172,14 @@ public class JCRJobStore implements JobStore {
                 executorService.submit(new Runnable() {
                     @Override
                     public void run() {
-                        synchronized (getSession()) {
+                        final Session session = getSession();
+                        synchronized (session) {
                             try {
-                                getSession().save();
+                                session.save();
                             } catch (RepositoryException e) {
                                 log.error("Failed to save ");
                                 try {
-                                    getSession().refresh(false);
+                                    session.refresh(false);
                                 } catch (RepositoryException ignore) {
                                 }
                             }
@@ -231,9 +233,10 @@ public class JCRJobStore implements JobStore {
             throw new JobPersistenceException("Cannot store trigger of type " + newTrigger.getClass().getName());
         }
         final JCRJobDetail jobDetail = (JCRJobDetail) newJob;
-        synchronized(getSession()) {
+        final Session session = getSession();
+        synchronized(session) {
             try {
-                final Node jobNode = getSession().getNodeByIdentifier(jobDetail.getIdentifier());
+                final Node jobNode = session.getNodeByIdentifier(jobDetail.getIdentifier());
 
                 final Node triggersNode;
                 if(jobNode.hasNode(HIPPOSCHED_TRIGGERS)) {
@@ -271,9 +274,9 @@ public class JCRJobStore implements JobStore {
                 final java.util.Calendar fireTime = dateToCalendar(newTrigger.getNextFireTime());
                 triggerNode.setProperty(HIPPOSCHED_NEXTFIRETIME, fireTime);
 
-                getSession().save();
+                session.save();
             } catch (RepositoryException e) {
-                refreshSession(getSession());
+                refreshSession(session);
                 throw new JobPersistenceException("Failed to store job and trigger", e);
             }
         }
