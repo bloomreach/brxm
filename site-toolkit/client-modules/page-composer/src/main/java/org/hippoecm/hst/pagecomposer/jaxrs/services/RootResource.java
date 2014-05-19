@@ -52,7 +52,8 @@ public class RootResource extends AbstractConfigResource {
         if (session != null) {
             return ok("OK");
         } else {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity("Error: No http session on the request found.").build();
         }
     }
 
