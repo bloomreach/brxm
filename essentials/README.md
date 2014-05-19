@@ -1,9 +1,16 @@
-# Hippo Essentials
-Hippo Essentials is for developers who want to setup a new [Hippo CMS](http://www.onehippo.org) project and it enables them to kickstart their project in a matter of minutes, to benefit from our best practices and to easily add Enterprise or community plugins from the Hippo Marketplace.
+#Hippo Essentials
 
-# BETA notice
+#BETA notice
 
-**Hippo Essentials is in BETA stage and is still undergoing testing and changes before its official release. Please use our feedback form to inform us if you encounter any bugs/glitches or if you have any suggestions for improvements. It's accessible from the [Essentials menu](http://localhost:8080/essentials/) once the application is running.**
+```
+Hippo Essentials is in BETA stage and is still undergoing testing and changes before its official release.
+Please use the Hippo Essentials feedback form to inform us if you encounter any bugs/glitches or if you have any
+suggestions for improvements.
+```
+
+
+Hippo Essentials is a project aimed at speeding up [Hippo CMS](http://www.onehippo.org) project implementations.
+It allows developers to easily install and configure Hippo CMS functionalities.
 
 # Getting Started
 
@@ -44,7 +51,7 @@ $ mvn clean install
 ### run archetype
 
 ```shell
-mvn archetype:generate -D "archetypeGroupId=org.onehippo.cms7" -D "archetypeArtifactId=essentials-archetype-website" -D "archetypeVersion=1.01.03-SNAPSHOT"
+mvn archetype:generate -D "archetypeGroupId=org.onehippo.cms7" -D "archetypeArtifactId=essentials-archetype-website" -D "archetypeVersion=1.01.02-SNAPSHOT"
 ```
 
 ## Working with Git
