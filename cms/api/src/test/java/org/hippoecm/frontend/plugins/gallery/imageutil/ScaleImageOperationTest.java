@@ -21,10 +21,16 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -171,6 +177,30 @@ public class ScaleImageOperationTest {
 
         assertEquals(0, scaleOp.getScaledWidth());
         assertEquals(0, scaleOp.getScaledHeight());
+    }
+
+    @Test
+    public void scaleSvgAddsViewboxWhenMissing() throws GalleryException, IOException, ParserConfigurationException, SAXException {
+        InputStream data = getClass().getResourceAsStream("/test-SVG-without-viewbox.svg");
+        ScaleImageOperation scaleOp = new ScaleImageOperation(200, 100, true, ImageUtils.ScalingStrategy.SPEED);
+        scaleOp.execute(data, "image/svg+xml");
+
+        InputStream scaledData = scaleOp.getScaledData();
+
+        // read svg
+        final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(false);
+        factory.setValidating(false);
+        factory.setFeature("http://xml.org/sax/features/namespaces", false);
+        factory.setFeature("http://xml.org/sax/features/validation", false);
+        factory.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+        factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        final DocumentBuilder builder = factory.newDocumentBuilder();
+        final Document svgDocument = builder.parse(scaledData);
+        final Element svgElement = svgDocument.getDocumentElement();
+
+        assertEquals("SVG without a 'viewBox' attribute should have gotten one set to the original image size",
+                "0 0 178.0 145.0", svgElement.getAttribute("viewBox"));
     }
 
     @Test

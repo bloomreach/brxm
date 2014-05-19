@@ -176,8 +176,8 @@ public class ScaleImageOperation extends AbstractImageOperation {
 
             log.info("SVG size: {} x {}", svgWidth, svgHeight);
 
-            final int originalWidth = readIntFromStart(svgWidth);
-            final int originalHeight = readIntFromStart(svgHeight);
+            final double originalWidth = readDoubleFromStart(svgWidth);
+            final double originalHeight = readDoubleFromStart(svgHeight);
 
             final double resizeRatio = calculateResizeRatio(originalWidth, originalHeight, width, height);
 
@@ -187,6 +187,12 @@ public class ScaleImageOperation extends AbstractImageOperation {
             // save variant with scaled dimensions
             svg.setAttribute("width", Integer.toString(scaledWidth));
             svg.setAttribute("height", Integer.toString(scaledHeight));
+
+            // add a viewbox when not present, so scaled variants still show the full image
+            if (!svg.hasAttribute("viewBox")) {
+                svg.setAttribute("viewBox", "0 0 " + originalWidth + " " + originalHeight);
+            }
+
             writeSvgDocument(tmpFile, svgDocument);
         }
     }
@@ -203,7 +209,7 @@ public class ScaleImageOperation extends AbstractImageOperation {
 
     private void writeSvgDocument(final File file, final Document svgDocument) {
         try {
-             final Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            final Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.METHOD, "xml");
             transformer.setOutputProperty(OutputKeys.ENCODING, svgDocument.getInputEncoding());
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -227,15 +233,15 @@ public class ScaleImageOperation extends AbstractImageOperation {
         factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
     }
 
-    private int readIntFromStart(String s) {
+    private double readDoubleFromStart(String s) {
         int i = 0;
-        while (i < s.length() && Character.isDigit(s.charAt(i))) {
+        while (i < s.length() && (Character.isDigit(s.charAt(i)) || s.charAt(i) == '.')) {
             i++;
         }
         if (i == 0) {
             return 0;
         }
-        return Integer.parseInt(s.substring(0, i));
+        return Double.parseDouble(s.substring(0, i));
     }
 
     /**
