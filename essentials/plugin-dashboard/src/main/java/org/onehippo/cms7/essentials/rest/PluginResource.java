@@ -51,7 +51,6 @@ import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventL
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
-import org.onehippo.cms7.essentials.dashboard.model.Restful;
 import org.onehippo.cms7.essentials.dashboard.packaging.CommonsInstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
@@ -243,7 +242,7 @@ public class PluginResource extends BaseResource {
             response = MessageRestful.class)
     @POST
     @Path("/hideintroduction")
-    public Restful hideWelcomeScreen(@Context ServletContext servletContext) {
+    public KeyValueRestful hideWelcomeScreen(@Context ServletContext servletContext) {
         try {
             final Plugin plugin = getPluginById(ProjectSetupPlugin.class.getName(), servletContext);
             final PluginContext context = new DefaultPluginContext(plugin);
@@ -251,7 +250,7 @@ public class PluginResource extends BaseResource {
                 final ProjectSettingsBean document = configService.read(ProjectSettingsBean.DEFAULT_NAME, ProjectSettingsBean.class);
                 document.setSetupDone(true);
                 configService.write(document);
-                return new KeyValueRestful("message", "Saved property for welcome screen");
+                return new KeyValueRestful("message","Saved property for welcome screen");
             }
 
 
@@ -260,9 +259,7 @@ public class PluginResource extends BaseResource {
             log.error("Error checking InstructionPackage status", e);
         }
 
-        final MessageRestful messageRestful = new MessageRestful();
-        messageRestful.setSuccessMessage(false);
-        return messageRestful;
+        return new KeyValueRestful("message", "Error saving welcome screen setting");
     }
 
     @ApiOperation(
