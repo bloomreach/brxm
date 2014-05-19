@@ -54,9 +54,9 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
 
     private static final Logger log = LoggerFactory.getLogger(CustomMountAndVirtualCmsHostAugmenter.class);
 
-    private static final String DEFAULT_NOOP_NAMED_PIPELINE =  "NoopPipeline";
+    private static final String DEFAULT_NOOP_NAMED_PIPELINE = "NoopPipeline";
 
-    private static final String [] EMPTY_ARRAY = {};
+    private static final String[] EMPTY_ARRAY = {};
 
     private String springConfiguredCmsLocation;
     private String mountName;
@@ -94,7 +94,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
             return;
         }
         log.info("Trying to augment to cms host custom mount '{}' of type '{}'and pipeline '{}'",
-                new String[]{mountName,mountType,mountNamedPipeline});
+                new String[]{mountName, mountType, mountNamedPipeline});
         // first we try to find all the cmsLocations that need to be added.
         // for every host group, we fetch just virtualhost and ask for its cmsLocation: Although it is configured
         // on the hst:virtualhostgroup node, it is inherited in every virtualhost
@@ -104,9 +104,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
                 continue;
             }
             MutableVirtualHost host = rootVirtualHosts.values().iterator().next();
-            if (!host.getCmsLocations().isEmpty()) {
-                cmsLocations.addAll(host.getCmsLocations());
-            }
+            cmsLocations.addAll(host.getCmsLocations());
         }
 
         if (cmsLocations.isEmpty()) {
@@ -227,7 +225,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
                         }
                         customMount = new CustomMount(mountName, mountType, mountNamedPipeline, rootMount, host);
                         ((MutableMount) rootMount).addMount((MutableMount) customMount);
-                        log.info("Successfully augmented mount {}", customMount,toString());
+                        log.info("Successfully augmented mount {}", customMount, toString());
                     } else {
                         log.info("There is an explicit custom Mount '{}' for CMS location '{}'. This mount can be removed from configuration" +
                                 " as it will be auto-created by the HST", mountName, cmsLocation);
@@ -271,7 +269,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
 
     private class CustomVirtualHost implements MutableVirtualHost {
         private VirtualHosts virtualHosts;
-        private Map<String,VirtualHost> childs = new HashMap<String, VirtualHost>();
+        private Map<String, VirtualHost> childs = new HashMap<String, VirtualHost>();
         private String name;
         private String hostName;
         private MutablePortMount portMount;
@@ -294,17 +292,17 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
                 i--;
             }
             position++;
-            if(position == hostSegments.length) {
+            if (position == hostSegments.length) {
                 // done with adding hosts
             } else {
-                 childs.put(hostSegments[position], new CustomVirtualHost(virtualHosts, hostSegments, cmsLocation,  position, hostGroupName));
+                childs.put(hostSegments[position], new CustomVirtualHost(virtualHosts, hostSegments, cmsLocation, position, hostGroupName));
             }
         }
 
         @Override
         public void addVirtualHost(MutableVirtualHost virtualHost) throws IllegalArgumentException {
-            if(childs.containsKey(virtualHost.getName())) {
-                throw new IllegalArgumentException("virtualHost '"+virtualHost.getName()+"' already exists");
+            if (childs.containsKey(virtualHost.getName())) {
+                throw new IllegalArgumentException("virtualHost '" + virtualHost.getName() + "' already exists");
             }
             childs.put(virtualHost.getName(), virtualHost);
         }
@@ -349,7 +347,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
 
         @Override
         public String getHostName() {
-              return hostName;
+            return hostName;
         }
 
         @Override
@@ -397,10 +395,12 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         public String getLocale() {
             return null;
         }
+
         @Override
         public String getHomePage() {
             return null;
         }
+
         @Override
         public String getBaseURL(HttpServletRequest request) {
             final StringBuilder builder = new StringBuilder();
@@ -410,6 +410,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
             builder.append("://").append(serverName);
             return builder.toString();
         }
+
         @Override
         public boolean isVersionInPreviewHeader() {
             return false;
@@ -426,7 +427,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         }
 
         @Override
-        public String [] getDefaultResourceBundleIds() {
+        public String[] getDefaultResourceBundleIds() {
             return EMPTY_ARRAY;
         }
 
@@ -439,7 +440,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         @Override
         public String getCmsLocation() {
             if (!cmsLocations.isEmpty()) {
-                return  cmsLocations.get(0);
+                return cmsLocations.get(0);
             }
             return null;
         }
@@ -486,15 +487,15 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
 
     }
 
-    private final static String fakeNonExistingPath = "/fakePath/"+UUID.randomUUID().toString();
+    private final static String fakeNonExistingPath = "/fakePath/" + UUID.randomUUID().toString();
 
     private class CustomMount implements MutableMount {
 
         private VirtualHost virtualHost;
         private Mount parent;
         // just a unique alias
-        private String alias = "randomAlias"+UUID.randomUUID().toString();
-        private String identifier = "randomIdentifer"+UUID.randomUUID().toString();
+        private String alias = "randomAlias" + UUID.randomUUID().toString();
+        private String identifier = "randomIdentifer" + UUID.randomUUID().toString();
         private String name;
         private String namedPipeline;
         private Map<String, Mount> childs = new HashMap<String, Mount>();
@@ -504,6 +505,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
 
         /**
          * Creates a hst:root Mount + the child custom mount
+         *
          * @param virtualHost
          * @param namedPipeline
          */
@@ -517,33 +519,34 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
             // the hst:root mount has a namedPipeline equal to null and can never be used
             Mount customRootMount = new CustomMount(mountName, type, mountNamedPipeline, this, virtualHost);
             childs.put(customRootMount.getName(), customRootMount);
-            ((MutableVirtualHosts)virtualHost.getVirtualHosts()).addMount(this);
+            ((MutableVirtualHosts) virtualHost.getVirtualHosts()).addMount(this);
         }
 
         /**
          * Creates only the custom mount
+         *
          * @param name
          * @param namedPipeline
          * @param parent
          * @param virtualHost
          */
         public CustomMount(String name, String type, String namedPipeline, Mount parent, VirtualHost virtualHost) {
-           this.name = name;
-           this.namedPipeline = namedPipeline;
-           this.parent = parent;
-           this.type = type;
-           types = Arrays.asList(type);
-           this.virtualHost = virtualHost;
-           mountPath = parent.getMountPath() + "/" + name;
+            this.name = name;
+            this.namedPipeline = namedPipeline;
+            this.parent = parent;
+            this.type = type;
+            types = Arrays.asList(type);
+            this.virtualHost = virtualHost;
+            mountPath = parent.getMountPath() + "/" + name;
         }
 
         @Override
         public void addMount(MutableMount mount) throws IllegalArgumentException {
-           if(childs.containsKey(mount.getName())) {
-                throw new IllegalArgumentException("Cannot add Mount with name '"+mount.getName()+"' because already exists for " + this.toString());
+            if (childs.containsKey(mount.getName())) {
+                throw new IllegalArgumentException("Cannot add Mount with name '" + mount.getName() + "' because already exists for " + this.toString());
             }
-           childs.put(mount.getName(), mount);
-           ((MutableVirtualHosts)virtualHost.getVirtualHosts()).addMount(this);
+            childs.put(mount.getName(), mount);
+            ((MutableVirtualHosts) virtualHost.getVirtualHosts()).addMount(this);
         }
 
         @Override
@@ -563,7 +566,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
 
         @Override
         public boolean isMapped() {
-           // must be false for CMS REST MOUNT
+            // must be false for CMS REST MOUNT
             return false;
         }
 
@@ -712,7 +715,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         public String getType() {
             // this has to be LIVE : the links that are created through the CMS REST MOUNT
             // need to be 'live' links. The CMS will decorate these live links to preview
-           return type;
+            return type;
         }
 
         @Override
@@ -798,7 +801,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         }
 
         @Override
-        public String [] getDefaultResourceBundleIds() {
+        public String[] getDefaultResourceBundleIds() {
             return EMPTY_ARRAY;
         }
 
@@ -819,31 +822,31 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
                     + ", childs=" + childs + ", mountPath=" + mountPath + ", types=" + types + ", getAlias()="
                     + getAlias() + ", isMapped()=" + isMapped() + ", isPortInUrl()=" + isPortInUrl() + ", isSite()="
                     + isSite() + ", getPort()=" + getPort() + ", onlyForContextPath()=" + onlyForContextPath()
-                    + ", getType()=" + getType() + ", getIdentifier()="+ getIdentifier() + "]";
+                    + ", getType()=" + getType() + ", getIdentifier()=" + getIdentifier() + "]";
         }
 
         @Deprecated
         @Override
         public String getCmsLocation() {
-            if(virtualHost instanceof MutableVirtualHost) {
-                if (((MutableVirtualHost)virtualHost).getCmsLocations().isEmpty()) {
+            if (virtualHost instanceof MutableVirtualHost) {
+                if (((MutableVirtualHost) virtualHost).getCmsLocations().isEmpty()) {
                     return null;
                 }
-                return ((MutableVirtualHost)virtualHost).getCmsLocations().get(0);
+                return ((MutableVirtualHost) virtualHost).getCmsLocations().get(0);
             } else {
                 log.warn("Can only get cms location of a MutableVirtualHost. '{}' is not a MutableVirtualHost", virtualHost);
+                return null;
             }
-            return null;
         }
 
         @Override
         public List<String> getCmsLocations() {
-            if(virtualHost instanceof MutableVirtualHost) {
-                return ((MutableVirtualHost)virtualHost).getCmsLocations();
+            if (virtualHost instanceof MutableVirtualHost) {
+                return ((MutableVirtualHost) virtualHost).getCmsLocations();
             } else {
                 log.warn("Can only get cms locations of a MutableVirtualHost. '{}' is not a MutableVirtualHost", virtualHost);
+                return Collections.emptyList();
             }
-            return Collections.emptyList();
         }
     }
 

@@ -124,12 +124,7 @@ public class HstCmsEditLinkTag extends TagSupport  {
             if (mount.getCmsLocations().size() == 1) {
                 cmsBaseUrl = mount.getCmsLocations().get(0);
             } else {
-                try {
-                    cmsBaseUrl = getBestCmsLocation(mount, servletRequest);
-                } catch (URISyntaxException e) {
-                    log.error("Exception while trying to find best cms location", e);
-                    return EVAL_PAGE;
-                }
+                cmsBaseUrl = getBestCmsLocation(mount.getCmsLocations(), HstRequestUtils.getFarthestRequestHost(servletRequest, false));
             }
            
             if(cmsBaseUrl.endsWith("/")) {
@@ -212,9 +207,8 @@ public class HstCmsEditLinkTag extends TagSupport  {
         }
     }
 
-    private String getBestCmsLocation(final Mount mount, final HttpServletRequest request) throws URISyntaxException {
-        String cmsRequestHostName = HstRequestUtils.getFarthestRequestHost(request, false);
-        for (String cmsLocation : mount.getCmsLocations()) {
+    private String getBestCmsLocation(final List<String> cmsLocations, final String cmsRequestHostName) {
+        for (String cmsLocation : cmsLocations) {
             String hostName = cmsLocation;
             if (cmsLocation.startsWith("http://")) {
                 hostName = hostName.substring("http://".length());
@@ -224,13 +218,13 @@ public class HstCmsEditLinkTag extends TagSupport  {
             hostName = StringUtils.substringBefore(hostName,"/");
             if (cmsRequestHostName.equals(hostName)) {
                 log.debug("For cms request with host {} found from {} best cms host to be {}",cmsRequestHostName,
-                        mount.getCmsLocations(), cmsLocation);
+                        cmsLocations, cmsLocation);
                 return cmsLocation;
             }
         }
-        log.debug("For cms request with host {} no matching host was found in {}. Return {} as cms host.",cmsRequestHostName,
-                mount.getCmsLocations(), mount.getCmsLocations().get(0));
-        return mount.getCmsLocations().get(0);
+        log.debug("For cms request with host {} no matching host was found in {}. Return {} as cms host.", cmsRequestHostName,
+                cmsLocations, cmsLocations.get(0));
+        return cmsLocations.get(0);
     }
 
     protected void cleanup() {
