@@ -28,8 +28,8 @@
             },
             failure: function(response) {
                 console.warn("The SSO handshake with '" + url + "' failed. " +
-                        "The channel manager cannot be used. Please make sure the site is up and the channel manager is configured correctly: " +
-                        response.responseText);
+                        "The channel manager cannot be used. Please make sure the site is up and the channel manager is configured correctly. " +
+                        "The server responded: " + response.responseText);
             }
         });
     }
