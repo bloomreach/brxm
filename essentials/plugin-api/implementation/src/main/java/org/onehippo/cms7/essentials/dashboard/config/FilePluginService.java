@@ -99,11 +99,10 @@ public class FilePluginService implements PluginConfigService {
             final String cleanedId = GlobalUtils.validFileName(pluginId);
             final String path = getFilePath(GlobalUtils.newInstance(clazz), cleanedId);
             if(!new File(path).exists()){
-                log.info("Path not found, configuration will not be read: {}", path);
+                log.debug("Path not found, for configuration: {}", path);
                 return null;
             }
-
-            log.info("Reading settings of: {}", path);
+            log.debug("Reading settings of: {}", path);
             final String setting = GlobalUtils.readStreamAsText(new FileInputStream(path));
             log.debug("setting {}", setting);
             return (T) unmarshaller.unmarshal(new StringReader(setting));
@@ -124,7 +123,7 @@ public class FilePluginService implements PluginConfigService {
             final JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
             final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             final String path = getFilePath(GlobalUtils.newInstance(clazz), null);
-            log.info("Reading settings of: {}", path);
+            log.debug("Reading settings of: {}", path);
             final String setting = GlobalUtils.readStreamAsText(new FileInputStream(path));
             log.debug("setting {}", setting);
             return (T) unmarshaller.unmarshal(new StringReader(setting));

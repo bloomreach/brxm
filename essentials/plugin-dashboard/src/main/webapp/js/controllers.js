@@ -41,6 +41,7 @@
             // just sets a hide screen boolean flag to true
             $scope.hide = function () {
                 $http.post($rootScope.REST.hide_introduction).success(function (data) {
+                    window.location = "/essentials";
                 });
             }
         })
