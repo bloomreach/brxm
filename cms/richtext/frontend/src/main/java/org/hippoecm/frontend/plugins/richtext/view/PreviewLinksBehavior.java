@@ -49,6 +49,10 @@ class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior implements ILinkD
 
     private final IModel<Node> model;
     private final IBrowseService browser;
+    /**
+     * When this behavior is used in the context of a diff view, the diffing process already
+     * encodes the urls. So this boolean is to prevent links being double encoded in that case.
+     */
     private final boolean encode;
 
     PreviewLinksBehavior(final IModel<Node> model, final IBrowseService browser, boolean encode) {
