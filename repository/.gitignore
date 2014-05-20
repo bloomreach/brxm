@@ -140,6 +140,7 @@ resources/.classpath
 resources/.project
 resources/.settings
 resources/target
+scripts/.classpath
 scripts/.project
 scripts/.settings
 scripts/hippo-repository-scripts.iml
@@ -214,6 +215,7 @@ upgrade/*.tmp
 upgrade/.classpath
 upgrade/.project
 upgrade/.settings
+upgrade/bin
 upgrade/handlemigration/.classpath
 upgrade/handlemigration/.project
 upgrade/handlemigration/.settings
@@ -231,6 +233,7 @@ upgrade/wdbp-error-log.txt
 upgrade/xml-upgrade/*.iml
 upgrade/xml-upgrade/.project
 upgrade/xml-upgrade/.settings
+upgrade/xml-upgrade/bin
 upgrade/xml-upgrade/target
 utilities/*.iml
 utilities/*.tmp

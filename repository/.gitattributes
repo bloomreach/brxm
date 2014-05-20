@@ -229,6 +229,7 @@ engine/src/test/java/org/hippoecm/repository/SearchOnNodeNameTest.java svneol=na
 engine/src/test/java/org/hippoecm/repository/SecurityServiceTest.java -text
 engine/src/test/java/org/hippoecm/repository/StandardHippoAnalyzerTest.java svneol=native#text/plain
 engine/src/test/java/org/hippoecm/repository/UnlockTest.java -text
+engine/src/test/java/org/hippoecm/repository/impl/InitializationProcessorImplTest.java -text
 engine/src/test/java/org/hippoecm/repository/impl/WorkflowPostActionsTest.java -text
 engine/src/test/java/org/hippoecm/repository/jackrabbit/xml/DereferencedExportTest.java -text
 engine/src/test/java/org/hippoecm/repository/jackrabbit/xml/ExportImportPackageTest.java -text

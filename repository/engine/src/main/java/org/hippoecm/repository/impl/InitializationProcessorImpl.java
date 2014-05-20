@@ -948,14 +948,9 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                 else {
                     ContentResourceLoader contentResourceLoader = null;
                     if (location != null) {
-                        String file = location.getFile();
-                        int offset = file.indexOf(".jar!");
+                        int offset = location.getFile().indexOf(".jar!");
                         if (offset != -1) {
-                            file = file.substring(0, offset+4);
-                            if (!file.startsWith("file:")) {
-                                file = "file:" + file;
-                            }
-                            zipFile = new ZipFile(new File(URI.create(file)));
+                            zipFile = new ZipFile(getBaseZipFileFromURL(location));
                             contentResourceLoader = new ZipFileContentResourceLoader(zipFile);
                         } else if (location.getProtocol().equals("file")) {
                             File sourceFile = new File(location.toURI());
@@ -985,6 +980,37 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             }
             FileUtils.deleteQuietly(tempFile);
         }
+    }
+
+    /**
+     * Returns a {@link java.io.File} object which bases the input JAR / ZIP file URL.
+     * <P>
+     * For example, if the <code>url</code> represents "file:/a/b/c.jar!/d/e/f.xml", then
+     * this method will return a File object representing "file:/a/b/c.jar" from the input.
+     * </P>
+     * @param url
+     * @return
+     * @throws URISyntaxException
+     */
+    protected File getBaseZipFileFromURL(final URL url) throws URISyntaxException {
+        String file = url.getFile();
+        int offset = file.indexOf(".jar!");
+
+        if (offset == -1) {
+            throw new IllegalArgumentException("Not a jar or zip url: " + url);
+        }
+
+        file = file.substring(0, offset + 4);
+
+        if (!file.startsWith("file:")) {
+            if (file.startsWith("/")) {
+                file = "file://" + file;
+            } else {
+                file = "file:///" + file;
+            }
+        }
+
+        return new File(URI.create(file));
     }
 
     private boolean isReloadable(Node node) throws RepositoryException {
