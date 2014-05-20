@@ -26,6 +26,8 @@ import javax.jcr.RepositoryException;
  */
 public class NullGalleryProcessor extends DefaultGalleryProcessor {
 
+    private static final long serialVersionUID = 1L;
+
     @Override
     protected void makeThumbnailImage(final Node node, final InputStream resourceData, final String mimeType) throws RepositoryException, GalleryException {
         // do nothing
@@ -36,4 +38,8 @@ public class NullGalleryProcessor extends DefaultGalleryProcessor {
         // do nothing
     }
 
+    @Override
+    public void validateResource(final Node node, final String fileName) throws GalleryException, RepositoryException {
+        // skip validation, means any type of file can be uploaded
+    }
 }

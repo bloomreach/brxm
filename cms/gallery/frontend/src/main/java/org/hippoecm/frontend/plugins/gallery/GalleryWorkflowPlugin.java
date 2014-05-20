@@ -56,10 +56,8 @@ import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
-import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.gallery.GalleryWorkflow;
@@ -80,7 +78,8 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
             super(context, config);
         }
 
-        public IModel getTitle() {
+        @Override
+        public IModel<String> getTitle() {
             return new StringResourceModel(GalleryWorkflowPlugin.this.getPluginConfig().getString("option.text", ""),
                     GalleryWorkflowPlugin.this, null);
         }
@@ -106,7 +105,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
 
     public GalleryWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        newItems = new LinkedList<String>();
+        newItems = new LinkedList<>();
 
         AbstractView<StdWorkflow> add;
         addOrReplace(add = new AbstractView<StdWorkflow>("new", createListDataProvider()) {
@@ -127,7 +126,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
             InputStream is = upload.getInputStream();
 
             WorkflowManager manager = UserSession.get().getWorkflowManager();
-            HippoNode node = null;
+            HippoNode node;
             try {
                 WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) GalleryWorkflowPlugin.this
                         .getDefaultModel();
@@ -170,13 +169,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
         try {
             DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
             defaultWorkflow.delete();
-        } catch (WorkflowException e) {
-            GalleryWorkflowPlugin.log.error(e.getMessage());
-        } catch (MappingException e) {
-            GalleryWorkflowPlugin.log.error(e.getMessage());
-        } catch (RepositoryException e) {
-            GalleryWorkflowPlugin.log.error(e.getMessage());
-        } catch (RemoteException e) {
+        } catch (WorkflowException | RepositoryException | RemoteException e) {
             GalleryWorkflowPlugin.log.error(e.getMessage());
         }
         try {
@@ -222,7 +215,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
                 return createDialog();
             }
         });
-        return new ListDataProvider<StdWorkflow>(list);
+        return new ListDataProvider<>(list);
     }
 
     private Dialog createDialog() {
@@ -231,24 +224,18 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
             WorkflowManager manager = UserSession.get().getWorkflowManager();
             WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) GalleryWorkflowPlugin.this
                     .getDefaultModel();
-            GalleryWorkflow workflow = (GalleryWorkflow) manager
-                    .getWorkflow((WorkflowDescriptor) workflowDescriptorModel.getObject());
+            GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(workflowDescriptorModel.getObject());
             if (workflow == null) {
                 GalleryWorkflowPlugin.log.error("No gallery workflow accessible");
             } else {
                 galleryTypes = workflow.getGalleryTypes();
             }
-        } catch (MappingException ex) {
-            GalleryWorkflowPlugin.log.error(ex.getMessage(), ex);
-        } catch (RepositoryException ex) {
-            GalleryWorkflowPlugin.log.error(ex.getMessage(), ex);
-        } catch (RemoteException ex) {
+        } catch (RepositoryException | RemoteException ex) {
             GalleryWorkflowPlugin.log.error(ex.getMessage(), ex);
         }
 
-        Component typeComponent = null;
+        Component typeComponent;
         if (galleryTypes != null && galleryTypes.size() > 1) {
-            DropDownChoice folderChoice;
             type = galleryTypes.get(0);
             typeComponent = new DropDownChoice("type", new PropertyModel(this, "type"), galleryTypes,
                     new TypeChoiceRenderer(this)).setNullValid(false).setRequired(true);
