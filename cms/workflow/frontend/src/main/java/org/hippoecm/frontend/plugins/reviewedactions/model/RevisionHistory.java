@@ -81,9 +81,9 @@ public class RevisionHistory implements IDetachable {
                 DocumentWorkflow workflow = getWorkflow();
                 if (workflow != null) {
                     final SortedMap<Calendar, Set<String>> versions = workflow.listVersions();
-                    int index = 0;
+                    int index = versions.size();
                     for (Map.Entry<Calendar, Set<String>> entry : versions.entrySet()) {
-                        list.add(new Revision(this, entry.getKey(), entry.getValue(), index++, new JcrNodeModel(wdm.getNode())));
+                        list.add(new Revision(this, entry.getKey(), entry.getValue(), --index, new JcrNodeModel(wdm.getNode())));
                     }
                 }
                 Collections.reverse(list);
