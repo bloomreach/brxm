@@ -171,14 +171,6 @@ public interface VirtualHosts {
      String getCmsPreviewPrefix();
 
      /**
-      * Returns the virtual host group node name in use for the current environment. The {@link ChannelManager} will only be able to create links
-      * for channels that are reflected in the hostGroup
-      *
-      * @return the virtual host group node name used for this {@link VirtualHosts}. If not configured it returns <code>null</code>
-      */
-     String getChannelManagerHostGroupName();
-
-     /**
       * @return the node name of the hst:sites that will be managed by the {@link ChannelManager}. If not configured it returns <code>hst:sites</code>
       */
      String getChannelManagerSitesName();
@@ -209,22 +201,26 @@ public interface VirtualHosts {
     boolean isChannelMngrSiteAuthenticationSkipped();
 
     /**
-     * @return all managed channels for the current {@link #getChannelManagerHostGroupName()}, identified by their channel IDs
+     * @param hostGroup the name of the host group to get the channels for
+     * @return all managed channels for the <code></code>hostGroup</code>. Empty List in case the hostGroup does not
+     * exist or has no channel
      */
-    Map<String, Channel> getChannels();
+    Map<String, Channel> getChannels(String hostGroup);
 
     /**
+     * @param hostGroup the name of the host group to get channel for
      * @return the channel configured at the given <code>channelPath</code> and <code>null</code> if no such channel exists
      * @throws IllegalArgumentException in case of invalid <code>channelPath</code>
      */
-    Channel getChannelByJcrPath(String channelPath);
+    Channel getChannelByJcrPath(String hostGroup, String channelPath);
 
     /**
-     * Get a {@link Channel} given its id
+     * For <code>hostGroup</code> get a {@link Channel} given its id
+     * @param hostGroup the name of the host group to get channel for
      * @param id - {@link Channel} id
      * @return {@link Channel} which has this id or <code>null</code>
      */
-    Channel getChannelById(String id);
+    Channel getChannelById(String hostGroup, String id);
 
     /**
      * The list of available blueprints
@@ -251,10 +247,11 @@ public interface VirtualHosts {
     /**
      * The channel info class for this channel identified by id.
      *
+     * @param hostGroup the name of the host group to get channel for
      * @param id - {@link Channel} id
      * @return The {@link ChannelInfo} {@link Class} type of {@link Channel} identified by id
      */
-    Class<? extends ChannelInfo> getChannelInfoClass(String id) throws ChannelException;
+    Class<? extends ChannelInfo> getChannelInfoClass(String hostGroup, String id) throws ChannelException;
 
     /**
      * The channel info for this channel.  It is an instance of the {@link #getChannelInfoClass} class.
@@ -283,10 +280,11 @@ public interface VirtualHosts {
     /**
      * Get {@link Channel} property definitions given a {@link Channel} id
      *
+     * @param hostGroup the name of the host group to get channel for
      * @param channelId - {@link Channel} id for which property definitions are going to be retrieved
      * @return {@link List} of {@link HstPropertyDefinition}
      */
-    List<HstPropertyDefinition> getPropertyDefinitions(String channelId);
+    List<HstPropertyDefinition> getPropertyDefinitions(String hostGroup, String channelId);
 
 
 }

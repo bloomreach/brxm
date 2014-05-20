@@ -19,6 +19,7 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.cmsrest.AbstractCmsRestTest;
+import org.hippoecm.hst.cmsrest.container.CmsRestSecurityValve;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
@@ -75,7 +76,7 @@ public class DocumentsResourceTest extends AbstractCmsRestTest {
     public void tearDown() throws Exception {
         super.tearDown();
         if (session != null) {
-        session.logout();
+            session.logout();
         }
     }
 
@@ -88,17 +89,14 @@ public class DocumentsResourceTest extends AbstractCmsRestTest {
         homePageNodeId = homePageNode.getIdentifier();
         ModifiableRequestContextProvider.set(requestContext);
     }
+
     @Test
     public void testDocumentResourceLiveUrls() throws Exception {
         initRequest();
+        // first set HOST_GROUP_NAME_FOR_CMS_HOST to 'testgroup'
+        RequestContextProvider.get().setAttribute(CmsRestSecurityValve.HOST_GROUP_NAME_FOR_CMS_HOST, "dev-localhost");
         // this homepage document can be exposed by two unittest mounts name (see hst-unittestvirtualhosts.xml):
         /*
-         * There we have on hst:hosts the property:
-         *
-         * hst:channelmanagerhostgroup = dev-localhost
-         *
-         * and we have
-         *
          * dev-localhost
          *     `localhost
          *          ` hst:root (mount with content '/unittestcontent/documents/unittestproject')
@@ -122,32 +120,19 @@ public class DocumentsResourceTest extends AbstractCmsRestTest {
     @Test
     public void testDocumentResourcePreviewUrls() throws Exception {
         initRequest();
+        // first set HOST_GROUP_NAME_FOR_CMS_HOST to 'testgroup'
+        RequestContextProvider.get().setAttribute(CmsRestSecurityValve.HOST_GROUP_NAME_FOR_CMS_HOST, "dev-localhost");
         String url = documentsResource.getUrl(homePageNodeId, "preview");
         assertEquals("/site/preview/custompipeline", url);
-        System.out.println(url);
     }
 
     @Test
     public void testDocumentResourceGetURLIsFullyQualifiedSiteURLsForTestGroupHostGroup() throws Exception {
-        String originalValue = "";
-        try {
-            // first change 'hst:channelmanagerhostgroup' from 'dev-localhost' to 'testgroup'
-            // for the rest this test is same as testDocumentResourceGetURLIsFullyQualifiedSiteURLs but now for hostgroup
-            // 'testgroup' : Note that the mount with  'custompipeline' now is the best match
-            originalValue = session.getNode("/hst:hst/hst:hosts").getProperty("hst:channelmanagerhostgroup").getString();
-            session.getNode("/hst:hst/hst:hosts").setProperty("hst:channelmanagerhostgroup", "testgroup");
-            session.save();
-
-            initRequest();
-
-            String url = documentsResource.getUrl(homePageNodeId , "live");
-
-            assertEquals("http://www.unit.test:8080/site/custompipeline", url);
-
-        } finally {
-            session.getNode("/hst:hst/hst:hosts").setProperty("hst:channelmanagerhostgroup", originalValue);
-            session.save();
-        }
+        initRequest();
+        // first set HOST_GROUP_NAME_FOR_CMS_HOST to 'testgroup'
+        RequestContextProvider.get().setAttribute(CmsRestSecurityValve.HOST_GROUP_NAME_FOR_CMS_HOST, "testgroup");
+        String url = documentsResource.getUrl(homePageNodeId , "live");
+        assertEquals("http://www.unit.test:8080/site/custompipeline", url);
     }
     
 

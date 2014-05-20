@@ -20,3 +20,4 @@ Error in dependency cycle
 Cannot load channels because node '/hst:hst/hst:channels' does not exist
 Unknown channel /hst:hst/hst:channels/testchannel, ignoring mount hst:root
 Please correct the configuration because duplicate configuration nodes found
+Cannot add cms location

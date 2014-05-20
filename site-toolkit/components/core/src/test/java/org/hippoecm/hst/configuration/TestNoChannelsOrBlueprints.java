@@ -75,7 +75,7 @@ public class TestNoChannelsOrBlueprints extends AbstractTestConfigurations {
         session.getNode("/hst:hst/hst:channels").remove();
         session.save();
         VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
-        assertTrue(vhosts.getChannels().isEmpty());
+        assertTrue(vhosts.getChannels("dev-localhost").isEmpty());
     }
 
     @Test
@@ -92,7 +92,7 @@ public class TestNoChannelsOrBlueprints extends AbstractTestConfigurations {
         session.getNode("/hst:hst/hst:blueprints").remove();
         session.save();
         VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
-        assertTrue(vhosts.getChannels().isEmpty());
+        assertTrue(vhosts.getChannels("dev-localhost").isEmpty());
         assertTrue(vhosts.getBlueprints().isEmpty());
     }
 

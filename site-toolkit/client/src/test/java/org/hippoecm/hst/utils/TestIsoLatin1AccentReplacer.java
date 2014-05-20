@@ -30,7 +30,7 @@ public class TestIsoLatin1AccentReplacer {
         
         
         String input = "aaabbbcccdddee";
-        String output = EncodingUtils.isoLatin1AccentReplacer(input);
+        String output = EncodingUtils.foldToASCIIReplacer(input);
         assertEquals("output is expected to be same as input but was not" , input, output);
         
     }
@@ -44,7 +44,7 @@ public class TestIsoLatin1AccentReplacer {
         String utf8EncodedInput = URLEncoder.encode(input, "UTF-8");
         assertNotSame("utf8EncodedInput is expected to be different then input because of accents", utf8EncodedInput ,input);
         
-        String output = EncodingUtils.isoLatin1AccentReplacer(input);
+        String output = EncodingUtils.foldToASCIIReplacer(input);
         // if all accented chars are replaced correctly, then the utf-8 encoded version of the output is the same as the output
         String utf8EncodedOutput = URLEncoder.encode(output, "UTF-8");
         assertEquals("output is expected to have no accents but was '"+output+"'", utf8EncodedOutput, output);
@@ -60,7 +60,7 @@ public class TestIsoLatin1AccentReplacer {
         
         // two chinese chars
         String input = "\u53F0\u5317";
-        String output = EncodingUtils.isoLatin1AccentReplacer(input);
+        String output = EncodingUtils.foldToASCIIReplacer(input);
         
         // the iso latin 1 accent replacer cannot replace chinese chars 
         assertEquals("output is expected to be same as input because cannot replace chinese chars", input , output);

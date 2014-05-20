@@ -703,12 +703,9 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
 
         @Override
         public String toString() {
-            return "CustomMount [virtualHost=" + virtualHost.getHostName() + ", alias=" + alias
-                    + ", identifier=" + identifier + ", name=" + name + ", namedPipeline=" + namedPipeline
-                    + ", childs=" + childs + ", mountPath=" + mountPath + ", types=" + types + ", getAlias()="
-                    + getAlias() + ", isMapped()=" + isMapped() + ", isPortInUrl()=" + isPortInUrl() + ", isSite()="
-                    + isSite() + ", getPort()=" + getPort() + ", onlyForContextPath()=" + onlyForContextPath()
-                    + ", getType()=" + getType() + ", getIdentifier()=" + getIdentifier() + "]";
+            StringBuilder builder = new StringBuilder("CustomMount [hostName=").append(virtualHost.getHostName())
+                    .append(", mountPath = ").append(mountPath).append("]");
+            return builder.toString();
         }
 
         @Deprecated

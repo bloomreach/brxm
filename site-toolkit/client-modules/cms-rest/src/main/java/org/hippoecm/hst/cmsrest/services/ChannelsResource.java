@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
+import org.hippoecm.hst.cmsrest.container.CmsRestSecurityValve;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
@@ -28,12 +29,15 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.rest.ChannelService;
 import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 import org.hippoecm.hst.rest.beans.InformationObjectsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.cmsrest.container.CmsRestSecurityValve.*;
 
 /**
  * Implementation of {@link ChannelService} for CMS to interact with {@link Channel} resources
@@ -47,16 +51,15 @@ public class ChannelsResource extends BaseResource implements ChannelService {
         final List<Channel> channels = new ArrayList<>();
         // do not use HstServices.getComponentManager().getComponent(HstManager.class.getName()) to get to
         // virtualhosts object since we REALLY need the hst model instance for the current request!!
-        HstRequestContext requestContext = RequestContextProvider.get();
-        final VirtualHosts virtualHosts = requestContext.getVirtualHost().getVirtualHosts();
-        final List<Mount> mountsForHostGroup = virtualHosts.getMountsByHostGroup(virtualHosts.getChannelManagerHostGroupName());
+
+        final List<Mount> mountsForHostGroup = getVirtualHosts().getMountsByHostGroup(getHostGroupNameForCmsHost());
         for (Mount mount : mountsForHostGroup) {
             if (!Mount.PREVIEW_NAME.equals(mount.getType())) {
                 log.debug("Skipping non preview mount '{}'. This can be for example the 'composer' auto augmented mount.",
                         mount.toString());
                 continue;
             }
-            final Channel channel =  mount.getChannel();
+            final Channel channel = mount.getChannel();
             if (channel == null) {
                 log.debug("Skipping link for mount '{}' since it does not have a channel", mount.getName());
                 continue;
@@ -98,12 +101,12 @@ public class ChannelsResource extends BaseResource implements ChannelService {
 
     @Override
     public List<HstPropertyDefinitionInfo> getChannelPropertyDefinitions(String id) {
-        return InformationObjectsBuilder.buildHstPropertyDefinitionInfos(getVirtualHosts().getPropertyDefinitions(id));
+        return InformationObjectsBuilder.buildHstPropertyDefinitionInfos(getVirtualHosts().getPropertyDefinitions(getHostGroupNameForCmsHost(), id));
     }
 
     @Override
     public Channel getChannel(String id) throws ChannelException {
-        final Channel channel = getVirtualHosts().getChannelById(id);
+        final Channel channel = getVirtualHosts().getChannelById(getHostGroupNameForCmsHost(), id);
         if (channel == null) {
             log.warn("Failed to retrieve a channel with id '{}'", id);
             throw new ChannelException("Failed to retrieve a channel with id '" + id + "'");
@@ -119,7 +122,7 @@ public class ChannelsResource extends BaseResource implements ChannelService {
     @Override
     public ChannelInfoClassInfo getChannelInfoClassInfo(String id) throws ChannelException {
         try {
-            Class<? extends ChannelInfo> channelInfoClass = getVirtualHosts().getChannelInfoClass(id);
+            Class<? extends ChannelInfo> channelInfoClass = getVirtualHosts().getChannelInfoClass(getHostGroupNameForCmsHost(), id);
             ChannelInfoClassInfo channelInfoClassInfo = null;
             if (channelInfoClass != null) {
                 channelInfoClassInfo = InformationObjectsBuilder.buildChannelInfoClassInfo(channelInfoClass);
@@ -137,7 +140,7 @@ public class ChannelsResource extends BaseResource implements ChannelService {
 
     @Override
     public Properties getChannelResourceValues(String id, String language) throws ChannelException {
-        Channel channel = getVirtualHosts().getChannelById(id);
+        Channel channel = getVirtualHosts().getChannelById(getHostGroupNameForCmsHost(), id);
         if (channel == null) {
             log.warn("Cannot find channel for id '{}'", id);
             throw new ChannelException("Cannot find channel for id '" + id + "'");

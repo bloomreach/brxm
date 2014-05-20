@@ -31,9 +31,6 @@
   <sv:property sv:name="hst:homepage" sv:type="String">
     <sv:value>home</sv:value>
   </sv:property>
-  <sv:property sv:name="hst:channelmanagerhostgroup" sv:type="String">
-    <sv:value>dev-localhost</sv:value>
-  </sv:property>
   <sv:property sv:name="hst:defaultcontextpath" sv:type="String">
     <sv:value>/site</sv:value>
   </sv:property>
@@ -73,7 +70,7 @@
       <sv:value>hst:virtualhostgroup</sv:value>
     </sv:property>
     <sv:property sv:name="hst:cmslocation" sv:type="String">
-      <sv:value>http://localhost:8080/cms</sv:value>
+      <sv:value>http://localhost:8080/cms, http://com.localhost:8080/cms</sv:value>
     </sv:property>
     <sv:node sv:name="localhost">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -181,7 +178,7 @@
       <sv:value>hst:virtualhostgroup</sv:value>
     </sv:property>
     <sv:property sv:name="hst:cmslocation" sv:type="String">
-      <sv:value>http://testgroup.example.com:8080/cms</sv:value>
+      <sv:value>http://testgroup.example.com:8080/cms, http://cms.unit.test, http://sub.cms.unit.test</sv:value>
     </sv:property>
     <sv:node sv:name="test">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">

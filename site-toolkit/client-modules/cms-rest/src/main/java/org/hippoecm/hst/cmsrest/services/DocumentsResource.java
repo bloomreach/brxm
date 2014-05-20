@@ -56,10 +56,7 @@ public class DocumentsResource extends BaseResource implements DocumentService {
             return Collections.emptyList();
         }
 
-        // do not use HstServices.getComponentManager().getComponent(HstManager.class.getName()) to get to
-        // virtualhosts object since we REALLY need the hst model instance for the current request!!
-        String hostGroupNameForChannelMngr = requestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().getChannelManagerHostGroupName();
-        List<HstLink> canonicalLinks = hstLinkCreator.createAllAvailableCanonicals(handle, requestContext, null, hostGroupNameForChannelMngr);
+        List<HstLink> canonicalLinks = hstLinkCreator.createAllAvailableCanonicals(handle, requestContext, null, getHostGroupNameForCmsHost());
         List<ChannelDocument> channelDocuments = new ArrayList<>(canonicalLinks.size());
 
         for (HstLink link : canonicalLinks) {
@@ -157,12 +154,12 @@ public class DocumentsResource extends BaseResource implements DocumentService {
             return null;
         }
 
-        String hostGroupNameForChannelMngr = requestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().getChannelManagerHostGroupName();
-        List<HstLink> canonicalLinks = hstLinkCreator.createAllAvailableCanonicals(handle, requestContext, type, hostGroupNameForChannelMngr);
+        final String hostGroupNameForCmsHost = getHostGroupNameForCmsHost();
+        List<HstLink> canonicalLinks = hstLinkCreator.createAllAvailableCanonicals(handle, requestContext, type, hostGroupNameForCmsHost);
 
         if (canonicalLinks.isEmpty()) {
             log.info("Cannot generate URL of type '{}' for document with UUID '{}' because no mount in the host group '{}' matches",
-                    new Object[]{type, uuid, hostGroupNameForChannelMngr});
+                    new Object[]{type, uuid, hostGroupNameForCmsHost});
 
             return null;
         }

@@ -191,7 +191,6 @@
         <property name="mountName" value="_rp"/>
         <property name="mountType" value="composer"/>
         <property name="mountNamedPipeline" value="ComposerPipeline"/>
-        <property name="springConfiguredCmsLocation" value="${cms.location}"/>
       </bean>
     </property>
   </bean>

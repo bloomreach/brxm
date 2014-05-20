@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -58,16 +57,10 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
 
     private static final String[] EMPTY_ARRAY = {};
 
-    private String springConfiguredCmsLocation;
     private String mountName;
     private String mountType;
     private String mountNamedPipeline;
     private String noopPipeline = DEFAULT_NOOP_NAMED_PIPELINE;
-
-    public void setSpringConfiguredCmsLocation(String springConfiguredCmsLocation) {
-        // the deprecated way how a cmsLocation used to be set in spring configuration. It now should be configured on the hst:virtualhostgroup node
-        this.springConfiguredCmsLocation = springConfiguredCmsLocation;
-    }
 
     public void setMountName(String mountName) {
         this.mountName = mountName;
@@ -93,156 +86,199 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         if (!validateState()) {
             return;
         }
-        log.info("Trying to augment to cms host custom mount '{}' of type '{}'and pipeline '{}'",
+        log.info("Trying to augment cms host custom mount '{}' of type '{}'and pipeline '{}'",
                 new String[]{mountName, mountType, mountNamedPipeline});
-        // first we try to find all the cmsLocations that need to be added.
-        // for every host group, we fetch just virtualhost and ask for its cmsLocation: Although it is configured
-        // on the hst:virtualhostgroup node, it is inherited in every virtualhost
-        Set<String> cmsLocations = new HashSet<String>();
-        for (Map<String, MutableVirtualHost> rootVirtualHosts : hosts.getRootVirtualHostsByGroup().values()) {
-            if (rootVirtualHosts.isEmpty()) {
+
+        for (Map.Entry<String, Map<String, MutableVirtualHost>> entry : hosts.getRootVirtualHostsByGroup().entrySet()) {
+            if (entry.getValue().isEmpty()) {
                 continue;
             }
-            MutableVirtualHost host = rootVirtualHosts.values().iterator().next();
-            cmsLocations.addAll(host.getCmsLocations());
-        }
 
-        if (cmsLocations.isEmpty()) {
-            if (springConfiguredCmsLocation != null) {
-                log.info("No cms locations configured on hst:hostgroup nodes. Use the cms location '{}' from Spring configuration", cmsLocations);
-                cmsLocations.add(springConfiguredCmsLocation);
+            final String hostGroup = entry.getKey();
+
+            // every host within one hostgroup has all the cms locations
+            final List<String> cmsLocationsForHostGroup = entry.getValue().values().iterator().next().getCmsLocations();
+            if (cmsLocationsForHostGroup.isEmpty()) {
+                log.info("No cms locations configured on hst:hostgroup {}.", hostGroup);
+                continue;
             }
+
+            for (String cmsLocation : cmsLocationsForHostGroup) {
+                addCmsLocationToHostGroup(cmsLocation, hostGroup, cmsLocationsForHostGroup, hosts);
+            }
+
         }
 
-        for (String cmsLocation : cmsLocations) {
-            try {
-                URI uri = new URI(cmsLocation);
-                String cmsCustomMountHostName = uri.getHost();
+    }
 
-                // get the host segments in reversed order. For example 127.0.0.1 --> {"1", "0", "0", "127"}
-                String[] hostSegments = cmsCustomMountHostName.split("\\.");
-                reverse(hostSegments);
-                VirtualHost host = null;
-                // try to find the cmsRestHostName host. If not present, we add a complete new one to a unique new host group
-                // It can map in multiple host groups to a 'partial' hostName, that does not contain a portMount with a rootMount.
-                // Hence, we *only* count the host if it also contains a portMount on port 0 or on the
-                // port of the cmsLocation AND a hst:root Mount at least in that p
-                for (Map<String, MutableVirtualHost> rootVirtualHostMap : hosts.getRootVirtualHostsByGroup().values()) {
-                    int i = 0;
-                    host = null;
-                    while (i < hostSegments.length) {
-                        if (i == 0) {
-                            host = rootVirtualHostMap.get(hostSegments[i]);
-                        } else {
-                            host = host.getChildHost(hostSegments[i]);
-                        }
-                        if (host == null) {
-                            // cmsRestHostName does not yet exist in this hostGroup
-                            break;
-                        }
-                        i++;
+    private void addCmsLocationToHostGroup(final String cmsLocation,
+                                           final String hostGroup,
+                                           final List<String> hostGroupCmsLocations,
+                                           final MutableVirtualHosts hosts) {
+        try {
+            URI uri = new URI(cmsLocation);
+            String cmsCustomMountHostName = uri.getHost();
+
+            // get the host segments in reversed order. For example 127.0.0.1 --> {"1", "0", "0", "127"}
+            String[] hostSegments = cmsCustomMountHostName.split("\\.");
+            reverse(hostSegments);
+
+            VirtualHost host;
+
+            // if there is already a host for the cms host we want to add, and this host is part of a different
+            // hostgroup, we CANNOT add the cms host and log a warning
+            for (Map<String, MutableVirtualHost> rootVirtualHostMap : hosts.getRootVirtualHostsByGroup().values()) {
+                int i = 0;
+                host = null;
+                while (i < hostSegments.length) {
+                    if (i == 0) {
+                        host = rootVirtualHostMap.get(hostSegments[i]);
+                    } else {
+                        host = host.getChildHost(hostSegments[i]);
                     }
-
-                    if (host != null) {
-                        // We have found the correct host. Now check whether also has portMount and that
-                        // portMount must contain a hstRoot
-                        PortMount portMount = null;
-                        int port = uri.getPort();
-                        if (port != 0) {
-                            portMount = host.getPortMount(port);
-                        }
-                        if (portMount == null) {
-                            // check default port 0
-                            portMount = host.getPortMount(0);
-                        }
-
-                        if (portMount == null) {
-                            continue;
-                        }
-                        if (portMount.getRootMount() == null) {
-                            continue;
-                        }
-                        // we have a correct host. Stop
+                    if (host == null) {
+                        // cmsRestHostName does not yet exist in this hostGroup
                         break;
                     }
+                    i++;
                 }
 
-                if (host == null) {
-                    // add the hostName + mount
-                    // it must be added to a unique virtualhost group to avoud collision
-                    String hostGroupName = CustomMountAndVirtualCmsHostAugmenter.class.getName() + "-" + UUID.randomUUID();
-                    VirtualHost newHost = new CustomVirtualHost(hosts, hostSegments, cmsLocation, 0, hostGroupName);
-                    // get the last one added
-                    hosts.addVirtualHost((MutableVirtualHost) newHost);
-                    host = newHost;
-                    while (!host.getChildHosts().isEmpty()) {
-                        host = host.getChildHosts().get(0);
+                if (host != null) {
+                    // We have found the correct host. Now check whether also has portMount and that
+                    // portMount must contain a hst:root
+                    PortMount portMount = null;
+                    int port = uri.getPort();
+                    if (port != 0) {
+                        portMount = host.getPortMount(port);
                     }
-                }
-
-                // now check whether to add a portMount
-                // first check portMount of the cmsLocation. then a port agnostic PortMount with port 0
-                PortMount portMount = null;
-                int port = uri.getPort();
-                if (port != 0) {
-                    portMount = host.getPortMount(port);
-                }
-                if (portMount == null) {
-                    // check default port 0
-                    portMount = host.getPortMount(0);
-                }
-
-                if (portMount == null) {
-                    // add a port Mount with port equal to the configured port. If port is -1, we add the default 0 port
-                    if (port == -1) {
-                        portMount = new CustomPortMount(0);
-                    } else {
-                        portMount = new CustomPortMount(port);
+                    if (portMount == null) {
+                        // check default port 0
+                        portMount = host.getPortMount(0);
                     }
-                    if (host instanceof CustomVirtualHost) {
-                        ((CustomVirtualHost) host).setPortMount((MutablePortMount) portMount);
-                    } else {
-                        ((MutableVirtualHost) host).addPortMount((MutablePortMount) portMount);
-                    }
-                }
 
-                // now check the hst:root presence on the portMount. If not add a hst:root + custom mount
-                Mount rootMount = portMount.getRootMount();
-                Mount customMount = null;
-                if (rootMount == null) {
-                    MutableMount rootMountPlusCustomMount = new CustomMount(host, mountType, noopPipeline);
-                    if (!(portMount instanceof MutablePortMount)) {
-                        log.error("Unable to add custom mount '{}' to the host group with CMS location '{}' because found portMount not of type MutablePortMount.", mountName, cmsLocation);
+                    if (portMount == null) {
                         continue;
                     }
-                    ((MutablePortMount) portMount).setRootMount(rootMountPlusCustomMount);
-                } else {
-                    customMount = rootMount.getChildMount(mountName);
-                    if (customMount == null) {
-                        if (!(rootMount instanceof MutableMount)) {
-                            log.error("Unable to add custom mount '{}' to the host group with CMS location '{}' because found rootMount not of type MutableMount.", mountName, cmsLocation);
-                            continue;
-                        }
-                        customMount = new CustomMount(mountName, mountType, mountNamedPipeline, rootMount, host);
-                        ((MutableMount) rootMount).addMount((MutableMount) customMount);
-                        log.info("Successfully augmented mount {}", customMount, toString());
-                    } else {
-                        log.info("There is an explicit custom Mount '{}' for CMS location '{}'. This mount can be removed from configuration" +
-                                " as it will be auto-created by the HST", mountName, cmsLocation);
+                    if (portMount.getRootMount() == null) {
                         continue;
                     }
+                    // we have a host for cms location including a portmount & rootmount.
+                    // if this host belongs to the wrong hostgroup, we cannot add the host
+                    if (!host.getHostGroupName().equals(hostGroup)) {
+                        log.warn("Cannot add cms location {} to hostGroup {} because the exact cms host is already " +
+                                "available below the hostGroup {}. That is not allowed", cmsLocation,
+                                hostGroup, host.getHostGroupName());
+                        return;
+                    }
+                    break;
                 }
-                if (customMount != null) {
-                    log.info("Successfully automatically created custom mount for cmsLocation '{}'. Created Mount = {}", cmsLocation, customMount);
-                }
-
-            } catch (URISyntaxException e) {
-                log.warn("'{}' is an invalid cmsLocation. The mount '{}' won't be available for hosts in that hostGroup.",
-                        cmsLocation, mountName);
-                continue;
-            } catch (IllegalArgumentException e) {
-                log.error("Unable to add custom cms host mount '" + mountName + "'.", e);
             }
+            final Map<String, MutableVirtualHost> virtualHostsForHostGroup = hosts.getRootVirtualHostsByGroup().get(hostGroup);
+            int i = 0;
+            MutableVirtualHost ancestorHost = null;
+            // now find the (partial) cms host for the <code>hostGroup</code>
+            host = null;
+            while (i < hostSegments.length) {
+                if (i == 0) {
+                    host = virtualHostsForHostGroup.get(hostSegments[i]);
+                } else {
+                    host = host.getChildHost(hostSegments[i]);
+                }
+                if (host == null) {
+                    // cmsRestHostName does not yet exist in this hostGroup
+                    break;
+                }
+                ancestorHost = (MutableVirtualHost)host;
+                i++;
+            }
+
+            VirtualHost cmsLocationHost;
+            if (ancestorHost == null) {
+                // host completely missing
+                VirtualHost newHost = new CustomVirtualHost(hosts, hostSegments, hostGroupCmsLocations, 0, hostGroup);
+                // get the last one added
+                hosts.addVirtualHost((MutableVirtualHost) newHost);
+                cmsLocationHost = newHost;
+                while (!cmsLocationHost.getChildHosts().isEmpty()) {
+                    cmsLocationHost = cmsLocationHost.getChildHosts().get(0);
+                }
+            } else if (ancestorHost.getHostName().equals(cmsCustomMountHostName)) {
+                // entire host is present
+                cmsLocationHost = ancestorHost;
+            } else {
+                // not entire cms host is available. Add missing host parts
+                // partial add
+                String[] missingHostSegments = Arrays.copyOfRange(hostSegments, i, hostSegments.length);
+                cmsLocationHost = new CustomVirtualHost(hosts, ancestorHost, missingHostSegments, hostGroupCmsLocations, 0, hostGroup);
+                while (!cmsLocationHost.getChildHosts().isEmpty()) {
+                    cmsLocationHost = cmsLocationHost.getChildHosts().get(0);
+                }
+            }
+
+            // now check whether to add a portMount
+            // first check portMount of the cmsLocation. then a port agnostic PortMount with port 0
+            PortMount portMount = null;
+            int port = uri.getPort();
+            if (port != 0) {
+                portMount = cmsLocationHost.getPortMount(port);
+            }
+            if (portMount == null) {
+                // check default port 0
+                portMount = cmsLocationHost.getPortMount(0);
+            }
+
+            if (portMount == null) {
+                // add a port Mount with port equal to the configured port. If port is -1, we add the default 0 port
+                if (port == -1) {
+                    portMount = new CustomPortMount(0);
+                } else {
+                    portMount = new CustomPortMount(port);
+                }
+                if (cmsLocationHost instanceof CustomVirtualHost) {
+                    ((CustomVirtualHost) cmsLocationHost).setPortMount((MutablePortMount) portMount);
+                } else {
+                    ((MutableVirtualHost) cmsLocationHost).addPortMount((MutablePortMount) portMount);
+                }
+            }
+
+            // now check the hst:root presence on the portMount. If not add a hst:root + custom mount
+            Mount rootMount = portMount.getRootMount();
+            Mount customMount = null;
+            if (rootMount == null) {
+                MutableMount rootMountPlusCustomMount = new CustomMount(cmsLocationHost, mountType, noopPipeline);
+                if (!(portMount instanceof MutablePortMount)) {
+                    log.error("Unable to add custom mount '{}' to the host group with CMS location '{}' because " +
+                            "found portMount not of type MutablePortMount.", mountName, cmsLocation);
+                    return;
+                }
+                ((MutablePortMount) portMount).setRootMount(rootMountPlusCustomMount);
+            } else {
+                customMount = rootMount.getChildMount(mountName);
+                if (customMount == null) {
+                    if (!(rootMount instanceof MutableMount)) {
+                        log.error("Unable to add custom mount '{}' to the host group with CMS location '{}' " +
+                                "because found rootMount not of type MutableMount.", mountName, cmsLocation);
+                        return;
+                    }
+                    customMount = new CustomMount(mountName, mountType, mountNamedPipeline, rootMount, cmsLocationHost);
+                    ((MutableMount) rootMount).addMount((MutableMount) customMount);
+                    log.info("Successfully augmented mount {}", customMount, toString());
+                } else {
+                    log.info("There is an explicit custom Mount '{}' for CMS location '{}'. This mount can be removed from configuration" +
+                            " as it will be auto-created by the HST", mountName, cmsLocation);
+                    return;
+                }
+            }
+            if (customMount != null) {
+                log.info("Successfully automatically created custom mount for cmsLocation '{}'. Created Mount = {}", cmsLocation, customMount);
+            }
+
+        } catch (URISyntaxException e) {
+            log.warn("'{}' is an invalid cmsLocation. The mount '{}' won't be available for hosts in that hostGroup.",
+                    cmsLocation, mountName);
+            return;
+        } catch (IllegalArgumentException e) {
+            log.error("Unable to add custom cms host mount '" + mountName + "'.", e);
         }
     }
 
@@ -269,19 +305,22 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
 
     private class CustomVirtualHost implements MutableVirtualHost {
         private VirtualHosts virtualHosts;
-        private Map<String, VirtualHost> childs = new HashMap<String, VirtualHost>();
+        private Map<String, VirtualHost> children = new HashMap<>();
         private String name;
         private String hostName;
         private MutablePortMount portMount;
         private final List<String> cmsLocations;
         private final String hostGroupName;
 
-        private CustomVirtualHost(VirtualHosts virtualHosts, String[] hostSegments, String cmsLocation, int position, String hostGroupName) {
+        private CustomVirtualHost(final VirtualHosts virtualHosts,
+                                  final String[] hostSegments,
+                                  final List<String> cmsLocations,
+                                  int position,
+                                  final String hostGroupName) {
             this.virtualHosts = virtualHosts;
             this.hostGroupName = hostGroupName;
             name = hostSegments[position];
-            this.cmsLocations = new ArrayList<>();
-            cmsLocations.add(cmsLocation);
+            this.cmsLocations = cmsLocations;
             int i = position;
             while (i > -1) {
                 if (hostName != null) {
@@ -295,16 +334,34 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
             if (position == hostSegments.length) {
                 // done with adding hosts
             } else {
-                childs.put(hostSegments[position], new CustomVirtualHost(virtualHosts, hostSegments, cmsLocation, position, hostGroupName));
+                children.put(hostSegments[position], new CustomVirtualHost(virtualHosts, hostSegments, cmsLocations, position, hostGroupName));
+            }
+        }
+
+        private CustomVirtualHost(final VirtualHosts virtualHosts,
+                                  final MutableVirtualHost ancestor,
+                                  final String[] hostSegments,
+                                  final List<String> cmsLocations,
+                                  int position,
+                                  final String hostGroupName) {
+            this.virtualHosts = virtualHosts;
+            this.hostGroupName = hostGroupName;
+            name = hostSegments[position];
+            this.cmsLocations = cmsLocations;
+            hostName = ancestor.getHostName() +  "." + hostSegments[position];
+            position++;
+            ancestor.addVirtualHost(this);
+            if (position < hostSegments.length) {
+                new CustomVirtualHost(virtualHosts, this, hostSegments, cmsLocations, position, hostGroupName);
             }
         }
 
         @Override
         public void addVirtualHost(MutableVirtualHost virtualHost) throws IllegalArgumentException {
-            if (childs.containsKey(virtualHost.getName())) {
+            if (children.containsKey(virtualHost.getName())) {
                 throw new IllegalArgumentException("virtualHost '" + virtualHost.getName() + "' already exists");
             }
-            childs.put(virtualHost.getName(), virtualHost);
+            children.put(virtualHost.getName(), virtualHost);
         }
 
         @Override
@@ -358,12 +415,12 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
 
         @Override
         public List<VirtualHost> getChildHosts() {
-            return Collections.unmodifiableList(new ArrayList<VirtualHost>(childs.values()));
+            return Collections.unmodifiableList(new ArrayList<VirtualHost>(children.values()));
         }
 
         @Override
         public VirtualHost getChildHost(String name) {
-            return childs.get(name);
+            return children.get(name);
         }
 
         @Override
@@ -513,7 +570,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
             this.virtualHost = virtualHost;
             name = HstNodeTypes.MOUNT_HST_ROOTNAME;
             mountPath = "";
-            type = Mount.LIVE_NAME;
+            this.type = type;
             types = Arrays.asList(type);
             this.namedPipeline = namedPipeline;
             // the hst:root mount has a namedPipeline equal to null and can never be used
@@ -815,14 +872,12 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
             throw new UnsupportedOperationException(this.getClass().getName() + " does not support setChannel");
         }
 
+
         @Override
         public String toString() {
-            return "CustomMount [virtualHost=" + virtualHost.getHostName() + ", parent=" + parent.getName() + ", alias=" + alias
-                    + ", identifier=" + identifier + ", name=" + name + ", namedPipeline=" + namedPipeline
-                    + ", childs=" + childs + ", mountPath=" + mountPath + ", types=" + types + ", getAlias()="
-                    + getAlias() + ", isMapped()=" + isMapped() + ", isPortInUrl()=" + isPortInUrl() + ", isSite()="
-                    + isSite() + ", getPort()=" + getPort() + ", onlyForContextPath()=" + onlyForContextPath()
-                    + ", getType()=" + getType() + ", getIdentifier()=" + getIdentifier() + "]";
+            StringBuilder builder = new StringBuilder("CustomMount [hostName=").append(virtualHost.getHostName())
+                    .append(", mountPath = ").append(mountPath).append("]");
+            return builder.toString();
         }
 
         @Deprecated

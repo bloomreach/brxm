@@ -33,6 +33,7 @@ import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.ValveContext;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.onehippo.sso.CredentialCipher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,9 @@ public class CmsRestSecurityValve extends AbstractOrderableValve {
     private static final String CREDENTIAL_CIPHER_KEY = "ENC_DEC_KEY";
 
     private static final String HEADER_CMS_REST_CREDENTIALS = "X-CMSREST-CREDENTIALS";
+    private static final String CMSREST_CMSHOST_HEADER = "X-CMSREST-CMSHOST";
+
+    public static final String HOST_GROUP_NAME_FOR_CMS_HOST = "HOST_GROUP_NAME_FOR_CMS_HOST";
 
     private static final String ERROR_MESSAGE_NO_CMS_REST_CREDENTIALS_FOUND = "no CMS REST credentials found";
 
@@ -68,6 +72,7 @@ public class CmsRestSecurityValve extends AbstractOrderableValve {
         }
 
         log.debug("Request '{}' is invoked from CMS context. Check for credentials and apply security rules or raise proper error!", servletRequest.getRequestURL());
+
         // Retrieve encrypted CMS REST username and password and use them as credentials to create a JCR session
         String cmsRestCredentials = servletRequest.getHeader(HEADER_CMS_REST_CREDENTIALS);
 
@@ -83,6 +88,22 @@ public class CmsRestSecurityValve extends AbstractOrderableValve {
             Credentials credentials = credentialCipher.decryptFromString(CREDENTIAL_CIPHER_KEY, cmsRestCredentials);
             cmsSession = repository.login(credentials);
             ((HstMutableRequestContext) requestContext).setSession(cmsSession);
+
+            final String cmsHost = requestContext.getServletRequest().getHeader(CMSREST_CMSHOST_HEADER);
+            if (StringUtils.isEmpty(cmsHost)) {
+                log.warn("Cannot proceed _cmsrest request because no no header found for '{}'", CMSREST_CMSHOST_HEADER);
+                setResponseError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, servletResponse);
+                return;
+            }
+            final ResolvedVirtualHost resolvedVirtualHost = requestContext.getVirtualHost().getVirtualHosts().matchVirtualHost(cmsHost);
+            if (resolvedVirtualHost == null) {
+                log.warn("Cannot match cmsHost '{}' to a host. Make sure '{}' is configured on a hst:virtualhostgroup node " +
+                        "that belong to the correct environment for the cmsHost", cmsHost, cmsHost);
+                setResponseError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, servletResponse);
+                return;
+            }
+            final String hostGroupNameForCmsHost = resolvedVirtualHost.getVirtualHost().getHostGroupName();
+            requestContext.setAttribute(HOST_GROUP_NAME_FOR_CMS_HOST, hostGroupNameForCmsHost);
             context.invokeNext();
         } catch (SignatureException se) {
             log.warn("SignatureException while processing CMS REST credentails : {}", se.toString());

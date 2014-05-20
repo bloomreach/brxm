@@ -664,11 +664,6 @@ public class MountDecoratorImpl implements MountDecorator {
         }
 
         @Override
-        public String getChannelManagerHostGroupName() {
-            return delegatee.getChannelManagerHostGroupName();
-        }
-
-        @Override
         public String getChannelManagerSitesName() {
             return delegatee.getChannelManagerSitesName();
         }
@@ -694,21 +689,18 @@ public class MountDecoratorImpl implements MountDecorator {
         }
 
         @Override
-        public Map<String, Channel> getChannels() {
-            // TODO Should channel be decorated?
-            return delegatee.getChannels();
+        public Map<String, Channel> getChannels(final String hostGroup) {
+            return delegatee.getChannels(hostGroup);
         }
 
         @Override
-        public Channel getChannelByJcrPath(final String channelPath) {
-            // TODO Should channel be decorated?
-            return delegatee.getChannelByJcrPath(channelPath);
+        public Channel getChannelByJcrPath(final String hostGroup, final String channelPath) {
+            return delegatee.getChannelByJcrPath(hostGroup, channelPath);
         }
 
         @Override
-        public Channel getChannelById(final String id) {
-            // TODO Should channel be decorated?
-            return delegatee.getChannelById(id);
+        public Channel getChannelById(final String hostGroup, final String id) {
+            return delegatee.getChannelById(hostGroup, id);
         }
 
         @Override
@@ -727,8 +719,8 @@ public class MountDecoratorImpl implements MountDecorator {
         }
 
         @Override
-        public Class<? extends ChannelInfo> getChannelInfoClass(final String id) throws ChannelException {
-            return delegatee.getChannelInfoClass(id);
+        public Class<? extends ChannelInfo> getChannelInfoClass(final String hostGroup, final String id) throws ChannelException {
+            return delegatee.getChannelInfoClass(hostGroup, id);
         }
 
         @Override
@@ -747,8 +739,8 @@ public class MountDecoratorImpl implements MountDecorator {
         }
 
         @Override
-        public List<HstPropertyDefinition> getPropertyDefinitions(final String channelId) {
-            return delegatee.getPropertyDefinitions(channelId);
+        public List<HstPropertyDefinition> getPropertyDefinitions(final String hostGroup, final String channelId) {
+            return delegatee.getPropertyDefinitions(hostGroup, channelId);
         }
     }
 

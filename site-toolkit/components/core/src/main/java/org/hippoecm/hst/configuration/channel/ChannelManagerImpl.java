@@ -198,10 +198,6 @@ public class ChannelManagerImpl implements ChannelManager {
     public void save(final Channel channel) throws ChannelException {
         synchronized (hstModelMutex) {
             try {
-                if (getVirtualHosts().getChannelById(channel.getId()) == null) {
-                    throw new ChannelException("No channel with id " + channel.getId() + " was found");
-                }
-
                 final Session session = getSession();
                 Node configNode = session.getNode(hstNodeLoadingCache.getRootPath());
                 updateChannel(configNode, channel);
@@ -374,10 +370,16 @@ public class ChannelManagerImpl implements ChannelManager {
         return mount;
     }
 
-    private Node getOrCreateVirtualHost(final Node configRoot, final String hostName) throws RepositoryException {
+    private Node getOrCreateVirtualHost(final Node configRoot, final String hostName) throws RepositoryException, ChannelException {
         final String[] elements = hostName.split("[.]");
 
-        Node mount = configRoot.getNode(HstNodeTypes.NODENAME_HST_HOSTS + "/" + getVirtualHosts().getChannelManagerHostGroupName());
+        // all modification methods will be moved to cmsrest module, and the also
+        // CmsRestSecurityValve#HOST_GROUP_NAME_FOR_CMS_HOST can be used. For now, hardcoded
+        final String hostGroupForCmsHost = (String)RequestContextProvider.get().getAttribute("HOST_GROUP_NAME_FOR_CMS_HOST");
+        if (StringUtils.isEmpty(hostGroupForCmsHost)) {
+            throw new ChannelException("There is no hostgroup for cms host available. Cannot get or create virtual hosts");
+        }
+        Node mount = configRoot.getNode(HstNodeTypes.NODENAME_HST_HOSTS + "/" + hostGroupForCmsHost);
 
         for (int i = elements.length - 1; i >= 0; i--) {
             mount = getOrAddNode(mount, elements[i], HstNodeTypes.NODETYPE_HST_VIRTUALHOST);
@@ -633,84 +635,6 @@ public class ChannelManagerImpl implements ChannelManager {
         public Node getConfigRootNode() {
             return configRootNode;
         }
-    }
-
-
-    @Deprecated
-    @Override
-    public Channel getChannelByJcrPath(String jcrPath) throws ChannelException {
-        if (StringUtils.isBlank(jcrPath) || !jcrPath.startsWith(channelsRoot)) {
-            throw new ChannelException("Expected a valid channel JCR path which should start with '" + channelsRoot + "', but got '" + jcrPath + "' instead");
-        }
-        return getVirtualHosts().getChannelByJcrPath(jcrPath);
-    }
-
-    @Deprecated
-    @Override
-    public Channel getChannelById(String id) throws ChannelException {
-        try {
-            return getVirtualHosts().getChannelById(id);
-        } catch (IllegalArgumentException e) {
-            throw new ChannelException("ChannelException", e);
-        }
-    }
-
-    @Deprecated
-    @Override
-    public Map<String, Channel> getChannels() throws ChannelException {
-        return getVirtualHosts().getChannels();
-    }
-
-    @Deprecated
-    @Override
-    public List<Blueprint> getBlueprints() throws ChannelException {
-        return getVirtualHosts().getBlueprints();
-    }
-
-    @Deprecated
-    @Override
-    public Blueprint getBlueprint(final String id) throws ChannelException {
-        final Blueprint blueprint = getVirtualHosts().getBlueprint(id);
-        if (blueprint == null) {
-            throw new ChannelException("Blueprint " + id + " does not exist");
-        }
-        return blueprint;
-    }
-
-    @Deprecated
-    @Override
-    public Class<? extends ChannelInfo> getChannelInfoClass(Channel channel) throws ChannelException {
-        return getVirtualHosts().getChannelInfoClass(channel);
-    }
-
-    @Deprecated
-    @Override
-    public <T extends ChannelInfo> T getChannelInfo(Channel channel) throws ChannelException {
-        return getVirtualHosts().getChannelInfo(channel);
-    }
-
-    @Deprecated
-    @Override
-    public List<HstPropertyDefinition> getPropertyDefinitions(Channel channel) {
-        return getVirtualHosts().getPropertyDefinitions(channel);
-    }
-
-    @Deprecated
-    @Override
-    public List<HstPropertyDefinition> getPropertyDefinitions(String channelId) {
-        return getVirtualHosts().getPropertyDefinitions(channelId);
-    }
-
-    @Deprecated
-    @Override
-    public ResourceBundle getResourceBundle(Channel channel, Locale locale) {
-        return getVirtualHosts().getResourceBundle(channel, locale);
-    }
-
-    @Deprecated
-    @Override
-    public Class<? extends ChannelInfo> getChannelInfoClass(String id) throws ChannelException {
-        return getVirtualHosts().getChannelInfoClass(id);
     }
 
     private static VirtualHosts getVirtualHosts() {

@@ -109,9 +109,9 @@ public class TestSiteService extends AbstractTestConfigurations {
         assertNull(previewHstSite.componentsConfiguration);
 
         final VirtualHosts virtualHosts = resMount.getMount().getVirtualHost().getVirtualHosts();
-        assertTrue(virtualHosts.getChannelById("testchannel").getChangedBySet() instanceof HashSet);
+        assertTrue(virtualHosts.getChannelById("dev-localhost","testchannel").getChangedBySet() instanceof HashSet);
 
-        virtualHosts.getChannelById("testchannel").getChangedBySet().size();
+        virtualHosts.getChannelById("dev-localhost","testchannel").getChangedBySet().size();
         // only when there is a PREVIEW channel, a ChannelLazyLoadingChangedBySet is created. When there is not preview channel
         // the componentsConfiguration is still not loaded
         assertNull(previewHstSite.componentsConfiguration);
@@ -156,14 +156,14 @@ public class TestSiteService extends AbstractTestConfigurations {
                 assertNull(hstSite.componentsConfiguration);
                 final VirtualHosts virtualHosts = resMount.getMount().getVirtualHost().getVirtualHosts();
 
-                assertEquals(0, virtualHosts.getChannelById("testchannel").getChangedBySet().size());
+                assertEquals(0, virtualHosts.getChannelById("dev-localhost","testchannel").getChangedBySet().size());
 
                 final HstSiteService previewHstSite = (HstSiteService)mount.getPreviewHstSite();
                 // only when changes from preview channel are loaded the lazy component configuration gets populated
                 assertNull(previewHstSite.componentsConfiguration);
 
-                assertEquals(1, virtualHosts.getChannelById("testchannel-preview").getChangedBySet().size());
-                assertTrue(virtualHosts.getChannelById("testchannel-preview").getChangedBySet().contains("someonelikeyou"));
+                assertEquals(1, virtualHosts.getChannelById("dev-localhost","testchannel-preview").getChangedBySet().size());
+                assertTrue(virtualHosts.getChannelById("dev-localhost","testchannel-preview").getChangedBySet().contains("someonelikeyou"));
                 // since changedBySet is request on preview channel, we expect previewHstSite.componentsConfiguration not to be
                 // null any more.
                 assertNull(hstSite.componentsConfiguration);

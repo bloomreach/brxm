@@ -28,6 +28,7 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -65,11 +66,11 @@ public abstract class AbstractSpringTestCase
 
     @Before
     public void setUp() throws Exception {
-        this.componentManager = new SpringComponentManager(getContainerConfiguration());
-        ((SpringComponentManager) this.componentManager).setConfigurationResources(getConfigurations());
+        componentManager = new SpringComponentManager(getContainerConfiguration());
+        componentManager.setConfigurationResources(getConfigurations());
         
-        this.componentManager.initialize();
-        this.componentManager.start();
+        componentManager.initialize();
+        componentManager.start();
         HstServices.setComponentManager(getComponentManager());
     }
 
@@ -78,6 +79,8 @@ public abstract class AbstractSpringTestCase
         this.componentManager.stop();
         this.componentManager.close();
         HstServices.setComponentManager(null);
+        // always clear HstRequestContext in case it is set on a thread local
+        ModifiableRequestContextProvider.clear();
     }
 
     /**

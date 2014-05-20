@@ -61,7 +61,7 @@ public class BlueprintHandler {
             blueprint.setPrototypeChannel(ChannelPropertyMapper.readChannel(channelNode, null));
         } else {
             // TODO - What is that ? See if you can fix it!
-            blueprint.setPrototypeChannel(new Channel(null));
+            blueprint.setPrototypeChannel(new Channel((String)null));
         }
 
         readMount(readSite(blueprintNode, blueprint), blueprintNode, blueprint);

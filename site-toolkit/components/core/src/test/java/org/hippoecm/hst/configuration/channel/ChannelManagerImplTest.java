@@ -72,6 +72,7 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
         Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
         Session session = repository.login(cred);
         final MockHstRequestContext requestContext = new MockHstRequestContext();
+        requestContext.setAttribute("HOST_GROUP_NAME_FOR_CMS_HOST", "dev-localhost");
         requestContext.setSession(session);
         ModifiableRequestContextProvider.set(requestContext);
 
@@ -135,7 +136,7 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
     public void channelsAreReadCorrectly() throws Exception {
         final HstManager manager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
 
-        Map<String, Channel> channels = manager.getVirtualHosts().getChannels();
+        Map<String, Channel> channels = manager.getVirtualHosts().getChannels("dev-localhost");
         assertEquals(1, channels.size());
         assertEquals("testchannel", channels.keySet().iterator().next());
 
@@ -148,7 +149,7 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
     @Test
     public void channelPropertiesSaved() throws Exception {
 
-        Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels();
+        Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
         assertEquals(1, channels.size());
         final Channel channel = channels.values().iterator().next();
         channel.setChannelInfoClassName(getClass().getCanonicalName() + "$" + TestChannelInfo.class.getSimpleName());
@@ -157,7 +158,7 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
         channelMngr.save(channel);
         resetDummyHostOnRequestContext();
 
-        channels = hstManager.getVirtualHosts().getChannels();
+        channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
 
         assertEquals(1, channels.size());
         Channel savedChannel = channels.values().iterator().next();
@@ -171,21 +172,21 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
     @Test
     public void channelsAreNotClonedWhenRetrieved() throws Exception {
         final HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
-        Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels();
-        Map<String, Channel> channelsAgain = hstManager.getVirtualHosts().getChannels();
+        Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
+        Map<String, Channel> channelsAgain = hstManager.getVirtualHosts().getChannels("dev-localhost");
         assertTrue(channelsAgain == channels);
     }
 
     @Test
     public void channelsMapIsNewInstanceWhenReloadedAfterChange() throws Exception {
-        Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels();
+        Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
         final Channel channel = channels.values().iterator().next();
         channel.setChannelInfoClassName(getClass().getCanonicalName() + "$" + TestChannelInfo.class.getSimpleName());
         channel.getProperties().put("title", "test title");
         // channel manager save triggers event path invalidation hence no explicit invalidation needed now
         channelMngr.save(channel);
         resetDummyHostOnRequestContext();
-        Map<String, Channel> channelsAgain = hstManager.getVirtualHosts().getChannels();
+        Map<String, Channel> channelsAgain = hstManager.getVirtualHosts().getChannels("dev-localhost");
         assertTrue("After a change, getChannels should return different instance for the Map", channelsAgain != channels);
 
     }
@@ -228,7 +229,7 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
 
     @Test
     public void channelsAreReloadedAfterAddingOne() throws Exception {
-        Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels();
+        Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
         int numberOfChannels = channels.size();
 
         Node channelsNode = getSession().getNode("/hst:hst/hst:channels");
@@ -247,7 +248,7 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
         resetDummyHostOnRequestContext();
 
         // manager should reload
-        channels = hstManager.getVirtualHosts().getChannels();
+        channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
         assertEquals(numberOfChannels + 1, channels.size());
         assertTrue(channels.containsKey("cmit-test-channel"));
 
@@ -265,8 +266,8 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
     }
 
     @Test
-    public void channelsThatAreNotReferencedByAMountAreDiscarded() throws ChannelException, RepositoryException, PrivilegedActionException, ContainerException {
-         Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels();
+    public void channelsThatAreNotReferencedByAMountAreNotPresent() throws ChannelException, RepositoryException, PrivilegedActionException, ContainerException {
+         Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
         int numberOfChannerBeforeAddingAnOrphanOne = channels.size();
 
         Node channelsNode = getSession().getNode("/hst:hst/hst:channels");
@@ -279,7 +280,7 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
         invalidator.eventPaths(pathsToBeChanged);
         resetDummyHostOnRequestContext();
 
-        channels = hstManager.getVirtualHosts().getChannels();
+        channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
 
         assertEquals(numberOfChannerBeforeAddingAnOrphanOne, channels.size());
         assertFalse(channels.containsKey("cmit-test-channel"));
@@ -390,7 +391,7 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
         assertEquals(0, listener2.getUpdatedCount());
         assertEquals(0, listener3.getUpdatedCount());
 
-        channel = hstManager.getVirtualHosts().getChannels().get(channelId);
+        channel = hstManager.getVirtualHosts().getChannels("dev-localhost").get(channelId);
         channel.setName("cmit-channel2");
         channel.setUrl("http://cmit-myhost2");
         channel.setContentRoot("/");
@@ -408,7 +409,7 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
 
         channelMngr.removeChannelManagerEventListeners(listener1, listener2, listener3);
 
-        channel = hstManager.getVirtualHosts().getChannels().get(channelId);
+        channel = hstManager.getVirtualHosts().getChannels("dev-localhost").get(channelId);
         channel.setName("cmit-channel2");
         channel.setUrl("http://cmit-myhost2");
         channel.setContentRoot("/");

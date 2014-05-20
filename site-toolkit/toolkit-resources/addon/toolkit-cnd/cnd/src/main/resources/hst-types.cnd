@@ -385,7 +385,7 @@
 - hst:defaultcontextpath (string)
 // Configurable override of the default _cmsinternal pathInfo prefix for the preview in the cms
 - hst:cmspreviewprefix (string)
-// the hostgroup the channel manager should use : if missing, the channel manager cannot load the channels
+// deprecated : not used any more. Can be removed from configuration
 - hst:channelmanagerhostgroup (string)
 // the sites the channel manager should use: Default is 'hst:sites'
 - hst:channelmanagersites (string)

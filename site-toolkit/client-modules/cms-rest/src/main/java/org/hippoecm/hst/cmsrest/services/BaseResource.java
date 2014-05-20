@@ -23,6 +23,8 @@ import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.RequestContextProvider;
 
+import static org.hippoecm.hst.cmsrest.container.CmsRestSecurityValve.HOST_GROUP_NAME_FOR_CMS_HOST;
+
 /**
  * An abstract base class represents functionality common among different RESTful resources
  */
@@ -35,6 +37,14 @@ public abstract class BaseResource {
         return RequestContextProvider.get().getVirtualHost().getVirtualHosts();
     }
 
+    public String getHostGroupNameForCmsHost() {
+        String hostGroupNameForCmsHost = (String)RequestContextProvider.get().getAttribute(HOST_GROUP_NAME_FOR_CMS_HOST);
+        if (hostGroupNameForCmsHost == null) {
+            throw new IllegalStateException("For cms rest request there should be a request context attr for '"+HOST_GROUP_NAME_FOR_CMS_HOST+"' " +
+                    "but wasn't found.");
+        }
+        return hostGroupNameForCmsHost;
+    }
     public void setChannelManager(final ChannelManager channelManager) {
         this.channelManager = channelManager;
     }

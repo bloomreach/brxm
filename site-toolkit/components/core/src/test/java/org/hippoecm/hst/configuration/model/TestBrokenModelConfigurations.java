@@ -155,7 +155,7 @@ public class TestBrokenModelConfigurations extends AbstractTestConfigurations {
     public void testModelMissingSitesDuringReload() throws Exception {
         final VirtualHosts firstModel = hstManager.getVirtualHosts();
         assertTrue( ((HstManagerImpl)hstManager).state == HstManagerImpl.BuilderState.UP2DATE);
-        final Map<String,Channel> channels = firstModel.getChannels();
+        final Map<String,Channel> channels = firstModel.getChannels("dev-localhost");
         assertTrue(channels.size() == 1);
         final ResolvedMount resolvedMount = firstModel.matchMount("localhost", "/site", "home");
         assertEquals("hst:root",resolvedMount.getMount().getName());
@@ -706,7 +706,7 @@ public class TestBrokenModelConfigurations extends AbstractTestConfigurations {
         final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
         assertEquals("/hst:hst/hst:sites/unittestproject", resolvedMount.getMount().getMountPoint());
 
-        assertTrue(hstManager.getVirtualHosts().getChannels().size() == 0);
+        assertTrue(hstManager.getVirtualHosts().getChannels("dev-localhost").size() == 0);
         assertNull(resolvedMount.getMount().getChannel());
 
     }

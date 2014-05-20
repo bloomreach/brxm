@@ -137,12 +137,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
     private Set<String> diagnosticsForIps = new HashSet<String>(0);
 
-    /**
-     * The 'active' virtual host group for the current environment. This should not be <code>null</code> and
-     * not contains slashes but just the name of the hst:virtualhostgroup node below the hst:hosts node
-     */
-    private String channelMngrVirtualHostGroupNodeName;
-
     private final static String DEFAULT_CHANNEL_MNGR_SITES_NODE_NAME = "hst:sites";
 
     /**
@@ -158,7 +152,8 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
     private String channelsRoot;
 
-    private final Map<String, Channel> channels = new HashMap<>();
+    private final Map<String, Map<String, Channel>> channelsByHostGroup = new HashMap<>();
+
     private final Map<String, Blueprint> blueprints = new HashMap<>();
     private boolean bluePrintsPrototypeChecked;
 
@@ -199,15 +194,11 @@ public class VirtualHostsService implements MutableVirtualHosts {
             cmsPreviewPrefix =  PathUtils.normalizePath(cmsPreviewPrefix);
         }
 
-        channelMngrVirtualHostGroupNodeName =
-                vHostConfValueProvider.getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_HOSTGROUP);
-        if(StringUtils.isEmpty(channelMngrVirtualHostGroupNodeName)) {
-            log.warn("On the hst:hosts node there is no '{}' property configured. This means the channel manager " +
-                    "won't be able to load channels in the preview / composer",
+        if (vHostConfValueProvider.hasProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_HOSTGROUP)) {
+            log.warn("Property '{}' on hst:hosts node has been deprecated and is not used any more. Can be removed.",
                     HstNodeTypes.VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_HOSTGROUP);
-        } else {
-            log.info("Channel manager will load channels for hostgroup = '{}'", channelMngrVirtualHostGroupNodeName);
         }
+
         String sites = vHostConfValueProvider.getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_SITES);
         if(!StringUtils.isEmpty(sites)) {
             log.info("Channel manager will load work with hst:sites node '{}' instead of the default '{}'.",
@@ -669,11 +660,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
     }
 
     @Override
-    public String getChannelManagerHostGroupName() {
-        return channelMngrVirtualHostGroupNodeName;
-    }
-
-    @Override
     public String getChannelManagerSitesName() {
         return channelMngrSitesNodeName;
     }
@@ -709,12 +695,20 @@ public class VirtualHostsService implements MutableVirtualHosts {
     }
 
     @Override
-    public Map<String, Channel> getChannels() {
+    public Map<String, Channel> getChannels(final String hostGroup) {
+        final Map<String, Channel> channels = channelsByHostGroup.get(hostGroup);
+        if (channels == null) {
+            return Collections.emptyMap();
+        }
         return channels;
     }
 
     @Override
-    public Channel getChannelByJcrPath(final String channelPath) {
+    public Channel getChannelByJcrPath(final String hostGroup, final String channelPath) {
+        final Map<String, Channel> channels = channelsByHostGroup.get(hostGroup);
+        if (channels == null) {
+            return null;
+        }
         if (StringUtils.isBlank(channelPath) || !channelPath.startsWith(channelsRoot)) {
             throw new IllegalArgumentException("Expected a valid channel JCR path which should start with '" + channelsRoot + "', but got '" + channelPath + "' instead");
         }
@@ -723,7 +717,11 @@ public class VirtualHostsService implements MutableVirtualHosts {
     }
 
     @Override
-    public Channel getChannelById(final String id) {
+    public Channel getChannelById(final String hostGroup, final String id) {
+        final Map<String, Channel> channels = channelsByHostGroup.get(hostGroup);
+        if (channels == null) {
+            return null;
+        }
         if (StringUtils.isBlank(id)) {
             throw new IllegalArgumentException("Expected a channel id, but got '" + id + "' instead");
         }
@@ -767,9 +765,9 @@ public class VirtualHostsService implements MutableVirtualHosts {
     }
 
     @Override
-    public Class<? extends ChannelInfo> getChannelInfoClass(final String id) throws ChannelException {
+    public Class<? extends ChannelInfo> getChannelInfoClass(final String hostGroup, final String id) throws ChannelException {
         try {
-            return getChannelInfoClass(getChannelById(id));
+            return getChannelInfoClass(getChannelById(hostGroup, id));
         } catch (IllegalArgumentException e) {
             throw new ChannelException("ChannelException for getChannelInfoClass", e);
         }
@@ -807,8 +805,8 @@ public class VirtualHostsService implements MutableVirtualHosts {
     }
 
     @Override
-    public List<HstPropertyDefinition> getPropertyDefinitions(final String channelId) {
-         return getPropertyDefinitions(getChannelById(channelId));
+    public List<HstPropertyDefinition> getPropertyDefinitions(final String hostGroup, final String channelId) {
+         return getPropertyDefinitions(getChannelById(hostGroup, channelId));
     }
 
 
@@ -825,11 +823,71 @@ public class VirtualHostsService implements MutableVirtualHosts {
         }
     }
 
-    private void loadChannels(final HstNode rootConfigNode) {
+    private void loadChannelsAndBluePrints(HstNodeLoadingCache hstNodeLoadingCache) {
+        long start = System.currentTimeMillis();
+        final HstNode rootConfigNode = hstNodeLoadingCache.getNode(hstNodeLoadingCache.getRootPath());
+        bluePrintsPrototypeChecked = false;
+        loadBlueprints(rootConfigNode);
+
+        final Map<String, Channel> channels = new HashMap<>();
+        loadChannels(rootConfigNode, channels);
+
+        for (String hostGroupName : getHostGroupNames()) {
+            for (Mount mount : getMountsByHostGroup(hostGroupName)) {
+                if (mount instanceof ContextualizableMount) {
+
+                    try {
+                        if (!mount.isMapped() || mount.isPreview() || mount.getHstSite() == null) {
+                            log.debug("Skipping mount '{}' because it is either not mapped or is a preview mount", mount.getName());
+                            continue;
+                        }
+
+                        String channelPath = mount.getChannelPath();
+                        if (StringUtils.isEmpty(channelPath)) {
+                            log.info("Mount '{}' does not have a channelpath configured. Skipping populating channel for mount.",
+                                    mount);
+                            continue;
+                        }
+                        if (!channelPath.startsWith(channelsRoot)) {
+                            log.warn(
+                                    "Channel path '{}' is not part of the HST configuration under {}, ignoring channel info for mount {}.  Use the full repository path for identification.",
+                                    new Object[]{channelPath, hstNodeLoadingCache.getRootPath(), mount.getName()});
+
+                            continue;
+                        }
+
+                        String channelNodeName = channelPath.substring(channelPath.lastIndexOf("/") + 1);
+                        final Channel channel = channels.get(channelNodeName);
+                        if (channel == null) {
+                            log.info("Mount '{}' has channelpath configured that does not point to a channel info. Skipping setting channelInfo.",
+                                    mount);
+                            continue;
+                        }
+
+                        // because channels can be used by multiple mounts in multiple hostgroups, we
+                        // need to clone them before using the instance.
+                        final Channel liveClone = new Channel(channel);
+                        final Channel previewChannel = channels.get(channelNodeName + "-preview");
+                        Channel previewClone = null;
+                        if (previewChannel != null) {
+                            previewClone = new Channel(previewChannel);
+                        }
+                        attachChannelToMount(liveClone, previewClone, (ContextualizableMount) mount, hstNodeLoadingCache);
+
+                    } catch (ChannelException e) {
+                        log.error("Could not set channel info to mount", e);
+                    }
+                }
+            }
+        }
+        log.info("Channel manager load took '{}' ms.", (System.currentTimeMillis() - start));
+    }
+
+    private void loadChannels(final HstNode rootConfigNode, final Map<String, Channel> channels) {
         HstNode channelsNode = rootConfigNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELS);
         if (channelsNode != null) {
             for (HstNode channelNode : channelsNode.getNodes()) {
-                loadChannel(channelNode);
+                loadChannel(channelNode, channels);
             }
         } else {
             log.info("Cannot load channels because node '{}' does not exist",
@@ -837,69 +895,66 @@ public class VirtualHostsService implements MutableVirtualHosts {
         }
     }
 
-    private void loadChannel(HstNode currNode) {
+    private void loadChannel(HstNode currNode, final Map<String, Channel> channels) {
         Channel channel = ChannelPropertyMapper.readChannel(currNode);
         channels.put(channel.getId(), channel);
     }
 
-    private void populateChannelForMount(ContextualizableMount mount, final HstNodeLoadingCache hstNodeLoadingCache) {
-        // we are only interested in Mount's that have isMapped = true and that
-        // are live mounts: We do not display 'preview' Mounts in cms: instead, a
-        // live mount decorated as preview are shown
-        if (!mount.isMapped() || mount.isPreview() || mount.getHstSite() == null) {
-            log.debug("Skipping mount '{}' because it is either not mapped or is a preview mount", mount.getName());
+    private void setBluePrintsPrototypes() {
+        if (bluePrintsPrototypeChecked) {
             return;
         }
-        String channelPath = mount.getChannelPath();
-        if (channelPath == null) {
-            // mount does not have an associated channel
-            log.debug("Ignoring mount '" + mount.getName() + "' since it does not have a channel path");
-            return;
+        try (HstNodeLoadingCache.LazyCloseableSession session = hstNodeLoadingCache.createLazyCloseableSession()) {
+            for (Blueprint blueprint : blueprints.values()) {
+                String prototypePath = BlueprintHandler.SUBSITE_TEMPLATES_PATH + blueprint.getId();
+                if (session.getSession().nodeExists(prototypePath)) {
+                    blueprint.setHasContentPrototype(true);
+                }
+            }
+        } catch (Exception e) {
+            throw new ModelLoadingException("Could not check blueprint prototypes : ", e);
         }
-        if (!channelPath.startsWith(channelsRoot)) {
-            log.warn(
-                    "Channel path '{}' is not part of the HST configuration under {}, ignoring channel info for mount {}.  Use the full repository path for identification.",
-                    new Object[] { channelPath, hstNodeLoadingCache.getRootPath(), mount.getName() });
+        bluePrintsPrototypeChecked = true;
+    }
 
-            return;
-        }
-        Channel channel = channels.get(channelPath.substring(channelsRoot.length()));
-        if (channel == null) {
-            log.warn("Unknown channel {}, ignoring mount {}", channelPath, mount.getName());
-            return;
-        }
-        if (channel.getUrl() != null) {
-            // We already encountered this channel while walking over all the mounts. This mount
-            // therefore points to the same channel as another mount, which is not allowed (each channel has only
-            // one mount)
-            log.warn("Channel {} contains multiple mounts - analysing mount {}, found url {} in channel", new Object[] {
-                    channelPath, mount.getName(), channel.getUrl() });
 
-            return;
+
+    private void attachChannelToMount(Channel liveChannel, final Channel previewChannel, ContextualizableMount mount, final HstNodeLoadingCache hstNodeLoadingCache) throws ChannelException {
+        long start = System.currentTimeMillis();
+
+        final String hostGroupName = mount.getVirtualHost().getHostGroupName();
+        Map<String, Channel> channelsForHostGroup = channelsByHostGroup.get(hostGroupName);
+        if (channelsForHostGroup == null) {
+            channelsForHostGroup = new HashMap<>();
+            channelsByHostGroup.put(hostGroupName, channelsForHostGroup);
+        }
+        channelsForHostGroup.put(liveChannel.getId(), liveChannel);
+        if (previewChannel != null) {
+            channelsForHostGroup.put(previewChannel.getId(), previewChannel);
         }
 
         String mountPoint = mount.getMountPoint();
         if (mountPoint != null) {
-            channel.setHstMountPoint(mountPoint);
-            channel.setContentRoot(mount.getContentPath());
+            liveChannel.setHstMountPoint(mountPoint);
+            liveChannel.setContentRoot(mount.getContentPath());
             String configurationPath = mount.getHstSite().getConfigurationPath();
             if (configurationPath != null) {
-                channel.setHstConfigPath(configurationPath);
+                liveChannel.setHstConfigPath(configurationPath);
             }
         }
 
         final HstSite previewHstSite = mount.getPreviewHstSite();
-        channel.setPreviewHstConfigExists(previewHstSite.hasPreviewConfiguration());
+        liveChannel.setPreviewHstConfigExists(previewHstSite.hasPreviewConfiguration());
 
         String mountPath = mount.getMountPath();
-        channel.setLocale(mount.getLocale());
-        channel.setMountId(mount.getIdentifier());
-        channel.setMountPath(mountPath);
+        liveChannel.setLocale(mount.getLocale());
+        liveChannel.setMountId(mount.getIdentifier());
+        liveChannel.setMountPath(mountPath);
 
         VirtualHost virtualHost = mount.getVirtualHost();
-        channel.setCmsPreviewPrefix(virtualHost.getVirtualHosts().getCmsPreviewPrefix());
-        channel.setContextPath(mount.onlyForContextPath());
-        channel.setHostname(virtualHost.getHostName());
+        liveChannel.setCmsPreviewPrefix(virtualHost.getVirtualHosts().getCmsPreviewPrefix());
+        liveChannel.setContextPath(mount.onlyForContextPath());
+        liveChannel.setHostname(virtualHost.getHostName());
 
         StringBuilder url = new StringBuilder();
         url.append(mount.getScheme());
@@ -921,139 +976,46 @@ public class VirtualHostsService implements MutableVirtualHosts {
             }
             url.append(mountPath);
         }
-        channel.setUrl(url.toString());
+        liveChannel.setUrl(url.toString());
 
-        Channel previewChannel = channels.get((channelPath+"-preview").substring(channelsRoot.length()));
         if (previewChannel == null) {
             // validate there is also ***no*** preview hst:configuration node: otherwise we have an invalid configuration
             if (mount.getPreviewHstSite().hasPreviewConfiguration()) {
                 log.error("Ambiguous HST configuration found. There is a preview configuration present at '{}' but there " +
                         "is NO preview channel node at '{}'. Channel manager won't function correctly for this channel. Remove the " +
                         "preview configuration or add a preview channel.", mount.getPreviewHstSite().getConfigurationPath(),
-                        channelPath+"-preview");
+                        channelsRoot + liveChannel.getName()+"-preview");
             }
-            mount.setChannel(channel, channel);
+            mount.setChannel(liveChannel, liveChannel);
+            mount.setChannelInfo(getChannelInfo(liveChannel), getChannelInfo(liveChannel));
         } else {
-            // validate there is also ***a*** preview hst:configuration node: otherwise we have an invalid configuration
             if (!mount.getPreviewHstSite().hasPreviewConfiguration()) {
                 log.error("Ambiguous HST configuration found. There is NO preview configuration present at '{}' but there " +
                         "is a preview channel node at '{}'. Channel manager won't function correctly for this channel. Add the " +
                         "preview configuration or remove the preview channel.", mount.getPreviewHstSite().getConfigurationPath(),
-                        channelPath+"-preview");
+                        channelsRoot + liveChannel.getName()+"-preview");
             }
-            populatePreviewChannel(previewChannel, channel);
+            populatePreviewChannel(previewChannel, liveChannel);
             previewChannel.setPreview(true);
             HstNode channelRootConfigNode = hstNodeLoadingCache.getNode(previewHstSite.getConfigurationPath());
             previewChannel.setChangedBySet(new ChannelLazyLoadingChangedBySet(channelRootConfigNode, previewHstSite, previewChannel));
-            mount.setChannel(channel, previewChannel);
+            mount.setChannel(liveChannel, previewChannel);
+            mount.setChannelInfo(getChannelInfo(liveChannel), getChannelInfo(previewChannel));
         }
+        log.info("Attaching channel {} to mount took {} ms ",liveChannel, (System.currentTimeMillis() - start));
     }
 
     private void populatePreviewChannel(final Channel preview, final Channel live) {
-        preview.setHstMountPoint(live.getHstMountPoint());
         preview.setContentRoot(live.getContentRoot());
         preview.setHstConfigPath(live.getHstConfigPath() + "-preview");
         preview.setPreviewHstConfigExists(live.isPreviewHstConfigExists());
         preview.setLocale(live.getLocale());
+        preview.setHstMountPoint(live.getHstMountPoint());
         preview.setMountId(live.getMountId());
         preview.setMountPath(live.getMountPath());
         preview.setCmsPreviewPrefix(live.getCmsPreviewPrefix());
         preview.setContextPath(live.getContextPath());
         preview.setHostname(live.getHostname());
         preview.setUrl(live.getUrl());
-    }
-
-    private void loadChannelsAndBluePrints(HstNodeLoadingCache hstNodeLoadingCache) {
-        long start = System.currentTimeMillis();
-        final HstNode rootConfigNode = hstNodeLoadingCache.getNode(hstNodeLoadingCache.getRootPath());
-        bluePrintsPrototypeChecked = false;
-        loadBlueprints(rootConfigNode);
-        List<Mount> mountsForCurrentHostGroup = Collections.emptyList();
-        if (channelMngrVirtualHostGroupNodeName == null) {
-            log.warn("Cannot load the Channel Manager because no host group configured on hst:hosts node");
-        } else if (!getHostGroupNames().contains(channelMngrVirtualHostGroupNodeName)) {
-            log.warn("Configured channel manager host group name {} does not exist or does not have " +
-                    "correctly loaded mounts", channelMngrVirtualHostGroupNodeName);
-        } else {
-            // in channel manager only the mounts for at most ONE single hostGroup are shown
-            mountsForCurrentHostGroup = getMountsByHostGroup(channelMngrVirtualHostGroupNodeName);
-            if (mountsForCurrentHostGroup.isEmpty()) {
-                log.warn("No mounts found in host group {}.", channelMngrVirtualHostGroupNodeName);
-            }
-        }
-        // load all the channels, even if they are not used by the current hostGroup
-        loadChannels(rootConfigNode);
-        for (Mount mountForCurrentHostGroup : mountsForCurrentHostGroup) {
-            if (mountForCurrentHostGroup instanceof ContextualizableMount) {
-                populateChannelForMount((ContextualizableMount) mountForCurrentHostGroup, hstNodeLoadingCache);
-            }
-        }
-
-        // for ALL the mounts in ALL the host groups, set the channel Info if available
-        for (String hostGroupName : getHostGroupNames()) {
-            for (Mount mount : getMountsByHostGroup(hostGroupName)) {
-                if (mount instanceof MutableMount) {
-                    try {
-                        String channelPath = mount.getChannelPath();
-                        if (StringUtils.isEmpty(channelPath)) {
-                            log.info("Mount '{}' does not have a channelpath configured. Skipping setting channelInfo.",
-                                    mount);
-                            continue;
-                        }
-                        String channelNodeName = channelPath.substring(channelPath.lastIndexOf("/") + 1);
-                        final Channel channel = this.channels.get(channelNodeName);
-                        Channel previewChannel;
-                        if (channel == null) {
-                            log.info("Mount '{}' has channelpath configured that does not point to a channel info. Skipping setting channelInfo.",
-                                    mount);
-                            continue;
-                        } else {
-                            previewChannel = this.channels.get(channelNodeName + "-preview");
-                            if (previewChannel == null) {
-                                log.info("No preview channel available. Use live channel");
-                                previewChannel = channel;
-                            }
-                        }
-                        log.debug("Setting channel info for mount '{}'.", mount);
-                        ((MutableMount) mount).setChannelInfo(getChannelInfo(channel), getChannelInfo(previewChannel));
-                    } catch (ChannelException e) {
-                        log.error("Could not set channel info to mount", e);
-                    }
-                }
-            }
-        }
-        discardChannelsWithoutMountForCurrentHostGroup();
-        log.info("Channel manager load took '{}' ms.", (System.currentTimeMillis() - start));
-    }
-
-    private void discardChannelsWithoutMountForCurrentHostGroup() {
-        List<String> channelsToDiscard = new ArrayList<String>();
-        for (Map.Entry<String, Channel> entry : channels.entrySet()) {
-            if (entry.getValue().getMountId() == null) {
-                log.info("Channel '{}' is not referred by any mount for hostgroup '{}'. Discarding this channel",
-                        entry.getValue().getId(), channelMngrVirtualHostGroupNodeName);
-                channelsToDiscard.add(entry.getKey());
-            }
-        }
-        for (String key : channelsToDiscard) {
-            channels.remove(key);
-        }
-    }
-
-    private void setBluePrintsPrototypes() {
-        if (bluePrintsPrototypeChecked) {
-            return;
-        }
-        try (HstNodeLoadingCache.LazyCloseableSession session = hstNodeLoadingCache.createLazyCloseableSession()) {
-            for (Blueprint blueprint : blueprints.values()) {
-                String prototypePath = BlueprintHandler.SUBSITE_TEMPLATES_PATH + blueprint.getId();
-                if (session.getSession().nodeExists(prototypePath)) {
-                    blueprint.setHasContentPrototype(true);
-                }
-            }
-        } catch (Exception e) {
-            throw new ModelLoadingException("Could not check blueprint prototypes : ", e);
-        }
-        bluePrintsPrototypeChecked = true;
     }
 }

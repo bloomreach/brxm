@@ -23,6 +23,7 @@ import javax.jcr.SimpleCredentials;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.container.SpringComponentManager;
@@ -48,6 +49,8 @@ public abstract class AbstractCmsRestTest {
         this.componentManager.stop();
         this.componentManager.close();
         HstServices.setComponentManager(null);
+        // always clear HstRequestContext in case it is set on a thread local
+        ModifiableRequestContextProvider.clear();
     }
 
     protected String[] getConfigurations() {

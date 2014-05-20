@@ -55,12 +55,13 @@ public class Channel implements Serializable {
     private Set<String> changedBySet = new HashSet<>();
     private String defaultDevice = DEFAULT_DEVICE;
     private List<String> devices = Collections.EMPTY_LIST;
-    private int hashCode;
     private boolean isPreview;
     private String channelNodeLockedBy;
     private String lastModifiedBy;
     private Calendar lockedOn;
     private Calendar lastModified;
+
+    private int hashCode;
     /**
      * {@link Channel} default constructor it is required for REST de/serialization 
      */
@@ -75,6 +76,38 @@ public class Channel implements Serializable {
      */
     public Channel(String id) {
         this.id = id;
+    }
+
+    // copy constructor
+    public Channel(final Channel channel) {
+        id = channel.id;
+        name = channel.name;
+        type = channel.type;
+        hostname = channel.hostname;
+        contextPath = channel.contextPath;
+        cmsPreviewPrefix = channel.cmsPreviewPrefix;
+        mountPath = channel.mountPath;
+        url = channel.url;
+        hstMountPoint = channel.hstMountPoint;
+        hstConfigPath = channel.hstConfigPath;
+        contentRoot = channel.contentRoot;
+        composerModeEnabled = channel.composerModeEnabled;
+        // not a deep clone: Not a problem!
+        properties.putAll(channel.getProperties());
+        channelInfoClassName = channel.channelInfoClassName;
+        mountId = channel.mountId;
+        locale = channel.locale;
+        previewHstConfigExists = channel.previewHstConfigExists;
+        // not a deep clone: Not a problem! Note even the same instance is used, this is because
+        // channel.changedBySet can be a ChannelLazyLoadingChangedBySet
+        changedBySet = channel.changedBySet;
+        defaultDevice =  channel.defaultDevice;
+        devices = channel.devices;
+        isPreview = channel.isPreview();
+        channelNodeLockedBy = channel.channelNodeLockedBy;
+        lastModifiedBy = channel.lastModifiedBy;
+        lockedOn = channel.lockedOn;
+        lastModified = channel.lastModified;
     }
 
     /**
@@ -352,7 +385,11 @@ public class Channel implements Serializable {
             return false;
         } else {
             Channel that = (Channel) other;
-            return id.equals(that.id);
+            if (mountId != null) {
+                return id.equals(that.id) && mountId.equals(that.mountId);
+            } else {
+                return id.equals(that.id);
+            }
         }
     }
 

@@ -241,7 +241,7 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
 		mountNode.setProperty(TEST_PROP, "testVal"+counter);
 		mountNode.getSession().save();
 
-		final Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels();
+		final Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
 		assertTrue(channels.size() == 1);
 		final Channel existingChannel = channels.values().iterator().next();
         final EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
@@ -285,6 +285,7 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
 									existingChannel.getProperties().put(TEST_PROP, newTestValue);
 
                                     MockHstRequestContext ctx = new MockHstRequestContext();
+                                    ctx.setAttribute("HOST_GROUP_NAME_FOR_CMS_HOST", "dev-localhost");
                                     ctx.setSession(getSession2());
                                     final VirtualHost dummyHost = hstManager.getVirtualHosts().getMountsByHostGroup("dev-localhost").get(0).getVirtualHost();
                                     ctx.setVirtualHost(dummyHost);
@@ -295,7 +296,7 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
 									// called concurrently, we can only guarantee that the loaded value for TEST_PROP
 									// is AT LEAST AS big as newTestValue
 
-									final Map<String, Channel> loadedChannels = hstManager.getVirtualHosts().getChannels();
+									final Map<String, Channel> loadedChannels = hstManager.getVirtualHosts().getChannels("dev-localhost");
 
 									JobResultWrapperModifyChannel result = new JobResultWrapperModifyChannel();
 									result.loadedChannels = loadedChannels;
@@ -370,6 +371,7 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
 		} finally {
 			existingChannel.getProperties().remove(TEST_PROP);
             MockHstRequestContext ctx = new MockHstRequestContext();
+            ctx.setAttribute("HOST_GROUP_NAME_FOR_CMS_HOST", "dev-localhost");
             ctx.setSession(getSession1());
             final VirtualHost dummyHost = hstManager.getVirtualHosts().getMountsByHostGroup("dev-localhost").get(0).getVirtualHost();
             ctx.setVirtualHost(dummyHost);
