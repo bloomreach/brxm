@@ -27,6 +27,7 @@ import java.util.Set;
 import javax.jcr.Credentials;
 import javax.jcr.SimpleCredentials;
 import javax.security.auth.Subject;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.cxf.common.util.StringUtils;
@@ -46,6 +47,7 @@ import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -73,6 +75,7 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
     private static final Logger log = LoggerFactory.getLogger(IRestProxyService.class);
 
     private static final String CMSREST_CREDENTIALS_HEADER = "X-CMSREST-CREDENTIALS";
+    private static final String CMSREST_CMSHOST_HEADER = "X-CMSREST-CMSHOST";
     // This is really bad workaround but it is used only for the time being
     private static final String CREDENTIAL_CIPHER_KEY = "ENC_DEC_KEY";
     public static final String CONFIG_REST_URI = "rest.uri";
@@ -229,7 +232,10 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         Subject subject = getSubject();
         // The accept method is called to solve an issue as the REST call was sent with 'text/plain' as an accept header
         // which caused problems matching with the relevant JAXRS resource
-        WebClient.client(clientProxy).header(CMSREST_CREDENTIALS_HEADER, getEncryptedCredentials(subject)).accept(MediaType.WILDCARD_TYPE);
+        WebClient.client(clientProxy)
+                .header(CMSREST_CREDENTIALS_HEADER, getEncryptedCredentials(subject))
+                .header(CMSREST_CMSHOST_HEADER, getFarthestRequestHost())
+                .accept(MediaType.WILDCARD_TYPE);
         return clientProxy;
     }
 
@@ -242,6 +248,28 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         subject.getPrivateCredentials().add(credentials);
         subject.setReadOnly();
         return subject;
+    }
+
+    protected String getFarthestRequestHost() {
+        final HttpServletRequest request = (HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest();
+        String host = request.getHeader("X-Forwarded-Host");
+
+        if (host != null) {
+            String [] hosts = host.split(",");
+            return hosts[0].trim();
+        }
+        host = request.getHeader("Host");
+        if (host != null && !"".equals(host)) {
+            return host;
+        }
+        // should never happen : HTTP/1.0 based browser clients are unlikely to login in the cms :)
+        int serverPort = request.getServerPort();
+        if (serverPort == 80 || serverPort == 443 || serverPort <= 0) {
+            host = request.getServerName();
+        } else {
+            host = request.getServerName() + ":" + serverPort;
+        }
+        return host;
     }
 
     protected String getEncryptedCredentials(Subject subject) throws IllegalArgumentException {
@@ -275,6 +303,7 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
 
             httpGet = new HttpGet(normalizedPingServiceUri);
             httpGet.addHeader(CMSREST_CREDENTIALS_HEADER, getEncryptedCredentials(getSubject()));
+            httpGet.addHeader(CMSREST_CMSHOST_HEADER, getFarthestRequestHost());
             final HttpContext httpContext = new BasicHttpContext();
             final HttpResponse httpResponse = httpClient.execute(httpGet, httpContext);
             boolean ok = (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK);
