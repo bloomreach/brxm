@@ -142,7 +142,8 @@ public class EventLogCleanupModule extends AbstractReconfigurableDaemonModule {
 
     void unscheduleJob() throws RepositoryException {
         final RepositoryScheduler repositoryScheduler = HippoServiceRegistry.getService(RepositoryScheduler.class);
-        repositoryScheduler.deleteJob(jobInfo.getName(), jobInfo.getGroup());
+        final String jobName = "EventLogCleanupJob" + quartzNamePostfix;
+        repositoryScheduler.deleteJob(jobName, "default");
         jobInfo = null;
     }
 
