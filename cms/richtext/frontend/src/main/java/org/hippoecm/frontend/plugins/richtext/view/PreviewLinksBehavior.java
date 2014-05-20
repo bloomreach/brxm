@@ -49,10 +49,12 @@ class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior implements ILinkD
 
     private final IModel<Node> model;
     private final IBrowseService browser;
+    private final boolean encode;
 
-    PreviewLinksBehavior(final IModel<Node> model, final IBrowseService browser) {
+    PreviewLinksBehavior(final IModel<Node> model, final IBrowseService browser, boolean encode) {
         this.model = model;
         this.browser = browser;
+        this.encode = encode;
     }
 
     @Override
@@ -87,7 +89,10 @@ class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior implements ILinkD
     public String internalLink(String link) {
         final AjaxRequestAttributes attributes = getAttributes();
         final Charset charset = RequestCycle.get().getRequest().getCharset();
-        attributes.getExtraParameters().put("link", UrlEncoder.QUERY_INSTANCE.encode(link, charset));
+        if (encode) {
+            link = UrlEncoder.QUERY_INSTANCE.encode(link, charset);
+        }
+        attributes.getExtraParameters().put("link", link);
         CharSequence asString = renderAjaxAttributes(getComponent(), attributes);
         return "href=\"#\" onclick='" + JS_PREVENT_DEFAULT + JS_STOP_EVENT + "Wicket.Ajax.get(" + asString + ");'";
     }

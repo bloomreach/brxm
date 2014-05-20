@@ -40,7 +40,7 @@ public class RichTextPreviewWithLinksAndImagesPanel extends AbstractRichTextView
                                                   final IBrowseService browser) {
         super(id);
 
-        final PreviewLinksBehavior previewLinksBehavior = new PreviewLinksBehavior(nodeModel, browser);
+        final PreviewLinksBehavior previewLinksBehavior = new PreviewLinksBehavior(nodeModel, browser, true);
         add(previewLinksBehavior);
 
         final IModel<String> viewModel = createViewModel(nodeModel, htmlModel, previewLinksBehavior);

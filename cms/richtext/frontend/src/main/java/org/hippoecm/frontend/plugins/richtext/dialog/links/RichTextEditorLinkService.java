@@ -47,7 +47,7 @@ public class RichTextEditorLinkService implements IDetachable {
         if (uuid != null) {
             if (factory.getLinkUuids().contains(uuid)) {
                 try {
-                    final org.hippoecm.frontend.plugins.richtext.RichTextLink link = factory.loadLink(uuid);
+                    final RichTextLink link = factory.loadLink(uuid);
                     return new InternalLink(p, link.getTargetModel());
                 } catch (RichTextException e) {
                     log.error("Could not load link '" + uuid + "'", e);
