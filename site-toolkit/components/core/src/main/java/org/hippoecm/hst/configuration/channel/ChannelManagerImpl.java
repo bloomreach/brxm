@@ -373,8 +373,8 @@ public class ChannelManagerImpl implements ChannelManager {
     private Node getOrCreateVirtualHost(final Node configRoot, final String hostName) throws RepositoryException, ChannelException {
         final String[] elements = hostName.split("[.]");
 
-        // all modification methods will be moved to cmsrest module, and the also
-        // CmsRestSecurityValve#HOST_GROUP_NAME_FOR_CMS_HOST can be used. For now, hardcoded
+        // FIXME: move all modification methods to the 'cmsrest' module and use the
+        // CmsRestSecurityValve#HOST_GROUP_NAME_FOR_CMS_HOST constant instead of the hardcoded string "HOST_GROUP_NAME_FOR_CMS_HOST"
         final String hostGroupForCmsHost = (String)RequestContextProvider.get().getAttribute("HOST_GROUP_NAME_FOR_CMS_HOST");
         if (StringUtils.isEmpty(hostGroupForCmsHost)) {
             throw new ChannelException("There is no hostgroup for cms host available. Cannot get or create virtual hosts");

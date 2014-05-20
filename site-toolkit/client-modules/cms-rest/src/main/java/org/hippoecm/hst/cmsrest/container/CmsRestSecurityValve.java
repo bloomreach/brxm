@@ -91,7 +91,7 @@ public class CmsRestSecurityValve extends AbstractOrderableValve {
 
             final String cmsHost = requestContext.getServletRequest().getHeader(CMSREST_CMSHOST_HEADER);
             if (StringUtils.isEmpty(cmsHost)) {
-                log.warn("Cannot proceed _cmsrest request because no no header found for '{}'", CMSREST_CMSHOST_HEADER);
+                log.warn("Cannot proceed _cmsrest request because no header found for '{}'", CMSREST_CMSHOST_HEADER);
                 setResponseError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, servletResponse);
                 return;
             }
