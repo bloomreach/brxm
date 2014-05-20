@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -47,6 +47,15 @@ public abstract class AbstractBrowserDialog<T extends RichTextEditorDocumentLink
             @Override
             protected IModel<Node> getInitialModel() {
                 return (IModel<Node>) getModelObject().getLinkTarget();
+            }
+
+            /**
+             *
+             * @return The {@link IModel} of the document node.
+             */
+            @Override
+            protected IModel<Node> getPropertyNodeModel() {
+                return null;
             }
 
             @Override
