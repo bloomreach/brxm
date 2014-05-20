@@ -141,9 +141,9 @@
      This is used by normal plugins, but also to autogenerate documentation in .../target/site/source-repository.html
   -->
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/branches/linkpickeri18n</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/cms/branches/linkpickeri18n</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/branches/linkpickeri18n</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</url>
   </scm>
 
   <build>
