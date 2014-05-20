@@ -92,15 +92,15 @@
         <sv:property sv:name="hst:alias" sv:type="String">
           <sv:value>root</sv:value>
         </sv:property>
-        <sv:node sv:name="examplecontextpathonly">
+        <sv:node sv:name="intranet">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:mount</sv:value>
           </sv:property>
           <sv:property sv:name="hst:onlyforcontextpath" sv:type="String">
-            <sv:value>/mycontextpath</sv:value>
+            <sv:value>/site2</sv:value>
           </sv:property>
           <sv:property sv:name="hst:alias" sv:type="String">
-            <sv:value>examplecontextpathonly</sv:value>
+            <sv:value>intranet</sv:value>
           </sv:property>
         </sv:node>
         <sv:node sv:name="subsite">

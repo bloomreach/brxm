@@ -100,21 +100,21 @@ public class DocumentsResourceTest extends AbstractCmsRestTest {
          * dev-localhost
          *     `localhost
          *          ` hst:root (mount with content '/unittestcontent/documents/unittestproject')
-         *                ` examplecontextpathonly (mount with content '/unittestcontent/documents/unittestproject' and
-         *                                             hst:onlyforcontextpath = /mycontextpath)
+         *                ` intranet (mount with content '/unittestcontent/documents/unittestproject' and
+         *                                             hst:onlyforcontextpath = /site2)
          *
          *
          * From above, you can see that the homepage document can have a link for two mounts:
          * 1) hst:root
-         * 2) examplecontextpathonly
+         * 2) intranet
          *
          * Since the second link has the same contentpath, same number of types, but has a more specific mount (contains
-         * more ancestors), we expect examplecontextpathonly as mount to be found for the link
+         * more ancestors), we expect intranet as mount to be found for the link
          */
 
         String url = documentsResource.getUrl(homePageNodeId , "live");
         // NOTE url is site host and NOT cms 127.0.0.1 host!
-        assertEquals("http://localhost:8080/mycontextpath/examplecontextpathonly", url);
+        assertEquals("http://localhost:8080/site2/intranet", url);
     }
 
     @Test

@@ -167,7 +167,7 @@ public class TestHstLinkRewritingCrossScheme extends AbstractBeanTestCase {
                 Object newsArticleBean = obm.getObject("/unittestcontent/documents/unittestproject/News/2009/April/AprilNewsArticle");
                 HstLink newsArticleLink = linkCreator.create(((HippoBean) newsArticleBean).getNode(), requestContext, "root");
 
-                //  /mycontextpath/examplecontextpathonly
+                //  /site2/intranet
                 assertEquals("news/2009/April/AprilNewsArticle.html", newsArticleLink.getPath());
                 final String newsArticlesHttpsURL = newsArticleLink.toUrlForm(requestContext, false);
                 final String newsArticlesHttpsURLFullyQualified = newsArticleLink.toUrlForm(requestContext, true);
@@ -192,34 +192,34 @@ public class TestHstLinkRewritingCrossScheme extends AbstractBeanTestCase {
 
             }
 
-            // NOW TEST THE SAME AS ABOVE WITH DIFFERENT mount alias (examplecontextpathonly) : That mount can also represent the documents
+            // NOW TEST THE SAME AS ABOVE WITH DIFFERENT mount alias (intranet) : That mount can also represent the documents
 
             {
                 Object newsArticleBean = obm.getObject("/unittestcontent/documents/unittestproject/News/2009/April/AprilNewsArticle");
-                HstLink newsArticleLink = linkCreator.create(((HippoBean) newsArticleBean).getNode(), requestContext, "examplecontextpathonly");
+                HstLink newsArticleLink = linkCreator.create(((HippoBean) newsArticleBean).getNode(), requestContext, "intranet");
 
-                //  /mycontextpath/examplecontextpathonly
+                //  /site2/intranet
                 assertEquals("news/2009/April/AprilNewsArticle.html", newsArticleLink.getPath());
                 final String newsArticlesHttpsURL = newsArticleLink.toUrlForm(requestContext, false);
                 final String newsArticlesHttpsURLFullyQualified = newsArticleLink.toUrlForm(requestContext, true);
 
                 assertEquals("scheme for news articles should be https",
-                        HTTPS_SCHEME + "://localhost/mycontextpath/examplecontextpathonly/news/2009/April/AprilNewsArticle.html", newsArticlesHttpsURL);
+                        HTTPS_SCHEME + "://localhost/site2/intranet/news/2009/April/AprilNewsArticle.html", newsArticlesHttpsURL);
                 assertTrue("scheme for news articles should be https",
                         newsArticlesHttpsURLFullyQualified.equals(newsArticlesHttpsURL));
             }
             {
                 Object homepageBean = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
-                HstLink homepageLink = linkCreator.create(((HippoBean) homepageBean).getNode(), requestContext, "examplecontextpathonly");
+                HstLink homepageLink = linkCreator.create(((HippoBean) homepageBean).getNode(), requestContext, "intranet");
 
                 assertEquals("", homepageLink.getPath());
                 final String homepageHttpURL = homepageLink.toUrlForm(requestContext, false);
                 final String homepageHttpURLFullyQualified = homepageLink.toUrlForm(requestContext, true);
 
                 assertEquals("link for homepage should be fully qualified http because cross mount on different port.",
-                        "/mycontextpath/examplecontextpathonly", homepageHttpURL);
+                        "/site2/intranet", homepageHttpURL);
                 assertEquals("link for homepage should be fully qualified http because cross mount on different port.",
-                        HTTP_SCHEME + "://localhost/mycontextpath/examplecontextpathonly", homepageHttpURLFullyQualified);
+                        HTTP_SCHEME + "://localhost/site2/intranet", homepageHttpURLFullyQualified);
 
             }
 
@@ -243,7 +243,7 @@ public class TestHstLinkRewritingCrossScheme extends AbstractBeanTestCase {
             Object newsArticleBean = obm.getObject("/unittestcontent/documents/unittestproject/News/2009/April/AprilNewsArticle");
             HstLink newsArticleLink = linkCreator.create(((HippoBean) newsArticleBean).getNode(), requestContext, "root");
 
-            //  /mycontextpath/examplecontextpathonly
+            //  /site2/intranet
             assertEquals("news/2009/April/AprilNewsArticle.html", newsArticleLink.getPath());
             final String newsArticlesHttpsURL = newsArticleLink.toUrlForm(requestContext, false);
             final String newsArticlesHttpsURLFullyQualified = newsArticleLink.toUrlForm(requestContext, true);

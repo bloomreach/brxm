@@ -574,14 +574,14 @@ public class TestMatchHostAndURL extends AbstractTestConfigurations {
         }
         
         /*
-         * We now test a match on a Mount at localhost/hst:root/examplecontextpathonly  that has configured: 
+         * We now test a match on a Mount at localhost/hst:root/intranet  that has configured:
          * 
-         * hst:onlyforcontextpath = /mycontextpath
+         * hst:onlyforcontextpath = /site2
          *  
-         * This means, that for a request uri like 'localhost/hst:root/examplecontextpathonly/home' that in case:
+         * This means, that for a request uri like 'localhost/hst:root/intranet/home' that in case:
          * 
-         * 1) The contextPath is '/mycontextpath' it should match this Mount
-         * 2) the contextPath is different than  '/mycontextpath': it should default back to the hst:root Mount
+         * 1) The contextPath is '/site2' it should match this Mount
+         * 2) the contextPath is different than  '/site2': it should default back to the hst:root Mount
          * 
          * 
          */
@@ -594,23 +594,23 @@ public class TestMatchHostAndURL extends AbstractTestConfigurations {
             // the port is part of the Host header
             request.addHeader("Host", "localhost");
             
-            // hst:onlyforcontextpath = /mycontextpath so we start with correct context path
-            request.setRequestURI("/mycontextpath/examplecontextpathonly/home");
-            request.setContextPath("/mycontextpath");
+            // hst:onlyforcontextpath = /site2 so we start with correct context path
+            request.setRequestURI("/site2/intranet/home");
+            request.setContextPath("/site2");
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
                 
                 ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                 
-                assertTrue("As the contextPath '/mycontextpath' matches the configured one of Mount 'examplecontextpathonly', we expect the Mount to have the name 'examplecontextpathonly'",mount.getMount().getName().equals("examplecontextpathonly"));
+                assertTrue("As the contextPath '/site2' matches the configured one of Mount 'intranet', we expect the Mount to have the name 'intranet'",mount.getMount().getName().equals("intranet"));
                 
-                // now change the contextPath to be unequal to the 'hst:onlyforcontextpath = /mycontextpath'. The Mount should be the hst:root Mount now
-                request.setRequestURI("/site/examplecontextpathonly/home");
+                // now change the contextPath to be unequal to the 'hst:onlyforcontextpath = /site2'. The Mount should be the hst:root Mount now
+                request.setRequestURI("/site/intranet/home");
                 request.setContextPath("/site");
                 
                 mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                
-                assertTrue("As the contextPath '/mywrongpath' does not match the configured one of Mount 'examplecontextpathonly', we expect a fallback to the Mount hst:root ",mount.getMount().getName().equals("hst:root"));
+                assertTrue("As the contextPath '/mywrongpath' does not match the configured one of Mount 'intranet', we expect a fallback to the Mount hst:root ",mount.getMount().getName().equals("hst:root"));
                 
             } catch (ContainerException e) {
                 fail(e.getMessage());
