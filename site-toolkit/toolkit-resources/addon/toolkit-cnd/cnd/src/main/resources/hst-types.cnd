@@ -286,9 +286,10 @@
 // if you do not want to mount to run with the default hst pipeline, you can configure the pipeline to be used here
 - hst:namedpipeline (string)
 - hst:showcontextpath (boolean)
-// when this mount is only applicable for certain contextpath, add this property containing the contextpath that 
-// is allowed (it can be an empty string, or if non empty it must start with '/' and no further '/' is allowed)
+// deprecated : use hst:contextpath instead
 - hst:onlyforcontextpath (string)
+// if this mount can only be used for a certain contextpath
+- hst:contextpath
 // deprecated and unused: do not use
 - hst:embeddedmountpath
 - hst:scheme (string)
@@ -351,9 +352,10 @@
 - hst:pagenotfound (string)
 - hst:locale (string)
 - hst:versioninpreviewheader (boolean)
-// when the mounts for this host is only applicable for certain contextpath, add this property containing the contextpath that 
-// is allowed (it can be an empty string, or if non empty it must start with '/' and no further '/' is allowed)
+// deprecated : use hst:contextpath instead
 - hst:onlyforcontextpath (string)
+// if the mounts for this host can only be used for a certain contextpath
+- hst:contextpath
 - hst:cacheable (boolean)
 - hst:defaultresourcebundleid (string)
 
@@ -379,9 +381,7 @@
 - hst:pagenotfound (string)
 - hst:locale (string)
 - hst:versioninpreviewheader (boolean)
-// The default contextpath for this webapp. If configured, this will be the value 
-// for the 'hst:onlyforcontextpath' for the hst:mounts. 
-// (it can be an empty string, or if non empty it must start with '/' and no further '/' is allowed)
+// The default contextpath for all sites.
 - hst:defaultcontextpath (string)
 // Configurable override of the default _cmsinternal pathInfo prefix for the preview in the cms
 - hst:cmspreviewprefix (string)

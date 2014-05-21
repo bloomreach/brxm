@@ -467,8 +467,13 @@ public class HstRequestUtils {
      */
     public static String createURLWithExplicitSchemeForRequest(final String scheme, final Mount mount, final HttpServletRequest request) {
         String contextPath = "";
-        if (mount.isContextPathInUrl() && mount.onlyForContextPath() != null) {
-            contextPath = mount.onlyForContextPath();
+        if (mount.isContextPathInUrl()) {
+            if (mount.getContextPath() == null) {
+                // contextPath agnostic, use context path from servlet request
+                contextPath = request.getContextPath();
+            } else {
+                contextPath = mount.getContextPath();
+            }
         }
         StringBuilder url = new StringBuilder(scheme).append("://").append(HstRequestUtils.getFarthestRequestHost(request, false))
                 .append(contextPath).append(request.getRequestURI().substring(request.getContextPath().length()));

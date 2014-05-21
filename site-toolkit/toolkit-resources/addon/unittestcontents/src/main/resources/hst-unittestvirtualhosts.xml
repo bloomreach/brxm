@@ -96,7 +96,7 @@
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:mount</sv:value>
           </sv:property>
-          <sv:property sv:name="hst:onlyforcontextpath" sv:type="String">
+          <sv:property sv:name="hst:contextpath" sv:type="String">
             <sv:value>/site2</sv:value>
           </sv:property>
           <sv:property sv:name="hst:alias" sv:type="String">

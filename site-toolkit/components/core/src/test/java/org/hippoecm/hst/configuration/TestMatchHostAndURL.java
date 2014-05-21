@@ -576,7 +576,7 @@ public class TestMatchHostAndURL extends AbstractTestConfigurations {
         /*
          * We now test a match on a Mount at localhost/hst:root/intranet  that has configured:
          * 
-         * hst:onlyforcontextpath = /site2
+         * hst:contextpath = /site2
          *  
          * This means, that for a request uri like 'localhost/hst:root/intranet/home' that in case:
          * 
@@ -586,7 +586,7 @@ public class TestMatchHostAndURL extends AbstractTestConfigurations {
          * 
          */
         @Test 
-        public void testMountOnlyForContextPath(){
+        public void testMountContextPath(){
             MockHttpServletRequest request = new MockHttpServletRequest();
             
             request.setScheme("http");
@@ -594,7 +594,7 @@ public class TestMatchHostAndURL extends AbstractTestConfigurations {
             // the port is part of the Host header
             request.addHeader("Host", "localhost");
             
-            // hst:onlyforcontextpath = /site2 so we start with correct context path
+            // hst:contextpath = /site2 so we start with correct context path
             request.setRequestURI("/site2/intranet/home");
             request.setContextPath("/site2");
             try {
@@ -604,7 +604,7 @@ public class TestMatchHostAndURL extends AbstractTestConfigurations {
                 
                 assertTrue("As the contextPath '/site2' matches the configured one of Mount 'intranet', we expect the Mount to have the name 'intranet'",mount.getMount().getName().equals("intranet"));
                 
-                // now change the contextPath to be unequal to the 'hst:onlyforcontextpath = /site2'. The Mount should be the hst:root Mount now
+                // now change the contextPath to be unequal to the 'hst:contextpath = /site2'. The Mount should be the hst:root Mount now
                 request.setRequestURI("/site/intranet/home");
                 request.setContextPath("/site");
                 

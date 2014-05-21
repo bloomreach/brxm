@@ -84,13 +84,37 @@ public interface VirtualHost {
     boolean isContextPathInUrl();
 
     /**
-     * In case the {@link HttpServletRequest#getContextPath()} does not matter, this method returns <code>null</code> or empty. <b>If</b> {@link Mount}s
-     * for this host can be used only for a certain contextPath, this method should return that contextPath. If configured, the contextPath is either an empty string,
-     * or it must start with a "/" and cannot contain any other "/".
-     *
-     * @return <code>null</code> or empty if the contextPath does not matter, otherwise the value the contextPath must have to match {@link Mount}s for this host.
+     * @deprecated since CMS 7.9.1 : Use {@link #getContextPath()} instead
      */
+    @Deprecated
     String onlyForContextPath();
+
+    /**
+     * <p>
+     *    Returns the contextpath (webapp) for this {@link Mount}. A request can only be matched to this
+     *    {@link Mount} if the request its {@link javax.servlet.http.HttpServletRequest#getContextPath()} is equal
+     *    to {@link #getContextPath()}, or when the {@link Mount} returns <code>null</code> for {@link #getContextPath()} : Namely
+     *    <code>null</code> means the {@link Mount} is contextpath (webapp) agnostic and can be matched regardless the
+     *   {@link javax.servlet.http.HttpServletRequest#getContextPath()}
+     * </p>
+     * @return the contextpath (webapp) for this {@link Mount}. The contextpath for the ROOT application must be an empty String.
+     * If non-empty, a path starting with a "/" character but that does not end with a "/" character must be returned. If
+     * <code>null</code> is returned, the {@link Mount} is contextpath (webapp) agnostic and can be matched regardless the
+     * {@link javax.servlet.http.HttpServletRequest#getContextPath()}
+     */
+
+
+    /**
+     * <p>
+     *    Returns the default contextpath (webapp) for all the {@link Mount}s below this {@link VirtualHost}. A {@link Mount}
+     *    can override this default host contextpath by setting the contextpath explicitly.
+     * </p>
+     * @return Returns the default contextpath (webapp) for all the {@link Mount}s below this {@link VirtualHost}.
+     * The contextpath for the ROOT application must be an empty String. If non-empty, a path starting with a "/" character
+     * but that does not end with a "/" character must be returned. It is not allowed to return <code>null</code>
+     * @see org.hippoecm.hst.configuration.hosting.Mount#getContextPath()
+     */
+    String getContextPath();
 
     /**
      * @return <code>true</code> when the created url should have the port in it

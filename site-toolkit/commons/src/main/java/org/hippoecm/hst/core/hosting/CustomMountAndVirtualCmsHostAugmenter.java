@@ -104,7 +104,12 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
             }
 
             for (String cmsLocation : cmsLocationsForHostGroup) {
-                addCmsLocationToHostGroup(cmsLocation, hostGroup, cmsLocationsForHostGroup, hosts);
+                try {
+                    addCmsLocationToHostGroup(cmsLocation, hostGroup, cmsLocationsForHostGroup, hosts);
+                } catch (Exception e) {
+                    log.error("Exception while trying to add cmsLocation '" + cmsLocation +
+                            "' to hostGroup '" + hostGroup + "'. Skip cms location.", e);
+                }
             }
 
         }
@@ -202,10 +207,10 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
                 while (!cmsLocationHost.getChildHosts().isEmpty()) {
                     cmsLocationHost = cmsLocationHost.getChildHosts().get(0);
                 }
-            } else if (ancestorHost.getHostName().equals(cmsCustomMountHostName)) {
+            } else if (i == hostSegments.length) {
                 // entire host is present
                 cmsLocationHost = ancestorHost;
-            } else {
+            } else if (i < hostSegments.length){
                 // not entire cms host is available. Add missing host parts
                 // partial add
                 String[] missingHostSegments = Arrays.copyOfRange(hostSegments, i, hostSegments.length);
@@ -214,6 +219,8 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
                     cmsLocationHost = cmsLocationHost.getChildHosts().get(0);
                 }
                 log.info("Added cms host '{}' for host group '{}'", cmsLocationHost.getHomePage(), cmsLocationHost.getHostGroupName());
+            } else {
+                throw new IllegalStateException("Cannot add cms location '"+cmsLocation+"'");
             }
 
             // now check whether to add a portMount
@@ -381,9 +388,16 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
             return;
         }
 
+        @Deprecated
         @Override
         public String onlyForContextPath() {
-            return virtualHosts.getDefaultContextPath();
+            return null;
+        }
+
+        @Override
+        public String getContextPath() {
+           // the cms host mounts must be contextpath agnostic!
+           return null;
         }
 
         @Override
@@ -677,9 +691,16 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
             return 0;
         }
 
+        @Deprecated
         @Override
         public String onlyForContextPath() {
-            return getVirtualHost().onlyForContextPath();
+            return null;
+        }
+
+        @Override
+        public String getContextPath() {
+            // the cms host mounts must be contextpath agnostic!
+            return null;
         }
 
         @Override

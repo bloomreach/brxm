@@ -101,7 +101,7 @@ public class DocumentsResourceTest extends AbstractCmsRestTest {
          *     `localhost
          *          ` hst:root (mount with content '/unittestcontent/documents/unittestproject')
          *                ` intranet (mount with content '/unittestcontent/documents/unittestproject' and
-         *                                             hst:onlyforcontextpath = /site2)
+         *                                             hst:contextpath = /site2)
          *
          *
          * From above, you can see that the homepage document can have a link for two mounts:

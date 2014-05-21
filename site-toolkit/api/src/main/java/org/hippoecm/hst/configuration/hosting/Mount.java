@@ -232,13 +232,25 @@ public interface Mount {
     int getPort();
 
     /**
-     * In case the {@link HttpServletRequest#getContextPath()} does not matter, this method must return <code>null</code> or empty. <b>If</b> only this {@link Mount}
-     * can be used for a certain contextPath, this method should return that contextPath. . If configured, the contextPath is either an empty String,
-     * or it has to start with a "/" and is not allowed to have any other "/".
-     *
-     * @return <code>null</code> or empty if the contextPath does not matter, otherwise it returns the value the contextPath must have a possible to match to this {@link Mount}
+     * @deprecated since CMS 7.9.1 : Use {@link #getContextPath()} instead
      */
+    @Deprecated
     String onlyForContextPath();
+
+    /**
+     * <p>
+     *    Returns the contextpath (webapp) for this {@link Mount}. A request can only be matched to this
+     *    {@link Mount} if the request its {@link javax.servlet.http.HttpServletRequest#getContextPath()} is equal
+     *    to {@link #getContextPath()}, or when the {@link Mount} returns <code>null</code> for {@link #getContextPath()} : Namely
+     *    <code>null</code> means the {@link Mount} is contextpath (webapp) agnostic and can be matched regardless the
+     *   {@link javax.servlet.http.HttpServletRequest#getContextPath()}
+     * </p>
+     * @return the contextpath (webapp) for this {@link Mount}. The contextpath for the ROOT application must be an empty String.
+     * If non-empty, a path starting with a "/" character but that does not end with a "/" character must be returned. If
+     * <code>null</code> is returned, the {@link Mount} is contextpath (webapp) agnostic and can be matched regardless the
+     * {@link javax.servlet.http.HttpServletRequest#getContextPath()}
+     */
+    String getContextPath();
 
     /**
      * @return the homepage for this {@link Mount} or <code>null</code> when not present

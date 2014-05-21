@@ -953,7 +953,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
         VirtualHost virtualHost = mount.getVirtualHost();
         liveChannel.setCmsPreviewPrefix(virtualHost.getVirtualHosts().getCmsPreviewPrefix());
-        liveChannel.setContextPath(mount.onlyForContextPath());
+        liveChannel.setContextPath(mount.getContextPath());
         liveChannel.setHostname(virtualHost.getHostName());
 
         StringBuilder url = new StringBuilder();
@@ -967,8 +967,8 @@ public class VirtualHostsService implements MutableVirtualHosts {
                 url.append(mount.getPort());
             }
         }
-        if (virtualHost.isContextPathInUrl() && mount.onlyForContextPath() != null) {
-            url.append(mount.onlyForContextPath());
+        if (virtualHost.isContextPathInUrl() && mount.getContentPath() != null) {
+            url.append(mount.getContentPath());
         }
         if (StringUtils.isNotEmpty(mountPath)) {
             if (!mountPath.startsWith("/")) {

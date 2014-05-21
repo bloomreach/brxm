@@ -152,12 +152,24 @@ public interface HstNodeTypes {
     String VIRTUALHOST_PROPERTY_SCHEME = "hst:scheme";
     String VIRTUALHOST_PROPERTY_SITENAME = "hst:sitename";
     String VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH = "hst:showcontextpath";
+
+    /**
+     * @deprecated since CMS 7.9.1, use {@link #VIRTUALHOST_PROPERTY_CONTEXTPATH} instead
+     */
+    @Deprecated
     String VIRTUALHOST_PROPERTY_ONLYFORCONTEXTPATH = "hst:onlyforcontextpath";
+    String VIRTUALHOST_PROPERTY_CONTEXTPATH = "hst:contextpath";
     String VIRTUALHOST_PROPERTY_SHOWPORT = "hst:showport";
 
     String MOUNT_HST_ROOTNAME = "hst:root";
     String MOUNT_PROPERTY_SHOWCONTEXTPATH = "hst:showcontextpath";
+    /**
+     * @deprecated since CMS 7.9.1, use {@link #VIRTUALHOST_PROPERTY_CONTEXTPATH} instead
+     */
+    @Deprecated
     String MOUNT_PROPERTY_ONLYFORCONTEXTPATH = "hst:onlyforcontextpath";
+    String MOUNT_PROPERTY_CONTEXTPATH = "hst:contextpath";
+
     String MOUNT_PROPERTY_NAMEDPIPELINE = "hst:namedpipeline";
     String MOUNT_PROPERTY_SHOWPORT = "hst:showport";
     String MOUNT_PROPERTY_SCHEME = "hst:scheme";

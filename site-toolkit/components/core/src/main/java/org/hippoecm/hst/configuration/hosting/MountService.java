@@ -188,9 +188,11 @@ public class MountService implements ContextualizableMount, MutableMount {
     private int port;
 
     /**
-     *  when this {@link Mount} is only applicable for certain contextpath, this property for the contextpath tells which value it must have. It must start with a slash.
+     *  when this {@link Mount} is only applicable for certain contextpath,
+     *  this property for the contextpath tells which value it must have. If not null, it must start with a '/' and is
+     *  not allowed to end with a '/'
      */
-    private String onlyForContextPath;
+    private String contextPath;
 
     private String scheme;
     private boolean schemeAgnostic;
@@ -301,27 +303,35 @@ public class MountService implements ContextualizableMount, MutableMount {
             }
         }
 
-        if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_ONLYFORCONTEXTPATH)) {
-            this.onlyForContextPath = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_ONLYFORCONTEXTPATH);
-        } else {
-            if(parent != null) {
-                this.onlyForContextPath = parent.onlyForContextPath();
+        if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_ONLYFORCONTEXTPATH)) {
+            log.warn("Property '{}' on Mount '{}' is deprecated. Use property '{}' instead",
+                    HstNodeTypes.MOUNT_PROPERTY_ONLYFORCONTEXTPATH, jcrLocation, HstNodeTypes.MOUNT_PROPERTY_CONTEXTPATH);
+            this.contextPath = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_ONLYFORCONTEXTPATH);
+        }
+
+        if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_CONTEXTPATH)) {
+            this.contextPath = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_CONTEXTPATH);
+        }
+
+        if(contextPath == null) {
+            if (parent == null) {
+                this.contextPath = virtualHost.getContextPath();
             } else {
-                this.onlyForContextPath = virtualHost.onlyForContextPath();
+                this.contextPath = parent.getContextPath();
             }
         }
 
-        if (onlyForContextPath != null && !"".equals(onlyForContextPath)) {
-            if (onlyForContextPath.startsWith("/")) {
-                // onlyForContextPath starts with a slash. If it contains another /, it is configured incorrectly
-                if (onlyForContextPath.substring(1).contains("/")) {
-                    log.warn("Incorrectly configured 'onlyForContextPath' : It must start with a '/' and is not allowed to contain any other '/' slashes. We set onlyForContextPath to null");
-                    onlyForContextPath = null;
+        if (StringUtils.isNotEmpty(contextPath)) {
+            if (contextPath.startsWith("/")) {
+                // contextPath starts with a slash. If it contains another /, it is configured incorrectly
+                if (contextPath.substring(1).contains("/")) {
+                    log.warn("Incorrectly configured 'contextPath' : It must start with a '/' and is not allowed to contain any other '/' slashes. We set contextPath to null");
+                    contextPath = null;
                 }
             } else {
-                log.warn("Incorrect configured 'onlyForContextPath': It must start with a '/' to be used, but it is '{}'. " +
-                        "We set onlyForContextPath to null", onlyForContextPath);
-                onlyForContextPath = null;
+                log.warn("Incorrect configured 'contextPath': It must start with a '/' to be used, but it is '{}'. " +
+                        "We set contextPath to null", contextPath);
+                contextPath = null;
             }
         }
 
@@ -756,8 +766,13 @@ public class MountService implements ContextualizableMount, MutableMount {
         return isSite;
     }
 
+    @Deprecated
     public String onlyForContextPath() {
-        return onlyForContextPath;
+        return contextPath;
+    }
+
+    public String getContextPath() {
+        return contextPath;
     }
 
     public boolean isPreview() {

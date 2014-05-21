@@ -376,9 +376,15 @@ public class MountDecoratorImpl implements MountDecorator {
             return delegatee.isVersionInPreviewHeader();
         }
 
+        @Deprecated
         @Override
         public String onlyForContextPath() {
             return delegatee.onlyForContextPath();
+        }
+
+        @Override
+        public String getContextPath() {
+            return delegatee.getContextPath();
         }
 
         @Deprecated
@@ -471,9 +477,15 @@ public class MountDecoratorImpl implements MountDecorator {
             return delegatee.isContextPathInUrl();
         }
 
+        @Deprecated
         @Override
         public String onlyForContextPath() {
             return delegatee.onlyForContextPath();
+        }
+
+        @Override
+        public String getContextPath() {
+            return delegatee.getContextPath();
         }
 
         @Override

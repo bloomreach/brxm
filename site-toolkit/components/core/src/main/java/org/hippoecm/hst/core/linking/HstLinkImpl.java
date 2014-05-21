@@ -19,6 +19,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -27,6 +28,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.request.ResolvedMountImpl;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.HstSiteMapUtils;
@@ -143,10 +145,14 @@ public class HstLinkImpl implements HstLink {
         // check if we need to set an explicit contextPath 
         String explicitContextPath = null;
         if (requestContext.isCmsRequest()) {
-            explicitContextPath = requestMount.onlyForContextPath();
+            if (requestMount.getContextPath() == null) {
+                explicitContextPath = requestContext.getServletRequest().getContextPath();
+            } else {
+                explicitContextPath = requestMount.getContextPath();
+            }
         } else if (mount != null && requestMount != mount) {
-            if (mount.isContextPathInUrl() && mount.onlyForContextPath() != null) {
-                explicitContextPath = mount.onlyForContextPath();
+            if (mount.isContextPathInUrl() && mount.getContextPath() != null) {
+                explicitContextPath = mount.getContextPath();
             }
         }
 
@@ -157,7 +163,8 @@ public class HstLinkImpl implements HstLink {
             urlString = hstUrl.toString();
         } else {
 
-            String subPathDelimeter = requestMount.getVirtualHost().getVirtualHosts().getHstManager().getPathSuffixDelimiter();
+            HstManager mngr = HstServices.getComponentManager().getComponent(HstManager.class.getName());
+            String subPathDelimeter =  mngr.getPathSuffixDelimiter();
             if (subPath != null) {
                 // subPath is allowed to be empty ""
                 path += subPathDelimeter + subPath;
@@ -193,7 +200,7 @@ public class HstLinkImpl implements HstLink {
                 // check whether the urlString is equal to the contextPath of the mount. If so,
                 // we need to append an extra / to the urlString : This is to avoid a link like 
                 // '/site' in cms preview context: It must there be '/site/'
-                if (urlString.equals(requestMount.onlyForContextPath())) {
+                if (urlString.equals(requestMount.getContextPath())) {
                     urlString += "/";
                 }
             }

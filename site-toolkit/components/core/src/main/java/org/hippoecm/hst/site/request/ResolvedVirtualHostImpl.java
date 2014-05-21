@@ -87,18 +87,19 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost {
             position++;
         }
         
-        if(contextPath != null && contextPath.length() != 0) {
-            // Check if the Mount that has a valid 'onlyForContextPath' : 
-            // if onlyForContextPath is not null && not equal to the contextPath, we need to try the parent Mount 
-            // until we have a valid one or have a Mount that is null
-            while(mount != null && contextPath != null && (mount.onlyForContextPath() != null && !mount.onlyForContextPath().equals(contextPath) )) {
-                log.debug("Mount '{}' cannot be used because the contextPath '{}' is not valid for this Mount, because it is only for context path. Let's try parent Mount's if present.'"+mount.onlyForContextPath()+"' ", mount.getName(), contextPath);
+        if(contextPath != null && mount.getContextPath() != null) {
+            // Check if the Mount that has a valid contextpath
+            while(mount != null && contextPath != null && (mount.getContextPath() != null && !mount.getContextPath().equals(contextPath) )) {
+                log.debug("Mount '{}' cannot be used because the contextPath '{}' is not valid for this Mount, because it is only for context path. Try parent Mount's if present.'"
+                        +mount.getContextPath()+"' ", mount.getName(), contextPath);
                 mount = mount.getParent();
             }
         }
         
         if(mount == null) {
-            log.warn("Virtual Host '{}' is not (correctly) mounted for portnumber '{}': We cannot return a ResolvedMount. Return null", virtualHost.getHostName(), String.valueOf(portMount.getPortNumber()));
+            log.warn("Virtual Host '{}' is not (correctly) mounted for portnumber '{}' and contextpath '{}': " +
+                    "We cannot return a ResolvedMount. Return null",
+                    virtualHost.getHostName(), String.valueOf(portMount.getPortNumber()), contextPath);
             return null;
         }
         

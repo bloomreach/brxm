@@ -85,10 +85,9 @@ public class DocumentsResource extends BaseResource implements DocumentService {
             document.setHostName(link.getMount().getVirtualHost().getHostName());
 
             // The preview in the cms always accesses the hst site through the hostname of the cms, but
-            // adds the contextpath of the website. By default it is site, but if a different contextpath is
-            // available for the mount that belongs to the HstLink, we take that one.
-            if (link.getMount().onlyForContextPath() != null) {
-                document.setContextPath(link.getMount().onlyForContextPath());
+            // adds the contextpath of the website.
+            if (link.getMount().getContextPath() != null) {
+                document.setContextPath(link.getMount().getContextPath());
             } else {
                 // if there is no contextpath configured on the Mount belonging to the HstLink, we use the contextpath
                 // from the current HttpServletRequest
