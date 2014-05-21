@@ -85,7 +85,8 @@ public class HeadContributionTag extends BodyTagSupport {
 
                     DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
                     DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
-                    Document doc = docBuilder.parse(new InputSource(new StringReader(xmlText)));
+                    reader = new StringReader(xmlText);
+                    Document doc = docBuilder.parse(new InputSource(reader));
                     element = doc.getDocumentElement();
                 } catch (Exception ex) {
                     throw new JspException(ex);
