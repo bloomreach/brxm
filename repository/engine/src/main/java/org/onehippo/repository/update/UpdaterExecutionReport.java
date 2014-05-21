@@ -139,6 +139,10 @@ class UpdaterExecutionReport {
         skippedCount++;
     }
 
+    int getVisitedCount() {
+        return getUpdateCount() + getFailedCount() + getSkippedCount();
+    }
+
     Logger getLogger() {
         return logger;
     }

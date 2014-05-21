@@ -43,7 +43,6 @@ import javax.jcr.query.QueryManager;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.core.id.NodeId;
-import org.codehaus.groovy.control.CompilationFailedException;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
@@ -111,6 +110,12 @@ public class UpdaterExecutor implements EventListener {
             message = "Finished executing updater " + updaterInfo.getName();
             info(message);
             logEvent(updaterInfo.getMethod(), null, message);
+            info("Visited " + report.getVisitedCount() + " nodes in total");
+            if (report.getVisitedCount() > 0) {
+                info("Updated: " + report.getUpdateCount());
+                info("Skipped: " + report.getSkippedCount());
+                info("Failed: " + report.getFailedCount());
+            }
             report.finish();
             try {
                 commitBatchIfNeeded();
@@ -166,7 +171,7 @@ public class UpdaterExecutor implements EventListener {
             try {
                 info("Loading nodes to update");
                 startNode.accept(visitor);
-                info("Finished loading nodes to update");
+                info("Finished loading " + visitor.count() + " nodes to update");
                 for (String identifier : visitor.identifiers()) {
                     if (cancelled) {
                         info("Update cancelled");
@@ -238,7 +243,7 @@ public class UpdaterExecutor implements EventListener {
                     info("Loaded " + count + " nodes");
                 }
             }
-            info("Finished loading nodes to update");
+            info("Finished loading " + count + " nodes to update");
             return results;
         } catch (RepositoryException e) {
             error("Executing query failed: " + e.getClass().getName() + " : " + e.getMessage());
@@ -374,6 +379,10 @@ public class UpdaterExecutor implements EventListener {
             }
         }
 
+        private long count() {
+            return count;
+        }
+
         private Iterable<String> identifiers() {
             return new Iterable<String>() {
                 @Override
@@ -416,11 +425,15 @@ public class UpdaterExecutor implements EventListener {
                 }
             }
             report.startBatch();
-            saveReport(session.getNodeByIdentifier(updaterInfo.getIdentifier()));
+            saveReport();
         }
         if (batchCompleted) {
             throttle(updaterInfo.getThrottle());
         }
+    }
+
+    private void saveReport() throws RepositoryException {
+        saveReport(session.getNodeByIdentifier(updaterInfo.getIdentifier()));
     }
 
     private void saveReport(final Node node) throws RepositoryException {
