@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * - property 'maxitems' (Long) the maximum number of items to keep in the logs. Defaults to -1, which means no maximum.
  * - property 'keepitemsfor' (Long) the number of milliseconds to keep items in the logs.
  */
-@RequiresService( types = { RepositoryScheduler.class } )
+@RequiresService(types = {RepositoryScheduler.class})
 public class EventLogCleanupModule extends AbstractReconfigurableDaemonModule {
 
     private static final Logger log = LoggerFactory.getLogger(EventLogCleanupModule.class);
@@ -59,14 +59,13 @@ public class EventLogCleanupModule extends AbstractReconfigurableDaemonModule {
     private static final String CONFIG_CRONEXPRESSION_PROPERTY = "cronexpression";
     private static final String CONFIG_LOCK_ISDEEP_PROPERTY = "jcr:lockIsDeep";
     private static final String CONFIG_LOCK_OWNER = "jcr:lockOwner";
-    
+
     private static final String ITEMS_QUERY_MAX_ITEMS = "SELECT * FROM hippolog:item ORDER BY hippolog:timestamp ASC";
     private static final String ITEMS_QUERY_ITEM_TIMEOUT = "SELECT * FROM hippolog:item ORDER BY hippolog:timestamp ASC";
 
     private String cronExpression = null;
     private long maxitems = -1;
     private long itemtimeout = -1;
-    private RepositoryJobInfo jobInfo;
     private String quartzNamePostfix = "";
 
     public EventLogCleanupModule() {
@@ -125,12 +124,12 @@ public class EventLogCleanupModule extends AbstractReconfigurableDaemonModule {
 
         final RepositoryScheduler scheduler = HippoServiceRegistry.getService(RepositoryScheduler.class);
 
-        final String jobName = "EventLogCleanupJob" + quartzNamePostfix;
+        final String jobName = getJobName();
         if (scheduler.checkExists(jobName, "default")) {
             return;
         }
 
-        jobInfo = new RepositoryJobInfo(jobName, EventLogCleanupJob.class);
+        final RepositoryJobInfo jobInfo = new RepositoryJobInfo(jobName, EventLogCleanupJob.class);
         jobInfo.setAttribute(CONFIG_MAXITEMS_PROPERTY, Long.toString(maxitems));
         jobInfo.setAttribute(CONFIG_KEEP_ITEMS_FOR, Long.toString(itemtimeout));
         jobInfo.setAttribute(CONFIG_MODULECONFIGPATH, moduleConfigPath);
@@ -142,9 +141,12 @@ public class EventLogCleanupModule extends AbstractReconfigurableDaemonModule {
 
     void unscheduleJob() throws RepositoryException {
         final RepositoryScheduler repositoryScheduler = HippoServiceRegistry.getService(RepositoryScheduler.class);
-        final String jobName = "EventLogCleanupJob" + quartzNamePostfix;
+        final String jobName = getJobName();
         repositoryScheduler.deleteJob(jobName, "default");
-        jobInfo = null;
+    }
+
+    private String getJobName() {
+        return "EventLogCleanupJob" + quartzNamePostfix;
     }
 
     public static class EventLogCleanupJob implements RepositoryJob {
@@ -152,12 +154,12 @@ public class EventLogCleanupModule extends AbstractReconfigurableDaemonModule {
         @Override
         public void execute(final RepositoryJobExecutionContext context) throws RepositoryException {
 
-            Session session = context.createSession(new SimpleCredentials("system", new char[] {}));
+            Session session = context.createSession(new SimpleCredentials("system", new char[]{}));
 
             try {
                 log.info("Running event log cleanup job");
 
-                long maxitems =  Long.valueOf(context.getAttribute(CONFIG_MAXITEMS_PROPERTY));
+                long maxitems = Long.valueOf(context.getAttribute(CONFIG_MAXITEMS_PROPERTY));
                 long itemtimeout = Long.valueOf(context.getAttribute(CONFIG_KEEP_ITEMS_FOR));
 
                 removeTooManyItems(maxitems, session);
@@ -173,7 +175,7 @@ public class EventLogCleanupModule extends AbstractReconfigurableDaemonModule {
                 final QueryManager queryManager = session.getWorkspace().getQueryManager();
                 final Query query = queryManager.createQuery(ITEMS_QUERY_MAX_ITEMS, Query.SQL);
                 final NodeIterator nodes = query.execute().getNodes();
-                final long totalSize = ((HippoNodeIterator)nodes).getTotalSize();
+                final long totalSize = ((HippoNodeIterator) nodes).getTotalSize();
                 final long cleanupSize = totalSize - maxitems;
                 for (int i = 0; i < cleanupSize; i++) {
                     try {
@@ -200,7 +202,7 @@ public class EventLogCleanupModule extends AbstractReconfigurableDaemonModule {
                 }
             }
         }
-        
+
         private void removeTimedOutItems(long itemtimeout, Session session) throws RepositoryException {
             if (itemtimeout != -1) {
                 final QueryManager queryManager = session.getWorkspace().getQueryManager();
