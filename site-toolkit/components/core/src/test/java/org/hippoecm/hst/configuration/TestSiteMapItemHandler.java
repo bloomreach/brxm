@@ -75,7 +75,7 @@ public class TestSiteMapItemHandler extends AbstractTestConfigurations {
             request.setServerName("localhost");
             request.addHeader("Host", "localhost");
             request.setRequestURI("/handler_nooptest");
-            request.setContextPath("");
+            request.setContextPath("/site");
             
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
@@ -170,7 +170,7 @@ public class TestSiteMapItemHandler extends AbstractTestConfigurations {
             request.setServerName("localhost");
             request.addHeader("Host", "localhost");
             request.setRequestURI("/handler_nooptest/foo");
-            request.setContextPath("");
+            request.setContextPath("/site");
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
                 ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
@@ -213,7 +213,7 @@ public class TestSiteMapItemHandler extends AbstractTestConfigurations {
             request.setServerName("localhost");
             request.addHeader("Host", "localhost");
             request.setRequestURI("/multiplehandler_example/foo/bar");
-            request.setContextPath("");
+            request.setContextPath("/site");
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
                 ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
@@ -282,7 +282,7 @@ public class TestSiteMapItemHandler extends AbstractTestConfigurations {
             request.setServerName("localhost");
             request.addHeader("Host", "localhost");
             request.setRequestURI("/handler_browser_redirecttest");
-            request.setContextPath("");
+            request.setContextPath("/site");
             
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
@@ -337,7 +337,7 @@ public class TestSiteMapItemHandler extends AbstractTestConfigurations {
             request.setServerName("localhost");
             request.addHeader("Host", "localhost");
             request.setRequestURI("/handler_sitemapitem_redirecttest"); 
-            request.setContextPath("");
+            request.setContextPath("/site");
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
                 ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
