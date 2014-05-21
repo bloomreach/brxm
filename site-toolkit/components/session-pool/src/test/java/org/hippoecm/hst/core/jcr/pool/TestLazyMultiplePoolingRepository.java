@@ -226,8 +226,10 @@ public class TestLazyMultiplePoolingRepository {
         session.logout();
         assertNotNull(disposableWikiPoolingRepo);
         assertTrue(disposableWikiPoolingRepo.isActive());
-        
+
+        System.gc();
         Thread.sleep(3000);
+        System.gc();
         
         disposableWikiRepo = multipleRepository.getRepositoryByCredentials(disposableWiki2Creds);
         assertNull(disposableWikiRepo);
