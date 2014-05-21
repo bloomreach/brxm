@@ -17,7 +17,7 @@ limitations under the License. -->
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:virtualhost</sv:value>
   </sv:property>
-  <sv:property sv:name="hst:onlyforcontextpath" sv:type="String">
+  <sv:property sv:name="hst:contextpath" sv:type="String">
     <sv:value>/intranet</sv:value>
   </sv:property>
   <sv:property sv:name="hst:homepage" sv:type="String">
@@ -37,6 +37,9 @@ limitations under the License. -->
         </sv:property>
         <sv:property sv:name="hst:mountpoint" sv:type="String">
           <sv:value>/hst:hst/hst:sites/intranet</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:channelpath" sv:type="String">
+          <sv:value>/hst:hst/hst:channels/intranet</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>

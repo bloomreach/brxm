@@ -22,9 +22,6 @@
   <sv:property sv:name="hst:showport" sv:type="Boolean">
     <sv:value>true</sv:value>
   </sv:property>
-  <sv:property sv:name="hst:channelmanagerhostgroup" sv:type="String">
-    <sv:value>dev-localhost</sv:value>
-  </sv:property>
   <sv:property sv:name="hst:defaultcontextpath" sv:type="String">
     <sv:value>/site</sv:value>
   </sv:property>
@@ -449,7 +446,7 @@
       <sv:value>hst:virtualhostgroup</sv:value>
     </sv:property>
     <sv:property sv:name="hst:cmslocation" sv:type="String">
-      <sv:value>http://localhost:8080/cms</sv:value>
+      <sv:value>http://127.0.0.1:8080/cms</sv:value>
     </sv:property>
     <sv:property sv:name="hst:defaultport" sv:type="Long">
       <sv:value>8080</sv:value>
@@ -476,7 +473,7 @@
       <sv:value>hst:virtualhostgroup</sv:value>
     </sv:property>
     <sv:property sv:name="hst:cmslocation" sv:type="String">
-      <sv:value>http://localhost:8080/cms</sv:value>
+      <sv:value>http://com.localhost:8080/cms</sv:value>
     </sv:property>
     <sv:property sv:name="hst:defaultport" sv:type="Long">
       <sv:value>8080</sv:value>
