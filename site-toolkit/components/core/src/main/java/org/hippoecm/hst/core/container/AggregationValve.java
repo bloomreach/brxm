@@ -429,47 +429,7 @@ public class AggregationValve extends AbstractBaseOrderableValve {
             }
             HstResponse response = responseMap.get(window);
             getComponentInvoker().invokeRender(requestContainerConfig, request, response);
-
-            if (log.isWarnEnabled()) {
-                if (window.getChildWindowMap() != null) {
-                    for (HstComponentWindow childWindow : window.getChildWindowMap().values()) {
-                        final HstResponse childResponse = responseMap.get(childWindow);
-                        if (!(childResponse instanceof HstResponseImpl)) {
-                            continue;
-                        }
-                        final HstResponseImpl childResponseImpl = (HstResponseImpl) childResponse;
-                        if (!childWindow.getResponseState().isFlushed() && StringUtils.isNotBlank(getRenderer(childWindow, childResponseImpl))) {
-                            if (childResponse.getHeadElements() == null || childResponse.getHeadElements().isEmpty()) {
-                                // there is a window with a renderer but the content is never included in its ancestor component : That
-                                // is a waste. Hence this warning
-                                log.warn("Component '{}' gets rendered but never adds anything to the response. Component id is '{}' " +
-                                        " and renderer '{}' is never flushed to a parent component. This is waste.",
-                                        new String[]{childWindow.getName(), childWindow.getComponentInfo().getId(), getRenderer(childWindow, childResponseImpl)});
-                            } else {
-                                // there is a window with a renderer but the content is never included in its ancestor component apart from some
-                                // head elements : this is potential waste and unintended behavior has this info
-                                log.info("Component '{}' gets rendered but except for some head element(s) adds nothing to the response. Component id is '{}' " +
-                                        " and renderer '{}' is never flushed to a parent component. This component might be waste.",
-                                        new String[]{childWindow.getName(), childWindow.getComponentInfo().getId(), getRenderer(childWindow, childResponseImpl)});
-                            }
-                        }
-                    }
-                }
-            }
-
         }
-    }
-
-    private String getRenderer(final HstComponentWindow window, final HstResponseImpl hstResponse) {
-        String dispatchUrl = hstResponse.getRenderPath();
-        if (StringUtils.isNotBlank(dispatchUrl)) {
-            return dispatchUrl;
-        }
-        dispatchUrl = window.getRenderPath();
-        if (StringUtils.isNotBlank(dispatchUrl)) {
-            return dispatchUrl;
-        }
-        return window.getNamedRenderer();
     }
 
     /**
