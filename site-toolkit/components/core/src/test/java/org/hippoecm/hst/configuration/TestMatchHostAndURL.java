@@ -37,6 +37,7 @@ import org.hippoecm.hst.site.request.MountDecoratorImpl;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -57,6 +58,7 @@ public class TestMatchHostAndURL extends AbstractTestConfigurations {
         public void setUp() throws Exception {
             super.setUp();
             this.hstSitesManager = getComponent(HstManager.class.getName());
+            System.out.println(hstSitesManager);
             this.hstURLFactory = getComponent(HstURLFactory.class.getName());
         }
 
@@ -87,11 +89,11 @@ public class TestMatchHostAndURL extends AbstractTestConfigurations {
         @Test
         public void testMatchNoContextPath() throws Exception {
             Session session = createSession();
+            createHstConfigBackup(session);
             // because hst:hosts contains hst:defaultcontextpath = /site we first need to set that property to ""
             session.getNode("/hst:hst/hst:hosts").setProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTCONTEXTPATH, "");
             session.save();
             Thread.sleep(100);
-            createHstConfigBackup(session);
             try {
 
                 MockHttpServletResponse response = new MockHttpServletResponse();
@@ -132,11 +134,11 @@ public class TestMatchHostAndURL extends AbstractTestConfigurations {
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
         Session session = createSession();
+        createHstConfigBackup(session);
         // because hst:hosts contains hst:defaultcontextpath = /site we first need to set that property to ""
         session.getNode("/hst:hst/hst:hosts").setProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTCONTEXTPATH, "");
         session.save();
         Thread.sleep(100);
-        createHstConfigBackup(session);
         try {
             request.setScheme("http");
             request.setServerName("localhost");
@@ -174,7 +176,7 @@ public class TestMatchHostAndURL extends AbstractTestConfigurations {
             request.setScheme("http");
             request.setServerName("localhost");
             request.addHeader("Host", "localhost");
-            request.setRequestURI("/preview/news/2009");
+            request.setRequestURI("/site/preview/news/2009");
             request.setContextPath("/site");
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
@@ -229,11 +231,11 @@ public class TestMatchHostAndURL extends AbstractTestConfigurations {
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
         Session session = createSession();
+        createHstConfigBackup(session);
         // because hst:hosts contains hst:defaultcontextpath = /site we first need to remove that property
         session.getNode("/hst:hst/hst:hosts").getProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTCONTEXTPATH).remove();
         session.save();
         Thread.sleep(100);
-        createHstConfigBackup(session);
         try {
         request.setScheme("http");
         request.setServerName("localhost");
