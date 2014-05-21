@@ -266,7 +266,7 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
     }
 
     @Test
-    public void channelsThatAreNotReferencedByAMountAreNotPresent() throws ChannelException, RepositoryException, PrivilegedActionException, ContainerException {
+    public void channels_not_referenced_by_mount_in_hostgroup_are_not_in_hostgroup() throws ChannelException, RepositoryException, PrivilegedActionException, ContainerException {
          Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
         int numberOfChannerBeforeAddingAnOrphanOne = channels.size();
 
