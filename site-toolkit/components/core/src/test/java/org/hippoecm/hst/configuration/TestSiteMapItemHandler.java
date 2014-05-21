@@ -74,7 +74,7 @@ public class TestSiteMapItemHandler extends AbstractTestConfigurations {
             request.setScheme("http");
             request.setServerName("localhost");
             request.addHeader("Host", "localhost");
-            request.setRequestURI("/handler_nooptest");
+            request.setRequestURI("/site/handler_nooptest");
             request.setContextPath("/site");
             
             try {
@@ -169,7 +169,7 @@ public class TestSiteMapItemHandler extends AbstractTestConfigurations {
             request.setScheme("http");
             request.setServerName("localhost");
             request.addHeader("Host", "localhost");
-            request.setRequestURI("/handler_nooptest/foo");
+            request.setRequestURI("/site/handler_nooptest/foo");
             request.setContextPath("/site");
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
@@ -212,7 +212,7 @@ public class TestSiteMapItemHandler extends AbstractTestConfigurations {
             request.setScheme("http");
             request.setServerName("localhost");
             request.addHeader("Host", "localhost");
-            request.setRequestURI("/multiplehandler_example/foo/bar");
+            request.setRequestURI("/site/multiplehandler_example/foo/bar");
             request.setContextPath("/site");
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
@@ -281,7 +281,7 @@ public class TestSiteMapItemHandler extends AbstractTestConfigurations {
             request.setScheme("http");
             request.setServerName("localhost");
             request.addHeader("Host", "localhost");
-            request.setRequestURI("/handler_browser_redirecttest");
+            request.setRequestURI("/site/handler_browser_redirecttest");
             request.setContextPath("/site");
             
             try {
@@ -336,7 +336,7 @@ public class TestSiteMapItemHandler extends AbstractTestConfigurations {
             request.setScheme("http");
             request.setServerName("localhost");
             request.addHeader("Host", "localhost");
-            request.setRequestURI("/handler_sitemapitem_redirecttest"); 
+            request.setRequestURI("/site/handler_sitemapitem_redirecttest");
             request.setContextPath("/site");
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
