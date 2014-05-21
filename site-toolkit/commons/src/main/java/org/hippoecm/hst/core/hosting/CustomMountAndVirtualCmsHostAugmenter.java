@@ -213,6 +213,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
                 while (!cmsLocationHost.getChildHosts().isEmpty()) {
                     cmsLocationHost = cmsLocationHost.getChildHosts().get(0);
                 }
+                log.info("Added cms host '{}' for host group '{}'", cmsLocationHost.getHomePage(), cmsLocationHost.getHostGroupName());
             }
 
             // now check whether to add a portMount
@@ -348,7 +349,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
             this.hostGroupName = hostGroupName;
             name = hostSegments[position];
             this.cmsLocations = cmsLocations;
-            hostName = ancestor.getHostName() +  "." + hostSegments[position];
+            hostName = hostSegments[position] + "." + ancestor.getHostName();
             position++;
             ancestor.addVirtualHost(this);
             if (position < hostSegments.length) {
