@@ -967,8 +967,8 @@ public class VirtualHostsService implements MutableVirtualHosts {
                 url.append(mount.getPort());
             }
         }
-        if (virtualHost.isContextPathInUrl() && mount.getContentPath() != null) {
-            url.append(mount.getContentPath());
+        if (virtualHost.isContextPathInUrl() && mount.getContextPath() != null) {
+            url.append(mount.getContextPath());
         }
         if (StringUtils.isNotEmpty(mountPath)) {
             if (!mountPath.startsWith("/")) {
