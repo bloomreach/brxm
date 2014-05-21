@@ -33,7 +33,6 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.freemarker.HstClassTemplateLoader;
 import org.hippoecm.hst.freemarker.RepositoryTemplateLoader;
 import org.hippoecm.hst.proxy.ProxyFactory;
-import org.hippoecm.hst.util.ServletConfigUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +44,6 @@ import freemarker.ext.servlet.AllHttpScopesHashModel;
 import freemarker.ext.servlet.FreemarkerServlet;
 import freemarker.template.Configuration;
 import freemarker.template.ObjectWrapper;
-import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
@@ -58,17 +56,13 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
 
     private static final String ATTR_JSP_TAGLIBS_MODEL = ".freemarker.JspTaglibs";
 
-    private static final String CONTINUE_RENDERING_AFTER_EXCEPTION = "continue-rendering-after-exception";
-
-    private boolean continueRenderingAfterException;
-
     private boolean lookupVirtualWebappLibResourcePathsChecked;
 
     private boolean lookupVirtualWebappLibResourcePathsEnabled;
 
     private boolean taglibModelInitialized;
     
-    private RepositoryTemplateLoader repositoryLoader;
+    private RepositoryTemplateLoader repositoryTemplateLoader;
 
     @Override
     public void init() throws ServletException {
@@ -82,13 +76,6 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
             conf.setTemplateExceptionHandler(TemplateExceptionHandler.IGNORE_HANDLER);
         }
 
-        TemplateLoader classTemplateLoader =  new HstClassTemplateLoader(getClass());
-        TemplateLoader defaultLoader = conf.getTemplateLoader();
-        // repository template loader
-        repositoryLoader = new RepositoryTemplateLoader();
-        TemplateLoader[] loaders = new TemplateLoader[] { defaultLoader, classTemplateLoader, repositoryLoader };
-        TemplateLoader multiLoader = new MultiTemplateLoader(loaders);
-        conf.setTemplateLoader(multiLoader);
         conf.setLocalizedLookup(false);
         
     }
@@ -98,7 +85,7 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
     @Override
     public void destroy() {
         super.destroy();
-        repositoryLoader.destroy();
+        repositoryTemplateLoader.destroy();
     }
 
 
@@ -205,5 +192,21 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Overrides {@link FreemarkerServlet#createTemplateLoader(String)} in order to use
+     * {@link MultiTemplateLoader} instead which cascades {@link HstClassTemplateLoader} and {@link RepositoryTemplateLoader}
+     * until it finds a template by the <code>templatePath</code>.
+     */
+    @Override
+    protected TemplateLoader createTemplateLoader(String templatePath) throws IOException {
+        TemplateLoader defaultTemplateLoader = super.createTemplateLoader(templatePath);
+        TemplateLoader classTemplateLoader =  new HstClassTemplateLoader(getClass());
+        // repository template loader
+        repositoryTemplateLoader = new RepositoryTemplateLoader();
+        TemplateLoader[] loaders = new TemplateLoader[] { defaultTemplateLoader, classTemplateLoader, repositoryTemplateLoader };
+        TemplateLoader multiLoader = new MultiTemplateLoader(loaders);
+        return multiLoader;
     }
 }
