@@ -51,16 +51,16 @@ public class HstEventsCollector {
     }
 
     public synchronized void collect(EventIterator events) {
-        final Map<String, Set<Integer>> movedNodePathMap = new HashMap<>();
+        final Map<String, Set<Integer>> movedNodeDetectionMap = new HashMap<>();
         while (events.hasNext()) {
             try {
-                addEvent(events.nextEvent(), movedNodePathMap);
+                addEvent(events.nextEvent(), movedNodeDetectionMap);
             } catch (RepositoryException e) {
                 log.error("Exception while getting jcr event");
             }
         }
-        for (String movedNodePath : movedNodePathMap.keySet()) {
-            if (movedNodePathMap.get(movedNodePath).size() == 2) {
+        for (String movedNodePath : movedNodeDetectionMap.keySet()) {
+            if (movedNodeDetectionMap.get(movedNodePath).size() == 2) {
                 hstEvents.add(new HstEvent(StringUtils.substringBeforeLast(movedNodePath, "/"), false));
             }
         }
@@ -91,7 +91,7 @@ public class HstEventsCollector {
 
     }
 
-    private void addEvent(final Event jcrEvent, final Map<String, Set<Integer>> movedNodePathMap) throws RepositoryException {
+    private void addEvent(final Event jcrEvent, final Map<String, Set<Integer>> movedNodeDetectionMap) throws RepositoryException {
         if (HippoNodeType.HIPPO_IGNORABLE.equals(jcrEvent.getUserData())) {
             log.debug("Ignore event '{}' because marked {}", jcrEvent.getPath(), HippoNodeType.HIPPO_IGNORABLE);
             return;
@@ -107,10 +107,10 @@ public class HstEventsCollector {
         } else {
             final int type = jcrEvent.getType();
             if (type == Event.NODE_REMOVED || type == Event.NODE_ADDED) {
-                if (!movedNodePathMap.containsKey(path)) {
-                    movedNodePathMap.put(path, new HashSet<Integer>());
+                if (!movedNodeDetectionMap.containsKey(path)) {
+                    movedNodeDetectionMap.put(path, new HashSet<Integer>());
                 }
-                movedNodePathMap.get(path).add(type);
+                movedNodeDetectionMap.get(path).add(type);
             }
             event = new HstEvent(path, false);
         }
