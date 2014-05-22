@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.repository.documentworkflow;
+package org.onehippo.repository.scxml;
 
 import java.security.AccessControlException;
 import java.util.Arrays;

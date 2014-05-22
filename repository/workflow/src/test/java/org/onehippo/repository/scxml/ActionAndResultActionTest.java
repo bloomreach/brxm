@@ -21,7 +21,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.scxml2.SCXMLExecutor;
 import org.junit.Test;
-import org.onehippo.repository.documentworkflow.MockWorkflowContext;
 import org.onehippo.repository.mock.MockNode;
 
 /**

@@ -38,6 +38,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.mock.MockValue;
+import org.onehippo.repository.scxml.MockAccessManagedSession;
+import org.onehippo.repository.scxml.MockWorkflowContext;
 import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
 
 public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {

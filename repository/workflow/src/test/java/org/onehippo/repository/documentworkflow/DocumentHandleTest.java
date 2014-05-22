@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,10 +25,10 @@ import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
+import org.onehippo.repository.scxml.MockWorkflowContext;
 import org.onehippo.repository.scxml.SCXMLWorkflowContext;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -99,43 +99,5 @@ public class DocumentHandleTest extends BaseDocumentWorkflowTest {
         assertNotNull(getUnpublished(dh));
         assertNotNull(getPublished(dh));
         assertEquals(draftVariant, getDraft(dh).getNode());
-    }
-
-    @Test
-    public void testPrivileges() throws Exception {
-        MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
-        session.setPermissions("/test/test", "hippo:admin", false);
-        MockWorkflowContext context = new MockWorkflowContext("testuser", session);
-        Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
-        addVariant((MockNode)handleNode, HippoStdNodeType.DRAFT);
-        DocumentHandleWorkflowContext workflowContext = new DocumentHandleWorkflowContext("test", context);
-        DocumentHandle dh = new DocumentHandle(handleNode);
-        workflowContext.initialize();
-        dh.initialize();
-        // testing with only hippo:admin being denied
-        assertTrue(workflowContext.isGranted(getDraft(dh), "foo"));
-        assertTrue(workflowContext.isGranted(getDraft(dh), "foo,bar"));
-        assertTrue(workflowContext.isGranted(getDraft(dh), "bar,foo"));
-        assertFalse(workflowContext.isGranted(getDraft(dh), "hippo:admin"));
-
-        session.setPermissions("/test/test", "hippo:author,hippo:editor", true);
-        dh = new DocumentHandle(handleNode);
-        workflowContext.initialize();
-        dh.initialize();
-        // testing with only hippo:author,hippo:editor being allowed
-        assertFalse(workflowContext.isGranted(getDraft(dh), "foo"));
-        assertFalse(workflowContext.isGranted(getDraft(dh), "foo,bar"));
-        assertFalse(workflowContext.isGranted(getDraft(dh), "bar,foo"));
-        assertFalse(workflowContext.isGranted(getDraft(dh), "hippo:author,foo"));
-        assertFalse(workflowContext.isGranted(getDraft(dh), "hippo:author,hippo:editor,foo"));
-        assertTrue(workflowContext.isGranted(getDraft(dh), "hippo:author"));
-        assertTrue(workflowContext.isGranted(getDraft(dh), "hippo:editor"));
-        assertTrue(workflowContext.isGranted(getDraft(dh), "hippo:author,hippo:editor"));
-        assertTrue(workflowContext.isGranted(getDraft(dh), "hippo:editor,hippo:author"));
-        assertFalse(workflowContext.isGranted(getDraft(dh), "hippo:admin"));
-        assertFalse(workflowContext.isGranted(getDraft(dh), "hippo:admin,foo"));
-        assertFalse(workflowContext.isGranted(getDraft(dh), "hippo:admin,hippo:author"));
-        assertFalse(workflowContext.isGranted(getDraft(dh), "hippo:admin,hippo:author,hippo:editor"));
-        assertFalse(workflowContext.isGranted(getDraft(dh), "hippo:author,hippo:editor,hippo:admin"));
     }
 }
