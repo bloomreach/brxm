@@ -114,6 +114,17 @@ public abstract class MockItem implements Item {
     }
 
     @Override
+    public int getDepth() throws RepositoryException {
+        int depth = 0;
+        MockNode cursor = parent;
+        while (cursor != null) {
+            depth += 1;
+            cursor = cursor.getMockParent();
+        }
+        return depth;
+    }
+
+    @Override
     public void save() {
         // do nothing
     }
@@ -127,11 +138,6 @@ public abstract class MockItem implements Item {
 
     @Override
     public Item getAncestor(final int depth) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public int getDepth() throws RepositoryException {
         throw new UnsupportedOperationException();
     }
 

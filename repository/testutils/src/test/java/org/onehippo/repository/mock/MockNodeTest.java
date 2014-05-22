@@ -60,6 +60,7 @@ public class MockNodeTest {
         assertEquals("rep:root", empty.getPrimaryNodeType().getName());
         assertFalse(empty.hasProperties());
         assertFalse(empty.getProperties().hasNext());
+        assertEquals(0, empty.getDepth());
     }
 
     @Test
@@ -73,6 +74,7 @@ public class MockNodeTest {
         assertEquals("value", actual.getString());
         assertEquals("/prop", actual.getPath());
         assertEquals(node, actual.getParent());
+        assertEquals(1, actual.getDepth());
     }
 
     @Test
@@ -233,6 +235,7 @@ public class MockNodeTest {
 
         assertEquals(1, root.getNodes().getSize());
         assertSame(child, root.getNode("child"));
+        assertEquals(1, child.getDepth());
     }
 
     @Test
@@ -264,6 +267,7 @@ public class MockNodeTest {
         assertEquals("Root node should still have only one child", 1, root.getNodes().getSize());
         assertEquals("Child node should have one child", 1, child.getNodes().getSize());
         assertSame(grandchild, child.getNode("grandchild"));
+        assertEquals(2, grandchild.getDepth());
     }
 
     @Test(expected = PathNotFoundException.class)
