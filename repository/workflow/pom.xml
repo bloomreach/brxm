@@ -120,9 +120,6 @@
         <configuration>
           <forkMode>always</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
-          <excludes>
-            <exclude>**/TranslationWorkflowTest.java</exclude>
-          </excludes>
         </configuration>
       </plugin>
     </plugins>

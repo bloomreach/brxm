@@ -77,7 +77,7 @@ public class TranslationWorkflowTest extends RepositoryTestCase {
 
         build(content, session);
 
-        privileges = new HashMap<String, Value[]>();
+        privileges = new HashMap<>();
         for (String category : new String[] { "translation", "embedded", "translation-copy", "translation-internal" }) {
             Node workflowsNode = session.getRootNode().getNode("hippo:configuration/hippo:workflows/" + category);
             for (NodeIterator handlers = workflowsNode.getNodes(); handlers.hasNext();) {
@@ -130,6 +130,7 @@ public class TranslationWorkflowTest extends RepositoryTestCase {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testTranslateDocumentInTranslatedFolder() throws Exception {
         WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
         Node handle = session.getRootNode().getNode("test/folder/document");
