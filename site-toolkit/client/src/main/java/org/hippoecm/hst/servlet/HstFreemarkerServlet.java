@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.proxy.Interceptor;
 import org.apache.commons.proxy.Invocation;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.freemarker.DelegatingTemplateLoader;
 import org.hippoecm.hst.freemarker.HstClassTemplateLoader;
 import org.hippoecm.hst.freemarker.RepositoryTemplateLoader;
 import org.hippoecm.hst.proxy.ProxyFactory;
@@ -201,7 +202,8 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
      */
     @Override
     protected TemplateLoader createTemplateLoader(String templatePath) throws IOException {
-        TemplateLoader defaultTemplateLoader = super.createTemplateLoader(templatePath);
+        TemplateLoader defaultTemplateLoader = 
+                new DelegatingTemplateLoader(super.createTemplateLoader(templatePath), null, new String [] { "classpath:", "jcr:" });
         TemplateLoader classTemplateLoader =  new HstClassTemplateLoader(getClass());
         // repository template loader
         repositoryTemplateLoader = new RepositoryTemplateLoader();
