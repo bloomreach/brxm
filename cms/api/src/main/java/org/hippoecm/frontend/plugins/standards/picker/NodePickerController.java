@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,9 +18,10 @@ package org.hippoecm.frontend.plugins.standards.picker;
 import java.util.Iterator;
 
 import javax.jcr.Node;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+
 import org.apache.wicket.Component;
+import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IModelReference;
@@ -36,7 +37,6 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.preferences.IPreferencesStore;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +62,6 @@ public abstract class NodePickerController implements IDetachable {
     private IModel<Node> selectedModel;
     private IModel<Node> lastModelVisited;
     private IModel<Node> baseModel;
-    private String documentLocale;
 
     public NodePickerController(IPluginContext context, NodePickerControllerSettings settings) {
         this.context = context;
@@ -71,43 +70,6 @@ public abstract class NodePickerController implements IDetachable {
         if (settings.isLastVisitedEnabled()) {
            lastModelVisited = getLastVisitedFromPreferences();
         }
-
-
-        if (settings.isLanguageContextWare() && getPropertyNodeModel()!=null) {
-            try {
-                Node node = getPropertyNodeModel().getObject();
-
-                // move up until locale is found
-                while (documentLocale == null && node!=null) {
-                    node = node.getParent();
-                    final boolean isTranslatedDocument = node.isNodeType(HippoTranslationNodeType.NT_TRANSLATED);
-                    if (isTranslatedDocument) {
-                        if (node.hasProperty(HippoTranslationNodeType.LOCALE)) {
-                            final Property p = node.getProperty(HippoTranslationNodeType.LOCALE);
-                            documentLocale = p.getString();
-                        }
-                    }
-                }
-                // mode down from rootnode until locale is found
-                final Node rootNode = UserSession.get().getJcrSession().getRootNode();
-                Node languageRootNode = null;
-                while (node!=null && rootNode!=null && !rootNode.getPath().equals(node.getPath())) {
-                    node = node.getParent();
-                    final boolean isTranslatedNode = node.isNodeType(HippoTranslationNodeType.NT_TRANSLATED);
-                    if (isTranslatedNode) {
-                        if (node.hasProperty(HippoTranslationNodeType.LOCALE)) {
-                            languageRootNode = node;
-                        }
-                    }
-                }
-                if (rootNode!=null && !rootNode.equals(node)) {
-                    baseModel = new JcrNodeModel(languageRootNode);
-                }
-            } catch (RepositoryException e) {
-                log.warn(e.getMessage());
-            }
-        }
-
         if (settings.hasBaseUUID()) {
             String baseUUID = settings.getBaseUUID();
             try {
@@ -116,7 +78,7 @@ public abstract class NodePickerController implements IDetachable {
             } catch (RepositoryException e) {
                 log.error("Could not create base model from UUID[" + baseUUID + "]", e);
             }
-        }
+        }   
     }
 
     public Component create(final String id) {
@@ -130,7 +92,7 @@ public abstract class NodePickerController implements IDetachable {
         control.start();
 
         IClusterConfig clusterConfig = control.getClusterConfig();
-
+        
         final String selectionModelServiceId = clusterConfig.getString(settings.getSelectionServiceKey());
         selectionModelReference = context.getService(selectionModelServiceId, IModelReference.class);
         context.registerService(selectionModelObserver = new IObserver() {
@@ -203,7 +165,7 @@ public abstract class NodePickerController implements IDetachable {
     }
 
     /**
-     * A hook that allows subclasses to specify a default location.
+     * A hook that allows subclasses to specify a default location. 
      *
      * @return An model used as default initial selection
      */
@@ -231,12 +193,6 @@ public abstract class NodePickerController implements IDetachable {
      * @return The model that is initially selected
      */
     protected abstract IModel<Node> getInitialModel();
-
-    /**
-     * Return the model of the Node where the reference to the link is stored
-     * @return The model of the Node that contains a reference to the link
-     */
-    protected abstract IModel<Node> getPropertyNodeModel();
 
     /**
      * This method is called when a new model is selected.
@@ -373,7 +329,7 @@ public abstract class NodePickerController implements IDetachable {
         String lastVisited = store.getString(settings.getLastVisitedKey(), LAST_VISITED);
         if (lastVisited != null) {
             return new JcrNodeModel(lastVisited);
-            }
+        }
         return null;
     }
 
@@ -381,7 +337,7 @@ public abstract class NodePickerController implements IDetachable {
      * Save the last visited location in the preferences store. By default, only nodes of type hippostd:folder are
      * allowed, other nodetypes can be specified by configuring a multi-value String property named "last.visited.nodetypes".
      *
-     * By default, all nodes except hippo document are allowed
+     * By default, all nodes except hippo document are allowed 
      */
     private void saveLastModelVisited() {
         if (lastModelVisited != null && lastModelVisited.getObject() != null) {

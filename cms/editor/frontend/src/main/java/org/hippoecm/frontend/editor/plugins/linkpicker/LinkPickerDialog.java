@@ -1,7 +1,5 @@
 /*
-/*
-/*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,14 +20,11 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.picker.NodePickerController;
@@ -71,38 +66,6 @@ public class LinkPickerDialog extends AbstractDialog<String> {
                     return null;
                 } catch (RepositoryException e) {
                     log.error("Error while getting link picker model for the node with UUID '" + uuid + "'", e);
-                }
-                return null;
-            }
-
-            /**
-             *
-             * @return The {@link IModel} containing the {@link Node} where the compound containing
-             * the {@code hippo:mirror} is stored.
-             */
-            @Override
-            protected IModel<Node> getPropertyNodeModel() {
-                IModel<String> linkPickerDialogModel = getModel();
-                if (linkPickerDialogModel instanceof IChainingModel){
-                    IChainingModel chainingModel = (IChainingModel) linkPickerDialogModel;
-                    IModel jcrPropertyValueModel = chainingModel.getChainedModel();
-                    if (jcrPropertyValueModel instanceof JcrPropertyValueModel){
-                        JcrPropertyValueModel model = (JcrPropertyValueModel) jcrPropertyValueModel;
-                        JcrItemModel itemModel =
-                                model.getJcrPropertymodel().getItemModel();
-                        final JcrItemModel parentModel = itemModel.getParentModel();
-                        final String uuid = parentModel.getUuid();
-                        if (StringUtils.isNotEmpty(uuid)) {
-                            try {
-                                return new JcrNodeModel(UserSession.get().getJcrSession().getNodeByIdentifier(uuid));
-                            } catch (ItemNotFoundException e) {
-                                // valid case, node does not exist
-                                return null;
-                            } catch (RepositoryException e) {
-                                log.error("Error while getting link picker model for the node with UUID '" + uuid + "'", e);
-                            }
-                        }
-                    }
                 }
                 return null;
             }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -60,7 +60,8 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
 
                 public AbstractDialog<String> createDialog() {
                     final JcrPropertyValueModel<String> docbaseModel = getDocBaseModel();
-                    return new LinkPickerDialog(context, getPluginConfig(), new IChainingModel<String>() {
+                    final IPluginConfig dialogConfig = LinkPickerDialogConfig.fromPluginConfig(getPluginConfig(), docbaseModel);
+                    return new LinkPickerDialog(context, dialogConfig, new IChainingModel<String>() {
                         private static final long serialVersionUID = 1L;
 
                         public String getObject() {
