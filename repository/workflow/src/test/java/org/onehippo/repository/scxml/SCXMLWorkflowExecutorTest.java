@@ -24,6 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.mock.MockNode;
+import org.onehippo.repository.testutils.ExecuteOnLogLevel;
 
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
@@ -95,7 +96,7 @@ public class SCXMLWorkflowExecutorTest {
         registry.addCustomAction(scxmlDefNode, "http://www.onehippo.org/cms7/repository/scxml", "result", ResultAction.class.getName());
         registry.setUp(scxmlConfigNode);
 
-        SCXMLWorkflowExecutor workflowExecutor = new SCXMLWorkflowExecutor(new SCXMLWorkflowContext("scxml", new MockWorkflowContext("testuser")), null);
+        final SCXMLWorkflowExecutor workflowExecutor = new SCXMLWorkflowExecutor(new SCXMLWorkflowContext("scxml", new MockWorkflowContext("testuser")), null);
         workflowExecutor.getSCXMLExecutor().getRootContext().set("message", "Hello world!");
         Object message = workflowExecutor.start();
 
@@ -105,12 +106,22 @@ public class SCXMLWorkflowExecutorTest {
         assertEquals("Hello world!", message);
 
         try {
-            workflowExecutor.triggerAction("foo");
+            ExecuteOnLogLevel.fatal(new ExecuteOnLogLevel.Executable() {
+                @Override
+                public void execute() throws Exception {
+                    workflowExecutor.triggerAction("foo");
+                }
+            }, "org.onehippo.repository.scxml.SCXMLWorkflowExecutor");
             fail("triggerAction foo should have failed");
+        } catch(ExecuteOnLogLevel.ExecutableException ex) {
+            if (ex.getCause() instanceof WorkflowException) {
+                assertEquals("Cannot invoke workflow scxml action foo: action not allowed or undefined", ex.getCause().getMessage());
+            }
+            else {
+                throw ex.getCause();
+            }
         }
-        catch (WorkflowException e) {
-            assertEquals("Cannot invoke workflow scxml action foo: action not allowed or undefined", e.getMessage());
-        }
+
         assertTrue(workflowExecutor.getContext().getActions().get("hello"));
         assertNull(workflowExecutor.triggerAction("hello"));
         assertTrue(workflowExecutor.isStarted());
@@ -138,14 +149,26 @@ public class SCXMLWorkflowExecutorTest {
         registry.addCustomAction(scxmlDefNode, "http://www.onehippo.org/cms7/repository/scxml", "action", ActionAction.class.getName());
         registry.setUp(scxmlConfigNode);
 
-        SCXMLWorkflowExecutor workflowExecutor = new SCXMLWorkflowExecutor(new SCXMLWorkflowContext("scxml", new MockWorkflowContext("testuser")), null);
+        final SCXMLWorkflowExecutor workflowExecutor = new SCXMLWorkflowExecutor(new SCXMLWorkflowContext("scxml", new MockWorkflowContext("testuser")), null);
+
         try {
-            workflowExecutor.start();
-            fail("Workflow should have failed starting");
+            ExecuteOnLogLevel.fatal(new ExecuteOnLogLevel.Executable() {
+                @Override
+                public void execute() throws Exception {
+                    workflowExecutor.start();
+                }
+            }, "org.onehippo.repository.scxml.SCXMLWorkflowExecutor");
+            fail("triggerAction foo should have failed");
         }
-        catch (WorkflowException e) {
-            assertEquals("Workflow scxml execution failed", e.getMessage());
+        catch(ExecuteOnLogLevel.ExecutableException ex) {
+            if (ex.getCause() instanceof WorkflowException) {
+                assertEquals("Workflow scxml execution failed", ex.getCause().getMessage());
+            }
+            else {
+                throw ex.getCause();
+            }
         }
+
         assertFalse(workflowExecutor.isStarted());
         try {
             workflowExecutor.triggerAction("foo");

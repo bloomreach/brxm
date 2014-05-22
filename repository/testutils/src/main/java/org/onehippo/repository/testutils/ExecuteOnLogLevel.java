@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -66,21 +66,116 @@ import org.slf4j.LoggerFactory;
  * utility method that you should include at least one logger. With only <code>String ... names</code> this would be
  * much less clear as then you could invoke debug with only a Runnable object and no other argument
  * </p>
+ * <p>
+ *  If the action to be invoked by the {@link Runnable} callback itself might throw (also) an exception, using
+ *  {@link Runnable} becomes a bit problematic as its {@link Runnable#run()} method doesn't allow that.
+ * </p>
+ * <p>
+ *  For these cases it is possible to use {@link Executable} instead, which allows throwing an exception in its
+ *  {@link Executable#execute()} method.
+ * </p>
+ * <p>
+ *  An exception thrown by an {@link Executable#execute()} callback will be wrapped in a {@link ExecutableException},
+ *  which extends RuntimeException instead.
+ * </p>
+ * <p>
+ *  An example of using {@link Executable} as callback could be:
+ * </p>
+ * <pre>
+ *     <code>
+ *         final MyAction action = ...
+ *         try {
+ *             ExecuteOnLogLevel.error(new ExecuteOnLogLevel.Executable () {
+ *                public void execute() throws Exception {
+ *                    // invoke the action which might throw an exception
+ *                    action.start();
+ *                }
+ *             }, myLoggerClass);
+ *         }
+ *         catch (ExecuteOnLogLevel.ExecutableException ee) {
+ *             if (ee.getCause() instanceof MyIgnorableException) {
+ *                 // ignore
+ *             }
+ *             else {
+ *                 throw ee.getCause();
+ *             }
+ *         }
+ *     </code>
+ * </pre>
+ * <p>
+ *   <em>Note: internally ExecuteOnLogLevel has been retrofitted to always use {@link Executable} using the
+ *   {@link RunnableAdapter}, zo it actually is a little bit more efficient to always use {@link Executable}.</em>
+ * </p>
  */
 public class ExecuteOnLogLevel {
 
     private static final Logger log = LoggerFactory.getLogger(ExecuteOnLogLevel.class);
 
+    /**
+     * Callback interface comparable to {@link Runnable} but with support for and allowing exceptions to be thrown
+     * by the {@link #execute()} method.
+     */
+    public static interface Executable {
+
+        /**
+         * Callback method for execution of some arbitrary action which also may throw an exception.
+         * @throws Exception
+         */
+        public void execute() throws Exception;
+    }
+
+    /**
+     * Marker RuntimeException potentially thrown by ExecuteOnLogLevel methods using {@link Executable}, which
+     * can be catched to get hold of the wrapped exception thrown by {@link Executable#execute()}.
+     */
+    public static class ExecutableException extends RuntimeException {
+
+        public ExecutableException(Exception cause) {
+            super(cause);
+        }
+
+        @Override
+        public Exception getCause() {
+            return (Exception)super.getCause();
+        }
+    }
+
+    /**
+     * Adapter for using a {@link Runnable} as {@link Executable}
+     */
+    public static class RunnableAdapter implements Executable {
+        Runnable callback;
+
+        public RunnableAdapter(Runnable callback) {
+            this.callback = callback;
+        }
+
+        @Override
+        public void execute() {
+            callback.run();
+        }
+    }
+
     private static final boolean isLog4jLog = "org.slf4j.impl.Log4jLoggerAdapter".equals(log.getClass().getName());
     private static final boolean isJDK14Log = "org.slf4j.impl.JDK14LoggerAdapter".equals(log.getClass().getName());
 
     /**
-     * @param callback the {@link Runnable} class that gets callbacked after the log-level for <code>name</code> and
+     * @param callback the {@link Runnable} class that gets called after the log-level for <code>name</code> and
      *                 <code>names</code> has been set to DEBUG level
      * @param clazz the class of the logger to set to DEBUG, for example javax.jcr.Repository
      * @param classes the classes of the loggers to set to DEBUG
      */
     public static void debug(Runnable callback, Class<?> clazz, Class<?> ... classes) {
+        debug(new RunnableAdapter(callback), clazz, classes);
+    }
+
+    /**
+     * @param callback the {@link Executable} class that gets called after the log-level for <code>name</code> and
+     *                 <code>names</code> has been set to DEBUG level
+     * @param clazz the class of the logger to set to DEBUG, for example javax.jcr.Repository
+     * @param classes the classes of the loggers to set to DEBUG
+     */
+    public static void debug(Executable callback, Class<?> clazz, Class<?> ... classes) {
         String[] strings = getNames(classes);
         debug(callback, clazz.getName(), strings);
     }
@@ -92,58 +187,118 @@ public class ExecuteOnLogLevel {
      * @param names the names of the loggers to set to DEBUG
      */
     public static void debug(Runnable callback, String name, String ... names) {
+        setToLevel("DEBUG", new RunnableAdapter(callback), name, names);
+    }
+
+    /**
+     * @param callback the {@link Executable} class that gets called after the log-level for <code>name</code> and
+     *                 <code>names</code> has been set to DEBUG level
+     * @param name the name of the logger to set to DEBUG, for example javax.jcr.Repository
+     * @param names the names of the loggers to set to DEBUG
+     */
+    public static void debug(Executable callback, String name, String ... names) {
         setToLevel("DEBUG", callback, name, names);
     }
 
     /**
-     * @param callback the {@link Runnable} class that gets callbacked after the log-level for <code>name</code> and
+     * @param callback the {@link Runnable} class that gets called after the log-level for <code>name</code> and
      *                 <code>names</code> has been set to INFO level
      * @param clazz the class of the logger to set to INFO, for example javax.jcr.Repository
      * @param classes the classes of the loggers to set to INFO
      */
     public static void info(Runnable callback, Class<?> clazz, Class<?> ... classes) {
+        info(new RunnableAdapter(callback), clazz, classes);
+    }
+
+    /**
+     * @param callback the {@link Executable} class that gets called after the log-level for <code>name</code> and
+     *                 <code>names</code> has been set to INFO level
+     * @param clazz the class of the logger to set to INFO, for example javax.jcr.Repository
+     * @param classes the classes of the loggers to set to INFO
+     */
+    public static void info(Executable callback, Class<?> clazz, Class<?> ... classes) {
         String[] strings = getNames(classes);
         info(callback, clazz.getName(), strings);
     }
 
     /**
-     * @param callback the {@link Runnable} class that gets callbacked after the log-level for <code>name</code> and
+     * @param callback the {@link Runnable} class that gets called after the log-level for <code>name</code> and
      *                 <code>names</code> has been set to INFO level
      * @param name the name of the logger to set to INFO, for example javax.jcr.Repository
      * @param names the names of the loggers to set to INFO
      */
     public static void info(Runnable callback, String name, String ... names) {
+        setToLevel("INFO", new RunnableAdapter(callback), name, names);
+    }
+
+    /**
+     * @param callback the {@link Executable} class that gets called after the log-level for <code>name</code> and
+     *                 <code>names</code> has been set to INFO level
+     * @param name the name of the logger to set to INFO, for example javax.jcr.Repository
+     * @param names the names of the loggers to set to INFO
+     */
+    public static void info(Executable callback, String name, String ... names) {
         setToLevel("INFO", callback, name, names);
     }
 
     /**
-     * @param callback the {@link Runnable} class that gets callbacked after the log-level for <code>name</code> and
+     * @param callback the {@link Runnable} class that gets called after the log-level for <code>name</code> and
      *                 <code>names</code> has been set to WARN level
      * @param clazz the class of the logger to set to WARN, for example javax.jcr.Repository
      * @param classes the classes of the loggers to set to WARN
      */
     public static void warn(Runnable callback, Class<?> clazz, Class<?> ... classes) {
+        warn(new RunnableAdapter(callback), clazz, classes);
+    }
+
+    /**
+     * @param callback the {@link Executable} class that gets called after the log-level for <code>name</code> and
+     *                 <code>names</code> has been set to WARN level
+     * @param clazz the class of the logger to set to WARN, for example javax.jcr.Repository
+     * @param classes the classes of the loggers to set to WARN
+     */
+    public static void warn(Executable callback, Class<?> clazz, Class<?> ... classes) {
         String[] strings = getNames(classes);
         warn(callback, clazz.getName(), strings);
     }
 
     /**
-     * @param callback the {@link Runnable} class that gets callbacked after the log-level for <code>name</code> and
+     * @param callback the {@link Runnable} class that gets called after the log-level for <code>name</code> and
      *                 <code>names</code> has been set to WARN level
      * @param name the name of the logger to set to WARN, for example javax.jcr.Repository
      * @param names the names of the loggers to set to WARN
      */
     public static void warn(Runnable callback, String name, String ... names) {
+        setToLevel("WARN", new RunnableAdapter(callback), name, names);
+    }
+
+    /**
+     * @param callback the {@link Executable} class that gets called after the log-level for <code>name</code> and
+     *                 <code>names</code> has been set to WARN level
+     * @param name the name of the logger to set to WARN, for example javax.jcr.Repository
+     * @param names the names of the loggers to set to WARN
+     */
+    public static void warn(Executable callback, String name, String ... names) {
         setToLevel("WARN", callback, name, names);
     }
 
     /**
-     * @param callback the {@link Runnable} class that gets callbacked after the log-level for <code>name</code> and
+     * @param callback the {@link Runnable} class that gets called after the log-level for <code>name</code> and
      *                 <code>names</code> has been set to ERROR level
      * @param clazz the class of the logger to set to ERROR, for example javax.jcr.Repository
      * @param classes the classes of the loggers to set to ERROR
      */
     public static void error(Runnable callback, Class<?> clazz, Class<?> ... classes) {
+        error(new RunnableAdapter(callback), clazz, classes);
+    }
+
+    /**
+     * @param callback the {@link Executable} class that gets called after the log-level for <code>name</code> and
+     *                 <code>names</code> has been set to ERROR level
+     * @param clazz the class of the logger to set to ERROR, for example javax.jcr.Repository
+     * @param classes the classes of the loggers to set to ERROR
+     */
+    public static void error(Executable callback, Class<?> clazz, Class<?> ... classes) {
         String[] strings = getNames(classes);
         error(callback, clazz.getName(), strings);
     }
@@ -155,23 +310,43 @@ public class ExecuteOnLogLevel {
      * @param names the names of the loggers to set to ERROR
      */
     public static void error(Runnable callback, String name, String ... names) {
+        setToLevel("ERROR", new RunnableAdapter(callback), name, names);
+    }
+
+    /**
+     * @param callback the {@link Executable} class that gets called after the log-level for <code>name</code> and
+     *                 <code>names</code> has been set to ERROR level
+     * @param name the name of the logger to set to ERROR, for example javax.jcr.Repository
+     * @param names the names of the loggers to set to ERROR
+     */
+    public static void error(Executable callback, String name, String ... names) {
         setToLevel("ERROR", callback, name, names);
     }
 
     /**
-     * @param callback the {@link Runnable} class that gets callbacked after the log-level for <code>name</code> and
+     * @param callback the {@link Runnable} class that gets called after the log-level for <code>name</code> and
      *                 <code>names</code> has been set to FATAL level
      * @param name the name of the logger to set to FATAL, for example javax.jcr.Repository
      * @param names the names of the loggers to set to FATAL
      */
     public static void fatal(Runnable callback, String name, String ... names) {
+        setToLevel("FATAL", new RunnableAdapter(callback), name, names);
+    }
+
+    /**
+     * @param callback the {@link Executable} class that gets called after the log-level for <code>name</code> and
+     *                 <code>names</code> has been set to FATAL level
+     * @param name the name of the logger to set to FATAL, for example javax.jcr.Repository
+     * @param names the names of the loggers to set to FATAL
+     */
+    public static void fatal(Executable callback, String name, String ... names) {
         setToLevel("FATAL", callback, name, names);
     }
 
-    private static void setToLevel(String level, Runnable callback, String name, String ... names) {
+    private static void setToLevel(String level, Executable callback, String name, String ... names) {
         final String[] allNames = Arrays.copyOf(names, names.length + 1);
         allNames[allNames.length-1] = name;
-        Map<String, String> oldLoggerLevelMap = new HashMap<String, String>();
+        Map<String, String> oldLoggerLevelMap = new HashMap<>();
 
         for (String n : allNames) {
             String oldLoggerLevel = getLoggerLevel(n);
@@ -184,7 +359,10 @@ public class ExecuteOnLogLevel {
 
         // do the callback with log-level set to ERROR
         try {
-            callback.run();
+            callback.execute();
+        }
+        catch (Exception e) {
+            throw new ExecutableException(e);
         } finally {
             // Reset the log-levels to the old values
             for (Map.Entry<String, String> entry : oldLoggerLevelMap.entrySet()) {
@@ -309,7 +487,7 @@ public class ExecuteOnLogLevel {
         if (classes == null) {
             return null;
         }
-        List<String> strings = new ArrayList<String>(classes.length);
+        List<String> strings = new ArrayList<>(classes.length);
         for (Class<?> clazz : classes) {
             strings.add(clazz.getName());
         }

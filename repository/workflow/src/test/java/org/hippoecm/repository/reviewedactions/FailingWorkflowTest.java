@@ -32,6 +32,7 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.ExecuteOnLogLevel;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 public class FailingWorkflowTest extends RepositoryTestCase {
@@ -52,7 +53,7 @@ public class FailingWorkflowTest extends RepositoryTestCase {
                         "hippostd:state", "published"
     };
 
-    Map<String, Value[]> privileges = new HashMap<String, Value[]>();
+    Map<String, Value[]> privileges = new HashMap<>();
 
     @Before
     public void setUp() throws Exception {
@@ -96,11 +97,22 @@ public class FailingWorkflowTest extends RepositoryTestCase {
         Workflow workflowInterface = manager.getWorkflow("default", document);
         assertTrue(workflowInterface instanceof FullReviewedActionsWorkflow);
         FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) workflowInterface;
+        final FullReviewedActionsWorkflow runnableWorkflow = workflow;
         try {
-            workflow.rename("fail");
+            ExecuteOnLogLevel.fatal(new ExecuteOnLogLevel.Executable() {
+                @Override
+                public void execute() throws Exception {
+                    runnableWorkflow.rename("fail");
+                }
+            }, "org.onehippo.repository.scxml.SCXMLWorkflowExecutor");
             fail("rename should have failed");
-        } catch(WorkflowException ex) {
-            // expected
+        } catch(ExecuteOnLogLevel.ExecutableException ex) {
+            if (ex.getCause() instanceof WorkflowException) {
+                // expected
+            }
+            else {
+                throw ex.getCause();
+            }
         }
 
         document = handle.getNode(handle.getName());
