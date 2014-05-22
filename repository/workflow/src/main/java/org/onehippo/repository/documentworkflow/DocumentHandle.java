@@ -70,7 +70,7 @@ public class DocumentHandle implements SCXMLWorkflowData {
                 DocumentVariant doc = createDocumentVariant(variant);
                 if (documents.containsKey(doc.getState())) {
                     log.warn("Document at path {} has multiple variants with state {}. Variant with identifier {} ignored.",
-                            new String[]{handle.getPath(), doc.getState(), variant.getIdentifier()});
+                            handle.getPath(), doc.getState(), variant.getIdentifier());
                 }
                 documents.put(doc.getState(), doc);
             }

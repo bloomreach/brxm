@@ -17,14 +17,12 @@
 package org.onehippo.repository.documentworkflow;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.quartz.HippoSchedJcrConstants;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.scxml.SCXMLWorkflowContext;
@@ -35,7 +33,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-public class DocumentHandleTest {
+public class DocumentHandleTest extends BaseDocumentWorkflowTest {
 
     private static class DocumentHandleWorkflowContext extends SCXMLWorkflowContext {
         private DocumentHandleWorkflowContext(final String scxmlId, final WorkflowContext workflowContext) {
@@ -45,20 +43,6 @@ public class DocumentHandleTest {
         public void initialize() throws WorkflowException {
             super.initialize();
         }
-    }
-
-    protected Node addVariant(Node handle, String state) throws RepositoryException {
-        Node variant = handle.addNode(handle.getName(), HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT);
-        variant.setProperty(HippoStdNodeType.HIPPOSTD_STATE, state);
-        return variant;
-    }
-
-    protected Node addRequest(Node handle, String type, boolean workflowRequest) throws RepositoryException {
-        Node variant = handle.addNode(HippoStdPubWfNodeType.HIPPO_REQUEST,
-                workflowRequest ? HippoStdPubWfNodeType.NT_HIPPOSTDPUBWF_REQUEST : HippoSchedJcrConstants.HIPPOSCHED_WORKFLOW_JOB);
-        variant.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_TYPE, type);
-        variant.addMixin(HippoNodeType.NT_REQUEST);
-        return variant;
     }
 
     protected static DocumentVariant getDraft(DocumentHandle dm) {
@@ -80,13 +64,13 @@ public class DocumentHandleTest {
         MockNode handle = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
         addRequest(handle, HippoStdPubWfNodeType.PUBLISH, true);
         DocumentHandleWorkflowContext workflowContext = new DocumentHandleWorkflowContext("test", new MockWorkflowContext("testuser"));
-        DocumentHandle dm = new DocumentHandle(handle);
+        DocumentHandle dh = new DocumentHandle(handle);
         workflowContext.initialize();
-        dm.initialize();
-        assertTrue(dm.getDocuments().isEmpty());
+        dh.initialize();
+        assertTrue(dh.getDocuments().isEmpty());
         assertEquals("testuser", workflowContext.getUser());
-        assertEquals(1, dm.getRequests().size());
-        assertTrue(dm.isRequestPending());
+        assertEquals(1, dh.getRequests().size());
+        assertTrue(dh.isRequestPending());
 
 
         // add published, unpublished variants & rejected request
@@ -95,26 +79,26 @@ public class DocumentHandleTest {
         addRequest(handle, HippoStdPubWfNodeType.REJECTED, true);
         Node rejectedRequest = addRequest(handle, HippoStdPubWfNodeType.REJECTED, true);
         rejectedRequest.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_USERNAME, "testuser");
-        dm = new DocumentHandle(handle);
+        dh = new DocumentHandle(handle);
         workflowContext.initialize();
-        dm.initialize();
-        assertNull(getDraft(dm));
-        assertNotNull(getUnpublished(dm));
-        assertNotNull(getPublished(dm));
-        assertEquals(publishedVariant, getPublished(dm).getNode());
-        assertEquals(unpublishedVariant, getUnpublished(dm).getNode());
-        assertEquals(3, dm.getRequests().size());
-        assertTrue(dm.isRequestPending());
+        dh.initialize();
+        assertNull(getDraft(dh));
+        assertNotNull(getUnpublished(dh));
+        assertNotNull(getPublished(dh));
+        assertEquals(publishedVariant, getPublished(dh).getNode());
+        assertEquals(unpublishedVariant, getUnpublished(dh).getNode());
+        assertEquals(3, dh.getRequests().size());
+        assertTrue(dh.isRequestPending());
 
         // add draft
         Node draftVariant = addVariant(handle, HippoStdNodeType.DRAFT);
-        dm = new DocumentHandle(handle);
+        dh = new DocumentHandle(handle);
         workflowContext.initialize();
-        dm.initialize();
-        assertNotNull(getDraft(dm));
-        assertNotNull(getUnpublished(dm));
-        assertNotNull(getPublished(dm));
-        assertEquals(draftVariant, getDraft(dm).getNode());
+        dh.initialize();
+        assertNotNull(getDraft(dh));
+        assertNotNull(getUnpublished(dh));
+        assertNotNull(getPublished(dh));
+        assertEquals(draftVariant, getDraft(dh).getNode());
     }
 
     @Test
@@ -123,35 +107,35 @@ public class DocumentHandleTest {
         session.setPermissions("/test/test", "hippo:admin", false);
         MockWorkflowContext context = new MockWorkflowContext("testuser", session);
         Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
-        addVariant(handleNode, HippoStdNodeType.DRAFT);
+        addVariant((MockNode)handleNode, HippoStdNodeType.DRAFT);
         DocumentHandleWorkflowContext workflowContext = new DocumentHandleWorkflowContext("test", context);
-        DocumentHandle dm = new DocumentHandle(handleNode);
+        DocumentHandle dh = new DocumentHandle(handleNode);
         workflowContext.initialize();
-        dm.initialize();
+        dh.initialize();
         // testing with only hippo:admin being denied
-        assertTrue(workflowContext.isGranted(getDraft(dm), "foo"));
-        assertTrue(workflowContext.isGranted(getDraft(dm), "foo,bar"));
-        assertTrue(workflowContext.isGranted(getDraft(dm), "bar,foo"));
-        assertFalse(workflowContext.isGranted(getDraft(dm), "hippo:admin"));
+        assertTrue(workflowContext.isGranted(getDraft(dh), "foo"));
+        assertTrue(workflowContext.isGranted(getDraft(dh), "foo,bar"));
+        assertTrue(workflowContext.isGranted(getDraft(dh), "bar,foo"));
+        assertFalse(workflowContext.isGranted(getDraft(dh), "hippo:admin"));
 
         session.setPermissions("/test/test", "hippo:author,hippo:editor", true);
-        dm = new DocumentHandle(handleNode);
+        dh = new DocumentHandle(handleNode);
         workflowContext.initialize();
-        dm.initialize();
+        dh.initialize();
         // testing with only hippo:author,hippo:editor being allowed
-        assertFalse(workflowContext.isGranted(getDraft(dm), "foo"));
-        assertFalse(workflowContext.isGranted(getDraft(dm), "foo,bar"));
-        assertFalse(workflowContext.isGranted(getDraft(dm), "bar,foo"));
-        assertFalse(workflowContext.isGranted(getDraft(dm), "hippo:author,foo"));
-        assertFalse(workflowContext.isGranted(getDraft(dm), "hippo:author,hippo:editor,foo"));
-        assertTrue(workflowContext.isGranted(getDraft(dm), "hippo:author"));
-        assertTrue(workflowContext.isGranted(getDraft(dm), "hippo:editor"));
-        assertTrue(workflowContext.isGranted(getDraft(dm), "hippo:author,hippo:editor"));
-        assertTrue(workflowContext.isGranted(getDraft(dm), "hippo:editor,hippo:author"));
-        assertFalse(workflowContext.isGranted(getDraft(dm), "hippo:admin"));
-        assertFalse(workflowContext.isGranted(getDraft(dm), "hippo:admin,foo"));
-        assertFalse(workflowContext.isGranted(getDraft(dm), "hippo:admin,hippo:author"));
-        assertFalse(workflowContext.isGranted(getDraft(dm), "hippo:admin,hippo:author,hippo:editor"));
-        assertFalse(workflowContext.isGranted(getDraft(dm), "hippo:author,hippo:editor,hippo:admin"));
+        assertFalse(workflowContext.isGranted(getDraft(dh), "foo"));
+        assertFalse(workflowContext.isGranted(getDraft(dh), "foo,bar"));
+        assertFalse(workflowContext.isGranted(getDraft(dh), "bar,foo"));
+        assertFalse(workflowContext.isGranted(getDraft(dh), "hippo:author,foo"));
+        assertFalse(workflowContext.isGranted(getDraft(dh), "hippo:author,hippo:editor,foo"));
+        assertTrue(workflowContext.isGranted(getDraft(dh), "hippo:author"));
+        assertTrue(workflowContext.isGranted(getDraft(dh), "hippo:editor"));
+        assertTrue(workflowContext.isGranted(getDraft(dh), "hippo:author,hippo:editor"));
+        assertTrue(workflowContext.isGranted(getDraft(dh), "hippo:editor,hippo:author"));
+        assertFalse(workflowContext.isGranted(getDraft(dh), "hippo:admin"));
+        assertFalse(workflowContext.isGranted(getDraft(dh), "hippo:admin,foo"));
+        assertFalse(workflowContext.isGranted(getDraft(dh), "hippo:admin,hippo:author"));
+        assertFalse(workflowContext.isGranted(getDraft(dh), "hippo:admin,hippo:author,hippo:editor"));
+        assertFalse(workflowContext.isGranted(getDraft(dh), "hippo:author,hippo:editor,hippo:admin"));
     }
 }

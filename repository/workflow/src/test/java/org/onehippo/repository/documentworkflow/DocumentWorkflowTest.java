@@ -21,123 +21,52 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.jcr.PropertyType;
-import javax.jcr.RepositoryException;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.scxml2.model.EnterableState;
 import org.apache.jackrabbit.util.ISO8601;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
-import org.hippoecm.repository.quartz.HippoSchedJcrConstants;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.repository.documentworkflow.action.ArchiveDocumentAction;
-import org.onehippo.repository.documentworkflow.action.ConfigVariantAction;
-import org.onehippo.repository.documentworkflow.action.CopyDocumentAction;
-import org.onehippo.repository.documentworkflow.action.CopyVariantAction;
-import org.onehippo.repository.documentworkflow.action.DeleteRequestAction;
-import org.onehippo.repository.documentworkflow.action.IsModifiedAction;
-import org.onehippo.repository.documentworkflow.action.ListVersionsVariantAction;
-import org.onehippo.repository.documentworkflow.action.MoveDocumentAction;
-import org.onehippo.repository.documentworkflow.action.RejectRequestAction;
-import org.onehippo.repository.documentworkflow.action.RenameDocumentAction;
-import org.onehippo.repository.documentworkflow.action.RequestActionAction;
-import org.onehippo.repository.documentworkflow.action.ScheduleWorkflowAction;
-import org.onehippo.repository.documentworkflow.action.VersionRestoreToAction;
-import org.onehippo.repository.documentworkflow.action.WorkflowRequestAction;
-import org.onehippo.repository.documentworkflow.action.RestoreVersionAction;
-import org.onehippo.repository.documentworkflow.action.RetrieveVersionAction;
-import org.onehippo.repository.documentworkflow.action.SetHolderAction;
-import org.onehippo.repository.documentworkflow.action.VersionVariantAction;
-import org.onehippo.repository.scxml.WorkflowExceptionAction;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.mock.MockValue;
-import org.onehippo.repository.mock.MockVersion;
-import org.onehippo.repository.scxml.ActionAction;
-import org.onehippo.repository.scxml.FeedbackAction;
-import org.onehippo.repository.scxml.MockRepositorySCXMLRegistry;
-import org.onehippo.repository.scxml.RepositorySCXMLExecutorFactory;
-import org.onehippo.repository.scxml.ResultAction;
-import org.onehippo.repository.scxml.SCXMLExecutorFactory;
-import org.onehippo.repository.scxml.SCXMLRegistry;
 import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
-import org.onehippo.repository.util.JcrConstants;
 
-import static org.junit.Assert.assertEquals;
-
-public class DocumentWorkflowTest {
+public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        MockRepositorySCXMLRegistry registry = new MockRepositorySCXMLRegistry();
-        MockNode scxmlConfigNode = registry.createConfigNode();
-        MockNode scxmlNode = registry.addScxmlNode(scxmlConfigNode, "documentworkflow", loadSCXML());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "action", ActionAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "result", ResultAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "feedback", FeedbackAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "copyVariant", CopyVariantAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "configVariant", ConfigVariantAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "workflowRequest", WorkflowRequestAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "archiveDocument", ArchiveDocumentAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "isModified", IsModifiedAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "scheduleWorkflow", ScheduleWorkflowAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "copyDocument", CopyDocumentAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "moveDocument", MoveDocumentAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "renameDocument", RenameDocumentAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "setHolder", SetHolderAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "deleteRequest", DeleteRequestAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "workflowException", WorkflowExceptionAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "version", VersionVariantAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "listVersions", ListVersionsVariantAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "retrieveVersion", RetrieveVersionAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "restoreVersion", RestoreVersionAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "versionRestoreTo", VersionRestoreToAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "requestAction", RequestActionAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "rejectRequest", RejectRequestAction.class.getName());
-        registry.setUp(scxmlConfigNode);
-
-        HippoServiceRegistry.registerService(registry, SCXMLRegistry.class);
-        HippoServiceRegistry.registerService(new RepositorySCXMLExecutorFactory(), SCXMLExecutorFactory.class);
+        createDocumentWorkflowSCXMLRegistry();
     }
 
     @AfterClass
     public static void afterClass() throws Exception {
-        HippoServiceRegistry.unregisterService(HippoServiceRegistry.getService(SCXMLExecutorFactory.class), SCXMLExecutorFactory.class);
-        HippoServiceRegistry.unregisterService(HippoServiceRegistry.getService(SCXMLRegistry.class), SCXMLRegistry.class);
+        destroyDocumentWorkflowSCXMLRegistry();
     }
 
-    protected static String loadSCXML() throws Exception {
-        return IOUtils.toString(DocumentWorkflowTest.class.getResourceAsStream("/documentworkflow.scxml"));
+    @SuppressWarnings("unchecked")
+    protected static Map<?, ?> sortMap(Map<?, ?> map) {
+        if (!(map instanceof SortedMap)) {
+            SortedMap<Object, Object> sorted = new TreeMap<>(map);
+            for (Map.Entry<Object,Object> entry : sorted.entrySet()) {
+                if (entry.getValue() instanceof Map) {
+                    entry.setValue(sortMap((Map<Object,Object>)entry.getValue()));
+                }
+            }
+            return sorted;
+        }
+        return map;
     }
 
-    protected MockNode addVariant(MockNode handle, String state) throws RepositoryException {
-        MockNode variant = (MockNode)handle.addNode(handle.getName(), HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT);
-        variant.setProperty(HippoStdNodeType.HIPPOSTD_STATE, state);
-        return variant;
-    }
-
-    protected MockNode addRequest(MockNode handle, String type, boolean workflowRequest) throws RepositoryException {
-        MockNode variant = (MockNode)handle.addNode(HippoStdPubWfNodeType.HIPPO_REQUEST,
-                workflowRequest ? HippoStdPubWfNodeType.NT_HIPPOSTDPUBWF_REQUEST : HippoSchedJcrConstants.HIPPOSCHED_WORKFLOW_JOB);
-        variant.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_TYPE, type);
-        variant.addMixin(HippoNodeType.NT_REQUEST);
-        return variant;
-    }
-
-    protected Set<String> set(String... vargs) {
-        Set<String> set = new TreeSet<>();
-        Collections.addAll(set, vargs);
-        return set;
-    }
-
-    protected Set<String> getCurrentStateIds(SCXMLWorkflowExecutor executor) {
+    protected static Set<String> getSCXMLStatusStateIds(SCXMLWorkflowExecutor executor) {
         Set<EnterableState> targets = executor.getSCXMLExecutor().getCurrentStatus().getStates();
 
         if (targets.isEmpty()) {
@@ -153,41 +82,20 @@ public class DocumentWorkflowTest {
         return ids;
     }
 
-    protected void assertMatchingStateIds(SCXMLWorkflowExecutor executor, String... ids) {
-        Set<String> stateIds = getCurrentStateIds(executor);
-        if (ids.length == stateIds.size()) {
-            for (String id : ids) {
-                if (!stateIds.contains(id)) {
-                    Assert.fail("Current SCXML states " + stateIds + " not matching expected states " + set(ids) + "");
-                }
-            }
-            return;
-        }
-        Assert.fail("Current SCXML states [" + stateIds + "] not matching expected states " + set(ids) + "");
-    }
-
-    protected void assertContainsStateIds(SCXMLWorkflowExecutor executor, String... ids) {
-        Set<String> stateIds = getCurrentStateIds(executor);
-        if (ids.length <= stateIds.size()) {
-            for (String id : ids) {
-                if (!stateIds.contains(id)) {
-                    Assert.fail("Current SCXML states " + stateIds + " not containing expected states " + set(ids) + "");
-                }
-            }
-            return;
-        }
-        Assert.fail("Current SCXML states [" + stateIds + "] not containing expected states " + set(ids) + "");
-    }
-
-    protected void assertContainsHint(Map<String, Serializable> hints, String hint, Object value) {
-        if (!hints.containsKey(hint) || !hints.get(hint).toString().equals(value.toString())) {
-            Assert.fail("Current hints " + hints + " not containing expected hint [" + hint + "] with value [" + value + "]");
+    protected static void assertMatchingSCXMLStates(SCXMLWorkflowExecutor executor, TreeSet<String> states) {
+        Set<String> stateIds = getSCXMLStatusStateIds(executor);
+        if (!stateIds.equals(states)) {
+            Assert.fail("Current SCXML states not matching expected states.\n"
+                    + "States  : " + stateIds + "\n"
+                    + "expected: " + states);
         }
     }
 
-    protected void assertNotContainsHint(Map<String, Serializable> hints, String hint) {
-        if (hints.containsKey(hint)) {
-            Assert.fail("Current hints " + hints + " contains not expected hint [" + hint + "]");
+    protected static void assertMatchingHints(Map<String, Serializable> hints, Map<String, Serializable> expected) {
+        if (!hints.equals(expected)) {
+            Assert.fail("Hints map does not match expected map.\n"
+                    +"Hint map: "+sortMap(hints)+"\n"
+                    +"expected: "+sortMap(expected));
         }
     }
 
@@ -207,62 +115,225 @@ public class DocumentWorkflowTest {
     }
 
     @Test
+    public void testVariants() throws Exception {
+
+        MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
+        MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
+        MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
+        wf.setWorkflowContext(workflowContext);
+        wf.setNode(handleNode);
+
+        // no document
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .noDocument()
+                        .states()
+        );
+
+        MockNode publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
+        // set (only) author permission
+        session.setPermissions(publishedVariant.getPath(), "hippo:author", true);
+
+        // only published
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit().editable()
+                        .requestPublication(false).requestDepublication(true).listVersions().requestDelete(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editable().noRequest().noPublish().depublishable().noVersioning().noTerminate().noCopy()
+                        .states()
+        );
+
+        MockNode unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
+        // set (only) author permission
+        session.setPermissions(unpublishedVariant.getPath(), "hippo:author", true);
+
+        // unpublished + published
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit().editable()
+                        .requestPublication(false).requestDepublication(true).listVersions().retrieveVersion().requestDelete(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editable().noRequest().noPublish().depublishable().versionable().noTerminate().noCopy()
+                        .states()
+        );
+
+        MockNode draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
+        // set (only) author permission
+        session.setPermissions(draftVariant.getPath(), "hippo:author", true);
+
+        // draft + unpublished + published
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(true).previewAvailable(true).checkModified(true).noEdit().editable()
+                        .requestPublication(false).requestDepublication(true).listVersions().retrieveVersion().requestDelete(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editable().noRequest().noPublish().depublishable().versionable().noTerminate().noCopy()
+                        .states()
+        );
+
+        publishedVariant.remove();
+
+        // draft + unpublished
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(true).checkModified(true).noEdit().editable()
+                        .requestPublication(true).requestDepublication(false).listVersions().retrieveVersion().requestDelete(true)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editable().noRequest().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .states()
+        );
+
+        draftVariant.remove();
+
+        // unpublished
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit().editable()
+                        .requestPublication(true).requestDepublication(false).listVersions().retrieveVersion().requestDelete(true)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editable().noRequest().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .states()
+        );
+
+        unpublishedVariant.remove();
+        addVariant(handleNode, HippoStdNodeType.DRAFT);
+        // set (only) author permission
+        session.setPermissions(draftVariant.getPath(), "hippo:author", true);
+
+        // draft
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit().editable()
+                        .requestPublication(false).requestDepublication(false).listVersions().requestDelete(true)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editable().noRequest().noPublish().noDepublish().noVersioning().terminateable().noCopy()
+                        .states()
+        );
+
+        addVariant(handleNode, HippoStdNodeType.PUBLISHED);
+        // set (only) author permission
+        session.setPermissions(publishedVariant.getPath(), "hippo:author", true);
+
+        // draft + published
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit().editable()
+                        .requestPublication(false).requestDepublication(true).listVersions().requestDelete(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editable().noRequest().noPublish().depublishable().noVersioning().noTerminate().noCopy()
+                        .states()
+        );
+    }
+
+    @Test
     public void testStatusState() throws Exception {
 
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
+        MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
         DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
-
-        MockNode handleNode = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
+        wf.setNode(handleNode);
 
         MockNode draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
-        MockNode unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
-        MockNode publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
+        // set (only) author permission
+        session.setPermissions(draftVariant.getPath(), "hippo:author", true);
 
-        wf.setNode(handleNode);
-        wf.getWorkflowExecutor().start();
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "status");
-        assertContainsHint(wf.hints(), "status", true);
-        assertContainsHint(wf.hints(), "checkModified", true);
-
-        unpublishedVariant.remove();
-        wf.setNode(handleNode);
-        wf.getWorkflowExecutor().start();
-
-        assertContainsHint(wf.hints(), "status", true);
-        assertContainsHint(wf.hints(), "checkModified", false);
-
-        publishedVariant.remove();
-        wf.setNode(handleNode);
-        wf.getWorkflowExecutor().start();
-
-        assertContainsHint(wf.hints(), "status", true);
+        // status=true (no holder)
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit().editable()
+                        .requestPublication(false).requestDepublication(false).listVersions().requestDelete(true)
+                        .hints()
+        );
 
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "testuser");
-        wf.setNode(handleNode);
-        wf.getWorkflowExecutor().start();
 
-        assertContainsHint(wf.hints(), "status", true);
+        // status=true (holder == editor)
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(false).checkModified(false).editing()
+                        .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
+                        .hints()
+        );
 
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "otheruser");
-        wf.setNode(handleNode);
-        wf.getWorkflowExecutor().start();
 
-        assertContainsHint(wf.hints(), "status", false);
+        // status=false (holder != editor, inUseBy=otheruser)
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(false).isLive(false).previewAvailable(false).checkModified(false).noEdit().inUseBy("otheruser")
+                        .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
+                        .hints()
+        );
 
-        unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
-        wf.setNode(handleNode);
-        wf.getWorkflowExecutor().start();
+        MockNode publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
+        // set (only) author permission
+        session.setPermissions(publishedVariant.getPath(), "hippo:author", true);
 
-        assertContainsHint(wf.hints(), "status", false);
+        // no/empty availability published: live + preview
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(false).isLive(true).previewAvailable(true).checkModified(false).noEdit().inUseBy("otheruser")
+                        .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
+                        .hints()
+        );
 
-        draftVariant.remove();
-        wf.setNode(handleNode);
-        wf.getWorkflowExecutor().start();
+        publishedVariant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[]{"foo"});
 
-        assertContainsHint(wf.hints(), "status", true);
+        // no live|preview availability on published
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(false).isLive(false).previewAvailable(false).checkModified(false).noEdit().inUseBy("otheruser")
+                        .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
+                        .hints()
+        );
+
+        publishedVariant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[]{"live"});
+
+        // live availability on published
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(false).isLive(true).previewAvailable(false).checkModified(false).noEdit().inUseBy("otheruser")
+                        .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
+                        .hints()
+        );
+
+        publishedVariant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[]{"preview", "live"});
+
+        // live|preview availability on published
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(false).isLive(true).previewAvailable(true).checkModified(false).noEdit().inUseBy("otheruser")
+                        .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
+                        .hints()
+        );
+
+        MockNode unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
+        // set (only) author permission
+        session.setPermissions(unpublishedVariant.getPath(), "hippo:author", true);
+        unpublishedVariant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[]{"preview"});
+        publishedVariant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[]{"live"});
+
+        // live availability on published, preview availability on unpublished
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(false).isLive(true).previewAvailable(true).checkModified(true).noEdit().inUseBy("otheruser")
+                        .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
+                        .hints()
+        );
+
+        publishedVariant.remove();
+
+        // only preview availability on unpublished
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(false).isLive(false).previewAvailable(true).checkModified(true).noEdit().inUseBy("otheruser")
+                        .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
+                        .hints()
+        );
     }
 
     @Test
@@ -270,656 +341,808 @@ public class DocumentWorkflowTest {
 
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
+        MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
         DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
-
-        MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
-        MockNode draftVariant, unpublishedVariant, publishedVariant, rejectedRequest, publishRequest;
-
-        draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
         wf.setNode(handleNode);
 
-        assertContainsStateIds(wf.getWorkflowExecutor(), "no-edit");
-        assertNotContainsHint(wf.hints(), "obtainEditableInstance");
-        assertNotContainsHint(wf.hints(), "commitEditableInstance");
-        assertNotContainsHint(wf.hints(), "disposeEditableInstance");
-        assertNotContainsHint(wf.hints(), "unlock");
+        MockNode draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
+        // set (only) author permission
+        session.setPermissions(draftVariant.getPath(), "hippo:author", true);
 
-        wf.setNode(handleNode);
-
-        // test state not-editable
-        assertContainsStateIds(wf.getWorkflowExecutor(), "editable");
-
-        rejectedRequest = addRequest(handleNode, HippoStdPubWfNodeType.REJECTED, true);
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "no-edit");
-
-        rejectedRequest.remove();
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "editable");
-
-        publishRequest = addRequest(handleNode, HippoStdPubWfNodeType.PUBLISH, true);
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "not-editable");
-
-        publishRequest.remove();
-
-        // test state not-editing
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "editable");
-        assertContainsHint(wf.hints(), "obtainEditableInstance", true);
-        assertContainsHint(wf.hints(), "unlock", false);
-
-        wf.setNode(handleNode);
-
-        assertContainsHint(wf.hints(), "obtainEditableInstance", true);
-        assertNotContainsHint(wf.hints(), "unlock");
-
-        wf.setNode(handleNode);
-
-        assertContainsHint(wf.hints(), "unlock", false);
-        assertNotContainsHint(wf.hints(), "obtainEditableInstance");
-
-        unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
-        wf.setNode(handleNode);
-
-        assertContainsHint(wf.hints(), "obtainEditableInstance", true);
-
-        unpublishedVariant.remove();
-        draftVariant.remove();
-
-        publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
-        wf.setNode(handleNode);
-
-        assertContainsHint(wf.hints(), "obtainEditableInstance", true);
-
-        rejectedRequest = addRequest(handleNode, HippoStdPubWfNodeType.REJECTED, true);
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "no-edit");
-
-
-        // test state editing
-        publishedVariant.remove();
-        rejectedRequest.remove();
-
-        draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
-        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "testuser");
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "editing");
-        assertContainsHint(wf.hints(), "obtainEditableInstance", true);
-        assertContainsHint(wf.hints(), "commitEditableInstance", true);
-        assertContainsHint(wf.hints(), "disposeEditableInstance", true);
-        assertNotContainsHint(wf.hints(), "unlock");
-
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "editing");
-        assertNotContainsHint(wf.hints(), "obtainEditableInstance");
-        assertNotContainsHint(wf.hints(), "commitEditableInstance");
-        assertNotContainsHint(wf.hints(), "disposeEditableInstance");
-        assertContainsHint(wf.hints(), "unlock", true);
-
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "editing");
-        assertContainsHint(wf.hints(), "obtainEditableInstance", true);
-        assertContainsHint(wf.hints(), "commitEditableInstance", true);
-        assertContainsHint(wf.hints(), "disposeEditableInstance", true);
-        assertContainsHint(wf.hints(), "unlock", true);
-        assertNotContainsHint(wf.hints(), "inUseBy");
+        // not editing, no request pending: editable
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit().editable()
+                        .requestPublication(false).requestDepublication(false).listVersions().requestDelete(true)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editable().noRequest().noPublish().noDepublish().noVersioning().terminateable().noCopy()
+                        .states()
+        );
 
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "otheruser");
-        session.setPermissions(draftVariant.getPath(), "hippo:admin", false);
-        wf.setNode(handleNode);
 
-        assertContainsStateIds(wf.getWorkflowExecutor(), "editing");
-        assertContainsHint(wf.hints(), "obtainEditableInstance", false);
-        assertContainsHint(wf.hints(), "commitEditableInstance", false);
-        assertContainsHint(wf.hints(), "disposeEditableInstance", false);
-        assertContainsHint(wf.hints(), "unlock", false);
-        assertContainsHint(wf.hints(), "inUseBy", "otheruser");
+        // editing, no request pending: editing
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(false).isLive(false).previewAvailable(false).checkModified(false).noEdit().inUseBy("otheruser")
+                        .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editing().noRequest().noPublish().noDepublish().noVersioning().noTerminate().noCopy()
+                        .states()
+        );
 
         session.setPermissions(draftVariant.getPath(), "hippo:admin", true);
-        wf.setNode(handleNode);
 
-        assertContainsStateIds(wf.getWorkflowExecutor(), "editing");
-        assertContainsHint(wf.hints(), "obtainEditableInstance", false);
-        assertContainsHint(wf.hints(), "commitEditableInstance", false);
-        assertContainsHint(wf.hints(), "disposeEditableInstance", false);
-        assertContainsHint(wf.hints(), "unlock", true);
+        // editing, no request pending, admin: editing, unlock
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(false).isLive(false).previewAvailable(false).checkModified(false).noEdit().inUseBy("otheruser").unlock(true)
+                        .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editing().noRequest().noPublish().noDepublish().noVersioning().noTerminate().noCopy()
+                        .states()
+        );
+
+        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "testuser");
+
+        // editor, no request pending (, admin): editing, edit
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(false).checkModified(false).editing()
+                        .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editing().noRequest().noPublish().noDepublish().noVersioning().noTerminate().noCopy()
+                        .states()
+        );
+
+        draftVariant.getProperty(HippoStdNodeType.HIPPOSTD_HOLDER).remove();
+        MockNode rejectedRequest = addRequest(handleNode, HippoStdPubWfNodeType.REJECTED, true);
+
+        // not editing, request rejected, admin: editable, unlock=false
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit().editable().unlock(false)
+                        .cancelRequest(rejectedRequest.getIdentifier())
+                        .requestPublication(false).requestDepublication(false).listVersions().requestDelete(true)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editable().requested().noPublish().noDepublish().noVersioning().terminateable().noCopy()
+                        .states()
+        );
+
+        session.setPermissions(draftVariant.getPath(), "hippo:author", true);
+
+        MockNode publishRequest = addRequest(handleNode, HippoStdPubWfNodeType.PUBLISH, true);
+
+        // not editing, publish request: no-edit
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit()
+                        .cancelRequest(rejectedRequest.getIdentifier())
+                        .acceptRequest(publishRequest.getIdentifier(), false)
+                        .cancelRequest(publishRequest.getIdentifier())
+                        .rejectRequest(publishRequest.getIdentifier())
+                        .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().noEdit().requested().noPublish().noDepublish().noVersioning().terminateable().noCopy()
+                        .states()
+        );
     }
 
     @Test
     public void testRequestState() throws Exception {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
+        MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
         DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
-
-        MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
-        MockNode unpublishedVariant, rejectedRequest, publishRequest;
+        wf.setNode(handleNode);
 
         // test state not-requested
-        unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
-        wf.setNode(handleNode);
+        MockNode unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
+        session.setPermissions(unpublishedVariant.getPath(), "hippo:author", true);
 
-        assertContainsStateIds(wf.getWorkflowExecutor(), "not-requested");
+        // no-request
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit().editable()
+                        .requestPublication(true).requestDepublication(false).listVersions().retrieveVersion().requestDelete(true)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editable().noRequest().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .states()
+        );
 
-        // test state requested
-        publishRequest = addRequest(handleNode, HippoStdPubWfNodeType.PUBLISH, true);
-        wf.setNode(handleNode);
+        MockNode publishRequest = addRequest(handleNode, HippoStdPubWfNodeType.PUBLISH, true);
+        publishRequest.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_USERNAME, "testuser");
+        session.setPermissions(publishRequest.getPath(), "hippo:author", true);
 
-        assertContainsStateIds(wf.getWorkflowExecutor(), "requested");
+        // author user publish request: cancelRequest=true
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit()
+                        .cancelRequest(publishRequest.getIdentifier())
+                        .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().noEdit().requested().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .states()
+        );
 
-        rejectedRequest = addRequest(handleNode, HippoStdPubWfNodeType.REJECTED, true);
-        wf.setNode(handleNode);
+        publishRequest.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_USERNAME, "otheruser");
 
-        assertContainsStateIds(wf.getWorkflowExecutor(), "request-rejected");
-
-        session.setPermissions(publishRequest.getPath(), "hippo:editor", false);
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "requested");
-        assertContainsHint(wf.hints(), "cancelRequest", false);
-        assertNotContainsHint(wf.hints(), "acceptRequest");
-        assertNotContainsHint(wf.hints(), "rejectRequest");
-
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "requested");
-        assertContainsHint(wf.hints(), "cancelRequest", false);
-        assertNotContainsHint(wf.hints(), "acceptRequest");
-        assertNotContainsHint(wf.hints(), "rejectRequest");
+        // author and other user publish request: no-op
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit()
+                        .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().noEdit().requested().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .states()
+        );
 
         session.setPermissions(publishRequest.getPath(), "hippo:editor", true);
 
-        wf.setNode(handleNode);
-        assertContainsStateIds(wf.getWorkflowExecutor(), "requested");
-        assertContainsHint(wf.hints(), "cancelRequest", false);
-        assertContainsHint(wf.hints(), "acceptRequest", true);
-        assertContainsHint(wf.hints(), "rejectRequest", true);
+        // editor other user publish request: acceptRequest=true,rejectRequest=true
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit()
+                        .acceptRequest(publishRequest.getIdentifier(), true)
+                        .rejectRequest(publishRequest.getIdentifier())
+                        .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().noEdit().requested().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .states()
+        );
+
+        MockNode publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
+        session.setPermissions(publishedVariant.getPath(), "hippo:author", true);
+
+        // editor other user publish request but unmodified: acceptRequest=false,rejectRequest=true
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit()
+                        .acceptRequest(publishRequest.getIdentifier(), false)
+                        .rejectRequest(publishRequest.getIdentifier())
+                        .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().noEdit().requested().noPublish().depublishable().versionable().noTerminate().noCopy()
+                        .states()
+        );
 
         publishRequest.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_USERNAME, "testuser");
-        wf.setNode(handleNode);
 
-        assertContainsHint(wf.hints(), "cancelRequest", true);
-        assertContainsHint(wf.hints(), "rejectRequest", false);
+        // editor own publish request but unmodified: acceptRequest=false,rejectRequest=true,cancelRequest=true
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit()
+                        .acceptRequest(publishRequest.getIdentifier(), false)
+                        .rejectRequest(publishRequest.getIdentifier())
+                        .cancelRequest(publishRequest.getIdentifier())
+                        .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().noEdit().requested().noPublish().depublishable().versionable().noTerminate().noCopy()
+                        .states()
+        );
 
-        publishRequest.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_USERNAME, "otheruser");
-        wf.setNode(handleNode);
+        publishRequest.remove();
 
-        assertContainsHint(wf.hints(), "cancelRequest", false);
-        assertContainsHint(wf.hints(), "rejectRequest", true);
+        MockNode depublishRequest = addRequest(handleNode, HippoStdPubWfNodeType.DEPUBLISH, true);
+        depublishRequest.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_USERNAME, "testuser");
+        session.setPermissions(depublishRequest.getPath(), "hippo:editor", true);
 
-        session.setPermissions(publishRequest.getPath(), "hippo:editor", false);
-        wf.setNode(handleNode);
+        // editor own depublish request live: acceptRequest=true,rejectRequest=true,cancelRequest=true
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit()
+                        .acceptRequest(depublishRequest.getIdentifier(), true)
+                        .rejectRequest(depublishRequest.getIdentifier())
+                        .cancelRequest(depublishRequest.getIdentifier())
+                        .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().noEdit().requested().noPublish().depublishable().versionable().noTerminate().noCopy()
+                        .states()
+        );
 
-        assertContainsHint(wf.hints(), "cancelRequest", false);
-        assertNotContainsHint(wf.hints(), "acceptRequest");
-        assertNotContainsHint(wf.hints(), "rejectRequest");
+        publishedVariant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[]{"preview"});
 
-        publishRequest.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_USERNAME, "testuser");
+        // editor own depublish request !live: acceptRequest=false,rejectRequest=true,cancelRequest=true
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit()
+                        .acceptRequest(depublishRequest.getIdentifier(), false)
+                        .rejectRequest(depublishRequest.getIdentifier())
+                        .cancelRequest(depublishRequest.getIdentifier())
+                        .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().noEdit().requested().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .states()
+        );
 
-        wf.setNode(handleNode);
+        depublishRequest.remove();
 
-        assertContainsHint(wf.hints(), "cancelRequest", true);
-        assertNotContainsHint(wf.hints(), "acceptRequest");
-        assertNotContainsHint(wf.hints(), "rejectRequest");
+        MockNode deleteRequest = addRequest(handleNode, HippoStdPubWfNodeType.DELETE, true);
+        deleteRequest.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_USERNAME, "testuser");
+        session.setPermissions(deleteRequest.getPath(), "hippo:editor", true);
 
-        // test state request-rejected
+        // editor own delete request !live: acceptRequest=true,rejectRequest=true,cancelRequest=true
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit()
+                        .acceptRequest(deleteRequest.getIdentifier(), true)
+                        .rejectRequest(deleteRequest.getIdentifier())
+                        .cancelRequest(deleteRequest.getIdentifier())
+                        .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().noEdit().requested().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .states()
+        );
 
-        session.setPermissions(rejectedRequest.getPath(), "hippo:editor", false);
-        wf.setNode(handleNode);
+        publishedVariant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[]{"preview","live"});
 
-        assertContainsStateIds(wf.getWorkflowExecutor(), "request-rejected");
-        assertContainsHint(wf.hints(), "cancelRequest", false);
-        assertContainsHint(wf.hints(), "acceptRequest", false);
-        assertContainsHint(wf.hints(), "rejectRequest", false);
+        // editor own delete request !live: acceptRequest=false,rejectRequest=true,cancelRequest=true
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit()
+                        .acceptRequest(deleteRequest.getIdentifier(), false)
+                        .rejectRequest(deleteRequest.getIdentifier())
+                        .cancelRequest(deleteRequest.getIdentifier())
+                        .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().noEdit().requested().noPublish().depublishable().versionable().noTerminate().noCopy()
+                        .states()
+        );
 
-        wf.setNode(handleNode);
+        deleteRequest.remove();
+        publishedVariant.remove();
 
-        assertContainsStateIds(wf.getWorkflowExecutor(), "request-rejected");
+        MockNode rejectedRequest = addRequest(handleNode, HippoStdPubWfNodeType.REJECTED, true);
+        rejectedRequest.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_USERNAME, "otheruser");
+        session.setPermissions(rejectedRequest.getPath(), "hippo:editor", true);
+
+        // editor other user rejected request: no-op
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit().editable()
+                        .requestPublication(true).requestDepublication(false).listVersions().retrieveVersion().requestDelete(true)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editable().requested().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .states()
+        );
 
         rejectedRequest.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_USERNAME, "testuser");
-        wf.setNode(handleNode);
 
-        assertContainsHint(wf.hints(), "cancelRequest", true);
-        assertContainsHint(wf.hints(), "acceptRequest", false);
-        assertContainsHint(wf.hints(), "rejectRequest", false);
+        // editor own rejected request: cancelRequest=true
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit().editable()
+                        .cancelRequest(rejectedRequest.getIdentifier())
+                        .requestPublication(true).requestDepublication(false).listVersions().retrieveVersion().requestDelete(true)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editable().requested().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .states()
+        );
+
+        session.setPermissions(rejectedRequest.getPath(), "hippo:author", true);
+
+        // author own rejected request: cancelRequest=true
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit().editable()
+                        .cancelRequest(rejectedRequest.getIdentifier())
+                        .requestPublication(true).requestDepublication(false).listVersions().retrieveVersion().requestDelete(true)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editable().requested().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .states()
+        );
 
         rejectedRequest.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_USERNAME, "otheruser");
-        wf.setNode(handleNode);
 
-        assertContainsHint(wf.hints(), "cancelRequest", false);
-        assertContainsHint(wf.hints(), "acceptRequest", false);
-        assertContainsHint(wf.hints(), "rejectRequest", false);
+        // author other user rejected request: no-op
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit().editable()
+                        .requestPublication(true).requestDepublication(false).listVersions().retrieveVersion().requestDelete(true)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editable().requested().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .states()
+        );
 
-        session.setPermissions(rejectedRequest.getPath(), "hippo:editor", true);
-        wf.setNode(handleNode);
+        rejectedRequest.remove();
 
-        assertContainsHint(wf.hints(), "cancelRequest", true);
-        assertContainsHint(wf.hints(), "acceptRequest", false);
-        assertContainsHint(wf.hints(), "rejectRequest", false);
+        MockNode scheduledRequest = addRequest(handleNode, HippoStdPubWfNodeType.PUBLISH, false);
+        session.setPermissions(scheduledRequest.getPath(), "hippo:editor", true);
 
-        publishRequest.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_USERNAME).remove();
-        wf.setNode(handleNode);
+        // editor scheduled request: cancelRequest=true
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit()
+                        .cancelRequest(scheduledRequest.getIdentifier())
+                        .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().noEdit().requested().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .states()
+        );
 
-        assertContainsHint(wf.hints(), "cancelRequest", true);
-        assertContainsHint(wf.hints(), "acceptRequest", false);
-        assertContainsHint(wf.hints(), "rejectRequest", false);
+        session.setPermissions(scheduledRequest.getPath(), "hippo:author", true);
 
-        session.setPermissions(rejectedRequest.getPath(), "hippo:editor", false);
-        wf.setNode(handleNode);
-
-        assertContainsHint(wf.hints(), "cancelRequest", false);
-        assertContainsHint(wf.hints(), "acceptRequest", false);
-        assertContainsHint(wf.hints(), "rejectRequest", false);
+        // author scheduled request: no-op
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit()
+                        .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().noEdit().requested().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .states()
+        );
     }
 
     @Test
     public void testPublishState() throws Exception {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
+        MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
-
-        MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
-        MockNode draftVariant, unpublishedVariant, publishedVariant, publishRequest;
-
-        unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
         wf.setNode(handleNode);
 
-        assertContainsStateIds(wf.getWorkflowExecutor(), "no-publish");
-        assertNotContainsHint(wf.hints(), "publish");
-
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "publishable");
-        assertContainsHint(wf.hints(), "publish", true);
-
-        unpublishedVariant.remove();
-        publishRequest = addRequest(handleNode, HippoStdPubWfNodeType.PUBLISH, true);
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "not-publishable");
-        assertContainsHint(wf.hints(), "publish", false);
-
-        unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
-        wf.setNode(handleNode);
-
-        assertContainsHint(wf.hints(), "publish", false);
-
-        workflowContext.setUserIdentity("system");
-        wf.setNode(handleNode);
-
-        assertContainsHint(wf.hints(), "publish", true);
-
-        workflowContext.setUserIdentity("testuser");
-        publishRequest.remove();
-        draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
-        wf.setNode(handleNode);
-
-        assertContainsHint(wf.hints(), "publish", false);
-
-        wf.setNode(handleNode);
-
-        assertContainsHint(wf.hints(), "publish", true);
-
+        MockNode draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
+        session.setPermissions(draftVariant.getPath(), "hippo:author", true);
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "testuser");
-        wf.setNode(handleNode);
 
-        assertContainsStateIds(wf.getWorkflowExecutor(), "not-publishable");
+        MockNode unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
+        session.setPermissions(unpublishedVariant.getPath(), "hippo:author", true);
 
-        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "otheruser");
-        wf.setNode(handleNode);
+        // author, no request, editing, modified (unpublished): requestPublication=false
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(true).checkModified(true).editing()
+                        .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editing().noRequest().noPublish().noDepublish().versionable().noTerminate().noCopy()
+                        .states()
+        );
 
-        assertContainsStateIds(wf.getWorkflowExecutor(), "not-publishable");
+        session.setPermissions(unpublishedVariant.getPath(), "hippo:editor", true);
 
+        // editor, no request, editing, modified (unpublished): requestPublication=false,publish=false
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(true).checkModified(true).editing()
+                        .requestPublication(false).publish(false).requestDepublication(false).depublish(false)
+                        .listVersions().retrieveVersion().versionable().requestDelete(false).terminateable(false).copy()
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editing().noRequest().noPublish().noDepublish().versionable().noTerminate().copyable()
+                        .states()
+        );
+
+        MockNode publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
+        session.setPermissions(publishedVariant.getPath(), "hippo:author", true);
         draftVariant.getProperty(HippoStdNodeType.HIPPOSTD_HOLDER).remove();
 
-        wf.setNode(handleNode);
+        // editor, no request, !editing, !modified (unpublished==published): requestPublication=false,publish=false
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(true).previewAvailable(true).checkModified(true).noEdit().editable()
+                        .requestPublication(false).publish(false).requestDepublication(true)
+                        .listVersions().retrieveVersion().versionable().requestDelete(false).terminateable(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editable().noRequest().noPublish().depublishable().versionable().noTerminate().noCopy()
+                        .states()
+        );
 
-        assertContainsHint(wf.hints(), "publish", true);
-
-        publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
-        wf.setNode(handleNode);
-
-        assertContainsHint(wf.hints(), "publish", false);
-
-        publishedVariant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[0]);
-        wf.setNode(handleNode);
-
-        assertContainsHint(wf.hints(), "publish", true);
-
-        publishedVariant.getProperty(HippoNodeType.HIPPO_AVAILABILITY).remove();
-
+        // make unpublished modified
         Calendar publishedModified = Calendar.getInstance();
         Calendar unpublishedModified = Calendar.getInstance();
         publishedModified.setTimeInMillis(unpublishedModified.getTimeInMillis() - 1000);
         unpublishedVariant.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE, new MockValue(PropertyType.DATE, ISO8601.format(unpublishedModified)));
         publishedVariant.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE, new MockValue(PropertyType.DATE, ISO8601.format(publishedModified)));
 
-        wf.setNode(handleNode);
+        // editor, no request, !editing, modified (unpublished!=published): requestPublication=true,publish=true
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(true).previewAvailable(true).checkModified(true).noEdit().editable()
+                        .requestPublication(true).publish(true).requestDepublication(true)
+                        .listVersions().retrieveVersion().versionable().requestDelete(false).terminateable(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editable().noRequest().publishable().depublishable().versionable().noTerminate().noCopy()
+                        .states()
+        );
 
-        assertContainsHint(wf.hints(), "publish", true);
+        session.setPermissions(unpublishedVariant.getPath(), "hippo:author", true);
 
-        publishedVariant.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE, new MockValue(PropertyType.DATE, ISO8601.format(unpublishedModified)));
+        // author, no request, !editing, modified (unpublished!=published): requestPublication=true
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(true).previewAvailable(true).checkModified(true).noEdit().editable()
+                        .requestPublication(true).requestDepublication(true)
+                        .listVersions().retrieveVersion().requestDelete(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editable().noRequest().publishable().depublishable().versionable().noTerminate().noCopy()
+                        .states()
+        );
 
-        wf.setNode(handleNode);
+        MockNode scheduledRequest = addRequest(handleNode, HippoStdPubWfNodeType.PUBLISH, false);
+        session.setPermissions(scheduledRequest.getPath(), "hippo:author", true);
 
-        assertContainsHint(wf.hints(), "publish", false);
+        // author, request, !editing, modified (unpublished!=published): requestPublication=false
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(true).previewAvailable(true).checkModified(true).noEdit()
+                        .requestPublication(false).requestDepublication(false)
+                        .listVersions().retrieveVersion().requestDelete(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().noEdit().requested().publishable().depublishable().versionable().noTerminate().noCopy()
+                        .states()
+        );
+
+        workflowContext.setUserIdentity("system");
+        session.setPermissions(unpublishedVariant.getPath(), "hippo:editor", true);
+
+        // system, request, !editing, modified (unpublished!=published): requestPublication=true,publish=true
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(true).previewAvailable(true).checkModified(true).noEdit()
+                        .requestPublication(true).publish(true).requestDepublication(true)
+                        .listVersions().retrieveVersion().versionable().requestDelete(false).terminateable(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().noEdit().requested().publishable().depublishable().versionable().noTerminate().noCopy()
+                        .states()
+        );
     }
 
     @Test
     public void testDePublishState() throws Exception {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
+        MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
-
-        MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
-        MockNode draftVariant, unpublishedVariant, publishedVariant, publishRequest;
-
-        publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
         wf.setNode(handleNode);
 
-        assertContainsStateIds(wf.getWorkflowExecutor(), "no-depublish");
-        assertNotContainsHint(wf.hints(), "depublish");
-
-        wf.setNode(handleNode);
-
-        // note: empty/no availability means allways available
-        assertContainsStateIds(wf.getWorkflowExecutor(), "depublishable");
-        assertContainsHint(wf.hints(), "depublish", true);
-
-        publishedVariant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[]{"foo"});
-
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "not-depublishable");
-        assertContainsHint(wf.hints(), "depublish", false);
-
-        publishedVariant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[]{"foo", "live"});
-
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "depublishable");
-        assertContainsHint(wf.hints(), "depublish", true);
-
-        draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
+        MockNode draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
+        session.setPermissions(draftVariant.getPath(), "hippo:author", true);
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "testuser");
-        wf.setNode(handleNode);
 
-        assertContainsStateIds(wf.getWorkflowExecutor(), "depublishable");
+        MockNode unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
+        session.setPermissions(unpublishedVariant.getPath(), "hippo:author", true);
 
-        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "otheruser");
-        wf.setNode(handleNode);
+        MockNode publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
+        session.setPermissions(publishedVariant.getPath(), "hippo:author", true);
 
-        assertContainsStateIds(wf.getWorkflowExecutor(), "not-depublishable");
+        // author, no request, editing, live: requestDepublication=false
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(true).previewAvailable(true).checkModified(true).editing()
+                        .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editing().noRequest().noPublish().noDepublish().versionable().noTerminate().noCopy()
+                        .states()
+        );
+
+        session.setPermissions(publishedVariant.getPath(), "hippo:editor", true);
+
+        // editor, no request, editing, live: requestDepublication=false,depublish=false
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(true).previewAvailable(true).checkModified(true).editing()
+                        .requestPublication(false).requestDepublication(false).depublish(false)
+                        .listVersions().retrieveVersion().requestDelete(false).copy()
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editing().noRequest().noPublish().noDepublish().versionable().noTerminate().copyable()
+                        .states()
+        );
 
         draftVariant.getProperty(HippoStdNodeType.HIPPOSTD_HOLDER).remove();
-        publishRequest = addRequest(handleNode, HippoStdPubWfNodeType.PUBLISH, true);
-        wf.setNode(handleNode);
+        publishedVariant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[]{});
 
-        assertContainsStateIds(wf.getWorkflowExecutor(), "no-depublish");
+        // editor, no request, !editing, !live: requestDepublication=false,depublish=false
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(true).checkModified(true).noEdit().editable()
+                        .requestPublication(true).requestDepublication(false).depublish(false)
+                        .listVersions().retrieveVersion().requestDelete(true).copy()
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editable().noRequest().publishable().noDepublish().versionable().terminateable().copyable()
+                        .states()
+        );
+
+        publishedVariant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[]{"live"});
+
+        // editor, no request, !editing, live: requestDepublication=true,depublish=true
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(true).previewAvailable(true).checkModified(true).noEdit().editable()
+                        .requestPublication(false).requestDepublication(true).depublish(true)
+                        .listVersions().retrieveVersion().requestDelete(false).copy()
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editable().noRequest().noPublish().depublishable().versionable().noTerminate().copyable()
+                        .states()
+        );
+
+        session.setPermissions(publishedVariant.getPath(), "hippo:author", true);
+
+        // author, no request, !editing, live: requestDepublication=true
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(true).previewAvailable(true).checkModified(true).noEdit().editable()
+                        .requestPublication(false).requestDepublication(true)
+                        .listVersions().retrieveVersion().requestDelete(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editable().noRequest().noPublish().depublishable().versionable().noTerminate().noCopy()
+                        .states()
+        );
+
+        MockNode scheduledRequest = addRequest(handleNode, HippoStdPubWfNodeType.PUBLISH, false);
+        session.setPermissions(scheduledRequest.getPath(), "hippo:author", true);
+
+        // author, request, !editing, live: requestDepublication=false
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(true).previewAvailable(true).checkModified(true).noEdit()
+                        .requestPublication(false).requestDepublication(false)
+                        .listVersions().retrieveVersion().requestDelete(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().noEdit().requested().noPublish().depublishable().versionable().noTerminate().noCopy()
+                        .states()
+        );
 
         workflowContext.setUserIdentity("system");
-        wf.setNode(handleNode);
+        session.setPermissions(publishedVariant.getPath(), "hippo:editor", true);
 
-        assertContainsStateIds(wf.getWorkflowExecutor(), "depublishable");
-        assertContainsHint(wf.hints(), "depublish", true);
-
-        workflowContext.setUserIdentity("testuser");
-
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "depublishable");
-        assertContainsHint(wf.hints(), "depublish", false);
-
-        publishRequest.remove();
-
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "depublishable");
-        assertContainsHint(wf.hints(), "depublish", true);
-
-        unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
-
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "depublishable");
-        assertContainsHint(wf.hints(), "depublish", false);
-
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "depublishable");
-        assertContainsHint(wf.hints(), "depublish", false);
-
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "depublishable");
-        assertContainsHint(wf.hints(), "depublish", true);
-
-        unpublishedVariant.remove();
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "depublishable");
-        assertContainsHint(wf.hints(), "depublish", false);
-
-        draftVariant.remove();
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "depublishable");
-        assertContainsHint(wf.hints(), "depublish", true);
+        // system, request, !editing, live: requestDepublication=true,depublish=true
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(true).previewAvailable(true).checkModified(true).noEdit()
+                        .requestPublication(false).requestDepublication(true).depublish(true)
+                        .listVersions().retrieveVersion().requestDelete(false).copy()
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().noEdit().requested().noPublish().depublishable().versionable().noTerminate().copyable()
+                        .states()
+        );
     }
 
     @Test
     public void testVersioningState() throws Exception {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
+        MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
-
-        MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
-        MockNode unpublishedVariant, frozenNode;
-
-        unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
-
-        MockVersion versionNode = new MockVersion("1.0", JcrConstants.NT_VERSION);
-        ((MockNode) unpublishedVariant.getParent()).addNode(versionNode);
-        frozenNode = versionNode.addMockNode(JcrConstants.JCR_FROZEN_NODE, JcrConstants.NT_FROZEN_NODE);
-        frozenNode.setProperty(JcrConstants.JCR_FROZEN_UUID, unpublishedVariant.getIdentifier());
-
         wf.setNode(handleNode);
 
-        assertContainsStateIds(wf.getWorkflowExecutor(), "version");
-        assertContainsHint(wf.hints(), "version", true);
-        assertContainsHint(wf.hints(), "listVersions", true);
-        assertContainsHint(wf.hints(), "restoreVersion", true);
-        assertContainsHint(wf.hints(), "revertVersion", true);
-        assertNotContainsHint(wf.hints(), "restoreVersionTo");
+        MockNode draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
+        session.setPermissions(draftVariant.getPath(), "hippo:author", true);
 
-        wf.setNode(handleNode);
+        // no unpublished: (only) listVersions=true
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit().editable()
+                        .requestPublication(false).requestDepublication(false).listVersions().requestDelete(true)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editable().noRequest().noPublish().noDepublish().noVersioning().terminateable().noCopy()
+                        .states()
+        );
 
-        assertContainsStateIds(wf.getWorkflowExecutor(), "no-versioning");
-        assertNotContainsHint(wf.hints(), "version");
-        assertNotContainsHint(wf.hints(), "restoreVersionTo");
+        draftVariant.remove();
+        MockNode unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
+        session.setPermissions(unpublishedVariant.getPath(), "hippo:author", true);
 
-        wf.setNode(handleNode);
-        assertContainsStateIds(wf.getWorkflowExecutor(), "version");
-        assertContainsHint(wf.hints(), "restoreVersionTo", true);
-        assertNotContainsHint(wf.hints(), "version");
+        // author, unpublished: listVersions=true, retrieveVersion=true
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit().editable()
+                        .requestPublication(true).requestDepublication(false).listVersions().retrieveVersion().requestDelete(true)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editable().noRequest().publishable().noDepublish().versionable().terminateable().noCopy()
+                        .states()
+        );
+
+        session.setPermissions(unpublishedVariant.getPath(), "hippo:editor", true);
+
+        // author, unpublished: listVersions=true, retrieveVersion=true, versionable
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit().editable()
+                        .requestPublication(true).publish(true).requestDepublication(false).depublish(false)
+                        .listVersions().retrieveVersion().versionable().requestDelete(true).terminateable(true).copy()
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editable().noRequest().publishable().noDepublish().versionable().terminateable().copyable()
+                        .states()
+        );
     }
 
     @Test
     public void testTerminateState() throws Exception {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
+        MockNode folderNode = (MockNode)session.getRootNode().addNode("folder", HippoNodeType.NT_DOCUMENT);
+        session.setPermissions(folderNode.getPath(), "jcr:write", false);
+        MockNode handleNode = (MockNode)folderNode.addNode("test", HippoNodeType.NT_HANDLE);
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
-
-        MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
-        MockNode draftVariant, unpublishedVariant, publishedVariant, publishRequest;
-
-        unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
-
         wf.setNode(handleNode);
 
-        assertContainsStateIds(wf.getWorkflowExecutor(), "terminateable");
-        assertContainsHint(wf.hints(), "delete", true);
-        assertContainsHint(wf.hints(), "move", true);
-        assertContainsHint(wf.hints(), "rename", true);
-
-        draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
-        publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
-        publishedVariant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[0]);
-
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "terminateable");
-        assertContainsHint(wf.hints(), "delete", true);
-        assertContainsHint(wf.hints(), "move", true);
-        assertContainsHint(wf.hints(), "rename", true);
-
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "not-terminateable");
-        assertContainsHint(wf.hints(), "delete", false);
-        assertContainsHint(wf.hints(), "move", false);
-        assertContainsHint(wf.hints(), "rename", false);
-
-        session.setPermissions(publishedVariant.getPath(), "hippo:editor", false);
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "not-terminateable");
-        assertContainsHint(wf.hints(), "delete", false);
-        assertNotContainsHint(wf.hints(), "move");
-        assertNotContainsHint(wf.hints(), "rename");
-
-        session.setPermissions(unpublishedVariant.getPath(), "hippo:editor", false);
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "terminateable");
-        assertContainsHint(wf.hints(), "delete", true);
-        assertNotContainsHint(wf.hints(), "move");
-        assertNotContainsHint(wf.hints(), "rename");
-
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "no-terminate");
-
-        publishedVariant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[]{"live"});
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "no-terminate");
-
-        publishedVariant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[0]);
+        MockNode draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
+        session.setPermissions(draftVariant.getPath(), "hippo:author", true);
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "testuser");
-        wf.setNode(handleNode);
+        MockNode publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
+        session.setPermissions(publishedVariant.getPath(), "hippo:author", true);
 
-        assertContainsStateIds(wf.getWorkflowExecutor(), "no-terminate");
+        // author, editing, live: requestDelete=false
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(true).previewAvailable(true).checkModified(false).editing()
+                        .requestPublication(false).requestDepublication(false)
+                        .listVersions().requestDelete(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editing().noRequest().noPublish().noDepublish().noVersioning().noTerminate().noCopy()
+                        .states()
+        );
+
+        session.setPermissions(publishedVariant.getPath(), "hippo:editor", true);
+
+        // editor, editing, live: requestDelete=false
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(true).previewAvailable(true).checkModified(false).editing()
+                        .requestPublication(false).publish(false).requestDepublication(false).depublish(false)
+                        .listVersions().requestDelete(false).copy()
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editing().noRequest().noPublish().noDepublish().noVersioning().noTerminate().copyable()
+                        .states()
+        );
+
+        session.setPermissions(folderNode.getPath(), "jcr:write", true);
+
+        // editor + writable containing folder, editing, live: requestDelete=false, terminateable=false
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(true).previewAvailable(true).checkModified(false).editing()
+                        .requestPublication(false).publish(false).requestDepublication(false).depublish(false)
+                        .listVersions().requestDelete(false).terminateable(false).copy()
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editing().noRequest().noPublish().noDepublish().noVersioning().noTerminate().copyable()
+                        .states()
+        );
+
+        session.setPermissions(publishedVariant.getPath(), "hippo:author", true);
+
+        // author + writable containing folder, editing, live: requestDelete=false
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(true).previewAvailable(true).checkModified(false).editing()
+                        .requestPublication(false).requestDepublication(false)
+                        .listVersions().requestDelete(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editing().noRequest().noPublish().noDepublish().noVersioning().noTerminate().noCopy()
+                        .states()
+        );
 
         draftVariant.getProperty(HippoStdNodeType.HIPPOSTD_HOLDER).remove();
-        publishRequest = addRequest(handleNode, HippoStdPubWfNodeType.PUBLISH, true);
-        wf.setNode(handleNode);
+        publishedVariant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[0]);
 
-        assertContainsStateIds(wf.getWorkflowExecutor(), "no-terminate");
+        MockNode scheduledRequest = addRequest(handleNode, HippoStdPubWfNodeType.PUBLISH, false);
 
-        publishRequest.remove();
-        unpublishedVariant.remove();
+        // author + writable containing folder, !editing, !live, request: requestDelete=false
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit()
+                        .cancelRequest(scheduledRequest.getIdentifier())
+                        .requestPublication(false).requestDepublication(false)
+                        .listVersions().requestDelete(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().noEdit().requested().noPublish().noDepublish().noVersioning().terminateable().noCopy()
+                        .states()
+        );
 
-        wf.setNode(handleNode);
+        scheduledRequest.remove();
 
-        assertContainsStateIds(wf.getWorkflowExecutor(), "terminateable");
-        assertContainsHint(wf.hints(), "delete", true);
+        // author + writable containing folder, !editing, !live: requestDelete=true
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit().editable()
+                        .requestPublication(false).requestDepublication(false)
+                        .listVersions().requestDelete(true)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editable().noRequest().noPublish().noDepublish().noVersioning().terminateable().noCopy()
+                        .states()
+        );
 
-        wf.setNode(handleNode);
+        session.setPermissions(publishedVariant.getPath(), "hippo:editor", true);
 
-        assertContainsStateIds(wf.getWorkflowExecutor(), "not-terminateable");
-        assertContainsHint(wf.hints(), "delete", false);
-
-        publishedVariant.remove();
-
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "terminateable");
-        assertContainsHint(wf.hints(), "delete", true);
+        // editor + writable containing folder, !editing, !live: requestDelete=true, terminateable
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit().editable()
+                        .requestPublication(false).publish(false).requestDepublication(false).depublish(false)
+                        .listVersions().requestDelete(true).terminateable(true).copy()
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editable().noRequest().noPublish().noDepublish().noVersioning().terminateable().copyable()
+                        .states()
+        );
     }
 
     @Test
     public void testCopyState() throws Exception {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
+        MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
-
-        MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
-        MockNode draftVariant, unpublishedVariant, publishedVariant, publishRequest;
-
-        draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
-        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "otheruser");
-        unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
-        publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
-        publishRequest = addRequest(handleNode, HippoStdPubWfNodeType.PUBLISH, true);
-
         wf.setNode(handleNode);
 
-        assertContainsStateIds(wf.getWorkflowExecutor(), "copyable");
-        assertContainsHint(wf.hints(), "copy", true);
+        MockNode publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
+        session.setPermissions(publishedVariant.getPath(), "hippo:author", true);
 
-        wf.setNode(handleNode);
-
-        unpublishedVariant.remove();
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "copyable");
-        assertContainsHint(wf.hints(), "copy", true);
-
-        session.setPermissions(publishedVariant.getPath(), "hippo:editor", false);
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "no-copy");
-        assertNotContainsHint(wf.hints(), "copy");
+        // author, published: no-copy
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit().editable()
+                        .requestPublication(false).requestDepublication(true)
+                        .listVersions().requestDelete(false)
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editable().noRequest().noPublish().depublishable().noVersioning().noTerminate().noCopy()
+                        .states()
+        );
 
         session.setPermissions(publishedVariant.getPath(), "hippo:editor", true);
-        wf.setNode(handleNode);
 
-        assertContainsStateIds(wf.getWorkflowExecutor(), "no-copy");
-        assertNotContainsHint(wf.hints(), "copy");
-
-        wf.setNode(handleNode);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "copyable");
-        assertContainsHint(wf.hints(), "copy", true);
-    }
-
-    @Test
-    public void testNoState() throws Exception {
-        MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
-        MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
-        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
-        wf.setWorkflowContext(workflowContext);
-
-        MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
-        MockNode unpublishedVariant, frozenNode;
-
-        unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
-
-        MockVersion versionNode = new MockVersion("1.0", JcrConstants.NT_VERSION);
-        ((MockNode) unpublishedVariant.getParent()).addNode(versionNode);
-        frozenNode = versionNode.addMockNode(JcrConstants.JCR_FROZEN_NODE, JcrConstants.NT_FROZEN_NODE);
-        frozenNode.setProperty(JcrConstants.JCR_FROZEN_UUID, unpublishedVariant.getIdentifier());
-
-        unpublishedVariant.remove();
-        wf.setNode(handleNode);
-
-        assertMatchingStateIds(wf.getWorkflowExecutor(), "status", "no-edit", "no-request", "no-publish", "no-depublish", "no-versioning", "no-terminate", "no-copy");
-        assertEquals(0, wf.hints().size());
+        // editor, published: copy
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                        .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit().editable()
+                        .requestPublication(false).publish(false).requestDepublication(true).depublish(true)
+                        .listVersions().requestDelete(false).terminateable(false).copy()
+                        .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                        .status().editable().noRequest().noPublish().depublishable().noVersioning().noTerminate().copyable()
+                        .states()
+        );
     }
 }

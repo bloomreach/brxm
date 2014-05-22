@@ -57,6 +57,12 @@
     def getContainingFolder() { workflowData.handle.parent }
   </script>
 
+  <!-- the initial no-document state is used to prevent entering the handle state if there is no document -->
+  <state id="no-document">
+    <!-- automatic transition to and continue in parallel handle state only when a document variant exists -->
+    <transition target="handle" cond="!workflowData.documents.isEmpty()"/>
+  </state>
+
   <parallel id="handle">
 
     <!-- the atomic status state is used to report several statuses and info feedback to the invoking workflow -->

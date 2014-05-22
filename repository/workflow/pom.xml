@@ -122,7 +122,6 @@
           <workingDirectory>${project.build.directory}</workingDirectory>
           <excludes>
             <exclude>**/TranslationWorkflowTest.java</exclude>
-            <exclude>**/DocumentWorkflowTest.java</exclude>
           </excludes>
         </configuration>
       </plugin>
