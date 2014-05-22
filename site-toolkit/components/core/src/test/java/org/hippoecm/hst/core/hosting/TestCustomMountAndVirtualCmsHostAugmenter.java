@@ -134,7 +134,7 @@ public class TestCustomMountAndVirtualCmsHostAugmenter extends AbstractTestConfi
 
             augmenter.augment((MutableVirtualHosts)hstSitesManager.getVirtualHosts());
 
-            final ResolvedMount justTheWwwUnitTestRootMount = hstSitesManager.getVirtualHosts().matchMount("www.unit.test", "", "_rp");
+            final ResolvedMount justTheWwwUnitTestRootMount = hstSitesManager.getVirtualHosts().matchMount("www.unit.test", "/site", "_rp");
             assertNotNull(justTheWwwUnitTestRootMount);
             assertEquals("",justTheWwwUnitTestRootMount.getResolvedMountPath());
             assertEquals("hst:root",justTheWwwUnitTestRootMount.getMount().getName());
