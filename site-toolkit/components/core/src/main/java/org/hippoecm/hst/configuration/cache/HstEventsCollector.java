@@ -16,7 +16,9 @@
 package org.hippoecm.hst.configuration.cache;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.RepositoryException;
@@ -49,11 +51,17 @@ public class HstEventsCollector {
     }
 
     public synchronized void collect(EventIterator events) {
+        final Map<String, Set<Integer>> movedNodePathMap = new HashMap<>();
         while (events.hasNext()) {
             try {
-                addEvent(events.nextEvent());
+                addEvent(events.nextEvent(), movedNodePathMap);
             } catch (RepositoryException e) {
                 log.error("Exception while getting jcr event");
+            }
+        }
+        for (String movedNodePath : movedNodePathMap.keySet()) {
+            if (movedNodePathMap.get(movedNodePath).size() == 2) {
+                hstEvents.add(new HstEvent(StringUtils.substringBeforeLast(movedNodePath, "/"), false));
             }
         }
     }
@@ -83,7 +91,7 @@ public class HstEventsCollector {
 
     }
 
-    private void addEvent(final Event jcrEvent) throws RepositoryException {
+    private void addEvent(final Event jcrEvent, final Map<String, Set<Integer>> movedNodePathMap) throws RepositoryException {
         if (HippoNodeType.HIPPO_IGNORABLE.equals(jcrEvent.getUserData())) {
             log.debug("Ignore event '{}' because marked {}", jcrEvent.getPath(), HippoNodeType.HIPPO_IGNORABLE);
             return;
@@ -92,15 +100,21 @@ public class HstEventsCollector {
             log.debug("Ignore event '{}' because not an event below /hst:hst.", jcrEvent.getPath());
             return;
         }
+        final String path = jcrEvent.getPath();
         final HstEvent event;
         if (isPropertyEvent(jcrEvent)) {
-            String nodePath = StringUtils.substringBeforeLast(jcrEvent.getPath(), "/");
-            event = new HstEvent(nodePath, true);
-            hstEvents.add(event);
+            event = new HstEvent(StringUtils.substringBeforeLast(path, "/"), true);
         } else {
-            event = new HstEvent(jcrEvent.getPath(), false);
-            hstEvents.add(event);
+            final int type = jcrEvent.getType();
+            if (type == Event.NODE_REMOVED || type == Event.NODE_ADDED) {
+                if (!movedNodePathMap.containsKey(path)) {
+                    movedNodePathMap.put(path, new HashSet<Integer>());
+                }
+                movedNodePathMap.get(path).add(type);
+            }
+            event = new HstEvent(path, false);
         }
+        hstEvents.add(event);
         log.debug("Collected event {}", event);
     }
 
