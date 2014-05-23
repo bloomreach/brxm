@@ -2000,7 +2000,6 @@ plugin-dashboard/src/main/webapp/css/media.css -text
 plugin-dashboard/src/main/webapp/css/normalize.css -text
 plugin-dashboard/src/main/webapp/css/print.css -text
 plugin-dashboard/src/main/webapp/css/theme.css -text
-plugin-dashboard/src/main/webapp/directives/essentials-global-settings.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-messages.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-simple-install-plugin.html -text
 plugin-dashboard/src/main/webapp/docs/rest-api/css/highlight.default.css -text

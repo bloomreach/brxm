@@ -57,7 +57,7 @@
                 <button class="btn btn-success glyphicon glyphicon-plus" ng-click="addUrl()">Add repository url</button>
             </label>
         </div>
-        <div class="row" ng-repeat="url in projectSettings.pluginRepositories">
+        <div class="row" ng-repeat="url in projectSettings.pluginRepositories track by $index">
             <div class="form-group">
                 <label class="col-sm-2 control-label">Repository URL {{$index +1}}</label>
                 <div class="col-sm-6">

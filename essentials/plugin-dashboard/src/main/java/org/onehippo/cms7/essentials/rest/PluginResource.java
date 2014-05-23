@@ -20,8 +20,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
@@ -35,6 +37,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.RuntimeDelegate;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Server;
@@ -64,6 +67,7 @@ import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.DependencyUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.rest.client.RestClient;
 import org.onehippo.cms7.essentials.rest.model.ControllerRestful;
 import org.onehippo.cms7.essentials.rest.model.RestList;
 import org.onehippo.cms7.essentials.rest.model.StatusRestful;
@@ -117,6 +121,24 @@ public class PluginResource extends BaseResource {
 
 
         final List<PluginRestful> items = getPlugins(servletContext);
+        // check if we have other repos:
+        final ProjectSettings projectSettings = getContext(servletContext).getProjectSettings();
+        final Set<String> pluginRepositories = projectSettings.getPluginRepositories();
+        for (String pluginRepository : pluginRepositories) {
+            if (pluginRepository.startsWith("http")) {
+                try {
+                    RestClient client = new RestClient(pluginRepository);
+                    final RestfulList<PluginRestful> myPlugins = client.getPlugins();
+                    if(myPlugins !=null){
+                        final List<PluginRestful> myPluginsItems = myPlugins.getItems();
+                        CollectionUtils.addAll(items, myPluginsItems.iterator());
+                    }
+                } catch (Exception e) {
+                    log.error("Error loading plugins from repository: " + pluginRepository, e);
+                }
+            }
+        }
+
 
         final Collection<String> restClasses = new ArrayList<>();
         final PluginContext context = getContext(servletContext);
@@ -236,6 +258,16 @@ public class PluginResource extends BaseResource {
             final Plugin plugin = getPluginById(ProjectSetupPlugin.class.getName(), servletContext);
             final PluginContext context = new DefaultPluginContext(plugin);
             try (PluginConfigService configService = context.getConfigService()) {
+                final Set<String> pluginRepositories = payload.getPluginRepositories();
+                if (pluginRepositories !=null) {
+                    final Iterator<String> iterator = pluginRepositories.iterator();
+                    for(;iterator.hasNext();){
+                        final String next = iterator.next();
+                        if(Strings.isNullOrEmpty(next)){
+                            iterator.remove();
+                        }
+                    }
+                }
                 payload.setSetupDone(true);
                 configService.write(payload);
                 return new KeyValueRestful("message", "Saved property for welcome screen");
@@ -408,9 +440,7 @@ public class PluginResource extends BaseResource {
     @Path("/projectsettings")
     public ProjectSettings getProjectSettings(@Context ServletContext servletContext) {
         final PluginContext context = getContext(servletContext);
-        final ProjectSettingsBean projectSettings = (ProjectSettingsBean) context.getProjectSettings();
-        projectSettings.addPluginRepository("test");
-        return projectSettings;
+        return context.getProjectSettings();
     }
 
     @GET

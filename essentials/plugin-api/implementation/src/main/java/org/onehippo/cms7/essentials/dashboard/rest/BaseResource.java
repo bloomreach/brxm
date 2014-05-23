@@ -65,8 +65,9 @@ public class BaseResource {
 
     /**
      * Instantiate InstructionPackage for plugin.
+     *
      * @param plugin Plugin instance
-     * @return   null if packageClass & packageFile are null or empty
+     * @return null if packageClass & packageFile are null or empty
      */
     protected InstructionPackage instructionPackageInstance(final Plugin plugin) {
         final String packageClass = plugin.getPackageClass();

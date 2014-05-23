@@ -16,7 +16,7 @@
 
 package org.onehippo.cms7.essentials.dashboard.model;
 
-import java.util.List;
+import java.util.Set;
 
 import org.onehippo.cms7.essentials.dashboard.config.Document;
 
@@ -55,7 +55,7 @@ public interface ProjectSettings extends Document {
 
     void setUseSamples(boolean useSamples);
 
-    List<String> getPluginRepositories();
+    Set<String> getPluginRepositories();
 
-    void setPluginRepositories(List<String> pluginRepositories);
+    void setPluginRepositories(Set<String> pluginRepositories);
 }

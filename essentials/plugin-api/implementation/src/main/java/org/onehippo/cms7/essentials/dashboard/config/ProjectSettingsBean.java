@@ -17,8 +17,8 @@
 package org.onehippo.cms7.essentials.dashboard.config;
 
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -44,7 +44,7 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
     private boolean useSamples;
 
 
-    private List<String> pluginRepositories = new ArrayList<>();
+    private Set<String> pluginRepositories = new HashSet<>();
 
 
     public ProjectSettingsBean() {
@@ -129,14 +129,16 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
         this.useSamples = useSamples;
     }
 
+
     @Override
-    public List<String> getPluginRepositories() {
+    public Set<String> getPluginRepositories() {
         return pluginRepositories;
     }
 
     @Override
-    public void setPluginRepositories(final List<String> pluginRepositories) {
+    public void setPluginRepositories(final Set<String> pluginRepositories) {
         this.pluginRepositories = pluginRepositories;
+
     }
 
     public void addPluginRepository(final String path) {
