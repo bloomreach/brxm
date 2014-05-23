@@ -16,11 +16,67 @@
 <div class="row" ng-controller="introductionCtrl">
     <h2>Welcome</h2>
     <p>You are about to use the Essentials Dashboard to add functionality to a new Hippo project.
-    To get some basic understanding about what the Dashboard is and how to use it, check
-    <a href="http://www.onehippo.org/library/essentials/hippo-developer-essentials.html">the documentation</a>.</p>
+        To get some basic understanding about what the Dashboard is and how to use it, check
+        <a href="http://www.onehippo.org/library/essentials/hippo-developer-essentials.html">the documentation</a>.</p>
     <p>We are happy to receive feedback on your experiences using the Dashboard. Please feel free to use the
-    built-in feedback mechanism for this. Thanks and enjoy!</p>
+        built-in feedback mechanism for this. Thanks and enjoy!</p>
+    <h3>Please choose project setup preferences</h3>
 
-    <a class="btn btn-success"  ng-click="hide()">Get started</a>
+    <form name="settingsForm">
+        <div class="form-group">
+            <label>Please select templating language:</label>
+        </div>
+        <div class="radio">
+            <label>
+                <input type="radio" ng-model="templateLanguage" required value="jsp"/>
+                JSP template
+            </label>
+        </div>
+        <div class="radio">
+            <label>
+                <input type="radio" ng-model="templateLanguage" required value="freemarker"/>
+                Freemarker template
+            </label>
+        </div>
+        <div class="form-group">
+            <label> Content: </label>
+        </div>
+        <div class="checkbox">
+            <label>
+                Add sample content <input type="checkbox" ng-model="useSamples"/>
+            </label>
+        </div>
+        <!--
+            //############################################
+            //  REPO URLS
+            //############################################
+        -->
+        <div class="row form-group">
+            <label class="col-sm-2 control-label">Setup plugin repository urls:</label>
+            <label class="col-sm-6 control-label">
+                <a href="javascript:void(0);" ng-click="addUrl()"><span class="glyphicon glyphicon-plus pull-right text-primary">Add new url</span></a>
+            </label>
+        </div>
+        <div class="row" ng-repeat="url in pluginRepositories">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Repository URL {{$index +1}}</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" required ng-model="url.value">
+                </div>
+                <div class="col-sm-2">
+                    <a class="btn btn-danger" href="javascript:void(0);" ng-click="removeUrl(url)"><span class="glyphicon glyphicon-minus pull-right">Remove</span></a>
+                </div>
+
+            </div>
+
+
+        </div>
+        <div class="form-group">
+            <a class="btn btn-success" ng-click="hide()">Get started</a>
+        </div>
+
+    </form>
+
+
 </div>
 

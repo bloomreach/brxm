@@ -50,6 +50,7 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
     private String templateLanguage;
     private boolean useSamples;
 
+
     private List<String> pluginRepositories = new ArrayList<>();
 
 

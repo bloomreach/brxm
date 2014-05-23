@@ -39,6 +39,30 @@
         })
         .controller('introductionCtrl', function ($scope, $location, $sce, $log, $rootScope, $http) {
             // just sets a hide screen boolean flag to true
+            $scope.templateLanguage = "jsp";
+            $scope.useSamples = true;
+            $scope.pluginRepositories = [];
+
+            $scope.addUrl = function () {
+                $scope.pluginRepositories.push({'value': '', 'protected':false});
+            };
+
+            /**
+             * NOTE: hippo provided one is protected
+             */
+            $scope.removeUrl = function (url) {
+                var idx = $scope.pluginRepositories.indexOf(url);
+                if (idx > -1) {
+                    var myUrl = $scope.pluginRepositories[idx];
+                    if(!myUrl.protected){
+                        $scope.pluginRepositories.splice(idx, 1);
+                    }else{
+
+                    }
+                }
+            };
+
+
             $scope.hide = function () {
                 $http.post($rootScope.REST.hide_introduction).success(function (data) {
                     window.location = "/essentials";
