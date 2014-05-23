@@ -91,21 +91,6 @@ public interface VirtualHost {
 
     /**
      * <p>
-     *    Returns the contextpath (webapp) for this {@link Mount}. A request can only be matched to this
-     *    {@link Mount} if the request its {@link javax.servlet.http.HttpServletRequest#getContextPath()} is equal
-     *    to {@link #getContextPath()}, or when the {@link Mount} returns <code>null</code> for {@link #getContextPath()} : Namely
-     *    <code>null</code> means the {@link Mount} is contextpath (webapp) agnostic and can be matched regardless the
-     *   {@link javax.servlet.http.HttpServletRequest#getContextPath()}
-     * </p>
-     * @return the contextpath (webapp) for this {@link Mount}. The contextpath for the ROOT application must be an empty String.
-     * If non-empty, a path starting with a "/" character but that does not end with a "/" character must be returned. If
-     * <code>null</code> is returned, the {@link Mount} is contextpath (webapp) agnostic and can be matched regardless the
-     * {@link javax.servlet.http.HttpServletRequest#getContextPath()}
-     */
-
-
-    /**
-     * <p>
      *    Returns the default contextpath (webapp) for all the {@link Mount}s below this {@link VirtualHost}. A {@link Mount}
      *    can override this default host contextpath by setting the contextpath explicitly.
      * </p>
