@@ -72,10 +72,12 @@ public class DefaultPluginContext implements PluginContext {
     public DefaultPluginContext(final Plugin plugin) {
         this.plugin = plugin;
         final ProjectSettings document = getProjectSettings();
-        setBeansPackageName(document.getSelectedBeansPackage());
-        setComponentsPackageName(document.getSelectedComponentsPackage());
-        setRestPackageName(document.getSelectedRestPackage());
-        setProjectNamespacePrefix(document.getProjectNamespace());
+        if (document != null) {
+            setBeansPackageName(document.getSelectedBeansPackage());
+            setComponentsPackageName(document.getSelectedComponentsPackage());
+            setRestPackageName(document.getSelectedRestPackage());
+            setProjectNamespacePrefix(document.getProjectNamespace());
+        }
     }
 
     @Override
