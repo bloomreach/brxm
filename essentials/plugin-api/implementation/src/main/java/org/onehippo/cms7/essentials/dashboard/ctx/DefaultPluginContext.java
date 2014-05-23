@@ -34,7 +34,9 @@ import javax.jcr.Session;
 import org.apache.jackrabbit.value.ValueFactoryImpl;
 import org.onehippo.cms7.essentials.dashboard.config.FilePluginService;
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
+import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.model.Plugin;
+import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
@@ -69,6 +71,21 @@ public class DefaultPluginContext implements PluginContext {
 
     public DefaultPluginContext(final Plugin plugin) {
         this.plugin = plugin;
+        final ProjectSettings document = getProjectSettings();
+        setBeansPackageName(document.getSelectedBeansPackage());
+        setComponentsPackageName(document.getSelectedComponentsPackage());
+        setRestPackageName(document.getSelectedRestPackage());
+        setProjectNamespacePrefix(document.getProjectNamespace());
+    }
+
+    @Override
+    public ProjectSettings getProjectSettings() {
+        try (PluginConfigService service = getConfigService()) {
+            return service.read(ProjectSettingsBean.DEFAULT_NAME, ProjectSettingsBean.class);
+        } catch (Exception e) {
+            log.error("Error reading project settings", e);
+        }
+        return null;
     }
 
     @Override

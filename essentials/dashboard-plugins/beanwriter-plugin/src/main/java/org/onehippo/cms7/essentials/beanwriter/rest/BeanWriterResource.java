@@ -28,8 +28,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
-import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
@@ -64,20 +62,6 @@ public class BeanWriterResource extends BaseResource {
         final PluginContext context = new DefaultPluginContext(new PluginRestful(className));
         // inject project settings:
         final RestfulList<MessageRestful> messages = new MyRestList();
-        try (PluginConfigService service = context.getConfigService()) {
-            final ProjectSettingsBean document = service.read(ProjectSettingsBean.DEFAULT_NAME, ProjectSettingsBean.class);
-            if (document != null) {
-                context.setBeansPackageName(document.getSelectedBeansPackage());
-                context.setComponentsPackageName(document.getSelectedComponentsPackage());
-                context.setRestPackageName(document.getSelectedRestPackage());
-                context.setProjectNamespacePrefix(document.getProjectNamespace());
-            }
-        }
-
-
-
-        /*messages.add(new MessageRestful("Not Enabled @see org.onehippo.cms7.essentials.rest.BeanWriterResource"));
-        messages.add(new MessageRestful("Not implemented yet"));*/
         final java.nio.file.Path namespacePath = new File(basePath + File.separator + "bootstrap").toPath();
 
         final List<MemoryBean> memoryBeans = BeanWriterUtils.buildBeansGraph(namespacePath, context, EssentialConst.SOURCE_PATTERN_JAVA);

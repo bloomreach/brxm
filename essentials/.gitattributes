@@ -557,6 +557,7 @@ plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/Depend
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/EssentialsDependency.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/PersistentHandler.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/Plugin.java -text
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/ProjectSettings.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/Restful.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/Vendor.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/packaging/InstructionPackage.java -text

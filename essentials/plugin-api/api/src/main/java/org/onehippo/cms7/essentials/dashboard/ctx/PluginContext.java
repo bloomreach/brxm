@@ -27,6 +27,7 @@ import javax.jcr.Session;
 
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.model.Plugin;
+import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
 
 import com.google.common.collect.Multimap;
 
@@ -37,6 +38,8 @@ import com.google.common.collect.Multimap;
  */
 public interface PluginContext extends Serializable {
 
+
+    ProjectSettings getProjectSettings();
 
     /**
      * Plugin can store and retrieve data during it's lifecycle
@@ -218,7 +221,6 @@ public interface PluginContext extends Serializable {
     Map<String, Object> getPlaceholderData();
 
     /**
-     *
      * @return essentials project resource directory path
      */
     String getEssentialsResourcePath();

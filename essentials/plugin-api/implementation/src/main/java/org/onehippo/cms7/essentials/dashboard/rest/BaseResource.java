@@ -103,11 +103,9 @@ public class BaseResource {
         try (final PluginConfigService configService = context.getConfigService()) {
 
             final ProjectSettingsBean document = configService.read(ProjectSettingsBean.DEFAULT_NAME, ProjectSettingsBean.class);
-
             if (document != null) {
                 projectRestful.setNamespace(document.getProjectNamespace());
             }
-
 
         } catch (Exception e) {
             log.error("Error reading project settings", e);
@@ -158,20 +156,7 @@ public class BaseResource {
 
     public PluginContext getContext(ServletContext servletContext) {
         final String className = ProjectSetupPlugin.class.getName();
-        final PluginContext context = new DefaultPluginContext(new PluginRestful(className));
-
-        try (final PluginConfigService service = context.getConfigService()) {
-            final ProjectSettingsBean document = service.read(ProjectSettingsBean.DEFAULT_NAME, ProjectSettingsBean.class);
-            if (document != null) {
-                context.setBeansPackageName(document.getSelectedBeansPackage());
-                context.setComponentsPackageName(document.getSelectedComponentsPackage());
-                context.setRestPackageName(document.getSelectedRestPackage());
-                context.setProjectNamespacePrefix(document.getProjectNamespace());
-            }
-        } catch (Exception e) {
-            log.error("Error getting context", e);
-        }
-        return context;
+        return new DefaultPluginContext(new PluginRestful(className));
     }
 
 

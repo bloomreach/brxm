@@ -18,6 +18,7 @@ package org.onehippo.cms7.essentials.dashboard.config;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
+import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -28,7 +29,7 @@ public class FilePluginServiceTest extends BaseTest {
     public void testPluginService() throws Exception {
 
         try (PluginConfigService service = new FilePluginService(getContext())) {
-            final ProjectSettingsBean bean = new ProjectSettingsBean();
+            final ProjectSettings bean = new ProjectSettingsBean();
             bean.setSetupDone(true);
             bean.setProjectNamespace("myNamespace");
             bean.setSelectedBeansPackage("testBeanPackage");
@@ -36,7 +37,7 @@ public class FilePluginServiceTest extends BaseTest {
             bean.setSelectedRestPackage("testRestPackage");
             final boolean written = service.write(bean);
             assertTrue(written);
-            final ProjectSettingsBean myBean = service.read(bean.getClass());
+            final ProjectSettings myBean = service.read(bean.getClass());
             assertEquals(myBean.getProjectNamespace(), bean.getProjectNamespace());
             assertEquals(myBean.getSelectedBeansPackage(), bean.getSelectedBeansPackage());
             assertEquals(myBean.getSelectedComponentsPackage(), bean.getSelectedComponentsPackage());

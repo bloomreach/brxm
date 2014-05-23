@@ -203,38 +203,26 @@ public class PluginResource extends BaseResource {
         }
 
         final PluginContext context = new DefaultPluginContext(new PluginRestful(ProjectSettingsBean.DEFAULT_NAME));
-        // inject project settings:
-        try (PluginConfigService configService = context.getConfigService()) {
 
+        //############################################
+        // EXECUTE SKELETON:
+        //############################################
+        final InstructionPackage commonPackage = new CommonsInstructionPackage();
+        getInjector().autowireBean(commonPackage);
+        commonPackage.setProperties(new HashMap<String, Object>(values));
+        commonPackage.execute(context);
 
-            final ProjectSettingsBean document = configService.read(ProjectSettingsBean.DEFAULT_NAME, ProjectSettingsBean.class);
-            if (document != null) {
-                context.setBeansPackageName(document.getSelectedBeansPackage());
-                context.setComponentsPackageName(document.getSelectedComponentsPackage());
-                context.setRestPackageName(document.getSelectedRestPackage());
-                context.setProjectNamespacePrefix(document.getProjectNamespace());
-            }
-            //############################################
-            // EXECUTE SKELETON:
-            //############################################
-            final InstructionPackage commonPackage = new CommonsInstructionPackage();
-            getInjector().autowireBean(commonPackage);
-            commonPackage.setProperties(new HashMap<String, Object>(values));
-            commonPackage.execute(context);
-
-            // execute InstructionPackage itself
-            InstructionPackage instructionPackage = instructionPackageInstance(myPlugin);
-            if(instructionPackage==null){
-                return new MessageRestful("Could not execute Installation package", DisplayEvent.DisplayType.STRONG);
-            }
-            instructionPackage.setProperties(new HashMap<String, Object>(values));
-            instructionPackage.execute(context);
-
-
+        // execute InstructionPackage itself
+        InstructionPackage instructionPackage = instructionPackageInstance(myPlugin);
+        if (instructionPackage == null) {
+            return new MessageRestful("Could not execute Installation package", DisplayEvent.DisplayType.STRONG);
         }
+        instructionPackage.setProperties(new HashMap<String, Object>(values));
+        instructionPackage.execute(context);
+
+
         return new MessageRestful("Please rebuild and restart your application:", DisplayEvent.DisplayType.STRONG);
     }
-
 
 
     @ApiOperation(
@@ -250,7 +238,7 @@ public class PluginResource extends BaseResource {
                 final ProjectSettingsBean document = configService.read(ProjectSettingsBean.DEFAULT_NAME, ProjectSettingsBean.class);
                 document.setSetupDone(true);
                 configService.write(document);
-                return new KeyValueRestful("message","Saved property for welcome screen");
+                return new KeyValueRestful("message", "Saved property for welcome screen");
             }
 
 
@@ -510,7 +498,7 @@ public class PluginResource extends BaseResource {
         }
 
         final InstructionPackage instructionPackage = instructionPackageInstance(myPlugin);
-        if(instructionPackage==null){
+        if (instructionPackage == null) {
             final MessageRestful resource = new MessageRestful("Could not create Instruction Package");
             resource.setSuccessMessage(false);
             list.add(resource);
