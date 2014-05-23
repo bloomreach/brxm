@@ -727,6 +727,7 @@ plugin-api/implementation/src/test/resources/project/content/namespaces/hippoplu
 plugin-api/implementation/src/test/resources/project/content/namespaces/hippoplugins/plugin.xml -text
 plugin-api/implementation/src/test/resources/project/content/namespaces/hippoplugins/vendor.xml -text
 plugin-api/implementation/src/test/resources/project/content/namespaces/hippoplugins/version.xml -text
+plugin-api/implementation/src/test/resources/project/essentials/pom.xml -text
 plugin-api/implementation/src/test/resources/project/instruction_file.txt -text
 plugin-api/implementation/src/test/resources/project/site/pom.xml -text
 plugin-api/implementation/src/test/resources/project/site/src/main/java/org/dummy/DummyClazz.java -text

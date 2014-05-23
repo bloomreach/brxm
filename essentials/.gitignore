@@ -3375,6 +3375,12 @@ plugin-api/implementation/src/test/resources/project/content/namespaces/hippoplu
 plugin-api/implementation/src/test/resources/project/content/namespaces/hippoplugins/target
 plugin-api/implementation/src/test/resources/project/content/namespaces/target
 plugin-api/implementation/src/test/resources/project/content/target
+plugin-api/implementation/src/test/resources/project/essentials/*.iml
+plugin-api/implementation/src/test/resources/project/essentials/.DS_Store
+plugin-api/implementation/src/test/resources/project/essentials/.idea
+plugin-api/implementation/src/test/resources/project/essentials/atlassian-ide-plugin.xml
+plugin-api/implementation/src/test/resources/project/essentials/hippo-plugins.iws
+plugin-api/implementation/src/test/resources/project/essentials/target
 plugin-api/implementation/src/test/resources/project/hippo-plugins.iws
 plugin-api/implementation/src/test/resources/project/site/*.iml
 plugin-api/implementation/src/test/resources/project/site/.DS_Store

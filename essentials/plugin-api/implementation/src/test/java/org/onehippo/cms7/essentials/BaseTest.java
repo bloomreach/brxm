@@ -112,12 +112,6 @@ public abstract class BaseTest {
 
             final String basePath = projectRoot.toString();
             System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, basePath);
-            context = new TestPluginContext(null, null);
-            context.setProjectNamespacePrefix(PROJECT_NAMESPACE_TEST);
-            context.setBeansPackageName("org.onehippo.cms7.essentials.dashboard.test.beans");
-            context.setComponentsPackageName("org.onehippo.cms7.essentials.dashboard.test.components");
-            context.setRestPackageName("org.onehippo.cms7.essentials.dashboard.test.rest");
-            context.setRestPackageName("org.onehippo.cms7.essentials.dashboard.test.rest");
             final File file = new File(basePath);
             if (file.exists()) {
                 final File cmsFolder = new File(basePath + File.separator + "cms");
@@ -133,6 +127,13 @@ public abstract class BaseTest {
                     essentialsFolder.mkdir();
                 }
             }
+            context = new TestPluginContext(null, null);
+            context.setProjectNamespacePrefix(PROJECT_NAMESPACE_TEST);
+            context.setBeansPackageName("org.onehippo.cms7.essentials.dashboard.test.beans");
+            context.setComponentsPackageName("org.onehippo.cms7.essentials.dashboard.test.components");
+            context.setRestPackageName("org.onehippo.cms7.essentials.dashboard.test.rest");
+            context.setRestPackageName("org.onehippo.cms7.essentials.dashboard.test.rest");
+
         }
         return context;
     }
