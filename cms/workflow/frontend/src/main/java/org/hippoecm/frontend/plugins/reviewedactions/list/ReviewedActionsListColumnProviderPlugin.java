@@ -22,6 +22,7 @@ import java.util.Locale;
 
 import javax.jcr.Node;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -41,6 +42,7 @@ import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -175,10 +177,10 @@ public class ReviewedActionsListColumnProviderPlugin extends AbstractListColumnP
 
     private String formattedCalendarByStyle(Calendar calendar, String patternStyle) {
         if (calendar != null) {
-            String pattern = DateTimeFormat.patternForStyle(patternStyle, getLocale());
-            return DateTimeFormat.forPattern(pattern).print(new DateTime(calendar));
+            DateTimeFormatter dtf = DateTimeFormat.forStyle(patternStyle).withLocale(getLocale());
+            return dtf.print(new DateTime(calendar));
         }
-        return "";
+        return StringUtils.EMPTY;
     }
 
     private int compareDates(Calendar o1, Calendar o2) {
@@ -202,10 +204,10 @@ public class ReviewedActionsListColumnProviderPlugin extends AbstractListColumnP
 
     private String advancedFormattedCalendar(Calendar cal) {
         if (cal != null) {
-            return DateTimeFormat.forPattern(DateTimeFormat.patternForStyle("LS", getLocale())).print(
-                    new DateTime(cal));
+            DateTimeFormatter dtf = DateTimeFormat.forStyle("LS").withLocale(getLocale());
+            return dtf.print(new DateTime(cal));
         }
-        return "";
+        return StringUtils.EMPTY;
     }
 
     private Locale getLocale() {
