@@ -58,7 +58,6 @@ public class TestMatchHostAndURL extends AbstractTestConfigurations {
         public void setUp() throws Exception {
             super.setUp();
             this.hstSitesManager = getComponent(HstManager.class.getName());
-            System.out.println(hstSitesManager);
             this.hstURLFactory = getComponent(HstURLFactory.class.getName());
         }
 
