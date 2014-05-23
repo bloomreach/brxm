@@ -22,7 +22,7 @@
         built-in feedback mechanism for this. Thanks and enjoy!</p>
     <h3>Please choose project setup preferences</h3>
 
-    <form name="settingsForm">
+    <form name="settingsForm" novalidate>
         <div class="form-group">
             <label>Please select templating language:</label>
         </div>
@@ -54,25 +54,22 @@
         <div class="row form-group">
             <label class="col-sm-2 control-label">Setup plugin repository urls:</label>
             <label class="col-sm-6 control-label">
-                <a href="javascript:void(0);" ng-click="addUrl()"><span class="glyphicon glyphicon-plus pull-right text-primary">Add new url</span></a>
+                <button class="btn btn-success glyphicon glyphicon-plus" ng-click="addUrl()">Add repository url</button>
             </label>
         </div>
         <div class="row" ng-repeat="url in pluginRepositories">
             <div class="form-group">
                 <label class="col-sm-2 control-label">Repository URL {{$index +1}}</label>
                 <div class="col-sm-6">
-                    <input type="text" class="form-control" required ng-model="url.value">
+                    <input type="text" class="form-control"  ng-model="url.value">
                 </div>
                 <div class="col-sm-2">
-                    <a class="btn btn-danger" href="javascript:void(0);" ng-click="removeUrl(url)"><span class="glyphicon glyphicon-minus pull-right">Remove</span></a>
+                    <button class="btn btn-danger glyphicon glyphicon-minus pull-right"  ng-click="removeUrl(url)">Remove url</button>
                 </div>
-
             </div>
-
-
         </div>
         <div class="form-group">
-            <a class="btn btn-success" ng-click="hide()">Get started</a>
+            <button class="btn btn-success" ng-click="hide()">Get started</button>
         </div>
 
     </form>

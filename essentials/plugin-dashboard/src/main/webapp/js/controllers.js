@@ -42,7 +42,6 @@
             $scope.templateLanguage = "jsp";
             $scope.useSamples = true;
             $scope.pluginRepositories = [];
-
             $scope.addUrl = function () {
                 $scope.pluginRepositories.push({'value': '', 'protected':false});
             };
