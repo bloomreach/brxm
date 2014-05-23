@@ -43,22 +43,4 @@ public interface Document {
     void setName(String name);
 
 
-    /**
-     * Returns content parent path
-     *
-     * @return absolute parent content path
-     */
-    String getParentPath();
-
-
-    String getPath();
-
-    /**
-     * Sets content path
-     *
-     * @param path
-     */
-    void setParentPath(String path);
-
-
 }

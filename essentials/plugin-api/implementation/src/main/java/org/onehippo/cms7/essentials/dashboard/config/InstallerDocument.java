@@ -21,22 +21,17 @@ import java.util.Calendar;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode;
-import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentProperty;
 
 /**
  * @version "$Id$"
  */
 
 @XmlRootElement()
-@PersistentNode(type = "essentials:document")
 public class InstallerDocument extends BaseDocument {
 
 
-    @PersistentProperty(name = "pluginId")
     private String pluginId;
 
-    @PersistentProperty(name = "dateInstalled")
     private Calendar dateInstalled;
 
 

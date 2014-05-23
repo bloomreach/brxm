@@ -21,22 +21,17 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentMultiProperty;
-import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode;
+
 
 /**
  * @version "$Id$"
  */
 
 @XmlRootElement(name = "base-document")
-@PersistentNode(type = "essentials:document")
 public class BaseDocument implements Document {
 
 
-    private String parentPath;
     private String name;
-
-    @PersistentMultiProperty(name = "properties")
     private List<String> properties = new LinkedList<>();
 
 
@@ -47,10 +42,6 @@ public class BaseDocument implements Document {
         this.name = name;
     }
 
-    public BaseDocument(final String name, final String parentPath) {
-        this.name = name;
-        this.parentPath = parentPath;
-    }
 
 
     @Override
@@ -80,27 +71,10 @@ public class BaseDocument implements Document {
     }
 
     @Override
-    public String getParentPath() {
-        return parentPath;
-    }
-
-    @Override
-    public String getPath() {
-        return parentPath + '/' + name;
-    }
-
-    @Override
-    public void setParentPath(String parentPath) {
-        this.parentPath = parentPath;
-    }
-
-
-    @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("BaseDocument");
         sb.append("{name='").append(name).append('\'');
-        sb.append(", path='").append(parentPath).append('\'');
         sb.append('}');
         return sb.toString();
     }

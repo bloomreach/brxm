@@ -28,18 +28,7 @@ import org.onehippo.cms7.essentials.dashboard.config.Document;
 public abstract class BaseJcrModel implements Document {
 
     private String name;
-    private String parentPath;
 
-
-    @Override
-    public String getParentPath() {
-        return parentPath;
-    }
-
-    @Override
-    public void setParentPath(final String parentPath) {
-        this.parentPath = parentPath;
-    }
 
     @Override
     public String getName() {
@@ -66,16 +55,11 @@ public abstract class BaseJcrModel implements Document {
         // ignore
     }
 
-    @Override
-    public String getPath() {
-        return parentPath + '/' + name;
-    }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("BaseJcrModel{");
         sb.append("name='").append(name).append('\'');
-        sb.append(", parentPath='").append(parentPath).append('\'');
         sb.append(", class='").append(this.getClass()).append('\'');
         sb.append('}');
         return sb.toString();

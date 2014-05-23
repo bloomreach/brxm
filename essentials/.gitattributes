@@ -634,11 +634,6 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/u
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/VersionUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/XmlUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/annotations/AnnotationUtils.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/annotations/Persistent.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/annotations/PersistentCollection.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/annotations/PersistentMultiProperty.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/annotations/PersistentNode.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/annotations/PersistentProperty.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/beansmodel/HippoEssentialsGeneratedObject.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/beansmodel/MemoryBean.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/beansmodel/MemoryProperty.java -text
@@ -665,7 +660,6 @@ plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/TestPluginC
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/DummyTestPlugin.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/FilePluginServiceTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/InstallerDocumentTest.java -text
-plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/TestBeanDocument.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/event/listeners/MemoryPluginEventListenerTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/event/listeners/ValidationEventListenerTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/CndInstructionTest.java -text
@@ -2006,6 +2000,7 @@ plugin-dashboard/src/main/webapp/css/media.css -text
 plugin-dashboard/src/main/webapp/css/normalize.css -text
 plugin-dashboard/src/main/webapp/css/print.css -text
 plugin-dashboard/src/main/webapp/css/theme.css -text
+plugin-dashboard/src/main/webapp/directives/essentials-global-settings.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-messages.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-simple-install-plugin.html -text
 plugin-dashboard/src/main/webapp/docs/rest-api/css/highlight.default.css -text

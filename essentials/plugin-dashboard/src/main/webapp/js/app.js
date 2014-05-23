@@ -167,7 +167,8 @@
                 documentTypes: root + '/documenttypes/',
 
                 package_install: plugins + '/install/package',
-                hide_introduction: plugins + '/hideintroduction',
+                save_settings: plugins + '/savesettings',
+                project_settings: plugins + '/projectsettings',
 
                 compounds: root + '/documenttypes/compounds',
                 compoundsCreate: root + '/documenttypes/compounds/create/',
@@ -246,10 +247,21 @@
                 },
                 templateUrl: 'directives/essentials-simple-install-plugin.html',
                 controller: function ($scope, $sce, $log, $rootScope, $http) {
+                    $scope.showForm = false;
+                    $scope.settingsButtonText = $scope.showForm ? "Use these settings" : "Change settings";
                     $scope.pluginId = "";
                     $scope.sampleData = true;
                     $scope.templateName = 'jsp';
                     $scope.message = {};
+                    $scope.toggleForm = function(){
+                        $scope.showForm = !$scope.showForm;
+                    }
+                    // populate with global settings:
+                    $http.get($rootScope.REST.project_settings).success(function (data) {
+                        $scope.projectSettings = data;
+                        $scope.templateName = $scope.projectSettings.templateLanguage;
+                        $scope.sampleData = $scope.projectSettings.useSamples;
+                    });
                     $scope.payload = {values: {pluginId: $scope.pluginId, sampleData: $scope.sampleData, templateName: $scope.templateName}};
                     $scope.$watchCollection("[sampleData, templateName]", function () {
                         $scope.payload = {values: {pluginId: $scope.pluginId, sampleData: $scope.sampleData, templateName: $scope.templateName}};

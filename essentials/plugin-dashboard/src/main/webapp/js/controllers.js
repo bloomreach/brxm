@@ -39,34 +39,48 @@
         })
         .controller('introductionCtrl', function ($scope, $location, $sce, $log, $rootScope, $http) {
             // just sets a hide screen boolean flag to true
-            $scope.templateLanguage = "jsp";
-            $scope.useSamples = true;
-            $scope.pluginRepositories = [];
             $scope.addUrl = function () {
-                $scope.pluginRepositories.push({'value': '', 'protected':false});
+                $scope.projectSettings.pluginRepositories.push('');
             };
 
             /**
              * NOTE: hippo provided one is protected
              */
             $scope.removeUrl = function (url) {
-                var idx = $scope.pluginRepositories.indexOf(url);
+                var idx = $scope.projectSettings.pluginRepositories.indexOf(url);
                 if (idx > -1) {
-                    var myUrl = $scope.pluginRepositories[idx];
-                    if(!myUrl.protected){
-                        $scope.pluginRepositories.splice(idx, 1);
-                    }else{
-
+                    var myUrl = $scope.projectSettings.pluginRepositories[idx];
+                    var protectedIndex = $scope.protectedRepositories.indexOf(url);
+                    if (protectedIndex == -1) {
+                        $scope.projectSettings.pluginRepositories.splice(idx, 1);
+                    } else {
+                        $rootScope.globalError = [];
+                        $rootScope.feedbackMessages = [];
+                        $rootScope.globalError.push("Cannot remove built-in repository url");
                     }
                 }
             };
-
-
-            $scope.hide = function () {
-                $http.post($rootScope.REST.hide_introduction).success(function (data) {
+            $scope.getStarted = function () {
+                // mark setup as done...
+                $scope.projectSettings.setupDone = true;
+                $http.post($rootScope.REST.save_settings, $scope.projectSettings).success(function (data) {
                     window.location = "/essentials";
                 });
+
             }
+            $scope.setup = function () {
+                $http.get($rootScope.REST.project_settings).success(function (data) {
+                    $scope.projectSettings = data;
+                    // set some defaults
+                    $scope.projectSettings.templateLanguage = 'jsp';
+                    $scope.projectSettings.useSamples = true;
+                    // protect built in repositories:
+                    $scope.protectedRepositories = $scope.projectSettings.pluginRepositories ? $scope.projectSettings.pluginRepositories.slice(0):[];
+                });
+            }
+            // initialize
+            $scope.setup();
+
         })
         .controller('pluginCtrl', function ($scope, $location, $sce, $log, $rootScope, $http) {
 

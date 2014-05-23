@@ -51,6 +51,7 @@ import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventL
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
+import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
 import org.onehippo.cms7.essentials.dashboard.packaging.CommonsInstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
@@ -226,22 +227,19 @@ public class PluginResource extends BaseResource {
 
 
     @ApiOperation(
-            value = "Hides introduction screen",
-            response = MessageRestful.class)
+            value = "Saves global project settings",
+            response = KeyValueRestful.class)
     @POST
-    @Path("/hideintroduction")
-    public KeyValueRestful hideWelcomeScreen(@Context ServletContext servletContext) {
+    @Path("/savesettings")
+    public KeyValueRestful hideWelcomeScreen(final ProjectSettingsBean payload, @Context ServletContext servletContext) {
         try {
             final Plugin plugin = getPluginById(ProjectSetupPlugin.class.getName(), servletContext);
             final PluginContext context = new DefaultPluginContext(plugin);
             try (PluginConfigService configService = context.getConfigService()) {
-                final ProjectSettingsBean document = configService.read(ProjectSettingsBean.DEFAULT_NAME, ProjectSettingsBean.class);
-                document.setSetupDone(true);
-                configService.write(document);
+                payload.setSetupDone(true);
+                configService.write(payload);
                 return new KeyValueRestful("message", "Saved property for welcome screen");
             }
-
-
         } catch (Exception e) {
 
             log.error("Error checking InstructionPackage status", e);
@@ -400,6 +398,19 @@ public class PluginResource extends BaseResource {
         }
         return list;
 
+    }
+    
+    @ApiOperation(
+            value = "returns project settings",
+            notes = "Contains a list of all predefined project settings and project setup preferences",
+            response = ProjectSettings.class)
+    @GET
+    @Path("/projectsettings")
+    public ProjectSettings getProjectSettings(@Context ServletContext servletContext) {
+        final PluginContext context = getContext(servletContext);
+        final ProjectSettingsBean projectSettings = (ProjectSettingsBean) context.getProjectSettings();
+        projectSettings.addPluginRepository("test");
+        return projectSettings;
     }
 
     @GET

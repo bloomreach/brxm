@@ -23,28 +23,21 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
-import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode;
-import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentProperty;
 
 /**
  * @version "$Id$"
  */
 
 @XmlRootElement(name = "project")
-@PersistentNode(type = "essentials:document")
 public class ProjectSettingsBean extends BaseDocument implements ProjectSettings {
 
 
     public static final String DEFAULT_NAME = "project-settings";
-    @PersistentProperty(name = "projectNamespace")
     private String projectNamespace;
-    @PersistentProperty(name = "selectedBeansPackage")
+
     private String selectedBeansPackage;
-    @PersistentProperty(name = "selectedComponentsPackage")
     private String selectedComponentsPackage;
-    @PersistentProperty(name = "selectedRestPackage")
     private String selectedRestPackage;
-    @PersistentProperty(name = "setupDone")
     private Boolean setupDone;
 
     private String templateLanguage;
@@ -61,11 +54,6 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
     public ProjectSettingsBean(final String name) {
         super(name);
     }
-
-    public ProjectSettingsBean(final String name, final String path) {
-        super(name, path);
-    }
-
 
     @Override
     public Boolean getSetupDone() {

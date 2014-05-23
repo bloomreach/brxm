@@ -28,13 +28,13 @@
         </div>
         <div class="radio">
             <label>
-                <input type="radio" ng-model="templateLanguage" required value="jsp"/>
+                <input type="radio" ng-model="projectSettings.templateLanguage" required value="jsp"/>
                 JSP template
             </label>
         </div>
         <div class="radio">
             <label>
-                <input type="radio" ng-model="templateLanguage" required value="freemarker"/>
+                <input type="radio" ng-model="projectSettings.templateLanguage" required value="freemarker"/>
                 Freemarker template
             </label>
         </div>
@@ -43,7 +43,7 @@
         </div>
         <div class="checkbox">
             <label>
-                Add sample content <input type="checkbox" ng-model="useSamples"/>
+                Add sample content <input type="checkbox" ng-model="projectSettings.useSamples"/>
             </label>
         </div>
         <!--
@@ -57,11 +57,11 @@
                 <button class="btn btn-success glyphicon glyphicon-plus" ng-click="addUrl()">Add repository url</button>
             </label>
         </div>
-        <div class="row" ng-repeat="url in pluginRepositories">
+        <div class="row" ng-repeat="url in projectSettings.pluginRepositories">
             <div class="form-group">
                 <label class="col-sm-2 control-label">Repository URL {{$index +1}}</label>
                 <div class="col-sm-6">
-                    <input type="text" class="form-control"  ng-model="url.value">
+                    <input type="text" class="form-control"  ng-model="url">
                 </div>
                 <div class="col-sm-2">
                     <button class="btn btn-danger glyphicon glyphicon-minus pull-right"  ng-click="removeUrl(url)">Remove url</button>
@@ -69,7 +69,7 @@
             </div>
         </div>
         <div class="form-group">
-            <button class="btn btn-success" ng-click="hide()">Get started</button>
+            <button class="btn btn-primary pull-right" ng-click="getStarted()">Get started</button>
         </div>
 
     </form>
