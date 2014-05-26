@@ -55,7 +55,7 @@ public class MessageInstructionExecutorTest extends BaseTest{
             final Multimap<MessageGroup,Restful> m = executor.execute(instructionSet, getContext());
             messages.putAll(m);
         }
-        assertEquals(7, messages.size());
-        assertEquals(7, messages.keys().size());
+        assertEquals(8, messages.size());
+        assertEquals(8, messages.keys().size());
     }
 }
