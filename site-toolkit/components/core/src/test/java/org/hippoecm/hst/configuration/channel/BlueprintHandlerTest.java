@@ -61,7 +61,7 @@ public class BlueprintHandlerTest extends RepositoryTestCase {
         session.save();
 
         HstNode blueprintNode = hstNodeLoadingCache.getNode("/test/hst:blueprints/test");
-        Blueprint blueprint = BlueprintHandler.buildBlueprint(blueprintNode);
+        Blueprint blueprint = BlueprintHandler.buildBlueprint(blueprintNode, "/site");
 
         assertEquals("test", blueprint.getId());
         assertEquals("Test Blueprint", blueprint.getName());
@@ -86,7 +86,7 @@ public class BlueprintHandlerTest extends RepositoryTestCase {
         session.save();
 
         HstNode blueprintNode = hstNodeLoadingCache.getNode("/test/hst:blueprints/test");
-        Blueprint blueprint = BlueprintHandler.buildBlueprint(blueprintNode);
+        Blueprint blueprint = BlueprintHandler.buildBlueprint(blueprintNode, "/site");
 
         Channel channel = blueprint.getPrototypeChannel();
         assertEquals("/hst:hst/hst:sites/blueprint-site", channel.getHstMountPoint());

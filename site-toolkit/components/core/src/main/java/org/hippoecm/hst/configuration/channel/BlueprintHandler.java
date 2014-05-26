@@ -28,7 +28,7 @@ public class BlueprintHandler {
 
     public static final String SUBSITE_TEMPLATES_PATH = "/hippo:configuration/hippo:queries/hippo:templates/new-subsite/hippostd:templates/";
 
-    public static Blueprint buildBlueprint(final HstNode blueprintNode) {
+    public static Blueprint buildBlueprint(final HstNode blueprintNode, final String blueprintContextPath) {
         Blueprint blueprint = new Blueprint();
 
         blueprint.setPath(blueprintNode.getValueProvider().getPath());
@@ -57,12 +57,14 @@ public class BlueprintHandler {
         }
 
         HstNode channelNode = blueprintNode.getNode(HstNodeTypes.NODENAME_HST_CHANNEL);
+        final Channel channel;
         if (channelNode != null) {
-            blueprint.setPrototypeChannel(ChannelPropertyMapper.readChannel(channelNode, null));
+            channel = ChannelPropertyMapper.readChannel(channelNode, null);
         } else {
-            blueprint.setPrototypeChannel(new Channel());
+            channel = new Channel();
         }
-
+        channel.setContextPath(blueprintContextPath);
+        blueprint.setPrototypeChannel(channel);
         readMount(readSite(blueprintNode, blueprint), blueprintNode, blueprint);
 
         return blueprint;

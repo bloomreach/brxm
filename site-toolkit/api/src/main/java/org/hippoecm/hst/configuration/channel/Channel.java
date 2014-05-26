@@ -44,7 +44,7 @@ public class Channel implements Serializable {
     private String hstConfigPath;
     private String contentRoot;
     private boolean composerModeEnabled;
-    private final Map<String, Object> properties = new HashMap<>();
+    private Map<String, Object> properties = new HashMap<>();
     private String channelInfoClassName;
     private String mountId;
     private String locale;
@@ -93,7 +93,7 @@ public class Channel implements Serializable {
         contentRoot = channel.contentRoot;
         composerModeEnabled = channel.composerModeEnabled;
         // not a deep clone: Not a problem!
-        properties.putAll(channel.getProperties());
+        setProperties(channel.getProperties());
         channelInfoClassName = channel.channelInfoClassName;
         mountId = channel.mountId;
         locale = channel.locale;
@@ -214,6 +214,13 @@ public class Channel implements Serializable {
         return this.mountPath;
     }
 
+    public void setProperties(Map<String, Object> properties){
+        this.properties = properties;
+    }
+
+    /**
+     * Returns the Immutable collection of properties for this {@link Channel}.
+     */
     public Map<String, Object> getProperties() {
         return properties;
     }

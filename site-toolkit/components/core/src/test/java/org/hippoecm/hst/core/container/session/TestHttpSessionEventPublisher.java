@@ -40,6 +40,7 @@ public class TestHttpSessionEventPublisher {
     @After
     public void tearDown() throws Exception {
         HstServices.setComponentManager(null);
+        HstServices.setContextPath(null);
     }
 
     @Test
@@ -50,6 +51,7 @@ public class TestHttpSessionEventPublisher {
 
         ComponentManager componentManager = EasyMock.createMock(ComponentManager.class);
         HstServices.setComponentManager(componentManager);
+        HstServices.setContextPath("/site");
         componentManager.publishEvent(EasyMock.anyObject(HttpSessionCreatedEvent.class));
 
         EasyMock.expectLastCall().andAnswer(new IAnswer<HttpSessionCreatedEvent>() {
@@ -76,6 +78,7 @@ public class TestHttpSessionEventPublisher {
 
         ComponentManager componentManager = EasyMock.createMock(ComponentManager.class);
         HstServices.setComponentManager(componentManager);
+        HstServices.setContextPath("/site");
         componentManager.publishEvent(EasyMock.anyObject(HttpSessionDestroyedEvent.class));
 
         EasyMock.expectLastCall().andAnswer(new IAnswer<HttpSessionDestroyedEvent>() {
@@ -87,10 +90,11 @@ public class TestHttpSessionEventPublisher {
         }).once();
 
         EasyMock.replay(componentManager);
- 
+
         HttpSessionListener listener = new HttpSessionEventPublisher();
         listener.sessionDestroyed(httpSessionEvent);
 
         EasyMock.verify(componentManager);
+
     }
 }

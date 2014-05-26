@@ -31,4 +31,18 @@
       </sv:property>
     </sv:node>
   </sv:node>
+  <sv:node sv:name="intranettestchannel">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:channel</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:name" sv:type="String">
+      <sv:value>Intranet Test Channel</sv:value>
+    </sv:property>
+    <sv:node sv:name="hst:channelinfo">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:channelinfo</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+
 </sv:node>

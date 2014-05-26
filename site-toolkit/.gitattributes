@@ -720,6 +720,7 @@ components/core/src/test/java/org/hippoecm/hst/configuration/cache/TestHstNodeLo
 components/core/src/test/java/org/hippoecm/hst/configuration/cache/TestPendingChangesHippoSession.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/channel/BlueprintHandlerTest.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/channel/ChannelInfoClassTest.java -text
+components/core/src/test/java/org/hippoecm/hst/configuration/channel/ChannelManagerOtherContextPath.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/channel/ChannelPropertyMapperTest.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/channel/ChannelUtilsTest.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/menu/TestHstMenuModels.java -text

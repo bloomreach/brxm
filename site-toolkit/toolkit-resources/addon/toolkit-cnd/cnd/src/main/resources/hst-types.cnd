@@ -406,6 +406,9 @@
 - hst:contentRoot (string)
 // prototype for the channel properties.
 // Used for default values
+// if the blueprint is meant for a different contextpath than configured in
+// hst:hosts/@hst:defaultcontextpath
+- hst:contextpath (string)
 + hst:channel (hst:channel)
 + hst:configuration (hst:configuration)
 + hst:site (hst:site)

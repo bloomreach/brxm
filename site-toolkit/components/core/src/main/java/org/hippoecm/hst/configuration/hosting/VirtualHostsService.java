@@ -51,6 +51,7 @@ import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -58,6 +59,7 @@ import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.hst.provider.ValueProvider;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.request.ResolvedVirtualHostImpl;
 import org.hippoecm.hst.util.DuplicateKeyNotAllowedHashMap;
 import org.hippoecm.hst.util.PathUtils;
@@ -814,8 +816,18 @@ public class VirtualHostsService implements MutableVirtualHosts {
         HstNode blueprintsNode = rootConfigNode.getNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS);
         if (blueprintsNode != null) {
             for (HstNode blueprintNode : blueprintsNode.getNodes()) {
+                String blueprintContextPath = blueprintNode.getValueProvider().getString(HstNodeTypes.BLUEPRINT_PROPERTY_CONTEXTPATH);
+                if (blueprintContextPath == null) {
+                    blueprintContextPath = getDefaultContextPath();
+                }
+                if (!HstServices.getContextPath().equals(blueprintContextPath)) {
+                    log.info("Skipping blueprint '{}' because only suited for contextPath '{}' and " +
+                            "current webapp's contextPath is '{}'.", blueprintNode.getValueProvider().getPath(),
+                            blueprintContextPath, HstServices.getContextPath());
+                    continue;
+                }
                 try {
-                blueprints.put(blueprintNode.getName(), BlueprintHandler.buildBlueprint(blueprintNode));
+                    blueprints.put(blueprintNode.getName(), BlueprintHandler.buildBlueprint(blueprintNode, blueprintContextPath));
                 } catch (ModelLoadingException e) {
                     log.error("Cannot load blueprint '{}' :", blueprintNode.getValueProvider().getPath(), e);
                 }
@@ -829,13 +841,17 @@ public class VirtualHostsService implements MutableVirtualHosts {
         bluePrintsPrototypeChecked = false;
         loadBlueprints(rootConfigNode);
 
-        final Map<String, Channel> channels = new HashMap<>();
-        loadChannels(rootConfigNode, channels);
+        final Map<String, Channel> hostGroupAgnosticChannels = new HashMap<>();
 
         for (String hostGroupName : getHostGroupNames()) {
             for (Mount mount : getMountsByHostGroup(hostGroupName)) {
+                if (mount.getContextPath() == null ||
+                        !mount.getContextPath().equals(HstServices.getContextPath())) {
+                    log.info("Skipping mount {} to attach a possible channel for since mount belongs to webapp with contextpath " +
+                            "'{}' and current webapp's contextpath is '{}'", mount, mount.getContextPath(), HstServices.getContextPath());
+                    continue;
+                }
                 if (mount instanceof ContextualizableMount) {
-
                     try {
                         if (!mount.isMapped() || mount.isPreview() || mount.getHstSite() == null) {
                             log.debug("Skipping mount '{}' because it is either not mapped or is a preview mount", mount.getName());
@@ -857,22 +873,31 @@ public class VirtualHostsService implements MutableVirtualHosts {
                         }
 
                         String channelNodeName = channelPath.substring(channelPath.lastIndexOf("/") + 1);
-                        final Channel channel = channels.get(channelNodeName);
+                        Channel channel = hostGroupAgnosticChannels.get(channelNodeName);
                         if (channel == null) {
-                            log.info("Mount '{}' has channelpath configured that does not point to a channel info. Skipping setting channelInfo.",
-                                    mount);
-                            continue;
+                            channel = loadChannel(rootConfigNode, channelNodeName);
+                            if (channel == null) {
+                                log.info("Mount '{}' has channelpath configured that does not point to a channel info. Skipping setting channelInfo.",
+                                        mount);
+                                continue;
+                            }
+                            hostGroupAgnosticChannels.put(channelNodeName, channel);
+                            String previewChannelNodeName = channelNodeName+ "-preview";
+                            final Channel previewChannel = loadChannel(rootConfigNode, previewChannelNodeName);
+                            if (previewChannel != null) {
+                                hostGroupAgnosticChannels.put(previewChannelNodeName, previewChannel);
+                            }
                         }
 
                         // because channels can be used by multiple mounts in multiple hostgroups, we
                         // need to clone them before using the instance.
                         final Channel liveClone = new Channel(channel);
-                        final Channel previewChannel = channels.get(channelNodeName + "-preview");
+                        final Channel previewChannel = hostGroupAgnosticChannels.get(channelNodeName + "-preview");
                         Channel previewClone = null;
                         if (previewChannel != null) {
                             previewClone = new Channel(previewChannel);
                         }
-                        attachChannelToMount(liveClone, previewClone, (ContextualizableMount) mount, hstNodeLoadingCache);
+                        attachChannelToMountAndHostGroup(liveClone, previewClone, (ContextualizableMount) mount, hstNodeLoadingCache);
 
                     } catch (ChannelException e) {
                         log.error("Could not set channel info to mount", e);
@@ -883,21 +908,22 @@ public class VirtualHostsService implements MutableVirtualHosts {
         log.info("Channel manager load took '{}' ms.", (System.currentTimeMillis() - start));
     }
 
-    private void loadChannels(final HstNode rootConfigNode, final Map<String, Channel> channels) {
+    private Channel loadChannel(final HstNode rootConfigNode, final String channelName) {
         HstNode channelsNode = rootConfigNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELS);
         if (channelsNode != null) {
-            for (HstNode channelNode : channelsNode.getNodes()) {
-                loadChannel(channelNode, channels);
+            HstNode channelNode = channelsNode.getNode(channelName);
+            if (channelNode == null) {
+                log.info("Cannot load channel '{}' because node '{}' does not exist",
+                        rootConfigNode.getValueProvider().getPath() + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/" + channelName);
+                return null;
+            } else {
+               return ChannelPropertyMapper.readChannel(channelNode);
             }
         } else {
-            log.info("Cannot load channels because node '{}' does not exist",
+            log.info("Cannot load channel '{}' because node '{}' does not exist",
                     rootConfigNode.getValueProvider().getPath() + "/" + HstNodeTypes.NODENAME_HST_CHANNELS);
+            return null;
         }
-    }
-
-    private void loadChannel(HstNode currNode, final Map<String, Channel> channels) {
-        Channel channel = ChannelPropertyMapper.readChannel(currNode);
-        channels.put(channel.getId(), channel);
     }
 
     private void setBluePrintsPrototypes() {
@@ -919,7 +945,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
 
 
-    private void attachChannelToMount(Channel liveChannel, final Channel previewChannel, ContextualizableMount mount, final HstNodeLoadingCache hstNodeLoadingCache) throws ChannelException {
+    private void attachChannelToMountAndHostGroup(Channel liveChannel, final Channel previewChannel, ContextualizableMount mount, final HstNodeLoadingCache hstNodeLoadingCache) throws ChannelException {
         long start = System.currentTimeMillis();
 
         final String hostGroupName = mount.getVirtualHost().getHostGroupName();

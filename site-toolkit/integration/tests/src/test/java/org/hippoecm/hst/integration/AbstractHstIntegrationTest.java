@@ -70,6 +70,7 @@ public class AbstractHstIntegrationTest {
         this.componentManager.initialize();
         this.componentManager.start();
         HstServices.setComponentManager(getComponentManager());
+        HstServices.setContextPath("/site");
 
         // register hst config changes listener
         localSession = createLocalSession(new SimpleCredentials("admin", "admin".toCharArray()));
@@ -94,6 +95,7 @@ public class AbstractHstIntegrationTest {
         localSession.logout();
 
         HstServices.setComponentManager(null);
+        HstServices.setContextPath(null);
         ModifiableRequestContextProvider.clear();
     }
 

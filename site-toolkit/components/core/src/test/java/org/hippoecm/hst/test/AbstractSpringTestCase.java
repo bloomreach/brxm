@@ -72,6 +72,7 @@ public abstract class AbstractSpringTestCase
         componentManager.initialize();
         componentManager.start();
         HstServices.setComponentManager(getComponentManager());
+        HstServices.setContextPath("/site");
     }
 
     @After
@@ -79,6 +80,7 @@ public abstract class AbstractSpringTestCase
         this.componentManager.stop();
         this.componentManager.close();
         HstServices.setComponentManager(null);
+        HstServices.setContextPath(null);
         // always clear HstRequestContext in case it is set on a thread local
         ModifiableRequestContextProvider.clear();
     }

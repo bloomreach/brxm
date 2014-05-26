@@ -199,6 +199,7 @@ public interface HstNodeTypes {
     String BLUEPRINT_PROPERTY_NAME = "hst:name";
     String BLUEPRINT_PROPERTY_DESCRIPTION = "hst:description";
     String BLUEPRINT_PROPERTY_CONTENT_ROOT = "hst:contentRoot";
+    String BLUEPRINT_PROPERTY_CONTEXTPATH= "hst:contextpath";
 
     String SITEMAPITEMHANDLDER_PROPERTY_CLASSNAME = "hst:sitemapitemhandlerclassname";
 

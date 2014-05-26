@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -97,7 +98,7 @@ public class ChannelPropertyMapper {
                 channel.setChannelInfoClassName(className);
                 HstNode channelInfoNode = channelNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO);
                 if (channelInfoNode != null) {
-                    Map<String, Object> properties = channel.getProperties();
+                    Map<String, Object> properties = new HashMap<>();
                     List<HstPropertyDefinition> propertyDefinitions = ChannelInfoClassProcessor.getProperties(clazz);
                     Map<HstPropertyDefinition, Object> values = ChannelPropertyMapper.loadProperties(channelInfoNode, propertyDefinitions);
                     for (HstPropertyDefinition def : propertyDefinitions) {
@@ -107,9 +108,14 @@ public class ChannelPropertyMapper {
                             properties.put(def.getName(), def.getDefaultValue());
                         }
                     }
+                    channel.setProperties(properties);
                 }
             } catch (ClassNotFoundException e) {
-                log.warn("Could not load channel info class " + className + " for channel " + channel.getId(), e);
+                if (log.isDebugEnabled()) {
+                    log.warn("Could not load channel info class '{}' for channel '{}'", className, channel.getId(), e);
+                } else {
+                    log.warn("Could not load channel info class '{}' for channel '{}' : {}", className, channel.getId(), e.toString());
+                }
             }
         }
         return channel;

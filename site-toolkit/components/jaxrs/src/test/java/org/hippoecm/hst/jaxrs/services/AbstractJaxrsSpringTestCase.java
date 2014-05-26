@@ -41,10 +41,12 @@ public abstract class AbstractJaxrsSpringTestCase
     @Before
     public void setUp() throws Exception {
         this.componentManager = new SpringComponentManager(getContainerConfiguration());
-        ((SpringComponentManager) this.componentManager).setConfigurationResources(getConfigurations());
+        this.componentManager.setConfigurationResources(getConfigurations());
         
         this.componentManager.initialize();
         this.componentManager.start();
+        HstServices.setComponentManager(getComponentManager());
+        HstServices.setContextPath("/site");
     }
 
     @After
@@ -52,6 +54,7 @@ public abstract class AbstractJaxrsSpringTestCase
         this.componentManager.stop();
         this.componentManager.close();
         HstServices.setComponentManager(null);
+        HstServices.setContextPath(null);
     }
 
     /**

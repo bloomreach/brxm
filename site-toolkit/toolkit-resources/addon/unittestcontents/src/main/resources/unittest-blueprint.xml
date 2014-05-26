@@ -81,7 +81,7 @@
       <sv:value>hst:site</sv:value>
     </sv:property>
     <sv:property sv:name="hst:configurationpath" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/blueprint-configuration</sv:value>
+      <sv:value>/hst:hst/hst:configurations/unittestsubproject</sv:value>
     </sv:property>
     <sv:property sv:name="hst:content" sv:type="String">
       <sv:value>/unittestcontent/documents/unittestproject</sv:value>

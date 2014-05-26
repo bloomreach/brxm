@@ -35,8 +35,6 @@ public class AbstractPipelineTestCase extends AbstractSpringTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        HstServices.setComponentManager(getComponentManager());
-        
         this.componentFactory = (HstComponentFactory) getComponent(HstComponentFactory.class.getName());
         this.pipelines = (Pipelines) getComponent(Pipelines.class.getName());
         this.defaultPipeline = this.pipelines.getDefaultPipeline();

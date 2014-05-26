@@ -34,6 +34,7 @@ import org.hippoecm.hst.rest.ChannelService;
 import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 import org.hippoecm.hst.rest.beans.InformationObjectsBuilder;
+import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

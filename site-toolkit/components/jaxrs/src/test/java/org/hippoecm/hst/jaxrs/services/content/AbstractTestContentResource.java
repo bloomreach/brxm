@@ -85,8 +85,6 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
     @Before
     public void setUp() throws Exception {
         super.setUp();
-
-        HstServices.setComponentManager(getComponentManager());
         
         pipelines = (Pipelines) getComponent(Pipelines.class.getName());
         jaxrsPipeline = this.pipelines.getPipeline("JaxrsRestContentPipeline");

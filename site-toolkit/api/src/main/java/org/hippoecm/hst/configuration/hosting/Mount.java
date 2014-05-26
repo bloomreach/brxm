@@ -444,21 +444,21 @@ public interface Mount {
     String getIdentifier();
 
     /**
-     * The channel properties for this mount.  The actual type of the info is set on the blueprint
-     * for the channel of the Mount ({@see Blueprint#getChannelInfoClass()}).
-     *
-     * @param <T> Type of the channel info.  Only checked at runtime on assignment.
-     * @return A channel properties instance.
-     */
-    <T extends ChannelInfo> T getChannelInfo();
-
-    /**
      * @return the repository path to the channel configuration node and <code>null</code> if not configured
      */
     String getChannelPath();
 
     /**
-     * @return The {@link Channel} object instance to which this {@link Mount} belongs, or null if this {@link Mount} does not contain a  {@link Channel}
+     * @param <T> Type of the channel info.  Only checked at runtime on assignment.
+     * @return A channel properties instance or <code>null</code> in case {@link #getChannel()} returns <code>null</code> or
+     * when the {@link ChannelInfo} interface cannot be loaded by the current classLoader
+     */
+    <T extends ChannelInfo> T getChannelInfo();
+
+    /**
+     * @return The {@link Channel} object instance to which this {@link Mount} belongs, or <code>null</code> if this
+     * {@link Mount} does not contain a  {@link Channel} <strong>or</strong> if this {@link Mount} belongs to a different
+     * webapp (contextPath) than the current webapp (contextPath)
      */
     Channel getChannel();
 
