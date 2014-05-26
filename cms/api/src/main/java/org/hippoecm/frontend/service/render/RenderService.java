@@ -35,9 +35,7 @@ public class RenderService<T> extends AbstractRenderService<T> {
 
     @Override
     protected ExtensionPoint createExtensionPoint(String extension) {
-        ExtensionPoint extPt = new ExtensionPoint(extension);
-        extPt.addPanel();
-        return extPt;
+        return new ExtensionPoint(extension);
     }
 
     /**
@@ -61,6 +59,7 @@ public class RenderService<T> extends AbstractRenderService<T> {
                 path = extension.substring(0, extension.lastIndexOf(':'));
                 id = extension.substring(extension.lastIndexOf(':') + 1);
             }
+            addPanel();
         }
 
         void addPanel() {

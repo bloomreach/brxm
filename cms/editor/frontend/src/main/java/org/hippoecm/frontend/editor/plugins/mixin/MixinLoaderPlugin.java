@@ -19,10 +19,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
+import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -57,9 +59,13 @@ public class MixinLoaderPlugin extends RenderPlugin {
         if (node != null) {
             String mixin = config.getString("mixin");
             try {
-                controllers.put(mixin, startMixin(mixin));
+                if (JcrHelper.isNodeType(node, mixin)) {
+                    controllers.put(mixin, startMixin(mixin));
+                }
             } catch (TemplateEngineException ex) {
                 log.error("Unable to start editor for mixin " + mixin, ex);
+            } catch (RepositoryException e) {
+                log.error("Unable to determine whether document has mixin " + mixin, e);
             }
         }
 
