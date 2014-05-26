@@ -563,7 +563,6 @@ plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/Vendor
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/packaging/InstructionPackage.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/packaging/MessageGroup.java -text
 plugin-api/api/src/main/resources/instructions.xsd -text
-plugin-api/api/src/main/resources/plugin.xsd -text
 plugin-api/api/src/test/resources/log4j.xml -text
 plugin-api/implementation/pom.xml -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/BaseDocument.java -text
