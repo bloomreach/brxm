@@ -45,7 +45,6 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.jaxrs.services.AbstractJaxrsSpringTestCase;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.junit.Before;
 import org.springframework.mock.web.MockServletConfig;
@@ -86,7 +85,7 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
     public void setUp() throws Exception {
         super.setUp();
         
-        pipelines = (Pipelines) getComponent(Pipelines.class.getName());
+        pipelines = getComponent(Pipelines.class.getName());
         jaxrsPipeline = this.pipelines.getPipeline("JaxrsRestContentPipeline");
         
         servletContext = new MockServletContext() { public String getRealPath(String path) { return null; } };

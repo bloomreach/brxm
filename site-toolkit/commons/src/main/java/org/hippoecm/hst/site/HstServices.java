@@ -51,7 +51,7 @@ public class HstServices {
 
     /**
      * Sets the component manager of the HST container.
-     * @param compManager
+     * @param compManager the component manger of the HST container
      */
     public static void setComponentManager(ComponentManager compManager) {
         HstServices.componentManager = compManager;
@@ -59,24 +59,21 @@ public class HstServices {
     }
     
     /**
-     * Returns the component manager of the HST container.
-     * @return
+     * @return Returns the component manager of the HST container.
      */
     public static ComponentManager getComponentManager() {
         return HstServices.componentManager;
     }
     
     /**
-     * Returns the flag if the HST container is available or not to serve requests.
-     * @return
+     * @return Returns the flag if the HST container is available or not to serve requests.
      */
     public static boolean isAvailable() {
         return HstServices.available;
     }
     
     /**
-     * Returns the {@link HstRequestProcessor} component to serve requests.
-     * @return
+     * @return Returns the {@link HstRequestProcessor} component to serve requests.
      */
     public static HstRequestProcessor getRequestProcessor() {
         return componentManager.getComponent(HstRequestProcessor.class.getName());

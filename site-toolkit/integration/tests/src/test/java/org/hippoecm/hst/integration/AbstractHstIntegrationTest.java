@@ -122,10 +122,8 @@ public class AbstractHstIntegrationTest {
     }
 
     protected Configuration getContainerConfiguration() {
-        PropertiesConfiguration propConf = new PropertiesConfiguration();
-        return propConf;
+        return new PropertiesConfiguration();
     }
-
 
 
     protected HstRequestContext getRequestContextWithResolvedSiteMapItemAndContainerURL(final MockHttpServletRequest request, String hostAndPort, String requestURI) throws Exception {

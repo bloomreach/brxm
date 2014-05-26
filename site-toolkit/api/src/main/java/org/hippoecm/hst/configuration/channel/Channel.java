@@ -54,7 +54,7 @@ public class Channel implements Serializable {
     // hst configuration belonging to the channel
     private Set<String> changedBySet = new HashSet<>();
     private String defaultDevice = DEFAULT_DEVICE;
-    private List<String> devices = Collections.EMPTY_LIST;
+    private List<String> devices = Collections.emptyList();
     private boolean isPreview;
     private String channelNodeLockedBy;
     private String lastModifiedBy;
@@ -121,7 +121,7 @@ public class Channel implements Serializable {
      * Set the unique ID of this channel
      */
     public void setId(String id) throws IllegalStateException {
-        if ( (this.id != null) && (this.id != "") ) {
+        if ( (this.id != null)) {
             throw new IllegalStateException("Channel id has been already set. It can not be changed.");
         }
 

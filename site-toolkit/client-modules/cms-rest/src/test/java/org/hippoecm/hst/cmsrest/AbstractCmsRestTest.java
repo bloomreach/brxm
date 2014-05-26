@@ -72,8 +72,7 @@ public abstract class AbstractCmsRestTest {
     }
 
     protected Configuration getContainerConfiguration() {
-        PropertiesConfiguration propConf = new PropertiesConfiguration();
-        return propConf;
+        return new PropertiesConfiguration();
     }
 
 }

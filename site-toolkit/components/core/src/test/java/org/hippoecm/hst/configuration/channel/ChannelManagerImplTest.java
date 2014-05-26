@@ -41,7 +41,6 @@ import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.JcrSessionUtils;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -448,8 +447,7 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
 
         channelMngr.addChannelManagerEventListeners(shortCircuitingListener);
 
-        final Channel channelToPersist = channel;
-        channelMngr.persist("cmit-test-bp2", channelToPersist);
+        channelMngr.persist("cmit-test-bp2", channel);
 
     }
 

@@ -149,9 +149,9 @@ public interface Mount {
     /**
      * <p>
      * Returns the content path for this {@link Mount} object. The content path is the absolute jcr path to the root site node content, for example
-     * something like '/content/documents/myproject'. The {@link #getContentPath()} can be the same as {@link #getMountPoint()}, but
+     * something like '/content/documents/myproject'. The content path can be the same as {@link #getMountPoint()}, but
      * this is in general only for {@link Mount}'s that have {@link #isMapped()} returning false. When the {@link Mount} does have
-     * {@link #isMapped()} equal to true, the {@link #getContentPath()} can return a different path than {@link #getMountPoint()}.
+     * {@link #isMapped()} equal to true, this method can return a different path than {@link #getMountPoint()}.
      * </p>
      *
      * @return the content path for this {@link Mount}. It cannot be <code>null</code>
@@ -241,7 +241,7 @@ public interface Mount {
      * <p>
      *    Returns the contextpath (webapp) for this {@link Mount}. A request can only be matched to this
      *    {@link Mount} if the request its {@link javax.servlet.http.HttpServletRequest#getContextPath()} is equal
-     *    to {@link #getContextPath()}, or when the {@link Mount} returns <code>null</code> for {@link #getContextPath()} : Namely
+     *    to this contextpath, or when the {@link Mount} returns <code>null</code> for this contextpath: Namely
      *    <code>null</code> means the {@link Mount} is contextpath (webapp) agnostic and can be matched regardless the
      *   {@link javax.servlet.http.HttpServletRequest#getContextPath()}
      * </p>
@@ -386,14 +386,12 @@ public interface Mount {
     Set<String> getUsers();
 
     /**
-     * Returns true if subject based jcr session should be used for this Mount
-     * @return
+     * @return Returns true if subject based jcr session should be used for this Mount
      */
     boolean isSubjectBasedSession();
 
     /**
-     * Returns true if subject based jcr session should be statefully managed.
-     * @return
+     * @return Returns true if subject based jcr session should be statefully managed.
      */
     boolean isSessionStateful();
 
@@ -473,7 +471,6 @@ public interface Mount {
     boolean isCacheable();
 
     /**
-     * @deprecated Use {@link #getDefaultResourceBundleIds()} instead.
      * @return the first item of default resource bundle IDs or null if not configured or empty.
      * @deprecated since 2.28.00. Use {@link #getDefaultResourceBundleIds()} instead
      */
@@ -481,7 +478,7 @@ public interface Mount {
     String getDefaultResourceBundleId();
 
     /**
-     * @returnM default resource bundle IDs for all sites below this mount to use, for example, { "org.example.resources.MyResources" }. Returns an empty array
+     * @return default resource bundle IDs for all sites below this mount to use, for example, { "org.example.resources.MyResources" }. Returns an empty array
      * when not configured on this {@link Mount} and empty from ancestor {@link Mount} or when root host from  {@link VirtualHost#getDefaultResourceBundleIds()}
      */
     String [] getDefaultResourceBundleIds();

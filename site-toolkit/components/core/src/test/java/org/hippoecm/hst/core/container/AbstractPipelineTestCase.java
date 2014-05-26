@@ -18,7 +18,6 @@ package org.hippoecm.hst.core.container;
 import javax.servlet.ServletConfig;
 
 import org.hippoecm.hst.container.HstContainerConfigImpl;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Before;
 
@@ -35,10 +34,10 @@ public class AbstractPipelineTestCase extends AbstractSpringTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        this.componentFactory = (HstComponentFactory) getComponent(HstComponentFactory.class.getName());
-        this.pipelines = (Pipelines) getComponent(Pipelines.class.getName());
+        this.componentFactory = getComponent(HstComponentFactory.class.getName());
+        this.pipelines = getComponent(Pipelines.class.getName());
         this.defaultPipeline = this.pipelines.getDefaultPipeline();
-        this.servletConfig = (ServletConfig) getComponent(ServletConfig.class.getName());
+        this.servletConfig = getComponent(ServletConfig.class.getName());
         this.requestContainerConfig = new HstContainerConfigImpl(this.servletConfig.getServletContext(), getClass().getClassLoader());
     }
 

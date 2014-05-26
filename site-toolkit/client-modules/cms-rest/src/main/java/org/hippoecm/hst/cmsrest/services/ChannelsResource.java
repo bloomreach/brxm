@@ -21,24 +21,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
-import org.hippoecm.hst.cmsrest.container.CmsRestSecurityValve;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.rest.ChannelService;
 import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 import org.hippoecm.hst.rest.beans.InformationObjectsBuilder;
-import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hippoecm.hst.cmsrest.container.CmsRestSecurityValve.*;
 
 /**
  * Implementation of {@link ChannelService} for CMS to interact with {@link Channel} resources

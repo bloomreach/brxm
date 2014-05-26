@@ -51,7 +51,6 @@ import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.configuration.site.HstSite;
-import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -137,7 +136,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
     private boolean channelMngrSiteAuthenticationSkipped;
 
-    private Set<String> diagnosticsForIps = new HashSet<String>(0);
+    private Set<String> diagnosticsForIps = new HashSet<>(0);
 
     private final static String DEFAULT_CHANNEL_MNGR_SITES_NODE_NAME = "hst:sites";
 
@@ -375,7 +374,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
         List<Mount> mountsForGroup = mountByHostGroup.get(hostGroup);
         if (mountsForGroup == null) {
-            mountsForGroup = new ArrayList<Mount>();
+            mountsForGroup = new ArrayList<>();
             mountByHostGroup.put(hostGroup, mountsForGroup);
         }
         mountsForGroup.add(mount);
@@ -384,7 +383,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
         if (aliasTypeMap == null) {
             // when a duplicate key is tried to be put, an IllegalArgumentException must be thrown, hence the
             // DuplicateKeyNotAllowedHashMap
-            aliasTypeMap = new DuplicateKeyNotAllowedHashMap<String, Mount>();
+            aliasTypeMap = new DuplicateKeyNotAllowedHashMap<>();
             mountByGroupAliasAndType.put(hostGroup, aliasTypeMap);
         }
         // add the mount for all alias-type combinations:
@@ -642,7 +641,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
      * @return a HashMap<String, VirtualHostService> that throws an exception when you put in the same key twice
      */
     public static HashMap<String, MutableVirtualHost> virtualHostHashMap(){
-        return new DuplicateKeyNotAllowedHashMap<String, MutableVirtualHost>();
+        return new DuplicateKeyNotAllowedHashMap<>();
     }
 
 
@@ -867,7 +866,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
                         if (!channelPath.startsWith(channelsRoot)) {
                             log.warn(
                                     "Channel path '{}' is not part of the HST configuration under {}, ignoring channel info for mount {}.  Use the full repository path for identification.",
-                                    new Object[]{channelPath, hstNodeLoadingCache.getRootPath(), mount.getName()});
+                                    channelPath, hstNodeLoadingCache.getRootPath(), mount.getName());
 
                             continue;
                         }

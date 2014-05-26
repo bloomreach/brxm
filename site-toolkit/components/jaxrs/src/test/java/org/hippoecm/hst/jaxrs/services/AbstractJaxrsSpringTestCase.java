@@ -72,11 +72,10 @@ public abstract class AbstractJaxrsSpringTestCase
     }
 
     protected <T> T getComponent(String name) {
-        return getComponentManager().<T>getComponent(name);
+        return getComponentManager().getComponent(name);
     }
     
     protected Configuration getContainerConfiguration() {
-        PropertiesConfiguration propConf = new PropertiesConfiguration();
-        return propConf;
+        return new PropertiesConfiguration();
     }
 }

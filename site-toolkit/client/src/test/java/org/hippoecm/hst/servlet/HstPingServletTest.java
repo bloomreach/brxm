@@ -92,7 +92,7 @@ public class HstPingServletTest {
             MockHttpServletRequest request = new MockHttpServletRequest();
             pingServlet.doGet(request, response);
             String content = response.getContentAsString();
-            assertTrue(content.indexOf("OK") >= 0);
+            assertTrue(content.contains("OK"));
             assertEquals(HttpServletResponse.SC_OK, response.getStatus());
 
             verify(componentManager, mockRepo, mockSession, rootNode);
@@ -131,7 +131,7 @@ public class HstPingServletTest {
 
             pingServlet.doGet(request, response);
             String content = response.getContentAsString();
-            assertTrue(content.indexOf("OK") >= 0);
+            assertTrue(content.contains("OK"));
             assertEquals(HttpServletResponse.SC_OK, response.getStatus());
 
             verify(componentManager, hstRequest, hrc, mockSession, rootNode);
@@ -147,7 +147,7 @@ public class HstPingServletTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         pingServlet.doGet(request, response);
         String content = response.getContentAsString();
-        assertTrue(content.indexOf("not available") >= 0);
+        assertTrue(content.contains("not available"));
         assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, response.getStatus());
     }
 
@@ -167,7 +167,7 @@ public class HstPingServletTest {
             MockHttpServletRequest request = new MockHttpServletRequest();
             pingServlet.doGet(request, response);
             String content = response.getContentAsString();
-            assertTrue(content.indexOf("not available") >= 0);
+            assertTrue(content.contains("not available"));
             assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, response.getStatus());
 
             verify(componentManager, mockRepo);
