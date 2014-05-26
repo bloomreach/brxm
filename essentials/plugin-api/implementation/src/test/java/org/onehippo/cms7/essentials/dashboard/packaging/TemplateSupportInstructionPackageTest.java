@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionParser;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
+import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
 import com.google.common.eventbus.EventBus;
 
@@ -42,7 +43,7 @@ public class TemplateSupportInstructionPackageTest extends BaseTest {
         InstructionPackage instructionPackage = new TemplateSupportInstructionPackage();
         injector.autowireBean(instructionPackage);
         final String instructionPath = instructionPackage.getInstructionPath();
-        assertEquals("Expected default path", instructionPath, DefaultInstructionPackage.DEFAULT_INSTRUCTIONS_PATH);
+        assertEquals("Expected default path", instructionPath, EssentialConst.DEFAULT_INSTRUCTIONS_PATH);
         final Map<String, Object> properties = instructionPackage.getProperties();
         assertEquals("Expected empty property set", 0, properties.size());
         final Set<String> groupNames = instructionPackage.groupNames();

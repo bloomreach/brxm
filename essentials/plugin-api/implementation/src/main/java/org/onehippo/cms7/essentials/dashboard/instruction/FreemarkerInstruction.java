@@ -61,7 +61,6 @@ public class FreemarkerInstruction extends FileInstruction {
     private String templateName;
     private boolean repoBased = false;
 
-
     @Override
     public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
         log.debug("executing Freemarker Instruction {}", this);
@@ -71,7 +70,7 @@ public class FreemarkerInstruction extends FileInstruction {
             eventBus.post(new InstructionEvent(this));
             return InstructionStatus.FAILED;
         }
-        defineTarget(context);
+
         // check if repository template type:
         if (repoBased && !Strings.isNullOrEmpty(repositoryTarget) && !Strings.isNullOrEmpty(templateName)) {
             log.debug("Using repository stored freemarker templates");
@@ -110,15 +109,16 @@ public class FreemarkerInstruction extends FileInstruction {
         return super.process(context, previousStatus);
     }
 
-    private void defineTarget(final PluginContext context) {
-        final String myTemplateName = (String) context.getPlaceholderData().get("templateName");
-        if (!Strings.isNullOrEmpty(myTemplateName) && myTemplateName.equals("repository")) {
+    private void defineTarget(Map<String, Object> placeholderData) {
+
+        final Boolean myRepoBased = (Boolean) placeholderData.get(EssentialConst.TEMPLATE_PARAM_REPOSITORY_BASED);
+        if (myRepoBased != null && myRepoBased) {
             repoBased = true;
         }
         if (repoBased) {
             // define repository target based on target path:
             repositoryTarget = getTarget();
-            final CharSequence freemarkerRoot = (CharSequence) context.getPlaceholderData().get(EssentialConst.PLACEHOLDER_SITE_FREEMARKER_ROOT);
+            final CharSequence freemarkerRoot = (CharSequence) placeholderData.get(EssentialConst.PLACEHOLDER_SITE_FREEMARKER_ROOT);
             // replace freemarker root
             if (repositoryTarget.contains(freemarkerRoot)) {
                 repositoryTarget = repositoryTarget.replace(freemarkerRoot, "");
@@ -140,13 +140,12 @@ public class FreemarkerInstruction extends FileInstruction {
                 }
                 templateName = parts.get(size - 1);
                 this.templateName = EXTENSION_REPLACEMENT.matcher(templateName).replaceAll("");
-                repositoryTarget = "/hst:hst/hst:configurations/"+ configurationName + "/hst:templates";
-
+                repositoryTarget = "/hst:hst/hst:configurations/" + configurationName + "/hst:templates";
+                setTarget(repositoryTarget + '/' + templateName);
             }
 
         }
     }
-
 
 
     public String getTemplateName() {
@@ -172,13 +171,15 @@ public class FreemarkerInstruction extends FileInstruction {
         return true;
     }
 
+    public boolean isRepoBased() {
+        return repoBased;
+    }
+
     @Override
     public void processPlaceholders(final Map<String, Object> data) {
         super.processPlaceholders(data);
-        final String myRepoTarget = TemplateUtils.replaceTemplateData(repositoryTarget, data);
-        if (myRepoTarget != null) {
-            repositoryTarget = myRepoTarget;
-        }
+        defineTarget(data);
+
     }
 
 

@@ -39,7 +39,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.eventbus.EventBus;
 
@@ -51,10 +50,6 @@ import com.google.common.eventbus.EventBus;
 public class DefaultInstructionPackage implements InstructionPackage {
 
 
-    public static final ImmutableSet<String> DEFAULT_GROUPS = new ImmutableSet.Builder<String>().add(EssentialConst.INSTRUCTION_GROUP_DEFAULT).build();
-    public static final String DEFAULT_INSTRUCTIONS_PATH = "/META-INF/instructions.xml";
-    public static final String PROP_TEMPLATE_NAME = "templateName";
-    public static final String PROP_SAMPLE_DATA = "sampleData";
     private static Logger log = LoggerFactory.getLogger(DefaultInstructionPackage.class);
 
     @Inject
@@ -79,11 +74,29 @@ public class DefaultInstructionPackage implements InstructionPackage {
     @Override
     public void setProperties(final Map<String, Object> properties) {
         this.properties = properties;
+        prepareProperties();
+    }
+
+    private void prepareProperties() {
+        if(properties==null){
+            return;
+        }
+        // set boolean value for freemarker templates
+        final String templateName = (String) properties.get(EssentialConst.PROP_TEMPLATE_NAME);
+        if (Strings.isNullOrEmpty(templateName) || templateName.equals(EssentialConst.TEMPLATE_JSP) || templateName.equals(EssentialConst.TEMPLATE_FREEMARKER)) {
+            properties.put(EssentialConst.TEMPLATE_PARAM_REPOSITORY_BASED, false);
+            properties.put(EssentialConst.TEMPLATE_PARAM_FILE_BASED, true);
+        } else {
+            // reset to freemarker
+            properties.put(EssentialConst.PROP_TEMPLATE_NAME, EssentialConst.TEMPLATE_FREEMARKER);
+            properties.put(EssentialConst.TEMPLATE_PARAM_FILE_BASED, false);
+            properties.put(EssentialConst.TEMPLATE_PARAM_REPOSITORY_BASED, true);
+        }
     }
 
     @Override
     public Set<String> groupNames() {
-        return DEFAULT_GROUPS;
+        return EssentialConst.DEFAULT_GROUPS;
     }
 
     @Override
@@ -115,7 +128,7 @@ public class DefaultInstructionPackage implements InstructionPackage {
     @Override
     public String getInstructionPath() {
         if (Strings.isNullOrEmpty(path)) {
-            return DEFAULT_INSTRUCTIONS_PATH;
+            return EssentialConst.DEFAULT_INSTRUCTIONS_PATH;
         }
         return path;
     }
@@ -159,15 +172,8 @@ public class DefaultInstructionPackage implements InstructionPackage {
     public InstructionStatus execute(final PluginContext context) {
         // NOTE: we'll add any additional context properties into context:
         context.addPlaceholderData(properties);
-        // set boolean value for freemarker templates
-        final String templateName = (String) properties.get(PROP_TEMPLATE_NAME);
-        if (Strings.isNullOrEmpty(templateName)) {
-            context.addPlaceholderData(EssentialConst.TEMPLATE_PARAM_REPOSITORY_BASED, true);
-            context.addPlaceholderData(EssentialConst.TEMPLATE_PARAM_FILE_BASED, false);
-        } else {
-            context.addPlaceholderData(EssentialConst.TEMPLATE_PARAM_FILE_BASED, true);
-            context.addPlaceholderData(EssentialConst.TEMPLATE_PARAM_REPOSITORY_BASED, false);
-        }
+
+
 
         if (instructions == null) {
             instructions = getInstructions();
@@ -197,6 +203,7 @@ public class DefaultInstructionPackage implements InstructionPackage {
         }
         return status;
     }
+
 
     @Override
     public InstructionParser getInstructionParser() {

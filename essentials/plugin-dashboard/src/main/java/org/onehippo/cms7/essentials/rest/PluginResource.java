@@ -525,8 +525,10 @@ public class PluginResource extends BaseResource {
     @POST
     @Path("/changes/")
     public RestfulList<MessageRestful> getInstructionPackageChanges(final PostPayloadRestful payload, @Context ServletContext servletContext) {
-
         final Map<String, String> values = payload.getValues();
+        final PluginContext context = getContext(servletContext);
+        context.addPlaceholderData(new HashMap<String, Object>(values));
+
         final String pluginId = values.get(PLUGIN_ID);
         final Plugin myPlugin = getPluginById(pluginId, servletContext);
 
@@ -537,7 +539,6 @@ public class PluginResource extends BaseResource {
             list.add(resource);
             return list;
         }
-
         final InstructionPackage instructionPackage = instructionPackageInstance(myPlugin);
         if (instructionPackage == null) {
             final MessageRestful resource = new MessageRestful("Could not create Instruction Package");
@@ -546,10 +547,10 @@ public class PluginResource extends BaseResource {
             return list;
         }
 
-
         instructionPackage.setProperties(new HashMap<String, Object>(values));
+
         @SuppressWarnings("unchecked")
-        final Multimap<MessageGroup, MessageRestful> messages = (Multimap<MessageGroup, MessageRestful>) instructionPackage.getInstructionsMessages(getContext(servletContext));
+        final Multimap<MessageGroup, MessageRestful> messages = (Multimap<MessageGroup, MessageRestful>) instructionPackage.getInstructionsMessages(context);
         final Collection<Map.Entry<MessageGroup, MessageRestful>> entries = messages.entries();
         for (Map.Entry<MessageGroup, MessageRestful> entry : entries) {
             final MessageRestful value = entry.getValue();

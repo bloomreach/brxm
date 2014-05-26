@@ -19,6 +19,7 @@ package org.onehippo.cms7.essentials.dashboard.restservices;
 import java.util.Set;
 
 import org.onehippo.cms7.essentials.dashboard.packaging.DefaultInstructionPackage;
+import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -33,6 +34,6 @@ public class RestServicesInstructionPackage extends DefaultInstructionPackage {
         if (restType != null) {
             return new ImmutableSet.Builder<String>().add(restType).build();
         }
-        return DEFAULT_GROUPS;
+        return EssentialConst.DEFAULT_GROUPS;
     }
 }

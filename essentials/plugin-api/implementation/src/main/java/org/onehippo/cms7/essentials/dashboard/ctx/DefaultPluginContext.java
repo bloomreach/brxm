@@ -103,6 +103,7 @@ public class DefaultPluginContext implements PluginContext {
     @Override
     public void addPluginContextData(final String key, final Object value) {
         contextData.put(key, value);
+
     }
 
     @Override
@@ -245,6 +246,7 @@ public class DefaultPluginContext implements PluginContext {
         if (data != null) {
             getPlaceholderData().putAll(data);
         }
+        fillInProperties();
     }
 
     /**
@@ -334,8 +336,6 @@ public class DefaultPluginContext implements PluginContext {
         placeholderData.put(EssentialConst.PLACEHOLDER_TMP_FOLDER, System.getProperty("java.io.tmpdir"));
         // essentials
         placeholderData.put(EssentialConst.PLACEHOLDER_ESSENTIALS_ROOT, getEssentialsDirectory().getAbsolutePath());
-
-
         return placeholderData;
     }
 
@@ -355,6 +355,23 @@ public class DefaultPluginContext implements PluginContext {
         } catch (RepositoryException e) {
             log.error("Error setting date instance", e);
             placeholderData.put(placeholderName, "1970-01-01T01:00:00.000+01:00");
+        }
+    }
+
+    private void fillInProperties() {
+        if(placeholderData==null){
+            return;
+        }
+        // set boolean value for freemarker templates
+        final String templateName = (String) placeholderData.get(EssentialConst.PROP_TEMPLATE_NAME);
+        if (Strings.isNullOrEmpty(templateName) || templateName.equals(EssentialConst.TEMPLATE_JSP) || templateName.equals(EssentialConst.TEMPLATE_FREEMARKER)) {
+            addPlaceholderData(EssentialConst.TEMPLATE_PARAM_REPOSITORY_BASED, false);
+            addPlaceholderData(EssentialConst.TEMPLATE_PARAM_FILE_BASED, true);
+        } else {
+            // reset to freemarker
+            placeholderData.put(EssentialConst.PROP_TEMPLATE_NAME, EssentialConst.TEMPLATE_FREEMARKER);
+            addPlaceholderData(EssentialConst.TEMPLATE_PARAM_FILE_BASED, false);
+            addPlaceholderData(EssentialConst.TEMPLATE_PARAM_REPOSITORY_BASED, true);
         }
     }
 

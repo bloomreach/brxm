@@ -19,8 +19,6 @@ package org.onehippo.cms7.essentials.dashboard.packaging;
 import java.util.Set;
 
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
@@ -31,12 +29,11 @@ import com.google.common.collect.ImmutableSet;
  * <p>{@code templateName}</p>
  *
  * @version "$Id$"
- * @see DefaultInstructionPackage#PROP_SAMPLE_DATA
- * @see DefaultInstructionPackage#PROP_TEMPLATE_NAME
+ * @see org.onehippo.cms7.essentials.dashboard.utils.EssentialConst#PROP_SAMPLE_DATA
+ * @see org.onehippo.cms7.essentials.dashboard.utils.EssentialConst#PROP_TEMPLATE_NAME
  */
 public class TemplateSupportInstructionPackage extends DefaultInstructionPackage {
 
-    private static final Logger log = LoggerFactory.getLogger(TemplateSupportInstructionPackage.class);
     public TemplateSupportInstructionPackage() {
     }
 
@@ -47,19 +44,13 @@ public class TemplateSupportInstructionPackage extends DefaultInstructionPackage
 
     @Override
     public Set<String> groupNames() {
-        final Boolean sampleData = Boolean.valueOf((String) getProperties().get(PROP_SAMPLE_DATA));
-        final String templateName = (String) getProperties().get(PROP_TEMPLATE_NAME);
-        String templateGroup = Strings.isNullOrEmpty(templateName) ? "jsp" : templateName;
-        // NOTE: we use freemarker group,
-        // freemarker instruction itself will decide if repository or file based type will be used
-        if(templateGroup.equals("repository")){
-            log.info("Forcing template group to be freemarker {}", templateGroup);
-            templateGroup = "freemarker";
-        }
+        final Boolean sampleData = Boolean.valueOf((String) getProperties().get(EssentialConst.PROP_SAMPLE_DATA));
+        final String templateName = (String) getProperties().get(EssentialConst.PROP_TEMPLATE_NAME);
+        final String templateGroup = Strings.isNullOrEmpty(templateName) ? "jsp" : templateName;
         if (sampleData) {
             return new ImmutableSet.Builder<String>()
                     .add(EssentialConst.INSTRUCTION_GROUP_DEFAULT)
-                    .add(PROP_SAMPLE_DATA)
+                    .add(EssentialConst.PROP_SAMPLE_DATA)
                     .add(templateGroup).build();
         }
         return new ImmutableSet.Builder<String>()

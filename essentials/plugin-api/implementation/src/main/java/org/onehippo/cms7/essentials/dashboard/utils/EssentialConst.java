@@ -144,10 +144,17 @@ public final class EssentialConst {
     public static final String HIPPO_DOCUMENT_IMPORT = "org.hippoecm.hst.content.beans.standard.HippoDocument";
     public static final String CONTENT_BLOCKS_TEMPLATE_XML = "content_blocks_template.xml";
     public static final String INSTRUCTION_GROUP_DEFAULT = "default";
+    public static final ImmutableSet<String> DEFAULT_GROUPS = new ImmutableSet.Builder<String>().add(INSTRUCTION_GROUP_DEFAULT).build();
     public static final String REPO_FOLDER_FORMAT = "yyyy/MM";
     public static final String UTF_8 = "UTF8";
     public static final String TEMPLATE_PARAM_REPOSITORY_BASED = "repositoryBased";
     public static final String TEMPLATE_PARAM_FILE_BASED = "fileBased";
+    public static final String DEFAULT_INSTRUCTIONS_PATH = "/META-INF/instructions.xml";
+    public static final String PROP_TEMPLATE_NAME = "templateName";
+    public static final String PROP_SAMPLE_DATA = "sampleData";
+    public static final String TEMPLATE_FREEMARKER = "freemarker";
+    public static final String TEMPLATE_JSP = "jsp";
+    public static final String TEMPLATE_REPOSITORY = "repository";
 
 
     private EssentialConst() {

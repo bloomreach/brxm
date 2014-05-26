@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionParser;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
+import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
 import com.google.common.eventbus.EventBus;
 
@@ -47,12 +48,12 @@ public class DefaultInstructionPackageTest extends BaseTest {
         InstructionPackage instructionPackage = new DefaultInstructionPackage();
         injector.autowireBean(instructionPackage);
         final String instructionPath = instructionPackage.getInstructionPath();
-        assertEquals("Expected default path", instructionPath, DefaultInstructionPackage.DEFAULT_INSTRUCTIONS_PATH);
+        assertEquals("Expected default path", instructionPath, EssentialConst.DEFAULT_INSTRUCTIONS_PATH);
         final Map<String, Object> properties = instructionPackage.getProperties();
         assertEquals("Expected empty property set", 0, properties.size());
         final Set<String> groupNames = instructionPackage.groupNames();
-        assertEquals("Expected default group names", DefaultInstructionPackage.DEFAULT_GROUPS.size(), groupNames.size());
-        assertEquals("Expected default group name", DefaultInstructionPackage.DEFAULT_GROUPS.iterator().next(), groupNames.iterator().next());
+        assertEquals("Expected default group names", EssentialConst.DEFAULT_GROUPS.size(), groupNames.size());
+        assertEquals("Expected default group name", EssentialConst.DEFAULT_GROUPS.iterator().next(), groupNames.iterator().next());
         final InstructionParser parser = instructionPackage.getInstructionParser();
         assertNotNull(parser);
         final EventBus bus = instructionPackage.getEventBus();

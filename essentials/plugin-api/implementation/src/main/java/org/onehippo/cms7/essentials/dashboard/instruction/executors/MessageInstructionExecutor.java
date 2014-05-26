@@ -23,6 +23,7 @@ import java.util.Set;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instruction.CndInstruction;
 import org.onehippo.cms7.essentials.dashboard.instruction.FileInstruction;
+import org.onehippo.cms7.essentials.dashboard.instruction.FreemarkerInstruction;
 import org.onehippo.cms7.essentials.dashboard.instruction.NodeFolderInstruction;
 import org.onehippo.cms7.essentials.dashboard.instruction.XmlInstruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
@@ -54,7 +55,9 @@ public class MessageInstructionExecutor {
 
         final Set<Instruction> mySet = instructionSet.getInstructions();
         for (Instruction instruction : mySet) {
-            if (instruction instanceof FileInstruction) {
+            if (instruction instanceof FreemarkerInstruction) {
+                processFreemarkerInstruction(retVal, placeholderData, (FreemarkerInstruction) instruction);
+            } else if (instruction instanceof FileInstruction) {
                 processFileInstruction(retVal, placeholderData, (FileInstruction) instruction);
 
             } else if (instruction instanceof NodeFolderInstruction) {
@@ -110,6 +113,33 @@ public class MessageInstructionExecutor {
             final String userMessage = MessageFormat.format("New file will be created: {0}", replacedData);
             Restful keyValueRestful = new MessageRestful(userMessage);
             retVal.put(MessageGroup.FILE_CREATE, keyValueRestful);
+        } else if (action.equals("delete")) {
+            final String replacedData = TemplateUtils.replaceTemplateData(instruction.getTarget(), placeholderData);
+            final String userMessage = MessageFormat.format("Following file will be deleted: {0}", replacedData);
+            Restful keyValueRestful = new MessageRestful(userMessage);
+            retVal.put(MessageGroup.FILE_DELETE, keyValueRestful);
+        }
+    }
+
+    private void processFreemarkerInstruction(final Multimap<MessageGroup, Restful> retVal, final Map<String, Object> placeholderData, final FreemarkerInstruction instruction) {
+        final String action = instruction.getAction();
+        // process placeholder
+        instruction.processPlaceholders(placeholderData);
+        if (action.equals("copy")) {
+            final String replacedData = TemplateUtils.replaceTemplateData(instruction.getTarget(), placeholderData);
+            final String userMessage;
+            if (instruction.isRepoBased()) {
+                userMessage = MessageFormat.format("New HST template node will be created: {0}", instruction.getTarget());
+                Restful keyValueRestful = new MessageRestful(userMessage);
+                retVal.put(MessageGroup.XML_NODE_CREATE, keyValueRestful);
+            } else {
+                userMessage = MessageFormat.format("New file will be created: {0}", replacedData);
+                Restful keyValueRestful = new MessageRestful(userMessage);
+                retVal.put(MessageGroup.FILE_CREATE, keyValueRestful);
+            }
+
+
+
         } else if (action.equals("delete")) {
             final String replacedData = TemplateUtils.replaceTemplateData(instruction.getTarget(), placeholderData);
             final String userMessage = MessageFormat.format("Following file will be deleted: {0}", replacedData);
