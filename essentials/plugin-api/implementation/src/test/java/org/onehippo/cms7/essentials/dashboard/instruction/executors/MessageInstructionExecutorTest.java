@@ -29,19 +29,18 @@ import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 import static org.junit.Assert.assertEquals;
 
-public class MessageInstructionExecutorTest extends BaseTest{
+public class MessageInstructionExecutorTest extends BaseTest {
 
-    private static final Logger log = LoggerFactory.getLogger(MessageInstructionExecutorTest.class);
+
     @Inject
     private InstructionParser parser;
+
     @Test
     public void testParseInstructionSet() throws Exception {
         MessageInstructionExecutor executor = new MessageInstructionExecutor();
@@ -52,7 +51,7 @@ public class MessageInstructionExecutorTest extends BaseTest{
         assertEquals(3, instructionSets.size());
         final Multimap<MessageGroup, Restful> messages = ArrayListMultimap.create();
         for (InstructionSet instructionSet : instructionSets) {
-            final Multimap<MessageGroup,Restful> m = executor.execute(instructionSet, getContext());
+            final Multimap<MessageGroup, Restful> m = executor.execute(instructionSet, getContext());
             messages.putAll(m);
         }
         assertEquals(8, messages.size());
