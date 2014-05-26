@@ -30,6 +30,12 @@
       <xs:enumeration value="copy"/>
     </xs:restriction>
   </xs:simpleType>
+  <xs:simpleType name="freemarkerActionType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="delete"/>
+      <xs:enumeration value="copy"/>
+    </xs:restriction>
+  </xs:simpleType>
   <xs:simpleType name="directoryActionType">
     <xs:restriction base="xs:string">
       <xs:enumeration value="delete"/>
@@ -47,7 +53,8 @@
   <xs:complexType name="instructionsSetType" mixed="true">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element type="fileType" name="file" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element type="directoryType" name="dirctory" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element type="freemarkerType" name="freemarker" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element type="directoryType" name="directory" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element type="executeType" name="execute" minOccurs="0" maxOccurs="unbounded"/>
       <!--<xs:element type="placeHoldersType" name="placeholders" minOccurs="0" maxOccurs="unbounded"/>-->
       <xs:element type="xmlType" name="xml" minOccurs="0" maxOccurs="unbounded"/>
@@ -72,6 +79,19 @@
     </xs:attribute>
     <xs:attribute use="required" name="target" type="xs:string"/>
     <xs:attribute use="optional" name="overwrite" type="xs:boolean" default="false"/>
+    <xs:attribute use="optional" name="message" type="xs:string" default="false"/>
+    <xs:attribute use="optional" name="binary" type="xs:boolean" default="false"/>
+  </xs:complexType>
+  <xs:complexType name="freemarkerType" mixed="true">
+    <xs:attribute use="required" name="action" type="freemarkerActionType"/>
+    <xs:attribute use="optional" name="source" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>Source file. We'll first try to check if file exist on a file system and copy it, if not, we'll try to fetch it from the classpath</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute use="required" name="target" type="xs:string"/>
+    <xs:attribute use="optional" name="overwrite" type="xs:boolean" default="false"/>
+    <xs:attribute use="optional" name="repositoryTarget" type="xs:string" default="false"/>
     <xs:attribute use="optional" name="message" type="xs:string" default="false"/>
     <xs:attribute use="optional" name="binary" type="xs:boolean" default="false"/>
   </xs:complexType>
@@ -120,10 +140,11 @@
     <xs:attribute use="required" name="documentType" type="xs:string"/>
     <xs:attribute use="required" name="superType" type="xs:string"/>
     <xs:attribute use="optional" name="namespaceUrl" type="xs:string">
-    <xs:annotation>
-      <!--TODO: NOT IMPLEMENTED YET -->
-      <xs:documentation>If not defined essentials template namespace will be used (TODO: NOT IMPLEMENTED YET)</xs:documentation>
-    </xs:annotation>
+      <xs:annotation>
+        <!--TODO: NOT IMPLEMENTED YET -->
+        <xs:documentation>If not defined essentials template namespace will be used (TODO: NOT IMPLEMENTED YET)</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
     <xs:attribute use="optional" name="namespacePrefix" type="xs:string">
       <xs:annotation>
         <xs:documentation>If not defined essentials template namespace will be used</xs:documentation>

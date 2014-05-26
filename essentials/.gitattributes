@@ -584,6 +584,7 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/i
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/DirectoryInstruction.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/ExecuteInstruction.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/FileInstruction.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/FreemarkerInstruction.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/NodeFolderInstruction.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/PluginInstruction.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/PluginInstructionSet.java -text
@@ -664,6 +665,7 @@ plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/e
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/CndInstructionTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/DummyInstruction.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/FileInstructionTest.java -text
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/FreemarkerInstructionTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/NodeFolderInstructionTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/PluginInstructionExecutorTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/XmlInstructionTest.java -text
