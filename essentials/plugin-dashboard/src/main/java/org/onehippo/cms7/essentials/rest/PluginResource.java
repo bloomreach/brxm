@@ -224,15 +224,16 @@ public class PluginResource extends BaseResource {
             resource.setSuccessMessage(false);
             return resource;
         }
-
+        final Map<String, Object> properties = new HashMap<String, Object>(values);
         final PluginContext context = new DefaultPluginContext(new PluginRestful(ProjectSettingsBean.DEFAULT_NAME));
-
+        context.addPlaceholderData(properties);
         //############################################
         // EXECUTE SKELETON:
         //############################################
         final InstructionPackage commonPackage = new CommonsInstructionPackage();
         getInjector().autowireBean(commonPackage);
-        commonPackage.setProperties(new HashMap<String, Object>(values));
+
+        commonPackage.setProperties(properties);
         commonPackage.execute(context);
 
         // execute InstructionPackage itself
@@ -240,7 +241,7 @@ public class PluginResource extends BaseResource {
         if (instructionPackage == null) {
             return new MessageRestful("Could not execute Installation package", DisplayEvent.DisplayType.STRONG);
         }
-        instructionPackage.setProperties(new HashMap<String, Object>(values));
+        instructionPackage.setProperties(properties);
         instructionPackage.execute(context);
 
 

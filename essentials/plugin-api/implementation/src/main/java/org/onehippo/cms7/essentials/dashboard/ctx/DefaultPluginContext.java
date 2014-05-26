@@ -362,6 +362,10 @@ public class DefaultPluginContext implements PluginContext {
         if(placeholderData==null){
             return;
         }
+        // check if already set:
+        if(placeholderData.containsKey(EssentialConst.TEMPLATE_PARAM_REPOSITORY_BASED)){
+            return;
+        }
         // set boolean value for freemarker templates
         final String templateName = (String) placeholderData.get(EssentialConst.PROP_TEMPLATE_NAME);
         if (Strings.isNullOrEmpty(templateName) || templateName.equals(EssentialConst.TEMPLATE_JSP) || templateName.equals(EssentialConst.TEMPLATE_FREEMARKER)) {

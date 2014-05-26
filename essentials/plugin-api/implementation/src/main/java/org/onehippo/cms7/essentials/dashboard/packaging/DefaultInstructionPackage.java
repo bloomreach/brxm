@@ -78,7 +78,7 @@ public class DefaultInstructionPackage implements InstructionPackage {
     }
 
     private void prepareProperties() {
-        if(properties==null){
+        if (properties == null) {
             return;
         }
         // set boolean value for freemarker templates
@@ -172,7 +172,6 @@ public class DefaultInstructionPackage implements InstructionPackage {
     public InstructionStatus execute(final PluginContext context) {
         // NOTE: we'll add any additional context properties into context:
         context.addPlaceholderData(properties);
-
 
 
         if (instructions == null) {
