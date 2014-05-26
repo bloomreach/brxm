@@ -1,4 +1,9 @@
-<#include "/WEB-INF/freemarker/include/imports.ftl">
+{{#repositoryBased}}
+    <#include "../../hst:default/hst:templates/imports">
+{{/repositoryBased}}
+{{#fileBased}}
+    <#include "/WEB-INF/freemarker/include/imports.ftl">
+{{/fileBased}}
 <#--
   Copyright 2014 Hippo B.V. (http://www.onehippo.com)
 
@@ -17,4 +22,9 @@
 <#-- @ftlvariable name="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable" -->
 <h1>TITLE</h1>
 <h1>${pageable.total}</h1>
-<#include "/WEB-INF/freemarker/include/pagination.ftl">
+{{#repositoryBased}}
+    <#include "../../hst:default/hst:templates/pagination">
+{{/repositoryBased}}
+{{#fileBased}}
+    <#include "/WEB-INF/freemarker/include/pagination.ftl">
+{{/fileBased}}

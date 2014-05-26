@@ -14,7 +14,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<#include "/WEB-INF/freemarker/include/imports.ftl">
+{{#repositoryBased}}
+    <#include "../../hst:default/hst:templates/imports">
+{{/repositoryBased}}
+{{#fileBased}}
+    <#include "/WEB-INF/freemarker/include/imports.ftl">
+{{/fileBased}}
 <html lang="en">
 <head>
     <meta charset="utf-8"/>

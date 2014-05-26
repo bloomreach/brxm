@@ -146,6 +146,8 @@ public final class EssentialConst {
     public static final String INSTRUCTION_GROUP_DEFAULT = "default";
     public static final String REPO_FOLDER_FORMAT = "yyyy/MM";
     public static final String UTF_8 = "UTF8";
+    public static final String TEMPLATE_PARAM_REPOSITORY_BASED = "repositoryBased";
+    public static final String TEMPLATE_PARAM_FILE_BASED = "fileBased";
 
 
     private EssentialConst() {

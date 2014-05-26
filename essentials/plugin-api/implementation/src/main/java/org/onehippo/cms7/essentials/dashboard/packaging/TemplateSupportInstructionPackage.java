@@ -19,6 +19,8 @@ package org.onehippo.cms7.essentials.dashboard.packaging;
 import java.util.Set;
 
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
@@ -34,6 +36,7 @@ import com.google.common.collect.ImmutableSet;
  */
 public class TemplateSupportInstructionPackage extends DefaultInstructionPackage {
 
+    private static final Logger log = LoggerFactory.getLogger(TemplateSupportInstructionPackage.class);
     public TemplateSupportInstructionPackage() {
     }
 
@@ -46,7 +49,13 @@ public class TemplateSupportInstructionPackage extends DefaultInstructionPackage
     public Set<String> groupNames() {
         final Boolean sampleData = Boolean.valueOf((String) getProperties().get(PROP_SAMPLE_DATA));
         final String templateName = (String) getProperties().get(PROP_TEMPLATE_NAME);
-        final String templateGroup = Strings.isNullOrEmpty(templateName) ? "jsp" : templateName;
+        String templateGroup = Strings.isNullOrEmpty(templateName) ? "jsp" : templateName;
+        // NOTE: we use freemarker group,
+        // freemarker instruction itself will decide if repository or file based type will be used
+        if(templateGroup.equals("repository")){
+            log.info("Forcing template group to be freemarker {}", templateGroup);
+            templateGroup = "freemarker";
+        }
         if (sampleData) {
             return new ImmutableSet.Builder<String>()
                     .add(EssentialConst.INSTRUCTION_GROUP_DEFAULT)

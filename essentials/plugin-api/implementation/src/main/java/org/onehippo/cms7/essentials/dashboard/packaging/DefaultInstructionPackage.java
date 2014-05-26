@@ -96,7 +96,7 @@ public class DefaultInstructionPackage implements InstructionPackage {
         final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
         final InstructionExecutor executor = new PluginInstructionExecutor();
         final Set<String> myGroupNames = groupNames();
-        final Multimap<MessageGroup,Restful> instructionsMessages = ArrayListMultimap.create();
+        final Multimap<MessageGroup, Restful> instructionsMessages = ArrayListMultimap.create();
         for (InstructionSet instructionSet : instructionSets) {
             final String group = instructionSet.getGroup();
             // execute only or group(s)
@@ -159,7 +159,15 @@ public class DefaultInstructionPackage implements InstructionPackage {
     public InstructionStatus execute(final PluginContext context) {
         // NOTE: we'll add any additional context properties into context:
         context.addPlaceholderData(properties);
-
+        // set boolean value for freemarker templates
+        final String templateName = (String) properties.get(PROP_TEMPLATE_NAME);
+        if (Strings.isNullOrEmpty(templateName)) {
+            context.addPlaceholderData(EssentialConst.TEMPLATE_PARAM_REPOSITORY_BASED, true);
+            context.addPlaceholderData(EssentialConst.TEMPLATE_PARAM_FILE_BASED, false);
+        } else {
+            context.addPlaceholderData(EssentialConst.TEMPLATE_PARAM_FILE_BASED, true);
+            context.addPlaceholderData(EssentialConst.TEMPLATE_PARAM_REPOSITORY_BASED, false);
+        }
 
         if (instructions == null) {
             instructions = getInstructions();

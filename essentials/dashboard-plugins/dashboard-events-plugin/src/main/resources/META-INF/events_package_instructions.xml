@@ -35,8 +35,8 @@
   </instructionSet>
 
   <instructionSet group="freemarker">
-    <file action="copy" source="freemarker/eventslist-main-eventslist.ftl" target="{{freemarkerRoot}}/hstdefault/eventslist-main-eventslist.ftl"/>
-    <file action="copy" source="freemarker/eventspage-main.ftl" target="{{freemarkerRoot}}/hstdefault/eventspage-main.ftl"/>
+    <freemarker action="copy" source="freemarker/eventslist-main-eventslist.ftl" target="{{freemarkerRoot}}/hstdefault/eventslist-main-eventslist.ftl"/>
+    <freemarker action="copy" source="freemarker/eventspage-main.ftl" target="{{freemarkerRoot}}/hstdefault/eventspage-main.ftl"/>
     <xml action="copy" source="xml/hst/templates/events-main-content-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
     <xml action="copy" source="xml/hst/templates/eventslist-main-eventslist-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>

@@ -1,4 +1,9 @@
+{{#repositoryBased}}
+<#include "../../hst:default/hst:templates/imports">
+{{/repositoryBased}}
+{{#fileBased}}
 <#include "/WEB-INF/freemarker/include/imports.ftl">
+{{/fileBased}}
 <#--
   Copyright 2014 Hippo B.V. (http://www.onehippo.com)
 
@@ -36,5 +41,10 @@
     </#list>
 </#if>
 <#if pageable.showPagination>
+{{#repositoryBased}}
+    <#include "../../hst:default/hst:templates/pagination">
+{{/repositoryBased}}
+{{#fileBased}}
     <#include "/WEB-INF/freemarker/include/pagination.ftl">
+{{/fileBased}}
 </#if>

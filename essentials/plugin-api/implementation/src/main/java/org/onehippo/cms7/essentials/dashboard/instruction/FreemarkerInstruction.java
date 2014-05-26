@@ -132,7 +132,7 @@ public class FreemarkerInstruction extends FileInstruction {
                 if (size > 1) {
                     configurationName = parts.get(0);
                     // check if hst default:
-                    if (configurationName.equals("hstdefault")) {
+                    if (configurationName.equals("hstdefault") || configurationName.equals("include")) {
                         configurationName = "hst:default";
                     }
                 } else {

@@ -55,8 +55,8 @@
 
   <instructionSet group="freemarker">
     <xml action="copy" source="hst/template-content-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <file action="copy" source="freemarker/contentpage-main.ftl" target="{{freemarkerRoot}}/{{namespace}}/contentpage-main.ftl"/>
+    <freemarker action="copy" source="freemarker/contentpage-main.ftl" target="{{freemarkerRoot}}/{{namespace}}/contentpage-main.ftl"/>
     <xml action="copy" source="hst/template-content-list-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <file action="copy" source="freemarker/contentlist-main-contentlist.ftl" target="{{freemarkerRoot}}/{{namespace}}/contentlist-main-contentlist.ftl"/>
+    <freemarker action="copy" source="freemarker/contentlist-main-contentlist.ftl" target="{{freemarkerRoot}}/{{namespace}}/contentlist-main-contentlist.ftl"/>
   </instructionSet>
 </instructions>
