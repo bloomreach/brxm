@@ -42,6 +42,7 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 
@@ -53,6 +54,11 @@ import com.google.common.eventbus.EventBus;
 public class FreemarkerInstruction extends FileInstruction {
     private static final Pattern EXTENSION_REPLACEMENT = Pattern.compile(".ftl");
     private static Logger log = LoggerFactory.getLogger(FreemarkerInstruction.class);
+    public static final ImmutableSet<String> DEFAULT_HST_TEMPLATES = new ImmutableSet.Builder<String>()
+            .add("hstdefault")
+            .add("include")
+            .add("essentials")
+            .build();
 
 
     @Inject
@@ -132,7 +138,7 @@ public class FreemarkerInstruction extends FileInstruction {
                 if (size > 1) {
                     configurationName = parts.get(0);
                     // check if hst default:
-                    if (configurationName.equals("hstdefault") || configurationName.equals("include")) {
+                    if (DEFAULT_HST_TEMPLATES.contains(configurationName)) {
                         configurationName = "hst:default";
                     }
                 } else {
