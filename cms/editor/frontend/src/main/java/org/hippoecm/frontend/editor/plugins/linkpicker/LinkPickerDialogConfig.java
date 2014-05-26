@@ -35,14 +35,14 @@ import org.slf4j.LoggerFactory;
  * that has the same locale as the document the compound is a part of, unless the configuration property
  * 'language.context.aware' is set to 'false' or no translated ancestor folder with the same locale exists.
  */
-class LinkPickerDialogConfig {
+public class LinkPickerDialogConfig {
 
     public static final String CONFIG_LANGUAGE_CONTEXT_AWARE = "language.context.aware";
     public static final boolean DEFAULT_LANGUAGE_CONTEXT_AWARE = true;
 
     private static final Logger log = LoggerFactory.getLogger(LinkPickerDialogConfig.class);
 
-    static IPluginConfig fromPluginConfig(IPluginConfig config, JcrPropertyValueModel model) {
+    public static IPluginConfig fromPluginConfig(IPluginConfig config, JcrPropertyValueModel model) {
         String baseUuid = getPickerBaseUuid(config, model);
         if (baseUuid != null) {
             config = new JavaPluginConfig(config);
