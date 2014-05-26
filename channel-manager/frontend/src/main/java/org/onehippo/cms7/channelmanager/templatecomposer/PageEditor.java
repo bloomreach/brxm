@@ -198,7 +198,6 @@ public class PageEditor extends ExtPanel {
         String variantsPath = null;
         if (config != null) {
             variantsPath = config.getString("variantsPath");
-            this.contextPath = config.getString("contextPath", contextPath);
             this.initialHstConnectionTimeout = config.getLong("initialHstConnectionTimeout", DEFAULT_INITIAL_CONNECTION_TIMEOUT);
             this.extAjaxTimeout = config.getLong("extAjaxTimeoutMillis", DEFAULT_EXT_AJAX_TIMEOUT);
             this.previewMode = config.getAsBoolean("previewMode", DEFAULT_PREVIEW_MODE);

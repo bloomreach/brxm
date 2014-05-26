@@ -168,7 +168,6 @@
             this.cmsUser = config.cmsUser;
             config.header = false;
 
-            this.composerRestMountUrl = config.contextPath + config.composerRestMountPath;
             this.variantsUuid = config.variantsUuid;
             this.pageContainer = new Hippo.ChannelManager.TemplateComposer.PageContainer(config);
             this.locale = config.locale;
@@ -184,7 +183,7 @@
             this.globalVariantsStoreFuture = null;
             if (Ext.isDefined(this.variantsUuid)) {
                 this.globalVariantsStore = new Hippo.ChannelManager.TemplateComposer.GlobalVariantsStore({
-                    composerRestMountUrl: this.composerRestMountUrl,
+                    composerRestMountUrl: this.pageContainer.getComposerRestMountUrl(),
                     locale: this.locale,
                     resources: config.resources,
                     variantsUuid: this.variantsUuid
@@ -212,7 +211,7 @@
                 }.createDelegate(this));
             }
 
-            invalidatePreviousHstSession(this.composerRestMountUrl, config.cmsUser);
+            invalidatePreviousHstSession(this.pageContainer.getComposerRestMountUrl(), config.cmsUser);
 
             this.initUI(config);
 
@@ -324,7 +323,7 @@
                             return false;
                         }
                         Ext.Ajax.request({
-                            url: self.composerRestMountUrl + '/cafebabe-cafe-babe-cafe-babecafebabe./setvariant?FORCE_CLIENT_HOST=true',
+                            url: self.pageContainer.getComposerRestMountUrl() + '/cafebabe-cafe-babe-cafe-babecafebabe./setvariant?FORCE_CLIENT_HOST=true',
                             method: 'POST',
                             headers: {
                                 'FORCE_CLIENT_HOST': 'true'
@@ -919,7 +918,7 @@
                 id: 'componentPropertiesPanel',
                 resources: this.resources,
                 locale: this.locale,
-                composerRestMountUrl: this.composerRestMountUrl,
+                composerRestMountUrl: this.pageContainer.getComposerRestMountUrl(),
                 variantsUuid: this.variantsUuid,
                 globalVariantsStore: this.globalVariantsStore,
                 globalVariantsStoreFuture: this.globalVariantsStoreFuture,
@@ -1060,7 +1059,7 @@
         editMenu: function(uuid) {
             var editMenuWindow = new Hippo.ChannelManager.TemplateComposer.EditMenuWindow({
                 resources: this.resources,
-                composerRestMountUrl: this.composerRestMountUrl,
+                composerRestMountUrl: this.pageContainer.getComposerRestMountUrl(),
                 debug: this.debug,
                 locale: this.locale,
                 menuId: uuid
@@ -1072,7 +1071,7 @@
         showPages: function() {
             var pagesWindow = new Hippo.ChannelManager.TemplateComposer.PagesWindow({
                 resources: this.resources,
-                composerRestMountUrl: this.composerRestMountUrl,
+                composerRestMountUrl: this.pageContainer.getComposerRestMountUrl(),
                 debug: this.debug,
                 locale: this.locale,
                 mountId: this.currentMountId,
@@ -1087,7 +1086,7 @@
             var pageSettingsWindow = new Hippo.ChannelManager.TemplateComposer.PageSettingsWindow({
                 resources: this.resources,
                 cmsUser: this.cmsUser,
-                composerRestMountUrl: this.composerRestMountUrl,
+                composerRestMountUrl: this.pageContainer.getComposerRestMountUrl(),
                 debug: this.debug,
                 locale: this.locale,
                 mountId: this.currentMountId,

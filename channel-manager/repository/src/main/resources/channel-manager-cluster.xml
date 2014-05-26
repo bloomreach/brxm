@@ -54,9 +54,6 @@
       <sv:property sv:name="composerRestMountPath" sv:type="String">
         <sv:value>/_rp</sv:value>
       </sv:property>
-      <sv:property sv:name="contextPath" sv:type="String">
-        <sv:value>/site</sv:value>
-      </sv:property>
       <sv:property sv:name="initialHstConnectionTimeout" sv:type="Long">
         <sv:value>60000</sv:value>
       </sv:property>

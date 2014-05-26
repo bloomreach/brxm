@@ -65,8 +65,6 @@
             this.resources = pageContainer.resources;
             this.previewMode = pageContainer.previewMode;
             this.contextPath = pageContainer.contextPath;
-            this.composerRestMountUrl = pageContainer.composerRestMountUrl;
-            this.renderPath = pageContainer.renderPath;
             this.internalLinkUrlPrefix = document.location.protocol + '//' + document.location.host;
             this.internalLinkUrlPrefix = appendPathFragment(this.internalLinkUrlPrefix, pageContainer.contextPath);
             this.internalLinkUrlPrefix = appendPathFragment(this.internalLinkUrlPrefix, pageContainer.cmsPreviewPrefix);
@@ -296,7 +294,7 @@
         _createToolkitStore: function(mountId) {
             return new Hippo.ChannelManager.TemplateComposer.ToolkitStore({
                 mountId: mountId,
-                composerRestMountUrl: this.composerRestMountUrl
+                composerRestMountUrl: this.pageContainer.getComposerRestMountUrl()
             });
         },
 
@@ -304,7 +302,7 @@
             return new Hippo.ChannelManager.TemplateComposer.PageModelStore({
                 mountId: mountId,
                 pageId: pageId,
-                composerRestMountUrl: this.composerRestMountUrl,
+                composerRestMountUrl: this.pageContainer.getComposerRestMountUrl(),
                 resources: this.resources
             });
         },

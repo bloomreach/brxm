@@ -27,7 +27,6 @@
             this.contextPath = config.contextPath;
             this.cmsPreviewPrefix = config.cmsPreviewPrefix;
             this.renderPathInfo = config.renderPathInfo;
-            this.composerRestMountUrl = this.contextPath + this.composerRestMountPath;
             this.iFrameErrorPage = config.iFrameErrorPage;
             this.initialHstConnectionTimeout = config.initialHstConnectionTimeout;
             this.iFrameJsHeadContributions = config.iFrameJsHeadContributions;
@@ -68,7 +67,7 @@
             this.ping = window.setInterval(function() {
                 if (this.sessionId && this._hasFocus() && Ext.getCmp('pageEditorIFrame').isValidSession(this.sessionId)) {
                     Ext.Ajax.request({
-                        url: this.composerRestMountUrl + '/cafebabe-cafe-babe-cafe-babecafebabe./keepalive/?FORCE_CLIENT_HOST=true',
+                        url: this.getComposerRestMountUrl() + '/cafebabe-cafe-babe-cafe-babecafebabe./keepalive/?FORCE_CLIENT_HOST=true',
                         failure: function() {
                             delete this.sessionId;
 
@@ -84,6 +83,10 @@
                     });
                 }
             }.createDelegate(this), 20000);
+        },
+
+        getComposerRestMountUrl: function() {
+            return this.contextPath + this.composerRestMountPath;
         },
 
         destroy: function() {
@@ -179,7 +182,7 @@
                     'CMS-User': self.cmsUser,
                     'FORCE_CLIENT_HOST': 'true'
                 },
-                url: self.composerRestMountUrl + '/cafebabe-cafe-babe-cafe-babecafebabe./composermode/' + self.renderHost + '/?FORCE_CLIENT_HOST=true',
+                url: self.getComposerRestMountUrl() + '/cafebabe-cafe-babe-cafe-babecafebabe./composermode/' + self.renderHost + '/?FORCE_CLIENT_HOST=true',
                 success: function(response) {
                     var responseObj = Ext.util.JSON.decode(response.responseText);
                     this.canEdit = responseObj.data.canWrite;
@@ -246,7 +249,7 @@
                                 headers: {
                                     'FORCE_CLIENT_HOST': 'true'
                                 },
-                                url: self.composerRestMountUrl + '/' + mountId + './discard?FORCE_CLIENT_HOST=true',
+                                url: self.getComposerRestMountUrl() + '/' + mountId + './discard?FORCE_CLIENT_HOST=true',
                                 success: function() {
                                     // reset pageContext, the page and toolkit stores must be reloaded
                                     self.pageContext = null;
@@ -277,7 +280,7 @@
             return new Hippo.Future(function(onSuccess) {
                 var manageChangesWindow = new Hippo.ChannelManager.TemplateComposer.ManageChangesWindow({
                     cmsUser: self.cmsUser,
-                    composerRestMountUrl: self.composerRestMountUrl,
+                    composerRestMountUrl: self.getComposerRestMountUrl(),
                     mountId: self.pageContext.ids.mountId,
                     resources: self.resources,
                     onSuccess: function() {
@@ -325,7 +328,7 @@
                     headers: {
                         'FORCE_CLIENT_HOST': 'true'
                     },
-                    url: this.composerRestMountUrl + '/' + mountId + './edit?FORCE_CLIENT_HOST=true',
+                    url: this.getComposerRestMountUrl() + '/' + mountId + './edit?FORCE_CLIENT_HOST=true',
                     success: function() {
                         // reset pageContext, the page and toolkit stores must be reloaded
                         self.pageContext = null;
@@ -361,7 +364,7 @@
                     headers: {
                         'FORCE_CLIENT_HOST': 'true'
                     },
-                    url: self.composerRestMountUrl + '/' + self.pageContext.ids.mountId + './publish?FORCE_CLIENT_HOST=true',
+                    url: self.getComposerRestMountUrl() + '/' + self.pageContext.ids.mountId + './publish?FORCE_CLIENT_HOST=true',
                     success: function() {
                         self.refreshIframe.call(self, null);
                         onSuccess();
