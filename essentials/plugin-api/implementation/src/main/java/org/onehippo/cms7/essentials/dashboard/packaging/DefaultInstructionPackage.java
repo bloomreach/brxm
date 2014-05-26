@@ -81,6 +81,10 @@ public class DefaultInstructionPackage implements InstructionPackage {
         if (properties == null) {
             return;
         }
+        // do not reset:
+        if (properties.containsKey(EssentialConst.TEMPLATE_PARAM_REPOSITORY_BASED)) {
+            return;
+        }
         // set boolean value for freemarker templates
         final String templateName = (String) properties.get(EssentialConst.PROP_TEMPLATE_NAME);
         if (Strings.isNullOrEmpty(templateName) || templateName.equals(EssentialConst.TEMPLATE_JSP) || templateName.equals(EssentialConst.TEMPLATE_FREEMARKER)) {
