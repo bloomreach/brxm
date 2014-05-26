@@ -37,6 +37,33 @@
             }());
         });
 
+    function isStyleSheetPartOfHead(cssPath) {
+        var ss = document.styleSheets,
+            i, length;
+        for (i = 0, length = ss.length; i < length; i++) {
+            if (ss[i].href === cssPath) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function addCssToHead(cssPath) {
+        $('head').append('<link rel="stylesheet" href="' + cssPath + '" type="text/css"/>');
+    }
+
+    function addCssToHeadOnce(cssPath) {
+        if (!isStyleSheetPartOfHead(cssPath)) {
+            addCssToHead(cssPath);
+        }
+    }
+
+    function ensureDivAreaCompatibility(editor) {
+        if (!editor.addContentsCss) {
+            editor.addContentsCss = addCssToHeadOnce;
+        }
+    }
+
     function updateEditorElementWhenDataChanged(editor) {
         var data = editor.getData();
 
@@ -69,6 +96,7 @@
                 try {
                     var editor = CKEDITOR.replace(elementId, config);
                     if (editor !== null) {
+                        ensureDivAreaCompatibility(editor);
                         updateEditorElementWhenDataChanged(editor);
                         destroyEditorWhenElementIsDestroyed(editor);
                         removeHippoEditorFieldBorder(editor);

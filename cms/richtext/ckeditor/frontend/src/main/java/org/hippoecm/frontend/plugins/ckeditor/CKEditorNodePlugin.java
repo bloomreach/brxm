@@ -66,9 +66,6 @@ import org.slf4j.LoggerFactory;
 public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
 
     public static final String DEFAULT_EDITOR_CONFIG = "{"
-            + "  codemirror: {"
-            + "    autoFormatOnStart: true"
-            + "  },"
             + "  contentsCss: 'ckeditor/hippocontents.css',"
             + "  dialog_buttonsOrder: 'ltr',"
             + "  dialog_noConfirmCancel: true,"
@@ -78,7 +75,7 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
             + "  ],"
             + "  linkShowAdvancedTab: false,"
             + "  linkShowSurroundingAnchors: false,"
-            + "  plugins: 'a11yhelp,basicstyles,button,clipboard,codemirror,contextmenu,dialog,dialogadvtab,dialogui,divarea,elementspath,enterkey,entities,floatingspace,floatpanel,htmlwriter,indent,indentblock,indentlist,justify,link,list,listblock,liststyle,magicline,maximize,menu,menubutton,panel,panelbutton,pastefromword,pastetext,popup,removeformat,resize,richcombo,showblocks,showborders,specialchar,stylescombo,tab,table,tabletools,toolbar,undo,youtube',"
+            + "  plugins: 'a11yhelp,basicstyles,button,clipboard,codemirror,contextmenu,dialog,dialogadvtab,dialogui,divarea,elementspath,enterkey,entities,floatingspace,floatpanel,htmlwriter,indent,indentblock,indentlist,justify,link,list,listblock,liststyle,magicline,maximize,menu,menubutton,panel,panelbutton,pastefromword,pastetext,popup,removeformat,resize,richcombo,showblocks,showborders,specialchar,stylescombo,tab,table,tableresize,tabletools,textselection,toolbar,undo,youtube',"
             + "  removeFormatAttributes: 'style,lang,width,height,align,hspace,valign',"
             + "  title: false,"
             + "  toolbarGroups: ["
