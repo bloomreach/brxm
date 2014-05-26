@@ -115,13 +115,28 @@ public class FreemarkerInstruction extends FileInstruction {
         return super.process(context, previousStatus);
     }
 
+    public void setRepositoryTarget(final String repositoryTarget) {
+        this.repositoryTarget = repositoryTarget;
+    }
+
     private void defineTarget(Map<String, Object> placeholderData) {
 
         final Boolean myRepoBased = (Boolean) placeholderData.get(EssentialConst.TEMPLATE_PARAM_REPOSITORY_BASED);
         if (myRepoBased != null && myRepoBased) {
             repoBased = true;
+
         }
         if (repoBased) {
+            // check if repositoryTarget already defined
+            if(!Strings.isNullOrEmpty(repositoryTarget)){
+                final String myTarget = TemplateUtils.replaceTemplateData(repositoryTarget, placeholderData);
+                if (myTarget != null) {
+                    repositoryTarget = myTarget;
+                    setTarget(myTarget);
+                    return;
+                }
+            }
+
             // define repository target based on target path:
             repositoryTarget = getTarget();
             final CharSequence freemarkerRoot = (CharSequence) placeholderData.get(EssentialConst.PLACEHOLDER_SITE_FREEMARKER_ROOT);

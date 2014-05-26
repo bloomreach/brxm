@@ -49,7 +49,9 @@ public class FreemarkerInstructionTest extends BaseRepositoryTest {
         log.info("instruction {}", instruction);
         assertTrue(instruction.valid());
         final PluginContext context = getContext();
-        context.addPlaceholderData("templateName", "repository");
+        context.addPlaceholderData(EssentialConst.PROP_TEMPLATE_NAME, EssentialConst.TEMPLATE_FREEMARKER);
+        context.addPlaceholderData(EssentialConst.TEMPLATE_PARAM_FILE_BASED, false);
+        context.addPlaceholderData(EssentialConst.TEMPLATE_PARAM_REPOSITORY_BASED, true);
         assertTrue(instruction.valid());
         final String projectNamespace = (String) context.getPlaceholderData().get(EssentialConst.PLACEHOLDER_NAMESPACE);
         log.info("projectNamespace {}", projectNamespace);
