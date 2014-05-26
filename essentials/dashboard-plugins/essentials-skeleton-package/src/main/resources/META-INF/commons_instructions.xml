@@ -43,13 +43,13 @@
 
   <instructionSet group="freemarker">
     <!-- include -->
-    <file action="copy" source="instructions/freemarker/imports.ftl" target="{{freemarkerRoot}}/include/imports.ftl"/>
-    <file action="copy" source="instructions/freemarker/pagination.ftl" target="{{freemarkerRoot}}/include/pagination.ftl"/>
+    <freemarker action="copy" source="instructions/freemarker/imports.ftl" target="{{freemarkerRoot}}/include/imports.ftl"/>
+    <freemarker action="copy" source="instructions/freemarker/pagination.ftl" target="{{freemarkerRoot}}/include/pagination.ftl"/>
      <!-- skeleton -->
-    <file action="copy" source="instructions/freemarker/homepage-main-content.ftl" target="{{freemarkerRoot}}/{{namespace}}/homepage-main-content.ftl"/>
-    <file action="copy" source="instructions/freemarker/base-layout.ftl" target="{{freemarkerRoot}}/{{namespace}}/base-layout.ftl"/>
-    <file action="copy" source="instructions/freemarker/base-top-menu.ftl" target="{{freemarkerRoot}}/{{namespace}}/base-top-menu.ftl"/>
-    <file action="copy" source="instructions/freemarker/base-footer-content.ftl" target="{{freemarkerRoot}}/{{namespace}}/base-footer-content.ftl"/>
+    <freemarker action="copy" source="instructions/freemarker/homepage-main-content.ftl" target="{{freemarkerRoot}}/{{namespace}}/homepage-main-content.ftl"/>
+    <freemarker action="copy" source="instructions/freemarker/base-layout.ftl" target="{{freemarkerRoot}}/{{namespace}}/base-layout.ftl"/>
+    <freemarker action="copy" source="instructions/freemarker/base-top-menu.ftl" target="{{freemarkerRoot}}/{{namespace}}/base-top-menu.ftl"/>
+    <freemarker action="copy" source="instructions/freemarker/base-footer-content.ftl" target="{{freemarkerRoot}}/{{namespace}}/base-footer-content.ftl"/>
   </instructionSet>
   <instructionSet group="freemarker">
     <xml action="copy" source="instructions/xml/hst/templates/base-layout-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>

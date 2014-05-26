@@ -18,7 +18,9 @@ package org.onehippo.cms7.essentials.dashboard.instruction;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.jcr.Node;
@@ -38,7 +40,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 
 /**
@@ -47,13 +51,15 @@ import com.google.common.eventbus.EventBus;
 @Component
 @XmlRootElement(name = "freemarker", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class FreemarkerInstruction extends FileInstruction {
+    private static final Pattern EXTENSION_REPLACEMENT = Pattern.compile(".ftl");
     private static Logger log = LoggerFactory.getLogger(FreemarkerInstruction.class);
 
 
     @Inject
     private EventBus eventBus;
     private String repositoryTarget;
-
+    private String templateName;
+    private boolean repoBased = false;
 
 
     @Override
@@ -65,13 +71,9 @@ public class FreemarkerInstruction extends FileInstruction {
             eventBus.post(new InstructionEvent(this));
             return InstructionStatus.FAILED;
         }
-        final String templateName = (String) context.getPlaceholderData().get("templateName");
-        boolean repoBased = false;
-        if(!Strings.isNullOrEmpty(templateName) && templateName.equals("repository")){
-            repoBased = true;
-        }
+        defineTarget(context);
         // check if repository template type:
-        if (repoBased && !Strings.isNullOrEmpty(repositoryTarget)) {
+        if (repoBased && !Strings.isNullOrEmpty(repositoryTarget) && !Strings.isNullOrEmpty(templateName)) {
             log.debug("Using repository stored freemarker templates");
             final Session session = context.createSession();
             InputStream stream = null;
@@ -81,17 +83,14 @@ public class FreemarkerInstruction extends FileInstruction {
                     log.error("Stream was null for source: {}", getSource());
                     return InstructionStatus.FAILED;
                 }
-
-                if (session.nodeExists(repositoryTarget)) {
-                    log.debug("Node already exists {}", repositoryTarget);
+                final String absPath = repositoryTarget + '/' + templateName;
+                if (session.nodeExists(absPath)) {
+                    log.debug("Node already exists {}", absPath);
                     return InstructionStatus.SKIPPED;
                 }
-                final int lastPathIndex = repositoryTarget.lastIndexOf('/');
-                final String root = repositoryTarget.substring(0, lastPathIndex);
-                final Node node = session.getNode(root);
-                final String myTemplateName = repositoryTarget.substring(lastPathIndex + 1, repositoryTarget.length());
-                log.debug("Adding freemarker template: {}", myTemplateName);
-                final Node templateNode = node.addNode(myTemplateName, "hst:template");
+                final Node templatesRootNode = session.getNode(repositoryTarget);
+                log.debug("Adding freemarker template: {}", templateName);
+                final Node templateNode = templatesRootNode.addNode(templateName, "hst:template");
                 final String content = GlobalUtils.readStreamAsText(stream);
                 final String replacedData = TemplateUtils.replaceTemplateData(content, context.getPlaceholderData());
                 templateNode.setProperty("hst:script", replacedData);
@@ -111,6 +110,53 @@ public class FreemarkerInstruction extends FileInstruction {
         return super.process(context, previousStatus);
     }
 
+    private void defineTarget(final PluginContext context) {
+        final String myTemplateName = (String) context.getPlaceholderData().get("templateName");
+        if (!Strings.isNullOrEmpty(myTemplateName) && myTemplateName.equals("repository")) {
+            repoBased = true;
+        }
+        if (repoBased) {
+            // define repository target based on target path:
+            repositoryTarget = getTarget();
+            final CharSequence freemarkerRoot = (CharSequence) context.getPlaceholderData().get(EssentialConst.PLACEHOLDER_SITE_FREEMARKER_ROOT);
+            // replace freemarker root
+            if (repositoryTarget.contains(freemarkerRoot)) {
+                repositoryTarget = repositoryTarget.replace(freemarkerRoot, "");
+                final Iterable<String> split = Splitter.on("/").omitEmptyStrings().trimResults().split(repositoryTarget);
+                final List<String> parts = Lists.newArrayList(split);
+                final int size = parts.size();
+                if (size == 0) {
+                    log.error("Cannot extract template name and configuration from target: {}", getTarget());
+                }
+                String configurationName;
+                if (size > 1) {
+                    configurationName = parts.get(0);
+                    // check if hst default:
+                    if (configurationName.equals("hstdefault")) {
+                        configurationName = "hst:default";
+                    }
+                } else {
+                    configurationName = "hst:default";
+                }
+                templateName = parts.get(size - 1);
+                this.templateName = EXTENSION_REPLACEMENT.matcher(templateName).replaceAll("");
+                repositoryTarget = "/hst:hst/hst:configurations/"+ configurationName + "/hst:templates";
+
+            }
+
+        }
+    }
+
+
+
+    public String getTemplateName() {
+        return templateName;
+    }
+
+    public String getRepositoryTarget() {
+        return repositoryTarget;
+    }
+
     @Override
     protected boolean valid() {
         if (Strings.isNullOrEmpty(getAction()) || !VALID_ACTIONS.contains(getAction())) {
@@ -120,7 +166,7 @@ public class FreemarkerInstruction extends FileInstruction {
             return false;
         }
         // check if we have valid
-        if (Strings.isNullOrEmpty(getTarget()) && Strings.isNullOrEmpty(repositoryTarget)) {
+        if (Strings.isNullOrEmpty(getTarget())) {
             return false;
         }
         return true;
@@ -135,19 +181,11 @@ public class FreemarkerInstruction extends FileInstruction {
         }
     }
 
-    public String getRepositoryTarget() {
-        return repositoryTarget;
-    }
-
-    public void setRepositoryTarget(final String repositoryTarget) {
-        this.repositoryTarget = repositoryTarget;
-    }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("FreemarkerInstruction{");
         sb.append("").append(super.toString());
-        sb.append(", repositoryTarget=").append(repositoryTarget);
         sb.append('}');
         return sb.toString();
     }

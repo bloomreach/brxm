@@ -23,14 +23,16 @@ import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class FreemarkerInstructionTest extends BaseRepositoryTest {
 
-    public static final String SOURCE =  "test_template_freemarker.ftl";
+    public static final String SOURCE = "test_template_freemarker.ftl";
     private static final Logger log = LoggerFactory.getLogger(FreemarkerInstructionTest.class);
     @Inject
     private InstructionExecutor executor;
@@ -43,12 +45,17 @@ public class FreemarkerInstructionTest extends BaseRepositoryTest {
         super.createHstRootConfig();
         instruction.setAction("copy");
         instruction.setSource(SOURCE);
-        instruction.setRepositoryTarget("/hst:hst/hst:configurations/{{namespace}}/hst:templates/my-template");
+        instruction.setTarget("{{freemarkerRoot}}/{{namespace}}/homepage-main-content.ftl");
         log.info("instruction {}", instruction);
         assertTrue(instruction.valid());
         final PluginContext context = getContext();
         context.addPlaceholderData("templateName", "repository");
+        assertTrue(instruction.valid());
+        final String projectNamespace = (String) context.getPlaceholderData().get(EssentialConst.PLACEHOLDER_NAMESPACE);
+        log.info("projectNamespace {}", projectNamespace);
         instruction.process(context, InstructionStatus.SUCCESS);
+        assertEquals("/hst:hst/hst:configurations/" + projectNamespace + "/hst:templates", instruction.getRepositoryTarget());
+        assertEquals("homepage-main-content", instruction.getTemplateName());
         instruction.process(context, InstructionStatus.SKIPPED);
 
 

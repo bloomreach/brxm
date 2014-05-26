@@ -91,7 +91,6 @@
     </xs:attribute>
     <xs:attribute use="required" name="target" type="xs:string"/>
     <xs:attribute use="optional" name="overwrite" type="xs:boolean" default="false"/>
-    <xs:attribute use="optional" name="repositoryTarget" type="xs:string" default="false"/>
     <xs:attribute use="optional" name="message" type="xs:string" default="false"/>
     <xs:attribute use="optional" name="binary" type="xs:boolean" default="false"/>
   </xs:complexType>
