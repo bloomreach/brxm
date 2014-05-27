@@ -52,4 +52,22 @@ public class ConfigurationUtils {
         }
         return isWorkspaceConfig(node.getParent());
     }
+
+    public static boolean isValidContextPath(String path) {
+        if (path == null) {
+            // we allow context path to be null which means can be used to be
+            // context path agnostic
+            return true;
+        }
+        if (path.equals("")) {
+            return true;
+        }
+        if (!path.startsWith("/")) {
+            return false;
+        }
+        if (path.substring(1).contains("/")) {
+            return false;
+        }
+        return true;
+    }
 }

@@ -34,6 +34,8 @@ import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.ConfigurationUtils.isValidContextPath;
+
 public class VirtualHostService implements MutableVirtualHost {
 
     private static final Logger log = LoggerFactory.getLogger(VirtualHostService.class);
@@ -135,6 +137,14 @@ public class VirtualHostService implements MutableVirtualHost {
             } else {
                 contextPath = parentHost.getContextPath();
             }
+        }
+        if (!isValidContextPath(contextPath)) {
+            String msg = String.format("Incorrect configured contextPath '%s' for host '%s': It must start with a '/' to be used" +
+                    "and is not allowed to contain any other '/', but it is '%s'. " +
+                    "Skipping host from hst model.",
+                    contextPath, virtualHostNode.getValueProvider().getPath(), contextPath);
+            log.warn(msg);
+            throw new ModelLoadingException(msg);
         }
 
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_SHOWPORT)) {

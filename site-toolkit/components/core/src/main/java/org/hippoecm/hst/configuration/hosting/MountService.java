@@ -48,6 +48,8 @@ import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.ConfigurationUtils.isValidContextPath;
+
 public class MountService implements ContextualizableMount, MutableMount {
 
     private static final Logger log = LoggerFactory.getLogger(MountService.class);
@@ -321,18 +323,12 @@ public class MountService implements ContextualizableMount, MutableMount {
             }
         }
 
-        if (StringUtils.isNotEmpty(contextPath)) {
-            if (contextPath.startsWith("/")) {
-                // contextPath starts with a slash. If it contains another /, it is configured incorrectly
-                if (contextPath.substring(1).contains("/")) {
-                    log.warn("Incorrectly configured 'contextPath' : It must start with a '/' and is not allowed to contain any other '/' slashes. We set contextPath to null");
-                    contextPath = null;
-                }
-            } else {
-                log.warn("Incorrect configured 'contextPath': It must start with a '/' to be used, but it is '{}'. " +
-                        "We set contextPath to null", contextPath);
-                contextPath = null;
-            }
+        if (!isValidContextPath(contextPath)) {
+            String msg = String.format("Incorrect configured contextPath '%s' for mount '%s': It must start with a '/' to be used" +
+                    "and is not allowed to contain any other '/', but it is '%s'. " +
+                    "Skipping mount from hst model.", contextPath, jcrLocation, contextPath);
+            log.error(msg);
+            throw new ModelLoadingException(msg);
         }
 
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_SCHEME)) {

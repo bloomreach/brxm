@@ -65,6 +65,8 @@ import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.ConfigurationUtils.isValidContextPath;
+
 public class VirtualHostsService implements MutableVirtualHosts {
 
     private static final Logger log = LoggerFactory.getLogger(VirtualHostsService.class);
@@ -174,6 +176,14 @@ public class VirtualHostsService implements MutableVirtualHosts {
         ValueProvider vHostConfValueProvider = vhostsNode.getValueProvider();
         contextPathInUrl = vHostConfValueProvider.getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWCONTEXTPATH);
         defaultContextPath = vHostConfValueProvider.getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTCONTEXTPATH);
+        if (!isValidContextPath(defaultContextPath)) {
+            String msg = String.format("Incorrect configured defaultContextPath '%s' for '%s': It must start with a '/' to be used" +
+                    "and is not allowed to contain any other '/', but it is '%s'. " +
+                    "Skipping host from hst model.",
+                    defaultContextPath, hstNodeLoadingCache.getRootPath()+"/hst:hosts", defaultContextPath);
+            log.error(msg);
+            throw new ModelLoadingException(msg);
+        }
         cmsPreviewPrefix = vHostConfValueProvider.getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_CMSPREVIEWPREFIX);
         diagnosticsEnabled = vHostConfValueProvider.getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DIAGNOSTISC_ENABLED);
 
@@ -292,7 +302,9 @@ public class VirtualHostsService implements MutableVirtualHosts {
             for(HstNode virtualHostNode : hostGroupNode.getNodes()) {
 
                 try {
-                    VirtualHostService virtualHost = new VirtualHostService(this, virtualHostNode, null, hostGroupNode.getValueProvider().getName(), validCmsLocations , defaultPort, hstNodeLoadingCache);
+                    VirtualHostService virtualHost = new VirtualHostService(this, virtualHostNode, null,
+                            hostGroupNode.getValueProvider().getName(),
+                            validCmsLocations , defaultPort, hstNodeLoadingCache);
                     rootVirtualHosts.put(virtualHost.getName(), virtualHost);
                 } catch (ModelLoadingException e) {
                     log.error("Unable to add virtualhost with name '"+virtualHostNode.getValueProvider().getName()+"'. Fix the configuration. This virtualhost will be skipped.", e);
