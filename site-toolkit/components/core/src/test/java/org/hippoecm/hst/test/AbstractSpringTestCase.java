@@ -74,14 +74,18 @@ public abstract class AbstractSpringTestCase
         componentManager.start();
         HstServices.setComponentManager(getComponentManager());
 
-        ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
-                .setContextPath("/site");
+        final HstManager hstManager = componentManager.getComponent(HstManager.class.getName());
+        if (hstManager != null) {
+            ((MutableHstManager) hstManager).setContextPath("/site");
+        }
     }
 
     @After
     public void tearDown() throws Exception {
-        ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
-                .setContextPath(null);
+        final HstManager hstManager = componentManager.getComponent(HstManager.class.getName());
+        if (hstManager != null) {
+            ((MutableHstManager) hstManager).setContextPath(null);
+        }
         this.componentManager.stop();
         this.componentManager.close();
         HstServices.setComponentManager(null);
