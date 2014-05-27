@@ -78,9 +78,8 @@ public class AbstractPageComposerTest {
         this.componentManager.initialize();
         this.componentManager.start();
         HstServices.setComponentManager(getComponentManager());
-        ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
-                .setContextPath("/site");
         this.hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
+        ((MutableHstManager)hstManager).setContextPath("/site");
         this.siteMapMatcher = HstServices.getComponentManager().getComponent(HstSiteMapMatcher.class.getName());
         this.hstURLFactory = HstServices.getComponentManager().getComponent(HstURLFactory.class.getName());
         this.hstEventsCollector = HstServices.getComponentManager().getComponent("hstEventsCollector");
@@ -113,11 +112,10 @@ public class AbstractPageComposerTest {
         restoreHstConfigBackup(session);
 
         session.logout();
+        ((MutableHstManager)hstManager).setContextPath(null);
         this.componentManager.stop();
         this.componentManager.close();
         HstServices.setComponentManager(null);
-        ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
-                .setContextPath(null);
         ModifiableRequestContextProvider.clear();
 
     }

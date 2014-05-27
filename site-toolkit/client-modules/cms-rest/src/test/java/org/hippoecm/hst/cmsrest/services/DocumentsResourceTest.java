@@ -50,7 +50,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import static junit.framework.Assert.assertEquals;
 
 public class DocumentsResourceTest extends AbstractCmsRestTest {
-    private HstManager hstManager;
     private Session session;
     private HstURLFactory hstURLFactory;
     private HstLinkCreator linkCreator;
@@ -63,7 +62,6 @@ public class DocumentsResourceTest extends AbstractCmsRestTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        this.hstManager = getComponentManager().getComponent(HstManager.class.getName());
         this.linkCreator = getComponentManager().getComponent(HstLinkCreator.class.getName());
         this.siteMapMatcher = getComponentManager().getComponent(HstSiteMapMatcher.class.getName());
         this.hstURLFactory = getComponentManager().getComponent(HstURLFactory.class.getName());
@@ -181,7 +179,7 @@ public class DocumentsResourceTest extends AbstractCmsRestTest {
         requestContext.setAttribute(ContainerConstants.UNDECORATED_MOUNT, resolvedMount.getMount());
         final Mount decorated = mountDecorator.decorateMountAsPreview(resolvedMount.getMount());
         ((MutableResolvedMount) resolvedMount).setMount(decorated);
-    return resolvedMount;
+        return resolvedMount;
     }
 
 }

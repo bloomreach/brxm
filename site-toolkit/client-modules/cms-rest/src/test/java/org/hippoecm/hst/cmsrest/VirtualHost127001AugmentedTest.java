@@ -29,13 +29,10 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
 public class VirtualHost127001AugmentedTest extends AbstractCmsRestTest {
-    private HstManager hstManager;
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        this.hstManager = getComponentManager().getComponent(HstManager.class.getName());
-
     }
 
 

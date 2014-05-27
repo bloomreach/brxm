@@ -85,8 +85,6 @@ public class HstPingServletTest {
         expectLastCall();
 
         HstServices.setComponentManager(componentManager);
-        ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
-                .setContextPath("/site");
         assertTrue(HstServices.isAvailable());
 
         replay(componentManager, mockRepo, mockSession, rootNode);
@@ -101,8 +99,6 @@ public class HstPingServletTest {
             verify(componentManager, mockRepo, mockSession, rootNode);
         } finally {
             HstServices.setComponentManager(null);
-            ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
-                    .setContextPath(null);
         }
     }
 
@@ -127,8 +123,6 @@ public class HstPingServletTest {
         expect(rootNode.getNode("content/documents")).andReturn(null);
 
         HstServices.setComponentManager(componentManager);
-        ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
-                .setContextPath("/site");
         assertTrue(HstServices.isAvailable());
 
         replay(componentManager, hstRequest, hrc, mockSession, rootNode);
@@ -142,8 +136,6 @@ public class HstPingServletTest {
             verify(componentManager, hstRequest, hrc, mockSession, rootNode);
         } finally {
             HstServices.setComponentManager(null);
-            ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
-                    .setContextPath(null);
         }
     }
 
@@ -164,8 +156,6 @@ public class HstPingServletTest {
         expect(componentManager.getComponent(Repository.class.getName())).andReturn(null);
 
         HstServices.setComponentManager(componentManager);
-        ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
-                .setContextPath("/site");
         assertTrue(HstServices.isAvailable());
 
         replay(componentManager, mockRepo);
@@ -180,8 +170,6 @@ public class HstPingServletTest {
             verify(componentManager, mockRepo);
         } finally {
             HstServices.setComponentManager(null);
-            ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
-                    .setContextPath(null);
         }
     }
 

@@ -35,6 +35,7 @@ import org.junit.Before;
 public abstract class AbstractCmsRestTest {
 
     protected ComponentManager componentManager;
+    protected HstManager hstManager;
 
     @Before
     public void setUp() throws Exception {
@@ -44,17 +45,17 @@ public abstract class AbstractCmsRestTest {
         this.componentManager.initialize();
         this.componentManager.start();
         HstServices.setComponentManager(getComponentManager());
-        ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
-                .setContextPath("/site");
+
+        this.hstManager = getComponentManager().getComponent(HstManager.class.getName());
+        ((MutableHstManager)hstManager).setContextPath("/site");
     }
 
     @After
     public void tearDown() throws Exception {
+        ((MutableHstManager)hstManager).setContextPath(null);
         this.componentManager.stop();
         this.componentManager.close();
         HstServices.setComponentManager(null);
-        ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
-                .setContextPath(null);
         // always clear HstRequestContext in case it is set on a thread local
         ModifiableRequestContextProvider.clear();
     }

@@ -80,12 +80,12 @@ public abstract class AbstractSpringTestCase
 
     @After
     public void tearDown() throws Exception {
+        ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
+                .setContextPath(null);
         this.componentManager.stop();
         this.componentManager.close();
         HstServices.setComponentManager(null);
 
-        ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
-                .setContextPath(null);
         // always clear HstRequestContext in case it is set on a thread local
         ModifiableRequestContextProvider.clear();
     }
