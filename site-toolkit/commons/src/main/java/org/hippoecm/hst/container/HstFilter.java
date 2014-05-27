@@ -141,6 +141,7 @@ public class HstFilter implements Filter {
 
     private String [] prefixExclusions;
     private String [] suffixExclusions;
+    private String contextPath;
 
     public void init(FilterConfig filterConfig) throws ServletException {
         this.filterConfig = filterConfig;
@@ -159,7 +160,7 @@ public class HstFilter implements Filter {
 
         prefixExclusions = splitParamValue(getConfigOrContextInitParameter(PREFIX_EXCLUSIONS_INIT_PARAM, null), ",");
         suffixExclusions = splitParamValue(getConfigOrContextInitParameter(SUFFIX_EXCLUSIONS_INIT_PARAM, null), ",");
-
+        contextPath = filterConfig.getServletContext().getContextPath();
         initialized = false;
 
         if (HstServices.isAvailable()) {
@@ -266,6 +267,7 @@ public class HstFilter implements Filter {
                     if (hstManager instanceof MutableHstManager) {
                         ((MutableHstManager) hstManager).setHstFilterPrefixExclusions(prefixExclusions);
                         ((MutableHstManager) hstManager).setHstFilterSuffixExclusions(suffixExclusions);
+                        ((MutableHstManager) hstManager).setContextPath(contextPath);
                     }
                 }
             }

@@ -17,6 +17,8 @@ package org.hippoecm.hst.jaxrs.services;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.configuration.model.MutableHstManager;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.container.SpringComponentManager;
@@ -46,7 +48,8 @@ public abstract class AbstractJaxrsSpringTestCase
         this.componentManager.initialize();
         this.componentManager.start();
         HstServices.setComponentManager(getComponentManager());
-        HstServices.setContextPath("/site");
+        ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
+                .setContextPath("/site");
     }
 
     @After
@@ -54,7 +57,8 @@ public abstract class AbstractJaxrsSpringTestCase
         this.componentManager.stop();
         this.componentManager.close();
         HstServices.setComponentManager(null);
-        HstServices.setContextPath(null);
+        ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
+                .setContextPath(null);
     }
 
     /**

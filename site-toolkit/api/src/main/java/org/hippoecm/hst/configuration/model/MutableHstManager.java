@@ -20,4 +20,6 @@ public interface MutableHstManager extends HstManager {
     void setHstFilterPrefixExclusions(String[] hstFilterPrefixExclusions);
 
     void setHstFilterSuffixExclusions(String[] hstFilterSuffixExclusions);
+
+    void setContextPath(String contextPath);
 }

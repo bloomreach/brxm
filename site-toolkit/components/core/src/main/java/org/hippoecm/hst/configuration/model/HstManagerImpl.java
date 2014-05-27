@@ -81,6 +81,7 @@ public class HstManagerImpl implements MutableHstManager {
 
     private String[] hstFilterPrefixExclusions;
     private String[] hstFilterSuffixExclusions;
+    private String contextPath;
     
     /**
      * The list of implicit configuration augmenters which can provide extra hst configuration after the {@link VirtualHosts} object 
@@ -171,6 +172,14 @@ public class HstManagerImpl implements MutableHstManager {
 
     public void setHstFilterSuffixExclusions(final String[] hstFilterSuffixExclusions) {
         this.hstFilterSuffixExclusions = hstFilterSuffixExclusions;
+    }
+
+    public String getContextPath() {
+        return contextPath;
+    }
+
+    public void setContextPath(final String contextPath) {
+        this.contextPath = contextPath;
     }
 
     public void setStaleConfigurationSupported(boolean staleConfigurationSupported) {

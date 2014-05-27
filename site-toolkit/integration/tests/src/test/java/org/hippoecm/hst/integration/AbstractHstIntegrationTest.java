@@ -28,6 +28,7 @@ import org.apache.jackrabbit.spi.Event;
 import org.hippoecm.hst.configuration.cache.HstEventsCollector;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.configuration.model.MutableHstManager;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ComponentManager;
@@ -70,7 +71,8 @@ public class AbstractHstIntegrationTest {
         this.componentManager.initialize();
         this.componentManager.start();
         HstServices.setComponentManager(getComponentManager());
-        HstServices.setContextPath("/site");
+        ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
+                .setContextPath("/site");
 
         // register hst config changes listener
         localSession = createLocalSession(new SimpleCredentials("admin", "admin".toCharArray()));
@@ -95,7 +97,8 @@ public class AbstractHstIntegrationTest {
         localSession.logout();
 
         HstServices.setComponentManager(null);
-        HstServices.setContextPath(null);
+        ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
+                .setContextPath(null);
         ModifiableRequestContextProvider.clear();
     }
 

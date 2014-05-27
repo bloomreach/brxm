@@ -299,7 +299,6 @@ public class HstSiteConfigServlet extends HttpServlet {
     
     protected synchronized void initializeComponentManager(ServletConfig config) {
         SpringComponentManager componentManager = null;
-        HstServices.setContextPath(config.getServletContext().getContextPath());
         ComponentManager oldComponentManager = HstServices.getComponentManager();
 
         if (oldComponentManager != null) {
@@ -392,7 +391,6 @@ public class HstSiteConfigServlet extends HttpServlet {
         destroyRepositoryAvailabilityCheckerThread();
         destroyHstSiteConfigurationChangesCheckerThread();
 
-        HstServices.setContextPath(null);
         ComponentManager componentManager = HstServices.getComponentManager();
         // componentManager can be null if HstSiteConfigServlet didn't finish the initialization yet.
         if (componentManager != null) {

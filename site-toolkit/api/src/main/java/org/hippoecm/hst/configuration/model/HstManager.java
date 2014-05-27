@@ -75,6 +75,11 @@ public interface HstManager {
      * @return
      */
     String getPathSuffixDelimiter();
+
+    /**
+     * @return the contextPath of the current webapp
+     */
+    String getContextPath();
     
     /**
      * @return the {@link List} of {@link HstConfigurationAugmenter}s and empty list if no providers available.

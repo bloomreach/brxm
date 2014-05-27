@@ -36,17 +36,8 @@ public class HstServices {
     private static boolean available;
     private static ComponentManager componentManager;
     private static String HST_VERSION;
-    private static String contextPath;
 
     private HstServices() {
-    }
-
-    public static void setContextPath(final String contextPath) {
-        HstServices.contextPath = contextPath;
-    }
-
-    public static String getContextPath() {
-        return contextPath;
     }
 
     /**

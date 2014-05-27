@@ -30,6 +30,7 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstConfigurationEventListener;
 import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.configuration.model.MutableHstManager;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ComponentManager;
@@ -77,7 +78,8 @@ public class AbstractPageComposerTest {
         this.componentManager.initialize();
         this.componentManager.start();
         HstServices.setComponentManager(getComponentManager());
-        HstServices.setContextPath("/site");
+        ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
+                .setContextPath("/site");
         this.hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
         this.siteMapMatcher = HstServices.getComponentManager().getComponent(HstSiteMapMatcher.class.getName());
         this.hstURLFactory = HstServices.getComponentManager().getComponent(HstURLFactory.class.getName());
@@ -114,7 +116,8 @@ public class AbstractPageComposerTest {
         this.componentManager.stop();
         this.componentManager.close();
         HstServices.setComponentManager(null);
-        HstServices.setContextPath(null);
+        ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
+                .setContextPath(null);
         ModifiableRequestContextProvider.clear();
 
     }

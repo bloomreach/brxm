@@ -22,6 +22,8 @@ import javax.servlet.http.HttpSessionListener;
 
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
+import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.configuration.model.MutableHstManager;
 import org.hippoecm.hst.container.event.HttpSessionCreatedEvent;
 import org.hippoecm.hst.container.event.HttpSessionDestroyedEvent;
 import org.hippoecm.hst.core.container.ComponentManager;
@@ -39,8 +41,9 @@ public class TestHttpSessionEventPublisher {
 
     @After
     public void tearDown() throws Exception {
+        ((MutableHstManager)HstServices.getComponentManager().getComponent(HstManager.class.getName()))
+                .setContextPath(null);
         HstServices.setComponentManager(null);
-        HstServices.setContextPath(null);
     }
 
     @Test
@@ -51,7 +54,8 @@ public class TestHttpSessionEventPublisher {
 
         ComponentManager componentManager = EasyMock.createMock(ComponentManager.class);
         HstServices.setComponentManager(componentManager);
-        HstServices.setContextPath("/site");
+        ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
+                .setContextPath("/site");
         componentManager.publishEvent(EasyMock.anyObject(HttpSessionCreatedEvent.class));
 
         EasyMock.expectLastCall().andAnswer(new IAnswer<HttpSessionCreatedEvent>() {
@@ -78,7 +82,8 @@ public class TestHttpSessionEventPublisher {
 
         ComponentManager componentManager = EasyMock.createMock(ComponentManager.class);
         HstServices.setComponentManager(componentManager);
-        HstServices.setContextPath("/site");
+        ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
+                .setContextPath("/site");
         componentManager.publishEvent(EasyMock.anyObject(HttpSessionDestroyedEvent.class));
 
         EasyMock.expectLastCall().andAnswer(new IAnswer<HttpSessionDestroyedEvent>() {

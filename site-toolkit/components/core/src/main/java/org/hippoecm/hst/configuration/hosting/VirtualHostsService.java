@@ -831,10 +831,10 @@ public class VirtualHostsService implements MutableVirtualHosts {
                 if (blueprintContextPath == null) {
                     blueprintContextPath = getDefaultContextPath();
                 }
-                if (!HstServices.getContextPath().equals(blueprintContextPath)) {
+                if (!hstManager.getContextPath().equals(blueprintContextPath)) {
                     log.info("Skipping blueprint '{}' because only suited for contextPath '{}' and " +
                             "current webapp's contextPath is '{}'.", blueprintNode.getValueProvider().getPath(),
-                            blueprintContextPath, HstServices.getContextPath());
+                            blueprintContextPath, hstManager.getContextPath());
                     continue;
                 }
                 try {
@@ -857,9 +857,9 @@ public class VirtualHostsService implements MutableVirtualHosts {
         for (String hostGroupName : getHostGroupNames()) {
             for (Mount mount : getMountsByHostGroup(hostGroupName)) {
                 if (mount.getContextPath() == null ||
-                        !mount.getContextPath().equals(HstServices.getContextPath())) {
+                        !mount.getContextPath().equals(hstManager.getContextPath())) {
                     log.info("Skipping mount {} to attach a possible channel for since mount belongs to webapp with contextpath " +
-                            "'{}' and current webapp's contextpath is '{}'", mount, mount.getContextPath(), HstServices.getContextPath());
+                            "'{}' and current webapp's contextpath is '{}'", mount, mount.getContextPath(), hstManager.getContextPath());
                     continue;
                 }
                 if (mount instanceof ContextualizableMount) {

@@ -26,6 +26,8 @@ import javax.jcr.SimpleCredentials;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.configuration.model.MutableHstManager;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -83,7 +85,8 @@ public class HstPingServletTest {
         expectLastCall();
 
         HstServices.setComponentManager(componentManager);
-        HstServices.setContextPath("/site");
+        ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
+                .setContextPath("/site");
         assertTrue(HstServices.isAvailable());
 
         replay(componentManager, mockRepo, mockSession, rootNode);
@@ -98,7 +101,8 @@ public class HstPingServletTest {
             verify(componentManager, mockRepo, mockSession, rootNode);
         } finally {
             HstServices.setComponentManager(null);
-            HstServices.setContextPath(null);
+            ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
+                    .setContextPath(null);
         }
     }
 
@@ -123,7 +127,8 @@ public class HstPingServletTest {
         expect(rootNode.getNode("content/documents")).andReturn(null);
 
         HstServices.setComponentManager(componentManager);
-        HstServices.setContextPath("/site");
+        ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
+                .setContextPath("/site");
         assertTrue(HstServices.isAvailable());
 
         replay(componentManager, hstRequest, hrc, mockSession, rootNode);
@@ -137,7 +142,8 @@ public class HstPingServletTest {
             verify(componentManager, hstRequest, hrc, mockSession, rootNode);
         } finally {
             HstServices.setComponentManager(null);
-            HstServices.setContextPath(null);
+            ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
+                    .setContextPath(null);
         }
     }
 
@@ -158,7 +164,8 @@ public class HstPingServletTest {
         expect(componentManager.getComponent(Repository.class.getName())).andReturn(null);
 
         HstServices.setComponentManager(componentManager);
-        HstServices.setContextPath("/site");
+        ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
+                .setContextPath("/site");
         assertTrue(HstServices.isAvailable());
 
         replay(componentManager, mockRepo);
@@ -173,7 +180,8 @@ public class HstPingServletTest {
             verify(componentManager, mockRepo);
         } finally {
             HstServices.setComponentManager(null);
-            HstServices.setContextPath(null);
+            ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
+                    .setContextPath(null);
         }
     }
 

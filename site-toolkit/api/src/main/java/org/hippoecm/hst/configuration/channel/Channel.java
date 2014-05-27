@@ -93,7 +93,9 @@ public class Channel implements Serializable {
         contentRoot = channel.contentRoot;
         composerModeEnabled = channel.composerModeEnabled;
         // not a deep clone: Not a problem!
-        setProperties(channel.getProperties());
+        Map<String, Object> mapClone = new HashMap<>();
+        mapClone.putAll(channel.getProperties());
+        setProperties(mapClone);
         channelInfoClassName = channel.channelInfoClassName;
         mountId = channel.mountId;
         locale = channel.locale;

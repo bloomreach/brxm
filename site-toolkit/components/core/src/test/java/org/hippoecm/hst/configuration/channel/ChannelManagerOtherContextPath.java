@@ -18,6 +18,7 @@ package org.hippoecm.hst.configuration.channel;
 import java.util.Map;
 
 import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.configuration.model.MutableHstManager;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
@@ -50,7 +51,9 @@ public class ChannelManagerOtherContextPath extends AbstractTestConfigurations {
     @Test
     public void channels_for_current_contextpath_slashsite2_only_are_loaded() throws Exception {
         // now change the contextpath to site2: Now only 'intranettestchannel' is expected to be part of the channels
-        HstServices.setContextPath("/site2");
+
+        ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
+                .setContextPath("/site2");
         Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
         assertFalse("testchannel should not be part of channels since has wrong contextpath",
                 channels.containsKey("testchannel"));
