@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>26-iteration-80</version>
+    <version>26-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-cms</artifactId>
@@ -85,10 +85,10 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS</notice.project.name>
 
-    <hippo.commons.version>1.04.01-iteration-80</hippo.commons.version>
-    <hippo.utilities.version>1.03.01-iteration-80</hippo.utilities.version>
-    <hippo.services.version>1.04.01-iteration-80</hippo.services.version>
-    <hippo.repository.version>2.26.02-iteration-80</hippo.repository.version>
+    <hippo.commons.version>1.04.01-SNAPSHOT</hippo.commons.version>
+    <hippo.utilities.version>1.03.01-SNAPSHOT</hippo.utilities.version>
+    <hippo.services.version>1.04.01-SNAPSHOT</hippo.services.version>
+    <hippo.repository.version>2.26.02-SNAPSHOT</hippo.repository.version>
 
     <!-- Test dependencies  -->
     <easymock.version>2.4</easymock.version>
