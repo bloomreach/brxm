@@ -30,7 +30,7 @@
   <inceptionYear>2012</inceptionYear>
 
   <artifactId>hippo-cms7-commons</artifactId>
-  <version>1.04.01-iteration-80</version>
+  <version>1.04.01-SNAPSHOT</version>
 
   <dependencies>
 
@@ -54,9 +54,9 @@
      This is used by normal plugins, but also to autogenerate documentation in .../target/site/source-repository.html
   -->
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/commons/tags/hippo-cms7-commons-1.04.01-iteration-80</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/commons/tags/hippo-cms7-commons-1.04.01-iteration-80</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/commons/tags/hippo-cms7-commons-1.04.01-iteration-80</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/commons/trunk</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/commons/trunk</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/commons/trunk</url>
   </scm>
 
   <repositories>
