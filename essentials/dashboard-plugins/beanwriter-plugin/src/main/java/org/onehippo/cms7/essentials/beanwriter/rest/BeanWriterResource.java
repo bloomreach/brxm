@@ -16,9 +16,9 @@
 
 package org.onehippo.cms7.essentials.beanwriter.rest;
 
-import java.io.File;
-import java.util.Collection;
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
@@ -30,19 +30,17 @@ import javax.ws.rs.core.MediaType;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
-import org.onehippo.cms7.essentials.dashboard.model.BeanWriterLogEntry;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
-import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.MemoryBean;
+import org.onehippo.cms7.services.contenttype.ContentType;
+import org.onehippo.cms7.services.contenttype.ContentTypeService;
+import org.onehippo.cms7.services.contenttype.ContentTypes;
+import org.onehippo.cms7.services.contenttype.HippoContentTypeService;
 
-import com.google.common.collect.Multimap;
 
 /**
  * @version "$Id$"
@@ -55,14 +53,28 @@ public class BeanWriterResource extends BaseResource {
 
     @POST
     public RestfulList<MessageRestful> runBeanWriter(@Context ServletContext servletContext) throws Exception {
+        final String className = ProjectSetupPlugin.class.getName();
+        final PluginContext context = new DefaultPluginContext(new PluginRestful(className));
+        //############################################
+        // USE SERVICES
+        //############################################
+        final ContentTypeService service = new HippoContentTypeService(context.createSession());
+        final ContentTypes contentTypes = service.getContentTypes();
+        final SortedMap<String, Set<ContentType>> typesByPrefix = contentTypes.getTypesByPrefix();
+        for (Map.Entry<String, Set<ContentType>> entry : typesByPrefix.entrySet()) {
+            final String key = entry.getKey();
+        }
+
+
+
         final String basePath = ProjectUtils.getBaseProjectDirectory();
 
 
-        final String className = ProjectSetupPlugin.class.getName();
-        final PluginContext context = new DefaultPluginContext(new PluginRestful(className));
+
+
         // inject project settings:
         final RestfulList<MessageRestful> messages = new MyRestList();
-        final java.nio.file.Path namespacePath = new File(basePath + File.separator + "bootstrap").toPath();
+        /*final java.nio.file.Path namespacePath = new File(basePath + File.separator + "bootstrap").toPath();
 
         final List<MemoryBean> memoryBeans = BeanWriterUtils.buildBeansGraph(namespacePath, context, EssentialConst.SOURCE_PATTERN_JAVA);
         BeanWriterUtils.addMissingMethods(context, memoryBeans, EssentialConst.FILE_EXTENSION_JAVA);
@@ -81,7 +93,7 @@ public class BeanWriterResource extends BaseResource {
                     "mvn clean package\n" +
                             "mvn -P cargo.run", DisplayEvent.DisplayType.PRE
             ));
-        }
+        }*/
 
         return messages;
     }

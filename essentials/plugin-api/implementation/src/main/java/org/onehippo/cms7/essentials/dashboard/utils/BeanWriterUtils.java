@@ -52,6 +52,22 @@ import com.google.common.collect.ImmutableSet;
  * @version "$Id$"
  */
 public final class BeanWriterUtils {
+
+    public static final ImmutableSet<String> BUILT_IN_DOCUMENT_TYPES = new ImmutableSet.Builder<String>()
+            .add("autoexport").add("brokenlinks").add("editor")
+            .add("frontend").add("hippo").add("hippobroadcast")
+            .add("hippofacnav").add("hippogallery").add("hippogallerypicker")
+            .add("hippohtmlcleaner").add("hippolog").add("hipporeport")
+            .add("hipposched").add("hipposcxml").add("hippostd")
+            .add("hippostdpubwf").add("hipposys").add("hipposysedit")
+            .add("hippotranslation").add("hst").add("hstconfigedit").add("mix")
+            .add("nt").add("properties").add("rep").add("reporting")
+            .add("resourcebundle").add("selection")
+            .build();
+
+
+
+
     public static final String CONTEXT_DATA_KEY = BeanWriterUtils.class.getName();
     public static final String MSG_ADDED_METHOD = "@@@ added [{}] method";
     public static final String HIPPOSYSEDIT_PATH = "hipposysedit:path";
@@ -64,6 +80,12 @@ public final class BeanWriterUtils {
 
     private BeanWriterUtils() {
     }
+
+
+
+
+
+
 
     public static void addMissingMethods(final PluginContext context, final List<MemoryBean> memoryBeans, final String fileExtension) {
 
