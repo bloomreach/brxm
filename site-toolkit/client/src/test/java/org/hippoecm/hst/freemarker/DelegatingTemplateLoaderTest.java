@@ -52,14 +52,14 @@ public class DelegatingTemplateLoaderTest {
                 new DelegatingTemplateLoader(new WebappTemplateLoader(servletContext, basePath), null, new String [] { "classpath:", "jcr:" });
 
         try {
-            Object templateSource = templateLoader.findTemplateSource(normalWebResourcePath);
+            templateLoader.findTemplateSource(normalWebResourcePath);
         } catch (Exception e) {
             log.warn("Unexpected Exception.", e);
             fail("Unexpected Exception.");
         }
 
         try {
-            Object templateSource = templateLoader.findTemplateSource(problematicResourcePath);
+            templateLoader.findTemplateSource(problematicResourcePath);
         } catch (Exception e) {
             log.warn("Unexpected Exception.", e);
             fail("Unexpected Exception.");

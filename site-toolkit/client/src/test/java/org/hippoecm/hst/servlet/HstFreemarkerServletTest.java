@@ -72,14 +72,14 @@ public class HstFreemarkerServletTest {
         assertTrue(templateLoader instanceof MultiTemplateLoader);
 
         try {
-            Object templateSource = templateLoader.findTemplateSource(normalWebResourcePath);
+            templateLoader.findTemplateSource(normalWebResourcePath);
         } catch (Exception e) {
             log.warn("Unexpected Exception.", e);
             fail("Unexpected Exception.");
         }
 
         try {
-            Object templateSource = templateLoader.findTemplateSource(problematicResourcePath);
+            templateLoader.findTemplateSource(problematicResourcePath);
         } catch (Exception e) {
             log.warn("Unexpected Exception.", e);
             fail("Unexpected Exception.");
