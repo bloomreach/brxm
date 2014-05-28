@@ -68,8 +68,8 @@
     <xml action="copy" source="instructions/xml/hst/workspace/base.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
     <xml action="copy" source="instructions/xml/hst/workspace/homepage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
     <!-- common -->
-    <xml action="copy" source="instructions/xml/hst/sitemap/root.xml" target="/hst:hst/hst:configurations/common/hst:sitemap"/>
-    <xml action="copy" source="instructions/xml/hst/menu/main.xml" target="/hst:hst/hst:configurations/common/hst:sitemenus"/>
+    <xml action="copy" source="instructions/xml/hst/sitemap/root.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
+    <xml action="copy" source="instructions/xml/hst/menu/main.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus"/>
 
     <xml action="copy" source="instructions/xml/hst/pages/base.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:abstractpages"/>
     <xml action="copy" source="instructions/xml/hst/pages/homepage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>

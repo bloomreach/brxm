@@ -30,4 +30,5 @@
         </#if>
     </#list>
 </ul>
+<@hst.cmseditmenu menu=menu/>
 </#if>

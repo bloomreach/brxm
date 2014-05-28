@@ -43,7 +43,7 @@
 
   <instructionSet>
     <xml action="copy" source="xml/hst/workspace/eventslist.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
-    <xml action="copy" source="xml/hst/sitemap/events.xml" target="/hst:hst/hst:configurations/common/hst:sitemap"/>
+    <xml action="copy" source="xml/hst/sitemap/events.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
     <file action="copy" source="java/EventsDocument.txt" target="{{beansFolder}}/EventsDocument.java"/>
     <xml action="copy" source="xml/hst/pages/eventslist.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="xml/hst/pages/eventspage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
@@ -58,7 +58,7 @@
     //############################################
   -->
   <instructionSet>
-    <xml action="copy" source="xml/hst/menu/menu-item-events.xml" target="/hst:hst/hst:configurations/common/hst:sitemenus/main"/>
+    <xml action="copy" source="xml/hst/menu/menu-item-events.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus/main"/>
   </instructionSet>
 
   <!-- SAMPLES GROUP-->

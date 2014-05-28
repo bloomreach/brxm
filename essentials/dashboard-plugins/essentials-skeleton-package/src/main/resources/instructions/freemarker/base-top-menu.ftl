@@ -20,14 +20,24 @@
   limitations under the License.
 -->
 <#-- @ftlvariable name="menu" type="org.hippoecm.hst.core.sitemenu.HstSiteMenu" -->
+<#-- @ftlvariable id="editMode" type="java.lang.Boolean"-->
 <#if menu??>
-<ul class="nav nav-pills">
-    <#list menu.siteMenuItems as item>
+  <#if menu.siteMenuItems??>
+    <ul class="nav nav-pills">
+      <#list menu.siteMenuItems as item>
         <#if  item.selected || item.expanded>
-            <li class="active"><a href="<@hst.link link=item.hstLink/>">${item.name}</a></li>
+          <li class="active"><a href="<@hst.link link=item.hstLink/>">${item.name}</a></li>
         <#else>
-            <li><a href="<@hst.link link=item.hstLink/>">${item.name}</a></li>
+          <li><a href="<@hst.link link=item.hstLink/>">${item.name}</a></li>
         </#if>
-    </#list>
-</ul>
+      </#list>
+    </ul>
+  </#if>
+  <@hst.cmseditmenu menu=menu/>
+<#else>
+  <#if editMode>
+    <img src="<hst:link path='/images/essentials-edit-component.png' />"
+         alt="Configure valid menu in component parameters"
+         title="Configure valid menu in component parameters">
+  </#if>
 </#if>
