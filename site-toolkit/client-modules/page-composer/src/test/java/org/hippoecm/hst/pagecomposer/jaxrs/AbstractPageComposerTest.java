@@ -112,7 +112,6 @@ public class AbstractPageComposerTest {
         restoreHstConfigBackup(session);
 
         session.logout();
-        ((MutableHstManager)hstManager).setContextPath(null);
         this.componentManager.stop();
         this.componentManager.close();
         HstServices.setComponentManager(null);

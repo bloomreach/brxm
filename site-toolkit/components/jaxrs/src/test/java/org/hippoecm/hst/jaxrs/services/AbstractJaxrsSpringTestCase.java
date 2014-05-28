@@ -57,8 +57,6 @@ public abstract class AbstractJaxrsSpringTestCase
         this.componentManager.stop();
         this.componentManager.close();
         HstServices.setComponentManager(null);
-        ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
-                .setContextPath(null);
     }
 
     /**

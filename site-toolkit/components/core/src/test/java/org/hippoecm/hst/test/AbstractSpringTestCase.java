@@ -83,9 +83,6 @@ public abstract class AbstractSpringTestCase
     @After
     public void tearDown() throws Exception {
         final HstManager hstManager = componentManager.getComponent(HstManager.class.getName());
-        if (hstManager != null) {
-            ((MutableHstManager) hstManager).setContextPath(null);
-        }
         this.componentManager.stop();
         this.componentManager.close();
         HstServices.setComponentManager(null);

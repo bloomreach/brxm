@@ -52,7 +52,6 @@ public abstract class AbstractCmsRestTest {
 
     @After
     public void tearDown() throws Exception {
-        ((MutableHstManager)hstManager).setContextPath(null);
         this.componentManager.stop();
         this.componentManager.close();
         HstServices.setComponentManager(null);
