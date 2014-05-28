@@ -97,8 +97,6 @@ public class AbstractHstIntegrationTest {
         localSession.logout();
 
         HstServices.setComponentManager(null);
-        ((MutableHstManager)componentManager.getComponent(HstManager.class.getName()))
-                .setContextPath(null);
         ModifiableRequestContextProvider.clear();
     }
 
@@ -126,11 +124,6 @@ public class AbstractHstIntegrationTest {
 
     protected Configuration getContainerConfiguration() {
         return new PropertiesConfiguration();
-    }
-
-
-    protected HstRequestContext getRequestContextWithResolvedSiteMapItemAndContainerURL(final MockHttpServletRequest request, String hostAndPort, String requestURI) throws Exception {
-        return getRequestContextWithResolvedSiteMapItemAndContainerURL(request, null, hostAndPort, requestURI, null);
     }
 
     protected HstRequestContext getRequestContextWithResolvedSiteMapItemAndContainerURL(final MockHttpServletRequest request,String scheme, String hostAndPort, String requestURI, String queryString) throws Exception {
