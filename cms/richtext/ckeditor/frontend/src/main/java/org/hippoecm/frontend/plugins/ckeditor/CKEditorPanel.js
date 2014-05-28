@@ -117,7 +117,7 @@
             if (editor.checkDirty()) {
                 editor.updateElement();
             }
-        })
+        });
     }
 
     function destroyEditorWhenElementIsDestroyed(editor) {
