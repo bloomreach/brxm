@@ -64,21 +64,67 @@
         }
     }
 
-    function updateEditorElementWhenDataChanged(editor) {
-        var data = editor.getData();
+    function callFunctions(functionMap) {
+        var keys = CKEDITOR.tools.objectKeys(functionMap),
+            i, length;
+        for (i = 0, length = keys.length; i < length; i++) {
+            CKEDITOR.tools.callFunction(functionMap[keys[i]]);
+        }
+    }
 
-        editor.on('change', function() {
-            // only update the element when data really changed
-            var newData = editor.getData();
-            if (newData !== data) {
-                data = newData;
-                editor.updateElement();
-            }
+    function callFunctionsOnFormSubmit(form, functionMap) {
+        form.$.submit = CKEDITOR.tools.override(form.$.submit, function(originalSubmit) {
+            return function() {
+                callFunctions(functionMap);
+
+                // For IE, the DOM submit function is not a function
+                if (originalSubmit.apply) {
+                    originalSubmit.apply(this);
+                } else {
+                    originalSubmit();
+                }
+            };
         });
     }
 
+    function getFormSubmitListeners(editor) {
+        var form = new CKEDITOR.dom.element(editor.element.$.form),
+            submitListeners = form.getCustomData('submitListeners');
+
+        if (submitListeners === null) {
+            submitListeners = {};
+            form.setCustomData('submitListeners', submitListeners);
+            callFunctionsOnFormSubmit(form, submitListeners);
+        }
+
+        return submitListeners;
+    }
+
+    function setFormSubmitListener(editor, fn) {
+        var submitListeners = getFormSubmitListeners(editor);
+        submitListeners[editor.id] = CKEDITOR.tools.addFunction(fn);
+    }
+
+    function deleteFormSubmitListener(editor) {
+        var form = new CKEDITOR.dom.element(editor.element.$.form),
+            submitListeners = form.getCustomData('submitListeners');
+
+        delete submitListeners[editor.id];
+    }
+
+    function updateEditorElementWhenFormIsSubmitted(editor) {
+        setFormSubmitListener(editor, function() {
+            if (editor.checkDirty()) {
+                editor.updateElement();
+            }
+        })
+    }
+
     function destroyEditorWhenElementIsDestroyed(editor) {
-        HippoAjax.registerDestroyFunction(editor.element.$, editor.destroy, editor);
+        HippoAjax.registerDestroyFunction(editor.element.$, function() {
+            deleteFormSubmitListener(editor);
+            editor.destroy();
+        }, editor);
     }
 
     function removeHippoEditorFieldBorder(editor) {
@@ -97,7 +143,7 @@
                     var editor = CKEDITOR.replace(elementId, config);
                     if (editor !== null) {
                         ensureDivAreaCompatibility(editor);
-                        updateEditorElementWhenDataChanged(editor);
+                        updateEditorElementWhenFormIsSubmitted(editor);
                         destroyEditorWhenElementIsDestroyed(editor);
                         removeHippoEditorFieldBorder(editor);
                     } else {

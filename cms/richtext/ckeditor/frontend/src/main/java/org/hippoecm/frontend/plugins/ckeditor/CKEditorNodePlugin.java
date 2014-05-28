@@ -30,6 +30,7 @@ import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugins.richtext.IImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
+import org.hippoecm.frontend.plugins.richtext.LineEndingsModel;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
 import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePickerBehavior;
 import org.hippoecm.frontend.plugins.richtext.dialog.images.RichTextEditorImageService;
@@ -66,6 +67,7 @@ import org.slf4j.LoggerFactory;
 public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
 
     public static final String DEFAULT_EDITOR_CONFIG = "{"
+            + "  autoUpdateElement: false,"
             + "  contentsCss: 'ckeditor/hippocontents.css',"
             + "  dialog_buttonsOrder: 'ltr',"
             + "  dialog_noConfirmCancel: true,"
@@ -169,8 +171,9 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
 
         final IRichTextImageFactory imageFactory = createImageFactory();
         final IImageURLProvider urlProvider = createImageUrlProvider(imageFactory, linkFactory);
+        final RichTextImageMetaDataModel metaModel = new RichTextImageMetaDataModel(facetNodeNamesToUuidsModel, urlProvider);
 
-        return new RichTextImageMetaDataModel(facetNodeNamesToUuidsModel, urlProvider);
+        return new LineEndingsModel(metaModel);
     }
 
     protected IRichTextLinkFactory createLinkFactory() {
