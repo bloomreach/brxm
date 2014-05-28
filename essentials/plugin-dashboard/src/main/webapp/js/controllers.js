@@ -43,21 +43,10 @@
                 $scope.projectSettings.pluginRepositories.push('');
             };
 
-            /**
-             * NOTE: hippo provided one is protected
-             */
             $scope.removeUrl = function (url) {
                 var idx = $scope.projectSettings.pluginRepositories.indexOf(url);
                 if (idx > -1) {
-                    var myUrl = $scope.projectSettings.pluginRepositories[idx];
-                    var protectedIndex = $scope.protectedRepositories.indexOf(url);
-                    if (protectedIndex == -1) {
-                        $scope.projectSettings.pluginRepositories.splice(idx, 1);
-                    } else {
-                        $rootScope.globalError = [];
-                        $rootScope.feedbackMessages = [];
-                        $rootScope.globalError.push("Cannot remove built-in repository url");
-                    }
+                     $scope.projectSettings.pluginRepositories.splice(idx, 1);
                 }
             };
             $scope.getStarted = function () {
@@ -74,8 +63,6 @@
                     // set some defaults
                     $scope.projectSettings.templateLanguage = 'jsp';
                     $scope.projectSettings.useSamples = true;
-                    // protect built in repositories:
-                    $scope.protectedRepositories = $scope.projectSettings.pluginRepositories ? $scope.projectSettings.pluginRepositories.slice(0):[];
                 });
             }
             // initialize

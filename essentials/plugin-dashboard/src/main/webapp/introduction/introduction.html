@@ -67,7 +67,7 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label">Repository URL {{$index +1}}</label>
                 <div class="col-sm-6">
-                    <input type="text" class="form-control"  ng-model="url">
+                    <input type="text" class="form-control"  ng-model="projectSettings.pluginRepositories[$index]">
                 </div>
                 <div class="col-sm-2">
                     <button class="btn btn-danger glyphicon glyphicon-minus pull-right"  ng-click="removeUrl(url)">Remove url</button>
