@@ -45,7 +45,7 @@ public class HippoContentBean {
     private final String shortName;
     private final String name;
     private final List<HippoContentProperty> properties = new ArrayList<>();
-    private final List<HippoContentBean> children = new ArrayList<>();
+    private final List<HippoContentChildNode> children = new ArrayList<>();
     private final Set<String> superTypes = new HashSet<>();
     private static final String BASE_TYPE = "hippo:document";
     private static final String BASE_COMPOUND_TYPE = "hippo:compound";
@@ -103,10 +103,7 @@ public class HippoContentBean {
             final String key = entry.getKey();
             if (key.startsWith(prefix)) {
                 final ContentTypeChild value = entry.getValue();
-
-                log.info("value {}", key);
-                //log.info("value {}", value.get);
-                //addChild(new HippoContentBean(context, value));
+                addChild(new HippoContentChildNode(value));
             }
         }
     }
@@ -130,7 +127,7 @@ public class HippoContentBean {
         return false;
     }
 
-    public void addChild(final HippoContentBean child) {
+    public void addChild(final HippoContentChildNode child) {
         children.add(child);
     }
 
@@ -154,7 +151,7 @@ public class HippoContentBean {
         return prefix;
     }
 
-    public List<HippoContentBean> getChildren() {
+    public List<HippoContentChildNode> getChildren() {
         return children;
     }
 

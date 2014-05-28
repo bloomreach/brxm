@@ -16,7 +16,6 @@
 
 package org.onehippo.cms7.essentials.dashboard.services;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -36,8 +35,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.io.FilenameUtils;
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.ActionType;
 import org.onehippo.cms7.essentials.dashboard.model.BeanWriterLogEntry;
@@ -46,6 +43,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.JavaSourceUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.HippoContentBean;
+import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.HippoContentChildNode;
 import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.HippoContentProperty;
 import org.onehippo.cms7.essentials.dashboard.utils.code.ExistingMethodsVisitor;
 import org.onehippo.cms7.services.contenttype.ContentType;
@@ -127,10 +125,10 @@ public class ContentBeansService {
                     final ExistingMethodsVisitor ownMethodCollection = JavaSourceUtils.getMethodCollection(beanPath);
                     final Set<String> existingMethods = ownMethodCollection.getMethodInternalNames();
                     existingMethods.addAll(parentMethodCollection.getMethodInternalNames());
-                    addProperties(bean, beanPath, existingMethods);
+                    addMethods(bean, beanPath, existingMethods);
                 } else {
                     final ExistingMethodsVisitor ownMethodCollection = JavaSourceUtils.getMethodCollection(beanPath);
-                    addProperties(bean, beanPath, ownMethodCollection.getMethodInternalNames());
+                    addMethods(bean, beanPath, ownMethodCollection.getMethodInternalNames());
                 }
 
             }
@@ -186,8 +184,7 @@ public class ContentBeansService {
     public Set<ContentType> getProjectContentTypes() throws RepositoryException {
         final String namespacePrefix = context.getProjectNamespacePrefix();
         final Set<ContentType> projectContentTypes = new HashSet<>();
-        // TODO disable
-        final Session session = getSession();//context.createSession();
+        final Session session = context.createSession();
         try {
             final ContentTypeService service = new HippoContentTypeService(session);
             final ContentTypes contentTypes = service.getContentTypes();
@@ -209,14 +206,9 @@ public class ContentBeansService {
     // UTILS
     //############################################
 
-    private Session getSession() throws RepositoryException {
-        final HippoRepository hippoRepository = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
-        return hippoRepository.login("admin", "admin".toCharArray());
-    }
 
     private Map<String, Path> findExitingBeans() {
-        // TODO: mm remove hack
-        final Path startDir = new File("/home/machak/java/projects/hippo/appstore/site/src/main/java/org/example/beans").toPath();///context.getBeansPackagePath();
+        final Path startDir = context.getBeansPackagePath();
         final Map<String, Path> existingBeans = new HashMap<>();
         final List<Path> directories = new ArrayList<>();
         GlobalUtils.populateDirectories(startDir, directories);
@@ -241,27 +233,21 @@ public class ContentBeansService {
 
     private void createBaseBean(final HippoContentBean bean) {
         final Path javaClass = createJavaClass(bean);
-        final String hippoBean = JavaSourceUtils.createHippoBean(javaClass, "org.example.beans", bean.getName(), bean.getName());
+        JavaSourceUtils.createHippoBean(javaClass, context.beansPackageName(), bean.getName(), bean.getName());
         JavaSourceUtils.addExtendsClass(javaClass, "HippoDocument");
         JavaSourceUtils.addImport(javaClass, EssentialConst.HIPPO_DOCUMENT_IMPORT);
-
-
     }
 
 
-    private void addProperties(final HippoContentBean bean, final Path beanPath, final Collection<String> existing) {
+    private void addMethods(final HippoContentBean bean, final Path beanPath, final Collection<String> existing) {
         final List<HippoContentProperty> properties = bean.getProperties();
         for (HippoContentProperty property : properties) {
             final String name = property.getName();
             if (existing.contains(name)) {
                 log.debug("Property already exists {}", name);
                 continue;
-            } else {
-                log.info("name {}", name);
-
             }
             final String type = property.getType();
-            // add new method:
             log.debug("processing missing property, BEAN: {}, PROPERTY: {}", bean.getName(), property.getName());
 
             if (type == null) {
@@ -271,7 +257,6 @@ public class ContentBeansService {
             final boolean multiple = property.isMultiple();
             String methodName;
             switch (type) {
-                // TODO add other  methods
                 case "String":
                 case "Html":
                 case "Password":
@@ -311,6 +296,31 @@ public class ContentBeansService {
                     context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                     log.debug(MSG_ADDED_METHOD, methodName);
                     break;
+                default:
+                    log.error("ERROR {}", property);
+                    break;
+            }
+        }
+        //############################################
+        // NODE TYPES
+        //############################################
+        final List<HippoContentChildNode> children = bean.getChildren();
+        for (HippoContentChildNode child : children) {
+            final String name = child.getName();
+            if (existing.contains(name)) {
+                log.debug("Node method already exists {}", name);
+                continue;
+            }
+            final String type = child.getType();
+            log.debug("processing missing node, BEAN: {}, CHILD: {}", bean.getName(), child.getName());
+
+            if (type == null) {
+                log.error("Missing type for node, cannot create method {}", child.getName());
+                continue;
+            }
+            final boolean multiple = child.isMultiple();
+            String methodName;
+            switch (type) {
                 case "hippostd:html":
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodHippoHtml(beanPath, methodName, name, multiple);
@@ -318,13 +328,14 @@ public class ContentBeansService {
                     context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                     log.debug(MSG_ADDED_METHOD, methodName);
                     break;
-                case "hippo:mirror":
+                // TODO fix creation
+/*                case "hippo:mirror":
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodHippoMirror(beanPath, methodName, name, multiple);
                     existing.add(name);
                     context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                     log.debug(MSG_ADDED_METHOD, methodName);
-                    break;
+                    break;*/
                 case "hippogallerypicker:imagelink":
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodImageLink(beanPath, methodName, name, multiple);
@@ -333,7 +344,7 @@ public class ContentBeansService {
                     log.debug(MSG_ADDED_METHOD, methodName);
                     break;
                 default:
-                    log.error("ERROR {}", property);
+                    log.error("ERROR {}", child);
                     /*methodName = GlobalUtils.createMethodName(name);
                     // check if project namespace
                     if (type.startsWith(bean.getNamespace())) {
@@ -356,7 +367,9 @@ public class ContentBeansService {
                     }*/
                     break;
             }
+
         }
+
 
     }
 
@@ -369,21 +382,15 @@ public class ContentBeansService {
 
     private void createBean(final HippoContentBean bean, final Path parentPath) {
         final Path javaClass = createJavaClass(bean);
-        final String hippoBean = JavaSourceUtils.createHippoBean(javaClass, "org.example.beans", bean.getName(), bean.getName());
+        JavaSourceUtils.createHippoBean(javaClass, context.beansPackageName(), bean.getName(), bean.getName());
         final String extendsName = FilenameUtils.removeExtension(parentPath.toFile().getName());
         JavaSourceUtils.addExtendsClass(javaClass, extendsName);
         JavaSourceUtils.addImport(javaClass, EssentialConst.HIPPO_DOCUMENT_IMPORT);
-
-
-        //final String className = GlobalUtils.createClassName(name);
-        //final Path javaClass = JavaSourceUtils.createJavaClass(context.getSiteJavaRoot(), className, context.beansPackageName(), null);
-        //JavaSourceUtils.addExtendsClass(javaClass, extendsName);
-        //JavaSourceUtils.createHippoBean(javaClass, context.beansPackageName(), name, name);
     }
 
     private Path createJavaClass(final HippoContentBean bean) {
         final String className = GlobalUtils.createClassName(bean.getName());
-        return JavaSourceUtils.createJavaClass("/home/machak/java/projects/hippo/appstore/site/src/main/java/", className, "org.example.beans", null);
+        return JavaSourceUtils.createJavaClass(context.getSiteJavaRoot(), className, context.beansPackageName(), null);
     }
 
 

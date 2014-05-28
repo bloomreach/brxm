@@ -814,7 +814,7 @@ public final class JavaSourceUtils {
         methodDeclaration.setName(ast.newSimpleName(methodName));
         if (returnType.indexOf('[') != -1) {
             final String type = ARRAY_PATTERN.matcher(returnType).replaceAll("");
-            methodDeclaration.setReturnType2(ast.newSimpleType(ast.newSimpleName(type)));
+            methodDeclaration.setReturnType2(ast.newArrayType(ast.newSimpleType(ast.newSimpleName(type))));
         } else {
             methodDeclaration.setReturnType2(ast.newSimpleType(ast.newSimpleName(returnType)));
         }
