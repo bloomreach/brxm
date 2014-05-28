@@ -72,25 +72,24 @@ public class ContentBeansService {
     public static final String CONTEXT_DATA_KEY = BeanWriterUtils.class.getName();
 
     private final Set<HippoContentBean> contentBeans;
+    /**
+     * How many loops we run (beans extending none exising beans)
+     */
+    private static final int MISSING_DEPTH_MAX = 5;
+    private int missingBeansDepth = 0;
 
     public ContentBeansService(final PluginContext context) {
         this.context = context;
         this.baseSupertype = context.getProjectNamespacePrefix() + ':' + "basedocument";
         this.contentBeans = getContentBeans();
+
     }
 
 
     public void createBeans() throws RepositoryException {
 
         final Map<String, Path> existing = findExitingBeans();
-        final Iterable<HippoContentBean> missingBeans = Iterables.filter(contentBeans, new Predicate<HippoContentBean>() {
-            @Override
-            public boolean apply(HippoContentBean b) {
-                return !existing.containsKey(b.getName());
-            }
-        });
-        // process beans with known (project) supertypes:
-        final Iterator<HippoContentBean> iterator = Lists.newArrayList(missingBeans).iterator();
+        final Iterator<HippoContentBean> iterator = filterMissingBeans(existing);
         while (iterator.hasNext()) {
             final HippoContentBean next = iterator.next();
             // check if directly extending compound:
@@ -110,7 +109,27 @@ public class ContentBeansService {
         // process beans without resolved parent beans
         processMissing(Lists.newArrayList(iterator));
         processProperties();
+        // check if still missing(beans that extended missing beans)
+        final Iterator<HippoContentBean> extendedMissing = filterMissingBeans(findExitingBeans());
+        final boolean hasNonCreatedBeans = extendedMissing.hasNext();
+        if (missingBeansDepth < MISSING_DEPTH_MAX && hasNonCreatedBeans) {
+            missingBeansDepth++;
+            createBeans();
+        }else if(hasNonCreatedBeans){
+            log.error("Not all beans were created: {}", extendedMissing);
+        }
 
+    }
+
+    private Iterator<HippoContentBean> filterMissingBeans(final Map<String, Path> existing) {
+        final Iterable<HippoContentBean> missingBeans = Iterables.filter(contentBeans, new Predicate<HippoContentBean>() {
+            @Override
+            public boolean apply(HippoContentBean b) {
+                return !existing.containsKey(b.getName());
+            }
+        });
+        // process beans with known (project) supertypes:
+        return Lists.newArrayList(missingBeans).iterator();
     }
 
     private void processProperties() {
