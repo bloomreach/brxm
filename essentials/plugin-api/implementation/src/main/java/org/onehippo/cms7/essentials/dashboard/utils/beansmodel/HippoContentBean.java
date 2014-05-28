@@ -47,6 +47,8 @@ public class HippoContentBean {
     private final List<HippoContentProperty> properties = new ArrayList<>();
     private final List<HippoContentBean> children = new ArrayList<>();
     private final Set<String> superTypes = new HashSet<>();
+    private static final String BASE_TYPE = "hippo:document";
+    private static final String BASE_COMPOUND_TYPE = "hippo:compound";
 
 
     public HippoContentBean(final PluginContext context, final ContentType contentType) {
@@ -67,13 +69,29 @@ public class HippoContentBean {
     }
 
     private void processSupertypes() {
-        if(name.endsWith("basedocument")){
-            addSuperType("hippo:document");
+        if (name.endsWith("basedocument")) {
+            addSuperType(BASE_TYPE);
         }
+        boolean documentType = false;
+        boolean compoundType = false;
         final SortedSet<String> mySupertypes = contentType.getSuperTypes();
         for (String mySupertype : mySupertypes) {
-            if(mySupertype.startsWith(prefix)){
+            if (mySupertype.equals(BASE_TYPE)) {
+                documentType = true;
+            } else if (mySupertype.equals(BASE_COMPOUND_TYPE)) {
+                compoundType = true;
+            }
+            if (mySupertype.startsWith(prefix)) {
                 addSuperType(mySupertype);
+            }
+        }
+        if (superTypes.size() == 0) {
+            if (documentType) {
+                addSuperType(BASE_TYPE);
+            } else if (compoundType) {
+                addSuperType(BASE_COMPOUND_TYPE);
+            } else {
+                log.warn("Unknown supertype for {}", this);
             }
         }
     }
@@ -103,19 +121,13 @@ public class HippoContentBean {
         }
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("HippoContentBean{");
-        sb.append("contentType=").append(contentType);
-        sb.append(", context=").append(context);
-        sb.append(", prefix='").append(prefix).append('\'');
-        sb.append(", shortName='").append(shortName).append('\'');
-        sb.append(", name='").append(name).append('\'');
-        sb.append(", properties=").append(properties);
-        sb.append(", children=").append(children);
-        sb.append(", superTypes=").append(superTypes);
-        sb.append('}');
-        return sb.toString();
+    public boolean hasProperty(final String name) {
+        for (HippoContentProperty property : properties) {
+            if(property.getName().equals(name)){
+                return true;
+            }
+        }
+        return false;
     }
 
     public void addChild(final HippoContentBean child) {
@@ -158,4 +170,17 @@ public class HippoContentBean {
         return name;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("HippoContentBean{");
+        sb.append(", context=").append(context);
+        sb.append(", prefix='").append(prefix).append('\'');
+        sb.append(", shortName='").append(shortName).append('\'');
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", properties=").append(properties);
+        sb.append(", children=").append(children);
+        sb.append(", superTypes=").append(superTypes);
+        sb.append('}');
+        return sb.toString();
+    }
 }

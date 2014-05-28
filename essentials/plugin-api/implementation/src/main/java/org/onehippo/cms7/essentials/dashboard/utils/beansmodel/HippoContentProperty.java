@@ -31,6 +31,7 @@ public class HippoContentProperty {
     private final String prefix;
     private final String shortName;
     private final String name;
+    private final boolean multiple;
 
     public String getType() {
         return type;
@@ -51,7 +52,7 @@ public class HippoContentProperty {
         }
         this.type = contentType.getEffectiveType();
         this.cmsType = contentType.getItemType();
-
+        this.multiple = contentType.isMultiple();
     }
 
 
@@ -75,6 +76,8 @@ public class HippoContentProperty {
         return name;
     }
 
+
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("HippoContentProperty{");
@@ -85,5 +88,9 @@ public class HippoContentProperty {
         sb.append(", type='").append(type).append('\'');
         sb.append('}');
         return sb.toString();
+    }
+
+    public boolean isMultiple() {
+        return multiple;
     }
 }

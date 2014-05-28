@@ -41,7 +41,6 @@ public class BeanWriterResourceTest  {
         final String namespacePrefix  ="appstore";
 
 
-
         final DefaultPluginContext ctx = new DefaultPluginContext(new PluginRestful("test"));
         ctx.setProjectNamespacePrefix("appstore");
         final ContentBeansService contentBeansService = new ContentBeansService(ctx);
