@@ -33,12 +33,10 @@
       <sv:value>selectedMenu</sv:value>
       <sv:value>level</sv:value>
       <sv:value>menu</sv:value>
-      <sv:value>menuName</sv:value>
     </sv:property>
     <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
       <sv:value>on</sv:value>
       <sv:value>1</sv:value>
-      <sv:value>main</sv:value>
       <sv:value>main</sv:value>
     </sv:property>
     <sv:property sv:name="hst:template" sv:type="String">
