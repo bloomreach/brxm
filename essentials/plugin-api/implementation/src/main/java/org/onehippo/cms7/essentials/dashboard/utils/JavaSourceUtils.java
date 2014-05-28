@@ -346,11 +346,10 @@ public final class JavaSourceUtils {
     public static void addBeanMethodCalendar(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         final String returnType = multiple ? "List<Calendar>" : Calendar.class.getSimpleName();
         if (multiple) {
-            addImport(path, "java.util.List");
+            addImport(path, List.class.getName());
         }
-        addImport(path, "java.util.Calendar");
         addBeanMethodProperty(path, methodName, propertyName, returnType);
-        final String importName = Calendar.class.getPackage().getName();
+        final String importName = Calendar.class.getName();
         addImport(path, importName);
 
     }
@@ -367,7 +366,7 @@ public final class JavaSourceUtils {
     public static void addBeanMethodHippoHtml(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         final String returnType = multiple ? "List<HippoHtml>" : "HippoHtml";
         if (multiple) {
-            addImport(path, "java.util.List");
+            addImport(path, List.class.getName());
         }
         addSimpleMethod("getHippoHtml", path, methodName, propertyName, returnType);
         addImport(path, "org.hippoecm.hst.content.beans.standard.HippoHtml");
@@ -389,7 +388,7 @@ public final class JavaSourceUtils {
     public static void addBeanMethodHippoMirror(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
             addTwoArgumentsMethod("getLinkedBeans", "List<HippoMirrorBean>", path, methodName, propertyName);
-            addImport(path, "java.util.List");
+            addImport(path, List.class.getName());
         } else {
             addTwoArgumentsMethod("getLinkedBean", "HippoMirrorBean", path, methodName, propertyName);
         }
@@ -408,7 +407,7 @@ public final class JavaSourceUtils {
      */
     public static void addBeanMethodImageLink(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
-            addImport(path, "java.util.List");
+            addImport(path, List.class.getName());
             addTwoArgumentsMethod("getLinkedBeans", "HippoGalleryImageSetBean", path, methodName, propertyName);
         } else {
             addTwoArgumentsMethod("getLinkedBean", "HippoGalleryImageSetBean", path, methodName, propertyName);
@@ -753,13 +752,11 @@ public final class JavaSourceUtils {
      * @param importName name of the import e.g {@code java.util.List}
      */
     @SuppressWarnings(UNCHECKED)
-    public static void addImport(final Path path, final String importName) {
+    public static void addImport(final Path path, final CharSequence importName) {
         final CompilationUnit unit = getCompilationUnit(path);
         unit.recordModifications();
         final AST ast = unit.getAST();
-        final ImportDeclaration essentialsImportDeclaration = ast.newImportDeclaration();
-        essentialsImportDeclaration.setName(ast.newName(importName));
-        unit.imports().add(essentialsImportDeclaration);
+        addImport(unit, ast, importName);
         replaceFile(path, unit, ast);
     }
     //############################################
@@ -817,7 +814,7 @@ public final class JavaSourceUtils {
         methodDeclaration.setName(ast.newSimpleName(methodName));
         if (returnType.indexOf('[') != -1) {
             final String type = ARRAY_PATTERN.matcher(returnType).replaceAll("");
-            methodDeclaration.setReturnType2(ast.newSimpleType(ast.newSimpleName(type)));
+            methodDeclaration.setReturnType2(ast.newArrayType(ast.newSimpleType(ast.newSimpleName(type))));
         } else {
             methodDeclaration.setReturnType2(ast.newSimpleType(ast.newSimpleName(returnType)));
         }

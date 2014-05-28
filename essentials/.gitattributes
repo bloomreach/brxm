@@ -617,6 +617,7 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/r
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/rest/PropertyRestful.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/rest/QueryRestful.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/rest/RestfulList.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/services/ContentBeansService.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/setup/ProjectSetupPlugin.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/BeanWriterUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/CndUtils.java -text
@@ -634,6 +635,9 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/u
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/VersionUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/XmlUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/annotations/AnnotationUtils.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/beansmodel/HippoContentBean.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/beansmodel/HippoContentChildNode.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/beansmodel/HippoContentProperty.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/beansmodel/HippoEssentialsGeneratedObject.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/beansmodel/MemoryBean.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/beansmodel/MemoryProperty.java -text
@@ -2090,6 +2094,7 @@ plugin-dashboard/src/main/webapp/tools/galleryPlugin/galleryPlugin.html -text
 plugin-dashboard/src/main/webapp/tools/galleryPlugin/galleryPlugin.js -text
 plugin-dashboard/src/main/webapp/tools/galleryPlugin/testimageprocessor.json -text
 plugin-dashboard/src/main/webapp/tools/galleryPlugin/testimagesets.json -text
+plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/beanwriter/rest/BeanWriterResourceTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/dashboard/contentblocks/ContentBlocksPluginTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/ContentBlocksTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/RestClientTest.java -text
