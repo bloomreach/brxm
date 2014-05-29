@@ -45,7 +45,6 @@ import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.helpers.MessageFormatter;
 
 /**
  * Abstract supporting class for Hst Link tags
@@ -179,7 +178,7 @@ public class HstLinkTag extends ParamContainerTag {
                    }
                    if (!parametersMap.isEmpty()) {
                        try {
-                            String queryString = getQueryString(servletRequest.getCharacterEncoding());
+                            String queryString = getQueryString(HstRequestUtils.getCharacterEncoding(servletRequest));
                             path += queryString;
                        } catch (UnsupportedEncodingException e) {
                             throw new JspException(e);

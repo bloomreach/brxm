@@ -425,6 +425,35 @@ public class HstRequestUtils {
         return getRemoteAddrs(request)[0];
     }
 
+    /**
+     * Returns the name of the character encoding used in the body of the servlet request.
+     * This method returns <code>ISO-8859-1</code> instead of null if the request does not specify a character encoding
+     * because the Servlet specification requires that an encoding of ISO-8859-1 is used if a character encoding is not specified.
+     * @param request
+     * @param defaultEncoding
+     * @return
+     */
+    public static String getCharacterEncoding(HttpServletRequest request) {
+        return getCharacterEncoding(request, "ISO-8859-1");
+    }
+
+    /**
+     * Returns the name of the character encoding used in the body of the servlet request.
+     * This method returns <code>defaultEncoding</code> instead of null if the request does not specify a character encoding.
+     * @param request
+     * @param defaultEncoding
+     * @return
+     */
+    public static String getCharacterEncoding(HttpServletRequest request, String defaultEncoding) {
+        String encoding = request.getCharacterEncoding();
+
+        if (encoding != null) {
+            return encoding;
+        }
+
+        return defaultEncoding;
+    }
+
     public static Map<String, String []> parseQueryString(HttpServletRequest request) {
         Map<String, String []> queryParamMap = null;
 

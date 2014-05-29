@@ -102,10 +102,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         url.setResolvedMountPath(mount.getResolvedMountPath());
         url.setRequestPath(requestPath);
         url.setPathInfo(requestPath.substring(mount.getResolvedMountPath().length()));
-        String characterEncoding = requestCharacterEncoding;
-        if (characterEncoding == null) {
-            characterEncoding = "ISO-8859-1";
-        }
+        String characterEncoding = StringUtils.defaultIfEmpty(requestCharacterEncoding, "ISO-8859-1");
         url.setCharacterEncoding(characterEncoding);
         String [] namespacedPartAndPathInfo = splitPathInfo(requestPath.substring(mount.getResolvedMountPath().length()), characterEncoding);
         url.setPathInfo(namespacedPartAndPathInfo[1]);
@@ -136,18 +133,12 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         url.setHostName(HstRequestUtils.getFarthestRequestHost(request));
         url.setPortNumber(HstRequestUtils.getRequestServerPort(request));
         url.setRequestPath(HstRequestUtils.getRequestPath(request));
-        
-        String characterEncoding = request.getCharacterEncoding();
-        
-        if (characterEncoding == null) {
-            characterEncoding = "ISO-8859-1";
-        }
-        
+        String characterEncoding = HstRequestUtils.getCharacterEncoding(request);
         url.setCharacterEncoding(characterEncoding);
 
         Map<String, String []> paramMap = HstRequestUtils.parseQueryString(request);
         url.setParameters(paramMap);
-        
+
         url.setResolvedMountPath(resolvedMount.getResolvedMountPath());
 
         String [] namespacedPartAndPathInfo = splitPathInfo(resolvedMount, request, characterEncoding);
