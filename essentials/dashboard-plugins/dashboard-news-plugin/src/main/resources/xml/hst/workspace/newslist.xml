@@ -61,7 +61,7 @@
         <sv:value>on</sv:value>
       </sv:property>
       <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>newslist-main-newslist</sv:value>
+        <sv:value>newslist-main-newslist{{templateExtension}}</sv:value>
       </sv:property>
       <sv:property sv:name="hst:xtype" sv:type="String">
         <sv:value>HST.Item</sv:value>

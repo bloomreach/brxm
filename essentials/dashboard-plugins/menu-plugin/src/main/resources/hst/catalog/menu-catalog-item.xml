@@ -29,7 +29,7 @@
     <sv:value>images/component-icon-menu.png</sv:value>
   </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
-    <sv:value>essentials-menu</sv:value>
+    <sv:value>essentials-menu{{templateExtension}}</sv:value>
   </sv:property>
   <sv:property sv:name="hst:xtype" sv:type="String">
     <sv:value>HST.Item</sv:value>

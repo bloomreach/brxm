@@ -59,7 +59,7 @@
         <sv:value>{{namespace}}:enddate</sv:value>
       </sv:property>
       <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>eventslist-main-eventslist</sv:value>
+        <sv:value>eventslist-main-eventslist{{templateExtension}}</sv:value>
       </sv:property>
       <sv:property sv:name="hst:xtype" sv:type="String">
         <sv:value>HST.Item</sv:value>

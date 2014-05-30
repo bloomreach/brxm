@@ -29,7 +29,7 @@
     <sv:value>images/component-icon-banner.png</sv:value>
   </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
-    <sv:value>essentials-banner</sv:value>
+    <sv:value>essentials-banner{{templateExtension}}</sv:value>
   </sv:property>
   <sv:property sv:name="hst:xtype" sv:type="String">
     <sv:value>HST.Item</sv:value>

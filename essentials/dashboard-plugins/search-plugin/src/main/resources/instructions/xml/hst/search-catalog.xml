@@ -26,7 +26,7 @@
     <sv:value>images/component-icon-search.png</sv:value>
   </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
-    <sv:value>search-box</sv:value>
+    <sv:value>search-box{{templateExtension}}</sv:value>
   </sv:property>
   <sv:property sv:name="hst:xtype" sv:type="String">
     <sv:value>HST.Item</sv:value>

@@ -29,7 +29,7 @@
     <sv:value>images/component-icon-list.png</sv:value>
   </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
-    <sv:value>list-component</sv:value>
+    <sv:value>list-component{{templateExtension}}</sv:value>
   </sv:property>
   <sv:property sv:name="hst:xtype" sv:type="String">
     <sv:value>HST.Item</sv:value>

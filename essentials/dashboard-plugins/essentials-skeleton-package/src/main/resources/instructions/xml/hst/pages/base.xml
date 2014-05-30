@@ -20,7 +20,7 @@
     <sv:value>hst:component</sv:value>
   </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
-    <sv:value>base-layout</sv:value>
+    <sv:value>base-layout{{templateExtension}}</sv:value>
   </sv:property>
   <sv:node sv:name="menu">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">

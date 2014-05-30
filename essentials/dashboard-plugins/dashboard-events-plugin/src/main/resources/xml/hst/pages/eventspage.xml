@@ -29,7 +29,7 @@
       <sv:value>org.onehippo.cms7.essentials.components.EssentialsContentComponent</sv:value>
     </sv:property>
     <sv:property sv:name="hst:template" sv:type="String">
-      <sv:value>eventspage-main</sv:value>
+      <sv:value>eventspage-main{{templateExtension}}</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
