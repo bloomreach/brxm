@@ -46,7 +46,7 @@
         <sv:value>Blog posts by author</sv:value>
       </sv:property>
       <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>blog-author-posts{{templateExtension}}</sv:value>
+        <sv:value>blog-author{{templateExtension}}</sv:value>
       </sv:property>
       <sv:property sv:name="hst:xtype" sv:type="String">
         <sv:value>HST.Item</sv:value>

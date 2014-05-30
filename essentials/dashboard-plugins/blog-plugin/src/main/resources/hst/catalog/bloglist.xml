@@ -29,7 +29,7 @@
     <sv:value>images/component-icon-blog.png</sv:value>
   </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
-    <sv:value>blog-list-content{{templateExtension}}</sv:value>
+    <sv:value>blog-list{{templateExtension}}</sv:value>
   </sv:property>
   <sv:property sv:name="hst:xtype" sv:type="String">
     <sv:value>HST.Item</sv:value>

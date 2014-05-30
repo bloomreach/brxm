@@ -15,11 +15,11 @@
   limitations under the License.
   -->
 
-<sv:node sv:name="blog-list-content" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<sv:node sv:name="blog-list" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:template</sv:value>
   </sv:property>
   <sv:property sv:name="hst:renderpath" sv:type="String">
-    <sv:value>freemarker/essentials/blog/essentials-blog-list.ftl</sv:value>
+    <sv:value>freemarker/{{namespace}}/blog/blog-list.ftl</sv:value>
   </sv:property>
 </sv:node>

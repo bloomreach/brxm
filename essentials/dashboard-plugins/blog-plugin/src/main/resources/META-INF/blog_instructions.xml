@@ -83,23 +83,23 @@
     JSP TEMPLATES
   -->
   <instructionSet group="jsp">
-    <file action="copy" source="jsp/essentials-blog-main.jsp" target="{{jspRoot}}/essentials/blog/essentials-blog-main.jsp"/>
-    <file action="copy" source="jsp/essentials-blog-author-post.jsp" target="{{jspRoot}}/essentials/blog/essentials-blog-author-post.jsp"/>
-    <file action="copy" source="jsp/essentials-facet.jsp" target="{{jspRoot}}/essentials/facet/essentials-facet.jsp"/>
-    <file action="copy" source="jsp/essentials-blog-detail.jsp" target="{{jspRoot}}/essentials/blog/essentials-blog-detail.jsp"/>
-    <file action="copy" source="jsp/essentials-blog-list.jsp" target="{{jspRoot}}/essentials/blog/essentials-blog-list.jsp"/>
-    <file action="copy" source="jsp/essentials-author.jsp" target="{{jspRoot}}/essentials/author/essentials-author.jsp"/>
+    <file action="copy" source="jsp/blog-main.jsp" target="{{jspRoot}}/{{namespace}}/blog/blog-main.jsp"/>
+    <file action="copy" source="jsp/blog-author-posts.jsp" target="{{jspRoot}}/{{namespace}}/blog/blog-author-posts.jsp"/>
+    <file action="copy" source="jsp/facet.jsp" target="{{jspRoot}}/{{namespace}}/facet/blog-facet.jsp"/>
+    <file action="copy" source="jsp/blog-detail.jsp" target="{{jspRoot}}/{{namespace}}/blog/blog-detail.jsp"/>
+    <file action="copy" source="jsp/blog-list.jsp" target="{{jspRoot}}/{{namespace}}/blog/blog-list.jsp"/>
+    <file action="copy" source="jsp/author.jsp" target="{{jspRoot}}/{{namespace}}/author/blog-author.jsp"/>
   </instructionSet>
   <!--
     FREEMARKER TEMPLATES
   -->
   <instructionSet group="freemarker, repository">
-    <freemarker action="copy" source="freemarker/essentials-facet.ftl" target="{{freemarkerRoot}}/essentials/facet/essentials-facet.ftl"/>
-    <freemarker action="copy" source="freemarker/essentials-blog-author-post.ftl" target="{{freemarkerRoot}}/essentials/blog/essentials-blog-author-post.ftl"/>
-    <freemarker action="copy" source="freemarker/essentials-blog-detail.ftl" target="{{freemarkerRoot}}/essentials/blog/essentials-blog-detail.ftl"/>
-    <freemarker action="copy" source="freemarker/essentials-blog-main.ftl" target="{{freemarkerRoot}}/essentials/blog/essentials-blog-main.ftl"/>
-    <freemarker action="copy" source="freemarker/essentials-blog-list.ftl" target="{{freemarkerRoot}}/essentials/blog/essentials-blog-list.ftl"/>
-    <freemarker action="copy" source="freemarker/essentials-author.ftl" target="{{freemarkerRoot}}/essentials/author/essentials-author.ftl"/>
+    <freemarker action="copy" source="freemarker/blog-facet.ftl" target="{{freemarkerRoot}}/{{namespace}}/facet/blog-facet.ftl"/>
+    <freemarker action="copy" source="freemarker/blog-author-posts.ftl" target="{{freemarkerRoot}}/{{namespace}}/blog/blog-author-posts.ftl"/>
+    <freemarker action="copy" source="freemarker/blog-detail.ftl" target="{{freemarkerRoot}}/{{namespace}}/blog/blog-detail.ftl"/>
+    <freemarker action="copy" source="freemarker/blog-main.ftl" target="{{freemarkerRoot}}/{{namespace}}/blog/blog-main.ftl"/>
+    <freemarker action="copy" source="freemarker/blog-list.ftl" target="{{freemarkerRoot}}/{{namespace}}/blog/blog-list.ftl"/>
+    <freemarker action="copy" source="freemarker/blog-author.ftl" target="{{freemarkerRoot}}/{{namespace}}/author/blog-author.ftl"/>
   </instructionSet>
   <!--
     FACET & DAEMON MODULE SETUP
@@ -134,14 +134,14 @@
   <instructionSet group="jsp">
     <xml action="copy" source="hst/template-author-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="hst/template-facet-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="hst/template-blog-author-post-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="hst/template-blog-author-posts-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="hst/template-blog-main-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="hst/template-blog-detail-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="hst/template-blog-list-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
   <instructionSet group="freemarker">
     <xml action="copy" source="hst/template-author-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="hst/template-blog-author-post-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="hst/template-blog-author-posts-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="hst/template-facet-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="hst/template-blog-main-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="hst/template-blog-detail-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>

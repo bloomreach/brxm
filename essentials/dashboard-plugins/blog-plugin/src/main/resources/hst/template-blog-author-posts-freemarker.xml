@@ -20,6 +20,6 @@
     <sv:value>hst:template</sv:value>
   </sv:property>
   <sv:property sv:name="hst:renderpath" sv:type="String">
-    <sv:value>jsp/essentials/blog/essentials-blog-author-post.jsp</sv:value>
+    <sv:value>freemarker/{{namespace}}/blog/blog-author-posts.ftl</sv:value>
   </sv:property>
 </sv:node>
