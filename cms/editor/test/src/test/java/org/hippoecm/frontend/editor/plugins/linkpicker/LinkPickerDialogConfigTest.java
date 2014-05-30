@@ -24,7 +24,6 @@ import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.plugins.standards.picker.NodePickerControllerSettings;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockProperty;
