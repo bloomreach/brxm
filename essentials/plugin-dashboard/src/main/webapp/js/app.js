@@ -209,71 +209,9 @@
         })
 
         //############################################
-        // DIRECTIVES
+        // FACTORIES
         //############################################
-        .directive("essentialsMessages", function () {
-            return {
-                replace: false,
-                restrict: 'E',
-                scope: {
-                    label: '@',
-                    payload: '='
-                },
-                templateUrl: 'directives/essentials-messages.html',
-                controller: function ($scope, installerFactory) {
-                    // refresh messages when changes are made:
-                    $scope.$watch('payload', function (newValue, oldValue) {
-                        if (newValue) {
-                            return installerFactory.packageMessages(newValue).success(function (data) {
-                                return $scope.packageMessages = data;
-                            });
-                        }
-                    }, true);
-                    return installerFactory.packageMessages($scope.payload).success(function (data) {
-                        return $scope.packageMessages = data;
-                    });
-                }
-            }
-        }).directive("essentialsSimpleInstallPlugin", function () {
-            return {
-                replace: false,
-                restrict: 'E',
-                scope: {
-                    label: '@',
-                    pluginId: '@',
-                    pluginTitle: '@',
-                    buttonText: '@',
-                    sample: '@'
-                },
-                templateUrl: 'directives/essentials-simple-install-plugin.html',
-                controller: function ($scope, $sce, $log, $rootScope, $http) {
-                    $scope.showForm = false;
-                    $scope.settingsButtonText = $scope.showForm ? "Use these settings" : "Change settings";
-                    $scope.pluginId = "";
-                    $scope.sampleData = true;
-                    $scope.templateName = 'jsp';
-                    $scope.message = {};
-                    $scope.toggleForm = function(){
-                        $scope.showForm = !$scope.showForm;
-                    }
-                    // populate with global settings:
-                    $http.get($rootScope.REST.project_settings).success(function (data) {
-                        $scope.projectSettings = data;
-                        $scope.templateName = $scope.projectSettings.templateLanguage;
-                        $scope.sampleData = $scope.projectSettings.useSamples;
-                    });
-                    $scope.payload = {values: {pluginId: $scope.pluginId, sampleData: $scope.sampleData, templateName: $scope.templateName}};
-                    $scope.$watchCollection("[sampleData, templateName]", function () {
-                        $scope.payload = {values: {pluginId: $scope.pluginId, sampleData: $scope.sampleData, templateName: $scope.templateName}};
-                    });
-                    $scope.run = function () {
-                        $http.post($rootScope.REST.package_install, $scope.payload).success(function (data) {
-                        });
-                    };
-                }
 
-            }
-        })
         .factory('installerFactory', function ($http, $rootScope) {
             var packageMessages = function (payload) {
                 return $http.post($rootScope.REST.packageMessages, payload);

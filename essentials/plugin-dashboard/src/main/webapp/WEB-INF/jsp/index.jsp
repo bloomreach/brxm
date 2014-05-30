@@ -45,6 +45,7 @@
   <script src="${pageContext.request.contextPath}/js/Essentials.js"></script>
   <script src="${pageContext.request.contextPath}/js/app.js"></script>
   <script src="${pageContext.request.contextPath}/js/routes.js"></script>
+  <script src="${pageContext.request.contextPath}/js/directives.js"></script>
   <script src="${pageContext.request.contextPath}/js/controllers.js"></script>
 
   <link rel="icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>

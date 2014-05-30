@@ -35,23 +35,31 @@
     background-color: @alert-danger-bg;
     border-color: darken(@alert-danger-bg, 5%)
   }
+  &.infobox-danger h4 {
+    color: @alert-danger-text;
+  }
+  //
   &.infobox-warning {
     background-color: @alert-warning-bg;
     border-color: darken(@alert-warning-bg, 5%)
   }
+  &.infobox-warning h4 {
+    color: @alert-warning-text;
+  }
+ //
   &.infobox-info {
     background-color: @alert-info-bg;
     border-color: darken(@alert-info-bg, 5%)
   }
-  &.infobox-danger h4 {
-    color: @alert-danger-text;
-  }
-
-  &.infobox-warning h4 {
-    color: @alert-warning-text;
-  }
-
   &.infobox-info h4 {
     color: @alert-info-text;
+  }
+  //
+  &.infobox-success {
+    background-color: @alert-success-bg;
+    border-color: darken(@alert-success-bg, 5%)
+  }
+  &.infobox-success h4 {
+    color: @alert-success-text;
   }
 }

@@ -17,19 +17,19 @@
 (function () {
     "use strict";
     angular.module('hippo.essentials')
-            .controller('blogPluginCtrl', function ($scope, $sce, $log, $rootScope, $http) {
-                $scope.templateName = 'jsp';
-                $scope.setupImport = false;
-                $scope.importConfig = {
-                    'active': true,
-                    'cronExpression': '0 0 6 ? * SUN',
-                    'cronExpressionDescription': 'Fires @ 6am on every sunday, More info @ http://www.quartz-scheduler.org/',
-                    'maxDescriptionLength': 300,
-                    'authorsBasePath': '/',
-                    urls: [
-                        {'value': 'http://blog.jeroenreijn.com/feeds/posts/default', 'author':'Jeroen Rijn'}
-                    ]
-                };
+        .controller('blogPluginCtrl', function ($scope, $sce, $log, $rootScope, $http) {
+            $scope.templateName = 'jsp';
+            $scope.setupImport = false;
+            $scope.importConfig = {
+                'active': true,
+                'cronExpression': '0 0 6 ? * SUN',
+                'cronExpressionDescription': 'Fires @ 6am on every sunday, More info @ http://www.quartz-scheduler.org/',
+                'maxDescriptionLength': 300,
+                'authorsBasePath': '/',
+                urls: [
+                    {'value': 'http://blog.jeroenreijn.com/feeds/posts/default', 'author': 'Jeroen Rijn'}
+                ]
+            };
             $scope.pluginId = "blogPlugin";
             $scope.sampleData = true;
             $scope.templateName = 'jsp';
@@ -43,71 +43,67 @@
             };
 
 
-                $scope.execute = function () {
-                    var payload = Essentials.addPayloadData("templateName", $scope.templateName, null);
-                    Essentials.addPayloadData("sampleData", $scope.sampleData, payload);
-                    Essentials.addPayloadData("pluginId", "blogPlugin", payload);
-                    if ($scope.setupImport) {
-                        // prefix importer values, so we have no key clashes:
-                        var prefix = "importer_";
-                        Essentials.addPayloadData('importer_setupImport', true, payload);
-                        for (var key in $scope.importConfig) {
-                            if ($scope.importConfig.hasOwnProperty(key)) {
-                                var value = $scope.importConfig[key];
-                                if (key == 'urls') {
-                                    var suffix = 0;
-                                    angular.forEach(value, function (val) {
-                                        suffix++;
-                                        var v = val.value;
-                                        var author = val.author;
-                                        console.log(author);
-                                        var k = 'url' + suffix;
-                                        var keyAuthor = 'author' + suffix;
-                                        Essentials.addPayloadData(prefix + k, v, payload);
-                                        Essentials.addPayloadData(prefix + keyAuthor, author, payload);
+            $scope.execute = function () {
+                var payload = Essentials.addPayloadData("templateName", $scope.templateName, null);
+                Essentials.addPayloadData("sampleData", $scope.sampleData, payload);
+                Essentials.addPayloadData("pluginId", "blogPlugin", payload);
+                if ($scope.setupImport) {
+                    // prefix importer values, so we have no key clashes:
+                    var prefix = "importer_";
+                    Essentials.addPayloadData('importer_setupImport', true, payload);
+                    for (var key in $scope.importConfig) {
+                        if ($scope.importConfig.hasOwnProperty(key)) {
+                            var value = $scope.importConfig[key];
+                            if (key == 'urls') {
+                                var suffix = 0;
+                                angular.forEach(value, function (val) {
+                                    suffix++;
+                                    var v = val.value;
+                                    var author = val.author;
+                                    console.log(author);
+                                    var k = 'url' + suffix;
+                                    var keyAuthor = 'author' + suffix;
+                                    Essentials.addPayloadData(prefix + k, v, payload);
+                                    Essentials.addPayloadData(prefix + keyAuthor, author, payload);
 
-                                    });
-                                } else {
-                                    Essentials.addPayloadData(prefix + key, value, payload);
-                                }
-
+                                });
+                            } else {
+                                Essentials.addPayloadData(prefix + key, value, payload);
                             }
+
                         }
                     }
+                }
 
-                    $http.post($rootScope.REST.package_install, payload).success(function (data) {
-                        // globally handled
-                    });
-                };
+                $http.post($rootScope.REST.package_install, payload).success(function (data) {
+                    // globally handled
+                });
+            };
 
 
-                $scope.addUrl = function () {
-                    $scope.importConfig.urls.push({'value': ''});
-                };
-                $scope.removeUrl = function (url) {
-                    // we need at least on URL
-                    if ($scope.importConfig.urls.length <= 1) {
-                        return;
-                    }
-                    var idx = $scope.importConfig.urls.indexOf(url);
-                    if (idx > -1) {
-                        $scope.importConfig.urls.splice(idx, 1);
-                    }
-                };
-                $scope.init = function () {
-                    console.log("*** blog plugin ***");
-                    $http.get($rootScope.REST.projectSettings).success(function (data) {
-                        $rootScope.projectSettings = Essentials.keyValueAsDict(data.items);
-                        $scope.importConfig.blogsBasePath = '/content/documents/' + $rootScope.projectSettings.namespace + '/blog';
-                        $scope.importConfig.authorsBasePath = '/content/documents/' + $rootScope.projectSettings.namespace + '/blog' + '/authors';
-                        $scope.importConfig.projectNamespace = $rootScope.projectSettings.namespace;
-                    });
-                };
-            $http.get($rootScope.REST.project_settings).success(function (data) {
-                $scope.projectSettings = data;
-                $scope.templateName = $scope.projectSettings.templateLanguage;
-                $scope.sampleData = $scope.projectSettings.useSamples;
-            });
-                $scope.init();
-            })
+            $scope.addUrl = function () {
+                $scope.importConfig.urls.push({'value': ''});
+            };
+            $scope.removeUrl = function (url) {
+                // we need at least on URL
+                if ($scope.importConfig.urls.length <= 1) {
+                    return;
+                }
+                var idx = $scope.importConfig.urls.indexOf(url);
+                if (idx > -1) {
+                    $scope.importConfig.urls.splice(idx, 1);
+                }
+            };
+            $scope.init = function () {
+                $http.get($rootScope.REST.projectSettings).success(function (data) {
+                    $rootScope.projectSettings = Essentials.keyValueAsDict(data.items);
+                    $scope.projectSettings = data;
+                    $scope.importConfig.blogsBasePath = '/content/documents/' + $rootScope.projectSettings.namespace + '/blog';
+                    $scope.importConfig.authorsBasePath = '/content/documents/' + $rootScope.projectSettings.namespace + '/blog' + '/authors';
+                    $scope.importConfig.projectNamespace = $rootScope.projectSettings.namespace;
+                });
+
+            };
+            $scope.init();
+        })
 })();

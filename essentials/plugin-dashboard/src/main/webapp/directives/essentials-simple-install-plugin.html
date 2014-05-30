@@ -18,68 +18,8 @@
     <div class="panel-heading">{{pluginTitle}}</div>
     <div class="panel-body">
         <div>
-            <table class="table table-striped table-bordered table-condensed">
-                <thead>
-                <tr>
-                    <th>Settings:</th>
-                    <th>
-                        <button class="btn-primary" ng-click="toggleForm()">{{settingsButtonText}}</button>
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>Templating language:</td>
-                    <td>{{templateName}}</td>
-                </tr>
-                <tr ng-show="sample">
-                    <td>Sample data:</td>
-                    <td ng-show="sample">{{sampleData ? "Add sample data": "No sample data"}}</td>
-                </tr>
-                </tbody>
-            </table>
-            <div class="infobox infobox-info">
-                <h4>Current settings:</h4>
-                <p>Template language:<strong>{{templateName}}</strong></p>
-                <p ng-show="sample"><strong>{{sampleData ? "Add sample data": "No sample data"}}</strong></p>
-                <p class="pull-right">
-                    <button class="btn btn-primary" ng-click="toggleForm()">{{settingsButtonText}}</button>
-                </p>
-
-            </div>
+            <essentials-template-settings sample="{{sample}}" sample-data="sampleData" template-name="templateName"/>
         </div>
-        <form novalidate name="templateForm" ng-show="showForm">
-            <div class="form-group">
-                <label>Please select templating language:</label>
-            </div>
-            <div class="radio">
-                <label>
-                    <input type="radio" ng-model="templateName" required value="jsp"/>
-                    JSP template
-                </label>
-            </div>
-            <div class="radio">
-                <label>
-                    <input type="radio" ng-model="templateName" required value="freemarker"/>
-                    Freemarker template
-                </label>
-            </div>
-            <div class="radio">
-                <label>
-                    <input type="radio" ng-model="templateName" required value="repository"/>
-                    Repository freemarker template
-                </label>
-            </div>
-            <div ng-show="sample" class="form-group">
-                <label> Content: </label>
-            </div>
-            <div ng-show="sample" class="checkbox">
-                <label>
-                    Add sample content <input type="checkbox" ng-model="sampleData"/>
-                </label>
-            </div>
-
-        </form>
         <essentials-messages payload="payload" label="{{label}}"/>
     </div>
     <div class="panel-footer">

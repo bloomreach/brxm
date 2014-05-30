@@ -18,35 +18,8 @@
     <div class="panel-heading">Blog plugin</div>
     <div class="panel-body">
         <form novalidate name="blogForm">
-            <div class="form-group">
-                <label>Please select templating language:</label>
-            </div>
-            <div class="radio">
-                <label>
-                    <input type="radio" ng-model="templateName" required value="jsp"/>
-                    JSP template
-                </label>
-            </div>
-            <div class="radio">
-                <label>
-                    <input type="radio" ng-model="templateName" required value="freemarker"/>
-                    Freemarker template
-                </label>
-            </div>
-            <div class="radio">
-                <label>
-                    <input type="radio" ng-model="templateName" required value="repository"/>
-                    Repository freemarker template
-                </label>
-            </div>
-            <div class="form-group">
-                <label>Content:</label>
-            </div>
-            <div class="checkbox">
-                <label>
-                    Add sample content
-                    <input type="checkbox" ng-model="sampleData"/>
-                </label>
+            <div>
+                <essentials-template-settings sample="true" sample-data="sampleData" template-name="templateName"/>
             </div>
 
             <div class="form-group">
@@ -144,6 +117,7 @@
                     <div class="col-sm-2">
                         <input type="text" class="form-control" required ng-model="url.author">
                     </div>
+                    a
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label">&nbsp;</label>
@@ -154,7 +128,7 @@
             </div>
 
         </form>
-        <essentials-messages  payload="payload"/>
+        <essentials-messages payload="payload"/>
 
     </div>
     <div class="panel-footer">
