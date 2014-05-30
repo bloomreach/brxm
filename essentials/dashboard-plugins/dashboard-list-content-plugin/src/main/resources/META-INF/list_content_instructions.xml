@@ -27,9 +27,11 @@
     <xml action="copy" source="xml/hst/templates/content-component-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
 
-  <instructionSet group="freemarker">
+  <instructionSet group="freemarker, repository">
     <freemarker action="copy" source="freemarker/list-component.ftl" target="{{freemarkerRoot}}/hstdefault/list-comonent.ftl"/>
     <freemarker action="copy" source="freemarker/content-component.ftl" target="{{freemarkerRoot}}/hstdefault/content-component.ftl"/>
+    </instructionSet>
+  <instructionSet group="freemarker">
     <xml action="copy" source="xml/hst/templates/content-component-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
     <xml action="copy" source="xml/hst/templates/list-component-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>

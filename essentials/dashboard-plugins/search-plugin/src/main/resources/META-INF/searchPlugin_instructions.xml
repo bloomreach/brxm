@@ -30,9 +30,11 @@
     <xml action="copy" source="instructions/xml/hst/search-box-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="instructions/xml/hst/search-main-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
-  <instructionSet group="freemarker">
+  <instructionSet group="freemarker, repository">
     <freemarker action="copy" source="instructions/freemarker/search-main.ftl" target="{{freemarkerRoot}}/{{namespace}}/search-main.ftl"/>
     <freemarker action="copy" source="instructions/freemarker/search-box.ftl" target="{{freemarkerRoot}}/{{namespace}}/search-box.ftl"/>
+    </instructionSet>
+  <instructionSet group="freemarker">
     <xml action="copy" source="instructions/xml/hst/search-main-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="instructions/xml/hst/search-box-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>

@@ -93,13 +93,12 @@
   <!--
     FREEMARKER TEMPLATES
   -->
-  <instructionSet group="freemarker">
+  <instructionSet group="freemarker, repository">
     <freemarker action="copy" source="freemarker/essentials-facet.ftl" target="{{freemarkerRoot}}/essentials/facet/essentials-facet.ftl"/>
     <freemarker action="copy" source="freemarker/essentials-blog-author-post.ftl" target="{{freemarkerRoot}}/essentials/blog/essentials-blog-author-post.ftl"/>
     <freemarker action="copy" source="freemarker/essentials-blog-detail.ftl" target="{{freemarkerRoot}}/essentials/blog/essentials-blog-detail.ftl"/>
     <freemarker action="copy" source="freemarker/essentials-blog-main.ftl" target="{{freemarkerRoot}}/essentials/blog/essentials-blog-main.ftl"/>
     <freemarker action="copy" source="freemarker/essentials-blog-list.ftl" target="{{freemarkerRoot}}/essentials/blog/essentials-blog-list.ftl"/>
-
     <freemarker action="copy" source="freemarker/essentials-author.ftl" target="{{freemarkerRoot}}/essentials/author/essentials-author.ftl"/>
   </instructionSet>
   <!--

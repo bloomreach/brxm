@@ -154,6 +154,7 @@ public final class EssentialConst {
     public static final String PROP_TEMPLATE_NAME = "templateName";
     public static final String PROP_SAMPLE_DATA = "sampleData";
     public static final String TEMPLATE_FREEMARKER = "freemarker";
+
     public static final String TEMPLATE_JSP = "jsp";
     public static final String TEMPLATE_REPOSITORY = "repository";
 

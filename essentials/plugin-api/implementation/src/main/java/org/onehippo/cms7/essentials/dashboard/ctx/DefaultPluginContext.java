@@ -376,10 +376,8 @@ public class DefaultPluginContext implements PluginContext {
             addPlaceholderData(EssentialConst.TEMPLATE_PARAM_FILE_BASED, true);
             addPlaceholderData(EssentialConst.TEMPLATE_NAME_EXTENSION, "");
         } else {
-            // reset to freemarker
-            placeholderData.put(EssentialConst.PROP_TEMPLATE_NAME, EssentialConst.TEMPLATE_FREEMARKER);
-            addPlaceholderData(EssentialConst.TEMPLATE_PARAM_FILE_BASED, false);
             addPlaceholderData(EssentialConst.TEMPLATE_PARAM_REPOSITORY_BASED, true);
+            addPlaceholderData(EssentialConst.TEMPLATE_PARAM_FILE_BASED, false);
             addPlaceholderData(EssentialConst.TEMPLATE_NAME_EXTENSION, ".ftl");
         }
     }

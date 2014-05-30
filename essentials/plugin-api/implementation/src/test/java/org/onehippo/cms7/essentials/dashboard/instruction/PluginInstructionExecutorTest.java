@@ -86,7 +86,7 @@ public class PluginInstructionExecutorTest extends BaseRepositoryTest {
         final Instructions instructions = instructionParser.parseInstructions(content);
         final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
         for (InstructionSet instructionSet : instructionSets) {
-            if (instructionSet.getGroup().equals("myGroup")) {
+            if (instructionSet.getGroups().contains("myGroup")) {
                 pluginInstructionExecutor.execute(instructionSet, getContext());
             }
         }
@@ -96,7 +96,7 @@ public class PluginInstructionExecutorTest extends BaseRepositoryTest {
         // default group:
         listener.reset();
         for (InstructionSet instructionSet : instructionSets) {
-            if (instructionSet.getGroup().equals(EssentialConst.INSTRUCTION_GROUP_DEFAULT)) {
+            if (instructionSet.getGroups().contains(EssentialConst.INSTRUCTION_GROUP_DEFAULT)) {
                 pluginInstructionExecutor.execute(instructionSet, getContext());
             }
         }

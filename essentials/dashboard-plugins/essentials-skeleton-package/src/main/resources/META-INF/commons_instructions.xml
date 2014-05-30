@@ -41,7 +41,7 @@
     <xml action="copy" source="instructions/xml/hst/templates/homepage-main-content-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
 
-  <instructionSet group="freemarker">
+  <instructionSet group="freemarker, repository">
     <!-- include -->
     <freemarker action="copy" source="instructions/freemarker/imports.ftl" target="{{freemarkerRoot}}/include/imports.ftl"/>
     <freemarker action="copy" source="instructions/freemarker/pagination.ftl" target="{{freemarkerRoot}}/include/pagination.ftl"/>

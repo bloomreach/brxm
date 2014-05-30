@@ -231,6 +231,7 @@ public class PluginResource extends BaseResource {
         // EXECUTE SKELETON:
         //############################################
         final InstructionPackage commonPackage = new CommonsInstructionPackage();
+        commonPackage.setProperties(properties);
         getInjector().autowireBean(commonPackage);
         commonPackage.execute(context);
         // execute InstructionPackage itself

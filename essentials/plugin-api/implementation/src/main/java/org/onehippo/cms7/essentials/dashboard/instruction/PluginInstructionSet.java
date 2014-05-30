@@ -28,7 +28,10 @@ import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * @version "$Id$"
@@ -37,6 +40,7 @@ import com.google.common.base.Strings;
 public class PluginInstructionSet implements InstructionSet {
 
 
+    public static final Set<String> DEFAULT_GROUPS =  ImmutableSet.of(EssentialConst.INSTRUCTION_GROUP_DEFAULT);
     private Set<Instruction> instructions = new LinkedHashSet<>();
 
     private String group;
@@ -70,7 +74,6 @@ public class PluginInstructionSet implements InstructionSet {
     }
 
     @XmlAttribute
-    @Override
     public String getGroup() {
         if (Strings.isNullOrEmpty(group)) {
             group = EssentialConst.INSTRUCTION_GROUP_DEFAULT;
@@ -81,6 +84,15 @@ public class PluginInstructionSet implements InstructionSet {
     @Override
     public void setGroup(final String group) {
         this.group = group;
+    }
+
+    @Override
+    public Set<String> getGroups() {
+        if(Strings.isNullOrEmpty(group)){
+            return DEFAULT_GROUPS;
+        }
+        final Iterable<String> groups = Splitter.on(',').trimResults().omitEmptyStrings().split(group);
+        return Sets.newHashSet(groups);
     }
 
 

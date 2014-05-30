@@ -22,8 +22,11 @@
     <file action="copy" source="jsp/essentials-menu.jsp" target="{{jspRoot}}/hstdefault/essentials-menu.jsp"/>
     <xml action="copy" source="hst/menu-template-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
-  <instructionSet group="freemarker">
+
+  <instructionSet group="freemarker, repository">
     <freemarker action="copy" source="freemarker/essentials-menu.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-menu.ftl"/>
+  </instructionSet>
+  <instructionSet group="freemarker">
     <xml action="copy" source="hst/menu-template-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
   <instructionSet>

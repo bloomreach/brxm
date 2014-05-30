@@ -91,8 +91,6 @@ public class DefaultInstructionPackage implements InstructionPackage {
             properties.put(EssentialConst.TEMPLATE_PARAM_REPOSITORY_BASED, false);
             properties.put(EssentialConst.TEMPLATE_PARAM_FILE_BASED, true);
         } else {
-            // reset to freemarker
-            properties.put(EssentialConst.PROP_TEMPLATE_NAME, EssentialConst.TEMPLATE_FREEMARKER);
             properties.put(EssentialConst.TEMPLATE_PARAM_FILE_BASED, false);
             properties.put(EssentialConst.TEMPLATE_PARAM_REPOSITORY_BASED, true);
         }
@@ -115,14 +113,16 @@ public class DefaultInstructionPackage implements InstructionPackage {
         final Set<String> myGroupNames = groupNames();
         final Multimap<MessageGroup, Restful> instructionsMessages = ArrayListMultimap.create();
         for (InstructionSet instructionSet : instructionSets) {
-            final String group = instructionSet.getGroup();
-            // execute only or group(s)
-            if (myGroupNames.contains(group)) {
-                final Multimap<MessageGroup, Restful> instr = executor.getInstructionsMessages(instructionSet, context);
-                instructionsMessages.putAll(instr);
+            final Set<String> groups = instructionSet.getGroups();
+            for (String group : groups) {
+                // execute only or group(s)
+                if (myGroupNames.contains(group)) {
+                    final Multimap<MessageGroup, Restful> instr = executor.getInstructionsMessages(instructionSet, context);
+                    instructionsMessages.putAll(instr);
 
-            } else {
-                log.debug("Skipping instruction group for name: [{}]", group);
+                } else {
+                    log.debug("Skipping instruction group for name: [{}]", group);
+                }
             }
         }
         return instructionsMessages;
@@ -191,18 +191,21 @@ public class DefaultInstructionPackage implements InstructionPackage {
         final InstructionExecutor executor = new PluginInstructionExecutor();
         final Set<String> myGroupNames = groupNames();
         for (InstructionSet instructionSet : instructionSets) {
-            final String group = instructionSet.getGroup();
-            // execute only or group(s)
-            if (myGroupNames.contains(group)) {
-                // currently we return fail if any of instructions is failed
-                if (status == InstructionStatus.FAILED) {
-                    executor.execute(instructionSet, context);
-                    continue;
+            final Set<String> groups = instructionSet.getGroups();
+            for (String group : groups) {
+                // execute only or group(s)
+                if (myGroupNames.contains(group)) {
+                    // currently we return fail if any of instructions is failed
+                    if (status == InstructionStatus.FAILED) {
+                        executor.execute(instructionSet, context);
+                        continue;
+                    }
+                    status = executor.execute(instructionSet, context);
+                } else {
+                    log.debug("Skipping instruction group for name: [{}]", group);
                 }
-                status = executor.execute(instructionSet, context);
-            } else {
-                log.debug("Skipping instruction group for name: [{}]", group);
             }
+
         }
         return status;
     }

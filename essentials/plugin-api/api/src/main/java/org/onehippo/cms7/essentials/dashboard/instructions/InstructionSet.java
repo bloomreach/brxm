@@ -26,9 +26,13 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlTransient
 public interface InstructionSet {
 
-    String getGroup();
-
+    /**
+     * Comma separated group name(s)
+     * @param group e.g {@code freemarker, jsp}
+     */
     void setGroup(String group);
+
+    Set<String> getGroups();
 
     Set<Instruction> getInstructions();
 

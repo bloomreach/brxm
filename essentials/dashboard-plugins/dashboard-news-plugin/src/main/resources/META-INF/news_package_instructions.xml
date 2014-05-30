@@ -35,10 +35,12 @@
 
   </instructionSet>
 
-  <instructionSet group="freemarker">
+  <instructionSet group="freemarker, repository">
+
     <freemarker action="copy" source="freemarker/newslist-main-newslist.ftl" target="{{freemarkerRoot}}/hstdefault/newslist-main-newslist.ftl"/>
     <freemarker action="copy" source="freemarker/newspage-main.ftl" target="{{freemarkerRoot}}/hstdefault/newspage-main.ftl"/>
-
+  </instructionSet>
+  <instructionSet group="freemarker">
     <xml action="copy" source="xml/hst/templates/news-main-content-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
     <xml action="copy" source="xml/hst/templates/newslist-main-newslist-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
