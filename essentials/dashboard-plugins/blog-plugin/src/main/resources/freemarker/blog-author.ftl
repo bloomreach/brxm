@@ -1,8 +1,8 @@
 {{#repositoryBased}}
-    <#include "../../hst:default/hst:templates/imports.ftl">
+<#include "../../hst:default/hst:templates/imports.ftl">
 {{/repositoryBased}}
 {{#fileBased}}
-    <#include "/WEB-INF/freemarker/include/imports.ftl">
+<#include "/WEB-INF/freemarker/include/imports.ftl">
 {{/fileBased}}
 <#--
   Copyright 2014 Hippo B.V. (http://www.onehippo.com)
@@ -21,6 +21,8 @@
 -->
 <#-- @ftlvariable name="document" type="{{beansPackage}}.Author" -->
 <@hst.defineObjects/>
+<#if document??>
 <h1>
-    ${document.fullName}
+${document.fullName}
 </h1>
+</#if>
