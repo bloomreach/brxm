@@ -277,7 +277,7 @@ public class DefaultPluginContext implements PluginContext {
         // needed for freemarker templates
         placeholderData.put(EssentialConst.TEMPLATE_NAME_EXTENSION, "");
 
-        placeholderData.put(EssentialConst.PLACEHOLDER_PROJECT_ROOT, ProjectUtils.getBaseProjectDirectory());
+        placeholderData.put(EssentialConst.PLACEHOLDER_NAMESPACE, getProjectNamespacePrefix());
         placeholderData.put(EssentialConst.PLACEHOLDER_PROJECT_ROOT, ProjectUtils.getBaseProjectDirectory());
         //############################################
         // DATE PLACEHOLDERS
