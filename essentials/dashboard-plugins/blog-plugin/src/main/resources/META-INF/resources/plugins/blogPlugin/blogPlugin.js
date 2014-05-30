@@ -103,6 +103,11 @@
                         $scope.importConfig.projectNamespace = $rootScope.projectSettings.namespace;
                     });
                 };
+            $http.get($rootScope.REST.project_settings).success(function (data) {
+                $scope.projectSettings = data;
+                $scope.templateName = $scope.projectSettings.templateLanguage;
+                $scope.sampleData = $scope.projectSettings.useSamples;
+            });
                 $scope.init();
             })
 })();

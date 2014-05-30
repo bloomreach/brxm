@@ -232,10 +232,7 @@ public class PluginResource extends BaseResource {
         //############################################
         final InstructionPackage commonPackage = new CommonsInstructionPackage();
         getInjector().autowireBean(commonPackage);
-
-        commonPackage.setProperties(properties);
         commonPackage.execute(context);
-
         // execute InstructionPackage itself
         InstructionPackage instructionPackage = instructionPackageInstance(myPlugin);
         if (instructionPackage == null) {
@@ -243,8 +240,6 @@ public class PluginResource extends BaseResource {
         }
         instructionPackage.setProperties(properties);
         instructionPackage.execute(context);
-
-
         return new MessageRestful("Please rebuild and restart your application:", DisplayEvent.DisplayType.STRONG);
     }
 

@@ -112,8 +112,9 @@ public class FreemarkerInstruction extends FileInstruction {
             }
 
             return InstructionStatus.SUCCESS;
+        }else {
+            return super.process(context, previousStatus);
         }
-        return super.process(context, previousStatus);
     }
 
     public void setRepositoryTarget(final String repositoryTarget) {
