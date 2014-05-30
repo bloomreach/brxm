@@ -40,7 +40,7 @@
         <sv:value>Blog Detail</sv:value>
       </sv:property>
       <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>blog-main-content</sv:value>
+        <sv:value>blog-main-content{{templateExtension}}</sv:value>
       </sv:property>
       <sv:property sv:name="hst:xtype" sv:type="String">
         <sv:value>HST.Item</sv:value>

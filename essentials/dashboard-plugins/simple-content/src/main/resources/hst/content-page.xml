@@ -30,7 +30,7 @@
       <sv:value>org.onehippo.cms7.essentials.components.EssentialsContentComponent</sv:value>
     </sv:property>
     <sv:property sv:name="hst:template" sv:type="String">
-      <sv:value>contentpage-main</sv:value>
+      <sv:value>contentpage-main{{templateExtension}}</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
