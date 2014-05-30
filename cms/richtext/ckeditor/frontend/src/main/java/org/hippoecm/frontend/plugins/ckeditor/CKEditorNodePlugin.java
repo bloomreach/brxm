@@ -21,6 +21,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.editor.plugins.linkpicker.LinkPickerDialogConfig;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
@@ -55,10 +56,10 @@ import org.slf4j.LoggerFactory;
  * Configuration properties:
  * <ul>
  *     <li>imagepicker: child node with node picker controller settings for the image picker dialog.
- *         Default image picker settings: {@link DEFAULT_IMAGE_PICKER_CONFIG}</li>
+ *         Default image picker settings: {@link #DEFAULT_IMAGE_PICKER_CONFIG}</li>
  *     <li>linkpicker: child node with node picker controller settings for the document picker dialog
  *         opened by the internal link picker button.
- *         Default link picker settings: {@link DEFAULT_LINK_PICKER_CONFIG}</li>
+ *         Default link picker settings: {@link #DEFAULT_LINK_PICKER_CONFIG}</li>
  * </ul>
  *
  * @see NodePickerControllerSettings
@@ -198,7 +199,8 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
 
     private IPluginConfig getChildPluginConfig(final String key, IPluginConfig defaultConfig) {
         IPluginConfig childConfig = getPluginConfig().getPluginConfig(key);
-        return childConfig != null ? childConfig : defaultConfig;
+        IPluginConfig dialogConfig = LinkPickerDialogConfig.fromPluginConfig(childConfig, (JcrPropertyValueModel) getHtmlModel());
+        return dialogConfig != null ? dialogConfig : defaultConfig;
     }
 
     /**
