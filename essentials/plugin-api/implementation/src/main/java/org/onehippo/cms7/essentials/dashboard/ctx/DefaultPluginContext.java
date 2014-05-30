@@ -374,13 +374,13 @@ public class DefaultPluginContext implements PluginContext {
         if (Strings.isNullOrEmpty(templateName) || templateName.equals(EssentialConst.TEMPLATE_JSP) || templateName.equals(EssentialConst.TEMPLATE_FREEMARKER)) {
             addPlaceholderData(EssentialConst.TEMPLATE_PARAM_REPOSITORY_BASED, false);
             addPlaceholderData(EssentialConst.TEMPLATE_PARAM_FILE_BASED, true);
-            addPlaceholderData(EssentialConst.TEMPLATE_NAME_EXTENSION, ".ftl");
+            addPlaceholderData(EssentialConst.TEMPLATE_NAME_EXTENSION, "");
         } else {
             // reset to freemarker
             placeholderData.put(EssentialConst.PROP_TEMPLATE_NAME, EssentialConst.TEMPLATE_FREEMARKER);
             addPlaceholderData(EssentialConst.TEMPLATE_PARAM_FILE_BASED, false);
             addPlaceholderData(EssentialConst.TEMPLATE_PARAM_REPOSITORY_BASED, true);
-            addPlaceholderData(EssentialConst.TEMPLATE_NAME_EXTENSION, "");
+            addPlaceholderData(EssentialConst.TEMPLATE_NAME_EXTENSION, ".ftl");
         }
     }
 
