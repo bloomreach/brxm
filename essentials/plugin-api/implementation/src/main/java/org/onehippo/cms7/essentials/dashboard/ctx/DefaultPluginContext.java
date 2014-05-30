@@ -274,7 +274,10 @@ public class DefaultPluginContext implements PluginContext {
             return placeholderData;
         }
 
-        placeholderData.put(EssentialConst.PLACEHOLDER_NAMESPACE, getProjectNamespacePrefix());
+        // needed for freemarker templates
+        placeholderData.put(EssentialConst.TEMPLATE_NAME_EXTENSION, "");
+
+        placeholderData.put(EssentialConst.PLACEHOLDER_PROJECT_ROOT, ProjectUtils.getBaseProjectDirectory());
         placeholderData.put(EssentialConst.PLACEHOLDER_PROJECT_ROOT, ProjectUtils.getBaseProjectDirectory());
         //############################################
         // DATE PLACEHOLDERS
@@ -371,11 +374,13 @@ public class DefaultPluginContext implements PluginContext {
         if (Strings.isNullOrEmpty(templateName) || templateName.equals(EssentialConst.TEMPLATE_JSP) || templateName.equals(EssentialConst.TEMPLATE_FREEMARKER)) {
             addPlaceholderData(EssentialConst.TEMPLATE_PARAM_REPOSITORY_BASED, false);
             addPlaceholderData(EssentialConst.TEMPLATE_PARAM_FILE_BASED, true);
+            addPlaceholderData(EssentialConst.TEMPLATE_NAME_EXTENSION, ".ftl");
         } else {
             // reset to freemarker
             placeholderData.put(EssentialConst.PROP_TEMPLATE_NAME, EssentialConst.TEMPLATE_FREEMARKER);
             addPlaceholderData(EssentialConst.TEMPLATE_PARAM_FILE_BASED, false);
             addPlaceholderData(EssentialConst.TEMPLATE_PARAM_REPOSITORY_BASED, true);
+            addPlaceholderData(EssentialConst.TEMPLATE_NAME_EXTENSION, "");
         }
     }
 

@@ -1,5 +1,5 @@
 {{#repositoryBased}}
-    <#include "../../hst:default/hst:templates/imports">
+    <#include "../../hst:default/hst:templates/imports.ftl">
 {{/repositoryBased}}
 {{#fileBased}}
     <#include "/WEB-INF/freemarker/include/imports.ftl">

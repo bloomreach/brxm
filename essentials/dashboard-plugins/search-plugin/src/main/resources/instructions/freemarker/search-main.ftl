@@ -1,5 +1,5 @@
 {{#repositoryBased}}
-    <#include "../../hst:default/hst:templates/imports">
+    <#include "../../hst:default/hst:templates/imports.ftl">
 {{/repositoryBased}}
 {{#fileBased}}
     <#include "/WEB-INF/freemarker/include/imports.ftl">
@@ -33,7 +33,7 @@
     </#list>
     <#if pageable.showPagination??>
       {{#repositoryBased}}
-    <#include "../../hst:default/hst:templates/pagination">
+    <#include "../../hst:default/hst:templates/pagination.ftl">
 {{/repositoryBased}}
 {{#fileBased}}
     <#include "/WEB-INF/freemarker/include/pagination.ftl">

@@ -99,6 +99,7 @@ public class FreemarkerInstruction extends FileInstruction {
                 final String content = GlobalUtils.readStreamAsText(stream);
                 final String replacedData = TemplateUtils.replaceTemplateData(content, context.getPlaceholderData());
                 templateNode.setProperty("hst:script", replacedData);
+                session.save();
                 return InstructionStatus.SUCCESS;
 
             } catch (RepositoryException e) {
@@ -160,7 +161,8 @@ public class FreemarkerInstruction extends FileInstruction {
                     configurationName = "hst:default";
                 }
                 templateName = parts.get(size - 1);
-                this.templateName = EXTENSION_REPLACEMENT.matcher(templateName).replaceAll("");
+                // Repository based items needs .ftl extension!
+                //this.templateName = EXTENSION_REPLACEMENT.matcher(templateName).replaceAll("");
                 repositoryTarget = "/hst:hst/hst:configurations/" + configurationName + "/hst:templates";
                 setTarget(repositoryTarget + '/' + templateName);
             }

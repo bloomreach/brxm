@@ -40,7 +40,7 @@
       <sv:value>main</sv:value>
     </sv:property>
     <sv:property sv:name="hst:template" sv:type="String">
-      <sv:value>base-top-menu</sv:value>
+      <sv:value>base-top-menu{{templateExtension}}</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="top">
