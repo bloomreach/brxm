@@ -1,0 +1,57 @@
+/*
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+@import "essentials-variables.less";
+
+.infobox {
+  margin: 0 0 20px 0;
+  padding: 15px 30px 15px 15px;
+  border-left: 5px solid #eee;
+
+  h3, h4 {
+    margin-top: 0;
+  }
+  p:last-child {
+    margin-bottom: 0;
+  }
+  code,
+  .highlight {
+    background-color: @color-white;
+  }
+
+  &.infobox-danger {
+    background-color: @alert-danger-bg;
+    border-color: darken(@alert-danger-bg, 5%)
+  }
+  &.infobox-warning {
+    background-color: @alert-warning-bg;
+    border-color: darken(@alert-warning-bg, 5%)
+  }
+  &.infobox-info {
+    background-color: @alert-info-bg;
+    border-color: darken(@alert-info-bg, 5%)
+  }
+  &.infobox-danger h4 {
+    color: @alert-danger-text;
+  }
+
+  &.infobox-warning h4 {
+    color: @alert-warning-text;
+  }
+
+  &.infobox-info h4 {
+    color: @alert-info-text;
+  }
+}

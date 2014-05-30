@@ -955,10 +955,13 @@ plugin-dashboard/src/main/webapp/bootstrap-3.0.0/less/close.less -text
 plugin-dashboard/src/main/webapp/bootstrap-3.0.0/less/code.less -text
 plugin-dashboard/src/main/webapp/bootstrap-3.0.0/less/component-animations.less -text
 plugin-dashboard/src/main/webapp/bootstrap-3.0.0/less/dropdowns.less -text
+plugin-dashboard/src/main/webapp/bootstrap-3.0.0/less/essentials-less/essentials-variables.less -text
+plugin-dashboard/src/main/webapp/bootstrap-3.0.0/less/essentials-less/infobox.less -text
 plugin-dashboard/src/main/webapp/bootstrap-3.0.0/less/forms.less -text
 plugin-dashboard/src/main/webapp/bootstrap-3.0.0/less/glyphicons.less -text
 plugin-dashboard/src/main/webapp/bootstrap-3.0.0/less/grid.less -text
 plugin-dashboard/src/main/webapp/bootstrap-3.0.0/less/hippo-essentials.less -text
+plugin-dashboard/src/main/webapp/bootstrap-3.0.0/less/hippo-theme/_variables.less -text
 plugin-dashboard/src/main/webapp/bootstrap-3.0.0/less/input-groups.less -text
 plugin-dashboard/src/main/webapp/bootstrap-3.0.0/less/jumbotron.less -text
 plugin-dashboard/src/main/webapp/bootstrap-3.0.0/less/labels.less -text

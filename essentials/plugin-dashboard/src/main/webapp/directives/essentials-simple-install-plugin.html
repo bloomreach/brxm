@@ -38,6 +38,15 @@
                 </tr>
                 </tbody>
             </table>
+            <div class="infobox infobox-info">
+                <h4>Current settings:</h4>
+                <p>Template language:<strong>{{templateName}}</strong></p>
+                <p ng-show="sample"><strong>{{sampleData ? "Add sample data": "No sample data"}}</strong></p>
+                <p class="pull-right">
+                    <button class="btn btn-primary" ng-click="toggleForm()">{{settingsButtonText}}</button>
+                </p>
+
+            </div>
         </div>
         <form novalidate name="templateForm" ng-show="showForm">
             <div class="form-group">
