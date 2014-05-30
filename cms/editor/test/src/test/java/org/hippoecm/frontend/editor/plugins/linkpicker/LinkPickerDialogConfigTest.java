@@ -24,6 +24,7 @@ import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.plugins.standards.picker.NodePickerControllerSettings;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockProperty;
@@ -75,6 +76,14 @@ public class LinkPickerDialogConfigTest extends MockPluginTest {
         Property docbase = linkCompound.setProperty("hippo:docbase", "42");
 
         JcrPropertyModel<MockProperty> docbaseModel = new JcrPropertyModel<>(docbase);
+        return new JcrPropertyValueModel<>(docbaseModel);
+    }
+
+    private JcrPropertyValueModel<String> createHippostdContentField(Node document) throws RepositoryException{
+        String body = "<html><body></body></html>";
+        Node hippoStdHtml = document.addNode("htmlCompound","hippostd:html");
+        Property hippoStdContent = hippoStdHtml.setProperty("hipposted:content", body);
+        JcrPropertyModel<MockProperty> docbaseModel = new JcrPropertyModel<>(hippoStdContent);
         return new JcrPropertyValueModel<>(docbaseModel);
     }
 
@@ -158,5 +167,38 @@ public class LinkPickerDialogConfigTest extends MockPluginTest {
         assertNull("The fixture does not contain a German base folder, so no specific root folder UUID should be set for a German document",
                 config.getString("base.uuid"));
     }
+
+    @Test
+    public void englishDocumentCKEditor_languageAware_usesEnglishRootFolder() throws RepositoryException {
+        createDutchRootFolder();
+        Node englishFolder = rootFolder.getNode("englishFolder");
+        Node englishDocument = addTranslatedNode(englishFolder, "englishDocument", "hippo:document", "en");
+        docbaseValueModel = createHippostdContentField(englishDocument);
+
+        IPluginConfig config = LinkPickerDialogConfig.fromPluginConfig(new JavaPluginConfig(), docbaseValueModel);
+
+        assertEquals("an English document in an English folder under the Dutch root folder should use the UUID of" +
+                        " the English folder, since that's the matching locale",
+                englishFolder.getIdentifier(), config.getString("base.uuid"));
+    }
+
+    @Test
+    public void englishDocumentCKEditor_NotlanguageAware_useRootFolder() throws RepositoryException {
+        createDutchRootFolder();
+        Node englishFolder = rootFolder.getNode("englishFolder");
+        Node englishDocument = addTranslatedNode(englishFolder, "englishDocument", "hippo:document", "en");
+        docbaseValueModel = createHippostdContentField(englishDocument);
+
+        JavaPluginConfig languageContextUnawareConfig = new JavaPluginConfig();
+        languageContextUnawareConfig.put(LinkPickerDialogConfig.CONFIG_LANGUAGE_CONTEXT_AWARE, false);
+        IPluginConfig config = LinkPickerDialogConfig.fromPluginConfig(languageContextUnawareConfig, docbaseValueModel);
+
+        assertEquals("an English document in an English folder under the Dutch root folder should use the UUID of" +
+                        " the English folder, since that's the matching locale",
+                null, config.getString("base.uuid"));
+    }
+
+
+
 
 }
