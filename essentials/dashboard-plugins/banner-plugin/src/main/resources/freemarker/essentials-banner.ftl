@@ -20,7 +20,7 @@
   limitations under the License.
 -->
 <#-- @ftlvariable name="document" type="{{beansPackage}}.Banner" -->
-<#if banner??>
+<#if document??>
 <div class="row">
     <a href="<@hst.link hippobean=document.link />"><img src="<@hst.link hippobean=document.image />" alt="${document.title}"/></a>
 </div>
