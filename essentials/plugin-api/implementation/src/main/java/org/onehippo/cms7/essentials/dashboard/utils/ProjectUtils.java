@@ -28,11 +28,17 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.generated.jaxb.WebXml;
 import org.onehippo.cms7.essentials.dashboard.model.DependencyType;
 import org.onehippo.cms7.essentials.dashboard.utils.common.PackageVisitor;
 import org.slf4j.Logger;
@@ -184,6 +190,26 @@ public final class ProjectUtils {
 
     }
 
+
+    /**
+     * Read web.xml file content
+     *
+     * @param path path of XMl file
+     * @return
+     */
+    public static WebXml readWebXmlFile(final String path) {
+        try {
+            final JAXBContext context = JAXBContext.newInstance(WebXml.class);
+            final Marshaller m = context.createMarshaller();
+            final Unmarshaller unmarshaller = context.createUnmarshaller();
+            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            return (WebXml) unmarshaller.unmarshal(new File(path));
+        } catch (JAXBException e) {
+            log.error("Error reading web.xml:" + path, e);
+        }
+        return null;
+    }
+
     /**
      * Return full pom.xml file path for given dependency type
      *
@@ -253,6 +279,35 @@ public final class ProjectUtils {
                 + "main" + File.separatorChar
                 + "java" + File.separatorChar;
         return new File(javaFolder);
+    }
+
+    public static String getWebXmlPath(DependencyType type) {
+        if (type == null
+                || type == DependencyType.INVALID
+                || type == DependencyType.BOOTSTRAP
+                || type == DependencyType.BOOTSTRAP_CONFIG
+                || type == DependencyType.BOOTSTRAP_CONTENT) {
+            return null;
+        }
+        switch (type) {
+            case SITE:
+                return getWebXmlForDir(ProjectUtils.getSite());
+            case CMS:
+                return getWebXmlForDir(ProjectUtils.getCms());
+            case ESSENTIALS:
+                return getWebXmlForDir(ProjectUtils.getEssentialsFolder());
+        }
+        return null;
+
+    }
+
+    private static String getWebXmlForDir(final File folder) {
+
+        if (folder != null) {
+            return folder.getPath() + File.separatorChar + EssentialConst.PATH_REL_WEB_INF + File.separatorChar + "web.xml";
+        }
+        return null;
+
     }
 
 

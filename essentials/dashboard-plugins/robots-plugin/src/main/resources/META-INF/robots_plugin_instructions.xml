@@ -18,5 +18,8 @@
 <instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
 
-
+  <!-- INSTRUCTION ADDING BEAN MAPPINGS TO HST BEANS-->
+  <instructionSet>
+    <execute class="org.onehippo.cms7.essentials.plugins.robots.RobotsInstruction"/>
+  </instructionSet>
 </instructions>

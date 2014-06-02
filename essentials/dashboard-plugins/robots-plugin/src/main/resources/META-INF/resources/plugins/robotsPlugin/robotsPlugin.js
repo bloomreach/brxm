@@ -16,10 +16,13 @@
 
 (function () {
     "use strict";
-    angular.module('hippo.essentials').controller('galleryPluginCtrl', function ($scope, $sce, $log, $rootScope, $http, $modal) {
+    angular.module('hippo.essentials').controller('robotsPluginCtrl', function ($scope, $sce, $log, $rootScope, $http, $modal) {
 
         $scope.run = function(){
             console.log("adding robots support");
+            $scope.payload = {values: {pluginId: "robotsPluginCtrl"}};
+            $http.post($rootScope.REST.package_install, $scope.payload).success(function (data) {
+            });
         }
 
     });
