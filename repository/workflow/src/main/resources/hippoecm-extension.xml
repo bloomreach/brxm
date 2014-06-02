@@ -93,6 +93,12 @@
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>18.0</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>2.26.02</sv:value>
+    </sv:property>
   </sv:node>
 
   <!-- Hippo standard workflows (Threepane) -->
@@ -160,6 +166,12 @@
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>501.1</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>2.26.02</sv:value>
+    </sv:property>
   </sv:node>
 
   <!--Workflows configuration-->
@@ -176,6 +188,12 @@
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>501.1</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>2.26.02</sv:value>
+    </sv:property>
   </sv:node>
   <!--Workflows configuration-->
   <sv:node sv:name="reviewedactions-admin-workflows">
@@ -190,6 +208,12 @@
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>501.1</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>2.26.02</sv:value>
     </sv:property>
   </sv:node>
   <!--Workflows configuration-->
@@ -206,6 +230,12 @@
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>501.0</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>2.26.02</sv:value>
+    </sv:property>
   </sv:node>
 
   <!--Translation workflow configuration-->
@@ -221,6 +251,12 @@
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>505.0</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>2.26.02</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="folder-translations-workflows">
