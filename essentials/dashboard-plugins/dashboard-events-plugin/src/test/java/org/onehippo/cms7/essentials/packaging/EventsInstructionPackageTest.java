@@ -38,7 +38,7 @@ import static org.junit.Assert.assertEquals;
 public class EventsInstructionPackageTest extends BaseRepositoryTest {
 
 
-    public static final int TOTAL_INSTRUCTIONS = 8;
+    public static final int TOTAL_INSTRUCTIONS = 9;
 
 
 

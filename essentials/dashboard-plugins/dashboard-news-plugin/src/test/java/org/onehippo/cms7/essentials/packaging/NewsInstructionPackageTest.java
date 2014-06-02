@@ -38,7 +38,7 @@ import static org.junit.Assert.assertEquals;
 public class NewsInstructionPackageTest extends BaseRepositoryTest {
 
 
-    public static final int TOTAL_INSTRUCTIONS = 11;
+    public static final int TOTAL_INSTRUCTIONS = 12;
 
 
 

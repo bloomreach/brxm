@@ -38,7 +38,7 @@ import static org.junit.Assert.assertEquals;
 public class GenericListContentInstructionPackageTest extends BaseRepositoryTest {
 
 
-    public static final int TOTAL_INSTRUCTIONS = 3;
+    public static final int TOTAL_INSTRUCTIONS = 4;
 
 
 
