@@ -956,7 +956,10 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
 
 
-    private void attachChannelToMountAndHostGroup(Channel liveChannel, final Channel previewChannel, ContextualizableMount mount, final HstNodeLoadingCache hstNodeLoadingCache) throws ChannelException {
+    private void attachChannelToMountAndHostGroup(final Channel liveChannel,
+                                                  final Channel previewChannel,
+                                                  final ContextualizableMount mount,
+                                                  final HstNodeLoadingCache hstNodeLoadingCache) throws ChannelException {
         long start = System.currentTimeMillis();
 
         final String hostGroupName = mount.getVirtualHost().getHostGroupName();
@@ -965,6 +968,13 @@ public class VirtualHostsService implements MutableVirtualHosts {
             channelsForHostGroup = new HashMap<>();
             channelsByHostGroup.put(hostGroupName, channelsForHostGroup);
         }
+        if (channelsForHostGroup.containsKey(liveChannel.getId())) {
+            String msg = String.format("Channel '%s' is referenced by multiple mounts within hostgroup '%'. Within " +
+                    "a single hostgroup, a channel is only allowed to be referenced by a ons single mount.",
+                    liveChannel.getId(), hostGroupName);
+            throw new ChannelException(msg);
+        }
+
         channelsForHostGroup.put(liveChannel.getId(), liveChannel);
         if (previewChannel != null) {
             channelsForHostGroup.put(previewChannel.getId(), previewChannel);
