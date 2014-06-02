@@ -1,0 +1,25 @@
+{
+    "TECHNICAL_ERROR": "Une erreur technique s'est produite",
+    "ITEM_NOT_CORRECT_LOCATION": "Une erreur interne s'est produite: des pages du plan de site incorrect ont été demandées.",
+    "LANDING_PAGES": "Pages de renvoi",
+    "ADD_NEW_PAGE": "Ajouter une nouvelle page",
+    "ADD_NEW_PAGE_DISABLED_TOOLTIP": "Pour ajouter une page, cliquez tout d'abord \n sur 'Modifier le canal'",
+
+    "CREATE_NEW_PAGE": "Créer une nouvelle page",
+    "PAGE_TITLE": "Titre de page",
+    "TITLE_REQUIRED": "Le titre est un champ obligatoire",
+    "URL": "URL",
+    "URL_REQUIRED": "L'URL est un champ obligatoire",
+    "PAGE_TEMPLATE": "Modèle de page",
+    "CHOOSE_A_TEMPLATE": "Choisir un modèle",
+    "CREATE_PAGE": "Créer une page",
+    "CANCEL": "Annuler",
+
+    "ITEM_NAME_NOT_UNIQUE": "Cette URL est déjà utilisée",
+    "INVALID_NAME": "L'URL n'est pas valide",
+    "ILLEGAL_CHARACTERS": "Ces caractères ne sont pas autorisés: {{ illegalCharacters }}",
+    "ITEM_EXISTS_OUTSIDE_WORKSPACE": "Il existe déjà une page utilisant cette URL.",
+
+    "NO_RESULTS": "Aucun modèle trouvé pour",
+    "SELECT_OPTION": "Veuillez sélectionner un modèle"
+}

@@ -1,0 +1,40 @@
+{
+    "ADD_MENU_ITEM": "Menüelement hinzufügen",
+    "CANCEL": "Abbrechen",
+    "CREATE_MENU_ITEM": "Menüelement erstellen",
+    "CREATE_PAGE": "Seite erstellen",
+    "DELETE_MENU_ITEM": "Menüelement löschen",
+    "DESTINATION": "Ziel",
+    "EXAMPLE_DOMAIN": "http://www.beispiel.de",
+    "EXTERNAL_LINK": "Externer Link",
+    "EXTERNAL_LINK_REQUIRED": "Ein externer Link ist erforderlich",
+    "EXTERNAL_LINK_INVALID": "Der externe Link ist ungültig",
+    "INTERNAL_LINK": "Interner Link",
+    "LABEL": "Beschriftung",
+    "LABEL_REQUIRED": "Eine Beschriftung ist erforderlich",
+    "NONE": "Keine",
+    "PAGE_TITLE": "Seitentitel",
+    "PAGE_URL": "URL der Seite",
+    "SITEMAP_ITEM": "Element der Siteübersicht",
+    "SEARCH_FOR_TEMPLATE": "Nach Vorlage suchen",
+    "REMOVE_CONFIRMATION_TITLE": "Menüelement löschen",
+    "REMOVE_CONFIRMATION": "Sind Sie sicher, dass Sie das Menüelement '{{ title }}' löschen möchten?",
+
+    "OPEN_CONFIRMATION_TITLE": "Externen Link öffnen",
+    "OPEN_CONFIRMATION": "Sind Sie sicher, dass Sie '{{ title }}' in einer neuen Registerkarte öffnen möchten?",
+    "OPEN_LINK": "Externen Link öffnen",
+    "ITEM_ALREADY_LOCKED": "Sie können dieses Menü nicht bearbeiten, weil '{{ lockedBy }}' das Menü bereits bearbeitet",
+    "ITEM_NAME_NOT_UNIQUE": "Das Menüelement '{{item}}' existiert bereits im Untermenü '{{parentPath}}'",
+    "ITEM_NAME_NOT_UNIQUE_IN_ROOT": "Das Element '{{item}}' existiert bereits als Hauptmenüelement ",
+    "TECHNICAL_ERROR": "Es ist ein technischer Fehler aufgetreten",
+
+    "INVALID_CHARACTERS": "Die folgenden Zeichen sind in der Beschriftung nicht erlaubt: {{ invalidCharacters }}",
+    "INVALID_URL": "Der externe Link ist ungültig",
+
+    "UNTITLED": "Ohne Titel",
+    "MENU_ITEM": "Menüelement",
+
+    "CLOSE_PANEL_TITLE": "Sind Sie sicher, dass Sie dieses Fenster schließen möchten?",
+    "CLOSE_PANEL_CONFIRMATION": "Die letzten Änderungen werden nicht gespeichert",
+    "CLOSE": "Schließen"
+}

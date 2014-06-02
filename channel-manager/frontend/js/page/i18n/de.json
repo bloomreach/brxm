@@ -1,0 +1,30 @@
+{
+    "PAGE_TITLE": "Seitentitel",
+    "PAGE_TITLE_REQUIRED": "Der Seitentitel kann nicht leer sein",
+
+    "URL": "URL",
+    "URL_REQUIRED": "Die URL kann nicht leer sein",
+    "URL_ILLEGAL_CHARACTERS": "Diese Zeichen sind nicht erlaubt: {{ illegalCharacters }}",
+
+    "ASSIGN_NEW_TEMPLATE": "Verwenden Sie eine neue Vorlage",
+    "ASSIGN_NEW_TEMPLATE_REPOSITION_WARNING": "Komponenten der Seite können neu positioniert werden, wenn eine neue Vorlage verwendet wird.",
+    "ASSIGN_NEW_TEMPLATE_REMOVED_WARNING": "Die gewählte Vorlage enthält keine Container. Wenn diese Vorlage verwendet wird, werden alle Containerelemente der aktuellen Seite gelöscht.",
+    "SELECT_TEMPLATE": "Wählen Sie eine Vorlage",
+    "NO_TEMPLATE_FOUND_FOR": "Keine Vorlage gefunden für",
+
+    "SAVE": "Speichern",
+    "CANCEL": "Abbrechen",
+    "DELETE_PAGE": "Seite löschen",
+
+    "CONFIRM_DELETE_TITLE": "Löschen bestätigen",
+    "CONFIRM_DELETE_MESSAGE": "Sind Sie sicher, dass Sie '{{ title }}' löschen möchten?",
+
+    "TOOLTIP_NOT_EDITABLE": "Diese Seite kann nicht gelöscht werden, weil sie zurzeit nicht bearbeitet werden kann",
+    "TOOLTIP_IS_HOMEPAGE": "Die Homepage kann nicht gelöscht werden",
+
+    "PAGE_LOCKED": "Diese Seite wurde von {{ owner }} am {{ timestamp | date:'d-M-yyyy H:mm' }} gesperrt",
+
+    "TECHNICAL_ERROR": "Es ist ein technischer Fehler aufgetreten",
+    "ITEM_ALREADY_LOCKED": "Sie können diese Seite nicht bearbeiten, weil '{{ lockedBy }}' sie bereits bearbeitet"
+
+}

@@ -1,0 +1,30 @@
+{
+    "PAGE_TITLE": "Titre de page",
+    "PAGE_TITLE_REQUIRED": "Le titre de page ne peut pas être vide",
+
+    "URL": "URL",
+    "URL_REQUIRED": "L'URL ne peut pas être vide",
+    "URL_ILLEGAL_CHARACTERS": "Ces caractères ne sont pas autorisés: {{ illegalCharacters }}",
+
+    "ASSIGN_NEW_TEMPLATE": "Utiliser un nouveau modèle",
+    "ASSIGN_NEW_TEMPLATE_REPOSITION_WARNING": "Si un nouveau modèle est utilisé, il se peut que les composants de la page soient repositionnés.",
+    "ASSIGN_NEW_TEMPLATE_REMOVED_WARNING": "Le modèle sélectionné ne comprend aucun conteneur. Si ce modèle est utilisé, tous les éléments du conteneur de la page actuelle seront supprimés.",
+    "SELECT_TEMPLATE": "Sélectionnez un modèle",
+    "NO_TEMPLATE_FOUND_FOR": "Aucun modèle trouvé pour",
+
+    "SAVE": "Enregistrer",
+    "CANCEL": "Annuler",
+    "DELETE_PAGE": "Supprimer la page",
+
+    "CONFIRM_DELETE_TITLE": "Confirmer la suppression",
+    "CONFIRM_DELETE_MESSAGE": "Souhaitez-vous vraiment supprimer '{{ title }}'?",
+
+    "TOOLTIP_NOT_EDITABLE": "Cette page ne peut pas être supprimée, car elle n'est actuellement pas modifiable",
+    "TOOLTIP_IS_HOMEPAGE": "La page d'accueil ne peut pas être supprimée",
+
+    "PAGE_LOCKED": "Cette page a été verrouillée par {{ owner }} à {{ timestamp | date:'M/d/yyyy h:mm a' }}",
+
+    "TECHNICAL_ERROR": "Une erreur technique s'est produite",
+    "ITEM_ALREADY_LOCKED": "Cette page ne peut pas être modifiée, car elle est déjà en cours de modification par '{{ lockedBy }}'"
+
+}

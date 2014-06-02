@@ -1,0 +1,25 @@
+{
+    "TECHNICAL_ERROR": "Es ist ein technischer Fehler aufgetreten",
+    "ITEM_NOT_CORRECT_LOCATION": "Es ist ein interner Fehler aufgetreten: Es wurden Seiten von der verkehrten Siteübersicht angefordert.",
+    "LANDING_PAGES": "Landing Pages",
+    "ADD_NEW_PAGE": "Neue Seite hinzufügen",
+    "ADD_NEW_PAGE_DISABLED_TOOLTIP": "Um eine Seite hinzuzufügen, klicken Sie zunächst \n auf 'Kanal ändern'",
+
+    "CREATE_NEW_PAGE": "Neue Seite erstellen",
+    "PAGE_TITLE": "Seitentitel",
+    "TITLE_REQUIRED": "Das Feld 'Titel' ist erforderlich",
+    "URL": "URL",
+    "URL_REQUIRED": "Das Feld 'URL' ist erforderlich",
+    "PAGE_TEMPLATE": "Seitenvorlage",
+    "CHOOSE_A_TEMPLATE": "Vorlage wählen",
+    "CREATE_PAGE": "Seite erstellen",
+    "CANCEL": "Abbrechen",
+
+    "ITEM_NAME_NOT_UNIQUE": "Diese URL wird bereits verwendet",
+    "INVALID_NAME": "Die URL ist ungültig",
+    "ILLEGAL_CHARACTERS": "Diese Zeichen sind nicht erlaubt: {{ illegalCharacters }}",
+    "ITEM_EXISTS_OUTSIDE_WORKSPACE": "Es existiert bereits eine Seite mit dieser URL.",
+
+    "NO_RESULTS": "Keine Vorlagen gefunden für",
+    "SELECT_OPTION": "Bitte wählen Sie eine Vorlage"
+}

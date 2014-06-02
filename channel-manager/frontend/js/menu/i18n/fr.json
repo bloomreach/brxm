@@ -1,0 +1,41 @@
+{
+    "ADD_MENU_ITEM": "Ajouter un élément de menu",
+    "CANCEL": "Annuler",
+    "CREATE_MENU_ITEM": "Créer un élément de menu",
+    "CREATE_PAGE": "Créer une page",
+    "DELETE_MENU_ITEM": "Supprimer un élément de menu",
+    "DESTINATION": "Destination",
+    "EXAMPLE_DOMAIN": "http://www.exemple.com",
+    "EXTERNAL_LINK": "Lien externe",
+    "EXTERNAL_LINK_REQUIRED": "Un lien externe est requis",
+    "EXTERNAL_LINK_INVALID": "Le lien externe n'est pas valide",
+    "INTERNAL_LINK": "Lien interne",
+    "LABEL": "Etiquette",
+    "LABEL_REQUIRED": "Une étiquette est requise",
+    "NONE": "Aucun(e)",
+    "PAGE_TITLE": "Titre de la page",
+    "PAGE_URL": "URL de la page",
+    "SITEMAP_ITEM": "Elément de plan du site",
+    "SEARCH_FOR_TEMPLATE": "Chercher un modèle",
+    "REMOVE_CONFIRMATION_TITLE": "Supprimer un élément de menu",
+    "REMOVE_CONFIRMATION": "Souhaitez-vous vraiment supprimer l'élément de menu '{{ title }}'?",
+
+    "OPEN_CONFIRMATION_TITLE": "Ouvrir un lien externe",
+    "OPEN_CONFIRMATION": "Souhaitez-vous vraiment ouvrir '{{ title }}' dans un nouvel onglet?",
+    "OPEN_LINK": "Ouvrir un lien externe",
+
+    "ITEM_ALREADY_LOCKED": "Vous ne pouvez pas modifier ce menu, car il est en cours de modification par '{{ lockedBy }}'",
+    "ITEM_NAME_NOT_UNIQUE": "L'élément de menu '{{ item }}' existe déjà dans le sous-menu '{{ parentPath }}'",
+    "ITEM_NAME_NOT_UNIQUE_IN_ROOT": "L'élément de menu '{{ item }}' existe déjà en tant qu'élément de menu supérieur",
+    "TECHNICAL_ERROR": "Une erreur technique s'est produite",
+
+    "INVALID_CHARACTERS": "Les caractères suivants ne sont pas autorisés dans l'étiquette: {{ invalidCharacters }}",
+    "INVALID_URL": "Le lien externe n'est pas valide",
+
+    "UNTITLED": "Sans titre",
+    "MENU_ITEM": "élément de menu",
+
+    "CLOSE_PANEL_TITLE": "Souhaitez-vous vraiment fermer ce panneau?",
+    "CLOSE_PANEL_CONFIRMATION": "Les dernières modifications ne seront pas enregistrées.",
+    "CLOSE": "Fermer"
+}
