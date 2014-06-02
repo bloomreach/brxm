@@ -137,7 +137,8 @@
                 ]
             }
         ]
-    },   {
+    },
+    {
         "enabled": true,
         "@type": "plugin",
         "name": "Robots plugin",
@@ -173,6 +174,48 @@
                 "@type": "dependency",
                 "groupId": "org.onehippo.forge.robotstxt",
                 "artifactId": "robotstxt-hst-client",
+                "scope": "compile",
+                "type": "site"
+            }
+        ]
+
+    },
+    {
+        "enabled": true,
+        "@type": "plugin",
+        "name": "Poll plugin",
+        "introduction": "Add poll plugin support",
+        "pluginId": "pollPlugin",
+        "restClasses": [],
+        "packageFile": "/META-INF/poll_plugin_instructions.xml",
+        "type": "plugins",
+        "vendor": {
+            "@type": "vendor",
+            "name": "Hippo",
+            "url": "http://www.onehippo.com"
+        },
+        "libraries": [
+            {
+                "items": [
+                    {
+                        "component": "pollPlugin",
+                        "file": "pollPlugin.js"
+                    }
+                ]
+            }
+        ],
+        "dependencies": [
+            {
+                "@type": "dependency",
+                "groupId": "org.onehippo.forge.poll",
+                "artifactId": "poll-addon-repository",
+                "scope": "compile",
+                "type": "cms"
+            },
+            {
+                "@type": "dependency",
+                "groupId": "org.onehippo.forge.poll",
+                "artifactId": "poll-hst-client",
                 "scope": "compile",
                 "type": "site"
             }

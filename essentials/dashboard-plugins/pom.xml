@@ -58,6 +58,7 @@
     <module>freemarker-synchronizer</module>
     <module>banner-plugin</module>
     <module>robots-plugin</module>
+    <module>poll-plugin</module>
   </modules>
   <dependencyManagement>
 

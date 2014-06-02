@@ -477,6 +477,12 @@ dashboard-plugins/menu-plugin/src/main/resources/images/component-icon-menu.png 
 dashboard-plugins/menu-plugin/src/main/resources/jsp/essentials-menu.jsp -text
 dashboard-plugins/menu-plugin/src/test/java/org/onehippo/cms7/essentials/dashboard/menu/MenuInstructionPackageTest.java -text
 dashboard-plugins/menu-plugin/src/test/resources/log4j.xml -text
+dashboard-plugins/poll-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/poll/PollInstruction.java -text
+dashboard-plugins/poll-plugin/src/main/resources/META-INF/poll_plugin_instructions.xml -text
+dashboard-plugins/poll-plugin/src/main/resources/META-INF/resources/plugins/pollPlugin/pollPlugin.html -text
+dashboard-plugins/poll-plugin/src/main/resources/META-INF/resources/plugins/pollPlugin/pollPlugin.js -text
+dashboard-plugins/poll-plugin/src/main/resources/META-INF/web-fragment.xml -text
+dashboard-plugins/poll-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/pom.xml -text
 dashboard-plugins/robots-plugin/pom.xml -text
 dashboard-plugins/robots-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/robots/RobotsInstruction.java -text
