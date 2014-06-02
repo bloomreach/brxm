@@ -66,17 +66,20 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
         serializer = config.getString(SERIALIZER, COMPACT);
         omitComments = config.getBoolean(OMIT_COMMENTS);
         final IPluginConfig whitelistConfig = config.getPluginConfig(WHITELIST);
-        for (IPluginConfig elementConfig : whitelistConfig.getPluginConfigSet()) {
-            final Collection<String> attributes = elementConfig.containsKey(ATTRIBUTES) ?
-                    Arrays.asList(elementConfig.getStringArray(ATTRIBUTES)) : Collections.<String>emptyList();
-            final String configName = elementConfig.getName();
-            final int offset = configName.lastIndexOf('.');
-            final String elementName = offset != -1 ? configName.substring(offset+1) : configName;
-            final Element element = new Element(elementName, attributes);
-            whitelist.put(element.name, element);
+        if (whitelistConfig != null) {
+            for (IPluginConfig elementConfig : whitelistConfig.getPluginConfigSet()) {
+                final Collection<String> attributes = elementConfig.containsKey(ATTRIBUTES) ?
+                        Arrays.asList(elementConfig.getStringArray(ATTRIBUTES)) : Collections.<String>emptyList();
+                final String configName = elementConfig.getName();
+                final int offset = configName.lastIndexOf('.');
+                final String elementName = offset != -1 ? configName.substring(offset + 1) : configName;
+                final Element element = new Element(elementName, attributes);
+                whitelist.put(element.name, element);
+            }
         }
         if (context != null) {
-            context.registerService(this, IHtmlCleanerService.class.getName());
+            final String serviceId = config.getString("service.id", IHtmlCleanerService.class.getName());
+            context.registerService(this, serviceId);
         }
     }
 

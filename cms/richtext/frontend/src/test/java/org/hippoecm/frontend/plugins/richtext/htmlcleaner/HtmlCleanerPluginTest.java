@@ -17,13 +17,23 @@ package org.hippoecm.frontend.plugins.richtext.htmlcleaner;
 
 import javax.jcr.Node;
 
+import org.apache.wicket.util.io.IClusterable;
+import org.easymock.EasyMock;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.IPlugin;
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 
 public class HtmlCleanerPluginTest extends PluginTest {
 
@@ -104,5 +114,20 @@ public class HtmlCleanerPluginTest extends PluginTest {
                 "&#58;&#97;&#108;&#101;&#114;&#116;&#40;&#39;&#88;&#83;&#83;&#39;&#41;\">link</a>");
         log.debug(html);
         assertEquals("<a href=\"\">link</a>", html);
+    }
+
+    @Test
+    public void serviceIdIsConfigurable() {
+        final IPluginContext context = EasyMock.createMock(IPluginContext.class);
+        context.registerService(isA(HtmlCleanerPlugin.class), eq("myHtmlCleaner"));
+        EasyMock.expectLastCall();
+        replay(context);
+
+        final IPluginConfig config = new JavaPluginConfig();
+        config.put("service.id", "myHtmlCleaner");
+
+        final HtmlCleanerPlugin htmlCleanerPlugin = new HtmlCleanerPlugin(context, config);
+
+        verify(context);
     }
 }

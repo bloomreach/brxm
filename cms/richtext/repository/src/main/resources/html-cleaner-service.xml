@@ -21,6 +21,9 @@
   <sv:property sv:name="plugin.class" sv:type="String">
     <sv:value>org.hippoecm.frontend.plugins.richtext.htmlcleaner.HtmlCleanerPlugin</sv:value>
   </sv:property>
+  <sv:property sv:name="service.id" sv:type="String">
+    <sv:value>org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService</sv:value>
+  </sv:property>
   <sv:property sv:name="charset" sv:type="String">
     <sv:value>UTF-8</sv:value>
   </sv:property>
