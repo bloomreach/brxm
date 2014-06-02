@@ -62,7 +62,7 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
 
     @Test
     public void test_hstManager_basic() throws Exception {
-        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("www.unit.test", "", "/");
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
         assertNotNull(mount);
         final HstSite hstSite = mount.getMount().getHstSite();
         assertNotNull(hstSite);
