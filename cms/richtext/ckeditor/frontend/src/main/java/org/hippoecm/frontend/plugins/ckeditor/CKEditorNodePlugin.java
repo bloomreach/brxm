@@ -142,12 +142,13 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
     }
 
     private LinkPickerBehavior createLinkPickerBehavior(final String editorId) {
-        final IPluginConfig linkPickerConfig = getChildPluginConfig(CONFIG_CHILD_LINK_PICKER, DEFAULT_LINK_PICKER_CONFIG);
+        IPluginConfig dialogConfig = LinkPickerDialogConfig.fromPluginConfig(
+                getChildPluginConfig(CONFIG_CHILD_LINK_PICKER, DEFAULT_LINK_PICKER_CONFIG), (JcrPropertyValueModel) getHtmlModel());
 
         final IRichTextLinkFactory linkFactory = createLinkFactory();
         RichTextEditorLinkService linkService = new RichTextEditorLinkService(linkFactory);
 
-        final LinkPickerBehavior behavior = new LinkPickerBehavior(getPluginContext(), linkPickerConfig, linkService);
+        final LinkPickerBehavior behavior = new LinkPickerBehavior(getPluginContext(), dialogConfig, linkService);
         behavior.setCloseAction(new CKEditorInsertInternalLinkAction(editorId));
 
         return behavior;
@@ -199,8 +200,7 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
 
     private IPluginConfig getChildPluginConfig(final String key, IPluginConfig defaultConfig) {
         IPluginConfig childConfig = getPluginConfig().getPluginConfig(key);
-        IPluginConfig dialogConfig = LinkPickerDialogConfig.fromPluginConfig(childConfig, (JcrPropertyValueModel) getHtmlModel());
-        return dialogConfig != null ? dialogConfig : defaultConfig;
+        return childConfig != null ? childConfig : defaultConfig;
     }
 
     /**

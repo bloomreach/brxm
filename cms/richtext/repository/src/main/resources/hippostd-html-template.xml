@@ -153,6 +153,7 @@
         <sv:value>linkpicker.last.visited.nodetypes</sv:value>
         <sv:value>linkpicker.open.in.new.window.enabled</sv:value>
         <sv:value>imagepicker.cluster.name</sv:value>
+        <sv:value>linkpicker.language.context.aware</sv:value>
         <sv:value>imagepicker.nodetypes</sv:value>
         <sv:value>imagepicker.base.uuid</sv:value>
         <sv:value>imagepicker.last.visited.key</sv:value>
@@ -161,7 +162,6 @@
         <sv:value>imagepicker.preferred.image.variant</sv:value>
         <sv:value>included.image.variants</sv:value>
         <sv:value>excluded.image.variants</sv:value>
-        <sv:value>linkpicker.language.context.aware</sv:value>
       </sv:property>
       <sv:property sv:name="frontend:references" sv:type="String">
         <sv:value>wicket.model</sv:value>
@@ -226,14 +226,14 @@
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:pluginconfig</sv:value>
           </sv:property>
+          <sv:property sv:name="base.uuid" sv:type="String">
+            <sv:value>${linkpicker.base.uuid}</sv:value>
+          </sv:property>
           <sv:property sv:name="cluster.name" sv:type="String">
             <sv:value>${linkpicker.cluster.name}</sv:value>
           </sv:property>
-          <sv:property sv:name="nodetypes" sv:type="String">
-            <sv:value>${linkpicker.nodetypes}</sv:value>
-          </sv:property>
-          <sv:property sv:name="base.uuid" sv:type="String">
-            <sv:value>${linkpicker.base.uuid}</sv:value>
+          <sv:property sv:name="language.context.aware" sv:type="String">
+            <sv:value>${linkpicker.language.context.aware}</sv:value>
           </sv:property>
           <sv:property sv:name="last.visited.enabled" sv:type="String">
             <sv:value>${linkpicker.last.visited.enabled}</sv:value>
@@ -244,11 +244,11 @@
           <sv:property sv:name="last.visited.nodetypes" sv:type="String">
             <sv:value>${linkpicker.last.visited.nodetypes}</sv:value>
           </sv:property>
+          <sv:property sv:name="nodetypes" sv:type="String">
+            <sv:value>${linkpicker.nodetypes}</sv:value>
+          </sv:property>
           <sv:property sv:name="open.in.new.window.enabled" sv:type="String">
             <sv:value>${linkpicker.open.in.new.window.enabled}</sv:value>
-          </sv:property>
-          <sv:property sv:name="language.context.aware" sv:type="String">
-            <sv:value>${linkpicker.language.context.aware}</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>

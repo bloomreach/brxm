@@ -78,14 +78,6 @@ public class LinkPickerDialogConfigTest extends MockPluginTest {
         return new JcrPropertyValueModel<>(docbaseModel);
     }
 
-    private JcrPropertyValueModel<String> createHippostdContentField(Node document) throws RepositoryException{
-        String body = "<html><body></body></html>";
-        Node hippoStdHtml = document.addNode("htmlCompound","hippostd:html");
-        Property hippoStdContent = hippoStdHtml.setProperty("hipposted:content", body);
-        JcrPropertyModel<MockProperty> docbaseModel = new JcrPropertyModel<>(hippoStdContent);
-        return new JcrPropertyValueModel<>(docbaseModel);
-    }
-
     // Tests
 
     @Test
@@ -167,33 +159,20 @@ public class LinkPickerDialogConfigTest extends MockPluginTest {
                 config.getString("base.uuid"));
     }
 
+
     @Test
-    public void englishDocumentCKEditor_languageAware_usesEnglishRootFolder() throws RepositoryException {
+    public void englishDocument_NotlanguageAware_useRootFolder() throws RepositoryException {
         createDutchRootFolder();
         Node englishFolder = rootFolder.getNode("englishFolder");
         Node englishDocument = addTranslatedNode(englishFolder, "englishDocument", "hippo:document", "en");
-        docbaseValueModel = createHippostdContentField(englishDocument);
-
-        IPluginConfig config = LinkPickerDialogConfig.fromPluginConfig(new JavaPluginConfig(), docbaseValueModel);
-
-        assertEquals("an English document in an English folder under the Dutch root folder should use the UUID of" +
-                        " the English folder, since that's the matching locale",
-                englishFolder.getIdentifier(), config.getString("base.uuid"));
-    }
-
-    @Test
-    public void englishDocumentCKEditor_NotlanguageAware_useRootFolder() throws RepositoryException {
-        createDutchRootFolder();
-        Node englishFolder = rootFolder.getNode("englishFolder");
-        Node englishDocument = addTranslatedNode(englishFolder, "englishDocument", "hippo:document", "en");
-        docbaseValueModel = createHippostdContentField(englishDocument);
+        docbaseValueModel = createLinkField(englishDocument);
 
         JavaPluginConfig languageContextUnawareConfig = new JavaPluginConfig();
         languageContextUnawareConfig.put(LinkPickerDialogConfig.CONFIG_LANGUAGE_CONTEXT_AWARE, false);
         IPluginConfig config = LinkPickerDialogConfig.fromPluginConfig(languageContextUnawareConfig, docbaseValueModel);
 
         assertEquals("an English document in an English folder under the Dutch root folder should use the UUID of" +
-                        " the English folder, since that's the matching locale",
+                        " the base folder when base uuid has not been set and language.context.aware has been set to false",
                 null, config.getString("base.uuid"));
     }
 
