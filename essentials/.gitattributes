@@ -478,6 +478,12 @@ dashboard-plugins/menu-plugin/src/main/resources/jsp/essentials-menu.jsp -text
 dashboard-plugins/menu-plugin/src/test/java/org/onehippo/cms7/essentials/dashboard/menu/MenuInstructionPackageTest.java -text
 dashboard-plugins/menu-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/pom.xml -text
+dashboard-plugins/robots-plugin/pom.xml -text
+dashboard-plugins/robots-plugin/src/main/resources/META-INF/resources/plugins/robotsPlugin/robotsPlugin.html -text
+dashboard-plugins/robots-plugin/src/main/resources/META-INF/resources/plugins/robotsPlugin/robotsPlugin.js -text
+dashboard-plugins/robots-plugin/src/main/resources/META-INF/robots_plugin_instructions.xml -text
+dashboard-plugins/robots-plugin/src/main/resources/META-INF/web-fragment.xml -text
+dashboard-plugins/robots-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/search-plugin/pom.xml -text
 dashboard-plugins/search-plugin/src/main/resources/META-INF/resources/plugins/searchPlugin/searchPlugin.html -text
 dashboard-plugins/search-plugin/src/main/resources/META-INF/searchPlugin_instructions.xml -text

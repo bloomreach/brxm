@@ -57,6 +57,7 @@
     <module>beanwriter-plugin</module>
     <module>freemarker-synchronizer</module>
     <module>banner-plugin</module>
+    <module>robots-plugin</module>
   </modules>
   <dependencyManagement>
 

@@ -119,8 +119,31 @@
         "name": "Beanwriter",
         "introduction": "Create (re-generate) HST beans.",
         "pluginId": "beanwriter",
-
+        "packageFile": "/META-INF/robots_plugin_instructions.xml",
         "restClasses": ["org.onehippo.cms7.essentials.beanwriter.rest.BeanWriterResource"],
+        "type": "tools",
+        "vendor": {
+            "@type": "vendor",
+            "name": "Hippo",
+            "url": "http://www.onehippo.com"
+        },
+        "libraries": [
+            {
+                "items": [
+                    {
+                        "component": "robotsPlugin",
+                        "file": "robotsPlugin.js"
+                    }
+                ]
+            }
+        ]
+    },   {
+        "enabled": true,
+        "@type": "plugin",
+        "name": "Robots plugin",
+        "introduction": "Add Robots plugin support",
+        "pluginId": "beanwriter",
+        "restClasses": [],
         "type": "tools",
         "vendor": {
             "@type": "vendor",
