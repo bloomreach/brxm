@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 public class RobotsInstruction implements Instruction {
 
     private static Logger log = LoggerFactory.getLogger(RobotsInstruction.class);
-    private static final String BEANS_MAPPINGS = "classpath*:org/onehippo/cms7/hst/beans/**/*.class,classpath*:org/onehippo/forge/robotstxt/**/*.class";
+    private static final String BEANS_MAPPINGS = "classpath*:org/onehippo/forge/**/*.class";
 
     @Override
     public String getMessage() {

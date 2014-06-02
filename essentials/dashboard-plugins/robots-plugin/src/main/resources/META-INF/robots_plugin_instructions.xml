@@ -21,8 +21,11 @@
   <!-- INSTRUCTION ADDING BEAN MAPPINGS TO HST BEANS & SAMPLE CONTENT -->
   <instructionSet>
     <execute class="org.onehippo.cms7.essentials.plugins.robots.RobotsInstruction" />
-    <folder template="xml/administration-folder.xml" path="/content/documents/administration"/>
-    <xml action="copy" source="xml/robots_content.xml" target="/content/documents/administration"/>
+
     <xml action="copy" source="xml/robots_sitemap.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
+  </instructionSet>
+  <instructionSet group="sampleData">
+     <folder template="xml/administration-folder.xml" path="/content/documents/administration"/>
+     <xml action="copy" source="xml/robots_content.xml" target="/content/documents/administration"/>
   </instructionSet>
 </instructions>

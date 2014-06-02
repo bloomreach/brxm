@@ -14,19 +14,13 @@
   limitations under the License.
   -->
 
-<div ng-controller="pollPluginCtrl" class="panel panel-default">
-    <div class="panel-heading">Poll plugin</div>
-    <div class="panel-body">
+<essentials-simple-install-plugin
+        plugin-id="pollPlugin"
+        plugin-title="Poll plugin"
+        button-text="Add poll plugin support"
+        sample="true"
+        has-no-templates="true"
+        />
 
-        <essentials-messages payload="payload" label="{{label}}"/>
-    </div>
-    <div class="panel-footer">
-        <div class="input-group">
-      <span class="input-group-btn">
-        <button class="btn btn-primary pull-right" type="submit" ng-click="run()">Add Poll plugin support</button>
-      </span>
-        </div>
-    </div>
-</div>
 
 

@@ -18,7 +18,7 @@
 <div>
     <div class="infobox infobox-info">
         <h4>Current settings:</h4>
-        <p>Template language:
+        <p ng-hide="hasNoTemplates">Template language:
             <strong>{{templateName=='repository'?'repository freemarker template' : templateName +' template'}}</strong>
         </p>
         <p ng-show="sample">Use sample data: <strong>{{sampleData ? "yes": "no"}}</strong></p>
@@ -29,7 +29,8 @@
     </div>
     <div class="infobox infobox-success" ng-show="showForm">
         <form novalidate name="templateForm">
-            <div class="form-group">
+            <div ng-hide="hasNoTemplates">
+                <div class="form-group">
                 <label>Please select templating language:</label>
             </div>
             <div class="radio">
@@ -49,6 +50,7 @@
                     <input type="radio" ng-model="templateName" required value="repository"/>
                     Repository freemarker template
                 </label>
+            </div>
             </div>
             <div ng-show="sample" class="form-group">
                 <label> Content: </label>

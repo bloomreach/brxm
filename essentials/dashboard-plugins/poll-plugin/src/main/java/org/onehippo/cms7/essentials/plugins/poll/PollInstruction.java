@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 public class PollInstruction implements Instruction {
 
     private static Logger log = LoggerFactory.getLogger(PollInstruction.class);
-    private static final String BEANS_MAPPINGS = "classpath*:org/onehippo/forge/poll/contentbean/**/*.class";
+    private static final String BEANS_MAPPINGS = "classpath*:org/onehippo/forge/**/*.class";
 
     @Override
     public String getMessage() {

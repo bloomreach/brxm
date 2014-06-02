@@ -21,5 +21,11 @@
   <!-- INSTRUCTION ADDING BEAN MAPPINGS TO HST BEANS-->
   <instructionSet>
     <execute class="org.onehippo.cms7.essentials.plugins.poll.PollInstruction" />
+    <xml action="copy" source="xml/new-poll-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+    <xml action="copy" source="xml/new-poll-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+  </instructionSet>
+  <instructionSet group="sampleData">
+    <folder path="/content/documents/polls" template="xml/poll-folder.xml"/>
+    <xml action="copy" source="xml/poll-example.xml" target="/content/documents/polls"/>
   </instructionSet>
 </instructions>

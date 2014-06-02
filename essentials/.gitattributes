@@ -481,7 +481,10 @@ dashboard-plugins/poll-plugin/pom.xml -text
 dashboard-plugins/poll-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/poll/PollInstruction.java -text
 dashboard-plugins/poll-plugin/src/main/resources/META-INF/poll_plugin_instructions.xml -text
 dashboard-plugins/poll-plugin/src/main/resources/META-INF/resources/plugins/pollPlugin/pollPlugin.html -text
-dashboard-plugins/poll-plugin/src/main/resources/META-INF/resources/plugins/pollPlugin/pollPlugin.js -text
+dashboard-plugins/poll-plugin/src/main/resources/META-INF/resources/xml/new-poll-document.xml -text
+dashboard-plugins/poll-plugin/src/main/resources/META-INF/resources/xml/new-poll-folder.xml -text
+dashboard-plugins/poll-plugin/src/main/resources/META-INF/resources/xml/poll-example.xml -text
+dashboard-plugins/poll-plugin/src/main/resources/META-INF/resources/xml/poll-folder.xml -text
 dashboard-plugins/poll-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/poll-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/pom.xml -text
@@ -2105,8 +2108,6 @@ plugin-dashboard/src/main/webapp/pages/plugins-menu.html -text
 plugin-dashboard/src/main/webapp/pages/plugins-new-tabs.html -text
 plugin-dashboard/src/main/webapp/pages/plugins.html -text
 plugin-dashboard/src/main/webapp/pages/tools.html -text
-plugin-dashboard/src/main/webapp/plugins/carouselPlugin/carouselPlugin.html -text
-plugin-dashboard/src/main/webapp/plugins/carouselPlugin/carouselPlugin.js -text
 plugin-dashboard/src/main/webapp/theme/fonts/glyphicons-halflings-regular.eot -text
 plugin-dashboard/src/main/webapp/theme/fonts/glyphicons-halflings-regular.svg -text
 plugin-dashboard/src/main/webapp/theme/fonts/glyphicons-halflings-regular.ttf -text

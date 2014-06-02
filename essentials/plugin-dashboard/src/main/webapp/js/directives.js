@@ -29,6 +29,7 @@
                    /* settings: '=',*/
                     sampleData: '=',
                     templateName: '=',
+                    hasNoTemplates: '@',
                     sample: '@'
                 },
                 templateUrl: 'directives/essentials-template-settings.html',
@@ -77,7 +78,7 @@
                     pluginId: '@',
                     pluginTitle: '@',
                     buttonText: '@',
-                    noTemplate: '@',
+                    hasNoTemplates: '@',
                     sample: '@'
                 },
                 templateUrl: 'directives/essentials-simple-install-plugin.html',

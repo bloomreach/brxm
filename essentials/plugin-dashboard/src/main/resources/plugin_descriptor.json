@@ -187,14 +187,6 @@
             "url": "http://www.onehippo.com"
         },
         "libraries": [
-            {
-                "items": [
-                    {
-                        "component": "pollPlugin",
-                        "file": "pollPlugin.js"
-                    }
-                ]
-            }
         ],
         "dependencies": [
             {
