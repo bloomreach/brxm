@@ -28,6 +28,13 @@ import org.apache.wicket.util.io.IClusterable;
 public interface IRestProxyService extends IClusterable {
 
     /**
+     * The context path for this {@link IRestProxyService}. The context path for ROOT.war is an empty String. Other allowed
+     * values must start with a '/' and are not allowed to have another '/'. If not configured, <code>null</code> is returned
+     * @return the context path for which this rest proxy service is available, optionally <code>null</code> when not configured
+     */
+    String getContextPath();
+
+    /**
      * Creates a proxy to a REST service based on the provided class
      *
      * @param restServiceApiClass the class representing the REST service API.
