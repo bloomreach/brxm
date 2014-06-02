@@ -64,6 +64,11 @@ public class RobotsInstruction implements Instruction {
         final String webXmlPath = ProjectUtils.getWebXmlPath(DependencyType.SITE);
         final WebXml webXml = ProjectUtils.readWebXmlFile(webXmlPath);
         try {
+            final String hstBeanContextValue = webXml.getHstBeanContextValue();
+            if(hstBeanContextValue.contains(BEANS_MAPPINGS)){
+                log.info("HST bean mappings for robot.txt are already added");
+                return InstructionStatus.SKIPPED;
+            }
             final String newContent = webXml.addToHstBeanContextValue(new FileInputStream(webXmlPath), BEANS_MAPPINGS);
             GlobalUtils.writeToFile(newContent, new File(webXmlPath).toPath());
             log.debug("Added new content to {}", webXmlPath);
