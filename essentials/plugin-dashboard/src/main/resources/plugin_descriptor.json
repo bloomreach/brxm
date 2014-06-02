@@ -131,8 +131,8 @@
             {
                 "items": [
                     {
-                        "component": "beanwriterPlugin",
-                        "file": "beanwriterPlugin.js"
+                        "component": "beanwriter",
+                        "file": "beanwriter.js"
                     }
                 ]
             }
@@ -144,6 +144,7 @@
         "introduction": "Add Robots plugin support",
         "pluginId": "robotsPlugin",
         "restClasses": [],
+        "packageFile": "/META-INF/robots_plugin_instructions.xml",
         "type": "plugins",
         "vendor": {
             "@type": "vendor",

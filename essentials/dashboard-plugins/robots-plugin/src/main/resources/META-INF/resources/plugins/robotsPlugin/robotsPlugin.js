@@ -20,7 +20,7 @@
 
         $scope.run = function(){
             console.log("adding robots support");
-            $scope.payload = {values: {pluginId: "robotsPluginCtrl"}};
+            $scope.payload = {values: {pluginId: "robotsPlugin"}};
             $http.post($rootScope.REST.package_install, $scope.payload).success(function (data) {
             });
         }
