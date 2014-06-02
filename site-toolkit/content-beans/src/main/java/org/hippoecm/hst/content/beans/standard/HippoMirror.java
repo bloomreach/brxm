@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.content.beans.standard;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.content.beans.Node;
@@ -83,10 +84,10 @@ public class HippoMirror extends HippoFolder implements HippoMirrorBean {
                 }
             }
             return (HippoBean) objectConverter.getObject(deref);
+        } catch (ItemNotFoundException | ObjectBeanManagerException e) {
+            log.info("Cannot get a derefenced HippoBean: {}. Return null", e);
         } catch (RepositoryException e) {
             log.warn("Cannot get a derefenced HippoBean: {}. Return null", e);
-        } catch (ObjectBeanManagerException e) {
-            log.info("Cannot get a derefenced HippoBean: {}. Return null", e.toString());
         }
         return null;
     }
