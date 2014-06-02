@@ -18,9 +18,10 @@
     "use strict";
     angular.module('hippo.essentials').controller('robotsPluginCtrl', function ($scope, $sce, $log, $rootScope, $http, $modal) {
 
-        $scope.run = function(){
+        $scope.payload = {values: {pluginId: "robotsPlugin"}};
+        $scope.run = function () {
             console.log("adding robots support");
-            $scope.payload = {values: {pluginId: "robotsPlugin"}};
+
             $http.post($rootScope.REST.package_install, $scope.payload).success(function (data) {
             });
         }

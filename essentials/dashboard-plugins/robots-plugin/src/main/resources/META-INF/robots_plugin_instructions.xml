@@ -20,6 +20,6 @@
 
   <!-- INSTRUCTION ADDING BEAN MAPPINGS TO HST BEANS-->
   <instructionSet>
-    <execute class="org.onehippo.cms7.essentials.plugins.robots.RobotsInstruction"/>
+    <execute class="org.onehippo.cms7.essentials.plugins.robots.RobotsInstruction" />
   </instructionSet>
 </instructions>

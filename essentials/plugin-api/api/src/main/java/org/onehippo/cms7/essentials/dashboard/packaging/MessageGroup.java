@@ -28,6 +28,7 @@ public enum MessageGroup {
     XML_NODE_FOLDER_DELETE,
     XML_NODE_FOLDER_CREATE,
     DOCUMENT_REGISTER,
+    EXECUTE,
     UNKNOWN,
 
 }

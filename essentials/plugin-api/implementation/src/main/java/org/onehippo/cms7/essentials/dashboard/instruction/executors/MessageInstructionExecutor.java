@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instruction.CndInstruction;
+import org.onehippo.cms7.essentials.dashboard.instruction.ExecuteInstruction;
 import org.onehippo.cms7.essentials.dashboard.instruction.FileInstruction;
 import org.onehippo.cms7.essentials.dashboard.instruction.FreemarkerInstruction;
 import org.onehippo.cms7.essentials.dashboard.instruction.NodeFolderInstruction;
@@ -31,6 +32,7 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -66,6 +68,8 @@ public class MessageInstructionExecutor {
                 processCndInstruction(retVal, placeholderData, (CndInstruction) instruction);
             } else if (instruction instanceof XmlInstruction) {
                 processXmlInstruction(retVal, placeholderData, (XmlInstruction) instruction);
+            }   else if (instruction instanceof ExecuteInstruction) {
+                processXmlInstruction(retVal, placeholderData, (ExecuteInstruction) instruction);
             } else {
                 retVal.put(MessageGroup.UNKNOWN, new MessageRestful(instruction.getMessage()));
             }
@@ -73,6 +77,13 @@ public class MessageInstructionExecutor {
 
         return retVal;
     }
+
+
+    private void processXmlInstruction(final Multimap<MessageGroup, Restful> retVal, final Map<String, Object> placeholderData, final ExecuteInstruction instruction) {
+        final Instruction executeInstruction = GlobalUtils.newInstance(instruction.getClazz());
+        retVal.put(MessageGroup.EXECUTE, new MessageRestful(executeInstruction.getMessage()));
+    }
+
 
     private void processXmlInstruction(final Multimap<MessageGroup, Restful> retVal, final Map<String, Object> placeholderData, final XmlInstruction instruction) {
         final String replacedTarget = TemplateUtils.replaceTemplateData(instruction.getTarget(), placeholderData);

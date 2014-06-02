@@ -14,23 +14,26 @@
   limitations under the License.
   -->
 
-<accordion close-others="oneAtATime"> 
-  <accordion-group is-open="isopen"> 
-    <accordion-heading ng-class="active"> 
-      {{label ? label : "Display changes made by this plugin"}}
-      <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': isopen, 'glyphicon-chevron-right': !isopen}"></i> 
-    </accordion-heading> 
-    <div class="alert-info"  ng-repeat="message in packageMessages.items" ng-switch="message.group"> 
-      <div ng-switch-when="FILE_CREATE">{{message.value}}</div> 
-    </div> 
-    <div class="alert-success"  ng-repeat="message in packageMessages.items" ng-switch="message.group"> 
-      <div ng-switch-when="DOCUMENT_REGISTER">{{message.value}}</div> 
-    </div> 
-    <div class="alert-warning"  ng-repeat="message in packageMessages.items" ng-switch="message.group"> 
-      <div ng-switch-when="XML_NODE_CREATE">{{message.value}}</div> 
-    </div> 
-    <div class="alert-danger"  ng-repeat="message in packageMessages.items" ng-switch="message.group"> 
-      <div ng-switch-when="XML_NODE_FOLDER_CREATE">{{message.value}}</div> 
-    </div> 
-  </accordion-group> 
+<accordion close-others="oneAtATime">
+    <accordion-group is-open="isopen">
+        <accordion-heading ng-class="active">
+            {{label ? label : "Display changes made by this plugin"}}
+            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': isopen, 'glyphicon-chevron-right': !isopen}"></i>
+        </accordion-heading>
+        <div class="alert-info" ng-repeat="message in packageMessages.items" ng-switch="message.group">
+            <div ng-switch-when="FILE_CREATE">{{message.value}}</div>
+        </div>
+        <div class="alert-success" ng-repeat="message in packageMessages.items" ng-switch="message.group">
+            <div ng-switch-when="DOCUMENT_REGISTER">{{message.value}}</div>
+        </div>
+        <div class="alert-warning" ng-repeat="message in packageMessages.items" ng-switch="message.group">
+            <div ng-switch-when="XML_NODE_CREATE">{{message.value}}</div>
+        </div>
+        <div class="alert-danger" ng-repeat="message in packageMessages.items" ng-switch="message.group">
+            <div ng-switch-when="XML_NODE_FOLDER_CREATE">{{message.value}}</div>
+        </div>
+        <div class="alert-success" ng-repeat="message in packageMessages.items" ng-switch="message.group">
+            <div ng-switch-when="EXECUTE">{{message.value}}</div>
+        </div>
+    </accordion-group>
 </accordion>
