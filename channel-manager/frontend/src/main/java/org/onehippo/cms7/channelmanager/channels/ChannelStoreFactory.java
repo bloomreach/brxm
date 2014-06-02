@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -42,7 +43,10 @@ public final class ChannelStoreFactory {
         // prevent instantiation
     }
 
-    public static ChannelStore createStore(IPluginContext context, IPluginConfig config, IRestProxyService restProxyService) {
+    public static ChannelStore createStore(final IPluginContext context,
+                                           final IPluginConfig config,
+                                           final Map<String, IRestProxyService> restProxyServices,
+                                           final BlueprintStore blueprintStore) {
         Set<String> storeFieldNames = parseChannelFields(config);
 
         // then create a list of all the Ext fields in the store
@@ -60,8 +64,9 @@ public final class ChannelStoreFactory {
         }
 
         final ChannelStore channelStore = new ChannelStore("channel-store", fieldList,
-                                                     parseSortColumn(config, storeFieldNames), parseSortOrder(config),
-                                                     new LocaleResolver(localeProvider), new RestClientProxyFactory(restProxyService));
+                parseSortColumn(config, storeFieldNames), parseSortOrder(config),
+                new LocaleResolver(localeProvider), restProxyServices,
+                blueprintStore);
 
         if (config.containsKey("channelRegionIconPath")) {
             channelStore.setChannelRegionIconPath(config.getString("channelRegionIconPath"));

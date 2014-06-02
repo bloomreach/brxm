@@ -18,6 +18,7 @@ package org.onehippo.cms7.channelmanager;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -39,12 +40,10 @@ import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.IRestProxyService;
 import org.hippoecm.frontend.service.IconSize;
-import org.hippoecm.hst.rest.SiteService;
+import org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager;
 import org.onehippo.cms7.channelmanager.service.IChannelManagerService;
 import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
 import org.onehippo.cms7.channelmanager.templatecomposer.TemplateComposerApiHeaderItem;
-
-import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.CONFIG_REST_PROXY_SERVICE_ID;
 
 @SuppressWarnings("serial")
 public class ChannelManagerPerspective extends Perspective implements IChannelManagerService {
@@ -58,12 +57,10 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
     public ChannelManagerPerspective(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        // Check whether the site is up and running
-        final IRestProxyService restProxyService = context.getService(config.getString(CONFIG_REST_PROXY_SERVICE_ID, IRestProxyService.class.getName()), IRestProxyService.class);
-        final SiteService siteService = restProxyService.createSecureRestProxy(SiteService.class);
+        final Map<String, IRestProxyService> liveRestProxyServices = RestProxyServicesManager.getLiveRestProxyServices(context, config);
 
-        // When site service is null most probably the site is down
-        siteIsUp = (siteService != null);
+        // when at least one proxy service is live, at least one site webapp is up
+        siteIsUp = (!liveRestProxyServices.isEmpty());
 
         if (siteIsUp) {
             IPluginConfig wfConfig = config.getPluginConfig("layout.wireframe");

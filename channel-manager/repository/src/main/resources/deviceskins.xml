@@ -32,9 +32,6 @@ limitations under the License.
       <sv:property sv:name="position.view" sv:type="String">
         <sv:value>before template-composer-toolbar-fullscreen-button</sv:value>
       </sv:property>
-      <sv:property sv:name="rest.proxy.service.id" sv:type="String">
-        <sv:value>hst.rest.proxy.service</sv:value>
-      </sv:property>
     </sv:node>
   </sv:node>
   <sv:node sv:name="cms-services" h:merge="combine">

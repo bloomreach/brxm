@@ -15,6 +15,8 @@
  */
 package org.onehippo.cms7.channelmanager.service;
 
+import java.util.Map;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -24,10 +26,9 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IRestProxyService;
 import org.hippoecm.hst.rest.DocumentService;
+import org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.CONFIG_REST_PROXY_SERVICE_ID;
 
 /**
  * Returns the fully qualified, canonical URL to a document in a channel of a certain type (preview, live,
@@ -48,24 +49,23 @@ public class ChannelDocumentUrlService extends Plugin implements IDocumentUrlSer
     private static final Logger log = LoggerFactory.getLogger(ChannelDocumentUrlService.class);
     private static final long serialVersionUID = 1L;
 
-    private final IRestProxyService restProxyService;
+    final Map<String, IRestProxyService> liveRestProxyServices;
     private final String type;
 
     public ChannelDocumentUrlService(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        // load REST proxy service
-        final String restProxyServiceId = config.getString(CONFIG_REST_PROXY_SERVICE_ID, IRestProxyService.class.getName());
-        log.debug("Using REST proxy service with id '{}'", restProxyServiceId);
-        restProxyService = context.getService(restProxyServiceId, IRestProxyService.class);
-        if (restProxyService == null) {
-            throw new IllegalStateException("Unknown REST proxy service: '" + restProxyServiceId + "'. "
-                    + "Please set the configuration property '" + CONFIG_REST_PROXY_SERVICE_ID + "'");
-        }
-
+        liveRestProxyServices = RestProxyServicesManager.getLiveRestProxyServices(context, config);
         // read type from configuration
         type = config.getString("type", DEFAULT_TYPE);
+
+        if (liveRestProxyServices.isEmpty()) {
+            log.info("No rest proxies services available.");
+            return;
+        }
+
         log.debug("Using type '{}'", type);
+
 
         final String serviceId = config.getString("service.id", IDocumentUrlService.DEFAULT_SERVICE_ID);
         context.registerService(this, serviceId);
@@ -74,21 +74,22 @@ public class ChannelDocumentUrlService extends Plugin implements IDocumentUrlSer
     @Override
     public String getUrl(final Node documentNode) {
         final String uuid = getUuidOfHandle(documentNode);
-
         if (uuid == null) {
+            try {
+                log.info("Could not find handle for document '{}'", documentNode.getPath());
+            } catch (RepositoryException e) {
+                log.error("Error retrieving path from document", e);
+            }
+            return null;
+        }
+        if (liveRestProxyServices.isEmpty()) {
+            log.info("No rest proxies services available.");
             return null;
         }
 
-        final DocumentService documentService = restProxyService.createSecureRestProxy(DocumentService.class);
-        if (documentService == null) {
-            log.warn("The REST proxy service does provide a proxy for class '{}'. The document URL service can therefore not generate a URL for the document with UUID '{}'",
-                    DocumentService.class.getCanonicalName(), uuid);
-
-            return null;
-        }
-
+        final IRestProxyService proxyService = liveRestProxyServices.values().iterator().next();
+        final DocumentService documentService = proxyService.createSecureRestProxy(DocumentService.class);
         String url = documentService.getUrl(uuid, type);
-
         return StringUtils.isBlank(url) ? null : url;
     }
 

@@ -31,6 +31,11 @@ public class RestClientProxyFactory implements IRestProxyService, Serializable {
     private IRestProxyService restProxyService;
     private List<Object> additionalProviders;
 
+    @Override
+    public String getContextPath() {
+        return restProxyService.getContextPath();
+    }
+
     /**
      * Creates a new instance of {@link RestClientProxyFactory}
      *

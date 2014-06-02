@@ -15,11 +15,14 @@
  */
 package org.onehippo.cms7.channelmanager.channels;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -36,6 +39,8 @@ import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ExtDataField;
 import org.wicketstuff.js.ext.data.ExtJsonStore;
 
+import static org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager.getExecutorService;
+
 public class BlueprintStore extends ExtJsonStore<Object> {
 
     private static final String FIELD_NAME = "name";
@@ -46,13 +51,13 @@ public class BlueprintStore extends ExtJsonStore<Object> {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(BlueprintStore.class);
 
-    private transient List<Blueprint> blueprints;
-    private Long total;
-    private final IRestProxyService restProxyService;
+    private transient Map<String,Blueprint>  blueprints;
+    private transient int availableRestProxiesHashCode;
+    final Map<String, IRestProxyService> restProxyServices;
 
-    public BlueprintStore(IRestProxyService restProxyService) {
+    public BlueprintStore(final Map<String, IRestProxyService> restProxyServices) {
         super(Arrays.asList(new ExtDataField(FIELD_NAME), new ExtDataField(FIELD_DESCRIPTION), new ExtDataField(FIELD_HAS_CONTENT_PROTOTYPE), new ExtDataField(FIELD_CONTENT_ROOT)));
-        this.restProxyService = restProxyService;
+        this.restProxyServices = restProxyServices;
     }
 
     @Override
@@ -63,16 +68,7 @@ public class BlueprintStore extends ExtJsonStore<Object> {
 
     @Override
     protected long getTotal() {
-        if (this.total == null) {
-            List<Blueprint> blueprintList = getBlueprints();
-            if (blueprintList != null){
-                this.total = (long) blueprintList.size();
-            } else {
-                log.warn("Unable to retrieve blueprints.");
-                this.total = 0l;
-            }
-        }
-        return this.total;
+        return getBlueprints().size();
     }
 
     public boolean isEmpty() {
@@ -92,9 +88,7 @@ public class BlueprintStore extends ExtJsonStore<Object> {
     @Override
     protected JSONArray getData() throws JSONException {
         JSONArray data = new JSONArray();
-        List<Blueprint> blueprints = getBlueprints();
-        this.total = (long) blueprints.size();
-        for (Blueprint blueprint : blueprints) {
+        for (Blueprint blueprint : getBlueprints().values()) {
             JSONObject object = new JSONObject();
             object.put("id", blueprint.getId());
             object.put(FIELD_NAME, blueprint.getName());
@@ -111,17 +105,39 @@ public class BlueprintStore extends ExtJsonStore<Object> {
         return data;
     }
 
-    private List<Blueprint> getBlueprints() {
-    	if (blueprints == null) {
-            if (restProxyService != null) {
-                BlueprintService blueprintService = restProxyService.createSecureRestProxy(BlueprintService.class);
-                blueprints = blueprintService.getBlueprints();
-            } else {
-                blueprints = Collections.emptyList();
-            }
+    public Map<String,Blueprint> getBlueprints() {
+        // check whether previously loaded blueprints are from same live proxies as current live proxies
+        if (blueprints != null && availableRestProxiesHashCode == restProxyServices.keySet().hashCode()) {
+            return blueprints;
         }
 
-    	return blueprints;
+        availableRestProxiesHashCode = restProxyServices.keySet().hashCode();
+        blueprints = new HashMap<>();
+
+        List<Callable<List<Blueprint>>> restProxyJobs = new ArrayList<>();
+        for (final IRestProxyService restProxyService : restProxyServices.values()) {
+            final BlueprintService blueprintService = restProxyService.createSecureRestProxy(BlueprintService.class);
+            restProxyJobs.add(new Callable<List<Blueprint>>() {
+                @Override
+                public List<Blueprint> call() throws Exception {
+                    return blueprintService.getBlueprints();
+                }
+            });
+        }
+
+        try {
+            final List<Future<List<Blueprint>>> futures = getExecutorService().invokeAll(restProxyJobs);
+            for (Future<List<Blueprint>> future : futures) {
+                for (Blueprint blueprint : future.get()) {
+                    blueprints.put(blueprint.getId(), blueprint);
+                }
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("Failed to load the channels for one or more rest proxy.", e);
+        }
+
+        return blueprints;
     }
+
 
 }

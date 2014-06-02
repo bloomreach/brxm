@@ -23,10 +23,12 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.ws.rs.WebApplicationException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -55,12 +57,13 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager;
 import org.onehippo.cms7.channelmanager.service.IChannelManagerService;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.CONFIG_REST_PROXY_SERVICE_ID;
+import static org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager.getExecutorService;
 
 @SuppressWarnings({ "deprecation", "serial" })
 public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> {
@@ -70,15 +73,11 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
 
     public static final String CONFIG_CHANNEL_MANAGER_SERVICE_ID = "channel.manager.service.id";
 
-    private final IRestProxyService restProxyService;
     private final IChannelManagerService channelManagerService;
 
     public ChannelActionsPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-
-        restProxyService = loadService("REST proxy service", CONFIG_REST_PROXY_SERVICE_ID, IRestProxyService.class);
         channelManagerService = loadService("channel manager service", CONFIG_CHANNEL_MANAGER_SERVICE_ID, IChannelManagerService.class);
-
         if (channelManagerService != null) {
             WorkflowDescriptorModel model = (WorkflowDescriptorModel) getDefaultModel();
             if (model != null) {
@@ -139,59 +138,70 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
         return service;
     }
 
-    private MarkupContainer createMenu(String documentUuid) {
-        if (restProxyService == null) {
+    private MarkupContainer createMenu(final String documentUuid) {
+
+        final Map<String, IRestProxyService> liveRestProxyServices = RestProxyServicesManager.getLiveRestProxyServices(getPluginContext(), getPluginConfig());
+        if (liveRestProxyServices.isEmpty()) {
+            log.info("No rest proxies services available. Cannot create menu for available channels");
             return new EmptyPanel("channels");
         }
 
-        final DocumentService documentService = restProxyService.createSecureRestProxy(DocumentService.class);
-        if (documentService == null) {
-            log.warn("The REST proxy service does not provide a proxy for class '{}'. As a result, the 'View' menu cannot be populated with the channels for the document with UUID '{}'",
-                    DocumentService.class.getCanonicalName(), documentUuid);
-            return new EmptyPanel("channels");
-        }
+        List<Callable<List<ChannelDocument>>> restProxyJobs = new ArrayList<>();
 
-        try {
-            final Map<String, ChannelDocument> idToChannelMap = new LinkedHashMap<String, ChannelDocument>();
-
-            final List<ChannelDocument> channelDocuments = documentService.getChannels(documentUuid);
-            if (channelDocuments != null) {
-                Collections.sort(channelDocuments, getChannelDocumentComparator());
-                for (final ChannelDocument channelDocument : channelDocuments) {
-                    idToChannelMap.put(channelDocument.getChannelId(), channelDocument);
+        // any live rest proxy service can create a URL for any channel, becu
+        for (final Map.Entry<String, IRestProxyService> entry : liveRestProxyServices.entrySet()) {
+            final DocumentService documentService = entry.getValue().createSecureRestProxy(DocumentService.class);
+            restProxyJobs.add(new Callable<List<ChannelDocument>>() {
+                @Override
+                public List<ChannelDocument> call() throws Exception {
+                    return documentService.getChannels(documentUuid);
                 }
+            });
+        }
+
+        final List<ChannelDocument> combinedChannelDocuments = new ArrayList<>();
+        try {
+            final List<Future<List<ChannelDocument>>> futures = getExecutorService().invokeAll(restProxyJobs);
+            for (Future<List<ChannelDocument>> future : futures) {
+                combinedChannelDocuments.addAll(future.get());
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Exception while trying to find Channel for document with uuid '{}'.", documentUuid, e);
+            } else {
+                log.warn("Exception while trying to find Channel for document with uuid '{}' : {}", documentUuid, e.toString());
+            }
+        }
+        Collections.sort(combinedChannelDocuments, getChannelDocumentComparator());
+
+        final Map<String, ChannelDocument> idToChannelMap = new LinkedHashMap<String, ChannelDocument>();
+        for (final ChannelDocument channelDocument : combinedChannelDocuments) {
+            idToChannelMap.put(channelDocument.getChannelId(), channelDocument);
+        }
+
+        return new ListView<String>("channels", new LoadableDetachableModel<List<String>>() {
+
+            @Override
+            protected List<String> load() {
+                List<String> names = new ArrayList<String>();
+                names.addAll(idToChannelMap.keySet());
+                return names;
             }
 
-            return new ListView<String>("channels", new LoadableDetachableModel<List<String>>() {
+        }) {
 
-                @Override
-                protected List<String> load() {
-                    List<String> names = new ArrayList<String>();
-                    names.addAll(idToChannelMap.keySet());
-                    return names;
-                }
+            {
+                onPopulate();
+            }
 
-            }) {
+            @Override
+            protected void populateItem(final ListItem<String> item) {
+                final String channelId = item.getModelObject();
+                ChannelDocument channel = idToChannelMap.get(channelId);
+                item.add(new ViewChannelAction("view-channel", channel));
+            }
+        };
 
-                {
-                    onPopulate();
-                }
-
-                @Override
-                protected void populateItem(final ListItem<String> item) {
-                    final String channelId = item.getModelObject();
-                    ChannelDocument channel = idToChannelMap.get(channelId);
-                    item.add(new ViewChannelAction("view-channel", channel));
-                }
-            };
-        } catch (WebApplicationException e) {
-            log.error("Could not initialize channel actions menu, REST proxy returned status code '{}'",
-                    e.getResponse().getStatus());
-
-            log.debug("REST proxy returned message: {}", e.getMessage());
-        }
-
-        return new EmptyPanel("channels");
     }
 
     protected Comparator<ChannelDocument> getChannelDocumentComparator() {

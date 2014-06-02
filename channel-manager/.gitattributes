@@ -179,6 +179,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/social/SocialSha
 frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/social/facebook-icon-16.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/social/linkedin-icon-16.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/social/twitter-icon-16.png -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/restproxy/RestProxyServicesManager.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/service/ChannelDocumentUrlService.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/service/IChannelManagerService.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor.java -text

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 package org.onehippo.cms7.channelmanager;
+
+import java.util.Map;
 
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.model.Model;
@@ -33,15 +35,17 @@ import org.onehippo.cms7.channelmanager.channels.ChannelOverview;
 import org.onehippo.cms7.channelmanager.channels.ChannelStore;
 import org.onehippo.cms7.channelmanager.channels.ChannelStoreFactory;
 import org.onehippo.cms7.channelmanager.hstconfig.HstConfigEditor;
+import org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager;
 import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
 import org.onehippo.cms7.channelmanager.widgets.ExtLinkPicker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.layout.BorderLayout;
 import org.wicketstuff.js.ext.util.ExtClass;
 import org.wicketstuff.js.ext.util.ExtProperty;
 import org.wicketstuff.js.ext.util.JSONIdentifier;
 
-import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.CONFIG_REST_PROXY_SERVICE_ID;
 import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.HST_CONFIG_EDITOR_DISABLED;
 import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.HST_CONFIG_EDITOR_LOCK_INHERITED_NODES;
 
@@ -49,6 +53,8 @@ import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.HST_CONFIG_E
 public class RootPanel extends ExtPanel {
 
     private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(RootPanel.class);
+
     private static final PackageResourceReference BREADCRUMB_ARROW = new PackageResourceReference(RootPanel.class, "breadcrumb-arrow.png");
 
     public enum CardId {
@@ -107,16 +113,15 @@ public class RootPanel extends ExtPanel {
             composerRestMountPath = pageEditorConfig.getString(COMPOSER_REST_MOUNT_PATH_PROPERTY, DEFAULT_COMPOSER_REST_MOUNT_PATH);
         }
 
-        // Retrieve the Channel Service
-        IRestProxyService restProxyService = context.getService(config.getString(CONFIG_REST_PROXY_SERVICE_ID, IRestProxyService.class.getName()), IRestProxyService.class);
 
-        // COMMENT - MNour: Here we can inject the Channels REST service
-        this.channelStore = ChannelStoreFactory.createStore(context, channelListConfig, restProxyService);
-        this.channelStoreFuture = new ExtStoreFuture<Object>(channelStore);
+        final Map<String, IRestProxyService> liveRestProxyServices = RestProxyServicesManager.getLiveRestProxyServices(context, config);
+
+        this.blueprintStore = new BlueprintStore(liveRestProxyServices);
+        this.channelStore = ChannelStoreFactory.createStore(context, channelListConfig, liveRestProxyServices, blueprintStore);
+        this.channelStoreFuture = new ExtStoreFuture<>(channelStore);
         add(this.channelStore);
         add(this.channelStoreFuture);
 
-        this.blueprintStore = new BlueprintStore(restProxyService);
 
         // card 0: channel manager
         final ExtPanel channelManagerCard = new ExtPanel();

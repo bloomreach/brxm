@@ -26,6 +26,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -45,12 +48,11 @@ import org.apache.wicket.util.string.interpolator.MapVariableInterpolator;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.service.IRestProxyService;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelNotFoundException;
-import org.hippoecm.hst.rest.BlueprintService;
 import org.hippoecm.hst.rest.ChannelService;
-import org.hippoecm.hst.rest.SiteService;
 import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 import org.json.JSONArray;
@@ -63,6 +65,8 @@ import org.wicketstuff.js.ext.data.ActionFailedException;
 import org.wicketstuff.js.ext.data.ExtDataField;
 import org.wicketstuff.js.ext.data.ExtGroupingStore;
 import org.wicketstuff.js.ext.util.ExtClass;
+
+import static org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager.getExecutorService;
 
 /**
  * Channel JSON Store.
@@ -127,22 +131,30 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     private final String sortFieldName;
     private final SortOrder sortOrder;
     private final LocaleResolver localeResolver;
-    private final IRestProxyService restProxyService;
+    private final Map<String, IRestProxyService> restProxyServices;
+    private final BlueprintStore blueprintStore;
     private final Map<String, Properties> channelResourcesCache;
     private String channelRegionIconPath = DEFAULT_CHANNEL_ICON_PATH;
     private String channelTypeIconPath = DEFAULT_CHANNEL_ICON_PATH;
 
-    public ChannelStore(String storeId, List<ExtDataField> fields, String sortFieldName, SortOrder sortOrder, LocaleResolver localeResolver, IRestProxyService restProxyService) {
+    public ChannelStore(final String storeId,
+                        final List<ExtDataField> fields,
+                        final String sortFieldName,
+                        final SortOrder sortOrder,
+                        final LocaleResolver localeResolver,
+                        final Map<String, IRestProxyService> restProxyServices,
+                        final BlueprintStore blueprintStore) {
 
         super(fields);
         this.storeId = storeId;
         this.sortFieldName = sortFieldName;
         this.sortOrder = sortOrder;
         this.localeResolver = localeResolver;
-        this.restProxyService = restProxyService;
+        this.restProxyServices = restProxyServices;
+        this.blueprintStore = blueprintStore;
         this.channelResourcesCache = new HashMap<>();
 
-        if (this.restProxyService == null) {
+        if (this.restProxyServices == null || this.restProxyServices.isEmpty()) {
             log.warn("No RESTful proxy service configured!");
         }
     }
@@ -367,18 +379,6 @@ public class ChannelStore extends ExtGroupingStore<Object> {
             }
         }
 
-        // No translation found, is the site down?
-        SiteService siteService = restProxyService.createSecureRestProxy(SiteService.class);
-        if (!siteService.isAlive()) {
-            log.info(
-                    "Field '{}' is not a known Channel field, and no custom ChannelInfo class contains a translation of it for locale '{}'. It looks like the site is down. Falling back to the field name itself as the column header.",
-                    fieldName, Session.get().getLocale());
-        } else {
-            log.warn(
-                    "Field '{}' is not a known Channel field, and no custom ChannelInfo class contains a translation of it for locale '{}'. Falling back to the field name itself as the column header.",
-                    fieldName, Session.get().getLocale());
-        }
-
         return fieldName;
     }
 
@@ -405,7 +405,9 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     }
 
     public boolean canModifyChannels() {
-        ChannelService channelService = restProxyService.createSecureRestProxy(ChannelService.class);
+        // just check first webapp only since currently just /hst:hst/hst:channels node is checked.
+        // we need more fine-grained control later
+        ChannelService channelService = restProxyServices.values().iterator().next().createSecureRestProxy(ChannelService.class);
         return channelService.canUserModifyChannels();
     }
 
@@ -413,8 +415,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         if (channels == null) {
             loadChannels();
         }
-
-        return Collections.unmodifiableList(new ArrayList<Channel>(channels.values()));
+        return Collections.unmodifiableList(new ArrayList<>(channels.values()));
     }
 
     public Channel getChannel(String id) throws ChannelNotFoundException {
@@ -432,36 +433,37 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     }
 
     public List<HstPropertyDefinitionInfo> getChannelPropertyDefinitions(Channel channel) {
-        ChannelService channelService = restProxyService.createSecureRestProxy(ChannelService.class);
+        final IRestProxyService restProxy = getRestProxy(channel);
+        ChannelService channelService = restProxy.createSecureRestProxy(ChannelService.class);
         return channelService.getChannelPropertyDefinitions(channel.getId());
     }
 
-    public Properties getChannelResourceValues(Channel channel) throws ChannelException {
-        return getCachedChannelResources(channel.getId());
+    public Properties getChannelResourceValues(final Channel channel) throws ChannelException {
+        return getCachedChannelResources(channel);
     }
 
-    private Properties getCachedChannelResources(final String channelId) throws ChannelException {
-        Properties resources = channelResourcesCache.get(channelId);
+    private Properties getCachedChannelResources(final Channel channel) throws ChannelException {
+        Properties resources = channelResourcesCache.get(channel.getId());
 
         if (resources == null || Application.get().getDebugSettings().isAjaxDebugModeEnabled()) {
-            resources = fetchChannelResources(channelId);
-            channelResourcesCache.put(channelId, resources);
+            resources = fetchChannelResources(channel);
+            channelResourcesCache.put(channel.getId(), resources);
         } else {
-            log.info("Using cached i18n resources for channel '{}'", channelId);
+            log.info("Using cached i18n resources for channel '{}'", channel.getId());
         }
 
         return resources;
     }
 
-    private Properties fetchChannelResources(final String channelId) throws ChannelException {
-        log.info("Fetching i18n resources for channel '{}'", channelId);
-        final ChannelService channelService = restProxyService.createSecureRestProxy(ChannelService.class);
+    private Properties fetchChannelResources(final Channel channel) throws ChannelException {
+        log.info("Fetching i18n resources for channel '{}'", channel.getId());
+        final ChannelService channelService = getRestProxy(channel).createSecureRestProxy(ChannelService.class);
         final String locale = Session.get().getLocale().toString();
-        return channelService.getChannelResourceValues(channelId, locale);
+        return channelService.getChannelResourceValues(channel.getId(), locale);
     }
 
     public void saveChannel(Channel channel) throws ActionFailedException {
-        ChannelService channelService = restProxyService.createSecureRestProxy(ChannelService.class);
+        ChannelService channelService = getRestProxy(channel).createSecureRestProxy(ChannelService.class);
 
         try {
             channelService.save(channel);
@@ -476,7 +478,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
      *         ChannelInfo class or the channel manager could not be loaded (e.g. because the site is down).
      */
     public ChannelInfoClassInfo getChannelInfoClassInfo(Channel channel) throws ChannelException {
-        ChannelService channelService = restProxyService.createSecureRestProxy(ChannelService.class);
+        ChannelService channelService = getRestProxy(channel).createSecureRestProxy(ChannelService.class);
         return channelService.getChannelInfoClassInfo(channel.getId());
     }
 
@@ -499,22 +501,29 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     }
 
     protected void loadChannels() {
-        ChannelService channelService = restProxyService.createSecureRestProxy(ChannelService.class);
-
-        if (channelService == null) {
-            log.error("Could not get channelservice REST service!");
-            channels = Collections.emptyMap();
-            return;
+        channels = new HashMap<>();
+        List<Callable<List<Channel>>> restProxyJobs = new ArrayList<>();
+        for (final IRestProxyService restProxyService : restProxyServices.values()) {
+            final ChannelService channelService = restProxyService.createSecureRestProxy(ChannelService.class);
+            restProxyJobs.add(new Callable<List<Channel>>() {
+                @Override
+                public List<Channel> call() throws Exception {
+                    return channelService.getChannels();
+                }
+            });
         }
-
-        List<Channel> channelsList;
-        channelsList = channelService.getChannels();
-        channels = new HashMap<String, Channel>(channelsList.size());
-        for (Channel channel : channelsList) {
-            if (StringUtils.isEmpty(channel.getType())) {
-                channel.setType(DEFAULT_TYPE);
+        try {
+            final List<Future<List<Channel>>> futures = getExecutorService().invokeAll(restProxyJobs);
+            for (Future<List<Channel>> future : futures) {
+                for (Channel channel : future.get()) {
+                    if (StringUtils.isEmpty(channel.getType())) {
+                        channel.setType(DEFAULT_TYPE);
+                    }
+                    channels.put(channel.getId(), channel);
+                }
             }
-            channels.put(channel.getId(), channel);
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("Failed to load the channels for one or more rest proxy.", e);
         }
     }
 
@@ -522,22 +531,15 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     protected JSONObject createRecord(JSONObject record) throws ActionFailedException, JSONException {
         // Create new channel
         final String blueprintId = record.getString("blueprintId");
-        final Channel newChannel;
-        BlueprintService blueprintService = restProxyService.createSecureRestProxy(BlueprintService.class);
-
-        if (blueprintService == null) {
-            throw new ActionFailedException("Could not get blueprint REST service!");
+        final Blueprint blueprint = blueprintStore.getBlueprints().get(blueprintId);
+        if (blueprint == null) {
+            throw new ActionFailedException("Cannot find blueprint for id '"+blueprintId+"'.");
         }
-        try {
-            newChannel = blueprintService.getBlueprint(blueprintId).getPrototypeChannel();
-        } catch (ChannelException e) {
-            throw new ActionFailedException("ChannelException : ", e);
-        }
+        final Channel newChannel = blueprint.getPrototypeChannel();
         // Set channel parameters
         final String channelName = record.getString("name");
         newChannel.setName(channelName);
         newChannel.setUrl(record.getString("url"));
-
         final String contentRoot = record.getString("contentRoot");
         if (StringUtils.isNotEmpty(contentRoot)) {
             newChannel.setContentRoot(contentRoot);
@@ -571,8 +573,17 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     }
 
     protected String persistChannel(String blueprintId, Channel newChannel) throws ChannelException {
-        ChannelService channelService = restProxyService.createSecureRestProxy(ChannelService.class);
+        ChannelService channelService = getRestProxy(newChannel).createSecureRestProxy(ChannelService.class);
         return channelService.persist(blueprintId, newChannel);
+    }
+
+    private IRestProxyService getRestProxy(final Channel channel) {
+        final IRestProxyService restProxy = restProxyServices.get(channel.getContextPath());
+        if (restProxy == null) {
+            throw new IllegalArgumentException("Channel '"+channel.toString()+"' has a contextPath '"+channel.getContextPath()+"' " +
+                    "for which no rest proxy is registered. Available rest proxies are for contextPath(s) '"+restProxyServices.keySet()+"'");
+        }
+        return restProxy;
     }
 
     private Locale getLocale(String absPath) {

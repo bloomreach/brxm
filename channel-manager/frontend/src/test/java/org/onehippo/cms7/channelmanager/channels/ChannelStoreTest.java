@@ -17,7 +17,9 @@ package org.onehippo.cms7.channelmanager.channels;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hippoecm.frontend.service.IRestProxyService;
 import org.hippoecm.hst.configuration.channel.Channel;
@@ -39,12 +41,13 @@ import static org.junit.Assert.assertFalse;
  */
 public class ChannelStoreTest {
 
-    private IRestProxyService mockedProxyService;
+    private Map<String, IRestProxyService> mockedProxyServices = new HashMap<>();
     private ChannelService mockedChannelService;
 
     @Before
     public void initMocks() {
-        mockedProxyService = createNiceMock(IRestProxyService.class);
+        final IRestProxyService mockedProxyService = createNiceMock(IRestProxyService.class);
+        mockedProxyServices.put("/site", mockedProxyService);
         mockedChannelService = createNiceMock(ChannelService.class);
         expect(mockedProxyService.createSecureRestProxy(ChannelService.class)).andReturn(mockedChannelService);
         replay(mockedProxyService);
@@ -61,7 +64,7 @@ public class ChannelStoreTest {
 
         final List<ExtDataField> fields = Arrays.asList(new ExtDataField("id"), new ExtDataField("locale"), new ExtDataField("hostname"));
         ChannelStore store = new ChannelStore("testStoreId", fields, "dummySortName", ChannelStore.SortOrder.ascending,
-                createNiceMock(LocaleResolver.class), mockedProxyService);
+                createNiceMock(LocaleResolver.class), mockedProxyServices, new BlueprintStore(mockedProxyServices));
 
         JSONArray json = store.getData();
         assertEquals("There should be JSON data for one channel", 1, json.length());
@@ -82,7 +85,7 @@ public class ChannelStoreTest {
 
         final List<ExtDataField> dummyFields = Collections.emptyList();
         ChannelStore store = new ChannelStore("testStoreId", dummyFields, "dummySortName", ChannelStore.SortOrder.ascending,
-                createNiceMock(LocaleResolver.class), mockedProxyService);
+                createNiceMock(LocaleResolver.class), mockedProxyServices, new BlueprintStore(mockedProxyServices));
 
         JSONArray json = store.getData();
         assertEquals("There should be JSON data for one channel", 1, json.length());
