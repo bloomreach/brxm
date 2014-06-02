@@ -57,7 +57,7 @@ public class FreemarkerInstructionTest extends BaseRepositoryTest {
         log.info("projectNamespace {}", projectNamespace);
         instruction.process(context, InstructionStatus.SUCCESS);
         assertEquals("/hst:hst/hst:configurations/" + projectNamespace + "/hst:templates", instruction.getRepositoryTarget());
-        assertEquals("homepage-main-content", instruction.getTemplateName());
+        assertEquals("homepage-main-content.ftl", instruction.getTemplateName());
         instruction.process(context, InstructionStatus.SKIPPED);
 
 
