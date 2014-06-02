@@ -18,5 +18,9 @@
     "use strict";
     angular.module('hippo.essentials').controller('galleryPluginCtrl', function ($scope, $sce, $log, $rootScope, $http, $modal) {
 
+        $scope.run = function(){
+            console.log("adding robots support");
+        }
+
     });
 }());

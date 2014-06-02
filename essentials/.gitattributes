@@ -586,6 +586,8 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/e
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/listeners/LoggingPluginEventListener.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/listeners/MemoryPluginEventListener.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/listeners/ValidationEventListener.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/generated/jaxb/WebContextParam.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/generated/jaxb/WebXml.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/CndInstruction.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/DirectoryInstruction.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/ExecuteInstruction.java -text
@@ -672,6 +674,7 @@ plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/c
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/InstallerDocumentTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/event/listeners/MemoryPluginEventListenerTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/event/listeners/ValidationEventListenerTest.java -text
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/generated/jaxb/WebXmlTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/CndInstructionTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/DummyInstruction.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/FileInstructionTest.java -text
@@ -768,6 +771,7 @@ plugin-api/implementation/src/test/resources/test_java_parsing.txt -text
 plugin-api/implementation/src/test/resources/test_template.ftl -text
 plugin-api/implementation/src/test/resources/test_template_freemarker.ftl -text
 plugin-api/implementation/src/test/resources/test_template_httl.ftl -text
+plugin-api/implementation/src/test/resources/test_web.xml -text
 plugin-api/implementation/src/test/resources/testnamespace.cnd -text
 plugin-api/implementation/src/test/resources/updateplugintest.xml -text
 plugin-api/pom.xml -text

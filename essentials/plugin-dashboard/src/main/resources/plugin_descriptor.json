@@ -131,8 +131,8 @@
             {
                 "items": [
                     {
-                        "component": "robotsPlugin",
-                        "file": "robotsPlugin.js"
+                        "component": "beanwriterPlugin",
+                        "file": "beanwriterPlugin.js"
                     }
                 ]
             }
@@ -144,7 +144,7 @@
         "introduction": "Add Robots plugin support",
         "pluginId": "beanwriter",
         "restClasses": [],
-        "type": "tools",
+        "type": "plugins",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -154,12 +154,29 @@
             {
                 "items": [
                     {
-                        "component": "beanwriter",
-                        "file": "beanwriter.js"
+                        "component": "robotsPlugin",
+                        "file": "robotsPlugin.js"
                     }
                 ]
             }
+        ],
+        "dependencies": [
+            {
+                "@type": "dependency",
+                "groupId": "org.onehippo.forge.robotstxt",
+                "artifactId": "robotstxt-addon-repository",
+                "scope": "compile",
+                "type": "cms"
+            },
+            {
+                "@type": "dependency",
+                "groupId": "org.onehippo.forge.robotstxt",
+                "artifactId": "robotstxt-hst-client",
+                "scope": "compile",
+                "type": "site"
+            }
         ]
+
     },
     {
         "enabled": true,
