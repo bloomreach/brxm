@@ -401,20 +401,14 @@
                     );
                 }
                 toolbar.add(
-                    this.createPagesButton()
+                    this.createPagesButton(),
+                    ' ',
+                    variantsComboBoxLabel,
+                    variantsComboBox,
+                    this.getFullScreenButtonConfig(true)
                 );
-                if (this.pageContainer.canEdit) {
-                    toolbar.add(
-                        ' ',
-                        variantsComboBoxLabel,
-                        variantsComboBox,
-                        this.getFullScreenButtonConfig(true)
-                    );
-                }
             }
-            if (this.fullscreen || this.pageContainer.canEdit) {
-                this.addToolbarPlugins(toolbar, 'view');
-            }
+            this.addToolbarPlugins(toolbar, 'view');
             if (toolbar.rendered) {
                 toolbar.doLayout();
             }
