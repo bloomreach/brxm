@@ -142,7 +142,7 @@
         "@type": "plugin",
         "name": "Robots plugin",
         "introduction": "Add Robots plugin support",
-        "pluginId": "beanwriter",
+        "pluginId": "robotsPlugin",
         "restClasses": [],
         "type": "plugins",
         "vendor": {
