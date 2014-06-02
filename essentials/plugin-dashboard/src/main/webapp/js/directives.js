@@ -77,6 +77,7 @@
                     pluginId: '@',
                     pluginTitle: '@',
                     buttonText: '@',
+                    noTemplate: '@',
                     sample: '@'
                 },
                 templateUrl: 'directives/essentials-simple-install-plugin.html',

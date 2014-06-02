@@ -17,7 +17,7 @@
 <div class="panel panel-default">
     <div class="panel-heading">{{pluginTitle}}</div>
     <div class="panel-body">
-        <div>
+        <div ng-hide="noTemplate">
             <essentials-template-settings sample="{{sample}}" sample-data="sampleData" template-name="templateName"/>
         </div>
         <essentials-messages payload="payload" label="{{label}}"/>

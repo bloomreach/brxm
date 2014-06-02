@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2014 Hippo B.V. (http://www.onehippo.com)
 
@@ -13,13 +14,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-
-<essentials-simple-install-plugin
-        plugin-id="robotsPlugin"
-        plugin-title="Robots plugin"
-        button-text="Add robots plugin support"
-        sample="true"
-        no-template="true"
-        />
-
-
+<sv:node sv:name="robots.txt" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hst:sitemapitem</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+    <sv:value>hst:pages/robotstxt</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+    <sv:value>../administration/robots</sv:value>
+  </sv:property>
+</sv:node>
