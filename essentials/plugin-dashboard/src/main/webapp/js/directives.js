@@ -84,8 +84,9 @@
                 templateUrl: 'directives/essentials-simple-install-plugin.html',
                 controller: function ($scope, $sce, $log, $rootScope, $http) {
                     $scope.showForm = false;
+
                     $scope.settingsButtonText = $scope.showForm ? "Use these settings" : "Change settings";
-                    $scope.pluginId = "";
+                    //$scope.pluginId = pluginId;
                     $scope.sampleData = true;
                     $scope.templateName = 'jsp';
                     $scope.message = {};
@@ -98,6 +99,9 @@
                         $http.post($rootScope.REST.package_install, $scope.payload).success(function (data) {
                         });
                     };
+                    $http.get($rootScope.REST.root + "/plugins/plugins/" + $scope.pluginId).success(function (plugin) {
+                        $scope.pluginDescription = $sce.trustAsHtml(plugin.description);
+                    });
                 }
 
             }

@@ -321,6 +321,23 @@ public class PluginResource extends BaseResource {
 
 
     @ApiOperation(
+            value = "Returns plugin descriptor file",
+            notes = "Used for plugin layout etc.",
+            response = PluginRestful.class)
+    @ApiParam(name = PLUGIN_ID, value = "Plugin id", required = true)
+    @GET
+    @Path("/plugins/{pluginId}")
+    public Plugin getPlugin(@Context ServletContext servletContext, @PathParam(PLUGIN_ID) String pluginId) {
+        final List<PluginRestful> pluginList = getPlugins(servletContext);
+        for (Plugin plugin : pluginList) {
+            if (plugin.getPluginId().equals(pluginId)) {
+               return plugin;
+            }
+        }
+        return new PluginRestful();
+    }
+
+    @ApiOperation(
             value = "Checks if certain plugin is installed",
             notes = "Sets PluginRestful installed flag to true or false",
             response = PluginRestful.class)
