@@ -503,12 +503,25 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     protected void loadChannels() {
         channels = new HashMap<>();
         List<Callable<List<Channel>>> restProxyJobs = new ArrayList<>();
-        for (final IRestProxyService restProxyService : restProxyServices.values()) {
+        for (Map.Entry<String, IRestProxyService> entry : restProxyServices.entrySet()) {
+            final IRestProxyService restProxyService = entry.getValue();
+            final String contextPath = entry.getKey();
             final ChannelService channelService = restProxyService.createSecureRestProxy(ChannelService.class);
             restProxyJobs.add(new Callable<List<Channel>>() {
                 @Override
                 public List<Channel> call() throws Exception {
-                    return channelService.getChannels();
+                    final List<Channel> result = channelService.getChannels();
+                    final List<Channel> checkedChannels = new ArrayList<>(result.size());
+                    for (Channel channel : result) {
+                        if (!contextPath.equals(channel.getContextPath())) {
+                            log.warn("Skipping channel '{}' which  is fetched via wrong rest proxy as the " +
+                                    "contextPath of the rest proxy is '{}' and from the channel it is '{}'.",
+                                    channel, contextPath, channel.getContextPath());
+                        } else {
+                            checkedChannels.add(channel);
+                        }
+                    }
+                    return checkedChannels;
                 }
             });
         }
