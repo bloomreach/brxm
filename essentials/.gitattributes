@@ -795,6 +795,7 @@ plugin-api/implementation/src/test/resources/updateplugintest.xml -text
 plugin-api/pom.xml -text
 plugin-dashboard/pom.xml -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/ContentBlocksResource.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/DocumentResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/ImageGalleryResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/JcrResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/NodeResource.java -text
@@ -803,6 +804,7 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/client/RestClie
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/config/RestServletListener.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/exc/RestException.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/ControllerRestful.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/DocumentRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/PropertyRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/RestList.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/StatusRestful.java -text

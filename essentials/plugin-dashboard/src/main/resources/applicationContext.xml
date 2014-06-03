@@ -36,6 +36,7 @@
   <bean id="imageGalleryResource" class="org.onehippo.cms7.essentials.rest.ImageGalleryResource"/>
 
   <bean id="nodeResource" class="org.onehippo.cms7.essentials.rest.NodeResource"/>
+  <bean id="documentResource" class="org.onehippo.cms7.essentials.rest.DocumentResource"/>
   <bean id="pluginResource" class="org.onehippo.cms7.essentials.rest.PluginResource"/>
   <bean id="corsFilter" class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter">
     <property name="allowCredentials" value="true"/>
@@ -50,6 +51,7 @@
       <ref bean="imageGalleryResource"/>
       <ref bean="nodeResource"/>
       <ref bean="pluginResource"/>
+      <ref bean="documentResource"/>
       <!-- API -->
       <ref bean="swaggerResourceJSON"/>
 

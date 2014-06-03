@@ -183,8 +183,13 @@
                 galleryProcessor: root + '/imagegallery/',
                 imageSets: root + '/imagegallery/imagesets/',
                 galleryProcessorSave: root + '/imagegallery/save',
-                imageSetsSave: root + '/imagegallery/imagesets/save'
-
+                imageSetsSave: root + '/imagegallery/imagesets/save',
+                //############################################
+                // DOCUMENTS
+                //############################################
+                documents: root+ '/documents/',
+                documents_compounds: root.documents +  'compounds',
+                documents_documents: root.documents +  'documents'
 
             };
 
