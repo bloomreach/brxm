@@ -286,6 +286,7 @@ public class ChannelManagerImpl implements ChannelManager {
 
             // Create mount
             Node mount = createMountNode(virtualHost, blueprintNode, channelUri.getPath());
+            mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_CONTEXTPATH, channel.getContextPath());
             mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH, channelsRoot + channelId);
             mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT, mountPointPath);
             final String locale = channel.getLocale();
@@ -379,13 +380,13 @@ public class ChannelManagerImpl implements ChannelManager {
         if (StringUtils.isEmpty(hostGroupForCmsHost)) {
             throw new ChannelException("There is no hostgroup for cms host available. Cannot get or create virtual hosts");
         }
-        Node mount = configRoot.getNode(HstNodeTypes.NODENAME_HST_HOSTS + "/" + hostGroupForCmsHost);
+        Node host = configRoot.getNode(HstNodeTypes.NODENAME_HST_HOSTS + "/" + hostGroupForCmsHost);
 
         for (int i = elements.length - 1; i >= 0; i--) {
-            mount = getOrAddNode(mount, elements[i], HstNodeTypes.NODETYPE_HST_VIRTUALHOST);
+            host = getOrAddNode(host, elements[i], HstNodeTypes.NODETYPE_HST_VIRTUALHOST);
         }
 
-        return mount;
+        return host;
     }
 
     private Node createSiteNode(final Node sitesNode, final String siteNodeName, final String contentRootPath) throws RepositoryException {
