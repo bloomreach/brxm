@@ -112,50 +112,51 @@
                     }
                 ]
             }
-        ]         "dependencies": [
-        {
-            "@type": "dependency",
-            "groupId": "org.onehippo",
-            "artifactId": "taxonomy-api",
-            "scope": "compile",
-            "type": "cms"
-        },
-        {
-            "@type": "dependency",
-            "groupId": "org.onehippo",
-            "artifactId": "taxonomy-addon-frontend",
-            "scope": "compile",
-            "type": "cms"
-        },
-        {
-            "@type": "dependency",
-            "groupId": "org.onehippo",
-            "artifactId": "taxonomy-addon-repository",
-            "scope": "compile",
-            "type": "cms"
-        },
-        {
-            "@type": "dependency",
-            "groupId": "org.onehippo",
-            "artifactId": "taxonomy-api",
-            "scope": "compile",
-            "type": "site"
-        },
-        {
-            "@type": "dependency",
-            "groupId": "org.onehippo",
-            "artifactId": "taxonomy-hst-api",
-            "scope": "compile",
-            "type": "site"
-        },
-        {
-            "@type": "dependency",
-            "groupId": "org.onehippo",
-            "artifactId": "taxonomy-hstclient",
-            "scope": "compile",
-            "type": "site"
-        }
-    ]
+        ],
+        "dependencies": [
+            {
+                "@type": "dependency",
+                "groupId": "org.onehippo",
+                "artifactId": "taxonomy-api",
+                "scope": "compile",
+                "type": "cms"
+            },
+            {
+                "@type": "dependency",
+                "groupId": "org.onehippo",
+                "artifactId": "taxonomy-addon-frontend",
+                "scope": "compile",
+                "type": "cms"
+            },
+            {
+                "@type": "dependency",
+                "groupId": "org.onehippo",
+                "artifactId": "taxonomy-addon-repository",
+                "scope": "compile",
+                "type": "cms"
+            },
+            {
+                "@type": "dependency",
+                "groupId": "org.onehippo",
+                "artifactId": "taxonomy-api",
+                "scope": "compile",
+                "type": "site"
+            },
+            {
+                "@type": "dependency",
+                "groupId": "org.onehippo",
+                "artifactId": "taxonomy-hst-api",
+                "scope": "compile",
+                "type": "site"
+            },
+            {
+                "@type": "dependency",
+                "groupId": "org.onehippo",
+                "artifactId": "taxonomy-hstclient",
+                "scope": "compile",
+                "type": "site"
+            }
+        ]
     },
     {
         "enabled": true,
