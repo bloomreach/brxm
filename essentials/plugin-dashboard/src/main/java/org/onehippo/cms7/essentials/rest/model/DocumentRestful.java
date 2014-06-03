@@ -37,6 +37,7 @@ public class DocumentRestful implements Restful {
     private boolean mixin;
     private boolean compoundType;
     private Set<String> superTypes;
+    private Set<String> fieldLocations;
 
     public DocumentRestful(final ContentType contentType) {
         this.fullName = contentType.getName();
@@ -45,6 +46,14 @@ public class DocumentRestful implements Restful {
         this.compoundType = contentType.isCompoundType();
         this.superTypes = contentType.getSuperTypes();
         this.name = extractName(contentType.getName());
+    }
+
+    public Set<String> getFieldLocations() {
+        return fieldLocations;
+    }
+
+    public void setFieldLocations(final Set<String> fieldLocations) {
+        this.fieldLocations = fieldLocations;
     }
 
     private String extractName(final String name) {

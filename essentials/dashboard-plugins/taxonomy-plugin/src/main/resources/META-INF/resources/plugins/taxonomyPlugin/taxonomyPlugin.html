@@ -14,7 +14,52 @@
   limitations under the License.
   -->
 
-<div ng-controller="taxonomyPluginCtrl">
+<div class="panel panel-default" ng-controller="taxonomyPluginCtrl">
+    <div class="panel-heading">Taxonomy plugin</div>
+    <div class="panel-body">
+        <form novalidate name="taxonomyForm">
+            <div class="infobox infobox-success" ng-show="pluginDescription" ng-bind-html="pluginDescription"></div>
+            <div><h3>Choose taxonomy name</h3>
+                <input ng-model="taxonomyName" ng-required="true"/>
+            </div>
+            <div>
+                <h3>Choose taxonomy locales</h3>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <p style="display: inline; margin-right: 20px;" ng-repeat="loc in locales">
+                            <span style="padding-right: 20px; cursor: default"><input type="checkbox" checked="{{loc.checked}}" ng-model="loc.checked"/></span><span>{{loc.name}}</span>
+                        </p>
+                    </li>
+                </ul>
+            </div>
+            <div ng-show="documentTypes.length">
+                <h3>Add taxonomy to following documents:</h3>
+                <table class="table table-hover">
+                    <tbody>
+                    <tr ng-repeat="doc in documentTypes" class="{{doc.name == 'basedocument' ? 'danger':''}}">
+                        <td>
+                            <input type="checkbox" checked="{{doc.checked}}" ng-model="doc.checked" ng-disabled="doc.name == 'basedocument'"/>
+                        </td>
+                        <td>{{doc.name}}</td>
+                        <td><select class="pull-right" chosen ng-disabled="doc.name == 'basedocument'"
+                                    style="width:120px;margin-left: 20px;"
+                                    ng-model="doc.selectedField"
+                                    ng-selected="doc.selectedField"
+                                    ng-options="option for option in doc.fieldLocations"></select>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
 
+            </div>
+        </form>
+    </div>
+    <div class="panel-footer">
+        <div class="pull-right">
+            <button ng-disabled="!taxonomyForm.$valid" class="btn btn-primary" ng-click="run()">Install Taxonomy plugin</button>
+        </div>
+        <p class="clearfix">&nbsp;</p>
+    </div>
 </div>
+
 

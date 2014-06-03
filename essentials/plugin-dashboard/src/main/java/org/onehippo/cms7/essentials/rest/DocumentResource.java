@@ -16,16 +16,20 @@
 
 package org.onehippo.cms7.essentials.rest;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -97,6 +101,7 @@ public class DocumentResource extends BaseResource {
         final String namespacePrefix = context.getProjectNamespacePrefix();
         final Session session = context.createSession();
         final Collection<ContentType> projectContentTypes = new HashSet<>();
+        final List<DocumentRestful> documents = new ArrayList<>();
         try {
             final ContentTypeService service = new HippoContentTypeService(session);
             final ContentTypes contentTypes = service.getContentTypes();
@@ -108,21 +113,43 @@ public class DocumentResource extends BaseResource {
                     projectContentTypes.addAll(value);
                 }
             }
+            // add extra properties (field locations)
+            for (ContentType doc : projectContentTypes) {
+                Type myType = doc.isCompoundType() ? Type.COMPOUND : Type.DOCUMENT;
+
+                if (type == Type.ALL) {
+                    documents.add(new DocumentRestful(doc));
+                } else if (myType == type) {
+                    documents.add(new DocumentRestful(doc));
+                }
+            }
+            for (DocumentRestful document : documents) {
+                final String path = MessageFormat.format("/hippo:namespaces/{0}/{1}/editor:templates/_default_/root", namespacePrefix, document.getName());
+                if(session.nodeExists(path)){
+                    final Node node = session.getNode(path);
+                    final Set<String> locations = new HashSet<>();
+                    if(node.hasProperty("wicket.extensions")){
+                        final Value[] values = node.getProperty("wicket.extensions").getValues();
+                        for (Value value : values) {
+                            final String propVal = value.getString();
+                            if(node.hasProperty(propVal)){
+                                locations.add(node.getProperty(propVal).getString());
+                            }
+                        }
+                    }
+                    if(locations.isEmpty()){
+                        locations.add("${cluster.id}.field");
+                    }
+                    document.setFieldLocations(locations);
+                }
+            }
         } catch (RepositoryException e) {
             log.error("Error fetching document types", e);
         } finally {
             GlobalUtils.cleanupSession(session);
         }
-        final List<DocumentRestful> documents = new ArrayList<>();
-        for (ContentType doc : projectContentTypes) {
-            Type myType = doc.isCompoundType() ? Type.COMPOUND : Type.DOCUMENT;
-
-            if (type == Type.ALL) {
-                documents.add(new DocumentRestful(doc));
-            } else if (myType == type) {
-                documents.add(new DocumentRestful(doc));
-            }
-        }
+        // sort documents by name:
+        Collections.sort(documents, new DocumentNameComparator());
         return documents;
     }
 
@@ -133,4 +160,13 @@ public class DocumentResource extends BaseResource {
         ASSET,
         GALLERY
     }
+    private static class DocumentNameComparator implements java.util.Comparator<DocumentRestful> {
+        @Override
+        public int compare(final DocumentRestful first, final DocumentRestful second) {
+            String name1 = first.getName();
+            String name2 = second.getName();
+            return String.CASE_INSENSITIVE_ORDER.compare(name1, name2);
+        }
+    }
+
 }

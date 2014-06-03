@@ -17,7 +17,48 @@
 (function () {
     "use strict";
     angular.module('hippo.essentials')
-        .controller('taxonomyPluginCtrl', function ($scope, $sce, $log, $rootScope, $http) {
-            //
+        .controller('taxonomyPluginCtrl', function ($scope, $filter, $sce, $log, $rootScope, $http) {
+            $scope.pluginId = "taxonomyPlugin";
+            var endpoint = $rootScope.REST.documents;
+            var endpointTaxonomy = $scope.endpoint = $rootScope.REST.dynamic + '/taxonomy-plugin/';
+            $scope.locales = [
+                {name: "en"},
+                {name: "fr"},
+                {name: "de"},
+                {name: "es"},
+                {name: "it"},
+                {name: "nl"}
+            ];
+            $scope.taxonomyName = null;
+            $scope.selectChange = function () {
+                console.log("Item changed");
+            };
+            $scope.run = function () {
+                // we need at least one locale
+                var documents = $filter('filter')($scope.documentTypes, {checked: true});
+                var locales = $filter('filter')($scope.locales, {checked: true});
+                if (locales.length == 0) {
+                    locales.push("en");
+                }
+                var payload = Essentials.addPayloadData("locales", locales.join(','), null);
+                Essentials.addPayloadData("locales", locales.join(','), null);
+                Essentials.addPayloadData("documents", documents.join(','), payload);
+                $http.post(endpointTaxonomy, payload).success(function (data) {
+                    console.log(data);
+                });
+            };
+
+            //############################################
+            // INITIALIZE APP:
+            //############################################
+
+            $http.get(endpoint).success(function (data) {
+                $scope.documentTypes = data;
+            });
+            $http.get($rootScope.REST.root + "/plugins/plugins/" + $scope.pluginId).success(function (plugin) {
+                $scope.pluginDescription = $sce.trustAsHtml(plugin.description);
+            });
+
+
         })
 })();
