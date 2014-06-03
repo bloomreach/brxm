@@ -92,6 +92,74 @@
     {
         "enabled": true,
         "@type": "plugin",
+        "name": "Taxonomy plugin",
+        "introduction": "Adds taxonomy support to hippo project",
+        "description": "Editors can enrich their metadata using the Taxonomy plugin to categorize the content. The CMS administrator can edit the taxonomy itself.<p>Read more about Robots.txt plugin at plugin site: <a href=\"http://taxonomy.forge.onehippo.org/\" target=\"_blank\">http://taxonomy.forge.onehippo.org/</a></p>",
+        "pluginId": "taxonomyPlugin",
+        "packageFile": "taxonomy_plugin_instructions.xml",
+        "restClasses": [],
+        "type": "tools",
+        "vendor": {
+            "@type": "vendor",
+            "name": "Hippo",
+            "url": "http://www.onehippo.com"
+        },
+        "libraries": [
+            {
+                "items": [
+                    {
+                        "file": "taxonomyPlugin.js"
+                    }
+                ]
+            }
+        ]         "dependencies": [
+        {
+            "@type": "dependency",
+            "groupId": "org.onehippo",
+            "artifactId": "taxonomy-api",
+            "scope": "compile",
+            "type": "cms"
+        },
+        {
+            "@type": "dependency",
+            "groupId": "org.onehippo",
+            "artifactId": "taxonomy-addon-frontend",
+            "scope": "compile",
+            "type": "cms"
+        },
+        {
+            "@type": "dependency",
+            "groupId": "org.onehippo",
+            "artifactId": "taxonomy-addon-repository",
+            "scope": "compile",
+            "type": "cms"
+        },
+        {
+            "@type": "dependency",
+            "groupId": "org.onehippo",
+            "artifactId": "taxonomy-api",
+            "scope": "compile",
+            "type": "site"
+        },
+        {
+            "@type": "dependency",
+            "groupId": "org.onehippo",
+            "artifactId": "taxonomy-hst-api",
+            "scope": "compile",
+            "type": "site"
+        },
+        {
+            "@type": "dependency",
+            "groupId": "org.onehippo",
+            "artifactId": "taxonomy-hstclient",
+            "scope": "compile",
+            "type": "site"
+        }
+    ]
+    },
+    {
+        "enabled": true,
+        "@type": "plugin",
         "name": "Gallery manager",
         "introduction": "Manage your project's image sets.",
         "pluginId": "galleryPlugin",
@@ -143,7 +211,7 @@
         "@type": "plugin",
         "name": "Robots plugin",
         "introduction": "Add Robots plugin support",
-        "description": "The robotstxt plugin adds a special document type to the CMS, allowing webmasters to determine the content of the robots.txt file retrieved by webbots. See <a href=\"http://www.robotstxt.org/\">robotstxt.org</a> for more information on the format and purpose of that file.<p>The robotstxt plugin provides Beans and Components for retrieving the robots.txt-related data from the Hippo repository, and a sample JSP file for rendering that data into the robots.txt file.</p>\n<p>Read more about Robots.txt plugin at plugin site: <a href=\"http://robotstxt.forge.onehippo.org/\" target=\"_blank\">http://robotstxt.forge.onehippo.org/</a></p>        ",
+        "description": "The robotstxt plugin adds a special document type to the CMS, allowing webmasters to determine the content of the robots.txt file retrieved by webbots. See <a href=\"http://www.robotstxt.org/\">robotstxt.org</a> for more information on the format and purpose of that file.<p>The robotstxt plugin provides Beans and Components for retrieving the robots.txt-related data from the Hippo repository, and a sample JSP file for rendering that data into the robots.txt file.</p>\n<p>Read more about Robots.txt plugin at plugin site: <a href=\"http://robotstxt.forge.onehippo.org/\" target=\"_blank\">http://robotstxt.forge.onehippo.org/</a></p>",
         "pluginId": "robotsPlugin",
         "restClasses": [],
         "packageFile": "/META-INF/robots_plugin_instructions.xml",

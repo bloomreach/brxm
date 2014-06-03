@@ -537,6 +537,11 @@ dashboard-plugins/simple-content/src/main/resources/java/ContentDocument.txt -te
 dashboard-plugins/simple-content/src/main/resources/jsp/contentlist-main-contentlist.jsp -text
 dashboard-plugins/simple-content/src/main/resources/jsp/contentpage-main.jsp -text
 dashboard-plugins/simple-content/src/main/resources/namespaces/contentdocument.xml -text
+dashboard-plugins/taxonomy-plugin/pom.xml -text
+dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/resources/plugins/taxonomyPlugin/taxonomyPlugin.js -text
+dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/resources/plugins/taxonomyPlugin/taxoonmyPlugin.html -text
+dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/taxonomy_plugin_instructions.xml -text
+dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/web-fragment.xml -text
 ide/intellij/project-setup/META-INF/plugin.xml -text
 ide/intellij/project-setup/README.txt -text
 ide/intellij/project-setup/ide-integration.jar -text

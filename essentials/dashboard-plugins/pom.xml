@@ -59,6 +59,7 @@
     <module>banner-plugin</module>
     <module>robots-plugin</module>
     <module>poll-plugin</module>
+    <module>taxonomy-plugin</module>
   </modules>
   <dependencyManagement>
 
