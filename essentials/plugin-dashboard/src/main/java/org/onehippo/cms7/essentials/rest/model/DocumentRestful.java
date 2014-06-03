@@ -23,6 +23,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 import org.onehippo.cms7.services.contenttype.ContentType;
 
+import com.google.common.base.Splitter;
+
 /**
  * @version "$Id$"
  */
@@ -40,12 +42,17 @@ public class DocumentRestful implements Restful {
     private Set<String> fieldLocations;
 
     public DocumentRestful(final ContentType contentType) {
-        this.fullName = contentType.getName();
+        this.fullName = extractFullName(contentType.getName());
         this.prefix = contentType.getPrefix();
         this.mixin = contentType.isMixin();
         this.compoundType = contentType.isCompoundType();
         this.superTypes = contentType.getSuperTypes();
-        this.name = extractName(contentType.getName());
+        this.name = extractName(fullName);
+    }
+
+    private String extractFullName(final CharSequence name) {
+        final Iterable<String> split = Splitter.on(",").split(name);
+        return split.iterator().next();
     }
 
     public Set<String> getFieldLocations() {

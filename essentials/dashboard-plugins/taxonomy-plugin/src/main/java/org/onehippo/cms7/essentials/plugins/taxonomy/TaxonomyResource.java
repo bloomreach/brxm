@@ -16,15 +16,20 @@
 
 package org.onehippo.cms7.essentials.plugins.taxonomy;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.servlet.ServletContext;
@@ -36,6 +41,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
@@ -53,6 +59,7 @@ import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
@@ -68,10 +75,19 @@ public class TaxonomyResource extends BaseResource {
     public static final String HIPPOTAXONOMY_LOCALES = "hippotaxonomy:locales";
     public static final String HIPPOTAXONOMY_MIXIN = "hippotaxonomy:classifiable";
     private static final StringCodec codec = new StringCodecFactory.NameEncoding();
+    public static final String HIPPOSYSEDIT_SUPERTYPE = "hipposysedit:supertype";
 
 
     private static Logger log = LoggerFactory.getLogger(TaxonomyResource.class);
 
+
+    /**
+     * Adds taxonomy  to {@code /content/taxonomies/} node.
+     *
+     * @param payloadRestful payload data
+     * @param servletContext servlet context
+     * @return message or an error message in case of error
+     */
     @POST
     @Path("/")
     public MessageRestful createTaxonomy(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
@@ -92,7 +108,7 @@ public class TaxonomyResource extends BaseResource {
             }
             if (!Strings.isEmpty(taxonomyName)) {
                 final Node taxonomiesNode = createOrGetTaxonomyContainer(session);
-                if(taxonomiesNode.hasNode(taxonomyName)){
+                if (taxonomiesNode.hasNode(taxonomyName)) {
                     return new ErrorMessageRestful("Taxonomy with name: " + taxonomyName + " already exists");
                 }
                 addTaxonomyNode(session, taxonomiesNode, taxonomyName, locales);
@@ -107,7 +123,87 @@ public class TaxonomyResource extends BaseResource {
         return new ErrorMessageRestful("Failed to create taxonomy");
     }
 
+    /**
+     * Adds taxonomy  to a document
+     *
+     * @param payloadRestful payload data
+     * @param servletContext servlet context
+     * @return message or an error message in case of error
+     */
+    @POST
+    @Path("/add")
+    public MessageRestful addTaxonomyToDocument(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
+        final PluginContext context = getContext(servletContext);
+        final Session session = context.createSession();
+        try {
+            final Map<String, String> values = payloadRestful.getValues();
+            final String[] taxonomyNames = extractValues(values.get("taxonomies"));
+            final String[] documentNames = extractValues(values.get("documents"));
+            final String[] locations = extractValues(values.get("locations"));
+            final Set<String> changedDocuments = new HashSet<>();
+            for (int i = 0; i < documentNames.length; i++) {
+                final String documentName = documentNames[i];
+                final String location = locations[i];
+                final String taxonomyName = taxonomyNames[i];
+                // add mixin:
+                final String prefix = context.getProjectNamespacePrefix();
+                final String prototypePath = MessageFormat.format("/hippo:namespaces/{0}/{1}/hipposysedit:prototypes/hipposysedit:prototype", prefix, documentName);
+                if (session.nodeExists(prototypePath)) {
+                    final Node node = session.getNode(prototypePath);
+                    node.addMixin(HIPPOTAXONOMY_MIXIN);
+                }
+                // add supertypes
+                final String nodeTypePath = MessageFormat.format("/hippo:namespaces/{0}/{1}/hipposysedit:nodetype/hipposysedit:nodetype", prefix, documentName);
+                if (session.nodeExists(nodeTypePath)) {
+                    final Node node = session.getNode(nodeTypePath);
+                    if (node.hasProperty(HIPPOSYSEDIT_SUPERTYPE)) {
+                        final Property property = node.getProperty(HIPPOSYSEDIT_SUPERTYPE);
+                        final Value[] myValues = property.getValues();
+                        final Set<String> newValueSet = prepareValues(myValues, HIPPOTAXONOMY_MIXIN);
+                        final String[] newValues = newValueSet.toArray(new String[newValueSet.size()]);
+                        property.setValue(newValues);
+                    }
+                }
+                //
+                // add field:
+                final String path = MessageFormat.format("/hippo:namespaces/{0}/{1}/editor:templates/_default_", prefix, documentName);
+                if (session.nodeExists(path)) {
+                    final Node node = session.getNode(path);
+                    if (node.hasNode("classifiable")) {
+                        log.info("Taxonomy already added");
+                        continue;
+                    }
+                    final Node fieldNode = node.addNode("classifiable", "frontend:plugin");
+                    fieldNode.setProperty("mixin", HIPPOTAXONOMY_MIXIN);
+                    fieldNode.setProperty("plugin.class", "org.hippoecm.frontend.editor.plugins.mixin.MixinLoaderPlugin");
+                    fieldNode.setProperty("wicket.id", location);
+                    final Node clusterNode = fieldNode.addNode("cluster.options", "frontend:pluginconfig");
+                    clusterNode.setProperty("taxonomy.name", taxonomyName);
+                    changedDocuments.add(documentName);
+                }
+            }
+            if (session.hasPendingChanges()) {
+                session.save();
+            }
+            if (changedDocuments.size() > 0) {
+                return new MessageRestful("Added fields to following documents: " + Joiner.on(",").join(changedDocuments));
+            }
+            return new MessageRestful("No taxonomy fields were added, fields already exist");
+        } catch (RepositoryException e) {
+            log.error("Error adding taxonomy to a document", e);
+        } finally {
+            GlobalUtils.cleanupSession(session);
+        }
+        return new ErrorMessageRestful("Error adding taxonomy fields");
+    }
 
+
+    /**
+     * Returns list of taxonomies found under {@code /content/taxonomies/} node.
+     *
+     * @param servletContext servlet context
+     * @return list of taxonomies (name and node path pairs)
+     */
     @GET
     @Path("/taxonomies")
     public List<KeyValueRestful> getTaxonomies(@Context ServletContext servletContext) {
@@ -182,4 +278,28 @@ public class TaxonomyResource extends BaseResource {
         }
         return false;
     }
+
+    private String[] extractValues(final CharSequence value) {
+        if (Strings.isEmpty(value)) {
+            return ArrayUtils.EMPTY_STRING_ARRAY;
+        }
+        final Splitter splitter = Splitter.on(",").omitEmptyStrings().trimResults();
+        final Iterable<String> iterable = splitter.split(value);
+        final List<String> strings = Lists.newArrayList(iterable);
+        return strings.toArray(new String[strings.size()]);
+    }
+
+    private Set<String> prepareValues(final Value[] values, final String value) throws RepositoryException {
+        final Set<String> myValues = new HashSet<>();
+        for (Value v : values) {
+            myValues.add(v.getString());
+        }
+        if (myValues.contains(value)) {
+            return myValues;
+        }
+
+        myValues.add(value);
+        return myValues;
+    }
+
 }
