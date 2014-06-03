@@ -277,7 +277,7 @@ public abstract class AbstractGroupManager implements GroupManager {
     }
 
     public final NodeIterator getMemberships(String rawUserId, String providerId) throws RepositoryException {
-        String userId = sanitizeId(rawUserId);
+        String userId = NodeNameCodec.decode(sanitizeId(rawUserId));
 
         StringBuilder statement = new StringBuilder();
         // Triggers: https://issues.apache.org/jira/browse/JCR-1573 don't use path in query for now
@@ -285,7 +285,7 @@ public abstract class AbstractGroupManager implements GroupManager {
         statement.append("//element");
         statement.append("(*, ").append(HippoNodeType.NT_GROUP).append(")");
         statement.append('[');
-        statement.append("(@").append(HippoNodeType.HIPPO_MEMBERS).append(" = '").append(userId).append("'");
+        statement.append("(@").append(HippoNodeType.HIPPO_MEMBERS).append(" = '").append(userId.replace("'", "''")).append("'");
         statement.append(" or @").append(HippoNodeType.HIPPO_MEMBERS).append(" = '*')");
         if (providerId != null) {
             statement.append(" and @");
@@ -309,7 +309,7 @@ public abstract class AbstractGroupManager implements GroupManager {
             final NodeIterator nodes = getMemberships(userId, providerId);
             while (nodes.hasNext()) {
                 try {
-                    groupIds.add(nodes.nextNode().getName());
+                    groupIds.add(NodeNameCodec.decode(nodes.nextNode().getName()));
                 } catch (RepositoryException e) {
                     log.warn("Failed to add group id to set of memberships of user {}: " + e, userId);
                 }
@@ -365,11 +365,11 @@ public abstract class AbstractGroupManager implements GroupManager {
 
     public final Set<String> getMembers(Node group) throws RepositoryException {
         Value[] vals = group.getProperty(HippoNodeType.HIPPO_MEMBERS).getValues();
-        Set<String> memebers = new HashSet<String>(vals.length);
+        Set<String> members = new HashSet<String>(vals.length);
         for (Value val : vals) {
-            memebers.add(val.getString());
+            members.add(val.getString());
         }
-        return memebers;
+        return members;
     }
 
     public final void setMembers(Node group, Set<String> members) throws RepositoryException {

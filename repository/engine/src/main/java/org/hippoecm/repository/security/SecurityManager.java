@@ -71,6 +71,7 @@ import org.apache.jackrabbit.core.security.principal.PrincipalProviderRegistry;
 import org.apache.jackrabbit.core.security.principal.ProviderRegistryImpl;
 import org.apache.jackrabbit.core.security.simple.SimpleAccessManager;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.security.domain.Domain;
 import org.hippoecm.repository.security.group.DummyGroupManager;
 import org.hippoecm.repository.security.group.GroupManager;
@@ -377,14 +378,14 @@ public class SecurityManager implements HippoSecurityManager {
      * @param rawUserId the unparsed userId
      */
     private Set<Domain> getDomainsForUser(String rawUserId, String providerId) throws RepositoryException {
-        String userId = sanitizeUserId(rawUserId, providerId);
+        String userId = NodeNameCodec.decode(sanitizeUserId(rawUserId, providerId));
         Set<Domain> domains = new HashSet<Domain>();
         StringBuilder statement = new StringBuilder();
         statement.append("SELECT * FROM ").append(HippoNodeType.NT_AUTHROLE);
         statement.append(" WHERE");
         statement.append(" jcr:path LIKE '/").append(domainsPath).append("/%").append("'");
         statement.append(" AND ");
-        statement.append(HippoNodeType.HIPPO_USERS).append(" = '").append(userId).append("'");
+        statement.append(HippoNodeType.HIPPO_USERS).append(" = '").append(userId.replace("'", "''")).append("'");
         try {
             Query q = systemSession.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.SQL);
             QueryResult result = q.execute();
@@ -405,14 +406,15 @@ public class SecurityManager implements HippoSecurityManager {
      * Get the domains in which the group has a role.
      */
     private Set<Domain> getDomainsForGroup(String rawGroupId, String providerId) throws RepositoryException {
-        String groupId = sanitizeGroupId(rawGroupId, providerId);
+        String groupId = NodeNameCodec.decode(sanitizeGroupId(rawGroupId, providerId));
+
         Set<Domain> domains = new HashSet<Domain>();
         StringBuilder statement = new StringBuilder();
         statement.append("SELECT * FROM ").append(HippoNodeType.NT_AUTHROLE);
         statement.append(" WHERE");
         statement.append(" jcr:path LIKE '/").append(domainsPath).append("/%").append("'");
         statement.append(" AND ");
-        statement.append(HippoNodeType.HIPPO_GROUPS).append(" = '").append(groupId).append("'");
+        statement.append(HippoNodeType.HIPPO_GROUPS).append(" = '").append(groupId.replaceAll("'", "''")).append("'");
         try {
             Query q = systemSession.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.SQL);
             QueryResult result = q.execute();
@@ -584,12 +586,18 @@ public class SecurityManager implements HippoSecurityManager {
     }
 
     private void assignGroupPrincipals(Set<Principal> principals, String userId, String providerId) {
+        if (userId == null) {
+            return;
+        }
         for (String groupId : getMemberships(userId, providerId)) {
             principals.add(new GroupPrincipal(groupId));
         }
     }
 
     private void assignFacetAuthPrincipals(Set<Principal> principals, String userId, String providerId) throws RepositoryException {
+        if (userId == null) {
+            return;
+        }
         // Find domains that the user is associated with
         Set<Domain> userDomains = new HashSet<Domain>();
         userDomains.addAll(getDomainsForUser(userId, providerId));
