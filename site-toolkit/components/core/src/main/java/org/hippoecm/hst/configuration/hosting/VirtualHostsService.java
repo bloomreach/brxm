@@ -837,6 +837,16 @@ public class VirtualHostsService implements MutableVirtualHosts {
                             blueprintContextPath, hstManager.getContextPath());
                     continue;
                 }
+                if (!isValidContextPath(blueprintContextPath)) {
+                    String msg = String.format("Incorrect configured contextPath '%s' for blueprint '%s': It must start with a '/' to be used" +
+                            "and is not allowed to contain any other '/', but it is '%s'. " +
+                            "Skipping blueprint from hst model.",
+                            blueprintContextPath, blueprintNode.getValueProvider().getPath() , blueprintContextPath);
+                    log.error(msg);
+                    continue;
+                }
+
+
                 try {
                     blueprints.put(blueprintNode.getName(), BlueprintHandler.buildBlueprint(blueprintNode, blueprintContextPath));
                 } catch (ModelLoadingException e) {
