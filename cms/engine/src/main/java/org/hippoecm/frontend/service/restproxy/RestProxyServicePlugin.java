@@ -172,9 +172,7 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
                 .header(CMSREST_CMSHOST_HEADER, getFarthestRequestHost())
                 .accept(MediaType.WILDCARD_TYPE);
 
-        // TODO set a timeout?
-        //WebClient.getConfig(WebClient.client(clientProxy)).getHttpConduit().getClient().setAsyncExecuteTimeout(60000);
-        // WebClient.getConfig(WebClient.client(clientProxy)).setSynchronousTimeout(60000);
+        // default time out is 60000 ms;
         return clientProxy;
     }
 
