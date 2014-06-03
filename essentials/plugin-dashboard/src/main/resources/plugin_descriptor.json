@@ -98,7 +98,7 @@
         "pluginId": "taxonomyPlugin",
         "packageFile": "taxonomy_plugin_instructions.xml",
         "restClasses": [],
-        "type": "tools",
+        "type": "plugins",
         "vendor": {
             "@type": "vendor",
             "name": "Hippo",
@@ -108,6 +108,7 @@
             {
                 "items": [
                     {
+                        "component": "taxonomyPlugin",
                         "file": "taxonomyPlugin.js"
                     }
                 ]
