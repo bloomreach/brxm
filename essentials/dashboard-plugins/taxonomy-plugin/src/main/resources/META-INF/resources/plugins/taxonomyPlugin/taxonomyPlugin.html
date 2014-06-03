@@ -32,9 +32,22 @@
                     </li>
                 </ul>
             </div>
-            <div ng-show="documentTypes.length">
+            <div class="pull-right">
+                <button ng-disabled="!taxonomyForm.$valid" class="btn btn-primary" ng-click="addTaxonomy()">Create new taxonomy</button>
+            </div>
+        </form>
+        <form novalidate name="documentsForm">
+            <div ng-show="documentTypes.length && taxonomies.length">
                 <h3>Add taxonomy to following documents:</h3>
                 <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>Document</th>
+                        <th>Field position</th>
+                        <th>Taxonomy name</th>
+                    </tr>
+                    </thead>
                     <tbody>
                     <tr ng-repeat="doc in documentTypes" class="{{doc.name == 'basedocument' ? 'danger':''}}">
                         <td>
@@ -47,6 +60,12 @@
                                     ng-selected="doc.selectedField"
                                     ng-options="option for option in doc.fieldLocations"></select>
                         </td>
+                        <td><select class="pull-right" chosen ng-disabled="doc.name == 'basedocument'"
+                                    style="width:120px;margin-left: 20px;"
+                                    ng-model="doc.selectedTaxonomy"
+                                    ng-selected="doc.selectedTaxonomy"
+                                    ng-options="option.key for option in taxonomies"></select>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
@@ -56,7 +75,7 @@
     </div>
     <div class="panel-footer">
         <div class="pull-right">
-            <button ng-disabled="!taxonomyForm.$valid" class="btn btn-primary" ng-click="run()">Install Taxonomy plugin</button>
+            <button ng-disabled="!documentsForm.$valid || !taxonomies.length" class="btn btn-primary" ng-click="addDocuments()">Add taxonomy to documents</button>
         </div>
         <p class="clearfix">&nbsp;</p>
     </div>

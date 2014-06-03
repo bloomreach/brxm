@@ -46,7 +46,7 @@ import com.google.common.collect.Multimap;
  */
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
-@Path("/beanwriter/")
+@Path("beanwriter/")
 public class BeanWriterResource extends BaseResource {
 
 
