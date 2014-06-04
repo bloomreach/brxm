@@ -60,6 +60,7 @@
     <module>robots-plugin</module>
     <module>poll-plugin</module>
     <module>taxonomy-plugin</module>
+    <module>document-wizard-plugin</module>
   </modules>
   <dependencyManagement>
 

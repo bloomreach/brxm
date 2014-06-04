@@ -162,6 +162,55 @@
     {
         "enabled": true,
         "@type": "plugin",
+        "name": "Document wizard plugin",
+        "introduction": "Adds Document wizard support to hippo project",
+        "description": "The Document Wizard is an addon for Hippo CMS that lets CMS users create new documents quickly and easily from the dashboard. On clicking a shortcut link a dialog window opens where information for the document to create can be entered.<p>Read more about the document wizard plugin at <a href=\"http://documentwizard.forge.onehippo.org/\" target=\"_blank\">http://documentwizard.forge.onehippo.org/</a></p>",
+        "pluginId": "documentWizardPlugin",
+        "packageFile": "",
+        "restClasses": ["org.onehippo.cms7.essentials.plugins.docwiz.DocumentWizardResource"],
+        "type": "plugins",
+        "vendor": {
+            "@type": "vendor",
+            "name": "Hippo",
+            "url": "http://www.onehippo.com"
+        },
+        "libraries": [
+            {
+                "items": [
+                    {
+                        "component": "documentWizardPlugin",
+                        "file": "documentWizardPlugin.js"
+                    }
+                ]
+            }
+        ],
+        "dependencies": [
+            {
+                "@type": "dependency",
+                "groupId": "org.onehippo.forge",
+                "artifactId": "dashboard-document-wizard",
+                "scope": "compile",
+                "type": "cms"
+            },
+            {
+                "@type": "dependency",
+                "groupId": "org.onehippo.forge.selectionplugins",
+                "artifactId": "selectionplugins-addon-cms",
+                "scope": "compile",
+                "type": "cms"
+            },
+            {
+                "@type": "dependency",
+                "groupId": "org.onehippo.forge.selectionplugins",
+                "artifactId": "selectionplugins-addon-repository",
+                "scope": "compile",
+                "type": "cms"
+            }
+        ]
+    },
+    {
+        "enabled": true,
+        "@type": "plugin",
         "name": "Gallery manager",
         "introduction": "Manage your project's image sets.",
         "pluginId": "galleryPlugin",
