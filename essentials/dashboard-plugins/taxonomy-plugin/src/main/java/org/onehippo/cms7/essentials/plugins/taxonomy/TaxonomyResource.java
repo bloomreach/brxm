@@ -147,11 +147,12 @@ public class TaxonomyResource extends BaseResource {
                 final String taxonomyName = taxonomyNames[i];
                 // add mixin:
                 final String prefix = context.getProjectNamespacePrefix();
-                final String prototypePath = MessageFormat.format("/hippo:namespaces/{0}/{1}/hipposysedit:prototypes/hipposysedit:prototype", prefix, documentName);
+               /* final String prototypePath = MessageFormat.format("/hippo:namespaces/{0}/{1}/hipposysedit:prototypes/hipposysedit:prototype", prefix, documentName);
                 if (session.nodeExists(prototypePath)) {
                     final Node node = session.getNode(prototypePath);
                     node.addMixin(HIPPOTAXONOMY_MIXIN);
                 }
+                */
                 // add supertypes
                 final String nodeTypePath = MessageFormat.format("/hippo:namespaces/{0}/{1}/hipposysedit:nodetype/hipposysedit:nodetype", prefix, documentName);
                 if (session.nodeExists(nodeTypePath)) {
@@ -176,7 +177,7 @@ public class TaxonomyResource extends BaseResource {
                     final Node fieldNode = node.addNode("classifiable", "frontend:plugin");
                     fieldNode.setProperty("mixin", HIPPOTAXONOMY_MIXIN);
                     fieldNode.setProperty("plugin.class", "org.hippoecm.frontend.editor.plugins.mixin.MixinLoaderPlugin");
-                    fieldNode.setProperty("wicket.id", location);
+                    fieldNode.setProperty("wicket.id", MessageFormat.format("{0}.item", location));
                     final Node clusterNode = fieldNode.addNode("cluster.options", "frontend:pluginconfig");
                     clusterNode.setProperty("taxonomy.name", taxonomyName);
                     changedDocuments.add(documentName);
