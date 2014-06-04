@@ -847,10 +847,6 @@ plugin-dashboard/src/main/webapp/WEB-INF/jsp/errors/404.jsp -text
 plugin-dashboard/src/main/webapp/WEB-INF/jsp/errors/500.jsp -text
 plugin-dashboard/src/main/webapp/WEB-INF/jsp/index.jsp -text
 plugin-dashboard/src/main/webapp/WEB-INF/web.xml -text
-plugin-dashboard/src/main/webapp/angular/index.jsp -text
-plugin-dashboard/src/main/webapp/angular/index2.jsp -text
-plugin-dashboard/src/main/webapp/angular/index3.jsp -text
-plugin-dashboard/src/main/webapp/angular/index4.jsp -text
 plugin-dashboard/src/main/webapp/assets/css/bootstrap.css -text
 plugin-dashboard/src/main/webapp/assets/fonts/Roboto-Black-webfont.eot -text
 plugin-dashboard/src/main/webapp/assets/fonts/Roboto-Black-webfont.svg -text

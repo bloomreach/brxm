@@ -4054,12 +4054,6 @@ plugin-dashboard/src/main/webapp/WEB-INF/jsp/errors/target
 plugin-dashboard/src/main/webapp/WEB-INF/jsp/hippo-plugins.iws
 plugin-dashboard/src/main/webapp/WEB-INF/jsp/target
 plugin-dashboard/src/main/webapp/WEB-INF/target
-plugin-dashboard/src/main/webapp/angular/*.iml
-plugin-dashboard/src/main/webapp/angular/.DS_Store
-plugin-dashboard/src/main/webapp/angular/.idea
-plugin-dashboard/src/main/webapp/angular/atlassian-ide-plugin.xml
-plugin-dashboard/src/main/webapp/angular/hippo-plugins.iws
-plugin-dashboard/src/main/webapp/angular/target
 plugin-dashboard/src/main/webapp/assets/*.iml
 plugin-dashboard/src/main/webapp/assets/.DS_Store
 plugin-dashboard/src/main/webapp/assets/.idea

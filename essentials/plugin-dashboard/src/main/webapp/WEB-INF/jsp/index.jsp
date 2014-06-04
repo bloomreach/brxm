@@ -28,13 +28,12 @@
   <script src="${pageContext.request.contextPath}/js/lib/angular-route.min.js"></script>
   <script src="${pageContext.request.contextPath}/js/lib/angular-ui-router.js"></script>
 
-  <script src="${pageContext.request.contextPath}/js/lib/chosen.jquery.js"></script>
+  <script src="${pageContext.request.contextPath}/components/chosen/chosen.jquery.js"></script>
   <script src="${pageContext.request.contextPath}/js/lib/chosen.js"></script>
   <script src="${pageContext.request.contextPath}/js/lib/ui-sortable.js"></script>
   <script src="${pageContext.request.contextPath}/js/lib/ui-utils.js"></script>
 
-  <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/chosen.css"/>
-  <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/chosen-spinner.css"/>
+  <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/components/chosen/chosen.css"/>
   <%--<script src="${pageContext.request.contextPath}/js/require.js" data-main="${pageContext.request.contextPath}/js/main.js"></script>--%>
   <%--<script src="${pageContext.request.contextPath}/js/require.js"></script>--%>
 
