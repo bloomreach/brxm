@@ -62,7 +62,9 @@
                                     ng-model="doc.selectedField"
                                     ng-selected="doc.selectedField"
                                     ng-required="doc.checked"
-                                    ng-options="option for option in doc.fieldLocations"></select>
+                                    ng-options="option for option in doc.fieldLocations">
+                                <option value=""></option>
+                            </select>
                         </td>
                         <td class="{{documentsForm.taxonomyField.$invalid ? 'danger':''}}">
                             <select class="pull-right" name="taxonomyField" chosen ng-disabled="doc.name == 'basedocument'"
@@ -71,7 +73,9 @@
                                     ng-selected="doc.selectedTaxonomy"
                                     ng-required="doc.checked"
                                     required
-                                    ng-options="option.key for option in taxonomies"></select>
+                                    ng-options="option.key for option in taxonomies">
+                                <option value=""></option>
+                            </select>
                         </td>
                     </tr>
                     </tbody>
