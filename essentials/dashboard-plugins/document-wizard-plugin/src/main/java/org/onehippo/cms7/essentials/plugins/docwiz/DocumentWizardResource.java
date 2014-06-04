@@ -16,6 +16,11 @@
 
 package org.onehippo.cms7.essentials.plugins.docwiz;
 
+import java.util.Map;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -24,9 +29,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.wicket.util.string.Strings;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
+import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,9 +49,44 @@ public class DocumentWizardResource extends BaseResource {
 
     private static Logger log = LoggerFactory.getLogger(DocumentWizardResource.class);
 
+    public static final String ROOT_CONFIG_PATH = "/hippo:configuration/hippo:frontend/cms/cms-dashshortcuts";
+
+
     @POST
     @Path("/")
     public MessageRestful addWizard(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
+        final PluginContext context = getContext(servletContext);
+        final Session session = context.createSession();
+        try {
+            final Node root = session.getNode(ROOT_CONFIG_PATH);
+            final Map<String, String> values = payloadRestful.getValues();
+            final String shortcutName = values.get("shortcutName");
+            final String classificationType = values.get("classificationType");
+            final String documentType = values.get("documentType");
+            final String baseFolder = values.get("baseFolder");
+
+            final String query = values.get("query");
+            if (Strings.isEmpty(shortcutName)) {
+                return new ErrorMessageRestful("Shortcut name was empty/invalid");
+            }
+            if (root.hasNode(shortcutName)) {
+                return new ErrorMessageRestful("Shortcut name was already configured: " + shortcutName);
+            }
+            final Node node = root.addNode(shortcutName, "frontend:plugin");
+            node.setProperty("browser.id", "service.browse");
+            node.setProperty("wicket.id", "shortcut");
+            node.setProperty("workaround", "4");
+            node.setProperty("plugin.class", "org.onehippo.forge.dashboard.documentwizard.NewDocumentWizardPlugin");
+            node.setProperty("baseFolder", baseFolder);
+            node.setProperty("documentType", documentType);
+            node.setProperty("classificationType", classificationType);
+            session.save();
+            return new MessageRestful("Successfully created Document Wizard shortcut: " + shortcutName);
+        } catch (RepositoryException e) {
+            log.error("Error configuring document wizard shortcuts", e);
+        } finally {
+            GlobalUtils.cleanupSession(session);
+        }
         return new MessageRestful("setup");
 
     }

@@ -18,11 +18,29 @@
     "use strict";
     angular.module('hippo.essentials')
         .controller('documentWizardCtrl', function ($scope, $filter, $sce, $log, $rootScope, $http) {
-            $scope.pluginId = "documentWizard";
+            $scope.pluginId = "documentWizardPlugin";
+            $scope.selectedDocument = null;
+            $scope.shortcutName = null;
+            $scope.baseFolder = null;
+            $scope.baseFolder = null;
+            $scope.classificationType = ["date", "list"];
+            $scope.classificationTypes = ["date", "list"];
+
             var endpoint = $rootScope.REST.dynamic + 'documentwizard/';
 
-            $scope.addWizard = function(){
+            $scope.addWizard = function () {
 
-            }
+            };
+
+            //############################################
+            // INIT
+            //############################################
+            $http.get($rootScope.REST.root + "/plugins/plugins/" + $scope.pluginId).success(function (plugin) {
+                $scope.pluginDescription = $sce.trustAsHtml(plugin.description);
+            });
+            $http.get($rootScope.REST.documents).success(function (data) {
+                $scope.documentTypes = data;
+            });
+
         })
 })();
