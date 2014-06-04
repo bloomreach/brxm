@@ -92,6 +92,7 @@ public class JcrBrowserResource extends BaseResource {
         while (nodes.hasNext()) {
             final Node kid = nodes.nextNode();
             final JcrNode jcrKid = new JcrNode(kid.getName(), kid.getPath());
+            jcrKid.setFetchProperties(jcrNode.isFetchProperties());
             jcrNode.addNode(jcrKid);
             populateProperties(kid, jcrKid);
             if (anotherLevel) {
@@ -104,13 +105,15 @@ public class JcrBrowserResource extends BaseResource {
 
 
     private void populateProperties(final Node node, final JcrNode jcrNode) throws RepositoryException {
-        final PropertyIterator properties = node.getProperties();
-        while (properties.hasNext()) {
-            final Property p = properties.nextProperty();
-            final JcrProperty<String> jcrProperty = new JcrProperty<>();
-            jcrProperty.setName(p.getName());
-            jcrProperty.setValue(p.getPath());
-            jcrNode.addProperty(jcrProperty);
+        if (jcrNode.isFetchProperties()) {
+            final PropertyIterator properties = node.getProperties();
+            while (properties.hasNext()) {
+                final Property p = properties.nextProperty();
+                final JcrProperty<String> jcrProperty = new JcrProperty<>();
+                jcrProperty.setName(p.getName());
+                jcrProperty.setValue(p.getPath());
+                jcrNode.addProperty(jcrProperty);
+            }
         }
     }
 

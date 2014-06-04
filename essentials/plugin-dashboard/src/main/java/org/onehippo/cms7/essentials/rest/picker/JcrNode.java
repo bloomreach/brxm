@@ -35,6 +35,10 @@ public class JcrNode implements Restful {
     private List<JcrProperty<?>> properties;
     private List<JcrNode> items;
     /**
+     * By default we don't send any properties to client, unless explicitly set.
+     */
+    private boolean fetchProperties;
+    /**
      * flag which indicates node is in "loaded" state (e.g. all data is retrieved)
      * so no additional requests needs to be done, unless explicitly requested
      */
@@ -152,6 +156,14 @@ public class JcrNode implements Restful {
 
     public void setDepth(final int depth) {
         this.depth = depth;
+    }
+
+    public boolean isFetchProperties() {
+        return fetchProperties;
+    }
+
+    public void setFetchProperties(final boolean fetchProperties) {
+        this.fetchProperties = fetchProperties;
     }
 
     @Override
