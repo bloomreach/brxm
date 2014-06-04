@@ -415,8 +415,8 @@ dashboard-plugins/dashboard-restservices-plugin/src/test/resources/log4j.xml -te
 dashboard-plugins/dashboard-setup-plugin/pom.xml -text
 dashboard-plugins/document-wizard-plugin/pom.xml -text
 dashboard-plugins/document-wizard-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/docwiz/DocumentWizardResource.java -text
-dashboard-plugins/document-wizard-plugin/src/main/resources/META-INF/resources/plugins/documentWizard/documentWizard.html -text
-dashboard-plugins/document-wizard-plugin/src/main/resources/META-INF/resources/plugins/documentWizard/documentWizard.js -text
+dashboard-plugins/document-wizard-plugin/src/main/resources/META-INF/resources/plugins/documentWizardPlugin/documentWizardPlugin.html -text
+dashboard-plugins/document-wizard-plugin/src/main/resources/META-INF/resources/plugins/documentWizardPlugin/documentWizardPlugin.js -text
 dashboard-plugins/document-wizard-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/document-wizard-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/essentials-skeleton-package/pom.xml -text
