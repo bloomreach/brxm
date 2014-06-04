@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+  >
+	<soap:Body>
+		<jsconf xmlns="http://example.com/ns1">
+			<response>
+				<meta>
+					<component id="seite1" class="component">
+            <properties>
+							<property name="prop1">
+								<thing />
+								<value>1</value>
+							</property>
+							<property name="prop2">
+								<thing att="something" />
+							</property>
+							<foo_bar>foo</foo_bar>
+						</properties>
+					</component>
+				</meta>
+			</response>
+		</jsconf>
+	</soap:Body>
+</soap:Envelope>

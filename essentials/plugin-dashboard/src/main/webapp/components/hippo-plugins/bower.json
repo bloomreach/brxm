@@ -1,0 +1,17 @@
+{
+  "name": "hippo-plugins",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "angular": "1.2.15",
+    "angular-mocks": "1.2.15",
+    "ExplorerCanvas": "#1735174401034391aa632957b17ce4a167613a83",
+    "es5-shim": "#d24a08dfe81e0eda3d5e9f3b859d63c1da05aba7",
+    "fastclick": "0.6.11",
+    "html5shiv": "3.7.0",
+    "jasmine-jquery": "1.5.9",
+    "jquery": "1.10.2",
+    "js-detect-ie": "https://github.com/ianpgall/js-detect-ie.git#241cd48c867c6c296fa772874b04bdaa15b81cb1",
+    "respond": "1.4.2"
+  }
+}
