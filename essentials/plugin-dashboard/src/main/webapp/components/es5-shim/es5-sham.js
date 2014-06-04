@@ -1,19 +1,13 @@
-/*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+/*!
+ * https://github.com/es-shims/es5-shim
+ * @license es5-shim Copyright 2009-2014 by contributors, MIT License
+ * see https://github.com/es-shims/es5-shim/blob/master/LICENSE
  */
 
+// vim: ts=4 sts=4 sw=4 expandtab
+
+//Add semicolon to prevent IIFE from being passed as argument to concated code.
+;
 // Module systems magic dance
 (function (definition) {
     // RequireJS
@@ -49,7 +43,7 @@ if ((supportsAccessors = owns(prototypeOfObject, "__defineGetter__"))) {
 // ES5 15.2.3.2
 // http://es5.github.com/#x15.2.3.2
 if (!Object.getPrototypeOf) {
-    // https://github.com/kriskowal/es5-shim/issues#issue/2
+    // https://github.com/es-shims/es5-shim/issues#issue/2
     // http://ejohn.org/blog/objectgetprototypeof/
     // recommended by fschaefer on github
     Object.getPrototypeOf = function getPrototypeOf(object) {
@@ -246,7 +240,7 @@ if (!Object.create) {
 
 // Patch for WebKit and IE8 standard mode
 // Designed by hax <hax.github.com>
-// related issue: https://github.com/kriskowal/es5-shim/issues#issue/5
+// related issue: https://github.com/es-shims/es5-shim/issues#issue/5
 // IE8 Reference:
 //     http://msdn.microsoft.com/en-us/library/dd282900.aspx
 //     http://msdn.microsoft.com/en-us/library/dd229916.aspx

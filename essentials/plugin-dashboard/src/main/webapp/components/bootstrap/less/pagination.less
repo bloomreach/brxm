@@ -1,19 +1,3 @@
-/*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 //
 // Pagination (multiple pages)
 // --------------------------------------------------
@@ -32,6 +16,7 @@
       padding: @padding-base-vertical @padding-base-horizontal;
       line-height: @line-height-base;
       text-decoration: none;
+      color: @pagination-color;
       background-color: @pagination-bg;
       border: 1px solid @pagination-border;
       margin-left: -1px;
@@ -55,7 +40,9 @@
   > li > span {
     &:hover,
     &:focus {
+      color: @pagination-hover-color;
       background-color: @pagination-hover-bg;
+      border-color: @pagination-hover-border;
     }
   }
 
@@ -67,19 +54,21 @@
       z-index: 2;
       color: @pagination-active-color;
       background-color: @pagination-active-bg;
-      border-color: @pagination-active-bg;
+      border-color: @pagination-active-border;
       cursor: default;
     }
   }
 
   > .disabled {
     > span,
+    > span:hover,
+    > span:focus,
     > a,
     > a:hover,
     > a:focus {
       color: @pagination-disabled-color;
-      background-color: @pagination-bg;
-      border-color: @pagination-border;
+      background-color: @pagination-disabled-bg;
+      border-color: @pagination-disabled-border;
       cursor: not-allowed;
     }
   }

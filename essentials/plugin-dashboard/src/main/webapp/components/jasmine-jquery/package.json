@@ -1,7 +1,7 @@
 {
     "name": "jasmine-jquery"
   , "description": "jQuery matchers and fixture loader for Jasmine framework"
-  , "version": "1.5.9"
+  , "version": "2.0.3"
   , "keywords": ["jasmine", "jquery"]
   , "homepage": "http://github.com/velesin/jasmine-jquery"
   , "author": {
@@ -21,6 +21,6 @@
   , "devDependencies": {
       "grunt": "~0.4.1"
     , "grunt-contrib-jshint": "~0.6.0"
-    , "grunt-contrib-jasmine": "~0.4.0"
+    , "grunt-contrib-jasmine": "git://github.com/travisjeffery/grunt-contrib-jasmine#9d5874dd592cf41e8268918fe9baeb261afd75b2"
   }
 }

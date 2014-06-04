@@ -1,21 +1,14 @@
-/*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+/* ========================================================================
+ * Bootstrap: tab.js v3.1.0
+ * http://getbootstrap.com/javascript/#tabs
+ * ========================================================================
+ * Copyright 2011-2014 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
 
 
-+function ($) { "use strict";
++function ($) {
+  'use strict';
 
   // TAB CLASS DEFINITION
   // ====================
@@ -27,7 +20,7 @@
   Tab.prototype.show = function () {
     var $this    = this.element
     var $ul      = $this.closest('ul:not(.dropdown-menu)')
-    var selector = $this.attr('data-target')
+    var selector = $this.data('target')
 
     if (!selector) {
       selector = $this.attr('href')
@@ -50,8 +43,8 @@
     this.activate($this.parent('li'), $ul)
     this.activate($target, $target.parent(), function () {
       $this.trigger({
-        type: 'shown.bs.tab'
-      , relatedTarget: previous
+        type: 'shown.bs.tab',
+        relatedTarget: previous
       })
     })
   }
@@ -129,4 +122,4 @@
     $(this).tab('show')
   })
 
-}(window.jQuery);
+}(jQuery);
