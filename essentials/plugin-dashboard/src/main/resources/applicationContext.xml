@@ -38,6 +38,7 @@
   <bean id="nodeResource" class="org.onehippo.cms7.essentials.rest.NodeResource"/>
   <bean id="documentResource" class="org.onehippo.cms7.essentials.rest.DocumentResource"/>
   <bean id="pluginResource" class="org.onehippo.cms7.essentials.rest.PluginResource"/>
+  <bean id="jcrBrowserResource" class="org.onehippo.cms7.essentials.rest.picker.JcrBrowserResource"/>
   <bean id="corsFilter" class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter">
     <property name="allowCredentials" value="true"/>
     <property name="allowOrigins" value="*"/>
@@ -47,6 +48,7 @@
   <jaxrs:server id="restServer" address="/">
     <jaxrs:serviceBeans>
       <ref bean="jcrResource"/>
+      <ref bean="jcrBrowserResource"/>
       <ref bean="contentBlocksResource"/>
       <ref bean="imageGalleryResource"/>
       <ref bean="nodeResource"/>

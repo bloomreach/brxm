@@ -4000,6 +4000,12 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/gallery/h
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/gallery/target
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/hippo-plugins.iws
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/target
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/picker/*.iml
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/picker/.DS_Store
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/picker/.idea
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/picker/atlassian-ide-plugin.xml
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/picker/hippo-plugins.iws
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/picker/target
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/target
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/utils/*.iml
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/utils/.DS_Store

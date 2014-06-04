@@ -830,6 +830,9 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/gallery/I
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/gallery/ImageSetsRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/gallery/ImageVariantRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/jaxb.properties -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/picker/JcrBrowserResource.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/picker/JcrNode.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/picker/JcrProperty.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/utils/RestWorkflow.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/DynamicRestPointsApplication.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/EndPointList.java -text
@@ -989,6 +992,7 @@ plugin-dashboard/src/main/webapp/bootstrap-3.0.0/less/close.less -text
 plugin-dashboard/src/main/webapp/bootstrap-3.0.0/less/code.less -text
 plugin-dashboard/src/main/webapp/bootstrap-3.0.0/less/component-animations.less -text
 plugin-dashboard/src/main/webapp/bootstrap-3.0.0/less/dropdowns.less -text
+plugin-dashboard/src/main/webapp/bootstrap-3.0.0/less/essentials-less/essentials-modal.less -text
 plugin-dashboard/src/main/webapp/bootstrap-3.0.0/less/essentials-less/essentials-variables.less -text
 plugin-dashboard/src/main/webapp/bootstrap-3.0.0/less/essentials-less/infobox.less -text
 plugin-dashboard/src/main/webapp/bootstrap-3.0.0/less/essentials-less/space.less -text
