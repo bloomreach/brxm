@@ -213,7 +213,7 @@ public class TaxonomyResource extends BaseResource {
 
         try {
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
-            final Query xpath = queryManager.createQuery("//content//element(*, hippotaxonomy:taxonomy)", "xpath");
+            final Query xpath = queryManager.createQuery("//content//element(*, hippotaxonomy:taxonomy)[@hippostd:state='published']", "xpath");
             final NodeIterator nodes = xpath.execute().getNodes();
             while (nodes.hasNext()) {
                 final Node node = nodes.nextNode();
