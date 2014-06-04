@@ -73,6 +73,16 @@ limitations under the License. -->
       ,classpath*:org/onehippo/forge/**/*.class</param-value>
   </context-param>
 
+  <context-param>
+    <param-name>hst-env-config-properties</param-name>
+    <param-value>${catalina.base}/conf/hst-intranet.properties</param-value>
+  </context-param>
+  <!-- alternative to above intranet hst config properties can be configured as -->
+  <!--<context-param>-->
+    <!--<param-name>hst-config-properties</param-name>-->
+    <!--<param-value>file:${catalina.base}/conf/hst-intranet.properties</param-value>-->
+  <!--</context-param>-->
+
   <filter>
     <filter-name>CharacterEncodingFilter</filter-name>
     <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>

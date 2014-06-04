@@ -227,6 +227,11 @@
                     <todir>conf/</todir>
                     <tofile>hst.properties</tofile>
                   </configfile>
+                  <configfile>
+                    <file>${project.basedir}/conf/hst-intranet.properties</file>
+                    <todir>conf/</todir>
+                    <tofile>hst-intranet.properties</tofile>
+                  </configfile>
                 </configfiles>
               </configuration>
               <container>

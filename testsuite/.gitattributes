@@ -106,6 +106,7 @@ components/src/main/resources/org/hippoecm/hst/demo/wicketexamples/WicketContent
 components/src/main/resources/org/hippoecm/hst/demo/wicketexamples/WicketContentBrowserPage.properties -text
 components/src/main/resources/org/hippoecm/hst/demo/wicketexamples/WicketContentBrowserPage_en.properties -text
 conf/context.xml -text
+conf/hst-intranet.properties -text
 conf/hst.properties -text
 conf/log4j.dtd -text
 conf/log4j.xml -text svneol=unset#text/plain
@@ -175,6 +176,7 @@ dependencies/cms/pom.xml -text
 dependencies/pom.xml -text
 dependencies/site/pom.xml -text
 intranet-bootstrap/configuration/pom.xml -text
+intranet-bootstrap/configuration/src/main/resources/hippo-configuration/hippo-frontend/cms/hst-intranet-rest-proxy-service.xml -text
 intranet-bootstrap/configuration/src/main/resources/hippoecm-extension.xml -text
 intranet-bootstrap/configuration/src/main/resources/hst/channels/intranet.xml -text
 intranet-bootstrap/configuration/src/main/resources/hst/configurations/intranet.xml -text
@@ -213,6 +215,8 @@ intranet-bootstrap/configuration/src/main/resources/namespaces/intranet.xml -tex
 intranet-bootstrap/configuration/src/main/resources/namespaces/intranet/basedocument.xml -text
 intranet-bootstrap/configuration/src/main/resources/namespaces/intranet/newsdocument.xml -text
 intranet-bootstrap/configuration/src/main/resources/namespaces/intranet/textdocument.xml -text
+intranet-bootstrap/configuration/src/main/resources/security/intranet-liveuser.xml -text
+intranet-bootstrap/configuration/src/main/resources/security/intranet-previewuser.xml -text
 intranet-bootstrap/content/pom.xml -text
 intranet-bootstrap/content/src/main/resources/content/documents/intranet.xml -text
 intranet-bootstrap/content/src/main/resources/content/documents/intranet/common.xml -text
