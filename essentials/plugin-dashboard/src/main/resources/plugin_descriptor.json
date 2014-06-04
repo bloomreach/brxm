@@ -94,7 +94,7 @@
         "@type": "plugin",
         "name": "Taxonomy plugin",
         "introduction": "Adds taxonomy support to hippo project",
-        "description": "Editors can enrich their metadata using the Taxonomy plugin to categorize the content. The CMS administrator can edit the taxonomy itself.<p>Read more about Robots.txt plugin at plugin site: <a href=\"http://taxonomy.forge.onehippo.org/\" target=\"_blank\">http://taxonomy.forge.onehippo.org/</a></p>",
+        "description": "Editors can enrich their metadata using the Taxonomy plugin to categorize the content. The CMS administrator can edit the taxonomy.<p>Read more about the taxonomy plugin at <a href=\"http://taxonomy.forge.onehippo.org/\" target=\"_blank\">http://taxonomy.forge.onehippo.org/</a></p>",
         "pluginId": "taxonomyPlugin",
         "packageFile": "",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.taxonomy.TaxonomyResource"],
