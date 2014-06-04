@@ -25,10 +25,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jcr.Credentials;
 import javax.jcr.LoginException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.security.auth.Subject;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -162,17 +164,28 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         return this.contextNamespace;
     }
 
-    public Session getSession() throws LoginException, RepositoryException {
+    public Session getSession() throws RepositoryException {
         return getSession(true);
     }
 
-    public Session getSession(boolean create) throws LoginException, RepositoryException {
+    public Session getSession(boolean create) throws RepositoryException {
         if (this.session == null) {
             if (create) {
                 if (contextCredentialsProvider != null) {
-                    this.session = this.repository.login(contextCredentialsProvider.getDefaultCredentials(this));
+                    final SimpleCredentials defaultCredentials = (SimpleCredentials) contextCredentialsProvider.getDefaultCredentials(this);
+                    try {
+                        this.session = this.repository.login(defaultCredentials);
+                    } catch (LoginException e) {
+                        log.warn("Login Exception for session for userID {}. Cannot create session.", defaultCredentials.getUserID());
+                        throw e;
+                    }
                 } else {
-                    this.session = this.repository.login();
+                    try {
+                        this.session = this.repository.login();
+                    } catch (LoginException e) {
+                        log.warn("Login Exception for anonymous login.");
+                        throw e;
+                    }
                 }
             }
         } else if (!this.session.isLive()) {
@@ -631,7 +644,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         try {
             defaultObjectBeanManager = createObjectBeanManager(getSession());
         } catch (RepositoryException e) {
-            throw new IllegalStateException("Cannot get ObjectBeanManager", e);
+            throw new IllegalStateException("Cannot get ObjectBeanManager. Cause : '"+e.toString()+"'", e);
         }
         return defaultObjectBeanManager;
     }
@@ -657,7 +670,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         try {
             defaultHstQueryManager = createQueryManager(getSession());
         } catch (RepositoryException e) {
-            throw new IllegalStateException("Cannot get HstQueryManager", e);
+            throw new IllegalStateException("Cannot get HstQueryManager. Cause : '"+e.toString()+"'", e);
         }
         return defaultHstQueryManager;
     }
