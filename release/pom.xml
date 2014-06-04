@@ -43,13 +43,13 @@
     <hippo.addon-channel-manager.version>2.26.01-SNAPSHOT</hippo.addon-channel-manager.version>
     <hippo.addon-search-service.version>1.03.01-SNAPSHOT</hippo.addon-search-service.version>
     <hippo.commons.version>1.04.01-SNAPSHOT</hippo.commons.version>
-    <hippo.cms.version>2.26.02-SNAPSHOT</hippo.cms.version>
+    <hippo.cms.version>2.26.03-SNAPSHOT</hippo.cms.version>
     <hippo.frontend.plugins.version>1.01.01-SNAPSHOT</hippo.frontend.plugins.version>
     <hippo.frontend.theme.version>1.01.01-SNAPSHOT</hippo.frontend.theme.version>
     <hippo.hst.version>2.28.03-SNAPSHOT</hippo.hst.version>
     <hippo.packages.version>2.26.01-SNAPSHOT</hippo.packages.version>
     <hippo.release.version>7.9.1-SNAPSHOT</hippo.release.version>
-    <hippo.repository.version>2.26.02-SNAPSHOT</hippo.repository.version>
+    <hippo.repository.version>2.26.03-SNAPSHOT</hippo.repository.version>
     <hippo.services.version>1.04.01-SNAPSHOT</hippo.services.version>
     <hippo.services.eventbus.version>1.04.01-SNAPSHOT</hippo.services.eventbus.version>
     <hippo.services.contenttype.version>1.04.01-SNAPSHOT</hippo.services.contenttype.version>
