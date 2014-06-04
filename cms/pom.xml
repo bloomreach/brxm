@@ -85,9 +85,9 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS</notice.project.name>
 
-    <hippo.commons.version>1.04.01-SNAPSHOT</hippo.commons.version>
-    <hippo.utilities.version>1.03.01-SNAPSHOT</hippo.utilities.version>
-    <hippo.services.version>1.04.01-SNAPSHOT</hippo.services.version>
+    <hippo.commons.version>1.04.00</hippo.commons.version>
+    <hippo.utilities.version>1.03.00</hippo.utilities.version>
+    <hippo.services.version>1.04.00</hippo.services.version>
     <hippo.repository.version>2.26.02-SNAPSHOT</hippo.repository.version>
 
     <!-- Test dependencies  -->
