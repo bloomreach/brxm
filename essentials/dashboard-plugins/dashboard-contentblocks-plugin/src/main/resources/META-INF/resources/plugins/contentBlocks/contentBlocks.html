@@ -18,8 +18,8 @@
     <div ng-show="pluginInstalled">
         <div class="panel-heading">Content Blocks</div>
         <div class="panel-body">
-            <p>{{introMessage}}</p>
-            <p ng-bind-html="deliberatelyTrustDangerousSnippet()"></p>
+            <div class="infobox infobox-success"><p>{{introMessage}}</p>
+                <p ng-bind-html="deliberatelyTrustDangerousSnippet"></p></div>
             <h4> Available Content Blocks:</h4>
             <!--<pre>{{documentTypes}}</pre>-->
             <ul class="list-group">

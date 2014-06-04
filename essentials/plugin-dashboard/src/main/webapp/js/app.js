@@ -29,8 +29,7 @@
  */
 (function () {
     "use strict";
-
-    angular.module('hippo.essentials', ['ngRoute', 'localytics.directives', 'ui.validate', 'ui.bootstrap', 'ui.sortable', 'ui.router', 'hippo.theme'])
+     angular.module('hippo.essentials', ['ngRoute', 'localytics.directives', 'ui.validate', 'ui.bootstrap', 'ui.sortable', 'ui.router', 'ui.tree', 'hippo.theme'])
 
 //############################################
 // GLOBAL LOADING

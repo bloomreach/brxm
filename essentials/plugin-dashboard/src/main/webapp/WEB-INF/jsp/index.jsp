@@ -24,19 +24,22 @@
   <%--<script src="${pageContext.request.contextPath}/js/jquery.js"></script>--%>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
   <script src="${pageContext.request.contextPath}/js/lib/jquery.ui.min.js"></script>
-
-  <script src="${pageContext.request.contextPath}/js/lib/angular.js"></script>
+  <script src="${pageContext.request.contextPath}/components/angular/angular.min.js"></script>
+  <script src="${pageContext.request.contextPath}/components/underscore/underscore.js"></script>
   <script src="${pageContext.request.contextPath}/js/lib/angular-route.min.js"></script>
   <script src="${pageContext.request.contextPath}/js/lib/angular-ui-router.js"></script>
+
 
   <script src="${pageContext.request.contextPath}/components/chosen/chosen.jquery.js"></script>
   <script src="${pageContext.request.contextPath}/js/lib/chosen.js"></script>
   <script src="${pageContext.request.contextPath}/js/lib/ui-sortable.js"></script>
   <script src="${pageContext.request.contextPath}/js/lib/ui-utils.js"></script>
   <%-- HIPPO THEME DEPS --%>
-  <script src="${pageContext.request.contextPath}/components/angular-ui-tree/dist/angular-ui-tree.min.js"></script>
+  <script src="${pageContext.request.contextPath}/components/angular-ui-tree/dist/angular-ui-tree.js"></script>
   <script src="${pageContext.request.contextPath}/components/hippo-plugins/dist/js/main.js"></script>
   <script src="${pageContext.request.contextPath}/components/hippo-theme/dist/js/main.js"></script>
+
+
 
   <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/components/chosen/chosen.css"/>
   <script src="${pageContext.request.contextPath}/js/lib/ui-bootstrap-0.10.js"></script>
