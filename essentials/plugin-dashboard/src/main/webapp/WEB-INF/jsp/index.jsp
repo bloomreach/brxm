@@ -19,6 +19,7 @@
 <head>
   <title>Hippo Essentials</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/theme/hippo-theme/main.css"/>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/components/angular-ui-tree/dist/angular-ui-tree.min.css"/>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/hippo-essentials.css"/>
   <%--<script src="${pageContext.request.contextPath}/js/jquery.js"></script>--%>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -32,14 +33,12 @@
   <script src="${pageContext.request.contextPath}/js/lib/chosen.js"></script>
   <script src="${pageContext.request.contextPath}/js/lib/ui-sortable.js"></script>
   <script src="${pageContext.request.contextPath}/js/lib/ui-utils.js"></script>
+  <%-- HIPPO THEME DEPS --%>
+  <script src="${pageContext.request.contextPath}/components/angular-ui-tree/dist/angular-ui-tree.min.js"></script>
+  <script src="${pageContext.request.contextPath}/components/hippo-plugins/dist/js/main.js"></script>
+  <script src="${pageContext.request.contextPath}/components/hippo-theme/dist/js/main.js"></script>
 
   <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/components/chosen/chosen.css"/>
-  <%--<script src="${pageContext.request.contextPath}/js/require.js" data-main="${pageContext.request.contextPath}/js/main.js"></script>--%>
-  <%--<script src="${pageContext.request.contextPath}/js/require.js"></script>--%>
-
-  <!--<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.3/angular.min.js"></script>-->
-  <%--  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.3/angular-route.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>--%>
   <script src="${pageContext.request.contextPath}/js/lib/ui-bootstrap-0.10.js"></script>
   <script src="${pageContext.request.contextPath}/js/Essentials.js"></script>
   <script src="${pageContext.request.contextPath}/js/app.js"></script>
