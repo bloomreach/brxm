@@ -18,19 +18,60 @@
     "use strict";
     angular.module('hippo.essentials')
         .controller('documentWizardCtrl', function ($scope, $filter, $sce, $log, $rootScope, $http) {
+            var endpoint = $rootScope.REST.dynamic + 'documentwizard/';
             $scope.pluginId = "documentWizardPlugin";
+            $scope.showDialog = false;
             $scope.selectedDocument = null;
             $scope.shortcutName = null;
             $scope.baseFolder = null;
-            $scope.baseFolder = null;
-            $scope.classificationType = ["date", "list"];
+            $scope.classificationType = null;
             $scope.classificationTypes = ["date", "list"];
-
-            var endpoint = $rootScope.REST.dynamic + 'documentwizard/';
-
+            $scope.addOk = function () {
+                $scope.showDialog = false;
+                console.log("OK");
+            };
+            $scope.addCancel = function () {
+                $scope.showDialog = false;
+                console.log("cancel");
+            };
             $scope.addWizard = function () {
+                var payload = Essentials.addPayloadData("selectedDocument", $scope.selectedDocument, null);
+                Essentials.addPayloadData("classificationType", $scope.classificationType, payload);
+                Essentials.addPayloadData("baseFolder", $scope.baseFolder, payload);
+                Essentials.addPayloadData("shortcutName", $scope.baseFolder, payload);
+                $scope.showDialog = true;
+                console.log($scope.showDialog);
+                /*$http.post($rootScope.REST, payload).success(function (data) {
+
+                 });
+                 */
 
             };
+
+
+            // default visibility of the dialog
+            $scope.dialog = {
+                visible: false
+            };
+
+            // the message is supposed to come from the ContainerService, that handles
+            // the communication with the iFrame
+            $rootScope.$on('close-confirmation:show', function () {
+                $scope.$apply(function () {
+                    $scope.dialog.visible = true;
+                });
+            });
+
+            // confirm - close the panel
+            $scope.confirm = function () {
+                console.log("Configrm");
+            };
+
+            // cancel - hide the dialog
+            $scope.cancel = function () {
+                $scope.dialog.visible = false;
+            };
+
 
             //############################################
             // INIT
@@ -41,6 +82,44 @@
             $http.get($rootScope.REST.documents).success(function (data) {
                 $scope.documentTypes = data;
             });
+            $http.get("http://localhost:8080/essentials/rest/jcrbrowser/folders").success(function (data) {
+                $scope.treeItems = data.items;
+            });
+
+
+            //############################################
+            // TREE
+            //############################################
+
+
+            $scope.callbacks = {
+                accept: function (sourceNodeScope, destNodesScope, destIndex) {
+                    return destNodesScope && !destNodesScope.nodrop;
+                },
+
+                dragStart: function (event) {
+                    var sourceItem = event.source.nodeScope.$modelValue;
+                    $log.info('start dragging ' + sourceItem.title);
+                    $scope.selectedItem = sourceItem;
+                },
+
+                dragStop: function (event) {
+                    var sourceItem = event.source.nodeScope.$modelValue;
+                    $log.info('stop dragging ' + sourceItem.title);
+                },
+
+                dropped: function (event) {
+                    var source = event.source,
+                        dest = event.dest;
+                    if (source.nodeScope && dest.nodesScope) {
+                        var sourceItem = source.nodeScope.$modelValue;
+                        var destItem = dest.nodesScope.$nodeScope ? dest.nodesScope.$nodeScope.$modelValue : {title: 'root'};
+                        var destIndex = dest.index;
+                        $log.info('dropped ' + sourceItem.title + ' into ' + destItem.title + ' at index ' + destIndex);
+                    }
+                }
+            };
+
 
         })
 })();

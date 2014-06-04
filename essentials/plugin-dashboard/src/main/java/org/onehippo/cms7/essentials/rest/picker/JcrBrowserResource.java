@@ -52,7 +52,17 @@ public class JcrBrowserResource extends BaseResource {
     @GET
     @Path("/")
     public JcrNode getFromRoot(@Context ServletContext servletContext) throws RepositoryException {
-        return getNode(new JcrNode("/", "/"), servletContext);
+        final JcrNode payload = new JcrNode("/", "/");
+        return getNode(payload, servletContext);
+    }
+    @GET
+    @Path("/folders")
+    public JcrNode getFolders(@Context ServletContext servletContext) throws RepositoryException {
+        final JcrNode payload = new JcrNode("/content", "/content");
+        payload.setFoldersOnly(true);
+        payload.setFetchProperties(false);
+        payload.setDepth(3);
+        return getNode(payload, servletContext);
     }
 
 
@@ -69,11 +79,13 @@ public class JcrBrowserResource extends BaseResource {
             // TODO abs path
             final Node n = session.getNode(path);
             final JcrNode jcrNode = new JcrNode(n.getName(), n.getPath());
+            jcrNode.setFoldersOnly(payload.isFoldersOnly());
+            jcrNode.setFetchProperties(payload.isFetchProperties());
             populateProperties(n, jcrNode);
             //############################################
             // LOAD KIDS (lazy)
             //############################################
-            populateNodes(n, jcrNode, true);
+            populateNodes(n, jcrNode, 0, payload.getDepth());
 
             //############################################
             //
@@ -87,19 +99,23 @@ public class JcrBrowserResource extends BaseResource {
 
     }
 
-    private void populateNodes(final Node node, final JcrNode jcrNode, boolean anotherLevel) throws RepositoryException {
+    private void populateNodes(final Node node, final JcrNode jcrNode, final int startDepth, final int endDepth) throws RepositoryException {
         final NodeIterator nodes = node.getNodes();
         while (nodes.hasNext()) {
             final Node kid = nodes.nextNode();
+            if(jcrNode.isFoldersOnly()) {
+                final String name = kid.getPrimaryNodeType().getName();
+                if(!name.equals("hippostd:folder")){
+                    continue;
+                }
+
+            }
             final JcrNode jcrKid = new JcrNode(kid.getName(), kid.getPath());
-            jcrKid.setFetchProperties(jcrNode.isFetchProperties());
             jcrNode.addNode(jcrKid);
             populateProperties(kid, jcrKid);
-            if (anotherLevel) {
-                populateNodes(kid, jcrKid, false);
+            if (startDepth < endDepth) {
+                populateNodes(kid, jcrKid, (startDepth+1), endDepth);
             }
-
-
         }
     }
 

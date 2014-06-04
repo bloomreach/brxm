@@ -19,10 +19,14 @@ package org.onehippo.cms7.essentials.rest.picker;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
+
+import com.google.common.collect.ImmutableSet;
 
 
 /**
@@ -33,7 +37,15 @@ public class JcrNode implements Restful {
 
     private static final long serialVersionUID = 1L;
     private List<JcrProperty<?>> properties;
+    public static final Set<String> SYSTEM_NODE_TYPES  = new ImmutableSet.Builder<String>()
+            .add("rep:system")
+            .build();
     private List<JcrNode> items;
+
+    /**
+     * Fetch folders only
+     */
+    private boolean foldersOnly;
     /**
      * By default we don't send any properties to client, unless explicitly set.
      */
@@ -100,6 +112,8 @@ public class JcrNode implements Restful {
         if (items == null) {
             items = new ArrayList<>();
         }
+        node.setFetchProperties(isFetchProperties());
+        node.setFoldersOnly(isFoldersOnly());
         items.add(node);
     }
 
@@ -158,12 +172,22 @@ public class JcrNode implements Restful {
         this.depth = depth;
     }
 
+    @XmlTransient
     public boolean isFetchProperties() {
         return fetchProperties;
     }
 
     public void setFetchProperties(final boolean fetchProperties) {
         this.fetchProperties = fetchProperties;
+    }
+
+    @XmlTransient
+    public boolean isFoldersOnly() {
+        return foldersOnly;
+    }
+
+    public void setFoldersOnly(final boolean foldersOnly) {
+        this.foldersOnly = foldersOnly;
     }
 
     @Override
@@ -174,5 +198,6 @@ public class JcrNode implements Restful {
         sb.append('}');
         return sb.toString();
     }
+
 
 }
