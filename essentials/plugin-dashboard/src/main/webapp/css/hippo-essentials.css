@@ -359,9 +359,8 @@ body {
   padding-bottom: 0px;
   background-color: #ffffff;
 }
-form {
-  width: 100%;
-  max-width: 100%;
+.form-group {
+  height: 30px;
 }
 /* menu stuff*/
 .nav-stacked li {
