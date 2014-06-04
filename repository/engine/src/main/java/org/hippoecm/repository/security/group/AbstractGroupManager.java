@@ -277,16 +277,20 @@ public abstract class AbstractGroupManager implements GroupManager {
     }
 
     public final NodeIterator getMemberships(String rawUserId, String providerId) throws RepositoryException {
-        String userId = NodeNameCodec.decode(sanitizeId(rawUserId));
+        final String userId = rawUserId != null ? NodeNameCodec.decode(sanitizeId(rawUserId)) : null;
 
         StringBuilder statement = new StringBuilder();
         // Triggers: https://issues.apache.org/jira/browse/JCR-1573 don't use path in query for now
         //statement.append("//").append(groupsPath).append("//element");
         statement.append("//element");
         statement.append("(*, ").append(HippoNodeType.NT_GROUP).append(")");
-        statement.append('[');
-        statement.append("(@").append(HippoNodeType.HIPPO_MEMBERS).append(" = '").append(userId.replace("'", "''")).append("'");
-        statement.append(" or @").append(HippoNodeType.HIPPO_MEMBERS).append(" = '*')");
+        statement.append("[(");
+        statement.append("@").append(HippoNodeType.HIPPO_MEMBERS).append(" = '*'");
+        if (userId != null) {
+            statement.append(" or @");
+            statement.append(HippoNodeType.HIPPO_MEMBERS).append(" = '").append(userId.replace("'", "''")).append("'");
+        }
+        statement.append(')');
         if (providerId != null) {
             statement.append(" and @");
             statement.append(HippoNodeType.HIPPO_SECURITYPROVIDER).append("= '").append(providerId).append("'");
