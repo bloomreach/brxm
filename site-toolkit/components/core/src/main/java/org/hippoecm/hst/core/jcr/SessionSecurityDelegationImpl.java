@@ -29,6 +29,7 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.security.auth.login.LoginException;
 
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -168,7 +169,14 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
 
         long start = System.currentTimeMillis();
         Session jcrSession = null;
-        Session session1 = repository.login(cred1);
+
+        Session session1 = null;
+        try {
+            session1 = repository.login(cred1);
+        } catch (javax.jcr.LoginException e) {
+            logWarningAndRethrow(cred1, e);
+        }
+
         if (!(session1 instanceof HippoSession)) {
             session1.logout();
             throw new IllegalStateException("Repository returned Session is not a HippoSession.");
@@ -176,11 +184,16 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
 
         Session session2 = null;
         try {
-            session2 = repository.login(cred2);
+            try {
+                session2 = repository.login(cred2);
+            } catch (javax.jcr.LoginException e) {
+                logWarningAndRethrow(cred2, e);
+
+            }
             jcrSession = ((HippoSession) session1).createSecurityDelegate(session2, domainExtensions);
         } finally {
             if (session1 != null) {
-                session1.logout();
+                session2.logout();
             }
             if (session2 != null) {
                 session2.logout();
@@ -201,6 +214,17 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
         }
 
         return jcrSession;
+    }
+
+    private void logWarningAndRethrow(final Credentials cred, final javax.jcr.LoginException e) throws javax.jcr.LoginException {
+        if (cred == previewCredentials ) {
+            log.error("Cannot create security delegate due to LoginException due to invalid preview credentials : {}", e.toString());
+        } else if (cred == liveCredentials) {
+            log.error("Cannot create security delegate due to LoginException due to invalid live credentials : {}", e.toString());
+        } else {
+            log.info("Cannot create security delegate due to LoginException : {}", e.toString());
+        }
+        throw e;
     }
 
     private void storeInList(final Session jcrSession, final HstRequestContext requestContext) {

@@ -97,7 +97,7 @@ public class SubjectBasedSessionValve extends AbstractBaseOrderableValve {
             try {
                 lazySession = (LazySession) subjectBasedRepository.login();
             } catch (Exception e) {
-                throw new ContainerException("Failed to create session based on subject.", e);
+                throw new ContainerException("Failed to create session based on subject. Cause '"+e.toString()+"'", e);
             }
         }
 
