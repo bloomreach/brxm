@@ -148,7 +148,6 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
 
         List<Callable<List<ChannelDocument>>> restProxyJobs = new ArrayList<>();
 
-        // any live rest proxy service can create a URL for any channel, becu
         for (final Map.Entry<String, IRestProxyService> entry : liveRestProxyServices.entrySet()) {
             final DocumentService documentService = entry.getValue().createSecureRestProxy(DocumentService.class);
             restProxyJobs.add(new Callable<List<ChannelDocument>>() {

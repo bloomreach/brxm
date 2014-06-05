@@ -87,6 +87,8 @@ public class ChannelDocumentUrlService extends Plugin implements IDocumentUrlSer
             return null;
         }
 
+        // since hst webapp can create cross context path  urls, any rest proxy service can
+        // create a url. Just pick first
         final IRestProxyService proxyService = liveRestProxyServices.values().iterator().next();
         final DocumentService documentService = proxyService.createSecureRestProxy(DocumentService.class);
         String url = documentService.getUrl(uuid, type);

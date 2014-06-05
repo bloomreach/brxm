@@ -27,6 +27,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -86,28 +87,23 @@ public class RestProxyServicesManager {
         final Map<String, IRestProxyService> liveRestProxyServiceMap = new HashMap<>();
 
         final long currentTime = System.currentTimeMillis();
+        final List<Future<?>> futures = new ArrayList<>();
 
         for (Map.Entry<String, IRestProxyService> entry : restProxyServiceMap.entrySet()) {
             final String contextPath = entry.getKey();
             final IRestProxyService proxyService = entry.getValue();
-            RestProxyInfo restProxyInfo = restProxyInfos.get(contextPath);
-            if (restProxyInfo == null) {
-                synchronized (RestProxyServicesManager.class) {
-                    restProxyInfo = restProxyInfos.get(contextPath);
-                    if (restProxyInfo == null) {
-                        restProxyInfo = new RestProxyInfo();
-                        restProxyInfos.put(contextPath, restProxyInfo);
-                    }
-                }
-            }
-            final RestProxyInfo finalRestProxyInfo = restProxyInfo;
-            final List<Future<?>> futures = new ArrayList<>();
+            final RestProxyInfo restProxyInfo = getOrCreateRestProxyInfo(contextPath);
+
             synchronized (restProxyInfo) {
                 if (restProxyInfo.isLive && currentTime < restProxyInfo.nextCheckTimestamp) {
                     liveRestProxyServiceMap.put(contextPath, proxyService);
                 } else if (currentTime > restProxyInfo.nextCheckTimestamp) {
+                    if (restProxyInfo.alreadyScheduled) {
+                        continue;
+                    }
                     // live check required
                     final SiteService siteService = proxyService.createSecureRestProxy(SiteService.class);
+                    restProxyInfo.alreadyScheduled = true;
                     futures.add(executorService.submit(new Runnable() {
                         @Override
                         public void run() {
@@ -115,44 +111,61 @@ public class RestProxyServicesManager {
                                 final boolean alive = siteService.isAlive();
                                 if (alive) {
                                     liveRestProxyServiceMap.put(contextPath, proxyService);
-                                    finalRestProxyInfo.isLive = true;
-                                    finalRestProxyInfo.nextCheckTimestamp = System.currentTimeMillis() + finalRestProxyInfo.checkIntervalMilliSeconds;
-                                    finalRestProxyInfo.consecutiveFailures = 0;
+                                    restProxyInfo.isLive = true;
+                                    restProxyInfo.nextCheckTimestamp = System.currentTimeMillis() + restProxyInfo.checkIntervalMilliSeconds;
+                                    restProxyInfo.consecutiveFailures = 0;
                                 } else {
                                     liveRestProxyServiceMap.remove(contextPath);
-                                    markFailed(finalRestProxyInfo);
+                                    markFailed(restProxyInfo);
 
                                     log.warn("Site for contextPath {} is not live. Re-checking in {} milliseconds. Cause: {}",
-                                            contextPath, (finalRestProxyInfo.nextCheckTimestamp - currentTime));
+                                            contextPath, (restProxyInfo.nextCheckTimestamp - currentTime));
 
                                 }
                             } catch (Exception e) {
                                 liveRestProxyServiceMap.remove(contextPath);
-                                markFailed(finalRestProxyInfo);
+                                markFailed(restProxyInfo);
 
                                 if (log.isDebugEnabled()) {
                                     log.warn("Site for contextPath {} is not live. Re-checking in {} milliseconds.",
-                                            contextPath, (finalRestProxyInfo.nextCheckTimestamp - currentTime), e);
+                                            contextPath, (restProxyInfo.nextCheckTimestamp - currentTime), e);
                                 } else {
                                     log.warn("Site for contextPath {} is not live. Re-checking in {} milliseconds. Cause: {}",
-                                            contextPath, (finalRestProxyInfo.nextCheckTimestamp - currentTime), e.toString());
+                                            contextPath, (restProxyInfo.nextCheckTimestamp - currentTime), e.toString());
                                 }
+                            } finally {
+                                restProxyInfo.alreadyScheduled = false;
                             }
                         }
                     }));
 
                 }
             }
-            for (Future<?> future : futures) {
-                try {
-                    future.get();
-                } catch (InterruptedException | ExecutionException e) {
-                    log.warn("Exception while retrieving future.", e);
+        }
+        // make sure that all submitted tasks are really finished
+        for (Future<?> future : futures) {
+            try {
+                future.get();
+            } catch (InterruptedException | ExecutionException e) {
+                log.warn("Exception while retrieving future.", e);
+            }
+        }
+
+        return Collections.unmodifiableMap(liveRestProxyServiceMap);
+    }
+
+    private static RestProxyInfo getOrCreateRestProxyInfo(final String contextPath) {
+        RestProxyInfo restProxyInfo = restProxyInfos.get(contextPath);
+        if (restProxyInfo == null) {
+            synchronized (RestProxyServicesManager.class) {
+                restProxyInfo = restProxyInfos.get(contextPath);
+                if (restProxyInfo == null) {
+                    restProxyInfo = new RestProxyInfo();
+                    restProxyInfos.put(contextPath, restProxyInfo);
                 }
             }
-
         }
-        return Collections.unmodifiableMap(liveRestProxyServiceMap);
+        return restProxyInfo;
     }
 
     private static void markFailed(final RestProxyInfo restProxyInfo) {
@@ -164,11 +177,12 @@ public class RestProxyServicesManager {
     }
 
     private static class RestProxyInfo {
-        private volatile boolean isLive;
-        private volatile long nextCheckTimestamp = 0;
-        private volatile int consecutiveFailures = 0;
+        private boolean isLive;
+        private long nextCheckTimestamp = 0;
+        private boolean alreadyScheduled;
+        private int consecutiveFailures = 0;
         //one minute
-        private volatile long checkIntervalMilliSeconds = 60000;
+        private long checkIntervalMilliSeconds = TimeUnit.MILLISECONDS.convert(1L, TimeUnit.MINUTES);
 
     }
 }
