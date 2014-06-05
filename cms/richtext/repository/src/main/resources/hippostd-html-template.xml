@@ -148,12 +148,12 @@
         <sv:value>linkpicker.cluster.name</sv:value>
         <sv:value>linkpicker.nodetypes</sv:value>
         <sv:value>linkpicker.base.uuid</sv:value>
+        <sv:value>linkpicker.language.context.aware</sv:value>
         <sv:value>linkpicker.last.visited.key</sv:value>
         <sv:value>linkpicker.last.visited.enabled</sv:value>
         <sv:value>linkpicker.last.visited.nodetypes</sv:value>
         <sv:value>linkpicker.open.in.new.window.enabled</sv:value>
         <sv:value>imagepicker.cluster.name</sv:value>
-        <sv:value>linkpicker.language.context.aware</sv:value>
         <sv:value>imagepicker.nodetypes</sv:value>
         <sv:value>imagepicker.base.uuid</sv:value>
         <sv:value>imagepicker.last.visited.key</sv:value>
