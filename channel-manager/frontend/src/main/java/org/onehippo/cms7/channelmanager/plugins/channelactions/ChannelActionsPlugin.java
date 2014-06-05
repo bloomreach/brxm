@@ -146,6 +146,8 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
             return new EmptyPanel("channels");
         }
 
+        // a rest proxy can only return ChannelDocument for the webapp the proxy belongs to. Hence we need to
+        // invoke all rest proxies to get all available channel documents
         List<Callable<List<ChannelDocument>>> restProxyJobs = new ArrayList<>();
 
         for (final Map.Entry<String, IRestProxyService> entry : liveRestProxyServices.entrySet()) {
