@@ -20,8 +20,8 @@
         .controller('documentWizardCtrl', function ($scope, $filter, $sce, $log, $modal, $rootScope, $http) {
             var endpoint = $rootScope.REST.dynamic + 'documentwizard/';
             $scope.pluginId = "documentWizardPlugin";
-
             $scope.valueListPath = null;
+            $scope.folderQuery = null;
             $scope.selectedDocument = null;
             $scope.shortcutName = null;
             $scope.baseFolder = null;
@@ -39,6 +39,8 @@
                 Essentials.addPayloadData("classificationType", $scope.classificationType, payload);
                 Essentials.addPayloadData("baseFolder", $scope.baseFolder, payload);
                 Essentials.addPayloadData("shortcutName", $scope.baseFolder, payload);
+                Essentials.addPayloadData("folderQuery", $scope.folderQuery, payload);
+                Essentials.addPayloadData("val", $scope.valueListPath, payload);
 
                 /*$http.post($rootScope.REST, payload).success(function (data) {
 
