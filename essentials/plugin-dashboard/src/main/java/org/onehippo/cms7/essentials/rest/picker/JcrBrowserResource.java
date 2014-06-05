@@ -48,30 +48,31 @@ import com.google.common.base.Strings;
 public class JcrBrowserResource extends BaseResource {
 
     private static final Logger log = LoggerFactory.getLogger(JcrBrowserResource.class);
+    public static final int DEFAULT_DEPTH = 3;
 
     @GET
     @Path("/")
     public JcrNode getFromRoot(@Context ServletContext servletContext) throws RepositoryException {
-        final JcrNode payload = new JcrNode("/", "/");
-        return getNode(payload, servletContext);
+        final JcrQuery query = new JcrQuery("/");
+        return getNode(query, servletContext);
     }
     @GET
     @Path("/folders")
     public JcrNode getFolders(@Context ServletContext servletContext) throws RepositoryException {
-        final JcrNode payload = new JcrNode("/content", "/content");
-        payload.setFoldersOnly(true);
-        payload.setFetchProperties(false);
-        payload.setDepth(3);
-        return getNode(payload, servletContext);
+        final JcrQuery query = new JcrQuery("/content");
+        query.setFolderPicker(true);
+        query.setFetchProperties(false);
+        query.setDepth(DEFAULT_DEPTH);
+        return getNode(query, servletContext);
     }
 
 
     @POST
     @Path("/")
-    public JcrNode getNode(final JcrNode payload, @Context ServletContext servletContext) throws RepositoryException {
+    public JcrNode getNode(final JcrQuery query, @Context ServletContext servletContext) throws RepositoryException {
         final Session session = GlobalUtils.createSession();
         try {
-            String path = payload.getPath();
+            String path = query.getPath();
             if (Strings.isNullOrEmpty(path)) {
                 log.error("Path was null or empty, using root path [/]");
                 path = "/";
@@ -79,17 +80,9 @@ public class JcrBrowserResource extends BaseResource {
             // TODO abs path
             final Node n = session.getNode(path);
             final JcrNode jcrNode = new JcrNode(n.getName(), n.getPath());
-            jcrNode.setFoldersOnly(payload.isFoldersOnly());
-            jcrNode.setFetchProperties(payload.isFetchProperties());
-            populateProperties(n, jcrNode);
-            //############################################
-            // LOAD KIDS (lazy)
-            //############################################
-            populateNodes(n, jcrNode, 0, payload.getDepth());
 
-            //############################################
-            //
-            //############################################
+            populateProperties(n, jcrNode, query);
+            populateNodes(n, jcrNode, query);
             return jcrNode;
 
         } finally {
@@ -99,29 +92,32 @@ public class JcrBrowserResource extends BaseResource {
 
     }
 
-    private void populateNodes(final Node node, final JcrNode jcrNode, final int startDepth, final int endDepth) throws RepositoryException {
+    private void populateNodes(final Node node, final JcrNode jcrNode, final JcrQuery query) throws RepositoryException {
         final NodeIterator nodes = node.getNodes();
         while (nodes.hasNext()) {
             final Node kid = nodes.nextNode();
-            if(jcrNode.isFoldersOnly()) {
+            if(query.isFolderPicker()) {
                 final String name = kid.getPrimaryNodeType().getName();
                 if(!name.equals("hippostd:folder")){
                     continue;
                 }
-
+                if(query.isExcluded(kid)){
+                    continue;
+                }
             }
             final JcrNode jcrKid = new JcrNode(kid.getName(), kid.getPath());
             jcrNode.addNode(jcrKid);
-            populateProperties(kid, jcrKid);
-            if (startDepth < endDepth) {
-                populateNodes(kid, jcrKid, (startDepth+1), endDepth);
+            populateProperties(kid, jcrKid,query);
+            if (query.getCurrentDepth() < query.getDepth()) {
+                query.incrementDepth();
+                populateNodes(kid, jcrKid, query);
             }
         }
     }
 
 
-    private void populateProperties(final Node node, final JcrNode jcrNode) throws RepositoryException {
-        if (jcrNode.isFetchProperties()) {
+    private void populateProperties(final Node node, final JcrNode jcrNode, final JcrQuery query) throws RepositoryException {
+        if (query.isFetchProperties()) {
             final PropertyIterator properties = node.getProperties();
             while (properties.hasNext()) {
                 final Property p = properties.nextProperty();

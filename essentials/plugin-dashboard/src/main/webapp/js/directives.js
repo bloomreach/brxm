@@ -20,13 +20,95 @@
         //############################################
         // DIRECTIVES
         //############################################
-        .directive("essentialsTemplateSettings", function () {
+        .directive("essentialsFolderPicker", function () {
+            return {
+                replace: false,
+                restrict: 'E',
+                scope: {
+                    title: '@',
+                    buttonText: '@',
+                    endPoint: '@',
+                    selectedPath: '=',
+                    selected: '='
+                },
+                templateUrl: 'directives/essentials-folder-picker.html',
+                controller: function ($scope, $rootScope, $modal, $log, $http) {
+                    $scope.open = function (size) {
+                        var modalInstance = $modal.open({
+                            templateUrl: 'tree-picker.html',
+                            controller: ModalInstanceCtrl,
+                            size: size,
+                            resolve: {
+                                endPoint: function () {
+                                    return $scope.endPoint;
+                                }, title: function () {
+                                    return $scope.title;
+                                }, buttonText: function () {
+                                    return $scope.buttonText;
+                                }, selectedPath: function () {
+                                    return $scope.selectedPath;
+                                }, selected: function () {
+                                    return $scope.selected;
+                                }
+                            }
+
+                        });
+                        modalInstance.result.then(function (selected) {
+                            if (selected) {
+                                $scope.selected = selected;
+                                $scope.selectedPath = selected.id;
+                            } else {
+                                console.log("Nothing selected");
+                            }
+                        });
+                    };
+
+
+                    //############################################
+                    // MODAL
+                    //############################################
+                    var ModalInstanceCtrl = function ($scope, $modalInstance, endPoint, title, selectedPath) {
+                        $scope.title = title;
+                        $http.get(endPoint).success(function (data) {
+                            console.log("selectedPath" + selectedPath);
+                            $scope.treeItems = data.items;
+                        });
+                        $scope.ok = function () {
+                            $modalInstance.close($scope.selected);
+                        };
+
+                        $scope.cancel = function () {
+                            $modalInstance.dismiss('cancel');
+                        };
+                        $scope.callbacks = {
+                            accept: function () {
+                                // disable drag/drop stuff
+                                return false;
+                            },
+                            dragStart: function (event) {
+                                $scope.selected = event.source.nodeScope.$modelValue;
+                                $scope.selectedPath = $scope.selected.id;
+                            },
+
+                            dragStop: function (event) {
+                                // noop
+                            },
+
+                            dropped: function (event) {
+                                // noop
+                            }
+                        };
+
+                    };
+                }
+            }
+        }).directive("essentialsTemplateSettings", function () {
             return {
                 replace: false,
                 restrict: 'E',
                 scope: {
                     label: '@',
-                   /* settings: '=',*/
+                    /* settings: '=',*/
                     sampleData: '=',
                     templateName: '=',
                     hasNoTemplates: '@',

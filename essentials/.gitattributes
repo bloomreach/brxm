@@ -833,6 +833,7 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/jaxb.prop
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/picker/JcrBrowserResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/picker/JcrNode.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/picker/JcrProperty.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/picker/JcrQuery.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/utils/RestWorkflow.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/DynamicRestPointsApplication.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/EndPointList.java -text
@@ -1577,6 +1578,7 @@ plugin-dashboard/src/main/webapp/css/media.css -text
 plugin-dashboard/src/main/webapp/css/normalize.css -text
 plugin-dashboard/src/main/webapp/css/print.css -text
 plugin-dashboard/src/main/webapp/css/theme.css -text
+plugin-dashboard/src/main/webapp/directives/essentials-folder-picker.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-messages.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-simple-install-plugin.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-template-settings.html -text

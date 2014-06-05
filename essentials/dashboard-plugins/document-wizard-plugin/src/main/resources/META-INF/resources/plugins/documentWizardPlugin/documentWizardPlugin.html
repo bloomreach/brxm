@@ -22,26 +22,17 @@
         <div>
             <form class="form-horizontal" novalidate name="wizardForm">
                 <div class="form-group">
-                    <label class="col-sm-4 control-label">Dialog:</label>
-                    <div class="col-sm-8">
-                        <div hippo.theme.confirmation-dialog
-                             data-show="showDialog"
-                             data-perform-confirmation="onOk()"
-                             data-perform-cancel="onCancel()"
-                             data-confirm-label="Ok"
-                             data-cancel-label="Cancel">
-                            <div hippo.theme.tree
-                                 items="treeItems"
-                                 callbacks="callbacks"
-                                 selected-item-id="selectedItem.id">
-                                <a class="btn btn-link btn-xs" data-nodrag
-                                   data-ng-click="toggleItem()"
-                                   data-ng-hide="childNodes().length === 0">
-                                    <span class="fa" data-ng-class="{'fa-caret-down': !collapsed, 'fa-caret-right': collapsed}"></span>
-                                </a>
-                                {{ item.title }}
-                            </div>
-                        </div>
+                    <label class="col-sm-4 control-label">Select target folder:</label>
+                    <div class="col-sm-5">
+                        <input type="text" ng-model="selectedFolderPath"/>
+                    </div>
+                    <div class="col-sm-3">
+                        <essentials-folder-picker
+                                button-text="Select folder"
+                                title="Select target folder"
+                                selected-path="selectedFolderPath"
+                                selected="selectedFolderItem"
+                                end-point="http://localhost:8080/essentials/rest/jcrbrowser/folders"/>
                     </div>
 
                 </div>
@@ -88,8 +79,20 @@
                         </select>
                     </div>
                 </div>
-
-
+                <div ng-show="classificationType == 'list'" class="form-group">
+                    <label class="col-sm-4 control-label">Value list document:</label>
+                    <div class="col-sm-5">
+                        <input type="text" ng-model="valueListPath"/>
+                    </div>
+                    <div class="col-sm-3">
+                        <essentials-folder-picker
+                                button-text="Select folder"
+                                title="Select target folder"
+                                selected-path="valueListPath"
+                                selected="selectedFolderItem"
+                                end-point="http://localhost:8080/essentials/rest/jcrbrowser/folders"/>
+                    </div>
+                </div>
             </form>
         </div>
     </div>

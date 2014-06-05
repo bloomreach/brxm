@@ -219,6 +219,9 @@
 // HIPPO SPECIFIC  CSS
 //############################################
 */
+.no-drag .angular-ui-tree-handle {
+  cursor: pointer;
+}
 .footer {
   border-top: 1px solid #eeeeee;
   margin-top: 400px;
