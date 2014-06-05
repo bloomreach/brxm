@@ -640,10 +640,19 @@ public class MountDecoratorImpl implements MountDecorator {
                 final Mount mountByGroupAliasAndType = delegatee.getMountByGroupAliasAndType(hostGroupName, alias, type);
                 if (mountByGroupAliasAndType != null) {
                     // explicit preview found
+                    log.debug("Explicit preview mount '{}' for alias '{}' in host group '{}'. Return null",
+                            mountByGroupAliasAndType, alias, hostGroupName);
                     return decorateMountAsPreview(mountByGroupAliasAndType);
                 }
                 // check whether there is a 'live' variant. If so, return that one decorated as preview mount
                 final Mount liveMount = delegatee.getMountByGroupAliasAndType(hostGroupName, alias, Mount.LIVE_NAME);
+                if (liveMount == null) {
+                    log.debug("No preview or live mount found for alias '{}' in host group '{}'. Return null",
+                            mountByGroupAliasAndType, alias, hostGroupName);
+                    return null;
+                }
+                log.debug("Found live mount '{}' for alias '{}' in host group '{}'. Return preview decorated version,",
+                        liveMount, alias, hostGroupName);
                 return decorateMountAsPreview(liveMount);
             }
             return null;  
