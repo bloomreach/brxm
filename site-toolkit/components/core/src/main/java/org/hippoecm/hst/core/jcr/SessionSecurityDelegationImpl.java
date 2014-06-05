@@ -193,7 +193,7 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
             jcrSession = ((HippoSession) session1).createSecurityDelegate(session2, domainExtensions);
         } finally {
             if (session1 != null) {
-                session2.logout();
+                session1.logout();
             }
             if (session2 != null) {
                 session2.logout();
