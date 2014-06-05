@@ -52,6 +52,7 @@ public class DocumentWizardResource extends BaseResource {
     public static final String ROOT_CONFIG_PATH = "/hippo:configuration/hippo:frontend/cms/cms-dashshortcuts";
 
 
+
     @POST
     @Path("/")
     public MessageRestful addWizard(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
@@ -64,8 +65,9 @@ public class DocumentWizardResource extends BaseResource {
             final String classificationType = values.get("classificationType");
             final String documentType = values.get("documentType");
             final String baseFolder = values.get("baseFolder");
-
+            final String valueListPath = values.get("valueListPath");
             final String query = values.get("query");
+
             if (Strings.isEmpty(shortcutName)) {
                 return new ErrorMessageRestful("Shortcut name was empty/invalid");
             }
@@ -80,6 +82,9 @@ public class DocumentWizardResource extends BaseResource {
             node.setProperty("baseFolder", baseFolder);
             node.setProperty("documentType", documentType);
             node.setProperty("classificationType", classificationType);
+            if(classificationType.equals("list")){
+                node.setProperty("valueListPath", valueListPath);
+            }
             session.save();
             return new MessageRestful("Successfully created Document Wizard shortcut: " + shortcutName);
         } catch (RepositoryException e) {

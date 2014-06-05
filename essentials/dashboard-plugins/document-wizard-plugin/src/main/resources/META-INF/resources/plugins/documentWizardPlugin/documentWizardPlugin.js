@@ -35,17 +35,15 @@
                 console.log("cancel");
             };
             $scope.addWizard = function () {
-                var payload = Essentials.addPayloadData("selectedDocument", $scope.selectedDocument, null);
+                var payload = Essentials.addPayloadData("documentType", $scope.selectedDocument.fullName, null);
                 Essentials.addPayloadData("classificationType", $scope.classificationType, payload);
                 Essentials.addPayloadData("baseFolder", $scope.baseFolder, payload);
-                Essentials.addPayloadData("shortcutName", $scope.baseFolder, payload);
+                Essentials.addPayloadData("shortcutName", $scope.shortcutName, payload);
                 Essentials.addPayloadData("folderQuery", $scope.folderQuery, payload);
-                Essentials.addPayloadData("val", $scope.valueListPath, payload);
+                Essentials.addPayloadData("valueListPath", $scope.valueListPath, payload);
+                $http.post(endpoint, payload).success(function (data) {
 
-                /*$http.post($rootScope.REST, payload).success(function (data) {
-
-                 });
-                 */
+                });
 
             };
 
