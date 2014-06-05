@@ -16,8 +16,9 @@
   -->
 
 <div>
-    <script type="text/ng-template" id="tree-picker.html">
-        <!--<div class="modal fade">-->
+    <div class="modal">
+        <script type="text/ng-template" id="tree-picker.html">
+
             <div class="modal-header">
                 <h3 class="modal-title">{{title ? title:'Select target'}}</h3>
             </div>
@@ -34,12 +35,16 @@
                     </a>
                     {{ item.title }}
                 </div>
+                <div class="modal-body">
+                    <div class="infobox infobox-success">{{selectedPath}}</div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
                 <button class="btn btn-primary" ng-click="ok()">OK</button>
             </div>
-        <!--</div>-->
-    </script>
+
+        </script>
+    </div>
     <button class="btn btn-primary" ng-click="open('lg')">{{buttonText? buttonText:'Pick an item'}}</button>
 </div>

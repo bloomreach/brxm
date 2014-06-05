@@ -21,16 +21,14 @@
             var endpoint = $rootScope.REST.dynamic + 'documentwizard/';
             $scope.pluginId = "documentWizardPlugin";
 
-            $scope.showDialog = false;
             $scope.valueListPath = null;
             $scope.selectedDocument = null;
             $scope.shortcutName = null;
             $scope.baseFolder = null;
-            $scope.classificationType = "list";
+            $scope.classificationType = null;
             $scope.classificationTypes = ["date", "list"];
             $scope.addOk = function () {
-                $scope.showDialog = false;
-                console.log("OK");
+
             };
             $scope.addCancel = function () {
                 $scope.showDialog = false;
@@ -41,8 +39,7 @@
                 Essentials.addPayloadData("classificationType", $scope.classificationType, payload);
                 Essentials.addPayloadData("baseFolder", $scope.baseFolder, payload);
                 Essentials.addPayloadData("shortcutName", $scope.baseFolder, payload);
-                $scope.showDialog = true;
-                console.log($scope.showDialog);
+
                 /*$http.post($rootScope.REST, payload).success(function (data) {
 
                  });
@@ -84,89 +81,6 @@
             $http.get($rootScope.REST.documents).success(function (data) {
                 $scope.documentTypes = data;
             });
-            $http.get("http://localhost:8080/essentials/rest/jcrbrowser/folders").success(function (data) {
-                $scope.treeItems = data.items;
-            });
-
-
-            //############################################
-            // TREE
-            //############################################
-
-            $scope.callbacks = {
-                accept: function () {
-                    return false;
-                },
-                dragStart: function (event) {
-                    var sourceItem = event.source.nodeScope.$modelValue;
-                    $scope.selectedItem = sourceItem;
-                    $scope.baseFolder = sourceItem.id;
-                }
-            };
-            //############################################
-            // MODAL
-            //############################################
-
-            $scope.open = function (size) {
-
-                var modalInstance = $modal.open({
-                    templateUrl: 'tree-picker.html',
-                    controller: ModalInstanceCtrl,
-                    size: size
-                });
-
-                modalInstance.result.then(function (selectedItem) {
-                    $scope.selected = selectedItem;
-                }, function () {
-                    $log.info('Modal dismissed at: ' + new Date());
-                });
-            };
-
-            var ModalInstanceCtrl = function ($scope, $modalInstance) {
-
-
-                $http.get("http://localhost:8080/essentials/rest/jcrbrowser/folders").success(function (data) {
-                    $scope.treeItems = data.items;
-                });
-
-                $scope.ok = function () {
-                    $modalInstance.close($scope.selected.item);
-                };
-
-                $scope.cancel = function () {
-                    $modalInstance.dismiss('cancel');
-                };
-
-
-                $scope.callbacks = {
-                    accept: function (sourceNodeScope, destNodesScope, destIndex) {
-                        return destNodesScope && !destNodesScope.nodrop;
-                    },
-
-                    dragStart: function (event) {
-                        var sourceItem = event.source.nodeScope.$modelValue;
-                        $log.info('start dragging ' + sourceItem.title);
-                        $scope.selectedItem = sourceItem;
-                    },
-
-                    dragStop: function (event) {
-                        var sourceItem = event.source.nodeScope.$modelValue;
-                        $log.info('stop dragging ' + sourceItem.title);
-                    },
-
-                    dropped: function (event) {
-                        var source = event.source,
-                            dest = event.dest;
-                        if (source.nodeScope && dest.nodesScope) {
-                            var sourceItem = source.nodeScope.$modelValue;
-                            var destItem = dest.nodesScope.$nodeScope ? dest.nodesScope.$nodeScope.$modelValue : {title: 'root'};
-                            var destIndex = dest.index;
-                            $log.info('dropped ' + sourceItem.title + ' into ' + destItem.title + ' at index ' + destIndex);
-                        }
-                    }
-                };
-
-            };
 
 
         })
