@@ -31,6 +31,7 @@ import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugins.richtext.IImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
+import org.hippoecm.frontend.plugins.richtext.LineEndingsModel;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
 import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePickerBehavior;
 import org.hippoecm.frontend.plugins.richtext.dialog.images.RichTextEditorImageService;
@@ -67,9 +68,7 @@ import org.slf4j.LoggerFactory;
 public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
 
     public static final String DEFAULT_EDITOR_CONFIG = "{"
-            + "  codemirror: {"
-            + "    autoFormatOnStart: true"
-            + "  },"
+            + "  autoUpdateElement: false,"
             + "  contentsCss: 'ckeditor/hippocontents.css',"
             + "  dialog_buttonsOrder: 'ltr',"
             + "  dialog_noConfirmCancel: true,"
@@ -78,8 +77,7 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
             + "    [ 'Alt', 'b', 'showblocks' ]"
             + "  ],"
             + "  linkShowAdvancedTab: false,"
-            + "  linkShowSurroundingAnchors: false,"
-            + "  plugins: 'a11yhelp,basicstyles,button,clipboard,codemirror,contextmenu,dialog,dialogadvtab,dialogui,divarea,elementspath,enterkey,entities,floatingspace,floatpanel,htmlwriter,indent,indentblock,indentlist,justify,link,list,listblock,liststyle,magicline,maximize,menu,menubutton,panel,panelbutton,pastefromword,pastetext,popup,removeformat,resize,richcombo,showblocks,showborders,specialchar,stylescombo,tab,table,tabletools,toolbar,undo,youtube',"
+            + "  plugins: 'a11yhelp,basicstyles,button,clipboard,codemirror,contextmenu,dialog,dialogadvtab,dialogui,divarea,elementspath,enterkey,entities,floatingspace,floatpanel,htmlwriter,indent,indentblock,indentlist,justify,link,list,listblock,liststyle,magicline,maximize,menu,menubutton,panel,panelbutton,pastefromword,pastetext,popup,removeformat,resize,richcombo,showblocks,showborders,specialchar,stylescombo,tab,table,tableresize,tabletools,toolbar,undo,youtube',"
             + "  removeFormatAttributes: 'style,lang,width,height,align,hspace,valign',"
             + "  title: false,"
             + "  toolbarGroups: ["
@@ -175,8 +173,9 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
 
         final IRichTextImageFactory imageFactory = createImageFactory();
         final IImageURLProvider urlProvider = createImageUrlProvider(imageFactory, linkFactory);
+        final RichTextImageMetaDataModel metaModel = new RichTextImageMetaDataModel(facetNodeNamesToUuidsModel, urlProvider);
 
-        return new RichTextImageMetaDataModel(facetNodeNamesToUuidsModel, urlProvider);
+        return new LineEndingsModel(metaModel);
     }
 
     protected IRichTextLinkFactory createLinkFactory() {

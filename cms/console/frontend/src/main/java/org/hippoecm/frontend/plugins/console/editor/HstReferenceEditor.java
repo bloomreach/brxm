@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,9 +43,9 @@ class HstReferenceEditor extends Panel {
     protected static final String PROPERTY_HST_REFERENCECOMPONENT = "hst:referencecomponent";
 
     private static final String NODE_HST_CONFIGURATION = "hst:configuration";
-    private static final String NODE_HST_CONFIGURATIONS = "hst:configurations";
-    private static final String NODE_HST_DEFAULT = "hst:default";
+    private static final String NODE_HST_WORKSPACE = "hst:workspace";
     private static final String NODE_HST_TEMPLATES = "hst:templates";
+    private static final String NODE_JCR_ROOT = "rep:root";
     private static final String NODE_HST_CONTAINERCOMPONENTREFERENCE = "hst:containercomponentreference";
     private static final String PROPERY_HST_INHERITSFROM = "hst:inheritsfrom";
     private static final String PROPERTY_HST_RENDERPATH = "hst:renderpath";
@@ -53,6 +53,7 @@ class HstReferenceEditor extends Panel {
     private static final String PROPERTY_HST_COMPONENTCLASSNAME = "hst:componentclassname";
     private static final String PROPERTY_HST_XTYPE = "hst:xtype";
     private static final String PATH_PREFIX_WORKSPACE_CONTAINERS = "hst:workspace/hst:containers/";
+    private static final String PATH_HST_DEFAULT = "hst:hst/hst:configurations/hst:default";
 
     HstReferenceEditor(String id, JcrPropertyModel propertyModel, JcrPropertyValueModel valueModel) {
         super(id);
@@ -125,8 +126,6 @@ class HstReferenceEditor extends Panel {
     /**
      * Get the hst configuration node that a hst property refers to
      *
-     *
-     *
      * @param propertyModel model representing the property
      * @param valueModel model representing the value of the property
      * @return the requested node or null
@@ -134,21 +133,26 @@ class HstReferenceEditor extends Panel {
      */
     private Node getHstReferencedNode(final JcrPropertyModel propertyModel, final JcrPropertyValueModel valueModel) throws RepositoryException {
         String propertyValue = valueModel.getValue().getString();
-        final Node rootNode = UserSession.get().getJcrSession().getRootNode();
 
-        // first try: hst configuration nodes in the current hst:configuration group
+        // first try: hst configuration nodes in the current hst:workspace or hst:configuration group
         Node currentHstConfiguration = propertyModel.getProperty().getParent();
+        Node templateNode;
         do {
-            if(currentHstConfiguration.getPrimaryNodeType().isNodeType(NODE_HST_CONFIGURATION)) {
-                break;
+            if(currentHstConfiguration.getPrimaryNodeType().isNodeType(NODE_HST_WORKSPACE)) {
+                templateNode = getConfigurationNode(currentHstConfiguration, propertyValue, propertyModel);
+                if(templateNode != null) {
+                    return templateNode;
+                }
+            } else if(currentHstConfiguration.getPrimaryNodeType().isNodeType(NODE_HST_CONFIGURATION)) {
+                templateNode = getConfigurationNode(currentHstConfiguration, propertyValue, propertyModel);
+                if(templateNode != null) {
+                    return templateNode;
+                } else {
+                    break;
+                }
             }
             currentHstConfiguration = currentHstConfiguration.getParent();
-        } while (!currentHstConfiguration.equals(rootNode));
-
-        Node templateNode = getConfigurationNode(currentHstConfiguration, propertyValue, propertyModel);
-        if(templateNode != null) {
-            return templateNode;
-        }
+        } while (!currentHstConfiguration.getPrimaryNodeType().isNodeType(NODE_JCR_ROOT));
 
         // second try: hst configuration nodes in any inheritsfrom hst:configuration group
         if(currentHstConfiguration.hasProperty(PROPERY_HST_INHERITSFROM)) {
@@ -163,15 +167,8 @@ class HstReferenceEditor extends Panel {
         }
 
         // third try: hst configuration nodes from hst:default group
-        Node hstDefaultConfiguration = currentHstConfiguration.getParent();
-        do {
-            if(hstDefaultConfiguration.getPrimaryNodeType().isNodeType(NODE_HST_CONFIGURATIONS)) {
-                hstDefaultConfiguration = hstDefaultConfiguration.getNode(NODE_HST_DEFAULT);
-                break;
-            }
-            hstDefaultConfiguration = hstDefaultConfiguration.getParent();
-        } while (!hstDefaultConfiguration.equals(rootNode));
-
+        final Node rootNode = UserSession.get().getJcrSession().getRootNode();
+        Node hstDefaultConfiguration = rootNode.getNode(PATH_HST_DEFAULT);
         if(hstDefaultConfiguration.hasNode(NODE_HST_TEMPLATES)) {
             templateNode = getConfigurationNode(hstDefaultConfiguration, propertyValue, propertyModel);
             if(templateNode != null) {

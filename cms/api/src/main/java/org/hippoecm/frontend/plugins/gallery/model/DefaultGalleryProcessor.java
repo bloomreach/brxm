@@ -32,14 +32,18 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
-import javax.jcr.*;
+import javax.jcr.Item;
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.ValueFactory;
 import javax.jcr.nodetype.NodeDefinition;
 
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.util.io.IOUtils;
-import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceException;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
+import org.hippoecm.frontend.model.JcrHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,7 +113,7 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
             int resizeHeight = (int) (originalHeight * resizeRatio);
 
             BufferedImage originalImage = reader.read(FIRST_IMAGE_IN_FILE);
-            BufferedImage scaledImage = null;
+            BufferedImage scaledImage;
             if (resizeRatio < 1.0d) {
                 scaledImage = getScaledInstance(originalImage, resizeWidth, resizeHeight,
                         RenderingHints.VALUE_INTERPOLATION_BICUBIC, true);
@@ -127,9 +131,7 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
             mciis.close();
 
             return new ByteArrayInputStream(out.toByteArray());
-        } catch (IOException e) {
-            throw new GalleryException("Could not resize image", e);
-        } catch (UnsupportedMimeTypeException e) {
+        } catch (IOException | UnsupportedMimeTypeException e) {
             throw new GalleryException("Could not resize image", e);
         } finally {
             if (reader != null) {
@@ -244,6 +246,7 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
         return ret;
     }
 
+    @Override
     public Dimension getDesiredResourceDimension(Node node) throws RepositoryException {
         if(node.isNodeType("hippo:resource")) {
             try {
@@ -275,15 +278,15 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
         }
     }
 
+    @Override
     public void makeImage(Node node, InputStream istream, String mimeType, String fileName) throws GalleryException,
             RepositoryException {
-        Node primaryChild = null;
         try {
             Item item = JcrHelper.getPrimaryItem(node);
             if (!item.isNode()) {
                 throw new GalleryException("Primary item is not a node");
             }
-            primaryChild = (Node) item;
+            Node primaryChild = (Node) item;
             if (primaryChild.isNodeType("hippo:resource")) {
                 ResourceHelper.setDefaultResourceProperties(primaryChild, mimeType, istream);
                 if (mimeType.equals(ResourceHelper.MIME_TYPE_PDF)) {
@@ -328,6 +331,7 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
         node.setProperty(JcrConstants.JCR_MIMETYPE, mimeType);
     }
 
+    @Override
     public void validateResource(Node node, String fileName) throws GalleryException, RepositoryException {
         try {
             ResourceHelper.validateResource(node, fileName);
@@ -336,6 +340,7 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
         }
     }
 
+    @Override
     public void initGalleryResource(Node node, InputStream data, String mimeType, String fileName, Calendar lastModified)
             throws GalleryException, RepositoryException {
         node.setProperty(JcrConstants.JCR_MIMETYPE, mimeType);
@@ -347,6 +352,7 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
         return ResourceHelper.getValueFactory(node);
     }
 
+    @Override
     public boolean isUpscalingEnabled(Node node) throws GalleryException, RepositoryException {
         return true;
     }

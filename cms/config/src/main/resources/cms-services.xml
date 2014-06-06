@@ -71,6 +71,9 @@
     <sv:property sv:name="rest.uri" sv:type="String">
       <sv:value>http://127.0.0.1:8080/site/_cmsrest</sv:value>
     </sv:property>
+    <sv:property sv:name="context.path" sv:type="String">
+      <sv:value>/site</sv:value>
+    </sv:property>
     <sv:property sv:name="ping.service.uri" sv:type="String">
       <sv:value>/sites/_isAlive</sv:value>
     </sv:property>

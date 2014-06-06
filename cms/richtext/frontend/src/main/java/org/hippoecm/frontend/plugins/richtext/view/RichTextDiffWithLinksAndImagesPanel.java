@@ -61,7 +61,7 @@ public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextDiffPan
                                                final IBrowseService browser) {
         super(id);
 
-        final PreviewLinksBehavior previewLinksBehavior = new PreviewLinksBehavior(currentNodeModel, browser);
+        final PreviewLinksBehavior previewLinksBehavior = new PreviewLinksBehavior(currentNodeModel, browser, false);
         add(previewLinksBehavior);
 
         final IModel<String> viewModel = createDiffModel(baseNodeModel, currentNodeModel, previewLinksBehavior);

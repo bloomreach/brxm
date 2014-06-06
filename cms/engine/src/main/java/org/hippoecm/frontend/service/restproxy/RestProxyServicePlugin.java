@@ -15,10 +15,7 @@
  */
 package org.hippoecm.frontend.service.restproxy;
 
-import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -27,25 +24,13 @@ import java.util.Set;
 import javax.jcr.Credentials;
 import javax.jcr.SimpleCredentials;
 import javax.security.auth.Subject;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.params.ClientPNames;
-import org.apache.http.impl.client.ClientParamsStack;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.CoreConnectionPNames;
-import org.apache.http.params.HttpParams;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -73,22 +58,19 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
     private static final Logger log = LoggerFactory.getLogger(IRestProxyService.class);
 
     private static final String CMSREST_CREDENTIALS_HEADER = "X-CMSREST-CREDENTIALS";
+    private static final String CMSREST_CMSHOST_HEADER = "X-CMSREST-CMSHOST";
     // This is really bad workaround but it is used only for the time being
     private static final String CREDENTIAL_CIPHER_KEY = "ENC_DEC_KEY";
     public static final String CONFIG_REST_URI = "rest.uri";
+    public static final String CONFIG_CONTEXT_PATH = "context.path";
     public static final String CONFIG_SERVICE_ID = "service.id";
     public static final String DEFAULT_SERVICE_ID = IRestProxyService.class.getName();
-    public static final String PING_SERVICE_URI = "ping.service.uri";
 
     private static final long serialVersionUID = 1L;
     private static final JacksonJaxbJsonProvider defaultJJJProvider;
 
-    private final static int FIRST_TIME_PING_SERVLET_TIMEOUT = 20000;
-    private final static int PING_SERVLET_TIMEOUT = 1000;
-    private final static int MAX_CONNECTIONS = 50;
-    private final String pingServiceUri;
-    private Boolean siteIsAlive;
     private final String restUri;
+    private final String contextPath;
 
     static {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -103,35 +85,6 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         defaultJJJProvider.setMapper(objectMapper);
     }
 
-    protected static HttpClient httpClient = null;
-    static {
-        PoolingClientConnectionManager mgr = new PoolingClientConnectionManager();
-        mgr.setDefaultMaxPerRoute(MAX_CONNECTIONS);
-        mgr.setMaxTotal(MAX_CONNECTIONS);
-        final BasicHttpParams overrideParams = new BasicHttpParams();
-        overrideParams.setIntParameter(CoreConnectionPNames.SO_TIMEOUT, FIRST_TIME_PING_SERVLET_TIMEOUT);
-        overrideParams.setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, FIRST_TIME_PING_SERVLET_TIMEOUT);
-        httpClient = new DefaultHttpClient(mgr) {
-            private volatile long start = -1;
-            @Override
-            protected HttpParams determineParams(final HttpRequest req) {
-                // At first we wait a little longer for the response, in order to give the application time to start up
-                if (start == -1) {
-                    start = System.currentTimeMillis();
-                }
-                if (System.currentTimeMillis() - start < FIRST_TIME_PING_SERVLET_TIMEOUT) {
-                    return new ClientParamsStack(null, getParams(), req.getParams(), overrideParams);
-                } else {
-                    return super.determineParams(req);
-                }
-            }
-        };
-        // @see http://hc.apache.org/httpcomponents-client-ga/tutorial/html/connmgmt.html#d5e399
-        httpClient.getParams().setIntParameter(CoreConnectionPNames.SO_TIMEOUT, PING_SERVLET_TIMEOUT);
-        httpClient.getParams().setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, PING_SERVLET_TIMEOUT);
-        httpClient.getParams().setBooleanParameter(CoreConnectionPNames.STALE_CONNECTION_CHECK, false);
-        httpClient.getParams().setBooleanParameter(ClientPNames.HANDLE_AUTHENTICATION, false);
-    }
 
     public RestProxyServicePlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -141,16 +94,31 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
             throw new IllegalStateException("No REST service URI configured. Please set the plugin configuration property '"
                     + CONFIG_REST_URI + "'");
         }
+        log.info("Using REST uri '{}'", restUri);
 
-        log.debug("Using REST uri '{}'", restUri);
+        contextPath = config.getString(CONFIG_CONTEXT_PATH);
+        if (contextPath != null) {
+            if (isValidContextPath(contextPath)) {
+               log.info("Configured contextPath for REST service with uri '{}' is '{}'", restUri, contextPath);
+            } else {
+                throw new IllegalStateException("Invalid context path configured for restUri '"
+                        + restUri + "'. Property '"+CONFIG_CONTEXT_PATH+"' must be either missing, empty, or " +
+                        "start with a '/' and no more other '/' but it was '"+contextPath+"'");
+            }
+        } else {
+            log.info("No context path set. #getContextPath will return null");
+        }
+
 
         final String serviceId = config.getString(CONFIG_SERVICE_ID, DEFAULT_SERVICE_ID);
-        log.debug("Registering this service under id '{}'", serviceId);
+        log.info("Registering this service under id '{}'", serviceId);
         context.registerService(this, serviceId);
 
-        pingServiceUri = (restUri + config.getString(PING_SERVICE_URI, "/sites/_isAlive")).replaceAll("^://", "/");
-        log.debug("Using ping REST uri '{}'", pingServiceUri);
+    }
 
+    @Override
+    public String getContextPath() {
+        return contextPath;
     }
 
     @Override
@@ -176,21 +144,6 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
      */
     @Override
     public <T> T createRestProxy(final Class<T> restServiceApiClass, final List<Object> additionalProviders) {
-        if (siteIsAlive == null) {
-            checkSiteIsAlive(pingServiceUri);
-        }
-        if (!siteIsAlive) {
-            log.info("It appears that the site might be down. Pinging site one more time!");
-            siteIsAlive = null;
-            checkSiteIsAlive(pingServiceUri);
-            if (!siteIsAlive) {
-                log.warn("It appears that site is still down. Please check with your administrator!");
-                return null;
-            } else {
-                log.info("Site is up and running.");
-            }
-        }
-
         return JAXRSClientFactory.create(restUri, restServiceApiClass, getProviders(additionalProviders));
     }
 
@@ -209,27 +162,17 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
      */
     @Override
     public <T> T createSecureRestProxy(final Class<T> restServiceApiClass, final List<Object> additionalProviders) {
-        if (siteIsAlive == null) {
-            checkSiteIsAlive(pingServiceUri);
-        }
-        if (!siteIsAlive) {
-            log.info("It appears that the site might be down. Pinging site one more time!");
-            siteIsAlive = null;
-            checkSiteIsAlive(pingServiceUri);
-            if (!siteIsAlive) {
-                log.warn("It appears that site is still down. Please check with your administrator!");
-                return null;
-            } else {
-                log.info("Site is up and running.");
-            }
-        }
-
         T clientProxy = JAXRSClientFactory.create(restUri, restServiceApiClass, getProviders(additionalProviders));
 
         Subject subject = getSubject();
         // The accept method is called to solve an issue as the REST call was sent with 'text/plain' as an accept header
         // which caused problems matching with the relevant JAXRS resource
-        WebClient.client(clientProxy).header(CMSREST_CREDENTIALS_HEADER, getEncryptedCredentials(subject)).accept(MediaType.WILDCARD_TYPE);
+        WebClient.client(clientProxy)
+                .header(CMSREST_CREDENTIALS_HEADER, getEncryptedCredentials(subject))
+                .header(CMSREST_CMSHOST_HEADER, getFarthestRequestHost())
+                .accept(MediaType.WILDCARD_TYPE);
+
+        // default time out is 60000 ms;
         return clientProxy;
     }
 
@@ -242,6 +185,28 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         subject.getPrivateCredentials().add(credentials);
         subject.setReadOnly();
         return subject;
+    }
+
+    protected String getFarthestRequestHost() {
+        final HttpServletRequest request = (HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest();
+        String host = request.getHeader("X-Forwarded-Host");
+
+        if (host != null) {
+            String [] hosts = host.split(",");
+            return hosts[0].trim();
+        }
+        host = request.getHeader("Host");
+        if (host != null && !"".equals(host)) {
+            return host;
+        }
+        // should never happen : HTTP/1.0 based browser clients are unlikely to login in the cms :)
+        int serverPort = request.getServerPort();
+        if (serverPort == 80 || serverPort == 443 || serverPort <= 0) {
+            host = request.getServerName();
+        } else {
+            host = request.getServerName() + ":" + serverPort;
+        }
+        return host;
     }
 
     protected String getEncryptedCredentials(Subject subject) throws IllegalArgumentException {
@@ -262,40 +227,6 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         return credentialCipher.getEncryptedString(CREDENTIAL_CIPHER_KEY, subjectCredentials);
     }
 
-    protected void checkSiteIsAlive(final String pingServiceUri) {
-        String normalizedPingServiceUri = "";
-
-        // Check whether the site is up and running or not
-        HttpGet httpGet = null;
-
-        try {
-            // Make sure that it is URL encoded correctly, except for the '/' and ':' characters
-            normalizedPingServiceUri = URLEncoder.encode(pingServiceUri, Charset.defaultCharset().name())
-                    .replaceAll("%2F", "/").replaceAll("%3A", ":");
-
-            httpGet = new HttpGet(normalizedPingServiceUri);
-            httpGet.addHeader(CMSREST_CREDENTIALS_HEADER, getEncryptedCredentials(getSubject()));
-            final HttpContext httpContext = new BasicHttpContext();
-            final HttpResponse httpResponse = httpClient.execute(httpGet, httpContext);
-            boolean ok = (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK);
-            if (!ok) {
-                log.warn("The response status ('{}') is not okay from the pinging site service URI, '{}'.", httpResponse.getStatusLine(), normalizedPingServiceUri);
-            }
-            siteIsAlive = ok;
-        } catch (IOException e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Error while pinging site using URI " + normalizedPingServiceUri, e);
-            } else {
-                log.warn("Error while pinging site using URI {} - {}", normalizedPingServiceUri, e.toString());
-            }
-            siteIsAlive = Boolean.FALSE;
-        } finally {
-            if ((httpGet != null) && (!httpGet.isAborted())) {
-                httpGet.reset();
-            }
-        }
-    }
-
     protected List<Object> getProviders(final List<Object> additionalProviders) {
         List<Object> providers = new ArrayList<Object>();
         providers.add(defaultJJJProvider);
@@ -303,6 +234,24 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
             providers.addAll(additionalProviders);
         }
         return providers;
+    }
+
+    private static boolean isValidContextPath(String path) {
+        if (path == null) {
+            // we allow context path to be null which means can be used to be
+            // context path agnostic
+            return true;
+        }
+        if (path.equals("")) {
+            return true;
+        }
+        if (!path.startsWith("/")) {
+            return false;
+        }
+        if (path.substring(1).contains("/")) {
+            return false;
+        }
+        return true;
     }
 
 }

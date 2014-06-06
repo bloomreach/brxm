@@ -49,8 +49,6 @@ import org.slf4j.LoggerFactory;
 @RequiresService(types = { RepositoryScheduler.class })
 public class BrokenLinksCheckerDaemonModule extends AbstractReconfigurableSchedulingDaemonModule {
 
-    private static Logger log = LoggerFactory.getLogger(BrokenLinksCheckerDaemonModule.class);
-
     /**
      * Flag property name whether or not the scheduled job should be enabled.
      */
@@ -139,6 +137,8 @@ public class BrokenLinksCheckerDaemonModule extends AbstractReconfigurableSchedu
                         params.put(prop.getName(), prop.getString());
                     } else if (prop.getType() == PropertyType.BOOLEAN) {
                         params.put(prop.getName(), Boolean.toString(prop.getBoolean()));
+                    } else if (prop.getType() == PropertyType.LONG) {
+                        params.put(prop.getName(), Long.toString(prop.getLong()));
                     }
                 }
             }

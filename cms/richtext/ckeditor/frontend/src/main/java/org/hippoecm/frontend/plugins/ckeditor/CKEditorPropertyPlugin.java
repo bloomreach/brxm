@@ -20,6 +20,7 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.richtext.LineEndingsModel;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
 import org.hippoecm.frontend.plugins.richtext.view.RichTextDiffPanel;
 import org.hippoecm.frontend.plugins.richtext.view.RichTextPreviewPanel;
@@ -31,6 +32,7 @@ import org.hippoecm.frontend.plugins.richtext.view.RichTextPreviewPanel;
 public class CKEditorPropertyPlugin extends AbstractCKEditorPlugin<String> {
 
     public static final String DEFAULT_EDITOR_CONFIG = "{"
+            + "  autoUpdateElement: false,"
             + "  contentsCss: 'ckeditor/hippocontents.css',"
             + "  plugins: 'basicstyles,button,clipboard,contextmenu,divarea,enterkey,entities,floatingspace,floatpanel,htmlwriter,listblock,magicline,menu,menubutton,panel,panelbutton,removeformat,richcombo,stylescombo,tab,toolbar,undo',"
             + "  title: false,"
@@ -58,7 +60,7 @@ public class CKEditorPropertyPlugin extends AbstractCKEditorPlugin<String> {
     protected IModel<String> createEditModel() {
         final RichTextModel model = new RichTextModel(getHtmlModel());
         model.setCleaner(getHtmlCleanerOrNull());
-        return model;
+        return new LineEndingsModel(model);
     }
 
     @Override

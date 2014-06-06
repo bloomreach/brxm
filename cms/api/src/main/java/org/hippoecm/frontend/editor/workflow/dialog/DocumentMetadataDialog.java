@@ -39,6 +39,7 @@ import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.util.NodeIterable;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -175,10 +176,10 @@ public class DocumentMetadataDialog extends AbstractDialog<WorkflowDescriptor> {
 
     private String formattedCalendarByStyle(Calendar calendar, String patternStyle) {
         if (calendar != null) {
-            String pattern = DateTimeFormat.patternForStyle(patternStyle, getLocale());
-            return DateTimeFormat.forPattern(pattern).print(new DateTime(calendar));
+            DateTimeFormatter dtf = DateTimeFormat.forStyle(patternStyle).withLocale(getLocale());
+            return dtf.print(new DateTime(calendar));
         }
-        return "";
+        return StringUtils.EMPTY;
     }
 
 
