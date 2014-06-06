@@ -135,6 +135,11 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     private Name hippoHandle;
 
     /**
+     * Name of hippo:resultset, needed for document model checking
+     */
+    private Name hippoResultSet;
+
+    /**
      * Name of hippo:facetsearch, needed for document model checking
      */
     private Name hippoFacetSearch;
@@ -257,6 +262,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         rootNodeId = hierMgr.resolveNodePath(PathFactoryImpl.getInstance().getRootPath());
 
         hippoHandle = npRes.getQName(HippoNodeType.NT_HANDLE);
+        hippoResultSet = npRes.getQName(HippoNodeType.HIPPO_RESULTSET);
         hippoFacetSearch = npRes.getQName(HippoNodeType.NT_FACETSEARCH);
         hippoFacetSelect = npRes.getQName(HippoNodeType.NT_FACETSELECT);
 
@@ -1197,9 +1203,11 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             }
             try {
                 if (isInstanceOfType(nodeState, HippoNodeType.NT_DOCUMENT)) {
-                    // assert that parent is a handle to be sure we are dealing with a real document
-                    final NodeState handle = getParentState(nodeState);
-                    if (handle.getNodeTypeName().equals(hippoHandle)) {
+                    // if the parent is either a handle or a resultset we are sure we are dealing with a
+                    // real document
+                    final NodeState parentState = getParentState(nodeState);
+                    if (parentState.getNodeTypeName().equals(hippoHandle)
+                            || parentState.getNodeTypeName().equals(hippoResultSet)) {
                         if (log.isDebugEnabled()) {
                             log.debug("MATCH hippoDoc: " + nodeState.getNodeTypeName());
                         }
