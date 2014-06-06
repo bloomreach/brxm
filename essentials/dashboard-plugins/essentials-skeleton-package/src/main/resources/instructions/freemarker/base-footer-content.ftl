@@ -4,6 +4,14 @@
 {{#fileBased}}
     <#include "/WEB-INF/freemarker/include/imports.ftl">
 {{/fileBased}}
+{{#sortBy}}
+
+<sv:property sv:name="sortBy" sv:type="String">
+    <sv:value>label</sv:value>
+</sv:property>
+{{sortBy}}
+
+
 <#--
   Copyright 2014 Hippo B.V. (http://www.onehippo.com)
 

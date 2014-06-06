@@ -128,6 +128,28 @@ public final class TemplateUtils {
         return identifier.startsWith("get") || identifier.startsWith("is");
     }
 
+    public static String replaceStringPlaceholders(final String content, final Map<String, String> data) {
+            if (Strings.isNullOrEmpty(content)) {
+                return content;
+            }
+
+            try {
+                final Writer writer = new StringWriter();
+                final MustacheFactory mf = new DefaultMustacheFactory();
+
+                final StringReader reader = new StringReader(content);
+                final Mustache mustache = mf.compile(reader, content);
+
+                mustache.execute(writer, data);
+                writer.flush();
+
+                return writer.toString();
+            } catch (IOException e) {
+                log.error("Error flushing template", e);
+            }
+            return content;
+
+    }
     public static String replaceTemplateData(final String content, final Map<String, Object> data) {
         if (Strings.isNullOrEmpty(content)) {
             return content;

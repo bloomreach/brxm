@@ -26,10 +26,8 @@ import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.servlet.ServletContext;
@@ -54,6 +52,7 @@ import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
+import org.onehippo.cms7.essentials.dashboard.utils.DocumentTemplateUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
@@ -145,28 +144,8 @@ public class TaxonomyResource extends BaseResource {
                 final String documentName = documentNames[i];
                 final String location = locations[i];
                 final String taxonomyName = taxonomyNames[i];
-                // add mixin:
                 final String prefix = context.getProjectNamespacePrefix();
-               /* final String prototypePath = MessageFormat.format("/hippo:namespaces/{0}/{1}/hipposysedit:prototypes/hipposysedit:prototype", prefix, documentName);
-                if (session.nodeExists(prototypePath)) {
-                    final Node node = session.getNode(prototypePath);
-                    node.addMixin(HIPPOTAXONOMY_MIXIN);
-                }
-                */
-                // add supertypes
-                final String nodeTypePath = MessageFormat.format("/hippo:namespaces/{0}/{1}/hipposysedit:nodetype/hipposysedit:nodetype", prefix, documentName);
-                if (session.nodeExists(nodeTypePath)) {
-                    final Node node = session.getNode(nodeTypePath);
-                    if (node.hasProperty(HIPPOSYSEDIT_SUPERTYPE)) {
-                        final Property property = node.getProperty(HIPPOSYSEDIT_SUPERTYPE);
-                        final Value[] myValues = property.getValues();
-                        final Set<String> newValueSet = prepareValues(myValues, HIPPOTAXONOMY_MIXIN);
-                        final String[] newValues = newValueSet.toArray(new String[newValueSet.size()]);
-                        property.setValue(newValues);
-                    }
-                }
-                //
-                // add field:
+                DocumentTemplateUtils.addMixinType(context, documentName, HIPPOTAXONOMY_MIXIN);
                 final String path = MessageFormat.format("/hippo:namespaces/{0}/{1}/editor:templates/_default_", prefix, documentName);
                 if (session.nodeExists(path)) {
                     final Node node = session.getNode(path);
@@ -280,7 +259,7 @@ public class TaxonomyResource extends BaseResource {
         return false;
     }
 
-    private String[] extractValues(final CharSequence value) {
+    private static String[] extractValues(final CharSequence value) {
         if (Strings.isEmpty(value)) {
             return ArrayUtils.EMPTY_STRING_ARRAY;
         }
@@ -290,17 +269,5 @@ public class TaxonomyResource extends BaseResource {
         return strings.toArray(new String[strings.size()]);
     }
 
-    private Set<String> prepareValues(final Value[] values, final String value) throws RepositoryException {
-        final Set<String> myValues = new HashSet<>();
-        for (Value v : values) {
-            myValues.add(v.getString());
-        }
-        if (myValues.contains(value)) {
-            return myValues;
-        }
-
-        myValues.add(value);
-        return myValues;
-    }
 
 }
