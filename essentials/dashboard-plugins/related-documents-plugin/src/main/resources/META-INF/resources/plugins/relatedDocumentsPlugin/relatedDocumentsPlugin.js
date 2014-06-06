@@ -20,13 +20,21 @@
         .controller('relatedDocumentsCtrl', function ($scope, $filter, $sce, $log, $modal, $rootScope, $http) {
             var endpoint = $rootScope.REST.dynamic + 'related-documents';
             $scope.pluginId = "relatedDocumentsPlugin";
+            $scope.numberOfSuggestions = "20";
+            $scope.searchPaths = "";
+            $scope.fieldLocation = "";
 
             $scope.addDocs = function () {
-              /*  var payload = Essentials.addPayloadData("documentType", $scope.selectedDocument, null);
+
+                var payload = Essentials.addPayloadData("documentType", $scope.selectedDocument, null);
+                Essentials.addPayloadData("numberOfSuggestions", $scope.numberOfSuggestions, payload);
+                Essentials.addPayloadData("searchPaths", $scope.searchPaths, payload);
+                Essentials.addPayloadData("fieldLocation", $scope.fieldLocation, payload);
 
                 $http.post(endpoint, payload).success(function (data) {
 
-                });*/
+
+                });
 
             };
 
@@ -37,6 +45,7 @@
             $http.get($rootScope.REST.root + "/plugins/plugins/" + $scope.pluginId).success(function (plugin) {
                 $scope.pluginDescription = $sce.trustAsHtml(plugin.description);
             });
+
             $http.get($rootScope.REST.documents).success(function (data) {
                 $scope.documentTypes = data;
             });
