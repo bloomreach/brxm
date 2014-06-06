@@ -90,6 +90,22 @@ public class TemplateUtilsTest extends BaseTest {
     }
 
     @Test
+    public void testParsing() throws Exception {
+        final String template = "{{#sortBy}}\n" +
+                '\n' +
+                "<sv:property sv:name=\"sortBy\" sv:type=\"String\">\n" +
+                "    <sv:value>label</sv:value>\n" +
+                "</sv:property>\n" +
+                "{{/sortBy}}";
+
+        final Map<String, String> data = new HashMap<>();
+        data.put("sortBy", "namespace:document");
+        final String result = TemplateUtils.replaceStringPlaceholders(template, data);
+        log.info("result {}", result);
+        assertTrue(result.length() > 20);
+    }
+
+    @Test
     public void testReplaceTemplateDataHttl() throws Exception {
         final Map<String, Object> data = new HashMap<>();
         data.put("beanReference", "com.foo.bar");
