@@ -19,10 +19,10 @@ package org.onehippo.cms7.essentials.plugins.taxonomy;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -39,7 +39,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
@@ -54,6 +53,7 @@ import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.utils.DocumentTemplateUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.PayloadUtils;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,10 +136,10 @@ public class TaxonomyResource extends BaseResource {
         final Session session = context.createSession();
         try {
             final Map<String, String> values = payloadRestful.getValues();
-            final String[] taxonomyNames = extractValues(values.get("taxonomies"));
-            final String[] documentNames = extractValues(values.get("documents"));
-            final String[] locations = extractValues(values.get("locations"));
-            final Set<String> changedDocuments = new HashSet<>();
+            final String[] taxonomyNames = PayloadUtils.extractValueArray(values.get("taxonomies"));
+            final String[] documentNames = PayloadUtils.extractValueArray(values.get("documents"));
+            final String[] locations = PayloadUtils.extractValueArray(values.get("locations"));
+            final Collection<String> changedDocuments = new HashSet<>();
             for (int i = 0; i < documentNames.length; i++) {
                 final String documentName = documentNames[i];
                 final String location = locations[i];
@@ -259,15 +259,7 @@ public class TaxonomyResource extends BaseResource {
         return false;
     }
 
-    private static String[] extractValues(final CharSequence value) {
-        if (Strings.isEmpty(value)) {
-            return ArrayUtils.EMPTY_STRING_ARRAY;
-        }
-        final Splitter splitter = Splitter.on(",").omitEmptyStrings().trimResults();
-        final Iterable<String> iterable = splitter.split(value);
-        final List<String> strings = Lists.newArrayList(iterable);
-        return strings.toArray(new String[strings.size()]);
-    }
+
 
 
 }

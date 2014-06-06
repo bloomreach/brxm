@@ -38,11 +38,10 @@ import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.PayloadUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Splitter;
 
 /**
  * @version "$Id$"
@@ -65,14 +64,19 @@ public class RelatedDocumentsResource extends BaseResource {
             final Map<String, String> values = payloadRestful.getValues();
             final String documents = values.get("documents");
             final String numberOfSuggestions = values.get("numberOfSuggestions");
-            final String fieldLocation = values.get("fieldLocation");
+
             final String searchPaths = values.get("searchPaths");
             final String prefix = context.getProjectNamespacePrefix();
+
             final String templateRelatedDocs = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/related_documents_template.xml"));
             final String templateSuggestDocs = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/related_documents_suggestion_template.xml"));
             if (!Strings.isEmpty(documents)) {
-                final Iterable<String> docs = Splitter.on(",").omitEmptyStrings().trimResults().split(documents);
+
+                final String[] docs = PayloadUtils.extractValueArray(values.get("documents"));
+                final String[] locations = PayloadUtils.extractValueArray(values.get("locations"));
+
                 for (String document : docs) {
+
                     final String nodeTypePath = MessageFormat.format("/hippo:namespaces/{0}/{1}/hipposysedit:nodetype/hipposysedit:nodetype", prefix, document);
                     String myFieldData = TemplateUtils.replaceStringPlaceholders(templateRelatedDocs, values);//.(templateRelatedDocs, "fieldLocation", fieldLocation);
                     myFieldData = GlobalUtils.replacePlaceholders(myFieldData, "searchPaths", searchPaths);

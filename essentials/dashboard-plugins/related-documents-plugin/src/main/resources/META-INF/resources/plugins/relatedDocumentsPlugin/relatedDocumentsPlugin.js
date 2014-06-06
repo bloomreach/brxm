@@ -25,11 +25,20 @@
             $scope.fieldLocation = "";
 
             $scope.addDocs = function () {
+                var documents = [];
+                var locations = [];
+                angular.forEach($scope.documentTypes, function (value, key) {
+                    if (value.checked) {
+                        documents.push(value.fullName);
+                        locations.push(value.fieldLocation);
+                    }
 
-                var payload = Essentials.addPayloadData("documentType", $scope.selectedDocument, null);
+
+                });
+                var payload = Essentials.addPayloadData("documents", documents.join(','), null);
                 Essentials.addPayloadData("numberOfSuggestions", $scope.numberOfSuggestions, payload);
                 Essentials.addPayloadData("searchPaths", $scope.searchPaths, payload);
-                Essentials.addPayloadData("fieldLocation", $scope.fieldLocation, payload);
+                Essentials.addPayloadData("fieldLocation", locations.join(','), payload);
 
                 $http.post(endpoint, payload).success(function (data) {
 
