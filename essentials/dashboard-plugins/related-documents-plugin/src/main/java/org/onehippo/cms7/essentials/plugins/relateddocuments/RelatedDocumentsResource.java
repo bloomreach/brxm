@@ -16,8 +16,12 @@
 
 package org.onehippo.cms7.essentials.plugins.relateddocuments;
 
+import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Map;
 
+import javax.jcr.ImportUUIDBehavior;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
@@ -27,12 +31,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.wicket.util.string.Strings;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +55,7 @@ public class RelatedDocumentsResource extends BaseResource {
     private static Logger log = LoggerFactory.getLogger(RelatedDocumentsResource.class);
 
     public static final String MIXIN_NAME = "relateddocs:relatabledocs";
+
     @POST
     @Path("/")
     public MessageRestful addDocuments(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
@@ -57,14 +64,27 @@ public class RelatedDocumentsResource extends BaseResource {
         try {
             final Map<String, String> values = payloadRestful.getValues();
             final String documents = values.get("documents");
-            if(!Strings.isEmpty(documents)) {
+            final String numberOfSuggestions = values.get("numberOfSuggestions");
+            final String fieldLocation = values.get("fieldLocation");
+            final String searchPaths = values.get("searchPaths");
+            final String prefix = context.getProjectNamespacePrefix();
+            final String templateRelatedDocs = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/related_documents_template.xml"));
+            final String templateSuggestDocs = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/related_documents_suggestion_template.xml"));
+            if (!Strings.isEmpty(documents)) {
                 final Iterable<String> docs = Splitter.on(",").omitEmptyStrings().trimResults().split(documents);
                 for (String document : docs) {
-                    log.info("document {}", document);
+                    final String nodeTypePath = MessageFormat.format("/hippo:namespaces/{0}/{1}/hipposysedit:nodetype/hipposysedit:nodetype", prefix, document);
+                    String myFieldData = TemplateUtils.replaceStringPlaceholders(templateRelatedDocs, values);//.(templateRelatedDocs, "fieldLocation", fieldLocation);
+                    myFieldData = GlobalUtils.replacePlaceholders(myFieldData, "searchPaths", searchPaths);
+                    final String mySuggestData = GlobalUtils.replacePlaceholders(templateSuggestDocs, "numberOfSuggestions", numberOfSuggestions);
+                    session.importXML(nodeTypePath, IOUtils.toInputStream(mySuggestData), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
+
                 }
             }
 
 
+        } catch (RepositoryException | IOException e) {
+            log.error("Error adding related documents field", e);
         } finally {
             GlobalUtils.cleanupSession(session);
         }

@@ -498,6 +498,8 @@ dashboard-plugins/related-documents-plugin/pom.xml -text
 dashboard-plugins/related-documents-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/relateddocuments/RelatedDocumentsResource.java -text
 dashboard-plugins/related-documents-plugin/src/main/resources/META-INF/resources/plugins/relatedDocumentsPlugin/relatedDocumentsPlugin.html -text
 dashboard-plugins/related-documents-plugin/src/main/resources/META-INF/resources/plugins/relatedDocumentsPlugin/relatedDocumentsPlugin.js -text
+dashboard-plugins/related-documents-plugin/src/main/resources/META-INF/resources/related_documents_suggestion_template.xml -text
+dashboard-plugins/related-documents-plugin/src/main/resources/META-INF/resources/related_documents_template.xml -text
 dashboard-plugins/related-documents-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/robots-plugin/pom.xml -text
 dashboard-plugins/robots-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/robots/RobotsInstruction.java -text
@@ -661,6 +663,7 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/s
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/BeanWriterUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/CndUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/DependencyUtils.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/DocumentTemplateUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/EssentialConst.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/GalleryUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/GlobalUtils.java -text

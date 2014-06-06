@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<sv:node sv:name="relateddocssuggest" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>frontend:plugin</sv:value>
+  </sv:property>
+  <sv:property sv:name="caption" sv:type="String">
+    <sv:value>Related documents suggestion</sv:value>
+  </sv:property>
+  <sv:property sv:name="engine" sv:type="String">
+    <sv:value>${engine}</sv:value>
+  </sv:property>
+  <sv:property sv:name="mode" sv:type="String">
+    <sv:value>${mode}</sv:value>
+  </sv:property>
+  <sv:property sv:name="plugin.class" sv:type="String">
+    <sv:value>org.onehippo.forge.relateddocs.editor.RelatedDocsSuggestPlugin</sv:value>
+  </sv:property>
+  <sv:property sv:name="template.size" sv:type="String">
+    <sv:value/>
+  </sv:property>
+  <sv:property sv:name="numberOfSuggestions" sv:type="Long">
+    <sv:value>{{numberOfSuggestions}}</sv:value>
+  </sv:property>
+  <sv:property sv:name="wicket.id" sv:type="String">
+    <sv:value>${cluster.id}.field</sv:value>
+  </sv:property>
+  <sv:property sv:name="wicket.model" sv:type="String">
+    <sv:value>${wicket.model}</sv:value>
+  </sv:property>
+  <sv:property sv:name="browser.id" sv:type="String">
+    <sv:value>service.browse</sv:value>
+  </sv:property>
+</sv:node>
