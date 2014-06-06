@@ -27,20 +27,27 @@ import java.util.Set;
 import java.util.SortedMap;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
+import org.hippoecm.repository.api.HippoNode;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
+import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.rest.model.DocumentRestful;
@@ -53,6 +60,7 @@ import org.slf4j.LoggerFactory;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 
 /**
  * @version "$Id$"
@@ -91,6 +99,36 @@ public class DocumentResource extends BaseResource {
     @Path("/compounds")
     public List<DocumentRestful> getCompounds(@Context ServletContext servletContext) {
         return fetchDocuments(servletContext, Type.COMPOUND);
+    }
+
+    @ApiOperation(
+            value = "Returns all documents of the specified type",
+            notes = "Specify the document type as {namespace}:{typename}.",
+            response = PluginRestful.class)
+    @ApiParam(name = "docType", value = "Document type", required = true)
+    @GET
+    @Path("/{docType}")
+    public List<KeyValueRestful> getDocumentsByType(@Context ServletContext servletContext, @PathParam("docType") String docType) {
+        final List<KeyValueRestful> valueLists = new ArrayList<>();
+        final PluginContext context = getContext(servletContext);
+        final Session session = context.createSession();
+
+        try {
+            final QueryManager queryManager = session.getWorkspace().getQueryManager();
+            final Query xpath = queryManager.createQuery("//content/documents//element(*, " + docType + ")", "xpath");
+            final NodeIterator nodes = xpath.execute().getNodes();
+            while (nodes.hasNext()) {
+                final Node node = nodes.nextNode();
+                final String path = node.getPath();
+                valueLists.add(new KeyValueRestful(((HippoNode) node).getLocalizedName(), path));
+            }
+        } catch (RepositoryException e) {
+            log.debug("Error fetching value lists", e);
+        } finally {
+            GlobalUtils.cleanupSession(session);
+        }
+
+        return valueLists;
     }
 
     //*************************************************************************************
