@@ -211,6 +211,41 @@
     {
         "enabled": true,
         "@type": "plugin",
+        "name": "Related documents plugin",
+        "introduction": "Adds Related documents support to hippo project",
+        "description": "The Related Documents plugin is a Hippo CMS 7 editor plugin by which you can pick docments that are related to the currently edited document. It has also the capability to create a list of suggested documents you may want to pick, based on matching metadata search.<p>Read more about the Related documents  plugin at <a href=\"http://relateddocs.forge.onehippo.org/\" target=\"_blank\">http://relateddocs.forge.onehippo.org/</a></p>",
+        "pluginId": "relatedDocumentsPlugin",
+        "packageFile": "",
+        "restClasses": ["org.onehippo.cms7.essentials.plugins.relateddocuments.RelatedDocumentsResource"],
+        "type": "plugins",
+        "vendor": {
+            "@type": "vendor",
+            "name": "Hippo",
+            "url": "http://www.onehippo.com"
+        },
+        "libraries": [
+            {
+                "items": [
+                    {
+                        "component": "relatedDocumentsPlugin",
+                        "file": "relatedDocumentsPlugin.js"
+                    }
+                ]
+            }
+        ],
+        "dependencies": [
+            {
+                "@type": "dependency",
+                "groupId": "org.onehippo.forge",
+                "artifactId": "relateddocs",
+                "scope": "compile",
+                "type": "cms"
+            }
+        ]
+    },
+    {
+        "enabled": true,
+        "@type": "plugin",
         "name": "Gallery manager",
         "introduction": "Manage your project's image sets.",
         "pluginId": "galleryPlugin",

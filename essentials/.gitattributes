@@ -494,6 +494,11 @@ dashboard-plugins/poll-plugin/src/main/resources/META-INF/resources/xml/poll-fol
 dashboard-plugins/poll-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/poll-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/pom.xml -text
+dashboard-plugins/related-documents-plugin/pom.xml -text
+dashboard-plugins/related-documents-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/relateddocuments/RelatedDocumentsResource.java -text
+dashboard-plugins/related-documents-plugin/src/main/resources/META-INF/resources/plugins/relatedDocumentsPlugin/relatedDocumentsPlugin.html -text
+dashboard-plugins/related-documents-plugin/src/main/resources/META-INF/resources/plugins/relatedDocumentsPlugin/relatedDocumentsPlugin.js -text
+dashboard-plugins/related-documents-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/robots-plugin/pom.xml -text
 dashboard-plugins/robots-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/robots/RobotsInstruction.java -text
 dashboard-plugins/robots-plugin/src/main/resources/META-INF/resources/plugins/robotsPlugin/robotsPlugin.html -text
@@ -675,6 +680,8 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/u
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/beansmodel/HippoEssentialsGeneratedObject.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/beansmodel/MemoryBean.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/beansmodel/MemoryProperty.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/cnd/CndLexer.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/cnd/CndParser.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/code/ComponentInformation.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/code/EssentialsGeneratedMethod.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/code/ExistingMethodsVisitor.java -text

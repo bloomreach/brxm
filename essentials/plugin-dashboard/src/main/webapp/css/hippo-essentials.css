@@ -334,10 +334,26 @@ body {
   white-space: nowrap;
   font-size: 12px;
 }
-.ng-invalid input:focus,
-.ng-invalid-minlength input:focus {
-  color: #b94a48;
-  /*-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);*/
-  border: 3px solid #b94a48;
+input.ng-invalid,
+input.ng-invalid-minlength {
+  background-color: #e7484c;
+  color: #fff;
+}
+select.ng-invalid + div.chosen-container {
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  border: 2px solid #e7484c;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+input:focus.ng-invalid,
+input:focus.ng-invalid-minlength {
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  border: 3px solid #e7484c;
+}
+input.ng-valid,
+input:focus.ng-valid {
+  background-color: #fff;
+  color: #000;
 }

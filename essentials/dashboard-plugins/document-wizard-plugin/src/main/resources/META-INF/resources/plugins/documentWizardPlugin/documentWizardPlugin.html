@@ -24,7 +24,7 @@
                 <div class="form-group">
                     <label class="col-sm-4 control-label">Select target folder:</label>
                     <div class="col-sm-5">
-                        <input ng-class="wizardForm.baseFolder.$invalid?'bg-danger':''" type="text" ng-model="baseFolder" ng-required="true" name="baseFolder"/>
+                        <input type="text" ng-model="baseFolder" ng-required="true" name="baseFolder"/>
                     </div>
                     <div class="col-sm-3">
                         <essentials-folder-picker
@@ -40,12 +40,12 @@
                 <div class="form-group">
                     <label class="col-sm-4 control-label">Shortcut name:</label>
                     <div class="col-sm-8">
-                        <input ng-class="wizardForm.shortcutName.$invalid?'bg-danger':''" ng-required="true" name="shortcutName" type="text" ng-model="shortcutName"/>
+                        <input ng-required="true" name="shortcutName" type="text" ng-model="shortcutName"/>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-4 control-label">Document type:</label>
-                    <div ng-class="wizardForm.selectedDocument.$invalid?'col-sm-8 bg-danger':'col-sm-8'">
+                    <div class="col-sm-8">
                         <select name="selectedDocument" chosen
                                 style="width: 200px"
                                 ng-model="selectedDocument"
@@ -59,12 +59,12 @@
                 <div class="form-group">
                     <label class="col-sm-4 control-label">Folder query name</label>
                     <div class="col-sm-8">
-                        <input ng-class="wizardForm.folderQuery.$invalid?'bg-danger':''" ng-required="true" name="folderQuery" type="text" ng-model="folderQuery"/>
+                        <input ng-required="true" name="folderQuery" type="text" ng-model="folderQuery"/>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-4 control-label">Type:</label>
-                    <div ng-class="wizardForm.classificationType.$invalid?'col-sm-8 bg-danger':'col-sm-8'">
+                    <div class="col-sm-8">
                         <select name="classificationType" chosen
                                 style="width: 200px"
                                 ng-model="classificationType"
@@ -78,7 +78,7 @@
                 <div ng-show="classificationType == 'list'" class="form-group">
                     <label class="col-sm-4 control-label">Value list document:</label>
                     <div class="col-sm-5">
-                        <input ng-class="wizardForm.valueListPath.$invalid?'bg-danger':''" type="text" ng-required="classificationType == 'list'" name="valueListPath" ng-model="valueListPath"/>
+                        <input type="text" ng-required="classificationType == 'list'" name="valueListPath" ng-model="valueListPath"/>
                     </div>
                     <div class="col-sm-3">
                         <essentials-folder-picker

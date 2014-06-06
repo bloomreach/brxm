@@ -61,6 +61,7 @@
     <module>poll-plugin</module>
     <module>taxonomy-plugin</module>
     <module>document-wizard-plugin</module>
+    <module>related-documents-plugin</module>
   </modules>
   <dependencyManagement>
 
