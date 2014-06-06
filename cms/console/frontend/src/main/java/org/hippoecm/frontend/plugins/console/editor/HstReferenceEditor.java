@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ class HstReferenceEditor extends Panel {
     protected static final String PROPERTY_HST_REFERENCECOMPONENT = "hst:referencecomponent";
 
     private static final String NODE_HST_CONFIGURATION = "hst:configuration";
+    private static final String NODE_HST_WORKSPACE = "hst:workspace";
     private static final String NODE_HST_CONFIGURATIONS = "hst:configurations";
     private static final String NODE_HST_DEFAULT = "hst:default";
     private static final String NODE_HST_TEMPLATES = "hst:templates";
@@ -136,19 +137,19 @@ class HstReferenceEditor extends Panel {
         String propertyValue = valueModel.getValue().getString();
         final Node rootNode = UserSession.get().getJcrSession().getRootNode();
 
-        // first try: hst configuration nodes in the current hst:configuration group
+        // first try: hst configuration nodes in the current hst:workspace or hst:configuration group
         Node currentHstConfiguration = propertyModel.getProperty().getParent();
+        Node templateNode;
         do {
-            if(currentHstConfiguration.getPrimaryNodeType().isNodeType(NODE_HST_CONFIGURATION)) {
-                break;
+            if(currentHstConfiguration.getPrimaryNodeType().isNodeType(NODE_HST_CONFIGURATION) ||
+                    currentHstConfiguration.getPrimaryNodeType().isNodeType(NODE_HST_WORKSPACE)) {
+                templateNode = getConfigurationNode(currentHstConfiguration, propertyValue, propertyModel);
+                if(templateNode != null) {
+                    return templateNode;
+                }
             }
             currentHstConfiguration = currentHstConfiguration.getParent();
         } while (!currentHstConfiguration.equals(rootNode));
-
-        Node templateNode = getConfigurationNode(currentHstConfiguration, propertyValue, propertyModel);
-        if(templateNode != null) {
-            return templateNode;
-        }
 
         // second try: hst configuration nodes in any inheritsfrom hst:configuration group
         if(currentHstConfiguration.hasProperty(PROPERY_HST_INHERITSFROM)) {
