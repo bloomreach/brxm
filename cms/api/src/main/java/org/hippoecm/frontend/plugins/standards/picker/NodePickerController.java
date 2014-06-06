@@ -43,7 +43,6 @@ import org.slf4j.LoggerFactory;
 public abstract class NodePickerController implements IDetachable {
     private static final long serialVersionUID = 1L;
 
-
     static final Logger log = LoggerFactory.getLogger(NodePickerController.class);
 
     private static final String LAST_VISITED = "last.visited";
@@ -71,7 +70,7 @@ public abstract class NodePickerController implements IDetachable {
         if (settings.isLastVisitedEnabled()) {
            lastModelVisited = getLastVisitedFromPreferences();
         }
-        if(settings.hasBaseUUID()) {
+        if (settings.hasBaseUUID()) {
             String baseUUID = settings.getBaseUUID();
             try {
                 Node baseNode = UserSession.get().getJcrSession().getNodeByIdentifier(baseUUID);
@@ -288,7 +287,7 @@ public abstract class NodePickerController implements IDetachable {
     }
 
     public final void onClose() {
-        if(settings.isLastVisitedEnabled()) {
+        if (settings.isLastVisitedEnabled()) {
             saveLastModelVisited();
         }
 

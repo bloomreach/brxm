@@ -21,6 +21,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.editor.plugins.linkpicker.LinkPickerDialogConfig;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
@@ -56,10 +57,10 @@ import org.slf4j.LoggerFactory;
  * Configuration properties:
  * <ul>
  *     <li>imagepicker: child node with node picker controller settings for the image picker dialog.
- *         Default image picker settings: {@link DEFAULT_IMAGE_PICKER_CONFIG}</li>
+ *         Default image picker settings: {@link #DEFAULT_IMAGE_PICKER_CONFIG}</li>
  *     <li>linkpicker: child node with node picker controller settings for the document picker dialog
  *         opened by the internal link picker button.
- *         Default link picker settings: {@link DEFAULT_LINK_PICKER_CONFIG}</li>
+ *         Default link picker settings: {@link #DEFAULT_LINK_PICKER_CONFIG}</li>
  * </ul>
  *
  * @see NodePickerControllerSettings
@@ -139,12 +140,13 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
     }
 
     private LinkPickerBehavior createLinkPickerBehavior(final String editorId) {
-        final IPluginConfig linkPickerConfig = getChildPluginConfig(CONFIG_CHILD_LINK_PICKER, DEFAULT_LINK_PICKER_CONFIG);
+        IPluginConfig dialogConfig = LinkPickerDialogConfig.fromPluginConfig(
+                getChildPluginConfig(CONFIG_CHILD_LINK_PICKER, DEFAULT_LINK_PICKER_CONFIG), (JcrPropertyValueModel) getHtmlModel());
 
         final IRichTextLinkFactory linkFactory = createLinkFactory();
         RichTextEditorLinkService linkService = new RichTextEditorLinkService(linkFactory);
 
-        final LinkPickerBehavior behavior = new LinkPickerBehavior(getPluginContext(), linkPickerConfig, linkService);
+        final LinkPickerBehavior behavior = new LinkPickerBehavior(getPluginContext(), dialogConfig, linkService);
         behavior.setCloseAction(new CKEditorInsertInternalLinkAction(editorId));
 
         return behavior;

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -162,14 +162,15 @@ public class FacetSelectTemplatePlugin extends RenderPlugin<Node> {
                 }
             };
             if ("edit".equals(mode)) {
-                final IModel<String> docbaseModel = new JcrPropertyValueModel<String>(new JcrPropertyModel<String>(node
+                final JcrPropertyValueModel<String> docbaseModel = new JcrPropertyValueModel<String>(new JcrPropertyModel<String>(node
                         .getProperty("hippo:docbase")));
 
                 IDialogFactory dialogFactory = new IDialogFactory() {
                     private static final long serialVersionUID = 1L;
 
                     public AbstractDialog<String> createDialog() {
-                        return new LinkPickerDialog(context, getPluginConfig(), new IChainingModel<String>() {
+                        final IPluginConfig dialogConfig = LinkPickerDialogConfig.fromPluginConfig(getPluginConfig(), docbaseModel);
+                        return new LinkPickerDialog(context, dialogConfig, new IChainingModel<String>() {
                             private static final long serialVersionUID = 1L;
 
                             public String getObject() {

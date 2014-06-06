@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.editor.plugins.linkpicker;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.jcr.ItemNotFoundException;
@@ -24,7 +23,6 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 
-import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
@@ -32,6 +30,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.ClearableDialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
+import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -41,7 +40,6 @@ import org.slf4j.LoggerFactory;
 
 public class LinkPickerPlugin extends RenderPlugin<String> {
     private static final long serialVersionUID = 1L;
-    
 
     static final Logger log = LoggerFactory.getLogger(LinkPickerPlugin.class);
 
@@ -87,7 +85,8 @@ public class LinkPickerPlugin extends RenderPlugin<String> {
                 private static final long serialVersionUID = 1L;
 
                 public AbstractDialog<String> createDialog() {
-                    return new LinkPickerDialog(context, getPluginConfig(), new IChainingModel<String>() {
+                    final IPluginConfig dialogConfig = LinkPickerDialogConfig.fromPluginConfig(getPluginConfig(), (JcrPropertyValueModel) valueModel);
+                    return new LinkPickerDialog(context, dialogConfig, new IChainingModel<String>() {
                         private static final long serialVersionUID = 1L;
 
                         public String getObject() {
@@ -114,7 +113,7 @@ public class LinkPickerPlugin extends RenderPlugin<String> {
                     });
                 }
             };
-            
+
             add(new ClearableDialogLink("value", displayModel, dialogFactory, getDialogService()) {
                 private static final long serialVersionUID = 1L;
 
