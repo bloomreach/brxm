@@ -246,6 +246,42 @@
     {
         "enabled": true,
         "@type": "plugin",
+        "name": "SEO  plugin",
+        "introduction": "Adds SEO  support to hippo project",
+        "description": "The HST SEO Support Components provides HST Components which enable easy HTML metadata head elements contributions.<p>Read more about the SEO plugin at <a href=\"http://hst-seo-support.forge.onehippo.org/\" target=\"_blank\">http://hst-seo-support.forge.onehippo.org/</a></p>",
+        "pluginId": "relatedDocumentsPlugin",
+        "packageFile": "",
+        "restClasses": ["org.onehippo.cms7.essentials.plugins.seo.SeoResource"],
+        "type": "plugins",
+        "vendor": {
+            "@type": "vendor",
+            "name": "Hippo",
+            "url": "http://www.onehippo.com"
+        },
+        "libraries": [
+            {
+                "items": [
+                    {
+                        "component": "seoPlugin",
+                        "file": "seoPlugin.js"
+                    }
+                ]
+            }
+        ],
+        "dependencies": [
+            {
+                "@type": "dependency",
+                "groupId": "org.onehippo.forge.hst-seo-support",
+                "artifactId": "hst-seo-support",
+                "scope": "compile",
+                "version": "0.02.00",
+                "type": "site"
+            }
+        ]
+    },
+    {
+        "enabled": true,
+        "@type": "plugin",
         "name": "Gallery manager",
         "introduction": "Manage your project's image sets.",
         "pluginId": "galleryPlugin",

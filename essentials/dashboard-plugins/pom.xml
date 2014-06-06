@@ -62,6 +62,7 @@
     <module>taxonomy-plugin</module>
     <module>document-wizard-plugin</module>
     <module>related-documents-plugin</module>
+    <module>seo-plugin</module>
   </modules>
   <dependencyManagement>
 
