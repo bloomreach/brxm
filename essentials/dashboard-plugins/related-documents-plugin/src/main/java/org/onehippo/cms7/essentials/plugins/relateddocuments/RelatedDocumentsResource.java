@@ -16,6 +16,8 @@
 
 package org.onehippo.cms7.essentials.plugins.relateddocuments;
 
+import java.util.Map;
+
 import javax.jcr.Session;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
@@ -25,6 +27,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.wicket.util.string.Strings;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
@@ -32,6 +35,8 @@ import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Splitter;
 
 /**
  * @version "$Id$"
@@ -43,12 +48,23 @@ public class RelatedDocumentsResource extends BaseResource {
 
     private static Logger log = LoggerFactory.getLogger(RelatedDocumentsResource.class);
 
+    public static final String MIXIN_NAME = "relateddocs:relatabledocs";
     @POST
     @Path("/")
     public MessageRestful addDocuments(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
         final PluginContext context = getContext(servletContext);
         final Session session = context.createSession();
         try {
+            final Map<String, String> values = payloadRestful.getValues();
+            final String documents = values.get("documents");
+            if(!Strings.isEmpty(documents)) {
+                final Iterable<String> docs = Splitter.on(",").omitEmptyStrings().trimResults().split(documents);
+                for (String document : docs) {
+                    log.info("document {}", document);
+                }
+            }
+
+
         } finally {
             GlobalUtils.cleanupSession(session);
         }
