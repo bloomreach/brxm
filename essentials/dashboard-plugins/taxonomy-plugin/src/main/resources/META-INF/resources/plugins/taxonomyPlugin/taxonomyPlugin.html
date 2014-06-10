@@ -17,28 +17,32 @@
 <div class="panel panel-default" ng-controller="taxonomyPluginCtrl">
     <div class="panel-heading">Taxonomy plugin</div>
     <div class="panel-body">
-        <form novalidate name="taxonomyForm">
-            <div class="infobox infobox-success" ng-show="pluginDescription" ng-bind-html="pluginDescription"></div>
-            <div><h3>Choose taxonomy name</h3>
-                <input ng-model="taxonomyName" ng-required="true"/>
-            </div>
-            <div>
-                <h3>Choose taxonomy locales</h3>
-                <ul class="list-group">
-                    <li class="list-group-item">
+        <div>
+            <form novalidate name="taxonomyForm">
+                <div class="infobox infobox-success" ng-show="pluginDescription" ng-bind-html="pluginDescription"></div>
+                <h3>Create new taxonomy:</h3>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">Taxonomy Name:</label>
+                    <div class="col-sm-8">
+                        <input ng-model="taxonomyName" ng-required="true"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Taxonomy locale:</label>
+                    <div class="col-sm-8">
                         <p style="display: inline; margin-right: 20px;" ng-repeat="loc in locales">
-                            <span style="padding-right: 20px; cursor: default"><input type="checkbox" checked="{{loc.checked}}" ng-model="loc.checked"/></span><span>{{loc.name}}</span>
+                            <span style="padding-right: 5px; cursor: default"><input type="checkbox" checked="{{loc.checked}}" ng-model="loc.checked"/></span><span>{{loc.name}}</span>
                         </p>
-                    </li>
-                </ul>
-            </div>
-            <div class="pull-right">
-                <button ng-disabled="!taxonomyForm.$valid" class="btn btn-primary" ng-click="addTaxonomy()">Create new taxonomy</button>
-            </div>
-        </form>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button ng-disabled="!taxonomyForm.$valid" class="btn btn-primary pull-right" ng-click="addTaxonomy()">Create new taxonomy</button>
+                </div>
+            </form>
+        </div>
         <form novalidate name="documentsForm">
             <div ng-show="documentTypes.length && taxonomies.length">
-                <h3>Add taxonomy to following documents:</h3>
+                <h3>Or add taxonomy to following documents:</h3>
                 <table class="table table-hover">
                     <thead>
                     <tr>
@@ -57,7 +61,7 @@
                         <td class="{{documentsForm.locationField.$invalid ? 'danger':''}}">
                             <select
                                     name="locationField"
-                                    class="pull-right" chosen ng-disabled="doc.name == 'basedocument'"
+                                    class="chosen-select pull-right" chosen ng-disabled="doc.name == 'basedocument'"
                                     style="width:120px;margin-left: 20px;"
                                     ng-model="doc.selectedField"
                                     ng-selected="doc.selectedField"
@@ -67,7 +71,7 @@
                             </select>
                         </td>
                         <td class="{{documentsForm.taxonomyField.$invalid ? 'danger':''}}">
-                            <select class="pull-right" name="taxonomyField" chosen ng-disabled="doc.name == 'basedocument'"
+                            <select class=" chosen-select pull-right" name="taxonomyField" chosen ng-disabled="doc.name == 'basedocument'"
                                     style="width:120px;margin-left: 20px;"
                                     ng-model="doc.selectedTaxonomy"
                                     ng-selected="doc.selectedTaxonomy"
