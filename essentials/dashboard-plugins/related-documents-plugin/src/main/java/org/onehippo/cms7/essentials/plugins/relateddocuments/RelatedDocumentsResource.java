@@ -18,6 +18,7 @@ package org.onehippo.cms7.essentials.plugins.relateddocuments;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.jcr.ImportUUIDBehavior;
@@ -37,6 +38,7 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
+import org.onehippo.cms7.essentials.dashboard.utils.DocumentTemplateUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.PayloadUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
@@ -63,9 +65,9 @@ public class RelatedDocumentsResource extends BaseResource {
         try {
             final Map<String, String> values = payloadRestful.getValues();
             final String documents = values.get("documents");
-            final String numberOfSuggestions = values.get("numberOfSuggestions");
 
-            final String searchPaths = values.get("searchPaths");
+            //final String numberOfSuggestions = values.get("numberOfSuggestions");
+            //final String searchPaths = values.get("searchPaths");
             final String prefix = context.getProjectNamespacePrefix();
 
             final String templateRelatedDocs = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/related_documents_template.xml"));
@@ -75,15 +77,31 @@ public class RelatedDocumentsResource extends BaseResource {
                 final String[] docs = PayloadUtils.extractValueArray(values.get("documents"));
                 final String[] locations = PayloadUtils.extractValueArray(values.get("locations"));
 
-                for (String document : docs) {
+                for (int i = 0; i < docs.length; i++) {
 
-                    final String nodeTypePath = MessageFormat.format("/hippo:namespaces/{0}/{1}/hipposysedit:nodetype/hipposysedit:nodetype", prefix, document);
-                    String myFieldData = TemplateUtils.replaceStringPlaceholders(templateRelatedDocs, values);//.(templateRelatedDocs, "fieldLocation", fieldLocation);
-                    myFieldData = GlobalUtils.replacePlaceholders(myFieldData, "searchPaths", searchPaths);
-                    final String mySuggestData = GlobalUtils.replacePlaceholders(templateSuggestDocs, "numberOfSuggestions", numberOfSuggestions);
-                    session.importXML(nodeTypePath, IOUtils.toInputStream(mySuggestData), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
+                    final String document = docs[i];
 
+
+                    final String location = locations[i];
+                    final String fieldImportPath = MessageFormat.format("/hippo:namespaces/{0}/{1}/editor:templates/_default_", prefix, document);
+                    final String suggestFieldPath = MessageFormat.format("{0}/relateddocs", fieldImportPath);
+                    if (session.nodeExists(suggestFieldPath)) {
+                        log.info("Suggest field path: [{}] already exists.", fieldImportPath);
+                        continue;
+                    }
+                    DocumentTemplateUtils.addMixinType(context, document, MIXIN_NAME);
+                    // add place holders:
+                    final Map<String, String> templateData = new HashMap<>(values);
+                    templateData.put("fieldLocation", MessageFormat.format("{0}.item", location));
+                    // import field:
+                    final String fieldData = TemplateUtils.replaceStringPlaceholders(templateRelatedDocs, templateData);
+                    session.importXML(fieldImportPath, IOUtils.toInputStream(fieldData), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
+                    // import suggest field:
+                    final String suggestData = TemplateUtils.replaceStringPlaceholders(templateSuggestDocs, templateData);
+                    session.importXML(fieldImportPath, IOUtils.toInputStream(suggestData), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
+                    session.save();
                 }
+
             }
 
 

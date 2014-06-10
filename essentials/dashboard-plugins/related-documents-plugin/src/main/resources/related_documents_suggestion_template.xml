@@ -37,7 +37,7 @@
     <sv:value>{{numberOfSuggestions}}</sv:value>
   </sv:property>
   <sv:property sv:name="wicket.id" sv:type="String">
-    <sv:value>${cluster.id}.field</sv:value>
+    <sv:value>{{fieldLocation}}</sv:value>
   </sv:property>
   <sv:property sv:name="wicket.model" sv:type="String">
     <sv:value>${wicket.model}</sv:value>
