@@ -16,14 +16,41 @@
 
 package org.onehippo.cms7.essentials.components;
 
+import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
+import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.onehippo.cms7.essentials.components.info.EssentialsImageComponentInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 /**
- * Same as {@code EssentialsDocumentComponent}. Only difference is that document picker is accepting images
  * @version "$Id$"
  */
 
 @ParametersInfo(type = EssentialsImageComponentInfo.class)
-public class EssentialsImageComponent extends EssentialsDocumentComponent {
+public class EssentialsImageComponent extends CommonComponent {
+    private static final Logger log = LoggerFactory.getLogger(EssentialsImageComponent.class);
+
+    @Override
+    public void doBeforeRender(final HstRequest request, final HstResponse response) {
+        super.doBeforeRender(request, response);
+        final EssentialsImageComponentInfo paramInfo = getComponentParametersInfo(request);
+        final String documentPath = paramInfo.getDocument();
+        log.debug("Calling EssentialsImageComponent for document path:  [{}]", documentPath);
+        if (!Strings.isNullOrEmpty(documentPath)) {
+            try {
+                final Object image = RequestContextProvider.get().getObjectBeanManager().getObject(documentPath);
+                request.setAttribute(REQUEST_ATTR_DOCUMENT, image);
+            } catch (ObjectBeanManagerException e) {
+                if (log.isDebugEnabled()) {
+                    log.error("Error getting image", e);
+                }
+            }
+        }
+        request.setAttribute(REQUEST_ATTR_PARAM_INFO, paramInfo);
+    }
 }
