@@ -147,6 +147,10 @@ public final class JavaSourceUtils {
         }
         final CompilationUnit unit = getCompilationUnit(path);
         unit.recordModifications();
+        if (unit.types().size() == 0) {
+            log.error("Invalid unit for bean: {}", path);
+            return null;
+        }
         final TypeDeclaration classType = (TypeDeclaration) unit.types().get(0);
         final AST ast = unit.getAST();
         unit.getPackage().setName(ast.newName(DOT_SPLITTER.split(packageName)));
@@ -769,6 +773,7 @@ public final class JavaSourceUtils {
         log.debug("Rewriting\n{}", rewrite);
         GlobalUtils.writeToFile(rewrite, path);
     }
+
     @SuppressWarnings(UNCHECKED)
     private static List<Object> getClassAnnotations(final Path path) {
         final CompilationUnit unit = getCompilationUnit(path);

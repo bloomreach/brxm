@@ -275,6 +275,7 @@ dashboard-plugins/components-plugin/components-library/src/main/java/org/onehipp
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/EssentialsMenuComponent.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/EssentialsNewsComponent.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/EssentialsSearchComponent.java -text
+dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/EssentialsVideoComponent.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsBlogAuthorPostsComponentInfo.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsBlogComponentInfo.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsCarouselComponentInfo.java -text
@@ -293,6 +294,7 @@ dashboard-plugins/components-plugin/components-library/src/main/java/org/onehipp
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsRepositoryMenuComponentInfo.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsSearchComponentInfo.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsSortable.java -text
+dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsVideoComponentInfo.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/model/AcceptAllFilter.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/model/AuthorEntry.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/model/Authors.java -text
@@ -581,7 +583,11 @@ dashboard-plugins/video-component-plugin/src/main/resources/META-INF/videoCompon
 dashboard-plugins/video-component-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/video-component-plugin/src/main/resources/instructions/freemarker/video-component.ftl -text
 dashboard-plugins/video-component-plugin/src/main/resources/instructions/images/component-icon-video.png -text
+dashboard-plugins/video-component-plugin/src/main/resources/instructions/java/Video.txt -text
 dashboard-plugins/video-component-plugin/src/main/resources/instructions/jsp/video-component.jsp -text
+dashboard-plugins/video-component-plugin/src/main/resources/instructions/xml/content/video.xml -text
+dashboard-plugins/video-component-plugin/src/main/resources/instructions/xml/folderoptions/new-video-document.xml -text
+dashboard-plugins/video-component-plugin/src/main/resources/instructions/xml/folderoptions/new-video-folder.xml -text
 dashboard-plugins/video-component-plugin/src/main/resources/instructions/xml/hst/video-component-catalog.xml -text
 dashboard-plugins/video-component-plugin/src/main/resources/instructions/xml/hst/video-component-freemarker.xml -text
 dashboard-plugins/video-component-plugin/src/main/resources/instructions/xml/hst/video-component-jsp.xml -text

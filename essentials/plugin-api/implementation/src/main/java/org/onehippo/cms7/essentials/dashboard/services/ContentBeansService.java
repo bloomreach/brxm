@@ -408,7 +408,11 @@ public class ContentBeansService {
     }
 
     private Path createJavaClass(final HippoContentBean bean) {
-        final String className = GlobalUtils.createClassName(bean.getName());
+         String name = bean.getName();
+        if(name.indexOf(',') !=-1){
+            name = name.split(",")[0];
+        }
+        final String className = GlobalUtils.createClassName(name);
         return JavaSourceUtils.createJavaClass(context.getSiteJavaRoot(), className, context.beansPackageName(), null);
     }
 

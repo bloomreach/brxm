@@ -23,7 +23,6 @@
   <instructionSet>
     <cnd documentType="eventsdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
     <xml action="copy" source="xml/namespaces/eventsdocument.xml" target="/hippo:namespaces/{{namespace}}"/>
-    <folder path="/content/documents/{{namespace}}/events/{{dateRepoYearMonth}}" template="xml/content/events.xml"/>
   </instructionSet>
 
 
@@ -65,6 +64,7 @@
 
   <!-- SAMPLES GROUP-->
   <instructionSet group="sampleData">
+    <folder path="/content/documents/{{namespace}}/events/{{dateRepoYearMonth}}" template="xml/content/events.xml"/>
     <xml action="copy" source="xml/samples/content/documents/events/sample_breakfast.xml" target="/content/documents/{{namespace}}/events/{{dateRepoYearMonth}}"/>
     <xml action="copy" source="xml/samples/content/documents/events/sample_introduction_speech.xml" target="/content/documents/{{namespace}}/events/{{dateRepoYearMonth}}"/>
     <xml action="copy" source="xml/samples/content/documents/events/sample_workshop.xml" target="/content/documents/{{namespace}}/events/{{dateRepoYearMonth}}"/>

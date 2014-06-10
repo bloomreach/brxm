@@ -1,8 +1,8 @@
 {{#repositoryBased}}
-    <#include "../../hst:default/hst:templates/imports.ftl">
+<#include "../../hst:default/hst:templates/imports.ftl">
 {{/repositoryBased}}
 {{#fileBased}}
-    <#include "/WEB-INF/freemarker/include/imports.ftl">
+<#include "/WEB-INF/freemarker/include/imports.ftl">
 {{/fileBased}}
 <#--
   Copyright 2014 Hippo B.V. (http://www.onehippo.com)
@@ -19,10 +19,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<#-- @ftlvariable name="document" type="org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean" -->
+
+<#-- @ftlvariable name="document" type="{{beansPackage}}.Video" -->
+<#-- @ftlvariable name="cparm" type="org.onehippo.cms7.essentials.components.info.EssentialsVideoComponentInfo"--%> -->
 <#if document??>
-<@hst.link var="img" hippobean=document.original/>
-    <img src="${img}" title="${document.fileName}" alt="${document.fileName}"/>
+<iframe width="${cparm.width}" height="${cparm.height}" src="${document.link}" frameborder="0" allowfullscreen></iframe>
 </#if>
 
 

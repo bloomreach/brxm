@@ -1,0 +1,23 @@
+package {{beansPackage}};
+
+import org.hippoecm.hst.content.beans.Node;
+import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
+
+@HippoEssentialsGenerated(internalName = "{{namespace}}:video")
+@Node(jcrType = "{{namespace}}:video")
+public class Video extends BaseDocument {
+    @HippoEssentialsGenerated(internalName = "{{namespace}}:title")
+    public String getTitle() {
+        return getProperty("{{namespace}}:title");
+    }
+
+    @HippoEssentialsGenerated(internalName = "{{namespace}}:description")
+    public String getDescription() {
+        return getProperty("{{namespace}}:description");
+    }
+
+    @HippoEssentialsGenerated(internalName = "{{namespace}}:link")
+    public String getLink() {
+        return getProperty("{{namespace}}:link");
+    }
+}

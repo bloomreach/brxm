@@ -23,7 +23,6 @@
   <instructionSet>
     <cnd documentType="newsdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
     <xml action="copy" source="xml/namespaces/newsdocument.xml" target="/hippo:namespaces/{{namespace}}"/>
-    <folder path="/content/documents/{{namespace}}/news/{{dateRepoYearMonth}}" template="xml/content/news.xml"/>
   </instructionSet>
 
 
@@ -79,6 +78,7 @@
 
   <!-- SAMPLES GROUP-->
   <instructionSet group="sampleData">
+    <folder path="/content/documents/{{namespace}}/news/{{dateRepoYearMonth}}" template="xml/content/news.xml"/>
     <xml action="copy" source="xml/samples/content/documents/news/sample_medusa.xml" target="/content/documents/{{namespace}}/news/{{dateRepoYearMonth}}"/>
     <xml action="copy" source="xml/samples/content/documents/news/sample_harvest.xml" target="/content/documents/{{namespace}}/news/{{dateRepoYearMonth}}"/>
     <xml action="copy" source="xml/samples/content/documents/news/sample_gastropoda.xml" target="/content/documents/{{namespace}}/news/{{dateRepoYearMonth}}"/>

@@ -15,7 +15,7 @@
   limitations under the License.
   --%>
 
-<%--@elvariable id="document" type="org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean"--%>
-<hst:link var="img" hippobean="${document.original}"/>
-<img src="${img}" title="${fn:escapeXml(document.fileName)}" alt="${fn:escapeXml(document.fileName)}"/>
+<%--@elvariable id="document" type="{{beansPackage}}.Video"--%>
+<%--@elvariable id="cparm" type="org.onehippo.cms7.essentials.components.info.EssentialsVideoComponentInfo"--%>
+<iframe width="${cparm.width}" height="${cparm.height}" src="${document.link}" frameborder="0" allowfullscreen></iframe>
 

@@ -21,6 +21,9 @@
   <instructionSet>
     <xml action="copy" source="instructions/xml/hst/video-component-catalog.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <file action="copy" binary="true" source="instructions/images/component-icon-video.png" target="{{siteWebRoot}}/images/component-icon-video.png"/>
+    <file action="copy" source="instructions/java/Video.txt" target="{{beansFolder}}/Video.java"/>
+    <xml action="copy" source="instructions/xml/folderoptions/new-video-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+    <xml action="copy" source="instructions/xml/folderoptions/new-video-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
   </instructionSet>
   <instructionSet group="jsp">
     <file action="copy" source="instructions/jsp/video-component.jsp" target="{{jspRoot}}/{{namespace}}/video-component.jsp"/>
@@ -29,9 +32,13 @@
   </instructionSet>
   <instructionSet group="freemarker, repository">
     <freemarker action="copy" source="instructions/freemarker/video-component-freemarker.ftl" target="{{freemarkerRoot}}/{{namespace}}/video-component.ftl"/>
-    </instructionSet>
+  </instructionSet>
   <instructionSet group="freemarker">
     <xml action="copy" source="instructions/xml/hst/video-component-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+  </instructionSet>
+
+  <instructionSet group="sampleData">
+    <folder path="/content/documents/{{namespace}}/videos/" template="instructions/xml/content/video.xml"/>
   </instructionSet>
 </instructions>
 
