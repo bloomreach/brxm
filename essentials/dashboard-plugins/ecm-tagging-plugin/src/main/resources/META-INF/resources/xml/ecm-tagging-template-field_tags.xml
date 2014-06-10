@@ -1,0 +1,61 @@
+<sv:node sv:name="tags" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>frontend:plugin</sv:value>
+  </sv:property>
+  <sv:property sv:name="plugin.class" sv:type="String">
+    <sv:value>org.onehippo.forge.ecmtagging.editor.TagsPlugin</sv:value>
+  </sv:property>
+  <sv:property sv:name="wicket.id" sv:type="String">
+    <sv:value>${cluster.id}.field</sv:value>
+  </sv:property>
+  <sv:property sv:name="wicket.model" sv:type="String">
+    <sv:value>${wicket.model}</sv:value>
+  </sv:property>
+  <sv:property sv:name="mode" sv:type="String">
+    <sv:value>${mode}</sv:value>
+  </sv:property>
+  <sv:property sv:name="engine" sv:type="String">
+    <sv:value>${engine}</sv:value>
+  </sv:property>
+  <sv:property sv:name="caption" sv:type="String">
+    <sv:value>Tags</sv:value>
+  </sv:property>
+  <sv:property sv:name="widget.cols" sv:type="String">
+    <sv:value>20</sv:value>
+  </sv:property>
+  <sv:property sv:name="widget.rows" sv:type="String">
+    <sv:value>2</sv:value>
+  </sv:property>
+  <sv:property sv:name="search.paths" sv:type="String">
+    <sv:value>/content</sv:value>
+  </sv:property>
+  <sv:node sv:name="yui.config">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:pluginconfig</sv:value>
+    </sv:property>
+    <sv:property sv:name="anim.vert" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="use.shadow" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="container.id" sv:type="String">
+      <sv:value>tagging-autocomplete</sv:value>
+    </sv:property>
+    <sv:property sv:name="schema.result.list" sv:type="String">
+      <sv:value>response.results</sv:value>
+    </sv:property>
+    <sv:property sv:name="schema.fields" sv:type="String">
+      <sv:value>label</sv:value>
+      <sv:value>url</sv:value>
+    </sv:property>
+    <sv:node sv:name="schema.meta.fields">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="totalHits" sv:type="String">
+        <sv:value>response.totalHits</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+</sv:node>

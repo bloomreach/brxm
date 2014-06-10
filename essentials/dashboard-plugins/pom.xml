@@ -66,6 +66,7 @@
     <module>image-component-plugin</module>
     <module>video-component-plugin</module>
     <module>faq-component-plugin</module>
+    <module>ecm-tagging-plugin</module>
   </modules>
   <dependencyManagement>
 

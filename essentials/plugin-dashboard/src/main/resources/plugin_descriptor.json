@@ -211,6 +211,41 @@
     {
         "enabled": true,
         "@type": "plugin",
+        "name": "ECM tagging plugin",
+        "introduction": "Adds ECM tagging support to hippo project",
+        "description": "The taggin plugin is an editor plugin for Hippo CMS 7. <p>Read more about the ECM tagging plugin plugin at <a href=\"http://ecm-tagging.forge.onehippo.org/\" target=\"_blank\">http://ecm-tagging.forge.onehippo.org/</a></p>",
+        "pluginId": "ecmTaggingPlugin",
+        "packageFile": "",
+        "restClasses": ["org.onehippo.cms7.essentials.plugins.ecm.EcmTaggingResource"],
+        "type": "plugins",
+        "vendor": {
+            "@type": "vendor",
+            "name": "Hippo",
+            "url": "http://www.onehippo.com"
+        },
+        "libraries": [
+            {
+                "items": [
+                    {
+                        "component": "ecmTaggingPlugin",
+                        "file": "ecmTaggingPlugin.js"
+                    }
+                ]
+            }
+        ],
+        "dependencies": [
+            {
+                "@type": "dependency",
+                "groupId": "org.onehippo.forge",
+                "artifactId": "ecm-tagging",
+                "scope": "compile",
+                "type": "cms"
+            }
+        ]
+    },
+    {
+        "enabled": true,
+        "@type": "plugin",
         "name": "Document wizard plugin",
         "introduction": "Adds Document wizard support to hippo project",
         "description": "The Document Wizard is an addon for Hippo CMS that lets CMS users create new documents quickly and easily from the dashboard. On clicking a shortcut link a dialog window opens where information for the document to create can be entered.<p>Read more about the document wizard plugin at <a href=\"http://documentwizard.forge.onehippo.org/\" target=\"_blank\">http://documentwizard.forge.onehippo.org/</a></p>",

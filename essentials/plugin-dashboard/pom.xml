@@ -125,6 +125,11 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
+      <artifactId>hippo-essentials-ecm-tagging-plugin</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7.essentials</groupId>
       <artifactId>hippo-dashboard-gallery-plugin</artifactId>
       <version>${project.version}</version>
     </dependency>
