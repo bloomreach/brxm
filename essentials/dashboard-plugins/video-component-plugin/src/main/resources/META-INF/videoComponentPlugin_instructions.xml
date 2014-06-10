@@ -19,6 +19,8 @@
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
 
   <instructionSet>
+    <cnd documentType="video" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
+    <xml action="copy" source="instructions/xml/namespace/video-namespace.xml" target="/hippo:namespaces/{{namespace}}"/>
     <xml action="copy" source="instructions/xml/hst/video-component-catalog.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <file action="copy" binary="true" source="instructions/images/component-icon-video.png" target="{{siteWebRoot}}/images/component-icon-video.png"/>
     <file action="copy" source="instructions/java/Video.txt" target="{{beansFolder}}/Video.java"/>
@@ -38,7 +40,7 @@
   </instructionSet>
 
   <instructionSet group="sampleData">
-    <folder path="/content/documents/{{namespace}}/videos/" template="instructions/xml/content/video.xml"/>
+    <xml action="copy" source="instructions/xml/content/video.xml" target="/content/documents/{{namespace}}"/>
   </instructionSet>
 </instructions>
 

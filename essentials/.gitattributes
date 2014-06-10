@@ -591,6 +591,7 @@ dashboard-plugins/video-component-plugin/src/main/resources/instructions/xml/fol
 dashboard-plugins/video-component-plugin/src/main/resources/instructions/xml/hst/video-component-catalog.xml -text
 dashboard-plugins/video-component-plugin/src/main/resources/instructions/xml/hst/video-component-freemarker.xml -text
 dashboard-plugins/video-component-plugin/src/main/resources/instructions/xml/hst/video-component-jsp.xml -text
+dashboard-plugins/video-component-plugin/src/main/resources/instructions/xml/namespace/video-namespace.xml -text
 ide/intellij/project-setup/META-INF/plugin.xml -text
 ide/intellij/project-setup/README.txt -text
 ide/intellij/project-setup/ide-integration.jar -text

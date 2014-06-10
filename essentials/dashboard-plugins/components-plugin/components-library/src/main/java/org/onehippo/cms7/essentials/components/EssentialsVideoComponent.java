@@ -17,11 +17,12 @@
 package org.onehippo.cms7.essentials.components;
 
 import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.onehippo.cms7.essentials.components.info.EssentialsVideoComponentInfo;
 
 /**
  * @version "$Id$"
  */
 
-@ParametersInfo(type = EssentialsVideoComponent.class)
+@ParametersInfo(type = EssentialsVideoComponentInfo.class)
 public class EssentialsVideoComponent extends EssentialsDocumentComponent {
 }
