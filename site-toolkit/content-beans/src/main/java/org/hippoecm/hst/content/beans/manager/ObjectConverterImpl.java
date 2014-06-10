@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.service.ServiceFactory;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.LoggerFactory;
 
 public class ObjectConverterImpl implements ObjectConverter {
@@ -81,20 +82,21 @@ public class ObjectConverterImpl implements ObjectConverter {
         String nodePath = null;
         try {
             nodePath  = node.getPath();
-            if(!node.hasNode(relPath)) {
+            final Node relNode = JcrUtils.getNodeIfExists(node, relPath);
+            if (relNode == null) {
                 log.info("Cannot get object for node '{}' with relPath '{}'", nodePath , relPath);
                 return null;
             }
-            Node relNode = node.getNode(relPath);
             if (relNode.isNodeType(HippoNodeType.NT_HANDLE)) {
                 // if its a handle, we want the child node. If the child node is not present,
                 // this node can be ignored
-                if(relNode.hasNode(relNode.getName())) {
-                    return getObject(relNode.getNode(relNode.getName()));
-                } else {
+                final Node document = JcrUtils.getNodeIfExists(relNode, relNode.getName());
+                if (document == null) {
                     log.info("Cannot get object for node '{}' with relPath '{}'", nodePath, relPath);
                     return null;
-                } 
+                } else {
+                    return getObject(document);
+                }
             } else {
                 return getObject(relNode);
             }   
