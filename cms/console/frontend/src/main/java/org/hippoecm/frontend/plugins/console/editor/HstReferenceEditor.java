@@ -53,7 +53,7 @@ class HstReferenceEditor extends Panel {
     private static final String PROPERTY_HST_COMPONENTCLASSNAME = "hst:componentclassname";
     private static final String PROPERTY_HST_XTYPE = "hst:xtype";
     private static final String PATH_PREFIX_WORKSPACE_CONTAINERS = "hst:workspace/hst:containers/";
-    private static final String PATH_HST_DEFAULT = "hst:hst/hst:configurations/hst:default";
+    private static final String PATH_HST_DEFAULT = "/hst:hst/hst:configurations/hst:default";
 
     HstReferenceEditor(String id, JcrPropertyModel propertyModel, JcrPropertyValueModel valueModel) {
         super(id);
@@ -167,8 +167,7 @@ class HstReferenceEditor extends Panel {
         }
 
         // third try: hst configuration nodes from hst:default group
-        final Node rootNode = UserSession.get().getJcrSession().getRootNode();
-        Node hstDefaultConfiguration = rootNode.getNode(PATH_HST_DEFAULT);
+        final Node hstDefaultConfiguration = UserSession.get().getJcrSession().getNode(PATH_HST_DEFAULT);
         if(hstDefaultConfiguration.hasNode(NODE_HST_TEMPLATES)) {
             templateNode = getConfigurationNode(hstDefaultConfiguration, propertyValue, propertyModel);
             if(templateNode != null) {
