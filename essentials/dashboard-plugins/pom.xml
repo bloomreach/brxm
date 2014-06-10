@@ -63,6 +63,7 @@
     <module>document-wizard-plugin</module>
     <module>related-documents-plugin</module>
     <module>seo-plugin</module>
+    <module>image-component-plugin</module>
   </modules>
   <dependencyManagement>
 

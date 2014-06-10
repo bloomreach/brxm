@@ -447,6 +447,28 @@
     {
         "enabled": true,
         "@type": "plugin",
+        "name": "Image component plugin",
+        "introduction": "Add image component and rendering template",
+        "pluginId": "imageComponentPlugin",
+        "packageFile": "/META-INF/imageComponentPlugin_instructions.xml",
+        "restClasses": [],
+        "type": "plugins",
+        "vendor": {
+            "@type": "vendor",
+            "name": "Hippo",
+            "url": "http://www.onehippo.com"
+        },
+        "libraries": [
+            {
+                "items": [
+
+                ]
+            }
+        ]
+    },
+    {
+        "enabled": true,
+        "@type": "plugin",
         "name": "Banner support",
         "introduction": "Add Banner document type to your project. Add Banner and Carousel components to the Channel Manager's component catalog.",
         "pluginId": "bannerPlugin",

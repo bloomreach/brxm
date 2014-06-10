@@ -472,6 +472,16 @@ dashboard-plugins/freemarker-synchronizer/src/main/resources/META-INF/web-fragme
 dashboard-plugins/freemarker-synchronizer/src/test/java/org/onehippo/cms7/essentials/tools/rest/FSUtilsTest.java -text
 dashboard-plugins/freemarker-synchronizer/src/test/resources/log4j.xml -text
 dashboard-plugins/icons/onebit/license.txt -text
+dashboard-plugins/image-component-plugin/pom.xml -text
+dashboard-plugins/image-component-plugin/src/main/resources/META-INF/imageComponentPlugin_instructions.xml -text
+dashboard-plugins/image-component-plugin/src/main/resources/META-INF/resources/plugins/imageComponentPlugin/imageComponentPlugin.html -text
+dashboard-plugins/image-component-plugin/src/main/resources/META-INF/web-fragment.xml -text
+dashboard-plugins/image-component-plugin/src/main/resources/instructions/freemarker/image-component.ftl -text
+dashboard-plugins/image-component-plugin/src/main/resources/instructions/images/component-icon-image.png -text
+dashboard-plugins/image-component-plugin/src/main/resources/instructions/jsp/image-component.jsp -text
+dashboard-plugins/image-component-plugin/src/main/resources/instructions/xml/hst/image-component-catalog.xml -text
+dashboard-plugins/image-component-plugin/src/main/resources/instructions/xml/hst/image-component-freemarker.xml -text
+dashboard-plugins/image-component-plugin/src/main/resources/instructions/xml/hst/image-component-jsp.xml -text
 dashboard-plugins/menu-plugin/pom.xml -text
 dashboard-plugins/menu-plugin/src/main/resources/META-INF/menu_instructions.xml -text
 dashboard-plugins/menu-plugin/src/main/resources/META-INF/resources/plugins/menuPlugin/menuPlugin.html -text
