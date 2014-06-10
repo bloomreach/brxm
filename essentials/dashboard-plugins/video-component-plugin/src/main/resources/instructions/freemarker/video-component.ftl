@@ -21,9 +21,9 @@
 -->
 
 <#-- @ftlvariable name="document" type="{{beansPackage}}.Video" -->
-<#-- @ftlvariable name="cparm" type="org.onehippo.cms7.essentials.components.info.EssentialsVideoComponentInfo"--%> -->
+<#-- @ftlvariable name="cparam" type="org.onehippo.cms7.essentials.components.info.EssentialsVideoComponentInfo"--%> -->
 <#if document??>
-<iframe width="${cparm.width}" height="${cparm.height}" src="${document.link}" frameborder="0" allowfullscreen></iframe>
+<iframe width="${cparam.width}" height="${cparam.height}" src="${document.link}" frameborder="0" allowfullscreen></iframe>
 </#if>
 
 

@@ -16,6 +16,6 @@
   --%>
 
 <%--@elvariable id="document" type="{{beansPackage}}.Video"--%>
-<%--@elvariable id="cparm" type="org.onehippo.cms7.essentials.components.info.EssentialsVideoComponentInfo"--%>
-<iframe width="${cparm.width}" height="${cparm.height}" src="${document.link}" frameborder="0" allowfullscreen></iframe>
+<%--@elvariable id="cparam" type="org.onehippo.cms7.essentials.components.info.EssentialsVideoComponentInfo"--%>
+<iframe width="${cparam.width}" height="${cparam.height}" src="${document.link}" frameborder="0" allowfullscreen></iframe>
 
