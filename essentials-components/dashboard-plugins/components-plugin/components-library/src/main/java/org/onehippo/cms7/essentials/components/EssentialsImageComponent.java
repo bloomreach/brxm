@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.components.info;
+package org.onehippo.cms7.essentials.components;
 
-import org.hippoecm.hst.core.parameters.JcrPath;
-import org.hippoecm.hst.core.parameters.Parameter;
+import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.onehippo.cms7.essentials.components.info.EssentialsImageComponentInfo;
 
 /**
+ * Same as {@code EssentialsDocumentComponent}. Only difference is that document picker is accepting images
  * @version "$Id$"
  */
-public interface EssentialsDocumentComponentInfo {
 
-    @Parameter(name = "document", required = true, displayName = "Document")
-    @JcrPath(
-            isRelative = true,
-            pickerConfiguration = "cms-pickers/documents",
-            pickerSelectableNodeTypes = {"hippo:document"},
-            pickerInitialPath = "/content/documents"
-    )
-    String getDocument();
-
+@ParametersInfo(type = EssentialsImageComponentInfo.class)
+public class EssentialsImageComponent extends EssentialsDocumentComponent {
 }
