@@ -2255,12 +2255,6 @@ dashboard-plugins/ecm-tagging-plugin/src/main/resources/META-INF/resources/plugi
 dashboard-plugins/ecm-tagging-plugin/src/main/resources/META-INF/resources/plugins/hippo-plugins.iws
 dashboard-plugins/ecm-tagging-plugin/src/main/resources/META-INF/resources/plugins/target
 dashboard-plugins/ecm-tagging-plugin/src/main/resources/META-INF/resources/target
-dashboard-plugins/ecm-tagging-plugin/src/main/resources/META-INF/resources/xml/*.iml
-dashboard-plugins/ecm-tagging-plugin/src/main/resources/META-INF/resources/xml/.DS_Store
-dashboard-plugins/ecm-tagging-plugin/src/main/resources/META-INF/resources/xml/.idea
-dashboard-plugins/ecm-tagging-plugin/src/main/resources/META-INF/resources/xml/atlassian-ide-plugin.xml
-dashboard-plugins/ecm-tagging-plugin/src/main/resources/META-INF/resources/xml/hippo-plugins.iws
-dashboard-plugins/ecm-tagging-plugin/src/main/resources/META-INF/resources/xml/target
 dashboard-plugins/ecm-tagging-plugin/src/main/resources/META-INF/target
 dashboard-plugins/ecm-tagging-plugin/src/main/resources/atlassian-ide-plugin.xml
 dashboard-plugins/ecm-tagging-plugin/src/main/resources/hippo-plugins.iws

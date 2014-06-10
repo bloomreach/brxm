@@ -18,7 +18,9 @@ package org.onehippo.cms7.essentials.plugins.ecm;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import javax.jcr.ImportUUIDBehavior;
@@ -37,6 +39,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.wicket.util.string.Strings;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
+import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.utils.DocumentTemplateUtils;
@@ -45,6 +48,8 @@ import org.onehippo.cms7.essentials.dashboard.utils.PayloadUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Joiner;
 
 /**
  * @version "$Id$"
@@ -82,7 +87,8 @@ public class EcmTaggingResource extends BaseResource {
                 final Node tags = rootNode.addNode("tags", "hippofacnav:facetnavigation");
                 final String rootIdentifier = session.getNode("/content").getIdentifier();
                 tags.setProperty("hippo:docbase", rootIdentifier);
-                tags.setProperty("hippofacnav:facets", "hippostd:tags");
+                tags.setProperty("hippofacnav:facets", new String[]{"hippostd:tags"});
+                tags.setProperty("hippofacnav:limit", 100);
                 session.save();
             } else {
                 log.info("/tags node already exists");
@@ -93,6 +99,7 @@ public class EcmTaggingResource extends BaseResource {
                 final String[] docs = PayloadUtils.extractValueArray(values.get("documents"));
                 final String[] locations = PayloadUtils.extractValueArray(values.get("locations"));
 
+                final Collection<String> addedDocuments = new HashSet<>();
                 for (int i = 0; i < docs.length; i++) {
 
                     final String document = docs[i];
@@ -115,9 +122,18 @@ public class EcmTaggingResource extends BaseResource {
                     // import suggest field:
                     final String suggestData = TemplateUtils.replaceStringPlaceholders(templateSuggest, templateData);
                     session.importXML(fieldImportPath, IOUtils.toInputStream(suggestData), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
+                    addedDocuments.add(document);
                     session.save();
                 }
+                if (addedDocuments.size() > 0) {
+                    return new MessageRestful("Successfully added tagging to following document: " + Joiner.on(",").join(addedDocuments));
+                } else {
+                    return new MessageRestful("No tagging was added to selected documents.");
+                }
 
+
+            } else {
+                new ErrorMessageRestful("No documents were selected");
             }
 
 
@@ -126,7 +142,7 @@ public class EcmTaggingResource extends BaseResource {
         } finally {
             GlobalUtils.cleanupSession(session);
         }
-        return new MessageRestful("setup");
+        return new ErrorMessageRestful("Error adding tagging fields");
 
     }
 

@@ -428,9 +428,9 @@ dashboard-plugins/ecm-tagging-plugin/pom.xml -text
 dashboard-plugins/ecm-tagging-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/ecm/EcmTaggingResource.java -text
 dashboard-plugins/ecm-tagging-plugin/src/main/resources/META-INF/resources/plugins/ecmTaggingPlugin/ecmTaggingPlugin.html -text
 dashboard-plugins/ecm-tagging-plugin/src/main/resources/META-INF/resources/plugins/ecmTaggingPlugin/ecmTaggingPlugin.js -text
-dashboard-plugins/ecm-tagging-plugin/src/main/resources/META-INF/resources/xml/ecm-tagging-template-field_tag_suggest.xml -text
-dashboard-plugins/ecm-tagging-plugin/src/main/resources/META-INF/resources/xml/ecm-tagging-template-field_tags.xml -text
 dashboard-plugins/ecm-tagging-plugin/src/main/resources/META-INF/web-fragment.xml -text
+dashboard-plugins/ecm-tagging-plugin/src/main/resources/ecm-tagging-template-field_tag_suggest.xml -text
+dashboard-plugins/ecm-tagging-plugin/src/main/resources/ecm-tagging-template-field_tags.xml -text
 dashboard-plugins/essentials-skeleton-package/pom.xml -text
 dashboard-plugins/essentials-skeleton-package/src/main/java/org/onehippo/cms7/essentials/dashboard/packaging/CommonsInstructionPackage.java -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/META-INF/commons_instructions.xml -text
