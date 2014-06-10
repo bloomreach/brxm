@@ -575,6 +575,16 @@ dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/resources/plugins/
 dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/resources/xml/taxonomy.xml -text
 dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/taxonomy-plugin/src/test/resources/log4j.xml -text
+dashboard-plugins/video-component-plugin/pom.xml -text
+dashboard-plugins/video-component-plugin/src/main/resources/META-INF/resources/plugins/videoComponentPlugin/videoComponentPlugin.html -text
+dashboard-plugins/video-component-plugin/src/main/resources/META-INF/videoComponentPlugin_instructions.xml -text
+dashboard-plugins/video-component-plugin/src/main/resources/META-INF/web-fragment.xml -text
+dashboard-plugins/video-component-plugin/src/main/resources/instructions/freemarker/video-component.ftl -text
+dashboard-plugins/video-component-plugin/src/main/resources/instructions/images/component-icon-video.png -text
+dashboard-plugins/video-component-plugin/src/main/resources/instructions/jsp/video-component.jsp -text
+dashboard-plugins/video-component-plugin/src/main/resources/instructions/xml/hst/video-component-catalog.xml -text
+dashboard-plugins/video-component-plugin/src/main/resources/instructions/xml/hst/video-component-freemarker.xml -text
+dashboard-plugins/video-component-plugin/src/main/resources/instructions/xml/hst/video-component-jsp.xml -text
 ide/intellij/project-setup/META-INF/plugin.xml -text
 ide/intellij/project-setup/README.txt -text
 ide/intellij/project-setup/ide-integration.jar -text
