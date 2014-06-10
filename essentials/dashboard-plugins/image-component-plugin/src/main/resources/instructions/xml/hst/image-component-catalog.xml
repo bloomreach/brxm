@@ -20,7 +20,7 @@
     <sv:value>hst:containeritemcomponent</sv:value>
   </sv:property>
   <sv:property sv:name="hst:componentclassname" sv:type="String">
-    <sv:value>org.onehippo.cms7.essentials.components.EssentialsDocumentComponent</sv:value>
+    <sv:value>org.onehippo.cms7.essentials.components.EssentialsImageComponent</sv:value>
   </sv:property>
   <sv:property sv:name="hst:label" sv:type="String">
     <sv:value>Image</sv:value>

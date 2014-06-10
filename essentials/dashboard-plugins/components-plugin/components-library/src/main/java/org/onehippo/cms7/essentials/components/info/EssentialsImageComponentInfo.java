@@ -22,14 +22,14 @@ import org.hippoecm.hst.core.parameters.Parameter;
 /**
  * @version "$Id$"
  */
-public interface EssentialsDocumentComponentInfo {
+public interface EssentialsImageComponentInfo {
 
-    @Parameter(name = "document", required = true, displayName = "Document")
+    @Parameter(name = "document", required = true, displayName = "Image")
     @JcrPath(
             isRelative = true,
-            pickerConfiguration = "cms-pickers/documents",
-            pickerSelectableNodeTypes = {"hippo:document"},
-            pickerInitialPath = "/content/documents"
+            pickerConfiguration = "cms-pickers/images",
+            pickerSelectableNodeTypes = {"hippogallery:imageset"},
+            pickerInitialPath = "/content/gallery"
     )
     String getDocument();
 
