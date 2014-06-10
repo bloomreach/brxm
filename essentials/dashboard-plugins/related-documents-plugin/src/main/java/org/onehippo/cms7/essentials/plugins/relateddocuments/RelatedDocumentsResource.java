@@ -53,6 +53,7 @@ import org.slf4j.LoggerFactory;
 @Path("related-documents")
 public class RelatedDocumentsResource extends BaseResource {
 
+
     private static Logger log = LoggerFactory.getLogger(RelatedDocumentsResource.class);
 
     public static final String MIXIN_NAME = "relateddocs:relatabledocs";

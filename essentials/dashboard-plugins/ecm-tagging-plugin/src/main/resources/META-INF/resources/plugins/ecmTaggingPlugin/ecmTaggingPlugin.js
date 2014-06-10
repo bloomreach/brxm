@@ -41,17 +41,10 @@
                 Essentials.addPayloadData("widgetCols", $scope.widgetCols, payload);
                 Essentials.addPayloadData("widgetRows", $scope.widgetRows, payload);
                 Essentials.addPayloadData("locations", selectedDocumentLocations.join(','), payload);
-
-            };
-
-            $scope.addTagging = function () {
-
-                var payload = Essentials.addPayloadData("locales", extractLocales($scope.locales), null);
                 $http.post(endpointEcmTagging, payload).success(function (data) {
-
-
                 });
             };
+
             //############################################
             // INITIALIZE APP:
             //############################################

@@ -21,10 +21,10 @@
     <sv:value>Tags</sv:value>
   </sv:property>
   <sv:property sv:name="widget.cols" sv:type="String">
-    <sv:value>20</sv:value>
+    <sv:value>{{widgetCols}}</sv:value>
   </sv:property>
   <sv:property sv:name="widget.rows" sv:type="String">
-    <sv:value>2</sv:value>
+    <sv:value>{{widgetRows}}</sv:value>
   </sv:property>
   <sv:property sv:name="search.paths" sv:type="String">
     <sv:value>/content</sv:value>

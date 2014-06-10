@@ -34,7 +34,7 @@
     <sv:value>${engine}</sv:value>
   </sv:property>
   <sv:property sv:name="numberOfSuggestions" sv:type="Long">
-    <sv:value>20</sv:value>
+    <sv:value>{{numberOfSuggestions}}</sv:value>
   </sv:property>
   <sv:property sv:name="caption" sv:type="String">
     <sv:value>Keyword suggestions</sv:value>
