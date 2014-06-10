@@ -723,8 +723,6 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/u
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/beansmodel/HippoEssentialsGeneratedObject.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/beansmodel/MemoryBean.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/beansmodel/MemoryProperty.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/cnd/CndLexer.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/cnd/CndParser.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/code/ComponentInformation.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/code/EssentialsGeneratedMethod.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/code/ExistingMethodsVisitor.java -text
