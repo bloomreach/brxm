@@ -65,6 +65,7 @@
     <module>seo-plugin</module>
     <module>image-component-plugin</module>
     <module>video-component-plugin</module>
+    <module>faq-component-plugin</module>
   </modules>
   <dependencyManagement>
 

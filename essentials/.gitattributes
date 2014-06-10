@@ -467,6 +467,10 @@ dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/xm
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/xml/hst/workspace/homepage.xml -text
 dashboard-plugins/essentials-skeleton-package/src/test/java/org/onehippo/cms7/essentials/dashboard/packaging/CommonsInstructionPackageTest.java -text
 dashboard-plugins/essentials-skeleton-package/src/test/resources/log4j.xml -text
+dashboard-plugins/faq-component-plugin/pom.xml -text
+dashboard-plugins/faq-component-plugin/src/main/resources/META-INF/faqComponentPlugin_instructions.xml -text
+dashboard-plugins/faq-component-plugin/src/main/resources/META-INF/resources/plugins/faqComponentPlugin/faqComponentPlugin.html -text
+dashboard-plugins/faq-component-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/freemarker-synchronizer/pom.xml -text
 dashboard-plugins/freemarker-synchronizer/src/main/java/org/onehippo/cms7/essentials/tools/rest/FSUtils.java -text
 dashboard-plugins/freemarker-synchronizer/src/main/java/org/onehippo/cms7/essentials/tools/rest/FreemarkerSyncResource.java -text

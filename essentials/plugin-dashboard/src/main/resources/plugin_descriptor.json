@@ -491,6 +491,28 @@
     {
         "enabled": true,
         "@type": "plugin",
+        "name": "FAQ component plugin",
+        "introduction": "Add FAQ component, rendering template and sample data",
+        "pluginId": "faqComponentPlugin",
+        "packageFile": "/META-INF/faqComponentPlugin_instructions.xml",
+        "restClasses": [],
+        "type": "plugins",
+        "vendor": {
+            "@type": "vendor",
+            "name": "Hippo",
+            "url": "http://www.onehippo.com"
+        },
+        "libraries": [
+            {
+                "items": [
+
+                ]
+            }
+        ]
+    },
+    {
+        "enabled": true,
+        "@type": "plugin",
         "name": "Banner support",
         "introduction": "Add Banner document type to your project. Add Banner and Carousel components to the Channel Manager's component catalog.",
         "pluginId": "bannerPlugin",
