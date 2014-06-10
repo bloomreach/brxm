@@ -27,9 +27,11 @@ import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.Value;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
@@ -146,6 +148,30 @@ public class HardHandleUpdateVisitor extends BaseContentUpdateVisitor {
             if (oldPreview != null) {
                 copy(oldPreview, newPreview);
                 oldPreview.remove();
+                defaultSession.save();
+            } else {
+                newPreview.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[]{"preview"});
+                for (Node sibling : new NodeIterable(handle.getNodes(handle.getName()))) {
+                    if (sibling.isSame(newPreview)) {
+                        continue;
+                    }
+                    if (sibling.hasProperty(HippoNodeType.HIPPO_AVAILABILITY)) {
+                        Value[] values = sibling.getProperty(HippoNodeType.HIPPO_AVAILABILITY).getValues();
+                        List<String> asList = new ArrayList<>();
+                        boolean modified = false;
+                        for (Value value : values) {
+                            if ("preview".equals(value.getString())) {
+                                modified = true;
+                                continue;
+                            }
+                            asList.add(value.getString());
+                        }
+                        if (modified) {
+                            JcrUtils.ensureIsCheckedOut(sibling);
+                            sibling.setProperty(HippoNodeType.HIPPO_AVAILABILITY, asList.toArray(new String[asList.size()]), PropertyType.STRING);
+                        }
+                    }
+                }
                 defaultSession.save();
             }
         }
