@@ -219,8 +219,16 @@
   </servlet-mapping>
 
   <!-- Timeout in minutes -->
-    <session-config>
-        <session-timeout>60</session-timeout>
-    </session-config>
+  <session-config>
+      <session-timeout>60</session-timeout>
+  </session-config>
+
+
+  <env-entry>
+    <env-entry-name>logging/contextName</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value>cms</env-entry-value>
+  </env-entry>
+
 
 </web-app>

@@ -28,6 +28,12 @@
     <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%t] [%C.%M():%L] %m%n"/>
     </layout>
+    <filter class="org.onehippo.cms7.logging.log4j.MdcOrJndiPropertyFilter">
+      <param name="name" value="logging/contextName" />
+      <param name="resourceRef" value="true" />
+      <param name="value" value="cms" />
+      <param name="onMatchOption" value="ACCEPT" />
+    </filter>
   </appender>
 
   <!-- hippo-site.log -->
@@ -37,6 +43,12 @@
     <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%t] [%C.%M():%L] %m%n"/>
     </layout>
+    <filter class="org.onehippo.cms7.logging.log4j.MdcOrJndiPropertyFilter">
+      <param name="name" value="logging/contextName" />
+      <param name="resourceRef" value="true" />
+      <param name="value" value="site" />
+      <param name="onMatchOption" value="ACCEPT" />
+    </filter>
   </appender>
 
   <!-- hippo-intranet.log -->
@@ -46,6 +58,12 @@
     <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%t] [%C.%M():%L] %m%n"/>
     </layout>
+    <filter class="org.onehippo.cms7.logging.log4j.MdcOrJndiPropertyFilter">
+      <param name="name" value="logging/contextName" />
+      <param name="resourceRef" value="true" />
+      <param name="value" value="intranet" />
+      <param name="onMatchOption" value="ACCEPT" />
+    </filter>
   </appender>
 
   <!-- hippo-demo-events.log -->
@@ -64,6 +82,12 @@
     <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%t] %m%n"/>
     </layout>
+    <filter class="org.onehippo.cms7.logging.log4j.MdcOrJndiPropertyFilter">
+      <param name="name" value="logging/contextName" />
+      <param name="resourceRef" value="true" />
+      <param name="value" value="site" />
+      <param name="onMatchOption" value="ACCEPT" />
+    </filter>
   </appender>
 
 
@@ -74,6 +98,12 @@
     <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%t] %m%n"/>
     </layout>
+    <filter class="org.onehippo.cms7.logging.log4j.MdcOrJndiPropertyFilter">
+      <param name="name" value="logging/contextName" />
+      <param name="resourceRef" value="true" />
+      <param name="value" value="intranet" />
+      <param name="onMatchOption" value="ACCEPT" />
+    </filter>
   </appender>
 
   <!-- hippo-audit.log -->
