@@ -555,7 +555,10 @@ dashboard-plugins/search-plugin/src/main/resources/instructions/xml/hst/search-s
 dashboard-plugins/seo-plugin/pom.xml -text
 dashboard-plugins/seo-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/seo/SeoResource.java -text
 dashboard-plugins/seo-plugin/src/main/resources/META-INF/resources/plugins/seoPlugin/seoPlugin.html -text
-dashboard-plugins/seo-plugin/src/main/resources/META-INF/resources/plugins/seoPlugin/seoPlugin.js -text
+dashboard-plugins/seo-plugin/src/main/resources/META-INF/seoPlugin_instructions.xml -text
+dashboard-plugins/seo-plugin/src/main/resources/META-INF/web-fragment.xml -text
+dashboard-plugins/seo-plugin/src/main/resources/instructions/component-icon-seo.png -text
+dashboard-plugins/seo-plugin/src/main/resources/instructions/seo-catalog-item.xml -text
 dashboard-plugins/seo-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/simple-content/pom.xml -text
 dashboard-plugins/simple-content/src/main/resources/META-INF/resources/plugins/simpleContent/simpleContent.html -text

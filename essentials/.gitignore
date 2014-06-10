@@ -3381,6 +3381,12 @@ dashboard-plugins/seo-plugin/src/main/resources/META-INF/resources/target
 dashboard-plugins/seo-plugin/src/main/resources/META-INF/target
 dashboard-plugins/seo-plugin/src/main/resources/atlassian-ide-plugin.xml
 dashboard-plugins/seo-plugin/src/main/resources/hippo-plugins.iws
+dashboard-plugins/seo-plugin/src/main/resources/instructions/*.iml
+dashboard-plugins/seo-plugin/src/main/resources/instructions/.DS_Store
+dashboard-plugins/seo-plugin/src/main/resources/instructions/.idea
+dashboard-plugins/seo-plugin/src/main/resources/instructions/atlassian-ide-plugin.xml
+dashboard-plugins/seo-plugin/src/main/resources/instructions/hippo-plugins.iws
+dashboard-plugins/seo-plugin/src/main/resources/instructions/target
 dashboard-plugins/seo-plugin/src/main/resources/target
 dashboard-plugins/seo-plugin/src/main/target
 dashboard-plugins/seo-plugin/src/target

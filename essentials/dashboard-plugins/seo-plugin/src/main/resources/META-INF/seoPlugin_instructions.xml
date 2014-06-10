@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2014 Hippo B.V. (http://www.onehippo.com)
 
@@ -14,12 +15,14 @@
   limitations under the License.
   -->
 
+<instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
 
-<essentials-simple-install-plugin
-        plugin-id="seoPlugin"
-        plugin-title="SEO plugin"
-        button-text="Add SEO plugin support"
-        sample="false"/>
+  <instructionSet>
+    <xml action="copy" source="instructions/seo-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <file action="copy" binary="true" source="instructions/component-icon-seo.png" target="{{siteWebRoot}}/images/component-icon-seo.png"/>
+  </instructionSet>
 
 
 
+</instructions>
