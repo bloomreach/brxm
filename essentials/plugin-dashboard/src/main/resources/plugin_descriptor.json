@@ -160,55 +160,6 @@
         ]
     },
     {
-        "enabled": false,
-        "@type": "plugin",
-        "name": "Tag-cloud Management plugin",
-        "introduction": "Adds Tag-cloud Management support to hippo project",
-        "description": "With the Tag-cloud Management plugin you can controll the visual representation of a tag-cloud, add tags from sources like: ecm-tagging, facetnavigation, custom tagging and future support for google-analytics search tags and edit certain values like labels, values, control options like tagsorting, colors etc. and where a tag should go to (document, documentlist, internal, external link).<p>Read more about the Tag-cloud Management plugin at <a href=\"http://tcmp.forge.onehippo.org/\" target=\"_blank\">http://tcmp.forge.onehippo.org/</a></p>",
-        "pluginId": "tcmpPlugin",
-        "packageFile": "",
-        "restClasses": ["org.onehippo.cms7.essentials.plugins.tcmp.TagCloudManagementResource"],
-        "type": "plugins",
-        "vendor": {
-            "@type": "vendor",
-            "name": "Hippo",
-            "url": "http://www.onehippo.com"
-        },
-        "libraries": [
-            {
-                "items": [
-                    {
-                        "component": "tcmpPlugin",
-                        "file": "tcmpPlugin.js"
-                    }
-                ]
-            }
-        ],
-        "dependencies": [
-            {
-                "@type": "dependency",
-                "groupId": "org.onehippo.forge",
-                "artifactId": "tcmp-addon-frontend",
-                "scope": "compile",
-                "type": "cms"
-            },
-            {
-                "@type": "dependency",
-                "groupId": "org.onehippo.forge",
-                "artifactId": "tcmp-addon-repository",
-                "scope": "compile",
-                "type": "cms"
-            },
-            {
-                "@type": "dependency",
-                "groupId": "org.onehippo.forge",
-                "artifactId": "tcmp-component",
-                "scope": "compile",
-                "type": "site"
-            }
-        ]
-    },
-    {
         "enabled": true,
         "@type": "plugin",
         "name": "ECM tagging plugin",
