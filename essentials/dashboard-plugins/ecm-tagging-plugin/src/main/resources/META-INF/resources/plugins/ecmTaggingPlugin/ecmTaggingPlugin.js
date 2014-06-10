@@ -21,15 +21,10 @@
             $scope.pluginId = "ecmTaggingPlugin";
             var endpoint = $rootScope.REST.documents;
             var endpointEcmTagging = $scope.endpoint = $rootScope.REST.dynamic + 'ecmtaggingyplugin/';
+            $scope.widgetCols = 20;
+            $scope.widgetRows = 2;
+            $scope.numberOfSuggestions = 10;
 
-            $scope.locales = [
-                {name: "en"},
-                {name: "fr"},
-                {name: "de"},
-                {name: "es"},
-                {name: "it"},
-                {name: "nl"}
-            ];
             $scope.addDocuments = function () {
 
                 var selectedDocumentNames = [];
@@ -42,6 +37,9 @@
 
                 });
                 var payload = Essentials.addPayloadData("documents", selectedDocumentNames.join(','), null);
+                Essentials.addPayloadData("numberOfSuggestions", $scope.numberOfSuggestions, payload);
+                Essentials.addPayloadData("widgetCols", $scope.widgetCols, payload);
+                Essentials.addPayloadData("widgetRows", $scope.widgetRows, payload);
                 Essentials.addPayloadData("locations", selectedDocumentLocations.join(','), payload);
 
             };
@@ -61,6 +59,7 @@
                 $scope.documentTypes = data;
             });
             //
+
             $http.get($rootScope.REST.root + "/plugins/plugins/" + $scope.pluginId).success(function (plugin) {
                 $scope.pluginDescription = $sce.trustAsHtml(plugin.description);
             });
