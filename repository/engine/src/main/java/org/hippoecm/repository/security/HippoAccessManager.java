@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -1206,8 +1206,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                     // if the parent is either a handle or a resultset we are sure we are dealing with a
                     // real document
                     final NodeState parentState = getParentState(nodeState);
-                    if (parentState.getNodeTypeName().equals(hippoHandle)
-                            || parentState.getNodeTypeName().equals(hippoResultSet)) {
+                    final Name parentNodeTypeName = parentState.getNodeTypeName();
+                    if (parentNodeTypeName.equals(hippoHandle) || parentNodeTypeName.equals(hippoResultSet)) {
                         if (log.isDebugEnabled()) {
                             log.debug("MATCH hippoDoc: " + nodeState.getNodeTypeName());
                         }
