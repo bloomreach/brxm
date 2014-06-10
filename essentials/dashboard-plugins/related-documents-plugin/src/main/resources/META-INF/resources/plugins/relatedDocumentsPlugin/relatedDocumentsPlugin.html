@@ -33,6 +33,7 @@
                         <th>Document</th>
                         <th>Field position</th>
                         <th>Search folder</th>
+                        <th>Nr. of suggestions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -64,7 +65,6 @@
                                                       end-point="http://localhost:8080/essentials/rest/jcrbrowser/folders"/>
                         </td>
                         <td>
-
                             <input type="text" ng-hide="doc.name == 'basedocument'" ng-model="numberOfSuggestions" ng-required="doc.name != 'basedocument' && doc.checked" name="numberOfSuggestions"/>
                         </td>
                     </tr>

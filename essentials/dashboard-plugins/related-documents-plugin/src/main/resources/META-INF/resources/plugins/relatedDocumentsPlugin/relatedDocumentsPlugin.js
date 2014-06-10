@@ -20,33 +20,27 @@
         .controller('relatedDocumentsCtrl', function ($scope, $filter, $sce, $log, $modal, $rootScope, $http) {
             var endpoint = $rootScope.REST.dynamic + 'related-documents';
             $scope.pluginId = "relatedDocumentsPlugin";
-            $scope.numberOfSuggestions = "20";
-            $scope.searchPaths = "";
+            $scope.numberOfSuggestions = "10";
             $scope.fieldLocation = "";
+            $scope.searchPaths = "";
 
             $scope.addDocs = function () {
                 var documents = [];
                 var locations = [];
-                angular.forEach($scope.documentTypes, function (value, key) {
+                angular.forEach($scope.documentTypes, function (value) {
                     if (value.checked) {
-                        documents.push(value.fullName);
+                        documents.push(value.name);
                         locations.push(value.fieldLocation);
                     }
-
-
                 });
                 var payload = Essentials.addPayloadData("documents", documents.join(','), null);
                 Essentials.addPayloadData("numberOfSuggestions", $scope.numberOfSuggestions, payload);
                 Essentials.addPayloadData("searchPaths", $scope.searchPaths, payload);
-                Essentials.addPayloadData("fieldLocation", locations.join(','), payload);
-
+                Essentials.addPayloadData("locations", locations.join(','), payload);
                 $http.post(endpoint, payload).success(function (data) {
-
-
                 });
 
             };
-
 
             //############################################
             // INIT
