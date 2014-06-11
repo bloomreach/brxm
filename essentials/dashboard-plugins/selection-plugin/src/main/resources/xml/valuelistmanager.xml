@@ -22,8 +22,8 @@
         class="org.onehippo.forge.selection.hst.manager.DefaultValueListManager">
     <constructor-arg>
       <map>
-        <entry key="relativeValuelist1" value="valuelists/valuelist1"/>
-        <entry key="absoluteValuelist2" value="/content/documents/valuelists/valuelist2"/>
+        <!--<entry key="relativeValuelist1" value="valuelists/valuelist1"/>-->
+        <!--<entry key="absoluteValuelist2" value="/content/documents/valuelists/valuelist2"/>-->
       </map>
     </constructor-arg>
   </bean>

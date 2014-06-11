@@ -49,29 +49,12 @@ import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Ideas:
- * - sort document types in UI (documents first, compounds last?)
- * - show up-to-date list of selection fields, maybe per document type?
- * - provide UI to create value lists
- * - add more "advanced" options, depending on selection field type
- * - support default value => prototype
- */
-
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("selectionplugin")
 public class SelectionResource extends BaseResource {
 
     private static Logger log = LoggerFactory.getLogger(SelectionResource.class);
-
-    @POST
-    @Path("/")
-    public MessageRestful tickle(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
-        // just to make sure the front-end - back-end connection is working...
-        log.error("tickling...");
-        return null;
-    }
 
     @POST
     @Path("/addfield")

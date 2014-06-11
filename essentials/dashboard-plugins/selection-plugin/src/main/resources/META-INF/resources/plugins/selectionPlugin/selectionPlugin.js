@@ -26,11 +26,6 @@
             });
 
             var restEndpoint = $rootScope.REST.dynamic + 'selectionplugin/';
-            $scope.tickle = function() {
-                $http.post(restEndpoint, {}).success(function (data) {
-                    alert('Hurray!');
-                });
-            };
             $scope.addField = function() {
                 var position = $scope.fieldPosition;
                 if ($scope.selectedDocumentType.fieldLocations.length < 2) {
@@ -46,7 +41,7 @@
                         valueList: $scope.selectedValueList.value
                     }
                 };
-                $http.post(restEndpoint + 'addfield/', payload).success(function (data) {
+                $http.post(restEndpoint + 'addfield/', payload).success(function () {
                     resetAddFieldForm();
                     reloadSelectionFields($scope.selectedDocumentType);
                 });
@@ -69,14 +64,14 @@
             };
             $scope.selectionTypes = [ 'single', 'multiple' ];
             $scope.valueListNameByPath = function(path) {
-                var name;
-                angular.forEach($scope.valueLists, function(entry, index) {
+                var name = '';
+                angular.forEach($scope.valueLists, function(entry) {
                     if (entry.value === path) {
                         name = entry.key;
                     }
                 });
                 return name;
-            }
+            };
             resetAddFieldForm();
 
             $http.get($rootScope.REST.root + "/plugins/plugins/" + $scope.pluginId).success(function (plugin) {
