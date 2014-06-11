@@ -54,11 +54,17 @@
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>7013</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
-      <sv:value>true</sv:value>
+  </sv:node>
+
+  <sv:node sv:name="delete-checkbrokenlinks-workflow">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:version" sv:type="String">
-      <sv:value>2.26.03</sv:value>
+    <sv:property sv:name="hippo:contentdelete" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:workflows/brokenlinks/checkbrokenlinks</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>7014</sv:value>
     </sv:property>
   </sv:node>
 
