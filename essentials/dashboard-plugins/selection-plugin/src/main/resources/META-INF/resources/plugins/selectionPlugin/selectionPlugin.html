@@ -37,60 +37,66 @@
   <div class="panel panel-default" ng-hide="plugin.installState !== 'added'">
     <div class="panel-heading">Selection Plugin Configuration</div>
     <div class="panel-body">
-      <h2>Project Value Lists</h2>
-      <ul>
-        <li ng-repeat="valueList in valueLists"><span title="{{valueList.value}}">{{valueList.key}}</span></li>
-      </ul>
-      <h2>Project Document Types</h2>
-      <ul>
-        <li ng-repeat="type in documentTypes">{{type.name}}<span ng-hide="{{!type.compoundType}}">(Compound)</span></li>
-      </ul>
 
       <div ng-show="documentTypes.length && valueLists.length">
-        <form novalidate>
-          <h3>Add selection fields to document types</h3>
-          <table class="table table-hover">
-            <thead>
-              <tr>
-                <th>Document type</th>
-                <th>Field name</th>
-                <th>Field position</th>
-                <th>Selection type</th>
-                <th>Value list</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <select ng-model="documentType"
-                          ng-options="type.name for type in documentTypes | filter:showDocument">
-                  </select>
-                </td>
-                <td><input ng-model="fieldName"/></td>
-                <td>
-                  <select ng-model="fieldPosition"
-                          ng-options="position for position in documentType.fieldLocations"
-                          ng-show="documentType.fieldLocations.length > 1">
-                   </select>
-                </td>
-                <td>
-                  <select ng-model="selectionType"
-                          ng-options="type for type in selectionTypes">
-                  </select>
-                </td>
-                <td>
-                  <select ng-model="valueList"
-                          ng-options="list.key for list in valueLists">
-                    <option value="">Choose a value list...</option>
-                  </select>
-                </td>
-                <td>
-                   <button class="btn btn-primary" ng-click="addSelectionField(documentType)">Add</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <h3>Add selection fields to document types</h3>
+        <form class="form-horizontal" novalidate name="addFieldForm">
+          <div class="form-group">
+            <label class="col-sm-4 control-label">Document type:</label>
+            <div ng-class="addFieldForm.selectedDocumentType.$invalid ? 'col-sm-8 bg-danger' : 'col-sm-8'">
+              <select name="selectedDocumentType" required
+                      style="width: 200px"
+                      ng-model="selectedDocumentType"
+                      ng-selected="selectedDocumentType"
+                      ng-options="type.name for type in documentTypes | filter:showDocument">
+                <option value="">Choose a document type...</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-4 control-label">Name of new field:</label>
+            <div class="col-sm-8">
+              <input ng-class="addFieldForm.fieldName.$invalid?'bg-danger':''" required name="fieldName" type="text" ng-model="fieldName"/>
+            </div>
+          </div>
+          <div class="form-group" ng-show="selectedDocumentType.fieldLocations.length > 1">
+            <label class="col-sm-4 control-label">Field position:</label>
+            <div class="col-sm-8">
+              <select ng-model="fieldPosition"
+                      ng-selected="fieldPosition"
+                      ng-options="positionName(position) for position in selectedDocumentType.fieldLocations">
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-4 control-label">Selection type:</label>
+            <div class="col-sm-8">
+              <select ng-model="selectionType"
+                      ng-selected="selectionType"
+                      ng-options="type for type in selectionTypes">
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-4 control-label">Value list:</label>
+            <div ng-class="addFieldForm.selectedValueList.$invalid ? 'col-sm-8 bg-danger' : 'col-sm-8'">
+              <select name="selectedValueList" required
+                      style="width: 200px"
+                      ng-model="selectedValueList"
+                      ng-selected="selectedValueList"
+                      ng-options="list.key for list in valueLists">
+                <option value="">Choose a value list...</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-8">
+              <div class="pull-right">
+                <button ng-disabled="!addFieldForm.$valid" class="btn btn-primary">Add new selection field.</button>
+              </div>
+            </div>
+          </div>
         </form>
 
           <!--

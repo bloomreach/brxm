@@ -35,17 +35,27 @@
                 return documentType.name !== 'basedocument';
             };
 
+            $scope.positionMap = {
+                '${cluster.id}.right': 'right',
+                '${cluster.id}.left' : 'left'
+            };
+            $scope.positionName = function(pos) {
+                return $scope.positionMap[pos];
+            };
+            $scope.fieldPosition = '${cluster.id}.right'; // default to adding selection fields in the right column
+            $scope.selectionTypes = [ 'single', 'multiple' ];
+            $scope.selectionType = 'single';
+
             $http.get($rootScope.REST.root + "/plugins/plugins/" + $scope.pluginId).success(function (plugin) {
                 $scope.plugin = plugin;
             });
             $http.get($rootScope.REST.documents).success(function (data){
                 $scope.documentTypes = data;
             });
-            $scope.selectionTypes = [ 'single', 'multiple' ];
             loadValueLists();
 
             function loadValueLists() {
-                $http.get(restEndpoint + "valuelists/").success(function (data) {
+                $http.get($rootScope.REST.documents + "selection:valuelist").success(function (data) {
                     $scope.valueLists = data;
                 });
             }

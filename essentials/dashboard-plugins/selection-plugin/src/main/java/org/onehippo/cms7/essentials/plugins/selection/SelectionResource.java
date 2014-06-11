@@ -16,31 +16,17 @@
 
 package org.onehippo.cms7.essentials.plugins.selection;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.hippoecm.repository.api.HippoNode;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
-import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,36 +43,5 @@ public class SelectionResource extends BaseResource {
         // just to make sure the front-end - back-end connection is working...
         log.error("tickling...");
         return null;
-    }
-
-    /**
-     * Retrieve a list of available value lists.
-     *
-     * @param servletContext servlet context
-     * @return list of value lists (name and node path pairs)
-     */
-    @GET
-    @Path("/valuelists")
-    public List<KeyValueRestful> getTaxonomies(@Context ServletContext servletContext) {
-        final List<KeyValueRestful> valueLists = new ArrayList<>();
-        final PluginContext context = getContext(servletContext);
-        final Session session = context.createSession();
-
-        try {
-            final QueryManager queryManager = session.getWorkspace().getQueryManager();
-            final Query xpath = queryManager.createQuery("//content//element(*, selection:valuelist)", "xpath");
-            final NodeIterator nodes = xpath.execute().getNodes();
-            while (nodes.hasNext()) {
-                final Node node = nodes.nextNode();
-                final String path = node.getPath();
-                valueLists.add(new KeyValueRestful(((HippoNode) node).getLocalizedName(), path));
-            }
-        } catch (RepositoryException e) {
-            log.error("Error fetching value lists", e);
-        } finally {
-            GlobalUtils.cleanupSession(session);
-        }
-
-        return valueLists;
     }
 }
