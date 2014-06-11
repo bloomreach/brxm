@@ -28,8 +28,14 @@
             $scope.baseFolder = null;
             $scope.classificationType = null;
             $scope.classificationTypes = ["date", "list"];
-            $scope.addOk = function () {
+            $scope.shortcutLinkLabel = "New document";
+            $scope.nameLabel = "New document";
+            $scope.dateLabel = "Document date";
+            $scope.listLabel = "";
 
+
+            $scope.anyOf = function () {
+                return true;
             };
             $scope.documentFirstSorting = function (keyValue) {
                 return keyValue.key.indexOf('document') == -1 ? 1 : 0;
@@ -46,6 +52,12 @@
                 Essentials.addPayloadData("shortcutName", $scope.shortcutName, payload);
                 Essentials.addPayloadData("documentQuery", $scope.documentQuery.value, payload);
                 Essentials.addPayloadData("valueListPath", $scope.valueListPath.value, payload);
+                // labels
+                Essentials.addPayloadData("shortcutLinkLabel", $scope.shortcutLinkLabel, payload);
+                Essentials.addPayloadData("nameLabel", $scope.nameLabel, payload);
+                Essentials.addPayloadData("dateLabel", $scope.dateLabel, payload);
+                Essentials.addPayloadData("listLabel", $scope.listLabel, payload);
+
                 $http.post(endpoint, payload).success(function (data) {
 
                 });

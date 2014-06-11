@@ -52,7 +52,6 @@ public class DocumentWizardResource extends BaseResource {
     public static final String ROOT_CONFIG_PATH = "/hippo:configuration/hippo:frontend/cms/cms-dashshortcuts";
 
 
-
     @POST
     @Path("/")
     public MessageRestful addWizard(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
@@ -83,9 +82,19 @@ public class DocumentWizardResource extends BaseResource {
             node.setProperty("query", query);
             node.setProperty("documentType", documentType);
             node.setProperty("classificationType", classificationType);
-            if(classificationType.equals("list")){
+            if (classificationType.equals("list")) {
                 node.setProperty("valueListPath", valueListPath);
             }
+            // add translation node:
+            final Node translationNode = node.addNode("en", "frontend:pluginconfig");
+            translationNode.setProperty("shortcut-link-label", values.get("shortcutLinkLabel"));
+            translationNode.setProperty("name-label", values.get("nameLabel"));
+            if (classificationType.equals("list")) {
+                translationNode.setProperty("list-label", values.get("listLabel"));
+            } else {
+                translationNode.setProperty("date-label", values.get("dateLabel"));
+            }
+
             session.save();
             return new MessageRestful("Successfully created Document Wizard shortcut: " + shortcutName);
         } catch (RepositoryException e) {

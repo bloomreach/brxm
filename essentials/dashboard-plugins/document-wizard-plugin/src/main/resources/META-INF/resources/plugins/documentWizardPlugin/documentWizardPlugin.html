@@ -21,6 +21,26 @@
         <h3>Create document wizard shortcut:</h3>
         <div>
             <form class="form-horizontal" novalidate name="wizardForm">
+
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">Shortcut name:</label>
+                    <div class="col-sm-8">
+                        <input ng-required="true" name="shortcutName" type="text" ng-model="shortcutName"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">Shortcut display name:</label>
+                    <div class="col-sm-8">
+                        <input ng-required="true" name="shortcutLinkLabel" type="text" ng-model="shortcutLinkLabel"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">Document name label:</label>
+                    <div class="col-sm-8">
+                        <input ng-required="true" name="nameLabel" type="text" ng-model="nameLabel"/>
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label class="col-sm-4 control-label">Select target folder:</label>
                     <div class="col-sm-5">
@@ -37,12 +57,6 @@
 
                 </div>
 
-                <div class="form-group">
-                    <label class="col-sm-4 control-label">Shortcut name:</label>
-                    <div class="col-sm-8">
-                        <input ng-required="true" name="shortcutName" type="text" ng-model="shortcutName"/>
-                    </div>
-                </div>
                 <div class="form-group">
                     <label class="col-sm-4 control-label">Document type:</label>
                     <div class="col-sm-8">
@@ -81,6 +95,13 @@
                         </select>
                     </div>
                 </div>
+                <div ng-show="classificationType == 'date'" class="form-group">
+                    <label class="col-sm-4 control-label">Date label:</label>
+                    <div class="col-sm-8">
+                        <input ng-required="classificationType == 'date'" name="dateLabel" type="text" ng-model="dateLabel"/>
+                    </div>
+
+                </div>
                 <div ng-show="classificationType == 'list'" class="form-group">
                     <label class="col-sm-4 control-label">Value list document:</label>
                     <div class="col-sm-8">
@@ -91,6 +112,12 @@
                                 ng-options="option.value for option in valueLists">
                             <option value=""></option>
                         </select>
+                    </div>
+                </div>
+                <div ng-show="classificationType == 'list'" class="form-group">
+                    <label class="col-sm-4 control-label">List label:</label>
+                    <div class="col-sm-8">
+                        <input ng-required="classificationType == 'list'" name="listLabel" type="text" ng-model="listLabel"/>
                     </div>
                 </div>
             </form>
