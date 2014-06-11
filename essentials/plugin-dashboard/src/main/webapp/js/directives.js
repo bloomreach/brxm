@@ -168,7 +168,6 @@
                     $scope.showForm = false;
 
                     $scope.settingsButtonText = $scope.showForm ? "Use these settings" : "Change settings";
-                    //$scope.pluginId = pluginId;
                     $scope.sampleData = true;
                     $scope.templateName = 'jsp';
                     $scope.message = {};
@@ -179,14 +178,11 @@
                     });
                     $scope.run = function () {
                         $http.post($rootScope.REST.package_install, $scope.payload).success(function (data) {
-                            $scope.plugin.addRequested = true;
-                            $scope.hideUI = true;
+                            $rootScope.$broadcast('update-plugin-install-state', { 'pluginId': $scope.pluginId, 'state': 'add requested' });
                         });
                     };
                     $http.get($rootScope.REST.root + "/plugins/plugins/" + $scope.pluginId).success(function (plugin) {
-                        $scope.plugin = plugin;
                         $scope.pluginDescription = $sce.trustAsHtml(plugin.description);
-                        $scope.hideUI = $scope.plugin.addRequested;
                     });
                 }
             }

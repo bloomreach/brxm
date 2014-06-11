@@ -14,25 +14,42 @@
   limitations under the License.
   -->
 
-<div><essentials-simple-install-plugin
+<div ng-controller="selectionPluginCtrl">
+  <div ng-hide="plugin.installState != 'installed'">
+  <essentials-simple-install-plugin
     plugin-id="selectionPlugin"
     plugin-title="Selection Plugin Installation"
     button-text="Add Selection Plugin"
     has-no-templates="true"/>
-</div>
-<div class="panel panel-default">
-  <div class="panel-heading">Selection Plugin Configuration</div>
-  <div class="panel-body">
-    <p>todo</p>
   </div>
-  <div class="panel-footer">
-    <div class="pull-right">
-      <button class="btn btn-primary">Apply Configuration</button>
-    </div>
-    <p class="clearfix">&nbsp;</p>
-  </div>
-</div>
 
+  <div class="panel panel-default" ng-hide="plugin.installState !== 'add requested'">
+    <div class="panel-heading">Please rebuild</div>
+    <div class="panel-body">
+      <p>Adding of this plug-in is pending. Please rebuild your project to make the changes effective.</p>
+      <p>After the rebuild, you will be able to create Value List documents in the CMS. Go ahead and create some,
+      and fill them with values. Then, come back to the dashboard and associate the value lists with document type
+      fields.</p>
+    </div>
+  </div>
+
+    <!--Configuration part-->
+  <div class="panel panel-default" ng-hide="plugin.installState !== 'added'">
+    <div class="panel-heading">Selection Plugin Configuration</div>
+    <div class="panel-body">
+      <h2>Project Value Lists</h2>
+      <ul>
+        <li ng-repeat="valueList in valueLists"><span title="{{valueList.value}}">{{valueList.key}}</span></li>
+      </ul>
+    </div>
+    <div class="panel-footer">
+      <div class="pull-right">
+        <button class="btn btn-primary" ng-click="tickle()">Apply Configuration</button>
+      </div>
+      <p class="clearfix">&nbsp;</p>
+    </div>
+  </div>
+</div>
 
 
 

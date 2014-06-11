@@ -553,6 +553,7 @@ dashboard-plugins/search-plugin/src/main/resources/instructions/xml/hst/search-m
 dashboard-plugins/search-plugin/src/main/resources/instructions/xml/hst/search-page.xml -text
 dashboard-plugins/search-plugin/src/main/resources/instructions/xml/hst/search-sitemap.xml -text
 dashboard-plugins/selection-plugin/pom.xml -text
+dashboard-plugins/selection-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/selection/SelectionResource.java -text
 dashboard-plugins/selection-plugin/src/main/resources/META-INF/resources/plugins/selectionPlugin/selectionPlugin.html -text
 dashboard-plugins/selection-plugin/src/main/resources/META-INF/resources/plugins/selectionPlugin/selectionPlugin.js -text
 dashboard-plugins/selection-plugin/src/main/resources/META-INF/selectionPlugin_instructions.xml -text

@@ -19,14 +19,28 @@
     angular.module('hippo.essentials')
         .controller('selectionPluginCtrl', function ($scope, $filter, $sce, $log, $rootScope, $http) {
             $scope.pluginId = "selectionPlugin";
+            $scope.$on('update-plugin-install-state', function(event, args) {
+                if ($scope.pluginId === args.pluginId && $scope.plugin !== undefined) {
+                    $scope.plugin.installState = args.state;
+                }
+            });
 
-            $scope.install = function () {
-                $http.post($rootScope.REST.package_install, {}).success(function (data) {
+            var restEndpoint = $rootScope.REST.dynamic + 'selectionplugin/';
+            $scope.tickle = function() {
+                $http.post(restEndpoint, {}).success(function (data) {
+                    alert('Hurray!');
                 });
             };
 
             $http.get($rootScope.REST.root + "/plugins/plugins/" + $scope.pluginId).success(function (plugin) {
-                $scope.pluginDescription = $sce.trustAsHtml(plugin.description);
+                $scope.plugin = plugin;
             });
+            loadValueLists();
+
+            function loadValueLists() {
+                $http.get(restEndpoint + "valuelists/").success(function (data) {
+                    $scope.valueLists = data;
+                });
+            }
         })
 })();

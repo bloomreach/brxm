@@ -48,7 +48,7 @@ public class ResourcePluginService extends AbstractPluginService {
     @Override
     public <T extends Document> T read(final String pluginId, final Class<T> clazz) {
         final String cleanedId = (pluginId != null) ? GlobalUtils.validFileName(pluginId) : null;
-        final String path = getFileName(GlobalUtils.newInstance(clazz), cleanedId);
+        final String path = File.separator + getFileName(GlobalUtils.newInstance(clazz), cleanedId);
         final InputStream stream = getClass().getResourceAsStream(path);
         if (stream == null) {
             log.debug("Resource {} not found.", path);

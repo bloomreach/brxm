@@ -75,16 +75,10 @@ public class DummyTestPlugin implements Plugin {
     }
 
     @Override
-    public boolean isAddRequested() { return false; }
+    public String getInstallState() { return "installed"; }
 
     @Override
-    public void setAddRequestedFlag(boolean addRequested) { }
-
-    @Override
-    public boolean isAdded() { return false; }
-
-    @Override
-    public void setAddedFlag(boolean added) { }
+    public void setInstallState(final String installState) { }
 
     @Override
     public boolean isInstalled() {

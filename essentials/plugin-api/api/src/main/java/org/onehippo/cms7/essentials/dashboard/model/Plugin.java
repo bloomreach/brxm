@@ -46,13 +46,9 @@ public interface Plugin extends Serializable {
 
     void setNeedsInstallation(boolean needsInstallation);
 
-    boolean isAddRequested();
+    String getInstallState();
 
-    void setAddRequestedFlag(boolean addRequested);
-
-    boolean isAdded();
-
-    void setAddedFlag(boolean addRequested);
+    void setInstallState(String installState);
 
     boolean isInstalled();
 

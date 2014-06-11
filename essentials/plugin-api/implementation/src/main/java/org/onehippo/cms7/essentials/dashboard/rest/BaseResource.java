@@ -155,30 +155,36 @@ public class BaseResource {
                 }
             }
 
-            populateAddRequestedFlag(plugin, context);
-            populateAddedFlag(plugin, context);
+            populateInstallState(plugin, context);
         }
     }
 
-    protected void populateAddRequestedFlag(final PluginRestful plugin, final PluginContext context) {
+    protected void populateInstallState(final PluginRestful plugin, final PluginContext context) {
+        boolean addRequested = false;
+        boolean added = false;
+
         try (PluginConfigService service = new FilePluginService(context)) {
             final InstallerDocument document = service.read(plugin.getPluginId(), InstallerDocument.class);
-            if (document != null && document.hasDateAdded()) {
-                plugin.setAddRequestedFlag(true);
-            }
+            addRequested = document != null && document.hasDateAdded();
         } catch (Exception e) {
             log.error("Error reading settings for plugin {} from file", plugin.getPluginId(), e);
         }
-    }
 
-    protected void populateAddedFlag(final PluginRestful plugin, final PluginContext context) {
         try (PluginConfigService service = new ResourcePluginService(context)) {
             final InstallerDocument document = service.read(plugin.getPluginId(), InstallerDocument.class);
-            if (document != null && document.hasDateAdded()) {
-                plugin.setAddedFlag(true);
-            }
+            added = document != null && document.hasDateAdded();
         } catch (Exception e) {
             log.error("Error reading settings for plugin {} from resource", plugin.getPluginId(), e);
+        }
+
+        if (addRequested) {
+            if (added) {
+                plugin.setInstallState("added");
+            } else {
+                plugin.setInstallState("add requested");
+            }
+        } else {
+            plugin.setInstallState("installed");
         }
     }
 
