@@ -66,7 +66,7 @@ public class DocumentWizardResource extends BaseResource {
             final String documentType = values.get("documentType");
             final String baseFolder = values.get("baseFolder");
             final String valueListPath = values.get("valueListPath");
-            final String query = values.get("query");
+            final String query = values.get("documentQuery");
 
             if (Strings.isEmpty(shortcutName)) {
                 return new ErrorMessageRestful("Shortcut name was empty/invalid");
@@ -80,6 +80,7 @@ public class DocumentWizardResource extends BaseResource {
             node.setProperty("workaround", "4");
             node.setProperty("plugin.class", "org.onehippo.forge.dashboard.documentwizard.NewDocumentWizardPlugin");
             node.setProperty("baseFolder", baseFolder);
+            node.setProperty("query", query);
             node.setProperty("documentType", documentType);
             node.setProperty("classificationType", classificationType);
             if(classificationType.equals("list")){

@@ -19,9 +19,10 @@
     angular.module('hippo.essentials')
         .controller('documentWizardCtrl', function ($scope, $filter, $sce, $log, $modal, $rootScope, $http) {
             var endpoint = $rootScope.REST.dynamic + 'documentwizard/';
+            var endpointQueries = $rootScope.REST.documents_template_queries;
             $scope.pluginId = "documentWizardPlugin";
             $scope.valueListPath = null;
-            $scope.folderQuery = null;
+            $scope.documentQuery = "new-document";
             $scope.selectedDocument = null;
             $scope.shortcutName = null;
             $scope.baseFolder = null;
@@ -30,6 +31,10 @@
             $scope.addOk = function () {
 
             };
+            $scope.documentFirstSorting = function (keyValue) {
+                return keyValue.key.indexOf('document') == -1 ? 1 : 0;
+            };
+
             $scope.addCancel = function () {
                 $scope.showDialog = false;
                 console.log("cancel");
@@ -39,7 +44,7 @@
                 Essentials.addPayloadData("classificationType", $scope.classificationType, payload);
                 Essentials.addPayloadData("baseFolder", $scope.baseFolder, payload);
                 Essentials.addPayloadData("shortcutName", $scope.shortcutName, payload);
-                Essentials.addPayloadData("folderQuery", $scope.folderQuery, payload);
+                Essentials.addPayloadData("documentQuery", $scope.documentQuery, payload);
                 Essentials.addPayloadData("valueListPath", $scope.valueListPath, payload);
                 $http.post(endpoint, payload).success(function (data) {
 
@@ -56,6 +61,16 @@
             });
             $http.get($rootScope.REST.documents).success(function (data) {
                 $scope.documentTypes = data;
+            });
+
+            $http.get(endpointQueries).success(function (data) {
+                $scope.queries = data;
+            });
+
+            $http.get($rootScope.REST.documents + "selection:valuelist").success(function (data) {
+                $scope.valueLists = data;
+                console.log("[]]]]]]]]]]]]]]");
+                console.log(data);
             });
 
 

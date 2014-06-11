@@ -57,9 +57,15 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-4 control-label">Folder query name</label>
+                    <label class="col-sm-4 control-label">Document query name:</label>
                     <div class="col-sm-8">
-                        <input ng-required="true" name="folderQuery" type="text" ng-model="folderQuery"/>
+                        <select name="documentQuery" chosen
+                                style="width: 200px"
+                                ng-model="documentQuery"
+                                ng-required="false"
+                                ng-options="option.key for option in queries | orderBy:documentFirstSorting">
+                            <option value=""></option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-group">
@@ -77,16 +83,14 @@
                 </div>
                 <div ng-show="classificationType == 'list'" class="form-group">
                     <label class="col-sm-4 control-label">Value list document:</label>
-                    <div class="col-sm-5">
-                        <input type="text" ng-required="classificationType == 'list'" name="valueListPath" ng-model="valueListPath"/>
-                    </div>
-                    <div class="col-sm-3">
-                        <essentials-folder-picker
-                                button-text="Select folder"
-                                title="Select target folder"
-                                selected-path="valueListPath"
-                                selected="selectedFolderItem"
-                                end-point="http://localhost:8080/essentials/rest/jcrbrowser/folders"/>
+                    <div class="col-sm-8">
+                        <select name="valueListPath" chosen
+                                style="width: 400px"
+                                ng-model="valueListPath"
+                                ng-required="classificationType == 'list'"
+                                ng-options="option.value for option in valueLists">
+                            <option value=""></option>
+                        </select>
                     </div>
                 </div>
             </form>
