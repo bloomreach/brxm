@@ -16,10 +16,12 @@
 
 package org.onehippo.cms7.essentials.plugins.selection;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Map;
 
+import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -32,8 +34,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.io.IOUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
@@ -61,12 +63,26 @@ public class SelectionResource extends BaseResource {
     @POST
     @Path("/addfield")
     public MessageRestful addField(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
-        final Map<String, String> values = payloadRestful.getValues();
+        final Session session = getContext(servletContext).createSession();
+
+        try {
+            return addField(session, payloadRestful.getValues());
+        } finally {
+            GlobalUtils.cleanupSession(session);
+        }
+    }
+
+    /**
+     * Add a new selection field to a document type.
+     *
+     * @param session JCR session for persisting the changes
+     * @param values  parameters of new selection field (See selectionPlugin.js for keys).
+     * @return        message to be sent back to front-end.
+     */
+    private MessageRestful addField(final Session session, final Map<String, String> values) {
         final String docTypeBase = MessageFormat.format("/hippo:namespaces/{0}/{1}/",
                 values.get("namespace"), values.get("documentType"));
         final String documentType = values.get("namespace") + ":" + values.get("documentType");
-        final PluginContext context = getContext(servletContext);
-        final Session session = context.createSession();
 
         Node editorTemplate;
         try {
@@ -90,12 +106,9 @@ public class SelectionResource extends BaseResource {
         }
 
         // Check if the field name is valid. If so, normalize it.
-        final String fieldName = values.get("fieldName").trim();
-        if (fieldName.length() == 0) {
-            return new ErrorMessageRestful("Field name must contain non-whitespace characters.");
-        }
-        final String normalized = NodeNameCodec.encode(fieldName);
+        final String normalized = NodeNameCodec.encode(values.get("fieldName").toLowerCase().replaceAll("\\s", ""));
         values.put("normalizedFieldName", normalized);
+        values.put("fieldPosition", values.get("fieldPosition") + ".item"); // stripped by content type service?
 
         // Check if the fieldName is already in use
         try {
@@ -110,19 +123,21 @@ public class SelectionResource extends BaseResource {
         }
 
         if ("single".equals(values.get("selectionType"))) {
-            InputStream stream = getClass().getResourceAsStream("/xml/single-field-editor-template.xml");
-//            String processed = TemplateUtils.replaceTemplateData(GlobalUtils.readStreamAsText(stream), values);
+            try {
+                importXml("/xml/single-field-editor-template.xml", values, editorTemplate);
+                importXml("/xml/single-field-node-type.xml", values, nodeType);
+                session.save();
+            } catch (IOException | RepositoryException e) {
+                log.warn("Error trying to import new field into editor template.", e);
+                try {
+                    session.refresh(false);
+                } catch (RepositoryException e2) {
+                    log.warn("Error trying to reset the JCR session.", e2);
+                }
+                return new ErrorMessageRestful("A problem occurred during the creation of the new selection field. Check logs.");
+            }
         }
         // TODO: multiselect
-
-
-        // provide XML templates, load them ("streamAsText"), replace them using mustache and xmlImport them on the session.
-
-// from XmlInstruction:
-//        InputStream stream = getClass().getClassLoader().getResourceAsStream(source);
-//        final String myData = TemplateUtils.replaceTemplateData(GlobalUtils.readStreamAsText(stream), context.getPlaceholderData());
-//        session.importXML(destination.getPath(), IOUtils.toInputStream(myData), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
-//        session.save();
 
         final String successMessage = MessageFormat.format("Successfully added new selection field {0} to document type {1}.",
                 values.get("fieldName"), documentType);
@@ -149,5 +164,23 @@ public class SelectionResource extends BaseResource {
             }
         }
         return false;
+    }
+
+    /**
+     * Import an XML resource into the repository, after mustache-processing.
+     *
+     * @param resourcePath   path to obtain resource.
+     * @param placeholderMap map with placeholder values
+     * @param destination    target parent JCR node for the import
+     * @throws IOException
+     * @throws RepositoryException
+     */
+    private void importXml(final String resourcePath, final Map<String, String> placeholderMap, final Node destination)
+        throws IOException, RepositoryException
+    {
+        final InputStream stream = getClass().getResourceAsStream(resourcePath);
+        final String processedXml = TemplateUtils.replaceStringPlaceholders(GlobalUtils.readStreamAsText(stream), placeholderMap);
+        destination.getSession().importXML(destination.getPath(), IOUtils.toInputStream(processedXml),
+                ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
     }
 }
