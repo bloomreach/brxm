@@ -86,6 +86,12 @@ public class SelectionResource extends BaseResource {
 
         // provide XML templates, load them ("streamAsText"), replace them using mustache and xmlImport them on the session.
 
+// from XmlInstruction:
+//        InputStream stream = getClass().getClassLoader().getResourceAsStream(source);
+//        final String myData = TemplateUtils.replaceTemplateData(GlobalUtils.readStreamAsText(stream), context.getPlaceholderData());
+//        session.importXML(destination.getPath(), IOUtils.toInputStream(myData), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
+//        session.save();
+
         final String successMessage = MessageFormat.format("Successfully added new selection field {0} to document type {1}.",
                 values.get("fieldName"), documentType);
         return new MessageRestful(successMessage);
