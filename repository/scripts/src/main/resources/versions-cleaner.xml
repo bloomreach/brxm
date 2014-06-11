@@ -29,6 +29,13 @@
   </sv:property>
   <sv:property sv:name="hipposys:script" sv:type="String">
 <sv:value>
+/**&#xd;
+ * VersionsCleaner is a script that visits document nodes and deletes their version history.&#xd;
+ * It can retain retainCount number and daysToKeep days of latest versions.&#xd;
+ * For each node it checks all its versions: if the age of the version is older&#xd;
+ * than the daysToKeep and there are more versions than retainCount then delete the version.&#xd;
+ */&#xd;
+&#xd;
 package org.hippoecm.frontend.plugins.cms.dev.updater&#xd;
 &#xd;
 import org.onehippo.repository.update.BaseNodeUpdateVisitor&#xd;
@@ -50,6 +57,7 @@ class VersionsCleaner extends BaseNodeUpdateVisitor {&#xd;
 &#xd;
   /** The number of versions to retain. Must be at least 1. */&#xd;
   int retainCount = 2;&#xd;
+  /** The number of days to keep versions. Must be at least 1 to keep history or 0 in which case only retainCount is used. */&#xd;
   int daysToKeep = 30;&#xd;
   &#xd;
   boolean doUpdate(Node node) {&#xd;
