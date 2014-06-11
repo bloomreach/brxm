@@ -48,6 +48,7 @@ public class PluginRestful implements Plugin, Restful {
     private String type;
     private boolean installed;
     private boolean needsInstallation;
+    private boolean addRequestedFlag;
     private boolean enabled;
     private Calendar dateInstalled;
     private String documentationLink;
@@ -104,6 +105,16 @@ public class PluginRestful implements Plugin, Restful {
     @Override
     public void setNeedsInstallation(final boolean needsInstallation) {
         this.needsInstallation = needsInstallation;
+    }
+
+    @Override
+    public boolean isAddRequested() {
+        return addRequestedFlag;
+    }
+
+    @Override
+    public void setAddRequestedFlag(boolean addRequested) {
+        addRequestedFlag = addRequested;
     }
 
     @Override

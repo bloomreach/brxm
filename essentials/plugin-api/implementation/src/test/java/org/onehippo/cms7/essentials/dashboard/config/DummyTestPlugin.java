@@ -75,6 +75,12 @@ public class DummyTestPlugin implements Plugin {
     }
 
     @Override
+    public boolean isAddRequested() { return false; }
+
+    @Override
+    public void setAddRequestedFlag(boolean addRequested) { }
+
+    @Override
     public boolean isInstalled() {
         return false;
     }

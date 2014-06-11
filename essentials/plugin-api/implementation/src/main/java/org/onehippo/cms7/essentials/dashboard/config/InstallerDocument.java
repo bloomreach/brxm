@@ -32,8 +32,11 @@ public class InstallerDocument extends BaseDocument {
 
     private String pluginId;
 
+    // date when the plugin got installed in the dashboard
     private Calendar dateInstalled;
 
+    // date when the plugin got added to the project
+    private Calendar dateAdded;
 
     public String getPluginId() {
         return pluginId;
@@ -50,6 +53,16 @@ public class InstallerDocument extends BaseDocument {
     public void setDateInstalled(final Calendar dateInstalled) {
         this.dateInstalled = dateInstalled;
     }
+
+    public Calendar getDateAdded() {
+        return dateAdded;
+    }
+
+    public void setDateAdded(final Calendar dateAdded) {
+        this.dateAdded = dateAdded;
+    }
+
+    public boolean hasDateAdded() { return dateAdded != null; }
 
     @Override
     public String toString() {

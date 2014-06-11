@@ -165,6 +165,8 @@
                 },
                 templateUrl: 'directives/essentials-simple-install-plugin.html',
                 controller: function ($scope, $sce, $log, $rootScope, $http) {
+                    $scope.descriptor = getPluginDescriptor($scope.pluginId);
+                    $scope.hideUI = ($scope.descriptor !== undefined) ? $scope.descriptor.addRequested : false;
                     $scope.showForm = false;
 
                     $scope.settingsButtonText = $scope.showForm ? "Use these settings" : "Change settings";
@@ -179,13 +181,27 @@
                     });
                     $scope.run = function () {
                         $http.post($rootScope.REST.package_install, $scope.payload).success(function (data) {
+                            if ($scope.descriptor !== undefined) {
+                                $scope.descriptor.addRequested = true;
+                            }
+                            $scope.hideUI = true;
                         });
                     };
                     $http.get($rootScope.REST.root + "/plugins/plugins/" + $scope.pluginId).success(function (plugin) {
+                        // TODO: remember the entire plugin descriptor, and get rid of the other fuss...
                         $scope.pluginDescription = $sce.trustAsHtml(plugin.description);
                     });
-                }
 
+                    function getPluginDescriptor(pluginId) {
+                        var retVal;
+                        angular.forEach($rootScope.pluginsCache, function (plugin) {
+                            if (plugin.pluginId === pluginId) {
+                                retVal = plugin;
+                            }
+                        });
+                        return retVal;
+                    }
+                }
             }
         })
 

@@ -241,6 +241,15 @@ public class PluginResource extends BaseResource {
         }
         instructionPackage.setProperties(properties);
         instructionPackage.execute(context);
+
+        // update the plugin's installer document
+        // TODO: what if there is no such file yet?
+        try (PluginConfigService service = new FilePluginService(context)) {
+            final InstallerDocument document = service.read(pluginId, InstallerDocument.class);
+            document.setDateAdded(Calendar.getInstance());
+            service.write(document);
+        }
+
         return new MessageRestful("Please rebuild and restart your application:", DisplayEvent.DisplayType.STRONG);
     }
 

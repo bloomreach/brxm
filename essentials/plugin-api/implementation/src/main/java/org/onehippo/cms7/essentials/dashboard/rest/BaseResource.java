@@ -26,6 +26,8 @@ import javax.inject.Inject;
 import javax.servlet.ServletContext;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.onehippo.cms7.essentials.dashboard.config.FilePluginService;
+import org.onehippo.cms7.essentials.dashboard.config.InstallerDocument;
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
@@ -124,7 +126,7 @@ public class BaseResource {
             @SuppressWarnings("unchecked")
             final RestfulList<PluginRestful> restfulList = mapper.readValue(json, RestfulList.class);
 
-            postProcessPlugins(restfulList);
+            postProcessPlugins(restfulList, servletContext);
 
             return restfulList.getItems();
         } catch (IOException e) {
@@ -138,10 +140,12 @@ public class BaseResource {
      *
      * @param plugins list of plugins.
      */
-    protected void postProcessPlugins(final RestfulList<PluginRestful> plugins) {
+    protected void postProcessPlugins(final RestfulList<PluginRestful> plugins, final ServletContext servletContext) {
+        final PluginContext context = getContext(servletContext);
 
-        // Populate the "needsInstallation" flag based on other plugin descriptor fields.
         for (PluginRestful plugin : plugins.getItems()) {
+
+            // Populate the "needsInstallation" flag based on other plugin descriptor fields.
             if ("plugins".equals(plugin.getType())) {
                 final List<EssentialsDependency> deps = plugin.getDependencies();
                 boolean needsInstallation = false;
@@ -153,6 +157,19 @@ public class BaseResource {
                     }
                 }
             }
+
+            populateAddRequestedFlag(plugin, context);
+        }
+    }
+
+    protected void populateAddRequestedFlag(final PluginRestful plugin, final PluginContext context) {
+        try (PluginConfigService service = new FilePluginService(context)) {
+            final InstallerDocument document = service.read(plugin.getPluginId(), InstallerDocument.class);
+            if (document != null && document.hasDateAdded()) {
+                plugin.setAddRequestedFlag(true);
+            }
+        } catch (Exception e) {
+            log.error("Error reading settings for plugin {}", plugin.getPluginId(), e);
         }
     }
 
