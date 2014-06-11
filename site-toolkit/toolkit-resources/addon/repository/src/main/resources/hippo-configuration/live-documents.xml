@@ -67,26 +67,6 @@
         <sv:value>live</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="state-not-draft">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:facetrule</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:equals" sv:type="Boolean">
-        <sv:value>false</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:facet" sv:type="String">
-        <sv:value>hippostd:state</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:filter" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:type" sv:type="String">
-        <sv:value>String</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:value" sv:type="String">
-        <sv:value>draft</sv:value>
-      </sv:property>
-    </sv:node>
   </sv:node>
   <sv:node sv:name="readonly">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">

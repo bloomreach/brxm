@@ -1194,6 +1194,7 @@ toolkit-resources/addon/repository/src/main/resources/hippo-configuration/domain
 toolkit-resources/addon/repository/src/main/resources/hippo-configuration/group-webmaster.xml -text
 toolkit-resources/addon/repository/src/main/resources/hippo-configuration/hstconfig-domain.xml -text svneol=unset#text/plain
 toolkit-resources/addon/repository/src/main/resources/hippo-configuration/readonly-folders.xml -text
+toolkit-resources/addon/repository/src/main/resources/hippo-configuration/state-not-draft.xml svneol=native#text/plain
 toolkit-resources/addon/repository/src/main/resources/hippo-configuration/subsite-template.xml -text
 toolkit-resources/addon/repository/src/main/resources/hippo-configuration/subsite-workflows.xml -text
 toolkit-resources/addon/repository/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
