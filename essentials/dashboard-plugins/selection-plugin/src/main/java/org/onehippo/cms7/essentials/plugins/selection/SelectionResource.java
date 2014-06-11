@@ -16,6 +16,12 @@
 
 package org.onehippo.cms7.essentials.plugins.selection;
 
+import java.text.MessageFormat;
+import java.util.Map;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -24,7 +30,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
+import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.slf4j.Logger;
@@ -43,5 +51,43 @@ public class SelectionResource extends BaseResource {
         // just to make sure the front-end - back-end connection is working...
         log.error("tickling...");
         return null;
+    }
+
+    @POST
+    @Path("/addfield")
+    public MessageRestful addField(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
+        final Map<String, String> values = payloadRestful.getValues();
+        final String docTypeBase = MessageFormat.format("/hippo:namespaces/{0}/{1}/",
+                values.get("namespace"), values.get("documentType"));
+        final String documentType = values.get("namespace") + ":" + values.get("documentType");
+        final PluginContext context = getContext(servletContext);
+        final Session session = context.createSession();
+
+        Node editorTemplate;
+        try {
+            editorTemplate = session.getNode(docTypeBase + "editor:templates/_default_");
+        } catch (RepositoryException e) {
+            log.warn("Error trying to retrieve editor template node.", e);
+            return new ErrorMessageRestful("Failed to update document type '" + documentType + "'. Check logs.");
+        }
+
+        Node nodeType;
+        try {
+            final Node nodeTypeHandle = session.getNode(docTypeBase + "hipposysedit:nodetype");
+            if (nodeTypeHandle.getNodes().getSize() > 1) {
+                return new ErrorMessageRestful("Document type '" + documentType + "' is currently being edited in the CMS, "
+                        + "please commit any pending changes before adding a selection field.");
+            }
+            nodeType = nodeTypeHandle.getNode("hipposysedit:nodetype");
+        } catch (RepositoryException e) {
+            log.warn("Error trying to retrieve nodetype node.", e);
+            return new ErrorMessageRestful("Failed to update document type '" + documentType + "'. Check logs.");
+        }
+
+        // provide XML templates, load them ("streamAsText"), replace them using mustache and xmlImport them on the session.
+
+        final String successMessage = MessageFormat.format("Successfully added new selection field {0} to document type {1}.",
+                values.get("fieldName"), documentType);
+        return new MessageRestful(successMessage);
     }
 }

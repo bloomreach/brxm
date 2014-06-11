@@ -31,6 +31,25 @@
                     alert('Hurray!');
                 });
             };
+            $scope.addField = function() {
+                var position = $scope.fieldPosition;
+                if ($scope.selectedDocumentType.fieldLocations.length < 2) {
+                    position = $scope.selectedDocumentType.fieldLocations[0];
+                }
+                var payload = {
+                    values: {
+                        namespace: $scope.selectedDocumentType.prefix,
+                        documentType: $scope.selectedDocumentType.name,
+                        fieldName: $scope.fieldName,
+                        fieldPosition: position,
+                        selectionType: $scope.selectionType,
+                        valueList: $scope.selectedValueList.value
+                    }
+                };
+                $http.post(restEndpoint + 'addfield/', payload).success(function (data) {
+                    resetAddFieldForm();
+                });
+            };
             $scope.showDocument = function(documentType) {
                 return documentType.name !== 'basedocument';
             };
@@ -42,9 +61,8 @@
             $scope.positionName = function(pos) {
                 return $scope.positionMap[pos];
             };
-            $scope.fieldPosition = '${cluster.id}.right'; // default to adding selection fields in the right column
             $scope.selectionTypes = [ 'single', 'multiple' ];
-            $scope.selectionType = 'single';
+            resetAddFieldForm();
 
             $http.get($rootScope.REST.root + "/plugins/plugins/" + $scope.pluginId).success(function (plugin) {
                 $scope.plugin = plugin;
@@ -58,6 +76,13 @@
                 $http.get($rootScope.REST.documents + "selection:valuelist").success(function (data) {
                     $scope.valueLists = data;
                 });
+            }
+            function resetAddFieldForm() {
+                $scope.selectedDocumentType = undefined;
+                $scope.fieldName = '';
+                $scope.fieldPosition = '${cluster.id}.right'; // default to adding selection fields in the right column
+                $scope.selectionType = 'single';
+                $scope.selectedValueList = undefined;
             }
         })
 })();
