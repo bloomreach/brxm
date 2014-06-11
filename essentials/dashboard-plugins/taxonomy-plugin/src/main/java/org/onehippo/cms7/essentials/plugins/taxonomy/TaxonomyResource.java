@@ -156,7 +156,7 @@ public class TaxonomyResource extends BaseResource {
                     final Node fieldNode = node.addNode("classifiable", "frontend:plugin");
                     fieldNode.setProperty("mixin", HIPPOTAXONOMY_MIXIN);
                     fieldNode.setProperty("plugin.class", "org.hippoecm.frontend.editor.plugins.mixin.MixinLoaderPlugin");
-                    fieldNode.setProperty("wicket.id", MessageFormat.format("{0}.item", location));
+                    fieldNode.setProperty("wicket.id", DocumentTemplateUtils.fieldPositionForLocation(location));
                     final Node clusterNode = fieldNode.addNode("cluster.options", "frontend:pluginconfig");
                     clusterNode.setProperty("taxonomy.name", taxonomyName);
                     changedDocuments.add(documentName);
@@ -166,9 +166,9 @@ public class TaxonomyResource extends BaseResource {
                 session.save();
             }
             if (changedDocuments.size() > 0) {
-                return new MessageRestful("Added fields to following documents: " + Joiner.on(",").join(changedDocuments));
+                return new MessageRestful("Added field(s) to following documents: " + Joiner.on(",").join(changedDocuments));
             }
-            return new MessageRestful("No taxonomy fields were added, fields already exist");
+            return new MessageRestful("No taxonomy fields were added, field(s) already exist");
         } catch (RepositoryException e) {
             log.error("Error adding taxonomy to a document", e);
         } finally {

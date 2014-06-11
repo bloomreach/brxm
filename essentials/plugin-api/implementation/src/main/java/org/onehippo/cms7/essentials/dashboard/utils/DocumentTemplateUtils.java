@@ -27,6 +27,7 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.nodetype.NodeType;
 
+import org.apache.wicket.util.string.Strings;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,7 @@ import org.slf4j.LoggerFactory;
 public final class DocumentTemplateUtils {
 
     private static final Pattern NAMESPACE_PATTERN = Pattern.compile(":");
+    public static final String DEFAULT_FIELD_LOCATION = "${cluster.id}.field";
     private static Logger log = LoggerFactory.getLogger(DocumentTemplateUtils.class);
 
     public static final String HIPPOSYSEDIT_SUPERTYPE = "hipposysedit:supertype";
@@ -62,7 +64,6 @@ public final class DocumentTemplateUtils {
             final String[] newValues = newValueSet.toArray(new String[newValueSet.size()]);
             property.setValue(newValues);
             // add mixin:
-            ///hippo:namespaces/appstore/huh/hipposysedit:prototypes/hipposysedit:prototype
             final String sysEditPath = "/hippo:namespaces/" + namespace + '/' + document + "/hipposysedit:prototypes/hipposysedit:prototype";
             final Node node = session.getNode(sysEditPath);
             final NodeType[] mixinNodeTypes = node.getMixinNodeTypes();
@@ -86,6 +87,13 @@ public final class DocumentTemplateUtils {
     }
 
 
+    public static String fieldPositionForLocation(final String location) {
+        if (Strings.isEmpty(location) || location.equals(DEFAULT_FIELD_LOCATION)) {
+            return DEFAULT_FIELD_LOCATION;
+        }
+        // location id left or right (etc) + .item extension:
+        return location + ".item";
+    }
     //############################################
     // UTILS
     //############################################
