@@ -160,9 +160,11 @@ public class SelectionResource extends BaseResource {
                         final SelectionFieldRestful field = new SelectionFieldRestful();
                         field.setNameSpace(nameSpace);
                         field.setDocumentName(documentName);
-                        field.setFieldName(editorField.getProperty("caption").getString());
-                        field.setFieldPosition(editorField.getProperty("wicket.id").getString());
-                        field.setSelectionType("single");
+                        field.setName(editorField.getProperty("caption").getString());
+                        if (editorTemplate.getNode("root").hasProperty("wicket.extensions")) {
+                            field.setPosition(editorField.getProperty("wicket.id").getString());
+                        }
+                        field.setType("single");
                         field.setValueList(editorField.getNode("cluster.options").getProperty("source").getString());
                         fields.add(field);
                         break; // out of the inner loop
@@ -192,9 +194,9 @@ public class SelectionResource extends BaseResource {
                 final SelectionFieldRestful field = new SelectionFieldRestful();
                 field.setNameSpace(nameSpace);
                 field.setDocumentName(documentName);
-                field.setFieldName(editorField.getProperty("caption").getString());
-                field.setFieldPosition(editorField.getProperty("wicket.id").getString());
-                field.setSelectionType("multiple");
+                field.setName(editorField.getProperty("caption").getString());
+                field.setPosition(editorField.getProperty("wicket.id").getString());
+                field.setType("multiple");
                 field.setValueList(editorField.getNode("valuelist.options").getProperty("source").getString());
                 fields.add(field);
             }

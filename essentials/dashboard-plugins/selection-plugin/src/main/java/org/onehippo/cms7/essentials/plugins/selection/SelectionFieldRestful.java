@@ -29,9 +29,9 @@ public class SelectionFieldRestful implements Restful{
     private static final long serialVersionUID = 1L;
     private String nameSpace;
     private String documentName;
-    private String fieldName;
-    private String fieldPosition;
-    private String selectionType;
+    private String name;
+    private String position;
+    private String type;
     private String valueList;
 
     public String getNameSpace() {
@@ -50,28 +50,28 @@ public class SelectionFieldRestful implements Restful{
         this.documentName = documentName;
     }
 
-    public String getFieldName() {
-        return fieldName;
+    public String getName() {
+        return name;
     }
 
-    public void setFieldName(final String fieldName) {
-        this.fieldName = fieldName;
+    public void setName(final String name) {
+        this.name = name;
     }
 
-    public String getFieldPosition() {
-        return fieldPosition;
+    public String getPosition() {
+        return position;
     }
 
-    public void setFieldPosition(final String fieldPosition) {
-        this.fieldPosition = fieldPosition;
+    public void setPosition(final String position) {
+        this.position = position;
     }
 
-    public String getSelectionType() {
-        return selectionType;
+    public String getType() {
+        return type;
     }
 
-    public void setSelectionType(final String selectionType) {
-        this.selectionType = selectionType;
+    public void setType(final String type) {
+        this.type = type;
     }
 
     public String getValueList() {
@@ -87,7 +87,7 @@ public class SelectionFieldRestful implements Restful{
         final StringBuilder sb = new StringBuilder("SelectionFieldRestful{");
         sb.append("nameSpace='").append(nameSpace).append('\'');
         sb.append(", documentName='").append(documentName).append('\'');
-        sb.append(", fieldName='").append(fieldName).append('\'');
+        sb.append(", name='").append(name).append('\'');
         sb.append('}');
         return sb.toString();
     }

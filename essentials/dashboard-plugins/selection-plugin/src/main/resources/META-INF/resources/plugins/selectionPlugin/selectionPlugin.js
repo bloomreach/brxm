@@ -48,6 +48,7 @@
                 };
                 $http.post(restEndpoint + 'addfield/', payload).success(function (data) {
                     resetAddFieldForm();
+                    reloadSelectionFields($scope.selectedDocumentType);
                 });
             };
             $scope.showDocument = function(documentType) {
@@ -59,9 +60,23 @@
                 '${cluster.id}.left' : 'left'
             };
             $scope.positionName = function(pos) {
+                // content type service doesn't provide ".item" suffix, while namespace JCR access does...
+                var suffix = '.item';
+                if (pos.slice(-suffix.length) === suffix) {
+                    pos = pos.substr(0, pos.length - suffix.length);
+                }
                 return $scope.positionMap[pos];
             };
             $scope.selectionTypes = [ 'single', 'multiple' ];
+            $scope.valueListNameByPath = function(path) {
+                var name;
+                angular.forEach($scope.valueLists, function(entry, index) {
+                    if (entry.value === path) {
+                        name = entry.key;
+                    }
+                });
+                return name;
+            }
             resetAddFieldForm();
 
             $http.get($rootScope.REST.root + "/plugins/plugins/" + $scope.pluginId).success(function (plugin) {
@@ -72,17 +87,29 @@
             });
             loadValueLists();
 
+            // when changing the document type, retrieve a fresh list of
+            $scope.$watch('selectedDocumentType', function (newValue) {
+                if (newValue) {
+                    reloadSelectionFields(newValue);
+                }
+            }, true);
+
             function loadValueLists() {
                 $http.get($rootScope.REST.documents + "selection:valuelist").success(function (data) {
                     $scope.valueLists = data;
                 });
             }
             function resetAddFieldForm() {
-                $scope.selectedDocumentType = undefined;
                 $scope.fieldName = '';
                 $scope.fieldPosition = '${cluster.id}.right'; // default to adding selection fields in the right column
                 $scope.selectionType = 'single';
                 $scope.selectedValueList = undefined;
+            }
+            function reloadSelectionFields(documentType) {
+                $scope.selectionFields = [];
+                $http.get(restEndpoint + 'fieldsfor/' + documentType.fullName).success(function (data) {
+                    $scope.selectionFields = data;
+                });
             }
         })
 })();

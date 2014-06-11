@@ -44,13 +44,32 @@
           <div class="form-group">
             <label class="col-sm-4 control-label">Document type:</label>
             <div ng-class="addFieldForm.selectedDocumentType.$invalid ? 'col-sm-8 bg-danger' : 'col-sm-8'">
-              <select name="selectedDocumentType" required
-                      style="width: 200px"
-                      ng-model="selectedDocumentType"
-                      ng-selected="selectedDocumentType"
-                      ng-options="type.name for type in documentTypes | filter:showDocument">
-                <option value="">Choose a document type...</option>
-              </select>
+                <select name="selectedDocumentType" required
+                        style="width: 200px"
+                        ng-model="selectedDocumentType"
+                        ng-selected="selectedDocumentType"
+                        ng-options="type.name for type in documentTypes | filter:showDocument">
+                  <option value="">Choose a document type...</option>
+                </select>
+              </div>
+          </div>
+          <div class="form-group" ng-show="selectionFields.length > 0">
+            <label class="col-sm-4 control-label">Existing selection fields:</label>
+            <div class="col-sm-8">
+              <table class="table table-hover">
+                <tr>
+                  <th>Field name</th>
+                  <th ng-show="selectedDocumentType.fieldLocations.length > 1">Position</th>
+                  <th>Type</th>
+                  <th>Value list</th>
+                </tr>
+                <tr ng-repeat="field in selectionFields">
+                  <td>{{field.name}}</td>
+                  <td ng-show="selectedDocumentType.fieldLocations.length > 1">{{positionName(field.position)}}</td>
+                  <td>{{field.type}}</td>
+                  <td>{{valueListNameByPath(field.valueList)}}</td>
+                </tr>
+              </table>
             </div>
           </div>
           <div class="form-group">
