@@ -659,10 +659,12 @@ plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/packaging/Me
 plugin-api/api/src/main/resources/instructions.xsd -text
 plugin-api/api/src/test/resources/log4j.xml -text
 plugin-api/implementation/pom.xml -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/AbstractPluginService.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/BaseDocument.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/FilePluginService.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/InstallerDocument.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/ProjectSettingsBean.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/ResourcePluginService.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/DefaultPluginContext.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/BaseEvent.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/DisplayEvent.java -text

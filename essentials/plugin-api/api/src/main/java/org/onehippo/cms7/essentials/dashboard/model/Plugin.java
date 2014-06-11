@@ -50,6 +50,10 @@ public interface Plugin extends Serializable {
 
     void setAddRequestedFlag(boolean addRequested);
 
+    boolean isAdded();
+
+    void setAddedFlag(boolean addRequested);
+
     boolean isInstalled();
 
     void setInstalled(boolean installed);

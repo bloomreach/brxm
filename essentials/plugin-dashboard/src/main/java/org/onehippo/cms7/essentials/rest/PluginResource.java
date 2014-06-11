@@ -243,9 +243,12 @@ public class PluginResource extends BaseResource {
         instructionPackage.execute(context);
 
         // update the plugin's installer document
-        // TODO: what if there is no such file yet?
         try (PluginConfigService service = new FilePluginService(context)) {
-            final InstallerDocument document = service.read(pluginId, InstallerDocument.class);
+            InstallerDocument document = service.read(pluginId, InstallerDocument.class);
+            if (document == null) {
+                // pre-installed plugins do not yet have an installer document.
+                document = createPluginInstallerDocument(pluginId);
+            }
             document.setDateAdded(Calendar.getInstance());
             service.write(document);
         }
@@ -407,10 +410,7 @@ public class PluginResource extends BaseResource {
                 if (notInstalled.size() == 0) {
                     final PluginContext context = getContext(servletContext);
                     try (PluginConfigService service = new FilePluginService(context)) {
-                        final InstallerDocument document = new InstallerDocument();
-                        document.setName(id);
-                        document.setDateInstalled(Calendar.getInstance());
-                        service.write(document);
+                        service.write(createPluginInstallerDocument(id));
                     }
                     message.setValue("Plugin successfully installed. Please rebuild and restart your application");
                     return message;
@@ -432,6 +432,15 @@ public class PluginResource extends BaseResource {
         message.setSuccessMessage(false);
         message.setValue("Plugin was not found and could not be installed");
         return message;
+    }
+
+    private InstallerDocument createPluginInstallerDocument(final String pluginId) {
+        final InstallerDocument document = new InstallerDocument();
+
+        document.setName(pluginId);
+        document.setDateInstalled(Calendar.getInstance());
+
+        return document;
     }
 
     @ApiOperation(

@@ -20,13 +20,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.StringReader;
-import java.io.Writer;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.io.FileUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
@@ -39,47 +32,32 @@ import com.google.common.base.Strings;
 /**
  * @version "$Id$"
  */
-public class FilePluginService implements PluginConfigService {
-
+public class FilePluginService extends AbstractPluginService {
 
     private static Logger log = LoggerFactory.getLogger(FilePluginService.class);
-    public static final String SETTINGS_EXTENSION = ".xml";
-
-
-    private final PluginContext context;
 
     public FilePluginService(final PluginContext context) {
-        this.context = context;
+        super(context);
     }
-
 
     @Override
     public boolean write(final Document document) {
+        final String path = getFilePath(document, null);
+        log.info("Writing settings to '{}'.", path);
+        final File file = new File(path);
         try {
-            final JAXBContext jaxbContext = JAXBContext.newInstance(document.getClass());
-            final Marshaller marshaller = jaxbContext.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            final String path = getFilePath(document, null);
-            log.info("Writing settings of: {}", path);
-            final File file = new File(path);
             //  make sure parent directory exists:
             final File parentFile = file.getParentFile();
             if (!parentFile.exists()) {
                 FileUtils.forceMkdir(parentFile);
             }
-            final Writer writer = new FileWriter(file);
-            marshaller.marshal(document, writer);
-            return true;
-        } catch (JAXBException e) {
-            log.error("Error writing settings", e);
+
+            return marshalWriter(new FileWriter(file), document);
         } catch (IOException e) {
-            log.error("Error writing file", e);
+            log.error("Error writing to file '{}'.", path, e);
         }
-
-
         return false;
     }
-
 
     @Override
     public boolean write(final Document document, final String pluginId) {
@@ -90,83 +68,25 @@ public class FilePluginService implements PluginConfigService {
         return write(document);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T extends Document> T read(final String pluginId, final Class<T> clazz) {
-        try {
-            final JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
-            final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            final String cleanedId = GlobalUtils.validFileName(pluginId);
-            final String path = getFilePath(GlobalUtils.newInstance(clazz), cleanedId);
-            if(!new File(path).exists()){
-                log.debug("Path not found, for configuration: {}", path);
-                return null;
-            }
-            log.debug("Reading settings of: {}", path);
-            final String setting = GlobalUtils.readStreamAsText(new FileInputStream(path));
-            log.debug("setting {}", setting);
-            return (T) unmarshaller.unmarshal(new StringReader(setting));
-        } catch (JAXBException e) {
-            log.error("Error reading settings", e);
-        } catch (IOException e) {
-            log.error("Error reading file", e);
+        final String cleanedId = (pluginId != null) ? GlobalUtils.validFileName(pluginId) : null;
+        final String path = getFilePath(GlobalUtils.newInstance(clazz), cleanedId);
+        if(!new File(path).exists()){
+            log.debug("File '{}' not found.", path);
+            return null;
         }
-
-        return null;
-
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T extends Document> T read(final Class<T> clazz) {
+        log.debug("Reading settings from '{}'.", path);
         try {
-            final JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
-            final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            final String path = getFilePath(GlobalUtils.newInstance(clazz), null);
-            log.debug("Reading settings of: {}", path);
-            final String setting = GlobalUtils.readStreamAsText(new FileInputStream(path));
-            log.debug("setting {}", setting);
-            return (T) unmarshaller.unmarshal(new StringReader(setting));
-        } catch (JAXBException e) {
-            log.error("Error reading settings", e);
+            return unmarshalStream(new FileInputStream(path), clazz);
         } catch (IOException e) {
-            log.error("Error reading file", e);
+            log.error("Error reading file '{}'.", path, e);
         }
-
         return null;
-
-
     }
 
     @Override
-    public void close() throws Exception {
-        // do nothing
+    public <T extends Document> T read(final Class<T> clazz) {
+        return read(null, clazz);
     }
-
-    //############################################
-    // UTILS
-    //############################################
-
-    private String getFilePath(final Document document, String pluginName) {
-        String fileName = pluginName;
-        if (Strings.isNullOrEmpty(fileName)) {
-            if (Strings.isNullOrEmpty(document.getName())) {
-                fileName = fileNameForClass(document);
-            } else {
-                fileName = GlobalUtils.validFileName(document.getName()) + SETTINGS_EXTENSION;
-            }
-        }
-        if(!fileName.endsWith(SETTINGS_EXTENSION)){
-            fileName = fileName + SETTINGS_EXTENSION;
-        }
-        return context.getEssentialsResourcePath() + File.separator + fileName;
-    }
-
-
-    private String fileNameForClass(final Document document) {
-        final String name = document.getClass().getName();
-        return GlobalUtils.validFileName(name) + SETTINGS_EXTENSION;
-    }
-
-
 }

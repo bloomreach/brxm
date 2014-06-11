@@ -26,10 +26,7 @@ import javax.inject.Inject;
 import javax.servlet.ServletContext;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.onehippo.cms7.essentials.dashboard.config.FilePluginService;
-import org.onehippo.cms7.essentials.dashboard.config.InstallerDocument;
-import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
-import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
+import org.onehippo.cms7.essentials.dashboard.config.*;
 import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
@@ -159,6 +156,7 @@ public class BaseResource {
             }
 
             populateAddRequestedFlag(plugin, context);
+            populateAddedFlag(plugin, context);
         }
     }
 
@@ -169,7 +167,18 @@ public class BaseResource {
                 plugin.setAddRequestedFlag(true);
             }
         } catch (Exception e) {
-            log.error("Error reading settings for plugin {}", plugin.getPluginId(), e);
+            log.error("Error reading settings for plugin {} from file", plugin.getPluginId(), e);
+        }
+    }
+
+    protected void populateAddedFlag(final PluginRestful plugin, final PluginContext context) {
+        try (PluginConfigService service = new ResourcePluginService(context)) {
+            final InstallerDocument document = service.read(plugin.getPluginId(), InstallerDocument.class);
+            if (document != null && document.hasDateAdded()) {
+                plugin.setAddedFlag(true);
+            }
+        } catch (Exception e) {
+            log.error("Error reading settings for plugin {} from resource", plugin.getPluginId(), e);
         }
     }
 
