@@ -33,6 +33,7 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -73,6 +74,7 @@ import com.wordnik.swagger.annotations.ApiParam;
 public class DocumentResource extends BaseResource {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentResource.class);
+    private static final String QUERY_STATEMENT_QUERIES = "hippo:configuration/hippo:queries/hippo:templates//element(*, hippostd:templatequery)";
 
     @ApiOperation(
             value = "Fetches all project document types (including compounds)",
@@ -101,6 +103,7 @@ public class DocumentResource extends BaseResource {
         return fetchDocuments(servletContext, Type.COMPOUND);
     }
 
+
     @ApiOperation(
             value = "Returns all documents of the specified type",
             notes = "Specify the document type as {namespace}:{typename}.",
@@ -115,7 +118,7 @@ public class DocumentResource extends BaseResource {
 
         try {
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
-            final Query xpath = queryManager.createQuery("//content/documents//element(*, " + docType + ")", "xpath");
+            final Query xpath = queryManager.createQuery("//content/documents//element(*, " + docType + ')', "xpath");
             final NodeIterator nodes = xpath.execute().getNodes();
             while (nodes.hasNext()) {
                 final Node node = nodes.nextNode();
@@ -130,6 +133,39 @@ public class DocumentResource extends BaseResource {
 
         return valueLists;
     }
+
+    @ApiOperation(
+            value = "Returns all document / folder query types",
+            notes = "No pairing is done (e.g.: news-folder + news-document combinations. This is left to users themselves)",
+            response = KeyValueRestful.class)
+    @ApiParam(name = "docType", value = "Document type", required = true)
+    @GET
+    @Path("/templatequeries")
+    public List<KeyValueRestful> getQueryCombinations(@Context ServletContext servletContext) {
+        final List<KeyValueRestful> templateList = new ArrayList<>();
+        final PluginContext context = getContext(servletContext);
+        final Session session = context.createSession();
+        try {
+            final QueryManager queryManager = session.getWorkspace().getQueryManager();
+            final Query query = queryManager.createQuery(QUERY_STATEMENT_QUERIES, "xpath");
+            final QueryResult result = query.execute();
+            final NodeIterator nodes = result.getNodes();
+            while(nodes.hasNext()){
+                final Node node = nodes.nextNode();
+                final String name = node.getName();
+                templateList.add(new KeyValueRestful(name, name));
+            }
+
+
+        } catch (RepositoryException e) {
+            log.debug("Error fetching value lists", e);
+        } finally {
+            GlobalUtils.cleanupSession(session);
+        }
+
+        return templateList;
+    }
+
 
     //*************************************************************************************
     // UTILS
@@ -163,19 +199,19 @@ public class DocumentResource extends BaseResource {
             }
             for (DocumentRestful document : documents) {
                 final String path = MessageFormat.format("/hippo:namespaces/{0}/{1}/editor:templates/_default_/root", namespacePrefix, document.getName());
-                if(session.nodeExists(path)){
+                if (session.nodeExists(path)) {
                     final Node node = session.getNode(path);
                     final Set<String> locations = new HashSet<>();
-                    if(node.hasProperty("wicket.extensions")){
+                    if (node.hasProperty("wicket.extensions")) {
                         final Value[] values = node.getProperty("wicket.extensions").getValues();
                         for (Value value : values) {
                             final String propVal = value.getString();
-                            if(node.hasProperty(propVal)){
+                            if (node.hasProperty(propVal)) {
                                 locations.add(node.getProperty(propVal).getString());
                             }
                         }
                     }
-                    if(locations.isEmpty()){
+                    if (locations.isEmpty()) {
                         locations.add("${cluster.id}.field");
                     }
                     document.setFieldLocations(locations);
@@ -191,13 +227,14 @@ public class DocumentResource extends BaseResource {
         return documents;
     }
 
-    public enum Type{
+    public enum Type {
         ALL,
         COMPOUND,
         DOCUMENT,
         ASSET,
         GALLERY
     }
+
     private static class DocumentNameComparator implements java.util.Comparator<DocumentRestful> {
         @Override
         public int compare(final DocumentRestful first, final DocumentRestful second) {
