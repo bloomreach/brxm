@@ -19,6 +19,8 @@ package org.onehippo.cms7.essentials.plugins.selection;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.ImportUUIDBehavior;
@@ -28,8 +30,10 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -44,6 +48,15 @@ import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+/**
+ * Ideas:
+ * - sort document types in UI (documents first, compounds last?)
+ * - show up-to-date list of selection fields, maybe per document type?
+ * - provide UI to create value lists
+ * - add more "advanced" options, depending on selection field type
+ * - support default value => prototype
+ */
 
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
@@ -67,8 +80,124 @@ public class SelectionResource extends BaseResource {
 
         try {
             return addField(session, payloadRestful.getValues());
+        } catch (RepositoryException | IOException e) {
+            log.warn("Exception trying to add a selection field to a document type", e);
+            return new ErrorMessageRestful("Failed to add new selection field to document type. Check logs.");
         } finally {
             GlobalUtils.cleanupSession(session);
+        }
+    }
+
+    @GET
+    @Path("/fieldsfor/{docType}/")
+    public List<SelectionFieldRestful> getSelectionFields(@Context ServletContext servletContext,
+                                                          @PathParam("docType") String docType) {
+        final List<SelectionFieldRestful> fields = new ArrayList<>();
+        final Session session = getContext(servletContext).createSession();
+
+        try {
+            addSelectionFields(fields, docType, session);
+        } catch (RepositoryException e) {
+            log.warn("Exception trying to retrieve selection fields for document type '{}'", docType, e);
+        } finally {
+            GlobalUtils.cleanupSession(session);
+        }
+
+        return fields;
+    }
+
+    /**
+     * Add all selection fields of a document type to a list.
+     *
+     * @param fields  list of selection fields
+     * @param docType namespaced name of document type
+     * @param session JCR session to read configuration
+     * @throws RepositoryException
+     */
+    private void addSelectionFields(final List<SelectionFieldRestful> fields, final String docType, final Session session)
+        throws RepositoryException
+    {
+        final String[] parts = docType.split(":");
+        if (parts.length != 2) {
+            log.warn("Unexpected document type '{}'.", docType);
+            return ;
+        }
+        final String nameSpace = parts[0];
+        final String docName = parts[1];
+        final String docTypeBase = MessageFormat.format("/hippo:namespaces/{0}/{1}/", nameSpace, docName);
+        final Node editorTemplate = session.getNode(docTypeBase + "editor:templates/_default_");
+        final Node nodeType = session.getNode(docTypeBase + "hipposysedit:nodetype/hipposysedit:nodetype");
+
+        addSingleSelectFields(fields, nameSpace, docName, nodeType, editorTemplate);
+        addMultiSelectFields(fields, nameSpace, docName, editorTemplate);
+    }
+
+    /**
+     * Find all single selection fields of the document type and add them to the list of selection fields.
+     *
+     * @param fields         list of selection fields
+     * @param nameSpace      document type namespace
+     * @param documentName   document type name
+     * @param nodeType       node type root node
+     * @param editorTemplate editor template root node
+     * @throws RepositoryException
+     */
+    private void addSingleSelectFields(final List<SelectionFieldRestful> fields, final String nameSpace,
+                                       final String documentName, final Node nodeType, final Node editorTemplate)
+        throws RepositoryException
+    {
+        final NodeIterator children = nodeType.getNodes();
+        while (children.hasNext()) {
+            final Node child = children.nextNode();
+
+            if (child.hasProperty("hipposysedit:type") && "DynamicDropdown".equals(child.getProperty("hipposysedit:type").getString())) {
+                final String fieldName = child.getName();
+                final NodeIterator editorFields = editorTemplate.getNodes();
+                while (editorFields.hasNext()) {
+                    final Node editorField = editorFields.nextNode();
+                    if (editorField.hasProperty("field") && fieldName.equals(editorField.getProperty("field").getString())) {
+
+                        final SelectionFieldRestful field = new SelectionFieldRestful();
+                        field.setNameSpace(nameSpace);
+                        field.setDocumentName(documentName);
+                        field.setFieldName(editorField.getProperty("caption").getString());
+                        field.setFieldPosition(editorField.getProperty("wicket.id").getString());
+                        field.setSelectionType("single");
+                        field.setValueList(editorField.getNode("cluster.options").getProperty("source").getString());
+                        fields.add(field);
+                        break; // out of the inner loop
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Find all multiple selection fields of the document type and add them to the list of selection fields.
+     *
+     * @param fields         list of selection fields
+     * @param nameSpace      document type namespace
+     * @param documentName   document type name
+     * @param editorTemplate editor template root node
+     * @throws RepositoryException
+     */
+    private void addMultiSelectFields(final List<SelectionFieldRestful> fields, final String nameSpace,
+                                      final String documentName, final Node editorTemplate)
+            throws RepositoryException
+    {
+        final NodeIterator editorFields = editorTemplate.getNodes();
+        while (editorFields.hasNext()) {
+            final Node editorField = editorFields.nextNode();
+            if (editorField.hasNode("valuelist.options")) {
+                final SelectionFieldRestful field = new SelectionFieldRestful();
+                field.setNameSpace(nameSpace);
+                field.setDocumentName(documentName);
+                field.setFieldName(editorField.getProperty("caption").getString());
+                field.setFieldPosition(editorField.getProperty("wicket.id").getString());
+                field.setSelectionType("multiple");
+                field.setValueList(editorField.getNode("valuelist.options").getProperty("source").getString());
+                fields.add(field);
+            }
         }
     }
 
@@ -79,65 +208,43 @@ public class SelectionResource extends BaseResource {
      * @param values  parameters of new selection field (See selectionPlugin.js for keys).
      * @return        message to be sent back to front-end.
      */
-    private MessageRestful addField(final Session session, final Map<String, String> values) {
+    private MessageRestful addField(final Session session, final Map<String, String> values)
+            throws RepositoryException, IOException {
         final String docTypeBase = MessageFormat.format("/hippo:namespaces/{0}/{1}/",
                 values.get("namespace"), values.get("documentType"));
         final String documentType = values.get("namespace") + ":" + values.get("documentType");
 
-        Node editorTemplate;
-        try {
-            editorTemplate = session.getNode(docTypeBase + "editor:templates/_default_");
-        } catch (RepositoryException e) {
-            log.warn("Error trying to retrieve editor template node.", e);
-            return new ErrorMessageRestful("Failed to update document type '" + documentType + "'. Check logs.");
+        final Node editorTemplate = session.getNode(docTypeBase + "editor:templates/_default_");
+        final Node nodeTypeHandle = session.getNode(docTypeBase + "hipposysedit:nodetype");
+        if (nodeTypeHandle.getNodes().getSize() > 1) {
+            return new ErrorMessageRestful("Document type '" + documentType + "' is currently being edited in the CMS, "
+                                         + "please commit any pending changes before adding a selection field.");
         }
-
-        Node nodeType;
-        try {
-            final Node nodeTypeHandle = session.getNode(docTypeBase + "hipposysedit:nodetype");
-            if (nodeTypeHandle.getNodes().getSize() > 1) {
-                return new ErrorMessageRestful("Document type '" + documentType + "' is currently being edited in the CMS, "
-                        + "please commit any pending changes before adding a selection field.");
-            }
-            nodeType = nodeTypeHandle.getNode("hipposysedit:nodetype");
-        } catch (RepositoryException e) {
-            log.warn("Error trying to retrieve nodetype node.", e);
-            return new ErrorMessageRestful("Failed to update document type '" + documentType + "'. Check logs.");
-        }
+        final Node nodeType = nodeTypeHandle.getNode("hipposysedit:nodetype");
 
         // Check if the field name is valid. If so, normalize it.
         final String normalized = NodeNameCodec.encode(values.get("fieldName").toLowerCase().replaceAll("\\s", ""));
         values.put("normalizedFieldName", normalized);
-        values.put("fieldPosition", values.get("fieldPosition") + ".item"); // stripped by content type service?
+        String fieldPosition = values.get("fieldPosition");
+        if (!"${cluster.id}.field".equals(fieldPosition)) {
+            values.put("fieldPosition", values.get("fieldPosition") + ".item"); // stripped by content type service?
+        }
 
         // Check if the fieldName is already in use
-        try {
-            if (nodeType.hasNode(normalized)
-                || editorTemplate.hasNode(normalized)
-                || isPropertyNameInUse(nodeType, values.get("namespace"), normalized)) {
-                return new ErrorMessageRestful("Field name is already in use for this document type.");
-            }
-        } catch (RepositoryException e) {
-            log.warn("Error trying to validate field name.", e);
-            return new ErrorMessageRestful("A problem occurred during validation of field name. Check logs.");
+        if (nodeType.hasNode(normalized)
+            || editorTemplate.hasNode(normalized)
+            || isPropertyNameInUse(nodeType, values.get("namespace"), normalized)) {
+            return new ErrorMessageRestful("Field name is already in use for this document type.");
         }
 
         if ("single".equals(values.get("selectionType"))) {
-            try {
-                importXml("/xml/single-field-editor-template.xml", values, editorTemplate);
-                importXml("/xml/single-field-node-type.xml", values, nodeType);
-                session.save();
-            } catch (IOException | RepositoryException e) {
-                log.warn("Error trying to import new field into editor template.", e);
-                try {
-                    session.refresh(false);
-                } catch (RepositoryException e2) {
-                    log.warn("Error trying to reset the JCR session.", e2);
-                }
-                return new ErrorMessageRestful("A problem occurred during the creation of the new selection field. Check logs.");
-            }
+            importXml("/xml/single-field-editor-template.xml", values, editorTemplate);
+            importXml("/xml/single-field-node-type.xml", values, nodeType);
+        } else if ("multiple".equals(values.get("selectionType"))) {
+            importXml("/xml/multi-field-editor-template.xml", values, editorTemplate);
+            importXml("/xml/multi-field-node-type.xml", values, nodeType);
         }
-        // TODO: multiselect
+        session.save();
 
         final String successMessage = MessageFormat.format("Successfully added new selection field {0} to document type {1}.",
                 values.get("fieldName"), documentType);
@@ -159,7 +266,7 @@ public class SelectionResource extends BaseResource {
         final String path = namespace + ":" + fieldName;
         while (fields.hasNext()) {
             final Node field = fields.nextNode();
-            if (field.hasProperty("hipposysedit:path") && fieldName.equals(field.getProperty("hipposysedit:path"))) {
+            if (field.hasProperty("hipposysedit:path") && path.equals(field.getProperty("hipposysedit:path").getString())) {
                 return true;
             }
         }
