@@ -162,7 +162,7 @@
                  */
                 pluginModules: plugins + '/modules/',
 
-
+                // TODO: refactor, this service is content-blocks specific. Use 'documents' instead.
                 documentTypes: root + '/documenttypes/',
 
                 package_install: plugins + '/install/package',

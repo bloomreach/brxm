@@ -31,10 +31,17 @@
                     alert('Hurray!');
                 });
             };
+            $scope.showDocument = function(documentType) {
+                return documentType.name !== 'basedocument';
+            };
 
             $http.get($rootScope.REST.root + "/plugins/plugins/" + $scope.pluginId).success(function (plugin) {
                 $scope.plugin = plugin;
             });
+            $http.get($rootScope.REST.documents).success(function (data){
+                $scope.documentTypes = data;
+            });
+            $scope.selectionTypes = [ 'single', 'multiple' ];
             loadValueLists();
 
             function loadValueLists() {

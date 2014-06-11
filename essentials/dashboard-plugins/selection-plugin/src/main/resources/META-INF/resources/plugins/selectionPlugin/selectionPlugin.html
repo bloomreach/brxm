@@ -41,6 +41,59 @@
       <ul>
         <li ng-repeat="valueList in valueLists"><span title="{{valueList.value}}">{{valueList.key}}</span></li>
       </ul>
+      <h2>Project Document Types</h2>
+      <ul>
+        <li ng-repeat="type in documentTypes">{{type.name}}<span ng-hide="{{!type.compoundType}}">(Compound)</span></li>
+      </ul>
+
+      <div ng-show="documentTypes.length && valueLists.length">
+        <form novalidate>
+          <h3>Add selection fields to document types</h3>
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Document type</th>
+                <th>Field name</th>
+                <th>Field position</th>
+                <th>Selection type</th>
+                <th>Value list</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <select ng-model="documentType"
+                          ng-options="type.name for type in documentTypes | filter:showDocument">
+                  </select>
+                </td>
+                <td><input ng-model="fieldName"/></td>
+                <td>
+                  <select ng-model="fieldPosition"
+                          ng-options="position for position in documentType.fieldLocations"
+                          ng-show="documentType.fieldLocations.length > 1">
+                   </select>
+                </td>
+                <td>
+                  <select ng-model="selectionType"
+                          ng-options="type for type in selectionTypes">
+                  </select>
+                </td>
+                <td>
+                  <select ng-model="valueList"
+                          ng-options="list.key for list in valueLists">
+                    <option value="">Choose a value list...</option>
+                  </select>
+                </td>
+                <td>
+                   <button class="btn btn-primary" ng-click="addSelectionField(documentType)">Add</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+      </div>
+
     </div>
     <div class="panel-footer">
       <div class="pull-right">
