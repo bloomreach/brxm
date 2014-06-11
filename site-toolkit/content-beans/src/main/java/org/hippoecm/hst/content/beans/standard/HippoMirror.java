@@ -85,9 +85,9 @@ public class HippoMirror extends HippoFolder implements HippoMirrorBean {
             }
             return (HippoBean) objectConverter.getObject(deref);
         } catch (ItemNotFoundException | ObjectBeanManagerException e) {
-            log.info("Cannot get a derefenced HippoBean: {}. Return null", e);
+            log.info("Cannot get a dereferenced HippoBean, return null", e);
         } catch (RepositoryException e) {
-            log.warn("Cannot get a derefenced HippoBean: {}. Return null", e);
+            log.warn("Cannot get a dereferenced HippoBean, return null", e);
         }
         return null;
     }
