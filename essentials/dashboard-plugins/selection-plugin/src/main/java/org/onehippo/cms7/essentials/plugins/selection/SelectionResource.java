@@ -16,10 +16,12 @@
 
 package org.onehippo.cms7.essentials.plugins.selection;
 
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.ServletContext;
@@ -30,11 +32,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,6 +89,33 @@ public class SelectionResource extends BaseResource {
             return new ErrorMessageRestful("Failed to update document type '" + documentType + "'. Check logs.");
         }
 
+        // Check if the field name is valid. If so, normalize it.
+        final String fieldName = values.get("fieldName").trim();
+        if (fieldName.length() == 0) {
+            return new ErrorMessageRestful("Field name must contain non-whitespace characters.");
+        }
+        final String normalized = NodeNameCodec.encode(fieldName);
+        values.put("normalizedFieldName", normalized);
+
+        // Check if the fieldName is already in use
+        try {
+            if (nodeType.hasNode(normalized)
+                || editorTemplate.hasNode(normalized)
+                || isPropertyNameInUse(nodeType, values.get("namespace"), normalized)) {
+                return new ErrorMessageRestful("Field name is already in use for this document type.");
+            }
+        } catch (RepositoryException e) {
+            log.warn("Error trying to validate field name.", e);
+            return new ErrorMessageRestful("A problem occurred during validation of field name. Check logs.");
+        }
+
+        if ("single".equals(values.get("selectionType"))) {
+            InputStream stream = getClass().getResourceAsStream("/xml/single-field-editor-template.xml");
+//            String processed = TemplateUtils.replaceTemplateData(GlobalUtils.readStreamAsText(stream), values);
+        }
+        // TODO: multiselect
+
+
         // provide XML templates, load them ("streamAsText"), replace them using mustache and xmlImport them on the session.
 
 // from XmlInstruction:
@@ -95,5 +127,27 @@ public class SelectionResource extends BaseResource {
         final String successMessage = MessageFormat.format("Successfully added new selection field {0} to document type {1}.",
                 values.get("fieldName"), documentType);
         return new MessageRestful(successMessage);
+    }
+
+    /**
+     * Check if a certain namespace/fieldname combination is already in use for a certain document type
+     *
+     * @param nodeType  JCR node representing the hipposysedit:nodetype node.
+     * @param namespace JCR namespace for the selected document type.
+     * @param fieldName Candidate normalized field name.
+     * @return          true if already in use, false otherwise.
+     * @throws RepositoryException
+     */
+    private boolean isPropertyNameInUse(final Node nodeType, final String namespace, final String fieldName)
+            throws RepositoryException {
+        final NodeIterator fields = nodeType.getNodes();
+        final String path = namespace + ":" + fieldName;
+        while (fields.hasNext()) {
+            final Node field = fields.nextNode();
+            if (field.hasProperty("hipposysedit:path") && fieldName.equals(field.getProperty("hipposysedit:path"))) {
+                return true;
+            }
+        }
+        return false;
     }
 }
