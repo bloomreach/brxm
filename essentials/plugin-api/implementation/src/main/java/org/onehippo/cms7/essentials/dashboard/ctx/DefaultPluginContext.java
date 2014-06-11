@@ -313,6 +313,7 @@ public class DefaultPluginContext implements PluginContext {
         placeholderData.put(EssentialConst.PLACEHOLDER_CMS_WEB_ROOT, cmsWebRoot);
         placeholderData.put(EssentialConst.PLACEHOLDER_CMS_RESOURCES, getCmsDirectory() + MAIN_RESOURCE_PART);
         placeholderData.put(EssentialConst.PLACEHOLDER_SITE_OVERRIDE_FOLDER, ProjectUtils.getSite().getAbsolutePath()
+                + File.separator + EssentialConst.PATH_REL_RESOURCES
                 + File.separator + EssentialConst.PATH_REL_OVERRIDE);
 
         placeholderData.put(EssentialConst.PLACEHOLDER_SITE_WEB_INF_ROOT, ProjectUtils.getSite().getAbsolutePath()

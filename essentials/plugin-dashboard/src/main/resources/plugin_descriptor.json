@@ -160,6 +160,43 @@
         ]
     },
     {
+        "@type": "plugin",
+        "type": "plugins",
+        "pluginId": "selectionPlugin",
+        "name": "Selection plugin",
+        "introduction": "Adds value lists and selection document fields to your Hippo project",
+        "description": "Add selection fields to your document types. The list of choices can be backed by a CMS-based value list. <p>Read more about the Selection plugin at <a href=\"http://selection.forge.onehippo.org/\" target=\"_blank\">http://selection.forge.onehippo.org/</a></p>",
+        "packageFile": "/META-INF/selectionPlugin_instructions.xml",
+        "vendor": {
+            "@type": "vendor",
+            "name": "Hippo",
+            "url": "http://www.onehippo.com"
+        },
+        "dependencies": [
+            {
+                "@type": "dependency",
+                "type": "cms",
+                "groupId": "org.onehippo.forge.selectionplugins",
+                "artifactId": "selectionplugins-addon-cms",
+                "scope": "compile"
+            },
+            {
+                "@type": "dependency",
+                "type": "cms",
+                "groupId": "org.onehippo.forge.selectionplugins",
+                "artifactId": "selectionplugins-addon-repository",
+                "scope": "compile"
+            },
+            {
+                "@type": "dependency",
+                "type": "site",
+                "groupId": "org.onehippo.forge.selectionplugins",
+                "artifactId": "selectionplugins-hst-client",
+                "scope": "compile"
+            }
+        ]
+    },
+    {
         "enabled": true,
         "@type": "plugin",
         "name": "ECM tagging plugin",

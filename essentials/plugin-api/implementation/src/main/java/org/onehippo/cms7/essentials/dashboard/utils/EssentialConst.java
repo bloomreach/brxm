@@ -26,7 +26,7 @@ import com.google.common.collect.ImmutableSet;
  */
 public final class EssentialConst {
 
-
+    public static final String PATH_REL_RESOURCES = "src" + File.separator + "main" + File.separator + "resources";
     public static final String PATH_REL_WEB_ROOT = "src" + File.separator + "main" + File.separator + "webapp";
     public static final String PATH_REL_WEB_INF = PATH_REL_WEB_ROOT + File.separator + "WEB-INF";
     public static final String FREEMARKER_RELATIVE_FOLDER = PATH_REL_WEB_INF + File.separator + "freemarker";

@@ -67,6 +67,7 @@
     <module>video-component-plugin</module>
     <module>faq-component-plugin</module>
     <module>ecm-tagging-plugin</module>
+    <module>selection-plugin</module>
   </modules>
   <dependencyManagement>
 
