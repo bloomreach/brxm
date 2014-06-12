@@ -131,6 +131,7 @@ public class DocumentResource extends BaseResource {
             GlobalUtils.cleanupSession(session);
         }
 
+        Collections.sort(valueLists);
         return valueLists;
     }
 
@@ -207,7 +208,8 @@ public class DocumentResource extends BaseResource {
                         for (Value value : values) {
                             final String propVal = value.getString();
                             if (node.hasProperty(propVal)) {
-                                locations.add(node.getProperty(propVal).getString());
+                                // ".item" suffix produces value usable in document field editor template's wicket.id prop.
+                                locations.add(node.getProperty(propVal).getString() + ".item");
                             }
                         }
                     }

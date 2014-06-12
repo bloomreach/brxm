@@ -18,93 +18,90 @@
     "use strict";
     angular.module('hippo.essentials')
         .controller('selectionPluginCtrl', function ($scope, $filter, $sce, $log, $rootScope, $http) {
-            $scope.pluginId = "selectionPlugin";
-            $scope.$on('update-plugin-install-state', function(event, args) {
-                if ($scope.pluginId === args.pluginId && $scope.plugin !== undefined) {
-                    $scope.plugin.installState = args.state;
-                }
-            });
 
-            var restEndpoint = $rootScope.REST.dynamic + 'selectionplugin/';
-            $scope.addField = function() {
-                var position = $scope.fieldPosition;
-                if ($scope.selectedDocumentType.fieldLocations.length < 2) {
-                    position = $scope.selectedDocumentType.fieldLocations[0];
-                }
-                var payload = {
-                    values: {
-                        namespace: $scope.selectedDocumentType.prefix,
-                        documentType: $scope.selectedDocumentType.name,
-                        fieldName: $scope.fieldName,
-                        fieldPosition: position,
-                        selectionType: $scope.selectionType,
-                        valueList: $scope.selectedValueList.value
+                var restEndpoint = $rootScope.REST.dynamic + 'selectionplugin/';
+
+                // Initialize the controller scope
+                $scope.pluginId = "selectionPlugin";
+                $scope.$on('update-plugin-install-state', function(event, args) {
+                    if ($scope.pluginId === args.pluginId && $scope.plugin !== undefined) {
+                        $scope.plugin.installState = args.state;
                     }
+                });
+
+                $scope.addField = function() {
+                    var payload = {
+                        values: {
+                            namespace:     $scope.selectedDocumentType.prefix,
+                            documentType:  $scope.selectedDocumentType.name,
+                            fieldName:     $scope.fieldName,
+                            fieldPosition: $scope.fieldPosition,
+                            selectionType: $scope.selectionType,
+                            valueList:     $scope.selectedValueList.value
+                        }
+                    };
+                    $http.post(restEndpoint + 'addfield/', payload).success(function () {
+                        resetAddFieldForm();
+                        reloadSelectionFields($scope.selectedDocumentType);
+                        $scope.regenerateBeans = true;
+                    });
                 };
-                $http.post(restEndpoint + 'addfield/', payload).success(function () {
-                    resetAddFieldForm();
-                    reloadSelectionFields($scope.selectedDocumentType);
-                });
-            };
-            $scope.showDocument = function(documentType) {
-                return documentType.name !== 'basedocument';
-            };
+                $scope.showDocument = function(documentType) { // don't show the basedocument option
+                    return documentType.name !== 'basedocument';
+                };
 
-            $scope.positionMap = {
-                '${cluster.id}.right': 'right',
-                '${cluster.id}.left' : 'left'
-            };
-            $scope.positionName = function(pos) {
-                // content type service doesn't provide ".item" suffix, while namespace JCR access does...
-                var suffix = '.item';
-                if (pos.slice(-suffix.length) === suffix) {
-                    pos = pos.substr(0, pos.length - suffix.length);
-                }
-                return $scope.positionMap[pos];
-            };
-            $scope.selectionTypes = [ 'single', 'multiple' ];
-            $scope.valueListNameByPath = function(path) {
-                var name = '';
-                angular.forEach($scope.valueLists, function(entry) {
-                    if (entry.value === path) {
-                        name = entry.key;
+                $scope.positionMap = {
+                    '${cluster.id}.right.item': 'right',
+                    '${cluster.id}.left.item' : 'left'
+                };
+                $scope.valueListAsOption = function(valueList) {
+                    return valueList.key + ' (' + valueList.value + ')';
+                };
+                $scope.selectionTypes = [ 'single', 'multiple' ];
+                $scope.valueListNameByPath = function(path) {
+                    var name = '';
+                    angular.forEach($scope.valueLists, function(entry) {
+                        if (entry.value === path) {
+                            name = entry.key;
+                        }
+                    });
+                    return name;
+                };
+                resetAddFieldForm();
+                loadValueLists();
+
+                $http.get($rootScope.REST.root + "/plugins/plugins/" + $scope.pluginId).success(function (plugin) {
+                    $scope.plugin = plugin;
+                });
+                $http.get($rootScope.REST.documents).success(function (data){
+                    $scope.documentTypes = data;
+                });
+
+                // when changing the document type, set the default position and retrieve a fresh list of fields
+                $scope.$watch('selectedDocumentType', function (newDocType) {
+                    if (newDocType) {
+                        $scope.positionMatters = newDocType.fieldLocations.length > 1;
+                        $scope.fieldPosition = newDocType.fieldLocations[0];
+                        reloadSelectionFields(newDocType);
                     }
-                });
-                return name;
-            };
-            resetAddFieldForm();
+                }, true);
 
-            $http.get($rootScope.REST.root + "/plugins/plugins/" + $scope.pluginId).success(function (plugin) {
-                $scope.plugin = plugin;
-            });
-            $http.get($rootScope.REST.documents).success(function (data){
-                $scope.documentTypes = data;
-            });
-            loadValueLists();
-
-            // when changing the document type, retrieve a fresh list of
-            $scope.$watch('selectedDocumentType', function (newValue) {
-                if (newValue) {
-                    reloadSelectionFields(newValue);
+                // Helper functions
+                function loadValueLists() {
+                    $http.get($rootScope.REST.documents + "selection:valuelist").success(function (data) {
+                        $scope.valueLists = data;
+                    });
                 }
-            }, true);
-
-            function loadValueLists() {
-                $http.get($rootScope.REST.documents + "selection:valuelist").success(function (data) {
-                    $scope.valueLists = data;
-                });
-            }
-            function resetAddFieldForm() {
-                $scope.fieldName = '';
-                $scope.fieldPosition = '${cluster.id}.right'; // default to adding selection fields in the right column
-                $scope.selectionType = 'single';
-                $scope.selectedValueList = undefined;
-            }
-            function reloadSelectionFields(documentType) {
-                $scope.selectionFields = [];
-                $http.get(restEndpoint + 'fieldsfor/' + documentType.fullName).success(function (data) {
-                    $scope.selectionFields = data;
-                });
-            }
+                function resetAddFieldForm() {
+                    $scope.fieldName = '';
+                    $scope.selectionType = 'single';
+                    $scope.selectedValueList = undefined;
+                }
+                function reloadSelectionFields(documentType) {
+                    $scope.selectionFields = [];
+                    $http.get(restEndpoint + 'fieldsfor/' + documentType.fullName).success(function (data) {
+                        $scope.selectionFields = data;
+                    });
+                }
         })
 })();

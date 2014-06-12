@@ -141,13 +141,11 @@ public class SelectionResource extends BaseResource {
                     if (editorField.hasProperty("field") && fieldName.equals(editorField.getProperty("field").getString())) {
 
                         final SelectionFieldRestful field = new SelectionFieldRestful();
+                        field.setType("single");
                         field.setNameSpace(nameSpace);
                         field.setDocumentName(documentName);
                         field.setName(editorField.getProperty("caption").getString());
-                        if (editorTemplate.getNode("root").hasProperty("wicket.extensions")) {
-                            field.setPosition(editorField.getProperty("wicket.id").getString());
-                        }
-                        field.setType("single");
+                        field.setPosition(editorField.getProperty("wicket.id").getString());
                         field.setValueList(editorField.getNode("cluster.options").getProperty("source").getString());
                         fields.add(field);
                         break; // out of the inner loop
@@ -175,11 +173,11 @@ public class SelectionResource extends BaseResource {
             final Node editorField = editorFields.nextNode();
             if (editorField.hasNode("valuelist.options")) {
                 final SelectionFieldRestful field = new SelectionFieldRestful();
+                field.setType("multiple");
                 field.setNameSpace(nameSpace);
                 field.setDocumentName(documentName);
                 field.setName(editorField.getProperty("caption").getString());
                 field.setPosition(editorField.getProperty("wicket.id").getString());
-                field.setType("multiple");
                 field.setValueList(editorField.getNode("valuelist.options").getProperty("source").getString());
                 fields.add(field);
             }
@@ -210,10 +208,6 @@ public class SelectionResource extends BaseResource {
         // Check if the field name is valid. If so, normalize it.
         final String normalized = NodeNameCodec.encode(values.get("fieldName").toLowerCase().replaceAll("\\s", ""));
         values.put("normalizedFieldName", normalized);
-        String fieldPosition = values.get("fieldPosition");
-        if (!"${cluster.id}.field".equals(fieldPosition)) {
-            values.put("fieldPosition", values.get("fieldPosition") + ".item"); // stripped by content type service?
-        }
 
         // Check if the fieldName is already in use
         if (nodeType.hasNode(normalized)

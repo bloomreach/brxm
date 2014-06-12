@@ -27,7 +27,7 @@ import com.wordnik.swagger.annotations.ApiModel;
  */
 @ApiModel
 @XmlRootElement(name = "keyvalue")
-public class KeyValueRestful implements Restful {
+public class KeyValueRestful implements Restful, Comparable<KeyValueRestful> {
 
     private static final long serialVersionUID = 1L;
 
@@ -66,5 +66,10 @@ public class KeyValueRestful implements Restful {
         sb.append(", value='").append(value).append('\'');
         sb.append('}');
         return sb.toString();
+    }
+
+    public int compareTo(KeyValueRestful other) {
+        int keyCompared = getKey().compareTo(other.getKey());
+        return keyCompared != 0 ? keyCompared : getValue().compareTo(other.getValue());
     }
 }

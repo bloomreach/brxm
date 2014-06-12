@@ -40,6 +40,11 @@
 
       <h3>Add selection fields to document types</h3>
 
+      <div ng-show="regenerateBeans" class="infobox infobox-info">
+        You have changed one or more document types, and may want to update your document type beans now. You can use
+        the BeanWriter tool for this.
+      </div>
+
       <div ng-hide="documentTypes.length && valueLists.length">
         <p>You have successfully installed the selection plugin, which makes it possible to create selection fields
           in your document types, using value lists created and maintained in the CMS.</p>
@@ -61,8 +66,8 @@
         <form class="form-horizontal" novalidate name="addFieldForm">
           <div class="form-group">
             <label class="col-sm-4 control-label">Document type:</label>
-            <div ng-class="addFieldForm.selectedDocumentType.$invalid ? 'col-sm-8 bg-danger' : 'col-sm-8'">
-                <select name="selectedDocumentType" required
+            <div class="col-sm-8" ng-class="addFieldForm.selectedDocumentType.$invalid ? 'bg-danger' : ''">
+                <select name="documentType" required
                         class="form-control"
                         ng-model="selectedDocumentType"
                         ng-selected="selectedDocumentType"
@@ -77,13 +82,13 @@
               <table class="table table-hover">
                 <tr>
                   <th>Field name</th>
-                  <th ng-show="selectedDocumentType.fieldLocations.length > 1">Position</th>
+                  <th ng-show="positionMatters">Position</th>
                   <th>Type</th>
                   <th>Value list</th>
                 </tr>
                 <tr ng-repeat="field in selectionFields">
                   <td>{{field.name}}</td>
-                  <td ng-show="selectedDocumentType.fieldLocations.length > 1">{{positionName(field.position)}}</td>
+                  <td ng-show="positionMatters">{{positionMap[field.position]}}</td>
                   <td>{{field.type}}</td>
                   <td>{{valueListNameByPath(field.valueList)}}</td>
                 </tr>
@@ -92,17 +97,17 @@
           </div>
           <div class="form-group">
             <label class="col-sm-4 control-label">Name of new field:</label>
-            <div class="col-sm-8">
-              <input class="form-control" ng-class="addFieldForm.fieldName.$invalid?'bg-danger':''" required name="fieldName" type="text" ng-model="fieldName"/>
+            <div class="col-sm-8" ng-class="addFieldForm.fieldName.$invalid?'bg-danger':''">
+              <input class="form-control" required name="fieldName" type="text" ng-model="fieldName"/>
             </div>
           </div>
-          <div class="form-group" ng-show="selectedDocumentType.fieldLocations.length > 1">
+          <div class="form-group" ng-show="positionMatters">
             <label class="col-sm-4 control-label">Field position:</label>
             <div class="col-sm-8">
               <select class="form-control"
                       ng-model="fieldPosition"
                       ng-selected="fieldPosition"
-                      ng-options="positionName(position) for position in selectedDocumentType.fieldLocations">
+                      ng-options="positionMap[position] for position in selectedDocumentType.fieldLocations">
               </select>
             </div>
           </div>
@@ -118,12 +123,12 @@
           </div>
           <div class="form-group">
             <label class="col-sm-4 control-label">Value list:</label>
-            <div ng-class="addFieldForm.selectedValueList.$invalid ? 'col-sm-8 bg-danger' : 'col-sm-8'">
-              <select name="selectedValueList" required
+            <div class="col-sm-8" ng-class="addFieldForm.selectedValueList.$invalid ? 'bg-danger' : ''">
+              <select name="valueList" required
                       class="form-control"
                       ng-model="selectedValueList"
                       ng-selected="selectedValueList"
-                      ng-options="list.key for list in valueLists">
+                      ng-options="valueListAsOption(list) for list in valueLists">
                 <option value="">Choose a value list...</option>
               </select>
             </div>
