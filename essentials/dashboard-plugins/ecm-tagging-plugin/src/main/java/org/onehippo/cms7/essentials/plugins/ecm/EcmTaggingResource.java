@@ -115,7 +115,7 @@ public class EcmTaggingResource extends BaseResource {
                     DocumentTemplateUtils.addMixinToTemplate(context, document, MIXIN_NAME, true);
                     // add place holders:
                     final Map<String, String> templateData = new HashMap<>(values);
-                    templateData.put("fieldLocation", MessageFormat.format("{0}.item", location));
+                    templateData.put("fieldLocation", location);
                     // import field:
                     final String fieldData = TemplateUtils.replaceStringPlaceholders(templateTags, templateData);
                     session.importXML(fieldImportPath, IOUtils.toInputStream(fieldData), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);

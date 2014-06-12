@@ -157,7 +157,7 @@ public class TaxonomyResource extends BaseResource {
                     final Node fieldNode = node.addNode("classifiable", "frontend:plugin");
                     fieldNode.setProperty("mixin", HIPPOTAXONOMY_MIXIN);
                     fieldNode.setProperty("plugin.class", "org.hippoecm.frontend.editor.plugins.mixin.MixinLoaderPlugin");
-                    fieldNode.setProperty("wicket.id", DocumentTemplateUtils.fieldPositionForLocation(location));
+                    fieldNode.setProperty("wicket.id", location);
                     final Node clusterNode = fieldNode.addNode("cluster.options", "frontend:pluginconfig");
                     clusterNode.setProperty("taxonomy.name", taxonomyName);
                     changedDocuments.add(documentName);

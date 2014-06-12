@@ -31,6 +31,8 @@ import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableSet;
+
 /**
  * @version "$Id$"
  */
@@ -38,6 +40,10 @@ public class HippoContentBean {
 
     private static final Logger log = LoggerFactory.getLogger(HippoContentBean.class);
 
+    public static final Set<String> ACCEPTED_PROPERTIES = new ImmutableSet.Builder<String>()
+            .add("hippotaxonomy:keys")
+            .add("hippostd:tags")
+            .build();
     private static final Pattern PREFIX_SPLITTER = Pattern.compile(":");
     private final ContentType contentType;
     private final PluginContext context;
@@ -114,13 +120,16 @@ public class HippoContentBean {
             final String key = entry.getKey();
             if (key.startsWith(prefix)) {
                 addProperty(new HippoContentProperty(entry.getValue()));
+            } else if (ACCEPTED_PROPERTIES.contains(key)) {
+                addProperty(new HippoContentProperty(entry.getValue()));
             }
+
         }
     }
 
     public boolean hasProperty(final String name) {
         for (HippoContentProperty property : properties) {
-            if(property.getName().equals(name)){
+            if (property.getName().equals(name)) {
                 return true;
             }
         }

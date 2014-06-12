@@ -30,7 +30,6 @@ import javax.jcr.nodetype.NodeType;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
-import org.apache.wicket.util.string.Strings;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,13 +128,6 @@ public final class DocumentTemplateUtils {
     }
 
 
-    public static String fieldPositionForLocation(final String location) {
-        if (Strings.isEmpty(location) || location.equals(DEFAULT_FIELD_LOCATION)) {
-            return DEFAULT_FIELD_LOCATION;
-        }
-        // location id left or right (etc) + .item extension:
-        return location + ".item";
-    }
     //############################################
     // UTILS
     //############################################
