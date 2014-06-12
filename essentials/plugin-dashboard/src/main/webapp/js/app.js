@@ -59,7 +59,12 @@
                         $rootScope.globalError = [];
                         $rootScope.feedbackMessages = [];
                         if (error.data) {
-                            $rootScope.globalError.push(error.data);
+                            if (error.data.value) {
+                                $rootScope.globalError.push(error.data.value);
+
+                            } else {
+                                $rootScope.globalError.push(error.data);
+                            }
                         }
                         else {
                             $rootScope.globalError.push(error.status);
@@ -87,7 +92,12 @@
                         $rootScope.globalError = [];
                         $rootScope.feedbackMessages = [];
                         if (error.data) {
+                            if (error.data.value) {
+                                $rootScope.globalError.push(error.data.value);
+
+                            }else{
                             $rootScope.globalError.push(error.data);
+                            }
                         }
                         else {
                             $rootScope.globalError.push(error.status);

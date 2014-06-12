@@ -31,6 +31,7 @@ import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -131,7 +132,7 @@ public class TaxonomyResource extends BaseResource {
      */
     @POST
     @Path("/add")
-    public MessageRestful addTaxonomyToDocument(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
+    public MessageRestful addTaxonomyToDocument(final PostPayloadRestful payloadRestful, @Context HttpServletResponse response, @Context ServletContext servletContext) {
         final PluginContext context = getContext(servletContext);
         final Session session = context.createSession();
         try {
@@ -168,7 +169,7 @@ public class TaxonomyResource extends BaseResource {
             if (changedDocuments.size() > 0) {
                 return new MessageRestful("Added field(s) to following documents: " + Joiner.on(",").join(changedDocuments));
             }
-            return new MessageRestful("No taxonomy fields were added, field(s) already exist");
+            return createErrorMessage("No taxonomy fields were added, field(s) already exist", response);
         } catch (RepositoryException e) {
             log.error("Error adding taxonomy to a document", e);
         } finally {
@@ -176,6 +177,8 @@ public class TaxonomyResource extends BaseResource {
         }
         return new ErrorMessageRestful("Error adding taxonomy fields");
     }
+
+
 
 
     /**
