@@ -476,6 +476,9 @@ dashboard-plugins/essentials-skeleton-package/src/test/java/org/onehippo/cms7/es
 dashboard-plugins/essentials-skeleton-package/src/test/resources/log4j.xml -text
 dashboard-plugins/faq-component-plugin/pom.xml -text
 dashboard-plugins/faq-component-plugin/src/main/resources/META-INF/faqComponentPlugin_instructions.xml -text
+dashboard-plugins/faq-component-plugin/src/main/resources/META-INF/instructions/icon/component-icon-faq.png -text
+dashboard-plugins/faq-component-plugin/src/main/resources/META-INF/instructions/java/FaqDocument.txt -text
+dashboard-plugins/faq-component-plugin/src/main/resources/META-INF/instructions/xml/faq-document.xml -text
 dashboard-plugins/faq-component-plugin/src/main/resources/META-INF/resources/plugins/faqComponentPlugin/faqComponentPlugin.html -text
 dashboard-plugins/faq-component-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/freemarker-synchronizer/pom.xml -text
