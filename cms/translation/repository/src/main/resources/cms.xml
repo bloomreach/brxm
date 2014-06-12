@@ -14,50 +14,45 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-    xmlns:h="http://www.onehippo.org/jcr/xmlimport"
-    sv:name="hippo:frontend" h:merge="combine">
-  <sv:node sv:name="cms" h:merge="combine">
-    <sv:node sv:name="cms-folder-views" h:merge="combine">
-      <sv:node sv:name="hippostd:folder" h:merge="combine">
-        <sv:node sv:name="translationColumns" h:merge="skip">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.translation.list.TranslationsColumnProviderPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="column.id" sv:type="String">
-            <sv:value>${cluster.id}.columns</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-      <sv:node sv:name="hippostd:directory" h:merge="combine">
-        <sv:node sv:name="translationColumns" h:merge="skip">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.translation.list.TranslationsColumnProviderPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="column.id" sv:type="String">
-            <sv:value>${cluster.id}.columns</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-      <sv:node sv:name="hippo:facetselect" h:merge="combine">
-        <sv:node sv:name="translationColumns" h:merge="skip">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.translation.list.TranslationsColumnProviderPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="column.id" sv:type="String">
-            <sv:value>${cluster.id}.columns</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:h="http://www.onehippo.org/jcr/xmlimport"
+    sv:name="cms-folder-views" h:merge="combine">
+  <sv:node sv:name="hippostd:folder" h:merge="combine">
+    <sv:node sv:name="translationColumns" h:merge="skip">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.translation.list.TranslationsColumnProviderPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="column.id" sv:type="String">
+        <sv:value>${cluster.id}.columns</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="hippostd:directory" h:merge="combine">
+    <sv:node sv:name="translationColumns" h:merge="skip">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.translation.list.TranslationsColumnProviderPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="column.id" sv:type="String">
+        <sv:value>${cluster.id}.columns</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="hippo:facetselect" h:merge="combine">
+    <sv:node sv:name="translationColumns" h:merge="skip">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.translation.list.TranslationsColumnProviderPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="column.id" sv:type="String">
+        <sv:value>${cluster.id}.columns</sv:value>
+      </sv:property>
     </sv:node>
   </sv:node>
 </sv:node>

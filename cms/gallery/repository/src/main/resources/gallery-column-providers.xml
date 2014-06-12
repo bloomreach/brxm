@@ -14,36 +14,32 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node sv:name="hippo:frontend" xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+<sv:node sv:name="cms-folder-views" xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
          xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="combine">
-  <sv:node sv:name="cms" h:merge="combine">
-    <sv:node sv:name="cms-folder-views" h:merge="combine">
-      <sv:node sv:name="hippogallery:stdImageGallery" h:merge="combine">
-        <sv:node sv:name="defaultColumns">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.gallery.columns.ImageGalleryColumnProviderPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="column.id" sv:type="String">
-            <sv:value>${cluster.id}.columns</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-      <sv:node sv:name="hippogallery:stdAssetGallery" h:merge="combine">
-        <sv:node sv:name="defaultColumns">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.gallery.columns.AssetGalleryColumnProviderPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="column.id" sv:type="String">
-            <sv:value>${cluster.id}.columns</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
+  <sv:node sv:name="hippogallery:stdImageGallery" h:merge="combine">
+    <sv:node sv:name="defaultColumns">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.gallery.columns.ImageGalleryColumnProviderPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="column.id" sv:type="String">
+        <sv:value>${cluster.id}.columns</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="hippogallery:stdAssetGallery" h:merge="combine">
+    <sv:node sv:name="defaultColumns">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.gallery.columns.AssetGalleryColumnProviderPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="column.id" sv:type="String">
+        <sv:value>${cluster.id}.columns</sv:value>
+      </sv:property>
     </sv:node>
   </sv:node>
 </sv:node>

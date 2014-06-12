@@ -164,7 +164,7 @@
       <sv:value>gallery-column-providers.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration</sv:value>
+      <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>2006.0</sv:value>
