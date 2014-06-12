@@ -286,6 +286,7 @@ dashboard-plugins/components-plugin/components-library/src/main/java/org/onehipp
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsDocumentListComponentInfo.properties -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsEventsComponentInfo.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsFacetsComponentInfo.java -text
+dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsFaqComponentInfo.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsImageComponentInfo.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsListPickerComponentInfo.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/info/EssentialsMenuComponentInfo.java -text

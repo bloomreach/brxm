@@ -16,20 +16,51 @@
 
 package org.onehippo.cms7.essentials.components;
 
+import java.util.List;
+
+import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
+import org.hippoecm.hst.content.beans.standard.HippoFolder;
+import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.onehippo.cms7.essentials.components.info.EssentialsFaqComponentInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 /**
  * @version "$Id$"
  */
-public class EssentialsFaqComponent extends CommonComponent {
+
+@ParametersInfo(type = EssentialsFaqComponentInfo.class)
+public class EssentialsFaqComponent extends EssentialsListComponent {
 
     private static Logger log = LoggerFactory.getLogger(EssentialsFaqComponent.class);
 
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
+
+        final EssentialsFaqComponentInfo paramInfo = getComponentParametersInfo(request);
+        // check if single document is used:
+        if(!Strings.isNullOrEmpty(paramInfo.getFaqDocument())){
+            setContentBeanWith404(request, response);
+            return;
+        }
+
+        final String path = paramInfo.getPath();
+        if(paramInfo.getFolderOrder() !=null && paramInfo.getFolderOrder() && !Strings.isNullOrEmpty(path)){
+
+            final HippoFolderBean bean = getHippoBeanForPath(path, HippoFolder.class);
+            if(bean==null){
+                return;
+            }
+            final List<HippoDocumentBean> documents = bean.getDocuments();
+            //..
+
+        }
+
         super.doBeforeRender(request, response);
 
     }
