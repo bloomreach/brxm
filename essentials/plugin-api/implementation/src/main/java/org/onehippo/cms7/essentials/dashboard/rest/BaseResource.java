@@ -24,9 +24,14 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.onehippo.cms7.essentials.dashboard.config.*;
+import org.onehippo.cms7.essentials.dashboard.config.FilePluginService;
+import org.onehippo.cms7.essentials.dashboard.config.InstallerDocument;
+import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
+import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
+import org.onehippo.cms7.essentials.dashboard.config.ResourcePluginService;
 import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
@@ -61,6 +66,12 @@ public class BaseResource {
 
     private ApplicationContext applicationContext;
 
+
+
+    public MessageRestful createErrorMessage(final String message, final HttpServletResponse response) {
+        response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+        return new ErrorMessageRestful(message);
+    }
 
     /**
      * Instantiate InstructionPackage for plugin.
