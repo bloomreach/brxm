@@ -21,11 +21,14 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.nodetype.NodeType;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 
 import org.apache.wicket.util.string.Strings;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
@@ -43,14 +46,18 @@ public final class DocumentTemplateUtils {
 
     public static final String HIPPOSYSEDIT_SUPERTYPE = "hipposysedit:supertype";
 
+    private DocumentTemplateUtils() {
+    }
+
     /**
      * Adds mixin type to document template if one doesn't exists.
      *
-     * @param context      plugin context
-     * @param documentName name of the document it can be either {@code docname} or {@code projectprefix:docname}
-     * @param mixinName    name of the mixin
+     * @param context                plugin context
+     * @param documentName           name of the document it can be either {@code docname} or {@code projectprefix:docname}
+     * @param mixinName              name of the mixin
+     * @param processExistingContent scan repository for existing documents and add mixins to those
      */
-    public static void addMixinType(final PluginContext context, final String documentName, final String mixinName) throws RepositoryException {
+    public static void addMixinToTemplate(final PluginContext context, final String documentName, final String mixinName, final boolean processExistingContent) throws RepositoryException {
         final String namespace = context.getProjectNamespacePrefix();
         final String document = documentName.indexOf(':') == -1 ? documentName : NAMESPACE_PATTERN.split(documentName)[1];
 
@@ -74,16 +81,51 @@ public final class DocumentTemplateUtils {
                     break;
                 }
             }
-            if(!hasMixin) {
+            if (!hasMixin) {
                 node.addMixin(mixinName);
             }
 
-            session.save();
+            if (session.hasPendingChanges()) {
+                session.save();
+            }
+            if (processExistingContent) {
+                addContentMixin(context, namespace + ':' + document, mixinName);
+            }
+
         } finally {
             GlobalUtils.cleanupSession(session);
         }
 
 
+    }
+
+    private static void addContentMixin(final PluginContext context, final String documentName, final String mixinName) throws RepositoryException {
+        final Session session = context.createSession();
+        try {
+            final QueryManager queryManager = session.getWorkspace().getQueryManager();
+            final QueryResult result = queryManager.createQuery("//content//element(*," + documentName + ')', "xpath").execute();
+            final NodeIterator nodes = result.getNodes();
+            while (nodes.hasNext()) {
+                final Node node = nodes.nextNode();
+                boolean hasMixin = false;
+                final NodeType[] mixinNodeTypes = node.getMixinNodeTypes();
+                for (NodeType mixinNodeType : mixinNodeTypes) {
+                    if (mixinNodeType.getName().equals(mixinName)) {
+                        hasMixin = true;
+                        break;
+                    }
+                }
+                if (!hasMixin) {
+                    node.addMixin(mixinName);
+                }
+            }
+            if (session.hasPendingChanges()) {
+                session.save();
+            }
+
+        } finally {
+            GlobalUtils.cleanupSession(session);
+        }
     }
 
 
@@ -97,8 +139,6 @@ public final class DocumentTemplateUtils {
     //############################################
     // UTILS
     //############################################
-
-
 
 
     private static Set<String> prepareValues(final Value[] values, final String value) throws RepositoryException {

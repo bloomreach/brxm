@@ -112,7 +112,7 @@ public class EcmTaggingResource extends BaseResource {
                         log.info("Suggest field path: [{}] already exists.", fieldImportPath);
                         continue;
                     }
-                    DocumentTemplateUtils.addMixinType(context, document, MIXIN_NAME);
+                    DocumentTemplateUtils.addMixinToTemplate(context, document, MIXIN_NAME, true);
                     // add place holders:
                     final Map<String, String> templateData = new HashMap<>(values);
                     templateData.put("fieldLocation", MessageFormat.format("{0}.item", location));

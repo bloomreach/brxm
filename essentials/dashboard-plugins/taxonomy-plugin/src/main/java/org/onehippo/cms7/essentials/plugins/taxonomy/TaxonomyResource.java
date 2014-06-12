@@ -145,7 +145,7 @@ public class TaxonomyResource extends BaseResource {
                 final String location = locations[i];
                 final String taxonomyName = taxonomyNames[i];
                 final String prefix = context.getProjectNamespacePrefix();
-                DocumentTemplateUtils.addMixinType(context, documentName, HIPPOTAXONOMY_MIXIN);
+                DocumentTemplateUtils.addMixinToTemplate(context, documentName, HIPPOTAXONOMY_MIXIN, true);
                 final String path = MessageFormat.format("/hippo:namespaces/{0}/{1}/editor:templates/_default_", prefix, documentName);
                 if (session.nodeExists(path)) {
                     final Node node = session.getNode(path);
