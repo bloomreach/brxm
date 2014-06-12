@@ -29,7 +29,7 @@
  */
 (function () {
     "use strict";
-     angular.module('hippo.essentials', [ 'hippo.theme', 'ngRoute', 'localytics.directives', 'ui.bootstrap', 'ui.router'])
+    angular.module('hippo.essentials', [ 'hippo.theme', 'ngRoute', 'localytics.directives', 'ui.bootstrap', 'ui.router'])
 
 //############################################
 // GLOBAL LOADING
@@ -94,9 +94,8 @@
                         if (error.data) {
                             if (error.data.value) {
                                 $rootScope.globalError.push(error.data.value);
-
-                            }else{
-                            $rootScope.globalError.push(error.data);
+                            } else {
+                                $rootScope.globalError.push(error.data);
                             }
                         }
                         else {
@@ -196,10 +195,10 @@
                 //############################################
                 // DOCUMENTS
                 //############################################
-                documents: root+ '/documents/',
-                documents_compounds: root + '/documents/' +  'compounds',
-                documents_documents: root + '/documents/' +  'documents',
-                documents_template_queries: root + '/documents/' +  'templatequeries'
+                documents: root + '/documents/',
+                documents_compounds: root + '/documents/' + 'compounds',
+                documents_documents: root + '/documents/' + 'documents',
+                documents_template_queries: root + '/documents/' + 'templatequeries'
 
             };
 
