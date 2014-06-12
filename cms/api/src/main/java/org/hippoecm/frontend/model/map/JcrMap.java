@@ -60,7 +60,7 @@ public class JcrMap extends AbstractMap<String, Object> implements IHippoMap, ID
         try {
             return getNode().getPrimaryNodeType().getName();
         } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+            log.error(ex.getMessage(), ex);
         }
         return null;
     }
@@ -74,7 +74,7 @@ public class JcrMap extends AbstractMap<String, Object> implements IHippoMap, ID
             }
             return result;
         } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+            log.error(ex.getMessage(), ex);
         }
         return new ArrayList<String>(0);
     }
@@ -126,7 +126,7 @@ public class JcrMap extends AbstractMap<String, Object> implements IHippoMap, ID
                 log.warn("Node model is not valid");
             }
         } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+            log.error(ex.getMessage(), ex);
         }
     }
 
@@ -189,7 +189,7 @@ public class JcrMap extends AbstractMap<String, Object> implements IHippoMap, ID
                 }
             }
         } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+            log.error(ex.getMessage(), ex);
         }
         return current;
     }
@@ -215,7 +215,7 @@ public class JcrMap extends AbstractMap<String, Object> implements IHippoMap, ID
             }
             return result;
         } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+            log.error(ex.getMessage(), ex);
         }
         return null;
     }
@@ -239,7 +239,7 @@ public class JcrMap extends AbstractMap<String, Object> implements IHippoMap, ID
             }
             return false;
         } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+            log.error(ex.getMessage(), ex);
         }
         return false;
     }
@@ -300,7 +300,7 @@ public class JcrMap extends AbstractMap<String, Object> implements IHippoMap, ID
                 }
             }
         } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+            log.error(ex.getMessage(), ex);
         }
         return null;
     }
@@ -350,7 +350,7 @@ public class JcrMap extends AbstractMap<String, Object> implements IHippoMap, ID
                 return names.size() + (int) node.getProperties().getSize() - 1;
             }
         } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+            log.error(ex.getMessage(), ex);
         }
         return 0;
     }
@@ -397,7 +397,7 @@ public class JcrMap extends AbstractMap<String, Object> implements IHippoMap, ID
                 }
             }
         } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+            log.error(ex.getMessage(), ex);
         }
         return result;
     }
@@ -406,7 +406,7 @@ public class JcrMap extends AbstractMap<String, Object> implements IHippoMap, ID
         try {
             getNode().refresh(false);
         } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+            log.error(ex.getMessage(), ex);
         }
     }
 
@@ -414,7 +414,7 @@ public class JcrMap extends AbstractMap<String, Object> implements IHippoMap, ID
         try {
             getNode().save();
         } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+            log.error(ex.getMessage(), ex);
         }
     }
 
