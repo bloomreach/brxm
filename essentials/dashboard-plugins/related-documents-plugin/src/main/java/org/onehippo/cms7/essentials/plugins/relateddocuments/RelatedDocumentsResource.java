@@ -19,7 +19,9 @@ package org.onehippo.cms7.essentials.plugins.relateddocuments;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.RepositoryException;
@@ -44,6 +46,8 @@ import org.onehippo.cms7.essentials.dashboard.utils.PayloadUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Joiner;
 
 /**
  * @version "$Id$"
@@ -73,6 +77,8 @@ public class RelatedDocumentsResource extends BaseResource {
 
             final String templateRelatedDocs = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/related_documents_template.xml"));
             final String templateSuggestDocs = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/related_documents_suggestion_template.xml"));
+
+            final Set<String> changedDocuments = new HashSet<>();
             if (!Strings.isEmpty(documents)) {
 
                 final String[] docs = PayloadUtils.extractValueArray(values.get("documents"));
@@ -101,8 +107,13 @@ public class RelatedDocumentsResource extends BaseResource {
                     final String suggestData = TemplateUtils.replaceStringPlaceholders(templateSuggestDocs, templateData);
                     session.importXML(fieldImportPath, IOUtils.toInputStream(suggestData), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
                     session.save();
+                    changedDocuments.add(document);
                 }
 
+            }
+            if (changedDocuments.size() > 0) {
+                final String join = Joiner.on(',').join(changedDocuments);
+                return new MessageRestful("Added related document fields to following documents: " + join);
             }
 
 
@@ -111,7 +122,7 @@ public class RelatedDocumentsResource extends BaseResource {
         } finally {
             GlobalUtils.cleanupSession(session);
         }
-        return new MessageRestful("setup");
+        return new MessageRestful("No related document fields were added");
 
     }
 
