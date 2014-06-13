@@ -570,7 +570,6 @@ dashboard-plugins/selection-plugin/src/main/resources/xml/single-field-editor-te
 dashboard-plugins/selection-plugin/src/main/resources/xml/single-field-node-type.xml -text
 dashboard-plugins/selection-plugin/src/main/resources/xml/valuelistmanager.xml -text
 dashboard-plugins/seo-plugin/pom.xml -text
-dashboard-plugins/seo-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/seo/SeoResource.java -text
 dashboard-plugins/seo-plugin/src/main/resources/META-INF/resources/plugins/seoPlugin/seoPlugin.html -text
 dashboard-plugins/seo-plugin/src/main/resources/META-INF/seoPlugin_instructions.xml -text
 dashboard-plugins/seo-plugin/src/main/resources/META-INF/web-fragment.xml -text
