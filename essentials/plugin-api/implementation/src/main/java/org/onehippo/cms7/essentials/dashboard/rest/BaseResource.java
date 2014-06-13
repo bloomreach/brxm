@@ -171,31 +171,41 @@ public class BaseResource {
     }
 
     protected void populateInstallState(final PluginRestful plugin, final PluginContext context) {
-        boolean addRequested = false;
-        boolean added = false;
+        boolean boarding = false;
+        boolean onBoard = false;
+        boolean installing = false;
+        boolean installed = false;
 
         try (PluginConfigService service = new FilePluginService(context)) {
             final InstallerDocument document = service.read(plugin.getPluginId(), InstallerDocument.class);
-            addRequested = document != null && document.hasDateAdded();
+            if (document != null) {
+                boarding = document.getDateInstalled() != null;
+                installing = document.getDateAdded() != null;
+            }
         } catch (Exception e) {
             log.error("Error reading settings for plugin {} from file", plugin.getPluginId(), e);
         }
 
         try (PluginConfigService service = new ResourcePluginService(context)) {
             final InstallerDocument document = service.read(plugin.getPluginId(), InstallerDocument.class);
-            added = document != null && document.hasDateAdded();
+            if (document != null) {
+                onBoard = document.getDateInstalled() != null;
+                installed = document.getDateAdded() != null;
+            }
         } catch (Exception e) {
             log.error("Error reading settings for plugin {} from resource", plugin.getPluginId(), e);
         }
 
-        if (addRequested) {
-            if (added) {
-                plugin.setInstallState("added");
-            } else {
-                plugin.setInstallState("add requested");
-            }
-        } else {
+        if (installed) {
             plugin.setInstallState("installed");
+        } else if (installing) {
+            plugin.setInstallState("installing");
+        } else if (onBoard) {
+            plugin.setInstallState("onBoard");
+        } else if (boarding) {
+            plugin.setInstallState("boarding");
+        } else {
+            plugin.setInstallState("discovered");
         }
     }
 

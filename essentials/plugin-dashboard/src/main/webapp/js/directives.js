@@ -178,7 +178,7 @@
                     });
                     $scope.run = function () {
                         $http.post($rootScope.REST.package_install, $scope.payload).success(function (data) {
-                            $rootScope.$broadcast('update-plugin-install-state', { 'pluginId': $scope.pluginId, 'state': 'add requested' });
+                            $rootScope.$broadcast('update-plugin-install-state', { 'pluginId': $scope.pluginId, 'state': 'installing' });
                         });
                     };
                     $http.get($rootScope.REST.root + "/plugins/plugins/" + $scope.pluginId).success(function (plugin) {

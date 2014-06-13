@@ -165,7 +165,7 @@
         "pluginId": "selectionPlugin",
         "name": "Selection plugin",
         "introduction": "Add value lists and selection document fields to your Hippo project",
-        "description": "Add selection fields to your document types. The list of choices can be backed by a CMS-based value list. <p>Read more about the Selection plugin at <a href=\"http://selection.forge.onehippo.org/\" target=\"_blank\">http://selection.forge.onehippo.org/</a></p>",
+        "description": "Add selection fields to your document types. The list of choices are backed by a CMS-based value list. <p>Read more about the Selection plugin at <a href=\"http://selection.forge.onehippo.org/\" target=\"_blank\">http://selection.forge.onehippo.org/</a></p>",
         "packageFile": "/META-INF/selectionPlugin_instructions.xml",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.selection.SelectionResource"],
         "vendor": {
