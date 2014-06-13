@@ -39,13 +39,6 @@
 }
 
 /*
-  Hides the clear pseudo element in input fields for IE >= 10
-*/
-input::-ms-clear {
-    display: none;
-}
-
-/*
   Centers a block horizontally and vertically using the technique from http://css-tricks.com/centering-in-the-unknown/
   Requires that all parent elements of the 'l-center-container' element have the class 'l-stretch'.
 */
@@ -71,6 +64,7 @@ html, body, .l-stretch, .l-center-container {
     display: inline-block;
     vertical-align: middle;
 }
+
 
 .tooltip-inner {
     max-width: 500px;
