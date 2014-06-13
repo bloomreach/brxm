@@ -480,6 +480,8 @@ dashboard-plugins/faq-component-plugin/src/main/resources/META-INF/faqComponentP
 dashboard-plugins/faq-component-plugin/src/main/resources/META-INF/resources/plugins/faqComponentPlugin/faqComponentPlugin.html -text
 dashboard-plugins/faq-component-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/hst/faq-component-catalog-item.xml -text
+dashboard-plugins/faq-component-plugin/src/main/resources/instructions/hst/faq-menu-item.xml -text
+dashboard-plugins/faq-component-plugin/src/main/resources/instructions/hst/faq-sitemap-item.xml -text
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/icon/component-icon-faq.png -text
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/java/FaqDocument.txt -text
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/xml/faq-document.xml -text

@@ -25,6 +25,9 @@
     <file action="copy"  source="instructions/icon/component-icon-faq.png" binary="true" target="{{siteWebRoot}}/images/component-icon-faq.png"/>
     <xml action="copy" source="instructions/hst/faq-component-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
 
+    <xml action="copy" source="instructions/hst/faq-menu-item.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus/main"/>
+    <xml action="copy" source="instructions/hst/faq-sitemap-item.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
+
   </instructionSet>
 
 </instructions>
