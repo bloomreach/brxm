@@ -22,7 +22,9 @@
     <cnd documentType="faqdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated,hippostd:taggable"/>
     <xml action="copy" source="instructions/xml/faq-document.xml" target="/hippo:namespaces/{{namespace}}"/>
     <file action="copy" source="instructions/java/FaqDocument.txt" target="{{beansFolder}}/FaqDocument.java"/>
-    <file action="copy" binary="true" source="instructions/icon/component-icon-faq.png" target="{{siteWebRoot}}/images/component-icon-faq.png"/>
+    <file action="copy"  source="instructions/icon/component-icon-faq.png" binary="true" target="{{siteWebRoot}}/images/component-icon-faq.png"/>
+    <xml action="copy" source="instructions/hst/faq-component-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+
   </instructionSet>
 
 </instructions>
