@@ -30,5 +30,14 @@
 
   </instructionSet>
 
+
+  <instructionSet group="jsp">
+    <file action="copy" source="instructions/jsp/faq-main-faq.jsp" target="{{jspRoot}}/hstdefault/faq-main-faq.jsp"/>
+    <file action="copy" source="instructions/jsp/faq-main-faqlist.jsp" target="{{jspRoot}}/hstdefault/faq-main-faqlist.jsp"/>
+    <xml action="copy" source="instructions/hst/faq-faq-template-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" source="instructions/hst/faq-list-template-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+
+  </instructionSet>
+
 </instructions>
 

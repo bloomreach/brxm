@@ -2551,6 +2551,12 @@ dashboard-plugins/faq-component-plugin/src/main/resources/instructions/java/.ide
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/java/atlassian-ide-plugin.xml
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/java/hippo-plugins.iws
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/java/target
+dashboard-plugins/faq-component-plugin/src/main/resources/instructions/jsp/*.iml
+dashboard-plugins/faq-component-plugin/src/main/resources/instructions/jsp/.DS_Store
+dashboard-plugins/faq-component-plugin/src/main/resources/instructions/jsp/.idea
+dashboard-plugins/faq-component-plugin/src/main/resources/instructions/jsp/atlassian-ide-plugin.xml
+dashboard-plugins/faq-component-plugin/src/main/resources/instructions/jsp/hippo-plugins.iws
+dashboard-plugins/faq-component-plugin/src/main/resources/instructions/jsp/target
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/target
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/xml/*.iml
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/xml/.DS_Store
