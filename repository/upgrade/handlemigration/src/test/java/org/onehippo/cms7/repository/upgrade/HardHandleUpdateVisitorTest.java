@@ -18,7 +18,9 @@ package org.onehippo.cms7.repository.upgrade;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.jcr.ItemVisitor;
 import javax.jcr.Node;
@@ -29,6 +31,8 @@ import javax.jcr.Value;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionIterator;
 import javax.jcr.version.VersionManager;
+
+import com.google.common.collect.Sets;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -77,7 +81,7 @@ public class HardHandleUpdateVisitorTest extends RepositoryTestCase {
         editAndPublishTestDocuments();
         migrate();
         checkDocumentHistory();
-        checkAvailability(Arrays.asList("live", "preview"));
+        checkAvailability(Sets.newHashSet("live", "preview"));
     }
 
     @Test
@@ -86,7 +90,7 @@ public class HardHandleUpdateVisitorTest extends RepositoryTestCase {
         editDocuments();
         migrate();
         checkDocumentHistory();
-        checkAvailability(Arrays.asList("live", "preview"));
+        checkAvailability(Sets.newHashSet("live", "preview"));
     }
 
     @Test
@@ -94,7 +98,7 @@ public class HardHandleUpdateVisitorTest extends RepositoryTestCase {
         editAndPublishTestDocuments();
         depublishDocuments();
         migrate();
-        checkAvailability(Arrays.asList("preview"));
+        checkAvailability(Sets.newHashSet("preview"));
     }
 
     @Test
@@ -132,6 +136,7 @@ public class HardHandleUpdateVisitorTest extends RepositoryTestCase {
             @Override
             public void visit(final Property property) throws RepositoryException {
             }
+
             @Override
             public void visit(final Node node) throws RepositoryException {
                 if (JcrUtils.isVirtual(node)) {
@@ -197,15 +202,15 @@ public class HardHandleUpdateVisitorTest extends RepositoryTestCase {
         assertFalse("Preview still has harddocument mixin", document.isNodeType(HippoNodeType.NT_HARDDOCUMENT));
     }
 
-    private void checkAvailability(List<String> expected) throws Exception {
+    private void checkAvailability(Set<String> expected) throws Exception {
         for (int i = 0; i < NO_OF_DOCS; i++) {
             checkAvailability(getPreview(i), expected);
         }
     }
 
-    private void checkAvailability(Node document, List<String> expected) throws RepositoryException {
+    private void checkAvailability(Node document, Set<String> expected) throws RepositoryException {
         Node handle = document.getParent();
-        List<String> availabilities = new ArrayList<>();
+        Set<String> availabilities = new HashSet<>();
         for (Node child : new NodeIterable(handle.getNodes(handle.getName()))) {
             assertTrue(child.hasProperty(HippoNodeType.HIPPO_AVAILABILITY));
             Value[] values = child.getProperty(HippoNodeType.HIPPO_AVAILABILITY).getValues();
@@ -213,7 +218,6 @@ public class HardHandleUpdateVisitorTest extends RepositoryTestCase {
                 availabilities.add(value.getString());
             }
         }
-        Collections.sort(availabilities);
         assertEquals(expected, availabilities);
     }
 
