@@ -25,6 +25,18 @@
     <file action="copy"  source="instructions/icon/component-icon-faq.png" binary="true" target="{{siteWebRoot}}/images/component-icon-faq.png"/>
     <xml action="copy" source="instructions/hst/faq-component-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
 
+    <xml action="copy" source="instructions/hst/faq-menu-item.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus/main"/>
+    <xml action="copy" source="instructions/hst/faq-sitemap-item.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
+
+  </instructionSet>
+
+
+  <instructionSet group="jsp">
+    <file action="copy" source="instructions/jsp/faq-main-faq.jsp" target="{{jspRoot}}/hstdefault/faq-main-faq.jsp"/>
+    <file action="copy" source="instructions/jsp/faq-main-faqlist.jsp" target="{{jspRoot}}/hstdefault/faq-main-faqlist.jsp"/>
+    <xml action="copy" source="instructions/hst/faq-faq-template-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" source="instructions/hst/faq-list-template-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+
   </instructionSet>
 
 </instructions>
