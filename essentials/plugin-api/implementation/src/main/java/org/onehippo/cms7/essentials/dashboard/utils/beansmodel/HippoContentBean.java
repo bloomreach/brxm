@@ -42,6 +42,7 @@ public class HippoContentBean {
 
     public static final Set<String> ACCEPTED_PROPERTIES = new ImmutableSet.Builder<String>()
             .add("hippotaxonomy:keys")
+            .add("relateddocs:reldoc")
             .add("hippostd:tags")
             .build();
     private static final Pattern PREFIX_SPLITTER = Pattern.compile(":");
