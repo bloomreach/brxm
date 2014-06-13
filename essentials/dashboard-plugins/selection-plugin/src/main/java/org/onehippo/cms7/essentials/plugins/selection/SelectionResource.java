@@ -29,6 +29,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -58,14 +59,16 @@ public class SelectionResource extends BaseResource {
 
     @POST
     @Path("/addfield")
-    public MessageRestful addField(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
+    public MessageRestful addField(final PostPayloadRestful payloadRestful,
+                                   @Context ServletContext servletContext,
+                                   @Context HttpServletResponse response) {
         final Session session = getContext(servletContext).createSession();
 
         try {
-            return addField(session, payloadRestful.getValues());
+            return addField(session, payloadRestful.getValues(), response);
         } catch (RepositoryException | IOException e) {
             log.warn("Exception trying to add a selection field to a document type", e);
-            return new ErrorMessageRestful("Failed to add new selection field to document type. Check logs.");
+            return createErrorMessage("Failed to add new selection field to document type. Check logs.", response);
         } finally {
             GlobalUtils.cleanupSession(session);
         }
@@ -191,7 +194,7 @@ public class SelectionResource extends BaseResource {
      * @param values  parameters of new selection field (See selectionPlugin.js for keys).
      * @return        message to be sent back to front-end.
      */
-    private MessageRestful addField(final Session session, final Map<String, String> values)
+    private MessageRestful addField(final Session session, final Map<String, String> values, final HttpServletResponse response)
             throws RepositoryException, IOException {
         final String docTypeBase = MessageFormat.format("/hippo:namespaces/{0}/{1}/",
                 values.get("namespace"), values.get("documentType"));
@@ -200,8 +203,8 @@ public class SelectionResource extends BaseResource {
         final Node editorTemplate = session.getNode(docTypeBase + "editor:templates/_default_");
         final Node nodeTypeHandle = session.getNode(docTypeBase + "hipposysedit:nodetype");
         if (nodeTypeHandle.getNodes().getSize() > 1) {
-            return new ErrorMessageRestful("Document type '" + documentType + "' is currently being edited in the CMS, "
-                                         + "please commit any pending changes before adding a selection field.");
+            return createErrorMessage("Document type '" + documentType + "' is currently being edited in the CMS, "
+                                    + "please commit any pending changes before adding a selection field.", response);
         }
         final Node nodeType = nodeTypeHandle.getNode("hipposysedit:nodetype");
 
@@ -213,7 +216,7 @@ public class SelectionResource extends BaseResource {
         if (nodeType.hasNode(normalized)
             || editorTemplate.hasNode(normalized)
             || isPropertyNameInUse(nodeType, values.get("namespace"), normalized)) {
-            return new ErrorMessageRestful("Field name is already in use for this document type.");
+            return createErrorMessage("Field name is already in use for this document type.", response);
         }
 
         if ("single".equals(values.get("selectionType"))) {

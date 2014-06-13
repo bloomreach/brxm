@@ -43,7 +43,7 @@
                     $http.post(restEndpoint + 'addfield/', payload).success(function () {
                         resetAddFieldForm();
                         reloadSelectionFields($scope.selectedDocumentType);
-                        $scope.regenerateBeans = true;
+                        $scope.fieldAdded = true;
                     });
                 };
                 $scope.showDocument = function(documentType) { // don't show the basedocument option
