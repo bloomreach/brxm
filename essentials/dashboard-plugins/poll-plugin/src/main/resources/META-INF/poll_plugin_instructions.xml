@@ -25,7 +25,7 @@
     <xml action="copy" source="xml/new-poll-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
   </instructionSet>
   <instructionSet group="sampleData">
-    <folder path="/content/documents/polls" template="xml/poll-folder.xml"/>
-    <xml action="copy" source="xml/poll-example.xml" target="/content/documents/polls"/>
+    <folder path="/content/documents/{{namespace}}/polls" template="xml/poll-folder.xml"/>
+    <xml action="copy" source="xml/poll-example.xml" target="/content/documents/{{namespace}}/polls"/>
   </instructionSet>
 </instructions>
