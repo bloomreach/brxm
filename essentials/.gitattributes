@@ -534,11 +534,11 @@ dashboard-plugins/related-documents-plugin/src/main/resources/related_documents_
 dashboard-plugins/robots-plugin/pom.xml -text
 dashboard-plugins/robots-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/robots/RobotsInstruction.java -text
 dashboard-plugins/robots-plugin/src/main/resources/META-INF/resources/plugins/robotsPlugin/robotsPlugin.html -text
-dashboard-plugins/robots-plugin/src/main/resources/META-INF/resources/xml/administration_folder.xml -text
-dashboard-plugins/robots-plugin/src/main/resources/META-INF/resources/xml/robots_content.xml -text
-dashboard-plugins/robots-plugin/src/main/resources/META-INF/resources/xml/robots_sitemap.xml -text
 dashboard-plugins/robots-plugin/src/main/resources/META-INF/robots_plugin_instructions.xml -text
 dashboard-plugins/robots-plugin/src/main/resources/META-INF/web-fragment.xml -text
+dashboard-plugins/robots-plugin/src/main/resources/xml/administration_folder.xml -text
+dashboard-plugins/robots-plugin/src/main/resources/xml/robots_content.xml -text
+dashboard-plugins/robots-plugin/src/main/resources/xml/robots_sitemap.xml -text
 dashboard-plugins/robots-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/search-plugin/pom.xml -text
 dashboard-plugins/search-plugin/src/main/resources/META-INF/resources/plugins/searchPlugin/searchPlugin.html -text
