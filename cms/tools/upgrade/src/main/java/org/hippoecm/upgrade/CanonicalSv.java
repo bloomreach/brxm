@@ -35,12 +35,13 @@ public class CanonicalSv {
 
     public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {
         File file = null;
+        String prefixPath = null;
         AbstractOutput output = new TextOutput(System.out);
         for (int i = 0; i < args.length; i++) {
             if (args[i].startsWith("-")) {
-                if (args[i].startsWith("-j")) {
+                if (args[i].equals("-j")) {
                     output = new JsonOutput(System.out);
-                } else if (args[i].startsWith("-h")) {
+                } else if (args[i].equals("-h")) {
                     System.err.println("Usage: CanonicalSv [OPTIONS] [<file>]");
                     System.err.println("Generate a canonical representation from a system view xml file.");
                     System.err.println("Child nodes and properties are ordered according to name and, if necessary, value.");
@@ -48,10 +49,18 @@ public class CanonicalSv {
                     System.err.println();
                     System.err.println("  -h print this help text");
                     System.err.println("  -j output JSON formatted string");
+                    System.err.println("  -p <path> qualified jcr path prefix of the original system view xml export");
+                    System.err.println();
+                    System.err.println("Example: CanonicalSv -p /hippo:configuration/hippo:frontend <file>");
                     System.err.println();
                     System.err.println("<file> is an xml file in the system view JCR format.");
                     System.err.println("With no file argument, standard input is used.");
                     System.exit(0);
+                } else if (args[i].equals("-p")) {
+                    i++;
+                    if (i < args.length) {
+                        prefixPath = args[i];
+                    }
                 }
             } else if (file == null) {
                 file = new File(args[i]);
@@ -69,15 +78,20 @@ public class CanonicalSv {
             doc = db.parse(System.in);
         }
         doc.getDocumentElement().normalize();
-        Item root = new Item("root");
+        Item root = new Item(null);
+        if (prefixPath != null) {
+            root.setParentPath(prefixPath);
+        }
         process(doc.getDocumentElement(), root);
-        output.render(root);
+        output.render(root.children.values().iterator().next().iterator().next());
+
     }
 
     static String INDENT = "  ";
 
     static void process(Element xmlRoot, Item jcrRoot) {
         Item item = new Item(xmlRoot.getAttribute("sv:name"));
+        jcrRoot.add(item);
 
         NodeList nodes = xmlRoot.getChildNodes();
         for (int i = 0; i < nodes.getLength(); i++) {
@@ -103,8 +117,6 @@ public class CanonicalSv {
                 }
             }
         }
-
-        jcrRoot.add(item);
     }
 
 }

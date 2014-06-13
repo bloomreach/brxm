@@ -32,9 +32,9 @@ class TextOutput extends AbstractOutput {
 
     void render(Item item, String prefix) {
         if (item.containsKey("jcr:primaryType")) {
-            out.println(prefix + "+ " + item.name + " [" + item.get("jcr:primaryType")[0] + "]");
+            out.println(prefix + item.getPath() + " [" + item.get("jcr:primaryType")[0] + "]");
         } else {
-            out.println(prefix + "+ " + item.name);
+            out.println(prefix + item.getPath());
         }
         for (Map.Entry<String, Value[]> entry : item.entrySet()) {
             if ("jcr:primaryType".equals(entry.getKey())) {

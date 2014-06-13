@@ -27,16 +27,26 @@ class Item extends TreeMap<String, Value[]> implements Comparable<Item> {
     private static final long serialVersionUID = 1L;
 
     String name;
+    private String parentPath;
     SortedMap<String, Set<Item>> children = new TreeMap<String, Set<Item>>();
 
     Item(String name) {
         this.name = name;
     }
 
+    protected void setParentPath(String parentPath) {
+        this.parentPath = parentPath;
+    }
+
+    public String getPath() {
+        return (parentPath == null ? "" : parentPath) + (name == null ? "" : "/" + name);
+    }
+
     void add(Item child) {
         if (!children.containsKey(child.name)) {
             children.put(child.name, new TreeSet<Item>());
         }
+        child.setParentPath(getPath());
         children.get(child.name).add(child);
     }
 

@@ -16,6 +16,9 @@
 mvn clean install
 
 # run
-sh target/canonicalsv/bin/canonicalsv <input.xml> > <output file>
+sh target/canonicalsv/bin/canonicalsv [-p <jcr prefix path>] <input.xml> > <output file>
 # or
-cat <input.xml> | sh target/canonicalsv/bin/canonicalsv > <output file>
+cat <input.xml> | sh target/canonicalsv/bin/canonicalsv  [-p <jcr prefix path>] > <output file>
+
+# get help:
+sh target/canonicalsv/bin/canonicalsv -h
