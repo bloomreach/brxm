@@ -136,11 +136,13 @@ public class ObjectConverterImpl implements ObjectConverter {
     public Object getObject(Node node) throws ObjectBeanManagerException {
         String jcrPrimaryNodeType;
         String path;
-        try { 
-            if ("rep:root".equals(node.getPrimaryNodeType().getName())) {
-                log.debug("Root node is not supposed to be resolved to a bean.");
+        try {
+
+            if (node.isSame(node.getSession().getRootNode()) && getAnnotatedClassFor("rep:root") == null) {
+                log.debug("Root node is not mapped to be resolved to a bean.");
                 return null;
             }
+
             if(node.isNodeType(HippoNodeType.NT_HANDLE) ) {
                 if(node.hasNode(node.getName())) {
                     return getObject(node.getNode(node.getName()));
@@ -195,11 +197,8 @@ public class ObjectConverterImpl implements ObjectConverter {
     public String getPrimaryObjectType(Node node) throws ObjectBeanManagerException {
         String jcrPrimaryNodeType;
         String path;
-        try { 
-            if ("rep:root".equals(node.getPrimaryNodeType().getName())) {
-                log.debug("Root node is not supposed to be resolved to a bean.");
-                return null;
-            }
+        try {
+
             if(node.isNodeType(HippoNodeType.NT_HANDLE) ) {
                 if(node.hasNode(node.getName())) {
                     return getPrimaryObjectType(node.getNode(node.getName()));

@@ -63,14 +63,6 @@ public class HippoMirror extends HippoFolder implements HippoMirrorBean {
                 return null;
             }
 
-            if (deref.isSame(deref.getSession().getRootNode()) && objectConverter.getAnnotatedClassFor("rep:root") == null) {
-                // the root node is linked and the object converter does not have
-                // a annotated class for it --> return null directly. We do this separate check because many
-                // links initially point to the root node as a default. This is a performance optimalization to avoid
-                // needless objectConverter calls.
-                return null;
-            }
-
             if (deref.isNodeType(HippoNodeType.NT_HANDLE)) {
                 /*
                  * the link is to a hippo:handle. Only return the linked bean if a child node (document) with the same name is
