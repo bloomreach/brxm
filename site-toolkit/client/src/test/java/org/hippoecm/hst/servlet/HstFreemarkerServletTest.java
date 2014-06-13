@@ -41,7 +41,7 @@ public class HstFreemarkerServletTest {
     final String basePath = "/";
     final String normalWebResourcePath = "a/b/c/vbox.ftl";
     final String normalWebResourceRealPath = "/home/dev/tomcat/webapps/site/a/b/c/vbox.ftl";
-    final String problematicResourcePath = "classpath:/org/hippoecm/hst/pagecomposer/builtin/components/vbox.ftl";
+    final String classpathResourcePath = "classpath:/org/hippoecm/hst/pagecomposer/builtin/components/vbox.ftl";
     final String exceptionMessageOnWindows = "The filename, directory name, or volume label syntax is incorrect";
 
     private HstFreemarkerServlet servlet;
@@ -50,7 +50,7 @@ public class HstFreemarkerServletTest {
     public void before() throws Exception {
         ServletContext servletContext = EasyMock.createNiceMock(ServletContext.class);
         EasyMock.expect(servletContext.getRealPath(basePath + normalWebResourcePath)).andReturn(normalWebResourceRealPath).anyTimes();
-        EasyMock.expect(servletContext.getRealPath(basePath + problematicResourcePath)).andThrow(new RuntimeException(exceptionMessageOnWindows)).anyTimes();
+        EasyMock.expect(servletContext.getRealPath(basePath + classpathResourcePath)).andThrow(new RuntimeException(exceptionMessageOnWindows)).anyTimes();
         EasyMock.replay(servletContext);
 
         MockServletConfig servletConfig = new MockServletConfig(servletContext);
@@ -79,7 +79,7 @@ public class HstFreemarkerServletTest {
         }
 
         try {
-            templateLoader.findTemplateSource(problematicResourcePath);
+            templateLoader.findTemplateSource(classpathResourcePath);
         } catch (Exception e) {
             log.warn("Unexpected Exception.", e);
             fail("Unexpected Exception.");
