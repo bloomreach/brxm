@@ -20,4 +20,7 @@
 <h3>${document.title}</h3>
 <iframe width="${cparam.width}" height="${cparam.height}" src="${document.link}" frameborder="0" allowfullscreen></iframe>
 <p>${document.description}</p>
+<c:if test="${editMode && (document eq null)}">
+  <img src="<hst:link path="/images/essentials-edit-component.png" />" alt="Edit video component settings">
+</c:if>
 

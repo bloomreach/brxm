@@ -24,5 +24,8 @@
 <@hst.link var="img" hippobean=document.original/>
     <img src="${img}" title="${document.fileName}" alt="${document.fileName}"/>
 </#if>
-
+<#if editMode && document>
+    <@hst.link var="placholderLink" path="/images/essentials-edit-component.png" />
+    <img src="${placholderLink}" alt="Edit image component settings">
+</#if>
 

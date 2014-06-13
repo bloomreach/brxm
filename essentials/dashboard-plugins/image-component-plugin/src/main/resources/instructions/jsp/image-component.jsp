@@ -18,4 +18,6 @@
 <%--@elvariable id="document" type="org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean"--%>
 <hst:link var="img" hippobean="${document.original}"/>
 <img src="${img}" title="${fn:escapeXml(document.fileName)}" alt="${fn:escapeXml(document.fileName)}"/>
-
+<c:if test="${editMode && (document eq null)}">
+  <img src="<hst:link path="/images/essentials-edit-component.png" />" alt="Edit image component settings">
+</c:if>

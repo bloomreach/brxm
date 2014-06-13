@@ -27,5 +27,9 @@
 <iframe width="${cparam.width}" height="${cparam.height}" src="${document.link}" frameborder="0" allowfullscreen></iframe>
 <p>${document.description}</p>
 </#if>
+<#if editMode && document>
+    <@hst.link var="placholderLink" path="/images/essentials-edit-component.png" />
+<img src="${placholderLink}" alt="Edit video component settings">
+</#if>
 
 
