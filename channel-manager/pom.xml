@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>26-SNAPSHOT</version>
+    <version>25</version>
   </parent>
 
 
@@ -35,9 +35,9 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Addon Channel Manager</notice.project.name>
 
-    <hippo.repository.version>2.26.03-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>2.26.03-SNAPSHOT</hippo.cms.version>
-    <hippo.hst.version>2.28.03-SNAPSHOT</hippo.hst.version>
+    <hippo.repository.version>2.26.03</hippo.repository.version>
+    <hippo.cms.version>2.26.03</hippo.cms.version>
+    <hippo.hst.version>2.28.03</hippo.hst.version>
     <hippo.addon-hst-configuration-editor.version>1.13.01</hippo.addon-hst-configuration-editor.version>
     <hippo.frontend.plugins.version>1.01.00</hippo.frontend.plugins.version>
     <hippo.frontend.theme.version>1.01.01</hippo.frontend.theme.version>
