@@ -211,7 +211,7 @@ public class ObjectConverterImpl implements ObjectConverter {
           
             if (!isObjectType) {
                 if (jcrPrimaryNodeType.equals("hippotranslation:translations")) {
-                    log.warn("Encountered node of type 'hippotranslation:translations' : This nodetype is completely deprecated and should be " +
+                    log.info("Encountered node of type 'hippotranslation:translations' : This nodetype is completely deprecated and should be " +
                             "removed from all content including from prototypes.");
                     return null;
                 }
