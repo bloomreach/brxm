@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>26-SNAPSHOT</version>
+    <version>25</version>
   </parent>
 
   <name>Hippo Site Toolkit</name>
@@ -87,7 +87,7 @@
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
     <hippo.commons.version>1.04.00</hippo.commons.version>
-    <hippo.repository.version>2.26.03-SNAPSHOT</hippo.repository.version>
+    <hippo.repository.version>2.26.03</hippo.repository.version>
     <hippo.utilities.version>1.03.00</hippo.utilities.version>
     <hippo.services.version>1.04.00</hippo.services.version>
 
