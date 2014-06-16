@@ -18,7 +18,7 @@
   <parent>
     <artifactId>hippo-repository-upgrade</artifactId>
     <groupId>org.onehippo.cms7</groupId>
-    <version>2.26.03</version>
+    <version>2.26.04-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
