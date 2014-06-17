@@ -37,9 +37,9 @@
               <tr>
                 <td>&nbsp;</td>
                 <td class="hippo-global-alignright">
-                  <input type="hidden" name="destination" value="${destination?html}" />
+                  <input type="hidden" id="destination" name="destination" value="${destination?html}" />
                   <input class="hippo-form-submit" type="submit" value="${messages.getString("label.login")}"/>
-                  <input class="hippo-form-submit" type="button" value="${messages.getString("label.cancel")}" onclick="if ('${destination?html}') location.href = '${destination?html}'; return false;" />
+                  <input class="hippo-form-submit" type="button" value="${messages.getString("label.cancel")}" onclick="if (document.getElementById('destination').value) location.href = document.getElementById('destination').value; return false;" />
                 </td>
               </tr>
             </table>
