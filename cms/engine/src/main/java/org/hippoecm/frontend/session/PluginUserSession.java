@@ -27,6 +27,7 @@ import javax.jcr.query.QueryManager;
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.wicket.Application;
@@ -36,6 +37,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.Request;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.NoRepositoryAvailablePage;
@@ -239,8 +241,19 @@ public class PluginUserSession extends UserSession {
 
     public void login() {
         try {
-            login((UserCredentials)null, null);
+            UserCredentials userCreds = getUserCredentialsFromRequestAttribute();
+            login(userCreds, null);
         } catch (LoginException ignore) {}
+    }
+
+    /**
+     * {@link #login()} method invokes this method if there's any <code>UserCredentials</code> object from the request.
+     * For example, Web SSO Agent can set a UserCredentials for the user as request attribute.
+     * @return
+     */
+    protected UserCredentials getUserCredentialsFromRequestAttribute() {
+        HttpServletRequest request = ((HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest());
+        return (UserCredentials) request.getAttribute(UserCredentials.class.getName());
     }
 
     @Override
