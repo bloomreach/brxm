@@ -39,6 +39,7 @@ class FilteringByExpressionListableBeanFactory extends DefaultListableBeanFactor
     {
         super(parentBeanFactory);
         jexlContext = JexlHelper.createContext();
+        jexlContext.getVars().put("sys", System.class);
         jexlContext.getVars().put("config", containerConfiguration);
     }
 
