@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
@@ -111,6 +112,21 @@ public class JcrMultiPropertyValueModelTest extends PluginTest {
         Value[] values = prop.getValues();
         assertEquals(1, values.length);
         assertEquals("y", values[0].getString());
+    }
+
+    @Test
+    public void testEmptyNonExistingRelaxedPropertyIsCreated() throws Exception {
+        Node test = this.root.addNode("test", "frontendtest:relaxed");
+
+        JcrPropertyModel propModel = new JcrPropertyModel("/test/strings");
+        JcrMultiPropertyValueModel valueModel = new JcrMultiPropertyValueModel<String>(propModel.getItemModel());
+        List<String> list = new ArrayList<String>(1);
+        valueModel.setObject(list);
+
+        Property prop = test.getProperty("strings");
+        Value[] values = prop.getValues();
+        assertEquals(0, values.length);
+        assertEquals(PropertyType.STRING, prop.getType());
     }
 
     protected Value createValue(String value) throws UnsupportedRepositoryOperationException, RepositoryException {
