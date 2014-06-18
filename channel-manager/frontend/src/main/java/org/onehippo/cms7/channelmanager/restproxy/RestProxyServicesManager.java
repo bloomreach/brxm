@@ -27,8 +27,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.wicket.Application;
+import org.apache.wicket.IInitializer;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IRestProxyService;
@@ -39,13 +42,20 @@ import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.CONFIG_REST_PROXY_SERVICE_ID;
 
-public class RestProxyServicesManager {
+public class RestProxyServicesManager implements IInitializer {
 
     private static final Logger log = LoggerFactory.getLogger(RestProxyServicesManager.class);
 
     public static final String DEFAULT_CONTEXT_PATH = "/site";
     private static final int MAX_THREADS = 5;
-    private static final ExecutorService executorService = Executors.newFixedThreadPool(MAX_THREADS);
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(MAX_THREADS, new ThreadFactory() {
+        @Override
+        public Thread newThread(final Runnable r) {
+            final Thread thread = new Thread(r);
+            thread.setDaemon(true);
+            return thread;
+        }
+    });
 
     private static ConcurrentHashMap<String, RestProxyInfo> restProxyInfos = new ConcurrentHashMap<>();
 
@@ -174,6 +184,35 @@ public class RestProxyServicesManager {
         // after every consecutive new failure we delay the next try...until at most 5 times
         long reCheckIntervalMilliSeconds = restProxyInfo.checkIntervalMilliSeconds * Math.min(5, restProxyInfo.consecutiveFailures);
         restProxyInfo.nextCheckTimestamp = System.currentTimeMillis() + reCheckIntervalMilliSeconds;
+    }
+
+    @Override
+    public void init(final Application application) {
+
+    }
+
+    @Override
+    public void destroy(final Application application) {
+        if (executorService.isShutdown() || executorService.isTerminated()) {
+            log.debug("Executor service has already shut down");
+        } else {
+            log.debug("Shutting down the executor service");
+            executorService.shutdown();
+            try {
+                final long duration = 10L;
+                final TimeUnit unit = TimeUnit.SECONDS;
+                log.debug("Awaiting termination of running tasks for at most {} {}", duration, unit);
+                if (executorService.awaitTermination(duration, unit)) {
+                    log.debug("All tasks terminated within {} {}", duration, unit);
+                } else {
+                    final int pendingTasks = executorService.shutdownNow().size();
+                    log.debug("{} pending tasks did not execute and are destroyed", pendingTasks);
+                }
+            } catch (InterruptedException e) {
+                log.error("An error occurred while awaiting termination", e);
+            }
+            log.debug("Executor service successfully shut down");
+        }
     }
 
     private static class RestProxyInfo {
