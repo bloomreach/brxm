@@ -61,7 +61,7 @@ public class JcrMultiPropertyValueModel<T extends Serializable> implements IMode
     // dynamically reload value
     private transient boolean loaded = false;
     private transient List<T> object = null;
-    private transient PropertyDefinition propertyDefinition;
+    private transient PropertyDefinition cachedPropertyDefinition;
 
     private final JcrPropertyModel<T> propertyModel;
     private final int type;
@@ -73,8 +73,10 @@ public class JcrMultiPropertyValueModel<T extends Serializable> implements IMode
 
     public JcrMultiPropertyValueModel(JcrPropertyModel<T> propertyModel) {
         this.propertyModel = propertyModel;
-        Property property = propertyModel.getProperty();
+        this.type = determineType(propertyModel.getProperty());
+    }
 
+    private int determineType(final Property property) {
         int type = NO_TYPE;
         if (property != null) {
             try {
@@ -92,7 +94,7 @@ public class JcrMultiPropertyValueModel<T extends Serializable> implements IMode
         if (type == NO_TYPE) {
             type = PropertyType.UNDEFINED;
         }
-        this.type = type;
+        return type;
     }
 
     public Property getProperty() {
@@ -115,7 +117,7 @@ public class JcrMultiPropertyValueModel<T extends Serializable> implements IMode
     public void detach() {
         loaded = false;
         object = null;
-        propertyDefinition = null;
+        cachedPropertyDefinition = null;
         propertyModel.detach();
     }
 
@@ -229,22 +231,22 @@ public class JcrMultiPropertyValueModel<T extends Serializable> implements IMode
     }
 
     private PropertyDefinition getPropertyDefinition(int type) {
-        if (propertyDefinition == null) {
+        if (cachedPropertyDefinition == null) {
             // property doesn't exist, try to find pdef in the node definition
-            propertyDefinition = propertyModel.getDefinition(type, true);
-            if (propertyDefinition == null) {
-                propertyDefinition = propertyModel.getDefinition(type, false);
+            cachedPropertyDefinition = propertyModel.getDefinition(type, true);
+            if (cachedPropertyDefinition == null) {
+                cachedPropertyDefinition = propertyModel.getDefinition(type, false);
 
-                if (propertyDefinition == null && propertyModel.getItemModel().exists()) {
+                if (cachedPropertyDefinition == null && propertyModel.getItemModel().exists()) {
                     try {
-                        propertyDefinition = propertyModel.getProperty().getDefinition();
+                        cachedPropertyDefinition = propertyModel.getProperty().getDefinition();
                     } catch (RepositoryException e) {
                         throw new RuntimeException("Unable to determine property definition for " + propertyModel, e);
                     }
                 }
             }
         }
-        return propertyDefinition;
+        return cachedPropertyDefinition;
     }
 
     private void setValues(List<Value> values) {
