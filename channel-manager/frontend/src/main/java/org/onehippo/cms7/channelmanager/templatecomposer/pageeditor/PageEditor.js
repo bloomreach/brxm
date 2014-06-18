@@ -166,6 +166,8 @@
             this.title = config.title;
             this.resources = config.resources;
             this.cmsUser = config.cmsUser;
+            this.antiCache = config.antiCache;
+
             config.header = false;
 
             this.variantsUuid = config.variantsUuid;
@@ -1056,7 +1058,8 @@
                 composerRestMountUrl: this.pageContainer.getComposerRestMountUrl(),
                 debug: this.debug,
                 locale: this.locale,
-                menuId: uuid
+                menuId: uuid,
+                antiCache: this.antiCache
             });
             editMenuWindow.on('close', this.refreshIframe, this);
             editMenuWindow.show();
@@ -1071,7 +1074,8 @@
                 mountId: this.currentMountId,
                 sitemapId: this.currentSitemapId,
                 userCanEdit: this.pageContainer.canEdit,
-                userIsEditing: !this.pageContainer.previewMode
+                userIsEditing: !this.pageContainer.previewMode,
+                antiCache: this.antiCache
             });
             pagesWindow.show();
         },
@@ -1085,7 +1089,8 @@
                 locale: this.locale,
                 mountId: this.currentMountId,
                 sitemapId: this.currentSitemapId,
-                sitemapItemId: this.currentSitemapItemId
+                sitemapItemId: this.currentSitemapItemId,
+                antiCache: this.antiCache
             });
             pageSettingsWindow.show();
         },

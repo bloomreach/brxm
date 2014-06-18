@@ -33,9 +33,13 @@
         performCloseHandshake: true,
 
         constructor: function(config) {
-            var isClosing = false;
+            var isClosing = false,
+                url = config.iframeUrl;
 
             this.iframePanelId = Ext.id();
+
+            url = Ext.urlAppend(url, 'parentExtIFramePanelId=' + this.iframePanelId);
+            url = Ext.urlAppend(url, 'antiCache=' + config.antiCache);
 
             Ext.apply(config, {
                 layout: 'fit',
@@ -44,7 +48,7 @@
                     {
                         xtype: 'Hippo.ChannelManager.TemplateComposer.IFramePanel',
                         id: this.iframePanelId,
-                        url: Ext.urlAppend(config.iframeUrl, 'parentExtIFramePanelId=' + this.iframePanelId),
+                        url: url,
                         iframeConfig: config.iframeConfig
                     }
                 ],

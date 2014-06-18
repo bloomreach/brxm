@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.commons.iterator.NodeIterable;
 import org.apache.wicket.Application;
@@ -173,6 +174,10 @@ public class PageEditor extends ExtPanel {
     @ExtProperty
     @SuppressWarnings("unused")
     private Boolean hideHstConfigEditor;
+
+    @ExtProperty
+    @SuppressWarnings("unused")
+    private static final String antiCache = RandomStringUtils.randomAlphanumeric(4);
 
     private IPluginContext context;
     private ExtStoreFuture<Object> channelStoreFuture;

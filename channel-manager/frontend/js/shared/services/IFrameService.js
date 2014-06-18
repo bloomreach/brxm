@@ -26,17 +26,24 @@
             function getParentIFramePanelId() {
                 var idParam = 'parentExtIFramePanelId',
                     search = $window.location.search,
-                    keyValue = search.split('=');
+                    parameters, i, length, keyValue;
 
-                if (keyValue[0] === ('?' + idParam)) {
-                    return keyValue[1];
+                if (search.length > 0) {
+                    parameters = search.substring(1).split('&');
+
+                    for (i = 0, length = parameters.length; i < length; i++) {
+                        keyValue = parameters[i].split('=');
+                        if (keyValue[0] === idParam) {
+                            return keyValue[1];
+                        }
+                    }
                 }
 
                 throw new Error("Expected query parameter '" + idParam + "'");
             }
 
             function getParentIFramePanel() {
-                var iframePanelId = getParentIFramePanelId($window),
+                var iframePanelId = getParentIFramePanelId(),
                     iframePanel = $window.parent.Ext.getCmp(iframePanelId);
 
                 if (!angular.isObject(iframePanel)) {
