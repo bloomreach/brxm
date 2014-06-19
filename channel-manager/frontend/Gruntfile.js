@@ -49,89 +49,30 @@ module.exports = function (grunt) {
         // clean target (distribution) folder
         clean: {
             target: {
-                files: [{
-                    dot: true,
-                    src: [
-                        '<%= build.target %>/*'
-                    ]
-                }]
+                src: '<%= build.target %>'
             },
 
             bower: {
-                files: [{
-                    dot: true,
-                    src: [
-                        '<%= build.source %>/components/**'
-                    ]
-                }]
+                src: '<%= build.source %>/components/**'
             }
         },
 
-        // copy files
+        // copy files to target folder
         copy: {
-            menu: {
+            apps: {
                 files: [
                     {
                         expand: true,
-                        dot: true,
-                        cwd: '<%= build.source %>/menu',
-                        dest: '<%= build.target %>/menu',
+                        cwd: '<%= build.source %>',
+                        dest: '<%= build.target %>',
                         src: [
                             '**/*.html',
                             '**/*.js',
+                            '!**/*.spec.js',
                             '**/assets/css/*',
                             '**/assets/images/*',
-                            '**/i18n/*.json'
-                        ]
-                    }
-                ]
-            },
-
-            page: {
-                files: [
-                    {
-                        expand: true,
-                        dot: true,
-                        cwd: '<%= build.source %>/page',
-                        dest: '<%= build.target %>/page',
-                        src: [
-                            '**/*.html',
-                            '**/*.js',
-                            '**/assets/css/*',
-                            '**/i18n/*.json'
-                        ]
-                    }
-                ]
-            },
-
-            pages: {
-                files: [
-                    {
-                        expand: true,
-                        dot: true,
-                        cwd: '<%= build.source %>/pages',
-                        dest: '<%= build.target %>/pages',
-                        src: [
-                            '**/*.html',
-                            '**/*.js',
-                            '**/assets/css/*',
-                            '**/i18n/*.json'
-                        ]
-                    }
-                ]
-            },
-
-            shared: {
-                files: [
-                    {
-                        expand: true,
-                        dot: true,
-                        cwd: '<%= build.source %>/shared',
-                        dest: '<%= build.target %>/shared',
-                        src: [
-                            '**/*.js',
-                            '**/assets/css/*',
-                            '**/assets/images/*'
+                            '**/i18n/*.json',
+                            '!components/**'
                         ]
                     }
                 ]
@@ -141,7 +82,6 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        dot: true,
                         cwd: '<%= build.source %>/components',
                         dest: '<%= build.target %>/components',
                         src: readDeclutteredComponentFiles()
@@ -150,41 +90,38 @@ module.exports = function (grunt) {
             }
         },
 
-        // watch
+        // add hashes to file names to avoid caching issues
+        filerev: {
+            css: {
+                src: '<%= build.target %>/**/*.css'
+            },
+            js: {
+                src: '<%= build.target %>/**/*.js'
+            },
+            images: {
+                src: '<%= build.target %>/**/*.{gif,png}'
+            }
+        },
+
+        // replace file references in HTML files with their hashed versions
+        usemin: {
+            css: '<%= build.target %>/**/*.css',
+            html: '<%= build.target %>/**/*.html'
+        },
+
+        // watch source files and rebuild when they change
         watch: {
-            menu: {
-                files: [
-                    '<%= build.source %>/menu/**/*'
-                ],
-                tasks: ['jshint', 'copy:menu']
+            options: {
+                spawn: false,
+                interrupt: true
             },
 
-            page: {
+            apps: {
                 files: [
-                    '<%= build.source %>/page/**/*'
+                    '<%= build.source %>/**/*',
+                    '!<%= build.source %>/components/**/*'
                 ],
-                tasks: ['jshint', 'copy:page']
-            },
-
-            pages: {
-                files: [
-                    '<%= build.source %>/pages/**/*'
-                ],
-                tasks: ['jshint', 'copy:pages']
-            },
-
-            shared: {
-                files: [
-                    '<%= build.source %>/shared/**/*'
-                ],
-                tasks: ['jshint', 'copy:shared']
-            },
-
-            components: {
-                files: [
-                    '<%= build.source %>/components/*'
-                ],
-                tasks: ['copy:components']
+                tasks: ['build']
             },
 
             livereload: {
@@ -192,10 +129,8 @@ module.exports = function (grunt) {
                     livereload: true
                 },
                 files: [
-                    '<%= build.source %>/menu/**/*',
-                    '<%= build.source %>/page/**/*',
-                    '<%= build.source %>/pages/**/*',
-                    '<%= build.source %>/shared/**/*'
+                    '<%= build.source %>/**/*',
+                    '!<%= build.source %>/components/**/*'
                 ]
             }
         },
@@ -216,18 +151,14 @@ module.exports = function (grunt) {
                 reporter: require('jshint-stylish'),
                 jshintrc: true
             },
-            app: [
-                '<%= build.source %>/shared/**/*.js',
-                '<%= build.source %>/menu/**/*.js',
-                '<%= build.source %>/page/**/*.js',
-                '<%= build.source %>/pages/**/*.js',
-                '!<%= build.source %>/**/*.spec.js'
+            apps: [
+                '<%= build.source %>/**/*.js',
+                '!<%= build.source %>/**/*.spec.js',
+                '!<%= build.source %>/components/**/*'
             ],
             tests: [
-                '<%= build.source %>/shared/**/*.spec.js',
-                '<%= build.source %>/menu/**/*.spec.js',
-                '<%= build.source %>/page/**/*.spec.js',
-                '<%= build.source %>/pages/**/*.spec.js'
+                '<%= build.source %>/**/*.spec.js',
+                '!<%= build.source %>/components/**/*'
             ]
         },
 
@@ -254,14 +185,13 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('build', 'Build everything', [
-        'jshint:app',
+        'jshint:apps',
         'declutter',
         'clean:target',
-        'copy:menu',
-        'copy:page',
-        'copy:pages',
-        'copy:shared',
-        'copy:components'
+        'copy:apps',
+        'copy:components',
+        'filerev',
+        'usemin'
     ]);
 
     grunt.registerTask('test', 'Test the source code', [
