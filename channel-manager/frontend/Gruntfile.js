@@ -188,8 +188,7 @@ module.exports = function (grunt) {
         'jshint:apps',
         'declutter',
         'clean:target',
-        'copy:apps',
-        'copy:components',
+        'copy',
         'filerev',
         'usemin'
     ]);
