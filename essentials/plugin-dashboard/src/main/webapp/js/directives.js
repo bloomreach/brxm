@@ -186,6 +186,21 @@
                     });
                 }
             }
+        }).directive("essentialsCmsDocumentTypeDeepLink", function () {
+            return {
+                replace: true,
+                restrict: 'E',
+                scope: {
+                    nameSpace: '@',
+                    documentName: '@',
+                    label: '@'
+                },
+                templateUrl: 'directives/essentials-cms-document-type-deep-link.html',
+                controller: function ($scope, $sce, $log, $rootScope, $http) {
+                    $scope.label = 'CMS Document Type Editor';
+                    $scope.defaultNameSpace = $rootScope.projectSettings.projectNamespace;
+                }
+            }
         })
 
 

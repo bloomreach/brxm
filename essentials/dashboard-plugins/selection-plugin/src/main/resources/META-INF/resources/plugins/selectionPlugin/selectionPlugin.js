@@ -35,7 +35,6 @@
                             namespace:     $scope.selectedDocumentType.prefix,
                             documentType:  $scope.selectedDocumentType.name,
                             fieldName:     $scope.fieldName,
-                            fieldPosition: $scope.fieldPosition,
                             selectionType: $scope.selectionType,
                             valueList:     $scope.selectedValueList.value
                         }
@@ -44,16 +43,13 @@
                         resetAddFieldForm();
                         reloadSelectionFields($scope.selectedDocumentType);
                         $scope.fieldAdded = true;
+                        $scope.modifiedType = $scope.selectedDocumentType;
                     });
                 };
                 $scope.showDocument = function(documentType) { // don't show the basedocument option
                     return documentType.name !== 'basedocument';
                 };
 
-                $scope.positionMap = {
-                    '${cluster.id}.right.item': 'right',
-                    '${cluster.id}.left.item' : 'left'
-                };
                 $scope.valueListAsOption = function(valueList) {
                     return valueList.key + ' (' + valueList.value + ')';
                 };
@@ -75,14 +71,25 @@
                 });
                 $http.get($rootScope.REST.documents).success(function (data){
                     $scope.documentTypes = data;
+
+                    // if there's only one selectable type, preselect it.
+                    var selectable = [];
+                    angular.forEach($scope.documentTypes, function(type) {
+                        if ($scope.showDocument(type)) {
+                            selectable.push(type);
+                        }
+                    });
+                    if (selectable.length == 1) {
+                        $scope.selectedDocumentType = selectable[0];
+                    }
                 });
 
                 // when changing the document type, set the default position and retrieve a fresh list of fields
                 $scope.$watch('selectedDocumentType', function (newDocType) {
                     if (newDocType) {
-                        $scope.positionMatters = newDocType.fieldLocations.length > 1;
-                        $scope.fieldPosition = newDocType.fieldLocations[0];
                         reloadSelectionFields(newDocType);
+                    } else {
+                        $scope.selectionFields = [];
                     }
                 }, true);
 

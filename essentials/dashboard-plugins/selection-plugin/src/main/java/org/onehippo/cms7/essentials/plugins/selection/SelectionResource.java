@@ -42,9 +42,9 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.io.IOUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
-import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
+import org.onehippo.cms7.essentials.dashboard.utils.DocumentTemplateUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
@@ -148,7 +148,6 @@ public class SelectionResource extends BaseResource {
                         field.setNameSpace(nameSpace);
                         field.setDocumentName(documentName);
                         field.setName(editorField.getProperty("caption").getString());
-                        field.setPosition(editorField.getProperty("wicket.id").getString());
                         field.setValueList(editorField.getNode("cluster.options").getProperty("source").getString());
                         fields.add(field);
                         break; // out of the inner loop
@@ -180,7 +179,6 @@ public class SelectionResource extends BaseResource {
                 field.setNameSpace(nameSpace);
                 field.setDocumentName(documentName);
                 field.setName(editorField.getProperty("caption").getString());
-                field.setPosition(editorField.getProperty("wicket.id").getString());
                 field.setValueList(editorField.getNode("valuelist.options").getProperty("source").getString());
                 fields.add(field);
             }
@@ -218,6 +216,9 @@ public class SelectionResource extends BaseResource {
             || isPropertyNameInUse(nodeType, values.get("namespace"), normalized)) {
             return createErrorMessage("Field name is already in use for this document type.", response);
         }
+
+        // Put the new field to the default location
+        values.put("fieldPosition", DocumentTemplateUtils.getDefaultPosition(editorTemplate));
 
         if ("single".equals(values.get("selectionType"))) {
             importXml("/xml/single-field-editor-template.xml", values, editorTemplate);

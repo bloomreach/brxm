@@ -40,7 +40,6 @@ import org.slf4j.LoggerFactory;
 public final class DocumentTemplateUtils {
 
     private static final Pattern NAMESPACE_PATTERN = Pattern.compile(":");
-    public static final String DEFAULT_FIELD_LOCATION = "${cluster.id}.field";
     private static Logger log = LoggerFactory.getLogger(DocumentTemplateUtils.class);
 
     public static final String HIPPOSYSEDIT_SUPERTYPE = "hipposysedit:supertype";
@@ -96,6 +95,15 @@ public final class DocumentTemplateUtils {
         }
 
 
+    }
+
+    public static String getDefaultPosition(final Node editorTemplate) throws RepositoryException {
+        final Node root = editorTemplate.getNode("root");
+        if (root.hasProperty("wicket.extensions")) {
+            final Value[] extensions = root.getProperty("wicket.extensions").getValues();
+            return root.getProperty(extensions[0].getString()).getString() + ".item";
+        }
+        return "${cluster.id}.field";
     }
 
     private static void addContentMixin(final PluginContext context, final String documentName, final String mixinName) throws RepositoryException {

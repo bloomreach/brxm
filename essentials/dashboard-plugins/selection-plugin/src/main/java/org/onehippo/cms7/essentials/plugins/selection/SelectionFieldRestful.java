@@ -30,7 +30,6 @@ public class SelectionFieldRestful implements Restful{
     private String nameSpace;
     private String documentName;
     private String name;
-    private String position;
     private String type;
     private String valueList;
 
@@ -56,14 +55,6 @@ public class SelectionFieldRestful implements Restful{
 
     public void setName(final String name) {
         this.name = name;
-    }
-
-    public String getPosition() {
-        return position;
-    }
-
-    public void setPosition(final String position) {
-        this.position = position;
     }
 
     public String getType() {
