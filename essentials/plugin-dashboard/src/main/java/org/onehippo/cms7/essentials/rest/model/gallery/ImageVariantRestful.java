@@ -40,6 +40,11 @@ public class ImageVariantRestful implements Restful {
     private String name;
     private int width = 0;
     private int height = 0;
+
+    private Boolean upscaling = false;
+    private String optimization = null;
+    private Double compression = null;
+
     private List<PropertyRestful> properties = new ArrayList<>();
     private List<TranslationRestful> translations = new ArrayList<>();
     private List<ImageSetRestful> imageSets = new ArrayList<>();
@@ -93,6 +98,30 @@ public class ImageVariantRestful implements Restful {
         this.height = height;
     }
 
+    public Boolean getUpscaling() {
+        return upscaling;
+    }
+
+    public void setUpscaling(final Boolean upscaling) {
+        this.upscaling = upscaling;
+    }
+
+    public String getOptimization() {
+        return optimization;
+    }
+
+    public void setOptimization(final String optimization) {
+        this.optimization = optimization;
+    }
+
+    public Double getCompression() {
+        return compression;
+    }
+
+    public void setCompression(final Double compression) {
+        this.compression = compression;
+    }
+
     public List<PropertyRestful> getProperties() {
         return properties;
     }
@@ -129,9 +158,11 @@ public class ImageVariantRestful implements Restful {
         this.properties.add(property);
     }
 
+/*
     public String getNodeType() {
         return getNamespace() + ':' + getName();
     }
+*/
 
     public PropertyRestful getProperty(final String propertyName) {
         for (PropertyRestful property : this.properties) {

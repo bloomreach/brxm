@@ -35,11 +35,11 @@
     <div id="imageVariantsInfo" ng-show="imageVariantsInfo" class="alert alert-info">
         <button data-dismiss="alert" class="close" type="button">×</button>
         Some help text for image variants.
-        <a class="alert-link" href="http://www.onehippo.org/" target="_blank">Link to documentation</a>
+        <a class="alert-link" href="http://www.onehippo.org/" target="_blank"><!-- TODO link to documentation -->Link to documentation</a>
     </div>
 
     <div class="panel-body">
-        <form ng-repeat-start="variant in imageProcessor.variants | hideHippoGalleryVariantsFilter">
+        <form ng-repeat-start="variant in imageGalleryData.imageProcessor.variants | hideHippoGalleryVariantsFilter">
             <fieldset>
                 <!-- Variant name -->
                 <div class="form-group" ng-class="{true: 'has-error form-group',false: 'form-group'}[variant.name=='']">
@@ -82,12 +82,12 @@
                             <span class="input-group-addon" ng-if="variantTranslation.locale" style="width: 100px;">{{variantTranslation.locale}}</span>
                             <input type="text" class="form-control" ng-model="variantTranslation.message"
                                    style="width: 280px;"/>
-                            <span class="input-group-btn" ng-if="variantTranslation.locale"><button data-dismiss="alert"
-                                                                                                    class="close"
-                                                                                                    type="button"
-                                                                                                    ng-click="removeVariantTranslation(variant,variantTranslation)">
-                                ×
-                            </button></span>
+                <span class="input-group-btn" ng-if="variantTranslation.locale"><button data-dismiss="alert"
+                                                                                        class="close"
+                                                                                        type="button"
+                                                                                        ng-click="removeVariantTranslation(variant,variantTranslation)">
+                    ×
+                </button></span>
                         </div>
                     </div>
                     <!-- Add translation -->
@@ -116,15 +116,13 @@
                 <!-- Variant height -->
                 <div class="form-group">
                     <label for="variant{{$index}}Height">Height</label>
-                    <input type="text" placeholder="0" id="variant{{$index}}Height" class="form-control"
-                           style="width: 60px;">
+                    <input type="text" placeholder="0" id="variant{{$index}}Height" class="form-control" ng-model="variant.height" style="width: 60px;">
                 </div>
 
                 <!-- Variant width -->
                 <div class="form-group">
                     <label for="variant{{$index}}Width">Width</label>
-                    <input type="text" placeholder="0" id="variant{{$index}}Width" class="form-control"
-                           style="width: 60px;">
+                    <input type="text" placeholder="0" id="variant{{$index}}Width" class="form-control" ng-model="variant.width" style="width: 60px;">
                 </div>
 
                 <!-- Attached image sets -->
@@ -134,7 +132,7 @@
                             style="width:100%"
                             ng-model="variant.imageSets"
                             ng-multiple="true"
-                            ng-options="imageSet.namespace + ':' + imageSet.name for imageSet in imageSets track by calculateIdForImageSet(imageSet)"
+                            ng-options="imageSet.namespace + ':' + imageSet.name for imageSet in imageGalleryData.imageSets track by calculateIdForImageSet(imageSet)"
                             data-placeholder="Select image sets"
                             chosen
                             multiple
@@ -151,8 +149,8 @@
                     <div class="input-group">
                         <span class="input-group-addon" style="width: 140px;">Upscale</span>
                         <select id="variant{{$index}}Upscale" class="form-control"
-                                ng-model="upscalingValue"
-                                ng-options="v.description for v in upscalingValues"
+                                ng-model="variant.upscaling"
+                                ng-options="v.value as v.description for v in upscalingValues"
                                 style="width: 240px;"
                                 >
                         </select>
@@ -161,8 +159,8 @@
                     <div class="input-group">
                         <span class="input-group-addon" style="width: 140px;">Speed vs Quality</span>
                         <select id="variant{{$index}}Optimize" class="form-control"
-                                ng-model="optimizeValue"
-                                ng-options="o.description for o in optimizeValues"
+                                ng-model="variant.optimization"
+                                ng-options="o.value as o.description for o in optimizeValues"
                                 style="width: 240px;"
                                 >
                         </select>
@@ -171,8 +169,8 @@
                     <div class="input-group">
                         <span class="input-group-addon" style="width: 140px;">JPEG Quality</span>
                         <select id="variant{{$index}}Compression" class="form-control"
-                                ng-model="compressionValue"
-                                ng-options="c.description for c in compressionValues"
+                                ng-model="variant.compression"
+                                ng-options="c.value as c.description for c in compressionValues"
                                 style="width: 240px;"
                                 >
                         </select>
@@ -201,14 +199,12 @@
     </div>
 
     <div class="panel-body">
-        <form ng-repeat-start="imageSet in imageSets">
+        <form ng-repeat-start="imageSet in imageGalleryData.imageSets">
             <fieldset>
 
-
-                  <span class="badge" style="float:right;">
-                    <button data-dismiss="alert" class="close" type="button" ng-click="removeImageSet(imageSet)">×
-                    </button>
-                </span>
+        <span class="badge" style="float:right;">
+          <button data-dismiss="alert" class="close" type="button" ng-click="removeImageSet(imageSet)">×</button>
+        </span>
                 <!-- Image set name -->
                 <div class="form-group"
                      ng-class="{true: 'has-error form-group',false: 'form-group'}[imageSet.name=='']">
@@ -223,7 +219,7 @@
                     </div>
                     <div class="input-group" style="width: 200px;">
                         <span class="input-group-addon" style="width: 100px;">{{imageSet.namespace}}:</span>
-                        <input type="text" placeholder="variantname" id="imageSet{{$index}}Name" class="form-control"
+                        <input type="text" placeholder="imagesetname" id="imageSet{{$index}}Name" class="form-control"
                                ng-model="imageSet.name" style="width: 200px;">
                     </div>
 
@@ -247,7 +243,7 @@
                              style="width: 400px;">
                             <span class="input-group-addon" ng-if="!imageSetTranslation.locale" style="width: 100px;">default</span>
                             <span class="input-group-addon" ng-if="imageSetTranslation.locale" style="width: 100px;">{{imageSetTranslation.locale}}</span>
-                            <input type="text" class="form-control" ng-model="imageSetTranslation.message"
+                            <input type="text" placeholder="Image set name" class="form-control" ng-model="imageSetTranslation.message"
                                    style="width: 280px;"/>
                             <span class="input-group-btn" ng-if="imageSetTranslation.locale"><button
                                     data-dismiss="alert" class="close" type="button"
@@ -274,6 +270,7 @@
                                                                   ng-click="addImageSetTranslation(imageSet, newTranslationLocale, newTranslationMessage)">
                                 Add translation
                             </button></span>
+
                         </div>
                     </div>
                 </div>
@@ -285,7 +282,7 @@
                             style="width:100%"
                             ng-model="imageSet.variants"
                             ng-multiple="true"
-                            ng-options="variant.namespace + ':' + variant.name for variant in imageProcessor.variants  | hideHippoGalleryVariantsFilter track by calculateIdForVariant(variant)"
+                            ng-options="variant.namespace + ':' + variant.name for variant in imageGalleryData.imageProcessor.variants  | hideHippoGalleryVariantsFilter track by calculateIdForVariant(variant)"
                             data-placeholder="Select image variants"
                             chosen
                             multiple
@@ -306,6 +303,6 @@
 
 <div class="panel-footer clearfix">
     <!-- Save button -->
-    <button class="btn btn-primary pull-right" type="button" ng-click="saveVariantsAndImageSets()">Save</button>
+    <button class="btn btn-primary pull-right" type="button" ng-click="saveImageGalleryData()">Save</button>
 </div>
 </div>

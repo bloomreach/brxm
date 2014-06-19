@@ -908,6 +908,7 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentbl
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/DocumentType.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/HasProviderMatcher.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/jaxb.properties -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/gallery/ImageGalleryDataRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/gallery/ImageProcessorRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/gallery/ImageSetRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/gallery/ImageSetsRestful.java -text

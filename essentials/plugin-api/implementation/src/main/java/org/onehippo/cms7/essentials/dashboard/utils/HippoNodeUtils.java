@@ -295,6 +295,21 @@ public final class HippoNodeUtils {
         return type.substring(i + 1);
     }
 
+    public static String getTypeFromPrefixAndName(final String prefix, final String name) {
+        if (StringUtils.isBlank(prefix)) {
+            return name;
+        } else if(StringUtils.isBlank(name)) {
+            return prefix;
+        } else {
+            return new StringBuilder()
+                    .append(prefix.trim())
+                    .append(':')
+                    .append(name.trim())
+                    .toString();
+        }
+
+    }
+
     //############################################
     // UTIL
     //############################################

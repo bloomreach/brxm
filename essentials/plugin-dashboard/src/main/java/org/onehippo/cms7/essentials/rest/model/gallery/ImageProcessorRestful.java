@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
+import org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils;
 import org.onehippo.cms7.essentials.rest.model.PropertyRestful;
 
 /**
@@ -104,6 +105,15 @@ public class ImageProcessorRestful implements Restful {
 
     public void addVariant(final ImageVariantRestful variant) {
         this.variants.add(variant);
+    }
+
+    public ImageVariantRestful getVariantForNodeType(final String nodeType) {
+        for (final ImageVariantRestful variant : this.variants) {
+            if (StringUtils.equals(HippoNodeUtils.getTypeFromPrefixAndName(variant.getNamespace(), variant.getName()), nodeType)) {
+                return variant;
+            }
+        }
+        return null;
     }
 
     public ImageVariantRestful getVariant(final String id) {

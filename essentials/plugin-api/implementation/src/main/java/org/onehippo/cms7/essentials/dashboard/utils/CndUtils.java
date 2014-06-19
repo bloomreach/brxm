@@ -87,7 +87,7 @@ public final class CndUtils {
             log.debug("Namespace exception", e);
         } catch (RepositoryException e) {
             log.error("Error while determining namespace check.", e);
-        }finally {
+        } finally {
             GlobalUtils.cleanupSession(session);
         }
         return false;
@@ -112,7 +112,7 @@ public final class CndUtils {
             log.debug("Namespace exception", e);
         } catch (RepositoryException e) {
             log.error("Error while determining namespace check.", e);
-        }finally {
+        } finally {
             GlobalUtils.cleanupSession(session);
         }
         return false;
@@ -178,6 +178,7 @@ public final class CndUtils {
      *
      * @param context the plugin context
      * @param prefix  the namespace prefix
+     * @return the node representing the namespace
      * @throws RepositoryException when hippo namespace can't be created
      */
     public static void createHippoNamespace(final PluginContext context, final String prefix) throws RepositoryException {
@@ -190,12 +191,38 @@ public final class CndUtils {
             final Node namespaces = session.getRootNode().getNode(HippoNodeType.NAMESPACES_PATH);
             if (namespaces.hasNode(prefix)) {
                 log.info("Namespace '{}' already registered", prefix);
-                return;
+                session.save();
+                //return namespaces.getNode(prefix);
             }
-            namespaces.addNode(prefix, HippoNodeType.NT_NAMESPACE);
+            //return namespaces.addNode(prefix, HippoNodeType.NT_NAMESPACE);
         } finally {
             GlobalUtils.cleanupSession(session);
         }
+    }
+
+    public static Node createHippoNamespace(final Session session, final String prefix) throws RepositoryException {
+        if (StringUtils.isBlank(prefix)) {
+            throw new RepositoryException("Unable to create namespace for empty prefix");
+        }
+        final Node namespaces = session.getRootNode().getNode(HippoNodeType.NAMESPACES_PATH);
+        if (namespaces.hasNode(prefix)) {
+            log.info("Namespace '{}' already registered", prefix);
+            return namespaces.getNode(prefix);
+        }
+        return namespaces.addNode(prefix, HippoNodeType.NT_NAMESPACE);
+    }
+
+    public static Node getHippoNamespaceNode(final Session session, final String prefix) throws RepositoryException {
+        if (StringUtils.isBlank(prefix)) {
+            throw new RepositoryException("Unable to fetch namespace for empty prefix");
+        }
+
+        final Node namespaces = session.getRootNode().getNode(HippoNodeType.NAMESPACES_PATH);
+        if (namespaces.hasNode(prefix)) {
+            return namespaces.getNode(prefix);
+        }
+        log.info("Namespace node '{}' not available", prefix);
+        return null;
     }
 
     /**

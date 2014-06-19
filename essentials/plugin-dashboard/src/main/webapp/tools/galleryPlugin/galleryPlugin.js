@@ -24,49 +24,8 @@
 
         $scope.invalidated = false;
 
-
-        $http({
-            method: 'GET',
-            url: $rootScope.REST.imageSets
-        }).success(function (data) {
-            $scope.imageSetsData = data;
-            $scope.imageSets = $scope.imageSetsData.imageSets;
-        });
-
-        /*
-         // TODO populate image sets from rest service
-         $http.get('plugins/galleryPlugin/testimagesets.json').success(function(data) {
-         $scope.imageSets = data;
-
-         //$scope.updateSelectedImageSetsAndVariants();
-         });
-         */
-
-        $scope.saveGalleryProcessor = function () {
-
-            $http({
-                method: 'PUT',
-                url: $rootScope.REST.galleryProcessorSave + '2',
-                data: $scope.imageProcessor
-            }).success(function (data) {
-                $log.info(data);
-            });
-        };
-
-        $scope.saveImageSets = function () {
-
-            $http({
-                method: 'PUT',
-                url: $rootScope.REST.imageSetsSave,
-                data: $scope.imageSetsData
-            }).success(function (data) {
-                $log.info(data);
-            });
-        };
-
-
-        // TODO populate image sets from rest service
-        $http.get('plugins/galleryPlugin/cmslanguages.json').success(function (data) {
+        // TODO populate languages from rest service
+        $http.get('tools/galleryPlugin/cmslanguages.json').success(function (data) {
             $scope.cmsLanguages = data;
         });
 
@@ -74,36 +33,8 @@
         $scope.variantTranslationsModels = {};
 
 
-        $scope.init = function () {
-            $log.info(" **** gallery plugin called ***");
-            $http.get($rootScope.REST.galleryProcessor).success(function (data) {
-                if(data && data.length > 0){
-                    $scope.imageProcessor = data[0];
-                }
-
-            });
-
-
-        };
-
-        /*
-         $scope.displayImageSet = function(imageSet) {
-         $scope.currentImageSet = imageSet;
-         $log.info("selected" + $scope.currentImageSet.name);
-         }
-         */
-
-        /*
-         $scope.addImageSet = function() {
-         $log.info("Add image set");
-         }
-
-         $scope.deleteCurrentImageSet = function() {
-         $log.info("Add image set");
-         }
-         */
-
-        // TODO change this
+        // TODO determine gallery namespace dynamically based on project settings
+        // (currently projectgallery namespace needs to be added manually)
         $scope.projectGalleryNamespace = "projectgallery";
 
 
@@ -181,6 +112,52 @@
             ]
         };
 
+
+        $scope.init = function () {
+            $log.info(" **** Gallery plugin called ***");
+
+            // Fetch image gallery data: image processor (with variants) and image sets.
+            $scope.fetchImageGalleryData();
+
+        };
+
+        /**
+         * Fetch the image gallery data from the Image Gallery Rest Resource. It fetches the gallery processor
+         * and the available image sets.
+         */
+        $scope.fetchImageGalleryData = function () {
+            $http({
+                method: 'GET',
+                url: $rootScope.REST.imageGalleryData
+            }).success(function (data) {
+                if (data !== null) {
+                    $log.info(" **** Image gallery data retrieved ***");
+                    $scope.imageGalleryData = data;
+                }
+            });
+        };
+
+
+        $scope.saveImageGalleryData = function () {
+            if (!$scope.validateVariants() || !$scope.validateImageSets()) {
+                $scope.invalidated = true;
+                $log.info('Unable to save image sets');
+                return
+            }
+            $scope.invalidated = false;
+            $log.info("Save image sets");
+
+            $http({
+                method: 'PUT',
+                url: $rootScope.REST.imageGalleryDataSave,
+                data: $scope.imageGalleryData
+            }).success(function (data) {
+                $log.info(data);
+            });
+
+        };
+
+
         /**
          * A
          * @param variant
@@ -191,13 +168,13 @@
             var newVariant = angular.copy($scope.newVariantTemplate);
             newVariant.namespace = $scope.projectGalleryNamespace;
             newVariant.id = $scope.generateUUID();
-            $scope.imageProcessor.variants.push(newVariant);
+            $scope.imageGalleryData.imageProcessor.variants.push(newVariant);
         };
 
         $scope.removeVariant = function (variant) {
-            var index = $scope.imageProcessor.variants.indexOf(variant)
+            var index = $scope.imageGalleryData.imageProcessor.variants.indexOf(variant)
             if (index >= 0) {
-                $scope.imageProcessor.variants.splice(index, 1);
+                $scope.imageGalleryData.imageProcessor.variants.splice(index, 1);
             }
         };
 
@@ -231,13 +208,13 @@
             var newImageSet = angular.copy($scope.newImageSetTemplate);
             newImageSet.namespace = $scope.projectGalleryNamespace;
             newImageSet.id = $scope.generateUUID();
-            $scope.imageSets.push(newImageSet);
+            $scope.imageGalleryData.imageSets.push(newImageSet);
         };
 
         $scope.removeImageSet = function (imageSet) {
-            var index = $scope.imageSets.indexOf(imageSet)
+            var index = $scope.imageGalleryData.imageSets.indexOf(imageSet)
             if (index >= 0) {
-                $scope.imageSets.splice(index, 1);
+                $scope.imageGalleryData.imageSets.splice(index, 1);
             }
         };
 
@@ -285,8 +262,8 @@
 
 
         $scope.updateImageSetsForVariant = function (variant) {
-            for (var i = 0, length = $scope.imageSets.length; i < length; ++i) {
-                var imageSet = $scope.imageSets[i];
+            for (var i = 0, length = $scope.imageGalleryData.imageSets.length; i < length; ++i) {
+                var imageSet = $scope.imageGalleryData.imageSets[i];
                 $scope.updateImageSetForVariant(imageSet, variant);
             }
         };
@@ -338,8 +315,8 @@
         };
 
         $scope.updateVariantsForImageSet = function (imageSet) {
-            for (var i = 0, length = $scope.imageProcessor.variants.length; i < length; ++i) {
-                var variant = $scope.imageProcessor.variants[i];
+            for (var i = 0, length = $scope.imageGalleryData.imageProcessor.variants.length; i < length; ++i) {
+                var variant = $scope.imageGalleryData.imageProcessor.variants[i];
                 $scope.updateVariantForImageSet(variant, imageSet);
             }
         };
@@ -356,21 +333,9 @@
         };
 
 
-        $scope.saveVariantsAndImageSets = function () {
-            if (!$scope.validateVariants() || !$scope.validateImageSets()) {
-                $scope.invalidated = true;
-                $log.info('Unable to save image sets');
-                return
-            }
-            $scope.invalidated = false;
-            $log.info('Save image sets');
-            $scope.saveGalleryProcessor();
-            $scope.saveImageSets();
-        };
-
         $scope.validateVariants = function () {
-            for (var i = 0, length = $scope.imageProcessor.variants.length; i < length; ++i) {
-                var variant = $scope.imageProcessor.variants[i];
+            for (var i = 0, length = $scope.imageGalleryData.imageProcessor.variants.length; i < length; ++i) {
+                var variant = $scope.imageGalleryData.imageProcessor.variants[i];
                 if (variant.name === "") {
                     return false;
                 }
@@ -379,8 +344,8 @@
         };
 
         $scope.validateImageSets = function () {
-            for (var i = 0, length = $scope.imageSets.length; i < length; ++i) {
-                var imageSet = $scope.imageSets[i];
+            for (var i = 0, length = $scope.imageGalleryData.imageSets.length; i < length; ++i) {
+                var imageSet = $scope.imageGalleryData.imageSets[i];
                 if (imageSet.name === "") {
                     return false;
                 }
@@ -407,35 +372,6 @@
                 $log.info('Modal dismissed at: ' + new Date());
             });
         };
-
-
-        $scope.imageSetVariants2 = [
-            {
-                "name": "projectgallery:large",
-                "translations": [
-                    {
-                        "locale": "",
-                        "message": "Large"
-                    },
-                    {
-                        "locale": "en",
-                        "message": "Large"
-                    },
-                    {
-                        "locale": "nl",
-                        "message": "Groot"
-                    }
-                ],
-                "width": 400,
-                "height": 400,
-                "properties": [
-                    {
-                        "name": "upscaling",
-                        "value": "false"
-                    }
-                ]
-            }
-        ];
 
 
         $scope.upscalingValues = [
@@ -523,17 +459,17 @@
             $modalInstance.dismiss('cancel');
         };
     })
-            .filter('hideHippoGalleryVariantsFilter', function () {
-                return function (variants) {
-                    var shownVariants = [];
-                    angular.forEach(variants, function (variant) {
-                        if (variant.namespace !== 'hippogallery') {
-                            shownVariants.push(variant);
-                        }
-                    });
-                    return shownVariants;
-                };
-            })
+        .filter('hideHippoGalleryVariantsFilter', function () {
+            return function (variants) {
+                var shownVariants = [];
+                angular.forEach(variants, function (variant) {
+                    if (variant.namespace !== 'hippogallery') {
+                        shownVariants.push(variant);
+                    }
+                });
+                return shownVariants;
+            };
+        })
 }());
 
 /**

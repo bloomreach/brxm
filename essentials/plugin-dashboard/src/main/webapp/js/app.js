@@ -189,6 +189,8 @@
                 getProperty: root + '/node/property',
                 setProperty: root + '/node/property/save',
                 galleryProcessor: root + '/imagegallery/',
+                imageGalleryData: root + '/imagegallery/gallerycontent/',
+                imageGalleryDataSave: root + '/imagegallery/gallerycontentsave',
                 imageSets: root + '/imagegallery/imagesets/',
                 galleryProcessorSave: root + '/imagegallery/save',
                 imageSetsSave: root + '/imagegallery/imagesets/save',

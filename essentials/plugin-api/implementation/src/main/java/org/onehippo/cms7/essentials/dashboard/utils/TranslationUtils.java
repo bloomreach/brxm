@@ -70,6 +70,8 @@ public final class TranslationUtils {
         final Node translation = node.addNode(HippoNodeType.HIPPO_TRANSLATION, HippoNodeType.HIPPO_TRANSLATION);
         if (StringUtils.isNotBlank(language)) {
             translation.setProperty(HippoNodeType.HIPPO_LANGUAGE, language);
+        } else {
+            translation.setProperty(HippoNodeType.HIPPO_LANGUAGE, StringUtils.EMPTY);
         }
         if (StringUtils.isNotBlank(property)) {
             translation.setProperty(HippoNodeType.HIPPO_PROPERTY, property);
