@@ -23,7 +23,8 @@
             function(IFrame) {
                 var config = {
                     apiUrlPrefix: 'http://localhost:8080/site/_rp',
-                    locale: 'en'
+                    locale: 'en',
+                    antiCache: new Date().getTime()
                 };
 
                 // override default config when app runs in iframe

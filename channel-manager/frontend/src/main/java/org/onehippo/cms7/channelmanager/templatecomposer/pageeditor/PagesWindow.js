@@ -35,7 +35,8 @@
                     mountId: config.mountId,
                     sitemapId: config.sitemapId,
                     userCanEdit: config.userCanEdit,
-                    userIsEditing: config.userIsEditing
+                    userIsEditing: config.userIsEditing,
+                    antiCache: config.antiCache
                 }
             });
 

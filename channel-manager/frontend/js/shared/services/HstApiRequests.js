@@ -19,13 +19,19 @@
     angular.module('hippo.channel')
         .factory('hippo.channel.HstApiRequests', [
             'hippo.channel.ConfigService',
-            '$q', function (ConfigService, $q) {
+            '$q', '$templateCache', function (ConfigService, $q, $templateCache) {
                 return {
                     'request': function(config) {
+                        if ($templateCache.get(config.url)) {
+                            return config;
+                        }
+                        config.params = config.params || {};
                         if (config.url.indexOf(ConfigService.apiUrlPrefix) === 0) {
-                            config.params = config.params || {};
                             // Calling HST endpoints requires this GET parameter to be set
                             config.params.FORCE_CLIENT_HOST = true;
+                            config.params.antiCache = new Date().getTime();
+                        } else if (config.method === 'GET') {
+                            config.params.antiCache = ConfigService.antiCache;
                         }
                         return $q.when(config);
                     }

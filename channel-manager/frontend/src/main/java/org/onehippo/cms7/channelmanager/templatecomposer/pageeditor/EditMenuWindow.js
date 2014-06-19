@@ -33,7 +33,8 @@
                     apiUrlPrefix: config.composerRestMountUrl,
                     debug: config.debug,
                     locale: config.locale,
-                    menuId: config.menuId
+                    menuId: config.menuId,
+                    antiCache: config.antiCache
                 }
             });
 

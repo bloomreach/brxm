@@ -35,7 +35,8 @@
                     locale: config.locale,
                     mountId: config.mountId,
                     sitemapId: config.sitemapId,
-                    sitemapItemId: config.sitemapItemId
+                    sitemapItemId: config.sitemapItemId,
+                    antiCache: config.antiCache
                 },
                 performCloseHandshake: false
             });
