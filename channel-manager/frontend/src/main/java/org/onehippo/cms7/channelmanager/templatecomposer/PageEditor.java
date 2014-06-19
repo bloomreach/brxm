@@ -177,7 +177,7 @@ public class PageEditor extends ExtPanel {
 
     @ExtProperty
     @SuppressWarnings("unused")
-    private static final String antiCache = RandomStringUtils.randomAlphanumeric(4);
+    private static final String ANTI_CACHE = RandomStringUtils.randomAlphanumeric(4);
 
     private IPluginContext context;
     private ExtStoreFuture<Object> channelStoreFuture;

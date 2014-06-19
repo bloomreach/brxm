@@ -166,7 +166,7 @@
             this.title = config.title;
             this.resources = config.resources;
             this.cmsUser = config.cmsUser;
-            this.antiCache = config.antiCache;
+            this.antiCache = config.ANTI_CACHE;
 
             config.header = false;
 
