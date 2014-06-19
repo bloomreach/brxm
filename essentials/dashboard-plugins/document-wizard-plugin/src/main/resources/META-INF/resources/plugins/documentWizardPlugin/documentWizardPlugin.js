@@ -51,7 +51,7 @@
                 Essentials.addPayloadData("baseFolder", $scope.baseFolder, payload);
                 Essentials.addPayloadData("shortcutName", $scope.shortcutName, payload);
                 Essentials.addPayloadData("documentQuery", $scope.documentQuery.value, payload);
-                Essentials.addPayloadData("valueListPath", $scope.valueListPath.value, payload);
+                Essentials.addPayloadData("valueListPath", $scope.valueListPath, payload);
                 // labels
                 Essentials.addPayloadData("shortcutLinkLabel", $scope.shortcutLinkLabel, payload);
                 Essentials.addPayloadData("nameLabel", $scope.nameLabel, payload);
@@ -81,8 +81,6 @@
 
             $http.get($rootScope.REST.documents + "selection:valuelist").success(function (data) {
                 $scope.valueLists = data;
-                console.log("[]]]]]]]]]]]]]]");
-                console.log(data);
             });
 
 
