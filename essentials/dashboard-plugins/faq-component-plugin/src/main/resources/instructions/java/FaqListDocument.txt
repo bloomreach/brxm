@@ -22,4 +22,11 @@ public class FaqListDocument extends BaseDocument {
 	public HippoHtml getDescription() {
 		return getHippoHtml("{{namespace}}:description");
 	}
+
+	@HippoEssentialsGenerated(internalName = "{{namespace}}:faqdocuments")
+    public List<FaqDocument> getFaqDocuments() {
+        return getLinkedBeans("{{namespace}}:faqdocuments", FaqDocument.class);
+    }
+
+
 }
