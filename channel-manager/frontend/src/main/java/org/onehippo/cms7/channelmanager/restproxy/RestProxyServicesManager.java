@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -59,8 +60,12 @@ public class RestProxyServicesManager implements IInitializer {
 
     private static ConcurrentHashMap<String, RestProxyInfo> restProxyInfos = new ConcurrentHashMap<>();
 
-    public static ExecutorService getExecutorService() {
-        return executorService;
+    public static <T> List<Future<T>> submitJobs(List<? extends Callable<T>> jobs) {
+        try {
+            return executorService.invokeAll(jobs);
+        } catch (InterruptedException e) {
+            return Collections.emptyList();
+        }
     }
 
     public static Map<String, IRestProxyService> getLiveRestProxyServices(final IPluginContext context,

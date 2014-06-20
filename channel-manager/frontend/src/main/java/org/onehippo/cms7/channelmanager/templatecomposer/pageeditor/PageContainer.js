@@ -72,7 +72,7 @@
                             delete this.sessionId;
 
                             Hippo.Msg.hide();
-                            Hippo.Msg.confirm(this.resources['hst-exception-title'], this.resources['hst-timeout-message'], function(id) {
+                            Hippo.Msg.confirm(this.resources['hst-exception-title'], this.resources['hst-timeout-message'].format(this.contextPath), function(id) {
                                 if (id === 'yes') {
                                     this._initializeHstSession();
                                 } else {
@@ -200,7 +200,7 @@
                             }, Ext.Ajax.timeout);
                         } else {
                             Hippo.Msg.hide();
-                            Hippo.Msg.confirm(self.resources['hst-exception-title'], self.resources['hst-timeout-message'], function(id) {
+                            Hippo.Msg.confirm(self.resources['hst-exception-title'], self.resources['hst-timeout-message'].format(this.contextPath), function(id) {
                                 if (id === 'yes') {
                                     retry = self.initialHstConnectionTimeout;
                                     self._initializeHstSession(callback);

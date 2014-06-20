@@ -66,7 +66,7 @@ import org.wicketstuff.js.ext.data.ExtDataField;
 import org.wicketstuff.js.ext.data.ExtGroupingStore;
 import org.wicketstuff.js.ext.util.ExtClass;
 
-import static org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager.getExecutorService;
+import static org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager.submitJobs;
 
 /**
  * Channel JSON Store.
@@ -209,7 +209,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
                         }
                     }
                     object.put(field.getName(), values);
-                } else if  (ChannelField.changedBySet.name().equals(field.getName())) {
+                } else if (ChannelField.changedBySet.name().equals(field.getName())) {
                     JSONArray values = new JSONArray();
                     final Set<String> lockedBySet = channel.getChangedBySet();
                     if (lockedBySet != null) {
@@ -360,7 +360,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
         Channel channel = null;
         try {
-            for (Iterator<Channel> channels = getChannels().iterator(); channels.hasNext();) {
+            for (Iterator<Channel> channels = getChannels().iterator(); channels.hasNext(); ) {
                 channel = channels.next();
                 properties = getChannelResourceValues(channel);
                 String header = properties.getProperty(fieldName);
@@ -374,7 +374,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
                 log.warn("Could not get localized value of field '" + fieldName + "' for channel with id '" + channelId + "'", ce);
             } else {
                 log.warn("Could not get localized value of field '{}' for channel with id '{}' - {}"
-                        , new String[] {fieldName, channelId, ce.toString()});
+                        , new String[]{fieldName, channelId, ce.toString()});
 
             }
         }
@@ -475,7 +475,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     /**
      * @param channel the channel to get the ChannelInfo class for
      * @return the ChannelInfo class for the given channel, or <code>null</code> if the channel does not have a custom
-     *         ChannelInfo class or the channel manager could not be loaded (e.g. because the site is down).
+     * ChannelInfo class or the channel manager could not be loaded (e.g. because the site is down).
      */
     public ChannelInfoClassInfo getChannelInfoClassInfo(Channel channel) throws ChannelException {
         ChannelService channelService = getRestProxy(channel).createSecureRestProxy(ChannelService.class);
@@ -515,7 +515,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
                     for (Channel channel : result) {
                         if (!contextPath.equals(channel.getContextPath())) {
                             log.warn("Skipping channel '{}' which  is fetched via wrong rest proxy as the " +
-                                    "contextPath of the rest proxy is '{}' and from the channel it is '{}'.",
+                                            "contextPath of the rest proxy is '{}' and from the channel it is '{}'.",
                                     channel, contextPath, channel.getContextPath());
                         } else {
                             checkedChannels.add(channel);
@@ -525,18 +525,18 @@ public class ChannelStore extends ExtGroupingStore<Object> {
                 }
             });
         }
-        try {
-            final List<Future<List<Channel>>> futures = getExecutorService().invokeAll(restProxyJobs);
-            for (Future<List<Channel>> future : futures) {
+        final List<Future<List<Channel>>> futures = submitJobs(restProxyJobs);
+        for (Future<List<Channel>> future : futures) {
+            try {
                 for (Channel channel : future.get()) {
                     if (StringUtils.isEmpty(channel.getType())) {
                         channel.setType(DEFAULT_TYPE);
                     }
                     channels.put(channel.getId(), channel);
                 }
+            } catch (ExecutionException | InterruptedException e) {
+                log.error("Failed to load the channels for one or more rest proxies.", e);
             }
-        } catch (InterruptedException | ExecutionException e) {
-            log.error("Failed to load the channels for one or more rest proxy.", e);
         }
     }
 
@@ -546,7 +546,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         final String blueprintId = record.getString("blueprintId");
         final Blueprint blueprint = blueprintStore.getBlueprints().get(blueprintId);
         if (blueprint == null) {
-            throw new ActionFailedException("Cannot find blueprint for id '"+blueprintId+"'.");
+            throw new ActionFailedException("Cannot find blueprint for id '" + blueprintId + "'.");
         }
         final Channel newChannel = blueprint.getPrototypeChannel();
         // Set channel parameters
@@ -593,8 +593,8 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     private IRestProxyService getRestProxy(final Channel channel) {
         final IRestProxyService restProxy = restProxyServices.get(channel.getContextPath());
         if (restProxy == null) {
-            throw new IllegalArgumentException("Channel '"+channel.toString()+"' has a contextPath '"+channel.getContextPath()+"' " +
-                    "for which no rest proxy is registered. Available rest proxies are for contextPath(s) '"+restProxyServices.keySet()+"'");
+            throw new IllegalArgumentException("Channel '" + channel.toString() + "' has a contextPath '" + channel.getContextPath() + "' " +
+                    "for which no rest proxy is registered. Available rest proxies are for contextPath(s) '" + restProxyServices.keySet() + "'");
         }
         return restProxy;
     }
@@ -618,15 +618,15 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
     private ActionFailedException createActionFailedException(Exception cause, Channel newChannel) {
         if (cause instanceof ChannelException) {
-            ChannelException ce = (ChannelException)cause;
-            switch(ce.getType()) {
+            ChannelException ce = (ChannelException) cause;
+            switch (ce.getType()) {
                 case MOUNT_NOT_FOUND:
                 case MOUNT_EXISTS:
                     String channelUrl = newChannel.getUrl();
                     String parentUrl = StringUtils.substringBeforeLast(channelUrl, "/");
                     return new ActionFailedException(getResourceValue("channelexception." + ce.getType().getKey(), channelUrl, parentUrl), cause);
                 default:
-                    return new ActionFailedException(getResourceValue("channelexception." + ce.getType().getKey(), (Object[])ce.getParameters()), cause);
+                    return new ActionFailedException(getResourceValue("channelexception." + ce.getType().getKey(), (Object[]) ce.getParameters()), cause);
             }
         }
         log.warn("Could not create new channel '" + newChannel.getName() + "': " + cause.getMessage());

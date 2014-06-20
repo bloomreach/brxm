@@ -63,9 +63,9 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager.getExecutorService;
+import static org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager.submitJobs;
 
-@SuppressWarnings({ "deprecation", "serial" })
+@SuppressWarnings({"deprecation", "serial"})
 public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> {
 
     private static final Logger log = LoggerFactory.getLogger(ChannelActionsPlugin.class);
@@ -161,16 +161,16 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
         }
 
         final List<ChannelDocument> combinedChannelDocuments = new ArrayList<>();
-        try {
-            final List<Future<List<ChannelDocument>>> futures = getExecutorService().invokeAll(restProxyJobs);
-            for (Future<List<ChannelDocument>> future : futures) {
+        final List<Future<List<ChannelDocument>>> futures = submitJobs(restProxyJobs);
+        for (Future<List<ChannelDocument>> future : futures) {
+            try {
                 combinedChannelDocuments.addAll(future.get());
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Exception while trying to find Channel for document with uuid '{}'.", documentUuid, e);
-            } else {
-                log.warn("Exception while trying to find Channel for document with uuid '{}' : {}", documentUuid, e.toString());
+            } catch (InterruptedException | ExecutionException e) {
+                if (log.isDebugEnabled()) {
+                    log.warn("Exception while trying to find Channel for document with uuid '{}'.", documentUuid, e);
+                } else {
+                    log.warn("Exception while trying to find Channel for document with uuid '{}' : {}", documentUuid, e.toString());
+                }
             }
         }
         Collections.sort(combinedChannelDocuments, getChannelDocumentComparator());
@@ -240,10 +240,10 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
         protected void invoke() {
             if (channelManagerService != null) {
                 // create the pathInfo of the channel manager url. The pathInfo includes the mountPath & path after the mount
-                StringBuilder pathInfo  = new StringBuilder(channelDocument.getMountPath()).append(channelDocument.getPathInfo());
+                StringBuilder pathInfo = new StringBuilder(channelDocument.getMountPath()).append(channelDocument.getPathInfo());
                 channelManagerService.viewChannel(channelDocument.getChannelId(), pathInfo.toString(),
                         channelDocument.getContextPath(),
-                        channelDocument.getCmsPreviewPrefix() );
+                        channelDocument.getCmsPreviewPrefix());
             } else {
                 log.info("Cannot view channel, no channel manager service available");
             }

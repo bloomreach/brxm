@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ExtDataField;
 import org.wicketstuff.js.ext.data.ExtJsonStore;
 
-import static org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager.getExecutorService;
+import static org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager.submitJobs;
 
 public class BlueprintStore extends ExtJsonStore<Object> {
 
@@ -51,7 +51,7 @@ public class BlueprintStore extends ExtJsonStore<Object> {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(BlueprintStore.class);
 
-    private transient Map<String,Blueprint>  blueprints;
+    private transient Map<String, Blueprint> blueprints;
     private transient int availableRestProxiesHashCode;
     final Map<String, IRestProxyService> restProxyServices;
 
@@ -105,7 +105,7 @@ public class BlueprintStore extends ExtJsonStore<Object> {
         return data;
     }
 
-    public Map<String,Blueprint> getBlueprints() {
+    public Map<String, Blueprint> getBlueprints() {
         // check whether previously loaded blueprints are from same live proxies as current live proxies
         if (blueprints != null && availableRestProxiesHashCode == restProxyServices.keySet().hashCode()) {
             return blueprints;
@@ -125,15 +125,15 @@ public class BlueprintStore extends ExtJsonStore<Object> {
             });
         }
 
-        try {
-            final List<Future<List<Blueprint>>> futures = getExecutorService().invokeAll(restProxyJobs);
-            for (Future<List<Blueprint>> future : futures) {
+        final List<Future<List<Blueprint>>> futures = submitJobs(restProxyJobs);
+        for (Future<List<Blueprint>> future : futures) {
+            try {
                 for (Blueprint blueprint : future.get()) {
                     blueprints.put(blueprint.getId(), blueprint);
                 }
+            } catch (InterruptedException | ExecutionException e) {
+                log.error("Failed to load blueprint for one or more rest proxies.", e);
             }
-        } catch (InterruptedException | ExecutionException e) {
-            log.error("Failed to load the channels for one or more rest proxy.", e);
         }
 
         return blueprints;
