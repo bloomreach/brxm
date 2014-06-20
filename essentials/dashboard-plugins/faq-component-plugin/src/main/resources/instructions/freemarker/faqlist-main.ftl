@@ -27,7 +27,7 @@
 <div>
     <@hst.html hippohtml=document.description/>
 </div>
-    <#list faq as document.faqDocuments>
+    <#list document.faqDocuments as faq>
     <div>
         <h3><a href="<@hst.link hippobean=faq />">${faq.question}</a></h3>
         <@hst.html hippohtml=faq.answer/>
