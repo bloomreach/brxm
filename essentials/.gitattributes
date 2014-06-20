@@ -484,7 +484,9 @@ dashboard-plugins/faq-component-plugin/src/main/resources/instructions/folderopt
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/freemarker/faq-main-faq.ftl -text
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/freemarker/faq-main-faqlist.ftl -text
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/hst/faq-component-catalog-item.xml -text
+dashboard-plugins/faq-component-plugin/src/main/resources/instructions/hst/faq-faq-template-freemarker.xml -text
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/hst/faq-faq-template-jsp.xml -text
+dashboard-plugins/faq-component-plugin/src/main/resources/instructions/hst/faq-list-template-freemarker.xml -text
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/hst/faq-list-template-jsp.xml -text
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/hst/faq-menu-item.xml -text
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/hst/faq-sitemap-item.xml -text

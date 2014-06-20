@@ -18,6 +18,7 @@
 <instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
 
+
   <instructionSet>
     <cnd documentType="faqdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated,hippostd:taggable"/>
     <cnd documentType="faqlistdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated,hippostd:taggable"/>
@@ -40,10 +41,12 @@
 
 
   <instructionSet group="freemarker">
-    <file action="copy" source="instructions/freemarker/faq-main-faq.ftl" target="{{jspRoot}}/hstdefault/faq-main-faq.ftl"/>
-    <file action="copy" source="instructions/freemarker/faq-main-faqlist.ftl" target="{{jspRoot}}/hstdefault/faq-main-faqlist.ftl"/>
     <xml action="copy" source="instructions/hst/faq-faq-template-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
     <xml action="copy" source="instructions/hst/faq-list-template-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+  </instructionSet>
+  <instructionSet group="freemarker, repository">
+    <file action="copy" source="instructions/freemarker/faq-main-faq.ftl" target="{{jspRoot}}/hstdefault/faq-main-faq.ftl"/>
+    <file action="copy" source="instructions/freemarker/faq-main-faqlist.ftl" target="{{jspRoot}}/hstdefault/faq-main-faqlist.ftl"/>
 
   </instructionSet>
 
