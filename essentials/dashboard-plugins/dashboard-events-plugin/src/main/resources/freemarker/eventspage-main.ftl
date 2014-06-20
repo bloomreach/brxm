@@ -19,7 +19,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<#-- @ftlvariable name="document" type="{{beansPackage}}EventsDocument" -->
+<#-- @ftlvariable name="document" type="{{beansPackage}}.EventsDocument" -->
 <#if document??>
     <@hst.link var="link" hippobean=document/>
 <article>
@@ -37,11 +37,13 @@
     <#if document.introduction??>
         <p>${document.introduction}</p>
     </#if>
-    <#if image.original>
+    <#if document.image?? && document.image.original??>
         <@hst.link var="img" hippobean=document.image.original/>
         <figure>
             <img src="${img}" title="${document.image.fileName}" alt="${document.image.fileName}"/>
-            <figcaption>${document.image.description}</figcaption>
+            <#if document.image.description??>
+                <figcaption>${document.image.description}</figcaption>
+            </#if>
         </figure>
     </#if>
     <@hst.html hippohtml=document.content/>
