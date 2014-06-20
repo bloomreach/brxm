@@ -15,11 +15,16 @@
   limitations under the License.
   -->
 
-<sv:node sv:name="faq-main" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<sv:node sv:name="faq" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:template</sv:value>
+    <sv:value>hst:containercomponentfolder</sv:value>
   </sv:property>
-  <sv:property sv:name="hst:renderpath" sv:type="String">
-    <sv:value>jsp/{{namespace}}/faq-main.jsp</sv:value>
-  </sv:property>
+  <sv:node sv:name="main">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:containercomponent</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:xtype" sv:type="String">
+      <sv:value>HST.vBox</sv:value>
+    </sv:property>
+  </sv:node>
 </sv:node>

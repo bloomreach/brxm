@@ -15,11 +15,11 @@
   limitations under the License.
   -->
 
-<sv:node sv:name="faq-main-faqlist" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<sv:node sv:name="faqlist-main" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:template</sv:value>
   </sv:property>
   <sv:property sv:name="hst:renderpath" sv:type="String">
-    <sv:value>freemarker/hstdefault/faq-main-faqlist.ftl</sv:value>
+    <sv:value>freemarker/{{namespace}}/faqlist-main.ftl</sv:value>
   </sv:property>
 </sv:node>
