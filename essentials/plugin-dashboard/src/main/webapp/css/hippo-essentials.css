@@ -369,3 +369,6 @@ input:focus.ng-valid {
 ng\:form {
   display: block;
 }
+div.chosen-container[style] {
+  min-width: 100px;
+}
