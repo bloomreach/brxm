@@ -247,6 +247,7 @@ public class TaxonomyResource extends BaseResource {
         taxonomyNode.setProperty(HippoStdNodeType.HIPPOSTD_STATE, HippoStdNodeType.PUBLISHED);
         taxonomyNode.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, session.getUserID());
         taxonomyNode.setProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY, "live");
+        taxonomyNode.setProperty("hippo:availability", new String[]{"live","preview"});
         taxonomyNode.setProperty(HIPPOTAXONOMY_LOCALES, locales);
         session.save();
         return true;

@@ -87,7 +87,7 @@
                 if (loc.length == 0) {
                     locales.push('en');
                 } else {
-                    angular.forEach(l, function (value) {
+                    angular.forEach(loc, function (value) {
                         locales.push(value.name);
                     });
                 }
