@@ -54,7 +54,7 @@
   <link rel="icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
   <link rel="shortcut icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
 </head>
-<body id="container">
+<body id="container" ng-cloak>
 
 <!-- LOADER ON HTTP REQUESTS -->
 <div class="busy-loader ng-hide" ng-show="busyLoading">

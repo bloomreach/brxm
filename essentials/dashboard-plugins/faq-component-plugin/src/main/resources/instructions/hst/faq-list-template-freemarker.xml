@@ -15,24 +15,11 @@
   limitations under the License.
   -->
 
-<sv:node sv:name="faq" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<sv:node sv:name="faqlist-main" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:containeritemcomponent</sv:value>
+    <sv:value>hst:template</sv:value>
   </sv:property>
-  <sv:property sv:name="hst:componentclassname" sv:type="String">
-    <sv:value>org.onehippo.cms7.essentials.components.EssentialsDocumentComponent</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:label" sv:type="String">
-    <sv:value>Faq</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:iconpath" sv:type="String">
-    <sv:value>images/component-icon-faq.png</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:template" sv:type="String">
-    <sv:value>faq-{{templateExtension}}</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:xtype" sv:type="String">
-    <sv:value>HST.Item</sv:value>
+  <sv:property sv:name="hst:renderpath" sv:type="String">
+    <sv:value>freemarker/{{namespace}}/faqlist-main.ftl</sv:value>
   </sv:property>
 </sv:node>
-

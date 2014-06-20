@@ -15,11 +15,23 @@
   limitations under the License.
   -->
 
-<sv:node sv:name="faq-main" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<sv:node sv:name="faqlist" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:template</sv:value>
+    <sv:value>hst:component</sv:value>
   </sv:property>
-  <sv:property sv:name="hst:renderpath" sv:type="String">
-    <sv:value>jsp/{{namespace}}/faq-main.jsp</sv:value>
+  <sv:property sv:name="jcr:uuid" sv:type="String">
+    <sv:value>e6a3e9bc-af48-4fba-b513-c987b13a0695</sv:value>
   </sv:property>
+  <sv:property sv:name="hst:referencecomponent" sv:type="String">
+    <sv:value>hst:abstractpages/base</sv:value>
+  </sv:property>
+  <sv:node sv:name="main">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:containercomponentreference</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:referencecomponent" sv:type="String">
+      <sv:value>faqlist/main</sv:value>
+    </sv:property>
+  </sv:node>
 </sv:node>
+

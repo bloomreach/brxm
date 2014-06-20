@@ -1,0 +1,32 @@
+ package {{beansPackage}};
+
+import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.standard.HippoHtml;
+import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
+
+@HippoEssentialsGenerated(internalName = "{{namespace}}:faqlistdocument")
+@Node(jcrType = "{{namespace}}:faqlistdocument")
+public class FaqListDocument extends BaseDocument {
+
+	@HippoEssentialsGenerated(internalName = "{{namespace}}:title")
+	public String getTitle() {
+		return getProperty("{{namespace}}:title");
+	}
+
+	@HippoEssentialsGenerated(internalName = "hippostd:tags")
+	public String[] getTags() {
+		return getProperty("hippostd:tags");
+	}
+
+	@HippoEssentialsGenerated(internalName = "{{namespace}}:description")
+	public HippoHtml getDescription() {
+		return getHippoHtml("{{namespace}}:description");
+	}
+
+	@HippoEssentialsGenerated(internalName = "{{namespace}}:faqdocuments")
+    public List<FaqDocument> getFaqDocuments() {
+        return getLinkedBeans("{{namespace}}:faqdocuments", FaqDocument.class);
+    }
+
+
+}

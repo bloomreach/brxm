@@ -1,5 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+{{#repositoryBased}}
+<#include "../../hst:default/hst:templates/imports.ftl">
+{{/repositoryBased}}
+{{#fileBased}}
+<#include "/WEB-INF/freemarker/include/imports.ftl">
+{{/fileBased}}
+<#--
   Copyright 2014 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,13 +18,13 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-  -->
+-->
 
-<sv:node sv:name="faq-main" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:template</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:renderpath" sv:type="String">
-    <sv:value>jsp/{{namespace}}/faq-main.jsp</sv:value>
-  </sv:property>
-</sv:node>
+<#-- @ftlvariable name="document" type="{{beansPackage}}.FaqDocument" -->
+<@hst.defineObjects/>
+<#if document??>
+<h1>${document.question}</h1>
+<@hst.html hippohtml=document.answer />
+</#if>
+
+
