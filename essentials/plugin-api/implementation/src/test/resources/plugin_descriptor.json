@@ -57,7 +57,7 @@
         
         "enabled": false,
         "@type": "plugin",
-        "introduction": "Creates (re-generates) HST beans",
+        "introduction": "Generate HST Content beans.",
         "name": "Beanwriter plugin",
         "pluginId": "beanwriter",
 

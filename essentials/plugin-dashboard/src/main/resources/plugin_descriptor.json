@@ -381,7 +381,7 @@
         "enabled": true,
         "@type": "plugin",
         "name": "Beanwriter",
-        "introduction": "Create (re-generate) HST beans.",
+        "introduction": "Generate HST Content beans.",
         "pluginId": "beanwriter",
         "packageFile": "",
         "restClasses": ["org.onehippo.cms7.essentials.beanwriter.rest.BeanWriterResource"],
