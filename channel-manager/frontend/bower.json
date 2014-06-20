@@ -2,11 +2,11 @@
   "name": "hippo-addon-channel-manager-frontend",
   "private": true,
   "dependencies": {
-    "angular": "1.2.15",
-    "angular-route": "1.2.15",
+    "angular": "1.2.18",
+    "angular-route": "1.2.18",
     "angular-translate": "2.1.0",
     "angular-translate-loader-static-files": "2.1.0",
-    "angular-mocks": "1.2.15",
+    "angular-mocks": "1.2.18",
     "angular-ui-router": "0.2.7",
     "hippo-theme": "./target/dependency/hippo-theme.zip",
     "hippo-plugins": "./target/dependency/hippo-plugins.zip",
@@ -15,7 +15,9 @@
     "angular-ui-tree": "2.0.11"
   },
   "resolutions": {
-    "jasmine-jquery": "2.0.3",
-    "es5-shim": "d24a08dfe81e0eda3d5e9f3b859d63c1da05aba7"
+    "angular": "1.2.18",
+    "angular-mocks": "1.2.18",
+    "es5-shim": "d24a08dfe81e0eda3d5e9f3b859d63c1da05aba7",
+    "jasmine-jquery": "2.0.3"
   }
 }

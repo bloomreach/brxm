@@ -28,7 +28,7 @@
         }">
             <label for="hippo.channel.menu.menuItem.add.title">{{ 'LABEL' | translate }}</label>
             <input type="text" name="title" class="form-control" id="hippo.channel.menu.menuItem.add.title"
-                   placeholder="{{ 'LABEL' | translate }}"
+                   data-ng-attr-placeholder="{{ 'LABEL' | translate }}"
                    hippo.channel.menu.auto-focus
                    data-ng-model="selectedMenuItem.title"
                    data-ng-focus="form.title.$setPristine();"
@@ -98,7 +98,7 @@
          }">
             <label for="hippo.channel.menu.menuItem.add.url">{{ 'EXTERNAL_LINK' | translate }}</label>
             <input type="text" name="url" class="form-control" id="hippo.channel.menu.menuItem.add.url"
-                   placeholder="{{ 'EXAMPLE_DOMAIN' | translate }}"
+                   data-ng-attr-placeholder="{{ 'EXAMPLE_DOMAIN' | translate }}"
                    data-ng-model="selectedMenuItem.link"
                    data-ng-required="true">
             <div class="tooltip-container" ng-show="form.url.$dirty && form.url.$invalid">
@@ -114,7 +114,7 @@
            }"></i>
         </div>
 
-        <hr>
+        <hr/>
 
         <button type="submit" class="btn btn-default" ng-click="submit()">{{ 'CREATE_MENU_ITEM' | translate }}</button>
         <button type="submit" class="btn btn-link" ng-click="cancel()">{{ 'CANCEL' | translate }}</button>

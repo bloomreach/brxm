@@ -66,7 +66,7 @@
                      data-title="{{ fieldFeedbackMessage.title }}"></div>
             </div>
             <input type="text" name="title" class="form-control" id="hippo.channel.menu.menuItem.edit.title"
-                   placeholder="{{ 'LABEL' | translate }}"
+                   data-ng-attr-placeholder="{{ 'LABEL' | translate }}"
                    data-hippo.channel.menu.auto-focus
                    data-ng-model="selectedMenuItem.title"
                    data-ng-required="true"
@@ -150,7 +150,7 @@
                          data-title="{{ fieldFeedbackMessage.link }}"></div>
                 </div>
                 <input type="text" name="url" class="form-control" id="hippo.channel.menu.menuItem.edit.url"
-                       placeholder="{{ 'EXAMPLE_DOMAIN' | translate }}"
+                       data-ng-attr-placeholder="{{ 'EXAMPLE_DOMAIN' | translate }}"
                        data-ng-model="selectedMenuItem.link"
                        data-ng-required="true"
                        data-ng-blur="form.url.$valid ? saveSelectedMenuItem('link') : '';">

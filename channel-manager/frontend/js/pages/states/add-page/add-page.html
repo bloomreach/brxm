@@ -31,7 +31,7 @@
                     }">
                     <label for="page-title">{{ 'PAGE_TITLE' | translate }}</label>
                     <input type="text" name="title" class="form-control" id="page-title"
-                           placeholder="{{ 'PAGE_TITLE' | translate }}"
+                           data-ng-attr-placeholder="{{ 'PAGE_TITLE' | translate }}"
                            data-ng-model="page.title"
                            data-ng-focus="form.title.$setPristine();"
                            data-ng-required="true"
@@ -56,7 +56,6 @@
                     <div class="input-group">
                         <span class="input-group-addon">{{ host }}/</span>
                         <input type="text" name="url" class="form-control" id="page-url"
-                               placeholder=""
                                data-ng-model="page.url"
                                data-illegal-characters="validation.illegalCharacters"
                                data-ng-focus="form.url.$setPristine();"
@@ -88,11 +87,11 @@
                             data-options="prototypes"
                             data-ng-model="page.prototype"
                             data-no-results-text="{{ 'NO_RESULTS' | translate }}"
-                            data-placeholder="{{ 'SELECT_OPTION' | translate }}">
+                            data-ng-attr-placeholder="{{ 'SELECT_OPTION' | translate }}">
                     </select>
                 </div>
 
-                <hr>
+                <hr/>
 
                 <button type="submit" class="btn btn-default" data-ng-click="submit()">{{ 'CREATE_PAGE' | translate }}</button>
                 <button type="submit" class="btn btn-link" data-ng-click="navigateTo('overview-pages')" data-ng-controller="hippo.channel.pages.NavigationCtrl">{{ 'CANCEL' | translate }}</button>
