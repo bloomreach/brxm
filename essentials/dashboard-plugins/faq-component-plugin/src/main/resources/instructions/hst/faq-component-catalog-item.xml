@@ -29,7 +29,7 @@
     <sv:value>images/component-icon-faq.png</sv:value>
   </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
-    <sv:value>faq-{{templateExtension}}</sv:value>
+    <sv:value>faqlist-main{{templateExtension}}</sv:value>
   </sv:property>
   <sv:property sv:name="hst:xtype" sv:type="String">
     <sv:value>HST.Item</sv:value>
