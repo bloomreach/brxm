@@ -59,7 +59,7 @@ describe('HstApiRequests', function () {
         expect(hstApiRequests).toBeDefined();
     });
 
-    it('should add FORCE_CLIENT_HOST GET parameter', function () {
+    it('should add the FORCE_CLIENT_HOST and a antiCache GET parameter for HST API calls', function () {
         var url = prefix + '/something';
         var config = {
             url: url
@@ -67,18 +67,19 @@ describe('HstApiRequests', function () {
         hstApiRequests.request(config);
         expect(config.params.FORCE_CLIENT_HOST).toBe(true);
         expect(config.url).toBe(url);
+        expect(config.params.antiCache).toBeDefined();
         expect(qMock.when).toHaveBeenCalledWith(config);
     });
 
-    it('should not add FORCE_CLIENT_HOST GET parameter', function () {
+    it('should only add the configured antiCache GET aparameter for non-HST API calls', function () {
         var url = '/something-else';
         var config = {
             url: url,
             method: 'GET'
         };
         hstApiRequests.request(config);
-        expect(config.params).toEqual({antiCache: antiCache});
         expect(config.url).toBe(url);
+        expect(config.params).toEqual({antiCache: antiCache});
         expect(qMock.when).toHaveBeenCalledWith(config);
     });
 
