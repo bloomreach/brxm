@@ -20,10 +20,18 @@
 
   <instructionSet>
     <cnd documentType="faqdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated,hippostd:taggable"/>
+    <cnd documentType="faqlistdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated,hippostd:taggable"/>
     <xml action="copy" source="instructions/xml/faq-document.xml" target="/hippo:namespaces/{{namespace}}"/>
+    <xml action="copy" source="instructions/xml/faq-list-document.xml" target="/hippo:namespaces/{{namespace}}"/>
     <file action="copy" source="instructions/java/FaqDocument.txt" target="{{beansFolder}}/FaqDocument.java"/>
-    <file action="copy"  source="instructions/icon/component-icon-faq.png" binary="true" target="{{siteWebRoot}}/images/component-icon-faq.png"/>
+    <file action="copy" source="instructions/java/FaqListDocument.txt" target="{{beansFolder}}/FaqListDocument.java"/>
+    <file action="copy" source="instructions/icon/component-icon-faq.png" binary="true" target="{{siteWebRoot}}/images/component-icon-faq.png"/>
     <xml action="copy" source="instructions/hst/faq-component-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <xml action="copy" source="instructions/folderoptions/new-faq-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+    <xml action="copy" source="instructions/folderoptions/new-faq-document-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+    <xml action="copy" source="instructions/folderoptions/new-faq-list-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+    <xml action="copy" source="instructions/folderoptions/new-faq-list-document-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+
 
     <xml action="copy" source="instructions/hst/faq-menu-item.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus/main"/>
     <xml action="copy" source="instructions/hst/faq-sitemap-item.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
@@ -31,12 +39,24 @@
   </instructionSet>
 
 
+  <instructionSet group="freemarker">
+    <file action="copy" source="instructions/freemarker/faq-main-faq.ftl" target="{{jspRoot}}/hstdefault/faq-main-faq.ftl"/>
+    <file action="copy" source="instructions/freemarker/faq-main-faqlist.ftl" target="{{jspRoot}}/hstdefault/faq-main-faqlist.ftl"/>
+    <xml action="copy" source="instructions/hst/faq-faq-template-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" source="instructions/hst/faq-list-template-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+
+  </instructionSet>
+
   <instructionSet group="jsp">
     <file action="copy" source="instructions/jsp/faq-main-faq.jsp" target="{{jspRoot}}/hstdefault/faq-main-faq.jsp"/>
     <file action="copy" source="instructions/jsp/faq-main-faqlist.jsp" target="{{jspRoot}}/hstdefault/faq-main-faqlist.jsp"/>
     <xml action="copy" source="instructions/hst/faq-faq-template-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
     <xml action="copy" source="instructions/hst/faq-list-template-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
 
+  </instructionSet>
+
+  <instructionSet group="sampleData">
+    <xml action="copy" source="instructions/xml/faq-sample.xml" target="/content/documents/{{namespace}}"/>
   </instructionSet>
 
 </instructions>
