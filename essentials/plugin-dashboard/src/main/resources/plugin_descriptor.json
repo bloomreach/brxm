@@ -296,7 +296,7 @@
         "@type": "plugin",
         "name": "Related documents plugin",
         "introduction": "Adds Related documents support to hippo project",
-        "description": "The Related Documents plugin is a Hippo CMS 7 editor plugin by which you can pick docments that are related to the currently edited document. It has also the capability to create a list of suggested documents you may want to pick, based on matching metadata search.<p>Read more about the Related documents  plugin at <a href=\"http://relateddocs.forge.onehippo.org/\" target=\"_blank\">http://relateddocs.forge.onehippo.org/</a></p>",
+        "description": "The Related Documents plugin is a Hippo CMS 7 document editor plugin with which you can pick documents that are related to the currently edited document. It has the capability of creating a list of suggested documents you may want to pick, based on matching metadata search.<p>Read more about the Related documents  plugin at <a href=\"http://relateddocs.forge.onehippo.org/\" target=\"_blank\">http://relateddocs.forge.onehippo.org/</a></p>",
         "pluginId": "relatedDocumentsPlugin",
         "packageFile": "",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.relateddocuments.RelatedDocumentsResource"],
