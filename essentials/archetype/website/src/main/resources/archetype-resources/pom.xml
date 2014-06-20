@@ -62,6 +62,10 @@
   <properties>
 
     <!--***START temporary override of versions*** -->
+    <hippo.cms.version>2.26.03</hippo.cms.version>
+    <hippo.hst.version>2.28.03</hippo.hst.version>
+    <hippo.repository.version>2.26.03</hippo.repository.version>
+
     <essentials.version>1.01.03-SNAPSHOT</essentials.version>
     <!-- ***END temporary override of versions*** -->
 
