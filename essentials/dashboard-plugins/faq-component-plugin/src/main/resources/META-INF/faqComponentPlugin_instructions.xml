@@ -52,8 +52,8 @@
     <xml action="copy" source="instructions/hst/faq-list-template-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
   <instructionSet group="freemarker, repository">
-    <file action="copy" source="instructions/freemarker/faq-main.ftl" target="{{jspRoot}}/{{namespace}}/faq-main.ftl"/>
-    <file action="copy" source="instructions/freemarker/faqlist-main.ftl" target="{{jspRoot}}/{{namespace}}/faqlist-main.ftl"/>
+    <file action="copy" source="instructions/freemarker/faq-main.ftl" target="{{freemarkerRoot}}/{{namespace}}/faq-main.ftl"/>
+    <file action="copy" source="instructions/freemarker/faqlist-main.ftl" target="{{freemarkerRoot}}/{{namespace}}/faqlist-main.ftl"/>
 
   </instructionSet>
 
