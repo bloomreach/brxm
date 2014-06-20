@@ -61,6 +61,7 @@
       </sv:property>
       <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
         <sv:value>new-faq-list-document</sv:value>
+        <sv:value>new-faq-document</sv:value>
         <sv:value>new-faq-document-folder</sv:value>
         <sv:value>new-faq-list-document-folder</sv:value>
       </sv:property>
