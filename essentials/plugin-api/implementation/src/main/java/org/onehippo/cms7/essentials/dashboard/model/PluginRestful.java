@@ -38,6 +38,7 @@ public class PluginRestful implements Plugin, Restful {
     private List<String> restClasses;
     private Vendor vendor;
     private List<EssentialsDependency> dependencies;
+    private List<Repository> repositories;
     private String title;
     private String name;
     private String introduction;
@@ -281,6 +282,17 @@ public class PluginRestful implements Plugin, Restful {
     @Override
     public void setDescription(final String description) {
         this.description = description;
+    }
+
+
+    @Override
+    public List<Repository> getRepositories() {
+        return repositories;
+    }
+
+    @Override
+    public void setRepositories(final List<Repository> repositories) {
+        this.repositories = repositories;
     }
 
     @Override

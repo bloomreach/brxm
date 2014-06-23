@@ -21,6 +21,8 @@ import org.onehippo.cms7.essentials.BaseResourceTest;
 import org.onehippo.cms7.essentials.dashboard.model.DependencyRestful;
 import org.onehippo.cms7.essentials.dashboard.model.DependencyType;
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
+import org.onehippo.cms7.essentials.dashboard.model.Repository;
+import org.onehippo.cms7.essentials.dashboard.model.RepositoryRestful;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -31,6 +33,29 @@ import static org.junit.Assert.assertTrue;
  */
 public class DependencyUtilsTest extends BaseResourceTest {
 
+
+    public static final String NEW_REPO = "http://maven.onehippo.com/maven3/";
+
+    @Test
+    public void testRepositoryAdd() throws Exception {
+        final Repository repository = new RepositoryRestful();
+        repository.setType(DependencyType.PROJECT.getName());
+        repository.setUrl("http://maven.onehippo.com/maven2/");
+        repository.setId("hippo");
+        assertEquals(DependencyType.PROJECT, repository.getDependencyType());
+        boolean hasRepo = DependencyUtils.hasRepository(repository);
+        assertTrue("Expected hippo maven repository", hasRepo);
+        // add new one:
+        repository.setUrl(NEW_REPO);
+        repository.setId("some-id");
+        hasRepo = DependencyUtils.hasRepository(repository);
+        assertFalse("Expected no maven repository", hasRepo);
+        DependencyUtils.addRepository(repository);
+        hasRepo = DependencyUtils.hasRepository(repository);
+        assertTrue("Expected new maven repository: " + NEW_REPO, hasRepo);
+
+
+    }
 
     @Test
     public void testHasDependency() throws Exception {

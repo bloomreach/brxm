@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.Plugin;
+import org.onehippo.cms7.essentials.dashboard.model.Repository;
 import org.onehippo.cms7.essentials.dashboard.model.Vendor;
 import org.onehippo.cms7.essentials.dashboard.model.VendorRestful;
 
@@ -198,6 +199,16 @@ public class DummyTestPlugin implements Plugin {
 
     @Override
     public void setIntroduction(final String introduction) {
+
+    }
+
+    @Override
+    public List<Repository> getRepositories() {
+        return null;
+    }
+
+    @Override
+    public void setRepositories(final List<Repository> repositories) {
 
     }
 

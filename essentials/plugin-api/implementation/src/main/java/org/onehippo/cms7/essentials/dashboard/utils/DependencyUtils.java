@@ -27,6 +27,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.onehippo.cms7.essentials.dashboard.model.DependencyType;
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
+import org.onehippo.cms7.essentials.dashboard.model.Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,8 +40,42 @@ public final class DependencyUtils {
 
     private static Logger log = LoggerFactory.getLogger(DependencyUtils.class);
 
-    private DependencyUtils() {
+
+    /**
+     * Add maven repository node to pom model
+     * @param repository Repository instance
+     * @return true if tag is added or already exists
+     */
+    public static boolean addRepository(final Repository repository) {
+        final DependencyType type = repository.getDependencyType();
+        if (type == DependencyType.INVALID) {
+            return false;
+        }
+        final Model model = ProjectUtils.getPomModel(type);
+        if (model == null) {
+            log.warn("Pom model was null for type: {}", type);
+            return false;
+        }
+        if (!hasRepository(repository)) {
+
+            FileWriter fileWriter = null;
+            try {
+                final org.apache.maven.model.Repository mavenRepository = repository.createMavenRepository();
+                model.addRepository(mavenRepository);
+                fileWriter = new FileWriter(ProjectUtils.getPomPath(type));
+                final MavenXpp3Writer writer = new MavenXpp3Writer();
+                writer.write(fileWriter, model);
+                log.debug("Added new maven repository {}", repository);
+            } catch (IOException e) {
+                log.error("Error adding maven dependency", e);
+                return false;
+            } finally {
+                IOUtils.closeQuietly(fileWriter);
+            }
+        }
+        return true;
     }
+
 
     /**
      * Remove dependency from pom (if exists)
@@ -126,6 +161,35 @@ public final class DependencyUtils {
     }
 
     /**
+     * Checks if repository entry already exists within pom model
+     *
+     * @param repository repository instance
+     * @return true if provided repository is invalid or when it exists within pom model with same url
+     */
+    public static boolean hasRepository(final Repository repository) {
+        final DependencyType type = repository.getDependencyType();
+        if (type == DependencyType.INVALID) {
+            return false;
+        }
+        final Model model = ProjectUtils.getPomModel(type);
+        final List<org.apache.maven.model.Repository> repositories = model.getRepositories();
+        for (org.apache.maven.model.Repository rep : repositories) {
+            final String url = repository.getUrl();
+            if (Strings.isNullOrEmpty(url)) {
+                log.warn("Invalid Repository defined {}", rep);
+                return true;
+            }
+            final String existingUrl = rep.getUrl();
+            final boolean hasRepo = url.equals(existingUrl);
+            if (hasRepo) {
+                log.debug("Found repository for url: {}", url);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Checks if project has dependency
      *
      * @param dependency instance of EssentialsDependency dependency
@@ -166,5 +230,6 @@ public final class DependencyUtils {
                 && projectDependency.getGroupId().equals(dependency.getGroupId());
     }
 
-
+    private DependencyUtils() {
+    }
 }

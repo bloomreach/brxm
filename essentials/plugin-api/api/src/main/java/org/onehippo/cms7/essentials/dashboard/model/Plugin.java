@@ -99,4 +99,7 @@ public interface Plugin extends Serializable {
 
     void setIntroduction(String introduction);
 
+    List<Repository> getRepositories();
+
+    void setRepositories(List<Repository> repositories);
 }

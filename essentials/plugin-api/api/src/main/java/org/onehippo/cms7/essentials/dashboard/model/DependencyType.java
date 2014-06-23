@@ -24,13 +24,17 @@ import com.google.common.base.Strings;
 public enum DependencyType {
 
 
-    INVALID(null), SITE("site"), CMS("cms"), BOOTSTRAP("bootstrap"), BOOTSTRAP_CONFIG("config"), BOOTSTRAP_CONTENT("content"), ESSENTIALS("essentials");
+    INVALID(null), SITE("site"), CMS("cms"), BOOTSTRAP("bootstrap"), BOOTSTRAP_CONFIG("config"), BOOTSTRAP_CONTENT("content"), ESSENTIALS("essentials"), PROJECT("project");
     private final String name;
 
     DependencyType(final String name) {
         this.name = name;
     }
 
+
+    public String getName() {
+        return name;
+    }
 
     @Override
     public String toString() {
@@ -50,6 +54,8 @@ public enum DependencyType {
             return CMS;
         } else if (type.equals(BOOTSTRAP.name)) {
             return BOOTSTRAP;
+        } else if (type.equals(PROJECT.name)) {
+            return PROJECT;
         } else if (type.equals(BOOTSTRAP_CONFIG.name)) {
             return BOOTSTRAP_CONFIG;
         } else if (type.equals(BOOTSTRAP_CONTENT.name)) {

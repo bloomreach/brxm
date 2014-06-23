@@ -667,7 +667,9 @@ plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/Essent
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/PersistentHandler.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/Plugin.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/ProjectSettings.java -text
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/Repository.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/Restful.java -text
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/Snapshot.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/Vendor.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/packaging/InstructionPackage.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/packaging/MessageGroup.java -text
@@ -712,6 +714,8 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/m
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/DependencyRestful.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/PluginNamespaceMapper.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/PluginRestful.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/RepositoryRestful.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/SnapshotRestful.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/VendorRestful.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/BaseJcrModel.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/SimplePropertyModel.java -text
@@ -850,6 +854,7 @@ plugin-api/implementation/src/test/resources/project/content/namespaces/hippoplu
 plugin-api/implementation/src/test/resources/project/content/namespaces/hippoplugins/version.xml -text
 plugin-api/implementation/src/test/resources/project/essentials/pom.xml -text
 plugin-api/implementation/src/test/resources/project/instruction_file.txt -text
+plugin-api/implementation/src/test/resources/project/pom.xml -text
 plugin-api/implementation/src/test/resources/project/site/pom.xml -text
 plugin-api/implementation/src/test/resources/project/site/src/main/java/org/dummy/DummyClazz.java -text
 plugin-api/implementation/src/test/resources/project/site/src/main/java/org/onehippo/cms7/essentials/dashboard/test/beans/BaseDocument.txt -text

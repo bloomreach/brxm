@@ -148,6 +148,10 @@ public final class ProjectUtils {
         return new File(absolutePath);
     }
 
+    public static File getProjectRootFolder(){
+        return new File(getBaseProjectDirectory());
+    }
+
     /**
      * Returns Bootstrap root folder e.g. {@code /home/foo/myproject/bootstrap}
      *
@@ -225,6 +229,8 @@ public final class ProjectUtils {
                 return getPomForDir(ProjectUtils.getSite());
             case CMS:
                 return getPomForDir(ProjectUtils.getCms());
+            case PROJECT:
+                return getPomForDir(ProjectUtils.getProjectRootFolder());
             case BOOTSTRAP:
                 return getPomForDir(ProjectUtils.getBootstrapFolder());
             case BOOTSTRAP_CONFIG:
