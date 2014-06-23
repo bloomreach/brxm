@@ -535,7 +535,11 @@ public class ChannelStore extends ExtGroupingStore<Object> {
                     channels.put(channel.getId(), channel);
                 }
             } catch (ExecutionException | InterruptedException e) {
-                log.error("Failed to load the channels for one or more rest proxies.", e);
+                if (log.isDebugEnabled()) {
+                    log.warn("Failed to load the channels for one or more rest proxies.", e);
+                } else {
+                    log.warn("Failed to load the channels for one or more rest proxies: {}", e.toString());
+                }
             }
         }
     }
