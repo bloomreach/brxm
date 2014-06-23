@@ -48,7 +48,7 @@ public class RestfulList<T extends Restful> implements Serializable {
     }
 
     public void addAll(Collection<T> items) {
-        items.addAll(items);
+        this.items.addAll(items);
     }
 
     public Iterator<T> iterator() {

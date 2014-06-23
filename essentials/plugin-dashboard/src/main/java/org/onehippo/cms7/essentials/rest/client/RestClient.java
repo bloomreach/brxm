@@ -16,13 +16,14 @@
 
 package org.onehippo.cms7.essentials.rest.client;
 
+import java.io.IOException;
+
 import javax.ws.rs.core.MediaType;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.transport.http.HTTPConduit;
+import org.apache.wicket.util.string.Strings;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.slf4j.Logger;
@@ -74,25 +75,22 @@ public class RestClient {
 
     @SuppressWarnings("unchecked")
     public RestfulList<PluginRestful> getPlugins() {
-        // TODO use rest client
-        if (isEnabled()) {
-            try {
-                final JAXBContext context = JAXBContext.newInstance(RestfulList.class);
-                final Unmarshaller unmarshaller = context.createUnmarshaller();
-                return (RestfulList<PluginRestful>) unmarshaller.unmarshal(getClass().getResourceAsStream("/rest.xml"));
-            } catch (JAXBException e) {
-                log.error("Error parsing XML", e);
-            }
-
-        } else {
-
-            final WebClient client = WebClient.create(baseResourceUri);
-            setTimeouts(client, connectionTimeout, receiveTimeout);
-            return client.path("plugins").accept(MediaType.APPLICATION_XML).get(RestfulList.class);
+        final WebClient client = WebClient.create(baseResourceUri);
+        setTimeouts(client, connectionTimeout, receiveTimeout);
+        final String json = client.accept(MediaType.APPLICATION_JSON_TYPE).get(String.class);
+        if(Strings.isEmpty(json)){
+            return new RestfulList<>();
         }
-        return null;
+        final ObjectMapper mapper = new ObjectMapper();
+        try {
+            @SuppressWarnings("unchecked")
+            final RestfulList<PluginRestful> restfulList = mapper.readValue(json, RestfulList.class);
+            return restfulList;
+        } catch (IOException e) {
+            log.error("Error parsing remote plugins for repository: "  + baseResourceUri, e);
+        }
+         return new RestfulList<>();
     }
-
     private boolean isEnabled() {
         return true;
     }

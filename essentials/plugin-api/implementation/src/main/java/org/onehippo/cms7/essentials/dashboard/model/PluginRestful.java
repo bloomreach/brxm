@@ -313,6 +313,9 @@ public class PluginRestful implements Plugin, Restful {
     @JsonSubTypes({@JsonSubTypes.Type(value = RepositoryRestful.class, name = "repository")})
     @Override
     public List<Repository> getRepositories() {
+        if(repositories ==null){
+            return new ArrayList<>();
+        }
         return repositories;
     }
 

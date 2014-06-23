@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.essentials.rest;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -55,6 +56,7 @@ import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
+import org.onehippo.cms7.essentials.dashboard.model.Repository;
 import org.onehippo.cms7.essentials.dashboard.packaging.CommonsInstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.MessageGroup;
@@ -101,6 +103,7 @@ public class PluginResource extends BaseResource {
     @Inject
     private EventBus eventBus;
 
+    private DynamicRestPointsApplication application;
 
     @Inject
     private MemoryPluginEventListener listener;
@@ -110,7 +113,7 @@ public class PluginResource extends BaseResource {
     private static Logger log = LoggerFactory.getLogger(PluginResource.class);
 
     @ApiOperation(
-            value = "Fetches a (remote) service and checks for available Hippo Essentials plugins. " +
+            value = "Fetches local file descriptors  and checks for available Hippo Essentials plugins. " +
                     "It also registers any plugin REST endpoints which come available under /dynamic endpoint e.g. /dynamic/{pluginEndpoint}",
             notes = "Retrieves a list of PluginRestful objects",
             response = RestfulList.class)
@@ -118,80 +121,63 @@ public class PluginResource extends BaseResource {
     @Path("/")
     public RestfulList<PluginRestful> getPluginList(@Context ServletContext servletContext) throws Exception {
         final RestfulList<PluginRestful> plugins = new RestList<>();
-
-
         final List<PluginRestful> items = getPlugins(servletContext);
-        // check if we have other repos:
-        final ProjectSettings projectSettings = getContext(servletContext).getProjectSettings();
+        final Collection<String> restClasses = new ArrayList<>();
+        final PluginContext context = getContext(servletContext);
+        try (PluginConfigService service = new FilePluginService(context)) {
+            processPlugins(plugins, items, restClasses, service);
+        }
+        //############################################
+        // Register endpoints:
+        //############################################
+        registerEndpoints(restClasses);
+
+
+        return plugins;
+    }
+
+
+    @ApiOperation(
+            value = "Fetches remote service(s) and checks for available Hippo Essentials plugins. " +
+                    "It also registers any plugin REST endpoints which come available under /dynamic endpoint e.g. /dynamic/{pluginEndpoint}",
+            notes = "Retrieves a list of PluginRestful objects",
+            response = RestfulList.class)
+    @GET
+    @Path("/remote")
+    public RestfulList<PluginRestful> getRemotePluginList(@Context ServletContext servletContext) throws Exception {
+
+        final ProjectSettings projectSettings = getProjectSettings(servletContext);
+        final RestfulList<PluginRestful> plugins = new RestfulList<>();
+        final Collection<PluginRestful> items = new ArrayList<>();
         final Set<String> pluginRepositories = projectSettings.getPluginRepositories();
         for (String pluginRepository : pluginRepositories) {
             if (pluginRepository.startsWith("http")) {
                 try {
                     RestClient client = new RestClient(pluginRepository);
                     final RestfulList<PluginRestful> myPlugins = client.getPlugins();
-                    if(myPlugins !=null){
+                    if (myPlugins != null) {
                         final List<PluginRestful> myPluginsItems = myPlugins.getItems();
                         CollectionUtils.addAll(items, myPluginsItems.iterator());
                     }
                 } catch (Exception e) {
-                    log.error("Error loading plugins from repository: " + pluginRepository, e);
+                    log.error(MessageFormat.format("Error loading plugins from repository: {0}", pluginRepository), e);
                 }
             }
         }
-
-
         final Collection<String> restClasses = new ArrayList<>();
         final PluginContext context = getContext(servletContext);
-        try (PluginConfigService service = new FilePluginService(context)) {
-            for (PluginRestful item : items) {
-                plugins.add(item);
-                final String pluginId = item.getPluginId();
-                if (!isInstalled(item)) {
-                    item.setNeedsInstallation(true);
-                }
-                //############################################
-                // collect endpoints
-                //############################################
-                final List<String> pluginRestClasses = item.getRestClasses();
-                if (pluginRestClasses != null) {
-                    for (String clazz : pluginRestClasses) {
-                        restClasses.add(clazz);
-                    }
-                }
+        final PluginConfigService service = context.getConfigService();
+        processPlugins(plugins, items, restClasses, service);
+        return plugins;
+    }
 
-
-                // check if recently installed:
-                // TODO: move to client?
-                final InstallerDocument document = service.read(pluginId, InstallerDocument.class);
-                if (document != null && document.getDateInstalled() != null) {
-                    final Calendar dateInstalled = document.getDateInstalled();
-                    final Calendar lastWeek = Calendar.getInstance();
-                    lastWeek.add(Calendar.DAY_OF_MONTH, WEEK_OLD);
-                    if (dateInstalled.after(lastWeek)) {
-                        item.setDateInstalled(dateInstalled);
-                    }
-                }
-
-            }
-        }
-        //############################################
-        // Register endpoints:
-        //############################################
+    public void registerEndpoints(final Collection<String> restClasses) {
         if (!initialized && !restClasses.isEmpty()) {
             initialized = true;
             final RuntimeDelegate delegate = RuntimeDelegate.getInstance();
             final Bus bus = BusFactory.getDefaultBus();
-            final DynamicRestPointsApplication application = new DynamicRestPointsApplication();
-            for (String restClass : restClasses) {
-                final Class<?> endpointClass = GlobalUtils.loadCLass(restClass);
-                if (endpointClass == null) {
-                    log.error("Invalid application class: {}", restClass);
-                    continue;
-                }
-                application.addClass(endpointClass);
-                log.info("Adding dynamic REST (plugin) endpoint {}", endpointClass.getName());
-
-            }
+            application = new DynamicRestPointsApplication();
+            addClasses(restClasses);
             // register:
             final ApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
             final Object jsonProvider = applicationContext.getBean("jsonProvider");
@@ -201,9 +187,19 @@ public class PluginResource extends BaseResource {
             final Server server = factoryBean.create();
             server.start();
         }
+    }
 
+    public void addClasses(final Iterable<String> restClasses) {
+        for (String restClass : restClasses) {
+            final Class<?> endpointClass = GlobalUtils.loadCLass(restClass);
+            if (endpointClass == null) {
+                log.error("Invalid application class: {}", restClass);
+                continue;
+            }
+            application.addClass(endpointClass);
+            log.info("Adding dynamic REST (plugin) endpoint {}", endpointClass.getName());
 
-        return plugins;
+        }
     }
 
 
@@ -268,11 +264,11 @@ public class PluginResource extends BaseResource {
             final PluginContext context = new DefaultPluginContext(plugin);
             try (PluginConfigService configService = context.getConfigService()) {
                 final Set<String> pluginRepositories = payload.getPluginRepositories();
-                if (pluginRepositories !=null) {
+                if (pluginRepositories != null) {
                     final Iterator<String> iterator = pluginRepositories.iterator();
-                    for(;iterator.hasNext();){
+                    for (; iterator.hasNext(); ) {
                         final String next = iterator.next();
-                        if(Strings.isNullOrEmpty(next)){
+                        if (Strings.isNullOrEmpty(next)) {
                             iterator.remove();
                         }
                     }
@@ -343,7 +339,7 @@ public class PluginResource extends BaseResource {
         final List<PluginRestful> pluginList = getPlugins(servletContext);
         for (Plugin plugin : pluginList) {
             if (plugin.getPluginId().equals(pluginId)) {
-               return plugin;
+                return plugin;
             }
         }
         return new PluginRestful();
@@ -385,7 +381,10 @@ public class PluginResource extends BaseResource {
     public MessageRestful installPlugin(@Context ServletContext servletContext, @PathParam(PLUGIN_ID) String pluginId) throws Exception {
 
         final MessageRestful message = new MessageRestful();
+        // TODO add plugin cache so we do not need to fetch remote plugins all over again?
         final RestfulList<PluginRestful> pluginList = getPluginList(servletContext);
+        final RestfulList<PluginRestful> remoteList = getRemotePluginList(servletContext);
+        pluginList.addAll(remoteList.getItems());
         for (PluginRestful plugin : pluginList.getItems()) {
             final String id = plugin.getPluginId();
             if (Strings.isNullOrEmpty(id)) {
@@ -396,18 +395,26 @@ public class PluginResource extends BaseResource {
                     message.setValue("Plugin was already installed. Please rebuild and restart your application");
                     return message;
                 }
-
                 final List<EssentialsDependency> dependencies = plugin.getDependencies();
-                final Collection<EssentialsDependency> notInstalled = new ArrayList<>();
+                final Collection<EssentialsDependency> dependenciesNotInstalled = new ArrayList<>();
                 for (EssentialsDependency dependency : dependencies) {
 
                     final boolean installed = DependencyUtils.addDependency(dependency);
                     if (!installed) {
-                        notInstalled.add(dependency);
+                        dependenciesNotInstalled.add(dependency);
+                    }
+                }
+                final List<Repository> repositories = plugin.getRepositories();
+                final Collection<Repository> repositoriesNotInstalled = new ArrayList<>();
+
+                for (Repository repository : repositories) {
+                    final boolean installed = DependencyUtils.addRepository(repository);
+                    if (!installed) {
+                        repositoriesNotInstalled.add(repository);
                     }
                 }
 
-                if (notInstalled.size() == 0) {
+                if (dependenciesNotInstalled.size() == 0 && repositoriesNotInstalled.size() == 0) {
                     final PluginContext context = getContext(servletContext);
                     try (PluginConfigService service = new FilePluginService(context)) {
                         service.write(createPluginInstallerDocument(id));
@@ -415,10 +422,20 @@ public class PluginResource extends BaseResource {
                     message.setValue("Plugin successfully installed. Please rebuild and restart your application");
                     return message;
                 } else {
-                    final StringBuilder builder = new StringBuilder("Not all dependencies were successfully installed: ");
-                    for (EssentialsDependency essentialsDependency : notInstalled) {
-                        builder.append(essentialsDependency.getGroupId()).append(':').append(essentialsDependency.getArtifactId());
-                        builder.append(", ");
+                    final StringBuilder builder = new StringBuilder();
+                    if (dependenciesNotInstalled.size() > 0) {
+                        builder.append("Not all dependencies were successfully installed: ");
+                        for (EssentialsDependency essentialsDependency : dependenciesNotInstalled) {
+                            builder.append(essentialsDependency.getGroupId()).append(':').append(essentialsDependency.getArtifactId());
+                            builder.append(", ");
+                        }
+                    }
+                    if (repositoriesNotInstalled.size() > 0) {
+                        builder.append("Not all repositories were installed: ");
+                        for (Repository essentialsRepository : repositoriesNotInstalled) {
+                            builder.append(essentialsRepository.getUrl());
+                            builder.append(", ");
+                        }
                     }
                     message.setValue(builder.toString());
                     message.setSuccessMessage(false);
@@ -463,7 +480,7 @@ public class PluginResource extends BaseResource {
         return list;
 
     }
-    
+
     @ApiOperation(
             value = "returns project settings",
             notes = "Contains a list of all predefined project settings and project setup preferences",
@@ -592,5 +609,36 @@ public class PluginResource extends BaseResource {
         return list;
     }
 
+    private void processPlugins(final RestfulList<PluginRestful> plugins, final Iterable<PluginRestful> items, final Collection<String> restClasses, final PluginConfigService service) {
+        for (PluginRestful item : items) {
+            plugins.add(item);
+            final String pluginId = item.getPluginId();
+            if (!isInstalled(item)) {
+                item.setNeedsInstallation(true);
+            }
+            //############################################
+            // collect endpoints
+            //############################################
+            final List<String> pluginRestClasses = item.getRestClasses();
+            if (pluginRestClasses != null) {
+                for (String clazz : pluginRestClasses) {
+                    restClasses.add(clazz);
+                }
+            }
+
+
+            // check if recently installed:
+            // TODO: move to client?
+            final InstallerDocument document = service.read(pluginId, InstallerDocument.class);
+            if (document != null && document.getDateInstalled() != null) {
+                final Calendar dateInstalled = document.getDateInstalled();
+                final Calendar lastWeek = Calendar.getInstance();
+                lastWeek.add(Calendar.DAY_OF_MONTH, WEEK_OLD);
+                if (dateInstalled.after(lastWeek)) {
+                    item.setDateInstalled(dateInstalled);
+                }
+            }
+        }
+    }
 
 }
