@@ -40,7 +40,6 @@
   </properties>
 
   <modules>
-    <module>clone-component</module>
     <module>blog-plugin</module>
     <module>menu-plugin</module>
     <module>simple-content</module>

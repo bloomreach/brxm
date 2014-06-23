@@ -475,30 +475,6 @@
     {
         "enabled": true,
         "@type": "plugin",
-        "name": "Clone a component",
-        "introduction": "Duplicate a Channel Manager catalog component and its markup (template).",
-        "pluginId": "cloneComponent",
-        "restClasses": ["org.onehippo.cms7.essentials.plugin.clonecomponent.CloneComponentResource"],
-        "type": "tools",
-        "vendor": {
-            "@type": "vendor",
-            "name": "Hippo",
-            "url": "http://www.onehippo.com"
-        },
-        "libraries": [
-            {
-                "items": [
-                    {
-                        "component": "cloneComponent",
-                        "file": "cloneComponent.js"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "enabled": true,
-        "@type": "plugin",
         "name": "Search support",
         "introduction": "Add a search page to the project, including URL mapping and main menu item, and a Search Box component to the Channel Manager's component catalog.",
         "pluginId": "searchPlugin",
