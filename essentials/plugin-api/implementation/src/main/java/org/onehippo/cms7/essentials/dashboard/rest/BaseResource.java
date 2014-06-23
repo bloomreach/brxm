@@ -39,6 +39,7 @@ import org.onehippo.cms7.essentials.dashboard.model.DependencyType;
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
+import org.onehippo.cms7.essentials.dashboard.model.Repository;
 import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.packaging.TemplateSupportInstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
@@ -101,6 +102,12 @@ public class BaseResource {
         final List<EssentialsDependency> dependencies = plugin.getDependencies();
         for (EssentialsDependency dependency : dependencies) {
             if (!DependencyUtils.hasDependency(dependency)) {
+                return false;
+            }
+        }
+        final List<Repository>  repositories = plugin.getRepositories();
+        for (Repository repository : repositories) {
+            if (!DependencyUtils.hasRepository(repository)) {
                 return false;
             }
         }
