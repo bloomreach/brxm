@@ -109,7 +109,7 @@ public class DerivedDataTest extends RepositoryTestCase {
         for (Value value : p.getValues()) {
             values.add(value.getString());
         }
-        assertEquals(3, values.size());
+        assertEquals(4, values.size());
         assertTrue(values.contains(session.getRootNode().getIdentifier()));
         assertTrue(values.contains(folder2.getIdentifier()));
         assertTrue(values.contains(folder2.getNode("document").getIdentifier()));
@@ -122,7 +122,7 @@ public class DerivedDataTest extends RepositoryTestCase {
         for (Value value : p.getValues()) {
             values.add(value.getString());
         }
-        assertEquals(3, values.size());
+        assertEquals(4, values.size());
         assertTrue(values.contains(session.getRootNode().getIdentifier()));
         assertTrue(values.contains(folder1.getIdentifier()));
         assertTrue(values.contains(folder1.getNode("document").getIdentifier()));
