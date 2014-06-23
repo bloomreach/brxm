@@ -54,7 +54,6 @@
     <module>dashboard-list-content-plugin</module>
     <module>components-plugin</module>
     <module>beanwriter-plugin</module>
-    <module>freemarker-synchronizer</module>
     <module>banner-plugin</module>
     <module>robots-plugin</module>
     <module>poll-plugin</module>

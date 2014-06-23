@@ -659,32 +659,6 @@
     {
         "enabled": true,
         "@type": "plugin",
-        "name": "Freemarker synchronizing",
-        "introduction": "Synchronize Freemarker templates between your project sources and your project's repository.",
-        "pluginId": "freemarkersync",
-
-        "restClasses": ["org.onehippo.cms7.essentials.tools.rest.FreemarkerSyncResource"],
-        "type": "tools",
-        "vendor": {
-            "@type": "vendor",
-            "name": "Hippo",
-            "url": "http://www.onehippo.com"
-        },
-        "libraries": [
-            {
-                "items": [
-                    {
-                        "component": "freemarkersync",
-                        "file": "freemarkersync.js"
-                    }
-                ]
-            }
-        ]
-
-    },
-    {
-        "enabled": true,
-        "@type": "plugin",
         "name": "Events support",
         "introduction": "Add support for event documents, rendered in an event overview and event detail pages. All pages are disclosed under the \"events\" URL space, and the overview is linked into the site's main menu.",
         "packageFile": "/META-INF/events_package_instructions.xml",

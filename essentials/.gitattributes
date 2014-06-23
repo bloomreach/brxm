@@ -495,14 +495,6 @@ dashboard-plugins/faq-component-plugin/src/main/resources/instructions/jsp/faqli
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/xml/faq-document.xml -text
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/xml/faq-list-document.xml -text
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/xml/faq-sample.xml -text
-dashboard-plugins/freemarker-synchronizer/pom.xml -text
-dashboard-plugins/freemarker-synchronizer/src/main/java/org/onehippo/cms7/essentials/tools/rest/FSUtils.java -text
-dashboard-plugins/freemarker-synchronizer/src/main/java/org/onehippo/cms7/essentials/tools/rest/FreemarkerSyncResource.java -text
-dashboard-plugins/freemarker-synchronizer/src/main/resources/META-INF/resources/tools/freemarkersync/freemarkersync.html -text
-dashboard-plugins/freemarker-synchronizer/src/main/resources/META-INF/resources/tools/freemarkersync/freemarkersync.js -text
-dashboard-plugins/freemarker-synchronizer/src/main/resources/META-INF/web-fragment.xml -text
-dashboard-plugins/freemarker-synchronizer/src/test/java/org/onehippo/cms7/essentials/tools/rest/FSUtilsTest.java -text
-dashboard-plugins/freemarker-synchronizer/src/test/resources/log4j.xml -text
 dashboard-plugins/icons/onebit/license.txt -text
 dashboard-plugins/image-component-plugin/pom.xml -text
 dashboard-plugins/image-component-plugin/src/main/resources/META-INF/imageComponentPlugin_instructions.xml -text

@@ -71,22 +71,6 @@
     },
     {
         
-        "enabled": false,
-        "@type": "plugin",
-        "introduction": "Freemarker synchronizing tool",
-        "name": "Freemarker synchronizing",
-        "pluginId": "freemarkersync",
-
-        "restClasses": ["org.onehippo.cms7.essentials.tools.rest.FreemarkerSyncResource"],
-        "type": "tools",
-        "vendor": {
-            "@type": "vendor",
-            "name": "Hippo",
-            "url": "http://www.onehippo.com"
-        }
-    },
-    {
-        
         "enabled": true,
         "@type": "plugin",
         "description": "A basic News and Events site that contains a homepage template, News and Agenda components and detail pages to render both News and Event articles. It comes with a standard navigational menu and URL structure. This is the most basic Power Pack to start with. You can easily extend with more components later on.",
