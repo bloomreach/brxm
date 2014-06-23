@@ -36,9 +36,7 @@ class BuiltinPropertyReference extends PropertyReference {
             final Collection<Value> ancestors = new ArrayList<Value>();
             Node ancestor = modified;
             while (ancestor != null) {
-                if (ancestor.isNodeType("mix:referenceable")) {
-                    ancestors.add(getValueFactory().createValue(ancestor.getIdentifier()));
-                }
+                ancestors.add(getValueFactory().createValue(ancestor.getIdentifier()));
                 try {
                     ancestor = ancestor.getParent();
                 } catch (ItemNotFoundException ex) {
