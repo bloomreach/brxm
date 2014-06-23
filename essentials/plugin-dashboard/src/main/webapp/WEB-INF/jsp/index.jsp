@@ -94,9 +94,6 @@
           <a href="{{item.link}}" ng-click="onMenuClick(item)">{{item.name}}</a>
         </li>
         <li>
-          <a target="API" href="${pageContext.request.contextPath}/docs/rest-api/index.html">REST API</a>
-        </li>
-        <li>
           <a target="FEEDBACK" href="https://issues.onehippo.com/rest/collectors/1.0/template/form/a23eddf8?os_authType=none">Feedback</a>
         </li>
       </ul>
@@ -112,7 +109,8 @@
   </div>
   <div class="row footer">
     <p class="text-center">
-      (C) 2013-2014 <a href="http://www.onehippo.com">Hippo B.V.</a>, All Rights Reserved
+      (C) 2013-2014 <a href="http://www.onehippo.com">Hippo B.V.</a>, All Rights Reserved |
+      <a target="API" href="${pageContext.request.contextPath}/docs/rest-api/index.html">REST API</a>
     </p>
   </div>
 
