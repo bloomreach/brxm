@@ -135,7 +135,9 @@ public class MockProperty extends MockItem implements Property {
 
     @Override
     public void setValue(final Binary value) {
-        throw new UnsupportedOperationException();
+        this.values.clear();
+        this.values.add(new MockValue(value));
+        multiple = false;
     }
 
     @Override
@@ -180,12 +182,12 @@ public class MockProperty extends MockItem implements Property {
 
     @Override
     public InputStream getStream() {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Use #getBinary instead");
     }
 
     @Override
-    public Binary getBinary() {
-        throw new UnsupportedOperationException();
+    public Binary getBinary() throws RepositoryException {
+        return getValue().getBinary();
     }
 
     @Override

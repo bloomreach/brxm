@@ -221,6 +221,11 @@ public class MockSession implements HippoSession {
         return new MockNodeIterator(Collections.<MockNode>emptyList());
     }
 
+    @Override
+    public ValueFactory getValueFactory() {
+        return new MockValueFactory();
+    }
+
     // REMAINING METHODS ARE NOT IMPLEMENTED
 
     @Override
@@ -255,11 +260,6 @@ public class MockSession implements HippoSession {
 
     @Override
     public void removeItem(final String absPath) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ValueFactory getValueFactory() {
         throw new UnsupportedOperationException();
     }
 

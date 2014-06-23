@@ -25,6 +25,8 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -46,6 +48,7 @@ import javax.jcr.Value;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.PropertyDefinition;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.util.ISO8601;
 import org.junit.Test;
 
@@ -547,11 +550,12 @@ public class MockNodeTest {
     }
 
     @Test
-    public void testVariousTypesOfProperties() throws RepositoryException {
+    public void testVariousTypesOfProperties() throws RepositoryException, IOException {
         MockNode root = MockNode.root();
         MockNode node = root.addMockNode("node1", "nt:unstructured");
 
         Calendar now = Calendar.getInstance();
+        byte[] binaryData = new byte[1];
 
         node.setProperty("string1", "stringvalue1");
         node.setProperty("boolean1", true);
@@ -559,6 +563,7 @@ public class MockNodeTest {
         node.setProperty("date1", now);
         node.setProperty("double1", Double.MAX_VALUE);
         node.setProperty("bigdecimal1", BigDecimal.TEN);
+        node.setProperty("binary", new MockBinary(new ByteArrayInputStream(binaryData)));
 
         assertTrue(node.getProperty("boolean1").getBoolean());
         assertEquals(Long.MAX_VALUE, node.getProperty("long1").getLong());
@@ -566,6 +571,7 @@ public class MockNodeTest {
         assertEquals(Double.toString(Double.MAX_VALUE), Double.toString(node.getProperty("double1").getDouble()));
         assertEquals(BigDecimal.TEN, node.getProperty("bigdecimal1").getDecimal());
         assertEquals("stringvalue1", node.getProperty("string1").getString());
+        assertTrue(IOUtils.contentEquals(new ByteArrayInputStream(binaryData), node.getProperty("binary").getBinary().getStream()));
 
         node.setProperty("stringarray1", new String [] { "stringvalue1", "stringvalue2" });
         node.setProperty("booleanarray1", new MockValue[] { new MockValue(PropertyType.BOOLEAN, "true"), new MockValue(PropertyType.BOOLEAN, "false") });

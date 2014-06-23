@@ -15,11 +15,17 @@
  */
 package org.onehippo.repository.mock;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
+import javax.jcr.Binary;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.ValueFactory;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -82,6 +88,18 @@ public class MockSessionTest {
     public void getUserIdReturnsEmptyString() throws RepositoryException {
         Session session = MockNode.root().getSession();
         assertEquals("", session.getUserID());
+    }
+
+    @Test
+    public void valueFactoryCanCreateBinaries() throws RepositoryException, IOException {
+        Session session = new MockSession(MockNode.root());
+        ValueFactory factory = session.getValueFactory();
+
+        byte[] data = new byte[10];
+        data[3] = 42;
+        Binary binary = factory.createBinary(new ByteArrayInputStream(data));
+        assertEquals(data.length, binary.getSize());
+        IOUtils.contentEquals(new ByteArrayInputStream(data), binary.getStream());
     }
 
     private MockNode createRootFooBarMockNode() throws RepositoryException {

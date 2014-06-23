@@ -479,8 +479,10 @@ public class MockNode extends MockItem implements HippoNode {
     }
 
     @Override
-    public Property setProperty(final String name, final Binary value)  {
-        throw new UnsupportedOperationException();
+    public Property setProperty(final String name, final Binary value) throws RepositoryException {
+        Property p = getPropertyOrAddNew(name, PropertyType.BINARY);
+        p.setValue(value);
+        return p;
     }
 
     @Override

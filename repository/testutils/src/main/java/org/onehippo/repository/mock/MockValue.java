@@ -34,6 +34,7 @@ public class MockValue implements Value {
 
     private int type;
     private String stringifiedValue;
+    private Binary binary;
 
     @SuppressWarnings("unused")
     public MockValue() {
@@ -42,6 +43,11 @@ public class MockValue implements Value {
 
     public MockValue(String stringifiedValue) {
         this(PropertyType.STRING, stringifiedValue);
+    }
+
+    public MockValue(Binary binaryValue) {
+        this.type = PropertyType.BINARY;
+        this.binary = binaryValue;
     }
 
     public MockValue(int type, String stringifiedValue) {
@@ -83,6 +89,10 @@ public class MockValue implements Value {
             this.stringifiedValue = value.getDecimal().toString();
             break;
         }
+        case PropertyType.BINARY: {
+            this.binary = value.getBinary();
+            break;
+        }
         default:
         {
             throw new UnsupportedOperationException("Unsupported type, " + type + ". Only primitive number/string values are currently supported.");
@@ -97,11 +107,19 @@ public class MockValue implements Value {
 
     @Override
     public String getString() throws ValueFormatException {
+        checkNotBinary();
         return stringifiedValue;
+    }
+
+    private void checkNotBinary() throws ValueFormatException {
+        if (binary != null) {
+            throw new ValueFormatException("Binary value cannot be converted to a string");
+        }
     }
 
     @Override
     public Calendar getDate() throws ValueFormatException {
+        checkNotBinary();
         try {
             Calendar date = ISO8601.parse(stringifiedValue);
 
@@ -117,6 +135,7 @@ public class MockValue implements Value {
 
     @Override
     public boolean getBoolean() throws ValueFormatException {
+        checkNotBinary();
         try {
             return Boolean.parseBoolean(stringifiedValue);
         } catch (Exception e) {
@@ -126,6 +145,7 @@ public class MockValue implements Value {
 
     @Override
     public long getLong() throws ValueFormatException {
+        checkNotBinary();
         try {
             return Long.parseLong(stringifiedValue);
         } catch (Exception e) {
@@ -135,6 +155,7 @@ public class MockValue implements Value {
 
     @Override
     public double getDouble() throws ValueFormatException {
+        checkNotBinary();
         try {
             return Double.parseDouble(stringifiedValue);
         } catch (Exception e) {
@@ -144,6 +165,7 @@ public class MockValue implements Value {
 
     @Override
     public BigDecimal getDecimal() throws ValueFormatException {
+        checkNotBinary();
         try {
             return new BigDecimal(stringifiedValue);
         } catch (Exception e) {
@@ -152,13 +174,16 @@ public class MockValue implements Value {
     }
 
     @Override
-    public InputStream getStream() {
-        throw new UnsupportedOperationException();
+    public InputStream getStream() throws RepositoryException {
+        throw new UnsupportedOperationException("Use #getBinary instead");
     }
 
     @Override
-    public Binary getBinary() {
-        throw new UnsupportedOperationException();
+    public Binary getBinary() throws RepositoryException {
+        if (binary != null) {
+            return binary;
+        }
+        throw new RepositoryException("Value is not binary");
     }
 
     @Override
@@ -166,20 +191,32 @@ public class MockValue implements Value {
         if (this == o) {
             return true;
         } else if (o instanceof MockValue) {
-            MockValue other = (MockValue)o;
-            return stringifiedValue.equals(other.stringifiedValue);
+            MockValue other = (MockValue) o;
+            if (stringifiedValue != null) {
+                return stringifiedValue.equals(other.stringifiedValue);
+            } else {
+                return binary.equals(other.binary);
+            }
         }
-
         return false;
     }
 
     @Override
     public int hashCode() {
-        return stringifiedValue.hashCode();
+        if (stringifiedValue != null) {
+            return stringifiedValue.hashCode();
+        }
+        return binary.hashCode();
     }
 
     @Override
     public String toString() {
-        return super.toString() + ";{type: " + type + ", stringifiedValue: '" + stringifiedValue + "'}";
+        StringBuffer result = new StringBuffer(super.toString());
+        result.append(";{type: ").append(type);
+        if (stringifiedValue != null) {
+            result.append(", '").append(stringifiedValue).append("'");
+        }
+        result.append("}");
+        return result.toString();
     }
 }
