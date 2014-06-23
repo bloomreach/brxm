@@ -30,9 +30,6 @@
   <sv:property sv:name="hst:defaultcontextpath" sv:type="String">
     <sv:value>/site</sv:value>
   </sv:property>
-  <sv:property sv:name="hst:channelmanagerhostgroup" sv:type="String">
-    <sv:value>dev-localhost</sv:value>
-  </sv:property>
   <sv:property sv:name="hst:suffixexclusions" sv:type="String">
     <sv:value>.do</sv:value>
     <sv:value>.css</sv:value>
