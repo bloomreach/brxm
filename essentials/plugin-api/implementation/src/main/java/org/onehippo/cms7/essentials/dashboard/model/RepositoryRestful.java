@@ -16,9 +16,14 @@
 
 package org.onehippo.cms7.essentials.dashboard.model;
 
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.maven.model.RepositoryPolicy;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonSubTypes;
+import org.codehaus.jackson.annotate.JsonTypeInfo;
 
 /**
  * @version "$Id$"
@@ -74,6 +79,11 @@ public class RepositoryRestful implements Repository, Restful {
         this.url = url;
     }
 
+
+    @XmlElementRef(type = SnapshotRestful.class, name = "snapshots")
+    @JsonSubTypes({@JsonSubTypes.Type(value = SnapshotRestful.class, name = "snapshots")})
+    @JsonTypeInfo(defaultImpl = SnapshotRestful.class, use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
+
     @Override
     public Snapshot getSnapshots() {
         return snapshots;
@@ -94,6 +104,8 @@ public class RepositoryRestful implements Repository, Restful {
         this.type = type;
     }
 
+    @XmlTransient
+    @JsonIgnore
     @Override
     public DependencyType getDependencyType() {
         return DependencyType.typeForName(type);

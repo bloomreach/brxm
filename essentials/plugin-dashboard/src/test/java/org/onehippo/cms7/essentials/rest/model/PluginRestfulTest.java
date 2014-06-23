@@ -20,7 +20,12 @@ import java.util.Calendar;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
+import org.onehippo.cms7.essentials.dashboard.model.DependencyType;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
+import org.onehippo.cms7.essentials.dashboard.model.Repository;
+import org.onehippo.cms7.essentials.dashboard.model.RepositoryRestful;
+import org.onehippo.cms7.essentials.dashboard.model.Snapshot;
+import org.onehippo.cms7.essentials.dashboard.model.SnapshotRestful;
 import org.onehippo.cms7.essentials.dashboard.model.Vendor;
 import org.onehippo.cms7.essentials.dashboard.model.VendorRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PluginModuleRestful;
@@ -53,6 +58,15 @@ public class PluginRestfulTest {
         final Vendor vendor = new VendorRestful();
         vendor.setName("hippo");
         value.setVendor(vendor);
+        final Repository repository = new RepositoryRestful();
+        repository.setId("myId");
+        repository.setUrl("http://onehippo.com/maven2");
+        final Snapshot snapshots = new SnapshotRestful();
+        snapshots.setEnabled(true);
+        repository.setSnapshots(snapshots);
+        repository.setType(DependencyType.PROJECT.getName());
+        value.addRepository(repository);
+
         // test json:
         final ObjectMapper mapper = new ObjectMapper();
         final String json = mapper.writeValueAsString(value);
@@ -65,6 +79,7 @@ public class PluginRestfulTest {
         assertEquals(vendor.getName(), fromJson.getVendor().getName());
         assertEquals("Expected 1 prefixed library", 1, value.getLibraries().size());
         assertEquals("Expected 2 js libraries", 2, value.getLibraries().get(0).getItems().size());
+        assertEquals("Expected 1 repository", 1, value.getRepositories().size());
 
 
     }
