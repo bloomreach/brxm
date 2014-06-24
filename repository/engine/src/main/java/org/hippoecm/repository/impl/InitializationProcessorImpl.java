@@ -924,10 +924,6 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         InputStream esvIn = null;
         FileOutputStream out = null;
         try {
-            String relpath = (parentAbsPath.startsWith("/") ? parentAbsPath.substring(1) : parentAbsPath);
-            if (relpath.length() > 0 && !session.getRootNode().hasNode(relpath)) {
-                session.getRootNode().addNode(relpath);
-            }
             if (session instanceof HippoSession) {
                 HippoSession hippoSession = (HippoSession) session;
                 int uuidBehaviour = ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW;
