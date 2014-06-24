@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
@@ -80,6 +81,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ContextLoader;
 
 import com.google.common.base.Strings;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Multimap;
 import com.google.common.eventbus.EventBus;
 import com.wordnik.swagger.annotations.Api;
@@ -98,6 +102,23 @@ import com.wordnik.swagger.annotations.ApiParam;
 @Path("/plugins")
 public class PluginResource extends BaseResource {
 
+
+    /**
+     * Plugin cache to avoid remote calls
+     */
+    private final LoadingCache<String, RestfulList<PluginRestful>> pluginCache = CacheBuilder.newBuilder()
+            .expireAfterAccess(60, TimeUnit.MINUTES)
+            .recordStats()
+            .build(new CacheLoader<String, RestfulList<PluginRestful>>() {
+                @Override
+                public RestfulList<PluginRestful> load(final String url) throws Exception {
+                    RestClient client = new RestClient(url);
+                    return client.getPlugins();
+                }
+
+
+            });
+
     public static final int WEEK_OLD = -7;
     public static final String PLUGIN_ID = "pluginId";
     @Inject
@@ -109,9 +130,11 @@ public class PluginResource extends BaseResource {
     private MemoryPluginEventListener listener;
 
 
+
     private boolean initialized;
     private static Logger log = LoggerFactory.getLogger(PluginResource.class);
 
+    @SuppressWarnings("unchecked")
     @ApiOperation(
             value = "Fetches local file descriptors  and checks for available Hippo Essentials plugins. " +
                     "It also registers any plugin REST endpoints which come available under /dynamic endpoint e.g. /dynamic/{pluginEndpoint}",
@@ -120,6 +143,7 @@ public class PluginResource extends BaseResource {
     @GET
     @Path("/")
     public RestfulList<PluginRestful> getPluginList(@Context ServletContext servletContext) throws Exception {
+
         final RestfulList<PluginRestful> plugins = new RestList<>();
         final List<PluginRestful> items = getPlugins(servletContext);
         final Collection<String> restClasses = new ArrayList<>();
@@ -131,12 +155,11 @@ public class PluginResource extends BaseResource {
         // Register endpoints:
         //############################################
         registerEndpoints(restClasses);
-
-
         return plugins;
     }
 
 
+    @SuppressWarnings("unchecked")
     @ApiOperation(
             value = "Fetches remote service(s) and checks for available Hippo Essentials plugins. " +
                     "It also registers any plugin REST endpoints which come available under /dynamic endpoint e.g. /dynamic/{pluginEndpoint}",
@@ -146,6 +169,7 @@ public class PluginResource extends BaseResource {
     @Path("/remote")
     public RestfulList<PluginRestful> getRemotePluginList(@Context ServletContext servletContext) throws Exception {
 
+
         final ProjectSettings projectSettings = getProjectSettings(servletContext);
         final RestfulList<PluginRestful> plugins = new RestfulList<>();
         final Collection<PluginRestful> items = new ArrayList<>();
@@ -153,8 +177,8 @@ public class PluginResource extends BaseResource {
         for (String pluginRepository : pluginRepositories) {
             if (pluginRepository.startsWith("http")) {
                 try {
-                    RestClient client = new RestClient(pluginRepository);
-                    final RestfulList<PluginRestful> myPlugins = client.getPlugins();
+                    final RestfulList<PluginRestful> myPlugins = pluginCache.get(pluginRepository);
+                    log.debug("{}", pluginCache.stats());
                     if (myPlugins != null) {
                         final List<PluginRestful> myPluginsItems = myPlugins.getItems();
                         CollectionUtils.addAll(items, myPluginsItems.iterator());
@@ -186,6 +210,8 @@ public class PluginResource extends BaseResource {
             factoryBean.setBus(bus);
             final Server server = factoryBean.create();
             server.start();
+        } else {
+            addClasses(restClasses);
         }
     }
 
@@ -194,6 +220,11 @@ public class PluginResource extends BaseResource {
             final Class<?> endpointClass = GlobalUtils.loadCLass(restClass);
             if (endpointClass == null) {
                 log.error("Invalid application class: {}", restClass);
+                continue;
+            }
+            final Set<Class<?>> classes = application.getClasses();
+            if (classes.contains(endpointClass)) {
+                log.debug("Class already loaded {}", restClass);
                 continue;
             }
             application.addClass(endpointClass);
@@ -381,7 +412,6 @@ public class PluginResource extends BaseResource {
     public MessageRestful installPlugin(@Context ServletContext servletContext, @PathParam(PLUGIN_ID) String pluginId) throws Exception {
 
         final MessageRestful message = new MessageRestful();
-        // TODO add plugin cache so we do not need to fetch remote plugins all over again?
         final RestfulList<PluginRestful> pluginList = getPluginList(servletContext);
         final RestfulList<PluginRestful> remoteList = getRemotePluginList(servletContext);
         pluginList.addAll(remoteList.getItems());

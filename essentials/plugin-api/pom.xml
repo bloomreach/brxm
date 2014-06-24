@@ -36,7 +36,7 @@
     <javax.inject.version>1</javax.inject.version>
     <spring.version>3.2.6.RELEASE</spring.version>
     <junit.version>4.11</junit.version>
-    <maven-model.version>3.0.5</maven-model.version>
+    <maven-model.version>3.2.1</maven-model.version>
     <commons-io.version>2.3</commons-io.version>
     <tika-parsers.version>0.9</tika-parsers.version>
     <core.jdt.version>3.3.0-v_771</core.jdt.version>

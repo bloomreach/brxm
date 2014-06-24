@@ -16,17 +16,22 @@
 
 package org.onehippo.cms7.essentials.dashboard.config;
 
-import com.google.common.base.Strings;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.File;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.io.Writer;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import java.io.*;
+
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 /**
  * Created by tjeger on 6/4/14.
@@ -108,8 +113,6 @@ public abstract class AbstractPluginService implements PluginConfigService {
     @SuppressWarnings("unchecked")
     protected <T extends Document> T unmarshalStream(final InputStream stream, final Class<T> clazz) {
         final String setting = GlobalUtils.readStreamAsText(stream);
-        log.debug("setting {}", setting);
-
         try {
             final JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
             final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
