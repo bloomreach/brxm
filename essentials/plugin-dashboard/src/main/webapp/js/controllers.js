@@ -119,7 +119,6 @@
                         $rootScope.pluginsCache = items;
                         processItems(items);
                         // fetch remote repositories:
-                        console.log(">>> LOCAL <<<");
                         fetchRemote(items)
                         function fetchRemote(items) {
 
@@ -127,15 +126,8 @@
                                 items = [];
                             }
                             $http.get($rootScope.REST.plugins  + "remote").success(function (data) {
-                                console.log("==========================================");
-                                console.log("==========================================");
-                                console.log("==========================================");
-                                console.log(" >>> remote data");
-                                console.log(data.items);
                                 items.concat(data.items);
-                                console.log("+++++++++++++++++++++++++++++++++++++++===");
                                 var all = items.concat(data.items);
-                                console.log(all);
                                 $rootScope.pluginsCache = all;
                                 processItems(items);
                             });
