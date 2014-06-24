@@ -24,8 +24,7 @@
     <div class="panel">
         <div class="panel-heading"><h2>{{selectedPlugin.name}}</h2></div>
         <div class="list-group">
-            <p class="list-group-item">
-                {{selectedPlugin.introduction}}
+            <p class="list-group-item" ng-bind-html="selectedPlugin.introduction">
             </p>
             <p class="list-group-item">
                 <a href="{{selectedPlugin.vendor.url}}" target="_blank">{{selectedPlugin.vendor.name}}</a>

@@ -25,6 +25,7 @@
   <script src="${pageContext.request.contextPath}/components/jquery/jquery.js"></script>
   <%--<script src="${pageContext.request.contextPath}/js/lib/jquery.ui.min.js"></script>--%>
   <script src="${pageContext.request.contextPath}/components/angular/angular.js"></script>
+  <script src="${pageContext.request.contextPath}/components/angular/angular-sanitize.min.js"></script>
   <script src="${pageContext.request.contextPath}/components/underscore/underscore.js"></script>
   <script src="${pageContext.request.contextPath}/components/bootstrap/dist/js/bootstrap.js"></script>
   <script src="${pageContext.request.contextPath}/components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>

@@ -1166,6 +1166,8 @@ plugin-dashboard/src/main/webapp/components/angular-ui-tree/source/main.js -text
 plugin-dashboard/src/main/webapp/components/angular-ui-tree/source/services/helper.js -text
 plugin-dashboard/src/main/webapp/components/angular/README.md -text
 plugin-dashboard/src/main/webapp/components/angular/angular-csp.css -text
+plugin-dashboard/src/main/webapp/components/angular/angular-sanitize.min.js -text
+plugin-dashboard/src/main/webapp/components/angular/angular-sanitize.min.js.map -text
 plugin-dashboard/src/main/webapp/components/angular/angular.js -text
 plugin-dashboard/src/main/webapp/components/angular/angular.min.js -text
 plugin-dashboard/src/main/webapp/components/angular/angular.min.js.gzip -text
