@@ -23,9 +23,18 @@ import org.slf4j.LoggerFactory;
 /**
  * @version "$Id$"
  */
-public class GalleryModel implements Restful{
+public class GalleryModel implements Restful {
 
     private static final long serialVersionUID = 1L;
     private static Logger log = LoggerFactory.getLogger(GalleryModel.class);
 
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
 }

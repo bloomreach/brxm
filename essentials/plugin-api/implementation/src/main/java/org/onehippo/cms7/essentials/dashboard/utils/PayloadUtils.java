@@ -20,11 +20,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.wicket.util.string.Strings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 /**
@@ -32,18 +30,16 @@ import com.google.common.collect.Lists;
  */
 public final class PayloadUtils {
 
-    private static Logger log = LoggerFactory.getLogger(PayloadUtils.class);
-
-    public static String[] extractValueArray(final CharSequence value) {
-        if (Strings.isEmpty(value)) {
+    public static String[] extractValueArray(final String value) {
+        if (Strings.isNullOrEmpty(value)) {
             return ArrayUtils.EMPTY_STRING_ARRAY;
         }
         final List<String> strings = extractValueList(value);
         return strings.toArray(new String[strings.size()]);
     }
 
-    public static List<String> extractValueList(final CharSequence value) {
-        if (Strings.isEmpty(value)) {
+    public static List<String> extractValueList(final String value) {
+        if (Strings.isNullOrEmpty(value)) {
             return Collections.emptyList();
         }
         final Splitter splitter = Splitter.on(",").omitEmptyStrings().trimResults();
