@@ -68,11 +68,21 @@ public interface ContentRewriter<T> {
      * @param fullyQualifiedLinks
      */
     void setFullyQualifiedLinks(boolean fullyQualifiedLinks);
-    
+
     /**
      * @return <code>true</code> when fully qualified links (URLs) should be created
      */
     boolean isFullyQualifiedLinks();
+
+    /**
+     * @param canonicalLinks when <code>true</code> this {@link ContentRewriter} will return canonical links for internal links
+     */
+    void setCanonicalLinks(boolean canonicalLinks);
+
+    /**
+     * @return <code>true</code> when canonical links should be created for internal links
+     */
+    boolean isCanonicalLinks();
 
     /**
      * Sets whether this {@link ContentRewriter} should use an imageVariant. 

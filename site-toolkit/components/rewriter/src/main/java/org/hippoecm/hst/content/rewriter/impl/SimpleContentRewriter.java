@@ -311,18 +311,10 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
                             log.info("Unable to rewrite path '{}' for node '{}' to proper binary url for imageVariant '{}'.", new String[]{relPath, nodePath, imageVariant.getName()});
                             return null;
                         }
-                        if (targetMount == null) {
-                            return reqContext.getHstLinkCreator().create(binary, reqContext);
-                        } else {
-                            return reqContext.getHstLinkCreator().create(binary, targetMount);
-                        }
+                        return createLink(binary, reqContext, targetMount);
                     } else {
                         Node binary = binaryDocument.getNode(binaryPathSegments[2]);
-                        if (targetMount == null) {
-                            return reqContext.getHstLinkCreator().create(binary, reqContext);
-                        } else {
-                            return reqContext.getHstLinkCreator().create(binary, targetMount);
-                        }
+                        return createLink(binary, reqContext, targetMount);
                     }
 
                 } else {
@@ -338,11 +330,7 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
                             }
                             referencedNode = referencedNode.getNode(referencedNode.getName());
                         }
-                        if (targetMount == null) {
-                            return reqContext.getHstLinkCreator().create(referencedNode, reqContext);
-                        } else {
-                            return reqContext.getHstLinkCreator().create(referencedNode, targetMount);
-                        }
+                        return createLink(referencedNode, reqContext, targetMount);
                     } else {
                         log.info("For '{}' a node of type hippo:mirror of hippo:facetselect is expected but was of type '{}'. Cannot " +
                                 "create a link for that node type.", mirrorNode.getPath(), mirrorNode.getPrimaryNodeType().getName());
@@ -357,6 +345,22 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
             }
         }
         return null;
+    }
+
+    private HstLink createLink(final Node node, final HstRequestContext reqContext, final Mount targetMount) throws RepositoryException {
+        if (isCanonicalLinks()) {
+            if (targetMount != null) {
+                log.info("TargetMount is defined to create a link for, but target mount is ignored in case a canonical link is " +
+                        "requested. Ignoring target mount '{}' but instead return canonical link for nodepath '{}'.",
+                        targetMount.toString(), node.getPath());
+            }
+            return reqContext.getHstLinkCreator().createCanonical(node, reqContext);
+        }
+        if (targetMount == null) {
+            return reqContext.getHstLinkCreator().create(node, reqContext);
+        } else {
+            return reqContext.getHstLinkCreator().create(node, targetMount);
+        }
     }
 
     private boolean isValidBinariesPath(final String nodePath, final String relPath) {

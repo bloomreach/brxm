@@ -34,6 +34,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 public abstract class AbstractContentRewriter<T> implements ContentRewriter<T> {
     
     private boolean fullyQualifiedLinks;
+    private boolean canonicalLinks;
     private ImageVariant imageVariant;
     
     public AbstractContentRewriter() {
@@ -61,13 +62,23 @@ public abstract class AbstractContentRewriter<T> implements ContentRewriter<T> {
     }
 
     @Override
+    public void setFullyQualifiedLinks(boolean fullyQualifiedLinks) {
+        this.fullyQualifiedLinks = fullyQualifiedLinks;
+    }
+
+    @Override
     public boolean isFullyQualifiedLinks() {
         return fullyQualifiedLinks;
     }
 
     @Override
-    public void setFullyQualifiedLinks(boolean fullyQualifiedLinks) {
-       this.fullyQualifiedLinks = fullyQualifiedLinks;
+    public void setCanonicalLinks(final boolean canonicalLinks) {
+        this.canonicalLinks = canonicalLinks;
+    }
+
+    @Override
+    public boolean isCanonicalLinks() {
+        return canonicalLinks;
     }
 
     @Override

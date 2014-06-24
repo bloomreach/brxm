@@ -295,16 +295,16 @@
       <type>java.lang.Boolean</type>
     </attribute>
     <attribute>
-      <description>If the link that is created should be the canonical link, use this attr with value true
+      <description>If the link that is created should be the canonicalLinks link, use this attr with value true
       </description>
-      <name>canonical</name>
+      <name>canonicalLinks</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
       <type>java.lang.Boolean</type>
     </attribute>
     <attribute>
       <description>If the link should be created in the context of the current URL, use this attr with value true. When
-        having canonical='true', this attribute is ignored.
+        having canonicalLinks='true', this attribute is ignored.
       </description>
       <name>navigationStateful</name>
       <required>false</required>
@@ -578,6 +578,14 @@
         with 'http://' or 'https://' etc
       </description>
       <name>fullyQualifiedLinks</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
+    <attribute>
+      <description>When internal links should be rewritten the canonicalLinks links, use this attr with value true
+      </description>
+      <name>canonicalLinks</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
       <type>java.lang.Boolean</type>

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -54,6 +54,12 @@ public class HstHtmlTag extends TagSupport {
 
     protected String text;
 
+    /**
+     * boolean indicating whether possible available internal links will be created as canonicalLinks links. The canonicalLinks link is always the same,
+     * regardless the current context, in other words, regardless the current URL.
+     */
+    protected boolean canonicalLinks;
+
     protected enum RewriteMode { HIPPOHTML, FORMATTEDTEXT, UNKNOWN, TEXT }
 
     /**
@@ -96,28 +102,23 @@ public class HstHtmlTag extends TagSupport {
             return EVAL_PAGE;
         }
 
-        String characterEncoding = pageContext.getResponse().getCharacterEncoding();
-        if (characterEncoding == null) {
-            characterEncoding = "UTF-8";
-        }
-
         RewriteMode mode = determineMode();
         log.debug("Determined rewrite mode: " + mode);
 
         String html;
-        if(mode.equals(RewriteMode.HIPPOHTML) || mode.equals(RewriteMode.FORMATTEDTEXT)) {
-            if (contentRewriter == null) {
-                contentRewriter = new SimpleContentRewriter();
-            }
-        }
+        ContentRewriter<String> cr;
         switch (mode) {
             case HIPPOHTML:
-                contentRewriter.setFullyQualifiedLinks(fullyQualifiedLinks);
-                contentRewriter.setImageVariant(imageVariant);
-                html = contentRewriter.rewrite(hippoHtml.getContent(), hippoHtml.getNode(), requestContext);
+                cr = getOrCreateContentRewriter();
+                cr.setFullyQualifiedLinks(fullyQualifiedLinks);
+                cr.setImageVariant(imageVariant);
+                cr.setCanonicalLinks(canonicalLinks);
+                html = cr.rewrite(hippoHtml.getContent(), hippoHtml.getNode(), requestContext);
                 break;
             case FORMATTEDTEXT:
-                html = contentRewriter.rewrite(formattedText, requestContext);
+                cr = getOrCreateContentRewriter();
+                cr.setCanonicalLinks(canonicalLinks);
+                html = cr.rewrite(formattedText, requestContext);
                 break;
             case TEXT:
                 html = lineEndingsToHTML(text);
@@ -214,6 +215,7 @@ public class HstHtmlTag extends TagSupport {
         imageVariant = null;
         formattedText = null;
         text = null;
+        canonicalLinks = false;
     }
 
 
@@ -236,13 +238,25 @@ public class HstHtmlTag extends TagSupport {
     public ContentRewriter<String> getContentRewriter() {
         return contentRewriter;
     }
-    
+
+    public ContentRewriter<String> getOrCreateContentRewriter() {
+        if (contentRewriter == null) {
+            contentRewriter = new SimpleContentRewriter();
+        }
+        return contentRewriter;
+    }
+
+
     /**
      * @param fullyQualifiedLinks flag to define whether internal links are rewritten into fully qualified links (URLs)
      *                                 (including scheme and domain)
      */
-    public void setFullyQualifiedLinks(boolean fullyQualifiedLinks) {
+    public void setFullyQualifiedLinks(final boolean fullyQualifiedLinks) {
         this.fullyQualifiedLinks = fullyQualifiedLinks;
+    }
+
+    public void setCanonicalLinks(final boolean canonicalLinks) {
+        this.canonicalLinks = canonicalLinks;
     }
 
     /**

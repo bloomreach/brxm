@@ -98,7 +98,7 @@ public interface HstLinkCreator {
     HstLink create(Node node, HstRequestContext requestContext, HstSiteMapItem preferredItem, boolean fallback, boolean navigationStateful);
     
     /**
-     * This creates a canonical HstLink: regardless the current requestContext, one and the same jcr Node is garantueed to return the same HstLink. This is
+     * This creates a canonical HstLink: regardless the current requestContext, one and the same jcr Node is guaranteed to return the same HstLink. This is
      * useful when showing one and the same content via multiple urls, for example in faceted navigation. Search engines can better index your
      * website when defining a canonical location for duplicate contents: See 
      * <a href="http://googlewebmastercentral.blogspot.com/2009/02/specify-your-canonical.html">specify-your-canonical</a> for more info on this subject.
