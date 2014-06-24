@@ -495,6 +495,12 @@ dashboard-plugins/faq-component-plugin/src/main/resources/instructions/jsp/faqli
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/xml/faq-document.xml -text
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/xml/faq-list-document.xml -text
 dashboard-plugins/faq-component-plugin/src/main/resources/instructions/xml/faq-sample.xml -text
+dashboard-plugins/gallery-plugin/pom.xml -text
+dashboard-plugins/gallery-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/gallery/GalleryPluginResource.java -text
+dashboard-plugins/gallery-plugin/src/main/resources/META-INF/resources/tools/galleryPlugin/galleryPlugin.html -text
+dashboard-plugins/gallery-plugin/src/main/resources/META-INF/resources/tools/galleryPlugin/galleryPlugin.js -text
+dashboard-plugins/gallery-plugin/src/main/resources/META-INF/web-fragment.xml -text
+dashboard-plugins/gallery-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/icons/onebit/license.txt -text
 dashboard-plugins/image-component-plugin/pom.xml -text
 dashboard-plugins/image-component-plugin/src/main/resources/META-INF/imageComponentPlugin_instructions.xml -text
