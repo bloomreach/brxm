@@ -18,6 +18,7 @@ package org.onehippo.cms7.essentials.plugins.gallery;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -50,6 +51,7 @@ import org.slf4j.LoggerFactory;
 public class GalleryPluginResource extends BaseResource {
 
 
+    private static final Pattern NS_PATTERN = Pattern.compile(":");
     private static Logger log = LoggerFactory.getLogger(GalleryPluginResource.class);
 
 
@@ -58,20 +60,19 @@ public class GalleryPluginResource extends BaseResource {
      */
     @GET
     @Path("/")
-    public List<ImageModel> fetchExisting(@Context ServletContext servletContext) {
+    public List<GalleryModel> fetchExisting(@Context ServletContext servletContext) {
 
-        final List<ImageModel> models = new ArrayList<>();
+        final List<GalleryModel> models = new ArrayList<>();
         try {
-            final List<String> existingImageSets = CndUtils.getNodeTypesOfType(getContext(servletContext), HippoGalleryNodeType.IMAGE_SET, false);
-            for (String existingImageSet : existingImageSets) {
+            final List<String> existingImageSets = CndUtils.getNodeTypesOfType(getContext(servletContext), HippoGalleryNodeType.IMAGE_SET, true);
+            final PluginContext context = getContext(servletContext);
 
-                if (existingImageSet.equals(HippoGalleryNodeType.IMAGE_SET)) {
-                    final ImageModel model = new ImageModel(existingImageSet);
-                    model.setReadOnly(true);
-                    models.add(model);
-                } else {
-                    models.add(new ImageModel(existingImageSet));
-                }
+            for (String existingImageSet : existingImageSets) {
+                final String[] ns = NS_PATTERN.split(existingImageSet);
+                final List<ImageModel> imageModels = loadImageSet(ns[0], ns[1], context);
+                final GalleryModel galleryModel = new GalleryModel(existingImageSet);
+                galleryModel.setModels(imageModels);
+                models.add(galleryModel);
             }
         } catch (RepositoryException e) {
             log.error("Error fetching image types ", e);
@@ -111,7 +112,7 @@ public class GalleryPluginResource extends BaseResource {
      * @param imagesetTemplate the imageset template node
      * @param variant          the name of the variant (including prefix e.g. prefix:name)
      * @return
-     * @throws RepositoryException
+     * @throws javax.jcr.RepositoryException
      */
     private static List<TranslationModel> retrieveTranslationsForVariant(final Node imagesetTemplate, final String variant) throws RepositoryException {
         final List<TranslationModel> translations = new ArrayList<>();
@@ -143,5 +144,67 @@ public class GalleryPluginResource extends BaseResource {
 
         return new ArrayList<>();
     }
+
+    private void createOrLoadImageSet(final String prefix, final String name, final String imageNodePathToCopy, final PluginContext context) {
+        final Session session = context.createSession();
+        try {
+
+            final String nodeType = prefix + ':' + name;
+            final String uri = GalleryUtils.getGalleryURI(prefix);
+            // Check whether node type already exists
+            if (CndUtils.nodeTypeExists(context, nodeType)) {
+                if (CndUtils.isNodeOfSuperType(context, nodeType, HippoGalleryNodeType.IMAGE_SET)) {
+                    // Node type exists and is and image set which can be loaded
+                    loadImageSet(prefix, name, context);
+                    return;
+                } else {
+                    // Node type exists and is no image set
+                    return;
+                }
+            }
+
+            // Check whether namespace needs to / can be created
+            if (CndUtils.namespacePrefixExists(context, prefix)) {
+                // No need to register namespace because it already exists
+                log.debug("Already registered uri {}", uri);
+            } else if (CndUtils.namespaceUriExists(context, uri)) {
+                // Unable to register namespace for already existing URI
+                log.error("Namespace URI '{}' already exists", uri);
+                return;
+            } else {
+                // Register new namespace
+                CndUtils.registerNamespace(context, prefix, uri);
+            }
+
+            CndUtils.createHippoNamespace(context, prefix);
+            CndUtils.registerDocumentType(context, prefix, name, false, false, GalleryUtils.HIPPOGALLERY_IMAGE_SET, GalleryUtils.HIPPOGALLERY_RELAXED);
+
+            // copy node:
+            final Node imageNode;
+            if (imageNodePathToCopy != null) {
+                // Copy a previously used image variant
+                // TODO imageNodePath
+                final String imageNodePath = "" ;
+                imageNode = GalleryUtils.createImagesetNamespace(session, prefix, name, imageNodePath);
+            } else {
+                // Copy the default original image variant
+                imageNode = GalleryUtils.createImagesetNamespace(session, prefix, name);
+            }
+
+
+            populateTypes(session, imageNode);
+
+            session.save();
+
+            // Select the created imageset in the dropdown
+            String selectedImageSet = prefix + ':' + name;
+
+        } catch (RepositoryException e) {
+            log.error("Error in gallery plugin", e);
+            GlobalUtils.refreshSession(session, false);
+        }
+        GlobalUtils.cleanupSession(session);
+    }
+
 
 }
