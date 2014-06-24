@@ -14,15 +14,27 @@
   limitations under the License.
   -->
 
-<div class="panel panel-default" ng-controller="galleryPluginCtrl">
-<div class="panel-heading">
-    {{message}}
-</div>
-<div class="panel-body">
+<div class="panel panel-primary" ng-controller="galleryPluginCtrl">
+    <div class="panel-heading">
+        {{message}}
+    </div>
+    <div class="panel-body">
+        <div>Create a custom image set:
+            <form novalidate name="imageSetForm">
 
-</div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">Imageset name:</label>
+                    <div class="col-sm-8">
+                        <input ng-model="imageSetName" ng-pattern="/^[a-z]{2,}$/" ng-required="true"/>
+                    </div>
+                </div>
+                <button ng-disabled="!imageSetForm.$valid" class="btn btn-primary pull-right" ng-click="addImageSet()">Create new image set</button>
+            </form>
+        </div>
 
-<div class="panel-footer clearfix">
-    <button class="btn btn-primary pull-right" type="button" ng-click="save()">Save</button>
-</div>
+    </div>
+
+    <div class="panel-footer clearfix">
+        <button class="btn btn-primary pull-right" type="button" ng-click="save()">Save</button>
+    </div>
 </div>

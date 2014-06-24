@@ -19,15 +19,27 @@
 
     angular.module('hippo.essentials').controller('galleryPluginCtrl2', function ($scope, $sce, $log, $rootScope, $http) {
 
+        var endpoint = $rootScope.REST.dynamic + "galleryplugin";
+        $scope.imageSets = [];
         $scope.message = "Gallery plugin";
 
+        $scope.addImageSet = function () {
+            console.log("save image set");
+        };
         $scope.save = function () {
             console.log("init gallery");
         };
 
         $scope.init = function () {
+            console.log("getting image data");
+            $http.get(endpoint).success(function (data) {
+                $scope.imageSets = data;
+            });
+
             console.log("init gallery");
         };
+
+        $scope.init();
 
         //############################################
         // DEFAULTS
