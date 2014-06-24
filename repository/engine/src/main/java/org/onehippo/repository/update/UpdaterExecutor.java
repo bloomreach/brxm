@@ -106,6 +106,7 @@ public class UpdaterExecutor implements EventListener {
         } catch (RepositoryException e) {
             error("Unexpected exception while executing updater", e);
         } finally {
+            updaterInfo.getUpdater().destroy();
             // log before saving report for last time
             message = "Finished executing updater " + updaterInfo.getName();
             info(message);
@@ -123,7 +124,6 @@ public class UpdaterExecutor implements EventListener {
                 // log.error() instead of error() on purpose: report already saved
                 log.error(e.getClass().getName() + ": " + e.getMessage(), e);
             }
-            updaterInfo.getUpdater().destroy();
             report.close();
         }
     }
