@@ -235,9 +235,21 @@ public class PluginResource extends BaseResource {
 
 
     @ApiOperation(
+            value = "Clears plugin cache",
+            notes = "Remote Plugin descriptors are cached for 1 hour. This method clears plugin cache and plugins are fetched again on next requets",
+            response = MessageRestful.class)
+    @GET
+    @Path("/clearcache")
+    public MessageRestful clearCache(@Context ServletContext servletContext) throws Exception {
+        pluginCache.invalidateAll();
+        return new MessageRestful("Plugin Cache invalidated");
+    }
+
+
+    @ApiOperation(
             value = "Installs selected instruction package",
             notes = "Use PostPayloadRestful and set InstructionPackage id property (pluginId)",
-            response = RestfulList.class)
+            response = MessageRestful.class)
     @POST
     @Path("/install/package")
     public MessageRestful installInstructionPackage(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) throws Exception {
