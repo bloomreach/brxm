@@ -48,7 +48,6 @@
                     <tr>
                         <th></th>
                         <th>Document</th>
-                        <th>Field position</th>
                         <th>Taxonomy name</th>
                     </tr>
                     </thead>
@@ -58,18 +57,6 @@
                             <input type="checkbox" checked="{{doc.checked}}" ng-model="doc.checked" ng-disabled="doc.name == 'basedocument'"/>
                         </td>
                         <td>{{doc.name}}</td>
-                        <td class="{{documentsForm.locationField.$invalid ? 'danger':''}}">
-                            <select
-                                    name="locationField"
-                                    class="chosen-select pull-right" chosen ng-disabled="doc.name == 'basedocument'"
-                                    style="width:120px;margin-left: 20px;"
-                                    ng-model="doc.selectedField"
-                                    ng-selected="doc.selectedField"
-                                    ng-required="doc.checked"
-                                    ng-options="option for option in doc.fieldLocations">
-                                <option value=""></option>
-                            </select>
-                        </td>
                         <td class="{{documentsForm.taxonomyField.$invalid ? 'danger':''}}">
                             <select class=" chosen-select pull-right" name="taxonomyField" chosen ng-disabled="doc.name == 'basedocument'"
                                     style="width:120px;margin-left: 20px;"
