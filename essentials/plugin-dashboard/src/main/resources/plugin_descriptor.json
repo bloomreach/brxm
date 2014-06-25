@@ -497,7 +497,7 @@
     {
         "enabled": true,
         "@type": "plugin",
-        "name": "Image component plugin",
+        "name": "Image component",
         "introduction": "Add image component and rendering template",
         "pluginId": "imageComponentPlugin",
         "packageFile": "/META-INF/imageComponentPlugin_instructions.xml",
@@ -519,7 +519,7 @@
     {
         "enabled": true,
         "@type": "plugin",
-        "name": "Video component plugin",
+        "name": "Video component",
         "introduction": "Add video component and rendering template",
         "pluginId": "videoComponentPlugin",
         "packageFile": "/META-INF/videoComponentPlugin_instructions.xml",
@@ -541,9 +541,9 @@
     {
         "enabled": true,
         "@type": "plugin",
-        "name": "FAQ component plugin",
-        "introduction": "Add FAQ component, rendering template and sample data",
-        "pluginId": "faqComponentPlugin",
+        "name": "FAQ support",
+        "introduction": "Add FAQ document types, component, rendering template and sample data",
+        "pluginId": "faqPlugin",
         "packageFile": "/META-INF/faqComponentPlugin_instructions.xml",
         "restClasses": [],
         "type": "plugins",
@@ -563,7 +563,7 @@
     {
         "enabled": true,
         "@type": "plugin",
-        "name": "Banner support",
+        "name": "Banner component",
         "introduction": "Add Banner document type to your project. Add Banner and Carousel components to the Channel Manager's component catalog.",
         "pluginId": "bannerPlugin",
         "packageFile": "/META-INF/banner_instructions.xml",
@@ -682,7 +682,7 @@
     {
         "enabled": true,
         "@type": "plugin",
-        "name": "List and Content support",
+        "name": "List and Content component",
         "introduction": "Add generic List and Content components to the Channel Manager's component catalog.",
         "packageFile": "/META-INF/list_content_instructions.xml",
         "pluginId": "listContentPlugin",
