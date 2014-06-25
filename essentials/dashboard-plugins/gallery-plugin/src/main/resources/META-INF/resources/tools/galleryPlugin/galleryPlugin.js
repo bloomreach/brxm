@@ -31,7 +31,6 @@
             var payload = Essentials.addPayloadData("imageSetPrefix", $scope.imageSetPrefix, null);
             Essentials.addPayloadData("imageSetName", $scope.imageSetName, payload);
             $http.post(endpoint + "/create", payload).success(function (data) {
-                console.log(data);
                 loadImageSets();
             });
         };
@@ -56,7 +55,7 @@
             var payload = Essentials.addPayloadData("imageVariantName", $scope.imageVariantName, null);
             Essentials.addPayloadData("selectedImageSet", $scope.selectedImageSet.name, payload);
             $http.post(endpoint + "/addvariant", payload).success(function (data) {
-                console.log(data);
+                loadImageSets();
             });
         };
 

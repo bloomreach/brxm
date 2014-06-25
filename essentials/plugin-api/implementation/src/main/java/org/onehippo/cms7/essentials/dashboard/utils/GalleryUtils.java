@@ -17,7 +17,9 @@
 package org.onehippo.cms7.essentials.dashboard.utils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -26,17 +28,21 @@ import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 
 /**
- * @version "$Id: GalleryUtils.java 163480 2013-05-06 09:19:16Z mmilicevic $"
+ * @version "$Id$"
  */
 public final class GalleryUtils {
 
+    public static final String HIPPOSYSEDIT_PATH = "hipposysedit:path";
+    public static final String HIPPO_TRANSLATION = "hippo:translation";
+    public static final String HIPPO_LANGUAGE = "hippo:language";
+    public static final String HIPPO_PROPERTY = "hippo:property";
     private static Logger log = LoggerFactory.getLogger(GalleryUtils.class);
 
     public static final String HIPPOGALLERY_IMAGE = "hippogallery:image";
@@ -64,6 +70,7 @@ public final class GalleryUtils {
         sb.append(name);
         return sb.toString();
     }
+
     public static String getNamespacePathForPrefix(final String prefix) {
         final StringBuilder sb = new StringBuilder();
         sb.append('/');
@@ -113,7 +120,7 @@ public final class GalleryUtils {
      */
     public static Node createImagesetNamespace(final Session session, final String prefix, final String name, final String blueprintPath) throws RepositoryException {
         final String namespacePath = getNamespacePathForPrefix(prefix);
-        if(!session.nodeExists(namespacePath)){
+        if (!session.nodeExists(namespacePath)) {
             // create namespace root:
             final Node namespaceNode = session.getNode("/hippo:namespaces");
             final Node myNamespace = namespaceNode.addNode(prefix, "hipposysedit:namespace");
@@ -125,12 +132,82 @@ public final class GalleryUtils {
             return null;
         }
         final Node original = session.getNode(blueprintPath);
-        final HippoSession hs = (HippoSession) session;
-        final Node imageNode = hs.copy(original, destinationImagesetPath);
+        final Node imageNode = JcrUtils.copy(session, original.getPath(), destinationImagesetPath);
         HippoNodeUtils.setSupertype(imageNode, HIPPOGALLERY_IMAGE_SET, HIPPOGALLERY_RELAXED);
         HippoNodeUtils.setUri(imageNode, getGalleryURI(prefix));
         HippoNodeUtils.setNodeType(imageNode, getImagesetName(prefix, name));
         return imageNode;
+    }
+
+
+    /**
+     * Create a new image variant. We'll copy an existing one so all defaults are there
+     *
+     * @param session             the JCR session
+     * @param prefix              the imageset prefix
+     * @param imageSetName        the imageset name
+     * @param variantName         the imageset name
+     * @param existingVariantName name of existing variant node (mostly thumbnail or original)
+     * @throws RepositoryException when an exception in the repository occurs while creating the node
+     */
+    public static boolean createImagesetVariant(final PluginContext context, final String prefix, final String imageSetName, final String variantName, final String existingVariantName) {
+        final Session session = context.createSession();
+
+        try {
+            final String rootNamespacePath = "/hippo:namespaces/" + prefix + '/' + imageSetName;
+            final String baseNodePath = rootNamespacePath + "/hipposysedit:nodetype/hipposysedit:nodetype/";
+            final String nodeTypePath = baseNodePath + existingVariantName;
+            final String destinationNodePath = baseNodePath + variantName;
+            // node
+            final Node originalNode = session.getNode(nodeTypePath);
+            final Node imageNode = JcrUtils.copy(session, originalNode.getPath(), destinationNodePath);
+            final String oldSysPath = originalNode.getProperty(HIPPOSYSEDIT_PATH).getString();
+            // fetch all translations and copy:
+            final Map<String, String> translations = new HashMap<>();
+            final Node rootNode = session.getNode(rootNamespacePath);
+            final NodeIterator nodes = rootNode.getNodes();
+            while (nodes.hasNext()) {
+                final Node myNode = nodes.nextNode();
+                final boolean hasProperty = myNode.hasProperty(HIPPO_PROPERTY);
+                if (myNode.getName().equals(HIPPO_TRANSLATION)
+                        && hasProperty
+                        && myNode.getProperty(HIPPO_PROPERTY).getString().equals(oldSysPath)) {
+                    // add translation:
+                    if(myNode.hasProperty(HIPPO_LANGUAGE)){
+                        translations.put(myNode.getProperty(HIPPO_LANGUAGE).getString(), variantName);
+                    }
+                }
+            }
+            final String variantPath = prefix + ':' + variantName;
+            // add translations:
+
+            for (Map.Entry<String, String> entry : translations.entrySet()) {
+                final Node translationNode = rootNode.addNode(HIPPO_TRANSLATION, HIPPO_TRANSLATION);
+                translationNode.setProperty(HIPPO_LANGUAGE, entry.getKey());
+                translationNode.setProperty("hippo:message", entry.getValue());
+                translationNode.setProperty(HIPPO_PROPERTY, variantPath);
+            }
+
+
+            imageNode.setProperty(HIPPOSYSEDIT_PATH, variantPath);
+            // template
+            final String baseTemplatesPath = "/hippo:namespaces/" + prefix + '/' + imageSetName + "/editor:templates/_default_/";
+            final String templateTypePath = baseTemplatesPath + existingVariantName;
+            final String destinationTemplatePath = baseTemplatesPath + variantName;
+            final Node originalTemplate = session.getNode(templateTypePath);
+            final Node imageTemplateNode = JcrUtils.copy(session, originalTemplate.getPath(), destinationTemplatePath);
+
+            imageTemplateNode.setProperty("caption", variantName);
+            imageTemplateNode.setProperty("field", variantName);
+            session.save();
+            return true;
+        } catch (RepositoryException e) {
+            log.error("Error creating variant", e);
+
+        } finally {
+            GlobalUtils.cleanupSession(session);
+        }
+        return false;
     }
 
     /**
@@ -140,7 +217,6 @@ public final class GalleryUtils {
      * @param name   the imageset name
      * @return the name of the imageset node type
      */
-    // TODO rename (also used for images)
     public static String getImagesetName(final String prefix, final String name) {
         final StringBuilder sb = new StringBuilder();
         sb.append(prefix);

@@ -79,10 +79,6 @@ public class GalleryPluginResource extends BaseResource {
     @Path("/addvariant")
     public MessageRestful addVariant(final PostPayloadRestful payload, @Context ServletContext servletContext) {
         final Map<String, String> values = payload.getValues();
-        /*
-        *
-        *    var payload = Essentials.addPayloadData("imageVariantName", $scope.imageVariantName, null);
-            Essentials.addPayloadData("selectedImageSet", $scope.selectedImageSet.name, payload);*/
         final String imageVariantName = values.get("imageVariantName");
         final String selectedImageSet = values.get("selectedImageSet");
         if (Strings.isNullOrEmpty(imageVariantName) || Strings.isNullOrEmpty(selectedImageSet)) {
@@ -100,7 +96,31 @@ public class GalleryPluginResource extends BaseResource {
             return new ErrorMessageRestful("Couldn't load imageset model for: " + selectedImageSet);
         }
 
-        return new MessageRestful("test");
+
+        final ImageModel imageModel = extractBestModel(ourModel);
+        final boolean created = GalleryUtils.createImagesetVariant(getContext(servletContext), ourModel.getPrefix(), ourModel.getNameAfterPrefix(), imageVariantName, imageModel.getName());
+        if (created) {
+            return new MessageRestful("Image variant:  " + imageVariantName + " successfully created");
+        }
+        return new ErrorMessageRestful("Failed to create image variant: " + imageVariantName);
+    }
+
+    public ImageModel extractBestModel(final GalleryModel ourModel) {
+        final List<ImageModel> models = ourModel.getModels();
+        ImageModel bestModel = null;
+        for (ImageModel model : models) {
+            if (model.getName().equals("original")) {
+                return model;
+            }
+            if (model.getName().equals("thumbnail")) {
+                bestModel = model;
+            }
+            if (bestModel == null) {
+                bestModel = model;
+            }
+
+        }
+        return null;
     }
 
     /**

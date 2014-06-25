@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 
 /**
  * @version "$Id$"
@@ -36,6 +37,12 @@ public class GalleryModel implements Restful {
     public GalleryModel() {
     }
 
+    public String getPrefix(){
+        return GlobalUtils.getNamespacePrefix(name);
+    }
+    public String getNameAfterPrefix(){
+        return GlobalUtils.getNameAfterPrefix(name);
+    }
     public GalleryModel(final String name) {
         this.name = name;
     }
