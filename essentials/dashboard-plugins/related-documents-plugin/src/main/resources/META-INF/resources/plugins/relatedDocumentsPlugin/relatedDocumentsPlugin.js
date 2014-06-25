@@ -26,17 +26,14 @@
 
             $scope.addDocs = function () {
                 var documents = [];
-                var locations = [];
                 angular.forEach($scope.documentTypes, function (value) {
                     if (value.checked) {
                         documents.push(value.name);
-                        locations.push(value.fieldLocation);
                     }
                 });
                 var payload = Essentials.addPayloadData("documents", documents.join(','), null);
                 Essentials.addPayloadData("numberOfSuggestions", $scope.numberOfSuggestions, payload);
                 Essentials.addPayloadData("searchPaths", $scope.searchPaths, payload);
-                Essentials.addPayloadData("locations", locations.join(','), payload);
                 $http.post(endpoint, payload).success(function (data) {
                 });
 
