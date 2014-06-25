@@ -80,6 +80,7 @@ public final class DependencyUtils {
         try {
             fileWriter = new FileWriter(path);
             // fix profile names (intellij expects default profile id)
+            // see: http://youtrack.jetbrains.com/issue/IDEA-126568
             final List<Profile> profiles = model.getProfiles();
             boolean needsRewrite = false;
             for (Profile profile : profiles) {
