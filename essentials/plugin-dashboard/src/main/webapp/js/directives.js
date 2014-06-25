@@ -112,7 +112,7 @@
                     sampleData: '=',
                     templateName: '=',
                     hasNoTemplates: '@',
-                    sample: '@'
+                    hasSampleData: '@'
                 },
                 templateUrl: 'directives/essentials-template-settings.html',
                 controller: function ($scope, $rootScope, $http) {
@@ -153,15 +153,14 @@
             }
         }).directive("essentialsSimpleInstallPlugin", function () {
             return {
-                replace: false,
+                replace: true,
                 restrict: 'E',
                 scope: {
                     label: '@',
                     pluginId: '@',
-                    pluginTitle: '@',
-                    buttonText: '@',
                     hasNoTemplates: '@',
-                    sample: '@'
+                    hasSampleData: '@',
+                    hideInstalledInfo: '@'
                 },
                 templateUrl: 'directives/essentials-simple-install-plugin.html',
                 controller: function ($scope, $sce, $log, $rootScope, $http) {
@@ -178,11 +177,16 @@
                     });
                     $scope.run = function () {
                         $http.post($rootScope.REST.package_install, $scope.payload).success(function (data) {
-                            $rootScope.$broadcast('update-plugin-install-state', { 'pluginId': $scope.pluginId, 'state': 'installing' });
+                            $scope.plugin.installState = 'installing';
+                            $rootScope.$broadcast('update-plugin-install-state', {
+                                'pluginId': $scope.pluginId,
+                                'state': $scope.plugin.installState
+                            });
                         });
                     };
                     $http.get($rootScope.REST.root + "/plugins/plugins/" + $scope.pluginId).success(function (plugin) {
                         $scope.pluginDescription = $sce.trustAsHtml(plugin.description);
+                        $scope.plugin = plugin;
                     });
                 }
             }

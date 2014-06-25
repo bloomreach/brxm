@@ -15,22 +15,17 @@
   -->
 
 <div ng-controller="selectionPluginCtrl">
-  <div ng-show="plugin.installState === 'onBoard' || plugin.installState === 'boarding'">
   <essentials-simple-install-plugin
     plugin-id="selectionPlugin"
-    plugin-title="Selection Plugin Installation"
-    button-text="Add Selection Plugin"
-    has-no-templates="true"/>
-  </div>
+    has-no-templates="true"
+    hide-installed-info="true">
+  </essentials-simple-install-plugin>
 
-  <div class="panel panel-default" ng-show="plugin.installState === 'installing'">
-    <div class="panel-heading">Please Rebuild</div>
-    <div class="panel-body">
-      <p>Installation of this plug-in is pending. Please rebuild your project to make the changes effective.</p>
-      <p>After the rebuild, you will be able to create Value List documents in the CMS. Go ahead and create some,
-        and fill them with values. Then, come back to the dashboard and create new document type fields, using these
-        value lists.</p>
-    </div>
+  <div class="infobox infobox-info" ng-show="plugin.installState === 'installing'">
+    <h3>Next Steps</h3>
+    <p>After the rebuild, you will be able to create Value List documents in the CMS. Go ahead and create some,
+      and fill them with values. Then, come back to the dashboard and create new document type fields, using these
+      value lists.</p>
   </div>
 
     <!--Configuration part-->
