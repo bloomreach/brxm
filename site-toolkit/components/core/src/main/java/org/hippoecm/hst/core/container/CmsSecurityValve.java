@@ -67,7 +67,8 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
 
         if(servletRequest.getHeader("CMS-User") == null && !requestContext.isCmsRequest()) {
             String ignoredPrefix = requestContext.getResolvedMount().getMatchingIgnoredPrefix();
-            if(!StringUtils.isEmpty(ignoredPrefix) && ignoredPrefix.equals(requestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().getCmsPreviewPrefix())) {
+            if(!StringUtils.isEmpty(ignoredPrefix) && ignoredPrefix.equals(requestContext.getResolvedMount()
+                    .getMount().getVirtualHost().getVirtualHosts().getCmsPreviewPrefix())) {
                 // When the ignoredPrefix is not equal cmsPreviewPrefix the request is only allowed in the CMS CONTEXT
                 try {
                     servletResponse.sendError(HttpServletResponse.SC_FORBIDDEN);

@@ -113,11 +113,11 @@ public class HstManagerImpl implements MutableHstManager {
         this.pageCache = pageCache;
     }
     
-    public synchronized String getCmsPreviewPrefix() {
+    public String getCmsPreviewPrefix() {
         return cmsPreviewPrefix;
     }
 
-    public synchronized void setCmsPreviewPrefix(String cmsPreviewPrefix) {
+    public void setCmsPreviewPrefix(String cmsPreviewPrefix) {
         this.cmsPreviewPrefix = cmsPreviewPrefix;
     }
     
