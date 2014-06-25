@@ -97,15 +97,9 @@ public class EcmTaggingResource extends BaseResource {
             if (!Strings.isEmpty(documents)) {
 
                 final String[] docs = PayloadUtils.extractValueArray(values.get("documents"));
-                final String[] locations = PayloadUtils.extractValueArray(values.get("locations"));
 
                 final Collection<String> addedDocuments = new HashSet<>();
-                for (int i = 0; i < docs.length; i++) {
-
-                    final String document = docs[i];
-
-
-                    final String location = locations[i];
+                for (final String document : docs) {
                     final String fieldImportPath = MessageFormat.format("/hippo:namespaces/{0}/{1}/editor:templates/_default_", prefix, document);
                     final String suggestFieldPath = MessageFormat.format("{0}/relateddocs", fieldImportPath);
                     if (session.nodeExists(suggestFieldPath)) {
@@ -115,7 +109,8 @@ public class EcmTaggingResource extends BaseResource {
                     DocumentTemplateUtils.addMixinToTemplate(context, document, MIXIN_NAME, true);
                     // add place holders:
                     final Map<String, String> templateData = new HashMap<>(values);
-                    templateData.put("fieldLocation", location);
+                    final Node editorTemplate = session.getNode(fieldImportPath);
+                    templateData.put("fieldLocation", DocumentTemplateUtils.getDefaultPosition(editorTemplate));
                     // import field:
                     final String fieldData = TemplateUtils.replaceStringPlaceholders(templateTags, templateData);
                     session.importXML(fieldImportPath, IOUtils.toInputStream(fieldData), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
