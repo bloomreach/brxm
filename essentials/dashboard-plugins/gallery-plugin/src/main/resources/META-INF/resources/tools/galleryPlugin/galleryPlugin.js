@@ -17,7 +17,7 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.essentials').controller('galleryPluginCtrl', function ($scope, $sce, $log, $rootScope, $http) {
+    angular.module('hippo.essentials').controller('galleryPluginCtrl2', function ($scope, $sce, $log, $rootScope, $http) {
 
         var endpoint = $rootScope.REST.dynamic + "galleryplugin";
         $scope.imageSets = [];

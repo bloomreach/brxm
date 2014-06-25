@@ -25,6 +25,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -36,7 +37,6 @@ import javax.ws.rs.core.MediaType;
 import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
-import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
@@ -67,9 +67,9 @@ public class GalleryPluginResource extends BaseResource {
      */
     @POST
     @Path("/create")
-    public MessageRestful createImageSet(final PostPayloadRestful payload, @Context ServletContext servletContext) {
+    public MessageRestful createImageSet(final PostPayloadRestful payload, @Context ServletContext servletContext, @Context HttpServletResponse response) {
         final Map<String, String> values = payload.getValues();
-        return createImageSet(getContext(servletContext), values.get("imageSetPrefix"), values.get("imageSetName"));
+        return createImageSet(getContext(servletContext), values.get("imageSetPrefix"), values.get("imageSetName"), response);
     }
 
     /**
@@ -77,12 +77,12 @@ public class GalleryPluginResource extends BaseResource {
      */
     @POST
     @Path("/addvariant")
-    public MessageRestful addVariant(final PostPayloadRestful payload, @Context ServletContext servletContext) {
+    public MessageRestful addVariant(final PostPayloadRestful payload, @Context ServletContext servletContext, @Context HttpServletResponse response) {
         final Map<String, String> values = payload.getValues();
         final String imageVariantName = values.get("imageVariantName");
         final String selectedImageSet = values.get("selectedImageSet");
         if (Strings.isNullOrEmpty(imageVariantName) || Strings.isNullOrEmpty(selectedImageSet)) {
-            return new ErrorMessageRestful("Image set name or image variant name were empty");
+            return createErrorMessage("Image set name or image variant name were empty", response);
         }
         GalleryModel ourModel = null;
         final List<GalleryModel> models = fetchExisting(servletContext);
@@ -93,7 +93,7 @@ public class GalleryPluginResource extends BaseResource {
             }
         }
         if (ourModel == null) {
-            return new ErrorMessageRestful("Couldn't load imageset model for: " + selectedImageSet);
+            return createErrorMessage("Couldn't load imageset model for: " + selectedImageSet, response);
         }
 
 
@@ -102,7 +102,8 @@ public class GalleryPluginResource extends BaseResource {
         if (created) {
             return new MessageRestful("Image variant:  " + imageVariantName + " successfully created");
         }
-        return new ErrorMessageRestful("Failed to create image variant: " + imageVariantName);
+        return createErrorMessage("Failed to create image variant: " + imageVariantName, response);
+
     }
 
     public ImageModel extractBestModel(final GalleryModel ourModel) {
@@ -227,9 +228,10 @@ public class GalleryPluginResource extends BaseResource {
     }
 
 
-    private MessageRestful createImageSet(final PluginContext context, final String prefix, final String name) {
+    private MessageRestful createImageSet(final PluginContext context, final String prefix, final String name, final HttpServletResponse response) {
         if (Strings.isNullOrEmpty(prefix) || Strings.isNullOrEmpty(name)) {
-            return new ErrorMessageRestful("Imageset namespace prefix or it's name were empty");
+            return createErrorMessage("Error message", response);
+
         }
         final Session session = context.createSession();
         final String nodeType = prefix + ':' + name;
@@ -240,10 +242,10 @@ public class GalleryPluginResource extends BaseResource {
             if (CndUtils.nodeTypeExists(context, nodeType)) {
                 if (CndUtils.isNodeOfSuperType(context, nodeType, HippoGalleryNodeType.IMAGE_SET)) {
 
-                    return new ErrorMessageRestful("ImageSet already exists: " + nodeType);
+                    return createErrorMessage("ImageSet already exists: " + nodeType, response);
                 } else {
                     // Node type exists and is no image set
-                    return new ErrorMessageRestful("Node of type already exists: " + nodeType + " but it is not an ImageSet type");
+                    return createErrorMessage("Node of type already exists: " + nodeType + " but it is not an ImageSet type", response);
                 }
             }
             if (CndUtils.namespacePrefixExists(context, prefix)) {
@@ -252,7 +254,7 @@ public class GalleryPluginResource extends BaseResource {
             } else if (CndUtils.namespaceUriExists(context, uri)) {
                 // Unable to register namespace for already existing URI
                 log.error("Namespace URI '{}' already exists", uri);
-                return new ErrorMessageRestful("Namespace URI " + uri + " already exists");
+                return createErrorMessage("Namespace URI " + uri + " already exists", response);
             } else {
                 // Register new namespace
                 CndUtils.registerNamespace(context, prefix, uri);
@@ -270,7 +272,7 @@ public class GalleryPluginResource extends BaseResource {
 
         } catch (RepositoryException e) {
             log.error("Error creating image set", e);
-            return new ErrorMessageRestful("Error creating image set: " + e.getMessage());
+            return createErrorMessage("Error creating image set: " + e.getMessage(), response);
         } finally {
             GlobalUtils.cleanupSession(session);
         }
@@ -278,66 +280,6 @@ public class GalleryPluginResource extends BaseResource {
     }
 
 
-    private void createOrLoadImageSet(final String prefix, final String name, final String imageNodePathToCopy, final PluginContext context) {
-        final Session session = context.createSession();
-        try {
-
-            final String nodeType = prefix + ':' + name;
-            final String uri = GalleryUtils.getGalleryURI(prefix);
-            // Check whether node type already exists
-            if (CndUtils.nodeTypeExists(context, nodeType)) {
-                if (CndUtils.isNodeOfSuperType(context, nodeType, HippoGalleryNodeType.IMAGE_SET)) {
-                    // Node type exists and is and image set which can be loaded
-                    loadImageSet(prefix, name, context);
-                    return;
-                } else {
-                    // Node type exists and is no image set
-                    return;
-                }
-            }
-
-            // Check whether namespace needs to / can be created
-            if (CndUtils.namespacePrefixExists(context, prefix)) {
-                // No need to register namespace because it already exists
-                log.debug("Already registered uri {}", uri);
-            } else if (CndUtils.namespaceUriExists(context, uri)) {
-                // Unable to register namespace for already existing URI
-                log.error("Namespace URI '{}' already exists", uri);
-                return;
-            } else {
-                // Register new namespace
-                CndUtils.registerNamespace(context, prefix, uri);
-            }
-
-            CndUtils.createHippoNamespace(context, prefix);
-            CndUtils.registerDocumentType(context, prefix, name, false, false, GalleryUtils.HIPPOGALLERY_IMAGE_SET, GalleryUtils.HIPPOGALLERY_RELAXED);
-
-            // copy node:
-            final Node imageNode;
-            if (imageNodePathToCopy != null) {
-                // Copy a previously used image variant
-                // TODO imageNodePath
-                final String imageNodePath = "";
-                imageNode = GalleryUtils.createImagesetNamespace(session, prefix, name, imageNodePath);
-            } else {
-                // Copy the default original image variant
-                imageNode = GalleryUtils.createImagesetNamespace(session, prefix, name);
-            }
-
-
-            populateTypes(session, imageNode);
-
-            session.save();
-
-            // Select the created imageset in the dropdown
-            String selectedImageSet = prefix + ':' + name;
-
-        } catch (RepositoryException e) {
-            log.error("Error in gallery plugin", e);
-            GlobalUtils.refreshSession(session, false);
-        }
-        GlobalUtils.cleanupSession(session);
-    }
 
 
 }
