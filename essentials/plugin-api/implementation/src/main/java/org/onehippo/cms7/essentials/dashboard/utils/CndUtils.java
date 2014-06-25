@@ -83,8 +83,8 @@ public final class CndUtils {
             final String p = namespaceRegistry.getPrefix(uri);
             return !Strings.isNullOrEmpty(p);
         } catch (NamespaceException e) {
-            log.info("Namespace exception: {}", e.getMessage());
-            log.debug("Namespace exception", e);
+            // expected if not there
+            return false;
         } catch (RepositoryException e) {
             log.error("Error while determining namespace check.", e);
         } finally {
@@ -108,8 +108,8 @@ public final class CndUtils {
             final String p = namespaceRegistry.getURI(prefix);
             return !Strings.isNullOrEmpty(p);
         } catch (NamespaceException e) {
-            log.info("Namespace exception: {}", e.getMessage());
-            log.debug("Namespace exception", e);
+            // expected:
+            return false;
         } catch (RepositoryException e) {
             log.error("Error while determining namespace check.", e);
         } finally {

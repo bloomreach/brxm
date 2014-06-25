@@ -25,15 +25,24 @@ public class TranslationModel implements Serializable {
     private static final long serialVersionUID = 1L;
     private String language;
     private String message;
+    private String property;
 
     public TranslationModel() {
     }
 
-    public TranslationModel(final String language, final String message) {
+    public TranslationModel(final String language, final String message, final String property) {
         this.language = language;
         this.message = message;
+        this.property = property;
     }
 
+    public String getProperty() {
+        return property;
+    }
+
+    public void setProperty(final String property) {
+        this.property = property;
+    }
 
     public String getLanguage() {
         return language;

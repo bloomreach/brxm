@@ -28,6 +28,7 @@ public class GalleryModel implements Restful {
 
     private static final long serialVersionUID = 1L;
 
+    private String path;
     private String name;
     private boolean readOnly;
     private List<ImageModel> models;
@@ -60,6 +61,14 @@ public class GalleryModel implements Restful {
             models = new ArrayList<>();
         }
         models.add(model);
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(final String path) {
+        this.path = path;
     }
 
     public List<ImageModel> getModels() {

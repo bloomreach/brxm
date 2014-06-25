@@ -25,11 +25,13 @@ import org.apache.commons.lang.StringUtils;
 /**
  * @version "$Id$"
  */
-public class ImageModel implements Serializable{
+public class ImageModel implements Serializable {
 
 
     private static final long serialVersionUID = 1L;
     private final String prefix;
+    private String path;
+    private String parentPath;
     private int width;
     private int height;
     private String name;
@@ -51,19 +53,6 @@ public class ImageModel implements Serializable{
         this.name = name;
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("ImageModel{");
-        sb.append(", prefix='").append(prefix).append('\'');
-        sb.append(", name='").append(name).append('\'');
-        sb.append(", originalName='").append(originalName).append('\'');
-        sb.append("width=").append(width);
-        sb.append(", height=").append(height);
-        sb.append(", readOnly=").append(readOnly);
-        sb.append(", translations=").append(translations.size());
-        sb.append('}');
-        return sb.toString();
-    }
 
     public int getWidth() {
         return width;
@@ -89,6 +78,14 @@ public class ImageModel implements Serializable{
         return name;
     }
 
+    public String getPath() {
+        return path;
+    }
+
+    public String getParentPath() {
+        return parentPath;
+    }
+
     /**
      * Set the name of the image and set the original name of the image,
      * when the original name was not set before.
@@ -100,6 +97,14 @@ public class ImageModel implements Serializable{
             setOriginalName(name);
         }
         this.name = name;
+    }
+
+    public void setPath(final String path) {
+        this.path = path;
+    }
+
+    public void setParentPath(final String parentPath) {
+        this.parentPath = parentPath;
     }
 
     /**
@@ -185,8 +190,8 @@ public class ImageModel implements Serializable{
         translations.add(model);
     }
 
-    public void addTranslation(final String language, final String message) {
-        translations.add(new TranslationModel(StringUtils.trimToEmpty(language), StringUtils.trimToEmpty(message)));
+    public void addTranslation(final String language, final String message, final String property) {
+        translations.add(new TranslationModel(StringUtils.trimToEmpty(language), StringUtils.trimToEmpty(message), StringUtils.trimToEmpty(property)));
     }
 
     public void removeTranslation(final TranslationModel model) {
@@ -203,6 +208,20 @@ public class ImageModel implements Serializable{
         } else {
             this.translations = translations;
         }
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("ImageModel{");
+        sb.append(", prefix='").append(prefix).append('\'');
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", originalName='").append(originalName).append('\'');
+        sb.append(", width=").append(width);
+        sb.append(", height=").append(height);
+        sb.append(", readOnly=").append(readOnly);
+        sb.append(", translations=").append(translations.size());
+        sb.append('}');
+        return sb.toString();
     }
 
 }

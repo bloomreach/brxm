@@ -64,6 +64,14 @@ public final class GalleryUtils {
         sb.append(name);
         return sb.toString();
     }
+    public static String getNamespacePathForPrefix(final String prefix) {
+        final StringBuilder sb = new StringBuilder();
+        sb.append('/');
+        sb.append(HippoNodeType.NAMESPACES_PATH);
+        sb.append('/');
+        sb.append(prefix);
+        return sb.toString();
+    }
 
     /**
      * Return the imageset URI belonging based on a prefix.
@@ -104,6 +112,13 @@ public final class GalleryUtils {
      * @throws RepositoryException when an exception in the repository occurs while creating the node
      */
     public static Node createImagesetNamespace(final Session session, final String prefix, final String name, final String blueprintPath) throws RepositoryException {
+        final String namespacePath = getNamespacePathForPrefix(prefix);
+        if(!session.nodeExists(namespacePath)){
+            // create namespace root:
+            final Node namespaceNode = session.getNode("/hippo:namespaces");
+            final Node myNamespace = namespaceNode.addNode(prefix, "hipposysedit:namespace");
+            myNamespace.addMixin("mix:referenceable");
+        }
         final String destinationImagesetPath = getNamespacePathForImageset(prefix, name);
         if (!session.nodeExists(blueprintPath)) {
             log.warn("Imageset blueprint {} does not exist", blueprintPath);

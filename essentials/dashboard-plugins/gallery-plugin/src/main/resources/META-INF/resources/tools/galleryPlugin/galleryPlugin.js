@@ -17,29 +17,87 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.essentials').controller('galleryPluginCtrl2', function ($scope, $sce, $log, $rootScope, $http) {
+    angular.module('hippo.essentials').controller('galleryPluginCtrl', function ($scope, $sce, $log, $rootScope, $http) {
 
         var endpoint = $rootScope.REST.dynamic + "galleryplugin";
         $scope.imageSets = [];
-        $scope.message = "Gallery plugin";
+        $scope.selectedImageSet = null;
+        $scope.projectPrefix = $rootScope.projectSettings.namespace;
+        $scope.imageVariantName = null;
+        $scope.selectedImageModel = null;
 
         $scope.addImageSet = function () {
-            console.log("save image set");
+            console.log("save image set:  " + $scope.imageSetName + ':' + $scope.imageSetPrefix);
+            var payload = Essentials.addPayloadData("imageSetPrefix", $scope.imageSetPrefix, null);
+            Essentials.addPayloadData("imageSetName", $scope.imageSetName, payload);
+            $http.post(endpoint + "/create", payload).success(function (data) {
+                console.log(data);
+                loadImageSets();
+            });
         };
+
+
+        $scope.onSelectedImageSetChange = function () {
+            // reset selected model
+            console.log("reseting");
+            $scope.selectedImageModel = null;
+        };
+
+        $scope.addImageVariant = function () {
+            var exists = false;
+            angular.forEach($scope.selectedImageSet.models, function (model) {
+                if (model.name == $scope.imageVariantName) {
+                    exists = true;
+                }
+            });
+            if (exists) {
+                displayError("Image variant with name: " + $scope.imageVariantName + " already exists");
+            }
+            var payload = Essentials.addPayloadData("imageVariantName", $scope.imageVariantName, null);
+            Essentials.addPayloadData("selectedImageSet", $scope.selectedImageSet.name, payload);
+            $http.post(endpoint + "/addvariant", payload).success(function (data) {
+                console.log(data);
+            });
+        };
+
+        $scope.addTranslation = function () {
+            if ($scope.selectedImageModel) {
+                if (!$scope.selectedImageModel.translations) {
+                    $scope.selectedImageModel.translations = [];
+                }
+                $scope.selectedImageModel.translations.push({"language": "", "message": ""});
+            }
+        };
+
         $scope.save = function () {
             console.log("init gallery");
         };
 
         $scope.init = function () {
-            console.log("getting image data");
+            loadImageSets();
+        };
+
+        function loadImageSets() {
             $http.get(endpoint).success(function (data) {
                 $scope.imageSets = data;
             });
+        }
 
-            console.log("init gallery");
-        };
+        //############################################
+        // INIT APP
+        //############################################
 
         $scope.init();
+
+        //############################################
+        // UTIL
+        //############################################
+
+        function displayError(msg) {
+            $rootScope.globalError = [];
+            $rootScope.feedbackMessages = [];
+            $rootScope.globalError.push(msg);
+        }
 
         //############################################
         // DEFAULTS
