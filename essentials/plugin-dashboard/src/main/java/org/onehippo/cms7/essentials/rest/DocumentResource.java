@@ -121,7 +121,11 @@ public class DocumentResource extends BaseResource {
             final Query xpath = queryManager.createQuery("//content/documents//element(*, " + docType + ')', "xpath");
             final NodeIterator nodes = xpath.execute().getNodes();
             while (nodes.hasNext()) {
-                final Node node = nodes.nextNode();
+                Node node = nodes.nextNode();
+                final Node parent = node.getParent();
+                if ("hippo:handle".equals(parent.getPrimaryNodeType().getName())) {
+                    node = parent;
+                }
                 final String path = node.getPath();
                 valueLists.add(new KeyValueRestful(((HippoNode) node).getLocalizedName(), path));
             }
