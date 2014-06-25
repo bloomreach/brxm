@@ -583,7 +583,7 @@
       <type>java.lang.Boolean</type>
     </attribute>
     <attribute>
-      <description>When internal links should be rewritten the canonicalLinks links, use this attr with value true
+      <description>If internal links should be rewritten to canonicalLinks links then use this attr with value true
       </description>
       <name>canonicalLinks</name>
       <required>false</required>

@@ -352,7 +352,7 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
             if (targetMount != null) {
                 log.info("TargetMount is defined to create a link for, but target mount is ignored in case a canonical link is " +
                         "requested. Ignoring target mount '{}' but instead return canonical link for nodepath '{}'.",
-                        targetMount.toString(), node.getPath());
+                        targetMount, node.getPath());
             }
             return reqContext.getHstLinkCreator().createCanonical(node, reqContext);
         }
