@@ -35,16 +35,13 @@
             $scope.addDocuments = function () {
 
                 var selectedDocumentNames = [];
-                var selectedDocumentLocations = [];
                 var selectedTaxonomyNames = [];
                 var documents = $filter('filter')($scope.documentTypes, {checked: true});
                 angular.forEach(documents, function (value) {
                     selectedDocumentNames.push(value.name);
-                    selectedDocumentLocations.push(value.selectedField ? value.selectedField : "${cluster.id}.field");
                     selectedTaxonomyNames.push(value.selectedTaxonomy.key);
                 });
                 var payload = Essentials.addPayloadData("documents", selectedDocumentNames.join(','), null);
-                Essentials.addPayloadData("locations", selectedDocumentLocations.join(','), payload);
                 Essentials.addPayloadData("taxonomies", selectedTaxonomyNames.join(','), payload);
                 $http.post(endpointDocument, payload).success(function (data) {
                     //

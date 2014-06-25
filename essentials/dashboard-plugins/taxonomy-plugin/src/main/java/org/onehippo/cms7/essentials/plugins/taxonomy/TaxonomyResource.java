@@ -139,11 +139,9 @@ public class TaxonomyResource extends BaseResource {
             final Map<String, String> values = payloadRestful.getValues();
             final String[] taxonomyNames = PayloadUtils.extractValueArray(values.get("taxonomies"));
             final String[] documentNames = PayloadUtils.extractValueArray(values.get("documents"));
-            final String[] locations = PayloadUtils.extractValueArray(values.get("locations"));
             final Collection<String> changedDocuments = new HashSet<>();
             for (int i = 0; i < documentNames.length; i++) {
                 final String documentName = documentNames[i];
-                final String location = locations[i];
                 final String taxonomyName = taxonomyNames[i];
                 final String prefix = context.getProjectNamespacePrefix();
                 DocumentTemplateUtils.addMixinToTemplate(context, documentName, HIPPOTAXONOMY_MIXIN, true);
@@ -157,7 +155,7 @@ public class TaxonomyResource extends BaseResource {
                     final Node fieldNode = node.addNode("classifiable", "frontend:plugin");
                     fieldNode.setProperty("mixin", HIPPOTAXONOMY_MIXIN);
                     fieldNode.setProperty("plugin.class", "org.hippoecm.frontend.editor.plugins.mixin.MixinLoaderPlugin");
-                    fieldNode.setProperty("wicket.id", location);
+                    fieldNode.setProperty("wicket.id", DocumentTemplateUtils.getDefaultPosition(node));
                     final Node clusterNode = fieldNode.addNode("cluster.options", "frontend:pluginconfig");
                     clusterNode.setProperty("taxonomy.name", taxonomyName);
                     changedDocuments.add(documentName);

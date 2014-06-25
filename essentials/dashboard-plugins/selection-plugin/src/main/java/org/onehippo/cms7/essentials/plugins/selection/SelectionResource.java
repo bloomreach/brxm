@@ -141,8 +141,8 @@ public class SelectionResource extends BaseResource {
                 final NodeIterator editorFields = editorTemplate.getNodes();
                 while (editorFields.hasNext()) {
                     final Node editorField = editorFields.nextNode();
-                    if (editorField.hasProperty("field") && fieldName.equals(editorField.getProperty("field").getString())) {
-
+                    if (editorField.hasProperty("field") && fieldName.equals(editorField.getProperty("field").getString())
+                        && !editorField.hasNode("valuelist.options")) {
                         final SelectionFieldRestful field = new SelectionFieldRestful();
                         field.setType("single");
                         field.setNameSpace(nameSpace);

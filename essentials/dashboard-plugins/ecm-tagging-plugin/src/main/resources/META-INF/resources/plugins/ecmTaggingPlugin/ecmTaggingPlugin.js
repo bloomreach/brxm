@@ -26,21 +26,15 @@
             $scope.numberOfSuggestions = 10;
 
             $scope.addDocuments = function () {
-
-                var selectedDocumentNames = [];
-                var selectedDocumentLocations = [];
-
                 var documents = $filter('filter')($scope.documentTypes, {checked: true});
+                var selectedDocumentNames = [];
                 angular.forEach(documents, function (value) {
                     selectedDocumentNames.push(value.name);
-                    selectedDocumentLocations.push(value.selectedField ? value.selectedField : "${cluster.id}.field");
-
                 });
                 var payload = Essentials.addPayloadData("documents", selectedDocumentNames.join(','), null);
                 Essentials.addPayloadData("numberOfSuggestions", $scope.numberOfSuggestions, payload);
                 Essentials.addPayloadData("widgetCols", $scope.widgetCols, payload);
                 Essentials.addPayloadData("widgetRows", $scope.widgetRows, payload);
-                Essentials.addPayloadData("locations", selectedDocumentLocations.join(','), payload);
                 $http.post(endpointEcmTagging, payload).success(function (data) {
                 });
             };
