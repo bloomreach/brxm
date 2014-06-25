@@ -108,7 +108,7 @@ public class HstRequestUtils {
      * @return the decoded getRequestURI after the context path but before the matrix parameters or the query string in the request URL
      */
     public static String getRequestPath(HttpServletRequest request) {
-        return getDecodedPath(null, request, null);
+        return getDecodedPath(request, null);
     }
 
     /**
@@ -117,20 +117,12 @@ public class HstRequestUtils {
      * @return the decoded getRequestURI after the context path but before the matrix parameters or the query string in the request URL
      */
     public static String getRequestPath(HttpServletRequest request, String characterEncoding) {
-        return getDecodedPath(null, request, characterEncoding);
+        return getDecodedPath(request, characterEncoding);
     }
 
-    private static String getDecodedPath(ResolvedMount mount, HttpServletRequest request, String characterEncoding) {
+    private static String getDecodedPath(HttpServletRequest request, String characterEncoding) {
         String requestURI = getRequestURI(request, true);
         String encodePathInfo = requestURI.substring(request.getContextPath().length());
-
-        if (mount != null) {
-            String ignoredPrefix = mount.getMatchingIgnoredPrefix();
-            if (ignoredPrefix != null) {
-                encodePathInfo = encodePathInfo.substring(ignoredPrefix.length() + 1);
-            }
-            encodePathInfo = encodePathInfo.substring(mount.getResolvedMountPath().length());
-        }
 
         if (characterEncoding == null) {
             characterEncoding = request.getCharacterEncoding();
