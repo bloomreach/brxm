@@ -483,7 +483,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
      */
     protected String [] splitPathInfo(ResolvedMount resolvedMount, HttpServletRequest request, String characterEncoding) {
        
-        String pathInfo = HstRequestUtils.getPathInfo(resolvedMount, request, characterEncoding);
+        String pathInfo = request.getPathInfo();
         
         if (!pathInfo.startsWith(urlNamespacePrefixedPath)) {
             return new String [] { null, pathInfo };

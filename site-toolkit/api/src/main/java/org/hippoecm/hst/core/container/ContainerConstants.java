@@ -81,11 +81,6 @@ public interface ContainerConstants {
     /**
      * attribute that has a value when the request URI is already decoded.
      */
-    String IS_REQUEST_URI_DECODED = "org.hippoecm.hst.container.HstContainerRequest.requestURI.isDecoded";
-
-    /**
-     * attribute that has a value when the request URI is already decoded.
-     */
     String VIRTUALHOSTS_REQUEST_ATTR = "org.hippoecm.hst.configuration.hosting.VirtualHost.requestAttr";
 
     /**

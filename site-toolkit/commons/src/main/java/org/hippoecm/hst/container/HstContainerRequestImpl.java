@@ -136,16 +136,14 @@ public class HstContainerRequestImpl extends GenericHttpServletRequestWrapper im
     }
     
     private void setDecodedPathInfo(String pathTranslated) {
-        if(getAttribute(ContainerConstants.IS_REQUEST_URI_DECODED) == null) {
-            String characterEncoding = getCharacterEncoding();
-            if (characterEncoding == null) {
-                characterEncoding = "ISO-8859-1";
-            }
-            try {
-                pathInfo = URLDecoder.decode(pathTranslated, characterEncoding);
-            } catch (UnsupportedEncodingException e) {
-                throw new IllegalArgumentException("Invalid character encoding: " + characterEncoding, e);
-            }
+        String characterEncoding = getCharacterEncoding();
+        if (characterEncoding == null) {
+            characterEncoding = "ISO-8859-1";
+        }
+        try {
+            pathInfo = URLDecoder.decode(pathTranslated, characterEncoding);
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException("Invalid character encoding: " + characterEncoding, e);
         }
     }
 

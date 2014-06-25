@@ -108,7 +108,7 @@ public class HstRequestUtils {
      * @return the decoded getRequestURI after the context path but before the matrix parameters or the query string in the request URL
      */
     public static String getRequestPath(HttpServletRequest request) {
-        return getDecodedPath(null, request, null, false);
+        return getDecodedPath(null, request, null);
     }
 
     /**
@@ -117,48 +117,14 @@ public class HstRequestUtils {
      * @return the decoded getRequestURI after the context path but before the matrix parameters or the query string in the request URL
      */
     public static String getRequestPath(HttpServletRequest request, String characterEncoding) {
-        return getDecodedPath(null, request, characterEncoding, false);
+        return getDecodedPath(null, request, characterEncoding);
     }
 
-    /**
-     * Returns any extra path information associated with the URL the client sent when it made this request.
-     * The  extra path information that comes after the context path and after the (resolved) mountpath but before the query string in the request URL
-     * This method extracts and decodes the path information from the request URI returned from
-     * <CODE>HttpServletRequest#getRequestURI()</CODE>.
-     * @param mount
-     * @param request
-     * @return the decoded getRequestURI after the context path and after the (resolved) sitemount but before the query string in the request URL
-     */
-    public static String getPathInfo(ResolvedMount mount, HttpServletRequest request) {
-        return getDecodedPath(mount, request, null, true);
-    }
-
-    /**
-     * <p>
-     * Returns any extra path information associated with the URL the client sent when it made this request.
-     * The  extra path information that comes after the context path and after the (resolved) mountpath but before the query string in the request URL
-     * This method extracts and decodes the path information by the specified character encoding parameter
-     * from the request URI.
-     * </p>
-     * @param mount
-     * @param request
-     * @param characterEncoding
-     * @return the decoded getRequestURI after the context path and after the {@link ResolvedMount} but before the query string in the request URL
-     */
-    public static String getPathInfo(ResolvedMount mount, HttpServletRequest request, String characterEncoding) {
-        // TODO Make sure, the ./suffix gets removed from getPathInfo
-        return getDecodedPath(mount, request, characterEncoding, true);
-    }
-
-
-    private static String getDecodedPath(ResolvedMount mount, HttpServletRequest request, String characterEncoding, boolean stripMountPath) {
+    private static String getDecodedPath(ResolvedMount mount, HttpServletRequest request, String characterEncoding) {
         String requestURI = getRequestURI(request, true);
         String encodePathInfo = requestURI.substring(request.getContextPath().length());
 
-        if(stripMountPath) {
-            if(mount == null) {
-                throw new IllegalArgumentException("Cannot strip the mountPath when the resolved Mount is null");
-            }
+        if (mount != null) {
             String ignoredPrefix = mount.getMatchingIgnoredPrefix();
             if (ignoredPrefix != null) {
                 encodePathInfo = encodePathInfo.substring(ignoredPrefix.length() + 1);
@@ -180,6 +146,22 @@ public class HstRequestUtils {
             throw new IllegalArgumentException("Invalid character encoding: " + characterEncoding, e);
         }
 
+    }
+
+    /**
+     * @deprecated since CMS 7.9.1 (2.28.05) use {@link javax.servlet.http.HttpServletRequest#getPathInfo()} instead
+     */
+    @Deprecated
+    public static String getPathInfo(ResolvedMount mount, HttpServletRequest request) {
+        return request.getPathInfo();
+    }
+
+    /**
+     * @deprecated since CMS 7.9.1 (2.28.05) use {@link javax.servlet.http.HttpServletRequest#getPathInfo()} instead
+     */
+    @Deprecated
+    public static String getPathInfo(ResolvedMount mount, HttpServletRequest request, String characterEncoding) {
+        return request.getPathInfo();
     }
 
     /**
@@ -430,7 +412,6 @@ public class HstRequestUtils {
      * This method returns <code>ISO-8859-1</code> instead of null if the request does not specify a character encoding
      * because the Servlet specification requires that an encoding of ISO-8859-1 is used if a character encoding is not specified.
      * @param request
-     * @param defaultEncoding
      * @return
      */
     public static String getCharacterEncoding(HttpServletRequest request) {

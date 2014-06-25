@@ -416,7 +416,9 @@ public class HstFilter implements Filter {
             // sets filterChain for ValveContext to be able to retrieve...
             req.setAttribute(ContainerConstants.HST_FILTER_CHAIN, chain);
 
-            HstContainerURL hstContainerUrl = setMountPathAsServletPath(containerRequest, hstManager, requestContext, resolvedMount, res);
+            setHstServletPath((GenericHttpServletRequestWrapper) containerRequest, resolvedMount);
+
+            HstContainerURL hstContainerUrl = createOrGetContainerURL(containerRequest, hstManager, requestContext, resolvedMount, res);
 
             final String farthestRequestScheme = HstRequestUtils.getFarthestRequestScheme(req);
             if (resolvedMount.getMount().isMapped()) {
@@ -543,6 +545,14 @@ public class HstFilter implements Filter {
                 HDC.cleanUp();
             }
     	}
+    }
+
+    private void setHstServletPath(final GenericHttpServletRequestWrapper request, final ResolvedMount resolvedMount) {
+        if (resolvedMount.getMatchingIgnoredPrefix() != null) {
+            request.setServletPath("/" + resolvedMount.getMatchingIgnoredPrefix() + resolvedMount.getResolvedMountPath());
+        } else {
+            request.setServletPath(resolvedMount.getResolvedMountPath());
+        }
     }
 
     private boolean isSupportedScheme(final HstMutableRequestContext requestContext,
@@ -729,8 +739,7 @@ public class HstFilter implements Filter {
      * @param response servlet response for parsing the URL
      * @return the HST container URL for the resolved HST mount
      */
-    private HstContainerURL setMountPathAsServletPath(HstContainerRequest containerRequest, HstManager hstSitesManager, HstMutableRequestContext requestContext, ResolvedMount mount, HttpServletResponse response) {
-        ((GenericHttpServletRequestWrapper) containerRequest).setServletPath(mount.getResolvedMountPath());
+    private HstContainerURL createOrGetContainerURL(HstContainerRequest containerRequest, HstManager hstSitesManager, HstMutableRequestContext requestContext, ResolvedMount mount, HttpServletResponse response) {
 
         HstContainerURL hstContainerURL = requestContext.getBaseURL();
 
