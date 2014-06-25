@@ -35,7 +35,6 @@ import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 
-import org.codehaus.groovy.control.CompilationFailedException;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.modules.DaemonModule;
@@ -56,6 +55,8 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
     private Session session;
     private UpdaterRegistry updaterRegistry;
     private NodeUpdaterService updaterService;
+    private volatile ExecuteUpdatersTask task;
+    private final Object monitor = new Object();
 
     @Override
     public void initialize(final Session session) throws RepositoryException {
@@ -100,7 +101,16 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
         } catch (RepositoryException e) {
             log.error(e.getClass().getName() + ": " + e.getMessage(), e);
         }
-        updaterExecutor.shutdown();
+        synchronized (monitor) {
+            if (task != null) {
+                task.cancel();
+            }
+            updaterExecutor.shutdown();
+        }
+        try {
+            updaterExecutor.awaitTermination(10, TimeUnit.SECONDS);
+        } catch (InterruptedException ignore) {
+        }
         if (updaterRegistry != null) {
             HippoServiceRegistry.unregisterService(updaterService, NodeUpdaterService.class);
             updaterRegistry.stop();
@@ -113,7 +123,11 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
     }
 
     private void runExecuteUpdatersTask() {
-        updaterExecutor.execute(new ExecuteUpdatersTask());
+        synchronized (monitor) {
+            if (task == null) {
+                updaterExecutor.execute(task = new ExecuteUpdatersTask());
+            }
+        }
     }
 
     private final class ExecuteUpdatersTask implements Runnable {
@@ -121,6 +135,7 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
         private Lock lock;
         private ScheduledExecutorService keepAliveExecutor;
         private UpdaterExecutor updaterExecutor;
+        private volatile boolean cancelled;
 
         private ExecuteUpdatersTask() {}
 
@@ -134,11 +149,22 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
             } catch (RepositoryException e) {
                 log.error("Failed to obtain lock", e);
             } finally {
+                synchronized (monitor) {
+                    task = null;
+                }
                 stopLockKeepAlive();
                 unlock();
             }
         }
 
+        private void cancel() {
+            cancelled = true;
+            synchronized (monitor) {
+                if (updaterExecutor != null) {
+                    updaterExecutor.cancel();
+                }
+            }
+        }
 
         private boolean lock() throws RepositoryException {
             log.debug("Trying to obtain lock");
@@ -159,11 +185,10 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
         }
 
         private void executeUpdatersInQueue() {
-            Node updaterNode = getNextUpdaterNodeFromQueue();
-            while (updaterNode != null) {
+            Node updaterNode;
+            while (!cancelled && (updaterNode = getNextUpdaterNodeFromQueue()) != null) {
                 executeUpdater(updaterNode);
                 moveToHistory(updaterNode);
-                updaterNode = getNextUpdaterNodeFromQueue();
             }
         }
 
@@ -179,8 +204,10 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
                 log.error(e.getClass().getName() + ": " + e.getMessage(), e);
             } finally {
                 if (updaterExecutor != null) {
-                    updaterExecutor.destroy();
-                    updaterExecutor = null;
+                    synchronized (monitor) {
+                        updaterExecutor.destroy();
+                        updaterExecutor = null;
+                    }
                 }
                 if (session != null) {
                     session.logout();
