@@ -160,7 +160,8 @@
                     pluginId: '@',
                     hasNoTemplates: '@',
                     hasSampleData: '@',
-                    hideInstalledInfo: '@'
+                    hideInstalledInfo: '@',
+                    requireOnBoardState: '@' // use if CMS dependency bootstraps namespace required during installation.
                 },
                 templateUrl: 'directives/essentials-simple-install-plugin.html',
                 controller: function ($scope, $sce, $log, $rootScope, $http) {

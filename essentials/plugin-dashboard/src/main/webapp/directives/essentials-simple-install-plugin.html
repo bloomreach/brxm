@@ -14,7 +14,11 @@
     See the License for the specific language governing permissions and
     limitations under the License.
     -->
-  <div class="panel panel-default" ng-show="plugin.installState === 'onBoard' || plugin.installState === 'boarding' || plugin.installState === 'discovered'">
+  <div class="infobox infobox-warning" ng-show="plugin.installState === 'boarding' && requireOnBoardState">
+    <h3>Please Rebuild</h3>
+    <p>In order to be able to add this feature to your project, you first need to rebuild it.</p>
+  </div>
+  <div class="panel panel-default" ng-show="plugin.installState === 'onBoard' || (plugin.installState === 'boarding' && !requireOnBoardState) || plugin.installState === 'discovered'">
     <div class="panel-heading">{{plugin.name}}</div>
     <div class="panel-body">
       <div class="infobox infobox-success" ng-show="pluginDescription" ng-bind-html="pluginDescription"></div>
