@@ -27,7 +27,6 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>translation</module>
     <module>facetselectmirror</module>
     <module>facetsearch</module>
     <module>updater</module>

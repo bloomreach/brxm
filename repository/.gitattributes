@@ -114,7 +114,6 @@ deprecated/facetselectmirror/src/main/java/org/hippoecm/repository/jackrabbit/Fa
 deprecated/facetselectmirror/src/main/java/org/hippoecm/repository/jackrabbit/MirrorNodeVirtualProvider.java -text
 deprecated/facetselectmirror/src/test/java/org/hippoecm/repository/FacetSelectPerformanceTest.java -text
 deprecated/pom.xml svneol=native#text/plain
-deprecated/translation/pom.xml svneol=native#text/plain
 deprecated/updater/pom.xml svneol=native#text/plain
 deprecated/updater/src/main/java/org/hippoecm/repository/updater/UpdaterPath.java svneol=native#text/plain
 deprecated/updater/src/main/java/org/hippoecm/repository/upgrade/Upgrader12c.java svneol=native#text/plain
