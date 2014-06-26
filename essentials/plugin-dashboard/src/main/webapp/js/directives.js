@@ -128,6 +128,21 @@
                 }
             }
         })
+        .directive("essentialsHelp", function () {
+            return {
+                replace: false,
+                restrict: 'E',
+                scope: {
+                    helpText: '@',
+                    helpReference: '=',
+                    showHideVariable: '='
+                },
+                templateUrl: 'directives/essentials-help.html' ,
+                controller: function ($scope) {
+                    $scope.text = $scope.helpText? $scope.helpText: $scope.helpReference;
+                }
+            }
+        })
         .directive("essentialsMessages", function () {
             return {
                 replace: false,
