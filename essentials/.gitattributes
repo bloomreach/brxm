@@ -617,7 +617,6 @@ dashboard-plugins/taxonomy-plugin/pom.xml -text
 dashboard-plugins/taxonomy-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/taxonomy/TaxonomyResource.java -text
 dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/resources/plugins/taxonomyPlugin/taxonomyPlugin.html -text
 dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/resources/plugins/taxonomyPlugin/taxonomyPlugin.js -text
-dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/resources/xml/taxonomy.xml -text
 dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/taxonomy-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/video-component-plugin/pom.xml -text

@@ -3565,12 +3565,6 @@ dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/resources/plugins/
 dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/resources/plugins/taxonomyPlugin/hippo-plugins.iws
 dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/resources/plugins/taxonomyPlugin/target
 dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/resources/target
-dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/resources/xml/*.iml
-dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/resources/xml/.DS_Store
-dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/resources/xml/.idea
-dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/resources/xml/atlassian-ide-plugin.xml
-dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/resources/xml/hippo-plugins.iws
-dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/resources/xml/target
 dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/target
 dashboard-plugins/taxonomy-plugin/src/main/resources/atlassian-ide-plugin.xml
 dashboard-plugins/taxonomy-plugin/src/main/resources/hippo-plugins.iws
