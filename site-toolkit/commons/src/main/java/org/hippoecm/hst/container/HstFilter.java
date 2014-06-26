@@ -529,9 +529,9 @@ public class HstFilter implements Filter {
         }
     	catch (Exception e) {
             if(log.isDebugEnabled()) {
-                log.warn("Fatal error encountered while processing request '{}':", req.getRequestURI(), e);
+                log.warn("Unknown error encountered while processing request '{}':", req.getRequestURI(), e);
             } else {
-                log.warn("Fatal error encountered while processing request '{}': {}", req.getRequestURI(), e.toString());
+                log.warn("Unknown error encountered while processing request '{}': {}", req.getRequestURI(), e.toString());
             }
             sendError(req, res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     	}
