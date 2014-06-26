@@ -33,7 +33,6 @@ import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ServiceException;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,10 +90,7 @@ class PathInUrlController extends UrlControllerBehavior implements IObserver<IMo
         final Node node = nodeModel.getObject();
         if (node != null) {
             try {
-                if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    String path = node.getPath();
-                    setParameter(PATH_PARAM, path);
-                }
+                setParameter(PATH_PARAM, node.getPath());
             } catch (RepositoryException e) {
                 log.warn("Could not retrieve path of node model, path to the node will not be shown in the URL", e);
             }
