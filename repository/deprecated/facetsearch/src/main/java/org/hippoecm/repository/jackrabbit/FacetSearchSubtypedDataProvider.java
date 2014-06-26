@@ -31,6 +31,9 @@ import org.hippoecm.repository.dataprovider.DataProviderModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * deprecated since 2.26.00
+ */
 @Deprecated
 public class FacetSearchSubtypedDataProvider implements DataProviderModule {
     private final Logger log = LoggerFactory.getLogger(FacetSearchSubtypedDataProvider.class);

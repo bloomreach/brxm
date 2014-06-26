@@ -26,6 +26,9 @@ import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.dataprovider.StateProviderContext;
 
+/**
+ * deprecated since 2.26.00
+ */
 @Deprecated
 public class FacetSubSearchProvider extends AbstractFacetSearchProvider
 {

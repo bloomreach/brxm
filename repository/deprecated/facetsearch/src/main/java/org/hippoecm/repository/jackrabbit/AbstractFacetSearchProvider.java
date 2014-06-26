@@ -50,6 +50,9 @@ import org.hippoecm.repository.dataprovider.StateProviderContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * deprecated since 2.26.00
+ */
 @Deprecated
 public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
 
