@@ -32,9 +32,6 @@
   <!-- REST RESOURCES-->
   <bean id="jcrResource" class="org.onehippo.cms7.essentials.rest.JcrResource"/>
   <bean id="contentBlocksResource" class="org.onehippo.cms7.essentials.rest.ContentBlocksResource"/>
-
-  <bean id="imageGalleryResource" class="org.onehippo.cms7.essentials.rest.ImageGalleryResource"/>
-
   <bean id="nodeResource" class="org.onehippo.cms7.essentials.rest.NodeResource"/>
   <bean id="documentResource" class="org.onehippo.cms7.essentials.rest.DocumentResource"/>
   <bean id="pluginResource" class="org.onehippo.cms7.essentials.rest.PluginResource"/>
@@ -50,7 +47,6 @@
       <ref bean="jcrResource"/>
       <ref bean="jcrBrowserResource"/>
       <ref bean="contentBlocksResource"/>
-      <ref bean="imageGalleryResource"/>
       <ref bean="nodeResource"/>
       <ref bean="pluginResource"/>
       <ref bean="documentResource"/>

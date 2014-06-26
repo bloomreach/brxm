@@ -31,9 +31,6 @@ import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.Compounds;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.DocumentType;
-import org.onehippo.cms7.essentials.rest.model.gallery.ImageProcessorRestful;
-import org.onehippo.cms7.essentials.rest.model.gallery.ImageSetRestful;
-import org.onehippo.cms7.essentials.rest.model.gallery.ImageVariantRestful;
 
 /**
  * @version "$Id$"
@@ -54,9 +51,6 @@ public class RestList<T extends Restful> extends RestfulList<T> {
             @JsonSubTypes.Type(KeyValueRestful.class),
             @JsonSubTypes.Type(PostPayloadRestful.class),
             @JsonSubTypes.Type(DocumentType.class),
-            @JsonSubTypes.Type(ImageProcessorRestful.class),
-            @JsonSubTypes.Type(ImageSetRestful.class),
-            @JsonSubTypes.Type(ImageVariantRestful.class),
             @JsonSubTypes.Type(TranslationRestful.class),
             @JsonSubTypes.Type(PropertyRestful.class),
             @JsonSubTypes.Type(Compounds.class)

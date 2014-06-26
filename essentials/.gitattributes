@@ -897,7 +897,6 @@ plugin-api/pom.xml -text
 plugin-dashboard/pom.xml -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/ContentBlocksResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/DocumentResource.java -text
-plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/ImageGalleryResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/JcrResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/NodeResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/PluginResource.java -text
@@ -918,11 +917,6 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentbl
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/DocumentType.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/HasProviderMatcher.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/jaxb.properties -text
-plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/gallery/ImageGalleryDataRestful.java -text
-plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/gallery/ImageProcessorRestful.java -text
-plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/gallery/ImageSetRestful.java -text
-plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/gallery/ImageSetsRestful.java -text
-plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/gallery/ImageVariantRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/jaxb.properties -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/picker/JcrBrowserResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/picker/JcrNode.java -text
@@ -1760,11 +1754,6 @@ plugin-dashboard/src/main/webapp/theme/hippo-theme/_font-awesome.css -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/main.css -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/theme.html -text
 plugin-dashboard/src/main/webapp/theme/styles.css -text
-plugin-dashboard/src/main/webapp/tools/galleryPluginOld/cmslanguages.json -text
-plugin-dashboard/src/main/webapp/tools/galleryPluginOld/galleryPlugin.html -text
-plugin-dashboard/src/main/webapp/tools/galleryPluginOld/galleryPlugin.js -text
-plugin-dashboard/src/main/webapp/tools/galleryPluginOld/testimageprocessor.json -text
-plugin-dashboard/src/main/webapp/tools/galleryPluginOld/testimagesets.json -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/beanwriter/rest/BeanWriterResourceTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/dashboard/contentblocks/ContentBlocksPluginTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/ContentBlocksTest.java -text
