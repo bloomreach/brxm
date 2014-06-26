@@ -117,7 +117,6 @@ public class GalleryPluginResource extends BaseResource {
                 nodeTypeNode.getNode(name).remove();
             }
             final Node prototypeNode = namespaceNode.getNode(HIPPOSYSEDIT_PROTOTYPE + 's').getNode(HIPPOSYSEDIT_PROTOTYPE);
-
             if (prototypeNode.hasNode(myType)) {
                 prototypeNode.getNode(myType).remove();
             }
@@ -185,6 +184,7 @@ public class GalleryPluginResource extends BaseResource {
             final Session session = context.createSession();
             try {
                 createProcessingNode(session, ourModel.getPrefix() + ':' + imageVariantName);
+                session.save();
             } catch (RepositoryException e) {
                 log.error("Error creating processing node", e);
             } finally {

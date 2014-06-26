@@ -17,28 +17,28 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.essentials').controller('galleryPluginCtrl2', function ($scope, $sce, $log, $rootScope, $http) {
+    angular.module('hippo.essentials').controller('galleryPluginCtrl', function ($scope, $sce, $log, $rootScope, $http) {
 
         var endpoint = $rootScope.REST.dynamic + "galleryplugin";
         $scope.imageSets = [];
         $scope.selectedImageSet = null;
-        $scope.projectPrefix = $rootScope.projectSettings.namespace;
         $scope.imageVariantName = null;
         $scope.selectedImageModel = null;
 
         $scope.addImageSet = function () {
-            console.log("save image set:  " + $scope.imageSetName + ':' + $scope.imageSetPrefix);
             var payload = Essentials.addPayloadData("imageSetPrefix", $scope.imageSetPrefix, null);
             Essentials.addPayloadData("imageSetName", $scope.imageSetName, payload);
-            $http.post(endpoint + "/create", payload).success(function (data) {
-                loadImageSets();
+            $http.post(endpoint + "/create", payload).success(function () {
+                loadImageSets(true);
             });
         };
-
+        $scope.resetSelections = function () {
+            $scope.selectedImageModel = null;
+            $scope.selectedImageSet = null;
+            $scope.imageVariantName = null;
+        };
 
         $scope.onSelectedImageSetChange = function () {
-            // reset selected model
-            console.log("reseting");
             $scope.selectedImageModel = null;
         };
 
@@ -55,7 +55,7 @@
             var payload = Essentials.addPayloadData("imageVariantName", $scope.imageVariantName, null);
             Essentials.addPayloadData("selectedImageSet", $scope.selectedImageSet.name, payload);
             $http.post(endpoint + "/addvariant", payload).success(function (data) {
-                loadImageSets();
+                loadImageSets(true);
             });
         };
 
@@ -68,16 +68,37 @@
             }
         };
 
+        $scope.removeTranslation = function (translation) {
+            var idx = $scope.selectedImageModel.translations.indexOf(translation);
+            $scope.selectedImageModel.translations.splice(idx, 1);
+        };
+        $scope.removeImageVariant = function (variant) {
+            if (variant.readOnly) {
+                displayError("Cannot remove " + variant.name + " because it is required");
+                return;
+            }
+            $http.post(endpoint + "/remove", variant).success(function () {
+                loadImageSets(true);
+            });
+        };
         $scope.save = function () {
-            console.log("init gallery");
+            // save only saves translations, advanced settings and height/width:
+            $http.post(endpoint + "/update", $scope.selectedImageModel).success(function () {
+                loadImageSets(false);
+            });
+
+
         };
 
         $scope.init = function () {
-            loadImageSets();
+            loadImageSets(true);
         };
 
-        function loadImageSets() {
+        function loadImageSets(reset) {
             $http.get(endpoint).success(function (data) {
+                if (reset) {
+                    $scope.resetSelections();
+                }
                 $scope.imageSets = data;
             });
         }
@@ -116,8 +137,9 @@
             {value: 0.7, description: "medium"},
             {value: 0.5, description: "low"}
         ];
+
         $scope.optimizeValues = [
-            {value: "quality", description: "default (quality)", default: true},
+            {value: "quality", description: "default (quality)", selected: true},
             {value: "speed", description: "speed"},
             {value: "speed.and.quality", description: "speed and quality"},
             {value: "best.quality", description: "best quality"},
@@ -125,7 +147,7 @@
         ];
 
         $scope.upscalingValues = [
-            {value: false, description: "default (off)", default: true},
+            {value: false, description: "default (off)", selected: true},
             {value: true, description: "on"}
         ];
 
