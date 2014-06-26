@@ -1753,6 +1753,11 @@ plugin-dashboard/src/main/webapp/theme/hippo-theme/_font-awesome.css -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/main.css -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/theme.html -text
 plugin-dashboard/src/main/webapp/theme/styles.css -text
+plugin-dashboard/src/main/webapp/tools/galleryPluginOld/cmslanguages.json -text
+plugin-dashboard/src/main/webapp/tools/galleryPluginOld/galleryPlugin.html -text
+plugin-dashboard/src/main/webapp/tools/galleryPluginOld/galleryPlugin.js -text
+plugin-dashboard/src/main/webapp/tools/galleryPluginOld/testimageprocessor.json -text
+plugin-dashboard/src/main/webapp/tools/galleryPluginOld/testimagesets.json -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/beanwriter/rest/BeanWriterResourceTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/dashboard/contentblocks/ContentBlocksPluginTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/ContentBlocksTest.java -text

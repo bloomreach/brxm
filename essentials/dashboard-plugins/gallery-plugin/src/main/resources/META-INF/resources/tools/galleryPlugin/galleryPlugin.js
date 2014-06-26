@@ -150,12 +150,15 @@
             {value: false, description: "default (off)", selected: true},
             {value: true, description: "on"}
         ];
+<<<<<<< HEAD
+=======
         $scope.help =
         {imageSet: "Hippo CMS stores several variants of each uploaded image." +
             " All variants of an image are together called an image set, and can be seen in the image gallery in the CMS." +
             " Read more about imagesets here: <a target='_blank' href='http://www.onehippo.org/library/concepts/images-and-assets/create-a-custom-image-set.html'>" +
             "http://www.onehippo.org/library/concepts/images-and-assets/create-a-custom-image-set.html</a>"}
 
+>>>>>>> master
 
     })
 }());
