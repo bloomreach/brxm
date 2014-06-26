@@ -1974,12 +1974,6 @@ dashboard-plugins/dashboard-restservices-plugin/src/test/resources/hippo-plugins
 dashboard-plugins/dashboard-restservices-plugin/src/test/resources/target
 dashboard-plugins/dashboard-restservices-plugin/src/test/target
 dashboard-plugins/dashboard-restservices-plugin/target
-dashboard-plugins/dashboard-setup-plugin/*.iml
-dashboard-plugins/dashboard-setup-plugin/.DS_Store
-dashboard-plugins/dashboard-setup-plugin/.idea
-dashboard-plugins/dashboard-setup-plugin/atlassian-ide-plugin.xml
-dashboard-plugins/dashboard-setup-plugin/hippo-plugins.iws
-dashboard-plugins/dashboard-setup-plugin/target
 dashboard-plugins/document-wizard-plugin/*.iml
 dashboard-plugins/document-wizard-plugin/.DS_Store
 dashboard-plugins/document-wizard-plugin/.idea
