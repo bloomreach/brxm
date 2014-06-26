@@ -908,7 +908,6 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/DocumentR
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/PropertyRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/RestList.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/StatusRestful.java -text
-plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/StepRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/TranslationRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/AllDocumentMatcher.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/CBPayload.java -text
