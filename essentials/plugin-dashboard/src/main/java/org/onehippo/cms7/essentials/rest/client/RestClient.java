@@ -22,12 +22,13 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.transport.http.HTTPConduit;
-import org.apache.wicket.util.string.Strings;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 
 /**
@@ -78,7 +79,7 @@ public class RestClient {
         final WebClient client = WebClient.create(baseResourceUri);
         setTimeouts(client, connectionTimeout, receiveTimeout);
         final String json = client.accept(MediaType.APPLICATION_JSON_TYPE).get(String.class);
-        if(Strings.isEmpty(json)){
+        if(Strings.isNullOrEmpty(json)){
             return new RestfulList<>();
         }
         final ObjectMapper mapper = new ObjectMapper();

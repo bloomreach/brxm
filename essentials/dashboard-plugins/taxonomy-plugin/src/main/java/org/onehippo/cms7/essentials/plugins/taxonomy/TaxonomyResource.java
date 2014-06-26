@@ -40,7 +40,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.wicket.util.string.Strings;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -61,6 +60,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 /**
@@ -98,7 +98,7 @@ public class TaxonomyResource extends BaseResource {
             final String taxonomyName = values.get("taxonomyName");
             final String localeString = values.get("locales");
             final String[] locales;
-            if (Strings.isEmpty(localeString)) {
+            if (Strings.isNullOrEmpty(localeString)) {
                 locales = new String[]{"en"};
             } else {
                 final Splitter splitter = Splitter.on(",").omitEmptyStrings().trimResults();
@@ -106,7 +106,7 @@ public class TaxonomyResource extends BaseResource {
                 final List<String> strings = Lists.newArrayList(iterable);
                 locales = strings.toArray(new String[strings.size()]);
             }
-            if (!Strings.isEmpty(taxonomyName)) {
+            if (!Strings.isNullOrEmpty(taxonomyName)) {
                 final Node taxonomiesNode = createOrGetTaxonomyContainer(session);
                 if (taxonomiesNode.hasNode(taxonomyName)) {
                     return new ErrorMessageRestful("Taxonomy with name: " + taxonomyName + " already exists");

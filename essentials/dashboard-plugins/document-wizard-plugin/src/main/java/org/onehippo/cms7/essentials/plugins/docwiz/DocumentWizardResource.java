@@ -29,7 +29,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.wicket.util.string.Strings;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
@@ -38,6 +37,8 @@ import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 /**
  * @version "$Id$"
@@ -67,7 +68,7 @@ public class DocumentWizardResource extends BaseResource {
             final String valueListPath = values.get("valueListPath");
             final String query = values.get("documentQuery");
 
-            if (Strings.isEmpty(shortcutName)) {
+            if (Strings.isNullOrEmpty(shortcutName)) {
                 return new ErrorMessageRestful("Shortcut name was empty/invalid");
             }
             if (root.hasNode(shortcutName)) {

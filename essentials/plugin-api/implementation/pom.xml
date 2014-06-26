@@ -116,6 +116,14 @@
           <artifactId>wicket-extjs</artifactId>
           <groupId>org.wicketstuff</groupId>
         </exclusion>
+        <exclusion>
+          <artifactId>wicket-core</artifactId>
+          <groupId>org.apache.wicket</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>wicketstuff-input-events</artifactId>
+          <groupId>org.wicketstuff</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>

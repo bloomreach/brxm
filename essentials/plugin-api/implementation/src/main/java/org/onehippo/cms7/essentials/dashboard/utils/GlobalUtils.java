@@ -187,6 +187,30 @@ public final class GlobalUtils {
     }
 
 
+    /**
+     * @param fullName e.g. {@code myproject:foo}
+     * @return prefix e.g. {@code myproject}
+     */
+    public static String getNamespacePrefix(final String fullName) {
+        if (Strings.isNullOrEmpty(fullName) || fullName.indexOf(':') == -1) {
+            return null;
+        }
+        final String[] parts = NAMESPACE_PATTERN.split(fullName);
+        return parts[0];
+    }
+
+    /**
+     * @param fullName e.g. {@code myproject:foo}
+     * @return prefix e.g. {@code foo}
+     */
+    public static String getNameAfterPrefix(final String fullName) {
+        if (Strings.isNullOrEmpty(fullName) || fullName.indexOf(':') == -1) {
+            return null;
+        }
+        final String[] parts = NAMESPACE_PATTERN.split(fullName);
+        return parts[1];
+    }
+
     @SuppressWarnings("HippoHstCallNodeRefreshInspection")
     public static void refreshSession(final Session session, final boolean keepChanges) {
         try {
@@ -262,7 +286,7 @@ public final class GlobalUtils {
     }
 
     public static String validFileName(final String input) {
-        if(Strings.isNullOrEmpty(input)){
+        if (Strings.isNullOrEmpty(input)) {
             return null;
         }
 
