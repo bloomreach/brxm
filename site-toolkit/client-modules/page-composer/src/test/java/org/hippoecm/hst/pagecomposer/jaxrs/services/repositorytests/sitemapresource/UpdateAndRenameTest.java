@@ -62,8 +62,7 @@ public class UpdateAndRenameTest extends AbstractSiteMapResourceTest {
 
     @Test
     public void test_preview_workspace() throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL(request, "localhost", "/home");
+        final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
         ((HstMutableRequestContext) ctx).setSession(session);
         final Mount mount = ctx.getResolvedMount().getMount();
 

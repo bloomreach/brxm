@@ -51,7 +51,6 @@ import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.junit.After;
 import org.junit.Before;
-import org.springframework.mock.web.MockHttpServletRequest;
 
 import static org.junit.Assert.assertFalse;
 
@@ -130,8 +129,7 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
     }
 
     protected void createPreviewWithSiteMapWorkspace() throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL(request, "localhost", "/home");
+        final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
 
         final String previewConfigurationPath = ctx.getResolvedMount().getMount().getHstSite().getConfigurationPath() + "-preview";
         assertFalse("Preview config node should not exist yet.",
@@ -191,8 +189,7 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
     }
 
     public SiteMapRepresentation getSiteMapRepresentation(final Session requestSession) throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL(request, "localhost", "/home");
+        final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
         ((HstMutableRequestContext) ctx).setSession(requestSession);
         final HstSite site = mountResource.getPageComposerContextService().getEditingPreviewSite();
         final HstSiteMap siteMap = site.getSiteMap();

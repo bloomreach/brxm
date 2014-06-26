@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.hippoecm.hst.cmsrest;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.hosting.CustomMountAndVirtualHostAugmenter;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
@@ -58,22 +57,25 @@ public class VirtualHost127001AugmentedTest extends AbstractCmsRestTest {
         Session session = createSession();
         session.move("/hst:hst/hst:hosts/dev-localhost/localhost", "/hst:hst/hst:hosts/dev-localhost/127.0.0.1");
         session.save();
-        final VirtualHosts virtualHosts = hstManager.getVirtualHosts();
-        final ResolvedVirtualHost resolvedVirtualHost = virtualHosts.matchVirtualHost("127.0.0.1");
-        assertNotNull(resolvedVirtualHost);
-        assertEquals("127", resolvedVirtualHost.getVirtualHost().getName());
-        assertEquals("127.0.0.1", resolvedVirtualHost.getVirtualHost().getHostName());
-        // since 127.0.0.1 already exists, the _cmsrest mount should be added to 127.0.0.1 host living
-        // below dev-localhost
-        assertEquals("dev-localhost",resolvedVirtualHost.getVirtualHost().getHostGroupName());
-        final ResolvedMount resolvedMount = virtualHosts.matchMount("127.0.0.1", null, "/_cmsrest");
-        assertNotNull(resolvedMount);
-        assertEquals("_cmsrest",resolvedMount.getMount().getName());
+        try {
+            final VirtualHosts virtualHosts = hstManager.getVirtualHosts();
+            final ResolvedVirtualHost resolvedVirtualHost = virtualHosts.matchVirtualHost("127.0.0.1");
+            assertNotNull(resolvedVirtualHost);
+            assertEquals("127", resolvedVirtualHost.getVirtualHost().getName());
+            assertEquals("127.0.0.1", resolvedVirtualHost.getVirtualHost().getHostName());
+            // since 127.0.0.1 already exists, the _cmsrest mount should be added to 127.0.0.1 host living
+            // below dev-localhost
+            assertEquals("dev-localhost", resolvedVirtualHost.getVirtualHost().getHostGroupName());
+            final ResolvedMount resolvedMount = virtualHosts.matchMount("127.0.0.1", null, "/_cmsrest");
+            assertNotNull(resolvedMount);
+            assertEquals("_cmsrest", resolvedMount.getMount().getName());
+        } finally {
 
-        // move 127.0.0.1 back to localhost
-        session.move("/hst:hst/hst:hosts/dev-localhost/127.0.0.1", "/hst:hst/hst:hosts/dev-localhost/localhost");
-        session.save();
-        session.logout();
+            // move 127.0.0.1 back to localhost
+            session.move("/hst:hst/hst:hosts/dev-localhost/127.0.0.1", "/hst:hst/hst:hosts/dev-localhost/localhost");
+            session.save();
+            session.logout();
+        }
     }
 
 }

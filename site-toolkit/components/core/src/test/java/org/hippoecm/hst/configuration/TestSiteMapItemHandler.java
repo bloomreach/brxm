@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.container.HstContainerConfigImpl;
+import org.hippoecm.hst.container.HstContainerRequestImpl;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstContainerConfig;
@@ -36,6 +37,7 @@ import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.test.sitemapitemhandler.AbstractTestHstSiteItemMapHandler;
+import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -69,19 +71,25 @@ public class TestSiteMapItemHandler extends AbstractTestConfigurations {
         @Test
         public void testNoopItemHandlerNoWildCardMatch(){
             MockHttpServletResponse response = new MockHttpServletResponse();
-            MockHttpServletRequest request = new MockHttpServletRequest();
-            request.setLocalPort(8081);
-            request.setScheme("http");
-            request.setServerName("localhost");
-            request.addHeader("Host", "localhost");
-            request.setRequestURI("/site/handler_nooptest");
-            request.setContextPath("/site");
-            
+            GenericHttpServletRequestWrapper containerRequest;
+            {
+                MockHttpServletRequest request = new MockHttpServletRequest();
+                request.setLocalPort(8081);
+                request.setScheme("http");
+                request.setServerName("localhost");
+                request.addHeader("Host", "localhost");
+                setRequestInfo(request, "/site", "/handler_nooptest");
+                containerRequest = new HstContainerRequestImpl(request, hstSitesManager.getPathSuffixDelimiter());
+            }
+
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
-                ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
-                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
-                ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
+                ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
+                        containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+
+                setHstServletPath(containerRequest, mount);
+                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
+                ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
                 
                 assertTrue("The expected id of the resolved sitemap item is 'handler_nooptest' but was '"+resolvedSiteMapItem.getHstSiteMapItem().getId()+ "'", "handler_nooptest".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
                 
@@ -164,18 +172,24 @@ public class TestSiteMapItemHandler extends AbstractTestConfigurations {
         @Test
         public void testNoopItemHandlerWithWildCardMatch(){
             MockHttpServletResponse response = new MockHttpServletResponse();
-            MockHttpServletRequest request = new MockHttpServletRequest();
-            request.setLocalPort(8081);
-            request.setScheme("http");
-            request.setServerName("localhost");
-            request.addHeader("Host", "localhost");
-            request.setRequestURI("/site/handler_nooptest/foo");
-            request.setContextPath("/site");
+            GenericHttpServletRequestWrapper containerRequest;
+            {
+                MockHttpServletRequest request = new MockHttpServletRequest();
+                request.setLocalPort(8081);
+                request.setScheme("http");
+                request.setServerName("localhost");
+                request.addHeader("Host", "localhost");
+                setRequestInfo(request, "/site", "/handler_nooptest/foo");
+                containerRequest = new HstContainerRequestImpl(request, hstSitesManager.getPathSuffixDelimiter());
+            }
+
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
-                ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
-                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
-                ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
+                ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
+                        containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                setHstServletPath(containerRequest, mount);
+                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
+                ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
                 
                 assertTrue("The expected id of the resolved sitemap item is 'handler_nooptest/_default_' but was '"+resolvedSiteMapItem.getHstSiteMapItem().getId()+ "'", "handler_nooptest/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
                  
@@ -207,18 +221,24 @@ public class TestSiteMapItemHandler extends AbstractTestConfigurations {
         @Test
         public void testMultipleNoopItemHandlers(){
             MockHttpServletResponse response = new MockHttpServletResponse();
-            MockHttpServletRequest request = new MockHttpServletRequest();
-            request.setLocalPort(8081);
-            request.setScheme("http");
-            request.setServerName("localhost");
-            request.addHeader("Host", "localhost");
-            request.setRequestURI("/site/multiplehandler_example/foo/bar");
-            request.setContextPath("/site");
+            GenericHttpServletRequestWrapper containerRequest;
+            {
+                MockHttpServletRequest request = new MockHttpServletRequest();
+                request.setLocalPort(8081);
+                request.setScheme("http");
+                request.setServerName("localhost");
+                request.addHeader("Host", "localhost");
+                setRequestInfo(request, "/site", "/multiplehandler_example/foo/bar");
+                containerRequest = new HstContainerRequestImpl(request, hstSitesManager.getPathSuffixDelimiter());
+            }
+
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
-                ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
-                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
-                ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
+                ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
+                        containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                setHstServletPath(containerRequest, mount);
+                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
+                ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
                 
                 assertTrue("The expected id of the resolved sitemap item is 'multiplehandler_wildcardexample/_default_/_default_' but was '"+resolvedSiteMapItem.getHstSiteMapItem().getId()+ "'", "multiplehandler_example/_default_/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
                
@@ -234,7 +254,7 @@ public class TestSiteMapItemHandler extends AbstractTestConfigurations {
                 for( HstSiteMapItemHandlerConfiguration handlerConfig : handlerConfigrations){
                     try {
                         HstSiteMapItemHandler siteMapHandler =  siteMapItemHandlerFactory.getSiteMapItemHandlerInstance(requestContainerConfig, handlerConfig);
-                        processedSiteMapItem = siteMapHandler.process(processedSiteMapItem, request, response);
+                        processedSiteMapItem = siteMapHandler.process(processedSiteMapItem, containerRequest, response);
                     } catch (HstSiteMapItemHandlerException e){
                         fail("Failed to create HstSiteMapItemHandler instance: " + e.getMessage());
                     }
@@ -276,19 +296,23 @@ public class TestSiteMapItemHandler extends AbstractTestConfigurations {
         @Test
         public void testBrowserRedirectSiteMapItemHandler(){
             MockHttpServletResponse response = new MockHttpServletResponse();
-            MockHttpServletRequest request = new MockHttpServletRequest();
-            request.setLocalPort(8081);
-            request.setScheme("http");
-            request.setServerName("localhost");
-            request.addHeader("Host", "localhost");
-            request.setRequestURI("/site/handler_browser_redirecttest");
-            request.setContextPath("/site");
-            
+            GenericHttpServletRequestWrapper containerRequest;
+            {
+                MockHttpServletRequest request = new MockHttpServletRequest();
+                request.setLocalPort(8081);
+                request.setScheme("http");
+                request.setServerName("localhost");
+                request.addHeader("Host", "localhost");
+                setRequestInfo(request, "/site", "/handler_browser_redirecttest");
+                containerRequest = new HstContainerRequestImpl(request, hstSitesManager.getPathSuffixDelimiter());
+            }
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
-                ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
-                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
-                ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
+                ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
+                        containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                setHstServletPath(containerRequest, mount);
+                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
+                ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
                 
                 assertTrue("The expected id of the resolved sitemap item is 'handler_browser_redirecttest' but was '"+resolvedSiteMapItem.getHstSiteMapItem().getId()+ "'", "handler_browser_redirecttest".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
                
@@ -310,7 +334,7 @@ public class TestSiteMapItemHandler extends AbstractTestConfigurations {
                     
                     assertTrue("The exact same instance should be returned the second time by the siteMapItemHandlerFactory ", siteMapHandler == siteMapHandler2);
                     
-                    resolvedSiteMapItem = siteMapHandler2.process(resolvedSiteMapItem, request, response);
+                    resolvedSiteMapItem = siteMapHandler2.process(resolvedSiteMapItem, containerRequest, response);
                     
                     assertNull("the BrowserRedirectHandlerItem should return null ", resolvedSiteMapItem);
                     
@@ -330,19 +354,24 @@ public class TestSiteMapItemHandler extends AbstractTestConfigurations {
         
         @Test
         public void testSiteMapItemRedirectSiteMapItemHandler(){
-            MockHttpServletResponse response = new MockHttpServletResponse();
-            MockHttpServletRequest request = new MockHttpServletRequest();
-            request.setLocalPort(8081);
-            request.setScheme("http");
-            request.setServerName("localhost");
-            request.addHeader("Host", "localhost");
-            request.setRequestURI("/site/handler_sitemapitem_redirecttest");
-            request.setContextPath("/site");
+            MockHttpServletResponse response = new MockHttpServletResponse();GenericHttpServletRequestWrapper containerRequest;
+            {
+                MockHttpServletRequest request = new MockHttpServletRequest();
+                request.setLocalPort(8081);
+                request.setScheme("http");
+                request.setServerName("localhost");
+                request.addHeader("Host", "localhost");
+                setRequestInfo(request, "/site", "/handler_sitemapitem_redirecttest");
+                containerRequest = new HstContainerRequestImpl(request, hstSitesManager.getPathSuffixDelimiter());
+            }
+
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
-                ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
-                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
-                ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
+                ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
+                        containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                setHstServletPath(containerRequest, mount);
+                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
+                ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
                 
                 List<HstSiteMapItemHandlerConfiguration> handlerConfigrations = resolvedSiteMapItem.getHstSiteMapItem().getSiteMapItemHandlerConfigurations();
                 
@@ -353,7 +382,7 @@ public class TestSiteMapItemHandler extends AbstractTestConfigurations {
                     
                     HstSiteMapItemHandler siteMapHandler =  siteMapItemHandlerFactory.getSiteMapItemHandlerInstance(requestContainerConfig, handlerConfigrations.get(0));
                     
-                    ResolvedSiteMapItem redirectedResolvedSiteMapItem = siteMapHandler.process(resolvedSiteMapItem, request, response);
+                    ResolvedSiteMapItem redirectedResolvedSiteMapItem = siteMapHandler.process(resolvedSiteMapItem, containerRequest, response);
                     
                     assertNotNull(redirectedResolvedSiteMapItem);
                     

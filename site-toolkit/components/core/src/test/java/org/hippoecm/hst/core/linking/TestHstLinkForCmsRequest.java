@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import javax.jcr.Session;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.container.HstContainerRequestImpl;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
@@ -42,6 +43,7 @@ import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -275,13 +277,13 @@ public class TestHstLinkForCmsRequest extends AbstractBeanTestCase {
     }
 
     public HstRequestContext getRequestFromCms(final String hostAndPort,
-                                               final String requestURI,
+                                               final String pathInfo,
                                                final String queryString,
                                                final String renderingHost,
                                                final boolean forceClientHost) throws Exception {
         HstRequestContextComponent rcc = getComponent(HstRequestContextComponent.class.getName());
         HstMutableRequestContext requestContext = rcc.create();
-        HstContainerURL containerUrl = createContainerUrlForCmsRequest(requestContext, hostAndPort, requestURI, queryString, renderingHost, forceClientHost);
+        HstContainerURL containerUrl = createContainerUrlForCmsRequest(requestContext, hostAndPort, pathInfo, queryString, renderingHost, forceClientHost);
         requestContext.setBaseURL(containerUrl);
         ResolvedSiteMapItem resolvedSiteMapItem = getResolvedSiteMapItem(containerUrl);
         requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
@@ -297,36 +299,43 @@ public class TestHstLinkForCmsRequest extends AbstractBeanTestCase {
 
     public HstContainerURL createContainerUrlForCmsRequest(final HstMutableRequestContext requestContext,
                                                            final String hostAndPort,
-                                                           final String requestURI,
+                                                           final String pathInfo,
                                                            final String queryString,
                                                            final String renderingHost,
                                                            final boolean forceClientHost) throws Exception {
         MockHttpServletResponse response = new MockHttpServletResponse();
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        requestContext.setServletRequest(request);
-        String host = hostAndPort.split(":")[0];
-        if (hostAndPort.split(":").length > 1) {
-            int port = Integer.parseInt(hostAndPort.split(":")[1]);
-            request.setLocalPort(port);
-            request.setServerPort(port);
-        }
-        request.setScheme("http");
-        request.setServerName(host);
-        request.addHeader("Host", hostAndPort);
-        request.setContextPath("/site");
-        request.setQueryString(queryString);
-        request.setRequestURI("/site" + requestURI);
+        GenericHttpServletRequestWrapper containerRequest;
+        {
+            MockHttpServletRequest request = new MockHttpServletRequest();
+            if (hostAndPort.split(":").length > 1) {
+                int port = Integer.parseInt(hostAndPort.split(":")[1]);
+                request.setLocalPort(port);
+                request.setServerPort(port);
+            }
+            request.setScheme("http");
+            String host = hostAndPort.split(":")[0];
+            request.setServerName(host);
+            request.addHeader("Host", hostAndPort);
+            setRequestInfo(request, "/site", pathInfo);
+            request.setQueryString(queryString);
 
-        requestContext.setCmsRequest(true);
-        if (renderingHost != null) {
-            request.setParameter(ContainerConstants.RENDERING_HOST, renderingHost);
+            requestContext.setCmsRequest(true);
+            if (renderingHost != null) {
+                request.setParameter(ContainerConstants.RENDERING_HOST, renderingHost);
+            }
+            if (forceClientHost) {
+                request.setParameter("FORCE_CLIENT_HOST", "true");
+            }
+            containerRequest = new HstContainerRequestImpl(request, hstManager.getPathSuffixDelimiter());
         }
-        if (forceClientHost) {
-            request.setParameter("FORCE_CLIENT_HOST", "true");
-        }
+
+        requestContext.setServletRequest(containerRequest);
+
         VirtualHosts vhosts = hstManager.getVirtualHosts();
-        ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
-        return hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
+        ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
+                containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+        setHstServletPath(containerRequest, mount);
+        return hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
     }
 
     public ResolvedSiteMapItem getResolvedSiteMapItem(HstContainerURL url) throws ContainerException {

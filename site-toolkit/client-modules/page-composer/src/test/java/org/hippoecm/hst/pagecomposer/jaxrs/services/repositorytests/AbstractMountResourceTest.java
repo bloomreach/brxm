@@ -57,12 +57,10 @@ public abstract class AbstractMountResourceTest extends AbstractPageComposerTest
     }
 
     protected void mockNewRequest(Session jcrSession, String host, String pathInfo) throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL(request, host, pathInfo);
+        final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL(host, pathInfo);
         final String mountId = ctx.getResolvedMount().getMount().getIdentifier();
         ((HstMutableRequestContext) ctx).setSession(jcrSession);
         ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, mountId);
-        setMountIdOnHttpSession(request, mountId);
     }
 
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,10 +14,6 @@
  *  limitations under the License.
  */
 package org.hippoecm.hst.test;
-
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,11 +38,17 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.container.SpringComponentManager;
+import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.mock.web.MockHttpServletRequest;
+
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 
 /**
  * <p>
@@ -112,7 +114,26 @@ public abstract class AbstractSpringTestCase
     protected Configuration getContainerConfiguration() {
         return new PropertiesConfiguration();
     }
-    
+
+
+    protected void setRequestInfo(final MockHttpServletRequest request,
+                                  final String contextPath,
+                                  final String pathInfo) {
+        request.setPathInfo(pathInfo);
+        request.setContextPath(contextPath);
+        request.setRequestURI(contextPath + request.getServletPath() + pathInfo);
+    }
+
+
+    protected void setHstServletPath(final GenericHttpServletRequestWrapper request, final ResolvedMount resolvedMount) {
+        if (resolvedMount.getMatchingIgnoredPrefix() != null) {
+            request.setServletPath("/" + resolvedMount.getMatchingIgnoredPrefix() + resolvedMount.getResolvedMountPath());
+        } else {
+            request.setServletPath(resolvedMount.getResolvedMountPath());
+        }
+    }
+
+
     protected void setResolvedMount(HstMutableRequestContext requestContext) {
         
         ResolvedMount resolvedMount = createNiceMock(ResolvedMount.class);
