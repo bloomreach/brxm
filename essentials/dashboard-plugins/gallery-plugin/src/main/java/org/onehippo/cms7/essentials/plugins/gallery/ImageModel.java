@@ -22,6 +22,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.base.Strings;
+
 /**
  * @version "$Id$"
  */
@@ -29,15 +31,25 @@ public class ImageModel implements Serializable {
 
 
     private static final long serialVersionUID = 1L;
-    private final String prefix;
+    private String prefix;
+    private String type;
     private String path;
     private String parentPath;
+    private String parentNamespace;
     private int width;
     private int height;
     private String name;
+    private String originalType;
     private String originalName = null;
     private boolean readOnly;
+    private boolean upscaling;
+    private String optimize = "quality";
+    private double compression = 1D;
     private List<TranslationModel> translations = new ArrayList<>();
+
+    public ImageModel() {
+    }
+
 
     public ImageModel(final String prefix) {
         this.prefix = prefix;
@@ -46,13 +58,47 @@ public class ImageModel implements Serializable {
         }
     }
 
-    public ImageModel(final String prefix, final String name, final int width, final int height) {
+
+    public ImageModel(final String prefix, final String name, final String parentNamespace, final int width, final int height) {
         this(prefix);
         this.width = width;
+        this.parentNamespace = parentNamespace;
         this.height = height;
         this.name = name;
     }
 
+
+    public String getOptimize() {
+        return optimize;
+    }
+
+    public void setOptimize(final String optimize) {
+        this.optimize = optimize;
+    }
+
+    public double getCompression() {
+        return compression;
+    }
+
+    public void setCompression(final double compression) {
+        this.compression = compression;
+    }
+
+    public boolean isUpscaling() {
+        return upscaling;
+    }
+
+    public void setUpscaling(final boolean upscaling) {
+        this.upscaling = upscaling;
+    }
+
+    public String getParentNamespace() {
+        return parentNamespace;
+    }
+
+    public void setParentNamespace(final String parentNamespace) {
+        this.parentNamespace = parentNamespace;
+    }
 
     public int getWidth() {
         return width;
@@ -149,17 +195,36 @@ public class ImageModel implements Serializable {
         }
     }
 
+    public void setNameChanged(final boolean changed) {
+        // ignore
+    }
+
     /**
      * Get the type of the image based on the prefix and name.
      *
      * @return type of the image (i.e. 'prefix:name')
      */
     public String getType() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(getPrefix());
-        sb.append(':');
-        sb.append(getName());
-        return sb.toString();
+        if (Strings.isNullOrEmpty(type)) {
+            final StringBuilder sb = new StringBuilder();
+            sb.append(getPrefix());
+            sb.append(':');
+            sb.append(getName());
+            type = sb.toString();
+        }
+        return type;
+    }
+
+    public void setType(final String type) {
+        this.type = type;
+    }
+
+    public void setPrefix(final String prefix) {
+        this.prefix = prefix;
+    }
+
+    public void setOriginalType(final String originalType) {
+        this.originalType = originalType;
     }
 
     /**
@@ -168,6 +233,9 @@ public class ImageModel implements Serializable {
      * @return type of the original image (i.e. 'prefix:originalName')
      */
     public String getOriginalType() {
+        if (!Strings.isNullOrEmpty(originalType)) {
+            return originalType;
+        }
         if (getOriginalName() == null) {
             return getType();
         }
@@ -175,7 +243,8 @@ public class ImageModel implements Serializable {
         sb.append(getPrefix());
         sb.append(':');
         sb.append(getOriginalName());
-        return sb.toString();
+        originalType = sb.toString();
+        return originalType;
     }
 
     public boolean isReadOnly() {
@@ -199,6 +268,9 @@ public class ImageModel implements Serializable {
     }
 
     public List<TranslationModel> getTranslations() {
+        if (translations == null) {
+            return new ArrayList<>();
+        }
         return translations;
     }
 
