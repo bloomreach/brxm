@@ -15,24 +15,17 @@
  */
 package org.onehippo.repository.search;
 
-import java.util.Calendar;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
-import javax.jcr.query.QueryResult;
 
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.util.NodeIterable;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
-import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
 public class ServicingNodeIndexerSimilarityTest extends RepositoryTestCase {
-
 
     @Test
     public void testSimilaritySearches() throws RepositoryException, InterruptedException {
