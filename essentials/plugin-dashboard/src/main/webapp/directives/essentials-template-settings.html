@@ -21,7 +21,7 @@
         <p ng-hide="hasNoTemplates">Template language:
             <strong>{{templateName=='repository'?'repository freemarker template' : templateName +' template'}}</strong>
         </p>
-        <p ng-show="sample">Use sample data: <strong>{{sampleData ? "yes": "no"}}</strong></p>
+        <p ng-show="hasSampleData">Use sample data: <strong>{{sampleData ? "yes": "no"}}</strong></p>
         <p class="pull-right">
             <button class="btn btn-info" ng-click="toggleForm()">Change settings</button>
         </p>
@@ -52,10 +52,10 @@
                 </label>
             </div>
             </div>
-            <div ng-show="sample" class="form-group">
+            <div ng-show="hasSampleData" class="form-group">
                 <label> Content: </label>
             </div>
-            <div ng-show="sample" class="checkbox">
+            <div ng-show="hasSampleData" class="checkbox">
                 <label>
                     Add sample content <input type="checkbox" ng-model="sampleData"/>
                 </label>

@@ -35,7 +35,6 @@ import org.onehippo.cms7.essentials.dashboard.config.ResourcePluginService;
 import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
-import org.onehippo.cms7.essentials.dashboard.model.DependencyType;
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.Plugin;
 import org.onehippo.cms7.essentials.dashboard.model.PluginRestful;
@@ -159,20 +158,6 @@ public class BaseResource {
         final PluginContext context = getContext(servletContext);
 
         for (PluginRestful plugin : plugins.getItems()) {
-
-            // Populate the "needsInstallation" flag based on other plugin descriptor fields.
-            if ("plugins".equals(plugin.getType())) {
-                final List<EssentialsDependency> deps = plugin.getDependencies();
-                boolean needsInstallation = false;
-                for (EssentialsDependency dep : deps) {
-                    final DependencyType depType = dep.getDependencyType();
-                    if (depType == DependencyType.ESSENTIALS) {
-                        plugin.setNeedsInstallation(!ProjectUtils.isInstalled(depType, dep.createMavenDependency()));
-                        break;
-                    }
-                }
-            }
-
             populateInstallState(plugin, context);
         }
     }
