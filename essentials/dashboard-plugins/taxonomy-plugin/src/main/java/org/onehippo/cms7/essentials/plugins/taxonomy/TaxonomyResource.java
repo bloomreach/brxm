@@ -139,6 +139,7 @@ public class TaxonomyResource extends BaseResource {
             final Map<String, String> values = payloadRestful.getValues();
             final String[] taxonomyNames = PayloadUtils.extractValueArray(values.get("taxonomies"));
             final String[] documentNames = PayloadUtils.extractValueArray(values.get("documents"));
+
             final Collection<String> changedDocuments = new HashSet<>();
             for (int i = 0; i < documentNames.length; i++) {
                 final String documentName = documentNames[i];
@@ -146,20 +147,38 @@ public class TaxonomyResource extends BaseResource {
                 final String prefix = context.getProjectNamespacePrefix();
                 DocumentTemplateUtils.addMixinToTemplate(context, documentName, HIPPOTAXONOMY_MIXIN, true);
                 final String path = MessageFormat.format("/hippo:namespaces/{0}/{1}/editor:templates/_default_", prefix, documentName);
-                if (session.nodeExists(path)) {
-                    final Node node = session.getNode(path);
-                    if (node.hasNode("classifiable")) {
-                        log.info("Taxonomy already added");
-                        continue;
+                    if (session.nodeExists(path)) {
+                        final Node node = session.getNode(path);
+                        if (node.hasNode("classifiable")) {
+                            ClassificationDaoServiceBuilder classificationDaoServiceBuilder = new ClassificationDaoServiceBuilder();
+                            classificationDaoServiceBuilder.setFieldPath(taxonomyName);
+                            classificationDaoServiceBuilder.setSession(session);
+                            classificationDaoServiceBuilder.setClassificationDaoServiceName(ServiceNameBuilder.getServiceName(documentName, taxonomyName));
+                            String daoName = ServiceNameBuilder.getDaoName(documentName, taxonomyName);
+                            classificationDaoServiceBuilder.setTaxonomyClassificationDao(daoName);
+                            classificationDaoServiceBuilder.setClassificationDaoServiceName(daoName);
+                            classificationDaoServiceBuilder.build();
+                            AdditionalTaxonomyBuilder additionalTaxonomyBuilder = new AdditionalTaxonomyBuilder();
+                            additionalTaxonomyBuilder.setSession(session);
+                            additionalTaxonomyBuilder.setTaxonomyClassificationDao(daoName);
+                            additionalTaxonomyBuilder.setTaxonomyName(taxonomyName);
+                            additionalTaxonomyBuilder.setDocumentType(documentName);
+                            additionalTaxonomyBuilder.setPrefix(prefix);
+                            additionalTaxonomyBuilder.build();
+                            changedDocuments.add(documentName);
+                        }
+                        else{
+                            final Node fieldNode = node.addNode("classifiable", "frontend:plugin");
+                            fieldNode.setProperty("mixin", HIPPOTAXONOMY_MIXIN);
+                            fieldNode.setProperty("plugin.class", "org.hippoecm.frontend.editor.plugins.mixin.MixinLoaderPlugin");
+                            fieldNode.setProperty("wicket.id", DocumentTemplateUtils.getDefaultPosition(node));
+                            final Node clusterNode = fieldNode.addNode("cluster.options", "frontend:pluginconfig");
+                            clusterNode.setProperty("taxonomy.name", taxonomyName);
+                            changedDocuments.add(documentName);
+                        }
+
                     }
-                    final Node fieldNode = node.addNode("classifiable", "frontend:plugin");
-                    fieldNode.setProperty("mixin", HIPPOTAXONOMY_MIXIN);
-                    fieldNode.setProperty("plugin.class", "org.hippoecm.frontend.editor.plugins.mixin.MixinLoaderPlugin");
-                    fieldNode.setProperty("wicket.id", DocumentTemplateUtils.getDefaultPosition(node));
-                    final Node clusterNode = fieldNode.addNode("cluster.options", "frontend:pluginconfig");
-                    clusterNode.setProperty("taxonomy.name", taxonomyName);
-                    changedDocuments.add(documentName);
-                }
+
             }
             if (session.hasPendingChanges()) {
                 session.save();

@@ -614,6 +614,9 @@ dashboard-plugins/simple-content/src/main/resources/jsp/contentlist-main-content
 dashboard-plugins/simple-content/src/main/resources/jsp/contentpage-main.jsp -text
 dashboard-plugins/simple-content/src/main/resources/namespaces/contentdocument.xml -text
 dashboard-plugins/taxonomy-plugin/pom.xml -text
+dashboard-plugins/taxonomy-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/taxonomy/AdditionalTaxonomyBuilder.java -text
+dashboard-plugins/taxonomy-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/taxonomy/ClassificationDaoServiceBuilder.java -text
+dashboard-plugins/taxonomy-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/taxonomy/ServiceNameBuilder.java -text
 dashboard-plugins/taxonomy-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/taxonomy/TaxonomyResource.java -text
 dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/resources/plugins/taxonomyPlugin/taxonomyPlugin.html -text
 dashboard-plugins/taxonomy-plugin/src/main/resources/META-INF/resources/plugins/taxonomyPlugin/taxonomyPlugin.js -text
@@ -1755,6 +1758,9 @@ plugin-dashboard/src/main/webapp/theme/hippo-theme/theme.html -text
 plugin-dashboard/src/main/webapp/theme/styles.css -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/beanwriter/rest/BeanWriterResourceTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/dashboard/contentblocks/ContentBlocksPluginTest.java -text
+plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/plugins/taxonomy/AdditionalTaxonomyBuilderTest.java -text
+plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/plugins/taxonomy/ClassificationDaoServiceBuilderTest.java -text
+plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/plugins/taxonomy/ServiceNameBuilderTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/ContentBlocksTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/RestClientTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/model/PluginRestfulTest.java -text
