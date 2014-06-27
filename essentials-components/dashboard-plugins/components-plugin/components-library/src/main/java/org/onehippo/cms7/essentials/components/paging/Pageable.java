@@ -19,6 +19,11 @@ package org.onehippo.cms7.essentials.components.paging;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 
 /**
@@ -26,6 +31,7 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
  *
  * @version $Id$
  */
+@XmlAccessorType(XmlAccessType.NONE)
 public abstract class Pageable<T extends HippoBean> {
 
     private static final int DEFAULT_PAGE_RANGE = 10;
@@ -103,6 +109,7 @@ public abstract class Pageable<T extends HippoBean> {
      *
      * @return pagenumber we are displaying
      */
+    @XmlAttribute
     public int getCurrentPage() {
         return pageNumber;
     }
@@ -251,6 +258,7 @@ public abstract class Pageable<T extends HippoBean> {
      *
      * @return nr. of pages
      */
+    @XmlAttribute
     public long getTotalPages() {
         long pages = total / pageSize;
         long remainder = total % pageSize;
@@ -279,6 +287,7 @@ public abstract class Pageable<T extends HippoBean> {
         pageNumber = pageNumber <= 0 ? 1 : pageNumber;
     }
 
+    @XmlAttribute
     public int getPageSize() {
         return pageSize;
     }
@@ -292,6 +301,7 @@ public abstract class Pageable<T extends HippoBean> {
      *
      * @return total nr. of results
      */
+    @XmlAttribute
     public long getTotal() {
         return total;
     }
@@ -383,5 +393,6 @@ public abstract class Pageable<T extends HippoBean> {
     }
 
 
+    @XmlElement
     public abstract List<? extends HippoBean> getItems();
 }
