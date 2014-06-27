@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.intranet.componentsinfo;
 
-import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.parameters.Color;
 import org.hippoecm.hst.core.parameters.FieldGroup;
 import org.hippoecm.hst.core.parameters.FieldGroupList;

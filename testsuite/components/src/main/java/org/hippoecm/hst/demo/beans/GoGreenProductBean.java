@@ -15,11 +15,7 @@
  */
 package org.hippoecm.hst.demo.beans;
 
-import java.util.List;
-
 import org.hippoecm.hst.content.beans.index.IndexField;
-import org.hippoecm.hst.content.beans.standard.ContentBean;
-import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 
 public class GoGreenProductBean implements IdentifiableContentBean {

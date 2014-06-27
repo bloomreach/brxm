@@ -21,7 +21,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;

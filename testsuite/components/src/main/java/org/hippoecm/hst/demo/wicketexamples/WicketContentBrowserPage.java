@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.demo.wicketexamples;
 
-import java.io.NotSerializableException;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.demo.components;
 
-import javax.jcr.RepositoryException;
-
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;

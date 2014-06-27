@@ -16,7 +16,6 @@
 package org.hippoecm.hst.demo.beans;
 
 import org.hippoecm.hst.content.beans.Node;
-import org.hippoecm.hst.content.beans.index.IndexField;
 import org.hippoecm.hst.content.beans.standard.HippoResource;
 
 @Node(jcrType="demosite:textdocument")

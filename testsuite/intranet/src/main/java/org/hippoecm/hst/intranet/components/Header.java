@@ -15,12 +15,12 @@
  */
 package org.hippoecm.hst.intranet.components;
 
-import org.hippoecm.hst.intranet.channels.WebsiteInfo;
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.intranet.channels.WebsiteInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

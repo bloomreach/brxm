@@ -17,7 +17,6 @@ package org.hippoecm.hst.demo.container;
 
 import org.hippoecm.hst.container.valves.AbstractOrderableValve;
 import org.hippoecm.hst.core.container.ContainerException;
-import org.hippoecm.hst.core.container.Valve;
 import org.hippoecm.hst.core.container.ValveContext;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 

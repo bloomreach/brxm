@@ -18,8 +18,8 @@ package org.hippoecm.hst.intranet.beans;
 import java.util.Calendar;
 
 import org.hippoecm.hst.content.beans.Node;
-import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean;
+import org.hippoecm.hst.content.beans.standard.HippoHtml;
 
 @Node(jcrType="intranet:newsdocument")
 public class NewsDocument extends BaseDocument{

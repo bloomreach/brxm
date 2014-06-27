@@ -16,7 +16,6 @@
 package org.hippoecm.hst.demo.components;
 
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
-import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;

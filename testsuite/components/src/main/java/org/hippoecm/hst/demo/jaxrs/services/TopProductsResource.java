@@ -18,7 +18,6 @@ package org.hippoecm.hst.demo.jaxrs.services;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jcr.Node;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.DefaultValue;
@@ -39,7 +38,6 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.demo.beans.ProductBean;
 import org.hippoecm.hst.demo.jaxrs.model.ProductRepresentation;
 import org.hippoecm.hst.jaxrs.services.AbstractResource;
-import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
