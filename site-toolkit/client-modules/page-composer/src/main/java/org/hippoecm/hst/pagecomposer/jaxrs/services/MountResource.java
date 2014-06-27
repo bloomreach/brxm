@@ -358,6 +358,33 @@ public class MountResource extends AbstractConfigResource {
     }
 
     /**
+     * Delete the preview nodes of a channel, i.e. the preview configuration and the preview channel.
+     *
+     * This method erases uncommitted changes and should therefore be used very carefully.
+     * @return An ok Response containing the list of documents or an error response in case an exception occurred
+     */
+    @POST
+    @Path("/deletepreview/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deletePreview() {
+        final PageComposerContextService context = getPageComposerContextService();
+        final Channel channel = context.getEditingPreviewChannel();
+        if (channel != null) {
+            try {
+                final HippoSession session = HstConfigurationUtils.getNonProxiedSession(context.getRequestContext().getSession(false));
+                session.getNode("/hst:hst/hst:channels/" + channel.getId()).remove();
+                session.getNode(channel.getHstConfigPath()).remove();
+                HstConfigurationUtils.persistChanges(session);
+            } catch (RepositoryException e) {
+                log.warn("Exception occurred deleting the preview for channel " + channel.getName(), e);
+                return error("Exception occurred deleting the preview for channel " + channel.getName() + ": " + e.getMessage());
+            }
+        }
+
+        return ok("Deleted preview");
+    }
+
+    /**
      * reverts the changes for the current cms user for the channel he is working on.
      * reverting changes need to be done directly on JCR level as for the hst model it get very complex as the
      * hst model has an enhanced model on top of jcr, with for example inheritance and referencing resolved
