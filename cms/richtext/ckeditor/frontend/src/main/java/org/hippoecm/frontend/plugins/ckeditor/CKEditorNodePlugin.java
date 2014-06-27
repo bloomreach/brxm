@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -127,16 +127,23 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
     @Override
     protected CKEditorPanel createEditPanel(final String id, final String editorConfigJson) {
         final CKEditorPanel editPanel = new CKEditorPanel(id, editorConfigJson, createEditModel());
-        addPickerBehavior(editPanel);
+        addPickerExtension(editPanel);
+        addAutoSaveExtension(editPanel);
         return editPanel;
     }
 
-    private void addPickerBehavior(final CKEditorPanel editPanel) {
+    private void addPickerExtension(final CKEditorPanel editPanel) {
         final String editorId = editPanel.getEditorId();
         final LinkPickerBehavior linkPickerBehavior = createLinkPickerBehavior(editorId);
         final ImagePickerBehavior imagePickerBehavior = createImagePickerBehavior(editorId);
-        final CKEditorPanelPickerExtension pickerBehavior = new CKEditorPanelPickerExtension(linkPickerBehavior, imagePickerBehavior);
-        editPanel.addExtension(pickerBehavior);
+        final CKEditorPanelPickerExtension pickerExtension = new CKEditorPanelPickerExtension(linkPickerBehavior, imagePickerBehavior);
+        editPanel.addExtension(pickerExtension);
+    }
+
+    private void addAutoSaveExtension(final CKEditorPanel editPanel) {
+        final AutoSaveBehavior autoSaveBehavior = new AutoSaveBehavior(editPanel.getEditorModel());
+        final CKEditorPanelAutoSaveExtension autoSaveExtension = new CKEditorPanelAutoSaveExtension(autoSaveBehavior);
+        editPanel.addExtension(autoSaveExtension);
     }
 
     private LinkPickerBehavior createLinkPickerBehavior(final String editorId) {

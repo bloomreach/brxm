@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,16 +57,18 @@ public class CKEditorPanel extends Panel {
 
     private final String editorConfigJson;
     private final String editorId;
+    private final IModel<String> editorModel;
     private final List<CKEditorPanelExtension> extensions;
 
     public CKEditorPanel(final String id,
                   final String editorConfigJson,
-                  final IModel<String> editModel) {
+                  final IModel<String> editorModel) {
         super(id);
 
         this.editorConfigJson = editorConfigJson;
+        this.editorModel = editorModel;
 
-        final TextArea<String> textArea = new TextArea<String>(WICKET_ID_EDITOR, editModel);
+        final TextArea<String> textArea = new TextArea<String>(WICKET_ID_EDITOR, editorModel);
         textArea.setOutputMarkupId(true);
         add(textArea);
 
@@ -80,6 +82,13 @@ public class CKEditorPanel extends Panel {
      */
     public String getEditorId() {
         return editorId;
+    }
+
+    /**
+     * @return the model of the editor instance.
+     */
+    public IModel<String> getEditorModel() {
+        return editorModel;
     }
 
     /**

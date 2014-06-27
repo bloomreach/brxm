@@ -2450,6 +2450,7 @@ reporting/repository/src/main/resources/hipporeport.cnd -text
 reporting/repository/src/main/resources/reporting-dashboard.xml -text
 reporting/repository/src/main/resources/reports-cluster-loader.xml -text
 richtext/ckeditor/frontend/pom.xml -text
+richtext/ckeditor/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/AutoSaveBehavior.java svneol=native#text/plain
 richtext/ckeditor/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/DeclarativeKeystrokesConverter.java -text
 richtext/ckeditor/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/ckeditor-loading.gif -text
 richtext/ckeditor/frontend/src/test/java/org/hippoecm/frontend/plugins/ckeditor/DeclarativeKeystrokesConverterTest.java -text

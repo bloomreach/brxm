@@ -333,7 +333,7 @@
 
         icons: 'pickinternallink,pickimage',
         hidpi: true,
-        lang: CKEDITOR.tools.objectKeys(CKEDITOR.lang.languages),
+        lang: 'de,en,fr,it,nl',
 
         init: function(editor) {
             var config = editor.config.hippopicker;
