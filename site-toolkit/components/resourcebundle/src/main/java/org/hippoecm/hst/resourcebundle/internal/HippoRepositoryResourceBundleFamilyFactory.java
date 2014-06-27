@@ -16,6 +16,7 @@
 package org.hippoecm.hst.resourcebundle.internal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -68,7 +69,7 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
 
     @Override
     public ResourceBundleFamily createBundleFamily(String basename) {
-        MutableResourceBundleFamily bundleFamily = new DefaultMutableResourceBundleFamily(basename);;
+        MutableResourceBundleFamily bundleFamily = new DefaultMutableResourceBundleFamily(basename);
 
         Session session = null;
         Credentials[] creds = {liveCredentials, previewCredentials};
@@ -131,7 +132,7 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
                         String state = preview ? "preview" : "live";
                         throw new IllegalArgumentException("keys and messages must be of equal length but was not the case for '"+state+"'");
                     }
-                    Object[][] contents = createListResourceBundleContents(keys, messages);
+                    final Map<String,String> contents = createListResourceBundleContents(keys, messages);
                     ResourceBundle defaultBundle = new SimpleListResourceBundle(contents);
 
                     if (preview) {
@@ -164,7 +165,7 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
                             String state = preview ? "preview" : "live";
                             throw new IllegalArgumentException("keys and messages must be of equal length but was not the case for '"+state+"'");
                         }
-                        Object[][] contents = createListResourceBundleContents(keys, localizedMessages);
+                        final Map<String,String> contents = createListResourceBundleContents(keys, localizedMessages);
                         ResourceBundle localizedBundle = new SimpleListResourceBundle(contents);
 
                         if (preview) {
@@ -185,6 +186,7 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
         }
     }
 
+
     private String [] getPropertyAsStringArray(final Node node, final String propName) throws RepositoryException {
         return getPropertyAsStringArray(node.getProperty(propName));
     }
@@ -204,15 +206,13 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
         return (stringValues != null ? stringValues : ArrayUtils.EMPTY_STRING_ARRAY);
     }
 
-    protected Object[][] createListResourceBundleContents(String [] keys, String [] messages) {
-        Object [][] contents = new Object[keys.length][];
-
-        Map<String, String> contentsMap = new LinkedHashMap<String, String>();
+    protected Map<String,String> createListResourceBundleContents(String [] keys, String [] messages) {
+        Map<String,String> contents = new HashMap<>(keys.length);
+        Map<String, String> contentsMap = new HashMap<String, String>();
 
         for (int i = 0; i < keys.length; i++) {
             String message = (i < messages.length ? messages[i] : "");
             contentsMap.put(keys[i], message);
-            contents[i] = new Object[] { keys[i], null };
         }
 
         // use commons-configuration in order to translate variables (e.g., ${key1}) for the values of the following keys
@@ -220,10 +220,11 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
         config.setDelimiterParsingDisabled(true);
         config.setTrimmingDisabled(true);
         for (int i = 0; i < keys.length; i++) {
-            String key = (String) contents[i][0];
-            contents[i][1] = config.getString(key);
+            String key = keys[i];
+            String message = config.getString(key);
+            contents.put(key, message);
         }
-
         return contents;
     }
+
 }

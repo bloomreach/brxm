@@ -22,6 +22,9 @@ import static org.junit.Assert.assertSame;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableMap;
+
 import org.apache.commons.lang.LocaleUtils;
 import org.hippoecm.hst.resourcebundle.internal.DefaultMutableResourceBundleFamily;
 import org.hippoecm.hst.resourcebundle.internal.DefaultMutableResourceBundleRegistry;
@@ -88,15 +91,32 @@ public class TestDefaultResourceBundleRegistry {
             @Override
             public ResourceBundleFamily createBundleFamily(String basename) {
                 DefaultMutableResourceBundleFamily family = new DefaultMutableResourceBundleFamily(BASE_NAME);
-                family.setDefaultBundle(new SimpleListResourceBundle(new Object[][] { { "name", "NAME (default)" }, { "greeting", "HELLO (default)" } }));
+                family.setDefaultBundle(new SimpleListResourceBundle(ImmutableMap.of(
+                        "name", "simple bundle NAME (default)",
+                        "greeting", "HELLO (default)",
+                        "from", "default"
+                )));
                 family.setLocalizedBundle(LocaleUtils.toLocale("en"),
-                        new SimpleListResourceBundle(new Object[][] { { "name", "NAME (en)" }, { "greeting", "HELLO (en)" } }));
+                        new SimpleListResourceBundle(ImmutableMap.of(
+                                "name", "simple bundle NAME (en)",
+                                "greeting", "HELLO (en)"
+                        )));
                 family.setLocalizedBundle(LocaleUtils.toLocale("en_US"),
-                        new SimpleListResourceBundle(new Object[][] { { "name", "NAME (en_US)" }, { "greeting", "HELLO (en_US)" } }));
+                        new SimpleListResourceBundle(ImmutableMap.of(
+                                "name", "simple bundle NAME (en_US)",
+                                "greeting", "HELLO (en_US)",
+                                "from", "[<missing>]"
+                        )));
                 family.setLocalizedBundle(LocaleUtils.toLocale("fr"),
-                        new SimpleListResourceBundle(new Object[][] { { "name", "NOM (fr)" }, { "greeting", "BONJOUR (fr)" } }));
+                        new SimpleListResourceBundle(ImmutableMap.of(
+                                "name", "simple bundle NOM (fr)",
+                                "greeting", "BONJOUR (fr)"
+                        )));
                 family.setLocalizedBundle(LocaleUtils.toLocale("fr_FR"),
-                        new SimpleListResourceBundle(new Object[][] { { "name", "NOM (fr_FR)" }, { "greeting", "BONJOUR (fr_FR)" } }));
+                        new SimpleListResourceBundle(ImmutableMap.of(
+                                "name", "simple bundle NOM (fr_FR)",
+                                "greeting", "BONJOUR (fr_FR)"
+                        )));
                 return family;
             }
         });
@@ -104,50 +124,58 @@ public class TestDefaultResourceBundleRegistry {
         Locale locale = LocaleUtils.toLocale("en");
         ResourceBundle bundle = resourceBundleRegistry.getBundle(BASE_NAME, locale);
         assertNotNull(bundle);
-        assertEquals("NAME (en)", bundle.getString("name"));
+        assertEquals("simple bundle NAME (en)", bundle.getString("name"));
         assertEquals("HELLO (en)", bundle.getString("greeting"));
+        assertEquals("default", bundle.getString("from"));
+        assertEquals("From default (en) java backed properties", bundle.getString("fallback"));
+
         assertSame(bundle, resourceBundleRegistry.getBundle(BASE_NAME, locale));
 
         locale = LocaleUtils.toLocale("en_US");
         bundle = resourceBundleRegistry.getBundle(BASE_NAME, locale);
         assertNotNull(bundle);
-        assertEquals("NAME (en_US)", bundle.getString("name"));
+        assertEquals("simple bundle NAME (en_US)", bundle.getString("name"));
         assertEquals("HELLO (en_US)", bundle.getString("greeting"));
+        // value [<missing>] should be equal to not existing
+        assertEquals("default", bundle.getString("from"));
+        assertEquals("From default (en) java backed properties", bundle.getString("fallback"));
         assertSame(bundle, resourceBundleRegistry.getBundle(BASE_NAME, locale));
 
         locale = LocaleUtils.toLocale("en_CA");
         bundle = resourceBundleRegistry.getBundle(BASE_NAME, locale);
         assertNotNull(bundle);
-        assertEquals("NAME (en)", bundle.getString("name"));
+        assertEquals("simple bundle NAME (en)", bundle.getString("name"));
         assertEquals("HELLO (en)", bundle.getString("greeting"));
         assertSame(bundle, resourceBundleRegistry.getBundle(BASE_NAME, locale));
 
         locale = LocaleUtils.toLocale("fr");
         bundle = resourceBundleRegistry.getBundle(BASE_NAME, locale);
         assertNotNull(bundle);
-        assertEquals("NOM (fr)", bundle.getString("name"));
+        assertEquals("simple bundle NOM (fr)", bundle.getString("name"));
         assertEquals("BONJOUR (fr)", bundle.getString("greeting"));
+        assertEquals("From default java backed properties", bundle.getString("fallback"));
         assertSame(bundle, resourceBundleRegistry.getBundle(BASE_NAME, locale));
 
         locale = LocaleUtils.toLocale("fr_FR");
         bundle = resourceBundleRegistry.getBundle(BASE_NAME, locale);
         assertNotNull(bundle);
-        assertEquals("NOM (fr_FR)", bundle.getString("name"));
+        assertEquals("simple bundle NOM (fr_FR)", bundle.getString("name"));
         assertEquals("BONJOUR (fr_FR)", bundle.getString("greeting"));
         assertSame(bundle, resourceBundleRegistry.getBundle(BASE_NAME, locale));
 
         locale = LocaleUtils.toLocale("fr_CA");
         bundle = resourceBundleRegistry.getBundle(BASE_NAME, locale);
         assertNotNull(bundle);
-        assertEquals("NOM (fr)", bundle.getString("name"));
+        assertEquals("simple bundle NOM (fr)", bundle.getString("name"));
         assertEquals("BONJOUR (fr)", bundle.getString("greeting"));
         assertSame(bundle, resourceBundleRegistry.getBundle(BASE_NAME, locale));
 
         locale = LocaleUtils.toLocale("it_IT");
         bundle = resourceBundleRegistry.getBundle(BASE_NAME, locale);
         assertNotNull(bundle);
-        assertEquals("NAME (default)", bundle.getString("name"));
+        assertEquals("simple bundle NAME (default)", bundle.getString("name"));
         assertEquals("HELLO (default)", bundle.getString("greeting"));
+        assertEquals("default", bundle.getString("from"));
         assertSame(bundle, resourceBundleRegistry.getBundle(BASE_NAME, locale));
     }
 

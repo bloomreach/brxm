@@ -15,13 +15,16 @@
  */
 package org.hippoecm.hst.resourcebundle.internal;
 
-import static org.junit.Assert.assertEquals;
+import java.util.Map;
 
 import javax.jcr.Credentials;
 import javax.jcr.Repository;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
+
+import static junit.framework.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
 
 /**
  * TestHippoRepositoryResourceBundleFamilyFactory
@@ -40,15 +43,18 @@ public class TestHippoRepositoryResourceBundleFamilyFactory {
 
         HippoRepositoryResourceBundleFamilyFactory factory = new HippoRepositoryResourceBundleFamilyFactory(repository, liveCredentials, previewCredentials);
 
-        String [] keys = { "key.first", "key.second", "key.third", "key.fourth", "key.fifth" };
-        String [] values = { "Hello", "${key.first}, World!", "Greeting - ${key.second}", "${key.first} was evaluated to ${key.second}", " ${key.first} was evaluated and no trimming " };
-        Object [][] messages = factory.createListResourceBundleContents(keys, values);
+        String [] keys = { "key.first", "key.second", "key.third", "key.fourth", "key.fifth", "key.sixth" };
+        String [] values = { "Hello", "${key.first}, World!", "Greeting - ${key.second}",
+                "${key.first} was evaluated to ${key.second}", " ${key.first} was evaluated and no trimming ",
+                "[<missing>]"};
+        Map<String,String> messages = factory.createListResourceBundleContents(keys, values);
 
-        assertEquals("Hello", messages[0][1]);
-        assertEquals("Hello, World!", messages[1][1]);
-        assertEquals("Greeting - Hello, World!", messages[2][1]);
-        assertEquals("Hello was evaluated to Hello, World!", messages[3][1]);
-        assertEquals(" Hello was evaluated and no trimming ", messages[4][1]);
+        assertEquals("Hello", messages.get("key.first"));
+        assertEquals("Hello, World!", messages.get("key.second"));
+        assertEquals("Greeting - Hello, World!", messages.get("key.third"));
+        assertEquals("Hello was evaluated to Hello, World!", messages.get("key.fourth"));
+        assertEquals(" Hello was evaluated and no trimming ", messages.get("key.fifth"));
+        assertEquals("[<missing>] values should be filtered later", "[<missing>]", messages.get("key.sixth"));
     }
 
 }

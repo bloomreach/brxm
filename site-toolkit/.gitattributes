@@ -901,7 +901,6 @@ components/resourcebundle-cnd/pom.xml -text
 components/resourcebundle-cnd/src/main/resources/hippoecm-extension.xml -text
 components/resourcebundle-cnd/src/main/resources/resourcebundle.cnd -text
 components/resourcebundle/pom.xml -text
-components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/MapResourceBundle.java -text
 components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/PlaceHolderEmptyResourceBundleFamily.java -text
 components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/SimpleListResourceBundle.java -text
 components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/internal/DefaultMutableResourceBundleFamily.java -text
@@ -909,7 +908,6 @@ components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/internal
 components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/internal/HippoRepositoryResourceBundleEventListener.java -text
 components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/internal/HippoRepositoryResourceBundleFamilyFactory.java -text
 components/resourcebundle/src/test/java/org/hippoecm/hst/resourcebundle/TestDefaultResourceBundleRegistry.java -text
-components/resourcebundle/src/test/java/org/hippoecm/hst/resourcebundle/TestMapResourceBundle.java -text
 components/resourcebundle/src/test/java/org/hippoecm/hst/resourcebundle/internal/TestHippoRepositoryResourceBundleFamilyFactory.java -text
 components/resourcebundle/src/test/resources/log4j.xml -text
 components/resourcebundle/src/test/resources/org/hippoecm/hst/resourcebundle/TestMessages.properties -text

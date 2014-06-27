@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.resourcebundle.internal;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -25,6 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang.LocaleUtils;
 import org.hippoecm.hst.resourcebundle.PlaceHolderEmptyResourceBundleFamily;
 import org.hippoecm.hst.resourcebundle.ResourceBundleFamily;
+import org.hippoecm.hst.resourcebundle.SimpleListResourceBundle;
 
 /**
  * DefaultMutableResourceBundleRegistry
@@ -96,7 +98,8 @@ public class DefaultMutableResourceBundleRegistry implements MutableResourceBund
     }
 
     protected ResourceBundle getBundle(String basename, Locale locale, boolean preview) {
-        ResourceBundle bundle = null;
+        List<ResourceBundle> bundles = new ArrayList<>();
+        ResourceBundle defaultBundle = null;
         ResourceBundleFamily bundleFamily = bundleFamiliesMap.get(basename);
 
         if (bundleFamily == null && resourceBundleFamilyFactory != null) {
@@ -110,11 +113,9 @@ public class DefaultMutableResourceBundleRegistry implements MutableResourceBund
                 }
             }
         }
-
         if (bundleFamily != null && !(bundleFamily instanceof PlaceHolderEmptyResourceBundleFamily)) {
-            bundle = (preview ? bundleFamily.getDefaultBundleForPreview() : bundleFamily.getDefaultBundle());
-
-            if (locale != null) {
+            defaultBundle = (preview ? bundleFamily.getDefaultBundleForPreview() : bundleFamily.getDefaultBundle());
+            if (defaultBundle != null && locale != null) {
                 // 
                 // Let's try to find the best mapped resource bundle.
                 // For example, if the locale is 'en_US', then it tries to find bundle by 'en_US'.
@@ -122,27 +123,46 @@ public class DefaultMutableResourceBundleRegistry implements MutableResourceBund
                 // 
                 @SuppressWarnings("unchecked")
                 List<Locale> lookupLocales = (List<Locale>) LocaleUtils.localeLookupList(locale);
-
                 for (Locale loc : lookupLocales) {
                     ResourceBundle localizedBundle = (preview ? bundleFamily.getLocalizedBundleForPreview(loc) : bundleFamily.getLocalizedBundle(loc));
-
                     if (localizedBundle != null) {
-                        bundle = localizedBundle;
-                        break;
+                        bundles.add(localizedBundle);
                     }
                 }
             }
         }
 
-        if (bundle == null && fallbackToJavaResourceBundle) {
+        ResourceBundle fallbackJavaResourceBundle = null;
+        if (fallbackToJavaResourceBundle) {
             if (locale == null) {
-                bundle = ResourceBundle.getBundle(basename, Locale.getDefault(), Thread.currentThread().getContextClassLoader());
+                fallbackJavaResourceBundle = ResourceBundle.getBundle(basename, Locale.getDefault(), Thread.currentThread().getContextClassLoader());
             } else {
-                bundle = ResourceBundle.getBundle(basename, locale, Thread.currentThread().getContextClassLoader());
+                fallbackJavaResourceBundle = ResourceBundle.getBundle(basename, locale, Thread.currentThread().getContextClassLoader());
+            }
+            if (defaultBundle == null) {
+                return fallbackJavaResourceBundle;
             }
         }
+        if (defaultBundle == null) {
+            return null;
+        }
 
-        return bundle;
+        if (fallbackJavaResourceBundle != null) {
+            ((SimpleListResourceBundle)defaultBundle).setParent(fallbackJavaResourceBundle);
+        }
+
+        if (bundles.isEmpty()) {
+            return defaultBundle;
+        }
+
+        ResourceBundle primaryBundle = bundles.get(0);
+        int i = 1;
+        while (i < bundles.size()) {
+            ((SimpleListResourceBundle)bundles.get(i - 1)).setParent((bundles.get(i)));
+            i++;
+        }
+        ((SimpleListResourceBundle)bundles.get(bundles.size() - 1)).setParent(defaultBundle);
+        return primaryBundle;
     }
 
 }
