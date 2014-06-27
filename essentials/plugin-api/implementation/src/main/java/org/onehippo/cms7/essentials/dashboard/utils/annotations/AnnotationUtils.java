@@ -24,8 +24,22 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.FieldAccess;
+import org.eclipse.jdt.core.dom.MarkerAnnotation;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.onehippo.cms7.essentials.dashboard.utils.JavaSourceUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.code.ExistingMethodsVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,9 +52,76 @@ public final class AnnotationUtils {
 
     private static Logger log = LoggerFactory.getLogger(AnnotationUtils.class);
 
+    //############################################
+    // SOURCE UTILS
+    //############################################
 
-    private AnnotationUtils() {
+
+    public static String addXmlElementAnnotation(final String source){
+
+        final CompilationUnit unit = JavaSourceUtils.getCompilationUnit(source);
+        final AST ast = unit.getAST();
+        final ExistingMethodsVisitor methodsVisitor = JavaSourceUtils.getMethodCollection(unit);
+        final List<MethodDeclaration> getterMethods = methodsVisitor.getGetterMethods();
+        boolean needsImport = false;
+        for (MethodDeclaration getterMethod : getterMethods) {
+            @SuppressWarnings("rawtypes")
+            final List parameters = getterMethod.parameters();
+            if (parameters == null || parameters.size() == 0) {
+                // annotate getter:
+                final MarkerAnnotation xmlElementAnnotation = ast.newMarkerAnnotation();
+                xmlElementAnnotation.setTypeName(ast.newSimpleName(XmlElement.class.getSimpleName()));
+                JavaSourceUtils.addAnnotation(getterMethod, xmlElementAnnotation);
+                needsImport = true;
+            }
+        }
+        if (needsImport) {
+            JavaSourceUtils.addImport(unit, XmlElement.class.getName());
+        }
+
+        return JavaSourceUtils.rewrite(unit, ast);
+
     }
+    /**
+     * For given java source, add {@code @XmlAccessorType(XmlAccessType.NONE)} class annotation
+     *
+     * @param source
+     * @see XmlAccessorType
+     * @see XmlAccessType#NONE
+     */
+    public static String addXmlAccessNoneAnnotation(final String source) {
+
+        final CompilationUnit unit = JavaSourceUtils.getCompilationUnit(source);
+        if (unit.types() == null || unit.types().size() < 1) {
+            log.warn("Invalid java file");
+            return source;
+        }
+        final TypeDeclaration classType = (TypeDeclaration) unit.types().get(0);
+        final AST ast = unit.getAST();
+        // create annotation
+        final SingleMemberAnnotation xmlAccessAnnotation = ast.newSingleMemberAnnotation();
+        xmlAccessAnnotation.setTypeName(ast.newSimpleName(XmlAccessorType.class.getSimpleName()));
+        // add annotation value
+        final FieldAccess value = ast.newFieldAccess();
+        value.setExpression(ast.newName(XmlAccessType.class.getSimpleName()));
+        value.setName(ast.newSimpleName("NONE"));
+        xmlAccessAnnotation.setValue(value);
+        // rewrite & add imports:
+
+        JavaSourceUtils.addImport(unit, XmlAccessType.class.getName());
+        JavaSourceUtils.addImport(unit, XmlAccessorType.class.getName());
+        JavaSourceUtils.addAnnotation(classType, xmlAccessAnnotation);
+        return JavaSourceUtils.rewrite(unit, ast);
+    }
+
+
+
+
+
+    //############################################
+    // BINARY STUFF
+    //############################################
+
 
     /**
      * Return annotation of specific type
@@ -145,6 +226,9 @@ public final class AnnotationUtils {
             myClass = myClass.getSuperclass();
         }
         return returnValue.values();
+    }
+
+    private AnnotationUtils() {
     }
 }
 

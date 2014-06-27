@@ -831,6 +831,7 @@ plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/u
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/inject/TestEventsApplication.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/inject/TestEventsListener.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/update/UpdateConfigTest.java -text
+plugin-api/implementation/src/test/resources/AnnotationTestClass.txt -text
 plugin-api/implementation/src/test/resources/TestMockBean.java -text
 plugin-api/implementation/src/test/resources/cms-pom.xml -text
 plugin-api/implementation/src/test/resources/custom_nodetypes.xml -text

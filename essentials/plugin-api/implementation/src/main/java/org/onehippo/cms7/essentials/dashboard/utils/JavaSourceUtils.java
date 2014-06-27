@@ -477,12 +477,26 @@ public final class JavaSourceUtils {
         addBeanMethodProperty(path, methodName, propertyName, returnType);
     }
 
+    public static ExistingMethodsVisitor getMethodCollection(final CompilationUnit unit) {
+        final ExistingMethodsVisitor visitor = new ExistingMethodsVisitor();
+        unit.accept(visitor);
+        return visitor;
+    }
+
+    public static ExistingMethodsVisitor getMethodCollection(final String source) {
+        final CompilationUnit unit = getCompilationUnit(source);
+        final ExistingMethodsVisitor visitor = new ExistingMethodsVisitor();
+        unit.accept(visitor);
+        return visitor;
+    }
+
     /**
      * Parse given java file and return method visitor (ExistingMethodsVisitor)
      *
      * @param path path to java file
      * @return ExistingMethodsVisitor instance
      */
+
     public static ExistingMethodsVisitor getMethodCollection(final Path path) {
         final CompilationUnit unit = getCompilationUnit(path);
         final ExistingMethodsVisitor visitor = new ExistingMethodsVisitor();
@@ -763,6 +777,23 @@ public final class JavaSourceUtils {
         addImport(unit, ast, importName);
         replaceFile(path, unit, ast);
     }
+
+    @SuppressWarnings(UNCHECKED)
+    public static void addImport(final CompilationUnit unit, final CharSequence importName) {
+        final AST ast = unit.getAST();
+        addImport(unit, ast, importName);
+
+    }
+
+    public static String addImport(final String source, final CharSequence importName) {
+        final CompilationUnit unit = getCompilationUnit(source);
+        unit.recordModifications();
+        final AST ast = unit.getAST();
+        addImport(unit, ast, importName);
+        return rewrite(unit, ast);
+    }
+
+
     //############################################
     // LOCAL UTILITY METHODS
     //############################################
@@ -844,7 +875,7 @@ public final class JavaSourceUtils {
     }
 
     @SuppressWarnings(UNCHECKED)
-    private static void addAnnotation(ASTNode node, IExtendedModifier annotation) {
+    public static void addAnnotation(ASTNode node, IExtendedModifier annotation) {
         // add annotation at first position:
         if (node instanceof TypeDeclaration) {
             TypeDeclaration type = (TypeDeclaration) node;
@@ -859,7 +890,9 @@ public final class JavaSourceUtils {
             variable.modifiers().add(0, annotation);
         } else if (node instanceof MethodDeclaration) {
             MethodDeclaration method = (MethodDeclaration) node;
-            method.modifiers().add(0, annotation);
+            if (!hasAnnotation(method.modifiers(), annotation)) {
+                method.modifiers().add(0, annotation);
+            }
         } else if (node instanceof FieldDeclaration) {
             FieldDeclaration field = (FieldDeclaration) node;
             field.modifiers().add(0, annotation);
@@ -874,6 +907,23 @@ public final class JavaSourceUtils {
             if (modifier instanceof NormalAnnotation && annotation instanceof NormalAnnotation) {
                 final NormalAnnotation existing = (NormalAnnotation) modifier;
                 final NormalAnnotation newOne = (NormalAnnotation) annotation;
+                final String fullyQualifiedName = existing.getTypeName().getFullyQualifiedName();
+                if (fullyQualifiedName.equals(newOne.getTypeName().getFullyQualifiedName())) {
+                    log.debug("Annotation already exists: {}", fullyQualifiedName);
+                    return true;
+                }
+            } else if (modifier instanceof SingleMemberAnnotation && annotation instanceof SingleMemberAnnotation) {
+                final SingleMemberAnnotation existing = (SingleMemberAnnotation) modifier;
+                final SingleMemberAnnotation newOne = (SingleMemberAnnotation) annotation;
+                final String fullyQualifiedName = existing.getTypeName().getFullyQualifiedName();
+                if (fullyQualifiedName.equals(newOne.getTypeName().getFullyQualifiedName())) {
+                    log.debug("Annotation already exists: {}", fullyQualifiedName);
+                    return true;
+                }
+            }
+            else if (modifier instanceof MarkerAnnotation && annotation instanceof MarkerAnnotation) {
+                final MarkerAnnotation existing = (MarkerAnnotation) modifier;
+                final MarkerAnnotation newOne = (MarkerAnnotation) annotation;
                 final String fullyQualifiedName = existing.getTypeName().getFullyQualifiedName();
                 if (fullyQualifiedName.equals(newOne.getTypeName().getFullyQualifiedName())) {
                     log.debug("Annotation already exists: {}", fullyQualifiedName);
@@ -899,6 +949,13 @@ public final class JavaSourceUtils {
         return Paths.get(finalPath + File.separator + className + fileExtension);
     }
 
+    public static CompilationUnit getCompilationUnit(final String content) {
+        final ASTParser parser = ASTParser.newParser(AST.JLS3);
+        parser.setResolveBindings(true);
+        parser.setSource(new Document(content).get().toCharArray());
+        return (CompilationUnit) parser.createAST(null);
+    }
+
     private static CompilationUnit getCompilationUnit(final Path path) {
         final StringBuilder builder = GlobalUtils.readTextFile(path);
         final ASTParser parser = ASTParser.newParser(AST.JLS3);
@@ -907,7 +964,7 @@ public final class JavaSourceUtils {
         return (CompilationUnit) parser.createAST(null);
     }
 
-    private static String rewrite(final CompilationUnit unit, final AST ast) {
+    public static String rewrite(final CompilationUnit unit, final AST ast) {
         final IDocument document = new Document(unit.toString());
         final ASTRewrite rewriter = ASTRewrite.create(ast);
         final TextEdit edits = rewriter.rewriteAST(document, null);

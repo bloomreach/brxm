@@ -19,8 +19,20 @@ package org.onehippo.cms7.essentials.dashboard.utils.annotations;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
-import org.junit.Test;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlElement;
 
+import org.apache.commons.lang.StringUtils;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
+import org.eclipse.jdt.core.dom.TypeLiteral;
+import org.junit.Test;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -28,7 +40,44 @@ import static org.junit.Assert.assertTrue;
  */
 public class AnnotationUtilsTest {
 
+    private static final Logger log = LoggerFactory.getLogger(AnnotationUtilsTest.class);
     public static final int TOTAL_METHODS = 2;
+
+    @Test
+    public void testMethodAnnotation() throws Exception {
+        final String javaFile = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/AnnotationTestClass.txt"));
+        assertNotNull("Expected to find  /AnnotationTestClass.txt file", javaFile);
+        String annotated = AnnotationUtils.addXmlElementAnnotation(javaFile);
+        int nrOfItems = StringUtils.countMatches(annotated, XmlElement.class.getName());
+        assertEquals(1, nrOfItems);
+        nrOfItems = StringUtils.countMatches(annotated, "@XmlElement");
+        assertEquals(8, nrOfItems);
+        annotated = AnnotationUtils.addXmlElementAnnotation(annotated);
+        nrOfItems = StringUtils.countMatches(annotated, XmlElement.class.getName());
+        assertEquals(1, nrOfItems);
+        nrOfItems = StringUtils.countMatches(annotated, "@XmlElement");
+        assertEquals(8, nrOfItems);
+    }
+
+    @Test
+    public void testAddClassAnnotation() throws Exception {
+        final String javaFile = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/AnnotationTestClass.txt"));
+        assertNotNull("Expected to find  /AnnotationTestClass.txt file", javaFile);
+        String annotated = AnnotationUtils.addXmlAccessNoneAnnotation(javaFile);
+        annotated = AnnotationUtils.addXmlAccessNoneAnnotation(annotated);
+        log.info("annotated {}", annotated);
+        int nrOfItems = StringUtils.countMatches(annotated, XmlAccessType.class.getName());
+        assertEquals(1, nrOfItems);
+        nrOfItems = StringUtils.countMatches(annotated, XmlAccessType.class.getSimpleName());
+        assertEquals(2, nrOfItems);
+
+    }
+
+    public void addClass(final AST ast, final SingleMemberAnnotation xmlAccessAnnotation) {
+        final TypeLiteral typeLiteral = ast.newTypeLiteral();
+        typeLiteral.setType(ast.newSimpleType(ast.newName("XmlAccessType.NONE")));
+        xmlAccessAnnotation.setValue(typeLiteral);
+    }
 
     @Test
     public void testFindClass() throws Exception {
