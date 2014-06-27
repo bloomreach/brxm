@@ -26,27 +26,24 @@ import javax.xml.ws.WebServiceException;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
-import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
-import org.hippoecm.hst.content.beans.standard.HippoDocumentIterator;
-import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.content.beans.standard.HippoHtmlBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.jaxrs.services.AbstractResource;
 import org.hippoecm.hst.util.PathUtils;
-import org.onehippo.cms7.essentials.components.rest.common.RestList;
-import org.onehippo.cms7.essentials.components.rest.common.Restful;
+import org.onehippo.cms7.essentials.components.paging.DefaultPagination;
+import org.onehippo.cms7.essentials.components.paging.IterablePagination;
+import org.onehippo.cms7.essentials.components.paging.Pageable;
 import org.onehippo.cms7.essentials.components.rest.ctx.RestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version "$Id: BaseRestResource.java 174726 2013-08-22 14:24:50Z mmilicevic $"
+ * @version "$Id$"
  */
 public abstract class BaseRestResource extends AbstractResource {
 
@@ -54,6 +51,32 @@ public abstract class BaseRestResource extends AbstractResource {
     public static final String UNCHECKED = "unchecked";
     private static Logger log = LoggerFactory.getLogger(BaseRestResource.class);
     //
+
+
+    protected <T extends HippoBean> Pageable<T> findBeans(final RestContext context, final Class<T> clazz)  {
+        try {
+            final HstQuery query = createQuery(context, clazz);
+            final HstQueryResult execute = query.execute();
+            return new IterablePagination<>(
+                    execute.getHippoBeans(),
+                    execute.getTotalSize(),
+                    context.getPageSize(),
+                    context.getPage());
+        } catch (QueryException e) {
+            log.error("Error finding beans", e);
+        }
+        return  DefaultPagination.emptyCollection();
+    }
+
+
+    protected Pageable<? extends HippoBean> executeQuery(final RestContext context, final HstQuery query) throws QueryException {
+        final HstQueryResult execute = query.execute();
+        return new IterablePagination<>(
+                execute.getHippoBeans(),
+                execute.getTotalSize(),
+                context.getPageSize(),
+                context.getPage());
+    }
 
     /**
      * Return HippoQuery which scope is site root
@@ -69,7 +92,11 @@ public abstract class BaseRestResource extends AbstractResource {
         try {
             Node scopeNode = getScopeForContext(context);
             query = getHstQueryManager(context.getRequestContext()).createQuery(scopeNode, clazz);
-            query.setLimit(context.getResultLimit());
+            final int pageSize = context.getPageSize();
+            final int page = context.getPage();
+            query.setLimit(pageSize);
+            query.setOffset((page - 1) * pageSize);
+
         } catch (QueryException e) {
             log.error("Error creating HST query", e);
         } catch (RepositoryException e) {
@@ -116,15 +143,6 @@ public abstract class BaseRestResource extends AbstractResource {
         return root.getNode(relativePath);
     }
 
-    protected <T extends HippoBean> Restful<T> populateResult(RestContext context, HstQuery query, Class<? extends Restful<T>> clazz) throws QueryException {
-        Restful<T> restful = createInstance(clazz);
-        T bean = getSingleBean(query);
-        if (bean != null) {
-            restful.fromHippoBean(bean, context);
-            return restful;
-        }
-        return restful;
-    }
 
     @SuppressWarnings(UNCHECKED)
     protected <T extends HippoBean> T getSingleBean(HstQuery query) throws QueryException {
@@ -150,63 +168,6 @@ public abstract class BaseRestResource extends AbstractResource {
         }
 
         return retval;
-    }
-
-    protected <T extends HippoBean> RestList<Restful<T>> populateResults(RestContext context, HstQuery query, Class<? extends Restful<T>> clazz) throws QueryException {
-        final HstQueryResult results = query.execute();
-        final HippoBeanIterator beans = results.getHippoBeans();
-        final RestList<Restful<T>> retVal = newRestList();
-        while (beans.hasNext()) {
-            @SuppressWarnings(UNCHECKED)
-            final T bean = (T) beans.nextHippoBean();
-            if (bean != null) {
-                Restful<T> restful = createInstance(clazz);
-                restful.fromHippoBean(bean, context);
-                retVal.add(restful);
-            }
-        }
-        return retVal;
-    }
-
-    public abstract <T extends HippoBean> RestList<Restful<T>> newRestList();
-
-    protected <T extends HippoBean> RestList<Restful<T>> populateResultsFromFolder(RestContext context, final Class<T> clazz, Class<? extends Restful<T>> restFull) throws QueryException {
-        final RestList<Restful<T>> retVal = newRestList();
-        try {
-            Node node = getScopeForContext(context);
-            final ObjectConverter objectConverter = getObjectConverter(context.getRequestContext());
-            HippoBean scopeNode = (HippoBean) objectConverter.getObject(node);
-            if (scopeNode.isHippoFolderBean()) {
-                HippoFolderBean folder = (HippoFolderBean) scopeNode;
-                final HippoDocumentIterator<T> beans = folder.getDocumentIterator(clazz);
-                while (beans.hasNext()) {
-                    T bean = beans.next();
-                    if (bean != null) {
-                        Restful<T> restful = createInstance(restFull);
-                        restful.fromHippoBean(bean, context);
-                        retVal.add(restful);
-                    }
-                }
-                return retVal;
-            }
-        } catch (RepositoryException e) {
-            log.error("Error fetching folder beans ", e);
-        } catch (ObjectBeanManagerException e) {
-            log.error("Error fetching folder", e);
-        }
-        return retVal;
-
-    }
-
-    protected <T extends HippoBean> Restful<T> createInstance(Class<? extends Restful<T>> clazz) {
-        try {
-            return clazz.newInstance();
-        } catch (InstantiationException e) {
-            log.error("Error instantiating", e);
-        } catch (IllegalAccessException e) {
-            log.error("Access exception", e);
-        }
-        return null;
     }
 
 

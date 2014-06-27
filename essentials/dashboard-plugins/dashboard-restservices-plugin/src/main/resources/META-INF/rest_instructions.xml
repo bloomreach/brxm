@@ -23,7 +23,6 @@
     <execute class="org.onehippo.cms7.essentials.dashboard.restservices.RestMountInstruction"/>
   </instructionSet>
   <instructionSet group="plain">
-    <file action="copy" overwrite="false" source="HelloWorldPlainResource.txt" target="{{restFolder}}/HelloWorldPlainResource.java"/>
     <file action="copy" overwrite="false" source="spring-plain-rest-api.xml" target="{{siteOverrideFolder}}/spring-plain-rest-api.xml"/>
     <execute class="org.onehippo.cms7.essentials.dashboard.restservices.RestMountInstruction"/>
   </instructionSet>

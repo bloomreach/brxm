@@ -819,6 +819,22 @@ public final class JavaSourceUtils {
         return modifiers;
     }
 
+
+
+
+    public static String getPackageName(final Path path){
+        final CompilationUnit unit = JavaSourceUtils.getCompilationUnit(path);
+        final PackageDeclaration myPackage = unit.getPackage();
+        if (myPackage != null) {
+            final Name name = myPackage.getName();
+            if(name !=null){
+                return name.getFullyQualifiedName();
+            }
+
+        }
+        return "";
+    }
+
     @SuppressWarnings({UNCHECKED, RAWTYPES})
     private static void addImport(final CompilationUnit unit, final AST ast, final CharSequence importName) {
         final List imports = unit.imports();
@@ -956,7 +972,7 @@ public final class JavaSourceUtils {
         return (CompilationUnit) parser.createAST(null);
     }
 
-    private static CompilationUnit getCompilationUnit(final Path path) {
+    public static CompilationUnit getCompilationUnit(final Path path) {
         final StringBuilder builder = GlobalUtils.readTextFile(path);
         final ASTParser parser = ASTParser.newParser(AST.JLS3);
         parser.setResolveBindings(true);

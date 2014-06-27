@@ -29,17 +29,18 @@ import org.onehippo.cms7.essentials.components.rest.BaseRestResource;
  */
 public interface RestContext {
 
-    boolean isMinimalDataSet();
 
-    void setMinimalDataSet(boolean minimalDataSet);
+    int getPage();
+
+    void setPage(int page);
+
+    int getPageSize();
+
+    void setPageSize(int pageSize);
 
     HttpServletRequest getRequest();
 
     HstRequestContext getRequestContext();
-
-    int getResultLimit();
-
-    void setResultLimit(int resultLimit);
 
     String getScope();
 

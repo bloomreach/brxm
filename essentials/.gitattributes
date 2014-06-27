@@ -296,8 +296,6 @@ dashboard-plugins/components-plugin/components-library/src/main/java/org/onehipp
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/paging/IterablePagination.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/paging/Pageable.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/rest/BaseRestResource.java -text
-dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/rest/common/RestList.java -text
-dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/rest/common/Restful.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/rest/ctx/DefaultRestContext.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/rest/ctx/RestContext.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/utils/ComponentsUtils.java -text
@@ -399,13 +397,15 @@ dashboard-plugins/dashboard-restservices-plugin/src/main/java/org/onehippo/cms7/
 dashboard-plugins/dashboard-restservices-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/RestPluginConst.java -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/RestPluginResource.java -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/RestServicesInstructionPackage.java -text
+dashboard-plugins/dashboard-restservices-plugin/src/main/resources/BeanNameResource.txt -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/HelloWorldContentResource.txt -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/HelloWorldPlainResource.txt -text
-dashboard-plugins/dashboard-restservices-plugin/src/main/resources/META-INF/instructions.xml -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/META-INF/resources/tools/restServices/restServices.html -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/META-INF/resources/tools/restServices/restServices.js -text
+dashboard-plugins/dashboard-restservices-plugin/src/main/resources/META-INF/rest_instructions.xml -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/META-INF/web-fragment.xml -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/content_mount.xml -text
+dashboard-plugins/dashboard-restservices-plugin/src/main/resources/plain_mount.xml -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/spring-content-rest-api.xml -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/spring-plain-rest-api.xml -text
 dashboard-plugins/dashboard-restservices-plugin/src/test/resources/log4j.xml -text

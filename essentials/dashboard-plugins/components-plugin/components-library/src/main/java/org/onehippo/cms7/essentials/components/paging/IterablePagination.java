@@ -19,6 +19,8 @@ package org.onehippo.cms7.essentials.components.paging;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlElement;
+
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentIterator;
@@ -125,6 +127,7 @@ public class IterablePagination<T extends HippoBean> extends Pageable<T> {
      *
      * @return all paged items
      */
+    @XmlElement
     @Override
     public List<? extends HippoBean> getItems() {
         return items;

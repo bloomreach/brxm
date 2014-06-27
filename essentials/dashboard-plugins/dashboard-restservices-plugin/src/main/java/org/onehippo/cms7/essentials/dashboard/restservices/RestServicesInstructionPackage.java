@@ -29,6 +29,11 @@ import com.google.common.collect.ImmutableSet;
 public class RestServicesInstructionPackage extends DefaultInstructionPackage {
 
     @Override
+    public String getInstructionPath() {
+        return "/META-INF/rest_instructions.xml";
+    }
+
+    @Override
     public Set<String> groupNames() {
         final String restType = (String) getProperties().get(RestPluginConst.REST_TYPE);
         if (restType != null) {
