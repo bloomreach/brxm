@@ -295,16 +295,16 @@
       <type>java.lang.Boolean</type>
     </attribute>
     <attribute>
-      <description>If the link that is created should be the canonicalLinks link, use this attr with value true
+      <description>If the link that is created should be the canonical link, use this attr with value true
       </description>
-      <name>canonicalLinks</name>
+      <name>canonical</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
       <type>java.lang.Boolean</type>
     </attribute>
     <attribute>
       <description>If the link should be created in the context of the current URL, use this attr with value true. When
-        having canonicalLinks='true', this attribute is ignored.
+        having canonical='true', this attribute is ignored.
       </description>
       <name>navigationStateful</name>
       <required>false</required>
