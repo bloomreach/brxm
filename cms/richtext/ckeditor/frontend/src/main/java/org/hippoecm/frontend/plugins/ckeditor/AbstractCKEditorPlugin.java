@@ -136,12 +136,27 @@ public abstract class AbstractCKEditorPlugin<ModelType> extends RenderPlugin {
     }
 
     /**
-     * Create the panel to show in 'edit' mode, which should render a CKEditor instance to edit the model.
+     * Creates a panel that renders a CKEditor instance to edit the model.
      * @param id the Wicket ID of the panel
      * @param editorConfigJson the JSON configuration of the CKEditor instance to create.
      * @return the panel that displays a CKEditor instance.
      */
-    protected abstract Panel createEditPanel(final String id, final String editorConfigJson);
+    protected CKEditorPanel createEditPanel(final String id, final String editorConfigJson) {
+        CKEditorPanel editPanel = new CKEditorPanel(id, editorConfigJson, createEditModel());
+        addAutoSaveExtension(editPanel);
+        return editPanel;
+    }
+
+    /**
+     * @return the Wicket model behind a CKEditor instance.
+     */
+    protected abstract IModel<String> createEditModel();
+
+    private void addAutoSaveExtension(final CKEditorPanel editPanel) {
+        final AutoSaveBehavior autoSaveBehavior = new AutoSaveBehavior(editPanel.getEditorModel());
+        final CKEditorPanelAutoSaveExtension autoSaveExtension = new CKEditorPanelAutoSaveExtension(autoSaveBehavior);
+        editPanel.addExtension(autoSaveExtension);
+    }
 
     private Panel createComparePanel(final String id) {
         final IModel<ModelType> baseModel = getBaseModelOrNull();

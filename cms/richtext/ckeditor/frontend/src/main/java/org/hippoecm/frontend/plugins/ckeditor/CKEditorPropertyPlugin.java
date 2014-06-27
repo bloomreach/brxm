@@ -53,10 +53,6 @@ public class CKEditorPropertyPlugin extends AbstractCKEditorPlugin<String> {
     }
 
     @Override
-    protected Panel createEditPanel(final String id, final String editorConfigJson) {
-        return new CKEditorPanel(id, editorConfigJson, createEditModel());
-    }
-
     protected IModel<String> createEditModel() {
         final RichTextModel model = new RichTextModel(getHtmlModel());
         model.setCleaner(getHtmlCleanerOrNull());

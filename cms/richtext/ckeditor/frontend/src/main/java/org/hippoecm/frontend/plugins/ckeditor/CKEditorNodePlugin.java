@@ -126,9 +126,8 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
      */
     @Override
     protected CKEditorPanel createEditPanel(final String id, final String editorConfigJson) {
-        final CKEditorPanel editPanel = new CKEditorPanel(id, editorConfigJson, createEditModel());
+        final CKEditorPanel editPanel = super.createEditPanel(id, editorConfigJson);
         addPickerExtension(editPanel);
-        addAutoSaveExtension(editPanel);
         return editPanel;
     }
 
@@ -138,12 +137,6 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
         final ImagePickerBehavior imagePickerBehavior = createImagePickerBehavior(editorId);
         final CKEditorPanelPickerExtension pickerExtension = new CKEditorPanelPickerExtension(linkPickerBehavior, imagePickerBehavior);
         editPanel.addExtension(pickerExtension);
-    }
-
-    private void addAutoSaveExtension(final CKEditorPanel editPanel) {
-        final AutoSaveBehavior autoSaveBehavior = new AutoSaveBehavior(editPanel.getEditorModel());
-        final CKEditorPanelAutoSaveExtension autoSaveExtension = new CKEditorPanelAutoSaveExtension(autoSaveBehavior);
-        editPanel.addExtension(autoSaveExtension);
     }
 
     private LinkPickerBehavior createLinkPickerBehavior(final String editorId) {
@@ -170,6 +163,7 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
         return behavior;
     }
 
+    @Override
     protected IModel<String> createEditModel() {
         final IModel<String> htmlModel = getHtmlModel();
         final RichTextModel richTextModel = new RichTextModel(htmlModel);
