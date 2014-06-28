@@ -16,11 +16,11 @@
 package org.hippoecm.repository;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.rmi.ConnectException;
 import java.rmi.NoSuchObjectException;
 import java.rmi.NotBoundException;
@@ -29,39 +29,32 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Iterator;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.LoginException;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
-import javax.jcr.Value;
 import javax.jcr.observation.Event;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
-import javax.jcr.query.Row;
-import javax.jcr.query.RowIterator;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.api.observation.JackrabbitEvent;
 import org.hippoecm.repository.api.HippoNodeIterator;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.audit.AuditLogger;
 import org.hippoecm.repository.decorating.server.ServerServicingAdapterFactory;
 import org.hippoecm.repository.util.RepoUtils;
@@ -72,6 +65,12 @@ import org.onehippo.repository.RepositoryService;
 import org.onehippo.repository.cluster.RepositoryClusterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import freemarker.cache.ClassTemplateLoader;
+import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapper;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
 public class RepositoryServlet extends HttpServlet {
 
@@ -123,6 +122,8 @@ public class RepositoryServlet extends HttpServlet {
     private boolean startRemoteServer;
     private AuditLogger listener;
     private GuavaHippoEventBus hippoEventBus;
+
+    private Configuration freeMarkerConfiguration;
 
     public RepositoryServlet() {
         storageLocation = null;
@@ -230,6 +231,8 @@ public class RepositoryServlet extends HttpServlet {
             log.error("Error while setting up JCR repository: ", ex);
             throw new ServletException("RepositoryException: " + ex.getMessage());
         }
+
+        freeMarkerConfiguration = createFreemarkerConfiguration();
     }
 
 
@@ -313,9 +316,8 @@ public class RepositoryServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         // explicitly set character encoding
-
         req.setCharacterEncoding("UTF-8");
-        res.setContentType("text/html;charset=UTF-8");
+        res.setCharacterEncoding("UTF-8");
 
         if (!BasicAuth.hasAuthorizationHeader(req)) {
             BasicAuth.setRequestAuthorizationHeaders(res, "Repository");
@@ -324,368 +326,189 @@ public class RepositoryServlet extends HttpServlet {
 
         SimpleCredentials creds = BasicAuth.parseAuthorizationHeader(req);
 
-        String path = req.getRequestURI();
-        if (!path.endsWith("/")) {
-            res.sendRedirect(path + "/");
+        String currentNodePath = req.getRequestURI();
+
+        if (!currentNodePath.endsWith("/")) {
+            res.sendRedirect(currentNodePath + "/");
             return;
         }
-        if (path.startsWith(req.getContextPath())) {
-            path = path.substring(req.getContextPath().length());
-        }
-        if (path.startsWith(req.getServletPath())) {
-            path = path.substring(req.getServletPath().length());
-        }
-        res.setStatus(HttpServletResponse.SC_OK);
-        res.setContentType("text/html");
-        PrintWriter writer = res.getWriter();
 
-        Session session = null;
+        if (currentNodePath.startsWith(req.getContextPath())) {
+            currentNodePath = currentNodePath.substring(req.getContextPath().length());
+        }
+
+        if (currentNodePath.startsWith(req.getServletPath())) {
+            currentNodePath = currentNodePath.substring(req.getServletPath().length());
+        }
+
+        Session jcrSession = null;
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+
         try {
             if (creds.getUserID() == null || creds.getUserID().length() == 0) {
-                session = repository.login();
+                jcrSession = repository.login();
             } else {
-                session = repository.login(creds);
+                jcrSession = repository.login(creds);
             }
 
-            if (((HippoSession)session).getUser().isSystemUser()) {
+            if (((HippoSession)jcrSession).getUser().isSystemUser()) {
                 final InetAddress address = InetAddress.getByName(req.getRemoteHost());
                 if (!address.isAnyLocalAddress() && !address.isLoopbackAddress()) {
                     throw new LoginException();
                 }
             }
 
-            writer.println("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"");
-            writer.println("    \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">");
-            writer.println("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
-            writer.println("<head>");
-            writer.println("  <title>Hippo Repository Browser</title>");
-            writer.println("  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
-            writer.println("  <style type=\"text/css\">");
-            writer.println("    h3 {margin:2px}");
-            writer.println("    table.params {font-size:small}");
-            writer.println("    td.header {text-align: left; vertical-align: top; padding: 10px;}");
-            writer.println("    td {text-align: left}");
-            writer.println("    th {text-align: left}");
-            writer.println("  </style>");
-            writer.println("</head>");
-            writer.println("<body>");
-            writer.println("<table summary=\"infotable\">");
-            writer.println("  <tr>");
-            writer.println("    <td class=\"header\">");
-            writer.println("      <h3>Searching</h3>");
-            writer.println("      <table style=\"params\" summary=\"searching\">");
-            writer.println("        <form method=\"get\" action=\"\" accept-charset=\"UTF-8\">");
-            writer.println("        <tr>");
-            writer.println("          <th>UUID: </th>");
-            writer.println("          <td>");
-            writer.println("              <input name=\"uuid\" type=\"text\" size=\"150\" value=\"" + getRequestParameter(req,"uuid","") + "\"/>");
-            writer.println("          </td>");
-            writer.println("        </tr>");
-            writer.println("        <tr>");
-            writer.println("          <td>&nbsp;</td>");
-            writer.println("          <td>");
-            writer.println("              <input type=\"submit\" value=\"Fetch\"/>");
-            writer.println("          </td>");
-            writer.println("        </tr>");
-            writer.println("        </form>");
-            writer.println("        <form method=\"get\" action=\"\" accept-charset=\"UTF-8\">");
-            writer.println("        <tr>");
-            writer.println("          <th>XPath: </th>");
-            writer.println("          <td>");
-            writer.println("              <input name=\"xpath\" type=\"text\" size=\"150\" value=\"" + getRequestParameter(req,"xpath","") + "\"/>");
-            writer.println("          </td>");
-            writer.println("        </tr>");
-            writer.println("        <tr>");
-            writer.println("          <td>Limit: </td>");
-            writer.println("          <td>");
-            writer.println("              <input name=\"limit\" type=\"text\" size=\"5\" value=\"" + getRequestParameter(req,"limit","1000") + "\"/>");
-            writer.println("              <input type=\"submit\" value=\"Search\"/>");
-            writer.println("          </td>");
-            writer.println("        </tr>");
-            writer.println("        </form>");
-            writer.println("        <form method=\"get\" action=\"\" accept-charset=\"UTF-8\">");
-            writer.println("        <tr>");
-            writer.println("          <th>SQL: </th>");
-            writer.println("          <td>");
-            writer.println("              <input name=\"sql\" type=\"text\" size=\"150\" value=\"" + getRequestParameter(req,"sql","") + "\"/>");
-            writer.println("          </td>");
-            writer.println("        </tr>");
-            writer.println("        <tr>");
-            writer.println("          <td>Limit: </td>");
-            writer.println("          <td>");
-            writer.println("              <input name=\"limit\" type=\"text\" size=\"5\" value=\"" + getRequestParameter(req,"limit","1000") + "\"/>");
-            writer.println("              <input type=\"submit\" value=\"Search\"/>");
-            writer.println("          </td>");
-            writer.println("        </tr>");
-            writer.println("        </form>");
-            writer.println("      </table>");
-            writer.println("    </td>");
-            writer.println("    <td class=\"header\">");
-            writer.println("      <h3>Request parameters</h3>");
-            writer.println("      <table style=\"params\" summary=\"request parameters\">");
-            writer.println("        <tr><th>name</th><th>value</th></tr>");
-            writer.println("        <tr><td>servlet path : </td><td><code>" + req.getServletPath() + "</code></td></tr>");
-            writer.println("        <tr><td>request uri : </td><td><code>" + req.getRequestURI() + "</code></td></tr>");
-            writer.println("        <tr><td>relative path : </td><td><code>" + path + "</code></td></tr>");
-            writer.println("      </table>");
-            writer.println("    </td>");
-            writer.println("    <td class=\"header\">");
-            writer.println("      <h3>Login information</h3>");
-            writer.println("      <table style=\"params\" summary=\"login parameters\">");
-            writer.println("        <tr><th>logged in as : </th><td><code>" + session.getUserID() + "</code></td></tr>");
-            writer.println("      </table>");
-            writer.println("    </td>");
-            writer.println("  </tr>");
-            writer.println("</table>");
-            writer.println("  <h3>Referenced node</h3>");
+            templateParams.put("jcrSession", jcrSession);
 
             // parse path
-            while (path.startsWith("/")) {
-                path = path.substring(1);
-            }
-            path = URLDecoder.decode(path, "UTF-8");
-            Node node = session.getRootNode();
-            if (!"".equals(path)) {
-                node = node.getNode(path);
+            while (currentNodePath.startsWith("/")) {
+                currentNodePath = currentNodePath.substring(1);
             }
 
-            // create breadcrumb style path
-            StringBuilder breadCrumb = new StringBuilder();
-            breadCrumb.append("Accessing node <code>");
-            String[] elements = path.split("/");
-            int count = elements.length;
-            if ("".equals(path)) {
-                count = 0;
+            currentNodePath = URLDecoder.decode(currentNodePath, "UTF-8");
+            Node rootNode = jcrSession.getRootNode();
+            Node currentNode = rootNode;
+            if (!"".equals(currentNodePath)) {
+                currentNode = currentNode.getNode(currentNodePath);
             }
-            for (int i = 0; i < count + 1; i++) {
-                breadCrumb.append("<a href=\"./");
-                for (int j = i; j < count; j++) {
-                    breadCrumb.append("../");
+
+            templateParams.put("rootNode", rootNode);
+            templateParams.put("currentNodePath", currentNodePath);
+            templateParams.put("currentNode", currentNode);
+
+            if (currentNode.isSame(rootNode)) {
+                templateParams.put("ancestorNodes", Collections.emptyList());
+            } else {
+                List<Node> ancestorNodes = new LinkedList<Node>();
+                for (Node ancestor = currentNode.getParent(); ancestor != null && !ancestor.isSame(rootNode); ancestor = ancestor.getParent()) {
+                    ancestorNodes.add(0, ancestor);
                 }
-                breadCrumb.append("\">");
-                if (i == 0) {
-                    breadCrumb.append("/root");
-                } else {
-                    breadCrumb.append(StringEscapeUtils.escapeHtml(NodeNameCodec.decode(elements[i - 1])));
-                }
-                breadCrumb.append("/</a>");
-            }
-            breadCrumb.append("</code>");
-            writer.println(breadCrumb);
-
-            writer.println("    <ul>");
-
-            // list nodes
-            for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
-                Node child = iter.nextNode();
-                String childPath = child.getName();
-                if (child.getIndex() > 1) {
-                    childPath = childPath + "[" + child.getIndex() + "]";
-                }
-                childPath = URLEncoder.encode(childPath, "UTF-8");
-                writer.print("    <li type=\"circle\"><a href=\"./" + childPath + "/" + "\">");
-                String displayName = StringEscapeUtils.escapeHtml(NodeNameCodec.decode(child.getName()));
-                if (child.hasProperty(HippoNodeType.HIPPO_COUNT)) {
-                    writer.print(displayName + " [" + child.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]");
-                } else {
-                    writer.print(displayName);
-                }
-                writer.println("</a>");
+                templateParams.put("ancestorNodes", ancestorNodes);
             }
 
-            // list properties
-            for (PropertyIterator iter = node.getProperties(); iter.hasNext();) {
-                Property prop = iter.nextProperty();
-                writer.print("    <li type=\"disc\">");
-                writer.print("[name=" + prop.getName() + "] = ");
-                if (prop.getDefinition().isMultiple()) {
-                    Value[] values = prop.getValues();
-                    writer.print("[ ");
-                    for (int i = 0; i < values.length; i++) {
-                        if(values[i].getType() == PropertyType.BINARY) {
-                            writer.print((i > 0 ? ", " : "") + prop.getLength() + " bytes.");
-                        } else {
-                            writer.print((i > 0 ? ", " : "") + values[i].getString());
-                        }
-                    }
-                    writer.println(" ]");
-                } else {
-                    if(prop.getType() == PropertyType.BINARY) {
-                        writer.print(prop.getLength() + " bytes.");
-                    } else {
-                        writer.println(prop.getString());
-                    }
-                }
-            }
+            String param = null;
 
-            writer.println("    </ul>");
-
-
-            String queryString;
-            if ((queryString = req.getParameter("xpath")) != null || (queryString = req.getParameter("sql")) != null) {
-                QueryManager qmgr = session.getWorkspace().getQueryManager();
+            if ((param = req.getParameter("xpath")) != null || (param = req.getParameter("sql")) != null) {
+                QueryManager qmgr = jcrSession.getWorkspace().getQueryManager();
 
                 String language = (req.getParameter("xpath") != null ? Query.XPATH: Query.SQL);
-                Query query;
-                if (language.equals(Query.XPATH)) {
+                Query query = null;
+
+                if (Query.XPATH.equals(language)) {
                     // we encode xpath queries to support queries like /jcr:root/7_8//*
                     // the 7 needs to be encode
-                    query = qmgr.createQuery(RepoUtils.encodeXpath(queryString), language);
+                    query = qmgr.createQuery(RepoUtils.encodeXpath(param), language);
                 } else {
-                    query = qmgr.createQuery(queryString, language);
+                    query = qmgr.createQuery(param, language);
                 }
 
-                String strLimit = req.getParameter("limit");
-                if (strLimit != null && !strLimit.isEmpty()) {
-                    query.setLimit(Long.parseLong(strLimit));
-                }
-                QueryResult result = query.execute();
-                HippoNodeIterator iter = (HippoNodeIterator) result.getNodes();
-                
-                writer.println("  <h3>Query executed</h3>");
-                writer.println("  <blockquote>");
-                writer.println(StringEscapeUtils.escapeHtml(queryString));
-                writer.println("  </blockquote>");
-                writer.println("  Number of results found: " + iter.getTotalSize());
-                writer.println("  <ol>");
-               
-                while (iter.hasNext()) {
-                    Node resultNode = iter.nextNode();
-                    if (resultNode != null) {
-                        writer.print("    <li>");
-                        writer.print(resultNode.getPath());
-                        writer.println("</li>");
-                    }
-                }
-                writer.println("  </ol><hr/><table summary=\"searchresult\">");
-                result = query.execute();
-                String[] columns = result.getColumnNames();
-                writer.println("  <tr>");
-                for (int i = 0; i < columns.length; i++) {
-                    writer.print("    <th>");
-                    writer.print(columns[i]);
-                    writer.println("</th>");
-                }
-                writer.println("  </tr>");
-                for (RowIterator rowIter = result.getRows(); rowIter.hasNext();) {
-                    Row resultRow = rowIter.nextRow();
-                    writer.println("    <tr>");
-                    if (resultRow != null) {
-                        Value[] values = resultRow.getValues();
-                        if (values != null) {
-                            for (int i = 0; i < values.length; i++) {
-                                writer.print("    <td>");
-                                writer.print(values[i] != null && values[i].getType() != PropertyType.BINARY ? values[i].getString() : "");
-                                writer.println("</td>");
-                            }
-                        }
-                    }
-                    writer.println("  </tr>");
-                }
-                writer.println("</table>");
-            }
-            if ((queryString = req.getParameter("map")) != null) {
-                writer.println("  <h3>Repository as map</h3>");
-                Map map = repository.getRepositoryMap(node);
-                if(!queryString.equals("")) {
-                    StringTokenizer queryElts = new StringTokenizer(queryString, ".");
-                    while (queryElts.hasMoreTokens()) {
-                        map = (Map)map.get(queryElts.nextToken());
-                    }
-                }
-                writer.println("  <blockquote>");
-                writer.println("    _name = " + map.get("_name")+"<br/>");
-                writer.println("    _location = " + map.get("_location")+"<br/>");
-                writer.println("    _path = " + map.get("_path")+"<br/>");
-                //writer.println("    _parent._path = " + ((Map)map.get("_parent")).get("_path").toString()+"<br/>");
-                writer.println("    _index = " + map.get("_index")+"<br/>");
-                writer.println("    _size = " + map.get("_size")+"<br/>");
-                for (Iterator iter = map.keySet().iterator(); iter.hasNext();) {
-                    //Object e = iter.next();
-                    //writer.println("X"+e.getClass()+"<br/>");
-                    //if(e instanceof Map.Entry) {
-                    //Map.Entry entry = (Map.Entry)e;
-                    //String key = entry.getKey().toString();
-                    //Object value = entry.getValue().toString();
+                String limit = req.getParameter("limit");
 
-                    String key = (String) iter.next();
-                    Object value = map.get(key);
-                    if (value instanceof Map) {
-                        writer.println("    " + key + "._path = " + ((Map)value).get("_path")+"<br/>");
-                    } else {
-                        writer.println("    " + key + " = " + (value != null ? value.toString() : "null" )+"<br/>");
-                    }
-                    //}
+                if (limit != null && !limit.isEmpty()) {
+                    query.setLimit(Long.parseLong(limit));
                 }
-                writer.println("  </blockquote>");
-            }
-            if ((queryString = req.getParameter("uuid")) != null) {
-                writer.println("  <h3>Get node by UUID</h3>");
-                writer.println("  <blockquote>");
-                writer.println("UUID = " + StringEscapeUtils.escapeHtml(queryString));
-                writer.println("  </blockquote>");
-                writer.println("  <ol>");
-                writer.println("    <li>");
-                try {
-                    Node n = session.getNodeByIdentifier(queryString);
-                    writer.println("Found node: " + n.getPath());
-                } catch (ItemNotFoundException e) {
-                    writer.println("No node found for uuid " + StringEscapeUtils.escapeHtml(queryString));
-                } catch (RepositoryException e) {
-                    writer.println(e.getMessage());
-                }
-                writer.println("  </li> ");
-                writer.println("  </ol><hr>");
 
+                QueryResult queryResult = query.execute();
+                templateParams.put("queryResult", queryResult);
+                templateParams.put("queryResultTotalSize", ((HippoNodeIterator) queryResult.getNodes()).getTotalSize());
             }
-            if ((queryString = req.getParameter("deref")) != null) {
-                writer.println("  <h3>Getting nodes having a reference to </h3>");
-                writer.println("  <blockquote>");
-                writer.println("UUID = " + StringEscapeUtils.escapeHtml(queryString));
-                Node n = null;
-                try {
-                    n = session.getNodeByIdentifier(queryString);
-                    writer.println(" ( " + n.getPath() + " )");
-                } catch (RepositoryException e) {
-                    writer.println(e.getMessage());
-                }
-                writer.println("  </blockquote><hr>");
-                if (n != null) {
-                    PropertyIterator propIt = n.getReferences();
-                    if (propIt.hasNext()) {
-                        writer.println("  <table>");
-                        writer.println("  <tr><th align=left>");
-                        writer.println("  Node path");
-                        writer.println("  </th><th align=left>" );
-                        writer.println("  Property reference name" );
-                        writer.println("  </th></tr>");
-                        while (propIt.hasNext()) {
-                            Property prop = propIt.nextProperty();
-                            writer.println("  <tr><td>");
-                            writer.println(prop.getParent().getPath());
-                            writer.println("    </td><td>");
-                            writer.println("<b>"+prop.getName()+"</b>");
-                            writer.println("    </td></tr>");
-                        }
-                        writer.println("  </table>");
 
-                    }else {
-                        writer.println("No nodes have a reference to '" +n.getPath() + "'");
+            if ((param = req.getParameter("map")) != null) {
+                Map repositoryMap = repository.getRepositoryMap(currentNode);
+                if (!"".equals(param)) {
+                    StringTokenizer st = new StringTokenizer(param, ".");
+                    while (st.hasMoreTokens()) {
+                        repositoryMap = (Map) repositoryMap.get(st.nextToken());
                     }
                 }
+                templateParams.put("repositoryMap", repositoryMap);
             }
-            writer.println("</body></html>");
+
+            if (((param = req.getParameter("uuid")) != null) || ((param = req.getParameter("deref")) != null)) {
+                Node nodeById = jcrSession.getNodeByIdentifier(param);
+                templateParams.put("nodeById", nodeById);
+            }
         } catch (LoginException ex) {
             BasicAuth.setRequestAuthorizationHeaders(res, "Repository");
-        } catch (RepositoryException ex) {
-            writer.println("<p>Error while accessing the repository, exception reads as follows:");
-            writer.println("<pre>" + ex.getClass().getName() + ": " + ex.getMessage());
-            ex.printStackTrace(writer);
-            writer.println("</pre>");
-            writer.println("</body></html>");
+        } catch (Exception ex) {
+            templateParams.put("exception", ex);
         } finally {
-            if (session != null) {
-                session.logout();
+            try {
+                renderTemplatePage(req, res, getRenderTemplate(req), templateParams);
+            } catch (Exception te) {
+                log.warn("Failed to render freemarker template.", te);
+            } finally {
+                if (jcrSession != null) {
+                    jcrSession.logout();
+                }
+            }
+        }
+    }
+
+    /**
+     * Create Freemarker template engine configuration on initiaization
+     * <P>
+     * By default, this method created a configuration by using {@link DefaultObjectWrapper}
+     * and {@link ClassTemplateLoader}. And sets additional properties by loading
+     * <code>./RepositoryServlet-ftl.properties</code> from the classpath.
+     * </P>
+     * @return
+     */
+    protected Configuration createFreemarkerConfiguration() {
+        Configuration cfg = new Configuration();
+
+        cfg.setObjectWrapper(new DefaultObjectWrapper());
+        cfg.setTemplateLoader(new ClassTemplateLoader(getClass(), ""));
+
+        InputStream propsInput = null;
+        final String propsResName = getClass().getSimpleName() + "-ftl.properties";
+
+        try {
+            propsInput = getClass().getResourceAsStream(propsResName);
+            cfg.setSettings(propsInput);
+        } catch (Exception e) {
+            log.warn("Failed to load Freemarker configuration properties.", e);
+        } finally {
+            IOUtils.closeQuietly(propsInput);
+        }
+
+        return cfg;
+    }
+
+    /**
+     * Create Freemarker template to render result.
+     * By default, this loads <code>RepositoryServlet-html.ftl</code> from the classpath.
+     * @param request
+     * @return
+     * @throws IOException
+     */
+    protected Template getRenderTemplate(final HttpServletRequest request) throws IOException {
+        final String templateName = getClass().getSimpleName() + "-html.ftl";
+        return freeMarkerConfiguration.getTemplate(templateName);
+    }
+
+    private void renderTemplatePage(final HttpServletRequest request, final HttpServletResponse response,
+            Template template, final Map<String, Object> templateParams) throws IOException, ServletException, TemplateException {
+        PrintWriter out = null;
+
+        try {
+            out = response.getWriter();
+            Map<String, Object> context = new HashMap<String, Object>();
+
+            if (templateParams != null && !templateParams.isEmpty()) {
+                for (Map.Entry<String, Object> entry : templateParams.entrySet()) {
+                    context.put(entry.getKey(), entry.getValue());
+                }
+            }
+
+            context.put("request", request);
+            context.put("response", response);
+
+            template.process(context, out);
+            out.flush();
+        } finally {
+            if (out != null) {
+                out.close();
             }
         }
     }
