@@ -37,6 +37,7 @@
   <%-- HIPPO THEME DEPS --%>
   <script src="${pageContext.request.contextPath}/components/angular-ui-tree/dist/angular-ui-tree.js"></script>
   <script src="${pageContext.request.contextPath}/components/hippo-plugins/dist/js/main.js"></script>
+  <script src="${pageContext.request.contextPath}/components/hippo-theme/dist/js/main.js"></script>
 
 
   <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/components/chosen/chosen.css"/>
