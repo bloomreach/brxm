@@ -939,7 +939,6 @@ plugin-dashboard/src/main/webapp/WEB-INF/jsp/errors/404.jsp -text
 plugin-dashboard/src/main/webapp/WEB-INF/jsp/errors/500.jsp -text
 plugin-dashboard/src/main/webapp/WEB-INF/jsp/index.jsp -text
 plugin-dashboard/src/main/webapp/WEB-INF/web.xml -text
-plugin-dashboard/src/main/webapp/assets/css/bootstrap.css -text
 plugin-dashboard/src/main/webapp/assets/fonts/glyphicons-halflings-regular.eot -text
 plugin-dashboard/src/main/webapp/assets/fonts/glyphicons-halflings-regular.svg -text
 plugin-dashboard/src/main/webapp/assets/fonts/glyphicons-halflings-regular.ttf -text
