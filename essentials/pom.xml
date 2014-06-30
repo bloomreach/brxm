@@ -232,7 +232,6 @@
                 <exclude>**/*.cnd</exclude>
                 <exclude>**/*.json</exclude>
                 <exclude>**/*.log</exclude>
-
                 <exclude>**/*.patch</exclude>
                 <exclude>**/*.properties</exclude>
                 <exclude>**/hippoecm-extension.xml</exclude>
@@ -243,9 +242,9 @@
                 <!-- exclude IntelliJ Atlassian plugin file -->
                 <exclude>**/atlassian-ide-plugin.xml</exclude>
                 <!-- essentials specific -->
-                <exclude>plugin-dashboard/src/main/webapp/bootstrap-3.0.0/**</exclude>
                 <exclude>plugin-dashboard/src/main/webapp/components/**</exclude>
                 <exclude>plugin-dashboard/src/main/webapp/js/lib/**</exclude>
+                <exclude>plugin-dashboard/src/main/webapp/docs/rest-api/**</exclude>
                 <exclude>archetype/**</exclude>
                 <exclude>ide/**</exclude>
                 <exclude>**/*.md</exclude>
@@ -254,9 +253,9 @@
                 <exclude>**/*.svg</exclude>
                 <exclude>**/*.woff</exclude>
                 <exclude>**/*.ttf</exclude>
+                <exclude>jar-dependencies.txt</exclude>
               </excludes>
             </configuration>
-
           </plugin>
         </plugins>
       </build>
