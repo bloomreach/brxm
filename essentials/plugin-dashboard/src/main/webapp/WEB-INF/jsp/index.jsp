@@ -13,25 +13,29 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   --%>
-
 <!doctype html>
 <html>
 <head>
   <title>Hippo Essentials</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/main.css"/>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/components/angular-ui-tree/dist/angular-ui-tree.min.css"/>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/hippo-essentials.css"/>
+  <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/components/chosen/chosen.css"/>
+
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/essentials-less/hippo-essentials.css"/>
+
   <script src="${pageContext.request.contextPath}/components/jquery/jquery.js"></script>
   <script src="${pageContext.request.contextPath}/components/angular/angular.js"></script>
   <script src="${pageContext.request.contextPath}/components/angular/angular-sanitize.min.js"></script>
+  <script src="${pageContext.request.contextPath}/components/chosen/chosen.jquery.js"></script>
   <script src="${pageContext.request.contextPath}/components/underscore/underscore.js"></script>
+
   <script src="${pageContext.request.contextPath}/components/bootstrap/dist/js/bootstrap.js"></script>
+
+  <script src="${pageContext.request.contextPath}/components/angular-bootstrap/ui-bootstrap.min.js"></script>
   <script src="${pageContext.request.contextPath}/components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
   <script src="${pageContext.request.contextPath}/js/lib/angular-route.min.js"></script>
   <script src="${pageContext.request.contextPath}/js/lib/angular-ui-router.js"></script>
 
-
-  <script src="${pageContext.request.contextPath}/components/chosen/chosen.jquery.js"></script>
   <script src="${pageContext.request.contextPath}/js/lib/chosen.js"></script>
 
   <%-- HIPPO THEME DEPS --%>
@@ -39,9 +43,7 @@
   <script src="${pageContext.request.contextPath}/components/hippo-plugins/dist/js/main.js"></script>
   <script src="${pageContext.request.contextPath}/components/hippo-theme/dist/js/main.js"></script>
 
-
-  <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/components/chosen/chosen.css"/>
-  <script src="${pageContext.request.contextPath}/components/angular-bootstrap/ui-bootstrap.min.js"></script>
+  <%-- ESSENTIALS --%>
   <script src="${pageContext.request.contextPath}/js/Essentials.js"></script>
   <script src="${pageContext.request.contextPath}/js/app.js"></script>
   <script src="${pageContext.request.contextPath}/js/routes.js"></script>

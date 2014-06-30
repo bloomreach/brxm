@@ -73,21 +73,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 .infobox {
   margin: 0 0 20px 0;
   padding: 15px 30px 15px 15px;
@@ -109,28 +94,28 @@
   border-color: #ebcccc;
 }
 .infobox.infobox-danger h4 {
-  color: #b94a48;
+  color: #a94442;
 }
 .infobox.infobox-warning {
   background-color: #fcf8e3;
   border-color: #faf2cc;
 }
 .infobox.infobox-warning h4 {
-  color: #c09853;
+  color: #8a6d3b;
 }
 .infobox.infobox-info {
   background-color: #d9edf7;
   border-color: #c4e3f3;
 }
 .infobox.infobox-info h4 {
-  color: #3a87ad;
+  color: #31708f;
 }
 .infobox.infobox-success {
   background-color: #dff0d8;
   border-color: #d0e9c6;
 }
 .infobox.infobox-success h4 {
-  color: #468847;
+  color: #3c763d;
 }
 /*
  * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
@@ -192,6 +177,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+.modal {
+  display: block;
+  height: 0;
+  overflow: visible;
+}
+.modal-body:before,
+.modal-body:after {
+  display: table;
+  content: " ";
+}
+.modal-header:before,
+.modal-header:after {
+  display: table;
+  content: " ";
+}
 .confirmation-dialog.s-visible {
   display: none;
 }

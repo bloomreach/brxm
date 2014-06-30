@@ -5235,6 +5235,12 @@ plugin-dashboard/src/main/webapp/css/*.iml
 plugin-dashboard/src/main/webapp/css/.DS_Store
 plugin-dashboard/src/main/webapp/css/.idea
 plugin-dashboard/src/main/webapp/css/atlassian-ide-plugin.xml
+plugin-dashboard/src/main/webapp/css/essentials-less/*.iml
+plugin-dashboard/src/main/webapp/css/essentials-less/.DS_Store
+plugin-dashboard/src/main/webapp/css/essentials-less/.idea
+plugin-dashboard/src/main/webapp/css/essentials-less/atlassian-ide-plugin.xml
+plugin-dashboard/src/main/webapp/css/essentials-less/hippo-plugins.iws
+plugin-dashboard/src/main/webapp/css/essentials-less/target
 plugin-dashboard/src/main/webapp/css/hippo-plugins.iws
 plugin-dashboard/src/main/webapp/css/less/*.iml
 plugin-dashboard/src/main/webapp/css/less/.DS_Store

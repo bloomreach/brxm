@@ -20,20 +20,20 @@
         .controller('relatedDocumentsCtrl', function ($scope, $filter, $sce, $log, $modal, $rootScope, $http) {
             var endpoint = $rootScope.REST.dynamic + 'related-documents';
             $scope.pluginId = "relatedDocumentsPlugin";
-            $scope.numberOfSuggestions = "10";
-            $scope.fieldLocation = "";
-            $scope.searchPaths = "";
-
             $scope.addDocs = function () {
                 var documents = [];
+                var searchPaths = [];
+                var suggestions = [];
                 angular.forEach($scope.documentTypes, function (value) {
                     if (value.checked) {
                         documents.push(value.name);
+                        searchPaths.push(value.searchPaths);
+                        suggestions.push(value.numberOfSuggestions);
                     }
                 });
                 var payload = Essentials.addPayloadData("documents", documents.join(','), null);
-                Essentials.addPayloadData("numberOfSuggestions", $scope.numberOfSuggestions, payload);
-                Essentials.addPayloadData("searchPaths", $scope.searchPaths, payload);
+                Essentials.addPayloadData("numberOfSuggestions", suggestions.join(','), payload);
+                Essentials.addPayloadData("searchPaths", searchPaths.join(','), payload);
                 $http.post(endpoint, payload).success(function (data) {
                 });
 
