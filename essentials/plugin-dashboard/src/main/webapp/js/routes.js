@@ -37,7 +37,7 @@
                 })
                 .state('introduction', {
                     url: '/introduction',
-                    templateUrl: 'introduction/introduction.html',
+                    templateUrl: 'pages/introduction.html',
                     controller: 'introductionCtrl'
                 })
                 .state('tools-id', {

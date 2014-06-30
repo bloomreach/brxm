@@ -5310,12 +5310,6 @@ plugin-dashboard/src/main/webapp/images/.idea
 plugin-dashboard/src/main/webapp/images/atlassian-ide-plugin.xml
 plugin-dashboard/src/main/webapp/images/hippo-plugins.iws
 plugin-dashboard/src/main/webapp/images/target
-plugin-dashboard/src/main/webapp/introduction/*.iml
-plugin-dashboard/src/main/webapp/introduction/.DS_Store
-plugin-dashboard/src/main/webapp/introduction/.idea
-plugin-dashboard/src/main/webapp/introduction/atlassian-ide-plugin.xml
-plugin-dashboard/src/main/webapp/introduction/hippo-plugins.iws
-plugin-dashboard/src/main/webapp/introduction/target
 plugin-dashboard/src/main/webapp/js/*.iml
 plugin-dashboard/src/main/webapp/js/.DS_Store
 plugin-dashboard/src/main/webapp/js/.idea
