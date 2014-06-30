@@ -2519,6 +2519,10 @@ richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/model/Ric
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/model/RichTextEditorInternalLink.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/model/RichTextEditorLink.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/model/RichTextImageMetaDataModel.java svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/view/PreviewLinksBehavior.properties -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/view/PreviewLinksBehavior_de.properties -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/view/PreviewLinksBehavior_fr.properties -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/view/PreviewLinksBehavior_nl.properties -text
 richtext/frontend/src/site/apt/index.apt -text
 richtext/frontend/src/site/site.xml svneol=native#text/plain
 richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/richtext/RichTextProcessorTest.java svneol=native#text/plain

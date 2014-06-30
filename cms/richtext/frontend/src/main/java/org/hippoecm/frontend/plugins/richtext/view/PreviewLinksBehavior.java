@@ -28,16 +28,25 @@ import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.resource.loader.PackageStringResourceLoader;
 import org.apache.wicket.util.encoding.UrlDecoder;
 import org.apache.wicket.util.encoding.UrlEncoder;
 import org.apache.wicket.util.string.*;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.richtext.ILinkDecorator;
+import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_DOCBASE;
+import static org.hippoecm.repository.api.HippoNodeType.NT_DELETED;
+import static org.hippoecm.repository.api.HippoNodeType.NT_FACETSELECT;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
 class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior implements ILinkDecorator {
 
@@ -73,8 +82,8 @@ class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior implements ILinkD
                 try {
                     if (node.hasNode(link)) {
                         node = node.getNode(link);
-                        if (node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                            final String uuid = node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+                        if (node.isNodeType(NT_FACETSELECT)) {
+                            final String uuid = node.getProperty(HIPPO_DOCBASE).getString();
                             final Session jcrSession = UserSession.get().getJcrSession();
                             node = jcrSession.getNodeByIdentifier(uuid);
                             browser.browse(new JcrNodeModel(node));
@@ -93,16 +102,39 @@ class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior implements ILinkD
     public String internalLink(String link) {
         final AjaxRequestAttributes attributes = getAttributes();
         final Charset charset = RequestCycle.get().getRequest().getCharset();
-        if (encode) {
-            link = UrlEncoder.QUERY_INSTANCE.encode(link, charset);
+        if (linkExists(link)) {
+            if (encode) {
+                link = UrlEncoder.QUERY_INSTANCE.encode(link, charset);
+            }
+            attributes.getExtraParameters().put("link", link);
+            CharSequence asString = renderAjaxAttributes(getComponent(), attributes);
+            return "href=\"#\" onclick='" + JS_PREVENT_DEFAULT + JS_STOP_EVENT + "Wicket.Ajax.get(" + asString + ");'";
+        } else {
+            String message = new ClassResourceModel("brokenlink-alert", PreviewLinksBehavior.class, new Object[] {}).getObject();
+            return "class=\"brokenlink\" href=\"#\" onclick=\"alert('" + message + "');return false;\"";
         }
-        attributes.getExtraParameters().put("link", link);
-        CharSequence asString = renderAjaxAttributes(getComponent(), attributes);
-        return "href=\"#\" onclick='" + JS_PREVENT_DEFAULT + JS_STOP_EVENT + "Wicket.Ajax.get(" + asString + ");'";
     }
 
     @Override
     public String externalLink(String link) {
         return "href=\"" + link + "\" onclick=\"" + JS_STOP_EVENT + "\"";
+    }
+
+    private boolean linkExists(String linkRelPath) {
+        final Node node = model.getObject();
+        try {
+            if (node.hasNode(linkRelPath)) {
+                final Node link = node.getNode(linkRelPath);
+                final String docbase = JcrUtils.getStringProperty(link, HIPPO_DOCBASE, null);
+                if (docbase != null) {
+                    final Node target = UserSession.get().getJcrSession().getNodeByIdentifier(docbase);
+                    return !target.getNode(target.getName()).isNodeType(NT_DELETED);
+                }
+            }
+        } catch (ItemNotFoundException ignore) {
+        } catch (RepositoryException e) {
+            log.error("Error while checking internal link existence", e);
+        }
+        return false;
     }
 }
