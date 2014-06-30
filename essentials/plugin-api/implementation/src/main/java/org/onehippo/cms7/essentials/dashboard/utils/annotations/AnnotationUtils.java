@@ -36,8 +36,11 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
+import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.onehippo.cms7.essentials.dashboard.utils.JavaSourceUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.code.ExistingMethodsVisitor;
 import org.slf4j.Logger;
@@ -57,7 +60,48 @@ public final class AnnotationUtils {
     //############################################
 
 
-    public static String addXmlElementAnnotation(final String source){
+    public static String addXmlAdaptorAnnotation(final String source, final Class<?> returnType, final AdapterWrapper wrapper) {
+
+        final CompilationUnit unit = JavaSourceUtils.getCompilationUnit(source);
+        final AST ast = unit.getAST();
+        final ExistingMethodsVisitor methodsVisitor = JavaSourceUtils.getMethodCollection(unit);
+        final List<MethodDeclaration> getterMethods = methodsVisitor.getGetterMethods();
+        boolean needsImport = false;
+        final String ourReturnType = returnType.getSimpleName();
+        for (MethodDeclaration getterMethod : getterMethods) {
+            final Type returnType2 = getterMethod.getReturnType2();
+            if (returnType2.isSimpleType()) {
+                final SimpleType simpleType = (SimpleType) returnType2;
+                if (!simpleType.getName().getFullyQualifiedName().equals(ourReturnType)) {
+                    continue;
+                }
+            } else {
+                log.warn("TODO: Cannot map type: {}", returnType2);
+                continue;
+            }
+            log.info(ourReturnType);
+            @SuppressWarnings("rawtypes")
+            final List parameters = getterMethod.parameters();
+            if (parameters == null || parameters.size() == 0) {
+                final SingleMemberAnnotation generatedAnnotation = ast.newSingleMemberAnnotation();
+                generatedAnnotation.setTypeName(ast.newName("XmlJavaTypeAdapter"));
+                // name
+                final TypeLiteral typeLiteral = ast.newTypeLiteral();
+                typeLiteral.setType(ast.newSimpleType(ast.newName(wrapper.className)));
+                generatedAnnotation.setValue(typeLiteral);
+                JavaSourceUtils.addAnnotation(getterMethod, generatedAnnotation);
+                needsImport = true;
+            }
+        }
+        if (needsImport) {
+            JavaSourceUtils.addImport(unit, wrapper.importPath);
+        }
+
+        return JavaSourceUtils.rewrite(unit, ast);
+
+    }
+
+    public static String addXmlElementAnnotation(final String source) {
 
         final CompilationUnit unit = JavaSourceUtils.getCompilationUnit(source);
         final AST ast = unit.getAST();
@@ -82,6 +126,7 @@ public final class AnnotationUtils {
         return JavaSourceUtils.rewrite(unit, ast);
 
     }
+
     /**
      * For given java source, add {@code @XmlAccessorType(XmlAccessType.NONE)} class annotation
      *
@@ -113,9 +158,6 @@ public final class AnnotationUtils {
         JavaSourceUtils.addAnnotation(classType, xmlAccessAnnotation);
         return JavaSourceUtils.rewrite(unit, ast);
     }
-
-
-
 
 
     //############################################
@@ -226,6 +268,17 @@ public final class AnnotationUtils {
             myClass = myClass.getSuperclass();
         }
         return returnValue.values();
+    }
+
+
+    public static class AdapterWrapper {
+        private final String importPath;
+        private final String className;
+
+        public AdapterWrapper(final String importPath, final String className) {
+            this.importPath = importPath;
+            this.className = className;
+        }
     }
 
     private AnnotationUtils() {

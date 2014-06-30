@@ -986,9 +986,7 @@ public final class JavaSourceUtils {
         final TextEdit edits = rewriter.rewriteAST(document, null);
         try {
             edits.apply(document);
-            final String formattedSource = formatCode(document);
-            log.debug("formattedSource {}", formattedSource);
-            return formattedSource;
+            return formatCode(document);
         } catch (BadLocationException e) {
             log.error("Error creating HippoBean", e);
         }

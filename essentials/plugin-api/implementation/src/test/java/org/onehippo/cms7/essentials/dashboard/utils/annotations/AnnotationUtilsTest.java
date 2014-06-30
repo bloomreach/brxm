@@ -26,6 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
 import org.eclipse.jdt.core.dom.TypeLiteral;
+import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
@@ -42,6 +43,22 @@ public class AnnotationUtilsTest {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationUtilsTest.class);
     public static final int TOTAL_METHODS = 2;
+
+
+    @Test
+    public void testXmlAdaptorAnnotation() throws Exception {
+        final String javaFile = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/AnnotationTestClass.txt"));
+        assertNotNull("Expected to find  /AnnotationTestClass.txt file", javaFile);
+        final String annotationName = "HippoHtmlAdapter";
+        final String importPath = "org.onehippo.cms7.essentials.components.rest.adapters";
+        String annotated = AnnotationUtils.addXmlAdaptorAnnotation(javaFile, HippoHtml.class, new AnnotationUtils.AdapterWrapper(importPath, annotationName));
+        log.info("annotated {}", annotated);
+        int nrOfItems = StringUtils.countMatches(annotated, annotationName);
+        assertEquals(1, nrOfItems);
+        annotated = AnnotationUtils.addXmlAdaptorAnnotation(javaFile, HippoHtml.class, new AnnotationUtils.AdapterWrapper(importPath, annotationName));
+        nrOfItems = StringUtils.countMatches(annotated, annotationName);
+        assertEquals(1, nrOfItems);
+    }
 
     @Test
     public void testMethodAnnotation() throws Exception {
