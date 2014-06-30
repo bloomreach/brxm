@@ -31,5 +31,8 @@
     <sv:property sv:name="hipposys:nodetype" sv:type="String">
       <sv:value>hippotranslation:translated</sv:value>
     </sv:property>
+    <sv:property sv:name="hipposys:privileges" sv:multiple="true" sv:type="String">
+      <sv:value>hippo:author</sv:value>
+    </sv:property>
   </sv:node>
 </sv:node>
