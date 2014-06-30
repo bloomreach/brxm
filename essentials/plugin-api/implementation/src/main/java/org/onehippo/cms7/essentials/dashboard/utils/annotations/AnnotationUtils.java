@@ -30,14 +30,18 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.MarkerAnnotation;
+import org.eclipse.jdt.core.dom.MemberValuePair;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.NormalAnnotation;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
+import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.TypeLiteral;
@@ -59,6 +63,27 @@ public final class AnnotationUtils {
     // SOURCE UTILS
     //############################################
 
+
+    @SuppressWarnings("unchecked")
+    public static String addXmlRootAnnotation(final String source, final String name) {
+
+        final CompilationUnit unit = JavaSourceUtils.getCompilationUnit(source);
+        final AST ast = unit.getAST();
+        final TypeDeclaration classType = (TypeDeclaration) unit.types().get(0);
+        final NormalAnnotation xmlRootAnnotation = ast.newNormalAnnotation();
+        xmlRootAnnotation.setTypeName(ast.newName(XmlRootElement.class.getSimpleName()));
+        // name
+        final MemberValuePair generatedMemberValue = ast.newMemberValuePair();
+        generatedMemberValue.setName(ast.newSimpleName("name"));
+        final StringLiteral internalNameLiteral = ast.newStringLiteral();
+        internalNameLiteral.setLiteralValue(name);
+        generatedMemberValue.setValue(internalNameLiteral);
+        xmlRootAnnotation.values().add(generatedMemberValue);
+        JavaSourceUtils.addAnnotation(classType, xmlRootAnnotation);
+        JavaSourceUtils.addImport(unit, XmlRootElement.class.getName());
+        return JavaSourceUtils.rewrite(unit, ast);
+
+    }
 
     public static String addXmlAdaptorAnnotation(final String source, final Class<?> returnType, final AdapterWrapper wrapper) {
 

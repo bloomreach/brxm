@@ -21,6 +21,7 @@ import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jdt.core.dom.AST;
@@ -52,13 +53,28 @@ public class AnnotationUtilsTest {
         final String annotationName = "HippoHtmlAdapter";
         final String importPath = "org.onehippo.cms7.essentials.components.rest.adapters";
         String annotated = AnnotationUtils.addXmlAdaptorAnnotation(javaFile, HippoHtml.class, new AnnotationUtils.AdapterWrapper(importPath, annotationName));
-        log.info("annotated {}", annotated);
         int nrOfItems = StringUtils.countMatches(annotated, annotationName);
         assertEquals(1, nrOfItems);
         annotated = AnnotationUtils.addXmlAdaptorAnnotation(javaFile, HippoHtml.class, new AnnotationUtils.AdapterWrapper(importPath, annotationName));
         nrOfItems = StringUtils.countMatches(annotated, annotationName);
         assertEquals(1, nrOfItems);
     }
+
+    @Test
+    public void testXmlRootAnnotation() throws Exception {
+        final String javaFile = GlobalUtils.readStreamAsText(getClass().getResourceAsStream("/AnnotationTestClass.txt"));
+        assertNotNull("Expected to find  /AnnotationTestClass.txt file", javaFile);
+        String annotated = AnnotationUtils.addXmlRootAnnotation(javaFile, "testdocument");
+        int nrOfItems = StringUtils.countMatches(annotated, XmlRootElement.class.getName());
+        assertEquals(1, nrOfItems);
+        annotated = AnnotationUtils.addXmlRootAnnotation(javaFile, "testdocument");
+        nrOfItems = StringUtils.countMatches(annotated, XmlRootElement.class.getName());
+        assertEquals(1, nrOfItems);
+        nrOfItems = StringUtils.countMatches(annotated, "XmlRootElement");
+        // import and annotation
+        assertEquals(2, nrOfItems);
+    }
+
 
     @Test
     public void testMethodAnnotation() throws Exception {
