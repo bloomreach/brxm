@@ -108,7 +108,11 @@ ${response.setContentType("text/html;charset=UTF-8")}
       <table style="params" summary="login parameters">
         <tr>
           <th>Logged in as : </th>
-          <td><code>${jcrSession.userID!}</code></td>
+          <td>
+              <#if jcrSession??>
+                <code>${jcrSession.userID}</code>
+              </#if>
+          </td>
         </tr>
       </table>
     </td>
@@ -123,75 +127,76 @@ ${response.setContentType("text/html;charset=UTF-8")}
 
 <hr>
 
-<h3>Referenced node</h3>
-Accessing node : &nbsp;&nbsp;
+<#if currentNode??>
+    <h3>Referenced node</h3>
+    Accessing node : &nbsp;&nbsp;
 
-<code>
-  <#assign baseRelPath = "./">
-  <#if currentNode.isSame(rootNode)>
-    / <a href="${baseRelPath}">root</a> /
-  <#else>
-    <#assign distance = ancestorNodes?size>
-    <#assign baseRelPath = "">
-    <#list 0..distance as d>
-      <#assign baseRelPath = "../${baseRelPath}">
-    </#list>
-    / <a href="${baseRelPath}">root</a> /
+    <code>
+      <#assign baseRelPath = "./">
+      <#if currentNode.isSame(rootNode)>
+        / <a href="${baseRelPath}">root</a> /
+      <#else>
+        <#assign distance = ancestorNodes?size>
+        <#assign baseRelPath = "">
+        <#list 0..distance as d>
+          <#assign baseRelPath = "../${baseRelPath}">
+        </#list>
+        / <a href="${baseRelPath}">root</a> /
 
-    <#assign distance = ancestorNodes?size>
-    <#list ancestorNodes as ancestor>
-      <#assign ancestorLink = "">
-      <#list 1..distance as d>
-        <#assign ancestorLink = "../${ancestorLink}">
-      </#list>
-      <a href="${ancestorLink}">${ancestor.name!html}</a>
-      /
-      <#assign distance = distance - 1>
-    </#list>
-    <a href="./">${currentNode.name!html}</a>
-    /
-  </#if>
-</code>
-
-<ul>
-  <#list currentNode.nodes as child>
-    <li type="circle">
-      <#assign childLink = "${child.name}">
-      <#if child.index gt 1>
-        <#assign childLink = "${childLink}[${child.index}]">
+        <#assign distance = ancestorNodes?size>
+        <#list ancestorNodes as ancestor>
+          <#assign ancestorLink = "">
+          <#list 1..distance as d>
+            <#assign ancestorLink = "../${ancestorLink}">
+          </#list>
+          <a href="${ancestorLink}">${ancestor.name!html}</a>
+          /
+          <#assign distance = distance - 1>
+        </#list>
+        <a href="./">${currentNode.name!html}</a>
+        /
       </#if>
-      <a href="./${childLink?url}/">
-        ${child.name?html}
-        <#if child.hasProperty("hippo:count")>
-        [${child.getProperty("hippo:count").long}]
-        </#if>
-      </a>
-    </li>
-  </#list>
-  <#list currentNode.properties as prop>
-    <li type="disc">
-      [name="${prop.name}"] =
-      <#if prop.definition.multiple>
-        [
-          <#list prop.values as value>
-            <#if value.type != 2>
-              ${value.string!?html}, 
+    </code>
+
+    <ul>
+      <#list currentNode.nodes as child>
+        <li type="circle">
+          <#assign childLink = "${child.name}">
+          <#if child.index gt 1>
+            <#assign childLink = "${childLink}[${child.index}]">
+          </#if>
+          <a href="./${childLink?url}/">
+            ${child.name?html}
+            <#if child.hasProperty("hippo:count")>
+            [${child.getProperty("hippo:count").long}]
+            </#if>
+          </a>
+        </li>
+      </#list>
+      <#list currentNode.properties as prop>
+        <li type="disc">
+          [name="${prop.name}"] =
+          <#if prop.definition.multiple>
+            [
+              <#list prop.values as value>
+                <#if value.type != 2>
+                  ${value.string!?html},
+                <#else>
+                  ${prop.length} bytes.
+                </#if>
+              </#list>
+            ]
+          <#else>
+            <#if prop.type != 2>
+              ${prop.string!?html}
             <#else>
               ${prop.length} bytes.
             </#if>
-          </#list>
-        ]
-      <#else>
-        <#if prop.type != 2>
-          ${prop.string!?html}
-        <#else>
-          ${prop.length} bytes.
-        </#if>
-      </#if>
-    </li>
-  </#list>
-</ul>
-
+          </#if>
+        </li>
+      </#list>
+    </ul>
+</#if>
 <hr>
 
 <#if queryResult??>

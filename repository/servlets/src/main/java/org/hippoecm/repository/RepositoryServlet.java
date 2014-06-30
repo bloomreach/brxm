@@ -434,7 +434,9 @@ public class RepositoryServlet extends HttpServlet {
             templateParams.put("exception", ex);
         } finally {
             try {
-                renderTemplatePage(req, res, getRenderTemplate(req), templateParams);
+                if (jcrSession != null) {
+                    renderTemplatePage(req, res, getRenderTemplate(req), templateParams);
+                }
             } catch (Exception te) {
                 log.warn("Failed to render freemarker template.", te);
             } finally {
