@@ -1499,10 +1499,12 @@ plugin-dashboard/src/main/webapp/css/less/essentials-less/hippo-essentials.less 
 plugin-dashboard/src/main/webapp/css/less/essentials-less/infobox.less -text
 plugin-dashboard/src/main/webapp/css/less/essentials-less/space.less -text
 plugin-dashboard/src/main/webapp/css/less/hippo-theme/_variables.less -text
+plugin-dashboard/src/main/webapp/css/main.css -text
 plugin-dashboard/src/main/webapp/css/media.css -text
 plugin-dashboard/src/main/webapp/css/normalize.css -text
 plugin-dashboard/src/main/webapp/css/print.css -text
 plugin-dashboard/src/main/webapp/css/theme.css -text
+plugin-dashboard/src/main/webapp/css/theme.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-cms-document-type-deep-link.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-folder-picker.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-help.html -text
@@ -1581,14 +1583,6 @@ plugin-dashboard/src/main/webapp/pages/plugins-menu.html -text
 plugin-dashboard/src/main/webapp/pages/plugins-new-tabs.html -text
 plugin-dashboard/src/main/webapp/pages/plugins.html -text
 plugin-dashboard/src/main/webapp/pages/tools.html -text
-plugin-dashboard/src/main/webapp/theme/fonts/glyphicons-halflings-regular.eot -text
-plugin-dashboard/src/main/webapp/theme/fonts/glyphicons-halflings-regular.svg -text
-plugin-dashboard/src/main/webapp/theme/fonts/glyphicons-halflings-regular.ttf -text
-plugin-dashboard/src/main/webapp/theme/fonts/glyphicons-halflings-regular.woff -text
-plugin-dashboard/src/main/webapp/theme/hippo-theme/_font-awesome.css -text
-plugin-dashboard/src/main/webapp/theme/hippo-theme/main.css -text
-plugin-dashboard/src/main/webapp/theme/hippo-theme/theme.html -text
-plugin-dashboard/src/main/webapp/theme/styles.css -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/beanwriter/rest/BeanWriterResourceTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/dashboard/contentblocks/ContentBlocksPluginTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/ContentBlocksTest.java -text
