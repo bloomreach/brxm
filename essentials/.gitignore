@@ -4557,12 +4557,6 @@ plugin-dashboard/src/main/webapp/assets/img/.idea
 plugin-dashboard/src/main/webapp/assets/img/atlassian-ide-plugin.xml
 plugin-dashboard/src/main/webapp/assets/img/hippo-plugins.iws
 plugin-dashboard/src/main/webapp/assets/img/target
-plugin-dashboard/src/main/webapp/assets/mock/*.iml
-plugin-dashboard/src/main/webapp/assets/mock/.DS_Store
-plugin-dashboard/src/main/webapp/assets/mock/.idea
-plugin-dashboard/src/main/webapp/assets/mock/atlassian-ide-plugin.xml
-plugin-dashboard/src/main/webapp/assets/mock/hippo-plugins.iws
-plugin-dashboard/src/main/webapp/assets/mock/target
 plugin-dashboard/src/main/webapp/assets/target
 plugin-dashboard/src/main/webapp/atlassian-ide-plugin.xml
 plugin-dashboard/src/main/webapp/bootstrap-3.0.0/*.diff

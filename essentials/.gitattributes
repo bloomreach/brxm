@@ -946,8 +946,6 @@ plugin-dashboard/src/main/webapp/assets/fonts/glyphicons-halflings-regular.ttf -
 plugin-dashboard/src/main/webapp/assets/fonts/glyphicons-halflings-regular.woff -text
 plugin-dashboard/src/main/webapp/assets/img/glyphicons-halflings-white.png -text
 plugin-dashboard/src/main/webapp/assets/img/glyphicons-halflings.png -text
-plugin-dashboard/src/main/webapp/assets/mock/cmis_logo-72x72.png -text
-plugin-dashboard/src/main/webapp/assets/mock/content-block-72x72.png -text
 plugin-dashboard/src/main/webapp/bootstrap-3.0.0/.editorconfig -text
 plugin-dashboard/src/main/webapp/bootstrap-3.0.0/.travis.yml -text
 plugin-dashboard/src/main/webapp/bootstrap-3.0.0/CNAME -text
