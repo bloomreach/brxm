@@ -33,7 +33,6 @@
     <jetty.version>7.6.3.v20120416</jetty.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <cxf.version>2.6.6</cxf.version>
-    <eclipselink.version>2.5.1</eclipselink.version>
     <jackrabbit.version>2.6.2-h1</jackrabbit.version>
     <spring.version>3.2.6.RELEASE</spring.version>
     <spring-test.version>3.2.6.RELEASE</spring-test.version>
@@ -217,12 +216,6 @@
       <artifactId>junit</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.jetty.aggregate</groupId>
-      <artifactId>jetty-all-server</artifactId>
-      <version>${jetty.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-connector</artifactId>
     </dependency>
@@ -250,17 +243,6 @@
       <artifactId>cxf-rt-rs-extension-providers</artifactId>
       <version>${cxf.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.eclipse.persistence</groupId>
-      <artifactId>eclipselink</artifactId>
-      <version>${eclipselink.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.jettison</groupId>
-      <artifactId>jettison</artifactId>
-      <version>1.3.4</version>
-    </dependency>
-
     <dependency>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-core</artifactId>
