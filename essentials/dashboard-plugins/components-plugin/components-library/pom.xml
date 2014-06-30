@@ -44,12 +44,6 @@
       <artifactId>hippo-repository-modules</artifactId>
       <version>${hippo.repository.version}</version>
       <scope>test</scope>
-      <!--<exclusions>-->
-      <!--<exclusion>-->
-      <!--<artifactId>tika-parsers</artifactId>-->
-      <!--<groupId>org.apache.tika</groupId>-->
-      <!--</exclusion>-->
-      <!--</exclusions>-->
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>

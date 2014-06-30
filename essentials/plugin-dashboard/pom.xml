@@ -247,10 +247,6 @@
           <artifactId>derby</artifactId>
           <groupId>org.apache.derby</groupId>
         </exclusion>
-        <exclusion>
-          <artifactId>tika-core</artifactId>
-          <groupId>org.apache.tika</groupId>
-        </exclusion>
       </exclusions>
     </dependency>
     <dependency>

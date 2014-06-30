@@ -80,12 +80,6 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-modules</artifactId>
       <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>tika-parsers</artifactId>
-          <groupId>org.apache.tika</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
