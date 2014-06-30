@@ -44,11 +44,6 @@
       <version>${spring.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-      <version>1.4</version>
-    </dependency>
-    <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
       <artifactId>hippo-essentials-plugin-api</artifactId>
       <version>${project.version}</version>
@@ -247,6 +242,16 @@
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-core</artifactId>
       <version>${jackrabbit.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>derby</artifactId>
+          <groupId>org.apache.derby</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>tika-core</artifactId>
+          <groupId>org.apache.tika</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.jackrabbit</groupId>
