@@ -85,26 +85,25 @@ public final class AnnotationUtils {
 
     }
 
-    public static String addXmlAdaptorAnnotation(final String source, final Class<?> returnType, final AdapterWrapper wrapper) {
+    public static String addXmlAdaptorAnnotation(final String source, final String returnType, final AdapterWrapper wrapper) {
 
         final CompilationUnit unit = JavaSourceUtils.getCompilationUnit(source);
         final AST ast = unit.getAST();
         final ExistingMethodsVisitor methodsVisitor = JavaSourceUtils.getMethodCollection(unit);
         final List<MethodDeclaration> getterMethods = methodsVisitor.getGetterMethods();
         boolean needsImport = false;
-        final String ourReturnType = returnType.getSimpleName();
+
         for (MethodDeclaration getterMethod : getterMethods) {
             final Type returnType2 = getterMethod.getReturnType2();
             if (returnType2.isSimpleType()) {
                 final SimpleType simpleType = (SimpleType) returnType2;
-                if (!simpleType.getName().getFullyQualifiedName().equals(ourReturnType)) {
+                if (!simpleType.getName().getFullyQualifiedName().equals(returnType)) {
                     continue;
                 }
             } else {
                 log.warn("TODO: Cannot map type: {}", returnType2);
                 continue;
             }
-            log.info(ourReturnType);
             @SuppressWarnings("rawtypes")
             final List parameters = getterMethod.parameters();
             if (parameters == null || parameters.size() == 0) {
@@ -293,6 +292,18 @@ public final class AnnotationUtils {
             myClass = myClass.getSuperclass();
         }
         return returnValue.values();
+    }
+
+    public static String addKnownAdapters(final String source) {
+        // html:
+        final String htmlAdapter = "HippoHtmlAdapter";
+        final String adapterPackage = "org.onehippo.cms7.essentials.components.rest.adapters";
+        String adapterSource = addXmlAdaptorAnnotation(source, "HippoHtml", new AdapterWrapper(adapterPackage, htmlAdapter));
+        // image
+        final String imageAdapter = "HippoGalleryImageAdapter";
+        adapterSource = addXmlAdaptorAnnotation(adapterSource, "HippoGalleryImageSetBean", new AdapterWrapper(adapterPackage, imageAdapter));
+        // TODO: add link adapter to lists
+        return adapterSource;
     }
 
 

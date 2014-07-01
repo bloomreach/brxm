@@ -27,11 +27,13 @@
   <bean id="customRestPlainResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>
+        {{#beans}}
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            {{resourceCollection}}
+            <bean class="{{{fullQualifiedResourceName}}}"/>
           </constructor-arg>
         </bean>
+        {{/beans}}
       </list>
     </property>
   </bean>

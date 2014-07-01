@@ -17,8 +17,10 @@
 package org.onehippo.cms7.essentials.dashboard.restservices;
 
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,6 +37,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.instruction.FileInstruction;
+import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructionSet;
+import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
+import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
+import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.packaging.InstructionPackage;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
@@ -43,8 +50,11 @@ import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.HstUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.JavaSourceUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.annotations.AnnotationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +71,7 @@ public class RestPluginResource extends BaseResource {
 
 
     private static final Logger log = LoggerFactory.getLogger(RestPluginResource.class);
+
     @GET
     @Path("/beans")
     public RestfulList<KeyValueRestful> getHippoBeans(@Context ServletContext servletContext) {
@@ -105,37 +116,85 @@ public class RestPluginResource extends BaseResource {
         final InstructionPackage instructionPackage = new RestServicesInstructionPackage();
         // TODO: figure out injection part
         getInjector().autowireBean(instructionPackage);
-        values.put("resourceCollection", populateBeanReferences(selectedBeans));
+
+        final Set<ValidBean> validBeans = annotateBeans(selectedBeans, context);
+
         instructionPackage.setProperties(new HashMap<String, Object>(values));
+        // add beans for instruction set loop:
+        instructionPackage.getProperties().put("beans", validBeans);
         instructionPackage.execute(context);
+        // create endpoint rest
+        if (restType.equals("plain")) {
+            final InstructionExecutor executor = new PluginInstructionExecutor();
+            for (ValidBean validBean : validBeans) {
+                final Map<String, Object> properties = new HashMap<>();
+                properties.put("beanPackage", validBean.getBeanPackage());
+                properties.put("beanName", validBean.getBeanName());
+                properties.put("beans", validBean.getFullQualifiedName());
+                properties.put("fullQualifiedName", validBean.getFullQualifiedName());
+                properties.put("fullQualifiedResourceName", validBean.getFullQualifiedResourceName());
+                final FileInstruction instruction = createFileInstruction();
+                // execute instruction:
+                final InstructionSet mySet = new PluginInstructionSet();
+                mySet.addInstruction(instruction);
+                context.addPlaceholderData(properties);
+                executor.execute(mySet, context);
+            }
+        }
+
         message.setValue("Please rebuild and restart your application");
         return message;
     }
 
+    public FileInstruction createFileInstruction() {
+        final FileInstruction instruction = new FileInstruction();
+        getInjector().autowireBean(instruction);
+        instruction.setAction("copy");
+        instruction.setOverwrite(false);
+        instruction.setBinary(false);
+        instruction.setSource("BeanNameResource.txt");
+        instruction.setTarget("{{restFolder}}/{{beanName}}Resource.java");
+        return instruction;
+    }
 
-    private String populateBeanReferences(final String input){
-        if(Strings.isNullOrEmpty(input)){
+    private Set<ValidBean> annotateBeans(final String input, final PluginContext context) {
+        final Set<ValidBean> validBeans = new HashSet<>();
+
+        if (Strings.isNullOrEmpty(input)) {
             log.error("No beans were selected");
-            return "";
+            return validBeans;
         }
         final Iterable<String> split = Splitter.on(',').split(input);
-        final StringBuilder builder = new StringBuilder();
         for (String path : split) {
             final File file = new File(path);
-            if(file.exists()){
-                final java.nio.file.Path myPath = file.toPath();
-                final String packageName = JavaSourceUtils.getPackageName(myPath);
-                final String className = JavaSourceUtils.getFullQualifiedClassName(myPath);
-                if(Strings.isNullOrEmpty(packageName) || Strings.isNullOrEmpty(className)){
-                    log.warn("Skipping path: {}", path);
+            if (file.exists()) {
+                final java.nio.file.Path filePath = file.toPath();
+                final String className = JavaSourceUtils.getClassName(filePath);
+                if (Strings.isNullOrEmpty(className)) {
                     continue;
                 }
-                builder.append("<bean class=\"").append(packageName).append(className).append("\"/>").append('\n');
+                String source = GlobalUtils.readTextFile(filePath).toString();
+                // access annotation:
+                source = AnnotationUtils.addXmlAccessNoneAnnotation(source);
+                // root annotation
+                source = AnnotationUtils.addXmlRootAnnotation(source, className.toLowerCase());
+                // annotate fields:
+                source = AnnotationUtils.addXmlElementAnnotation(source);
+                //add adapters:
+                AnnotationUtils.addKnownAdapters(source);
+                final ValidBean bean = new ValidBean();
+                bean.setBeanName(className);
+                bean.setBeanPath(path);
+                bean.setBeanPackage(JavaSourceUtils.getPackageName(filePath));
+                final String qualifiedClassName = JavaSourceUtils.getFullQualifiedClassName(filePath);
+                bean.setFullQualifiedName(qualifiedClassName);
+                final String resourceName = MessageFormat.format("{0}.{1}Resource", context.getPlaceholderData().get(EssentialConst.PLACEHOLDER_REST_PACKAGE), className);
+                bean.setFullQualifiedResourceName(resourceName);
+                validBeans.add(bean);
             }
         }
-        return builder.toString();
-
-
+        return validBeans;
     }
+
 
 }

@@ -397,13 +397,12 @@ dashboard-plugins/dashboard-news-plugin/src/test/java/org/onehippo/cms7/essentia
 dashboard-plugins/dashboard-news-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/dashboard-restservices-plugin/pom.xml -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/MountRestful.java -text
-dashboard-plugins/dashboard-restservices-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/RestMountInstruction.java -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/RestPluginConst.java -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/RestPluginResource.java -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/RestServicesInstructionPackage.java -text
+dashboard-plugins/dashboard-restservices-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/ValidBean.java -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/BeanNameResource.txt -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/HelloWorldContentResource.txt -text
-dashboard-plugins/dashboard-restservices-plugin/src/main/resources/HelloWorldPlainResource.txt -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/META-INF/resources/tools/restServices/restServices.html -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/META-INF/resources/tools/restServices/restServices.js -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/META-INF/rest_instructions.xml -text
