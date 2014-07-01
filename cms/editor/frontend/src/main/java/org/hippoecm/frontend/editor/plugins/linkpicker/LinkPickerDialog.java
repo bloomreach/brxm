@@ -75,6 +75,10 @@ public class LinkPickerDialog extends AbstractDialog<String> {
                 setOkEnabled(isValid);
             }
 
+            @Override
+            protected void onFolderSelected(final IModel<Node> model) {
+                LinkPickerDialog.this.onFolderSelected(model);
+            }
         };
 
         add(controller.create("content"));
@@ -126,6 +130,8 @@ public class LinkPickerDialog extends AbstractDialog<String> {
         }
     }
 
+    protected void onFolderSelected(final IModel<Node> model){
+    }
 
     protected IPluginContext getPluginContext() {
         return context;

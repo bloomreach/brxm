@@ -21,7 +21,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IModelReference;
@@ -118,7 +117,7 @@ public abstract class NodePickerController implements IDetachable {
                 }
 
                 public void onEvent(Iterator events) {
-                    onFolderSelected(folderModelReference.getModel());
+                    setSelectedFolder(folderModelReference.getModel());
                 }
             }, IObserver.class.getName());
         }
@@ -130,9 +129,13 @@ public abstract class NodePickerController implements IDetachable {
         return renderer.getComponent();
     }
 
-    protected void onFolderSelected(final IModel<Node> model) {
+    private void setSelectedFolder(final IModel<Node> model){
         selectionModelReference.setModel(model);
         setSelectedModel(model);
+        onFolderSelected(model);
+    }
+
+    protected void onFolderSelected(final IModel<Node> model) {
     }
 
     /**
