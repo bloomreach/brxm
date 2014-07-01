@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -36,40 +37,59 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultRestContext implements RestContext {
 
-    public static final int RESULT_LIMIT = 10;
+    public static final int PAGE_SIZE = 10;
     private static final Logger log = LoggerFactory.getLogger(DefaultRestContext.class);
     private final HttpServletRequest request;
     private final HstRequestContext context;
     private final BaseRestResource resource;
     private Map<String, String> contextParams = new HashMap<String, String>();
-    private int resultLimit;
-    private boolean minimalDataSet;
+    private int pageSize;
+    private int page;
     private boolean absolutePath;
     private String scope;
 
 
-    public DefaultRestContext(BaseRestResource resource, HttpServletRequest request, HstRequestContext context) {
+    public DefaultRestContext(final BaseRestResource resource, final HttpServletRequest request) {
         this.request = request;
-        this.context = context;
-        this.resultLimit = RESULT_LIMIT;
+        this.context = RequestContextProvider.get();
+        this.pageSize = PAGE_SIZE;
         this.resource = resource;
+        this.page = 1;
 
 
     }
 
-    public DefaultRestContext(BaseRestResource resource, HttpServletRequest request, HstRequestContext context, int resultLimit) {
-        this(resource, request, context);
-        this.resultLimit = resultLimit;
+    public DefaultRestContext(final BaseRestResource resource, final HttpServletRequest request, final int page, final int pageSize) {
+        this(resource, request);
+        this.pageSize = pageSize;
+        this.page = page;
+    }
+
+
+    @Override
+    public int getPage() {
+        if (page < 1) {
+            return 1;
+        }
+        return page;
     }
 
     @Override
-    public boolean isMinimalDataSet() {
-        return minimalDataSet;
+    public void setPage(final int page) {
+        this.page = page;
     }
 
     @Override
-    public void setMinimalDataSet(boolean minimalDataSet) {
-        this.minimalDataSet = minimalDataSet;
+    public int getPageSize() {
+        if (page < 1) {
+            return PAGE_SIZE;
+        }
+        return pageSize;
+    }
+
+    @Override
+    public void setPageSize(final int pageSize) {
+        this.pageSize = pageSize;
     }
 
     @Override
@@ -80,16 +100,6 @@ public class DefaultRestContext implements RestContext {
     @Override
     public HstRequestContext getRequestContext() {
         return context;
-    }
-
-    @Override
-    public int getResultLimit() {
-        return resultLimit;
-    }
-
-    @Override
-    public void setResultLimit(final int resultLimit) {
-        this.resultLimit = resultLimit;
     }
 
     @Override
