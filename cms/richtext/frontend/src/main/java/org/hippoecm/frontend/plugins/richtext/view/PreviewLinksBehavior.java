@@ -110,7 +110,7 @@ class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior implements ILinkD
             CharSequence asString = renderAjaxAttributes(getComponent(), attributes);
             return "href=\"#\" onclick='" + JS_PREVENT_DEFAULT + JS_STOP_EVENT + "Wicket.Ajax.get(" + asString + ");'";
         } else {
-            String message = new ClassResourceModel("brokenlink-alert", PreviewLinksBehavior.class, new Object[] {}).getObject();
+            String message = new ClassResourceModel("brokenlink-alert", PreviewLinksBehavior.class).getObject();
             return "class=\"brokenlink\" href=\"#\" onclick=\"alert('" + message + "');return false;\"";
         }
     }
