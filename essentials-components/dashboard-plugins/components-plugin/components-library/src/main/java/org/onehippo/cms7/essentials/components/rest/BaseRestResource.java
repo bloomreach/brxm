@@ -53,9 +53,17 @@ public abstract class BaseRestResource extends AbstractResource {
     //
 
 
-    protected <T extends HippoBean> Pageable<T> findBeans(final RestContext context, final Class<T> clazz)  {
+    protected <T extends HippoBean> Pageable<T> findBeans(final RestContext context, final Class<T> clazz) {
+        return findBeans(context, clazz, Subtypes.INCLUDE);
+    }
+
+    protected <T extends HippoBean> Pageable<T> findBeansNoSubtypes(final RestContext context, final Class<T> clazz) {
+        return findBeans(context, clazz, Subtypes.EXCLUDE);
+    }
+
+    protected <T extends HippoBean> Pageable<T> findBeans(final RestContext context, final Class<T> clazz, final Subtypes subtypes) {
         try {
-            final HstQuery query = createQuery(context, clazz);
+            final HstQuery query = createQuery(context, clazz, subtypes);
             final HstQueryResult execute = query.execute();
             return new IterablePagination<>(
                     execute.getHippoBeans(),
@@ -65,7 +73,7 @@ public abstract class BaseRestResource extends AbstractResource {
         } catch (QueryException e) {
             log.error("Error finding beans", e);
         }
-        return  DefaultPagination.emptyCollection();
+        return DefaultPagination.emptyCollection();
     }
 
 
@@ -87,11 +95,11 @@ public abstract class BaseRestResource extends AbstractResource {
      */
 
     @SuppressWarnings(UNCHECKED)
-    public HstQuery createQuery(final RestContext context, final Class<? extends HippoBean> clazz) {
+    public HstQuery createQuery(final RestContext context, final Class<? extends HippoBean> clazz, final Subtypes subtypes) {
         HstQuery query = null;
         try {
             Node scopeNode = getScopeForContext(context);
-            query = getHstQueryManager(context.getRequestContext()).createQuery(scopeNode, clazz);
+            query = getHstQueryManager(context.getRequestContext()).createQuery(scopeNode, clazz, subtypes.isIncludeSubtypes());
             final int pageSize = context.getPageSize();
             final int page = context.getPage();
             query.setLimit(pageSize);
@@ -178,4 +186,19 @@ public abstract class BaseRestResource extends AbstractResource {
         final String content = body.getContent();
         return getContentRewriter().rewrite(content, body.getNode(), context.getRequestContext());
     }
+
+
+    public enum Subtypes {
+        INCLUDE(true), EXCLUDE(false);
+        private final boolean includeSubtypes;
+
+        Subtypes(final boolean includeSubtypes) {
+            this.includeSubtypes = includeSubtypes;
+        }
+
+        public boolean isIncludeSubtypes() {
+            return includeSubtypes;
+        }
+    }
+
 }
