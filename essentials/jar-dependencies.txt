@@ -1,4 +1,4 @@
-State of 2014/06/30:
+State of 2014/07/01:
 
 aopalliance-1.0.jar
 commands-3.3.0-I20070605-0010.jar
@@ -28,6 +28,7 @@ guava-16.0.1.jar
 hippo-banner-plugin-1.01.04-SNAPSHOT.jar
 hippo-beanwriter-plugin-1.01.04-SNAPSHOT.jar
 hippo-cms-api-2.26.00.jar
+hippo-cms-editor-common-2.26.00.jar
 hippo-dashboard-contentblocks-plugin-1.01.04-SNAPSHOT.jar
 hippo-dashboard-gallery-plugin-1.01.04-SNAPSHOT.jar
 hippo-dashboard-restservices-plugin-1.01.04-SNAPSHOT.jar
@@ -51,20 +52,21 @@ hippo-faq-component-plugin-1.01.04-SNAPSHOT.jar
 hippo-image-component-plugin-1.01.04-SNAPSHOT.jar
 hippo-menu-plugin-1.01.04-SNAPSHOT.jar
 hippo-repository-connector-2.26.00.jar
+hippo-repository-provider-2.26.00.jar
 hippo-repository-utilities-2.26.00.jar
 hippo-search-plugin-1.01.04-SNAPSHOT.jar
 hippo-services-contenttype-1.04.00.jar
 hippo-simple-content-plugin-1.01.04-SNAPSHOT.jar
 hippo-video-component-plugin-1.01.04-SNAPSHOT.jar
 imgscalr-lib-4.2.jar
-jackrabbit-api-2.6.2.jar
-jackrabbit-core-2.6.2-h1.jar
+jackrabbit-api-2.6.5.jar
+jackrabbit-core-2.6.5-h1.jar
 jackrabbit-jcr2spi-2.6.5.jar
-jackrabbit-jcr-commons-2.6.2.jar
+jackrabbit-jcr-commons-2.6.5.jar
 jackrabbit-jcr-rmi-2.6.5.jar
-jackrabbit-spi-2.6.2.jar
+jackrabbit-spi-2.6.5.jar
 jackrabbit-spi2jcr-2.6.5.jar
-jackrabbit-spi-commons-2.6.2-h1.jar
+jackrabbit-spi-commons-2.6.5-h1.jar
 jackson-annotations-2.1.5.jar
 jackson-core-2.1.5.jar
 jackson-core-asl-1.9.5.jar
@@ -79,7 +81,6 @@ jackson-xc-1.9.5.jar
 javassist-3.12.1.GA.jar
 javax.inject-1.jar
 jaxb-impl-2.2.6.jar
-jersey-core-1.11.jar
 jobs-3.5.300-v20130429-1813.jar
 joda-convert-1.2.jar
 joda-time-2.1.jar
@@ -117,6 +118,7 @@ swagger-annotations_2.10-1.3.0.jar
 swagger-core_2.10-1.3.0.jar
 swagger-jaxrs_2.10-1.3.0.jar
 text-3.3.0-v20070606-0010.jar
+tika-core-1.3.jar
 woodstox-core-asl-4.1.4.jar
 wsdl4j-1.6.2.jar
 xmlschema-core-2.0.3.jar
