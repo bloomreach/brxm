@@ -26,7 +26,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IRestProxyService;
 import org.hippoecm.frontend.translation.ILocaleProvider;
-import org.onehippo.cms7.channelmanager.channels.util.rest.RestClientProxyFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ExtDataField;

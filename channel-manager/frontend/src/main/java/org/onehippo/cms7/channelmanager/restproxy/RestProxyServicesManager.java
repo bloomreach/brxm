@@ -37,7 +37,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IRestProxyService;
 import org.hippoecm.hst.rest.SiteService;
-import org.onehippo.cms7.channelmanager.channels.util.rest.RestClientProxyFactory;
+import org.onehippo.cms7.channelmanager.channels.util.rest.RestClientProxyDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,7 +88,7 @@ public class RestProxyServicesManager implements IInitializer {
             if (contextPath == null) {
                 contextPath = DEFAULT_CONTEXT_PATH;
             }
-            final IRestProxyService previous = restProxyServiceMap.put(contextPath, new RestClientProxyFactory(restProxyService));
+            final IRestProxyService previous = restProxyServiceMap.put(contextPath, new RestClientProxyDecorator(restProxyService));
             if (previous != null) {
                 log.error("Multiple rest proxy services are configured for '{}' but " +
                         "the rest services either do have duplicate values for property 'context.path' or do not have the " +

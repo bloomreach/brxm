@@ -132,7 +132,11 @@ public class BlueprintStore extends ExtJsonStore<Object> {
                     blueprints.put(blueprint.getId(), blueprint);
                 }
             } catch (InterruptedException | ExecutionException e) {
-                log.error("Failed to load blueprint for one or more rest proxies.", e);
+                if (log.isDebugEnabled()) {
+                    log.warn("Failed to load blueprint for one or more rest proxies.", e);
+                } else{
+                    log.warn("Failed to load blueprint for one or more rest proxies : {}", e.toString());
+                }
             }
         }
 

@@ -19,12 +19,14 @@ import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.ws.rs.WebApplicationException;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IRestProxyService;
+import org.hippoecm.hst.rest.ChannelService;
 import org.hippoecm.hst.rest.DocumentService;
 import org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager;
 import org.slf4j.Logger;
@@ -73,13 +75,16 @@ public class ChannelDocumentUrlService extends Plugin implements IDocumentUrlSer
 
     @Override
     public String getUrl(final Node documentNode) {
+        final String path;
+        try {
+            path = documentNode.getPath();
+        } catch (RepositoryException e) {
+            log.error("Error retrieving path from document", e);
+            return null;
+        }
         final String uuid = getUuidOfHandle(documentNode);
         if (uuid == null) {
-            try {
-                log.info("Could not find handle for document '{}'", documentNode.getPath());
-            } catch (RepositoryException e) {
-                log.error("Error retrieving path from document", e);
-            }
+            log.info("Could not find handle for document '{}'", path);
             return null;
         }
         if (liveRestProxyServices.isEmpty()) {
@@ -87,12 +92,23 @@ public class ChannelDocumentUrlService extends Plugin implements IDocumentUrlSer
             return null;
         }
 
-        // since hst webapp can create cross context path  urls, any rest proxy service can
-        // create a url. Just pick first
-        final IRestProxyService proxyService = liveRestProxyServices.values().iterator().next();
-        final DocumentService documentService = proxyService.createSecureRestProxy(DocumentService.class);
-        String url = documentService.getUrl(uuid, type);
-        return StringUtils.isBlank(url) ? null : url;
+        // since hst webapp can create cross context path  urls, any rest proxy service that responds can be used
+        for (IRestProxyService proxyService : liveRestProxyServices.values()) {
+            try {
+                final DocumentService documentService = proxyService.createSecureRestProxy(DocumentService.class);
+                String url = documentService.getUrl(uuid, type);
+                return StringUtils.isBlank(url) ? null : url;
+            } catch (WebApplicationException e) {
+                if (log.isDebugEnabled()) {
+                    log.info("WebApplicationException. Check next rest proxy : ", e);
+                } else {
+                    log.info("WebApplicationException : {}. Check next rest proxy.", e.toString());
+                }
+
+            }
+        }
+        log.warn("No rest proxy responded. Cannot create URL for '{}'", path);
+        return null;
     }
 
     private String getUuidOfHandle(Node documentNode) {

@@ -32,6 +32,7 @@ import java.util.concurrent.Future;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.ws.rs.WebApplicationException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Application;
@@ -405,10 +406,22 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     }
 
     public boolean canModifyChannels() {
-        // just check first webapp only since currently just /hst:hst/hst:channels node is checked.
-        // we need more fine-grained control later
-        ChannelService channelService = restProxyServices.values().iterator().next().createSecureRestProxy(ChannelService.class);
-        return channelService.canUserModifyChannels();
+        // check the first proxy service that returns without exception
+        for (IRestProxyService proxyService : restProxyServices.values()) {
+            try {
+                final ChannelService channelService = proxyService.createSecureRestProxy(ChannelService.class);
+                return channelService.canUserModifyChannels();
+            } catch (WebApplicationException e) {
+                if (log.isDebugEnabled()) {
+                    log.info("WebApplicationException. Check next rest proxy : ", e);
+                } else {
+                    log.info("WebApplicationException : {}. Check next rest proxy.", e.toString());
+                }
+
+            }
+        }
+        log.warn("Rest proxies did not return valid response whether user can modify channels. Return false as default");
+        return false;
     }
 
     public List<Channel> getChannels() {

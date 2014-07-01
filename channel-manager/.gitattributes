@@ -138,7 +138,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/nl_NL.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ru_RU.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/triangle-collapsed.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/triangle-expanded.png -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/util/rest/RestClientProxyFactory.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/util/rest/RestClientProxyDecorator.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/util/rest/mappers/exceptions/ResponseToChannelExceptionMapper.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/website.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/zh_CN.png -text

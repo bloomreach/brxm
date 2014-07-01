@@ -26,7 +26,7 @@ import org.onehippo.cms7.channelmanager.channels.util.rest.mappers.exceptions.Re
 /**
  * A factory class to encapsulate any additional logic for creating REST client proxies
  */
-public class RestClientProxyFactory implements IRestProxyService, Serializable {
+public class RestClientProxyDecorator implements IRestProxyService, Serializable {
 
     private IRestProxyService restProxyService;
     private List<Object> additionalProviders;
@@ -37,13 +37,13 @@ public class RestClientProxyFactory implements IRestProxyService, Serializable {
     }
 
     /**
-     * Creates a new instance of {@link RestClientProxyFactory}
+     * Creates a new instance of {@link RestClientProxyDecorator}
      *
-     * @param restProxyService The {@link IRestProxyService} to which {@link RestClientProxyFactory} delegates methods
+     * @param restProxyService The {@link IRestProxyService} to which {@link RestClientProxyDecorator} delegates methods
      *                         calls
      * @throws IllegalArgumentException If <CODE>restProxyService</CODE> is <CODE>null</CODE>
      */
-    public RestClientProxyFactory(IRestProxyService restProxyService) {
+    public RestClientProxyDecorator(IRestProxyService restProxyService) {
         if (restProxyService == null) {
             throw new IllegalArgumentException("REST proxy service can not be 'null'");
         }
