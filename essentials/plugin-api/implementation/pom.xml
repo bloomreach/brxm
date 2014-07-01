@@ -44,10 +44,6 @@
       <artifactId>swagger-jaxrs_2.10</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.antlr</groupId>
-      <artifactId>antlr</artifactId>
-    </dependency>
-    <dependency>
       <groupId>javax.inject</groupId>
       <artifactId>javax.inject</artifactId>
     </dependency>
@@ -84,12 +80,6 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-modules</artifactId>
       <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>tika-parsers</artifactId>
-          <groupId>org.apache.tika</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
@@ -123,6 +113,14 @@
         <exclusion>
           <artifactId>wicketstuff-input-events</artifactId>
           <groupId>org.wicketstuff</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>yui-2.xx-sources</artifactId>
+          <groupId>org.onehippo.yui</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>htmldiff</artifactId>
+          <groupId>org.hippoecm</groupId>
         </exclusion>
       </exclusions>
     </dependency>

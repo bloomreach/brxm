@@ -252,6 +252,19 @@ public final class JavaSourceUtils {
     }
 
     /**
+     * Returns name of the class, e.g. {@code FooBarBean}
+     *
+     * @param path path to java source file
+     */
+    public static String getClassName(final Path path) {
+
+        final CompilationUnit unit = getCompilationUnit(path);
+        unit.recordModifications();
+        final TypeDeclaration classType = (TypeDeclaration) unit.types().get(0);
+        return classType.getName().getIdentifier();
+    }
+
+    /**
      * Adds {@code HippoEssentialsGenerated} annotation to provided java source file (class level)
      *
      * @param path path to java source file
@@ -986,9 +999,7 @@ public final class JavaSourceUtils {
         final TextEdit edits = rewriter.rewriteAST(document, null);
         try {
             edits.apply(document);
-            final String formattedSource = formatCode(document);
-            log.debug("formattedSource {}", formattedSource);
-            return formattedSource;
+            return formatCode(document);
         } catch (BadLocationException e) {
             log.error("Error creating HippoBean", e);
         }

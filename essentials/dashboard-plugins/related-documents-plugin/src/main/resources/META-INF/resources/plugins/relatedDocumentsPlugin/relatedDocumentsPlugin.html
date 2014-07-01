@@ -41,16 +41,16 @@
                         </td>
                         <td>{{doc.name}}</td>
                         <td>
-                            <input type="text" ng-hide="doc.name == 'basedocument'" ng-model="searchPaths" ng-required="doc.name != 'basedocument' && doc.checked" name="searchPaths"/>
+                            <input type="text" ng-hide="doc.name == 'basedocument'" ng-model="doc.searchPaths" ng-required="doc.name != 'basedocument' && doc.checked" name="searchPaths"/>
                             <essentials-folder-picker ng-hide="doc.name == 'basedocument'"
                                                       button-text="Select search folder"
                                                       title="Select search folder"
-                                                      selected-path="searchPaths"
-                                                      selected="searchPaths"
+                                                      selected-path="doc.searchPaths"
+                                                      selected="doc.searchPaths"
                                                       end-point="http://localhost:8080/essentials/rest/jcrbrowser/folders"/>
                         </td>
                         <td>
-                            <input type="text" ng-hide="doc.name == 'basedocument'" ng-model="numberOfSuggestions" ng-required="doc.name != 'basedocument' && doc.checked" name="numberOfSuggestions"/>
+                            <input type="text" ng-hide="doc.name == 'basedocument'" ng-model="doc.numberOfSuggestions" ng-required="doc.name != 'basedocument' && doc.checked" name="numberOfSuggestions" placeholder="10"/>
                         </td>
                     </tr>
                     </tbody>

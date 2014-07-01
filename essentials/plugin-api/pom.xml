@@ -51,7 +51,6 @@
     <cxf-bundle.version>2.7.8</cxf-bundle.version>
     <jackson.version>1.9.5</jackson.version>
     <swagger-jaxrs_2.10.version>1.3.0</swagger-jaxrs_2.10.version>
-    <antlr.version>3.2</antlr.version>
   </properties>
 
   <modules>
@@ -138,11 +137,6 @@
         <groupId>com.wordnik</groupId>
         <artifactId>swagger-jaxrs_2.10</artifactId>
         <version>${swagger-jaxrs_2.10.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.antlr</groupId>
-        <artifactId>antlr</artifactId>
-        <version>${antlr.version}</version>
       </dependency>
       <dependency>
         <groupId>commons-lang</groupId>

@@ -18,12 +18,12 @@
 <instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
   <instructionSet group="content">
+    <xml action="copy" overwrite="false" source="content_mount.xml" target="/hst:hst/hst:hosts/dev-localhost/localhost/hst:root"/>
     <file action="copy" overwrite="false" source="HelloWorldContentResource.txt" target="{{restFolder}}/HelloWorldContentResource.java"/>
     <file action="copy" overwrite="false" source="spring-content-rest-api.xml" target="{{siteOverrideFolder}}/spring-content-rest-api.xml"/>
-    <execute class="org.onehippo.cms7.essentials.dashboard.restservices.RestMountInstruction"/>
   </instructionSet>
   <instructionSet group="plain">
+    <xml action="copy" overwrite="false" source="plain_mount.xml" target="/hst:hst/hst:hosts/dev-localhost/localhost/hst:root"/>
     <file action="copy" overwrite="false" source="spring-plain-rest-api.xml" target="{{siteOverrideFolder}}/spring-plain-rest-api.xml"/>
-    <execute class="org.onehippo.cms7.essentials.dashboard.restservices.RestMountInstruction"/>
   </instructionSet>
 </instructions>

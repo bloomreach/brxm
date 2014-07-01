@@ -1,0 +1,359 @@
+/*
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+.infobox {
+  margin: 0 0 20px 0;
+  padding: 15px 30px 15px 15px;
+  border-left: 5px solid #eee;
+}
+.infobox h3,
+.infobox h4 {
+  margin-top: 0;
+}
+.infobox p:last-child {
+  margin-bottom: 0;
+}
+.infobox code,
+.infobox .highlight {
+  background-color: #ffffff;
+}
+.infobox.infobox-danger {
+  background-color: #f2dede;
+  border-color: #ebcccc;
+}
+.infobox.infobox-danger h4 {
+  color: #a94442;
+}
+.infobox.infobox-warning {
+  background-color: #fcf8e3;
+  border-color: #faf2cc;
+}
+.infobox.infobox-warning h4 {
+  color: #8a6d3b;
+}
+.infobox.infobox-info {
+  background-color: #d9edf7;
+  border-color: #c4e3f3;
+}
+.infobox.infobox-info h4 {
+  color: #31708f;
+}
+.infobox.infobox-success {
+  background-color: #dff0d8;
+  border-color: #d0e9c6;
+}
+.infobox.infobox-success h4 {
+  color: #3c763d;
+}
+/*
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+.space.mb1 {
+  margin-bottom: 10px;
+}
+.space.mb2 {
+  margin-bottom: 20px;
+}
+.space.mb3 {
+  margin-bottom: 30px;
+}
+.space.mb4 {
+  margin-bottom: 40px;
+}
+.space.mb5 {
+  margin-bottom: 50px;
+}
+.space.mt1 {
+  margin-top: 10px;
+}
+.space.mt2 {
+  margin-top: 20px;
+}
+.space.mt3 {
+  margin-top: 30px;
+}
+.space.mt4 {
+  margin-top: 40px;
+}
+.space.mt5 {
+  margin-top: 50px;
+}
+/*
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+.modal {
+  display: block;
+  height: 0;
+  overflow: visible;
+}
+.modal-body:before,
+.modal-body:after {
+  display: table;
+  content: " ";
+}
+.modal-header:before,
+.modal-header:after {
+  display: table;
+  content: " ";
+}
+.confirmation-dialog.s-visible {
+  display: none;
+}
+.confirmation-dialog.s-invisible {
+  display: block;
+  width: 100%;
+}
+/*
+//############################################
+// HIPPO SPECIFIC  CSS
+//############################################
+*/
+.no-drag .angular-ui-tree-handle {
+  cursor: pointer;
+}
+.footer {
+  border-top: 1px solid #eeeeee;
+  margin-top: 400px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-align: center;
+  color: #4f5e67;
+  font-size: 13px;
+  min-height: 600px;
+}
+/* Responsive: Portrait tablets and up */
+@media screen and (min-width: 768px) {
+  /* Remove the padding we set earlier */
+  .masthead,
+  .marketing,
+  .footer {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+.masthead {
+  margin-bottom: 30px;
+  text-align: center;
+  min-width: 768px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.hippo-header {
+  width: 100%;
+  height: 80px;
+  /*background-color: #C84A4B;*/
+  text-align: center;
+  vertical-align: middle;
+  table-layout: fixed;
+  font-size: 20px;
+  font-weight: bold;
+  /*background: url("../images/top-back.png") repeat;*/
+  color: #4f5e67;
+}
+.hippo-header-logo,
+.hippo-header-text {
+  display: inline;
+  text-align: center;
+  vertical-align: middle;
+  height: 80px;
+  margin-bottom: 20px;
+}
+.hippo-header-logo {
+  float: left;
+  padding: 5px;
+  padding-left: 20px;
+}
+.hippo-header-text {
+  padding-top: 30px;
+}
+body {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  background-color: #ffffff;
+}
+.form-group {
+  height: 30px;
+}
+/* menu stuff*/
+.nav-stacked li {
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: bold;
+}
+.plugin-introduction {
+  padding: 20px;
+}
+.busy-loader {
+  position: fixed;
+  z-index: 1000;
+  margin: 0 0 0 -12px;
+  left: 50%;
+}
+.tabs li {
+  min-width: 120px;
+  width: 160px;
+}
+.tabs {
+  width: 160px;
+}
+.essentials-group-item {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+.messages {
+  position: fixed;
+  z-index: 999;
+  padding: 8px;
+  text-align: center;
+  width: 100%;
+}
+.sep-10 {
+  margin-bottom: 10px;
+}
+.sep-20 {
+  margin-bottom: 20px;
+}
+.sep-30 {
+  margin-bottom: 30px;
+}
+/* HIPPO CHOSEN FONT SIZE FIX*/
+.chosen-container-multi .chosen-choices li.search-field {
+  margin: 0;
+  padding: 0;
+  white-space: nowrap;
+  font-size: 12px;
+}
+input.ng-invalid,
+input.ng-invalid-minlength {
+  background-color: #e7484c;
+  color: #fff;
+}
+select.ng-invalid + div.chosen-container {
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  border: 2px solid #e7484c;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+input:focus.ng-invalid,
+input:focus.ng-invalid-minlength {
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  border: 3px solid #e7484c;
+}
+input.ng-valid,
+input:focus.ng-valid {
+  background-color: #fff;
+  color: #000;
+}
+[ng\:cloak],
+[ng-cloak],
+[data-ng-cloak],
+[x-ng-cloak],
+.ng-cloak,
+.x-ng-cloak,
+.ng-hide {
+  display: none !important;
+}
+ng\:form {
+  display: block;
+}
+div.chosen-container[style] {
+  min-width: 100px;
+}

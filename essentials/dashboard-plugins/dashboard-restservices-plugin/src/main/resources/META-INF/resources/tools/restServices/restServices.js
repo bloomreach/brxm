@@ -49,12 +49,13 @@
             };
             $scope.runRestSetup = function () {
                 // check if we have selected documents:
-
-                var valid = checkValid();
-                if (!valid) {
-                    $scope.restForm.myDocument.$setValidity("checked", false);
-                    displayError("Please select at least one document type");
-                    return;
+                if ($scope.restType == 'plain') {
+                    var valid = checkValid();
+                    if (!valid) {
+                        $scope.restForm.myDocument.$setValidity("checked", false);
+                        displayError("Please select at least one document type");
+                        return;
+                    }
                 }
 
                 var files = [];
