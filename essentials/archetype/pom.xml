@@ -34,11 +34,6 @@
 
   <properties>
     <notice.project.name>Hippo CMS7 Essentials Maven Archetypes</notice.project.name>
-    <!--
-      Update to 1.11.01 once released
-      Remove when version 1.11.01 has been added to the latest cms release
-    -->
-    <forge.taxonomy.version>1.11.01-SNAPSHOT</forge.taxonomy.version>
   </properties>
 
   <distributionManagement>

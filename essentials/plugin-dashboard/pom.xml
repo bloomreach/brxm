@@ -250,6 +250,7 @@
       <artifactId>jackson-jaxrs</artifactId>
       <version>${jackson.version}</version>
     </dependency>
+
   </dependencies>
 
 

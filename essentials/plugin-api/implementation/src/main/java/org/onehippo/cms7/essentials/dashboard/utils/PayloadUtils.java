@@ -47,4 +47,6 @@ public final class PayloadUtils {
         return Lists.newArrayList(iterable);
     }
 
+    private PayloadUtils() {
+    }
 }

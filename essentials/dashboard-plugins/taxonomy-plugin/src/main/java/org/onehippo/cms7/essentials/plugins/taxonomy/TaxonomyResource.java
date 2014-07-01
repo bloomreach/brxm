@@ -79,7 +79,7 @@ public class TaxonomyResource extends BaseResource {
     public static final String HIPPOSYSEDIT_SUPERTYPE = "hipposysedit:supertype";
 
 
-    private static final Logger log = LoggerFactory.getLogger(TaxonomyResource.class);
+    private static Logger log = LoggerFactory.getLogger(TaxonomyResource.class);
 
 
     /**
