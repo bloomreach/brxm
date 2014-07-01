@@ -181,7 +181,10 @@ public class RestPluginResource extends BaseResource {
                 // annotate fields:
                 source = AnnotationUtils.addXmlElementAnnotation(source);
                 //add adapters:
-                AnnotationUtils.addKnownAdapters(source);
+                source = AnnotationUtils.addKnownAdapters(source);
+                // rewrite bean:
+                GlobalUtils.writeToFile(source, filePath);
+
                 final ValidBean bean = new ValidBean();
                 bean.setBeanName(className);
                 bean.setBeanPath(path);

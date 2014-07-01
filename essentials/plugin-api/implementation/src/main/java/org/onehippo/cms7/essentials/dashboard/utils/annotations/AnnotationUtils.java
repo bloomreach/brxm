@@ -297,11 +297,12 @@ public final class AnnotationUtils {
     public static String addKnownAdapters(final String source) {
         // html:
         final String htmlAdapter = "HippoHtmlAdapter";
-        final String adapterPackage = "org.onehippo.cms7.essentials.components.rest.adapters";
-        String adapterSource = addXmlAdaptorAnnotation(source, "HippoHtml", new AdapterWrapper(adapterPackage, htmlAdapter));
+        final String htmlAdapterPackage = "org.onehippo.cms7.essentials.components.rest.adapters.HippoHtmlAdapter";
+        String adapterSource = addXmlAdaptorAnnotation(source, "HippoHtml", new AdapterWrapper(htmlAdapterPackage, htmlAdapter));
         // image
         final String imageAdapter = "HippoGalleryImageAdapter";
-        adapterSource = addXmlAdaptorAnnotation(adapterSource, "HippoGalleryImageSetBean", new AdapterWrapper(adapterPackage, imageAdapter));
+        final String imageAdapterPackage = "org.onehippo.cms7.essentials.components.rest.adapters.HippoGalleryImageAdapter";
+        adapterSource = addXmlAdaptorAnnotation(adapterSource, "HippoGalleryImageSetBean", new AdapterWrapper(imageAdapterPackage, imageAdapter));
         // TODO: add link adapter to lists
         return adapterSource;
     }
