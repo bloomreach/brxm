@@ -337,6 +337,7 @@ public final class AnnotationUtils {
         final String imageAdapter = "HippoGalleryImageAdapter";
         final String imageAdapterPackage = "org.onehippo.cms7.essentials.components.rest.adapters.HippoGalleryImageAdapter";
         adapterSource = addXmlAdaptorAnnotation(adapterSource, "HippoGalleryImageSetBean", new AdapterWrapper(imageAdapterPackage, imageAdapter));
+        adapterSource = addXmlAdaptorAnnotation(adapterSource, "HippoGalleryImageSet", new AdapterWrapper(imageAdapterPackage, imageAdapter));
         // TODO: add link adapter to lists
         return adapterSource;
     }
