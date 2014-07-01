@@ -203,20 +203,20 @@ public class TaxonomyResource extends BaseResource {
     }
 
     private void buildServiceNode(final Session session, final String prefix, final String documentName, final String taxonomyName) {
-        final String serviceName = MessageFormat.format("taxonomyclassification",
+        final String serviceName = MessageFormat.format("taxonomyclassification{0}",
                 taxonomyName);
         final String servicePath = MessageFormat.format(
                 "/hippo:configuration/hippo:frontend/cms/cms-services/{0}", serviceName);
-        String daoName = getDaoName(documentName, taxonomyName);
-        final String fieldPath = MessageFormat.format("{0}:{1}",prefix,taxonomyName);
-
+        final String daoName = getDaoName(documentName, taxonomyName);
+        final String fieldPath = MessageFormat.format(
+                "{0}:{1}",prefix,documentName);
         new FrontendPluginBuilder(session,servicePath).setProperties(
-                ImmutableMap.<String,String>builder()
+                ImmutableMap.<String, String>builder()
                         .put("fieldPath", fieldPath)
                         .put("taxonomy.classification.dao", daoName)
                         .put("plugin.class"
                                 , "org.onehippo.taxonomy.plugin.MixinClassificationDaoPlugin")
-                .build()
+                        .build()
         ).build();
     }
 
