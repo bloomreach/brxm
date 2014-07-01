@@ -281,7 +281,7 @@ public class PluginResource extends BaseResource {
         instructionPackage.setProperties(properties);
         instructionPackage.execute(context);
 
-        // update the plugin's installer document
+        // update the plugins installer document
         try (PluginConfigService service = new FilePluginService(context)) {
             InstallerDocument document = service.read(pluginId, InstallerDocument.class);
             if (document == null) {

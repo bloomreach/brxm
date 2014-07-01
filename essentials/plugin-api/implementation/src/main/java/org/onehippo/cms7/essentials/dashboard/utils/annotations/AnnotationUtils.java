@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -39,6 +40,7 @@ import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MemberValuePair;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
+import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
 import org.eclipse.jdt.core.dom.StringLiteral;
@@ -50,6 +52,8 @@ import org.onehippo.cms7.essentials.dashboard.utils.code.ExistingMethodsVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableSet;
+
 /**
  * Utility methods for parsing annotations and bean properties (fields/methods)
  *
@@ -59,6 +63,16 @@ public final class AnnotationUtils {
 
     private static Logger log = LoggerFactory.getLogger(AnnotationUtils.class);
 
+    public static final Set<String> KNOWN_XML_TYPES = new ImmutableSet.Builder<String>()
+            .add("String")
+            .add("HippoHtml")
+            .add("Date").add("Calendar")
+            .add("Long").add("long")
+            .add("Integer").add("int")
+            .add("Double").add("double")
+            .add("Boolean").add("boolean")
+            .add("HippoGalleryImageSetBean").add("HippoGalleryImageSet")
+            .build();
     //############################################
     // SOURCE UTILS
     //############################################
@@ -85,26 +99,25 @@ public final class AnnotationUtils {
 
     }
 
-    public static String addXmlAdaptorAnnotation(final String source, final Class<?> returnType, final AdapterWrapper wrapper) {
+    public static String addXmlAdaptorAnnotation(final String source, final String returnType, final AdapterWrapper wrapper) {
 
         final CompilationUnit unit = JavaSourceUtils.getCompilationUnit(source);
         final AST ast = unit.getAST();
         final ExistingMethodsVisitor methodsVisitor = JavaSourceUtils.getMethodCollection(unit);
         final List<MethodDeclaration> getterMethods = methodsVisitor.getGetterMethods();
         boolean needsImport = false;
-        final String ourReturnType = returnType.getSimpleName();
+
         for (MethodDeclaration getterMethod : getterMethods) {
             final Type returnType2 = getterMethod.getReturnType2();
             if (returnType2.isSimpleType()) {
                 final SimpleType simpleType = (SimpleType) returnType2;
-                if (!simpleType.getName().getFullyQualifiedName().equals(ourReturnType)) {
+                if (!simpleType.getName().getFullyQualifiedName().equals(returnType)) {
                     continue;
                 }
             } else {
                 log.warn("TODO: Cannot map type: {}", returnType2);
                 continue;
             }
-            log.info(ourReturnType);
             @SuppressWarnings("rawtypes")
             final List parameters = getterMethod.parameters();
             if (parameters == null || parameters.size() == 0) {
@@ -134,9 +147,29 @@ public final class AnnotationUtils {
         final List<MethodDeclaration> getterMethods = methodsVisitor.getGetterMethods();
         boolean needsImport = false;
         for (MethodDeclaration getterMethod : getterMethods) {
+
+            // getter must have no parameters:
             @SuppressWarnings("rawtypes")
             final List parameters = getterMethod.parameters();
             if (parameters == null || parameters.size() == 0) {
+                // it also must not be of type void:
+                final Type returnType2 = getterMethod.getReturnType2();
+                if(returnType2==null){
+                    continue;
+                }
+                if(returnType2 instanceof PrimitiveType){
+                    final PrimitiveType myType = (PrimitiveType) returnType2;
+                    if(myType.getPrimitiveTypeCode().equals(PrimitiveType.VOID)){
+                        log.debug("Cannot annotate void type for method: {} ", getterMethod.getName().getIdentifier());
+                        continue;
+                    }
+                }
+                // check if known type:
+                final String returnName = returnType2.toString();
+                if (!KNOWN_XML_TYPES.contains(returnName)) {
+                    log.warn("Unknown return type [{}], will skip annotating it with @XmlElement", returnName);
+                    continue;
+                }
                 // annotate getter:
                 final MarkerAnnotation xmlElementAnnotation = ast.newMarkerAnnotation();
                 xmlElementAnnotation.setTypeName(ast.newSimpleName(XmlElement.class.getSimpleName()));
@@ -293,6 +326,19 @@ public final class AnnotationUtils {
             myClass = myClass.getSuperclass();
         }
         return returnValue.values();
+    }
+
+    public static String addKnownAdapters(final String source) {
+        // html:
+        final String htmlAdapter = "HippoHtmlAdapter";
+        final String htmlAdapterPackage = "org.onehippo.cms7.essentials.components.rest.adapters.HippoHtmlAdapter";
+        String adapterSource = addXmlAdaptorAnnotation(source, "HippoHtml", new AdapterWrapper(htmlAdapterPackage, htmlAdapter));
+        // image
+        final String imageAdapter = "HippoGalleryImageAdapter";
+        final String imageAdapterPackage = "org.onehippo.cms7.essentials.components.rest.adapters.HippoGalleryImageAdapter";
+        adapterSource = addXmlAdaptorAnnotation(adapterSource, "HippoGalleryImageSetBean", new AdapterWrapper(imageAdapterPackage, imageAdapter));
+        // TODO: add link adapter to lists
+        return adapterSource;
     }
 
 

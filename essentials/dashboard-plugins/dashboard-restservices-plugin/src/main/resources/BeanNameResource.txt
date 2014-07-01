@@ -25,10 +25,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.example.beans.{{beanName}};
 import org.onehippo.cms7.essentials.components.paging.Pageable;
 import org.onehippo.cms7.essentials.components.rest.BaseRestResource;
 import org.onehippo.cms7.essentials.components.rest.ctx.DefaultRestContext;
+import {{fullQualifiedName}};
 
 /**
  * @version "$Id$"
@@ -36,8 +36,8 @@ import org.onehippo.cms7.essentials.components.rest.ctx.DefaultRestContext;
 
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_FORM_URLENCODED})
-@Path("/news/")
-public class NewsResource extends BaseRestResource {
+@Path("/{{beanName}}/")
+public class {{beanName}}Resource extends BaseRestResource {
 
 
     @GET
