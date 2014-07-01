@@ -18,8 +18,10 @@ package org.hippoecm.hst.resourcebundle;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
 
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import com.google.common.collect.Collections2;
@@ -94,7 +96,7 @@ public class TestDefaultResourceBundleRegistry {
                 family.setDefaultBundle(new SimpleListResourceBundle(ImmutableMap.of(
                         "name", "simple bundle NAME (default)",
                         "greeting", "HELLO (default)",
-                        "from", "default"
+                        "missing", "default"
                 )));
                 family.setLocalizedBundle(LocaleUtils.toLocale("en"),
                         new SimpleListResourceBundle(ImmutableMap.of(
@@ -105,7 +107,7 @@ public class TestDefaultResourceBundleRegistry {
                         new SimpleListResourceBundle(ImmutableMap.of(
                                 "name", "simple bundle NAME (en_US)",
                                 "greeting", "HELLO (en_US)",
-                                "from", "[<missing>]"
+                                "missing", "[<missing>]"
                         )));
                 family.setLocalizedBundle(LocaleUtils.toLocale("fr"),
                         new SimpleListResourceBundle(ImmutableMap.of(
@@ -126,8 +128,13 @@ public class TestDefaultResourceBundleRegistry {
         assertNotNull(bundle);
         assertEquals("simple bundle NAME (en)", bundle.getString("name"));
         assertEquals("HELLO (en)", bundle.getString("greeting"));
-        assertEquals("default", bundle.getString("from"));
-        assertEquals("From default (en) java backed properties", bundle.getString("fallback"));
+
+        try {
+            bundle.getString("missing");
+            fail("missing key should be missing because value is [<missing>]");
+        } catch (MissingResourceException e) {
+            // correct
+        }
 
         assertSame(bundle, resourceBundleRegistry.getBundle(BASE_NAME, locale));
 
@@ -136,9 +143,6 @@ public class TestDefaultResourceBundleRegistry {
         assertNotNull(bundle);
         assertEquals("simple bundle NAME (en_US)", bundle.getString("name"));
         assertEquals("HELLO (en_US)", bundle.getString("greeting"));
-        // value [<missing>] should be equal to not existing
-        assertEquals("default", bundle.getString("from"));
-        assertEquals("From default (en) java backed properties", bundle.getString("fallback"));
         assertSame(bundle, resourceBundleRegistry.getBundle(BASE_NAME, locale));
 
         locale = LocaleUtils.toLocale("en_CA");
@@ -153,7 +157,6 @@ public class TestDefaultResourceBundleRegistry {
         assertNotNull(bundle);
         assertEquals("simple bundle NOM (fr)", bundle.getString("name"));
         assertEquals("BONJOUR (fr)", bundle.getString("greeting"));
-        assertEquals("From default java backed properties", bundle.getString("fallback"));
         assertSame(bundle, resourceBundleRegistry.getBundle(BASE_NAME, locale));
 
         locale = LocaleUtils.toLocale("fr_FR");
@@ -175,7 +178,6 @@ public class TestDefaultResourceBundleRegistry {
         assertNotNull(bundle);
         assertEquals("simple bundle NAME (default)", bundle.getString("name"));
         assertEquals("HELLO (default)", bundle.getString("greeting"));
-        assertEquals("default", bundle.getString("from"));
         assertSame(bundle, resourceBundleRegistry.getBundle(BASE_NAME, locale));
     }
 

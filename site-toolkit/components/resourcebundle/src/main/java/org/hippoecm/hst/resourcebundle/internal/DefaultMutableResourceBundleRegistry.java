@@ -1,12 +1,12 @@
 /**
  * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *         http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.resourcebundle.internal;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -26,7 +25,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang.LocaleUtils;
 import org.hippoecm.hst.resourcebundle.PlaceHolderEmptyResourceBundleFamily;
 import org.hippoecm.hst.resourcebundle.ResourceBundleFamily;
-import org.hippoecm.hst.resourcebundle.SimpleListResourceBundle;
 
 /**
  * DefaultMutableResourceBundleRegistry
@@ -98,8 +96,7 @@ public class DefaultMutableResourceBundleRegistry implements MutableResourceBund
     }
 
     protected ResourceBundle getBundle(String basename, Locale locale, boolean preview) {
-        List<ResourceBundle> bundles = new ArrayList<>();
-        ResourceBundle defaultBundle = null;
+        ResourceBundle bundle = null;
         ResourceBundleFamily bundleFamily = bundleFamiliesMap.get(basename);
 
         if (bundleFamily == null && resourceBundleFamilyFactory != null) {
@@ -113,56 +110,39 @@ public class DefaultMutableResourceBundleRegistry implements MutableResourceBund
                 }
             }
         }
+
         if (bundleFamily != null && !(bundleFamily instanceof PlaceHolderEmptyResourceBundleFamily)) {
-            defaultBundle = (preview ? bundleFamily.getDefaultBundleForPreview() : bundleFamily.getDefaultBundle());
-            if (defaultBundle != null && locale != null) {
-                // 
+            bundle = (preview ? bundleFamily.getDefaultBundleForPreview() : bundleFamily.getDefaultBundle());
+
+            if (locale != null) {
+                //
                 // Let's try to find the best mapped resource bundle.
                 // For example, if the locale is 'en_US', then it tries to find bundle by 'en_US'.
                 // Next, it tries to find bundle by 'en' if not found.
-                // 
+                //
                 @SuppressWarnings("unchecked")
                 List<Locale> lookupLocales = (List<Locale>) LocaleUtils.localeLookupList(locale);
+
                 for (Locale loc : lookupLocales) {
                     ResourceBundle localizedBundle = (preview ? bundleFamily.getLocalizedBundleForPreview(loc) : bundleFamily.getLocalizedBundle(loc));
+
                     if (localizedBundle != null) {
-                        bundles.add(localizedBundle);
+                        bundle = localizedBundle;
+                        break;
                     }
                 }
             }
         }
 
-        ResourceBundle fallbackJavaResourceBundle = null;
-        if (fallbackToJavaResourceBundle) {
+        if (bundle == null && fallbackToJavaResourceBundle) {
             if (locale == null) {
-                fallbackJavaResourceBundle = ResourceBundle.getBundle(basename, Locale.getDefault(), Thread.currentThread().getContextClassLoader());
+                bundle = ResourceBundle.getBundle(basename, Locale.getDefault(), Thread.currentThread().getContextClassLoader());
             } else {
-                fallbackJavaResourceBundle = ResourceBundle.getBundle(basename, locale, Thread.currentThread().getContextClassLoader());
-            }
-            if (defaultBundle == null) {
-                return fallbackJavaResourceBundle;
+                bundle = ResourceBundle.getBundle(basename, locale, Thread.currentThread().getContextClassLoader());
             }
         }
-        if (defaultBundle == null) {
-            return null;
-        }
 
-        if (fallbackJavaResourceBundle != null) {
-            ((SimpleListResourceBundle)defaultBundle).setParent(fallbackJavaResourceBundle);
-        }
-
-        if (bundles.isEmpty()) {
-            return defaultBundle;
-        }
-
-        ResourceBundle primaryBundle = bundles.get(0);
-        int i = 1;
-        while (i < bundles.size()) {
-            ((SimpleListResourceBundle)bundles.get(i - 1)).setParent((bundles.get(i)));
-            i++;
-        }
-        ((SimpleListResourceBundle)bundles.get(bundles.size() - 1)).setParent(defaultBundle);
-        return primaryBundle;
+        return bundle;
     }
 
 }
