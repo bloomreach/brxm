@@ -42,8 +42,8 @@ public class FrontendPluginBuilder {
     public Node build(){
         try {
             final Node rootNode = session.getRootNode();
-            if (!rootNode.hasNode(path)){
-                node = rootNode.addNode(path, "frontend:plugin");
+            if (!rootNode.hasNode(path.substring(1))){
+                node = rootNode.addNode(path.substring(1), "frontend:plugin");
                 for (Map.Entry<String,String> entry : (ImmutableSet<Map.Entry<String,String>>) properties.entrySet()) {
                     node.setProperty(entry.getKey(),entry.getValue());
                 }

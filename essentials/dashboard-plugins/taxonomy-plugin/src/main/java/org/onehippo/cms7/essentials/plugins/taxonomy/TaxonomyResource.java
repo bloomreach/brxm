@@ -151,8 +151,8 @@ public class TaxonomyResource extends BaseResource {
                     if (session.nodeExists(path)) {
                         final Node node = session.getNode(path);
                         if (node.hasNode("classifiable")) {
-                            buildServiceNode(session, documentName, taxonomyName);
-                            buildTemplateNode(session, documentName, taxonomyName, path);
+                            buildServiceNode(session, prefix, documentName, taxonomyName);
+                            buildTemplateNode(session, prefix, documentName, taxonomyName);
                             changedDocuments.add(documentName);
                         }
                         else{
@@ -183,8 +183,10 @@ public class TaxonomyResource extends BaseResource {
         return new ErrorMessageRestful("Error adding taxonomy fields");
     }
 
-    private void buildTemplateNode(final Session session, final String documentName, final String taxonomyName, final String path) {
-        final String templatePath = MessageFormat.format(path + "/{2}", taxonomyName);
+    private void buildTemplateNode(final Session session, final String prefix, final String documentName, final String taxonomyName) {
+        final String templatePath = MessageFormat.format(
+                "/hippo:namespaces/{0}/{1}/editor:templates/_default_/{2}", prefix, documentName,taxonomyName);
+
         String daoName = getDaoName(documentName, taxonomyName);
         new FrontendPluginBuilder(session,templatePath).setProperties(
                 ImmutableMap.<String,String>builder()
@@ -200,15 +202,17 @@ public class TaxonomyResource extends BaseResource {
         ).build();
     }
 
-    private void buildServiceNode(final Session session, final String documentName, final String taxonomyName) {
-        final String serviceName = MessageFormat.format("taxonomyclassification{0}{1}",
-                documentName.substring(documentName.indexOf(":") + 1), taxonomyName);
+    private void buildServiceNode(final Session session, final String prefix, final String documentName, final String taxonomyName) {
+        final String serviceName = MessageFormat.format("taxonomyclassification",
+                taxonomyName);
         final String servicePath = MessageFormat.format(
                 "/hippo:configuration/hippo:frontend/cms/cms-services/{0}", serviceName);
         String daoName = getDaoName(documentName, taxonomyName);
+        final String fieldPath = MessageFormat.format("{0}:{1}",prefix,taxonomyName);
+
         new FrontendPluginBuilder(session,servicePath).setProperties(
                 ImmutableMap.<String,String>builder()
-                        .put("taxonomy.name", taxonomyName)
+                        .put("fieldPath", fieldPath)
                         .put("taxonomy.classification.dao", daoName)
                         .put("plugin.class"
                                 , "org.onehippo.taxonomy.plugin.MixinClassificationDaoPlugin")
@@ -217,7 +221,7 @@ public class TaxonomyResource extends BaseResource {
     }
 
     public static String getDaoName(String docType, String taxonomyName){
-        return MessageFormat.format("taxonomy.classification.{0}.{1}.dao", docType.substring(docType.indexOf(":")+1), taxonomyName);
+        return MessageFormat.format("taxonomy.classification.{0}.dao", taxonomyName);
     }
 
 
