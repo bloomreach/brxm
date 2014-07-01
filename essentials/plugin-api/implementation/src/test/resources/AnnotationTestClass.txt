@@ -122,5 +122,10 @@ public class NewsDocument extends HippoDocument {
         return getProperty(SOURCE);
     }
 
+
+      public void getMySource() {
+            // do nothing
+      }
+
 }
 
