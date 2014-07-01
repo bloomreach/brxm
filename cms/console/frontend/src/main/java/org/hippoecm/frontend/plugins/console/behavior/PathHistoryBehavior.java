@@ -53,7 +53,11 @@ public class PathHistoryBehavior extends AbstractDefaultAjaxBehavior implements 
         if (!path.isNull()) {
             try {
                 myUpdate = true;
-                reference.setModel(new JcrNodeModel(path.toString()));
+                JcrNodeModel nodeModel = new JcrNodeModel(path.toString());
+                while (nodeModel.getNode() == null) {
+                    nodeModel = nodeModel.getParentModel();
+                }
+                reference.setModel(nodeModel);
             } finally {
                 myUpdate = false;
             }

@@ -50,7 +50,7 @@ public class NodeDialog extends AbstractDialog<Node> {
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(NodeDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(NodeDialog.class);
 
     private String name;
     private String type;
