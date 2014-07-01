@@ -17,40 +17,79 @@
 (function () {
     "use strict";
     angular.module('hippo.essentials')
-            .controller('restServicesCtrl', function ($scope, $sce, $log, $rootScope, $http) {
-                $scope.endpoint = $rootScope.REST.dynamic + 'restservices/';
-                $scope.resultMessages = [];
-                $scope.restType = null;
-                $scope.selectedType = "Choose REST type";
-                $scope.restName = "restapi";
-                $scope.showDocuments = false;
-                $scope.documentTypes = [];
+        .controller('restServicesCtrl', function ($scope, $sce, $log, $rootScope, $http) {
+            $scope.endpoint = $rootScope.REST.dynamic + 'restservices/';
+            $scope.resultMessages = [];
+            $scope.restType = null;
+            $scope.selectedType = "Choose REST type";
+            $scope.restName = "restapi";
+            $scope.showDocuments = false;
+            $scope.documentTypes = [];
 
-                $scope.init = function () {
+            $scope.init = function () {
 
-                };
-                $scope.onChangeType = function (restType) {
-                    $scope.restType = restType;
-                    if (restType == 'plain') {
-                        // fetch documents:
-                        $http.get($scope.endpoint + 'beans').success(function (data) {
-                            $scope.documentTypes = data.items;
-                            angular.forEach($scope.documentTypes, function (doc) {
-                                doc.checked = false;
-                                doc.name = doc.key.replace(".java", "");
-                            });
-                        });
-                    } else {
-                        $scope.documentTypes = [];
-                    }
-                };
-                $scope.runRestSetup = function () {
-                    var payload = Essentials.addPayloadData("restName", $scope.restName, null);
-                    Essentials.addPayloadData("restType", $scope.restType, payload);
-                    $http.post($scope.endpoint, payload).success(function (data) {
-                        // TODO: display reboot message and instruction sets executed
+            };
+            $scope.onChangeType = function (restType) {
+                $scope.restType = restType;
+                if (restType == 'plain') {
+                    // fetch documents:
+                    $http.get($rootScope.REST.documents).success(function (data) {
+                        $scope.documentTypes = data;
                     });
-                };
-                $scope.init();
-            })
+                } else {
+                    $scope.documentTypes = [];
+                }
+            };
+            $scope.checked = function () {
+                var valid = checkValid();
+                if (!valid) {
+                } else {
+                    $scope.restForm.myDocument.$setValidity("checked", true);
+                }
+            };
+            $scope.runRestSetup = function () {
+                // check if we have selected documents:
+
+                var valid = checkValid();
+                if (!valid) {
+                    $scope.restForm.myDocument.$setValidity("checked", false);
+                    displayError("Please select at least one document type");
+                    return;
+                }
+
+                var files = [];
+                angular.forEach($scope.documentTypes, function (value) {
+                    if (value.checked && value.fullPath) {
+                        files.push(value.fullPath);
+                    }
+                });
+                var fileString = files.join(',');
+                var payload = Essentials.addPayloadData("restName", $scope.restName, null);
+                Essentials.addPayloadData("restType", $scope.restType, payload);
+                Essentials.addPayloadData("javaFiles", fileString, payload);
+                $http.post($scope.endpoint, payload).success(function (data) {
+                    // TODO: display reboot message and instruction sets executed
+                });
+            };
+            $scope.init();
+            //############################################
+            // UTIL
+            //############################################
+            function displayError(msg) {
+                $rootScope.globalError = [];
+                $rootScope.feedbackMessages = [];
+                $rootScope.globalError.push(msg);
+            }
+
+            function checkValid() {
+                var valid = false;
+                angular.forEach($scope.documentTypes, function (value) {
+                    if (value.checked) {
+                        valid = true;
+                    }
+                });
+                return valid;
+            }
+
+        })
 })();

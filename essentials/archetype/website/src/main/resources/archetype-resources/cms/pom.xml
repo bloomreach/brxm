@@ -92,17 +92,6 @@
 
   </dependencies>
 
-  <profiles>
-    <profile>
-      <id>essentials</id>
-      <activation>
-        <!-- For the moment the essentials profile is active by default and
-         therefore the essentials content is always bootstrapped. -->
-        <activeByDefault>true</activeByDefault>
-      </activation>
-    </profile>
-  </profiles>
-
   <build>
     <finalName>cms</finalName>
     <plugins>

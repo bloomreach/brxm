@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.essentials.dashboard.restservices;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +44,11 @@ import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.HstUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.JavaSourceUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
 /**
@@ -55,6 +60,7 @@ import com.google.common.base.Strings;
 public class RestPluginResource extends BaseResource {
 
 
+    private static final Logger log = LoggerFactory.getLogger(RestPluginResource.class);
     @GET
     @Path("/beans")
     public RestfulList<KeyValueRestful> getHippoBeans(@Context ServletContext servletContext) {
@@ -90,6 +96,7 @@ public class RestPluginResource extends BaseResource {
         final Map<String, String> values = payloadRestful.getValues();
         final String restName = values.get(RestPluginConst.REST_NAME);
         final String restType = values.get(RestPluginConst.REST_TYPE);
+        final String selectedBeans = values.get(RestPluginConst.JAVA_FILES);
         if (Strings.isNullOrEmpty(restName) || Strings.isNullOrEmpty(restType)) {
             return new ErrorMessageRestful("REST service name / type or both were empty");
         }
@@ -98,10 +105,37 @@ public class RestPluginResource extends BaseResource {
         final InstructionPackage instructionPackage = new RestServicesInstructionPackage();
         // TODO: figure out injection part
         getInjector().autowireBean(instructionPackage);
+        values.put("resourceCollection", populateBeanReferences(selectedBeans));
         instructionPackage.setProperties(new HashMap<String, Object>(values));
         instructionPackage.execute(context);
         message.setValue("Please rebuild and restart your application");
         return message;
+    }
+
+
+    private String populateBeanReferences(final String input){
+        if(Strings.isNullOrEmpty(input)){
+            log.error("No beans were selected");
+            return "";
+        }
+        final Iterable<String> split = Splitter.on(',').split(input);
+        final StringBuilder builder = new StringBuilder();
+        for (String path : split) {
+            final File file = new File(path);
+            if(file.exists()){
+                final java.nio.file.Path myPath = file.toPath();
+                final String packageName = JavaSourceUtils.getPackageName(myPath);
+                final String className = JavaSourceUtils.getFullQualifiedClassName(myPath);
+                if(Strings.isNullOrEmpty(packageName) || Strings.isNullOrEmpty(className)){
+                    log.warn("Skipping path: {}", path);
+                    continue;
+                }
+                builder.append("<bean class=\"").append(packageName).append(className).append("\"/>").append('\n');
+            }
+        }
+        return builder.toString();
+
+
     }
 
 }

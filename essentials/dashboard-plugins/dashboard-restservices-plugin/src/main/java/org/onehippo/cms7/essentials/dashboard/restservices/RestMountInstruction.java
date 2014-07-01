@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.essentials.dashboard.restservices;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
@@ -53,6 +54,13 @@ public class RestMountInstruction implements Instruction {
 
     @Override
     public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
+
+        final Map<String, Object> myData = new HashMap<>();
+
+
+        context.addPlaceholderData(myData);
+
+
         log.info("Executing RestMountInstruction...");
         return InstructionStatus.SUCCESS;
     }

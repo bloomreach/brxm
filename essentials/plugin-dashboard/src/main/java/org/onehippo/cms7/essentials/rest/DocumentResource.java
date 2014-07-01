@@ -16,10 +16,14 @@
 
 package org.onehippo.cms7.essentials.rest;
 
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +55,7 @@ import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.JavaSourceUtils;
 import org.onehippo.cms7.essentials.rest.model.DocumentRestful;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeService;
@@ -228,10 +233,46 @@ public class DocumentResource extends BaseResource {
         } finally {
             GlobalUtils.cleanupSession(session);
         }
+        // populate java paths (if found):
+
+
+
         // sort documents by name:
         Collections.sort(documents, new DocumentNameComparator());
+        populateBeanPaths(context, documents);
         return documents;
     }
+
+    public void populateBeanPaths(final PluginContext context, final List<DocumentRestful> documents){
+        final java.nio.file.Path startDir = context.getBeansPackagePath();
+        final Map<String, java.nio.file.Path> existingBeans = new HashMap<>();
+        final List<java.nio.file.Path> directories = new ArrayList<>();
+        GlobalUtils.populateDirectories(startDir, directories);
+        final String pattern = "*.java";
+        for (java.nio.file.Path directory : directories) {
+            try (final DirectoryStream<java.nio.file.Path> stream = Files.newDirectoryStream(directory, pattern)) {
+                for (java.nio.file.Path path : stream) {
+                    final String nodeJcrType = JavaSourceUtils.getNodeJcrType(path);
+                    if (nodeJcrType != null) {
+                        log.info("nodeJcrType {}", nodeJcrType);
+                        existingBeans.put(nodeJcrType, path);
+                    }
+                }
+            } catch (IOException e) {
+                log.error("Error reading java files", e);
+            }
+        }
+        //
+        for (DocumentRestful document : documents) {
+            final String fullName = document.getFullName();
+            final java.nio.file.Path path = existingBeans.get(fullName);
+            if(path !=null){
+                document.setJavaName(path.toFile().getName());
+                document.setFullPath(path.toString());
+            }
+        }
+    }
+
 
     public enum Type {
         ALL,

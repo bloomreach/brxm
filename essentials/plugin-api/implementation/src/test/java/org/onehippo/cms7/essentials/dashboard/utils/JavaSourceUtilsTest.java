@@ -44,6 +44,7 @@ import static org.junit.Assert.assertTrue;
 public class JavaSourceUtilsTest extends BaseResourceTest {
 
     public static final String CLASS_NAME = "TestExampleClass";
+    public static final String PACKAGE_NAME = "com.foo.bar";
     private static Logger log = LoggerFactory.getLogger(JavaSourceUtilsTest.class);
     private String absolutePath = "";
     private Path path;
@@ -56,7 +57,12 @@ public class JavaSourceUtilsTest extends BaseResourceTest {
         super.setUp();
         final String tmpDir = System.getProperty("java.io.tmpdir");
         absolutePath = new File(tmpDir).getAbsolutePath();
-        path = JavaSourceUtils.createJavaClass(absolutePath, CLASS_NAME, "com.foo.bar", ".txt");
+        path = JavaSourceUtils.createJavaClass(absolutePath, CLASS_NAME, PACKAGE_NAME, ".txt");
+    }
+  @Test
+    public void testGetPackage() throws Exception {
+
+        assertEquals(JavaSourceUtils.getPackageName(path), PACKAGE_NAME);
     }
 
     @Test

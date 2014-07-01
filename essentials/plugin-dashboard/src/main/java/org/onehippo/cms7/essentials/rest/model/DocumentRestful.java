@@ -33,6 +33,8 @@ public class DocumentRestful implements Restful {
 
     private static final long serialVersionUID = 1L;
 
+    private String javaName;
+    private String fullPath;
     private String fullName;
     private String name;
     private String prefix;
@@ -48,6 +50,22 @@ public class DocumentRestful implements Restful {
         this.compoundType = contentType.isCompoundType();
         this.superTypes = contentType.getSuperTypes();
         this.name = extractName(fullName);
+    }
+
+    public String getJavaName() {
+        return javaName;
+    }
+
+    public void setJavaName(final String javaName) {
+        this.javaName = javaName;
+    }
+
+    public String getFullPath() {
+        return fullPath;
+    }
+
+    public void setFullPath(final String fullPath) {
+        this.fullPath = fullPath;
     }
 
     private String extractFullName(final CharSequence name) {

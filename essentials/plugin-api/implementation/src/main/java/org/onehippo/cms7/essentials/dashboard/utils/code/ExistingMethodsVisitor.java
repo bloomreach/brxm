@@ -44,6 +44,7 @@ public class ExistingMethodsVisitor extends ASTVisitor {
     private List<String> methodsNames = new ArrayList<>();
     private Set<String> internalNames = new HashSet<>();
     private List<String> generatedMethodNames = new ArrayList<>();
+    private List<MethodDeclaration> getterMethods = new ArrayList<>();
     private List<EssentialsGeneratedMethod> generatedMethods = new ArrayList<>();
 
     @Override
@@ -51,6 +52,9 @@ public class ExistingMethodsVisitor extends ASTVisitor {
         final String identifier = node.getName().getIdentifier();
         methods.add(node);
         methodsNames.add(identifier);
+        if (identifier.startsWith("get")) {
+            getterMethods.add(node);
+        }
 
         final List<?> modifiers = node.modifiers();
         for (Object modifier : modifiers) {
@@ -104,6 +108,10 @@ public class ExistingMethodsVisitor extends ASTVisitor {
 
     public Set<String> getMethodInternalNames() {
         return internalNames;
+    }
+
+    public List<MethodDeclaration> getGetterMethods() {
+        return getterMethods;
     }
 
     @Override
