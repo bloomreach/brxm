@@ -40,12 +40,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -64,6 +58,12 @@ import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableMap;
+
 /**
  * @version "$Id$"
  */
@@ -76,7 +76,6 @@ public class TaxonomyResource extends BaseResource {
     public static final String HIPPOTAXONOMY_LOCALES = "hippotaxonomy:locales";
     public static final String HIPPOTAXONOMY_MIXIN = "hippotaxonomy:classifiable";
     private static final StringCodec codec = new StringCodecFactory.NameEncoding();
-    public static final String HIPPOSYSEDIT_SUPERTYPE = "hipposysedit:supertype";
 
 
     private static Logger log = LoggerFactory.getLogger(TaxonomyResource.class);
@@ -140,7 +139,6 @@ public class TaxonomyResource extends BaseResource {
             final Map<String, String> values = payloadRestful.getValues();
             final String[] taxonomyNames = PayloadUtils.extractValueArray(values.get("taxonomies"));
             final String[] documentNames = PayloadUtils.extractValueArray(values.get("documents"));
-
             final Collection<String> changedDocuments = new HashSet<>();
             for (int i = 0; i < documentNames.length; i++) {
                 final String documentName = documentNames[i];
