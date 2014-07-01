@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -122,12 +123,13 @@ public final class AnnotationUtils {
             final List parameters = getterMethod.parameters();
             if (parameters == null || parameters.size() == 0) {
                 final SingleMemberAnnotation generatedAnnotation = ast.newSingleMemberAnnotation();
-                generatedAnnotation.setTypeName(ast.newName("XmlJavaTypeAdapter"));
+                generatedAnnotation.setTypeName(ast.newName(XmlJavaTypeAdapter.class.getSimpleName()));
                 // name
                 final TypeLiteral typeLiteral = ast.newTypeLiteral();
                 typeLiteral.setType(ast.newSimpleType(ast.newName(wrapper.className)));
                 generatedAnnotation.setValue(typeLiteral);
                 JavaSourceUtils.addAnnotation(getterMethod, generatedAnnotation);
+                JavaSourceUtils.addImport(unit, XmlJavaTypeAdapter.class.getName());
                 needsImport = true;
             }
         }
