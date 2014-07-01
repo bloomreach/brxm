@@ -18,20 +18,20 @@ package org.onehippo.cms7.essentials.components.rest.adapters;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean;
+import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.hst.jaxrs.model.content.HippoGalleryImageRepresentation;
 
-public class HippoGalleryImageAdapter extends XmlAdapter<HippoGalleryImageRepresentation, HippoGalleryImageSetBean> {
+public class HippoGalleryImageAdapter extends XmlAdapter<HippoGalleryImageRepresentation, HippoGalleryImageSet> {
 
 	@Override
-	public HippoGalleryImageRepresentation marshal(HippoGalleryImageSetBean bean) throws Exception {
+	public HippoGalleryImageRepresentation marshal(HippoGalleryImageSet bean) throws Exception {
 		HippoGalleryImageRepresentation representation = new HippoGalleryImageRepresentation();
 		representation.represent(bean);
 		return representation;
 	}
 
 	@Override
-	public HippoGalleryImageSetBean unmarshal(HippoGalleryImageRepresentation representation) throws Exception {
+	public HippoGalleryImageSet unmarshal(HippoGalleryImageRepresentation representation) throws Exception {
 		throw new UnsupportedOperationException("Unmarshalling not implemented.");
 	}
 
