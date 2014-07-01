@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -96,7 +97,7 @@ public class DefaultMutableResourceBundleRegistry implements MutableResourceBund
     }
 
     protected ResourceBundle getBundle(String basename, Locale locale, boolean preview) {
-        ResourceBundle bundle = null;
+
         ResourceBundleFamily bundleFamily = bundleFamiliesMap.get(basename);
 
         if (bundleFamily == null && resourceBundleFamilyFactory != null) {
@@ -112,7 +113,6 @@ public class DefaultMutableResourceBundleRegistry implements MutableResourceBund
         }
 
         if (bundleFamily != null && !(bundleFamily instanceof PlaceHolderEmptyResourceBundleFamily)) {
-            bundle = (preview ? bundleFamily.getDefaultBundleForPreview() : bundleFamily.getDefaultBundle());
 
             if (locale != null) {
                 //
@@ -127,22 +127,25 @@ public class DefaultMutableResourceBundleRegistry implements MutableResourceBund
                     ResourceBundle localizedBundle = (preview ? bundleFamily.getLocalizedBundleForPreview(loc) : bundleFamily.getLocalizedBundle(loc));
 
                     if (localizedBundle != null) {
-                        bundle = localizedBundle;
-                        break;
+                        return localizedBundle;
                     }
                 }
             }
-        }
 
-        if (bundle == null && fallbackToJavaResourceBundle) {
-            if (locale == null) {
-                bundle = ResourceBundle.getBundle(basename, Locale.getDefault(), Thread.currentThread().getContextClassLoader());
-            } else {
-                bundle = ResourceBundle.getBundle(basename, locale, Thread.currentThread().getContextClassLoader());
+            ResourceBundle bundle = (preview ? bundleFamily.getDefaultBundleForPreview() : bundleFamily.getDefaultBundle());
+            if (bundle != null) {
+                return bundle;
             }
         }
 
-        return bundle;
+        if (fallbackToJavaResourceBundle) {
+            if (locale == null) {
+                return ResourceBundle.getBundle(basename, Locale.getDefault(), Thread.currentThread().getContextClassLoader());
+            } else {
+                return ResourceBundle.getBundle(basename, locale, Thread.currentThread().getContextClassLoader());
+            }
+        }
+        throw new MissingResourceException("Cannot find resource bundle.", basename, "");
     }
 
 }

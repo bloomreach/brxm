@@ -89,26 +89,33 @@ public class TestDefaultResourceBundleRegistry {
 
     @Test
     public void testBundlesWithResourceBundleFamilyFactory() throws Exception {
+        final ResourceBundle defaultBundle = new SimpleListResourceBundle(ImmutableMap.of(
+                "name", "simple bundle NAME (default)",
+                "greeting", "HELLO (default)",
+                "missing", "default"
+        ));
+        final SimpleListResourceBundle enBundle = new SimpleListResourceBundle(ImmutableMap.of(
+                "name", "simple bundle NAME (en)",
+                "greeting", "HELLO (en)"
+        ));
+        enBundle.setParent(defaultBundle);
+
+        final SimpleListResourceBundle enUSBundle = new SimpleListResourceBundle(ImmutableMap.of(
+                "name", "simple bundle NAME (en_US)",
+                "greeting", "HELLO (en_US)",
+                "missing", "[<missing>]"
+        ));
+        enUSBundle.setParent(enBundle);
+
+
         resourceBundleRegistry.setResourceBundleFamilyFactory(new ResourceBundleFamilyFactory() {
             @Override
             public ResourceBundleFamily createBundleFamily(String basename) {
                 DefaultMutableResourceBundleFamily family = new DefaultMutableResourceBundleFamily(BASE_NAME);
-                family.setDefaultBundle(new SimpleListResourceBundle(ImmutableMap.of(
-                        "name", "simple bundle NAME (default)",
-                        "greeting", "HELLO (default)",
-                        "missing", "default"
-                )));
-                family.setLocalizedBundle(LocaleUtils.toLocale("en"),
-                        new SimpleListResourceBundle(ImmutableMap.of(
-                                "name", "simple bundle NAME (en)",
-                                "greeting", "HELLO (en)"
-                        )));
-                family.setLocalizedBundle(LocaleUtils.toLocale("en_US"),
-                        new SimpleListResourceBundle(ImmutableMap.of(
-                                "name", "simple bundle NAME (en_US)",
-                                "greeting", "HELLO (en_US)",
-                                "missing", "[<missing>]"
-                        )));
+
+                family.setDefaultBundle(defaultBundle);
+                family.setLocalizedBundle(LocaleUtils.toLocale("en"),enBundle);
+                family.setLocalizedBundle(LocaleUtils.toLocale("en_US"),enUSBundle);
                 family.setLocalizedBundle(LocaleUtils.toLocale("fr"),
                         new SimpleListResourceBundle(ImmutableMap.of(
                                 "name", "simple bundle NOM (fr)",
@@ -128,14 +135,8 @@ public class TestDefaultResourceBundleRegistry {
         assertNotNull(bundle);
         assertEquals("simple bundle NAME (en)", bundle.getString("name"));
         assertEquals("HELLO (en)", bundle.getString("greeting"));
-
-        try {
-            bundle.getString("missing");
-            fail("missing key should be missing because value is [<missing>]");
-        } catch (MissingResourceException e) {
-            // correct
-        }
-
+        // default bundle has 'missing' key
+        assertEquals("default", bundle.getString("missing"));
         assertSame(bundle, resourceBundleRegistry.getBundle(BASE_NAME, locale));
 
         locale = LocaleUtils.toLocale("en_US");
@@ -143,6 +144,8 @@ public class TestDefaultResourceBundleRegistry {
         assertNotNull(bundle);
         assertEquals("simple bundle NAME (en_US)", bundle.getString("name"));
         assertEquals("HELLO (en_US)", bundle.getString("greeting"));
+        // en_US has 'missing' key but with value [<missing>] which means missing and thus bubbles up
+        assertEquals("default", bundle.getString("missing"));
         assertSame(bundle, resourceBundleRegistry.getBundle(BASE_NAME, locale));
 
         locale = LocaleUtils.toLocale("en_CA");

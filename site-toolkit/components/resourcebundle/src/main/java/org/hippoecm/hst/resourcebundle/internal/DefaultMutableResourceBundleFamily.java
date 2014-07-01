@@ -15,12 +15,17 @@
  */
 package org.hippoecm.hst.resourcebundle.internal;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.commons.lang.LocaleUtils;
+import org.hippoecm.hst.resourcebundle.SimpleListResourceBundle;
 
 /**
  * DefaultMutableResourceBundleFamily
@@ -90,5 +95,38 @@ public class DefaultMutableResourceBundleFamily implements MutableResourceBundle
     @Override
     public void removeLocalizedBundleForPreview(Locale locale) {
         localizedBundlesMapForPreview.remove(locale);
+    }
+
+    public void setParentBundles() {
+        setParentBundles(localizedBundlesMap, getDefaultBundle());
+        setParentBundles(localizedBundlesMapForPreview, getDefaultBundleForPreview());
+
+    }
+
+    private void setParentBundles(final Map<Locale, ResourceBundle> bundles,
+                                  final ResourceBundle root) {
+
+        for (Map.Entry<Locale, ResourceBundle> entry : bundles.entrySet()) {
+            final ResourceBundle bundle = entry.getValue();
+            if (!(bundle instanceof SimpleListResourceBundle)) {
+                continue;
+            }
+            Locale locale = entry.getKey();
+            boolean parentIsSet = false;
+            List<Locale> parentLocales = new ArrayList<>((List<Locale>) LocaleUtils.localeLookupList(locale));
+            // locale at index 0 is current locale
+            parentLocales.remove(0);
+            for (Locale parentLocale : parentLocales) {
+                ResourceBundle parentBundle = bundles.get(parentLocale);
+                if (parentBundle != null) {
+                    ((SimpleListResourceBundle) bundle).setParent(parentBundle);
+                    parentIsSet = true;
+                    break;
+                }
+            }
+            if (!parentIsSet) {
+                ((SimpleListResourceBundle) bundle).setParent(root);
+            }
+        }
     }
 }

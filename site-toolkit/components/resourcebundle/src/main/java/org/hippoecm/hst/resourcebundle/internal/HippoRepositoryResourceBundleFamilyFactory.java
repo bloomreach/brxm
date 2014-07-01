@@ -69,7 +69,7 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
 
     @Override
     public ResourceBundleFamily createBundleFamily(String basename) {
-        MutableResourceBundleFamily bundleFamily = new DefaultMutableResourceBundleFamily(basename);
+        DefaultMutableResourceBundleFamily bundleFamily = new DefaultMutableResourceBundleFamily(basename);
 
         Session session = null;
         Credentials[] creds = {liveCredentials, previewCredentials};
@@ -116,6 +116,7 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
             return PLACE_HOLDER_EMPTY_RESOURCE_BUNDLE_FAMILY;
         }
 
+        bundleFamily.setParentBundles();
         return bundleFamily;
     }
 
