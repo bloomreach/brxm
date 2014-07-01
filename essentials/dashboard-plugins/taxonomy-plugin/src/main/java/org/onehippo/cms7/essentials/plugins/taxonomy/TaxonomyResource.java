@@ -40,6 +40,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -58,11 +64,6 @@ import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-
 /**
  * @version "$Id$"
  */
@@ -78,7 +79,7 @@ public class TaxonomyResource extends BaseResource {
     public static final String HIPPOSYSEDIT_SUPERTYPE = "hipposysedit:supertype";
 
 
-    private static Logger log = LoggerFactory.getLogger(TaxonomyResource.class);
+    private static final Logger log = LoggerFactory.getLogger(TaxonomyResource.class);
 
 
     /**
@@ -150,21 +151,8 @@ public class TaxonomyResource extends BaseResource {
                     if (session.nodeExists(path)) {
                         final Node node = session.getNode(path);
                         if (node.hasNode("classifiable")) {
-                            ClassificationDaoServiceBuilder classificationDaoServiceBuilder = new ClassificationDaoServiceBuilder();
-                            classificationDaoServiceBuilder.setFieldPath(taxonomyName);
-                            classificationDaoServiceBuilder.setSession(session);
-                            classificationDaoServiceBuilder.setClassificationDaoServiceName(ServiceNameBuilder.getServiceName(documentName, taxonomyName));
-                            String daoName = ServiceNameBuilder.getDaoName(documentName, taxonomyName);
-                            classificationDaoServiceBuilder.setTaxonomyClassificationDao(daoName);
-                            classificationDaoServiceBuilder.setClassificationDaoServiceName(daoName);
-                            classificationDaoServiceBuilder.build();
-                            AdditionalTaxonomyBuilder additionalTaxonomyBuilder = new AdditionalTaxonomyBuilder();
-                            additionalTaxonomyBuilder.setSession(session);
-                            additionalTaxonomyBuilder.setTaxonomyClassificationDao(daoName);
-                            additionalTaxonomyBuilder.setTaxonomyName(taxonomyName);
-                            additionalTaxonomyBuilder.setDocumentType(documentName);
-                            additionalTaxonomyBuilder.setPrefix(prefix);
-                            additionalTaxonomyBuilder.build();
+                            buildServiceNode(session, documentName, taxonomyName);
+                            buildTemplateNode(session, documentName, taxonomyName, path);
                             changedDocuments.add(documentName);
                         }
                         else{
@@ -195,7 +183,42 @@ public class TaxonomyResource extends BaseResource {
         return new ErrorMessageRestful("Error adding taxonomy fields");
     }
 
+    private void buildTemplateNode(final Session session, final String documentName, final String taxonomyName, final String path) {
+        final String templatePath = MessageFormat.format(path + "/{2}", taxonomyName);
+        String daoName = getDaoName(documentName, taxonomyName);
+        new FrontendPluginBuilder(session,templatePath).setProperties(
+                ImmutableMap.<String,String>builder()
+                        .put("taxonomy.classification.dao", daoName)
+                        .put("mode", "${mode}")
+                        .put("model.compareTo", "${model.compareTo}")
+                        .put("taxonomy.id", "service.taxonomy")
+                        .put("taxonomy.name", taxonomyName)
+                        .put("wicket.id", "${cluster.id}.left.item")
+                        .put("plugin.class", "org.onehippo.taxonomy.plugin.TaxonomyPickerPlugin")
+                        .put("wicket.model", "${wicket.model}")
+                        .build()
+        ).build();
+    }
 
+    private void buildServiceNode(final Session session, final String documentName, final String taxonomyName) {
+        final String serviceName = MessageFormat.format("taxonomyclassification{0}{1}",
+                documentName.substring(documentName.indexOf(":") + 1), taxonomyName);
+        final String servicePath = MessageFormat.format(
+                "/hippo:configuration/hippo:frontend/cms/cms-services/{0}", serviceName);
+        String daoName = getDaoName(documentName, taxonomyName);
+        new FrontendPluginBuilder(session,servicePath).setProperties(
+                ImmutableMap.<String,String>builder()
+                        .put("taxonomy.name", taxonomyName)
+                        .put("taxonomy.classification.dao", daoName)
+                        .put("plugin.class"
+                                , "org.onehippo.taxonomy.plugin.MixinClassificationDaoPlugin")
+                .build()
+        ).build();
+    }
+
+    public static String getDaoName(String docType, String taxonomyName){
+        return MessageFormat.format("taxonomy.classification.{0}.{1}.dao", docType.substring(docType.indexOf(":")+1), taxonomyName);
+    }
 
 
     /**

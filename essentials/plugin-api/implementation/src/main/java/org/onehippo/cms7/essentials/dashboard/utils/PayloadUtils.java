@@ -16,9 +16,7 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -48,21 +46,5 @@ public final class PayloadUtils {
         final Iterable<String> iterable = splitter.split(value);
         return Lists.newArrayList(iterable);
     }
-
-    public static String[][] extractValuesArray(final CharSequence value){
-
-        if (Strings.isEmpty(value)) {
-            return new String[0][0];
-        }
-        final List<String> strings = extractValueList(value);
-        List<String[]> list = new ArrayList<>();
-        for (String string : strings) {
-            list.add(extractValueArray(string));
-        }
-        return new String[][]{list.toArray(new String[list.size()])};
-
-
-    }
-
 
 }
