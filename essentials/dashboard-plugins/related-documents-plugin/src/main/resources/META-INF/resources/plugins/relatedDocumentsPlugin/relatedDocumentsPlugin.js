@@ -20,6 +20,7 @@
         .controller('relatedDocumentsCtrl', function ($scope, $filter, $sce, $log, $modal, $rootScope, $http) {
             var endpoint = $rootScope.REST.dynamic + 'related-documents';
             $scope.pluginId = "relatedDocumentsPlugin";
+            $scope.uiEnabled = false;
             $scope.addDocs = function () {
                 var documents = [];
                 var searchPaths = [];
@@ -43,13 +44,12 @@
             // INIT
             //############################################
             $http.get($rootScope.REST.root + "/plugins/plugins/" + $scope.pluginId).success(function (plugin) {
+                $scope.uiEnabled = plugin.installState !== 'boarding';
                 $scope.pluginDescription = $sce.trustAsHtml(plugin.description);
             });
 
             $http.get($rootScope.REST.documents).success(function (data) {
                 $scope.documentTypes = data;
             });
-
-
         })
 })();
