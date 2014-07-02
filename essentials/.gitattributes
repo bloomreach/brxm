@@ -901,6 +901,7 @@ plugin-api/implementation/src/test/resources/updateplugintest.xml -text
 plugin-api/pom.xml -text
 plugin-dashboard/pom.xml -text
 plugin-dashboard/src/main/appended-resources/META-INF/LICENSE -text
+plugin-dashboard/src/main/appended-resources/META-INF/NOTICE -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/ContentBlocksResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/DocumentResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/JcrResource.java -text

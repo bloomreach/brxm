@@ -11,12 +11,12 @@ WEB-INF/lib/commons-io-2.3.jar
 WEB-INF/lib/commons-lang-2.6.jar
 WEB-INF/lib/commons-pool-1.5.4.jar
 WEB-INF/lib/compiler-0.8.13.jar
-WEB-INF/lib/cxf-*-2.6.6.jar
+WEB-INF/lib/cxf-*-2.6.13.jar
 WEB-INF/lib/ezmorph-1.0.4.jar
 WEB-INF/lib/guava-16.0.1.jar
 WEB-INF/lib/imgscalr-lib-4.2.jar
 WEB-INF/lib/jackrabbit-*-2.6.5*.jar
-WEB-INF/lib/jackson-*-1.9.5.jar
+WEB-INF/lib/jackson-*-1.9.13.jar
 WEB-INF/lib/jackson-*-2.0.0.jar
 WEB-INF/lib/jackson-*-2.1.0.jar
 WEB-INF/lib/jackson-*-2.1.5.jar
@@ -32,7 +32,7 @@ WEB-INF/lib/plexus-utils-3.0.17.jar
 WEB-INF/lib/sanselan-0.97-incubator.jar
 WEB-INF/lib/spring-*-3.2.8.RELEASE.jar
 WEB-INF/lib/swagger-*-1.3.0.jar
-WEB-INF/lib/woodstox-core-asl-4.1.4.jar
+WEB-INF/lib/woodstox-core-asl-4.2.0.jar
 WEB-INF/lib/xmlschema-core-2.0.3.jar
 
 
