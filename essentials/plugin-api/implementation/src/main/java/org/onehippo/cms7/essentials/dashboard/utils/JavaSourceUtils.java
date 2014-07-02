@@ -364,11 +364,11 @@ public final class JavaSourceUtils {
         if (multiple) {
             addImport(path, List.class.getName());
             addParameterizedMethod(methodName, "List", "Calendar", path, "getChildBeansByName", propertyName);
-        }else {
+        } else {
 
             addBeanMethodProperty(path, methodName, propertyName, "Calendar");
         }
-            final String importName = Calendar.class.getName();
+        final String importName = Calendar.class.getName();
         addImport(path, importName);
 
     }
@@ -386,7 +386,7 @@ public final class JavaSourceUtils {
         if (multiple) {
             addImport(path, List.class.getName());
             addParameterizedMethod(methodName, "List", "HippoHtml", path, "getChildBeansByName", propertyName);
-        }else {
+        } else {
             addSimpleMethod("getHippoHtml", path, methodName, propertyName, "HippoHtml");
         }
         addImport(path, "org.hippoecm.hst.content.beans.standard.HippoHtml");
@@ -428,7 +428,7 @@ public final class JavaSourceUtils {
     public static void addBeanMethodImageLink(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
             addImport(path, List.class.getName());
-            addTwoArgumentsMethod("getLinkedBeans", "HippoGalleryImageSetBean", path, methodName, propertyName);
+            addParameterizedMethod(methodName, "List", "HippoGalleryImageSetBean", path, "getLinkedBeans", propertyName);
         } else {
             addTwoArgumentsMethod("getLinkedBean", "HippoGalleryImageSetBean", path, methodName, propertyName);
         }
@@ -835,14 +835,12 @@ public final class JavaSourceUtils {
     }
 
 
-
-
-    public static String getPackageName(final Path path){
+    public static String getPackageName(final Path path) {
         final CompilationUnit unit = JavaSourceUtils.getCompilationUnit(path);
         final PackageDeclaration myPackage = unit.getPackage();
         if (myPackage != null) {
             final Name name = myPackage.getName();
-            if(name !=null){
+            if (name != null) {
                 return name.getFullyQualifiedName();
             }
 
@@ -951,8 +949,7 @@ public final class JavaSourceUtils {
                     log.debug("Annotation already exists: {}", fullyQualifiedName);
                     return true;
                 }
-            }
-            else if (modifier instanceof MarkerAnnotation && annotation instanceof MarkerAnnotation) {
+            } else if (modifier instanceof MarkerAnnotation && annotation instanceof MarkerAnnotation) {
                 final MarkerAnnotation existing = (MarkerAnnotation) modifier;
                 final MarkerAnnotation newOne = (MarkerAnnotation) annotation;
                 final String fullyQualifiedName = existing.getTypeName().getFullyQualifiedName();
@@ -1014,7 +1011,7 @@ public final class JavaSourceUtils {
 
     @SuppressWarnings(UNCHECKED)
 
-    public static void addParameterizedMethod(final String methodName, final String returnType, final String genericsType, final Path path, final String returnMethodName, final String propertyName){
+    public static void addParameterizedMethod(final String methodName, final String returnType, final String genericsType, final Path path, final String returnMethodName, final String propertyName) {
         final CompilationUnit unit = getCompilationUnit(path);
         unit.recordModifications();
         final TypeDeclaration classType = (TypeDeclaration) unit.types().get(0);
