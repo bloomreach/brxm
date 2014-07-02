@@ -36,7 +36,6 @@
     <maven-compiler-plugin.version>2.5.1</maven-compiler-plugin.version>
     <junit.version>4.11</junit.version>
     <freemarker.version>2.3.18</freemarker.version>
-    <spring-test.version>3.2.6.RELEASE</spring-test.version>
   </properties>
 
   <modules>
@@ -76,12 +75,6 @@
         <groupId>org.onehippo.cms7.essentials</groupId>
         <artifactId>hippo-essentials-plugin-api</artifactId>
         <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-test</artifactId>
-        <version>${spring-test.version}</version>
-        <scope>test</scope>
       </dependency>
 
       <dependency>
