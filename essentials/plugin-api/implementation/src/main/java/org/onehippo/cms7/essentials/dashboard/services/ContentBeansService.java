@@ -237,7 +237,6 @@ public class ContentBeansService {
                 for (Path path : stream) {
                     final String nodeJcrType = JavaSourceUtils.getNodeJcrType(path);
                     if (nodeJcrType != null) {
-                        log.info("nodeJcrType {}", nodeJcrType);
                         existingBeans.put(nodeJcrType, path);
                     }
                 }
@@ -347,17 +346,17 @@ public class ContentBeansService {
                     context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                     log.debug(MSG_ADDED_METHOD, methodName);
                     break;
-                // TODO fix creation
-/*                case "hippo:mirror":
-                    methodName = GlobalUtils.createMethodName(name);
-                    JavaSourceUtils.addBeanMethodHippoMirror(beanPath, methodName, name, multiple);
-                    existing.add(name);
-                    context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
-                    log.debug(MSG_ADDED_METHOD, methodName);
-                    break;*/
+
                 case "hippogallerypicker:imagelink":
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodImageLink(beanPath, methodName, name, multiple);
+                    existing.add(name);
+                    context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
+                    log.debug(MSG_ADDED_METHOD, methodName);
+                    break;
+                case "hippo:mirror":
+                    methodName = GlobalUtils.createMethodName(name);
+                    JavaSourceUtils.addBeanMethodHippoMirror(beanPath, methodName, name, multiple);
                     existing.add(name);
                     context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                     log.debug(MSG_ADDED_METHOD, methodName);

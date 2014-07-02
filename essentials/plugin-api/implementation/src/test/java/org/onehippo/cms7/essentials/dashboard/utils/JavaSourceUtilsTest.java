@@ -59,11 +59,13 @@ public class JavaSourceUtilsTest extends BaseResourceTest {
         absolutePath = new File(tmpDir).getAbsolutePath();
         path = JavaSourceUtils.createJavaClass(absolutePath, CLASS_NAME, PACKAGE_NAME, ".txt");
     }
-  @Test
+
+    @Test
     public void testGetPackage() throws Exception {
 
         assertEquals(JavaSourceUtils.getPackageName(path), PACKAGE_NAME);
     }
+
 
     @Test
     public void testJcrType() throws Exception {
