@@ -36,6 +36,14 @@
 
     <!--***START temporary override of versions*** -->
 
+    <!-- These must stay in line with the overrides in the Essentials archetype
+         in order to avoid duplicate JARs in the Essentials WAR.
+         See /home/tjeger/Projects/essentials/essentials/archetype/website/src/main/resources/archetype-resources/pom.xml
+     -->
+    <hippo.cms.version>2.26.03</hippo.cms.version>
+    <hippo.hst.version>2.28.03</hippo.hst.version>
+    <hippo.repository.version>2.26.03</hippo.repository.version>
+
     <!-- ***END temporary override of versions*** -->
 
     <jstl.version>1.1.2</jstl.version>
