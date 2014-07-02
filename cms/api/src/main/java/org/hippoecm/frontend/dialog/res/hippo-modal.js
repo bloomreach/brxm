@@ -159,7 +159,7 @@
                 "<div class=\"w_left\" id='" + idLeft + "'>" +
                 "<div class=\"w_right_1\">" +
                 "<div class=\"w_right\" id='" + idRight + "'>" +
-                "<div class=\"w_content_1\" onmousedown=\"if (Wicket.Browser.isSafari()) { event.ignore = true; }  else { Wicket.Event.stop(event); } \">" +
+                "<div class=\"w_content_1\" onmousedown=\"Wicket.Event.stop(event);\">" +
                 "<div class=\"w_caption\"  id=\"" + idCaption + "\">" +
                 "<a class=\"w_close\" href=\"#\"></a>" +
                 "<span id=\"" + idCaptionText + "\" class=\"w_captionText\"></span>" +
