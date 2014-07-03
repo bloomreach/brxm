@@ -31,8 +31,14 @@
 
   <script src="${pageContext.request.contextPath}/components/bootstrap/dist/js/bootstrap.js"></script>
 
+
+<%--  NOTE: enable once R&D team upgrades version(s)--%>
+<%--
+
   <script src="${pageContext.request.contextPath}/components/angular-bootstrap/ui-bootstrap.min.js"></script>
   <script src="${pageContext.request.contextPath}/components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+--%>
+  <script src="${pageContext.request.contextPath}/js/lib/ui-bootstrap-tpls.min.js"></script>
   <script src="${pageContext.request.contextPath}/js/lib/angular-route.min.js"></script>
   <script src="${pageContext.request.contextPath}/js/lib/angular-ui-router.js"></script>
 
