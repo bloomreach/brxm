@@ -136,7 +136,7 @@ public class PluginResource extends BaseResource {
 
     @SuppressWarnings("unchecked")
     @ApiOperation(
-            value = "Fetches local file descriptors  and checks for available Hippo Essentials plugins. " +
+            value = "Fetches local and remote file descriptors  and checks for available Hippo Essentials plugins. " +
                     "It also registers any plugin REST endpoints which come available under /dynamic endpoint e.g. /dynamic/{pluginEndpoint}",
             notes = "Retrieves a list of PluginRestful objects",
             response = RestfulList.class)
@@ -148,31 +148,8 @@ public class PluginResource extends BaseResource {
         final List<PluginRestful> items = getPlugins(servletContext);
         final Collection<String> restClasses = new ArrayList<>();
         final PluginContext context = getContext(servletContext);
-        try (PluginConfigService service = new FilePluginService(context)) {
-            processPlugins(plugins, items, restClasses, service);
-        }
-        //############################################
-        // Register endpoints:
-        //############################################
-        registerEndpoints(restClasses);
-        return plugins;
-    }
-
-
-    @SuppressWarnings("unchecked")
-    @ApiOperation(
-            value = "Fetches remote service(s) and checks for available Hippo Essentials plugins. " +
-                    "It also registers any plugin REST endpoints which come available under /dynamic endpoint e.g. /dynamic/{pluginEndpoint}",
-            notes = "Retrieves a list of PluginRestful objects",
-            response = RestfulList.class)
-    @GET
-    @Path("/remote")
-    public RestfulList<PluginRestful> getRemotePluginList(@Context ServletContext servletContext) throws Exception {
-
-
+        // remote plugins
         final ProjectSettings projectSettings = getProjectSettings(servletContext);
-        final RestfulList<PluginRestful> plugins = new RestfulList<>();
-        final Collection<PluginRestful> items = new ArrayList<>();
         final Set<String> pluginRepositories = projectSettings.getPluginRepositories();
         for (String pluginRepository : pluginRepositories) {
             if (pluginRepository.startsWith("http")) {
@@ -188,12 +165,20 @@ public class PluginResource extends BaseResource {
                 }
             }
         }
-        final Collection<String> restClasses = new ArrayList<>();
-        final PluginContext context = getContext(servletContext);
-        final PluginConfigService service = context.getConfigService();
-        processPlugins(plugins, items, restClasses, service);
+
+
+        try (PluginConfigService service = new FilePluginService(context)) {
+            processPlugins(plugins, items, restClasses, service);
+        }
+        //############################################
+        // Register endpoints:
+        //############################################
+        registerEndpoints(restClasses);
         return plugins;
     }
+
+
+
 
     public void registerEndpoints(final Collection<String> restClasses) {
         if (!initialized && !restClasses.isEmpty()) {
@@ -425,8 +410,6 @@ public class PluginResource extends BaseResource {
 
         final MessageRestful message = new MessageRestful();
         final RestfulList<PluginRestful> pluginList = getPluginList(servletContext);
-        final RestfulList<PluginRestful> remoteList = getRemotePluginList(servletContext);
-        pluginList.addAll(remoteList.getItems());
         for (PluginRestful plugin : pluginList.getItems()) {
             final String id = plugin.getPluginId();
             if (Strings.isNullOrEmpty(id)) {

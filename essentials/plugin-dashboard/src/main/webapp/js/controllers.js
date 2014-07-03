@@ -118,25 +118,7 @@
                         var items = data.items;
                         $rootScope.pluginsCache = items;
                         processItems(items);
-                        // fetch remote repositories:
-                        fetchRemote(items)
-                        function fetchRemote(items) {
-
-                            if(!items){
-                                items = [];
-                            }
-                            $http.get($rootScope.REST.plugins  + "remote").success(function (data) {
-                                items.concat(data.items);
-                                var all = items.concat(data.items);
-                                $rootScope.pluginsCache = all;
-                                processItems(items);
-                            });
-                        }
-
-
                     });
-
-
                 }
 
                 function processItems(items) {
