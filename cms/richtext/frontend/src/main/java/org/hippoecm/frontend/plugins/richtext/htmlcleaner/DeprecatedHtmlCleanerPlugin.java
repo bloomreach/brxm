@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @deprecated Use {@link org.hippoecm.frontend.plugins.richtext.htmlcleaner.HtmlCleanerPlugin} instead.
+ * @since 2.26.00
  */
 @Deprecated
 public class DeprecatedHtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
