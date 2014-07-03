@@ -503,6 +503,7 @@ dashboard-plugins/gallery-plugin/src/main/java/org/onehippo/cms7/essentials/plug
 dashboard-plugins/gallery-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/gallery/GalleryPluginResource.java -text
 dashboard-plugins/gallery-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/gallery/ImageModel.java -text
 dashboard-plugins/gallery-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/gallery/TranslationModel.java -text
+dashboard-plugins/gallery-plugin/src/main/resources/ImageSetUpdater.groovy -text
 dashboard-plugins/gallery-plugin/src/main/resources/META-INF/resources/tools/galleryPlugin/galleryPlugin.html -text
 dashboard-plugins/gallery-plugin/src/main/resources/META-INF/resources/tools/galleryPlugin/galleryPlugin.js -text
 dashboard-plugins/gallery-plugin/src/main/resources/META-INF/web-fragment.xml -text
