@@ -436,6 +436,7 @@ dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/bo
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/bootstrap/fonts/glyphicons-halflings-regular.svg -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/bootstrap/fonts/glyphicons-halflings-regular.ttf -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/bootstrap/fonts/glyphicons-halflings-regular.woff -text
+dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/css/cms-request.css -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/freemarker/base-footer-content.ftl -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/freemarker/base-layout.ftl -text
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/freemarker/base-top-menu.ftl -text

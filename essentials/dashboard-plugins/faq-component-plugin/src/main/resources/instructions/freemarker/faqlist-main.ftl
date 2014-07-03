@@ -22,7 +22,8 @@
 <#-- @ftlvariable name="document" type="{{beansPackage}}.FaqListDocument" -->
 <@hst.defineObjects/>
 <#if document??>
-
+<div class="has-edit-button">
+<@hst.cmseditlink hippobean=document/>
 <h1>${document.title}</h1>
 <div>
     <@hst.html hippohtml=document.description/>
@@ -37,4 +38,5 @@
     <#if editMode && (document == null)>
     <img src="<@hst.link path="/images/essentials-edit-component.png" />" alt="Edit component settings">
     </#if>
+</div>
 </#if>

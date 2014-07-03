@@ -2256,6 +2256,12 @@ dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/bo
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/bootstrap/fonts/target
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/bootstrap/hippo-plugins.iws
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/bootstrap/target
+dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/css/*.iml
+dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/css/.DS_Store
+dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/css/.idea
+dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/css/atlassian-ide-plugin.xml
+dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/css/hippo-plugins.iws
+dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/css/target
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/freemarker/*.iml
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/freemarker/.DS_Store
 dashboard-plugins/essentials-skeleton-package/src/main/resources/instructions/freemarker/.idea

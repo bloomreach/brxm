@@ -3,8 +3,8 @@
     {
         "enabled": true,
         "@type": "plugin",
-        "name": "Content Blocks",
-        "introduction": "Provide the ability to add multiple pre-configured compound type blocks to a document. The CMS administrator can configure the available content blocks on a per-document-type basis.",
+        "name": "Content Blocks plugin",
+        "introduction": "Provides the ability to add multiple Content Blocks to document types. Each Content Block offers a choice between multiple (potentially complex) field types, as determined by a Provider Compound.",
         "pluginId": "contentBlocks",
         "type": "plugins",
         "vendor": {

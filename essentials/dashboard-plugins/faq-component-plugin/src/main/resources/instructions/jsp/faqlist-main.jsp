@@ -16,6 +16,8 @@
   --%>
 
 <%--@elvariable id="document" type="{{beansPackage}}.FaqListDocument"--%>
+<div class="has-edit-button">
+<hst:cmseditlink hippobean="${document}"/>
 <h1>${document.title}</h1>
 <div><hst:html hippohtml="${document.description}"/></div>
 <c:forEach var="faq" items="${document.faqDocuments}">
@@ -27,4 +29,4 @@
 <c:if test="${editMode && (document eq null)}">
   <img src="<hst:link path="/images/essentials-edit-component.png" />" alt="Edit component settings">
 </c:if>
-
+</div>

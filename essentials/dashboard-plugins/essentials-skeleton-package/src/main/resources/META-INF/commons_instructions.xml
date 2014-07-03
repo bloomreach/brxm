@@ -89,6 +89,7 @@
     <file binary="true" action="copy" source="instructions/js/jquery-2.1.0.min.js" target="{{javascriptRoot}}/jquery-2.1.0.min.js"/>
     <file action="copy" binary="true" source="instructions/bootstrap/css/bootstrap.css" target="{{siteWebRoot}}/css/bootstrap.css"/>
     <file action="copy" binary="true" source="instructions/bootstrap/css/bootstrap.min.css" target="{{siteWebRoot}}/css/bootstrap.min.css"/>
+    <file action="copy" binary="true" source="instructions/css/cms-request.css" target="{{siteWebRoot}}/css/cms-request.css"/>
     <file action="copy" binary="true" source="instructions/bootstrap/fonts/glyphicons-halflings-regular.eot" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.eot"/>
     <file action="copy" binary="true" source="instructions/bootstrap/fonts/glyphicons-halflings-regular.svg" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.svg"/>
     <file action="copy" binary="true" source="instructions/bootstrap/fonts/glyphicons-halflings-regular.ttf" target="{{siteWebRoot}}/fonts/glyphicons-halflings-regular.ttf"/>

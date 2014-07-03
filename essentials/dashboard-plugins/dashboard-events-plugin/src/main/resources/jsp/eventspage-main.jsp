@@ -18,7 +18,7 @@
 <%--@elvariable id="document" type="{{beansPackage}}.EventsDocument"--%>
 
 <hst:link var="link" hippobean="${document}"/>
-<article>
+<article class="has-edit-button">
   <hst:cmseditlink hippobean="${document}"/>
   <h3><a href="${link}"><c:out value="${document.title}"/></a></h3>
   <c:if test="${hst:isReadable(document, 'date.time')}">
