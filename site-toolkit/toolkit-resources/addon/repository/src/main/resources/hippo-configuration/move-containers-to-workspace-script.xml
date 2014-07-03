@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node sv:name="MoveContainersToWorkspace" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hipposys:updaterinfo</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:batchsize" sv:type="Long">
+    <sv:value>10</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:dryrun" sv:type="Boolean">
+    <sv:value>false</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:query" sv:type="String">
+    <sv:value>//element(*,hst:containercomponent)</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:script" sv:type="String">
+    <sv:value>package org.hippoecm.frontend.plugins.cms.dev.updater&#xd;
+&#xd;
+import org.onehippo.repository.update.BaseNodeUpdateVisitor&#xd;
+import javax.jcr.Node&#xd;
+&#xd;
+class UpdaterTemplate extends BaseNodeUpdateVisitor {&#xd;
+&#xd;
+  /**&#xd;
+   * override this method to define a place for the container&#xd;
+   * Slashes will be turned into folders.&#xd;
+   */&#xd;
+  String getNewContainerPath(Node container) {&#xd;
+    def parentName&#xd;
+    def parent = container.parent&#xd;
+    while (parent.primaryNodeType.name == "hst:component") {&#xd;
+      parentName = parent.name&#xd;
+      parent = parent.parent&#xd;
+    }&#xd;
+&#xd;
+    parentName + "/" + container.name&#xd;
+  }&#xd;
+&#xd;
+  /************************************************************&#xd;
+  * Generic methods for moving containers to hst:workspace *&#xd;
+  ************************************************************/&#xd;
+&#xd;
+  boolean doUpdate(Node node) {&#xd;
+    if (!node.isNodeType("hst:containercomponent")) {&#xd;
+      log.debug "Cannot update node of type ${node.primaryNodeType.name}. Query should only return hst:containercomponent nodes. Query for example //element(*,hst:containercomponent)"&#xd;
+      return false;&#xd;
+    }&#xd;
+    def parent = node.parent&#xd;
+    def name = node.name&#xd;
+    if (parent.primaryNodeType.name != "hst:component") {&#xd;
+      if (parent.primaryNodeType.name == "hst:containercomponentfolder") {&#xd;
+        log.debug "hst:containercomponent at " + node.path + " is already part of hst:workspace and does not need to be moved"&#xd;
+      } else {&#xd;
+        log.debug "hst:containercomponent at " + node.path + " does not have a hst:component as parent. Cannot update this node"&#xd;
+      }&#xd;
+      return false;&#xd;
+    }&#xd;
+&#xd;
+    def newContainerPath = getNewContainerPath(node)&#xd;
+&#xd;
+    def containers = getContainersNode(node)&#xd;
+    newContainerPath = prepareContainerPath(containers, newContainerPath)&#xd;
+&#xd;
+    log.debug "Moving container from '${node.path}' to '${containers.path}/${newContainerPath}'"&#xd;
+    node.session.move(node.path, containers.path + "/" + newContainerPath)&#xd;
+&#xd;
+    def reference = parent.addNode(name, "hst:containercomponentreference")&#xd;
+    reference.setProperty("hst:referencecomponent", newContainerPath)&#xd;
+&#xd;
+    true&#xd;
+  }&#xd;
+&#xd;
+  Node getContainersNode(Node container) {&#xd;
+    def config = container&#xd;
+    while (config.primaryNodeType.name != "hst:configuration") {&#xd;
+      config = config.parent&#xd;
+    }&#xd;
+&#xd;
+    def workspace = getOrAdd(config, "hst:workspace")&#xd;
+    getOrAdd(workspace, "hst:containers")&#xd;
+  }&#xd;
+&#xd;
+  Node getOrAdd(Node parent, String name, String type = null) {&#xd;
+    if (parent.hasNode(name)) {&#xd;
+      parent.getNode(name)&#xd;
+    } else {&#xd;
+      if (type != null) {&#xd;
+        parent.addNode(name, type);&#xd;
+      } else {&#xd;
+        parent.addNode(name)&#xd;
+      }&#xd;
+    }&#xd;
+  }&#xd;
+&#xd;
+  String prepareContainerPath(Node containers, String containerPath) {&#xd;
+    def folder = buildContainerFolders(containers, containerPath)&#xd;
+    def name = containerPath.substring(containerPath.lastIndexOf('/') + 1)&#xd;
+    name = getUniqueName(folder, name)&#xd;
+&#xd;
+    folder.path.substring(containers.path.length() + 1) + "/" + name&#xd;
+  }&#xd;
+&#xd;
+  Node buildContainerFolders(Node containers, String path) {&#xd;
+    def cursor = containers&#xd;
+    if (path.indexOf('/') &lt; 0) {&#xd;
+      return containers&#xd;
+    }&#xd;
+    path = path.substring(0, path.lastIndexOf('/'))&#xd;
+    for (folder in path.split('/')) {&#xd;
+      cursor = getOrAdd(cursor, folder, "hst:containercomponentfolder")&#xd;
+    }&#xd;
+    return cursor&#xd;
+  }&#xd;
+&#xd;
+  String getUniqueName(Node folder, String name) {&#xd;
+    if (!folder.hasNode(name)) {&#xd;
+      return name&#xd;
+    }&#xd;
+    def counter = 2&#xd;
+    while (folder.hasNode(name + "_" + counter)) {&#xd;
+      counter++&#xd;
+    }&#xd;
+    log.debug "Generated name: ${name}_${counter}"&#xd;
+    name + "_" + counter&#xd;
+  }&#xd;
+&#xd;
+  boolean undoUpdate(Node node) {&#xd;
+    throw new UnsupportedOperationException('Updater does not implement undoUpdate method')&#xd;
+  }&#xd;
+&#xd;
+}</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:throttle" sv:type="Long">
+    <sv:value>1000</sv:value>
+  </sv:property>
+</sv:node>
