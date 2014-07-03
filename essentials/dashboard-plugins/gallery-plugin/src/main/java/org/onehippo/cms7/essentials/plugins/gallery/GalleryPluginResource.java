@@ -183,7 +183,7 @@ public class GalleryPluginResource extends BaseResource {
                 while(nodes.hasNext()){
                     final Node imageFolderNode = nodes.nextNode();
                     imageFolderNode.setProperty("hippostd:foldertype", new String[]{folderName});
-                    imageFolderNode.setProperty("hippostd:gallerytype", new String[]{imageName});
+                    imageFolderNode.setProperty("hippostd:gallerytype", new String[]{newImageNamespace});
                 }
                 session.save();
             } catch (RepositoryException e) {
