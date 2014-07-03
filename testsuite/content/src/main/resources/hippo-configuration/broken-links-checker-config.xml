@@ -13,10 +13,10 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>brokenlinks:config</sv:value>
       </sv:property>
-      <sv:property sv:name="enabled" sv:type="Boolean">
+      <sv:property sv:name="enabled" sv:type="Boolean"  h:merge="override">
         <sv:value>false</sv:value>
       </sv:property>
-      <sv:property sv:name="cronExpression" sv:type="String">
+      <sv:property sv:name="cronExpression" sv:type="String"  h:merge="override">
         <sv:value>0 0/5 * * * ? *</sv:value>
       </sv:property>
     </sv:node>
