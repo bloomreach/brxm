@@ -71,7 +71,7 @@ public class LoginPlugin extends RenderPlugin {
     public static final String DEFAULT_LOCALE = "en";
 
     // Sorted by alphabetical order of the language name (see i18n properties), for a more user-friendly form
-    public final static String[] LOCALES = {"en", "fr", "nl", "it", "de"};
+    public final static String[] LOCALES = {"en", "fr", "nl", "de"};
 
     private static final long serialVersionUID = 1L;
 
