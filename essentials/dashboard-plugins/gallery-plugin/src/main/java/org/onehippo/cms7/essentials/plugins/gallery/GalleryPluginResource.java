@@ -192,17 +192,6 @@ public class GalleryPluginResource extends BaseResource {
                     imageFolderNode.setProperty("hippostd:gallerytype", new String[]{newImageNamespace});
                 }
                 session.save();
-                // schedule updater script
-                final XmlInstruction instruction = new XmlInstruction();
-                instruction.setAction(PluginInstruction.COPY);
-                instruction.setSource("image_set_updater.xml");
-                instruction.setTarget("/hippo:configuration/hippo:update/hippo:queue");
-                final InstructionExecutor executor = new PluginInstructionExecutor();
-                final InstructionSet instructionSet = new PluginInstructionSet();
-                instructionSet.addInstruction(instruction);
-                getInjector().autowireBean(instruction);
-                getInjector().autowireBean(executor);
-                executor.execute(instructionSet, context);
 
 
             } catch (RepositoryException e) {
@@ -255,6 +244,18 @@ public class GalleryPluginResource extends BaseResource {
 
                 GlobalUtils.cleanupSession(session);
             }
+
+            // schedule updater script  so new variants are created:
+            final XmlInstruction instruction = new XmlInstruction();
+            instruction.setAction(PluginInstruction.COPY);
+            instruction.setSource("image_set_updater.xml");
+            instruction.setTarget("/hippo:configuration/hippo:update/hippo:queue");
+            final InstructionExecutor executor = new PluginInstructionExecutor();
+            final InstructionSet instructionSet = new PluginInstructionSet();
+            instructionSet.addInstruction(instruction);
+            getInjector().autowireBean(instruction);
+            getInjector().autowireBean(executor);
+            executor.execute(instructionSet, context);
 
             return new MessageRestful("Image variant:  " + imageVariantName + " successfully created");
         }
@@ -340,7 +341,7 @@ public class GalleryPluginResource extends BaseResource {
                     && propName != null
                     && propName.equals(myType)) {
                 // remove
-                aNode.getProperty(HIPPO_PROPERTY).remove();
+                aNode.remove();
             }
         }
         if (justRemove) {
