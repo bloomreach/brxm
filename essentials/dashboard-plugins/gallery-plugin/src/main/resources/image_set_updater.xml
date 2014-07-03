@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<sv:node sv:name="Update image sets" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hipposys:updaterinfo</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:batchsize" sv:type="Long">
+    <sv:value>10</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:dryrun" sv:type="Boolean">
+    <sv:value>false</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:query" sv:type="String">
+    <sv:value>content/gallery//element(*,hippogallery:stdImageGallery)</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:script" sv:type="String">
+    <sv:value>/*&#xd;
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)&#xd;
+ *&#xd;
+ * Licensed under the Apache License, Version 2.0 (the "License");&#xd;
+ * you may not use this file except in compliance with the License.&#xd;
+ * You may obtain a copy of the License at&#xd;
+ *&#xd;
+ *  http://www.apache.org/licenses/LICENSE-2.0&#xd;
+ *&#xd;
+ * Unless required by applicable law or agreed to in writing, software&#xd;
+ * distributed under the License is distributed on an "AS IS" BASIS,&#xd;
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.&#xd;
+ * See the License for the specific language governing permissions and&#xd;
+ * limitations under the License.&#xd;
+ */&#xd;
+import org.apache.commons.io.IOUtils&#xd;
+import org.apache.jackrabbit.JcrConstants&#xd;
+import org.hippoecm.frontend.plugins.gallery.processor.ScalingGalleryProcessor&#xd;
+import org.hippoecm.frontend.plugins.gallery.processor.ScalingParameters&#xd;
+import org.hippoecm.repository.gallery.HippoGalleryNodeType&#xd;
+import org.onehippo.repository.update.BaseNodeUpdateVisitor&#xd;
+&#xd;
+import javax.jcr.Node&#xd;
+import javax.jcr.NodeIterator&#xd;
+import javax.jcr.RepositoryException&#xd;
+import javax.jcr.Session&#xd;
+import javax.jcr.query.Query&#xd;
+import javax.jcr.query.QueryManager&#xd;
+import javax.jcr.query.QueryResult&#xd;
+&#xd;
+/**&#xd;
+ * Groovy script to update image sets&#xd;
+ *&#xd;
+ * Query: content/gallery//element(*, hippogallery:stdImageGallery)&#xd;
+ *&#xd;
+ */&#xd;
+class ImageSetUpdater extends BaseNodeUpdateVisitor {&#xd;
+&#xd;
+    public static&#xd;
+    final String HIPPO_CONFIGURATION_GALLERY_PROCESSOR_SERVICE = "hippo:configuration/hippo:frontend/cms/cms-services/galleryProcessorService";&#xd;
+&#xd;
+    private static final int IMAGE_PROPERTIES_HEIGHT_INDEX = 1;&#xd;
+    private static final int IMAGE_PROPERTIES_WIDTH_INDEX = 0;&#xd;
+&#xd;
+    protected static final String CONFIG_PARAM_WIDTH = "width";&#xd;
+    protected static final String CONFIG_PARAM_HEIGHT = "height";&#xd;
+    protected static final Long DEFAULT_WIDTH = 0L;&#xd;
+    protected static final Long DEFAULT_HEIGHT = 0L;&#xd;
+&#xd;
+    public final Map&lt;String, List&lt;String&gt;&gt; imageSets = new HashMap&lt;String, List&lt;String&gt;&gt;();&#xd;
+    public final Map&lt;String, List&lt;Long&gt;&gt; imageVariants = new HashMap&lt;String, List&lt;Long&gt;&gt;();&#xd;
+&#xd;
+    private boolean overwrite = true;&#xd;
+    private boolean upscaling = true;&#xd;
+    private final String[] names = ["overwrite", "upscaling"];&#xd;
+    private final Object[] objects = [overwrite, upscaling];&#xd;
+&#xd;
+    public void initialize(Session session) throws RepositoryException {&#xd;
+        try {&#xd;
+            Node configNode = session.getRootNode().getNode(HIPPO_CONFIGURATION_GALLERY_PROCESSOR_SERVICE);&#xd;
+            getImageVariants(configNode);&#xd;
+            getImageSets(session);&#xd;
+&#xd;
+        } catch (RepositoryException e) {&#xd;
+            log.error("Exception while retrieving image set variants configuration", e);&#xd;
+        }&#xd;
+&#xd;
+        printInit(names, objects);&#xd;
+    }&#xd;
+&#xd;
+&#xd;
+    boolean doUpdate(Node node) {&#xd;
+        try {&#xd;
+            /* hippogallery:thumbnail is the only required image variant, not hippogalley:original according to the hippogallery cnd */&#xd;
+            List&lt;String&gt; imageSet = imageSets.get(node.getPrimaryNodeType().getName());&#xd;
+            if (imageSet == null || imageSet.isEmpty()) {&#xd;
+                log.warn("Could not find image set {} for node {}", node.getPrimaryNodeType().getName(), node.getName());&#xd;
+            }&#xd;
+            processImageSet(node);&#xd;
+            return true;&#xd;
+        } catch (RepositoryException e) {&#xd;
+            log.error("Failed in generating image variants", e);&#xd;
+        }&#xd;
+        return false;&#xd;
+    }&#xd;
+&#xd;
+    @Override&#xd;
+    boolean undoUpdate(final Node node) throws RepositoryException, UnsupportedOperationException {&#xd;
+        return false&#xd;
+    }&#xd;
+&#xd;
+    private void processImageSet(Node node) throws RepositoryException {&#xd;
+        Node data;&#xd;
+        if (node.hasNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL)) {&#xd;
+            data = node.getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);&#xd;
+        } else {&#xd;
+            data = node.getNode(HippoGalleryNodeType.IMAGE_SET_THUMBNAIL);&#xd;
+        }&#xd;
+&#xd;
+        for (String variantName : imageVariants.keySet()) {&#xd;
+            processVariant(node, data, variantName);&#xd;
+        }&#xd;
+    }&#xd;
+&#xd;
+    private void processVariant(Node node, Node data, String variantName) throws RepositoryException {&#xd;
+&#xd;
+        // same exception for thumbnails as when building the imageVariants&#xd;
+        if (!HippoGalleryNodeType.IMAGE_SET_THUMBNAIL.equals(variantName)) {&#xd;
+&#xd;
+            final List&lt;Long&gt; dimensions = imageVariants.get(variantName);&#xd;
+            if (dimensions == null) {&#xd;
+                log.warn("No width and height available for image variant {}. Skipping node {}", variantName, node.getPath());&#xd;
+                return;&#xd;
+            }&#xd;
+&#xd;
+            Node variant;&#xd;
+            if (node.hasNode(variantName)) {&#xd;
+                if (!overwrite) {&#xd;
+                    log.info("Skipping existing variant {} of node {}", variantName, node.getPath());&#xd;
+                    return;&#xd;
+                }&#xd;
+                variant = node.getNode(variantName);&#xd;
+            } else {&#xd;
+                variant = node.addNode(variantName, HippoGalleryNodeType.IMAGE);&#xd;
+            }&#xd;
+&#xd;
+            Long width = dimensions.get(IMAGE_PROPERTIES_WIDTH_INDEX);&#xd;
+            Long height = dimensions.get(IMAGE_PROPERTIES_HEIGHT_INDEX);&#xd;
+&#xd;
+            createImageVariant(node, data, variant, width, height);&#xd;
+&#xd;
+            node.getSession().save();&#xd;
+        }&#xd;
+    }&#xd;
+&#xd;
+    private void createImageVariant(Node node, Node data, Node variant, Long width, Long height) throws RepositoryException {&#xd;
+&#xd;
+        InputStream dataInputStream = null;&#xd;
+&#xd;
+        try {&#xd;
+            dataInputStream = data.getProperty(JcrConstants.JCR_DATA).getBinary().getStream();&#xd;
+            String mimeType = data.getProperty(JcrConstants.JCR_MIMETYPE).getString();&#xd;
+&#xd;
+            ScalingParameters scalingParameters = new ScalingParameters(width.intValue(), height.intValue(), upscaling);&#xd;
+            ScalingGalleryProcessor scalingGalleryProcessor = new ScalingGalleryProcessor();&#xd;
+&#xd;
+            scalingGalleryProcessor.addScalingParameters(variant.getName(), scalingParameters);&#xd;
+            scalingGalleryProcessor.initGalleryResource(variant, dataInputStream, mimeType, "", Calendar.getInstance());&#xd;
+&#xd;
+            log.info("Image variant {} generated for node {}", variant.getName(), node.getPath());&#xd;
+        } finally {&#xd;
+            IOUtils.closeQuietly(dataInputStream);&#xd;
+        }&#xd;
+    }&#xd;
+&#xd;
+    private void getImageInformation(Node node) {&#xd;
+        try {&#xd;
+            Session session = node.getSession();&#xd;
+            Node configNode = session.getRootNode().getNode(HIPPO_CONFIGURATION_GALLERY_PROCESSOR_SERVICE);&#xd;
+&#xd;
+            getImageVariants(configNode);&#xd;
+&#xd;
+            getImageSets(session);&#xd;
+&#xd;
+&#xd;
+        } catch (RepositoryException e) {&#xd;
+            log.error("Exception while retrieving image set variants configuration", e);&#xd;
+        }&#xd;
+    }&#xd;
+&#xd;
+    private void getImageSets(Session session) throws RepositoryException {&#xd;
+        QueryManager queryManager = session.getWorkspace().getQueryManager();&#xd;
+        Query query = queryManager.createQuery("hippo:namespaces//element(*,hippogallery:imageset)", "xpath");&#xd;
+        QueryResult queryResult = query.execute();&#xd;
+        NodeIterator nodeIterator = queryResult.getNodes();&#xd;
+&#xd;
+        // looking up nodes of type hippogallery:image (or derived) in the prototype of a namespace definition&#xd;
+        while (nodeIterator.hasNext()) {&#xd;
+            Node next = nodeIterator.nextNode();&#xd;
+            NodeIterator children = next.getNodes();&#xd;
+&#xd;
+            List&lt;String&gt; imageVariants = new ArrayList&lt;String&gt;();&#xd;
+&#xd;
+            while (children.hasNext()) {&#xd;
+                Node child = children.nextNode();&#xd;
+&#xd;
+                if (child.isNodeType(HippoGalleryNodeType.IMAGE)) {&#xd;
+                    imageVariants.add(child.getName());&#xd;
+                }&#xd;
+            }&#xd;
+            imageSets.put(next.getPrimaryNodeType().getName(), imageVariants);&#xd;
+        }&#xd;
+    }&#xd;
+&#xd;
+    private void getImageVariants(Node configNode) throws RepositoryException {&#xd;
+        NodeIterator variantNodes = configNode.getNodes();&#xd;
+&#xd;
+        while (variantNodes.hasNext()) {&#xd;
+            Node variantNode = variantNodes.nextNode();&#xd;
+            String variantName = variantNode.getName();&#xd;
+&#xd;
+            // hippogallery:thumbnail is the only required image variant according to the hippogallery.cnd&#xd;
+            // so no regeneration for that one&#xd;
+            if (!HippoGalleryNodeType.IMAGE_SET_THUMBNAIL.equals(variantName)) {&#xd;
+&#xd;
+                Long width = variantNode.hasProperty(CONFIG_PARAM_WIDTH) ? variantNode.getProperty(CONFIG_PARAM_WIDTH).getLong() : DEFAULT_WIDTH;&#xd;
+                Long height = variantNode.hasProperty(CONFIG_PARAM_HEIGHT) ? variantNode.getProperty(CONFIG_PARAM_HEIGHT).getLong() : DEFAULT_HEIGHT;&#xd;
+&#xd;
+                Object[] objects = [variantName, width, height];&#xd;
+&#xd;
+&#xd;
+                log.info("Registered image set variant '{}' with width {} and height {}",&#xd;
+                        objects);&#xd;
+&#xd;
+                final List&lt;Long&gt; dimensions = new ArrayList&lt;Long&gt;(2);&#xd;
+                dimensions.add(width);&#xd;
+                dimensions.add(height);&#xd;
+&#xd;
+                imageVariants.put(variantName, dimensions);&#xd;
+            }&#xd;
+        }&#xd;
+    }&#xd;
+&#xd;
+    protected void printInit(final String[] configNames, final Object[] configObjects) {&#xd;
+&#xd;
+        StringBuilder sb = new StringBuilder("### Initialized runner plugin ").append(this.getClass().getName()).append("\n");&#xd;
+&#xd;
+        if ((configNames != null) &amp;&amp; configObjects != null) {&#xd;
+            if (configNames.length != configObjects.length) {&#xd;
+                throw new IllegalArgumentException("Lengths of configNames and configObjects do not match: " + configNames.length + " and " + configObjects.length);&#xd;
+            }&#xd;
+&#xd;
+            if (configNames.length &gt; 0) {&#xd;
+                sb.append("Initialization parameters:\n");&#xd;
+                for (int i = 0; i &lt; configNames.length; i++) {&#xd;
+                    sb.append("  ").append(configNames[i]).append(" = ").append(configObjects[i]).append("\n");&#xd;
+                }&#xd;
+            }&#xd;
+        }&#xd;
+&#xd;
+        log.info(sb.toString());&#xd;
+    }&#xd;
+&#xd;
+}</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:throttle" sv:type="Long">
+    <sv:value>1000</sv:value>
+  </sv:property>
+</sv:node>

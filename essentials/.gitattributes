@@ -505,6 +505,7 @@ dashboard-plugins/gallery-plugin/src/main/java/org/onehippo/cms7/essentials/plug
 dashboard-plugins/gallery-plugin/src/main/resources/META-INF/resources/tools/galleryPlugin/galleryPlugin.html -text
 dashboard-plugins/gallery-plugin/src/main/resources/META-INF/resources/tools/galleryPlugin/galleryPlugin.js -text
 dashboard-plugins/gallery-plugin/src/main/resources/META-INF/web-fragment.xml -text
+dashboard-plugins/gallery-plugin/src/main/resources/image_set_updater.xml -text
 dashboard-plugins/gallery-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/icons/onebit/license.txt -text
 dashboard-plugins/image-component-plugin/pom.xml -text
