@@ -6,6 +6,8 @@ api/pom.xml -text
 api/src/main/java/org/hippoecm/hst/demo/addonmodules/api/MatrixOperator.java -text
 api/src/main/java/org/hippoecm/hst/demo/addonmodules/api/RandomGenerator.java -text
 cms/pom.xml -text
+cms/src/main/resources/org/hippoecm/frontend/plugins/standardworkflow/new-translated-folder-demosite-16.png -text
+cms/src/main/resources/org/hippoecm/frontend/plugins/standardworkflow/new-translated-folder-intranet-16.png -text
 cms/src/main/webapp/WEB-INF/web.xml -text
 components/pom.xml -text
 components/src/main/java/org/hippoecm/hst/demo/beans/BaseBean.java svneol=native#text/plain
@@ -130,6 +132,9 @@ content/src/main/resources/hippo-configuration/broken-links-checker-config.xml -
 content/src/main/resources/hippo-configuration/formdata-domain.xml -text svneol=unset#text/plain
 content/src/main/resources/hippo-configuration/formdata.xml -text svneol=unset#text/plain
 content/src/main/resources/hippo-configuration/modules/autoexport-module.xml -text
+content/src/main/resources/hippo-configuration/queries/templates/new-document-demosite.xml -text
+content/src/main/resources/hippo-configuration/queries/templates/new-folder-demosite.xml -text
+content/src/main/resources/hippo-configuration/queries/templates/new-translated-folder-demosite.xml -text
 content/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 content/src/main/resources/hst-blueprint-reusecontent.xml -text
 content/src/main/resources/hst-blueprint.xml -text
@@ -178,6 +183,9 @@ dependencies/pom.xml -text
 dependencies/site/pom.xml -text
 intranet-bootstrap/configuration/pom.xml -text
 intranet-bootstrap/configuration/src/main/resources/hippo-configuration/hippo-frontend/cms/hst-intranet-rest-proxy-service.xml -text
+intranet-bootstrap/configuration/src/main/resources/hippo-configuration/queries/templates/new-document-intranet.xml -text
+intranet-bootstrap/configuration/src/main/resources/hippo-configuration/queries/templates/new-folder-intranet.xml -text
+intranet-bootstrap/configuration/src/main/resources/hippo-configuration/queries/templates/new-translated-folder-intranet.xml -text
 intranet-bootstrap/configuration/src/main/resources/hippoecm-extension.xml -text
 intranet-bootstrap/configuration/src/main/resources/hst/channels/intranet.xml -text
 intranet-bootstrap/configuration/src/main/resources/hst/configurations/intranet.xml -text

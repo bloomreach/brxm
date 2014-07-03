@@ -1010,4 +1010,47 @@
     </sv:property>
   </sv:node>
 
+  <sv:node sv:name="testsuite-new-document-demosite-configuration">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>hippo-configuration/queries/templates/new-document-demosite.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:queries/hippo:templates</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>80000.1</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="testsuite-new-folder-demosite-configuration">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>hippo-configuration/queries/templates/new-folder-demosite.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:queries/hippo:templates</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>80000.2</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="testsuite-new-translated-folder-demosite-configuration">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>hippo-configuration/queries/templates/new-translated-folder-demosite.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:queries/hippo:templates</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>80000.3</sv:value>
+    </sv:property>
+  </sv:node>
+
 </sv:node>

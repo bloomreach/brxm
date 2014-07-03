@@ -30,8 +30,8 @@
     <sv:value>demosite-news-folder-id</sv:value>
   </sv:property>
   <sv:property sv:name="hippostd:foldertype" sv:type="String">
-    <sv:value>new-translated-folder</sv:value>
-    <sv:value>new-document</sv:value>
+    <sv:value>new-translated-folder-demosite</sv:value>
+    <sv:value>new-document-demosite</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:uuid" sv:type="String">
     <sv:value>8458a193-3c50-4606-a58d-52bd086992c7</sv:value>
@@ -51,8 +51,8 @@
       <sv:value>demosite-news-2009-folder-id</sv:value>
     </sv:property>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
-      <sv:value>new-translated-folder</sv:value>
-      <sv:value>new-document</sv:value>
+      <sv:value>new-translated-folder-demosite</sv:value>
+      <sv:value>new-document-demosite</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>1393ec73-c852-4b6a-99b6-91d8b8818280</sv:value>
@@ -72,8 +72,8 @@
         <sv:value>demosite-news-2009-01-folder-id</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:foldertype" sv:type="String">
-        <sv:value>new-translated-folder</sv:value>
-        <sv:value>new-document</sv:value>
+        <sv:value>new-translated-folder-demosite</sv:value>
+        <sv:value>new-document-demosite</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>36130853-f997-4214-be2f-4f5dac45a3ee</sv:value>
@@ -266,8 +266,8 @@
         <sv:value>demosite-news-2009-02-folder-id</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:foldertype" sv:type="String">
-        <sv:value>new-translated-folder</sv:value>
-        <sv:value>new-document</sv:value>
+        <sv:value>new-translated-folder-demosite</sv:value>
+        <sv:value>new-document-demosite</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>4c2d36c5-ee77-4c4e-8936-fa178b9e6a07</sv:value>
@@ -405,8 +405,8 @@
       <sv:value>demosite-new-2008-folder-id</sv:value>
     </sv:property>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
-      <sv:value>new-translated-folder</sv:value>
-      <sv:value>new-document</sv:value>
+      <sv:value>new-translated-folder-demosite</sv:value>
+      <sv:value>new-document-demosite</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>29773b5b-7020-4021-90b4-e1cce024dbb7</sv:value>
@@ -426,8 +426,8 @@
         <sv:value>demosite-new-2008-11-folder-id</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:foldertype" sv:type="String">
-        <sv:value>new-translated-folder</sv:value>
-        <sv:value>new-document</sv:value>
+        <sv:value>new-translated-folder-demosite</sv:value>
+        <sv:value>new-document-demosite</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>d771ff0e-907d-402a-9a2f-c7189dea3cd5</sv:value>
@@ -556,8 +556,8 @@
         <sv:value>demosite-new-2008-10-folder-id</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:foldertype" sv:type="String">
-        <sv:value>new-translated-folder</sv:value>
-        <sv:value>new-document</sv:value>
+        <sv:value>new-translated-folder-demosite</sv:value>
+        <sv:value>new-document-demosite</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>e5867d51-4fc1-4668-b749-c6f9a8466b41</sv:value>
@@ -698,7 +698,7 @@
       </sv:property>
       <sv:property sv:name="hippostd:foldertype" sv:type="String">
         <sv:value>new-folder</sv:value>
-        <sv:value>new-document</sv:value>
+        <sv:value>new-document-demosite</sv:value>
       </sv:property>
       <sv:node sv:name="website-onsoranjenl">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -825,7 +825,7 @@
       </sv:property>
       <sv:property sv:name="hippostd:foldertype" sv:type="String">
         <sv:value>new-folder</sv:value>
-        <sv:value>new-document</sv:value>
+        <sv:value>new-document-demosite</sv:value>
       </sv:property>
       <sv:node sv:name="takeover">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -945,7 +945,7 @@
       </sv:property>
       <sv:property sv:name="hippostd:foldertype" sv:type="String">
         <sv:value>new-folder</sv:value>
-        <sv:value>new-document</sv:value>
+        <sv:value>new-document-demosite</sv:value>
       </sv:property>
       <sv:node sv:name="apachecon">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -1209,7 +1209,7 @@
     </sv:property>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
       <sv:value>new-folder</sv:value>
-      <sv:value>new-document</sv:value>
+      <sv:value>new-document-demosite</sv:value>
     </sv:property>
     <sv:node sv:name="12">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -1223,7 +1223,7 @@
       </sv:property>
       <sv:property sv:name="hippostd:foldertype" sv:type="String">
         <sv:value>new-folder</sv:value>
-        <sv:value>new-document</sv:value>
+        <sv:value>new-document-demosite</sv:value>
       </sv:property>
       <sv:node sv:name="emerce-image-top-10">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -1440,7 +1440,7 @@
       </sv:property>
       <sv:property sv:name="hippostd:foldertype" sv:type="String">
         <sv:value>new-folder</sv:value>
-        <sv:value>new-document</sv:value>
+        <sv:value>new-document-demosite</sv:value>
       </sv:property>
       <sv:node sv:name="search-engine-optimalisation">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -1574,7 +1574,7 @@
       </sv:property>
       <sv:property sv:name="hippostd:foldertype" sv:type="String">
         <sv:value>new-folder</sv:value>
-        <sv:value>new-document</sv:value>
+        <sv:value>new-document-demosite</sv:value>
       </sv:property>
       <sv:node sv:name="hippo-gold-sponsor-apachecon-eu">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -1686,7 +1686,7 @@
       </sv:property>
       <sv:property sv:name="hippostd:foldertype" sv:type="String">
         <sv:value>new-folder</sv:value>
-        <sv:value>new-document</sv:value>
+        <sv:value>new-document-demosite</sv:value>
       </sv:property>
       <sv:node sv:name="council-of-justice-website">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -1787,7 +1787,7 @@
       </sv:property>
       <sv:property sv:name="hippostd:foldertype" sv:type="String">
         <sv:value>new-folder</sv:value>
-        <sv:value>new-document</sv:value>
+        <sv:value>new-document-demosite</sv:value>
       </sv:property>
       <sv:node sv:name="levi9">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -2219,7 +2219,7 @@
       </sv:property>
       <sv:property sv:name="hippostd:foldertype" sv:type="String">
         <sv:value>new-folder</sv:value>
-        <sv:value>new-document</sv:value>
+        <sv:value>new-document-demosite</sv:value>
       </sv:property>
       <sv:node sv:name="open-source-fast-50">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -2348,7 +2348,7 @@
     </sv:property>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
       <sv:value>new-folder</sv:value>
-      <sv:value>new-document</sv:value>
+      <sv:value>new-document-demosite</sv:value>
     </sv:property>
     <sv:node sv:name="04">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -2362,7 +2362,7 @@
       </sv:property>
       <sv:property sv:name="hippostd:foldertype" sv:type="String">
         <sv:value>new-folder</sv:value>
-        <sv:value>new-document</sv:value>
+        <sv:value>new-document-demosite</sv:value>
       </sv:property>
       <sv:node sv:name="website-finance-ministery">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -2474,7 +2474,7 @@
     </sv:property>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
       <sv:value>new-folder</sv:value>
-      <sv:value>new-document</sv:value>
+      <sv:value>new-document-demosite</sv:value>
     </sv:property>
     <sv:node sv:name="04">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -2488,7 +2488,7 @@
       </sv:property>
       <sv:property sv:name="hippostd:foldertype" sv:type="String">
         <sv:value>new-folder</sv:value>
-        <sv:value>new-document</sv:value>
+        <sv:value>new-document-demosite</sv:value>
       </sv:property>
       <sv:node sv:name="municipal-schijndel">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">

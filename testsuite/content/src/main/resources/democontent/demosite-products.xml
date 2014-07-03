@@ -14,8 +14,8 @@
   </sv:property>
   <sv:property sv:name="hippostd:foldertype" sv:type="String"
     sv:multiple="true">
-    <sv:value>new-translated-folder</sv:value>
-    <sv:value>new-document</sv:value>
+    <sv:value>new-translated-folder-demosite</sv:value>
+    <sv:value>new-document-demosite</sv:value>
 
   </sv:property>
   <sv:property sv:name="hippotranslation:id" sv:type="String">

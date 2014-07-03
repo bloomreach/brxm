@@ -29,8 +29,8 @@ limitations under the License. -->
     <sv:value>intranet-common-id</sv:value>
   </sv:property>
   <sv:property sv:name="hippostd:foldertype" sv:type="String">
-    <sv:value>new-translated-folder</sv:value>
-    <sv:value>new-document</sv:value>
+    <sv:value>new-translated-folder-intranet</sv:value>
+    <sv:value>new-document-intranet</sv:value>
   </sv:property>
   <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">

@@ -23,8 +23,8 @@ limitations under the License. -->
     <sv:value>hippotranslation:translated</sv:value>
   </sv:property>
   <sv:property sv:name="hippostd:foldertype" sv:type="String">
-    <sv:value>new-translated-folder</sv:value>
-    <sv:value>new-document</sv:value>
+    <sv:value>new-translated-folder-intranet</sv:value>
+    <sv:value>new-document-intranet</sv:value>
   </sv:property>
   <sv:property sv:name="hippotranslation:id" sv:type="String">
     <sv:value>b1698ac1-72d6-4223-86a9-da7965d1566f</sv:value>
@@ -52,8 +52,8 @@ limitations under the License. -->
       <sv:value>hippotranslation:translated</sv:value>
     </sv:property>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
-      <sv:value>new-translated-folder</sv:value>
-      <sv:value>new-document</sv:value>
+      <sv:value>new-translated-folder-intranet</sv:value>
+      <sv:value>new-document-intranet</sv:value>
     </sv:property>
     <sv:property sv:name="hippotranslation:id" sv:type="String">
       <sv:value>9485cb0d-cbd4-4ea9-98b8-e550e2ba60a7</sv:value>

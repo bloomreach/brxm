@@ -30,7 +30,7 @@
     <sv:value>demosite-wikipedia-folder-id</sv:value>
   </sv:property>
   <sv:property sv:name="hippostd:foldertype" sv:type="String">
-    <sv:value>new-translated-folder</sv:value>
-    <sv:value>new-document</sv:value>
+    <sv:value>new-translated-folder-demosite</sv:value>
+    <sv:value>new-document-demosite</sv:value>
   </sv:property>
 </sv:node>

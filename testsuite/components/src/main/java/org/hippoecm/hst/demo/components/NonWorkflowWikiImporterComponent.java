@@ -188,6 +188,7 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
 
                     if (!baseNode.hasNode("wikipedia")) {
                         wikiFolder = baseNode.addNode("wikipedia", "hippostd:folder");
+                        wikiFolder.setProperty("hippostd:foldertype", new String[]{"new-translated-folder-demosite", "new-document-demosite"});
                         wikiFolder.addMixin("mix:referenceable");
                         wikiFolder.addMixin("hippotranslation:translated");
                         wikiFolder.setProperty("hippotranslation:locale", "en");
@@ -289,11 +290,13 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
             this.maxSubFolders = maxSubFolders;
             this.addImages = addImages;
             currentFolder = wikiFolder.addNode("wiki-" + System.currentTimeMillis(), "hippostd:folder");
+            currentFolder.setProperty("hippostd:foldertype", new String[]{"new-translated-folder-demosite", "new-document-demosite"});
             currentFolder.addMixin("mix:referenceable");
             currentFolder.addMixin("hippotranslation:translated");
             currentFolder.setProperty("hippotranslation:locale", "en");
             currentFolder.setProperty("hippotranslation:id", UUID.randomUUID().toString());
             currentSubFolder = currentFolder.addNode("wiki-" + System.currentTimeMillis(), "hippostd:folder");
+            currentSubFolder.setProperty("hippostd:foldertype", new String[]{"new-translated-folder-demosite", "new-document-demosite"});
             currentSubFolder.addMixin("mix:referenceable");
             currentSubFolder.addMixin("hippotranslation:translated");
             currentSubFolder.setProperty("hippotranslation:locale", "en");
@@ -330,6 +333,7 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
                             if (numberOfSubFolders >= maxSubFolders) {
                                 currentFolder = wikiFolder.addNode("wiki-" + System.currentTimeMillis(),
                                         "hippostd:folder");
+                                currentFolder.setProperty("hippostd:foldertype", new String[]{"new-translated-folder-demosite", "new-document-demosite"});
                                 currentFolder.addMixin("mix:referenceable");
                                 currentFolder.addMixin("hippotranslation:translated");
                                 currentFolder.setProperty("hippotranslation:locale", "en");
@@ -338,6 +342,7 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
                             }
                             currentSubFolder = currentFolder.addNode("wiki-" + System.currentTimeMillis(),
                                     "hippostd:folder");
+                            currentSubFolder.setProperty("hippostd:foldertype", new String[]{"new-translated-folder-demosite", "new-document-demosite"});
                             currentSubFolder.addMixin("mix:referenceable");
                             currentSubFolder.addMixin("hippotranslation:translated");
                             currentSubFolder.setProperty("hippotranslation:locale", "en");

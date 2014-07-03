@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node sv:name="new-translated-folder-intranet" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hippostd:templatequery</sv:value>
+  </sv:property>
+  <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+    <sv:value>hipposys:implementation</sv:value>
+    <sv:value>hippo:translated</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippostd:icon" sv:type="String">
+    <sv:value>addfolder_ico</sv:value>
+  </sv:property>
+  <sv:property sv:multiple="true" sv:name="hippostd:modify" sv:type="String">
+    <sv:value>./_name</sv:value>
+    <sv:value>$name</sv:value>
+    <sv:value>./hippotranslation:id</sv:value>
+    <sv:value>$uuid</sv:value>
+    <sv:value>./hippotranslation:locale</sv:value>
+    <sv:value>$inherited</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:classname" sv:type="String">
+    <sv:value>org.hippoecm.repository.impl.query.DirectPath</sv:value>
+  </sv:property>
+  <sv:property sv:name="jcr:language" sv:type="String">
+    <sv:value>xpath</sv:value>
+  </sv:property>
+  <sv:property sv:name="jcr:statement" sv:type="String">
+    <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/new-translated-folder-intranet/hippostd:templates/node()</sv:value>
+  </sv:property>
+  <sv:node sv:name="hippostd:templates">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippostd:templates</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippostd:folder">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippostd:folder</sv:value>
+      </sv:property>
+      <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>hippotranslation:translated</sv:value>
+        <sv:value>mix:versionable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>cf15c709-be46-4949-8689-c58782697dbd</sv:value>
+      </sv:property>
+      <sv:property sv:multiple="true" sv:name="hippostd:foldertype" sv:type="String">
+        <sv:value>new-translated-folder-intranet</sv:value>
+        <sv:value>new-document-intranet</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>ff041853-2cee-41ba-be6e-66842432139c</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+        <sv:value>inherited locale</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="hippo:translation">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:translation</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:class" sv:type="String">
+      <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:language" sv:type="String">
+      <sv:value>en</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:message" sv:type="String">
+      <sv:value>new translated folder</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="hippo:translation">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:translation</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:class" sv:type="String">
+      <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:language" sv:type="String">
+      <sv:value>nl</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:message" sv:type="String">
+      <sv:value>nieuwe vertaalde map</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="hippo:translation">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:translation</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:class" sv:type="String">
+      <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:language" sv:type="String">
+      <sv:value>it</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:message" sv:type="String">
+      <sv:value>nuova cartella tradotta</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="hippo:translation">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:translation</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:class" sv:type="String">
+      <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:language" sv:type="String">
+      <sv:value>fr</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:message" sv:type="String">
+      <sv:value>un nouveau dossier traduit</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="hippo:translation">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:translation</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:class" sv:type="String">
+      <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:language" sv:type="String">
+      <sv:value>it</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:message" sv:type="String">
+      <sv:value>Nuova cartella tradotta</sv:value>
+    </sv:property>
+  </sv:node>
+</sv:node>

@@ -63,8 +63,8 @@
             <sv:value>f80dd670-f207-47b5-95e0-75f1c0123752</sv:value>
           </sv:property>
           <sv:property sv:name="hippostd:foldertype" sv:type="String">
-            <sv:value>new-translated-folder</sv:value>
-            <sv:value>new-document</sv:value>
+            <sv:value>new-translated-folder-demosite</sv:value>
+            <sv:value>new-document-demosite</sv:value>
           </sv:property>
         </sv:node>
         <sv:node  sv:name="demosite_fr">
@@ -86,8 +86,8 @@
             <sv:value>f80dd670-f207-47b5-95e0-75f1c0123752</sv:value>
           </sv:property>
           <sv:property sv:name="hippostd:foldertype" sv:type="String">
-            <sv:value>new-translated-folder</sv:value>
-            <sv:value>new-document</sv:value>
+            <sv:value>new-translated-folder-demosite</sv:value>
+            <sv:value>new-document-demosite</sv:value>
           </sv:property>
         </sv:node>
         <sv:node  sv:name="demosite_de">
@@ -109,8 +109,8 @@
             <sv:value>f80dd670-f207-47b5-95e0-75f1c0123752</sv:value>
           </sv:property>
           <sv:property sv:name="hippostd:foldertype" sv:type="String">
-            <sv:value>new-translated-folder</sv:value>
-            <sv:value>new-document</sv:value>
+            <sv:value>new-translated-folder-demosite</sv:value>
+            <sv:value>new-document-demosite</sv:value>
           </sv:property>
         </sv:node>
         <sv:node  sv:name="demosite_it">
@@ -132,8 +132,8 @@
             <sv:value>f80dd670-f207-47b5-95e0-75f1c0123752</sv:value>
           </sv:property>
           <sv:property sv:name="hippostd:foldertype" sv:type="String">
-            <sv:value>new-translated-folder</sv:value>
-            <sv:value>new-document</sv:value>
+            <sv:value>new-translated-folder-demosite</sv:value>
+            <sv:value>new-document-demosite</sv:value>
           </sv:property>
         </sv:node>
         <sv:node  sv:name="demosite_nl">
@@ -155,8 +155,8 @@
             <sv:value>f80dd670-f207-47b5-95e0-75f1c0123752</sv:value>
           </sv:property>
           <sv:property sv:name="hippostd:foldertype" sv:type="String">
-            <sv:value>new-translated-folder</sv:value>
-            <sv:value>new-document</sv:value>
+            <sv:value>new-translated-folder-demosite</sv:value>
+            <sv:value>new-document-demosite</sv:value>
           </sv:property>
         </sv:node>
     </sv:node>

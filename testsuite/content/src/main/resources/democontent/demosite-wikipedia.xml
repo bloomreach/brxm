@@ -10,6 +10,10 @@
   <sv:property sv:name="jcr:uuid" sv:type="String">
     <sv:value>0d298512-4512-4ba0-b21d-600c20f706d9</sv:value>
   </sv:property>
+  <sv:property sv:name="hippostd:foldertype" sv:type="String">
+    <sv:value>new-translated-folder-demosite</sv:value>
+    <sv:value>new-document-demosite</sv:value>
+  </sv:property>
   <sv:property sv:name="hippotranslation:locale" sv:type="String">
     <sv:value>en</sv:value>
   </sv:property>
