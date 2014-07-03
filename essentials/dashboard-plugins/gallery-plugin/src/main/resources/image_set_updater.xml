@@ -26,7 +26,7 @@
     <sv:value>false</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:query" sv:type="String">
-    <sv:value>content/gallery//element(*,hippogallery:stdImageGallery)</sv:value>
+    <sv:value>content/gallery//element(*,hippogallery:imageset)</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:script" sv:type="String">
     <sv:value>/*&#xd;

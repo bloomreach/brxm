@@ -95,7 +95,6 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
         if (node.hasNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL)) {
             data = node.getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
         } else {
-            log.info("data {}", data.getPath());
             data = node.getNode(HippoGalleryNodeType.IMAGE_SET_THUMBNAIL);
         }
 

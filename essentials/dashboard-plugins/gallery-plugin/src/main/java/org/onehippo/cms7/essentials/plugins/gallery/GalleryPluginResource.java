@@ -176,7 +176,7 @@ public class GalleryPluginResource extends BaseResource {
                 //..    imageNode.setProperty("new-image/hippostd:templates/image/image", newImageNamespace);
                 // folder
                 final String folderName = "new-" + imageSetName + "-folder";
-                final Node folderNode = JcrUtils.copy(session, rootDestination + "/new-image-folder", rootDestination + '/'+folderName);
+                final Node folderNode = JcrUtils.copy(session, rootDestination + "/new-image-folder", rootDestination + '/' + folderName);
                 final String oldFolderQuery = folderNode.getProperty("jcr:statement").getString();
                 final String newFolderQuery = oldFolderQuery.replaceAll("new\\-image\\-folder", folderName);
                 folderNode.setProperty("jcr:statement", newFolderQuery);
@@ -186,14 +186,25 @@ public class GalleryPluginResource extends BaseResource {
                 // update existing folders:
                 final Query query = session.getWorkspace().getQueryManager().createQuery("//content//element(*, hippogallery:stdImageGallery)", "xpath");
                 final NodeIterator nodes = query.execute().getNodes();
-                while(nodes.hasNext()){
+                while (nodes.hasNext()) {
                     final Node imageFolderNode = nodes.nextNode();
                     imageFolderNode.setProperty("hippostd:foldertype", new String[]{folderName});
                     imageFolderNode.setProperty("hippostd:gallerytype", new String[]{newImageNamespace});
                 }
+                // change primary types:
+                final Query handleQuery = session.getWorkspace().getQueryManager().createQuery("//content/gallery//element(*, hippo:handle)", "xpath");
+                final NodeIterator handleNodes = handleQuery.execute().getNodes();
+                while (handleNodes.hasNext()) {
+                    final Node handle = handleNodes.nextNode();
+                    final String name = handle.getName();
+                    if (handle.hasNode(name)) {
+                        final Node myImageNode = handle.getNode(name);
+                        myImageNode.setPrimaryType(newImageNamespace);
+                    }else{
+                        log.warn("handle {}", handle.getPath());
+                    }
+                }
                 session.save();
-
-
             } catch (RepositoryException e) {
                 log.error("Error creating query nodes", e);
             } finally {
