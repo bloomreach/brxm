@@ -66,7 +66,7 @@ public class FileUploadWidgetSettings implements IClusterable {
     private String buttonHeight;
     private boolean flashUploadEnabled = true;
     private boolean alwaysShowLabel;
-    private boolean useMultipleAttr = true;
+    private boolean useMultipleAttr = false;
 
     public FileUploadWidgetSettings() {
     }
