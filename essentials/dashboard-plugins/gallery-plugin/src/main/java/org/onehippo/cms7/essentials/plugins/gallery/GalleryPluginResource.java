@@ -167,7 +167,8 @@ public class GalleryPluginResource extends BaseResource {
                 final String rootDestination = "/hippo:configuration/hippo:queries/hippo:templates";
                 final String newImageNamespace = imageSetPrefix + ':' + imageSetName;
                 // image
-                final String imageName = "new-" + imageSetName + "-image";
+                final String queryMiddleName = imageSetPrefix + '-' + imageSetName;
+                final String imageName = "new-" + queryMiddleName + "-image";
                 final Node imageNode = JcrUtils.copy(session, rootDestination + "/new-image", rootDestination + '/' + imageName);
                 final String oldImageQuery = imageNode.getProperty("jcr:statement").getString();
                 final String newImageQuery = oldImageQuery.replaceAll("new\\-image", imageName);
@@ -175,7 +176,7 @@ public class GalleryPluginResource extends BaseResource {
 
                 //..    imageNode.setProperty("new-image/hippostd:templates/image/image", newImageNamespace);
                 // folder
-                final String folderName = "new-" + imageSetName + "-folder";
+                final String folderName = "new-" + queryMiddleName + "-folder";
                 final Node folderNode = JcrUtils.copy(session, rootDestination + "/new-image-folder", rootDestination + '/' + folderName);
                 final String oldFolderQuery = folderNode.getProperty("jcr:statement").getString();
                 final String newFolderQuery = oldFolderQuery.replaceAll("new\\-image\\-folder", folderName);
