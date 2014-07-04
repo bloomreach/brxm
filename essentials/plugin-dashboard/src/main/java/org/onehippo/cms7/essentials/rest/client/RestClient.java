@@ -16,8 +16,6 @@
 
 package org.onehippo.cms7.essentials.rest.client;
 
-import java.io.IOException;
-
 import javax.ws.rs.core.MediaType;
 
 import org.apache.cxf.jaxrs.client.WebClient;
@@ -36,7 +34,7 @@ import com.google.common.base.Strings;
  */
 public class RestClient {
 
-    public static final int DEFAULT_CONNECTION_TIMEOUT = 2500;
+    public static final int DEFAULT_CONNECTION_TIMEOUT = 2000;
     public static final int DEFAULT_RECEIVE_TIMEOUT = 2000;
     private static Logger log = LoggerFactory.getLogger(RestClient.class);
 
@@ -78,23 +76,20 @@ public class RestClient {
     public RestfulList<PluginRestful> getPlugins() {
         final WebClient client = WebClient.create(baseResourceUri);
         setTimeouts(client, connectionTimeout, receiveTimeout);
-        final String json = client.accept(MediaType.APPLICATION_JSON_TYPE).get(String.class);
-        if(Strings.isNullOrEmpty(json)){
-            return new RestfulList<>();
-        }
-        final ObjectMapper mapper = new ObjectMapper();
         try {
+            final String json = client.accept(MediaType.APPLICATION_JSON_TYPE).get(String.class);
+            if (Strings.isNullOrEmpty(json)) {
+                return new RestfulList<>();
+            }
+            final ObjectMapper mapper = new ObjectMapper();
+
             @SuppressWarnings("unchecked")
             final RestfulList<PluginRestful> restfulList = mapper.readValue(json, RestfulList.class);
             return restfulList;
-        } catch (IOException e) {
-            log.error("Error parsing remote plugins for repository: "  + baseResourceUri, e);
+        } catch (Exception e) {
+            log.error("Error parsing remote plugins for repository: " + baseResourceUri, e);
         }
-         return new RestfulList<>();
+        return new RestfulList<>();
     }
-    private boolean isEnabled() {
-        return true;
-    }
-
 
 }
