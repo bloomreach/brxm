@@ -16,10 +16,13 @@
 
 package org.onehippo.cms7.essentials.rest;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -45,6 +48,7 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.onehippo.cms7.essentials.dashboard.config.FilePluginService;
 import org.onehippo.cms7.essentials.dashboard.config.InstallerDocument;
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
@@ -130,7 +134,6 @@ public class PluginResource extends BaseResource {
     private MemoryPluginEventListener listener;
 
 
-
     private boolean initialized;
     private static Logger log = LoggerFactory.getLogger(PluginResource.class);
 
@@ -142,86 +145,14 @@ public class PluginResource extends BaseResource {
             response = RestfulList.class)
     @GET
     @Path("/")
-    public RestfulList<PluginRestful> getPluginList(@Context ServletContext servletContext) throws Exception {
-
-        final RestfulList<PluginRestful> plugins = new RestList<>();
-        final List<PluginRestful> items = getPlugins(servletContext);
-        final Collection<String> restClasses = new ArrayList<>();
-        final PluginContext context = getContext(servletContext);
-        // remote plugins
-        final ProjectSettings projectSettings = getProjectSettings(servletContext);
-        final Set<String> pluginRepositories = projectSettings.getPluginRepositories();
-        for (String pluginRepository : pluginRepositories) {
-            if (pluginRepository.startsWith("http")) {
-                try {
-                    final RestfulList<PluginRestful> myPlugins = pluginCache.get(pluginRepository);
-                    log.debug("{}", pluginCache.stats());
-                    if (myPlugins != null) {
-                        final List<PluginRestful> myPluginsItems = myPlugins.getItems();
-                        CollectionUtils.addAll(items, myPluginsItems.iterator());
-                    }
-                } catch (Exception e) {
-                    log.error(MessageFormat.format("Error loading plugins from repository: {0}", pluginRepository), e);
-                }
-            }
-        }
-
-
-        try (PluginConfigService service = new FilePluginService(context)) {
-            processPlugins(plugins, items, restClasses, service);
-        }
-        //############################################
-        // Register endpoints:
-        //############################################
-        registerEndpoints(restClasses);
-        return plugins;
-    }
-
-
-
-
-    public void registerEndpoints(final Collection<String> restClasses) {
-        if (!initialized && !restClasses.isEmpty()) {
-            initialized = true;
-            final RuntimeDelegate delegate = RuntimeDelegate.getInstance();
-            final Bus bus = BusFactory.getDefaultBus();
-            application = new DynamicRestPointsApplication();
-            addClasses(restClasses);
-            // register:
-            final ApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
-            final Object jsonProvider = applicationContext.getBean("jsonProvider");
-            final JAXRSServerFactoryBean factoryBean = delegate.createEndpoint(application, JAXRSServerFactoryBean.class);
-            factoryBean.setProvider(jsonProvider);
-            factoryBean.setBus(bus);
-            final Server server = factoryBean.create();
-            server.start();
-        } else {
-            addClasses(restClasses);
-        }
-    }
-
-    public void addClasses(final Iterable<String> restClasses) {
-        for (String restClass : restClasses) {
-            final Class<?> endpointClass = GlobalUtils.loadCLass(restClass);
-            if (endpointClass == null) {
-                log.error("Invalid application class: {}", restClass);
-                continue;
-            }
-            final Set<Class<?>> classes = application.getClasses();
-            if (classes.contains(endpointClass)) {
-                log.debug("Class already loaded {}", restClass);
-                continue;
-            }
-            application.addClass(endpointClass);
-            log.info("Adding dynamic REST (plugin) endpoint {}", endpointClass.getName());
-
-        }
+    public RestfulList<PluginRestful> fetchPlugins(@Context ServletContext servletContext) {
+        return getAllPlugins(servletContext);
     }
 
 
     @ApiOperation(
             value = "Clears plugin cache",
-            notes = "Remote Plugin descriptors are cached for 1 hour. This method clears plugin cache and plugins are fetched again on next requets",
+            notes = "Remote Plugin descriptors are cached for 1 hour. This method clears plugin cache and plugins are fetched again on next requests",
             response = MessageRestful.class)
     @GET
     @Path("/clearcache")
@@ -237,7 +168,7 @@ public class PluginResource extends BaseResource {
             response = MessageRestful.class)
     @POST
     @Path("/install/package")
-    public MessageRestful installInstructionPackage(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) throws Exception {
+    public MessageRestful installInstructionPackage(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
 
         final Map<String, String> values = payloadRestful.getValues();
         final String pluginId = String.valueOf(values.get(PLUGIN_ID));
@@ -275,6 +206,8 @@ public class PluginResource extends BaseResource {
             }
             document.setDateAdded(Calendar.getInstance());
             service.write(document);
+        } catch (Exception e) {
+            log.error("Error in proccessing installer documents", e);
         }
 
         return new MessageRestful("Please rebuild and restart your application:", DisplayEvent.DisplayType.STRONG);
@@ -380,7 +313,7 @@ public class PluginResource extends BaseResource {
     @ApiParam(name = PLUGIN_ID, value = "Plugin id", required = true)
     @GET
     @Path("/installstate/{pluginId}")
-    public PluginRestful getPluginList(@Context ServletContext servletContext, @PathParam(PLUGIN_ID) String pluginId) {
+    public PluginRestful getInstallStateList(@Context ServletContext servletContext, @PathParam(PLUGIN_ID) String pluginId) {
 
         final PluginRestful resource = new PluginRestful();
         final List<PluginRestful> pluginList = getPlugins(servletContext);
@@ -409,7 +342,7 @@ public class PluginResource extends BaseResource {
     public MessageRestful installPlugin(@Context ServletContext servletContext, @PathParam(PLUGIN_ID) String pluginId) throws Exception {
 
         final MessageRestful message = new MessageRestful();
-        final RestfulList<PluginRestful> pluginList = getPluginList(servletContext);
+        final RestfulList<PluginRestful> pluginList = getAllPlugins(servletContext);
         for (PluginRestful plugin : pluginList.getItems()) {
             final String id = plugin.getPluginId();
             if (Strings.isNullOrEmpty(id)) {
@@ -476,14 +409,6 @@ public class PluginResource extends BaseResource {
         return message;
     }
 
-    private InstallerDocument createPluginInstallerDocument(final String pluginId) {
-        final InstallerDocument document = new InstallerDocument();
-
-        document.setName(pluginId);
-        document.setDateInstalled(Calendar.getInstance());
-
-        return document;
-    }
 
     @ApiOperation(
             value = "Returns list of project settings like project namespace, project path etc. ",
@@ -519,7 +444,7 @@ public class PluginResource extends BaseResource {
 
     @GET
     @Path("/controllers")
-    public RestfulList<ControllerRestful> getControllers(@Context ServletContext servletContext) {
+    public RestfulList<ControllerRestful> getControllers(@Context ServletContext servletContext) throws Exception {
 
         final RestfulList<ControllerRestful> controllers = new RestList<>();
         final List<PluginRestful> plugins = getPlugins(servletContext);
@@ -571,7 +496,7 @@ public class PluginResource extends BaseResource {
             response = PluginModuleRestful.class)
     @GET
     @Path("/modules")
-    public PluginModuleRestful getModule(@Context ServletContext servletContext) {
+    public PluginModuleRestful getModule(@Context ServletContext servletContext) throws Exception {
         final PluginModuleRestful modules = new PluginModuleRestful();
         final List<PluginRestful> plugins = getPlugins(servletContext);
         for (PluginRestful plugin : plugins) {
@@ -598,7 +523,7 @@ public class PluginResource extends BaseResource {
             response = PluginModuleRestful.class)
     @POST
     @Path("/changes/")
-    public RestfulList<MessageRestful> getInstructionPackageChanges(final PostPayloadRestful payload, @Context ServletContext servletContext) {
+    public RestfulList<MessageRestful> getInstructionPackageChanges(final PostPayloadRestful payload, @Context ServletContext servletContext) throws Exception {
         final Map<String, String> values = payload.getValues();
         final PluginContext context = getContext(servletContext);
         context.addPlaceholderData(new HashMap<String, Object>(values));
@@ -634,6 +559,11 @@ public class PluginResource extends BaseResource {
         return list;
     }
 
+
+    //############################################
+    // UTIL
+    //############################################
+
     private void processPlugins(final RestfulList<PluginRestful> plugins, final Iterable<PluginRestful> items, final Collection<String> restClasses, final PluginConfigService service) {
         for (PluginRestful item : items) {
             plugins.add(item);
@@ -665,5 +595,133 @@ public class PluginResource extends BaseResource {
             }
         }
     }
+
+    private Plugin getPluginById(final String id, final ServletContext context) {
+        if (Strings.isNullOrEmpty(id)) {
+            return null;
+        }
+
+        final List<PluginRestful> plugins = getPlugins(context);
+        for (final Plugin next : plugins) {
+            final String pluginId = next.getPluginId();
+            if (Strings.isNullOrEmpty(pluginId)) {
+                continue;
+            }
+            if (pluginId.equals(id)) {
+                return next;
+            }
+        }
+        return null;
+    }
+
+    private InstallerDocument createPluginInstallerDocument(final String pluginId) {
+        final InstallerDocument document = new InstallerDocument();
+
+        document.setName(pluginId);
+        document.setDateInstalled(Calendar.getInstance());
+
+        return document;
+    }
+
+
+    private List<PluginRestful> getPlugins(final ServletContext servletContext) {
+        return getAllPlugins(servletContext).getItems();
+    }
+
+
+    private RestfulList<PluginRestful> getAllPlugins(final ServletContext servletContext) {
+        final RestfulList<PluginRestful> plugins = new RestList<>();
+        final List<PluginRestful> items = getLocalPlugins(servletContext);
+        final Collection<String> restClasses = new ArrayList<>();
+        final PluginContext context = getContext(servletContext);
+        // remote plugins
+        final ProjectSettings projectSettings = getProjectSettings(servletContext);
+        final Set<String> pluginRepositories = projectSettings.getPluginRepositories();
+        for (String pluginRepository : pluginRepositories) {
+            if (pluginRepository.startsWith("http")) {
+                try {
+                    final RestfulList<PluginRestful> myPlugins = pluginCache.get(pluginRepository);
+                    log.debug("{}", pluginCache.stats());
+                    if (myPlugins != null) {
+                        final List<PluginRestful> myPluginsItems = myPlugins.getItems();
+                        CollectionUtils.addAll(items, myPluginsItems.iterator());
+                    }
+                } catch (Exception e) {
+                    log.error(MessageFormat.format("Error loading plugins from repository: {0}", pluginRepository), e);
+                }
+            }
+        }
+
+
+        try (PluginConfigService service = new FilePluginService(context)) {
+            processPlugins(plugins, items, restClasses, service);
+        } catch (Exception e) {
+            log.error("Error processing plugins", e);
+        }
+        //############################################
+        // Register endpoints:
+        //############################################
+        registerEndpoints(restClasses);
+        return plugins;
+    }
+
+
+    private List<PluginRestful> getLocalPlugins(final ServletContext servletContext) {
+        final InputStream stream = getClass().getResourceAsStream("/plugin_descriptor.json");
+        final String json = GlobalUtils.readStreamAsText(stream);
+        final ObjectMapper mapper = new ObjectMapper();
+        try {
+
+            @SuppressWarnings("unchecked")
+            final RestfulList<PluginRestful> restfulList = mapper.readValue(json, RestfulList.class);
+
+            postProcessPlugins(restfulList, servletContext);
+
+            return restfulList.getItems();
+        } catch (IOException e) {
+            log.error("Error parsing plugins", e);
+        }
+        return Collections.emptyList();
+
+    }
+
+    private void registerEndpoints(final Collection<String> restClasses) {
+        if (!initialized && !restClasses.isEmpty()) {
+            initialized = true;
+            final RuntimeDelegate delegate = RuntimeDelegate.getInstance();
+            final Bus bus = BusFactory.getDefaultBus();
+            application = new DynamicRestPointsApplication();
+            addClasses(restClasses);
+            // register:
+            final ApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
+            final Object jsonProvider = applicationContext.getBean("jsonProvider");
+            final JAXRSServerFactoryBean factoryBean = delegate.createEndpoint(application, JAXRSServerFactoryBean.class);
+            factoryBean.setProvider(jsonProvider);
+            factoryBean.setBus(bus);
+            final Server server = factoryBean.create();
+            server.start();
+        } else {
+            addClasses(restClasses);
+        }
+    }
+
+    private void addClasses(final Iterable<String> restClasses) {
+        for (String restClass : restClasses) {
+            final Class<?> endpointClass = GlobalUtils.loadCLass(restClass);
+            if (endpointClass == null) {
+                log.error("Invalid application class: {}", restClass);
+                continue;
+            }
+            final Set<Class<?>> classes = application.getClasses();
+            if (classes.contains(endpointClass)) {
+                log.debug("Class already loaded {}", restClass);
+                continue;
+            }
+            application.addClass(endpointClass);
+            log.info("Adding dynamic REST (plugin) endpoint {}", endpointClass.getName());
+
+        }
+    }
+
 
 }

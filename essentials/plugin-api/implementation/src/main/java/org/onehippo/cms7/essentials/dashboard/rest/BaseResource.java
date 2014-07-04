@@ -17,16 +17,12 @@
 package org.onehippo.cms7.essentials.dashboard.rest;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.onehippo.cms7.essentials.dashboard.config.FilePluginService;
 import org.onehippo.cms7.essentials.dashboard.config.InstallerDocument;
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
@@ -131,23 +127,7 @@ public class BaseResource {
         return projectRestful;
     }
 
-    protected List<PluginRestful> getPlugins(final ServletContext servletContext) {
-        final InputStream stream = getClass().getResourceAsStream("/plugin_descriptor.json");
-        final String json = GlobalUtils.readStreamAsText(stream);
-        final ObjectMapper mapper = new ObjectMapper();
-        try {
 
-            @SuppressWarnings("unchecked")
-            final RestfulList<PluginRestful> restfulList = mapper.readValue(json, RestfulList.class);
-
-            postProcessPlugins(restfulList, servletContext);
-
-            return restfulList.getItems();
-        } catch (IOException e) {
-            log.error("Error parsing plugins", e);
-        }
-        return Collections.emptyList();
-    }
 
     /**
      * Post-process the list of available plugins to provide additional, project-specific information to the front-end.
@@ -237,22 +217,6 @@ public class BaseResource {
     }
 
 
-    protected Plugin getPluginById(final String id, final ServletContext context) {
-        if (Strings.isNullOrEmpty(id)) {
-            return null;
-        }
-        final List<PluginRestful> plugins = getPlugins(context);
-        for (final Plugin next : plugins) {
-            final String pluginId = next.getPluginId();
-            if (Strings.isNullOrEmpty(pluginId)) {
-                continue;
-            }
-            if (pluginId.equals(id)) {
-                return next;
-            }
-        }
-        return null;
-    }
 
     public AutowireCapableBeanFactory getInjector() {
         if (injector == null) {
