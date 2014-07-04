@@ -27,7 +27,7 @@
                 'maxDescriptionLength': 300,
                 'authorsBasePath': '/',
                 urls: [
-                    {'value': 'http://blog.jeroenreijn.com/feeds/posts/default', 'author': 'Jeroen Rijn'}
+                    {'value': '', 'author': ''}
                 ]
             };
             $scope.pluginId = "blogPlugin";
