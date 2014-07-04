@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -86,11 +87,27 @@ public final class GalleryUtils {
      * @param prefix the imageset prefix
      * @return the uri
      */
-    public static String getGalleryURI(final String prefix) {
+    public static String getGalleryURI(final PluginContext context, final String prefix) {
         if (StringUtils.isBlank(prefix)) {
             return null;
         }
-        return "http://www.onehippo.org/gallery/" + prefix + "/nt/2.0";
+        // check if project namespace:
+
+        if(context.getProjectNamespacePrefix().equals(prefix)){
+            final Session session  = context.createSession();
+
+            try {
+                final NamespaceRegistry namespaceRegistry = session.getWorkspace().getNamespaceRegistry();
+                return namespaceRegistry.getURI(prefix);
+
+            } catch (RepositoryException e) {
+                log.error("Error fetching namespace node", e);
+            } finally {
+                GlobalUtils.cleanupSession(session);
+            }
+        }
+
+        return "http://www.onehippo.org/gallery/" + prefix + "/nt/1.0";
     }
 
     /**
@@ -103,8 +120,8 @@ public final class GalleryUtils {
      * @return the created imageset node
      * @throws RepositoryException when an exception in the repository occurs while creating the node
      */
-    public static Node createImagesetNamespace(final Session session, final String prefix, final String name) throws RepositoryException {
-        return createImagesetNamespace(session, prefix, name, DEFAULT_IMAGESET_BLUEPRINT);
+    public static Node createImagesetNamespace(final PluginContext context, final Session session, final String prefix, final String name) throws RepositoryException {
+        return createImagesetNamespace(context, session, prefix, name, DEFAULT_IMAGESET_BLUEPRINT);
     }
 
     /**
@@ -118,7 +135,7 @@ public final class GalleryUtils {
      * @return the created imageset node
      * @throws RepositoryException when an exception in the repository occurs while creating the node
      */
-    public static Node createImagesetNamespace(final Session session, final String prefix, final String name, final String blueprintPath) throws RepositoryException {
+    public static Node createImagesetNamespace(final PluginContext context, final Session session, final String prefix, final String name, final String blueprintPath) throws RepositoryException {
         final String namespacePath = getNamespacePathForPrefix(prefix);
         if (!session.nodeExists(namespacePath)) {
             // create namespace root:
@@ -134,7 +151,7 @@ public final class GalleryUtils {
         final Node original = session.getNode(blueprintPath);
         final Node imageNode = JcrUtils.copy(session, original.getPath(), destinationImagesetPath);
         HippoNodeUtils.setSupertype(imageNode, HIPPOGALLERY_IMAGE_SET, HIPPOGALLERY_RELAXED);
-        HippoNodeUtils.setUri(imageNode, getGalleryURI(prefix));
+        HippoNodeUtils.setUri(imageNode, getGalleryURI(context, prefix));
         HippoNodeUtils.setNodeType(imageNode, getImagesetName(prefix, name));
         return imageNode;
     }

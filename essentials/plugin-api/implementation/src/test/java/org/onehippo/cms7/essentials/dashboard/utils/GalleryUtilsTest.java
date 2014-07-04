@@ -17,6 +17,7 @@
 package org.onehippo.cms7.essentials.dashboard.utils;
 
 import org.junit.Test;
+import org.onehippo.cms7.essentials.BaseRepositoryTest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -25,7 +26,7 @@ import static org.junit.Assert.assertNull;
 /**
  * @version "$Id: GalleryUtilsTest.java 172469 2013-08-01 12:02:04Z mmilicevic $"
  */
-public class GalleryUtilsTest {
+public class GalleryUtilsTest extends BaseRepositoryTest{
 
     public static final String SOME_NAMESPACE_PREFIX = "someprefix";
 
@@ -38,12 +39,12 @@ public class GalleryUtilsTest {
 
     @Test
     public void testGetGalleryUriWhenPrefixIsBlank() throws Exception {
-        assertNull(GalleryUtils.getGalleryURI(""));
+        assertNull(GalleryUtils.getGalleryURI(getContext(), ""));
     }
 
     @Test
     public void testGetGalleryUriWhenPrefixIsNotBlank() throws Exception {
-        assertEquals("http://www.onehippo.org/gallery/test/nt/2.0", GalleryUtils.getGalleryURI("test"));
+        assertEquals("http://www.onehippo.org/gallery/test/nt/1.0", GalleryUtils.getGalleryURI(getContext(), "test"));
     }
 
     @Test

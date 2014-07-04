@@ -90,6 +90,8 @@ public class GalleryPluginResource extends BaseResource {
             processTranslations(payload, myType, namespaceNode, false);
             // add processor stuff...
             updateProcessorNode(payload, session, myType);
+            // update sets
+            scheduleImageScript(context);
             session.save();
             return new MessageRestful("Successfully updated image variant: " + myType);
 
@@ -256,23 +258,27 @@ public class GalleryPluginResource extends BaseResource {
 
                 GlobalUtils.cleanupSession(session);
             }
+            scheduleImageScript(context);
 
-            // schedule updater script  so new variants are created:
-            final XmlInstruction instruction = new XmlInstruction();
-            instruction.setAction(PluginInstruction.COPY);
-            instruction.setSource("image_set_updater.xml");
-            instruction.setTarget("/hippo:configuration/hippo:update/hippo:queue");
-            final InstructionExecutor executor = new PluginInstructionExecutor();
-            final InstructionSet instructionSet = new PluginInstructionSet();
-            instructionSet.addInstruction(instruction);
-            getInjector().autowireBean(instruction);
-            getInjector().autowireBean(executor);
-            executor.execute(instructionSet, context);
 
             return new MessageRestful("Image variant:  " + imageVariantName + " successfully created");
         }
         return createErrorMessage("Failed to create image variant: " + imageVariantName, response);
 
+    }
+
+    public void scheduleImageScript(final PluginContext context) {
+        // schedule updater script  so new variants are created:
+        final XmlInstruction instruction = new XmlInstruction();
+        instruction.setAction(PluginInstruction.COPY);
+        instruction.setSource("image_set_updater.xml");
+        instruction.setTarget("/hippo:configuration/hippo:update/hippo:queue");
+        final InstructionExecutor executor = new PluginInstructionExecutor();
+        final InstructionSet instructionSet = new PluginInstructionSet();
+        instructionSet.addInstruction(instruction);
+        getInjector().autowireBean(instruction);
+        getInjector().autowireBean(executor);
+        executor.execute(instructionSet, context);
     }
 
     public ImageModel extractBestModel(final GalleryModel ourModel) {
@@ -454,7 +460,7 @@ public class GalleryPluginResource extends BaseResource {
         final String nodeType = prefix + ':' + name;
         try {
 
-            final String uri = GalleryUtils.getGalleryURI(prefix);
+            final String uri = GalleryUtils.getGalleryURI(context, prefix);
             // Check whether node type already exists
             if (CndUtils.nodeTypeExists(context, nodeType)) {
                 if (CndUtils.isNodeOfSuperType(context, nodeType, HippoGalleryNodeType.IMAGE_SET)) {
@@ -483,7 +489,7 @@ public class GalleryPluginResource extends BaseResource {
             CndUtils.registerDocumentType(context, prefix, name, false, false, GalleryUtils.HIPPOGALLERY_IMAGE_SET, GalleryUtils.HIPPOGALLERY_RELAXED);
             // copy node:
             GlobalUtils.refreshSession(session, false);
-            final Node imageNode = GalleryUtils.createImagesetNamespace(session, prefix, name, "/hippo:namespaces/hippogallery/imageset");
+            final Node imageNode = GalleryUtils.createImagesetNamespace(context, session, prefix, name, "/hippo:namespaces/hippogallery/imageset");
             session.save();
             log.debug("Created node: {}", imageNode.getPath());
 
