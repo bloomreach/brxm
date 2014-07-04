@@ -26,21 +26,28 @@
             $scope.showDocuments = false;
             $scope.documentTypes = [];
 
-            $scope.init = function () {
 
-            };
             $scope.onChangeType = function (restType) {
                 $scope.restType = restType;
                 if (restType == 'plain') {
                     // fetch documents:
                     $http.get($rootScope.REST.documents).success(function (data) {
-                        $scope.documentTypes = data;
+                        $scope.documentTypes = [];
+                        angular.forEach(data, function (value) {
+                            if (value.fullPath) {
+                                $scope.documentTypes.push(value);
+                            }
+                        });
+
                     });
                 } else {
                     $scope.documentTypes = [];
                 }
             };
-            $scope.checked = function () {
+            $scope.checked = function (item) {
+                if (item.checked && item.javaName) {
+                    item.endpoint = "http://localhost:8080/site/" + $scope.restName + "/" + item.javaName.split('.')[0] + '/';
+                }
                 var valid = checkValid();
                 if (!valid) {
                 } else {
@@ -72,7 +79,6 @@
                     // TODO: display reboot message and instruction sets executed
                 });
             };
-            $scope.init();
             //############################################
             // UTIL
             //############################################
