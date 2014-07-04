@@ -65,13 +65,14 @@ public final class AnnotationUtils {
     private static Logger log = LoggerFactory.getLogger(AnnotationUtils.class);
 
     public static final Set<String> KNOWN_XML_TYPES = new ImmutableSet.Builder<String>()
-            .add("String")
+            .add("String").add("List<String>").add("String[]")
+            .add("Date").add("Calendar").add("List<Calendar>").add("Calendar[]")
+            .add("Long").add("long").add("List<Calendar>").add("Calendar[]")
+            .add("Integer").add("int").add("List<Integer>").add("Integer[]").add("int[]")
+            .add("Double").add("double").add("List<Double>").add("Double[]").add("double[]")
+            .add("Float").add("float").add("List<Float>").add("Float[]").add("float[]")
+            .add("Boolean").add("boolean").add("List<Boolean>").add("Boolean[]").add("boolean[]")
             .add("HippoHtml")
-            .add("Date").add("Calendar")
-            .add("Long").add("long")
-            .add("Integer").add("int")
-            .add("Double").add("double")
-            .add("Boolean").add("boolean")
             .add("HippoGalleryImageSetBean").add("HippoGalleryImageSet")
             .build();
     //############################################
