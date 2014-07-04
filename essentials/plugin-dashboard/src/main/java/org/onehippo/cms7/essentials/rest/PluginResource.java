@@ -53,6 +53,7 @@ import org.onehippo.cms7.essentials.dashboard.config.FilePluginService;
 import org.onehippo.cms7.essentials.dashboard.config.InstallerDocument;
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
+import org.onehippo.cms7.essentials.dashboard.config.ResourcePluginService;
 import org.onehippo.cms7.essentials.dashboard.ctx.DefaultPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
@@ -564,13 +565,15 @@ public class PluginResource extends BaseResource {
     // UTIL
     //############################################
 
-    private void processPlugins(final RestfulList<PluginRestful> plugins, final Iterable<PluginRestful> items, final Collection<String> restClasses, final PluginConfigService service) {
+    private void processPlugins(final RestfulList<PluginRestful> plugins, final Iterable<PluginRestful> items,
+                                final Collection<String> restClasses, final PluginConfigService service, final PluginContext context) {
         for (PluginRestful item : items) {
             plugins.add(item);
             final String pluginId = item.getPluginId();
             if (!isInstalled(item)) {
                 item.setNeedsInstallation(true);
             }
+            populateInstallState(item, context);
             //############################################
             // collect endpoints
             //############################################
@@ -580,7 +583,6 @@ public class PluginResource extends BaseResource {
                     restClasses.add(clazz);
                 }
             }
-
 
             // check if recently installed:
             // TODO: move to client?
@@ -593,6 +595,45 @@ public class PluginResource extends BaseResource {
                     item.setDateInstalled(dateInstalled);
                 }
             }
+        }
+    }
+
+    private void populateInstallState(final PluginRestful plugin, final PluginContext context) {
+        boolean boarding = false;
+        boolean onBoard = false;
+        boolean installing = false;
+        boolean installed = false;
+
+        try (PluginConfigService service = new FilePluginService(context)) {
+            final InstallerDocument document = service.read(plugin.getPluginId(), InstallerDocument.class);
+            if (document != null) {
+                boarding = document.getDateInstalled() != null;
+                installing = document.getDateAdded() != null;
+            }
+        } catch (Exception e) {
+            log.error("Error reading settings for plugin {} from file", plugin.getPluginId(), e);
+        }
+
+        try (PluginConfigService service = new ResourcePluginService(context)) {
+            final InstallerDocument document = service.read(plugin.getPluginId(), InstallerDocument.class);
+            if (document != null) {
+                onBoard = document.getDateInstalled() != null;
+                installed = document.getDateAdded() != null;
+            }
+        } catch (Exception e) {
+            log.error("Error reading settings for plugin {} from resource", plugin.getPluginId(), e);
+        }
+
+        if (installed) {
+            plugin.setInstallState("installed");
+        } else if (installing) {
+            plugin.setInstallState("installing");
+        } else if (onBoard) {
+            plugin.setInstallState("onBoard");
+        } else if (boarding) {
+            plugin.setInstallState("boarding");
+        } else {
+            plugin.setInstallState("discovered");
         }
     }
 
@@ -654,7 +695,7 @@ public class PluginResource extends BaseResource {
 
 
         try (PluginConfigService service = new FilePluginService(context)) {
-            processPlugins(plugins, items, restClasses, service);
+            processPlugins(plugins, items, restClasses, service, context);
         } catch (Exception e) {
             log.error("Error processing plugins", e);
         }
@@ -671,18 +712,13 @@ public class PluginResource extends BaseResource {
         final String json = GlobalUtils.readStreamAsText(stream);
         final ObjectMapper mapper = new ObjectMapper();
         try {
-
             @SuppressWarnings("unchecked")
             final RestfulList<PluginRestful> restfulList = mapper.readValue(json, RestfulList.class);
-
-            postProcessPlugins(restfulList, servletContext);
-
             return restfulList.getItems();
         } catch (IOException e) {
             log.error("Error parsing plugins", e);
         }
         return Collections.emptyList();
-
     }
 
     private void registerEndpoints(final Collection<String> restClasses) {

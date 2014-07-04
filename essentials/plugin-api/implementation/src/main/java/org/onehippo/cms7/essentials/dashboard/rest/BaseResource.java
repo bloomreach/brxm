@@ -127,60 +127,6 @@ public class BaseResource {
         return projectRestful;
     }
 
-
-
-    /**
-     * Post-process the list of available plugins to provide additional, project-specific information to the front-end.
-     *
-     * @param plugins list of plugins.
-     */
-    protected void postProcessPlugins(final RestfulList<PluginRestful> plugins, final ServletContext servletContext) {
-        final PluginContext context = getContext(servletContext);
-
-        for (PluginRestful plugin : plugins.getItems()) {
-            populateInstallState(plugin, context);
-        }
-    }
-
-    protected void populateInstallState(final PluginRestful plugin, final PluginContext context) {
-        boolean boarding = false;
-        boolean onBoard = false;
-        boolean installing = false;
-        boolean installed = false;
-
-        try (PluginConfigService service = new FilePluginService(context)) {
-            final InstallerDocument document = service.read(plugin.getPluginId(), InstallerDocument.class);
-            if (document != null) {
-                boarding = document.getDateInstalled() != null;
-                installing = document.getDateAdded() != null;
-            }
-        } catch (Exception e) {
-            log.error("Error reading settings for plugin {} from file", plugin.getPluginId(), e);
-        }
-
-        try (PluginConfigService service = new ResourcePluginService(context)) {
-            final InstallerDocument document = service.read(plugin.getPluginId(), InstallerDocument.class);
-            if (document != null) {
-                onBoard = document.getDateInstalled() != null;
-                installed = document.getDateAdded() != null;
-            }
-        } catch (Exception e) {
-            log.error("Error reading settings for plugin {} from resource", plugin.getPluginId(), e);
-        }
-
-        if (installed) {
-            plugin.setInstallState("installed");
-        } else if (installing) {
-            plugin.setInstallState("installing");
-        } else if (onBoard) {
-            plugin.setInstallState("onBoard");
-        } else if (boarding) {
-            plugin.setInstallState("boarding");
-        } else {
-            plugin.setInstallState("discovered");
-        }
-    }
-
     public PluginContext getContext(ServletContext servletContext) {
         final String className = ProjectSetupPlugin.class.getName();
         return new DefaultPluginContext(new PluginRestful(className));
