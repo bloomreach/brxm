@@ -55,18 +55,7 @@
                 .state('plugins', {
                     url: '/plugins',
                     templateUrl: 'pages/plugins.html',
-                    controller: 'pluginCtrl',
-                    views: {
-                        "submenu": {
-                            templateUrl: 'pages/plugins-menu.html',
-                            controller: 'pluginCtrl'
-                        }, "plugintabs": {
-                            templateUrl: 'pages/plugins-installed-tabs.html',
-                            controller: 'pluginCtrl'
-                        }
-
-                    }
-
+                    controller: 'pluginCtrl'
                 })
                 .state('find-plugins', {
                     url: '/find-plugins',

@@ -15,3 +15,21 @@
   limitations under the License.
   -->
 
+<div class="col-sm-10" style="margin-top: 40px;" ng-hide="!plugins.length">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th class="nav nav-justified" colspan="2">There are recently installed plugins that can be configured:</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="plugin in plugins">
+            <td>{{plugin.name}}</td>
+            <td>{{plugin.introduction}}</td>
+            <td class="pull-right">
+                <a class="btn btn-primary" href="#/plugins/{{plugin.pluginId}}">Configure</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
