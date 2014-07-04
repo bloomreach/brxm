@@ -162,7 +162,7 @@ public class GalleryPluginResource extends BaseResource {
         final boolean updateExisting = Boolean.valueOf(values.get("updateExisting"));
         final String imageSetPrefix = values.get("imageSetPrefix");
         final MessageRestful imageSet = createImageSet(getContext(servletContext), imageSetPrefix, imageSetName, response);
-        if (updateExisting && imageSet.isSuccessMessage()) {
+        if (imageSet.isSuccessMessage()) {
             final PluginContext context = getContext(servletContext);
             final Session session = context.createSession();
             try {
@@ -186,25 +186,27 @@ public class GalleryPluginResource extends BaseResource {
                 final Node imageGalleryNode = folderNode.getNode("hippostd:templates").getNode("image gallery");
                 imageGalleryNode.setProperty("hippostd:foldertype", new String[]{folderName});
                 imageGalleryNode.setProperty("hippostd:gallerytype", new String[]{newImageNamespace});
-                // update existing folders:
-                final Query query = session.getWorkspace().getQueryManager().createQuery("//content//element(*, hippogallery:stdImageGallery)", "xpath");
-                final NodeIterator nodes = query.execute().getNodes();
-                while (nodes.hasNext()) {
-                    final Node imageFolderNode = nodes.nextNode();
-                    imageFolderNode.setProperty("hippostd:foldertype", new String[]{folderName});
-                    imageFolderNode.setProperty("hippostd:gallerytype", new String[]{newImageNamespace});
-                }
-                // change primary types:
-                final Query handleQuery = session.getWorkspace().getQueryManager().createQuery("//content/gallery//element(*, hippo:handle)", "xpath");
-                final NodeIterator handleNodes = handleQuery.execute().getNodes();
-                while (handleNodes.hasNext()) {
-                    final Node handle = handleNodes.nextNode();
-                    final String name = handle.getName();
-                    if (handle.hasNode(name)) {
-                        final Node myImageNode = handle.getNode(name);
-                        myImageNode.setPrimaryType(newImageNamespace);
-                    }else{
-                        log.warn("handle {}", handle.getPath());
+                if (updateExisting) {
+                    // update existing folders:
+                    final Query query = session.getWorkspace().getQueryManager().createQuery("//content//element(*, hippogallery:stdImageGallery)", "xpath");
+                    final NodeIterator nodes = query.execute().getNodes();
+                    while (nodes.hasNext()) {
+                        final Node imageFolderNode = nodes.nextNode();
+                        imageFolderNode.setProperty("hippostd:foldertype", new String[]{folderName});
+                        imageFolderNode.setProperty("hippostd:gallerytype", new String[]{newImageNamespace});
+                    }
+                    // change primary types:
+                    final Query handleQuery = session.getWorkspace().getQueryManager().createQuery("//content/gallery//element(*, hippo:handle)", "xpath");
+                    final NodeIterator handleNodes = handleQuery.execute().getNodes();
+                    while (handleNodes.hasNext()) {
+                        final Node handle = handleNodes.nextNode();
+                        final String name = handle.getName();
+                        if (handle.hasNode(name)) {
+                            final Node myImageNode = handle.getNode(name);
+                            myImageNode.setPrimaryType(newImageNamespace);
+                        } else {
+                            log.warn("handle {}", handle.getPath());
+                        }
                     }
                 }
                 session.save();
