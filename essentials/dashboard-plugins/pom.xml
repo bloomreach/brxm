@@ -45,7 +45,6 @@
     <module>search-plugin</module>
     <module>dashboard-news-plugin</module>
     <module>dashboard-events-plugin</module>
-    <module>dashboard-gallery-plugin</module>
     <module>essentials-skeleton-package</module>
     <module>dashboard-restservices-plugin</module>
     <module>dashboard-contentblocks-plugin</module>
