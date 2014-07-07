@@ -18,10 +18,18 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
+  <bean id="org.hippoecm.hst.core.search.HstQueryManagerFactory" 
+        class="org.hippoecm.hst.core.search.HstQueryManagerFactoryImpl">
+    <property name="defaultQueryDateRangeResolution" value="${default.query.date.range.resolution}"/>
+  </bean>
 
-    <bean id="org.hippoecm.hst.core.search.HstQueryManagerFactory" 
-          class="org.hippoecm.hst.core.search.HstQueryManagerFactoryImpl">
-      <property name="defaultQueryDateRangeResolution" value="${default.query.date.range.resolution}"/>
-    </bean>
-    
+  <bean id="org.hippoecm.hst.content.beans.manager.ObjectConverter" class="org.hippoecm.hst.site.content.ObjectConverterFactoryBean">
+    <property name="classpathResourceScanner" ref="org.hippoecm.hst.util.ClasspathResourceScanner" />
+  </bean>
+
+  <bean id="org.hippoecm.hst.content.tool.ContentBeansTool" class="org.hippoecm.hst.content.tool.DefaultContentBeansTool">
+    <constructor-arg ref="org.hippoecm.hst.core.search.HstQueryManagerFactory" />
+    <property name="objectConverter" ref="org.hippoecm.hst.content.beans.manager.ObjectConverter" />
+  </bean>
+
 </beans>

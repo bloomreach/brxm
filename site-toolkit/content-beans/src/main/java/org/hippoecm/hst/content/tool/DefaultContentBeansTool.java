@@ -72,6 +72,10 @@ public class DefaultContentBeansTool implements ContentBeansTool {
         return objectConverter;
     }
 
+    public void setObjectConverter(ObjectConverter objectConverter) {
+        this.objectConverter = objectConverter;
+    }
+
     public ObjectBeanManager createObjectBeanManager(Session session) {
         return new ObjectBeanManagerImpl(session, getObjectConverter());
     }
@@ -86,8 +90,10 @@ public class DefaultContentBeansTool implements ContentBeansTool {
         if (requestContext == null) {
             throw new IllegalStateException("HstRequestContext is not set in handler.");
         }
+
         List<Class<? extends HippoBean>> annotatedClasses = null;
         String ocmAnnotatedClassesResourcePath = requestContext.getServletContext().getInitParameter(BEANS_ANNOTATED_CLASSES_CONF_PARAM);
+
         try {
             annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(classpathResourceScanner, StringUtils.split(ocmAnnotatedClassesResourcePath, ", \t\r\n"));
         } catch (Exception e) {
