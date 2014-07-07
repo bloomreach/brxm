@@ -57,9 +57,9 @@
                     templateUrl: 'pages/plugins.html',
                     controller: 'pluginCtrl'
                 })
-                .state('find-plugins', {
-                    url: '/find-plugins',
-                    templateUrl: 'pages/find-plugins.html',
+                .state('installed-plugins', {
+                    url: '/installed-plugins',
+                    templateUrl: 'pages/installed-plugins.html',
                     controller: 'pluginCtrl'
                 }
             ).state('plugin', {

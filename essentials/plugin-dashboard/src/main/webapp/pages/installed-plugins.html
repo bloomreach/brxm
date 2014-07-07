@@ -1,4 +1,3 @@
-
 <!--
   Copyright 2014 Hippo B.V. (http://www.onehippo.com)
 
@@ -23,7 +22,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="plugin in plugins">
+        <tr ng-repeat="plugin in plugins | filter:{needsInstallation:false} | filter:{type:'plugins'} | orderBy:'name'">
             <td>{{plugin.name}}</td>
             <td>{{plugin.introduction}}</td>
             <td class="pull-right">
