@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.onehippo.cms7.essentials</groupId>
     <artifactId>hippo-dashboard-plugins</artifactId>
-    <version>1.01.04</version>
+    <version>1.01.05-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Essentials banner plugin</name>

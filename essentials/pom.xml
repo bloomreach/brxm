@@ -28,7 +28,7 @@
   <description>Hippo Essentials</description>
   <groupId>org.onehippo.cms7.essentials</groupId>
   <artifactId>hippo-essentials</artifactId>
-  <version>1.01.04</version>
+  <version>1.01.05-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
@@ -69,7 +69,7 @@
     <connection>scm:git:git@github.com:onehippo/essentials.git</connection>
     <url>scm:git:git@github.com:onehippo/essentials.git</url>
     <developerConnection>scm:git:git@github.com:onehippo/essentials.git</developerConnection>
-    <tag>hippo-essentials-1.01.04</tag>
+    <tag>HEAD</tag>
   </scm>
   <distributionManagement>
     <repository>
