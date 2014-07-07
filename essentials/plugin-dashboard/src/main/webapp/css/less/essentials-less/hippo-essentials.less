@@ -50,6 +50,7 @@
 */
 
 @footer-border: #eee;
+@header-size: 30px;
 
 .no-drag .angular-ui-tree-handle {
   cursor: pointer;
@@ -59,11 +60,17 @@
 .notification-bar {
   position: fixed;
   top:0;
+  height: @header-size;
 }
 
 .navbar-fixed-top {
   border-width: 0 0 1px;
-  position: relative;
+  position: fixed;
+  top:0;
+}
+
+.navbar-fixed-top-notification{
+  top: @header-size;
 }
 
 .footer {
@@ -97,40 +104,6 @@
   margin-right: auto;
 }
 
-//############################################
-// HEADER
-//############################################
-
-.hippo-header {
-  width: 100%;
-  height: 80px;
-  /*background-color: #C84A4B;*/
-  text-align: center;
-  vertical-align: middle;
-  table-layout: fixed;
-  font-size: 20px;
-  font-weight: bold;
-  /*background: url("../images/top-back.png") repeat;*/
-  color: @brand-steel;
-}
-
-.hippo-header-logo, .hippo-header-text {
-  display: inline;
-  text-align: center;
-  vertical-align: middle;
-  height: 80px;
-  margin-bottom: 20px;
-}
-
-.hippo-header-logo {
-  float: left;
-  padding: 5px;
-  padding-left: 20px;
-}
-
-.hippo-header-text {
-  padding-top: 30px;
-}
 
 body {
   background-color: @body-bg;

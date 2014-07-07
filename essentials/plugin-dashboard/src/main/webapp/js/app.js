@@ -34,7 +34,7 @@
 //############################################
 // GLOBAL LOADING
 //############################################
-        .config(function ($provide, $httpProvider, $controllerProvider, $compileProvider) {
+        .config(function ($provide, $httpProvider) {
 
             $provide.factory('MyHttpInterceptor', function ($q, $rootScope, $log) {
                 return {
@@ -42,16 +42,6 @@
                     // REQUEST
                     //############################################
                     request: function (config) {
-                        if (!$rootScope.FEEDBACK_TIMER) {
-                            $rootScope.FEEDBACK_TIMER = new Date();
-                        }
-                        $rootScope.busyLoading = true;
-                        var date = new Date();
-                        // keep success messages for 5 seconds
-                        if ((date.getTime() - $rootScope.FEEDBACK_TIMER.getTime()) > 5000) {
-                            $rootScope.FEEDBACK_TIMER = new Date();
-                            $rootScope.feedbackMessages = [];
-                        }
                         return config || $q.when(config);
                     },
                     requestError: function (error) {
@@ -59,6 +49,7 @@
                         $rootScope.globalError = [];
                         $rootScope.feedbackMessages = [];
                         if (error.data) {
+                            $rootScope.showNotifications = true;
                             if (error.data.value) {
                                 $rootScope.globalError.push(error.data.value);
 
@@ -81,6 +72,7 @@
                         // show success message:
                         if (data.data.successMessage) {
                             $rootScope.globalError = [];
+                            $rootScope.showNotifications = true;
                             $rootScope.feedbackMessages = [];
                             $rootScope.feedbackMessages.push(data.data.value);
                         }
@@ -88,6 +80,7 @@
                         return data || $q.when(data);
                     },
                     responseError: function (error) {
+                        $rootScope.showNotifications = true;
                         $rootScope.busyLoading = false;
                         $rootScope.globalError = [];
                         $rootScope.feedbackMessages = [];
@@ -114,7 +107,8 @@
 //############################################
 
 
-        .run(function ($rootScope, $location, $log, $http, $state) {
+        .run(function ($rootScope, $location, $log, $http) {
+            $rootScope.showNotifications  = false;
             $rootScope.headerMessage = "Welcome on the Hippo Trail";
             // routing listener
             $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
