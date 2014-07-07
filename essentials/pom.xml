@@ -270,30 +270,6 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-release-plugin</artifactId>
-            <version>2.2.2</version>
-            <inherited>true</inherited>
-            <configuration>
-              <autoVersionSubmodules>true</autoVersionSubmodules>
-              <!-- Default preparation goals are "clean verify", however for some multi-module projects
-                   this isn't always working. If some modules depend on other modules which are not in
-                   or under the same parent module, then Maven internal dependency resolution sometimes
-                   fails to find the dependent module. By doing a forced install during the release
-                   it is ensured these modules are (first) deployed to the local maven repository and
-                   thereby resolvable.
-                   To prevent unit-tests to be executed during this install additionally the environment
-                   parameter skipTests=true is set
-              -->
-              <preparationGoals>clean install</preparationGoals>
-              <!-- Default release:perform goals are "deploy site-deploy", but we don't do
-                   site deployment (anymore), which is why this is overridden to execute only "deploy"
-              -->
-              <goals>deploy</goals>
-              <arguments>-DskipTests=true</arguments>
-            </configuration>
-          </plugin>
-          <plugin>
             <groupId>org.apache.rat</groupId>
             <artifactId>apache-rat-plugin</artifactId>
             <inherited>false</inherited>
