@@ -63,7 +63,7 @@
 <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <a class="navbar-brand" href="/">Hippo Essentials</a>
+      <a class="navbar-brand" href="${pageContext.request.contextPath}">Hippo Essentials</a>
     </div>
     <div class="navbar-collapse collapse pull-right" ng-controller="mainMenuCtrl">
       <ul class="nav navbar-nav navbar-right">
