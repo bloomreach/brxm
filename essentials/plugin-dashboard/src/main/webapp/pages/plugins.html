@@ -19,15 +19,15 @@
     <table class="table table-striped">
         <thead>
         <tr>
-            <th class="nav nav-justified" colspan="2">There are recently installed plugins that can be configured:</th>
+            <th class="nav nav-justified" colspan="2">New plugins</th>
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="plugin in plugins">
+        <tr ng-repeat="plugin in plugins | filter:{needsInstallation:true} | filter:{type:'plugins'} | orderBy:'name'">
             <td>{{plugin.name}}</td>
             <td>{{plugin.introduction}}</td>
             <td class="pull-right">
-                <a class="btn btn-primary" href="#/plugins/{{plugin.pluginId}}">Configure</a>
+                <a class="btn btn-primary" href="#/plugins/{{plugin.pluginId}}">Install</a>
             </td>
         </tr>
         </tbody>
