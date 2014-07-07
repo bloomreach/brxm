@@ -685,6 +685,7 @@ components/core/src/main/resources/org/hippoecm/hst/core/container/simple-io-tem
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-cache.xml -text
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-channelManager.xml -text
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-container.xml svneol=native#text/plain
+components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-content-beans.xml -text
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-decorators.xml -text svneol=unset#text/plain
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-esi.xml -text
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-hstManager.xml svneol=native#text/plain

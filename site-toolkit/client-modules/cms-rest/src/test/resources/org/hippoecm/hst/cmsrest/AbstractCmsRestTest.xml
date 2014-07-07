@@ -25,6 +25,7 @@
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-cache.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-sitemenu.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-search.xml" />
+  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-content-beans.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-linking.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-container.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-invoker.xml" />
