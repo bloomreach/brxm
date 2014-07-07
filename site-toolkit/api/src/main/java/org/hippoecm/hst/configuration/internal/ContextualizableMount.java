@@ -34,6 +34,12 @@ public interface ContextualizableMount extends MutableMount {
      */
     HstSite getPreviewHstSite();
 
+
+    /**
+     * @return the repository path to the preview channel configuration node and <code>null</code> if not configured
+     */
+    String getPreviewChannelPath();
+
     /**
      * internal only : not api
      * @return the preview {@link Channel} of this mount. If this mount is already a preview mount, the same is returned as {@link #getChannel()}.

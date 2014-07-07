@@ -23,6 +23,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -32,11 +33,28 @@ import org.hippoecm.hst.configuration.hosting.PortMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
+import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.internal.MutableResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 public class TestMountDecoratorImpl {
+
+    @Before
+    public void setUp() {
+        MockHstRequestContext ctx = new MockHstRequestContext();
+        ctx.setCmsRequest(true);
+        ModifiableRequestContextProvider.set(ctx);
+    }
+
+    @After
+    public void tearDown() {
+        ModifiableRequestContextProvider.clear();
+    }
+
     @Test
     public void testDecorationsOfLiveToPreviewMount() throws Exception {
         ContextualizableMount mount = createNiceMock(ContextualizableMount.class);
@@ -132,10 +150,13 @@ public class TestMountDecoratorImpl {
         Mount mount2 = createNiceMock(Mount.class);
         Mount mount3 = createNiceMock(Mount.class);
         expect(mount1.isPreview()).andReturn(false).anyTimes();
+        expect(mount1.getType()).andReturn("live").anyTimes();
         expect(mount1.getName()).andReturn("mount1").anyTimes();
         expect(mount2.isPreview()).andReturn(false).anyTimes();
+        expect(mount2.getType()).andReturn("live").anyTimes();
         expect(mount2.getName()).andReturn("mount2").anyTimes();
         expect(mount3.isPreview()).andReturn(false).anyTimes();
+        expect(mount3.getType()).andReturn("live").anyTimes();
         expect(mount3.getName()).andReturn("mount3").anyTimes();
         ResolvedMount resolvedMount1 = createNiceMock(ResolvedMount.class);
         MutableResolvedMount resolvedMount2 = createNiceMock(MutableResolvedMount.class);
@@ -152,7 +173,7 @@ public class TestMountDecoratorImpl {
         expect(virtualHost.getVirtualHosts()).andReturn(virtualHosts).anyTimes();
 
         expect(virtualHosts.getMountsByHostGroup("foo")).andReturn(Lists.asList(mount1, new Mount[]{mount2, mount3})).anyTimes();
-        expect(virtualHosts.getMountByGroupAliasAndType("foo", "bar", "preview")).andReturn(mount1).anyTimes();
+        expect(virtualHosts.getMountByGroupAliasAndType("foo", "bar", "live")).andReturn(mount1).anyTimes();
         expect(virtualHosts.getMountByIdentifier("uuid")).andReturn(mount1).anyTimes();
 
         replay(mount1, mount2, mount3, resolvedMount1, resolvedMount2, resolvedMount3, virtualHost, virtualHosts);
@@ -164,9 +185,11 @@ public class TestMountDecoratorImpl {
         final VirtualHosts decoratedHosts = decoratedMount.getVirtualHost().getVirtualHosts();
         assertTrue(decoratedHosts instanceof MountDecoratorImpl.PreviewDecoratedVirtualHosts);
 
-        final Mount mountByGroupAliasAndType = decoratedHosts.getMountByGroupAliasAndType("foo", "bar", "preview");
+        final Mount mountByGroupAliasAndType = decoratedHosts.getMountByGroupAliasAndType("foo", "bar", "live");
 
         assertTrue(mountByGroupAliasAndType instanceof MountDecoratorImpl.PreviewDecoratedMount);
+        assertTrue(mountByGroupAliasAndType.isPreview());
+        assertTrue(mountByGroupAliasAndType.getType().equals(Mount.PREVIEW_NAME));
 
         final Mount decoratedByUUID = decoratedHosts.getMountByIdentifier("uuid");
         assertTrue(decoratedByUUID instanceof MountDecoratorImpl.PreviewDecoratedMount);
@@ -175,6 +198,45 @@ public class TestMountDecoratorImpl {
         for (Mount decoratedHostsMountsViaHost : decoratedHostsMountsViaHosts) {
             assertTrue(decoratedHostsMountsViaHost instanceof MountDecoratorImpl.PreviewDecoratedMount);
         }
+    }
+
+
+    @Test
+    public void testExplicitPreviewMountsAreSkipped() throws Exception {
+        Mount mount1 = createNiceMock(Mount.class);
+        Mount mount2 = createNiceMock(Mount.class);
+        expect(mount1.isPreview()).andReturn(false).anyTimes();
+        expect(mount1.getType()).andReturn("live").anyTimes();
+        expect(mount1.getName()).andReturn("mount1").anyTimes();
+        expect(mount2.isPreview()).andReturn(true).anyTimes();
+        expect(mount2.getType()).andReturn("preview").anyTimes();
+        expect(mount2.getName()).andReturn("mount2").anyTimes();
+
+        ResolvedMount resolvedMount1 = createNiceMock(ResolvedMount.class);
+        MutableResolvedMount resolvedMount2 = createNiceMock(MutableResolvedMount.class);
+
+        expect(resolvedMount1.getMount()).andReturn(mount1).anyTimes();
+        expect(resolvedMount2.getMount()).andReturn(mount2).anyTimes();
+
+        VirtualHost virtualHost = createNiceMock(VirtualHost.class);
+        expect(mount1.getVirtualHost()).andReturn(virtualHost).anyTimes();
+
+        VirtualHosts virtualHosts = createNiceMock(VirtualHosts.class);
+        expect(virtualHost.getVirtualHosts()).andReturn(virtualHosts).anyTimes();
+
+        expect(virtualHosts.getMountsByHostGroup("foo")).andReturn(Lists.asList(mount1, new Mount[]{mount2})).anyTimes();
+
+        replay(mount1, mount2, resolvedMount1, resolvedMount2, virtualHost, virtualHosts);
+
+        final MountDecoratorImpl mountDecorator = new MountDecoratorImpl();
+        Mount decoratedMount = mountDecorator.decorateMountAsPreview(mount1);
+        final VirtualHosts decoratedHosts = decoratedMount.getVirtualHost().getVirtualHosts();
+
+        final List<Mount> decoratedHostsMountsViaHosts = decoratedHosts.getMountsByHostGroup("foo");
+
+        // explicit preview mount should be skipped
+        assertEquals(1L, decoratedHostsMountsViaHosts.size());
+
     }
 
 }

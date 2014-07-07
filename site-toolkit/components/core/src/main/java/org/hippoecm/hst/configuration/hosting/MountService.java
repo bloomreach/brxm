@@ -72,10 +72,9 @@ public class MountService implements ContextualizableMount, MutableMount {
      */
     private VirtualHost virtualHost;
 
-    /**
-     * The channel to which this {@link Mount} belongs
-     */
     private String channelPath;
+
+    private String previewChannelPath;
 
     /**
      * The {@link Channel} to which this {@link Mount} belongs
@@ -526,6 +525,14 @@ public class MountService implements ContextualizableMount, MutableMount {
 
         if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH)) {
             channelPath = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH);
+            previewChannelPath = channelPath;
+            if (hstNodeLoadingCache.getNode(channelPath + "-preview") != null) {
+                previewChannelPath = channelPath + "-preview";
+            }
+            if (Mount.PREVIEW_NAME.equals(type)) {
+                // explicit PREVIEW
+                channelPath = previewChannelPath;
+            }
         }
 
         try {
@@ -564,8 +571,15 @@ public class MountService implements ContextualizableMount, MutableMount {
 
                 MountSiteMapConfiguration mountSiteMapConfiguration = new MountSiteMapConfiguration(this);
                 long start = System.currentTimeMillis();
-                hstSite = HstSiteService.createLiveSiteService(hstSiteNodeForMount, mountSiteMapConfiguration, hstNodeLoadingCache);
-                previewHstSite = HstSiteService.createPreviewSiteService(hstSiteNodeForMount, mountSiteMapConfiguration, hstNodeLoadingCache);
+                if (Mount.PREVIEW_NAME.equals(type)) {
+                    // explicit preview
+                    previewHstSite = HstSiteService.createPreviewSiteService(hstSiteNodeForMount, mountSiteMapConfiguration, hstNodeLoadingCache);
+                    hstSite = previewHstSite;
+                } else {
+                    hstSite = HstSiteService.createLiveSiteService(hstSiteNodeForMount, mountSiteMapConfiguration, hstNodeLoadingCache);
+                    previewHstSite = HstSiteService.createPreviewSiteService(hstSiteNodeForMount, mountSiteMapConfiguration, hstNodeLoadingCache);
+                }
+
                 contentPath = hstSiteNodeForMount.getValueProvider().getString(HstNodeTypes.SITE_CONTENT);
 
                 assertContentPathNotEmpty(mount, contentPath);
@@ -936,6 +950,11 @@ public class MountService implements ContextualizableMount, MutableMount {
     @Override
     public Channel getChannel() {
         return channel;
+    }
+
+    @Override
+    public String getPreviewChannelPath(){
+        return previewChannelPath;
     }
 
     @Override

@@ -40,6 +40,7 @@ import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.internal.MountDecorator;
 import org.hippoecm.hst.core.internal.MutableResolvedMount;
@@ -180,9 +181,8 @@ public class MountDecoratorImpl implements MountDecorator {
 
         @Override
         public String getChannelPath() {
-            HstSite site = getHstSite();
-            if (site.hasPreviewConfiguration()) {
-                return delegatee.getChannelPath() +"-preview";
+            if(delegatee instanceof ContextualizableMount) {
+                return  ((ContextualizableMount)delegatee).getPreviewChannelPath();
             }
             return delegatee.getChannelPath();
         }
@@ -636,26 +636,16 @@ public class MountDecoratorImpl implements MountDecorator {
 
         @Override
         public Mount getMountByGroupAliasAndType(final String hostGroupName, final String alias, final String type) {
-            if (Mount.PREVIEW_NAME.equals(type)) {
-                final Mount mountByGroupAliasAndType = delegatee.getMountByGroupAliasAndType(hostGroupName, alias, type);
-                if (mountByGroupAliasAndType != null) {
-                    // explicit preview found
-                    log.debug("Explicit preview mount '{}' for alias '{}' in host group '{}'. Return null",
-                            mountByGroupAliasAndType, alias, hostGroupName);
-                    return decorateMountAsPreview(mountByGroupAliasAndType);
-                }
-                // check whether there is a 'live' variant. If so, return that one decorated as preview mount
-                final Mount liveMount = delegatee.getMountByGroupAliasAndType(hostGroupName, alias, Mount.LIVE_NAME);
-                if (liveMount == null) {
-                    log.debug("No preview or live mount found for alias '{}' in host group '{}'. Return null",
-                            mountByGroupAliasAndType, alias, hostGroupName);
-                    return null;
-                }
-                log.debug("Found live mount '{}' for alias '{}' in host group '{}'. Return preview decorated version,",
-                        liveMount, alias, hostGroupName);
-                return decorateMountAsPreview(liveMount);
+            // check whether there is a 'live' variant. If so, return that one decorated as preview mount.
+            final Mount liveMount = delegatee.getMountByGroupAliasAndType(hostGroupName, alias, Mount.LIVE_NAME);
+            if (liveMount == null) {
+                log.debug("No preview or live mount found for alias '{}' in host group '{}'. Return null",
+                         alias, hostGroupName);
+                return null;
             }
-            return null;  
+            log.debug("Found live mount '{}' for alias '{}' in host group '{}'. Return preview decorated version,",
+                    liveMount, alias, hostGroupName);
+            return decorateMountAsPreview(liveMount);
         }
 
         @Override
@@ -663,7 +653,12 @@ public class MountDecoratorImpl implements MountDecorator {
             final List<Mount> mountsByHostGroup = delegatee.getMountsByHostGroup(hostGroupName);
             List<Mount> previewMounts = new ArrayList<>();
             for (Mount mount : mountsByHostGroup) {
-                 previewMounts.add(decorateMountAsPreview(mount));
+                if (mount.isPreview() && RequestContextProvider.get().isCmsRequest()) {
+                    log.debug("Skipping *explicit* preview mounts for cms requests since they cannot be used in channel " +
+                            "manager.");
+                    continue;
+                }
+                previewMounts.add(decorateMountAsPreview(mount));
             }
             return previewMounts;
         }
