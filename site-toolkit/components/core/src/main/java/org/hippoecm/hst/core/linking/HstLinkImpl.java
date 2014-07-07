@@ -145,10 +145,11 @@ public class HstLinkImpl implements HstLink {
         // check if we need to set an explicit contextPath 
         String explicitContextPath = null;
         if (requestContext.isCmsRequest()) {
-            if (requestMount.getContextPath() == null) {
-                explicitContextPath = requestContext.getServletRequest().getContextPath();
+            if (mount != null && mount.getContextPath() != null) {
+                explicitContextPath = mount.getContextPath();
             } else {
-                explicitContextPath = requestMount.getContextPath();
+                // mount is null or contextpath agnostic: use contextpath from current request
+                explicitContextPath = requestContext.getServletRequest().getContextPath();
             }
         } else if (mount != null && requestMount != mount) {
             if (mount.isContextPathInUrl() && mount.getContextPath() != null) {

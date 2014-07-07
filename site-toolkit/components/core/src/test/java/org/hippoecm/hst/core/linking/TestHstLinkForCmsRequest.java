@@ -25,6 +25,7 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.container.HstContainerRequestImpl;
+import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
@@ -283,6 +284,7 @@ public class TestHstLinkForCmsRequest extends AbstractBeanTestCase {
                                                final boolean forceClientHost) throws Exception {
         HstRequestContextComponent rcc = getComponent(HstRequestContextComponent.class.getName());
         HstMutableRequestContext requestContext = rcc.create();
+        ModifiableRequestContextProvider.set(requestContext);
         HstContainerURL containerUrl = createContainerUrlForCmsRequest(requestContext, hostAndPort, pathInfo, queryString, renderingHost, forceClientHost);
         requestContext.setBaseURL(containerUrl);
         ResolvedSiteMapItem resolvedSiteMapItem = getResolvedSiteMapItem(containerUrl);

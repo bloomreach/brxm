@@ -117,10 +117,11 @@ public class DocumentsResourceTest extends AbstractCmsRestTest {
     @Test
     public void testDocumentResourcePreviewUrls() throws Exception {
         initRequest();
-        // first set HOST_GROUP_NAME_FOR_CMS_HOST to 'testgroup'
+        // multiple mounts are suited, but the best mount is the deepest mount that is *not explicitly* a preview
         RequestContextProvider.get().setAttribute(CmsRestSecurityValve.HOST_GROUP_NAME_FOR_CMS_HOST, "dev-localhost");
         String url = documentsResource.getUrl(homePageNodeId, "preview");
-        assertEquals("/site/preview/custompipeline", url);
+        // note not a fully qualified URL but always one relative to cms request
+        assertEquals("/site2/intranet", url);
     }
 
     @Test
