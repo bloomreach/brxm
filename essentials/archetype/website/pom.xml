@@ -19,7 +19,7 @@
   <parent>
     <artifactId>essentials-archetype</artifactId>
     <groupId>org.onehippo.cms7</groupId>
-    <version>1.01.04-SNAPSHOT</version>
+    <version>1.01.04</version>
   </parent>
 
   <name>Hippo CMS7 Site Toolkit Website Archetype</name>
