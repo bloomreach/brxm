@@ -59,8 +59,9 @@
   <link rel="icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
   <link rel="shortcut icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
 </head>
-<body id="container" ng-cloak>
-<div ng-class="showNotifications ? 'container notification-bar' : 'container'">
+<body id="container" ng-cloak ng-class="showNotifications ? 'body-push':''">
+
+<div ng-show="showNotifications" class="container notification-bar">
   <div class="busy-loader ng-hide" ng-show="busyLoading">
     <img src="${pageContext.request.contextPath}/images/loader.gif"/>
   </div>
@@ -79,7 +80,7 @@
     </div>
   </div>
 </div>
-<div ng-class="showNotifications ? 'navbar navbar-default navbar-fixed-top' : 'navbar navbar-default navbar-fixed-top navbar-fixed-top-notification'" class="navbar navbar-default navbar-fixed-top" role="navigation">
+<div ng-class="showNotifications ? 'navbar navbar-default navbar-fixed-top navbar-push' : 'navbar navbar-default navbar-fixed-top'"  role="navigation">
   <div class="container">
     <div class="navbar-header">
       <a class="navbar-brand" href="${pageContext.request.contextPath}">Hippo Essentials</a>
@@ -91,6 +92,9 @@
         </li>
         <li>
           <a target="FEEDBACK" href="https://issues.onehippo.com/rest/collectors/1.0/template/form/a23eddf8?os_authType=none">Feedback</a>
+        </li>
+        <li>
+          <a target="FEEDBACK" href="https://issues.onehippo.com/rest/collectors/1.0/template/form/a23eddf8?os_authType=none">{{showNotifications}}</a>
         </li>
       </ul>
     </div>

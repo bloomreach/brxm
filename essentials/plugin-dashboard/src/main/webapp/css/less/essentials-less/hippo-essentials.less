@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 @import "../hippo-theme/_variables.less";
 @import "infobox.less";
 @import "space.less";
-
 @import "essentials-modal.less";
 
 @brand-primary: #428bca;
@@ -31,8 +29,6 @@
 @color-hippo-footer-text: #4F5E67;
 @body-bg: #FFF;
 @font-size-base: 16px;
-
-
 
 // Links
 // -------------------------
@@ -52,25 +48,31 @@
 @footer-border: #eee;
 @header-size: 30px;
 
+.body-push {
+  margin-top: 100px;
+}
+
+
 .no-drag .angular-ui-tree-handle {
   cursor: pointer;
 }
 
-
 .notification-bar {
   position: fixed;
-  top:0;
+  width: 100%;
+  top: 0;
   height: @header-size;
 }
 
 .navbar-fixed-top {
   border-width: 0 0 1px;
   position: fixed;
-  top:0;
+  top: 0;
 }
 
-.navbar-fixed-top-notification{
+.navbar-push {
   top: @header-size;
+  margin-bottom: @header-size;
 }
 
 .footer {
@@ -104,9 +106,9 @@
   margin-right: auto;
 }
 
-
 body {
   background-color: @body-bg;
+  margin-top: 70px;
 }
 
 .form-group {
@@ -184,12 +186,11 @@ input.ng-invalid, input.ng-invalid-minlength {
 
 }
 
-select.ng-invalid + div.chosen-container{
+select.ng-invalid + div.chosen-container {
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   border: 2px solid @brand-danger;
   .border-radius(3px);
 }
-
 
 input:focus.ng-invalid, input:focus.ng-invalid-minlength {
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
@@ -212,7 +213,6 @@ input.ng-valid, input:focus.ng-valid {
 ng\:form {
   display: block;
 }
-
 
 // chosen rendering fix:
 div.chosen-container[style] {

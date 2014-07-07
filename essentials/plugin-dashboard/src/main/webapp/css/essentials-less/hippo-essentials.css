@@ -204,11 +204,15 @@
 // HIPPO SPECIFIC  CSS
 //############################################
 */
+.body-push {
+  margin-top: 100px;
+}
 .no-drag .angular-ui-tree-handle {
   cursor: pointer;
 }
 .notification-bar {
   position: fixed;
+  width: 100%;
   top: 0;
   height: 30px;
 }
@@ -217,8 +221,9 @@
   position: fixed;
   top: 0;
 }
-.navbar-fixed-top-notification {
+.navbar-push {
   top: 30px;
+  margin-bottom: 30px;
 }
 .footer {
   border-top: 1px solid #eeeeee;
@@ -249,6 +254,7 @@
 }
 body {
   background-color: #ffffff;
+  margin-top: 70px;
 }
 .form-group {
   height: 30px;
