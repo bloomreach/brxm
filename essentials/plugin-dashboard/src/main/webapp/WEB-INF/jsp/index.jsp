@@ -60,6 +60,25 @@
   <link rel="shortcut icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
 </head>
 <body id="container" ng-cloak>
+<div class="container notification-bar">
+  <div class="busy-loader ng-hide" ng-show="busyLoading">
+    <img src="${pageContext.request.contextPath}/images/loader.gif"/>
+  </div>
+  <div class="row">
+    <!-- ERROR MESSAGES -->
+    <div class="alert-danger messages ng-hide" ng-show="globalError.length > 0">
+      <strong>An error occurred:</strong>
+      <div ng-repeat="message in globalError">
+        {{message}}
+      </div>
+    </div>
+    <div class="alert-success messages ng-hide" ng-show="feedbackMessages.length > 0">
+      <div ng-repeat="message in feedbackMessages">
+        <strong>{{message}}</strong>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
@@ -75,23 +94,6 @@
         </li>
       </ul>
     </div>
-    <!--/.nav-collapse -->
-  </div>
-</div>
-<!-- LOADER ON HTTP REQUESTS -->
-<div class="busy-loader ng-hide" ng-show="busyLoading">
-  <img src="${pageContext.request.contextPath}/images/loader.gif"/>
-</div>
-<!-- ERROR MESSAGES -->
-<div class="alert-danger messages ng-hide" ng-show="globalError.length > 0">
-  <strong>An error occurred:</strong>
-  <div ng-repeat="message in globalError">
-    {{message}}
-  </div>
-</div>
-<div class="alert-success messages ng-hide" ng-show="feedbackMessages.length > 0">
-  <div ng-repeat="message in feedbackMessages">
-    <strong>{{message}}</strong>
   </div>
 </div>
 <div class="container">

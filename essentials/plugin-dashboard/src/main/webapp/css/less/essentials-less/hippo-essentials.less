@@ -55,9 +55,17 @@
   cursor: pointer;
 }
 
-//
-//
-//
+
+.notification-bar {
+  position: fixed;
+  top:0;
+}
+
+.navbar-fixed-top {
+  border-width: 0 0 1px;
+  position: relative;
+}
+
 .footer {
   border-top: 1px solid @footer-border;
   margin-top: 400px;
@@ -125,11 +133,7 @@
 }
 
 body {
-  margin-top: 20px;
-  padding-top: 70px;
-  padding-bottom: 0px;
   background-color: @body-bg;
-
 }
 
 .form-group {
@@ -169,11 +173,12 @@ body {
 }
 
 .messages {
-  position: fixed;
+  position: relative;
   z-index: 999;
   padding: 8px;
   text-align: center;
   width: 100%;
+  height: 30px;
 }
 
 .sep-10 {
