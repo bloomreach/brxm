@@ -29,7 +29,7 @@
  */
 (function () {
     "use strict";
-    angular.module('hippo.essentials', [ 'hippo.theme', 'ngSanitize','ngRoute', 'localytics.directives', 'ui.bootstrap', 'ui.router'])
+    angular.module('hippo.essentials', [ 'hippo.theme', 'ngSanitize', 'ngRoute', 'localytics.directives', 'ui.bootstrap', 'ui.router'])
 
 //############################################
 // GLOBAL LOADING
@@ -107,8 +107,8 @@
 //############################################
 
 
-        .run(function ($rootScope, $location, $log, $http) {
-            $rootScope.showNotifications  = false;
+        .run(function ($rootScope, $location, $log, $http, $timeout) {
+            $rootScope.showNotifications = false;
             $rootScope.headerMessage = "Welcome on the Hippo Trail";
             // routing listener
             $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
@@ -137,6 +137,7 @@
                  * //TODO: change this once we have marketplace up and running
                  */
                 plugins: root + "/plugins/",
+                ping: plugins + '/ping/',
                 projectSettings: plugins + '/settings',
                 packageStatus: plugins + '/status/package/',
                 packageMessages: plugins + '/changes/',
@@ -191,12 +192,35 @@
                 documents_documents: root + '/documents/' + 'documents',
                 documents_template_queries: root + '/documents/' + 'templatequeries'
 
+
             };
 
             /**
              * Set global variables (often used stuff)
              */
             $rootScope.initData = function () {
+
+                var PING_RUNNING_TIMER = 7000;
+                var PING_DOWN_TIMER = 10000;
+                //############################################
+                // PINGER
+                //############################################
+                (function ping() {
+                    $http.get($rootScope.REST.ping).success(function (data) {
+                        if (data != 'true') {
+                            $rootScope.globalError = [];
+                            $rootScope.globalError.push("Application needs to be reinitialized, please reload");
+                        }
+                        $timeout(ping, PING_RUNNING_TIMER);
+                    }).error(function () {
+
+                        $rootScope.globalError = [];
+                        $rootScope.globalError.push("Application seems to be down");
+                        $timeout(ping, PING_DOWN_TIMER);
+                    });
+                })();
+
+
                 $http.get($rootScope.REST.controllers).success(function (data) {
                     $rootScope.controllers = data;
                 });

@@ -152,6 +152,16 @@ public class PluginResource extends BaseResource {
 
 
     @ApiOperation(
+            value = "Ping, returns true if application is initialized",
+            response = boolean.class)
+    @GET
+    @Path("/ping")
+    public boolean ping(@Context ServletContext servletContext) {
+        return initialized;
+    }
+
+
+    @ApiOperation(
             value = "Clears plugin cache",
             notes = "Remote Plugin descriptors are cached for 1 hour. This method clears plugin cache and plugins are fetched again on next requests",
             response = MessageRestful.class)
