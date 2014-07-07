@@ -1506,12 +1506,6 @@ dashboard-plugins/dashboard-events-plugin/src/test/resources/hippo-plugins.iws
 dashboard-plugins/dashboard-events-plugin/src/test/resources/target
 dashboard-plugins/dashboard-events-plugin/src/test/target
 dashboard-plugins/dashboard-events-plugin/target
-dashboard-plugins/dashboard-gallery-plugin/*.iml
-dashboard-plugins/dashboard-gallery-plugin/.DS_Store
-dashboard-plugins/dashboard-gallery-plugin/.idea
-dashboard-plugins/dashboard-gallery-plugin/atlassian-ide-plugin.xml
-dashboard-plugins/dashboard-gallery-plugin/hippo-plugins.iws
-dashboard-plugins/dashboard-gallery-plugin/target
 dashboard-plugins/dashboard-list-content-plugin/*.iml
 dashboard-plugins/dashboard-list-content-plugin/.DS_Store
 dashboard-plugins/dashboard-list-content-plugin/.idea
