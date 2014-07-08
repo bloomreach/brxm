@@ -16,6 +16,7 @@
 package org.hippoecm.hst.configuration.cache;
 
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,7 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class TestHstNodeLoadingCache extends AbstractHstLoadingCacheTestCase {
 
@@ -139,6 +141,28 @@ public class TestHstNodeLoadingCache extends AbstractHstLoadingCacheTestCase {
 
             assertNotNull(hstNodeLoadingCache.getNode("/hst:hst/hst:hosts"));
             assertNotNull(hstNodeLoadingCache.getNode("/hst:hst/hst:blueprints"));
+        }
+    }
+
+    @Test
+    public void test_node_modification_and_child_removal() throws Exception {
+        try (CommonHstConfigSetup setup = new CommonHstConfigSetup()) {
+            // load model cache first
+            hstNodeLoadingCache.getNode("/hst:hst");
+            setup.session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemenus").remove();
+            setup.session.getNode("/hst:hst/hst:configurations/unittestproject")
+                    .setProperty("hst:inheritsfrom",new String[]{"../common"});
+
+            setup.session.save();
+            // sleep to make sure the asynchronous jcr events have arrived
+            Thread.sleep(200);
+            hstEventsDispatcher.dispatchHstEvents();
+
+            try {
+                hstNodeLoadingCache.getNode("/hst:hst");
+            } catch (ConcurrentModificationException e) {
+                fail("HSTTWO-2968 should had solved possible java.util.ConcurrentModificationException");
+            }
         }
     }
 

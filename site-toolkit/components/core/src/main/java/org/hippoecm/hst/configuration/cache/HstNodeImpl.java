@@ -255,13 +255,7 @@ public class HstNodeImpl implements HstNode {
             if (children == null) {
                 return;
             }
-
-            // because when calling child.update(session) can result in child.getParent().remove(child.getName())
-            // we can not iterate directly through the children map
-            final HstNode[] arr = children.values().toArray(new HstNode[children.size()]);
-            for (HstNode child : arr) {
-                child.update(session);
-            }
+            updateChildren(session);
             return;
         }
 
@@ -282,14 +276,21 @@ public class HstNodeImpl implements HstNode {
             childrenReload(jcrNode);
         } else {
             if (children != null) {
-                for (HstNode hstNode : children.values()) {
-                    hstNode.update(session);
-                }
+                updateChildren(session);
             }
         }
 
         stale = false;
         staleChildren = false;
+    }
+
+    private void updateChildren(final Session session) throws RepositoryException {
+        // because when calling child.update(session) can result in child.getParent().remove(child.getName())
+        // we can not iterate directly through the children map
+        final HstNode[] arr = children.values().toArray(new HstNode[children.size()]);
+        for (HstNode child : arr) {
+            child.update(session);
+        }
     }
 
     private void childrenReload(final Node jcrNode) throws RepositoryException {
