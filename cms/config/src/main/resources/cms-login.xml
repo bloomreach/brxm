@@ -70,10 +70,10 @@
         <sv:value>service.behavior.browser.check</sv:value>
       </sv:property>
       <sv:property sv:name="browsers.supported" sv:type="String">
-        <sv:value>ie 7 &gt;=</sv:value>
-        <sv:value>firefox 3 &gt;=</sv:value>
-        <sv:value>safari 5 &gt;=</sv:value>
-        <sv:value>chrome 7 &gt;=</sv:value>
+        <sv:value>ie 8 &gt;=</sv:value>
+        <sv:value>firefox 24 &gt;=</sv:value>
+        <sv:value>safari 7 &gt;=</sv:value>
+        <sv:value>chrome 35 &gt;=</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
