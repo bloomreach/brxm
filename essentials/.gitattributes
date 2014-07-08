@@ -142,6 +142,7 @@ archetype/website/src/main/resources/archetype-resources/site/src/main/webapp/im
 archetype/website/src/main/resources/archetype-resources/site/src/main/webapp/js/html5shiv.js -text
 archetype/website/src/main/resources/archetype-resources/site/src/test/resources/log4j.xml -text
 archetype/website/src/main/resources/archetype-resources/src/main/assembly/distribution.xml -text
+dashboard-dependencies/pom.xml -text
 dashboard-plugins/banner-plugin/pom.xml -text
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/banner_instructions.xml -text
 dashboard-plugins/banner-plugin/src/main/resources/META-INF/resources/plugins/bannerPlugin/bannerPlugin.html -text
@@ -903,8 +904,6 @@ plugin-api/implementation/src/test/resources/testnamespace.cnd -text
 plugin-api/implementation/src/test/resources/updateplugintest.xml -text
 plugin-api/pom.xml -text
 plugin-dashboard/pom.xml -text
-plugin-dashboard/src/main/appended-resources/META-INF/LICENSE -text
-plugin-dashboard/src/main/appended-resources/META-INF/NOTICE -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/ContentBlocksResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/DocumentResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/JcrResource.java -text

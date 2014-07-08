@@ -54,6 +54,7 @@
     <freemarker.version>2.3.18</freemarker.version>
     <filesync.override>false</filesync.override>
     <maven.plugins.filesync.version>1.0.0</maven.plugins.filesync.version>
+    <jaxb-api.version>2.2.6</jaxb-api.version>
 
     <cargo.tomcat.major.version>7</cargo.tomcat.major.version>
     <cargo.tomcat.full.version>7.0.42</cargo.tomcat.full.version>
@@ -89,6 +90,7 @@
   <modules>
     <module>plugin-api</module>
     <module>dashboard-plugins</module>
+    <module>dashboard-dependencies</module>
     <module>plugin-dashboard</module>
   </modules>
 
