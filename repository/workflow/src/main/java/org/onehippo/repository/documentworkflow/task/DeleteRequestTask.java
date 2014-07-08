@@ -19,6 +19,7 @@ import java.rmi.RemoteException;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
@@ -43,9 +44,11 @@ public class DeleteRequestTask extends AbstractDocumentTask {
 
     @Override
     public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
-        Node requestNode = request.getCheckedOutNode(getWorkflowContext().getInternalWorkflowSession());
+        final Session session = getWorkflowContext().getInternalWorkflowSession();
+        Node requestNode = request.getCheckedOutNode(session);
         JcrUtils.ensureIsCheckedOut(requestNode.getParent());
         requestNode.remove();
+        session.save();
         return null;
     }
 }
