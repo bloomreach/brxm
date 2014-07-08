@@ -368,16 +368,31 @@ public class MountResource extends AbstractConfigResource {
     public Response deletePreview() {
         final PageComposerContextService context = getPageComposerContextService();
         final Channel channel = context.getEditingPreviewChannel();
-        if (channel != null) {
-            try {
-                Session session = context.getRequestContext().getSession();
-                session.getNode("/hst:hst/hst:channels/" + channel.getId()).remove();
-                session.getNode(channel.getHstConfigPath()).remove();
-                HstConfigurationUtils.persistChanges(session);
-            } catch (RepositoryException e) {
-                log.warn("Exception occurred deleting the preview for channel " + channel.getName(), e);
-                return error("Exception occurred deleting the preview for channel " + channel.getName() + ": " + e.getMessage());
-            }
+        if (channel == null) {
+            final String msg = "Cannot delete preview channel";
+            log.warn(msg);
+            return error(msg);
+        }
+        if (!channel.isPreviewHstConfigExists()) {
+            final String msg = String.format("Cannot delete channel '%s' preview for channel that does not have a preview",
+                    channel.getId());
+            log.warn(msg);
+            return error(msg);
+        }
+        if (!channel.getId().endsWith("-preview")) {
+            final String msg = String.format("Illegal channel preview for channel '%s' because it does not end with " +
+                    "'-preview'", channel.getId());
+            log.warn(msg);
+            return error(msg);
+        }
+        try {
+            Session session = context.getRequestContext().getSession();
+            session.getNode("/hst:hst/hst:channels/" + channel.getId()).remove();
+            session.getNode(channel.getHstConfigPath()).remove();
+            HstConfigurationUtils.persistChanges(session);
+        } catch (RepositoryException e) {
+            log.warn("Exception occurred deleting the preview for channel " + channel.getName(), e);
+            return error("Exception occurred deleting the preview for channel " + channel.getName() + ": " + e.getMessage());
         }
 
         return ok("Deleted preview");
