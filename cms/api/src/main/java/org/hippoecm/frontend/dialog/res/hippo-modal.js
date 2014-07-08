@@ -75,7 +75,7 @@
     Wicket.Window.prototype.bindClean = function() {
         //HippoAjax cleanup hook.
         if (YAHOO.hippo.HippoAjax) {
-            YAHOO.hippo.HippoAjax.cleanupModal(this);
+            YAHOO.hippo.HippoAjax.cleanupElement(this.window);
         }
 
         oldWindowBindClean.apply(this, arguments);

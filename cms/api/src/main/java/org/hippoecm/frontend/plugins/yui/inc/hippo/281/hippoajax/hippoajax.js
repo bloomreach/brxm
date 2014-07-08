@@ -110,12 +110,12 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
                 }
             },
 
-            cleanupModal : function(modal) {
+            cleanupElement: function(el) {
                 var els, i, len;
 
                 els = YAHOO.util.Dom.getElementsBy(function(node) {
                     return !YAHOO.lang.isUndefined(node.HippoDestroyID);
-                }, null, modal.window);
+                }, null, el);
 
                 for (i = 0, len = els.length; i < len; i++) {
                     YAHOO.hippo.HippoAjax.callDestroyFunction(els[i].HippoDestroyID);
@@ -127,19 +127,14 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
         
         tmpFunc = Wicket.Ajax.Call.prototype.processComponent;
         Wicket.Ajax.Call.prototype.processComponent = function(context, node) {
-            var compId, el, els, i, len;
+            var compId, el;
 
             compId = node.getAttribute("id");
             el = YAHOO.util.Dom.get(compId);
 
             if (el !== null && el !== undefined) {
-                els = YAHOO.util.Dom.getElementsBy(function(node) {
-                    return !YAHOO.lang.isUndefined(node.HippoDestroyID);
-                }, null, el);
+                YAHOO.hippo.HippoAjax.cleanupElement(el);
 
-                for (i = 0, len = els.length; i < len; i++) {
-                    YAHOO.hippo.HippoAjax.callDestroyFunction(els[i].HippoDestroyID);
-                }
                 YAHOO.util.Event.purgeElement(el, true);
             }
             tmpFunc.call(this, context, node);

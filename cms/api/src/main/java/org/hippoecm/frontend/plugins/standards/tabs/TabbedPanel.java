@@ -600,6 +600,7 @@ public class TabbedPanel extends WebMarkupContainer {
                 if (removed.contains(item.getDefaultModelObject())) {
                     target.appendJavaScript(
                             "var element = Wicket.$('" + item.getMarkupId() + "');" +
+                                    "HippoAjax.cleanupElement(element);" +
                                     "element.parentNode.removeChild(element);");
                     children.remove();
                 }
