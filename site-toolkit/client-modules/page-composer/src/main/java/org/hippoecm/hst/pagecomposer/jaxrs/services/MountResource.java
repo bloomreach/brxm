@@ -57,7 +57,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
@@ -241,7 +240,7 @@ public class MountResource extends AbstractConfigResource {
 
     private Response publishChangesOfCurrentUser() {
         try {
-            HippoSession session = HstConfigurationUtils.getNonProxiedSession(getPageComposerContextService().getRequestContext().getSession(false));
+            Session session = getPageComposerContextService().getRequestContext().getSession();
             String currentUserId = session.getUserID();
             return publishChangesOfUsers(Collections.singletonList(currentUserId));
         } catch (RepositoryException e) {
@@ -254,8 +253,8 @@ public class MountResource extends AbstractConfigResource {
         try {
             String liveConfigurationPath = getPageComposerContextService().getEditingLiveConfigurationPath();
             String previewConfigurationPath = getPageComposerContextService().getEditingPreviewConfigurationPath();
+            Session session = getPageComposerContextService().getRequestContext().getSession();
 
-            HippoSession session = HstConfigurationUtils.getNonProxiedSession(getPageComposerContextService().getRequestContext().getSession(false));
             List<String> mainConfigNodeNamesToPublish = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds);
             copyChangedMainConfigNodes(session, previewConfigurationPath, liveConfigurationPath, mainConfigNodeNamesToPublish);
             publishChannelChanges(session, userIds);
@@ -371,7 +370,7 @@ public class MountResource extends AbstractConfigResource {
         final Channel channel = context.getEditingPreviewChannel();
         if (channel != null) {
             try {
-                final HippoSession session = HstConfigurationUtils.getNonProxiedSession(context.getRequestContext().getSession(false));
+                Session session = context.getRequestContext().getSession();
                 session.getNode("/hst:hst/hst:channels/" + channel.getId()).remove();
                 session.getNode(channel.getHstConfigPath()).remove();
                 HstConfigurationUtils.persistChanges(session);
@@ -392,7 +391,7 @@ public class MountResource extends AbstractConfigResource {
     private Response discardChangesOfCurrentUser() {
         try {
             final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
-            HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
+            Session session = requestContext.getSession();
             String currentUserId = session.getUserID();
             return discardChanges(Collections.singletonList(currentUserId));
         } catch (RepositoryException e) {
@@ -408,7 +407,7 @@ public class MountResource extends AbstractConfigResource {
             final HstSite editingPreviewSite = getPageComposerContextService().getEditingPreviewSite();
             String previewConfigurationPath = editingPreviewSite.getConfigurationPath();
 
-            HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
+            Session session = requestContext.getSession();
             List<String> mainConfigNodeNamesToRevert = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds);
             copyChangedMainConfigNodes(session, liveConfigurationPath, previewConfigurationPath, mainConfigNodeNamesToRevert);
             discardChannelChanges(session, userIds);
@@ -426,31 +425,8 @@ public class MountResource extends AbstractConfigResource {
         }
     }
 
-    private List<String> findChangedNonWorkspacePagesContainersForUsers(final HippoSession session, String previewConfigurationPath, List<String> userIds) throws RepositoryException {
-        if (userIds.isEmpty()) {
-            return Collections.emptyList();
-        }
 
-        final String xpath = buildXPathQueryToFindContainersForUsers(previewConfigurationPath, userIds);
-        final QueryResult result = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH).execute();
-
-        final NodeIterable containersForUsers = new NodeIterable(result.getNodes());
-        List<String> relativeContainersForUsers = new ArrayList<String>();
-        for (Node containerForUsers : containersForUsers) {
-            String containerPath = containerForUsers.getPath();
-            if (!containerPath.startsWith(previewConfigurationPath)) {
-                log.warn("Cannot discard container '{}' because does not start with preview config path '{}'.");
-                continue;
-            }
-            final String relativeContainerPath = containerForUsers.getPath().substring(previewConfigurationPath.length());
-            relativeContainersForUsers.add(relativeContainerPath);
-        }
-        log.info("Changed containers for configuration '{}' for users '{}' are : {}",
-                new String[]{previewConfigurationPath, userIds.toString(), relativeContainersForUsers.toString()});
-        return relativeContainersForUsers;
-    }
-
-    private List<String> findChangedMainConfigNodeNamesForUsers(final HippoSession session, String previewConfigurationPath, List<String> userIds) throws RepositoryException {
+    private List<String> findChangedMainConfigNodeNamesForUsers(final Session session, String previewConfigurationPath, List<String> userIds) throws RepositoryException {
         if (userIds.isEmpty()) {
             return Collections.emptyList();
         }
@@ -523,7 +499,7 @@ public class MountResource extends AbstractConfigResource {
         return xpath.toString();
     }
 
-    private void copyChangedMainConfigNodes(final HippoSession session,
+    private void copyChangedMainConfigNodes(final Session session,
                                             final String fromConfig,
                                             final String toConfig,
                                             final List<String> mainConfigNodeNames) throws RepositoryException {
@@ -556,7 +532,7 @@ public class MountResource extends AbstractConfigResource {
     }
 
 
-    private void discardChannelChanges(final HippoSession session,
+    private void discardChannelChanges(final Session session,
                                        final List<String> userIds) throws RepositoryException {
         if (userIds.isEmpty()) {
             return;
@@ -583,7 +559,7 @@ public class MountResource extends AbstractConfigResource {
         }
     }
 
-    private void publishChannelChanges(final HippoSession session,
+    private void publishChannelChanges(final Session session,
                                        final List<String> userIds) throws RepositoryException {
         if (userIds.isEmpty()) {
             return;
@@ -610,7 +586,7 @@ public class MountResource extends AbstractConfigResource {
         }
     }
 
-    private void copyChannelInfoNodes(final HippoSession session, final String fromConfig, final String toConfig) throws RepositoryException {
+    private void copyChannelInfoNodes(final Session session, final String fromConfig, final String toConfig) throws RepositoryException {
         Node channelToNode = session.getNode(toConfig);
         channelToNode.remove();
         Node channelFromNode = session.getNode(fromConfig);

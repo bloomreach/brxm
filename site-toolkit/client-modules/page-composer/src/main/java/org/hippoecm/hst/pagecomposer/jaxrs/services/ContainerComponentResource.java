@@ -42,7 +42,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.PostRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
-import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +74,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
 
         HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
         try {
-            HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
+            Session session = requestContext.getSession();
             Node containerItem;
             try {
                 containerItem = session.getNodeByIdentifier(itemUUID);
@@ -137,7 +136,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
 
         HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
         try {
-            HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
+            Session session = requestContext.getSession();
             Node containerNode = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
             try {
                 // the acquireLock also checks all ancestors whether they are not locked by someone else

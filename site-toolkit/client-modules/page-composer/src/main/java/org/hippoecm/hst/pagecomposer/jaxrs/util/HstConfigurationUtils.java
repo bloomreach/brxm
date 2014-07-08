@@ -26,7 +26,6 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.JcrSessionUtils;
-import org.hippoecm.repository.api.HippoSession;
 import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
@@ -114,21 +113,5 @@ public class HstConfigurationUtils {
             eventBus.post(event);
         }
     }
-
-    public static HippoSession getNonProxiedSession(Session session) throws RepositoryException {
-        HippoSession hippoSession;
-        if (!(session instanceof HippoSession)) {
-            // a jcr session from request context cannot be directly cast to a HippoSession...hence this workaround:
-            Session nonProxiedSession = session.getRootNode().getSession();
-            if (!(nonProxiedSession instanceof HippoSession)) {
-                throw new IllegalStateException("Session not instance of HippoSession.");
-            }
-            hippoSession = (HippoSession) nonProxiedSession;
-        } else {
-            hippoSession = (HippoSession) session;
-        }
-        return hippoSession;
-    }
-
 
 }
