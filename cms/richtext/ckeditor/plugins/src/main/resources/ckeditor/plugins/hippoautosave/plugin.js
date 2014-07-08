@@ -20,9 +20,10 @@
             DEFAULT_THROTTLE_MILLIS = 2000,
             timer = null;
 
-    function save(data, callbackUrl) {
+    function save(data, callbackUrl, componentId) {
         Wicket.Ajax.post({
             u: callbackUrl,
+            c: componentId,
             ep: {
                 data: data
             }
@@ -32,10 +33,10 @@
     /**
      * Save the given data after <millis> milliseconds. A previous delayed save will be cancelled.
      */
-    function delaySave(millis, data, callbackUrl) {
+    function delaySave(millis, data, callbackUrl, componentId) {
         clearTimeout(timer);
         timer = setTimeout(function () {
-            save(data, callbackUrl);
+            save(data, callbackUrl, componentId);
         }, millis);
     }
 
@@ -47,10 +48,11 @@
                     editorData = editor.getData();
 
             function scheduleSave(newData) {
+                var id = editor.element.getId();
                 // only save data over <throttleMillis> milliseconds when it really changed
                 if (newData !== editorData) {
                     editorData = newData;
-                    delaySave(throttleMillis, editorData, callbackUrl);
+                    delaySave(throttleMillis, editorData, callbackUrl, id);
                 }
             }
 
@@ -74,11 +76,13 @@
             editor.on('blur', function () {
                 // save directly; the data is probably updated already via the 'change'
                 // event, but check again to be sure
-                var newData = editor.getData();
+                var newData = editor.getData(),
+                    id = editor.element.getId();
+
                 if (newData !== editorData) {
                     editorData = newData;
                 }
-                delaySave(DOM_MIN_TIMEOUT_MILLIS, editorData, callbackUrl);
+                delaySave(DOM_MIN_TIMEOUT_MILLIS, editorData, callbackUrl, id);
             });
         }
 
