@@ -37,7 +37,8 @@
           <assumeConsoleAlertEtc>true</assumeConsoleAlertEtc>
           <predefinedVars>
             CKEDITOR,
-            Wicket
+            Wicket,
+            window
           </predefinedVars>
           <sourceJsFolder>${basedir}/src/main/resources</sourceJsFolder>
         </configuration>
