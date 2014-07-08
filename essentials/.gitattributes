@@ -1563,13 +1563,11 @@ plugin-dashboard/src/main/webapp/pages/plugins-menu.html -text
 plugin-dashboard/src/main/webapp/pages/plugins-new-tabs.html -text
 plugin-dashboard/src/main/webapp/pages/plugins.html -text
 plugin-dashboard/src/main/webapp/pages/tools.html -text
-plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/beanwriter/rest/BeanWriterResourceTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/dashboard/contentblocks/ContentBlocksPluginTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/ContentBlocksTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/RestClientTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/model/PluginRestfulTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/model/RestListTest.java -text
-plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/utils/RestWorkflowTest.java -text
 plugin-dashboard/src/test/resources/contentblocks-compare.json -text
 plugin-dashboard/src/test/resources/contentblocks.json -text
 plugin-dashboard/src/test/resources/log4j.xml -text

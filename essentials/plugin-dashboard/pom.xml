@@ -29,7 +29,6 @@
   <description>Hippo Essentials plugins dashboard</description>
 
   <properties>
-
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <dependencies>
@@ -44,18 +43,6 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-essentials-plugin-api-implementation</artifactId>
-      <version>${project.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
