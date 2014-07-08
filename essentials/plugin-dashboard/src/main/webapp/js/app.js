@@ -208,15 +208,22 @@
                 (function ping() {
                     $http.get($rootScope.REST.ping).success(function (data) {
                         if (data != 'true') {
-                            $rootScope.globalError = [];
-                            $rootScope.globalError.push("Application needs to be reinitialized, please reload");
+                            $rootScope.showglobalModal = true;
+                            $rootScope.globalModalTitle = "Application error";
+                            $rootScope.globalModalTitle = "Application needs to be initialized, please reload";
+                        }else{
+
+                            $rootScope.showglobalModal = true;
+                            $rootScope.globalModalTitle = "Application error";
+                            $rootScope.globalModalTitle = "Application needs to be initialized, please reload";
                         }
                         $timeout(ping, PING_RUNNING_TIMER);
                     }).error(function () {
-
-                        $rootScope.globalError = [];
-                        $rootScope.globalError.push("Application seems to be down");
+                        $rootScope.showglobalModal = true;
+                        $rootScope.globalModalTitle = "Application error";
+                        $rootScope.globalModalTitle = "Application seems to be down";
                         $timeout(ping, PING_DOWN_TIMER);
+                        $rootScope.showglobalModal = true;
                     });
                 })();
 

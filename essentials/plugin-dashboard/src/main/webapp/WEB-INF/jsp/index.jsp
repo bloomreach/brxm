@@ -60,7 +60,7 @@
   <link rel="shortcut icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
 </head>
 <body id="container" ng-cloak ng-class="showNotifications ? 'body-push':''">
-
+<essentials-modal-message ng-hide="!showglobalModal" title="globalModalTitle" message="globalModalMessage"></essentials-modal-message>
 <div ng-show="showNotifications" class="container notification-bar">
   <div class="busy-loader ng-hide" ng-show="busyLoading">
     <img src="${pageContext.request.contextPath}/images/loader.gif"/>
