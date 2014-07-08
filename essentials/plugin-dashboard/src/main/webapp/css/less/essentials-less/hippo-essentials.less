@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 @import "../hippo-theme/_variables.less";
 @import "infobox.less";
 @import "space.less";
-
 @import "essentials-modal.less";
 
 @brand-primary: #428bca;
@@ -31,8 +29,6 @@
 @color-hippo-footer-text: #4F5E67;
 @body-bg: #FFF;
 @font-size-base: 16px;
-
-
 
 // Links
 // -------------------------
@@ -50,14 +46,35 @@
 */
 
 @footer-border: #eee;
+@header-size: 30px;
+
+.body-push {
+  margin-top: 100px;
+}
+
 
 .no-drag .angular-ui-tree-handle {
   cursor: pointer;
 }
 
-//
-//
-//
+.notification-bar {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  height: @header-size;
+}
+
+.navbar-fixed-top {
+  border-width: 0 0 1px;
+  position: fixed;
+  top: 0;
+}
+
+.navbar-push {
+  top: @header-size;
+  margin-bottom: @header-size;
+}
+
 .footer {
   border-top: 1px solid @footer-border;
   margin-top: 400px;
@@ -89,46 +106,9 @@
   margin-right: auto;
 }
 
-//############################################
-// HEADER
-//############################################
-
-.hippo-header {
-  width: 100%;
-  height: 80px;
-  /*background-color: #C84A4B;*/
-  text-align: center;
-  vertical-align: middle;
-  table-layout: fixed;
-  font-size: 20px;
-  font-weight: bold;
-  /*background: url("../images/top-back.png") repeat;*/
-  color: @brand-steel;
-}
-
-.hippo-header-logo, .hippo-header-text {
-  display: inline;
-  text-align: center;
-  vertical-align: middle;
-  height: 80px;
-  margin-bottom: 20px;
-}
-
-.hippo-header-logo {
-  float: left;
-  padding: 5px;
-  padding-left: 20px;
-}
-
-.hippo-header-text {
-  padding-top: 30px;
-}
-
 body {
-  padding-top: 0px;
-  padding-bottom: 0px;
   background-color: @body-bg;
-
+  margin-top: 70px;
 }
 
 .form-group {
@@ -168,11 +148,12 @@ body {
 }
 
 .messages {
-  position: fixed;
+  position: relative;
   z-index: 999;
   padding: 8px;
   text-align: center;
   width: 100%;
+  height: 30px;
 }
 
 .sep-10 {
@@ -205,12 +186,11 @@ input.ng-invalid, input.ng-invalid-minlength {
 
 }
 
-select.ng-invalid + div.chosen-container{
+select.ng-invalid + div.chosen-container {
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   border: 2px solid @brand-danger;
   .border-radius(3px);
 }
-
 
 input:focus.ng-invalid, input:focus.ng-invalid-minlength {
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
@@ -233,7 +213,6 @@ input.ng-valid, input:focus.ng-valid {
 ng\:form {
   display: block;
 }
-
 
 // chosen rendering fix:
 div.chosen-container[style] {

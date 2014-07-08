@@ -32,12 +32,12 @@
   <script src="${pageContext.request.contextPath}/components/bootstrap/dist/js/bootstrap.js"></script>
 
 
-<%--  NOTE: enable once R&D team upgrades version(s)--%>
-<%--
+  <%--  NOTE: enable once R&D team upgrades version(s)--%>
+  <%--
 
-  <script src="${pageContext.request.contextPath}/components/angular-bootstrap/ui-bootstrap.min.js"></script>
-  <script src="${pageContext.request.contextPath}/components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
---%>
+    <script src="${pageContext.request.contextPath}/components/angular-bootstrap/ui-bootstrap.min.js"></script>
+    <script src="${pageContext.request.contextPath}/components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+  --%>
   <script src="${pageContext.request.contextPath}/js/lib/ui-bootstrap-tpls.min.js"></script>
   <script src="${pageContext.request.contextPath}/js/lib/angular-route.min.js"></script>
   <script src="${pageContext.request.contextPath}/js/lib/angular-ui-router.js"></script>
@@ -59,42 +59,33 @@
   <link rel="icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
   <link rel="shortcut icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
 </head>
-<body id="container" ng-cloak>
-
-<!-- LOADER ON HTTP REQUESTS -->
-<div class="busy-loader ng-hide" ng-show="busyLoading">
-  <%--<span class="fa fa-spin fa-refresh"></span>&nbsp;--%>
-  <img src="${pageContext.request.contextPath}/images/loader.gif"/>
-</div>
-<!-- ERROR MESSAGES -->
-<div class="alert-danger messages ng-hide" ng-show="globalError.length > 0">
-  <strong>An error occurred:</strong>
-  <div ng-repeat="message in globalError">
-    {{message}}
+<body id="container" ng-cloak ng-class="showNotifications ? 'body-push':''">
+<essentials-modal-message ng-hide="!showglobalModal" title="globalModalTitle" message="globalModalMessage"></essentials-modal-message>
+<div ng-show="showNotifications" class="container notification-bar">
+  <div class="busy-loader ng-hide" ng-show="busyLoading">
+    <img src="${pageContext.request.contextPath}/images/loader.gif"/>
   </div>
-</div>
-<div class="alert-success messages ng-hide" ng-show="feedbackMessages.length > 0">
-  <div ng-repeat="message in feedbackMessages">
-    <strong>{{message}}</strong>
-  </div>
-</div>
-<%--
-  CONTENT
---%>
-
-<div  class="container">
   <div class="row">
-    <h1 class="page-header">
-      <div class="pull-left hippo-header-logo">
-        <a href="${pageContext.request.contextPath}"><img src="${pageContext.request.contextPath}/images/hippo-logo.png"></a>
+    <!-- ERROR MESSAGES -->
+    <div class="alert-danger messages ng-hide" ng-show="globalError.length > 0">
+      <div ng-repeat="message in globalError">
+        {{message}}
       </div>
-      <div class="text-center">Hippo CMS<small>Essentials</small></div>
-    </h1>
+    </div>
+    <div class="alert-success messages ng-hide" ng-show="feedbackMessages.length > 0">
+      <div ng-repeat="message in feedbackMessages">
+        <strong>{{message}}</strong>
+      </div>
+    </div>
   </div>
-
-  <div class="row">
-    <div class="col-sm-2" style="margin-right: 20px;" ng-controller="mainMenuCtrl">
-      <ul class="nav nav-stacked nav-pills" ng-show="packsInstalled">
+</div>
+<div ng-class="showNotifications ? 'navbar navbar-default navbar-fixed-top navbar-push' : 'navbar navbar-default navbar-fixed-top'"  role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="${pageContext.request.contextPath}">Hippo Essentials</a>
+    </div>
+    <div class="navbar-collapse collapse pull-right" ng-controller="mainMenuCtrl">
+      <ul class="nav navbar-nav navbar-right">
         <li ng-repeat="item in menu" ng-class="{true:'active', false:''}[isPageSelected('{{item.link}}')]">
           <a href="{{item.link}}" ng-click="onMenuClick(item)">{{item.name}}</a>
         </li>
@@ -103,21 +94,10 @@
         </li>
       </ul>
     </div>
-
-    <div class="col-sm-9" ng-controller="homeCtrl">
-      <div ui-view="submenu" autoscroll="false"></div>
-      <div ui-view="plugintabs" autoscroll="false"></div>
-      <div style="margin-left: 220px;" ui-view="plugininstance" autoscroll="false"></div>
-      <div ui-view autoscroll="false"></div>
-      <%--<div ng-view></div>--%>
-    </div>
   </div>
-  <div class="row footer">
-    <p class="text-center">
-      (C) 2013-2014 <a href="http://www.onehippo.com">Hippo B.V.</a>, All Rights Reserved |
-      <a target="API" href="${pageContext.request.contextPath}/docs/rest-api/index.html">REST API</a>
-    </p>
-  </div>
+</div>
+<div class="container">
+  <div ui-view autoscroll="false"></div>
 
 </div>
 

@@ -29,12 +29,12 @@
  */
 (function () {
     "use strict";
-    angular.module('hippo.essentials', [ 'hippo.theme', 'ngSanitize','ngRoute', 'localytics.directives', 'ui.bootstrap', 'ui.router'])
+    angular.module('hippo.essentials', [ 'hippo.theme', 'ngSanitize', 'ngRoute', 'localytics.directives', 'ui.bootstrap', 'ui.router'])
 
 //############################################
 // GLOBAL LOADING
 //############################################
-        .config(function ($provide, $httpProvider, $controllerProvider, $compileProvider) {
+        .config(function ($provide, $httpProvider) {
 
             $provide.factory('MyHttpInterceptor', function ($q, $rootScope, $log) {
                 return {
@@ -42,16 +42,6 @@
                     // REQUEST
                     //############################################
                     request: function (config) {
-                        if (!$rootScope.FEEDBACK_TIMER) {
-                            $rootScope.FEEDBACK_TIMER = new Date();
-                        }
-                        $rootScope.busyLoading = true;
-                        var date = new Date();
-                        // keep success messages for 5 seconds
-                        if ((date.getTime() - $rootScope.FEEDBACK_TIMER.getTime()) > 5000) {
-                            $rootScope.FEEDBACK_TIMER = new Date();
-                            $rootScope.feedbackMessages = [];
-                        }
                         return config || $q.when(config);
                     },
                     requestError: function (error) {
@@ -59,6 +49,7 @@
                         $rootScope.globalError = [];
                         $rootScope.feedbackMessages = [];
                         if (error.data) {
+                            $rootScope.showNotifications = true;
                             if (error.data.value) {
                                 $rootScope.globalError.push(error.data.value);
 
@@ -81,6 +72,7 @@
                         // show success message:
                         if (data.data.successMessage) {
                             $rootScope.globalError = [];
+                            $rootScope.showNotifications = true;
                             $rootScope.feedbackMessages = [];
                             $rootScope.feedbackMessages.push(data.data.value);
                         }
@@ -88,6 +80,7 @@
                         return data || $q.when(data);
                     },
                     responseError: function (error) {
+                        $rootScope.showNotifications = true;
                         $rootScope.busyLoading = false;
                         $rootScope.globalError = [];
                         $rootScope.feedbackMessages = [];
@@ -114,7 +107,8 @@
 //############################################
 
 
-        .run(function ($rootScope, $location, $log, $http, $state) {
+        .run(function ($rootScope, $location, $log, $http, $timeout) {
+            $rootScope.showNotifications = false;
             $rootScope.headerMessage = "Welcome on the Hippo Trail";
             // routing listener
             $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
@@ -143,6 +137,7 @@
                  * //TODO: change this once we have marketplace up and running
                  */
                 plugins: root + "/plugins/",
+                ping: plugins + '/ping/',
                 projectSettings: plugins + '/settings',
                 packageStatus: plugins + '/status/package/',
                 packageMessages: plugins + '/changes/',
@@ -197,12 +192,42 @@
                 documents_documents: root + '/documents/' + 'documents',
                 documents_template_queries: root + '/documents/' + 'templatequeries'
 
+
             };
 
             /**
              * Set global variables (often used stuff)
              */
             $rootScope.initData = function () {
+
+                var PING_RUNNING_TIMER = 7000;
+                var PING_DOWN_TIMER = 10000;
+                //############################################
+                // PINGER
+                //############################################
+                (function ping() {
+                    $http.get($rootScope.REST.ping).success(function (data) {
+                        if (data != 'true') {
+                            $rootScope.showglobalModal = true;
+                            $rootScope.globalModalTitle = "Application error";
+                            $rootScope.globalModalTitle = "Application needs to be initialized, please reload";
+                        }else{
+
+                            $rootScope.showglobalModal = true;
+                            $rootScope.globalModalTitle = "Application error";
+                            $rootScope.globalModalTitle = "Application needs to be initialized, please reload";
+                        }
+                        $timeout(ping, PING_RUNNING_TIMER);
+                    }).error(function () {
+                        $rootScope.showglobalModal = true;
+                        $rootScope.globalModalTitle = "Application error";
+                        $rootScope.globalModalTitle = "Application seems to be down";
+                        $timeout(ping, PING_DOWN_TIMER);
+                        $rootScope.showglobalModal = true;
+                    });
+                })();
+
+
                 $http.get($rootScope.REST.controllers).success(function (data) {
                     $rootScope.controllers = data;
                 });

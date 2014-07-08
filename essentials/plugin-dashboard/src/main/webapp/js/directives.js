@@ -102,6 +102,46 @@
                     };
                 }
             }
+        }) .directive("essentialsModalMessage", function () {
+            return {
+                replace: false,
+                restrict: 'E',
+                scope: {
+                    title: '@',
+                    message: '@'
+                },
+                templateUrl: 'directives/essentials-modal-message.html',
+                controller: function ($scope, $rootScope, $modal) {
+                    $scope.open = function (size) {
+                        var modalInstance = $modal.open({
+                            templateUrl: 'modal-message.html',
+                            controller: ModalInstanceCtrl,
+                            size: size,
+                            resolve: {
+                                 title: function () {
+                                    return $scope.title;
+                                }, message: function () {
+                                    return $scope.message;
+                                }
+                            }
+                        });
+                        modalInstance.result.then(function (selected) {
+                            // do nothing
+                        });
+                    };
+
+                    //############################################
+                    // MODAL
+                    //############################################
+                    var ModalInstanceCtrl = function ($scope, $modalInstance, title, message) {
+                        $scope.title = title;
+                        $scope.message = message;
+                        $scope.cancel = function () {
+                            $modalInstance.dismiss('cancel');
+                        };
+                    };
+                }
+            }
         }).directive("essentialsTemplateSettings", function () {
             return {
                 replace: false,

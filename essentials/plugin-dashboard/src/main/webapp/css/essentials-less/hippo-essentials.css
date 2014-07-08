@@ -204,8 +204,26 @@
 // HIPPO SPECIFIC  CSS
 //############################################
 */
+.body-push {
+  margin-top: 100px;
+}
 .no-drag .angular-ui-tree-handle {
   cursor: pointer;
+}
+.notification-bar {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  height: 30px;
+}
+.navbar-fixed-top {
+  border-width: 0 0 1px;
+  position: fixed;
+  top: 0;
+}
+.navbar-push {
+  top: 30px;
+  margin-bottom: 30px;
 }
 .footer {
   border-top: 1px solid #eeeeee;
@@ -234,38 +252,9 @@
   margin-left: auto;
   margin-right: auto;
 }
-.hippo-header {
-  width: 100%;
-  height: 80px;
-  /*background-color: #C84A4B;*/
-  text-align: center;
-  vertical-align: middle;
-  table-layout: fixed;
-  font-size: 20px;
-  font-weight: bold;
-  /*background: url("../images/top-back.png") repeat;*/
-  color: #4f5e67;
-}
-.hippo-header-logo,
-.hippo-header-text {
-  display: inline;
-  text-align: center;
-  vertical-align: middle;
-  height: 80px;
-  margin-bottom: 20px;
-}
-.hippo-header-logo {
-  float: left;
-  padding: 5px;
-  padding-left: 20px;
-}
-.hippo-header-text {
-  padding-top: 30px;
-}
 body {
-  padding-top: 0px;
-  padding-bottom: 0px;
   background-color: #ffffff;
+  margin-top: 70px;
 }
 .form-group {
   height: 30px;
@@ -297,11 +286,12 @@ body {
   padding-bottom: 6px;
 }
 .messages {
-  position: fixed;
+  position: relative;
   z-index: 999;
   padding: 8px;
   text-align: center;
   width: 100%;
+  height: 30px;
 }
 .sep-10 {
   margin-bottom: 10px;
