@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function() {
+(function () {
     "use strict";
 
     var DOM_MIN_TIMEOUT_MILLIS = 4,     // minimum delay for setTimeout() calls as defined in HTML5 spec
-        DEFAULT_THROTTLE_MILLIS = 2000,
-        timer = null;
+            DEFAULT_THROTTLE_MILLIS = 2000,
+            timer = null;
 
     function save(data, callbackUrl) {
         Wicket.Ajax.post({
@@ -41,21 +41,37 @@
 
     CKEDITOR.plugins.add('hippoautosave', {
 
-        init: function(editor) {
+        init: function (editor) {
             var callbackUrl = editor.config.hippoautosave_callbackUrl,
-                throttleMillis = editor.config.hippoautosave_throttleMillis || DEFAULT_THROTTLE_MILLIS,
-                editorData = editor.getData();
+                    throttleMillis = editor.config.hippoautosave_throttleMillis || DEFAULT_THROTTLE_MILLIS,
+                    editorData = editor.getData();
 
-            editor.on('change', function() {
+            function scheduleSave(newData) {
                 // only save data over <throttleMillis> milliseconds when it really changed
-                var newData = editor.getData();
                 if (newData !== editorData) {
                     editorData = newData;
                     delaySave(throttleMillis, editorData, callbackUrl);
                 }
+            }
+
+            editor.on('change', function() {
+                scheduleSave(editor.getData());
             });
 
-            editor.on('blur', function() {
+            // Detect changes in source mode.
+            editor.on('mode', function () {
+                if (editor.mode !== 'source') {
+                    return;
+                }
+                var codeMirror = window["codemirror_" + editor.id];
+                if (codeMirror) {
+                    codeMirror.on('change', function() {
+                        scheduleSave(codeMirror.getValue());
+                    });
+                }
+            });
+
+            editor.on('blur', function () {
                 // save directly; the data is probably updated already via the 'change'
                 // event, but check again to be sure
                 var newData = editor.getData();
