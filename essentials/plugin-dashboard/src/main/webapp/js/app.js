@@ -107,16 +107,9 @@
 //############################################
 
 
-        .run(function ($rootScope, $location, $log, $http, $timeout) {
+        .run(function ($rootScope, $location, $log, $http, $timeout, modalService) {
             $rootScope.showNotifications = false;
             $rootScope.headerMessage = "Welcome on the Hippo Trail";
-            // routing listener
-            $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
-                // noop
-
-            });
-
-
             var root = 'http://localhost:8080/essentials/rest';
             var plugins = root + "/plugins";
 
@@ -205,26 +198,40 @@
                 //############################################
                 // PINGER
                 //############################################
+                // keep reference to old modal:
+                var oldOptions = null;
                 (function ping() {
+
+                    var modalOptions = {
+                        closeButtonText: '',
+                        actionButtonText: 'Close',
+                        headerText: 'Application error',
+                        bodyText: ''
+
+                    };
+                    function openModal() {
+                        if(oldOptions){
+                            oldOptions.close('close');
+                        }
+                        var myModal = modalService.showModal({}, modalOptions);
+                        oldOptions = myModal.options;
+                        myModal.then(function () {
+                            // discard modal
+                            oldOptions = null;
+                        });
+                    }
                     $http.get($rootScope.REST.ping).success(function (data) {
                         if (data != 'true') {
-                            $rootScope.showglobalModal = true;
-                            $rootScope.globalModalTitle = "Application error";
-                            $rootScope.globalModalTitle = "Application needs to be initialized, please reload";
-                        }else{
-
-                            $rootScope.showglobalModal = true;
-                            $rootScope.globalModalTitle = "Application error";
-                            $rootScope.globalModalTitle = "Application needs to be initialized, please reload";
+                            modalOptions.bodyText = 'Aplication started, but not initialized. Please reload this page'
+                            openModal();
                         }
                         $timeout(ping, PING_RUNNING_TIMER);
                     }).error(function () {
-                        $rootScope.showglobalModal = true;
-                        $rootScope.globalModalTitle = "Application error";
-                        $rootScope.globalModalTitle = "Application seems to be down";
-                        $timeout(ping, PING_DOWN_TIMER);
-                        $rootScope.showglobalModal = true;
+                        modalOptions.bodyText = 'Aplication seems to be down'
+                        openModal();
+                        $timeout(ping, PING_RUNNING_TIMER);
                     });
+
                 })();
 
 
@@ -317,7 +324,63 @@
                 $rootScope.$broadcast(this.eventName);
             };
             return broadcaster;
-        });
+        })
+        .service('modalService',function ($modal) {
+            /**
+             *
+             * NOTE: template must be here because if server is down,
+             * template cannot be serverd anymore
+             */
+            var modalDefaults = {
+                backdrop: true,
+                keyboard: true,
+                modalFade: true,
+                template: '<div class="modal-header"><h3>{{modalOptions.headerText}}</h3></div>' +
+                    '<div class="modal-body"><p>{{modalOptions.bodyText}}</p></div>' +
+                    '<div class="modal-footer">' +
+                    '<button type="button" ng-hide="!modalOptions.closeButtonText" class="btn" data-ng-click="modalOptions.close()">{{modalOptions.closeButtonText}}</button>' +
+                    '<button ng-hide="!modalOptions.actionButtonText" class="btn btn-primary" data-ng-click="modalOptions.ok();">{{modalOptions.actionButtonText}}</button>' +
+                    '</div>'
+
+            };
+            var modalOptions = {
+                closeButtonText: "",
+                actionButtonText: "",
+                headerText: "",
+                bodyText: ""
+            };
+
+            this.showModal = function (customModalDefaults, customModalOptions) {
+                if (!customModalDefaults) customModalDefaults = {};
+                customModalDefaults.backdrop = 'static';
+                return this.show(customModalDefaults, customModalOptions);
+
+            };
+
+            this.show = function (customModalDefaults, customModalOptions) {
+                var myDefaults = {};
+                var myOptions = {};
+                angular.extend(myDefaults, modalDefaults, customModalDefaults);
+                angular.extend(myOptions, modalOptions, customModalOptions);
+
+                if (!myDefaults.controller) {
+                    myDefaults.controller = function ($scope, $modalInstance) {
+                        $scope.modalOptions = myOptions;
+                        $scope.modalOptions.ok = function (result) {
+                            $modalInstance.close(result);
+                        };
+                        $scope.modalOptions.close = function (result) {
+                            $modalInstance.dismiss('cancel');
+                        };
+                        myOptions = $scope.modalOptions;
+                    }
+                }
+                var myResult = $modal.open(myDefaults).result;
+                myResult.options = myOptions;
+                return  myResult;
+            };
+        }
+    );
 
 })();
 
