@@ -27,7 +27,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.JcrMatcher;
 public class HasProviderMatcher implements JcrMatcher {
 
     @Override
-    public boolean matches(final Node node) throws RepositoryException {
-        return (node.hasProperty("cbitem") && node.getProperty("cbitem").getBoolean());
+    public boolean matches(final Node prototypeNode) throws RepositoryException {
+        return (prototypeNode.hasProperty("cbitem") && prototypeNode.getProperty("cbitem").getBoolean());
     }
 }

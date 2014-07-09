@@ -314,7 +314,7 @@ dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/model/RestList.java -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/model/contentblocks/AllDocumentMatcher.java -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/model/contentblocks/CBPayload.java -text
-dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/model/contentblocks/Compounds.java -text
+dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/model/contentblocks/Compound.java -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/model/contentblocks/ContentBlockModel.java -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/model/contentblocks/DocumentType.java -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/plugins/contentblocks/model/contentblocks/HasProviderMatcher.java -text

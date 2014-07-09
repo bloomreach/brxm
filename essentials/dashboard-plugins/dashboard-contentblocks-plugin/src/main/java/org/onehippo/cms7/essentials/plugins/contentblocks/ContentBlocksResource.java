@@ -54,7 +54,7 @@ import org.onehippo.cms7.essentials.dashboard.rest.exc.RestException;
 import org.onehippo.cms7.essentials.plugins.contentblocks.model.RestList;
 import org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks.AllDocumentMatcher;
 import org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks.CBPayload;
-import org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks.Compounds;
+import org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks.Compound;
 import org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks.ContentBlockModel;
 import org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks.DocumentType;
 import org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks.HasProviderMatcher;
@@ -86,7 +86,7 @@ public class ContentBlocksResource extends BaseResource {
 
         try {
             final List<String> primaryTypes = HippoNodeUtils.getPrimaryTypes(session, new AllDocumentMatcher(), "new-document");
-            final Map<String, Compounds> compoundMap = getCompoundMap(servletContext);
+            final Map<String, Compound> compoundMap = getCompoundMap(servletContext);
 
             for (String primaryType : primaryTypes) {
                 final RestList<KeyValueRestful> keyValueRestfulRestfulList = new RestList<>();
@@ -96,8 +96,8 @@ public class ContentBlocksResource extends BaseResource {
                     final String name = it.nextNode().getName();
                     String namespaceName = MessageFormat.format("{0}{1}", prefix, name);
                     if (compoundMap.containsKey(namespaceName)) {
-                        final Compounds compounds = compoundMap.get(namespaceName);
-                        keyValueRestfulRestfulList.add(compounds);
+                        final Compound compound = compoundMap.get(namespaceName);
+                        keyValueRestfulRestfulList.add(compound);
                     }
                 }
 
@@ -120,10 +120,10 @@ public class ContentBlocksResource extends BaseResource {
         return execute.getNodes();
     }
 
-    private Map<String, Compounds> getCompoundMap(final ServletContext servletContext) {
-        final RestfulList<Compounds> compounds = getCompounds(servletContext);
-        Map<String, Compounds> compoundMap = new HashMap<>();
-        for (Compounds compound : compounds.getItems()) {
+    private Map<String, Compound> getCompoundMap(final ServletContext servletContext) {
+        final RestfulList<Compound> compounds = getCompounds(servletContext);
+        Map<String, Compound> compoundMap = new HashMap<>();
+        for (Compound compound : compounds.getItems()) {
             compoundMap.put(compound.getValue(), compound);
         }
         return compoundMap;
@@ -131,13 +131,13 @@ public class ContentBlocksResource extends BaseResource {
 
     @GET
     @Path("/compounds")
-    public RestfulList<Compounds> getCompounds(@Context ServletContext servletContext) {
-        final RestfulList<Compounds> types = new RestList<>();
+    public RestfulList<Compound> getCompounds(@Context ServletContext servletContext) {
+        final RestfulList<Compound> types = new RestList<>();
         final Session session = GlobalUtils.createSession();
         try {
             final Set<String> primaryTypes = HippoNodeUtils.getCompounds(session, new HasProviderMatcher());
             for (String primaryType : primaryTypes) {
-                types.add(new Compounds(HippoNodeUtils.getDisplayValue(session, primaryType), primaryType, HippoNodeUtils.resolvePath(primaryType)));
+                types.add(new Compound(HippoNodeUtils.getDisplayValue(session, primaryType), primaryType, HippoNodeUtils.resolvePath(primaryType)));
             }
         } catch (RepositoryException e) {
             log.error("Exception while trying to retrieve document types from repository {}", e);
