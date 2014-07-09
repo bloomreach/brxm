@@ -1365,12 +1365,7 @@ console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/Edit
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/EditorPlugin.java svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/HstReferenceEditor.html -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/HstReferenceEditor.java -text
-console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/HstReferenceEditor.properties -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/HstReferenceEditorPlugin.java -text
-console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/HstReferenceEditor_de.properties -text
-console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/HstReferenceEditor_fr.properties -text
-console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/HstReferenceEditor_it.properties -text
-console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/HstReferenceEditor_nl.properties -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/JcrName.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/NodeEditor.java svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/NodeTypesEditor.java svneol=native#text/plain

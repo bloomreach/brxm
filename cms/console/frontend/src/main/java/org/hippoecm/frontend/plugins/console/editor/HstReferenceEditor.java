@@ -84,8 +84,8 @@ class HstReferenceEditor extends Panel {
             editor.setSize("40");
             add(editor);
 
-            DisabledLink link = new DisabledLink("reference-link", new Model(getString("reference-not-found")));
-            link.add(new AttributeAppender("style", new Model("color:red"), " "));
+            DisabledLink link = new DisabledLink("reference-link", new Model("Reference might be inherited"));
+            link.add(new AttributeAppender("style", new Model("color:blue"), " "));
             add(link);
 
         } catch (RepositoryException e) {
@@ -108,7 +108,7 @@ class HstReferenceEditor extends Panel {
             if(targetNode.hasProperty(PROPERTY_HST_RENDERPATH)) {
                 title = targetNode.getProperty(PROPERTY_HST_RENDERPATH).getString();
             } else if (targetNode.hasProperty(PROPERTY_HST_SCRIPT)) {
-                title = getString("template-has-script");
+                title = "Template contains script";
 
             }
         } else if(propertyName.equals(PROPERTY_HST_COMPONENTCONFIGURATIONID) || propertyName.equals(PROPERTY_HST_REFERENCECOMPONENT)) {
