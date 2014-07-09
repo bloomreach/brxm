@@ -44,27 +44,15 @@ public class FreeTextSearchTest extends RepositoryTestCase {
     public static final String COMPOUNDDOCUMENT_TITLE_PART = "bar";
     public static final String  HTML_CONTENT_PART = "lux";
     public static final String  BINARY_CONTENT_PART = "dog";
-   
-    
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-    }
+    private static final String TRANSLATED_DOCUMENT_NAME = "xyzyx";
 
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    String[] defaultContent = new String[] {
-            "/test",                      "nt:unstructured",
-                "/test/Document1",             "hippo:handle",
-                "jcr:mixinTypes",             "mix:referenceable",
-                    "/test/Document1/Document1",        "hippo:testsearchdocument",
-                    "jcr:mixinTypes",                   "mix:referenceable",
-                    "title",                            "This is the title of document 1 containing " + DOCUMENT_TITLE_PART,
+    private String[] defaultContent = new String[] {
+            "/test", "nt:unstructured",
+                "/test/Document1", "hippo:handle",
+                "jcr:mixinTypes", "mix:referenceable",
+                    "/test/Document1/Document1", "hippo:testsearchdocument",
+                    "jcr:mixinTypes", "mix:referenceable",
+                    "title", "This is the title of document 1 containing " + DOCUMENT_TITLE_PART,
                         "/test/Document1/Document1/compoundchild",    "hippo:testcompoundstructure",
                         "compoundtitle", "This is the compoundtitle containing " + COMPOUNDDOCUMENT_TITLE_PART,
                             "/test/Document1/Document1/compoundchild/hippo:testhtml",    "hippo:testhtml",
@@ -93,6 +81,14 @@ public class FreeTextSearchTest extends RepositoryTestCase {
         writer.close();
         resource.setProperty("jcr:data", new ByteArrayInputStream(data.toByteArray()));
         resource.setProperty("jcr:lastModified", Calendar.getInstance());
+
+        // set translation node
+        Node handle = session.getNode("/test/Document1");
+        handle.addMixin("hippo:translated");
+        final Node translation = handle.addNode("hippo:translation", "hippo:translation");
+        translation.setProperty("hippo:language", "en");
+        translation.setProperty("hippo:message", TRANSLATED_DOCUMENT_NAME);
+
         session.save();
         flushIndex(session.getRepository());
     }
@@ -345,6 +341,38 @@ public class FreeTextSearchTest extends RepositoryTestCase {
             Node doc = nodes.nextNode();
             assertTrue(doc.getName().equals("Document1"));
         }
+    }
+
+    /**
+     * All hippo:message properties of hippo:translation nodes under a handle are included
+     * in the fulltext index of the document.
+     */
+    @Test
+    public void testSearchOnTranslatedDocumentName() throws Exception {
+        createContent(defaultContent);
+
+        String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'"+TRANSLATED_DOCUMENT_NAME+"')] order by @jcr:score descending";
+        final QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
+        final NodeIterator nodes = queryResult.getNodes();
+        assertEquals(1L, nodes.getSize());
+        final Node node = nodes.nextNode();
+        assertEquals("/test/Document1/Document1", node.getPath());
+    }
+
+    /**
+     * When the hippo:translation node under a hippo:handle is removed the document's index is updated
+     */
+    @Test
+    public void testRemoveTranslationUpdatesDocumentIndex() throws Exception {
+        createContent(defaultContent);
+        session.getNode("/test/Document1/hippo:translation").remove();
+        session.save();
+        flushIndex(session.getRepository());
+
+        String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'"+TRANSLATED_DOCUMENT_NAME+"')] order by @jcr:score descending";
+        final QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
+        final NodeIterator nodes = queryResult.getNodes();
+        assertEquals(0L, nodes.getSize());
     }
 
     @Test
