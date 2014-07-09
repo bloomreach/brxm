@@ -50,7 +50,6 @@
 + * (hst:template)
 
 
-
 [hst:abstractcomponent] > nt:base, mix:referenceable, hst:descriptive orderable 
 - hst:template (string)
 - hst:resourcetemplate (string)
@@ -117,10 +116,18 @@
 + * (hst:containeritempackage)
 
 [hst:components] > nt:base, mix:referenceable orderable
+- hst:lockedby (string)
+- hst:lockedon (date)
+- hst:lastmodified (date)
+- hst:lastmodifiedby (string)
 + * (hst:abstractcomponent)
 
 
 [hst:pages] > nt:base, mix:referenceable orderable
+- hst:lockedby (string)
+- hst:lockedon (date)
+- hst:lastmodified (date)
+- hst:lastmodifiedby (string)
 + * (hst:abstractcomponent)
 
 [hst:sitemapitemhandler] > nt:base, mix:referenceable
