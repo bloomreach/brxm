@@ -192,43 +192,39 @@
                 // PINGER
                 //############################################
                 // keep reference to old modal:
-                var oldOptions = null;
+                var pingModal = null;
                 (function ping() {
 
                     var modalOptions = {
                         closeButtonText: '',
                         actionButtonText: 'Close',
                         headerText: 'Service Down',
-                        bodyText: ''
+                        bodyText: 'The Essentials dashboard server appears to be down. If you are' +
+                                ' rebuilding the project, please wait until it is up and running again.'
 
                     };
                     function openModal() {
-                        if(oldOptions){
-                            oldOptions.close('close');
+                        if (pingModal == null) {
+                            pingModal = modalService.showModal({}, modalOptions);
+                            pingModal.then(function() {
+                                // discard modal
+                                pingModal = null;
+                            });
                         }
-                        var myModal = modalService.showModal({}, modalOptions);
-                        oldOptions = myModal.options;
-                        myModal.then(function () {
-                            // discard modal
-                            oldOptions = null;
-                        });
                     }
                     $http.get($rootScope.REST.ping).success(function (data) {
-                        if (data != 'true') {
-                            modalOptions.bodyText = 'The Essentials dashboard server appears to be down. If you are' +
-                                    ' rebuilding the project, please wait until it is up and running again.';
-                            openModal();
+                        if (data === 'true') {
+                            $timeout(ping, PING_RUNNING_TIMER);
+                        } else {
+                            // app is back up, but needs to restart
+                            // TODO: restart angular app
                         }
-                        $timeout(ping, PING_RUNNING_TIMER);
                     }).error(function () {
-                        modalOptions.bodyText = 'The Essentials dashboard server appears to be down. If you are' +
-                                ' rebuilding the project, please wait until it is up and running again.';
                         openModal();
-                        $timeout(ping, PING_RUNNING_TIMER);
+                        $timeout(ping, PING_DOWN_TIMER);
                     });
 
                 })();
-
 
                 $http.get($rootScope.REST.controllers).success(function (data) {
                     $rootScope.controllers = data;

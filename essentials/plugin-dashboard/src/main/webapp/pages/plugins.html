@@ -27,7 +27,7 @@
             <td>{{plugin.name}}</td>
             <td>{{plugin.introduction}}</td>
             <td class="pull-right">
-                <a class="btn btn-primary" href="#/plugins/{{plugin.pluginId}}">Install</a>
+              <button class="btn btn-primary" ng-click="installPlugin(plugin.pluginId)">Install</button>
             </td>
         </tr>
         </tbody>
