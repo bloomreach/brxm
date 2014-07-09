@@ -190,24 +190,26 @@ public class ContentBlocksResource extends BaseResource {
     //see org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource.updateContainer()
     @POST
     @Path("/compounds/contentblocks/create")
-
     public MessageRestful createContentBlocks(CBPayload body, @Context ServletContext servletContext) {
         final List<DocumentType> docTypes = body.getDocumentTypes().getItems();
-        final RestWorkflow workflow = new RestWorkflow(GlobalUtils.createSession(), getContext(servletContext));
-        for (DocumentType documentType : docTypes) {
-            final List<KeyValueRestful> providers = documentType.getProviders().getItems();
-            if (providers.isEmpty()) {
-                log.debug("DocumentType {} had no providers", documentType.getKey());
-                // TODO: remove them....
-                continue;
+        final Session session = GlobalUtils.createSession();
+        try {
+            final RestWorkflow workflow = new RestWorkflow(session, getContext(servletContext));
+            for (DocumentType documentType : docTypes) {
+                final List<KeyValueRestful> providers = documentType.getProviders().getItems();
+                if (providers.isEmpty()) {
+                    log.debug("DocumentType {} had no providers", documentType.getKey());
+                    // TODO: remove them....
+                    continue;
+                }
+                for (KeyValueRestful item : providers) {
+                    ContentBlockModel model = new ContentBlockModel(item.getValue(), ContentBlockModel.Prefer.LEFT, ContentBlockModel.Type.LINKS, item.getKey(), documentType.getValue());
+                    workflow.addContentBlockToType(model);
+                }
             }
-            for (KeyValueRestful item : providers) {
-                ContentBlockModel model = new ContentBlockModel(item.getValue(), ContentBlockModel.Prefer.LEFT, ContentBlockModel.Type.LINKS, item.getKey(), documentType.getValue());
-                workflow.addContentBlockToType(model);
-            }
+            return new MessageRestful("Successfully updated content blocks settings");
+        } finally {
+            GlobalUtils.cleanupSession(session);
         }
-        return new MessageRestful("Successfully updated content blocks settings");
     }
-
-
 }
