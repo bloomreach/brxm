@@ -110,6 +110,7 @@
         .run(function ($rootScope, $location, $log, $http, $timeout, modalService) {
             $rootScope.showNotifications = false;
             $rootScope.headerMessage = "Welcome on the Hippo Trail";
+            $rootScope.applicationUrl = 'http://localhost:8080/essentials';
             var root = 'http://localhost:8080/essentials/rest';
             var plugins = root + "/plugins";
 
@@ -217,7 +218,7 @@
                             $timeout(ping, PING_RUNNING_TIMER);
                         } else {
                             // app is back up, but needs to restart
-                            // TODO: restart angular app
+                            window.location.href = $rootScope.applicationUrl;
                         }
                     }).error(function () {
                         openModal();
