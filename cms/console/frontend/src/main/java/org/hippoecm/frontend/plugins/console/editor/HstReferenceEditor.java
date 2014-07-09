@@ -84,7 +84,7 @@ class HstReferenceEditor extends Panel {
             editor.setSize("40");
             add(editor);
 
-            DisabledLink link = new DisabledLink("reference-link", new Model("Reference might be inherited"));
+            DisabledLink link = new DisabledLink("reference-link", new Model("(Reference might be inherited)"));
             link.add(new AttributeAppender("style", new Model("color:blue"), " "));
             add(link);
 
