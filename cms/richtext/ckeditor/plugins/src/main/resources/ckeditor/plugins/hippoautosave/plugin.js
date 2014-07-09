@@ -16,9 +16,8 @@
 (function () {
     "use strict";
 
-    var DOM_MIN_TIMEOUT_MILLIS = 4,     // minimum delay for setTimeout() calls as defined in HTML5 spec
-            DEFAULT_THROTTLE_MILLIS = 2000,
-            timer = null;
+    var DEFAULT_THROTTLE_MILLIS = 2000,
+        timer = null;
 
     function save(data, callbackUrl, componentId) {
         Wicket.Ajax.post({
@@ -39,6 +38,13 @@
             save(data, callbackUrl, componentId);
         }, millis);
     }
+
+    function saveNow(data, callbackUrl, componentId) {
+        clearTimeout(timer);
+        save(data, callbackUrl, componentId);
+    }
+
+    CKEDITOR.focusManager._.blurDelay = 0;
 
     CKEDITOR.plugins.add('hippoautosave', {
 
@@ -82,7 +88,7 @@
                 if (newData !== editorData) {
                     editorData = newData;
                 }
-                delaySave(DOM_MIN_TIMEOUT_MILLIS, editorData, callbackUrl, id);
+                saveNow(newData, callbackUrl, id);
             });
         }
 
