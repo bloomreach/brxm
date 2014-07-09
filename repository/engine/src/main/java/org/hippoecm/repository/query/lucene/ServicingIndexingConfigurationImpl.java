@@ -71,7 +71,15 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
 
 
     private Name hippoDocument;
-    
+
+    private Name hippoTranslation;
+
+    private Name hippoMessage;
+
+    private Name hippoTranslated;
+
+    private String translationMessageFieldName;
+
     /**
      * QName's of all the child node that should be aggregated
      */
@@ -184,8 +192,12 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
         hippoText = nameResolver.getQName(HippoNodeType.HIPPO_TEXT);
         hippoHandle = nameResolver.getQName(HippoNodeType.NT_HANDLE);
         hippoDocument = nameResolver.getQName(HippoNodeType.NT_DOCUMENT);
+        hippoTranslation = nameResolver.getQName(HippoNodeType.HIPPO_TRANSLATION);
+        hippoMessage = nameResolver.getQName(HippoNodeType.HIPPO_MESSAGE);
+        hippoTranslated = nameResolver.getQName(HippoNodeType.NT_TRANSLATED);
         skipIndex = nameResolver.getQName(HippoNodeType.NT_SKIPINDEX);
         hippoAggregates = idxHippoAggregates.toArray(new Name[idxHippoAggregates.size()]);
+        translationMessageFieldName = nameResolver.getJCRName(hippoTranslation) + "/" + nameResolver.getJCRName(hippoMessage);
     }
 
     public boolean isChildAggregate(Name childType) {
@@ -284,6 +296,26 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
     @Override
     public Name getHippoDocumentName() {
         return hippoDocument;
+    }
+
+    @Override
+    public Name getHippoTranslationName() {
+        return hippoTranslation;
+    }
+
+    @Override
+    public Name getHippoMessageName() {
+        return hippoMessage;
+    }
+
+    @Override
+    public Name getHippoTranslatedName() {
+        return hippoTranslated;
+    }
+
+    @Override
+    public String getTranslationMessageFieldName() {
+        return translationMessageFieldName;
     }
 
     public Name getHippoPathPropertyName() {

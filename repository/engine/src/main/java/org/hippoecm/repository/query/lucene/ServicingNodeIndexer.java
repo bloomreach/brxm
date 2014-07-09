@@ -164,7 +164,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
      * in queries \@hippostd:content = 'some long text', and obviously, we do not need to support sorting on these fields either.
      * @see {@link NodeIndexer#addStringValue(org.apache.lucene.document.Document, String, String, boolean, boolean, float, boolean)}
      */
-    private void addStringValue(Document doc, String fieldName,
+    protected void addStringValue(Document doc, String fieldName,
                                   String internalValue, boolean tokenized,
                                   boolean includeInNodeIndex, float boost,
                                   boolean useInExcerpt,

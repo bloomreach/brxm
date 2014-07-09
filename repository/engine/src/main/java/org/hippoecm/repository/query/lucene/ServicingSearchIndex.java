@@ -402,6 +402,47 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         final NodeIdIteratorImpl removedIt = new NodeIdIteratorImpl(remove);
         super.updateNodes(removedIt, addedIt);
         updateContainingDocumentNodes(addedIt.processedStates, addedIt.processedIds, removedIt.processedIds);
+        updateSiblingDocumentStates(addedIt.processedStates, removedIt.processedIds);
+    }
+
+    private void updateSiblingDocumentStates(final List<NodeState> addedStates, final List<NodeId> removedIds) throws IOException, RepositoryException {
+        final List<NodeState> updateDocumentStates = new ArrayList<>();
+        final List<NodeId> updateDocumentIds = new ArrayList<>();
+        for (NodeState addedState : addedStates) {
+            if (!isTranslation(addedState.getNodeTypeName())) {
+                continue;
+            }
+            try {
+                final NodeId parentId = addedState.getParentId();
+                if (parentId == null) {
+                    continue;
+                }
+                final NodeState parentState = (NodeState) getContext().getItemStateManager().getItemState(parentId);
+                if (!isHandle(parentState)) {
+                    continue;
+                }
+                for (ChildNodeEntry siblingNodeEntry : parentState.getChildNodeEntries()) {
+                    final NodeId siblingId = siblingNodeEntry.getId();
+                    if (siblingId.equals(addedState.getId())) {
+                        continue;
+                    }
+                    if (updateDocumentIds.contains(siblingId) || removedIds.contains(siblingId)) {
+                        continue;
+                    }
+                    final NodeState siblingState = (NodeState) getContext().getItemStateManager().getItemState(siblingId);
+                    if (!isHippoDocument(siblingState)) {
+                        continue;
+                    }
+                    updateDocumentStates.add(siblingState);
+                    updateDocumentIds.add(siblingId);
+                }
+            } catch (ItemStateException e) {
+                log.debug("Unable to retrieve state: {}", e.getMessage());
+            }
+        }
+        if (!updateDocumentStates.isEmpty()) {
+            super.updateNodes(updateDocumentIds.iterator(), updateDocumentStates.iterator());
+        }
     }
 
     /*
@@ -425,11 +466,11 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
                     }
                 }
             } catch (ItemStateException e) {
-                log.debug("Unable to get state '{}'", e.getMessage());
+                log.debug("Unable to retrieve state: {}", e.getMessage());
             }
         }
 
-        if (updateDocumentStates.size() > 0) {
+        if (!updateDocumentStates.isEmpty()) {
             super.updateNodes(updateDocumentIds.iterator(), updateDocumentStates.iterator());
         }
     }
@@ -468,6 +509,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
                 // for free text searching. We use aggregateChildTypes = true only for child
                 // nodes directly below a hippo document.
                 aggregateDescendants(node, doc, indexFormatVersion, indexer, true);
+                aggregateTranslations(node, doc, indexer);
             }
         } catch (ItemStateException e) {
             log.debug("Unable to get state '{}'", e.getMessage());
@@ -475,6 +517,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
 
         return doc;
     }
+
 
     private boolean skipIndexing(final NodeState node,
                                  final Set<NodeId> excludedIdsCache,
@@ -553,6 +596,14 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         return node.getNodeTypeName().equals(getIndexingConfig().getHippoHandleName());
     }
 
+    private boolean isTranslated(NodeState state) {
+        return state.getMixinTypeNames().contains(getIndexingConfig().getHippoTranslatedName());
+    }
+
+    private boolean isTranslation(Name name) {
+        return name.equals(getIndexingConfig().getHippoTranslationName());
+    }
+
     private boolean isHippoDocument(NodeState node) {
         try {
             final EffectiveNodeType nodeType = getContext().getNodeTypeRegistry().getEffectiveNodeType(node.getNodeTypeName());
@@ -601,13 +652,13 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
             }
             Document aDoc;
             try {
-                NodeState childState = (NodeState) getContext().getItemStateManager().getItemState(
-                        childNodeEntry.getId());
+                final ItemStateManager itemStateManager = getContext().getItemStateManager();
+                final NodeState childState = (NodeState) itemStateManager.getItemState(childNodeEntry.getId());
                 if (aggregateChildTypes) {
                     if (getIndexingConfig().isChildAggregate(childState.getNodeTypeName())) {
                         for (Name propName : childState.getPropertyNames()) {
                             PropertyId id = new PropertyId(childNodeEntry.getId(), propName);
-                            PropertyState propState = (PropertyState) getContext().getItemStateManager().getItemState(id);
+                            PropertyState propState = (PropertyState) itemStateManager.getItemState(id);
                             InternalValue[] values = propState.getValues();
                             if (!indexer.isHippoPath(propName) && indexer.isFacet(propName)) {
                                 final NamePathResolver resolver = indexer.getResolver();
@@ -666,6 +717,39 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
                 log.warn("RepositoryException while indexing descendants of a hippo:document for "
                         + "node with UUID: " + state.getNodeId().toString(), e);
             }
+        }
+    }
+
+    private void aggregateTranslations(final NodeState state, final Document doc, final ServicingNodeIndexer indexer) {
+        try {
+            if (!isHippoDocument(state)) {
+                return;
+            }
+            final NodeId parentId = state.getParentId();
+            if (parentId == null) {
+                return;
+            }
+            final NodeState parentState = (NodeState) getContext().getItemStateManager().getItemState(parentId);
+            if (!isHandle(parentState) || !isTranslated(parentState)) {
+                return;
+            }
+            for (ChildNodeEntry childNodeEntry : parentState.getChildNodeEntries()) {
+                final Name childName = childNodeEntry.getName();
+                if (!isTranslation(childName)) {
+                    continue;
+                }
+                final NodeId translationId = childNodeEntry.getId();
+                final NodeState translationState = (NodeState) getContext().getItemStateManager().getItemState(translationId);
+                final PropertyId messagePropertyId = new PropertyId(translationState.getNodeId(), getIndexingConfig().getHippoMessageName());
+                final PropertyState messagePropertyState = (PropertyState) getContext().getItemStateManager().getItemState(messagePropertyId);
+                if (messagePropertyState.getValues().length == 0 || messagePropertyState.getValues()[0] == null || messagePropertyState.getValues()[0].getString().isEmpty()) {
+                    continue;
+                }
+                doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID, translationId.toString(), Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS));
+                indexer.addStringValue(doc, getIndexingConfig().getTranslationMessageFieldName(), messagePropertyState.getValues()[0].getString(), true, true, 2.0f, true, false);
+            }
+        } catch (ItemStateException | RepositoryException e) {
+            e.printStackTrace();
         }
     }
 

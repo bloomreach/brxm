@@ -49,6 +49,23 @@ public interface ServicingIndexingConfiguration extends IndexingConfiguration {
     Name getHippoDocumentName();
 
     /**
+     * @return QName of hippo:translation
+     */
+    Name getHippoTranslationName();
+
+    /**
+     * @return QName of hippo:message
+     */
+    Name getHippoMessageName();
+
+    String getTranslationMessageFieldName();
+
+    /**
+     * @return QName of hippo:translated
+     */
+    Name getHippoTranslatedName();
+
+    /**
      * @return QName of the hippo:paths property
      */
     Name getHippoPathPropertyName();
