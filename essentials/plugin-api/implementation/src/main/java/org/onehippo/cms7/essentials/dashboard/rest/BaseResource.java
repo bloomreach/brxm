@@ -127,12 +127,6 @@ public class BaseResource {
         return projectRestful;
     }
 
-    public PluginContext getContext(ServletContext servletContext) {
-        final String className = ProjectSetupPlugin.class.getName();
-        return new DefaultPluginContext(new PluginRestful(className));
-    }
-
-
     protected void addRestartInformation(final EventBus eventBus) {
         eventBus.post(new DisplayEvent(DisplayEvent.DisplayType.BR.name(), DisplayEvent.DisplayType.BR, true));
 

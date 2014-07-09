@@ -43,6 +43,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.MessageRestful;
@@ -64,10 +65,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
-/**
- * @version "$Id$"
- */
-// TODO mm: move this to own directory (as part of the plugin)
 @CrossOriginResourceSharing(allowAllOrigins = true)
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
@@ -80,7 +77,7 @@ public class ContentBlocksResource extends BaseResource {
     public RestfulList<DocumentType> getControllers(@Context ServletContext servletContext) {
         final RestfulList<DocumentType> types = new RestList<>();
         final Session session = GlobalUtils.createSession();
-        final PluginContext context = getContext(servletContext);
+        final PluginContext context = PluginContextFactory.getContext();
         final String projectNamespacePrefix = context.getProjectNamespacePrefix();
         String prefix = projectNamespacePrefix + ':';
 
@@ -156,7 +153,7 @@ public class ContentBlocksResource extends BaseResource {
         }
         final Session session = GlobalUtils.createSession();
         try {
-            final PluginContext context = getContext(servletContext);
+            final PluginContext context = PluginContextFactory.getContext();
             final RestWorkflow workflow = new RestWorkflow(session, context);
             workflow.addContentBlockCompound(name);
             return new MessageRestful("Successfully created compound with name: " + name);
@@ -171,7 +168,7 @@ public class ContentBlocksResource extends BaseResource {
         final Session session = GlobalUtils.createSession();
         try {
 
-            final PluginContext context = getContext(servletContext);
+            final PluginContext context = PluginContextFactory.getContext();
             final RestWorkflow workflow = new RestWorkflow(session, context);
             workflow.removeDocumentType(name);
             return new MessageRestful("Document type for name: " + name + " successfully deleted. You'll have to manually delete " + name + " entry from project CND file");
@@ -189,7 +186,7 @@ public class ContentBlocksResource extends BaseResource {
         final List<DocumentType> docTypes = body.getDocumentTypes().getItems();
         final Session session = GlobalUtils.createSession();
         try {
-            final RestWorkflow workflow = new RestWorkflow(session, getContext(servletContext));
+            final RestWorkflow workflow = new RestWorkflow(session, PluginContextFactory.getContext());
             for (DocumentType documentType : docTypes) {
                 final List<KeyValueRestful> providers = documentType.getProviders().getItems();
                 if (providers.isEmpty()) {

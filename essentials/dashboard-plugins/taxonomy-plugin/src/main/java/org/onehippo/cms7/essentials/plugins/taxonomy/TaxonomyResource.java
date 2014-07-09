@@ -46,6 +46,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
 import org.onehippo.cms7.essentials.dashboard.rest.ErrorMessageRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
@@ -91,7 +92,7 @@ public class TaxonomyResource extends BaseResource {
     @POST
     @Path("/")
     public MessageRestful createTaxonomy(final PostPayloadRestful payloadRestful, @Context ServletContext servletContext) {
-        final PluginContext context = getContext(servletContext);
+        final PluginContext context = PluginContextFactory.getContext();
         final Session session = context.createSession();
         try {
             final Map<String, String> values = payloadRestful.getValues();
@@ -133,7 +134,7 @@ public class TaxonomyResource extends BaseResource {
     @POST
     @Path("/add")
     public MessageRestful addTaxonomyToDocument(final PostPayloadRestful payloadRestful, @Context HttpServletResponse response, @Context ServletContext servletContext) {
-        final PluginContext context = getContext(servletContext);
+        final PluginContext context = PluginContextFactory.getContext();
         final Session session = context.createSession();
         try {
             final Map<String, String> values = payloadRestful.getValues();
@@ -189,7 +190,7 @@ public class TaxonomyResource extends BaseResource {
     @Path("/taxonomies")
     public List<KeyValueRestful> getTaxonomies(@Context ServletContext servletContext) {
         final List<KeyValueRestful> taxonomies = new ArrayList<>();
-        final PluginContext context = getContext(servletContext);
+        final PluginContext context = PluginContextFactory.getContext();
         final Session session = context.createSession();
 
         try {
