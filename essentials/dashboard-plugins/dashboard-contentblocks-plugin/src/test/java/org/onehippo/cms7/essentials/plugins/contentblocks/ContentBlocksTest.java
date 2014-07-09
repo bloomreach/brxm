@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.rest;
+package org.onehippo.cms7.essentials.plugins.contentblocks;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -26,9 +26,9 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
-import org.onehippo.cms7.essentials.rest.model.RestList;
-import org.onehippo.cms7.essentials.rest.model.contentblocks.CBPayload;
-import org.onehippo.cms7.essentials.rest.model.contentblocks.DocumentType;
+import org.onehippo.cms7.essentials.plugins.contentblocks.model.RestList;
+import org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks.CBPayload;
+import org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks.DocumentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

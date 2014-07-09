@@ -159,17 +159,10 @@
                  */
                 pluginModules: plugins + '/modules/',
 
-                // TODO: refactor, this service is content-blocks specific. Use 'documents' instead.
-                documentTypes: root + '/documenttypes/',
-
                 package_install: plugins + '/install/package',
                 save_settings: plugins + '/savesettings',
                 project_settings: plugins + '/projectsettings',
 
-                compounds: root + '/documenttypes/compounds',
-                compoundsCreate: root + '/documenttypes/compounds/create/',
-                compoundsDelete: root + '/documenttypes/compounds/delete/',
-                contentblocksCreate: root + '/documenttypes/compounds/contentblocks/create/',
                 //############################################
                 // NODE
                 //############################################
@@ -205,7 +198,7 @@
                     var modalOptions = {
                         closeButtonText: '',
                         actionButtonText: 'Close',
-                        headerText: 'Application error',
+                        headerText: 'Service Down',
                         bodyText: ''
 
                     };
@@ -222,12 +215,14 @@
                     }
                     $http.get($rootScope.REST.ping).success(function (data) {
                         if (data != 'true') {
-                            modalOptions.bodyText = 'Aplication started, but not initialized. Please reload this page'
+                            modalOptions.bodyText = 'The Essentials dashboard server appears to be down. If you are' +
+                                    ' rebuilding the project, please wait until it is up and running again.';
                             openModal();
                         }
                         $timeout(ping, PING_RUNNING_TIMER);
                     }).error(function () {
-                        modalOptions.bodyText = 'Aplication seems to be down'
+                        modalOptions.bodyText = 'The Essentials dashboard server appears to be down. If you are' +
+                                ' rebuilding the project, please wait until it is up and running again.';
                         openModal();
                         $timeout(ping, PING_RUNNING_TIMER);
                     });

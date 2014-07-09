@@ -14,20 +14,25 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.rest.model.contentblocks;
+package org.onehippo.cms7.essentials.plugins.contentblocks;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
+import java.util.HashMap;
 
-import org.onehippo.cms7.essentials.dashboard.utils.JcrMatcher;
+import org.junit.Test;
+import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * @version "$Id$"
  */
-public class HasProviderMatcher implements JcrMatcher {
+public class ContentBlocksPluginTest {
 
-    @Override
-    public boolean matches(final Node node) throws RepositoryException {
-        return (node.hasProperty("cbitem") && node.getProperty("cbitem").getBoolean());
+
+    @Test
+    public void testTemplateLoading() throws Exception {
+        final String template = TemplateUtils.injectTemplate("content_blocks_template.xml", new HashMap<String, Object>(), ContentBlocksPluginTest.class);
+        assertTrue(template != null);
+
     }
 }

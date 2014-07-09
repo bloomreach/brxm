@@ -19,6 +19,8 @@
 
     angular.module('hippo.essentials')
         .controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $http) {
+            var restEndpoint = $rootScope.REST.dynamic + 'contentblocks/';
+
             $scope.deliberatelyTrustDangerousSnippet = $sce.trustAsHtml('<a target="_blank" href="http://content-blocks.forge.onehippo.org">Detailed documentation</a>');
             $scope.introMessage = "Content Blocks plugin provides the content/document editor an ability to add multiple pre-configured compound type blocks to a document. You can configure the available content blocks on per document type basis.";
             $scope.providerInput = "";
@@ -38,7 +40,7 @@
 
             // delete a provider
             $scope.onDeleteProvider = function (provider) {
-                $http.delete($rootScope.REST.compoundsDelete + provider.key).success(function (data) {
+                $http.delete(restEndpoint + 'compounds/delete/' + provider.key).success(function (data) {
                     // reload providers, we deleted one:
                     loadProviders();
                 });
@@ -47,7 +49,7 @@
             // create a provider
             $scope.onAddProvider = function (providerName) {
                 $scope.providerInput = "";
-                $http.put($rootScope.REST.compoundsCreate + providerName, providerName).success(function (data) {
+                $http.put(restEndpoint + 'compounds/create/' + providerName, providerName).success(function (data) {
                     // reload providers, we added new one:
                     loadProviders();
                 });
@@ -73,7 +75,7 @@
                 });
 
                 console.log(payload);
-                $http.post($rootScope.REST.contentblocksCreate, payload).success(function (data) {
+                $http.post(restEndpoint + 'compounds/contentblocks/create', payload).success(function (data) {
                     // ignore
                 });
             };
@@ -92,7 +94,7 @@
                 
             // Helper functions
             function loadProviders() {
-                $http.get($rootScope.REST.compounds).success(function (data) {
+                $http.get(restEndpoint + 'compounds').success(function (data) {
                     $scope.providers = data.items;
                     
                     // (re-)initialize the provider map
@@ -103,7 +105,7 @@
                 });
             }
             function loadDocumentTypes() {
-                $http.get($rootScope.REST.documentTypes).success(function (data) {
+                $http.get(restEndpoint).success(function (data) {
                     $scope.documentTypes = data.items;
                     angular.forEach($scope.documentTypes, function (docType) {
                         docType.providers.providerNames = [];

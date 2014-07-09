@@ -14,40 +14,36 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.rest.model.contentblocks;
+package org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks;
 
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
-import org.onehippo.cms7.essentials.rest.model.RestList;
-
 
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "documentType")
-public class DocumentType extends KeyValueRestful implements Restful {
+@XmlRootElement(name = "items")
+public class Compounds extends KeyValueRestful implements Restful {
 
     private static final long serialVersionUID = 1L;
 
-    public DocumentType() {
+    private String path;
+
+    public Compounds() {
     }
 
-    private RestList<KeyValueRestful> providers;
-
-    public DocumentType(final String key, final String value, final RestList<KeyValueRestful> providers) {
+    public Compounds(final String key, final String value, final String path) {
         super(key, value);
-        this.providers = providers;
+        this.path = path;
     }
 
-    @XmlElement(name = "providers")
-    public RestList<KeyValueRestful> getProviders() {
-        return providers;
+    public String getPath() {
+        return path;
     }
 
-    public void setProviders(final RestList<KeyValueRestful> providers) {
-        this.providers = providers;
+    public void setPath(final String path) {
+        this.path = path;
     }
 }

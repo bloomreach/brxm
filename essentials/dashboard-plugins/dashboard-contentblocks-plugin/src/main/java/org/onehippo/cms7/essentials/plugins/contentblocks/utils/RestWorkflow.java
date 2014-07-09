@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.rest.utils;
+package org.onehippo.cms7.essentials.plugins.contentblocks.utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -47,11 +47,10 @@ import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.api.StringCodecFactory;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
-import org.onehippo.cms7.essentials.rest.exc.RestException;
-import org.onehippo.cms7.essentials.rest.model.contentblocks.ContentBlockModel;
+import org.onehippo.cms7.essentials.dashboard.rest.exc.RestException;
+import org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks.ContentBlockModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +60,7 @@ import org.slf4j.LoggerFactory;
 public class RestWorkflow {
 
     public static final String HIPPOSYSEDIT_NODETYPE = "hipposysedit:nodetype/hipposysedit:nodetype";
+    public static final String CONTENT_BLOCKS_TEMPLATE_XML = "content_blocks_template.xml";
     public static final String COMPOUND_TEMPLATE_NAME = "/rest_workflow_content_block_template.xml";
     private static Logger log = LoggerFactory.getLogger(RestWorkflow.class);
     private final Session session;
@@ -214,7 +214,7 @@ public class RestWorkflow {
                     ((HippoSession) session).importDereferencedXML(nodeType.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
                             ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, ImportMergeBehavior.IMPORT_MERGE_ADD_OR_OVERWRITE);
 
-                    parsed = TemplateUtils.injectTemplate(EssentialConst.CONTENT_BLOCKS_TEMPLATE_XML, data, getClass());
+                    parsed = TemplateUtils.injectTemplate(CONTENT_BLOCKS_TEMPLATE_XML, data, getClass());
                     in = new ByteArrayInputStream(parsed.getBytes("UTF-8"));
 
                     ((HippoSession) session).importDereferencedXML(ntemplate.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,

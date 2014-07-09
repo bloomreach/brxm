@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.rest.exc;
+package org.onehippo.cms7.essentials.dashboard.rest.exc;
 
 import javax.ws.rs.core.Response;
 

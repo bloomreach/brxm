@@ -7,6 +7,7 @@
         "introduction": "Provides the ability to add multiple Content Blocks to document types. Each Content Block offers a choice between multiple (potentially complex) field types, as determined by a Provider Compound.",
         "pluginId": "contentBlocks",
         "type": "plugins",
+        "restClasses": ["org.onehippo.cms7.essentials.plugins.contentblocks.ContentBlocksResource"],
         "vendor": {
             "@type": "vendor",
             "name": "Detailed Content Blocks documentation",

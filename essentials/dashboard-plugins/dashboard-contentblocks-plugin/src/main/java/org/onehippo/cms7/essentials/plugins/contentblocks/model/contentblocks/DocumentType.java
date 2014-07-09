@@ -14,37 +14,40 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.rest.model.contentblocks;
+package org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.onehippo.cms7.essentials.dashboard.model.Restful;
-import org.onehippo.cms7.essentials.rest.model.RestList;
+import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
+import org.onehippo.cms7.essentials.plugins.contentblocks.model.RestList;
 
 
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "cbpayload")
-public class CBPayload implements Restful {
+@XmlRootElement(name = "documentType")
+public class DocumentType extends KeyValueRestful implements Restful {
 
     private static final long serialVersionUID = 1L;
 
-    private RestList<DocumentType> documentTypes = new RestList<>();
-
-    public CBPayload() {
+    public DocumentType() {
     }
 
+    private RestList<KeyValueRestful> providers;
 
-    @XmlElement(name = "documentTypes")
-
-    public RestList<DocumentType> getDocumentTypes() {
-        return documentTypes;
+    public DocumentType(final String key, final String value, final RestList<KeyValueRestful> providers) {
+        super(key, value);
+        this.providers = providers;
     }
 
-    public void setDocumentTypes(final RestList<DocumentType> documentTypes) {
-        this.documentTypes = documentTypes;
+    @XmlElement(name = "providers")
+    public RestList<KeyValueRestful> getProviders() {
+        return providers;
     }
 
+    public void setProviders(final RestList<KeyValueRestful> providers) {
+        this.providers = providers;
+    }
 }

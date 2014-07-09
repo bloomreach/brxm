@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.rest;
+package org.onehippo.cms7.essentials.plugins.contentblocks;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -50,15 +50,15 @@ import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils;
-import org.onehippo.cms7.essentials.rest.exc.RestException;
-import org.onehippo.cms7.essentials.rest.model.RestList;
-import org.onehippo.cms7.essentials.rest.model.contentblocks.AllDocumentMatcher;
-import org.onehippo.cms7.essentials.rest.model.contentblocks.CBPayload;
-import org.onehippo.cms7.essentials.rest.model.contentblocks.Compounds;
-import org.onehippo.cms7.essentials.rest.model.contentblocks.ContentBlockModel;
-import org.onehippo.cms7.essentials.rest.model.contentblocks.DocumentType;
-import org.onehippo.cms7.essentials.rest.model.contentblocks.HasProviderMatcher;
-import org.onehippo.cms7.essentials.rest.utils.RestWorkflow;
+import org.onehippo.cms7.essentials.dashboard.rest.exc.RestException;
+import org.onehippo.cms7.essentials.plugins.contentblocks.model.RestList;
+import org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks.AllDocumentMatcher;
+import org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks.CBPayload;
+import org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks.Compounds;
+import org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks.ContentBlockModel;
+import org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks.DocumentType;
+import org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks.HasProviderMatcher;
+import org.onehippo.cms7.essentials.plugins.contentblocks.utils.RestWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,12 +71,9 @@ import com.google.common.base.Strings;
 @CrossOriginResourceSharing(allowAllOrigins = true)
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
-@Path("/documenttypes/")
+@Path("contentblocks")
 public class ContentBlocksResource extends BaseResource {
-
-
     private static Logger log = LoggerFactory.getLogger(ContentBlocksResource.class);
-
 
     @GET
     @Path("/")
@@ -109,7 +106,7 @@ public class ContentBlocksResource extends BaseResource {
         } catch (RepositoryException e) {
             log.error("Exception while trying to retrieve document types from repository {}", e);
             GlobalUtils.refreshSession(session, false);
-        }finally {
+        } finally {
             GlobalUtils.cleanupSession(session);
         }
 
@@ -117,12 +114,10 @@ public class ContentBlocksResource extends BaseResource {
     }
 
     private NodeIterator executeQuery(String queryString, final Session session) throws RepositoryException {
-
         final QueryManager queryManager = session.getWorkspace().getQueryManager();
         final Query query = queryManager.createQuery(queryString, EssentialConst.XPATH);
         final QueryResult execute = query.execute();
         return execute.getNodes();
-
     }
 
     private Map<String, Compounds> getCompoundMap(final ServletContext servletContext) {

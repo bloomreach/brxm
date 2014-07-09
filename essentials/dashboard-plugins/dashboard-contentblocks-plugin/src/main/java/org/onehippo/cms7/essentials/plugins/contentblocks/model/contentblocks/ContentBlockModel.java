@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.rest.model.contentblocks;
+package org.onehippo.cms7.essentials.plugins.contentblocks.model.contentblocks;
 
 import java.io.Serializable;
 
@@ -145,30 +145,6 @@ public final class ContentBlockModel implements Serializable {
         }
 
     }
-    /*
-    public enum WicketId {
-        LEFT("${cluster.id}.left.item"), RIGHT("${cluster.id}.right.item"), DEFAULT("${cluster.id}.field");
-        private String wicketId;
-
-        WicketId(final String wicketId) {
-            this.wicketId = wicketId;
-        }
-
-        public static WicketId get(String id) {
-            for (WicketId a : WicketId.values()) {
-                if (a.getWicketId().equals(id)) {
-                    return a;
-                }
-            }
-            return DEFAULT;
-        }
-
-        private String getWicketId() {
-            return wicketId;
-        }
-
-    }
-    */
 
     public enum Type implements Serializable {
         LINKS("links"), DROPDOWN("dropdown");
