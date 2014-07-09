@@ -228,7 +228,7 @@
                 scope: {
                     messages: '='
                 },
-                templateUrl: 'essentials-notifier.html',
+                templateUrl: 'directives/essentials-notifier.html',
                 controller: function ($scope, $filter, $sce, $log, $rootScope, $http, $timeout) {
                     var promisesQueue = [];
                     var lastLength = 0;
