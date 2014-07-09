@@ -221,6 +221,85 @@
                     $scope.defaultNameSpace = $rootScope.projectSettings.projectNamespace;
                 }
             }
+        }).directive("essentialsNotifier", function () {
+            return {
+                replace: false,
+                restrict: 'E',
+                scope: {
+                    messages: '='
+                },
+                templateUrl: 'essentials-notifier.html',
+                controller: function ($scope, $filter, $sce, $log, $rootScope, $http, $timeout) {
+                    var promisesQueue = [];
+                    var lastLength = 0;
+                    var ERROR_SHOW_TIME = 3000;
+                    $scope.messages = [];
+
+                    $scope.activeMessages = [];
+                    $scope.archiveMessages = [$scope.messages[0]];
+                    $scope.archiveOpen = true;
+
+                    $scope.$watch('messages', function () {
+                        // don't execute if message count is not changed, e.g. when changing visibility only
+                        if (lastLength == $scope.messages.length) {
+                            return;
+                        }
+                        var date = new Date();
+                        var now = date.toLocaleTimeString();
+                        // cancel all hide promises
+                        angular.forEach(promisesQueue, function (promise) {
+                            $timeout.cancel(promise);
+                        });
+                        promisesQueue = [];
+                        // keep messages which are not older than time showed + ERROR_SHOW_TIME:
+                        /*  var elapsedTime = new Date();
+                         elapsedTime.setSeconds(elapsedTime.getSeconds() + ERROR_SHOW_TIME);
+                         var keepValuesCounter =0;
+                         angular.forEach($scope.activeMessages, function (value) {
+                         if(value.fullDate && value.fullDate.getDate() < elapsedTime){
+                         keepValuesCounter++;
+                         }
+                         });*/
+                        var currentLength = $scope.messages.length;
+                        var startIdx = lastLength;
+                        lastLength = currentLength;
+                        $scope.activeMessages = [];
+                        $scope.activeMessages = $scope.messages.slice(startIdx, currentLength);
+                        $scope.archiveMessages = $scope.messages.slice(0, startIdx);
+                        angular.forEach($scope.messages, function (value) {
+                            value.visible = true;
+                            if (!value.date) {
+                                value.date = now;
+                                value.fullDate = date;
+                            }
+                        });
+                        if ($scope.archiveMessages.length == 0) {
+                            $scope.archiveMessages.push({type: "info", message: 'No archived messages', visible: true, date: now, fullDate: date})
+                        }
+                        // newer messages first:
+                        $scope.archiveMessages.reverse();
+                        if ($scope.activeMessages.length > 1) {
+                            // animate close:
+                            var counter = 1;
+                            var copy = $scope.activeMessages.slice(0);
+                            angular.forEach(copy, function (value) {
+                                if (counter > 1) {
+                                    var promise = $timeout(function () {
+                                        value.visible = false;
+                                        $scope.archiveMessages.unshift(value);
+                                    }, ERROR_SHOW_TIME * counter);
+                                    promisesQueue.push(promise);
+                                }
+                                counter = counter + 0.5;
+                            });
+                        }
+                    }, true);
+
+                    $scope.toggleArchive = function () {
+                        $scope.archiveOpen = !$scope.archiveOpen;
+                    };
+                }
+            }
         })
 
 

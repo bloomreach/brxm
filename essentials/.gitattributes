@@ -1520,6 +1520,7 @@ plugin-dashboard/src/main/webapp/directives/essentials-cms-document-type-deep-li
 plugin-dashboard/src/main/webapp/directives/essentials-folder-picker.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-help.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-messages.html -text
+plugin-dashboard/src/main/webapp/directives/essentials-notifier.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-simple-install-plugin.html -text
 plugin-dashboard/src/main/webapp/directives/essentials-template-settings.html -text
 plugin-dashboard/src/main/webapp/docs/rest-api/css/highlight.default.css -text
