@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
@@ -54,6 +53,7 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,9 +80,9 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
     private static Logger log = LoggerFactory.getLogger(ExtendedFolderWorkflowPlugin.class);
 
     private static final String QUERY_LANGUAGE_PUBLISH = Query.SQL;
-    private static final String QUERY_STATEMENT_PUBLISH = "SELECT * FROM hippostd:publishable WHERE jcr:path LIKE '$basefolder/%' AND hippostd:state='unpublished'";
+    private static final String QUERY_STATEMENT_PUBLISH = "SELECT * FROM hippostd:publishable WHERE jcr:path LIKE '$basefolder/%' AND (hippostd:state='unpublished' AND hippostd:stateSummary='changed') OR (hippostd:state='published' and NOT(hippo:availability='live'))";
     private static final String QUERY_LANGUAGE_DEPUBLISH = Query.SQL;
-    private static final String QUERY_STATEMENT_DEPUBLISH = "SELECT * FROM hippostd:publishable WHERE jcr:path LIKE '$basefolder/%' AND hippostd:state='published'";
+    private static final String QUERY_STATEMENT_DEPUBLISH = "SELECT * FROM hippostd:publishable WHERE jcr:path LIKE '$basefolder/%' AND hippostd:state='published' AND hippo:availability = 'live'";
     private static final String WORKFLOW_CATEGORY = "default";
 
     private String name;
@@ -133,20 +133,16 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
                 WorkflowManager wfMgr = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
                 for (String uuid : documents) {
                     try {
-                        Node document = session.getNodeByIdentifier(uuid);
-                        String path = document.getPath();
-                        if (document.getDepth() > 0) {
-                            Node handle = document.getParent();
-                            if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
-                                Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, handle);
-                                if (workflow instanceof DocumentWorkflow) {
-                                    DocumentWorkflow docWorkflow = (DocumentWorkflow) workflow;
-                                    cancelRequests(docWorkflow);
+                        Node handle = session.getNodeByIdentifier(uuid);
+                        if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
+                            Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, handle);
+                            if (workflow instanceof DocumentWorkflow) {
+                                DocumentWorkflow docWorkflow = (DocumentWorkflow) workflow;
+                                cancelRequests(docWorkflow);
 
-                                    ((DocumentWorkflow) workflow).publish();
-                                    ++processed;
-                                    log.info("published document "+path+" ("+uuid+")");
-                                }
+                                ((DocumentWorkflow) workflow).publish();
+                                ++processed;
+                                log.info("published document "+handle.getPath()+" ("+uuid+")");
                             }
                         }
                     } catch (RepositoryException ex) {
@@ -198,20 +194,16 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
                 WorkflowManager wfMgr = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
                 for (String uuid : documents) {
                     try {
-                        Node document = session.getNodeByIdentifier(uuid);
-                        String path = document.getPath();
-                        if (document.getDepth() > 0) {
-                            Node handle = document.getParent();
-                            if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
-                                Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, handle);
-                                if (workflow instanceof DocumentWorkflow) {
-                                    DocumentWorkflow docWorkflow = (DocumentWorkflow) workflow;
-                                    cancelRequests(docWorkflow);
+                        Node handle = session.getNodeByIdentifier(uuid);
+                        if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
+                            Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, handle);
+                            if (workflow instanceof DocumentWorkflow) {
+                                DocumentWorkflow docWorkflow = (DocumentWorkflow) workflow;
+                                cancelRequests(docWorkflow);
 
-                                    ((DocumentWorkflow) workflow).depublish();
-                                    ++processed;
-                                    log.info("depublished document "+path+" ("+uuid+")");
-                                }
+                                ((DocumentWorkflow) workflow).depublish();
+                                ++processed;
+                                log.info("depublished document "+handle.getPath()+" ("+uuid+")");
                             }
                         }
                     } catch (RepositoryException ex) {
@@ -257,12 +249,9 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
                 if (query != null && folder != null) {
                     query.bindValue("basefolder", folder.getSession().getValueFactory().createValue(folder.getPath()));
                     QueryResult result = query.execute();
-                    for (NodeIterator documentIter = result.getNodes(); documentIter.hasNext();) {
-                        Node document = documentIter.nextNode();
-                        if (document != null) {
-                            if (document.isNodeType("mix:referenceable") && document.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-                                documents.add(document.getIdentifier());
-                            }
+                    for (Node document : new NodeIterable(result.getNodes())) {
+                        if (document.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                            documents.add(document.getParent().getIdentifier());
                         }
                     }
                 } else {
@@ -290,6 +279,8 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
             affectedComponent = new Label("affected");
             affectedComponent.setVisible(false);
             add(affectedComponent);
+
+            setOkEnabled(!documents.isEmpty());
         }
 
         public WorkflowDescriptorModel getWorkflowDescriptorModel() {
